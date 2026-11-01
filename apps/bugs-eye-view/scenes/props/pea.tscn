@@ -9,16 +9,16 @@
 radial_segments = 16
 rings = 8
 
-[node name="Pea" type="RigidBody3D" unique_id=820106096]
+[node name="Pea" type="RigidBody3D" unique_id=1906444190]
 mass = 0.1
 script = ExtResource("1_54ojw")
 noise_on_impact = 1.4
 
-[node name="Shape" type="CollisionShape3D" parent="." unique_id=736146406]
+[node name="Shape" type="CollisionShape3D" parent="." unique_id=576115114]
 shape = SubResource("SphereShape3D_g6ix3")
 
-[node name="Visual" type="Node3D" parent="." unique_id=2046828928]
+[node name="Visual" type="Node3D" parent="." unique_id=1030578714]
 
-[node name="Mesh" type="MeshInstance3D" parent="Visual" unique_id=1541417362]
+[node name="Mesh" type="MeshInstance3D" parent="Visual" unique_id=1656832985]
 material_override = ExtResource("2_8wmp6")
 mesh = SubResource("SphereMesh_gqsvp")

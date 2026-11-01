@@ -578,3 +578,27 @@ func finalize(script_path: String, level_id: StringName, path: String, tree: Sce
 	if err != OK:
 		push_error("save failed %s" % path)
 	root.free()
+	LevelGeo.strip_instance_scripts(path)
+
+
+## Instanced actors re-state their (identical) script in the level file. In
+## exported binary scenes that line can be applied after the level's own
+## overrides and reset them (routes, schedules), so remove it.
+static func strip_instance_scripts(path: String) -> void:
+	var f := FileAccess.open(path, FileAccess.READ)
+	var lines := f.get_as_text().split("\n")
+	f.close()
+	var out: PackedStringArray = []
+	var in_instance := false
+	var removed := 0
+	for line in lines:
+		if line.begins_with("["):
+			in_instance = line.begins_with("[node ") and line.contains(" instance=")
+		elif in_instance and line.begins_with("script = ExtResource("):
+			removed += 1
+			continue
+		out.append(line)
+	var w := FileAccess.open(path, FileAccess.WRITE)
+	w.store_string("\n".join(out))
+	w.close()
+	print("  %s: removed %d redundant instance script lines" % [path.get_file(), removed])

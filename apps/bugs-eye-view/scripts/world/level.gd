@@ -249,10 +249,10 @@ func _update_ambient() -> void:
 		amb = minf(amb, 0.2)
 	PerceptionSystem.ambient_light = amb
 	if _env and _env.environment:
-		_env.environment.ambient_light_energy = lerpf(0.25, 1.0, amb)
+		_env.environment.ambient_light_energy = lerpf(0.2, 0.75, amb)
 		_env.environment.background_color = Color(_bg_base.r, _bg_base.g, _bg_base.b) * lerpf(0.2, 1.0, amb)
 	if _sun:
-		_sun.light_energy = 0.15 + amb * 0.9
+		_sun.light_energy = 0.1 + amb * 0.75
 
 
 ## Keeps at most PROP_AWAKE_CAP far-away props simulating; nearby props wake.

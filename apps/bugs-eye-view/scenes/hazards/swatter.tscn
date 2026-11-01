@@ -22,38 +22,38 @@ size = Vector3(5.6, 0.4, 0.25)
 [sub_resource type="BoxMesh" id="BoxMesh_djaap"]
 size = Vector3(0.7, 0.5, 22)
 
-[node name="Swatter" type="Node3D" unique_id=727164757]
+[node name="Swatter" type="Node3D" unique_id=35759077]
 script = ExtResource("1_ilo8t")
 impact_radius = 3.2
 
-[node name="Paddle" type="Node3D" parent="." unique_id=918838526]
+[node name="Paddle" type="Node3D" parent="." unique_id=1995580165]
 
-[node name="Head" type="MeshInstance3D" parent="Paddle" unique_id=181253708]
+[node name="Head" type="MeshInstance3D" parent="Paddle" unique_id=1958351374]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.2, 0)
 material_override = ExtResource("2_aclsy")
 mesh = SubResource("BoxMesh_2g2b1")
 
-[node name="Slot" type="MeshInstance3D" parent="Paddle" unique_id=1406050663]
+[node name="Slot" type="MeshInstance3D" parent="Paddle" unique_id=1918921239]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.22, -2.4)
 material_override = ExtResource("3_yy2at")
 mesh = SubResource("BoxMesh_340jc")
 
-[node name="@MeshInstance3D@58" type="MeshInstance3D" parent="Paddle" unique_id=1414394567]
+[node name="@MeshInstance3D@58" type="MeshInstance3D" parent="Paddle" unique_id=2123937862]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.22, -0.8)
 material_override = ExtResource("3_yy2at")
 mesh = SubResource("BoxMesh_hwtkx")
 
-[node name="@MeshInstance3D@59" type="MeshInstance3D" parent="Paddle" unique_id=1158435615]
+[node name="@MeshInstance3D@59" type="MeshInstance3D" parent="Paddle" unique_id=1538591405]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.22, 0.8)
 material_override = ExtResource("3_yy2at")
 mesh = SubResource("BoxMesh_h3ya3")
 
-[node name="@MeshInstance3D@60" type="MeshInstance3D" parent="Paddle" unique_id=1872071250]
+[node name="@MeshInstance3D@60" type="MeshInstance3D" parent="Paddle" unique_id=1499073214]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.22, 2.4)
 material_override = ExtResource("3_yy2at")
 mesh = SubResource("BoxMesh_ful1k")
 
-[node name="Handle" type="MeshInstance3D" parent="Paddle" unique_id=1147646231]
+[node name="Handle" type="MeshInstance3D" parent="Paddle" unique_id=1990304155]
 transform = Transform3D(1, 0, 0, 0, 0.94923544, -0.31456655, 0, 0.31456655, 0.94923544, 0, 3.5, 14.5)
 material_override = ExtResource("2_aclsy")
 mesh = SubResource("BoxMesh_djaap")

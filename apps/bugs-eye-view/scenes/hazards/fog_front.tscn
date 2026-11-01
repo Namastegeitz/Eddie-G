@@ -6,10 +6,10 @@
 [sub_resource type="BoxMesh" id="BoxMesh_n312b"]
 size = Vector3(200, 40, 60)
 
-[node name="FogFront" type="Node3D" unique_id=618572504]
+[node name="FogFront" type="Node3D" unique_id=1083216623]
 script = ExtResource("1_ultry")
 
-[node name="Mesh" type="MeshInstance3D" parent="." unique_id=1363265812]
+[node name="Mesh" type="MeshInstance3D" parent="." unique_id=452369317]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 20, 30)
 material_override = ExtResource("2_o8sd5")
 cast_shadow = 0

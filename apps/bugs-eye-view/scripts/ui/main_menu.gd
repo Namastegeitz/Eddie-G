@@ -14,7 +14,7 @@ func _ready() -> void:
 	layer.add_child(_ui)
 	var shade := ColorRect.new()
 	shade.color = Color(0, 0, 0, 0.35)
-	shade.set_anchors_preset(Control.PRESET_FULL_RECT)
+	shade.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	shade.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_ui.add_child(shade)
 	var col := UIKit.column(_ui, 520.0)

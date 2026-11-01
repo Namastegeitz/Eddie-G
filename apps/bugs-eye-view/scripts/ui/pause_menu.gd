@@ -15,7 +15,7 @@ func _ready() -> void:
 	add_child(_root)
 	var dim := ColorRect.new()
 	dim.color = Color(0, 0, 0, 0.65)
-	dim.set_anchors_preset(Control.PRESET_FULL_RECT)
+	dim.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	_root.add_child(dim)
 	var col := UIKit.column(_root, 520.0)
 	col.add_child(UIKit.title("PAUSED", 48))

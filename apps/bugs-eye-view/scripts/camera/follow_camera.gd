@@ -7,7 +7,7 @@ extends Node3D
 @export var distance: float = 8.0
 @export var height: float = 1.6
 @export var min_pitch: float = -1.25
-@export var max_pitch: float = 0.35
+@export var max_pitch: float = 0.15
 @export var follow_speed: float = 12.0
 @export var look_scale: float = 0.004
 
@@ -50,6 +50,10 @@ func set_target(t: BugBase) -> void:
 	t.cam = self
 	yaw = t.global_rotation.y
 	t.rotation.y = 0.0
+	# Start with the bug facing away from the camera.
+	t.facing = -Basis(Vector3.UP, yaw).z
+	if t.visual:
+		t.visual.rotation.y = yaw
 	snap()
 
 

@@ -17,6 +17,9 @@ const REBINDABLE: Array[String] = ["move_forward", "move_back", "move_left", "mo
 const MOUSE_LOOK_SCALE := 1.0
 const STICK_LOOK_SPEED := 900.0
 const CREEP_SCALE := 0.4
+## Browsers can report one huge jump right after pointer lock; ignore it.
+const CAPTURE_GRACE := 0.25
+const MAX_MOUSE_STEP := 250.0
 
 var enabled: bool = false
 var look_sensitivity: float = 1.0
@@ -26,6 +29,7 @@ var _touch_mode: bool = false
 var _touch_move: Vector2 = Vector2.ZERO
 var _look_accum: Vector2 = Vector2.ZERO
 var _touch_held: Dictionary = {}
+var _capture_grace := 0.0
 
 
 func _ready() -> void:
@@ -205,9 +209,17 @@ func _update_mouse_mode() -> void:
 	if DisplayServer.get_name() == "headless":
 		return
 	if enabled and not _touch_mode:
+		if Input.mouse_mode != Input.MOUSE_MODE_CAPTURED:
+			_capture_grace = CAPTURE_GRACE
 		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 	else:
 		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+
+
+func _process(delta: float) -> void:
+	if _capture_grace > 0.0:
+		_capture_grace -= delta
+		_look_accum = Vector2.ZERO
 
 
 # --- Raw input ------------------------------------------------------------
@@ -224,13 +236,16 @@ func _unhandled_input(event: InputEvent) -> void:
 	if _touch_mode and event is InputEventMouse:
 		return
 	if event is InputEventMouseMotion and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
-		_look_accum += (event as InputEventMouseMotion).relative * MOUSE_LOOK_SCALE
+		var rel := (event as InputEventMouseMotion).relative
+		if _capture_grace <= 0.0 and rel.length() < MAX_MOUSE_STEP:
+			_look_accum += rel * MOUSE_LOOK_SCALE
 		return
 	if event is InputEventMouseButton and (event as InputEventMouseButton).pressed \
 			and not _touch_mode and Input.mouse_mode != Input.MOUSE_MODE_CAPTURED \
 			and DisplayServer.get_name() != "headless":
 		# First click only re-captures the mouse; it is not an attack.
 		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+		_capture_grace = CAPTURE_GRACE
 		return
 	for a: StringName in GAME_ACTIONS:
 		var action := PREFIX + String(a)

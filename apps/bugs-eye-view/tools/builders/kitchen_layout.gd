@@ -79,7 +79,7 @@ static func build(tree: SceneTree) -> void:
 
 	# --- Light: ceiling lamp while people are in, morning sunbeam ---
 	g.light_zone("CeilingLight", Vector3(0, 20, 0), Vector3(118, 40, 88), 2, 1,
-		["breakfast", "lunch", "late_snack", "dishes", "midnight_snack", "lights_on"], [], false, 0.8)
+		["breakfast", "lunch", "late_snack", "dishes", "midnight_snack", "lights_on"], [], false, 0.45)
 	g.light_zone("Sunbeam", Vector3(-46, 2, 0), Vector3(26, 4, 22), 3, 2, ["sunbeam"], ["lights_out"])
 	g.deco_box("Window", Vector3(-59.85, 52, 0), Vector3(0.2, 30, 24), "window", Vector3.ZERO, false)
 

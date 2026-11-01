@@ -31,7 +31,7 @@ func _ready() -> void:
 	add_child(_root)
 	_tint = ColorRect.new()
 	_tint.color = Color(0.3, 0.55, 1.0, 0.14)
-	_tint.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_tint.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	_tint.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_tint.visible = false
 	_root.add_child(_tint)
@@ -94,7 +94,7 @@ func _make_label(text: String, size: int, color: Color) -> Label:
 
 func _build_top() -> void:
 	var top := MarginContainer.new()
-	top.set_anchors_preset(Control.PRESET_TOP_WIDE)
+	top.set_anchors_and_offsets_preset(Control.PRESET_TOP_WIDE)
 	for side in ["left", "right", "top"]:
 		top.add_theme_constant_override("margin_" + side, 12)
 	top.mouse_filter = Control.MOUSE_FILTER_IGNORE

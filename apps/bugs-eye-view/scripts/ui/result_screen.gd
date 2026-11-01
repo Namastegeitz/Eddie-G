@@ -34,7 +34,7 @@ func show_result(r: Dictionary) -> void:
 		c.queue_free()
 	var dim := ColorRect.new()
 	dim.color = Color(0, 0, 0, 0.7)
-	dim.set_anchors_preset(Control.PRESET_FULL_RECT)
+	dim.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	_root.add_child(dim)
 	_col = UIKit.column(_root, 560.0, 10)
 	var won := bool(r.get("won", false))

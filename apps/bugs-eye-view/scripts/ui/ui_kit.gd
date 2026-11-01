@@ -61,13 +61,13 @@ static func _box(bg: Color, border: Color, width: int, radius: int = 14) -> Styl
 
 static func setup_root(root: Control) -> void:
 	root.theme = theme()
-	root.set_anchors_preset(Control.PRESET_FULL_RECT)
+	root.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 
 
 static func background(parent: Control) -> ColorRect:
 	var bg := ColorRect.new()
 	bg.color = INK
-	bg.set_anchors_preset(Control.PRESET_FULL_RECT)
+	bg.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	parent.add_child(bg)
 	return bg
@@ -76,7 +76,7 @@ static func background(parent: Control) -> ColorRect:
 ## Scrollable, centered column that fits portrait phones and wide desktops.
 static func column(parent: Control, max_width: float = 620.0, separation: int = 14) -> VBoxContainer:
 	var scroll := ScrollContainer.new()
-	scroll.set_anchors_preset(Control.PRESET_FULL_RECT)
+	scroll.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	parent.add_child(scroll)
 	var center := CenterContainer.new()

@@ -34,6 +34,12 @@ window/stretch/mode="canvas_items"
 window/stretch/aspect="expand"
 window/handheld/orientation=6
 
+[editor]
+
+; Ship scenes as text: the binary conversion drops packed-array overrides on
+; instanced actors (routes, routine event lists) in this Godot version.
+export/convert_text_resources_to_binary=false
+
 [input_devices]
 
 pointing/emulate_mouse_from_touch=true

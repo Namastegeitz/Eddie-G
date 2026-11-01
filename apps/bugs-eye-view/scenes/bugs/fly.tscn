@@ -57,77 +57,77 @@ size = Vector3(0.5, 0.06, 0.06)
 [sub_resource type="BoxMesh" id="BoxMesh_v7lmw"]
 size = Vector3(0.5, 0.06, 0.06)
 
-[node name="Fly" type="CharacterBody3D" unique_id=118430961]
+[node name="Fly" type="CharacterBody3D" unique_id=2000122364]
 script = ExtResource("1_ba6ym")
 stats = ExtResource("2_enepr")
 
-[node name="Shape" type="CollisionShape3D" parent="." unique_id=1942664093]
+[node name="Shape" type="CollisionShape3D" parent="." unique_id=917757747]
 shape = SubResource("SphereShape3D_rmrqp")
 
-[node name="Visual" type="Node3D" parent="." unique_id=1339440072]
+[node name="Visual" type="Node3D" parent="." unique_id=1364943351]
 
-[node name="Body" type="MeshInstance3D" parent="Visual" unique_id=476684656]
+[node name="Body" type="MeshInstance3D" parent="Visual" unique_id=1624709368]
 transform = Transform3D(0.85, 0, 0, 0, 0.75, 0, 0, 0, 1.2, 0, 0, 0.15)
 material_override = ExtResource("3_257fa")
 mesh = SubResource("SphereMesh_o120r")
 
-[node name="Head" type="MeshInstance3D" parent="Visual" unique_id=2081994306]
+[node name="Head" type="MeshInstance3D" parent="Visual" unique_id=346906226]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, -0.45)
 material_override = ExtResource("3_257fa")
 mesh = SubResource("SphereMesh_ypak7")
 
-[node name="EyeL" type="MeshInstance3D" parent="Visual" unique_id=766635752]
+[node name="EyeL" type="MeshInstance3D" parent="Visual" unique_id=400139983]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.18, 0.12, -0.55)
 material_override = ExtResource("4_gh0f4")
 mesh = SubResource("SphereMesh_wdem3")
 
-[node name="EyeR" type="MeshInstance3D" parent="Visual" unique_id=1212574168]
+[node name="EyeR" type="MeshInstance3D" parent="Visual" unique_id=182175625]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.18, 0.12, -0.55)
 material_override = ExtResource("4_gh0f4")
 mesh = SubResource("SphereMesh_xxgyh")
 
-[node name="WingL" type="Node3D" parent="Visual" unique_id=584562018]
+[node name="WingL" type="Node3D" parent="Visual" unique_id=1141314113]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.2, 0.3, 0.1)
 
-[node name="Wing" type="MeshInstance3D" parent="Visual/WingL" unique_id=1971352204]
+[node name="Wing" type="MeshInstance3D" parent="Visual/WingL" unique_id=1945350828]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.45, 0, 0.1)
 material_override = ExtResource("5_1lv3v")
 mesh = SubResource("BoxMesh_b1eto")
 
-[node name="WingR" type="Node3D" parent="Visual" unique_id=1483436832]
+[node name="WingR" type="Node3D" parent="Visual" unique_id=1295878773]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.2, 0.3, 0.1)
 
-[node name="Wing" type="MeshInstance3D" parent="Visual/WingR" unique_id=572078868]
+[node name="Wing" type="MeshInstance3D" parent="Visual/WingR" unique_id=286546981]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.45, 0, 0.1)
 material_override = ExtResource("5_1lv3v")
 mesh = SubResource("BoxMesh_tw7hk")
 
-[node name="Leg" type="MeshInstance3D" parent="Visual" unique_id=292422242]
+[node name="Leg" type="MeshInstance3D" parent="Visual" unique_id=883480263]
 transform = Transform3D(0.8243771, -0.30092114, -0.47942555, 0.3428978, 0.9393727, 0, 0.45035928, -0.16439396, 0.87758255, -0.225, -0.25, -0.25)
 material_override = ExtResource("3_257fa")
 mesh = SubResource("BoxMesh_hk3pj")
 
-[node name="@MeshInstance3D@37" type="MeshInstance3D" parent="Visual" unique_id=19424938]
+[node name="@MeshInstance3D@37" type="MeshInstance3D" parent="Visual" unique_id=1656269827]
 transform = Transform3D(0.9393727, -0.3428978, 0, 0.3428978, 0.9393727, 0, 0, 0, 1, -0.225, -0.25, 0)
 material_override = ExtResource("3_257fa")
 mesh = SubResource("BoxMesh_cwobb")
 
-[node name="@MeshInstance3D@38" type="MeshInstance3D" parent="Visual" unique_id=2124223823]
+[node name="@MeshInstance3D@38" type="MeshInstance3D" parent="Visual" unique_id=1009754707]
 transform = Transform3D(0.8243771, -0.30092114, 0.47942555, 0.3428978, 0.9393727, 0, -0.45035928, 0.16439396, 0.87758255, -0.225, -0.25, 0.25)
 material_override = ExtResource("3_257fa")
 mesh = SubResource("BoxMesh_8vi66")
 
-[node name="@MeshInstance3D@39" type="MeshInstance3D" parent="Visual" unique_id=1139581929]
+[node name="@MeshInstance3D@39" type="MeshInstance3D" parent="Visual" unique_id=1042001955]
 transform = Transform3D(0.8243771, 0.30092114, 0.47942555, -0.3428978, 0.9393727, 0, -0.45035928, -0.16439396, 0.87758255, 0.225, -0.25, -0.25)
 material_override = ExtResource("3_257fa")
 mesh = SubResource("BoxMesh_qxgav")
 
-[node name="@MeshInstance3D@40" type="MeshInstance3D" parent="Visual" unique_id=2028472803]
+[node name="@MeshInstance3D@40" type="MeshInstance3D" parent="Visual" unique_id=627061280]
 transform = Transform3D(0.9393727, 0.3428978, 0, -0.3428978, 0.9393727, 0, 0, 0, 1, 0.225, -0.25, 0)
 material_override = ExtResource("3_257fa")
 mesh = SubResource("BoxMesh_fwwto")
 
-[node name="@MeshInstance3D@41" type="MeshInstance3D" parent="Visual" unique_id=1766059792]
+[node name="@MeshInstance3D@41" type="MeshInstance3D" parent="Visual" unique_id=991146222]
 transform = Transform3D(0.8243771, 0.30092114, -0.47942555, -0.3428978, 0.9393727, 0, 0.45035928, 0.16439396, 0.87758255, 0.225, -0.25, 0.25)
 material_override = ExtResource("3_257fa")
 mesh = SubResource("BoxMesh_v7lmw")

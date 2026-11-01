@@ -12,18 +12,18 @@ height = 3.2
 radial_segments = 16
 rings = 8
 
-[node name="Ball" type="RigidBody3D" unique_id=817148954]
+[node name="Ball" type="RigidBody3D" unique_id=224520897]
 mass = 0.6
 script = ExtResource("1_6d8im")
 noise_on_impact = 1.0
 trip_hazard = true
 impact_sound = &"thud"
 
-[node name="Shape" type="CollisionShape3D" parent="." unique_id=806025480]
+[node name="Shape" type="CollisionShape3D" parent="." unique_id=832256817]
 shape = SubResource("SphereShape3D_i372f")
 
-[node name="Visual" type="Node3D" parent="." unique_id=1211002821]
+[node name="Visual" type="Node3D" parent="." unique_id=565552549]
 
-[node name="Mesh" type="MeshInstance3D" parent="Visual" unique_id=1151556625]
+[node name="Mesh" type="MeshInstance3D" parent="Visual" unique_id=698964876]
 material_override = ExtResource("2_3mkuf")
 mesh = SubResource("SphereMesh_nlcrk")

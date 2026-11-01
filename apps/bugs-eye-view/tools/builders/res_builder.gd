@@ -35,7 +35,7 @@ static func _mat(color: Color, rough: float = 0.8, metal: float = 0.0, alpha: bo
 
 static func materials(force: bool) -> void:
 	var defs := {
-		"tile": _mat(Color(0.86, 0.84, 0.78), 0.5),
+		"tile": _mat(Color(0.74, 0.72, 0.66), 0.6),
 		"wood": _mat(Color(0.66, 0.47, 0.28)),
 		"dark_wood": _mat(Color(0.33, 0.2, 0.11)),
 		"counter_stone": _mat(Color(0.42, 0.42, 0.44), 0.4),
