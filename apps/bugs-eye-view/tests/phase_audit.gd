@@ -21,6 +21,8 @@ func _ready() -> void:
 		await _phase3()
 	if only in [0, 4]:
 		await _phase4()
+	if only in [0, 5]:
+		await _phase5()
 	finish("phase audit")
 
 
@@ -722,3 +724,196 @@ func _phase4() -> void:
 	await frames(240)
 	check(p.hits_left < h0, "caught behind the exterminator's fog, the bug takes a hit")
 	await unload(lvl)
+
+
+# --- Phase 5: shell & UX -------------------------------------------------------------
+
+func _hud(lvl: Node) -> Node:
+	for n in lvl.get_children():
+		if n is CanvasLayer and n.has_method("toast"):
+			return n
+	return null
+
+
+func _phase5() -> void:
+	print("-- Phase 5: settings, rebinding, pause/results, HUD, colony, audio, menu flow")
+	SaveSystem.data = SaveSystem.default_data()
+
+	# Settings take effect.
+	SaveSystem.set_setting("music_volume", 0.0)
+	check(AudioServer.is_bus_mute(AudioServer.get_bus_index(&"Music")), "music volume 0 mutes the music bus")
+	SaveSystem.set_setting("sfx_volume", 0.5)
+	check(absf(AudioServer.get_bus_volume_db(AudioServer.get_bus_index(&"SFX")) - linear_to_db(0.5)) < 0.01, "the effects slider sets the effects bus")
+	SaveSystem.set_setting("music_volume", 0.6)
+	SaveSystem.set_setting("quality", "low")
+	check(Engine.max_fps == 30 and get_viewport().scaling_3d_scale < 0.8 and not GameManager.shadows_enabled(), "low quality caps fps, lowers resolution and drops shadows")
+	SaveSystem.set_setting("quality", "high")
+	check(get_viewport().msaa_3d == Viewport.MSAA_2X and GameManager.shadows_enabled(), "high quality turns on antialiasing and shadows")
+	SaveSystem.set_setting("quality", "medium")
+	SaveSystem.set_setting("touch_controls", "on")
+	check(InputRouter.is_touch_mode(), "touch controls can be forced on")
+	SaveSystem.set_setting("touch_controls", "off")
+	check(not InputRouter.is_touch_mode(), "and forced off")
+
+	# Rebinding survives a restart and drives gameplay.
+	var lvl := await load_level(&"kitchen", &"cockroach")
+	var p := lvl.player
+	await frames(15)
+	var j := InputEventKey.new()
+	j.physical_keycode = KEY_J
+	InputRouter.rebind("jump", j)
+	check(InputRouter.binding_text("jump") == "J", "jump rebinds to J")
+	var y0 := p.global_position.y
+	key(KEY_J, true)
+	await frames(6)
+	key(KEY_J, false)
+	check(p.global_position.y > y0 + 0.15 or p.velocity.y > 1.0, "the new key makes the roach hop")
+	SaveSystem.load_game()
+	InputRouter.apply_saved_bindings()
+	check(InputRouter.binding_text("jump") == "J", "the binding is saved and reloaded")
+	InputRouter.reset_bindings()
+	check(InputRouter.binding_text("jump") == "Space", "reset restores Space")
+	await frames(30)
+
+	# HUD readouts.
+	var hud := _hud(lvl)
+	check(hud != null, "the HUD is up")
+	check((hud._crumbs as Label).text == "CRUMBS 0 / %d" % lvl.crumbs_needed, "the HUD counts crumbs")
+	check((hud._clock as Label).text.begins_with(HouseClock.clock_text()), "the HUD shows the house clock")
+	PerceptionSystem.set_escalation(2)
+	await frames(2)
+	check((hud._stages as Label).text.contains("[SWATTER]"), "the HUD marks reached escalation stages")
+	PerceptionSystem.set_escalation(0)
+	p.global_position = Vector3(43, 0.6, -30)
+	await frames(30)
+	check((hud._hint as Label).text == "Hold SQUEEZE to hide", "the HUD hints how to hide under the fridge")
+
+	# Pause by key, resume from the menu.
+	key(KEY_ESCAPE, true)
+	await frames(2)
+	key(KEY_ESCAPE, false)
+	check(GameManager.state == GameManager.State.PAUSED and get_tree().paused, "Esc pauses the game")
+	var resume: Button = null
+	for b in lvl.find_children("*", "Button", true, false):
+		if (b as Button).text == "Resume":
+			resume = b
+	resume.pressed.emit()
+	await frames(2)
+	check(GameManager.state == GameManager.State.PLAYING and not get_tree().paused, "Resume returns to play")
+
+	# Result screens.
+	p.take_hit(&"swatted", p.global_position)
+	await frames(int(60 * p.stats.invuln_time) + 5)
+	p.take_hit(&"swatted", p.global_position)
+	await frames(80)
+	var texts: PackedStringArray = []
+	for l in lvl.find_children("*", "Label", true, false):
+		if (l as Label).is_visible_in_tree():
+			texts.append((l as Label).text)
+	check(texts.has("SQUISHED!") and texts.has("Swatted!"), "getting caught shows SQUISHED! with the cause")
+	await unload(lvl)
+	lvl = await load_level(&"kitchen", &"cockroach")
+	await frames(5)
+	for c in get_tree().get_nodes_in_group(Phys.GROUP_CRUMB):
+		var crumb := c as Crumb
+		if crumb and not crumb.golden and lvl.is_ancestor_of(crumb) and lvl.crumbs_got < lvl.crumbs_needed:
+			lvl.player.global_position = crumb.global_position
+			await frames(3)
+	lvl.player.global_position = lvl.goal.global_position + Vector3.UP
+	await frames(30)
+	var labels: PackedStringArray = []
+	for l in lvl.find_children("*", "Label", true, false):
+		if (l as Label).is_visible_in_tree():
+			labels.append((l as Label).text)
+	var buttons: PackedStringArray = []
+	for b in lvl.find_children("*", "Button", true, false):
+		if (b as Button).is_visible_in_tree():
+			buttons.append((b as Button).text)
+	check(labels.has("ESCAPED!") and labels.has("Fly unlocked!"), "winning shows ESCAPED! and the unlock")
+	check(buttons.has("Next level") and buttons.has("Colony"), "the win screen offers the next level and the colony")
+	await unload(lvl)
+
+	# Colony: buy an upgrade from the screen.
+	SaveSystem.data["colony"] = {"banked": 0, "lifetime": 0, "upgrades": []}
+	SaveSystem.bank_crumbs(20)
+	var banked := int(SaveSystem.colony()["banked"])
+	var hub: Node = (load("res://scenes/hub/colony_hub.tscn") as PackedScene).instantiate()
+	get_tree().root.add_child(hub)
+	await frames(3)
+	var buy: Button = null
+	for b in hub.find_children("*", "Button", true, false):
+		if (b as Button).text == "Buy - 15 crumbs":
+			buy = b
+	check(buy != null and not buy.disabled, "the colony offers Swift Legs for 15 crumbs")
+	buy.pressed.emit()
+	await frames(2)
+	check(SaveSystem.has_upgrade(&"swift_legs") and int(SaveSystem.colony()["banked"]) == banked - 15, "buying it spends crumbs and owns the upgrade")
+	var locked := 0
+	for b in hub.find_children("*", "Button", true, false):
+		if (b as Button).text.begins_with("Buy") and (b as Button).disabled:
+			locked += 1
+	var needs := false
+	for l in hub.find_children("*", "Label", true, false):
+		if (l as Label).text == "Needs colony size 4":
+			needs = true
+	check(locked > 0 and needs, "upgrades that need a bigger colony stay locked (colony size %d)" % SaveSystem.colony_size())
+	hub.queue_free()
+	await frames(2)
+
+	# Audio: every sound the code asks for exists, and tension drives the heartbeat.
+	var missing: PackedStringArray = []
+	var rx := RegEx.create_from_string("(?:play|play_at|make_loop_emitter)\\(&\"([a-z_]+)\"")
+	var files: PackedStringArray = []
+	var stack := ["res://scripts", "res://autoload"]
+	while not stack.is_empty():
+		var d: String = stack.pop_back()
+		for sub in DirAccess.get_directories_at(d):
+			stack.append(d.path_join(sub))
+		for fname in DirAccess.get_files_at(d):
+			if fname.ends_with(".gd"):
+				files.append(d.path_join(fname))
+	for fpath in files:
+		var src := FileAccess.get_file_as_string(fpath)
+		for m in rx.search_all(src):
+			var k := StringName(m.get_string(1))
+			if AudioManager.get_stream(k) == null and not missing.has(String(k)):
+				missing.append(String(k))
+	for level in GameManager.LEVEL_IDS:
+		var scene_src := FileAccess.get_file_as_string(GameManager.get_level(level).scene_path)
+		for m in RegEx.create_from_string("sound_key = &\"([a-z_]+)\"").search_all(scene_src):
+			if AudioManager.get_stream(StringName(m.get_string(1))) == null:
+				missing.append(m.get_string(1))
+	check(missing.is_empty(), "every sound the game plays exists (%d scripts scanned) %s" % [files.size(), ", ".join(missing)])
+	AudioManager.play_music(&"music_ambient")
+	AudioManager.set_tension(1.0)
+	await frames(90)
+	check(AudioManager._heartbeat.playing and AudioManager._heartbeat.volume_db > -12.0, "being hunted brings up the heartbeat")
+	AudioManager.set_tension(0.0)
+	await frames(150)
+	check(not AudioManager._heartbeat.playing, "the heartbeat fades when things calm down")
+
+	# Real menu flow: main menu -> level select -> bug select -> kitchen.
+	var dummy := Node.new()
+	get_tree().root.add_child(dummy)
+	get_tree().current_scene = dummy
+	GameManager.goto("main_menu")
+	await frames(30)
+	check(get_tree().current_scene and get_tree().current_scene.scene_file_path.ends_with("main_menu.tscn"), "the main menu opens")
+	var play := _find_button(get_tree().current_scene, "Play")
+	play.pressed.emit()
+	await frames(30)
+	check(get_tree().current_scene.scene_file_path.ends_with("level_select.tscn"), "Play opens the room list")
+	_find_button(get_tree().current_scene, "Play Kitchen").pressed.emit()
+	await frames(30)
+	check(get_tree().current_scene.scene_file_path.ends_with("bug_select.tscn"), "picking a room opens bug select")
+	_find_button(get_tree().current_scene, "Play as Cockroach").pressed.emit()
+	await frames(45)
+	check(get_tree().current_scene is Level and GameManager.state == GameManager.State.PLAYING, "picking a bug starts the kitchen")
+	GameManager.goto("main_menu")
+	await frames(30)
+	var cur := get_tree().current_scene
+	var back := Node.new()
+	get_tree().root.add_child(back)
+	get_tree().current_scene = back
+	cur.queue_free()
+	await frames(3)
