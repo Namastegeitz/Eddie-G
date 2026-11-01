@@ -153,6 +153,11 @@ func _phase1() -> void:
 		await frames(5)
 		var map := lvl.get_world_3d().navigation_map
 		var spawn := (lvl.find_child("PlayerSpawn", true, false) as Node3D).global_position
+		# The navigation map syncs on a background thread; wait until it answers.
+		for i in 120:
+			if NavigationServer3D.map_get_path(map, spawn, lvl.goal.global_position, true).size() > 0:
+				break
+			await get_tree().physics_frame
 		var reachable := 0
 		for c in get_tree().get_nodes_in_group(Phys.GROUP_CRUMB):
 			var crumb := c as Crumb
