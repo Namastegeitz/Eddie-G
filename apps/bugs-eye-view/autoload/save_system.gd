@@ -5,7 +5,8 @@ extends Node
 signal settings_changed
 signal progress_changed
 
-const SAVE_PATH := "user://save.json"
+## Tests point this at a scratch file so they never touch a real save.
+var save_path := "user://save.json"
 const SAVE_VERSION := 1
 
 var data: Dictionary = {}
@@ -38,9 +39,9 @@ func default_data() -> Dictionary:
 
 func load_game() -> void:
 	data = default_data()
-	if not FileAccess.file_exists(SAVE_PATH):
+	if not FileAccess.file_exists(save_path):
 		return
-	var f := FileAccess.open(SAVE_PATH, FileAccess.READ)
+	var f := FileAccess.open(save_path, FileAccess.READ)
 	if f == null:
 		return
 	var parsed: Variant = JSON.parse_string(f.get_as_text())
@@ -49,9 +50,9 @@ func load_game() -> void:
 
 
 func save_game() -> void:
-	var f := FileAccess.open(SAVE_PATH, FileAccess.WRITE)
+	var f := FileAccess.open(save_path, FileAccess.WRITE)
 	if f == null:
-		push_warning("SaveSystem: cannot write %s" % SAVE_PATH)
+		push_warning("SaveSystem: cannot write %s" % save_path)
 		return
 	f.store_string(JSON.stringify(data, "  "))
 

@@ -102,8 +102,8 @@ func _sense(dt: float) -> void:
 		return
 	player_visible = can_see(p)
 	if player_visible:
-		var dist := eye_position().distance_to(p.global_position)
-		var proximity := 1.0 - clampf(dist / config.sight_range, 0.0, 1.0)
+		var flat := Vector2(p.global_position.x - global_position.x, p.global_position.z - global_position.z).length()
+		var proximity := 1.0 - clampf(flat / config.sight_range, 0.0, 1.0)
 		alert.add_suspicion(config.suspicion_gain * PerceptionSystem.visibility * (0.35 + proximity) * dt,
 			p.global_position, true)
 

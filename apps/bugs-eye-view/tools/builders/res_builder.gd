@@ -200,7 +200,7 @@ static func threats(force: bool) -> void:
 	h.min_visibility = 0.12
 	h.hearing_radius = 22.0
 	h.hearing_gain = 0.5
-	h.suspicion_gain = 1.4
+	h.suspicion_gain = 1.8
 	h.lose_sight_time = 2.0
 	h.search_duration = 9.0
 	h.turn_speed = 3.0

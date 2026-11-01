@@ -28,7 +28,7 @@ func _ready() -> void:
 	col.add_child(UIKit.button("Colony", func() -> void: GameManager.goto("colony")))
 	col.add_child(UIKit.button("Settings", func() -> void: GameManager.goto("settings")))
 	if not OS.has_feature("mobile") and not OS.has_feature("web"):
-		col.add_child(UIKit.button("Quit", func() -> void: get_tree().quit()))
+		col.add_child(UIKit.button("Quit", func() -> void: GameManager.quit_game()))
 	var c := SaveSystem.colony()
 	col.add_child(UIKit.label("Colony size %d  -  %d crumbs banked" % [SaveSystem.colony_size(), int(c["banked"])], 18, UIKit.DIM))
 	play.grab_focus.call_deferred()

@@ -65,7 +65,7 @@ func _ready() -> void:
 	PerceptionSystem.begin_level(player, 0.7, config.ambient_noise)
 	HouseClock.start(config.routine, HouseClock.slot_hour(GameManager.current_time_slot))
 	HouseClock.routine_changed.connect(_update_ambient)
-	HouseClock.hour_changed.connect(func(_h: float) -> void: _update_ambient())
+	HouseClock.hour_changed.connect(_on_hour)
 	var normal := 0
 	for c in get_tree().get_nodes_in_group(Phys.GROUP_CRUMB):
 		var crumb := c as Crumb
@@ -120,6 +120,10 @@ func _exit_tree() -> void:
 	AudioServer.playback_speed_scale = 1.0
 	if GameManager.level_node == self:
 		GameManager.level_node = null
+
+
+func _on_hour(_h: float) -> void:
+	_update_ambient()
 
 
 func _spawn_player() -> void:

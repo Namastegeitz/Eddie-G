@@ -83,9 +83,13 @@ func _glow(seconds: float) -> void:
 	if glow == null:
 		return
 	glow.visible = true
-	get_tree().create_timer(seconds).timeout.connect(func() -> void:
-		if is_instance_valid(glow):
-			glow.visible = false)
+	get_tree().create_timer(seconds).timeout.connect(_hide_glow)
+
+
+func _hide_glow() -> void:
+	var glow := get_node_or_null(glow_path) as Node3D
+	if glow:
+		glow.visible = false
 
 
 func _on_body_entered(b: Node3D) -> void:

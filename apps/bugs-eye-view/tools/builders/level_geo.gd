@@ -392,7 +392,7 @@ func spawn(pos: Vector3, yaw: float) -> void:
 func lure(n: String, kind: int, pos: Vector3, size: Vector3, material: String, loud: float = 2.5) -> LureProp:
 	var l := LureProp.new()
 	_area(l, n, pos, size + Vector3(2.0, 2.0, 2.0), props)
-	l.kind = kind
+	l.kind = kind as LureProp.Kind
 	l.loudness = loud
 	var mi := MeshInstance3D.new()
 	mi.name = "Visual"
@@ -513,7 +513,7 @@ func fog(pos: Vector3, yaw: float, travel: float, duration: float, width: float)
 func boss(kind: int, boss_name: String, subtitle: String, targets: Dictionary) -> BossDirector:
 	var b := BossDirector.new()
 	b.name = "BossDirector"
-	b.kind = kind
+	b.kind = kind as BossDirector.Kind
 	b.boss_name = boss_name
 	b.subtitle = subtitle
 	root.add_child(b)
@@ -530,14 +530,14 @@ func escalation() -> void:
 
 # --- Lighting -------------------------------------------------------------------
 
-func environment(bg: Color, ambient: Color, energy: float = 0.8) -> void:
+func environment(bg: Color, ambient_color: Color, energy: float = 0.8) -> void:
 	var we := WorldEnvironment.new()
 	we.name = "Environment"
 	var e := Environment.new()
 	e.background_mode = Environment.BG_COLOR
 	e.background_color = bg
 	e.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
-	e.ambient_light_color = ambient
+	e.ambient_light_color = ambient_color
 	e.ambient_light_energy = energy
 	e.tonemap_mode = Environment.TONE_MAPPER_FILMIC
 	we.environment = e

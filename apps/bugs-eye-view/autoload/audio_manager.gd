@@ -48,6 +48,26 @@ func _ready() -> void:
 	apply_volumes()
 
 
+## Stop every player before shutdown so no playback outlives the engine.
+func stop_all() -> void:
+	for n in get_tree().root.find_children("*", "AudioStreamPlayer3D", true, false):
+		(n as AudioStreamPlayer3D).stop()
+	_exit_tree()
+
+
+func _exit_tree() -> void:
+	_music.stop()
+	_heartbeat.stop()
+	for p in _players_2d:
+		p.stop()
+		p.stream = null
+	for p3 in _players_3d:
+		p3.stop()
+		p3.stream = null
+	_music.stream = null
+	_heartbeat.stream = null
+
+
 func _build_buses() -> void:
 	for bus_name: StringName in [&"Music", &"SFX", &"Ambience", &"Muffled"]:
 		if AudioServer.get_bus_index(bus_name) == -1:

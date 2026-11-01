@@ -47,7 +47,7 @@ height = 16.0
 radial_segments = 16
 rings = 1
 
-[node name="Human" type="CharacterBody3D" unique_id=1698802417]
+[node name="Human" type="CharacterBody3D" unique_id=1125321057]
 script = ExtResource("1_fx2vc")
 route = PackedVector3Array()
 has_newspaper = true
@@ -55,51 +55,51 @@ config = ExtResource("2_68snj")
 active_events = PackedStringArray()
 icon_height = 78.0
 
-[node name="Shape" type="CollisionShape3D" parent="." unique_id=8190255]
+[node name="Shape" type="CollisionShape3D" parent="." unique_id=2034936950]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 55, 0)
 shape = SubResource("CapsuleShape3D_n66m2")
 
-[node name="Torso" type="Node3D" parent="." unique_id=1934230699]
+[node name="Torso" type="Node3D" parent="." unique_id=1386171706]
 
-[node name="Hips" type="MeshInstance3D" parent="Torso" unique_id=1716060640]
+[node name="Hips" type="MeshInstance3D" parent="Torso" unique_id=540356743]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 39, 2)
 material_override = ExtResource("3_ftp6i")
 mesh = SubResource("BoxMesh_qe1b4")
 
-[node name="Chest" type="MeshInstance3D" parent="Torso" unique_id=1098020117]
+[node name="Chest" type="MeshInstance3D" parent="Torso" unique_id=1385222394]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 53, 2)
 material_override = ExtResource("4_b4oug")
 mesh = SubResource("BoxMesh_tk5se")
 
-[node name="ArmL" type="MeshInstance3D" parent="Torso" unique_id=1271609870]
+[node name="ArmL" type="MeshInstance3D" parent="Torso" unique_id=1464165256]
 transform = Transform3D(0.99280864, -0.119712204, 0, 0.119712204, 0.99280864, 0, 0, 0, 1, -9.5, 52, 2)
 material_override = ExtResource("5_jboqh")
 mesh = SubResource("CylinderMesh_jhhm7")
 
-[node name="ArmR" type="MeshInstance3D" parent="Torso" unique_id=1802765442]
+[node name="ArmR" type="MeshInstance3D" parent="Torso" unique_id=952988937]
 transform = Transform3D(0.99280864, 0.119712204, 0, -0.119712204, 0.99280864, 0, 0, 0, 1, 9.5, 52, 2)
 material_override = ExtResource("5_jboqh")
 mesh = SubResource("CylinderMesh_rf14u")
 
-[node name="Head" type="MeshInstance3D" parent="Torso" unique_id=1838423519]
+[node name="Head" type="MeshInstance3D" parent="Torso" unique_id=214746748]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 68, 2)
 material_override = ExtResource("5_jboqh")
 mesh = SubResource("SphereMesh_bid3i")
 
-[node name="LeftFoot" type="Node3D" parent="." unique_id=1244993967 instance=ExtResource("6_nhurr")]
+[node name="LeftFoot" type="Node3D" parent="." unique_id=46512844 instance=ExtResource("6_nhurr")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.7, 0, 0)
 script = ExtResource("7_36svo")
 
-[node name="RightFoot" type="Node3D" parent="." unique_id=1606077708 instance=ExtResource("6_nhurr")]
+[node name="RightFoot" type="Node3D" parent="." unique_id=132854970 instance=ExtResource("6_nhurr")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.7, 0, 0)
 script = ExtResource("7_36svo")
 
-[node name="Newspaper" type="Node3D" parent="." unique_id=1802540728]
+[node name="Newspaper" type="Node3D" parent="." unique_id=1557221108]
 script = ExtResource("8_hycs0")
 
-[node name="Paper" type="Node3D" parent="Newspaper" unique_id=1602038503]
+[node name="Paper" type="Node3D" parent="Newspaper" unique_id=896435898]
 
-[node name="Roll" type="MeshInstance3D" parent="Newspaper/Paper" unique_id=493501518]
+[node name="Roll" type="MeshInstance3D" parent="Newspaper/Paper" unique_id=1435458179]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, -8)
 material_override = ExtResource("9_iib63")
 mesh = SubResource("CylinderMesh_ivbyq")

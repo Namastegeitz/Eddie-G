@@ -28,7 +28,11 @@ func _ready() -> void:
 	col.add_child(_help)
 	col.add_child(UIKit.button("Quit to menu", func() -> void: GameManager.goto("main_menu")))
 	_root.visible = false
-	GameManager.state_changed.connect(func(s: int) -> void: _root.visible = s == GameManager.State.PAUSED)
+	GameManager.state_changed.connect(_on_state)
+
+
+func _on_state(s: int) -> void:
+	_root.visible = s == GameManager.State.PAUSED
 
 
 func bind(_lvl: Level) -> void:

@@ -86,7 +86,7 @@ static func find_rebounder(pos: Vector3) -> Rebounder:
 
 
 ## Shared strike resolution (used by hazards and pet pounces).
-static func apply_strike(pos: Vector3, radius: float, cause: StringName, owner: Threat,
+static func apply_strike(pos: Vector3, radius: float, cause: StringName, by: Threat,
 		stun_others: bool, zone_test: Callable = Callable()) -> bool:
 	var hit := false
 	var p := PerceptionSystem.player
@@ -107,7 +107,7 @@ static func apply_strike(pos: Vector3, radius: float, cause: StringName, owner: 
 			(p as Spider).on_vibration(pos)
 	if stun_others:
 		for t in PerceptionSystem.threats:
-			if t != owner and t.present and t.stun_time <= 0.0 \
+			if t != by and t.present and t.stun_time <= 0.0 \
 					and Vector2(t.global_position.x - pos.x, t.global_position.z - pos.z).length() <= radius + 1.5 \
 					and absf(t.global_position.y - pos.y) < 6.0:
 				t.stun()

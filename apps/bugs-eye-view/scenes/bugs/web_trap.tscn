@@ -25,32 +25,32 @@ size = Vector3(6, 0.06, 0.06)
 [sub_resource type="BoxMesh" id="BoxMesh_xyrw4"]
 size = Vector3(6, 0.06, 0.06)
 
-[node name="WebTrap" type="Area3D" unique_id=116676845]
+[node name="WebTrap" type="Area3D" unique_id=1645138494]
 script = ExtResource("1_lpo85")
 
-[node name="Shape" type="CollisionShape3D" parent="." unique_id=443947809]
+[node name="Shape" type="CollisionShape3D" parent="." unique_id=1913144727]
 shape = SubResource("CylinderShape3D_lca3p")
 
-[node name="Web" type="MeshInstance3D" parent="." unique_id=13125768]
+[node name="Web" type="MeshInstance3D" parent="." unique_id=1412594386]
 material_override = ExtResource("2_gduks")
 mesh = SubResource("CylinderMesh_ak7g1")
 
-[node name="Strand" type="MeshInstance3D" parent="." unique_id=813121958]
+[node name="Strand" type="MeshInstance3D" parent="." unique_id=960716324]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.04, 0)
 material_override = ExtResource("2_gduks")
 mesh = SubResource("BoxMesh_hbb4j")
 
-[node name="@MeshInstance3D@49" type="MeshInstance3D" parent="." unique_id=552839418]
+[node name="@MeshInstance3D@49" type="MeshInstance3D" parent="." unique_id=2130755105]
 transform = Transform3D(0.70710677, 0, 0.70710677, 0, 1, 0, -0.70710677, 0, 0.70710677, 0, 0.04, 0)
 material_override = ExtResource("2_gduks")
 mesh = SubResource("BoxMesh_kumgs")
 
-[node name="@MeshInstance3D@50" type="MeshInstance3D" parent="." unique_id=1405912781]
+[node name="@MeshInstance3D@50" type="MeshInstance3D" parent="." unique_id=2010145983]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0, 0.04, 0)
 material_override = ExtResource("2_gduks")
 mesh = SubResource("BoxMesh_gtqhe")
 
-[node name="@MeshInstance3D@51" type="MeshInstance3D" parent="." unique_id=1047953605]
+[node name="@MeshInstance3D@51" type="MeshInstance3D" parent="." unique_id=1414729443]
 transform = Transform3D(-0.70710677, 0, 0.70710677, 0, 1, 0, -0.70710677, 0, -0.70710677, 0, 0.04, 0)
 material_override = ExtResource("2_gduks")
 mesh = SubResource("BoxMesh_xyrw4")

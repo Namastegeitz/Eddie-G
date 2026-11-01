@@ -88,7 +88,7 @@ func surface_wish(input: Vector2, n: Vector3) -> Vector3:
 	return r * input.x + f * input.y
 
 
-func _crawl(delta: float) -> void:
+func _crawl(_delta: float) -> void:
 	var n := surface_normal
 	var input := move_input()
 	var wish := surface_wish(input, n)
@@ -295,9 +295,12 @@ func _draw_line(a: Vector3, b: Vector3) -> void:
 
 func _flash_line(a: Vector3, b: Vector3) -> void:
 	_draw_line(a, b)
-	get_tree().create_timer(0.15).timeout.connect(func() -> void:
-		if is_instance_valid(_zip_line) and not zipping:
-			_zip_line.visible = false)
+	get_tree().create_timer(0.15).timeout.connect(_hide_line)
+
+
+func _hide_line() -> void:
+	if _zip_line and not zipping:
+		_zip_line.visible = false
 
 
 func _spin_trap() -> void:

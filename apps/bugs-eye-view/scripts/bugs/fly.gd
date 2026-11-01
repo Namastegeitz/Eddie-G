@@ -169,12 +169,14 @@ func _on_strike_incoming(pos: Vector3, time_to_impact: float, radius: float) -> 
 	if dead or bullet_time or global_position.distance_to(pos) > radius + 5.0:
 		return
 	var wait := maxf(time_to_impact - 0.45, 0.0)
-	get_tree().create_timer(wait, false, true).timeout.connect(func() -> void:
-		if is_instance_valid(self) and not dead and not bullet_time \
-				and sense_meter >= stats.bullet_time_cost \
-				and global_position.distance_to(pos) <= radius + 5.0:
-			sense_meter -= stats.bullet_time_cost
-			start_bullet_time())
+	get_tree().create_timer(wait, false, true).timeout.connect(_on_strike_close.bind(pos, radius))
+
+
+func _on_strike_close(pos: Vector3, radius: float) -> void:
+	if not dead and not bullet_time and sense_meter >= stats.bullet_time_cost \
+			and global_position.distance_to(pos) <= radius + 5.0:
+		sense_meter -= stats.bullet_time_cost
+		start_bullet_time()
 
 
 func start_bullet_time() -> void:

@@ -31,9 +31,13 @@ func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_font = get_theme_default_font()
 	resized.connect(_layout)
-	InputRouter.touch_mode_changed.connect(func(on: bool) -> void: visible = on)
+	InputRouter.touch_mode_changed.connect(_on_touch_mode)
 	visible = InputRouter.is_touch_mode()
 	_layout()
+
+
+func _on_touch_mode(on: bool) -> void:
+	visible = on
 
 
 func bind_player(p: BugBase) -> void:

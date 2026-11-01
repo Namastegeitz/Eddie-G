@@ -164,6 +164,14 @@ func next_level_id() -> StringName:
 	return &""
 
 
+## Clean shutdown: silence audio and let playbacks drain before quitting.
+func quit_game(exit_code: int = 0) -> void:
+	AudioManager.stop_all()
+	for i in 3:
+		await get_tree().process_frame
+	get_tree().quit(exit_code)
+
+
 func toggle_pause() -> void:
 	if state == State.PLAYING:
 		set_state(State.PAUSED)

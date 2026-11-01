@@ -448,473 +448,473 @@ size = Vector3(0.3, 6, 8)
 [sub_resource type="BoxMesh" id="BoxMesh_3ukw4"]
 size = Vector3(0.2, 5, 8)
 
-[node name="LivingRoom" type="Node3D" unique_id=573765762]
+[node name="LivingRoom" type="Node3D" unique_id=1575758247]
 script = ExtResource("1_65od2")
 level_id = &"living_room"
 
-[node name="NavRegion" type="NavigationRegion3D" parent="." unique_id=531759581]
+[node name="NavRegion" type="NavigationRegion3D" parent="." unique_id=1306459541]
 navigation_mesh = SubResource("NavigationMesh_2few8")
 
-[node name="Geometry" type="Node3D" parent="NavRegion" unique_id=1694074262]
+[node name="Geometry" type="Node3D" parent="NavRegion" unique_id=1879713686]
 
-[node name="Floor" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1273432761]
+[node name="Floor" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=866645187]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 0)
 collision_mask = 0
 metadata/surface = &"wood"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/Floor" unique_id=2056648364]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/Floor" unique_id=1227908435]
 shape = SubResource("BoxShape3D_0ef5u")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/Floor" unique_id=391346918]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/Floor" unique_id=51620027]
 material_override = ExtResource("2_yekcy")
 mesh = SubResource("BoxMesh_rr0pm")
 
-[node name="WallBack" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=977680625]
+[node name="WallBack" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1510237797]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 45, -51)
 collision_mask = 0
 metadata/surface = &"default"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/WallBack" unique_id=1042068445]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/WallBack" unique_id=1420502140]
 shape = SubResource("BoxShape3D_a8v4a")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/WallBack" unique_id=117474624]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/WallBack" unique_id=1307876658]
 material_override = ExtResource("3_ru6ws")
 cast_shadow = 0
 mesh = SubResource("BoxMesh_7mvyh")
 
-[node name="WallFront" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1622352863]
+[node name="WallFront" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=273996486]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 45, 51)
 collision_mask = 0
 metadata/surface = &"default"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/WallFront" unique_id=2105013921]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/WallFront" unique_id=2043043343]
 shape = SubResource("BoxShape3D_j2blb")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/WallFront" unique_id=53552494]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/WallFront" unique_id=1148526008]
 material_override = ExtResource("3_ru6ws")
 cast_shadow = 0
 mesh = SubResource("BoxMesh_1pcip")
 
-[node name="WallLeft" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=919724734]
+[node name="WallLeft" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=356248543]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -66, 45, 0)
 collision_mask = 0
 metadata/surface = &"default"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/WallLeft" unique_id=146350227]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/WallLeft" unique_id=2020012101]
 shape = SubResource("BoxShape3D_gott5")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/WallLeft" unique_id=1670680777]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/WallLeft" unique_id=674717314]
 material_override = ExtResource("3_ru6ws")
 cast_shadow = 0
 mesh = SubResource("BoxMesh_ji4to")
 
-[node name="WallRight" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=2139958827]
+[node name="WallRight" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1145014459]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 66, 45, 0)
 collision_mask = 0
 metadata/surface = &"default"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/WallRight" unique_id=1192479608]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/WallRight" unique_id=1047473173]
 shape = SubResource("BoxShape3D_irc61")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/WallRight" unique_id=66623794]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/WallRight" unique_id=2048297004]
 material_override = ExtResource("3_ru6ws")
 cast_shadow = 0
 mesh = SubResource("BoxMesh_kqk2i")
 
-[node name="Ceiling" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=504563622]
+[node name="Ceiling" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=657321465]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 91, 0)
 collision_mask = 0
 metadata/surface = &"default"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/Ceiling" unique_id=873418572]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/Ceiling" unique_id=948737938]
 shape = SubResource("BoxShape3D_mxu08")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/Ceiling" unique_id=1610970801]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/Ceiling" unique_id=1830308565]
 material_override = ExtResource("4_gjfia")
 cast_shadow = 0
 mesh = SubResource("BoxMesh_5a150")
 
-[node name="Rug" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=940343847]
+[node name="Rug" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1740381308]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.2, 2)
 collision_mask = 0
 metadata/surface = &"carpet"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/Rug" unique_id=317998675]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/Rug" unique_id=1699615326]
 shape = SubResource("BoxShape3D_qdl87")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/Rug" unique_id=1661943816]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/Rug" unique_id=799601167]
 material_override = ExtResource("5_pk61i")
 cast_shadow = 0
 mesh = SubResource("BoxMesh_8hbe5")
 
-[node name="CouchBase" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=325324317]
+[node name="CouchBase" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=344489193]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 8.5, -39)
 collision_mask = 0
 metadata/surface = &"cloth"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/CouchBase" unique_id=1875010383]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/CouchBase" unique_id=1506905131]
 shape = SubResource("BoxShape3D_wafim")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/CouchBase" unique_id=1608763157]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/CouchBase" unique_id=1862508135]
 material_override = ExtResource("6_lws0n")
 mesh = SubResource("BoxMesh_wb6fu")
 
-[node name="CouchBack" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=2038745381]
+[node name="CouchBack" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1810239207]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 24, -46.5)
 collision_mask = 0
 metadata/surface = &"cloth"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/CouchBack" unique_id=1242883932]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/CouchBack" unique_id=2071727623]
 shape = SubResource("BoxShape3D_bmxa2")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/CouchBack" unique_id=332337052]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/CouchBack" unique_id=1114528405]
 material_override = ExtResource("6_lws0n")
 mesh = SubResource("BoxMesh_yqtjh")
 
-[node name="CouchArm" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1236019678]
+[node name="CouchArm" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1669249688]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -42.5, 12.5, -39)
 collision_mask = 0
 metadata/surface = &"cloth"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/CouchArm" unique_id=626623022]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/CouchArm" unique_id=570013587]
 shape = SubResource("BoxShape3D_wnic3")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/CouchArm" unique_id=1429451666]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/CouchArm" unique_id=2064185528]
 material_override = ExtResource("6_lws0n")
 mesh = SubResource("BoxMesh_mqbbc")
 
-[node name="CouchArm2" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=432007627]
+[node name="CouchArm2" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=80439502]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22.5, 12.5, -39)
 collision_mask = 0
 metadata/surface = &"cloth"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/CouchArm2" unique_id=1119158894]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/CouchArm2" unique_id=1899509488]
 shape = SubResource("BoxShape3D_vmm50")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/CouchArm2" unique_id=421532037]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/CouchArm2" unique_id=1298894076]
 material_override = ExtResource("6_lws0n")
 mesh = SubResource("BoxMesh_rgx3b")
 
-[node name="CouchLeg" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1822230401]
+[node name="CouchLeg" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=384220615]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38, 1.5, -47)
 collision_mask = 0
 metadata/surface = &"wood"
 metadata/camo = &"dark_wood"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/CouchLeg" unique_id=168816192]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/CouchLeg" unique_id=1378479576]
 shape = SubResource("BoxShape3D_gh47t")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/CouchLeg" unique_id=2136768644]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/CouchLeg" unique_id=123885080]
 material_override = ExtResource("7_8urxe")
 mesh = SubResource("BoxMesh_n3cni")
 
-[node name="CouchLeg2" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=2017242209]
+[node name="CouchLeg2" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1597608326]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18, 1.5, -47)
 collision_mask = 0
 metadata/surface = &"wood"
 metadata/camo = &"dark_wood"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/CouchLeg2" unique_id=938362480]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/CouchLeg2" unique_id=404951691]
 shape = SubResource("BoxShape3D_jwj1j")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/CouchLeg2" unique_id=333301799]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/CouchLeg2" unique_id=103418972]
 material_override = ExtResource("7_8urxe")
 mesh = SubResource("BoxMesh_1gs1a")
 
-[node name="CouchLeg3" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=701392872]
+[node name="CouchLeg3" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1249201465]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38, 1.5, -31)
 collision_mask = 0
 metadata/surface = &"wood"
 metadata/camo = &"dark_wood"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/CouchLeg3" unique_id=1669003002]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/CouchLeg3" unique_id=745081578]
 shape = SubResource("BoxShape3D_l1avy")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/CouchLeg3" unique_id=70550191]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/CouchLeg3" unique_id=1277621789]
 material_override = ExtResource("7_8urxe")
 mesh = SubResource("BoxMesh_u2ujj")
 
-[node name="CouchLeg4" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=955343424]
+[node name="CouchLeg4" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1734590119]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18, 1.5, -31)
 collision_mask = 0
 metadata/surface = &"wood"
 metadata/camo = &"dark_wood"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/CouchLeg4" unique_id=272336624]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/CouchLeg4" unique_id=75866497]
 shape = SubResource("BoxShape3D_52t6g")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/CouchLeg4" unique_id=2405980]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/CouchLeg4" unique_id=356526541]
 material_override = ExtResource("7_8urxe")
 mesh = SubResource("BoxMesh_vvq6d")
 
-[node name="CoffeeTable" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=381650148]
+[node name="CoffeeTable" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1769032085]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 16, -8)
 collision_mask = 0
 metadata/surface = &"wood"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/CoffeeTable" unique_id=1259337334]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/CoffeeTable" unique_id=365639999]
 shape = SubResource("BoxShape3D_2naew")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/CoffeeTable" unique_id=764954969]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/CoffeeTable" unique_id=1503088698]
 material_override = ExtResource("2_yekcy")
 mesh = SubResource("BoxMesh_xah42")
 
-[node name="CoffeeLeg" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1059752205]
+[node name="CoffeeLeg" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1378640015]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -23, 7.6, -15)
 collision_mask = 0
 metadata/surface = &"wood"
 metadata/camo = &"dark_wood"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/CoffeeLeg" unique_id=66218914]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/CoffeeLeg" unique_id=639139552]
 shape = SubResource("BoxShape3D_awhw3")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/CoffeeLeg" unique_id=441568015]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/CoffeeLeg" unique_id=1844080211]
 material_override = ExtResource("7_8urxe")
 mesh = SubResource("BoxMesh_mk081")
 
-[node name="CoffeeLeg2" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1832958720]
+[node name="CoffeeLeg2" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1188183145]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 7.6, -15)
 collision_mask = 0
 metadata/surface = &"wood"
 metadata/camo = &"dark_wood"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/CoffeeLeg2" unique_id=87788689]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/CoffeeLeg2" unique_id=524566186]
 shape = SubResource("BoxShape3D_6wvi4")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/CoffeeLeg2" unique_id=729497497]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/CoffeeLeg2" unique_id=353564293]
 material_override = ExtResource("7_8urxe")
 mesh = SubResource("BoxMesh_pdhge")
 
-[node name="CoffeeLeg3" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1682832978]
+[node name="CoffeeLeg3" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1200170864]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -23, 7.6, -1)
 collision_mask = 0
 metadata/surface = &"wood"
 metadata/camo = &"dark_wood"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/CoffeeLeg3" unique_id=389259867]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/CoffeeLeg3" unique_id=7293375]
 shape = SubResource("BoxShape3D_uovsn")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/CoffeeLeg3" unique_id=2113064141]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/CoffeeLeg3" unique_id=1701287938]
 material_override = ExtResource("7_8urxe")
 mesh = SubResource("BoxMesh_n1761")
 
-[node name="CoffeeLeg4" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1910001585]
+[node name="CoffeeLeg4" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1477616200]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 7.6, -1)
 collision_mask = 0
 metadata/surface = &"wood"
 metadata/camo = &"dark_wood"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/CoffeeLeg4" unique_id=58744096]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/CoffeeLeg4" unique_id=1078485619]
 shape = SubResource("BoxShape3D_pumj4")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/CoffeeLeg4" unique_id=108371288]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/CoffeeLeg4" unique_id=1311394751]
 material_override = ExtResource("7_8urxe")
 mesh = SubResource("BoxMesh_taoau")
 
-[node name="Blanket" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=560631906]
+[node name="Blanket" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=607977844]
 transform = Transform3D(0, 0.633854, 0.7734528, 0, 0.7734528, -0.633854, -1, 0, 0, 18.496458, 8.090618, -8)
 collision_mask = 0
 metadata/surface = &"cloth"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/Blanket" unique_id=2077194827]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/Blanket" unique_id=1177520739]
 shape = SubResource("BoxShape3D_7ith6")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/Blanket" unique_id=456586748]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/Blanket" unique_id=33609751]
 material_override = ExtResource("8_52lyl")
 mesh = SubResource("BoxMesh_av73m")
 
-[node name="TVStand" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1564925325]
+[node name="TVStand" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=128450967]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 10, 44)
 collision_mask = 0
 metadata/surface = &"wood"
 metadata/camo = &"dark_wood"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/TVStand" unique_id=1391934872]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/TVStand" unique_id=701122557]
 shape = SubResource("BoxShape3D_w3hkm")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/TVStand" unique_id=1622364343]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/TVStand" unique_id=1405254865]
 material_override = ExtResource("7_8urxe")
 mesh = SubResource("BoxMesh_o18gv")
 
-[node name="TV" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=213981004]
+[node name="TV" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=819303132]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 34, 47)
 collision_mask = 0
 metadata/surface = &"metal"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/TV" unique_id=208461103]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/TV" unique_id=793974809]
 shape = SubResource("BoxShape3D_sstla")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/TV" unique_id=374921334]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/TV" unique_id=2113606011]
 material_override = ExtResource("9_n64qi")
 mesh = SubResource("BoxMesh_dlyyy")
 
-[node name="Bookshelf" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=487783762]
+[node name="Bookshelf" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=2142771122]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -62, 35, 12)
 collision_mask = 0
 metadata/surface = &"wood"
 metadata/camo = &"dark_wood"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/Bookshelf" unique_id=1584812233]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/Bookshelf" unique_id=617341334]
 shape = SubResource("BoxShape3D_3ublb")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/Bookshelf" unique_id=1597270433]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/Bookshelf" unique_id=1437170417]
 material_override = ExtResource("7_8urxe")
 mesh = SubResource("BoxMesh_qp4op")
 
-[node name="SideTable" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=2117052876]
+[node name="SideTable" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=382838993]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 50, 12, -36)
 collision_mask = 0
 metadata/surface = &"wood"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/SideTable" unique_id=50355688]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/SideTable" unique_id=1139801092]
 shape = SubResource("BoxShape3D_13waa")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/SideTable" unique_id=1532602665]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/SideTable" unique_id=2011474160]
 material_override = ExtResource("2_yekcy")
 mesh = SubResource("BoxMesh_7q6q2")
 
-[node name="CatTreeBase" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=840347256]
+[node name="CatTreeBase" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1277497295]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 55, 1, 40)
 collision_mask = 0
 metadata/surface = &"carpet"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/CatTreeBase" unique_id=1686144753]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/CatTreeBase" unique_id=1441672023]
 shape = SubResource("BoxShape3D_shgvw")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/CatTreeBase" unique_id=1224466762]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/CatTreeBase" unique_id=729383886]
 material_override = ExtResource("10_uorbp")
 mesh = SubResource("BoxMesh_x68xr")
 
-[node name="CatTreePost" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=2037970043]
+[node name="CatTreePost" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1555271805]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 55, 16, 40)
 metadata/surface = &"carpet"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/CatTreePost" unique_id=86729466]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/CatTreePost" unique_id=672450334]
 shape = SubResource("CylinderShape3D_hqx73")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/CatTreePost" unique_id=178786361]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/CatTreePost" unique_id=798255816]
 material_override = ExtResource("10_uorbp")
 mesh = SubResource("CylinderMesh_tfvux")
 
-[node name="CatTreeLow" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=558725089]
+[node name="CatTreeLow" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=387078664]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 55, 15.5, 40)
 collision_mask = 0
 metadata/surface = &"carpet"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/CatTreeLow" unique_id=1163911475]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/CatTreeLow" unique_id=1515267735]
 shape = SubResource("BoxShape3D_wkilh")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/CatTreeLow" unique_id=1089037537]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/CatTreeLow" unique_id=593610245]
 material_override = ExtResource("10_uorbp")
 mesh = SubResource("BoxMesh_c0lf5")
 
-[node name="CatTreeTop" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=65083867]
+[node name="CatTreeTop" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1663556892]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 55, 31.5, 40)
 collision_mask = 0
 metadata/surface = &"carpet"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/CatTreeTop" unique_id=1364206357]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/CatTreeTop" unique_id=1385277385]
 shape = SubResource("BoxShape3D_r8ct2")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/CatTreeTop" unique_id=2038894740]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/CatTreeTop" unique_id=422086703]
 material_override = ExtResource("10_uorbp")
 mesh = SubResource("BoxMesh_mduvs")
 
-[node name="UmbrellaStand" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=2023843454]
+[node name="UmbrellaStand" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1911748559]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30, 6, 44)
 metadata/surface = &"metal"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/UmbrellaStand" unique_id=1504567683]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/UmbrellaStand" unique_id=1746301390]
 shape = SubResource("CylinderShape3D_ydmpy")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/UmbrellaStand" unique_id=465569223]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/UmbrellaStand" unique_id=1109167382]
 material_override = ExtResource("11_5ko1p")
 mesh = SubResource("CylinderMesh_bgp57")
 
-[node name="PlantPot" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=185682785]
+[node name="PlantPot" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=589675802]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -50, 8, -44)
 metadata/surface = &"soil"
 metadata/camo = &"soil"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/PlantPot" unique_id=93035640]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/PlantPot" unique_id=1003277659]
 shape = SubResource("CylinderShape3D_w42j6")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/PlantPot" unique_id=1232276665]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/PlantPot" unique_id=1788676079]
 material_override = ExtResource("12_ry0fu")
 mesh = SubResource("CylinderMesh_ii2fk")
 
-[node name="CavityFloor" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=5149823]
+[node name="CavityFloor" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1350627427]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -73, -1, -30)
 collision_mask = 0
 metadata/surface = &"wood"
 metadata/camo = &"dark_wood"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/CavityFloor" unique_id=775537555]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/CavityFloor" unique_id=1408334429]
 shape = SubResource("BoxShape3D_xcjxg")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/CavityFloor" unique_id=1211768109]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/CavityFloor" unique_id=407238607]
 material_override = ExtResource("7_8urxe")
 mesh = SubResource("BoxMesh_c2p3f")
 
-[node name="CavityOuter" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=571862416]
+[node name="CavityOuter" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1018308035]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -79.5, 6, -30)
 collision_mask = 0
 metadata/surface = &"wood"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/CavityOuter" unique_id=1280517685]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/CavityOuter" unique_id=1712945013]
 shape = SubResource("BoxShape3D_qa1px")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/CavityOuter" unique_id=657343005]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/CavityOuter" unique_id=1292976847]
 material_override = ExtResource("7_8urxe")
 mesh = SubResource("BoxMesh_fbin7")
 
-[node name="CavityEndA" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=597716157]
+[node name="CavityEndA" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=634286884]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -73, 6, -45.5)
 collision_mask = 0
 metadata/surface = &"wood"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/CavityEndA" unique_id=803248126]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/CavityEndA" unique_id=76383147]
 shape = SubResource("BoxShape3D_y3uof")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/CavityEndA" unique_id=1985375052]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/CavityEndA" unique_id=1972489703]
 material_override = ExtResource("7_8urxe")
 mesh = SubResource("BoxMesh_617ca")
 
-[node name="CavityEndB" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1984989663]
+[node name="CavityEndB" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1321624299]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -73, 6, -14.5)
 collision_mask = 0
 metadata/surface = &"wood"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/CavityEndB" unique_id=1603834051]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/CavityEndB" unique_id=1582744748]
 shape = SubResource("BoxShape3D_co58p")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/CavityEndB" unique_id=824913982]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/CavityEndB" unique_id=1232280489]
 material_override = ExtResource("7_8urxe")
 mesh = SubResource("BoxMesh_k0aht")
 
-[node name="CavityTop" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1639773486]
+[node name="CavityTop" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1705612575]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -73, 13.5, -30)
 collision_mask = 0
 metadata/surface = &"wood"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/CavityTop" unique_id=389350170]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/CavityTop" unique_id=1057359677]
 shape = SubResource("BoxShape3D_8oh3i")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/CavityTop" unique_id=1914487738]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/CavityTop" unique_id=567149185]
 material_override = ExtResource("7_8urxe")
 mesh = SubResource("BoxMesh_37x55")
 
-[node name="Zones" type="Node3D" parent="." unique_id=1806622623]
+[node name="Zones" type="Node3D" parent="." unique_id=101033287]
 
-[node name="UnderCouch" type="Area3D" parent="Zones" unique_id=2066765189]
+[node name="UnderCouch" type="Area3D" parent="Zones" unique_id=56357702]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 1.4, -39)
 script = ExtResource("13_5tg6w")
 allowed_bugs = PackedStringArray("cockroach")
 
-[node name="Shape" type="CollisionShape3D" parent="Zones/UnderCouch" unique_id=1570543808]
+[node name="Shape" type="CollisionShape3D" parent="Zones/UnderCouch" unique_id=543749002]
 shape = SubResource("BoxShape3D_birmq")
 
-[node name="UnderCouchShadow" type="Area3D" parent="Zones" unique_id=756630876]
+[node name="UnderCouchShadow" type="Area3D" parent="Zones" unique_id=1809253089]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 1.5, -39)
 script = ExtResource("14_u7hri")
 zone_priority = 3
@@ -922,16 +922,16 @@ active_events = PackedStringArray()
 inactive_events = PackedStringArray()
 linked_nodes = Array[NodePath]([NodePath("Tint")])
 
-[node name="Shape" type="CollisionShape3D" parent="Zones/UnderCouchShadow" unique_id=2136118230]
+[node name="Shape" type="CollisionShape3D" parent="Zones/UnderCouchShadow" unique_id=54908328]
 shape = SubResource("BoxShape3D_a2kt7")
 
-[node name="Tint" type="MeshInstance3D" parent="Zones/UnderCouchShadow" unique_id=788609753]
+[node name="Tint" type="MeshInstance3D" parent="Zones/UnderCouchShadow" unique_id=1193998994]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.44, 0)
 material_override = ExtResource("15_men35")
 cast_shadow = 0
 mesh = SubResource("BoxMesh_nka06")
 
-[node name="UnderCoffeeTable" type="Area3D" parent="Zones" unique_id=1514495073]
+[node name="UnderCoffeeTable" type="Area3D" parent="Zones" unique_id=1649495307]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 4, -8)
 script = ExtResource("14_u7hri")
 light_level = 1
@@ -940,16 +940,16 @@ active_events = PackedStringArray()
 inactive_events = PackedStringArray()
 linked_nodes = Array[NodePath]([NodePath("Tint")])
 
-[node name="Shape" type="CollisionShape3D" parent="Zones/UnderCoffeeTable" unique_id=1940091632]
+[node name="Shape" type="CollisionShape3D" parent="Zones/UnderCoffeeTable" unique_id=1813286311]
 shape = SubResource("BoxShape3D_05cvm")
 
-[node name="Tint" type="MeshInstance3D" parent="Zones/UnderCoffeeTable" unique_id=1010719213]
+[node name="Tint" type="MeshInstance3D" parent="Zones/UnderCoffeeTable" unique_id=339644363]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -3.94, 0)
 material_override = ExtResource("15_men35")
 cast_shadow = 0
 mesh = SubResource("BoxMesh_s1lyr")
 
-[node name="TVSound" type="Node3D" parent="Zones" unique_id=822513854]
+[node name="TVSound" type="Node3D" parent="Zones" unique_id=1215641497]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 30, 40)
 script = ExtResource("16_tn80l")
 radius = 55.0
@@ -959,7 +959,7 @@ volume_db = -6.0
 active_events = PackedStringArray("tv_on")
 inactive_events = PackedStringArray()
 
-[node name="TVGlow" type="Area3D" parent="Zones" unique_id=1385256711]
+[node name="TVGlow" type="Area3D" parent="Zones" unique_id=1402032820]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 5, 25)
 script = ExtResource("14_u7hri")
 light_level = 2
@@ -968,22 +968,22 @@ active_events = PackedStringArray("tv_on")
 inactive_events = PackedStringArray()
 linked_nodes = Array[NodePath]([NodePath("Tint"), NodePath("Light")])
 
-[node name="Shape" type="CollisionShape3D" parent="Zones/TVGlow" unique_id=796650960]
+[node name="Shape" type="CollisionShape3D" parent="Zones/TVGlow" unique_id=1425479703]
 shape = SubResource("BoxShape3D_q6vs5")
 
-[node name="Tint" type="MeshInstance3D" parent="Zones/TVGlow" unique_id=2138886079]
+[node name="Tint" type="MeshInstance3D" parent="Zones/TVGlow" unique_id=2031787735]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -4.94, 0)
 material_override = ExtResource("17_pa3ei")
 cast_shadow = 0
 mesh = SubResource("BoxMesh_bh0gr")
 
-[node name="Light" type="OmniLight3D" parent="Zones/TVGlow" unique_id=1494553979]
+[node name="Light" type="OmniLight3D" parent="Zones/TVGlow" unique_id=606036146]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5, 0)
 light_color = Color(1, 0.92, 0.75, 1)
 light_energy = 1.2
 omni_range = 39.6
 
-[node name="LampLight" type="Area3D" parent="Zones" unique_id=1117047358]
+[node name="LampLight" type="Area3D" parent="Zones" unique_id=1917386175]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 48, 5, -26)
 script = ExtResource("14_u7hri")
 light_level = 2
@@ -992,54 +992,54 @@ active_events = PackedStringArray("lamp_on")
 inactive_events = PackedStringArray()
 linked_nodes = Array[NodePath]([NodePath("Tint"), NodePath("Light")])
 
-[node name="Shape" type="CollisionShape3D" parent="Zones/LampLight" unique_id=1948713001]
+[node name="Shape" type="CollisionShape3D" parent="Zones/LampLight" unique_id=356548481]
 shape = SubResource("BoxShape3D_lajey")
 
-[node name="Tint" type="MeshInstance3D" parent="Zones/LampLight" unique_id=1250149374]
+[node name="Tint" type="MeshInstance3D" parent="Zones/LampLight" unique_id=1469963532]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -4.94, 0)
 material_override = ExtResource("17_pa3ei")
 cast_shadow = 0
 mesh = SubResource("BoxMesh_rbrpj")
 
-[node name="Light" type="OmniLight3D" parent="Zones/LampLight" unique_id=1031385912]
+[node name="Light" type="OmniLight3D" parent="Zones/LampLight" unique_id=1864566665]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5, 0)
 light_color = Color(1, 0.92, 0.75, 1)
 light_energy = 2.0
 omni_range = 36.0
 
-[node name="SideTablePerch" type="Node3D" parent="Zones" unique_id=2036434951]
+[node name="SideTablePerch" type="Node3D" parent="Zones" unique_id=357750047]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 50, 0, -22)
 script = ExtResource("18_4ihos")
 top_offset = Vector3(0, 24.6, -12)
 knock_radius = 9.0
 
-[node name="FanWind" type="Area3D" parent="Zones" unique_id=1000968502]
+[node name="FanWind" type="Area3D" parent="Zones" unique_id=1704734886]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 35, 15, 18)
 script = ExtResource("19_6of83")
 direction = Vector3(-1, 0, 0)
 active_events = PackedStringArray("fan_on")
 
-[node name="Shape" type="CollisionShape3D" parent="Zones/FanWind" unique_id=1602120716]
+[node name="Shape" type="CollisionShape3D" parent="Zones/FanWind" unique_id=2014385462]
 shape = SubResource("BoxShape3D_b2gsy")
 
-[node name="Gust0" type="MeshInstance3D" parent="Zones/FanWind" unique_id=2118285620]
+[node name="Gust0" type="MeshInstance3D" parent="Zones/FanWind" unique_id=1308690064]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -6, -3)
 material_override = ExtResource("20_2rboy")
 cast_shadow = 0
 mesh = SubResource("BoxMesh_y3auo")
 
-[node name="Gust1" type="MeshInstance3D" parent="Zones/FanWind" unique_id=1115836457]
+[node name="Gust1" type="MeshInstance3D" parent="Zones/FanWind" unique_id=1859733332]
 material_override = ExtResource("20_2rboy")
 cast_shadow = 0
 mesh = SubResource("BoxMesh_j5t3c")
 
-[node name="Gust2" type="MeshInstance3D" parent="Zones/FanWind" unique_id=1455717047]
+[node name="Gust2" type="MeshInstance3D" parent="Zones/FanWind" unique_id=1406866008]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6, 3)
 material_override = ExtResource("20_2rboy")
 cast_shadow = 0
 mesh = SubResource("BoxMesh_eb0tw")
 
-[node name="FanHum" type="Node3D" parent="Zones" unique_id=773422715]
+[node name="FanHum" type="Node3D" parent="Zones" unique_id=221150643]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 57, 18, 18)
 script = ExtResource("16_tn80l")
 radius = 25.0
@@ -1049,7 +1049,7 @@ volume_db = -12.0
 active_events = PackedStringArray("fan_on")
 inactive_events = PackedStringArray()
 
-[node name="Sunbeam" type="Area3D" parent="Zones" unique_id=377987164]
+[node name="Sunbeam" type="Area3D" parent="Zones" unique_id=1295756668]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 48, 2, 10)
 script = ExtResource("14_u7hri")
 light_level = 3
@@ -1058,188 +1058,188 @@ active_events = PackedStringArray("curtains_open")
 inactive_events = PackedStringArray("lights_out")
 linked_nodes = Array[NodePath]([NodePath("Tint")])
 
-[node name="Shape" type="CollisionShape3D" parent="Zones/Sunbeam" unique_id=1419167115]
+[node name="Shape" type="CollisionShape3D" parent="Zones/Sunbeam" unique_id=452764548]
 shape = SubResource("BoxShape3D_lacae")
 
-[node name="Tint" type="MeshInstance3D" parent="Zones/Sunbeam" unique_id=1152535384]
+[node name="Tint" type="MeshInstance3D" parent="Zones/Sunbeam" unique_id=646485987]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.94, 0)
 material_override = ExtResource("17_pa3ei")
 cast_shadow = 0
 mesh = SubResource("BoxMesh_iw4ra")
 
-[node name="CatTreePerch" type="Node3D" parent="Zones" unique_id=1465108734]
+[node name="CatTreePerch" type="Node3D" parent="Zones" unique_id=1905910746]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 46, 0, 40)
 script = ExtResource("18_4ihos")
 top_offset = Vector3(9, 32.5, 0)
 knock_radius = 4.0
 
-[node name="UmbrellaRebound" type="Node3D" parent="Zones" unique_id=996854500]
+[node name="UmbrellaRebound" type="Node3D" parent="Zones" unique_id=1311666491]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30, 0, 44)
 script = ExtResource("21_0kflw")
 radius = 6.0
 
-[node name="SpilledSoda" type="Area3D" parent="Zones" unique_id=1045554285]
+[node name="SpilledSoda" type="Area3D" parent="Zones" unique_id=1201404487]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -30, 0.6, -20)
 script = ExtResource("22_lpoka")
 active_events = PackedStringArray()
 
-[node name="Shape" type="CollisionShape3D" parent="Zones/SpilledSoda" unique_id=90423641]
+[node name="Shape" type="CollisionShape3D" parent="Zones/SpilledSoda" unique_id=1563218225]
 shape = SubResource("BoxShape3D_ct08w")
 
-[node name="Water" type="MeshInstance3D" parent="Zones/SpilledSoda" unique_id=941819074]
+[node name="Water" type="MeshInstance3D" parent="Zones/SpilledSoda" unique_id=611094067]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.55, 0)
 material_override = ExtResource("23_20ys3")
 cast_shadow = 0
 mesh = SubResource("BoxMesh_0smgp")
 
-[node name="GlueTrap" type="Area3D" parent="Zones" unique_id=1642843224]
+[node name="GlueTrap" type="Area3D" parent="Zones" unique_id=1660583165]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -52, 0.5, 32)
 script = ExtResource("24_j4ugo")
 
-[node name="Shape" type="CollisionShape3D" parent="Zones/GlueTrap" unique_id=1043164982]
+[node name="Shape" type="CollisionShape3D" parent="Zones/GlueTrap" unique_id=1948387768]
 shape = SubResource("BoxShape3D_umaum")
 
-[node name="Visual" type="MeshInstance3D" parent="Zones/GlueTrap" unique_id=1989442823]
+[node name="Visual" type="MeshInstance3D" parent="Zones/GlueTrap" unique_id=561214027]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.45, 0)
 material_override = ExtResource("25_7h7oo")
 mesh = SubResource("BoxMesh_gr0ql")
 
-[node name="CavityDark" type="Area3D" parent="Zones" unique_id=454156137]
+[node name="CavityDark" type="Area3D" parent="Zones" unique_id=618099508]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -73, 6, -30)
 script = ExtResource("14_u7hri")
 zone_priority = 3
 active_events = PackedStringArray()
 inactive_events = PackedStringArray()
 
-[node name="Shape" type="CollisionShape3D" parent="Zones/CavityDark" unique_id=375053924]
+[node name="Shape" type="CollisionShape3D" parent="Zones/CavityDark" unique_id=969196773]
 shape = SubResource("BoxShape3D_ufnvm")
 
-[node name="Pickups" type="Node3D" parent="." unique_id=1170974457]
+[node name="Pickups" type="Node3D" parent="." unique_id=108699011]
 
-[node name="Crumb" type="Area3D" parent="Pickups" unique_id=1257563541 instance=ExtResource("26_a5wc2")]
+[node name="Crumb" type="Area3D" parent="Pickups" unique_id=1537347922 instance=ExtResource("26_a5wc2")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -40, 0.6, 30)
 script = ExtResource("27_7ptmi")
 
-[node name="Crumb2" type="Area3D" parent="Pickups" unique_id=1864021809 instance=ExtResource("26_a5wc2")]
+[node name="Crumb2" type="Area3D" parent="Pickups" unique_id=779961568 instance=ExtResource("26_a5wc2")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20, 0.6, 20)
 script = ExtResource("27_7ptmi")
 
-[node name="Crumb3" type="Area3D" parent="Pickups" unique_id=2102244226 instance=ExtResource("26_a5wc2")]
+[node name="Crumb3" type="Area3D" parent="Pickups" unique_id=304144935 instance=ExtResource("26_a5wc2")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 5)
 script = ExtResource("27_7ptmi")
 
-[node name="Crumb4" type="Area3D" parent="Pickups" unique_id=1310775959 instance=ExtResource("26_a5wc2")]
+[node name="Crumb4" type="Area3D" parent="Pickups" unique_id=1103719009 instance=ExtResource("26_a5wc2")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15, 0.6, -5)
 script = ExtResource("27_7ptmi")
 
-[node name="Crumb5" type="Area3D" parent="Pickups" unique_id=1636904449 instance=ExtResource("26_a5wc2")]
+[node name="Crumb5" type="Area3D" parent="Pickups" unique_id=1597906980 instance=ExtResource("26_a5wc2")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 0.6, -32)
 script = ExtResource("27_7ptmi")
 
-[node name="Crumb6" type="Area3D" parent="Pickups" unique_id=782220314 instance=ExtResource("26_a5wc2")]
+[node name="Crumb6" type="Area3D" parent="Pickups" unique_id=566646100 instance=ExtResource("26_a5wc2")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -35, 0.6, -25)
 script = ExtResource("27_7ptmi")
 
-[node name="Crumb7" type="Area3D" parent="Pickups" unique_id=237028818 instance=ExtResource("26_a5wc2")]
+[node name="Crumb7" type="Area3D" parent="Pickups" unique_id=1666846749 instance=ExtResource("26_a5wc2")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 0.6, 36)
 script = ExtResource("27_7ptmi")
 
-[node name="Crumb8" type="Area3D" parent="Pickups" unique_id=1619871013 instance=ExtResource("26_a5wc2")]
+[node name="Crumb8" type="Area3D" parent="Pickups" unique_id=1674844777 instance=ExtResource("26_a5wc2")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30, 0.6, 12)
 script = ExtResource("27_7ptmi")
 
-[node name="Crumb9" type="Area3D" parent="Pickups" unique_id=873160871 instance=ExtResource("26_a5wc2")]
+[node name="Crumb9" type="Area3D" parent="Pickups" unique_id=1191024494 instance=ExtResource("26_a5wc2")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 44, 0.6, 28)
 script = ExtResource("27_7ptmi")
 
-[node name="Crumb10" type="Area3D" parent="Pickups" unique_id=2142931308 instance=ExtResource("26_a5wc2")]
+[node name="Crumb10" type="Area3D" parent="Pickups" unique_id=116782103 instance=ExtResource("26_a5wc2")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 52, 0.6, -15)
 script = ExtResource("27_7ptmi")
 
-[node name="Crumb11" type="Area3D" parent="Pickups" unique_id=995742027 instance=ExtResource("26_a5wc2")]
+[node name="Crumb11" type="Area3D" parent="Pickups" unique_id=894354763 instance=ExtResource("26_a5wc2")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -50, 0.6, 0)
 script = ExtResource("27_7ptmi")
 
-[node name="Crumb12" type="Area3D" parent="Pickups" unique_id=73420309 instance=ExtResource("26_a5wc2")]
+[node name="Crumb12" type="Area3D" parent="Pickups" unique_id=1575984156 instance=ExtResource("26_a5wc2")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14, 17.4, -6)
 script = ExtResource("27_7ptmi")
 
-[node name="Crumb13" type="Area3D" parent="Pickups" unique_id=183342371 instance=ExtResource("26_a5wc2")]
+[node name="Crumb13" type="Area3D" parent="Pickups" unique_id=56402924 instance=ExtResource("26_a5wc2")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20, 14.6, -36)
 script = ExtResource("27_7ptmi")
 
-[node name="Crumb14" type="Area3D" parent="Pickups" unique_id=2145001846 instance=ExtResource("26_a5wc2")]
+[node name="Crumb14" type="Area3D" parent="Pickups" unique_id=1521993112 instance=ExtResource("26_a5wc2")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -62, 70.6, 12)
 script = ExtResource("27_7ptmi")
 
-[node name="Crumb15" type="Area3D" parent="Pickups" unique_id=1934087423 instance=ExtResource("26_a5wc2")]
+[node name="Crumb15" type="Area3D" parent="Pickups" unique_id=598312194 instance=ExtResource("26_a5wc2")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 46, 24.6, -38)
 script = ExtResource("27_7ptmi")
 
-[node name="GoldenCrumb" type="Area3D" parent="Pickups" unique_id=729458473 instance=ExtResource("28_0tksf")]
+[node name="GoldenCrumb" type="Area3D" parent="Pickups" unique_id=1694926706 instance=ExtResource("28_0tksf")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -73, 0.6, -30)
 script = ExtResource("27_7ptmi")
 golden = true
 
-[node name="Goal" type="Area3D" parent="Pickups" unique_id=1037375499 instance=ExtResource("29_f4eap")]
+[node name="Goal" type="Area3D" parent="Pickups" unique_id=181220805 instance=ExtResource("29_f4eap")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 61, 0, -46)
 script = ExtResource("30_n2c7b")
 label = "gap under the hall door"
 
-[node name="Props" type="Node3D" parent="." unique_id=1686497437]
+[node name="Props" type="Node3D" parent="." unique_id=2115932632]
 
-[node name="Phone" type="Area3D" parent="Props" unique_id=1871356255]
+[node name="Phone" type="Area3D" parent="Props" unique_id=1030285123]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22.5, 22.3, -38)
 script = ExtResource("31_hg7f4")
 kind = 0
 loudness = 2.2
 glow_path = NodePath("Glow")
 
-[node name="Shape" type="CollisionShape3D" parent="Props/Phone" unique_id=178786265]
+[node name="Shape" type="CollisionShape3D" parent="Props/Phone" unique_id=1330332432]
 shape = SubResource("BoxShape3D_4yp6l")
 
-[node name="Visual" type="MeshInstance3D" parent="Props/Phone" unique_id=375237894]
+[node name="Visual" type="MeshInstance3D" parent="Props/Phone" unique_id=1272660365]
 material_override = ExtResource("9_n64qi")
 mesh = SubResource("BoxMesh_7of3r")
 
-[node name="Glow" type="MeshInstance3D" parent="Props/Phone" unique_id=1980633941]
+[node name="Glow" type="MeshInstance3D" parent="Props/Phone" unique_id=1929824558]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.28, 0)
 material_override = ExtResource("32_b1grf")
 mesh = SubResource("BoxMesh_h6mqs")
 
-[node name="GlowLight" type="OmniLight3D" parent="Props/Phone/Glow" unique_id=1487262789]
+[node name="GlowLight" type="OmniLight3D" parent="Props/Phone/Glow" unique_id=47784891]
 light_color = Color(0.7, 0.85, 1, 1)
 light_energy = 2.0
 omni_range = 10.0
 
-[node name="Remote" type="Area3D" parent="Props" unique_id=1599879282]
+[node name="Remote" type="Area3D" parent="Props" unique_id=513701537]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 17, -10)
 script = ExtResource("31_hg7f4")
 kind = 2
 loudness = 3.5
 linked_path = NodePath("../../Zones/TVSound")
 
-[node name="Shape" type="CollisionShape3D" parent="Props/Remote" unique_id=905665446]
+[node name="Shape" type="CollisionShape3D" parent="Props/Remote" unique_id=979121920]
 shape = SubResource("BoxShape3D_mlxys")
 
-[node name="Visual" type="MeshInstance3D" parent="Props/Remote" unique_id=194295770]
+[node name="Visual" type="MeshInstance3D" parent="Props/Remote" unique_id=1061284418]
 material_override = ExtResource("9_n64qi")
 mesh = SubResource("BoxMesh_3lgkr")
 
-[node name="Mug" type="RigidBody3D" parent="Props" unique_id=1743859214 instance=ExtResource("33_dx66n")]
+[node name="Mug" type="RigidBody3D" parent="Props" unique_id=1886852640 instance=ExtResource("33_dx66n")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 50, 26.1, -28.8)
 mass = 3.0
 script = ExtResource("34_2obti")
 noise_on_impact = 2.5
 impact_sound = &"clang"
 
-[node name="BottleCap" type="RigidBody3D" parent="Props" unique_id=1215851709 instance=ExtResource("35_m5ybd")]
+[node name="BottleCap" type="RigidBody3D" parent="Props" unique_id=285849383 instance=ExtResource("35_m5ybd")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 45, 24.3, -30)
 mass = 0.2
 script = ExtResource("34_2obti")
 noise_on_impact = 2.2
 
-[node name="Ball" type="RigidBody3D" parent="Props" unique_id=499380476 instance=ExtResource("36_hy74o")]
+[node name="Ball" type="RigidBody3D" parent="Props" unique_id=817148954 instance=ExtResource("36_hy74o")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 1.6, 10)
 mass = 0.6
 script = ExtResource("34_2obti")
@@ -1247,69 +1247,69 @@ noise_on_impact = 1.0
 trip_hazard = true
 impact_sound = &"thud"
 
-[node name="Acorn" type="RigidBody3D" parent="Props" unique_id=1374523880 instance=ExtResource("37_fywur")]
+[node name="Acorn" type="RigidBody3D" parent="Props" unique_id=55854007 instance=ExtResource("37_fywur")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20, 0.7, 30)
 mass = 0.2
 script = ExtResource("34_2obti")
 noise_on_impact = 1.2
 
-[node name="WallCrack" type="Area3D" parent="Props" unique_id=963011229]
+[node name="WallCrack" type="Area3D" parent="Props" unique_id=760988512]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -63.5, 1.5, -26)
 script = ExtResource("38_y3qhb")
 allowed_bugs = PackedStringArray("cockroach")
 exit_path = NodePath("Exit")
 label = "crack in the wall"
 
-[node name="Shape" type="CollisionShape3D" parent="Props/WallCrack" unique_id=654897227]
+[node name="Shape" type="CollisionShape3D" parent="Props/WallCrack" unique_id=1513380147]
 shape = SubResource("BoxShape3D_cvbf1")
 
-[node name="Exit" type="Marker3D" parent="Props/WallCrack" unique_id=1248002663]
+[node name="Exit" type="Marker3D" parent="Props/WallCrack" unique_id=1224568758]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.5, -0.7, -14)
 
-[node name="Marker" type="MeshInstance3D" parent="Props/WallCrack" unique_id=863257444]
+[node name="Marker" type="MeshInstance3D" parent="Props/WallCrack" unique_id=883626489]
 transform = Transform3D(1, 0, 0, 0, 0.3, 0, 0, 0, 1, 0, 0, 0)
 material_override = ExtResource("39_tb3la")
 mesh = SubResource("TorusMesh_751kh")
 
-[node name="HighVent" type="Area3D" parent="Props" unique_id=1964303108]
+[node name="HighVent" type="Area3D" parent="Props" unique_id=579442657]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -64.2, 70, -10)
 script = ExtResource("38_y3qhb")
 allowed_bugs = PackedStringArray("fly", "spider")
 exit_path = NodePath("Exit")
 label = "air vent"
 
-[node name="Shape" type="CollisionShape3D" parent="Props/HighVent" unique_id=1932640897]
+[node name="Shape" type="CollisionShape3D" parent="Props/HighVent" unique_id=1700654296]
 shape = SubResource("BoxShape3D_32po4")
 
-[node name="Exit" type="Marker3D" parent="Props/HighVent" unique_id=271837062]
+[node name="Exit" type="Marker3D" parent="Props/HighVent" unique_id=1554203869]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.800003, -69.2, -12)
 
-[node name="Marker" type="MeshInstance3D" parent="Props/HighVent" unique_id=1384662811]
+[node name="Marker" type="MeshInstance3D" parent="Props/HighVent" unique_id=1930946914]
 transform = Transform3D(1, 0, 0, 0, 0.3, 0, 0, 0, 1, 0, 0, 0)
 material_override = ExtResource("39_tb3la")
 mesh = SubResource("TorusMesh_oxndi")
 
-[node name="CavityExit" type="Area3D" parent="Props" unique_id=96299269]
+[node name="CavityExit" type="Area3D" parent="Props" unique_id=536274302]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -73, 1.5, -18)
 script = ExtResource("38_y3qhb")
 allowed_bugs = PackedStringArray()
 exit_path = NodePath("Exit")
 label = "crack back to the room"
 
-[node name="Shape" type="CollisionShape3D" parent="Props/CavityExit" unique_id=31359595]
+[node name="Shape" type="CollisionShape3D" parent="Props/CavityExit" unique_id=1767426124]
 shape = SubResource("BoxShape3D_qmnmx")
 
-[node name="Exit" type="Marker3D" parent="Props/CavityExit" unique_id=1401161813]
+[node name="Exit" type="Marker3D" parent="Props/CavityExit" unique_id=904541846]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18, -0.7, -2)
 
-[node name="Marker" type="MeshInstance3D" parent="Props/CavityExit" unique_id=2030927450]
+[node name="Marker" type="MeshInstance3D" parent="Props/CavityExit" unique_id=572573434]
 transform = Transform3D(1, 0, 0, 0, 0.3, 0, 0, 0, 1, 0, 0, 0)
 material_override = ExtResource("39_tb3la")
 mesh = SubResource("TorusMesh_rae57")
 
-[node name="Actors" type="Node3D" parent="." unique_id=1949255869]
+[node name="Actors" type="Node3D" parent="." unique_id=1332495079]
 
-[node name="Reader" type="CharacterBody3D" parent="Actors" unique_id=1698802417 instance=ExtResource("40_j1ese")]
+[node name="Reader" type="CharacterBody3D" parent="Actors" unique_id=1125321057 instance=ExtResource("40_j1ese")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 40, 0, -20)
 script = ExtResource("41_wsrly")
 route = PackedVector3Array(40, 0, -20, -34, 0, -22, -36, 0, 20, 25, 0, 26, 40, 0, 5)
@@ -1318,7 +1318,7 @@ config = ExtResource("42_l0k4a")
 active_events = PackedStringArray("tv_on", "reading")
 icon_height = 78.0
 
-[node name="Cat" type="CharacterBody3D" parent="Actors" unique_id=2977912 instance=ExtResource("43_3uaqo")]
+[node name="Cat" type="CharacterBody3D" parent="Actors" unique_id=1608867171 instance=ExtResource("43_3uaqo")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 40, 0.5, 40)
 script = ExtResource("44_45ob3")
 waypoints = PackedVector3Array(30, 0, 30, -30, 0, 30, -40, 0, -15, 30, 0, -15, 45, 0, 10)
@@ -1328,100 +1328,100 @@ config = ExtResource("45_6j5kw")
 active_events = PackedStringArray()
 icon_height = 10.0
 
-[node name="Lights" type="Node3D" parent="." unique_id=2078268341]
+[node name="Lights" type="Node3D" parent="." unique_id=1377123859]
 
-[node name="Environment" type="WorldEnvironment" parent="Lights" unique_id=626682343]
+[node name="Environment" type="WorldEnvironment" parent="Lights" unique_id=766516552]
 environment = SubResource("Environment_o1xvt")
 
-[node name="Sun" type="DirectionalLight3D" parent="Lights" unique_id=2067319709]
+[node name="Sun" type="DirectionalLight3D" parent="Lights" unique_id=995906975]
 transform = Transform3D(0.49999997, 0.5566704, -0.663414, 0, 0.76604444, 0.6427876, 0.86602545, -0.32139376, 0.3830222, 0, 0, 0)
 light_color = Color(1, 0.9, 0.75, 1)
 light_energy = 0.8
 shadow_enabled = true
 directional_shadow_max_distance = 180.0
 
-[node name="Decor" type="Node3D" parent="." unique_id=702968740]
+[node name="Decor" type="Node3D" parent="." unique_id=2146836358]
 
-[node name="Screen" type="MeshInstance3D" parent="Decor" unique_id=2017946932]
+[node name="Screen" type="MeshInstance3D" parent="Decor" unique_id=1794257083]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 34, 45.9)
 material_override = ExtResource("46_n6qjy")
 cast_shadow = 0
 mesh = SubResource("BoxMesh_4nkrk")
 
-[node name="Books" type="MeshInstance3D" parent="Decor" unique_id=806147417]
+[node name="Books" type="MeshInstance3D" parent="Decor" unique_id=66671603]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -58.8, 8, 12)
 material_override = ExtResource("6_lws0n")
 mesh = SubResource("BoxMesh_majrt")
 
-[node name="Books2" type="MeshInstance3D" parent="Decor" unique_id=49004264]
+[node name="Books2" type="MeshInstance3D" parent="Decor" unique_id=1402141557]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -58.8, 21, 12)
 material_override = ExtResource("8_52lyl")
 mesh = SubResource("BoxMesh_c6anq")
 
-[node name="Books3" type="MeshInstance3D" parent="Decor" unique_id=276670033]
+[node name="Books3" type="MeshInstance3D" parent="Decor" unique_id=2096023355]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -58.8, 34, 12)
 material_override = ExtResource("6_lws0n")
 mesh = SubResource("BoxMesh_mggll")
 
-[node name="Books4" type="MeshInstance3D" parent="Decor" unique_id=1088451581]
+[node name="Books4" type="MeshInstance3D" parent="Decor" unique_id=1878340938]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -58.8, 47, 12)
 material_override = ExtResource("8_52lyl")
 mesh = SubResource("BoxMesh_rrkvs")
 
-[node name="Books5" type="MeshInstance3D" parent="Decor" unique_id=1768464600]
+[node name="Books5" type="MeshInstance3D" parent="Decor" unique_id=1125955238]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -58.8, 60, 12)
 material_override = ExtResource("6_lws0n")
 mesh = SubResource("BoxMesh_6su13")
 
-[node name="LampBase" type="MeshInstance3D" parent="Decor" unique_id=505802047]
+[node name="LampBase" type="MeshInstance3D" parent="Decor" unique_id=824602688]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 54, 27, -40)
 material_override = ExtResource("11_5ko1p")
 mesh = SubResource("CylinderMesh_ksjg5")
 
-[node name="LampShade" type="MeshInstance3D" parent="Decor" unique_id=64276513]
+[node name="LampShade" type="MeshInstance3D" parent="Decor" unique_id=1473929063]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 54, 34, -40)
 material_override = ExtResource("47_0cyai")
 mesh = SubResource("CylinderMesh_8jff4")
 
-[node name="FanStand" type="MeshInstance3D" parent="Decor" unique_id=1034628431]
+[node name="FanStand" type="MeshInstance3D" parent="Decor" unique_id=1999726841]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 58, 9, 18)
 material_override = ExtResource("9_n64qi")
 mesh = SubResource("CylinderMesh_bj1dq")
 
-[node name="FanHead" type="MeshInstance3D" parent="Decor" unique_id=2032866352]
+[node name="FanHead" type="MeshInstance3D" parent="Decor" unique_id=355629351]
 transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, 57, 19, 18)
 material_override = ExtResource("11_5ko1p")
 mesh = SubResource("CylinderMesh_salb4")
 
-[node name="Window" type="MeshInstance3D" parent="Decor" unique_id=873793429]
+[node name="Window" type="MeshInstance3D" parent="Decor" unique_id=859396974]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 64.85, 45, 10)
 material_override = ExtResource("48_gks2t")
 cast_shadow = 0
 mesh = SubResource("BoxMesh_radrx")
 
-[node name="Plant" type="MeshInstance3D" parent="Decor" unique_id=808337699]
+[node name="Plant" type="MeshInstance3D" parent="Decor" unique_id=422521097]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -50, 24, -44)
 material_override = ExtResource("49_pquli")
 mesh = SubResource("SphereMesh_k18e6")
 
-[node name="VentGrille" type="MeshInstance3D" parent="Decor" unique_id=153537629]
+[node name="VentGrille" type="MeshInstance3D" parent="Decor" unique_id=1468763961]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -64.85, 70, -10)
 material_override = ExtResource("9_n64qi")
 mesh = SubResource("BoxMesh_xxhlo")
 
-[node name="DoorCrack" type="MeshInstance3D" parent="Decor" unique_id=585229256]
+[node name="DoorCrack" type="MeshInstance3D" parent="Decor" unique_id=612339884]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 64.85, 2.5, -46)
 material_override = ExtResource("39_tb3la")
 cast_shadow = 0
 mesh = SubResource("BoxMesh_3ukw4")
 
-[node name="PlayerSpawn" type="Marker3D" parent="." unique_id=2016573998]
+[node name="PlayerSpawn" type="Marker3D" parent="." unique_id=462731573]
 transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, -55, 0.8, 42)
 
-[node name="EscalationDirector" type="Node" parent="." unique_id=2001392146]
+[node name="EscalationDirector" type="Node" parent="." unique_id=1844379829]
 script = ExtResource("50_tec40")
 
-[node name="BossDirector" type="Node" parent="." unique_id=1212204994]
+[node name="BossDirector" type="Node" parent="." unique_id=1326089740]
 script = ExtResource("51_60a7y")
 kind = 1
 boss_name = "The Cat"

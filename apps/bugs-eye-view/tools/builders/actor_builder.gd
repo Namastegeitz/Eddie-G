@@ -245,9 +245,10 @@ static func pet(force: bool, path: String, config: String, color: String, big: b
 	var k := 1.4 if big else 1.0
 	p.set("icon_height", 10.0 * k)
 	var cap := CapsuleShape3D.new()
-	cap.radius = 2.2 * k
+	cap.radius = 2.4 * k
 	cap.height = 10.0 * k
-	shape(p, cap, Vector3(0, 3.5 * k, 0), Vector3(PI * 0.5, 0, 0))
+	# Bottom of the capsule at the origin so the pet's origin matches the navmesh.
+	shape(p, cap, Vector3(0, 2.4 * k, 0), Vector3(PI * 0.5, 0, 0))
 	var v := node3d(p, "Visual")
 	mesh(v, "Body", capsule(2.4 * k, 11.0 * k), color, Vector3(0, 5.0 * k, 0.5), Vector3(PI * 0.5, 0, 0))
 	mesh(v, "Head", sphere(2.3 * k), color, Vector3(0, 7.2 * k, -6.0 * k))
@@ -266,8 +267,8 @@ static func pet(force: bool, path: String, config: String, color: String, big: b
 	mesh(v, "EyeR", sphere(0.45), "fly_eye" if is_dog else "pea", Vector3(0.9 * k, 7.9 * k, -7.9 * k))
 	var agent := NavigationAgent3D.new()
 	agent.name = "Agent"
-	agent.path_desired_distance = 1.5
-	agent.target_desired_distance = 1.5
+	agent.path_desired_distance = 2.0
+	agent.target_desired_distance = 2.0
 	agent.radius = 2.0 * k
 	agent.height = 6.0 * k
 	agent.path_max_distance = 6.0

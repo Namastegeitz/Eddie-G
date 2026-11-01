@@ -15,26 +15,26 @@ size = Vector3(0.6, 0.5, 0.8)
 [sub_resource type="BoxMesh" id="BoxMesh_80co2"]
 size = Vector3(0.4, 0.4, 0.4)
 
-[node name="Crumb" type="Area3D" unique_id=1257563541]
+[node name="Crumb" type="Area3D" unique_id=1537347922]
 script = ExtResource("1_5x78b")
 
-[node name="Shape" type="CollisionShape3D" parent="." unique_id=1626604251]
+[node name="Shape" type="CollisionShape3D" parent="." unique_id=1850731009]
 shape = SubResource("SphereShape3D_7c5mo")
 
-[node name="Visual" type="Node3D" parent="." unique_id=1257007263]
+[node name="Visual" type="Node3D" parent="." unique_id=209949184]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.15, 0)
 
-[node name="A" type="MeshInstance3D" parent="Visual" unique_id=1860707366]
+[node name="A" type="MeshInstance3D" parent="Visual" unique_id=1806643128]
 transform = Transform3D(0.8882368, -0.035492957, 0.45801273, 0.18979606, 0.9362934, -0.29552022, -0.4183454, 0.34942093, 0.83838665, 0, 0, 0)
 material_override = ExtResource("2_x4qah")
 mesh = SubResource("BoxMesh_0f4vf")
 
-[node name="B" type="MeshInstance3D" parent="Visual" unique_id=2115957276]
+[node name="B" type="MeshInstance3D" parent="Visual" unique_id=946322603]
 transform = Transform3D(0.3307759, -0.4655987, 0.82085633, 0.27219215, 0.87992316, 0.38941833, -0.9036032, 0.094620466, 0.41778967, 0.25, 0.15, 0.1)
 material_override = ExtResource("2_x4qah")
 mesh = SubResource("BoxMesh_ai87q")
 
-[node name="C" type="MeshInstance3D" parent="Visual" unique_id=1279282802]
+[node name="C" type="MeshInstance3D" parent="Visual" unique_id=1330279615]
 transform = Transform3D(0.7094743, -0.688155, 0.15195069, 0.5991215, 0.47543356, -0.64421767, 0.37107915, 0.5480928, 0.7495963, -0.35, 0.05, -0.2)
 material_override = ExtResource("2_x4qah")
 mesh = SubResource("BoxMesh_80co2")

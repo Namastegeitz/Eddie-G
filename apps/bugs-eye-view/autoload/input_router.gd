@@ -61,13 +61,13 @@ func _default_events() -> Dictionary:
 
 func _register_default_actions() -> void:
 	var defaults := _default_events()
-	for name: String in defaults.keys():
-		var action := PREFIX + name
+	for action_name: String in defaults.keys():
+		var action := PREFIX + action_name
 		if InputMap.has_action(action):
 			InputMap.action_erase_events(action)
 		else:
 			InputMap.add_action(action, 0.25)
-		for ev: InputEvent in defaults[name]:
+		for ev: InputEvent in defaults[action_name]:
 			InputMap.action_add_event(action, ev)
 
 
@@ -124,14 +124,14 @@ func _dict_to_event(d: Dictionary) -> InputEvent:
 
 func apply_saved_bindings() -> void:
 	var saved := SaveSystem.get_bindings()
-	for name: String in saved.keys():
-		var action := PREFIX + name
+	for action_name: String in saved.keys():
+		var action := PREFIX + action_name
 		if not InputMap.has_action(action):
 			continue
 		for e: InputEvent in InputMap.action_get_events(action):
 			if e is InputEventKey or e is InputEventMouseButton:
 				InputMap.action_erase_event(action, e)
-		for d: Variant in saved[name]:
+		for d: Variant in saved[action_name]:
 			if d is Dictionary:
 				var ev := _dict_to_event(d)
 				if ev:
@@ -139,8 +139,8 @@ func apply_saved_bindings() -> void:
 
 
 ## Replaces the keyboard/mouse binding of an action, keeping gamepad events.
-func rebind(name: String, event: InputEvent) -> void:
-	var action := PREFIX + name
+func rebind(action_name: String, event: InputEvent) -> void:
+	var action := PREFIX + action_name
 	for e: InputEvent in InputMap.action_get_events(action):
 		if e is InputEventKey or e is InputEventMouseButton:
 			InputMap.action_erase_event(action, e)
@@ -150,7 +150,7 @@ func rebind(name: String, event: InputEvent) -> void:
 	elif event is InputEventMouseButton:
 		clean = _mouse((event as InputEventMouseButton).button_index)
 	InputMap.action_add_event(action, clean)
-	SaveSystem.set_binding(name, [_event_to_dict(clean)])
+	SaveSystem.set_binding(action_name, [_event_to_dict(clean)])
 	SaveSystem.save_game()
 
 
@@ -160,9 +160,9 @@ func reset_bindings() -> void:
 	_register_default_actions()
 
 
-func binding_text(name: String) -> String:
+func binding_text(action_name: String) -> String:
 	var parts: PackedStringArray = []
-	for e: InputEvent in InputMap.action_get_events(PREFIX + name):
+	for e: InputEvent in InputMap.action_get_events(PREFIX + action_name):
 		if e is InputEventKey:
 			parts.append(OS.get_keycode_string((e as InputEventKey).physical_keycode))
 		elif e is InputEventMouseButton:

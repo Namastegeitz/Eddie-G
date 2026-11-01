@@ -28,7 +28,7 @@ func stop() -> void:
 	routine_changed.emit()
 
 
-static func slot_hour(slot: StringName) -> float:
+func slot_hour(slot: StringName) -> float:
 	return float(SLOT_HOURS.get(slot, 7.0))
 
 

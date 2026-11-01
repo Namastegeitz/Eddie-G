@@ -22,8 +22,12 @@ func _ready() -> void:
 		if b is BugBase:
 			(b as BugBase).wiper_count -= 1
 			_player = null)
-	HouseClock.routine_changed.connect(func() -> void:
-		_active = active_events.is_empty() or HouseClock.any_active(active_events))
+	HouseClock.routine_changed.connect(_refresh)
+	_refresh()
+
+
+func _refresh() -> void:
+	_active = active_events.is_empty() or HouseClock.any_active(active_events)
 
 
 func _physics_process(_delta: float) -> void:

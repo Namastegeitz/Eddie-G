@@ -151,12 +151,20 @@ func bind(lvl: Level) -> void:
 	player.died.connect(func(_c: StringName) -> void: _update_lives())
 	player.hint_changed.connect(func(t: String) -> void: _hint.text = t)
 	player.sense_changed.connect(func(on: bool) -> void: _tint.visible = on and player is Fly)
-	PerceptionSystem.alert_level_changed.connect(func(_l: int) -> void: _update_threat())
-	PerceptionSystem.escalation_changed.connect(func(_s: int) -> void: _update_threat())
-	HouseClock.hour_changed.connect(func(_h: float) -> void: _update_clock())
+	PerceptionSystem.alert_level_changed.connect(_on_alert_level)
+	PerceptionSystem.escalation_changed.connect(_on_alert_level)
+	HouseClock.hour_changed.connect(_on_hour)
 	HouseClock.routine_changed.connect(_update_clock)
 	_update_lives()
 	_update_threat()
+	_update_clock()
+
+
+func _on_alert_level(_v: int) -> void:
+	_update_threat()
+
+
+func _on_hour(_h: float) -> void:
 	_update_clock()
 
 
