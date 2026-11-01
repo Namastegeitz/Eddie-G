@@ -4,8 +4,11 @@
 - Built end to end from `prompts/claude/bugs-eye-view.md` (all 6 phases, all 16 add-ons).
 - Godot 4.7.2 project: 3 bugs, 3 rooms with boss chases, perception-based stealth,
   escalation chain, daily routines, colony upgrades, menus, touch/keyboard/gamepad.
-- Tests: `tools/run_tests.sh` - 118 checks pass in the project and in an exported build;
-  zero GDScript warnings.
+- Tests: `tools/run_tests.sh` - 118-check smoke test + 162-check phase audit pass in the
+  project and in an exported build; zero GDScript warnings and engine errors.
+- Phase-by-phase audit (all 6 phases) done; fixes it found: human feet were never solid,
+  props didn't stun via feet, cereal-box domino layout, spider facing/normal errors, fog strength.
+- Android debug APK committed at `apps/bugs-eye-view/dist/android/bugseyeview-debug.apk`.
 - Builds made in the cloud session: Android debug APK, Windows, macOS, Linux, Web,
   iOS Xcode project (not committed; rebuild with the commands in RUN.md).
 - Playable web build published as a private Claude artifact:

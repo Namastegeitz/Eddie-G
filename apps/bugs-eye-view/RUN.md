@@ -42,8 +42,10 @@ in **Settings**.
 
 ## 3. Test it
 
-All checks (import, boot, warnings-as-errors, then the 118-check smoke test
-in the project **and** against an exported pack):
+All checks: import, boot, warnings-as-errors, then the 118-check smoke test
+and the 162-check phase audit (`tests/phase_audit.tscn`, one section per
+build phase), each run in the project **and** against an exported pack. Any
+script or engine error fails the run:
 
 ```bash
 tools/run_tests.sh
@@ -55,6 +57,9 @@ On Windows run it from Git Bash, or run the pieces in PowerShell:
 godot --headless --path . --import
 godot --headless --path . res://tests/smoke_test.tscn --fixed-fps 60
 ```
+
+Run one phase of the audit with
+`godot --headless --path . res://tests/phase_audit.tscn --fixed-fps 60 -- --phase=4`.
 
 `godot` means the Godot executable, e.g.
 `C:\Godot\Godot_v4.7.2-stable_win64_console.exe`. The smoke test prints
@@ -86,6 +91,13 @@ an HTML game), Netlify, or `npx surge build/web`. It is a single-threaded build,
 so it needs no special server headers. For hosts with a 15 MB file limit,
 `tools/web_artifact/package.py build/web build/web_artifact` splits the engine
 into parts and adds a page that stitches them back together.
+
+### Android test app
+
+A debug-signed APK of the current build is in
+`dist/android/bugseyeview-debug.apk`. On an Android phone, download it from
+GitHub, open it, and allow installs from that source. For Google Play you
+need the AAB from the *Android AAB* preset instead (see the checklist).
 
 ## 5. Change the game
 

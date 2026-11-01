@@ -62,8 +62,10 @@ giant muffled human voices, a heartbeat that rises when you're hunted.
 All six build phases from the prompt are done. Placeholder art and sound
 throughout (generated primitives and synthesized audio), ready to swap.
 
-- 118-check headless smoke test passes in the project and in an exported
-  build (`tools/run_tests.sh`), with zero GDScript warnings.
+- Two headless test suites pass in the project and in an exported build
+  (`tools/run_tests.sh`): a 118-check smoke test and a 162-check phase audit
+  that walks the spec phase by phase. Zero GDScript warnings, zero engine errors.
+- Android test app (debug-signed): [dist/android/bugseyeview-debug.apk](dist/android/bugseyeview-debug.apk).
 - Builds produced and checked: Android debug APK (signed), Windows, macOS,
   Linux, Web, and the iOS Xcode project. The web build was played in a
   browser at desktop and phone sizes.
