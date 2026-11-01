@@ -23,6 +23,8 @@ func _ready() -> void:
 		await _phase4()
 	if only in [0, 5]:
 		await _phase5()
+	if only in [0, 6]:
+		await _phase6()
 	finish("phase audit")
 
 
@@ -917,3 +919,74 @@ func _phase5() -> void:
 	get_tree().current_scene = back
 	cur.queue_free()
 	await frames(3)
+
+
+# --- Phase 6: ship prep ----------------------------------------------------------------
+
+func _phase6() -> void:
+	print("-- Phase 6: performance, pooling, icons and export setup")
+	SaveSystem.data = SaveSystem.default_data()
+	for level in GameManager.LEVEL_IDS:
+		var lvl := await load_level(level, &"cockroach")
+		await frames(30)
+		# Headless frames run back to back, so wall time per frame = CPU cost of
+		# all game logic + physics (rendering excluded).
+		var t0 := Time.get_ticks_usec()
+		await frames(240)
+		var ms := (Time.get_ticks_usec() - t0) / 240.0 / 1000.0
+		var meshes := 0
+		for m in lvl.find_children("*", "GeometryInstance3D", true, false):
+			if (m as GeometryInstance3D).is_visible_in_tree():
+				meshes += 1
+		print("     %s: %.2f ms per frame of logic + physics, %d visible meshes" % [level, ms, meshes])
+		check(ms < 4.0, "%s runs its game logic in under 4 ms a frame (%.2f)" % [level, ms])
+		check(meshes < 160, "%s keeps visible meshes low for phones (%d)" % [level, meshes])
+		await unload(lvl)
+
+	# Pools: a long fight doesn't keep creating objects.
+	var lvl2 := await load_level(&"kitchen", &"cockroach")
+	var p := lvl2.player
+	p.global_position = Vector3(43, 0.6, -30)
+	InputRouter.set_touch_action(&"secondary", true)
+	var human := first_in_group(Phys.GROUP_HUMAN, lvl2) as Human
+	await frames(30)
+	var target := Vector3(10, 0.8, 10)
+	var counts: Array[int] = []
+	for _wave in 12:
+		for i in 2:
+			var sw := lvl2.swatter_pool.acquire() as Swatter
+			sw.strike(target + Vector3(randf_range(-5, 5), 0, randf_range(-5, 5)), 0.3, human, lvl2.swatter_pool)
+		var cloud := lvl2.spray_pool.acquire() as SprayCloud
+		cloud.spawn(target, lvl2.spray_pool)
+		await frames(60)
+		counts.append(int(Performance.get_monitor(Performance.OBJECT_COUNT)))
+	InputRouter.set_touch_action(&"secondary", false)
+	var growth := counts[-1] - counts[3]
+	check(growth < 60, "pooled swatters and spray don't pile up objects (%d -> %d)" % [counts[3], counts[-1]])
+	await unload(lvl2)
+
+	# Icons, splash and export presets are project files (not shipped in a build).
+	if not FileAccess.file_exists("res://export_presets.cfg"):
+		print("     (running from an exported build: project-file checks skipped)")
+		return
+	for path in ["res://assets/icons/icon.png", "res://assets/icons/icon_1024.png", "res://assets/icons/icon_192.png",
+			"res://assets/icons/adaptive_foreground.png", "res://assets/icons/adaptive_background.png",
+			"res://assets/icons/icon.ico", "res://assets/icons/splash.png"]:
+		check(FileAccess.file_exists(path), "asset present: " + path.get_file())
+	var img := Image.load_from_file(ProjectSettings.globalize_path("res://assets/icons/icon_1024.png"))
+	check(img and img.get_width() == 1024 and img.get_height() == 1024, "App Store icon is 1024x1024")
+	var cfg := ConfigFile.new()
+	check(cfg.load("res://export_presets.cfg") == OK, "export_presets.cfg loads")
+	var platforms: PackedStringArray = []
+	for sec in cfg.get_sections():
+		if not sec.ends_with(".options"):
+			platforms.append(String(cfg.get_value(sec, "platform")))
+			var opts := sec + ".options"
+			for k in cfg.get_section_keys(opts):
+				var v: Variant = cfg.get_value(opts, k)
+				if v is String and (v as String).begins_with("res://"):
+					check(FileAccess.file_exists(v), "%s %s points at a real file" % [cfg.get_value(sec, "name"), k])
+	for want in ["Android", "iOS", "Windows Desktop", "macOS", "Linux", "Web"]:
+		check(platforms.has(want), "export preset for " + want)
+	check(ProjectSettings.get_setting("display/window/handheld/orientation") == 6, "phones rotate freely (sensor orientation)")
+	check(ProjectSettings.get_setting("rendering/textures/vram_compression/import_etc2_astc") == true, "mobile texture compression is enabled")
