@@ -17,6 +17,8 @@ func _ready() -> void:
 		await _phase1()
 	if only in [0, 2]:
 		await _phase2()
+	if only in [0, 3]:
+		await _phase3()
 	finish("phase audit")
 
 
@@ -345,3 +347,146 @@ func _find_button(root: Node, text: String) -> Button:
 		if (b as Button).text == text:
 			return b
 	return null
+
+
+# --- Phase 3: content, pets, newspaper, escalation, scoring --------------------------
+
+func _phase3() -> void:
+	print("-- Phase 3: living room, backyard, pets, newspaper, escalation, scoring")
+	SaveSystem.data = SaveSystem.default_data()
+	var lvl := await load_level(&"living_room", &"cockroach")
+	var p := lvl.player
+	HouseClock.set_hour(7.2)
+	await frames(5)
+
+	# Newspaper: hits inside its swept arc, misses outside it.
+	var reader := first_in_group(Phys.GROUP_HUMAN, lvl) as Human
+	reader.route = PackedVector3Array()
+	check(reader.present and reader.newspaper != null, "the reader is home with a newspaper while the TV is on")
+	var pivot := reader.global_position
+	p.global_position = pivot + Vector3(0, 0.8, 10)
+	await frames(5)
+	reader.newspaper.sweep_at(pivot, p.global_position, 0.3)
+	await frames(50)
+	check(p.hits_left < p.stats.max_hits, "the newspaper sweep hits a bug inside its arc")
+	await frames(int(60 * p.stats.invuln_time) + 10)
+	var hits := p.hits_left
+	p.global_position = pivot + Vector3(0, 0.8, -10)
+	await frames(5)
+	reader.newspaper.sweep_at(pivot, pivot + Vector3(0, 0, 10), 0.3)
+	await frames(50)
+	check(p.hits_left == hits, "a bug behind the reader is outside the sweep")
+
+	# TV noise masks footsteps nearby.
+	var near_tv := Vector3(-8, 0.8, 30)
+	check(PerceptionSystem.get_ambient_noise_at(near_tv) >= 0.85, "the TV fills the room with masking noise")
+	HouseClock.set_hour(9.5)
+	await frames(2)
+	check(PerceptionSystem.get_ambient_noise_at(near_tv) < 0.5, "with the TV off the room is quiet")
+
+	# The cat: sight cone, nap, losing you when you hide.
+	var cat := first_in_group(Phys.GROUP_PET, lvl) as Pet
+	HouseClock.set_hour(8.3)
+	await frames(10)
+	check(cat.sleeping and not cat.can_see(p), "the cat naps on its routine and sees nothing")
+	HouseClock.set_hour(7.2)
+	await frames(10)
+	cat.alert.reset()
+	cat.global_position = Vector3(0, 0.5, 10)
+	cat.rotation.y = 0.0
+	p.global_position = Vector3(0, 0.8, 25)
+	await frames(15)
+	check(not cat.player_visible, "the cat can't see a bug behind it")
+	cat.rotation.y = PI
+	var saw := false
+	for i in 120:
+		await get_tree().physics_frame
+		if cat.alert.state >= AlertState.SUSPICIOUS:
+			saw = true
+			break
+	check(saw, "the cat notices a bug in front of it")
+	p.global_position = Vector3(-10, 0.6, -39)
+	InputRouter.set_touch_action(&"secondary", true)
+	cat.force_alert(AlertState.ALERT, Vector3(0, 0.8, 25))
+	var calmed := false
+	for i in int(60 * (cat.config.search_duration + 12.0)):
+		await get_tree().physics_frame
+		if cat.alert.state <= AlertState.SUSPICIOUS and i > 120:
+			calmed = true
+			break
+	InputRouter.set_touch_action(&"secondary", false)
+	check(calmed, "the cat gives up the hunt when you hide under the couch")
+	await unload(lvl)
+
+	# Time-based intensity floor and scoring math.
+	lvl = await load_level(&"kitchen", &"cockroach")
+	var s0 := lvl.hazard_speed()
+	lvl._elapsed = lvl.config.intensity_ramp_seconds
+	await frames(2)
+	check(lvl.hazard_speed() > s0 + 0.3, "threats speed up as the run goes on (%.2f -> %.2f)" % [s0, lvl.hazard_speed()])
+	await unload(lvl)
+	var r := RunStats.new()
+	r.crumbs = 8
+	r.golden = true
+	r.close_calls = 2
+	r.lures_used = 1
+	r.threats_stunned = 1
+	r.hits_taken = 1
+	r.time = 100.0
+	r.won = true
+	var sc := r.score(GameManager.scoring, 180.0)
+	var cfg := GameManager.scoring
+	var expected := 8 * cfg.crumb_points + cfg.golden_points + 2 * cfg.close_call_points + cfg.lure_points \
+		+ cfg.stun_points + cfg.ghost_bonus + int(80.0 * cfg.speed_bonus_per_second) - cfg.hit_penalty
+	check(int(sc["total"]) == expected, "score adds up (%d == %d)" % [int(sc["total"]), expected])
+	var b := r.badges(180.0)
+	check(b["ghost"] and b["speedrun"] and b["golden"], "a clean, fast run with the golden crumb earns all three badges")
+	r.ever_alerted = true
+	r.time = 200.0
+	b = r.badges(180.0)
+	check(not b["ghost"] and not b["speedrun"], "being spotted or slow loses those badges")
+
+	# Backyard: the dog's bark calls the gardener; the yard keeps flyers in.
+	lvl = await load_level(&"backyard", &"cockroach")
+	HouseClock.set_hour(7.8)
+	await frames(5)
+	var gardener: Human = null
+	for h in get_tree().get_nodes_in_group(Phys.GROUP_HUMAN):
+		if lvl.is_ancestor_of(h) and (h as Human).present:
+			gardener = h
+	var dog := first_in_group(Phys.GROUP_PET, lvl) as Pet
+	check(gardener != null, "the gardener is out during gardening")
+	gardener.alert.reset()
+	dog.force_alert(AlertState.ALERT, lvl.player.global_position)
+	await frames(10)
+	check(gardener.alert.state >= AlertState.SEARCHING, "the dog's bark sends the gardener searching")
+	await unload(lvl)
+	lvl = await load_level(&"backyard", &"fly")
+	var fly := lvl.player as Fly
+	fly.teleport_to(Transform3D(Basis.IDENTITY, Vector3(0, 45, 40)))
+	fly.take_off()
+	fly.stamina = 999.0
+	face(lvl, PI)
+	InputRouter.set_touch_move(Vector2(0, 1))
+	await frames(240)
+	InputRouter.set_touch_move(Vector2.ZERO)
+	check(fly.global_position.z < 62.0 and fly.global_position.y < 110.0, "invisible walls keep the fly inside the yard (z=%.1f)" % fly.global_position.z)
+	await unload(lvl)
+
+	# Both new rooms can be won and unlock what follows.
+	for level in [&"living_room", &"backyard"]:
+		lvl = await load_level(level, &"cockroach")
+		await frames(5)
+		var got := 0
+		for c in get_tree().get_nodes_in_group(Phys.GROUP_CRUMB):
+			var crumb := c as Crumb
+			if crumb and not crumb.golden and lvl.is_ancestor_of(crumb) and got < lvl.crumbs_needed:
+				lvl.player.global_position = crumb.global_position
+				await frames(3)
+				got += 1
+		check(lvl.goal.active, "%s: the exit opens after %d crumbs" % [level, lvl.crumbs_needed])
+		lvl.player.global_position = lvl.goal.global_position + Vector3.UP
+		await frames(5)
+		check(GameManager.state == GameManager.State.WIN, "%s: reaching the exit wins" % level)
+		await unload(lvl)
+	check(SaveSystem.is_bug_unlocked(&"spider") and SaveSystem.is_level_completed(&"backyard"), "winning both rooms unlocks the spider and records the backyard")
