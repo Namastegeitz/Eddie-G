@@ -18,9 +18,9 @@ func _ready() -> void:
 func setup(pos: Vector3, normal: Vector3, lifetime: float, pool: NodePool) -> void:
 	_pool = pool
 	_life = lifetime
-	var f := Vector3.FORWARD - normal * normal.z
+	var f := Vector3.FORWARD - normal * normal.dot(Vector3.FORWARD)
 	if f.length_squared() < 0.01:
-		f = Vector3.RIGHT
+		f = Vector3.RIGHT - normal * normal.dot(Vector3.RIGHT)
 	global_transform = Transform3D(Basis.looking_at(f.normalized(), normal), pos)
 	monitoring = true
 

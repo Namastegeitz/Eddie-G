@@ -19,6 +19,8 @@ func _ready() -> void:
 		await _phase2()
 	if only in [0, 3]:
 		await _phase3()
+	if only in [0, 4]:
+		await _phase4()
 	finish("phase audit")
 
 
@@ -392,6 +394,7 @@ func _phase3() -> void:
 	HouseClock.set_hour(7.2)
 	await frames(10)
 	cat.alert.reset()
+	cat.waypoints = PackedVector3Array()
 	cat.global_position = Vector3(0, 0.5, 10)
 	cat.rotation.y = 0.0
 	p.global_position = Vector3(0, 0.8, 25)
@@ -490,3 +493,227 @@ func _phase3() -> void:
 		check(GameManager.state == GameManager.State.WIN, "%s: reaching the exit wins" % level)
 		await unload(lvl)
 	check(SaveSystem.is_bug_unlocked(&"spider") and SaveSystem.is_level_completed(&"backyard"), "winning both rooms unlocks the spider and records the backyard")
+
+
+# --- Phase 4: the living house -------------------------------------------------------
+
+func _active_node(lvl: Node, cls: String) -> int:
+	var n := 0
+	for c in lvl.find_children("*", cls, true, false):
+		if (c as Node).process_mode != Node.PROCESS_MODE_DISABLED and (c as Node3D).visible:
+			n += 1
+	return n
+
+
+func _phase4() -> void:
+	print("-- Phase 4: routines, props, hazards, secret routes, bosses")
+	SaveSystem.data = SaveSystem.default_data()
+	var lvl := await load_level(&"kitchen", &"cockroach")
+	var p := lvl.player
+	var human := first_in_group(Phys.GROUP_HUMAN, lvl) as Human
+	var vac := lvl.find_child("RobotVacuum", true, false) as RobotVacuum
+
+	# Routine: who is home and what is lit follows the clock.
+	HouseClock.set_hour(8.0)
+	await frames(3)
+	check(not human.present, "the kitchen empties after breakfast")
+	HouseClock.set_hour(8.5)
+	await frames(3)
+	check(human.present, "the human comes back to do the dishes")
+	check(not vac.present, "no vacuum before cleaning day")
+	HouseClock.set_hour(9.2)
+	await frames(3)
+	check(vac.present, "the robot vacuum comes out on cleaning day")
+	HouseClock.set_hour(10.0)
+	await frames(3)
+	check(not vac.present, "the vacuum docks when cleaning is over")
+	HouseClock.set_hour(7.2)
+	p.global_position = Vector3(43, 0.8, -9)
+	await frames(10)
+	check(PerceptionSystem.light_level >= 0.99, "the open fridge floods its doorway with light")
+	HouseClock.set_hour(7.4)
+	await frames(10)
+	check(PerceptionSystem.light_level < 0.99, "the light goes when the fridge closes")
+
+	# Sticky trap: slowed, then stuck; mashing tears you free.
+	p.global_position = Vector3(-46, 0.8, 18)
+	await frames(50)
+	check(p.stuck_time > 0.0, "the glue trap sticks the roach")
+	var stuck := p.stuck_time
+	for i in 4:
+		InputRouter.set_touch_action(&"dodge", true)
+		await frames(1)
+		InputRouter.set_touch_action(&"dodge", false)
+		await frames(1)
+	check(p.stuck_time < stuck - 1.0, "mashing buttons tears the roach free faster")
+	p.stuck_time = 0.0
+	p.global_position = Vector3(30, 0.8, 30)
+	await frames(30)
+
+	# Drain during the dishes: pulled in, washed out to the respawn spot.
+	HouseClock.set_hour(8.5)
+	await frames(3)
+	var drain := lvl.find_child("SinkDrain", true, false) as Drain
+	p.global_position = drain.global_position + Vector3(3.0, -0.2, 0)
+	var d0 := Vector2(p.global_position.x - drain.global_position.x, p.global_position.z - drain.global_position.z).length()
+	await frames(10)
+	var d1 := Vector2(p.global_position.x - drain.global_position.x, p.global_position.z - drain.global_position.z).length()
+	check(d1 < d0, "running water pulls the bug toward the drain")
+	var hits := p.hits_left
+	p.global_position = drain.global_position + Vector3(0.3, -0.2, 0)
+	await frames(5)
+	var respawn := drain.get_node("Respawn") as Node3D
+	check(p.hits_left < hits and p.global_position.distance_to(respawn.global_position) < 3.0, "the drain washes you out with a hit")
+	await frames(int(60 * p.stats.invuln_time) + 10)
+
+	# Bug spray at the top of the escalation chain.
+	HouseClock.set_hour(7.2)
+	await frames(2)
+	human.stun_time = 0.0
+	human.escalation_stage = 4
+	human._spray_cd = 0.0
+	human.force_alert(AlertState.SEARCHING, Vector3(0, 0.8, 0))
+	var sprayed := false
+	for i in 60:
+		await get_tree().physics_frame
+		if human._spray_cd > 0.0:
+			sprayed = true
+			break
+	check(sprayed and _active_node(lvl.find_child("Pools", false, false), "Node3D") > 0,
+		"a stage-4 human sprays where it last noticed you")
+
+	# A falling mug stuns the human it lands on (feet count).
+	human.alert.reset()
+	human.stun_time = 0.0
+	human.route = PackedVector3Array()
+	human.escalation_stage = 0
+	human._step_timer = 999.0
+	human.left_foot.plant_at(Vector3(24, 0, 10), 0.0)
+	await frames(5)
+	var mug: PhysicsProp = null
+	for n in get_tree().get_nodes_in_group(Phys.GROUP_PROP):
+		if lvl.is_ancestor_of(n) and (n as PhysicsProp).mass > 2.0:
+			mug = n
+	var foot_pos := human.left_foot.global_position
+	mug.freeze = false
+	mug.global_position = foot_pos + Vector3(0, 12, 0)
+	mug.linear_velocity = Vector3.ZERO
+	mug.sleeping = false
+	await frames(60)
+	check(human.stun_time > 0.0, "a mug dropped on the human's foot stuns them")
+	# A planted foot is a solid obstacle wherever the human has walked to.
+	human.left_foot.plant_at(Vector3(-20, 0, 38), 0.0)
+	await frames(3)
+	var rq := PhysicsRayQueryParameters3D.create(Vector3(-20, 20, 38), Vector3(-20, -1, 38))
+	var hit := lvl.get_world_3d().direct_space_state.intersect_ray(rq)
+	check(hit.get("collider") == human.left_foot.get_node("Body"), "the foot's collision follows the foot")
+	p.global_position = Vector3(-20, 0.8, 28)
+	face(lvl, 0.0)
+	await frames(10)
+	InputRouter.set_touch_move(Vector2(0, -1))
+	await frames(60)
+	InputRouter.set_touch_move(Vector2.ZERO)
+	check(p.global_position.z < 33.5, "a planted foot blocks the bug (z=%.1f)" % p.global_position.z)
+
+	# Cereal boxes topple like dominoes.
+	var boxes: Array[PhysicsProp] = []
+	for n in get_tree().get_nodes_in_group(Phys.GROUP_PROP):
+		var pp := n as PhysicsProp
+		if lvl.is_ancestor_of(pp) and pp.name.begins_with("CerealBox"):
+			boxes.append(pp)
+	boxes.sort_custom(func(a: PhysicsProp, b2: PhysicsProp) -> bool: return a.global_position.x < b2.global_position.x)
+	var starts: Array[Basis] = []
+	for bx in boxes:
+		starts.append(bx.global_basis)
+	boxes[0].freeze = false
+	boxes[0].apply_impulse(Vector3(6, 0, 0) * boxes[0].mass, Vector3(0, 3, 0))
+	await frames(120)
+	var tipped := 0
+	for i in boxes.size():
+		if boxes[i].global_basis.y.dot(starts[i].y) < 0.8 or boxes[i].global_position.y < 40.0:
+			tipped += 1
+	check(tipped >= 2, "a pushed cereal box knocks over the next one (%d tipped)" % tipped)
+
+	# Prop budget: far-away awake props get frozen.
+	p.global_position = Vector3(50, 0.8, 34)
+	for n in get_tree().get_nodes_in_group(Phys.GROUP_PROP):
+		var pp2 := n as PhysicsProp
+		if lvl.is_ancestor_of(pp2):
+			pp2.freeze = false
+			pp2.sleeping = false
+			pp2.apply_central_impulse(Vector3.UP * 0.01)
+	await frames(40)
+	var awake := 0
+	for n in get_tree().get_nodes_in_group(Phys.GROUP_PROP):
+		var pp3 := n as PhysicsProp
+		if lvl.is_ancestor_of(pp3) and not pp3.freeze and not pp3.sleeping:
+			awake += 1
+	check(awake <= Level.PROP_AWAKE_CAP, "no more than %d props simulate at once (%d awake)" % [Level.PROP_AWAKE_CAP, awake])
+	await unload(lvl)
+
+	# Secret routes: every passage leads somewhere solid; each bug finds a way to the golden crumb.
+	for level in GameManager.LEVEL_IDS:
+		for bug in GameManager.BUG_IDS:
+			lvl = await load_level(level, bug)
+			await frames(5)
+			var gold: Crumb = null
+			for c in get_tree().get_nodes_in_group(Phys.GROUP_CRUMB):
+				if lvl.is_ancestor_of(c) and (c as Crumb).golden:
+					gold = c
+			var route_ok := false
+			for psg in lvl.find_children("*", "Area3D", true, false):
+				var passage := psg as Passage
+				if passage == null or not passage.can_interact(lvl.player) or passage.allowed_bugs.is_empty():
+					continue
+				lvl.player.teleport_to(Transform3D(Basis.IDENTITY, passage.global_position))
+				await frames(4)
+				lvl.player._do_interact()
+				await frames(15)
+				var pos := lvl.player.global_position
+				if pos.distance_to(gold.global_position) < 15.0 and pos.y > -2.0:
+					route_ok = true
+			check(route_ok, "%s/%s: a secret route leads to the golden crumb" % [level, bug])
+			await unload(lvl)
+
+	# Living room: the fan blows a flying fly; the cat knocks the mug off the side table.
+	lvl = await load_level(&"living_room", &"fly")
+	var f := lvl.player as Fly
+	HouseClock.set_hour(7.2)
+	f.teleport_to(Transform3D(Basis.IDENTITY, Vector3(35, 15, 18)))
+	f.take_off()
+	await frames(20)
+	check(f.external_velocity.x < -2.0, "the fan pushes a flying fly (wind %.1f)" % f.external_velocity.x)
+	var cat := first_in_group(Phys.GROUP_PET, lvl) as Pet
+	var lmug: PhysicsProp = null
+	for n in get_tree().get_nodes_in_group(Phys.GROUP_PROP):
+		if lvl.is_ancestor_of(n) and (n as PhysicsProp).mass > 2.0:
+			lmug = n
+	var mug_y := lmug.global_position.y
+	cat.global_position = Vector3(50, 0.5, -18)
+	cat.force_alert(AlertState.SEARCHING, Vector3(48, 25.5, -33))
+	await frames(360)
+	check(lmug.global_position.y < mug_y - 5.0, "the cat leaps onto the side table and knocks the mug off")
+	await unload(lvl)
+
+	# Backyard: fly paper, sprinklers, and the exterminator's fog.
+	lvl = await load_level(&"backyard", &"fly")
+	f = lvl.player as Fly
+	f.teleport_to(Transform3D(Basis.IDENTITY, Vector3(15, 25, -45)))
+	f.take_off()
+	await frames(60)
+	check(f.stuck_time > 0.0 or not f.flying, "fly paper catches a flying fly")
+	await unload(lvl)
+	lvl = await load_level(&"backyard", &"cockroach")
+	p = lvl.player
+	HouseClock.set_hour(7.2)
+	for z in range(10):
+		p.global_position = Vector3(18 + z, 0.8, 25)
+		await frames(3)
+	check(PerceptionSystem.scent.strongest_near(Vector3(22, 0.8, 25), 6.0) < 0, "the sprinkler washes away your scent")
+	var fog := lvl.find_child("FogFront", true, false) as FogFront
+	fog.start()
+	p.global_position = Vector3(0, 0.8, -59)
+	var h0 := p.hits_left
+	await frames(240)
+	check(p.hits_left < h0, "caught behind the exterminator's fog, the bug takes a hit")
+	await unload(lvl)

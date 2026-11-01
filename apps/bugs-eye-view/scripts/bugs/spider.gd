@@ -173,9 +173,9 @@ func _orient_visual(delta: float) -> void:
 	var n := surface_normal
 	var f := facing - n * facing.dot(n)
 	if f.length_squared() < 0.001:
-		f = (Vector3.FORWARD - n * n.z)
+		f = Vector3.FORWARD - n * n.dot(Vector3.FORWARD)
 		if f.length_squared() < 0.001:
-			f = Vector3.RIGHT
+			f = Vector3.RIGHT - n * n.dot(Vector3.RIGHT)
 	var target := Basis.looking_at(f.normalized(), n)
 	var cur := visual.global_basis.orthonormalized()
 	var q := Quaternion(cur).slerp(Quaternion(target), clampf(14.0 * delta, 0.0, 1.0))

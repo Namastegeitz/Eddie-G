@@ -58,8 +58,14 @@ func _on_body_entered(body: Node) -> void:
 	PerceptionSystem.emit_world_noise(global_position, noise_on_impact)
 	if _touched_by_player > 0.0 and Level.current:
 		Level.current.note_lure_used()
-	if stuns_threats and body is Threat:
-		(body as Threat).stun()
+	if not stuns_threats:
+		return
+	# A human's feet are separate bodies that point back at their owner.
+	var t := body as Threat
+	if t == null and body.has_meta(&"threat"):
+		t = body.get_meta(&"threat") as Threat
+	if t:
+		t.stun()
 
 
 ## Called by a FootHazard that lands on this prop.

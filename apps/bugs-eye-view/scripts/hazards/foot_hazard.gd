@@ -30,6 +30,10 @@ func _setup() -> void:
 	if _body:
 		_body.collision_layer = Phys.WORLD
 		_body.collision_mask = 0
+		# The foot node (our parent) is what moves. Physics-synced animatable
+		# bodies only follow their own local transform, so they would stay
+		# behind at the spawn point; follow the global transform instead.
+		_body.sync_to_physics = false
 		_body.set_meta(&"surface", &"cloth")
 
 

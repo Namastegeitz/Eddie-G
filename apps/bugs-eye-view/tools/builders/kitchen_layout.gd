@@ -29,7 +29,7 @@ static func build(tree: SceneTree) -> void:
 	g.prop("pea", Vector3(-22, 38.6, -20.2))
 	g.prop("bottle_cap", Vector3(-50, 38.3, -20.8))
 	for i in 3:
-		g.prop("cereal_box", Vector3(-14 + i * 4.0, 42.6, -26), Vector3(0, 0, 0))
+		g.prop("cereal_box", Vector3(-14 + i * 4.0, 42.6, -26), Vector3(0, PI * 0.5, 0))
 	g.lure("Spoon", LureProp.Kind.SPOON, Vector3(-46, 38.3, -27), Vector3(1.2, 0.4, 7), "metal", 2.6)
 
 	# --- Stove with a hanging pan, and a metal pot on the floor ---

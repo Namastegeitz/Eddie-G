@@ -6,7 +6,7 @@ extends Node3D
 @export var travel: float = 120.0
 @export var duration: float = 70.0
 @export var width: float = 200.0
-@export var exposure_rate: float = 0.9
+@export var exposure_rate: float = 1.6
 
 var running := false
 var _t := 0.0
