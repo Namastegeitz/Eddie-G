@@ -1,0 +1,53 @@
+# Template: build Bug's-Eye View for iOS on Codemagic's cloud Macs (no Mac
+# needed). Not run yet - copy to the repository root as codemagic.yaml, then
+# set up in Codemagic:
+#   - Team integration "App Store Connect" (API key) named below.
+#   - Environment group "ios_signing" with APPLE_TEAM_ID (10 characters).
+#   - Code signing: automatic, bundle id com.aethertek.bugseyeview.
+# Paths assume the repository layout of this repo (game in apps/bugs-eye-view).
+workflows:
+  ios-testflight:
+    name: Bug's-Eye View iOS -> TestFlight
+    instance_type: mac_mini_m2
+    max_build_duration: 60
+    integrations:
+      app_store_connect: Codemagic API Key
+    environment:
+      groups:
+        - ios_signing
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: com.aethertek.bugseyeview
+      vars:
+        GODOT_VERSION: "4.7.2"
+        GAME_DIR: apps/bugs-eye-view
+    scripts:
+      - name: Install Godot and export templates
+        script: |
+          curl -sSL -o godot.zip "https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_macos.universal.zip"
+          unzip -q godot.zip
+          curl -sSL -o templates.tpz "https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_export_templates.tpz"
+          mkdir -p "$HOME/Library/Application Support/Godot/export_templates/${GODOT_VERSION}.stable"
+          unzip -q templates.tpz -d tpl
+          mv tpl/templates/* "$HOME/Library/Application Support/Godot/export_templates/${GODOT_VERSION}.stable/"
+      - name: Export the Xcode project
+        script: |
+          GODOT="$PWD/Godot.app/Contents/MacOS/Godot"
+          cd "$GAME_DIR"
+          sed -i '' "s|application/app_store_team_id=\"ABCDE12345\"|application/app_store_team_id=\"$APPLE_TEAM_ID\"|" export_presets.cfg
+          mkdir -p build/ios
+          "$GODOT" --headless --path . --import
+          "$GODOT" --headless --path . --export-release "iOS" build/ios/BugsEyeView.ipa
+      - name: Signing
+        script: xcode-project use-profiles
+      - name: Build the .ipa
+        script: |
+          xcode-project build-ipa \
+            --project "$GAME_DIR/build/ios/BugsEyeView.xcodeproj" \
+            --scheme "BugsEyeView"
+    artifacts:
+      - build/ios/ipa/*.ipa
+    publishing:
+      app_store_connect:
+        auth: integration
+        submit_to_testflight: true

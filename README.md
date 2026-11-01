@@ -12,6 +12,12 @@ prompts/
 STATUS.md        running log of what's done and what's next
 ```
 
+## Apps
+
+| App | What it is | Status |
+|---|---|---|
+| [Bug's-Eye View](apps/bugs-eye-view/) | Action-stealth survival game (Godot 4.7) as a tiny bug in a giant house. Android, iOS, Windows, macOS, Linux, Web. | All 6 phases built and tested; placeholder art. |
+
 ## Working across devices
 
 Work happens on the `claude/nifty-lamport-bfm2ub` branch and is pushed after

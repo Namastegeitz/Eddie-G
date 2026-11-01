@@ -1,0 +1,163 @@
+<title>Bug's-Eye View</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+/* One-screen game: the canvas fills the safe area; gold-on-black, single dark look by choice. */
+:root {
+  --ink: #0e0c0a;
+  --panel: #1a1611;
+  --gold: #f5c246;
+  --gold-dim: #9a7a2e;
+  --text: #f4eee0;
+  --muted: #a89f8e;
+  --danger: #e8705a;
+  --font-display: "Archivo Black", "Arial Black", Impact, sans-serif;
+  --font-body: "Archivo", "Helvetica Neue", Arial, sans-serif;
+  color-scheme: dark;
+}
+html, body { height: 100%; }
+body {
+  margin: 0;
+  background: var(--ink);
+  color: var(--text);
+  font-family: var(--font-body);
+  overflow: hidden;
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+#stage {
+  position: fixed;
+  top: env(safe-area-inset-top, 0px);
+  bottom: env(safe-area-inset-bottom, 0px);
+  left: env(safe-area-inset-left, 0px);
+  right: env(safe-area-inset-right, 0px);
+  background: var(--ink);
+}
+#canvas { display: block; width: 100%; height: 100%; }
+#canvas:focus { outline: none; }
+#status {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  padding-block: 24px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  background: var(--ink);
+  text-align: center;
+}
+#status img { width: min(46vmin, 260px); height: auto; max-width: 100%; }
+#status h1 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(28px, 7vmin, 46px);
+  letter-spacing: 0.02em;
+  color: var(--gold);
+  text-wrap: balance;
+}
+#status p { margin: 0; max-width: 34ch; color: var(--muted); font-size: 15px; line-height: 1.45; }
+.meter {
+  width: min(320px, 80%);
+  height: 8px;
+  border-radius: 4px;
+  background: var(--panel);
+  outline: 1px solid var(--gold-dim);
+  overflow: hidden;
+}
+.meter span { display: block; height: 100%; width: 0; background: var(--gold); transition: width 0.2s ease-out; }
+#meter-label { font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold-dim); font-variant-numeric: tabular-nums; }
+#notice { display: none; max-width: 40ch; padding: 14px 16px; border: 1px solid var(--danger); border-radius: 10px; color: var(--text); font-size: 14px; line-height: 1.45; }
+@media (prefers-reduced-motion: reduce) { .meter span { transition: none; } }
+</style>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Archivo:wght@400;600&display=swap">
+
+<div id="stage">
+  <canvas id="canvas" tabindex="0">Your browser does not support the canvas tag.</canvas>
+  <div id="status">
+    <img src="index.png" alt="">
+    <h1>Bug's-Eye View</h1>
+    <p>Sneak, scavenge and survive the house as a tiny bug. Stand still to blend in; shadows hide you; noisy floors give you away.</p>
+    <div class="meter" aria-hidden="true"><span id="meter-fill"></span></div>
+    <div id="meter-label">Loading engine 0 MB / 40 MB</div>
+    <div id="notice" role="alert"></div>
+  </div>
+</div>
+
+<script>
+// The engine (index.wasm, ~40 MB) is published in three parts to fit the
+// hosting limit per file, and the game data (index.pck) under a binary name
+// the host serves; this maps both back before Godot asks for them.
+(function () {
+  const PARTS = {
+    "index.wasm": ["index.part0.wasm", "index.part1.wasm", "index.part2.wasm"],
+    "index.pck": ["index-gamedata.wasm"],
+  };
+  const realFetch = window.fetch.bind(window);
+  window.fetch = async function (input, init) {
+    const url = typeof input === "string" ? input : (input && input.url) || "";
+    const name = url.split("/").pop().split("?")[0];
+    if (!PARTS[name]) return realFetch(input, init);
+    const bufs = [];
+    for (const part of PARTS[name]) {
+      const r = await realFetch(part);
+      if (!r.ok) return r;
+      bufs.push(await r.arrayBuffer());
+    }
+    const type = name.endsWith(".wasm") ? "application/wasm" : "application/octet-stream";
+    const blob = new Blob(bufs, { type: type });
+    return new Response(blob, { status: 200, headers: { "Content-Type": type, "Content-Length": String(blob.size) } });
+  };
+
+  // Keep the canvas backing size matched to its box (resize policy "none"),
+  // so the game stays inside the safe area on phones.
+  const canvas = document.getElementById("canvas");
+  function fit() {
+    const r = canvas.getBoundingClientRect();
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const w = Math.max(1, Math.round(r.width * dpr));
+    const h = Math.max(1, Math.round(r.height * dpr));
+    if (canvas.width !== w || canvas.height !== h) { canvas.width = w; canvas.height = h; }
+  }
+  fit();
+  window.addEventListener("resize", fit);
+  if (window.ResizeObserver) new ResizeObserver(fit).observe(canvas);
+})();
+</script>
+<script src="index.js"></script>
+<script>
+(function () {
+  const GODOT_CONFIG = {"args":[],"canvasResizePolicy":0,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":false,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":1112336,"index.wasm":39514754},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4};
+  const status = document.getElementById("status");
+  const fill = document.getElementById("meter-fill");
+  const label = document.getElementById("meter-label");
+  const notice = document.getElementById("notice");
+
+  function fail(err) {
+    console.error(err);
+    notice.textContent = "The game engine could not start in this viewer (" +
+      (err && err.message ? err.message : String(err)) +
+      "). Open this page in Safari or Chrome, or install the Android build.";
+    notice.style.display = "block";
+    label.textContent = "Stopped";
+  }
+
+  let engine;
+  try {
+    engine = new Engine(GODOT_CONFIG);
+  } catch (e) { fail(e); return; }
+  const missing = Engine.getMissingFeatures({ threads: false });
+  if (missing.length) { fail(new Error("missing browser features: " + missing.join(", "))); return; }
+  engine.startGame({
+    onProgress: function (current, total) {
+      if (current > 0 && total > 0) {
+        fill.style.width = (100 * current / total).toFixed(1) + "%";
+        label.textContent = "Loading engine " + Math.round(current / 1048576) + " MB / " + Math.round(total / 1048576) + " MB";
+      }
+    },
+  }).then(function () { status.remove(); }, fail);
+})();
+</script>
