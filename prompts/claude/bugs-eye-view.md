@@ -1,5 +1,7 @@
 # BUILD: "Bug's-Eye View" — a cross-platform action-stealth survival game
 
+<!-- v2: adds the stealth & interactivity add-ons and a sixth phase. -->
+
 ## Mission
 Build a complete, playable action-stealth survival game called "Bug's-Eye View"
 in Godot 4.x. The player is a tiny household bug surviving a busy human home —
@@ -36,12 +38,13 @@ fix, repeat.
     /scripts/       (.gd, organized by system)
     /resources/     (bug stats, level configs as .tres)
     /assets/        (placeholder meshes/materials/sfx)
-    /autoload/      (singletons: GameManager, InputRouter, SaveSystem, Audio)
+    /autoload/      (singletons: GameManager, InputRouter, SaveSystem, Audio,
+                     PerceptionSystem, HouseClock)
     Initialize a git repo. Commit after every phase with a clear message.
 
 ## Core architecture
 - InputRouter (autoload): ONE abstraction that emits game actions
-  (move_vector, jump, primary, secondary, interact, dodge). Touch controls,
+  (move_vector, jump, primary, secondary, interact, dodge, sense). Touch controls,
   keyboard/mouse, and gamepad all feed into it. Gameplay code NEVER reads raw
   input — only these actions. This is what makes cross-platform clean.
 - GameManager (autoload): game states (menu, playing, paused, caught, win),
@@ -50,6 +53,12 @@ fix, repeat.
   settings. Use user:// so it works on every platform.
 - AudioManager (autoload): sfx + music buses, master/sfx/music volume in
   settings.
+- PerceptionSystem (autoload): the single source of truth for how detectable
+  the player is right now (visibility, noise events, scent trail). Threats read
+  the player only through this system plus their own senses. See "Stealth &
+  interactivity add-ons".
+- HouseClock (autoload): runs the compressed in-game day and fires each level's
+  routine events. See "Living house".
 
 ## Gameplay — the three bug classes
 Each is a selectable character with its own scene, stats resource, and movement
@@ -85,25 +94,124 @@ Scale everything so the bug feels tiny — a fork is a hazard, a table is terrai
 - Build a reusable Threat base class; each hazard telegraphs clearly so deaths
   feel fair.
 
+## Stealth & interactivity add-ons
+Stealth is the heart of the game. Most threats should be avoidable by staying
+unseen, unheard and unsmelled, and being spotted should ESCALATE, not instantly
+kill. Every tuning value below lives in a .tres resource.
+
+### Perception model (shared by every threat)
+- PerceptionSystem combines three channels:
+  - Visibility (0-1): light level x movement x camouflage.
+  - Noise events: position + loudness; threats in hearing range react.
+  - Scent: a decaying trail the player leaves behind.
+- Every Threat has senses that read those channels: sight cone + line-of-sight
+  raycast, hearing radius, and (for the dog) scent tracking.
+
+### Core stealth systems
+1. LIGHT & SHADOW: authored LightZone volumes (Area3D: shadow / dim / lit /
+   bright) instead of sampling real-time lighting, so it stays cheap on phones.
+   Lamps, the fridge door, curtains and sunbeams toggle or move zones at
+   runtime. HUD shows an eye meter.
+2. NOISE SURFACES: tag surfaces with a NoiseSurface resource. Loud: chip bag,
+   foil, tile, dishes. Quiet: carpet, paper towel, cloth. Player noise = surface
+   x movement (creep < walk < sprint); the fly's buzz scales with airspeed.
+   Ambient noise from the routine (TV, dishwasher, vacuum) masks player noise.
+   HUD shows a noise ring.
+3. ALERT LEVELS + SEARCH: every Threat runs one shared state machine:
+   UNAWARE -> SUSPICIOUS (?) -> SEARCHING -> ALERT (!) -> cools back down.
+   Suspicion fills from perception. SEARCHING goes to the last known position
+   and sweeps nearby. Breaking line of sight and hiding drops them back down.
+   Icons float over threats; off-screen threats get edge-of-screen markers.
+4. DISTRACTIONS & LURES: lure props emit a noise/light event where they land.
+   Knock a pea or bottle cap off a counter edge, run across a phone screen to
+   light it up, or have the spider web-trip a spoon so it clatters. Threats
+   investigate the lure instead of you.
+
+### Advanced stealth plays
+5. FREEZE & BLEND IN: standing still for a short delay drops visibility (no
+   extra button, so it works on touch). On a camo-matching surface it drops
+   further: roach on dark wood or grout, spider in corners or its own web, fly
+   on a dark window frame. Any movement cancels it. The cockroach can also play
+   dead while a SUSPICIOUS threat is close.
+6. SCENT TRAILS: the player drops pooled scent points that decay over time and
+   build up when lingering. The dog follows the trail. Water spills, vinegar and
+   the sink wipe it.
+7. ESCALATION CHAIN: a human who spots you escalates in stages: shout (nearby
+   threats go SUSPICIOUS) -> grab the swatter -> call the pet -> bug-spray area
+   denial. Each stage changes which hazards are active. Staying hidden long
+   enough de-escalates one stage at a time. This is the main source of rising
+   intensity and drives the HUD threat indicator; keep a slow time-based floor.
+8. TURN THREATS ON EACH OTHER: props and hazards can carry a `stuns_threats`
+   flag. Lure the cat onto the counter so it knocks a mug onto the human's foot,
+   lead a swatter strike into a hanging pan so it rebounds, or trip the human
+   with a rolling grape. Stunned threats lose track of you. Award stealth score.
+
+### Living house
+9. DAILY HOUSEHOLD ROUTINE: HouseClock runs a compressed day per run (morning
+   rush, afternoon nap, cleaning, lights-out). Each level has a RoutineSchedule
+   .tres of timed events: which threats are active, light states, ambient noise.
+   The same room plays differently by time of day; once unlocked, level select
+   lets the player choose a start time.
+10. PHYSICS & CHAIN REACTIONS: pushable/knockable props (crumbs, grapes, a row
+    of cereal boxes, a spoon catapult) as pooled RigidBody3D with a capped
+    active count, sleeping when idle. Props can block a pet's path, form ramps,
+    or start a chain that lands on a threat.
+11. EXTRA HAZARDS: robot vacuum (patrol + suction pull), bug-spray clouds
+    (spreading, timed area denial), sticky traps (slow, then stuck), desk fan
+    (wind volume that pushes the fly), sink drain (pull). All extend the
+    Threat/Hazard base and telegraph clearly.
+12. SECRET ROUTES: vents, wall cracks, under-sink pipes and the gap behind the
+    fridge as shortcut passages. Each Passage lists which bugs can use it (roach:
+    cracks and low gaps; spider: high vents and ceiling corners; fly: open vents
+    and window gaps). Each level hides one route to a bonus area with a Golden
+    Crumb.
+
+### Real & fun
+13. TRUE BUG SENSES, on the `sense` action, each based on the real animal:
+    - Fly: compound-eye perception. When a strike is about to land nearby, time
+      slows briefly for a bullet-time dodge window, limited by a recharging
+      meter. (Real flies process motion far faster than humans.)
+    - Spider: vibration sense. While on a surface or web, footsteps and moving
+      threats show as ripples through walls and floors.
+    - Cockroach: antennae smell points toward the nearest crumb. Runs faster in
+      darkness and gets a scatter burst when a light switches on.
+14. COLONY HOME BASE: a nest hub scene between levels. Deposit crumbs to feed
+    the colony; it grows and unlocks upgrades (faster legs, longer web, quieter
+    wings, longer camo) defined as UpgradeDef .tres. Saved via SaveSystem.
+15. CHALLENGES & BOSS CHASES: per-level badges: Ghost (never reached ALERT),
+    Speedrun (under par time), Golden Crumb (found the secret route). One boss
+    chase per level: Kitchen "Cleaning Day" (robot vacuum + spray), Living Room
+    "The Cat" (multi-stage hunt), Backyard "The Exterminator" (fog spreading
+    room by room).
+16. PHONE FEEL - HAPTICS & SOUND: Input.vibrate_handheld scaled by distance for
+    footsteps, stomps and near misses, with a settings toggle (add Android's
+    VIBRATE permission only). Gamepad rumble and screen shake carry the same
+    cues on desktop. Giant-scale audio: human voices through a low-pass
+    "muffled" bus, fridge hum and TV mumble as positional 3D audio, and a
+    heartbeat layer that rises with alert level.
+
 ## Objectives, game loop & progression
 - Per level: collect N crumbs + reach the goal/hiding spot without being caught,
   under rising threat intensity (more/faster hazards over time).
-- Scoring: crumbs, time survived, close calls.
+- Scoring: crumbs, time survived, close calls, stealth (never spotted,
+  lures used, threats turned on each other), plus per-level badges.
 - Progression: start with Cockroach unlocked; unlock Fly and Spider via
   progress. Save it.
 - Lose = caught/swatted/stomped (respect Cockroach's extra-hit rule).
 
 ## UI / menus / HUD
 Main menu, bug select (locked/unlocked states), level select, in-game HUD
-(health/lives, crumbs, objective, threat indicator), pause, win/lose screens,
+(health/lives, crumbs, objective, threat indicator, eye meter, noise ring,
+alert icons, off-screen threat markers, sense meter), pause, win/lose screens,
 settings (volume, controls, quality). HUD and menus must scale and be
 touch-usable on phone and mouse/gamepad-usable on desktop.
 
 ## Controls
 - Mobile: on-screen virtual joystick (move) + context action buttons (primary /
   secondary / dodge / interact). Fly = drag-to-steer feel; Spider = tap target
-  to web/zip; Cockroach = hold to squeeze. Touch controls auto-show on
-  touchscreens, hidden on desktop.
+  to web/zip; Cockroach = hold to squeeze. A `sense` button per bug; freeze
+  is just letting go of the stick. Touch controls auto-show on touchscreens,
+  hidden on desktop.
 - Desktop: WASD/arrows + mouse, full gamepad support. Rebindable where feasible.
 - All of it routes through InputRouter actions.
 
@@ -119,6 +227,8 @@ touch-usable on phone and mouse/gamepad-usable on desktop.
   export (Android SDK + build tools; for iOS: a Mac, Xcode, Apple Developer
   account + signing). Don't block the build on these — set presets up so I can
   export once I supply them.
+- I work on Windows with no Mac. In the handoff doc, include a cloud-Mac route
+  for iOS builds (e.g. Codemagic) alongside the local-Mac route.
 
 ## Art & audio
 Generate/boot with placeholders only: primitive meshes, flat colored materials,
@@ -134,15 +244,25 @@ clean references so I can replace it without touching gameplay code.
   export per platform.
 
 ## Phased milestones — STOP after each and tell me how to test it
-Phase 1 — Vertical slice (prove it works end to end):
-  Cockroach only, Kitchen only, foot + swatter hazards, crumbs + goal, full
-  InputRouter with touch AND keyboard, runs on desktop, exports to Android .apk.
-Phase 2 — Full bug roster: add Fly and Spider with their movement + abilities,
-  bug select + unlock/save.
-Phase 3 — Content: Living Room + Backyard levels, pets with vision/chase AI,
-  newspaper hazard, threat escalation, scoring.
-Phase 4 — Shell & UX: all menus, settings, HUD polish, pause/win/lose, audio.
-Phase 5 — Ship prep: icons/splash, all export presets configured and test-built,
+Phase 1 — Vertical slice + stealth foundation (prove it works end to end):
+  Cockroach only, Kitchen only. Foot + swatter hazards driven by a human
+  presence that uses alert levels + search. Crumbs + goal. Full InputRouter
+  with touch AND keyboard. PerceptionSystem with light & shadow zones, noise
+  surfaces, and freeze & blend in. Cockroach senses (smell + light aversion).
+  Footstep haptics. Runs on desktop, exports to Android .apk.
+Phase 2 — Full bug roster: add Fly and Spider with their movement, abilities
+  and senses (bullet-time, vibration), per-bug camo, fly buzz noise, spider
+  web-trip lure, bug select + unlock/save.
+Phase 3 — Content & AI: Living Room + Backyard levels, pets with sight, hearing
+  and scent + NavigationAgent chase, scent trails, distractions & lures,
+  escalation chain, newspaper hazard, threat escalation, scoring + badges.
+Phase 4 — Living house: HouseClock + routines, physics props and chain
+  reactions, turning threats on each other, extra hazards, secret routes +
+  Golden Crumbs, the three boss chases.
+Phase 5 — Shell & UX: all menus, settings (incl. haptics toggle), HUD polish
+  (eye meter, noise ring, alert icons, off-screen markers), pause/win/lose,
+  colony home base, full audio pass.
+Phase 6 — Ship prep: icons/splash, all export presets configured and test-built,
   performance pass for mobile, RUN.md + store-export checklist.
 
 ## Coding standards
