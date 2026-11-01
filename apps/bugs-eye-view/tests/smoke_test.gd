@@ -158,6 +158,9 @@ func _test_level_matrix() -> void:
 				check(threats > 0, "%s: threats registered (%d)" % [level, threats])
 				var nav := lvl.find_child("NavRegion", true, false) as NavigationRegion3D
 				check(nav and nav.navigation_mesh.get_polygon_count() > 50, "%s: navmesh baked" % level)
+				var bs := lvl.batch_stats
+				check(int(bs.get("merged", 0)) >= 40 and int(bs.get("batches", 999)) * 2 < int(bs.get("merged", 0)),
+					"%s: static meshes batched (%d meshes -> %d draws)" % [level, int(bs.get("merged", 0)), int(bs.get("batches", 0))])
 			await unload(lvl)
 	check(space_ok, "every crumb rests on a surface")
 

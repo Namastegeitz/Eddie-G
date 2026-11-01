@@ -38,6 +38,8 @@ var swatter_pool: NodePool
 var spray_pool: NodePool
 var ripple_pool: NodePool
 var finished := false
+## {merged, batches} from the static mesh batcher (draw-call reduction).
+var batch_stats: Dictionary = {}
 var _elapsed := 0.0
 var _sun: DirectionalLight3D
 var _env: WorldEnvironment
@@ -60,6 +62,7 @@ func _ready() -> void:
 	swatter_pool = NodePool.from_scene(load(SWATTER_SCENE), pools, 2)
 	spray_pool = NodePool.from_scene(load(SPRAY_SCENE), pools, 3)
 	ripple_pool = NodePool.from_scene(load(RIPPLE_SCENE), pools, 8)
+	batch_stats = StaticBatcher.batch(self)
 	_spawn_player()
 	_spawn_camera()
 	PerceptionSystem.begin_level(player, 0.7, config.ambient_noise)
@@ -249,7 +252,7 @@ func _update_ambient() -> void:
 		amb = minf(amb, 0.2)
 	PerceptionSystem.ambient_light = amb
 	if _env and _env.environment:
-		_env.environment.ambient_light_energy = lerpf(0.2, 0.75, amb)
+		_env.environment.ambient_light_energy = lerpf(0.15, 0.6, amb)
 		_env.environment.background_color = Color(_bg_base.r, _bg_base.g, _bg_base.b) * lerpf(0.2, 1.0, amb)
 	if _sun:
 		_sun.light_energy = 0.1 + amb * 0.75
