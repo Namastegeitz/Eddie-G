@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="LevelConfig" format=3]
+
+[ext_resource type="Resource" path="res://resources/routines/living_room.tres" id="1_1sf63"]
+[ext_resource type="Script" path="res://scripts/data/level_config.gd" id="2_s3oyq"]
+
+[resource]
+script = ExtResource("2_s3oyq")
+id = &"living_room"
+display_name = "Living Room"
+description = "The TV hides your noise, the rug muffles your steps - and the cat is always watching."
+scene_path = "res://scenes/levels/living_room.tscn"
+order = 1
+crumbs_required = 9
+par_time = 220.0
+unlock_after = &"kitchen"
+unlocks_bug = &"spider"
+boss_name = "The Cat"
+routine = ExtResource("1_1sf63")
+ambient_light_by_period = {
+&"afternoon": 0.65,
+&"evening": 0.45,
+&"morning": 0.6,
+&"night": 0.25
+}
+ambient_noise = 0.05
+time_slots = PackedStringArray("morning", "afternoon", "night")

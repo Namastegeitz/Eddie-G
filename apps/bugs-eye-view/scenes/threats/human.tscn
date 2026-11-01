@@ -1,0 +1,85 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/threats/human.gd" id="1_pu1kt"]
+[ext_resource type="Resource" path="res://resources/threats/human.tres" id="2_u56bm"]
+[ext_resource type="Material" path="res://assets/materials/jeans.tres" id="3_sbe5c"]
+[ext_resource type="Material" path="res://assets/materials/shirt.tres" id="4_cwirc"]
+[ext_resource type="Material" path="res://assets/materials/skin.tres" id="5_xht7s"]
+[ext_resource type="PackedScene" path="res://scenes/hazards/foot.tscn" id="6_qlyt5"]
+[ext_resource type="Script" path="res://scripts/hazards/foot_hazard.gd" id="7_fs5eg"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_smbt1"]
+radius = 6.0
+height = 34.0
+
+[sub_resource type="BoxMesh" id="BoxMesh_7765l"]
+size = Vector3(13, 9, 7)
+
+[sub_resource type="BoxMesh" id="BoxMesh_tat5n"]
+size = Vector3(15, 20, 8)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_5wqfw"]
+top_radius = 1.6
+bottom_radius = 1.6
+height = 20.0
+radial_segments = 16
+rings = 1
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_74lbq"]
+top_radius = 1.6
+bottom_radius = 1.6
+height = 20.0
+radial_segments = 16
+rings = 1
+
+[sub_resource type="SphereMesh" id="SphereMesh_2n7gj"]
+radius = 5.0
+height = 10.0
+radial_segments = 16
+rings = 8
+
+[node name="Human" type="CharacterBody3D" unique_id=843249731]
+script = ExtResource("1_pu1kt")
+route = PackedVector3Array()
+config = ExtResource("2_u56bm")
+active_events = PackedStringArray()
+icon_height = 78.0
+
+[node name="Shape" type="CollisionShape3D" parent="." unique_id=2022287682]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 55, 0)
+shape = SubResource("CapsuleShape3D_smbt1")
+
+[node name="Torso" type="Node3D" parent="." unique_id=1529756029]
+
+[node name="Hips" type="MeshInstance3D" parent="Torso" unique_id=1381271115]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 39, 2)
+material_override = ExtResource("3_sbe5c")
+mesh = SubResource("BoxMesh_7765l")
+
+[node name="Chest" type="MeshInstance3D" parent="Torso" unique_id=1556397651]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 53, 2)
+material_override = ExtResource("4_cwirc")
+mesh = SubResource("BoxMesh_tat5n")
+
+[node name="ArmL" type="MeshInstance3D" parent="Torso" unique_id=1701165698]
+transform = Transform3D(0.99280864, -0.119712204, 0, 0.119712204, 0.99280864, 0, 0, 0, 1, -9.5, 52, 2)
+material_override = ExtResource("5_xht7s")
+mesh = SubResource("CylinderMesh_5wqfw")
+
+[node name="ArmR" type="MeshInstance3D" parent="Torso" unique_id=589680782]
+transform = Transform3D(0.99280864, 0.119712204, 0, -0.119712204, 0.99280864, 0, 0, 0, 1, 9.5, 52, 2)
+material_override = ExtResource("5_xht7s")
+mesh = SubResource("CylinderMesh_74lbq")
+
+[node name="Head" type="MeshInstance3D" parent="Torso" unique_id=1880382968]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 68, 2)
+material_override = ExtResource("5_xht7s")
+mesh = SubResource("SphereMesh_2n7gj")
+
+[node name="LeftFoot" type="Node3D" parent="." unique_id=1244993967 instance=ExtResource("6_qlyt5")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.7, 0, 0)
+script = ExtResource("7_fs5eg")
+
+[node name="RightFoot" type="Node3D" parent="." unique_id=1627543837 instance=ExtResource("6_qlyt5")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.7, 0, 0)
+script = ExtResource("7_fs5eg")

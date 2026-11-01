@@ -1,0 +1,7 @@
+[gd_resource type="Resource" script_class="StealthConfig" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/stealth_config.gd" id="1_176kc"]
+
+[resource]
+script = ExtResource("1_176kc")
+stage_names = PackedStringArray("Calm", "Shout", "Swatter", "Pet called", "Bug spray")

@@ -1,0 +1,29 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/stealth/physics_prop.gd" id="1_fhb8w"]
+[ext_resource type="Material" path="res://assets/materials/metal.tres" id="2_r70py"]
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_1dlkf"]
+height = 0.4
+radius = 1.0
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_4bfnq"]
+top_radius = 1.0
+bottom_radius = 1.0
+height = 0.4
+radial_segments = 16
+rings = 1
+
+[node name="BottleCap" type="RigidBody3D" unique_id=1215851709]
+mass = 0.2
+script = ExtResource("1_fhb8w")
+noise_on_impact = 2.2
+
+[node name="Shape" type="CollisionShape3D" parent="." unique_id=691311597]
+shape = SubResource("CylinderShape3D_1dlkf")
+
+[node name="Visual" type="Node3D" parent="." unique_id=758910855]
+
+[node name="Mesh" type="MeshInstance3D" parent="Visual" unique_id=537403519]
+material_override = ExtResource("2_r70py")
+mesh = SubResource("CylinderMesh_4bfnq")

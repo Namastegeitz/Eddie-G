@@ -1,0 +1,59 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/hazards/swatter.gd" id="1_ilo8t"]
+[ext_resource type="Material" path="res://assets/materials/swatter.tres" id="2_aclsy"]
+[ext_resource type="Material" path="res://assets/materials/dark_metal.tres" id="3_yy2at"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_2g2b1"]
+size = Vector3(7, 0.35, 7.5)
+
+[sub_resource type="BoxMesh" id="BoxMesh_340jc"]
+size = Vector3(5.6, 0.4, 0.25)
+
+[sub_resource type="BoxMesh" id="BoxMesh_hwtkx"]
+size = Vector3(5.6, 0.4, 0.25)
+
+[sub_resource type="BoxMesh" id="BoxMesh_h3ya3"]
+size = Vector3(5.6, 0.4, 0.25)
+
+[sub_resource type="BoxMesh" id="BoxMesh_ful1k"]
+size = Vector3(5.6, 0.4, 0.25)
+
+[sub_resource type="BoxMesh" id="BoxMesh_djaap"]
+size = Vector3(0.7, 0.5, 22)
+
+[node name="Swatter" type="Node3D" unique_id=387754978]
+script = ExtResource("1_ilo8t")
+impact_radius = 3.2
+
+[node name="Paddle" type="Node3D" parent="." unique_id=1785559214]
+
+[node name="Head" type="MeshInstance3D" parent="Paddle" unique_id=705278834]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.2, 0)
+material_override = ExtResource("2_aclsy")
+mesh = SubResource("BoxMesh_2g2b1")
+
+[node name="Slot" type="MeshInstance3D" parent="Paddle" unique_id=881320004]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.22, -2.4)
+material_override = ExtResource("3_yy2at")
+mesh = SubResource("BoxMesh_340jc")
+
+[node name="@MeshInstance3D@58" type="MeshInstance3D" parent="Paddle" unique_id=2059645699]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.22, -0.8)
+material_override = ExtResource("3_yy2at")
+mesh = SubResource("BoxMesh_hwtkx")
+
+[node name="@MeshInstance3D@59" type="MeshInstance3D" parent="Paddle" unique_id=838505254]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.22, 0.8)
+material_override = ExtResource("3_yy2at")
+mesh = SubResource("BoxMesh_h3ya3")
+
+[node name="@MeshInstance3D@60" type="MeshInstance3D" parent="Paddle" unique_id=1348356014]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.22, 2.4)
+material_override = ExtResource("3_yy2at")
+mesh = SubResource("BoxMesh_ful1k")
+
+[node name="Handle" type="MeshInstance3D" parent="Paddle" unique_id=918140433]
+transform = Transform3D(1, 0, 0, 0, 0.94923544, -0.31456655, 0, 0.31456655, 0.94923544, 0, 3.5, 14.5)
+material_override = ExtResource("2_aclsy")
+mesh = SubResource("BoxMesh_djaap")

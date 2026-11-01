@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="UpgradeDef" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/upgrade_def.gd" id="1_sxrlt"]
+
+[resource]
+script = ExtResource("1_sxrlt")
+id = &"strong_wings"
+display_name = "Strong Wings"
+description = "35% more flight stamina."
+cost = 30
+required_colony = 4
+applies_to = PackedStringArray("fly")
+modifiers = {
+"stamina_max": 1.35
+}

@@ -1,0 +1,101 @@
+[gd_resource type="Resource" script_class="RoutineSchedule" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/routine_event.gd" id="1_0k7i0"]
+[ext_resource type="Script" path="res://scripts/data/routine_schedule.gd" id="2_spc56"]
+
+[sub_resource type="Resource" id="Resource_0k7i0"]
+script = ExtResource("1_0k7i0")
+id = &"tv_on"
+label = "TV on"
+
+[sub_resource type="Resource" id="Resource_spc56"]
+script = ExtResource("1_0k7i0")
+id = &"curtains_open"
+start_hour = 7.5
+end_hour = 12.0
+
+[sub_resource type="Resource" id="Resource_xl5b0"]
+script = ExtResource("1_0k7i0")
+id = &"fan_on"
+label = "Fan on"
+end_hour = 12.0
+
+[sub_resource type="Resource" id="Resource_2e05c"]
+script = ExtResource("1_0k7i0")
+id = &"reading"
+label = "Reading the paper"
+start_hour = 8.0
+end_hour = 8.8
+
+[sub_resource type="Resource" id="Resource_c1noj"]
+script = ExtResource("1_0k7i0")
+id = &"cat_nap"
+label = "Cat napping"
+start_hour = 8.0
+end_hour = 9.0
+
+[sub_resource type="Resource" id="Resource_epldg"]
+script = ExtResource("1_0k7i0")
+id = &"tv_on"
+label = "TV on"
+start_hour = 13.0
+end_hour = 14.0
+
+[sub_resource type="Resource" id="Resource_x0ffq"]
+script = ExtResource("1_0k7i0")
+id = &"cat_nap"
+label = "Cat napping"
+start_hour = 13.0
+end_hour = 13.8
+
+[sub_resource type="Resource" id="Resource_803sx"]
+script = ExtResource("1_0k7i0")
+id = &"reading"
+label = "Reading the paper"
+start_hour = 13.8
+end_hour = 14.6
+
+[sub_resource type="Resource" id="Resource_otq1e"]
+script = ExtResource("1_0k7i0")
+id = &"fan_on"
+label = "Fan on"
+start_hour = 13.0
+end_hour = 17.0
+
+[sub_resource type="Resource" id="Resource_q2hcd"]
+script = ExtResource("1_0k7i0")
+id = &"curtains_open"
+start_hour = 13.0
+end_hour = 17.0
+
+[sub_resource type="Resource" id="Resource_x0ao5"]
+script = ExtResource("1_0k7i0")
+id = &"lamp_on"
+label = "Lamp on"
+start_hour = 21.5
+end_hour = 23.0
+
+[sub_resource type="Resource" id="Resource_lw4pu"]
+script = ExtResource("1_0k7i0")
+id = &"tv_on"
+label = "Late-night TV"
+start_hour = 21.5
+end_hour = 22.5
+
+[sub_resource type="Resource" id="Resource_bn3og"]
+script = ExtResource("1_0k7i0")
+id = &"reading"
+label = "Reading the paper"
+start_hour = 22.5
+end_hour = 23.0
+
+[sub_resource type="Resource" id="Resource_2ki3v"]
+script = ExtResource("1_0k7i0")
+id = &"lights_out"
+label = "Lights out"
+start_hour = 23.0
+end_hour = 6.0
+
+[resource]
+script = ExtResource("2_spc56")
+events = Array[ExtResource("1_0k7i0")]([SubResource("Resource_0k7i0"), SubResource("Resource_spc56"), SubResource("Resource_xl5b0"), SubResource("Resource_2e05c"), SubResource("Resource_c1noj"), SubResource("Resource_epldg"), SubResource("Resource_x0ffq"), SubResource("Resource_803sx"), SubResource("Resource_otq1e"), SubResource("Resource_q2hcd"), SubResource("Resource_x0ao5"), SubResource("Resource_lw4pu"), SubResource("Resource_bn3og"), SubResource("Resource_2ki3v")])

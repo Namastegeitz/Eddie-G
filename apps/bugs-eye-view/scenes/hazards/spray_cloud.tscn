@@ -1,0 +1,18 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/hazards/spray_cloud.gd" id="1_y2rl2"]
+[ext_resource type="Material" path="res://assets/materials/spray.tres" id="2_r20gg"]
+
+[sub_resource type="SphereMesh" id="SphereMesh_ve5br"]
+radius = 1.0
+height = 2.0
+radial_segments = 16
+rings = 8
+
+[node name="SprayCloud" type="Node3D" unique_id=80871684]
+script = ExtResource("1_y2rl2")
+
+[node name="Mesh" type="MeshInstance3D" parent="." unique_id=611565041]
+material_override = ExtResource("2_r20gg")
+cast_shadow = 0
+mesh = SubResource("SphereMesh_ve5br")

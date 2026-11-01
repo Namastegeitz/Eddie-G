@@ -1,0 +1,76 @@
+[gd_resource type="Resource" script_class="RoutineSchedule" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/routine_event.gd" id="1_jv8ps"]
+[ext_resource type="Script" path="res://scripts/data/routine_schedule.gd" id="2_irx2d"]
+
+[sub_resource type="Resource" id="Resource_jv8ps"]
+script = ExtResource("1_jv8ps")
+id = &"watering"
+label = "Sprinklers on"
+end_hour = 7.6
+
+[sub_resource type="Resource" id="Resource_irx2d"]
+script = ExtResource("1_jv8ps")
+id = &"gardening"
+label = "Gardening"
+start_hour = 7.6
+end_hour = 8.6
+
+[sub_resource type="Resource" id="Resource_3lbgj"]
+script = ExtResource("1_jv8ps")
+id = &"dog_nap"
+label = "Dog napping"
+start_hour = 8.6
+end_hour = 9.4
+
+[sub_resource type="Resource" id="Resource_8dcdo"]
+script = ExtResource("1_jv8ps")
+id = &"bbq"
+label = "Barbecue"
+start_hour = 13.0
+end_hour = 14.0
+
+[sub_resource type="Resource" id="Resource_1aqwk"]
+script = ExtResource("1_jv8ps")
+id = &"dog_nap"
+label = "Dog napping"
+start_hour = 14.0
+end_hour = 14.7
+
+[sub_resource type="Resource" id="Resource_7lpjd"]
+script = ExtResource("1_jv8ps")
+id = &"watering"
+label = "Sprinklers on"
+start_hour = 14.7
+end_hour = 15.3
+
+[sub_resource type="Resource" id="Resource_q0n0y"]
+script = ExtResource("1_jv8ps")
+id = &"porch_light"
+label = "Porch light on"
+start_hour = 21.5
+end_hour = 24.0
+
+[sub_resource type="Resource" id="Resource_f6r5k"]
+script = ExtResource("1_jv8ps")
+id = &"gardening"
+label = "Night watering"
+start_hour = 21.5
+end_hour = 22.2
+
+[sub_resource type="Resource" id="Resource_cg1ox"]
+script = ExtResource("1_jv8ps")
+id = &"watering"
+label = "Sprinklers on"
+start_hour = 21.5
+end_hour = 22.2
+
+[sub_resource type="Resource" id="Resource_1jp4t"]
+script = ExtResource("1_jv8ps")
+id = &"lights_out"
+start_hour = 22.2
+end_hour = 6.0
+
+[resource]
+script = ExtResource("2_irx2d")
+events = Array[ExtResource("1_jv8ps")]([SubResource("Resource_jv8ps"), SubResource("Resource_irx2d"), SubResource("Resource_3lbgj"), SubResource("Resource_8dcdo"), SubResource("Resource_1aqwk"), SubResource("Resource_7lpjd"), SubResource("Resource_q0n0y"), SubResource("Resource_f6r5k"), SubResource("Resource_cg1ox"), SubResource("Resource_1jp4t")])

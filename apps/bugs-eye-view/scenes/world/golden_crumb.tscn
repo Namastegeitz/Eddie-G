@@ -1,0 +1,46 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/world/crumb.gd" id="1_mxi86"]
+[ext_resource type="Material" path="res://assets/materials/golden.tres" id="2_7jsvh"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_4lc62"]
+radius = 1.2
+
+[sub_resource type="BoxMesh" id="BoxMesh_d2h8b"]
+size = Vector3(0.9, 0.6, 0.7)
+
+[sub_resource type="BoxMesh" id="BoxMesh_pj7ic"]
+size = Vector3(0.6, 0.5, 0.8)
+
+[sub_resource type="BoxMesh" id="BoxMesh_ww3s7"]
+size = Vector3(0.4, 0.4, 0.4)
+
+[node name="GoldenCrumb" type="Area3D" unique_id=729458473]
+script = ExtResource("1_mxi86")
+golden = true
+
+[node name="Shape" type="CollisionShape3D" parent="." unique_id=1335221381]
+shape = SubResource("SphereShape3D_4lc62")
+
+[node name="Visual" type="Node3D" parent="." unique_id=737407299]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.15, 0)
+
+[node name="A" type="MeshInstance3D" parent="Visual" unique_id=1033119771]
+transform = Transform3D(0.8882368, -0.035492957, 0.45801273, 0.18979606, 0.9362934, -0.29552022, -0.4183454, 0.34942093, 0.83838665, 0, 0, 0)
+material_override = ExtResource("2_7jsvh")
+mesh = SubResource("BoxMesh_d2h8b")
+
+[node name="B" type="MeshInstance3D" parent="Visual" unique_id=1731923743]
+transform = Transform3D(0.3307759, -0.4655987, 0.82085633, 0.27219215, 0.87992316, 0.38941833, -0.9036032, 0.094620466, 0.41778967, 0.25, 0.15, 0.1)
+material_override = ExtResource("2_7jsvh")
+mesh = SubResource("BoxMesh_pj7ic")
+
+[node name="C" type="MeshInstance3D" parent="Visual" unique_id=1519748261]
+transform = Transform3D(0.7094743, -0.688155, 0.15195069, 0.5991215, 0.47543356, -0.64421767, 0.37107915, 0.5480928, 0.7495963, -0.35, 0.05, -0.2)
+material_override = ExtResource("2_7jsvh")
+mesh = SubResource("BoxMesh_ww3s7")
+
+[node name="Glow" type="OmniLight3D" parent="Visual" unique_id=453731574]
+light_color = Color(1, 0.8, 0.3, 1)
+light_energy = 1.5
+omni_range = 6.0

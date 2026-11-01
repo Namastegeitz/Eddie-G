@@ -1,0 +1,10 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/camera/follow_camera.gd" id="1_llf1f"]
+
+[node name="FollowCamera" type="Node3D" unique_id=1173557378]
+script = ExtResource("1_llf1f")
+
+[node name="Arm" type="SpringArm3D" parent="." unique_id=360613339]
+
+[node name="Camera" type="Camera3D" parent="Arm" unique_id=1160124623]

@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="ThreatConfig" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/threat_config.gd" id="1_gwfm5"]
+
+[resource]
+script = ExtResource("1_gwfm5")
+sight_range = 80.0
+sight_angle_deg = 80.0
+near_sense_radius = 6.0
+eye_height = 62.0
+gaze_pitch_deg = 38.0
+min_visibility = 0.12
+hearing_radius = 28.0
+hearing_gain = 0.5
+suspicion_gain = 1.4
+lose_sight_time = 2.0
+search_duration = 12.0
+turn_speed = 3.0
+attack_range = 30.0
+attack_windup = 0.75
+attack_cooldown = 1.6
+stun_duration = 4.5

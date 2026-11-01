@@ -1,0 +1,30 @@
+[gd_resource type="Resource" script_class="BugStats" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/bug_stats.gd" id="1_sv6lg"]
+
+[resource]
+script = ExtResource("1_sv6lg")
+id = &"spider"
+display_name = "Spider"
+description = "Master of stealth and height. Crawls on walls and ceilings, zips on web lines that become bridges, spins traps and feels footsteps through the floor. Slow in the open."
+scene_path = "res://scenes/bugs/spider.tscn"
+color = Color(0.08, 0.07, 0.07, 1)
+unlock_hint = "escape the Living Room"
+rating_speed = 0.55
+rating_stealth = 0.95
+rating_toughness = 0.3
+move_speed = 7.0
+jump_velocity = 9.0
+dodge_speed = 14.0
+dodge_duration = 0.15
+dodge_cooldown = 0.8
+visibility_mult = 0.85
+noise_mult = 0.5
+camo_tags = PackedStringArray("wall", "web", "dark_wood")
+sense_max = 6.0
+sense_range = 70.0
+wall_speed = 7.5
+web_range = 32.0
+zip_speed = 32.0
+web_cooldown = 0.5
+bridge_duration = 10.0

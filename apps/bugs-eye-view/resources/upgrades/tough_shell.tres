@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="UpgradeDef" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/upgrade_def.gd" id="1_tkgl0"]
+
+[resource]
+script = ExtResource("1_tkgl0")
+id = &"tough_shell"
+display_name = "Tough Shell"
+description = "Recover from a knockdown 40% faster."
+required_colony = 2
+applies_to = PackedStringArray("cockroach")
+modifiers = {
+"invuln_time": 1.3,
+"knockdown_time": 0.6
+}

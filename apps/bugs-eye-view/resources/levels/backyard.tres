@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="LevelConfig" format=3]
+
+[ext_resource type="Resource" path="res://resources/routines/backyard.tres" id="1_ltcue"]
+[ext_resource type="Script" path="res://scripts/data/level_config.gd" id="2_8cmsv"]
+
+[resource]
+script = ExtResource("2_8cmsv")
+id = &"backyard"
+display_name = "Backyard"
+description = "Open sky, a dog with a nose for bugs, sprinklers and the exterminator's fog."
+scene_path = "res://scenes/levels/backyard.tscn"
+order = 2
+crumbs_required = 10
+par_time = 260.0
+unlock_after = &"living_room"
+boss_name = "The Exterminator"
+intensity_ramp_seconds = 300.0
+routine = ExtResource("1_ltcue")
+ambient_light_by_period = {
+&"afternoon": 0.9,
+&"evening": 0.6,
+&"morning": 0.85,
+&"night": 0.22
+}
+ambient_noise = 0.15
+time_slots = PackedStringArray("morning", "afternoon", "night")

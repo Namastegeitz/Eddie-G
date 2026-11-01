@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="UpgradeDef" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/upgrade_def.gd" id="1_1pail"]
+
+[resource]
+script = ExtResource("1_1pail")
+id = &"deep_camo"
+display_name = "Deep Camo"
+description = "Blending in hides you 35% better."
+cost = 25
+required_colony = 2
+applies_to = PackedStringArray()
+modifiers = {
+"camo_mult": 1.35
+}

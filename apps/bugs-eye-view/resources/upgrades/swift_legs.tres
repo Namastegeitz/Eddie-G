@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="UpgradeDef" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/upgrade_def.gd" id="1_ph6bv"]
+
+[resource]
+script = ExtResource("1_ph6bv")
+id = &"swift_legs"
+display_name = "Swift Legs"
+description = "+12% running, crawling and flying speed."
+cost = 15
+applies_to = PackedStringArray()
+modifiers = {
+"flight_speed": 1.08,
+"move_speed": 1.12,
+"sprint_speed": 1.12,
+"wall_speed": 1.12
+}

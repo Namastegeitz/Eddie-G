@@ -1,0 +1,105 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/threats/human.gd" id="1_fx2vc"]
+[ext_resource type="Resource" path="res://resources/threats/human.tres" id="2_68snj"]
+[ext_resource type="Material" path="res://assets/materials/jeans.tres" id="3_ftp6i"]
+[ext_resource type="Material" path="res://assets/materials/cloth_blue.tres" id="4_b4oug"]
+[ext_resource type="Material" path="res://assets/materials/skin.tres" id="5_jboqh"]
+[ext_resource type="PackedScene" path="res://scenes/hazards/foot.tscn" id="6_nhurr"]
+[ext_resource type="Script" path="res://scripts/hazards/foot_hazard.gd" id="7_36svo"]
+[ext_resource type="Script" path="res://scripts/hazards/newspaper.gd" id="8_hycs0"]
+[ext_resource type="Material" path="res://assets/materials/paper.tres" id="9_iib63"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_n66m2"]
+radius = 6.0
+height = 34.0
+
+[sub_resource type="BoxMesh" id="BoxMesh_qe1b4"]
+size = Vector3(13, 9, 7)
+
+[sub_resource type="BoxMesh" id="BoxMesh_tk5se"]
+size = Vector3(15, 20, 8)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_jhhm7"]
+top_radius = 1.6
+bottom_radius = 1.6
+height = 20.0
+radial_segments = 16
+rings = 1
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_rf14u"]
+top_radius = 1.6
+bottom_radius = 1.6
+height = 20.0
+radial_segments = 16
+rings = 1
+
+[sub_resource type="SphereMesh" id="SphereMesh_bid3i"]
+radius = 5.0
+height = 10.0
+radial_segments = 16
+rings = 8
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_ivbyq"]
+top_radius = 1.2
+bottom_radius = 1.2
+height = 16.0
+radial_segments = 16
+rings = 1
+
+[node name="Human" type="CharacterBody3D" unique_id=1698802417]
+script = ExtResource("1_fx2vc")
+route = PackedVector3Array()
+has_newspaper = true
+config = ExtResource("2_68snj")
+active_events = PackedStringArray()
+icon_height = 78.0
+
+[node name="Shape" type="CollisionShape3D" parent="." unique_id=8190255]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 55, 0)
+shape = SubResource("CapsuleShape3D_n66m2")
+
+[node name="Torso" type="Node3D" parent="." unique_id=1934230699]
+
+[node name="Hips" type="MeshInstance3D" parent="Torso" unique_id=1716060640]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 39, 2)
+material_override = ExtResource("3_ftp6i")
+mesh = SubResource("BoxMesh_qe1b4")
+
+[node name="Chest" type="MeshInstance3D" parent="Torso" unique_id=1098020117]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 53, 2)
+material_override = ExtResource("4_b4oug")
+mesh = SubResource("BoxMesh_tk5se")
+
+[node name="ArmL" type="MeshInstance3D" parent="Torso" unique_id=1271609870]
+transform = Transform3D(0.99280864, -0.119712204, 0, 0.119712204, 0.99280864, 0, 0, 0, 1, -9.5, 52, 2)
+material_override = ExtResource("5_jboqh")
+mesh = SubResource("CylinderMesh_jhhm7")
+
+[node name="ArmR" type="MeshInstance3D" parent="Torso" unique_id=1802765442]
+transform = Transform3D(0.99280864, 0.119712204, 0, -0.119712204, 0.99280864, 0, 0, 0, 1, 9.5, 52, 2)
+material_override = ExtResource("5_jboqh")
+mesh = SubResource("CylinderMesh_rf14u")
+
+[node name="Head" type="MeshInstance3D" parent="Torso" unique_id=1838423519]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 68, 2)
+material_override = ExtResource("5_jboqh")
+mesh = SubResource("SphereMesh_bid3i")
+
+[node name="LeftFoot" type="Node3D" parent="." unique_id=1244993967 instance=ExtResource("6_nhurr")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.7, 0, 0)
+script = ExtResource("7_36svo")
+
+[node name="RightFoot" type="Node3D" parent="." unique_id=1606077708 instance=ExtResource("6_nhurr")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.7, 0, 0)
+script = ExtResource("7_36svo")
+
+[node name="Newspaper" type="Node3D" parent="." unique_id=1802540728]
+script = ExtResource("8_hycs0")
+
+[node name="Paper" type="Node3D" parent="Newspaper" unique_id=1602038503]
+
+[node name="Roll" type="MeshInstance3D" parent="Newspaper/Paper" unique_id=493501518]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, -8)
+material_override = ExtResource("9_iib63")
+mesh = SubResource("CylinderMesh_ivbyq")

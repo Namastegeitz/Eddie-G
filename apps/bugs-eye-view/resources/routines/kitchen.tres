@@ -1,0 +1,141 @@
+[gd_resource type="Resource" script_class="RoutineSchedule" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/routine_event.gd" id="1_a5b3j"]
+[ext_resource type="Script" path="res://scripts/data/routine_schedule.gd" id="2_7ie6t"]
+
+[sub_resource type="Resource" id="Resource_a5b3j"]
+script = ExtResource("1_a5b3j")
+id = &"breakfast"
+label = "Breakfast rush"
+end_hour = 7.75
+
+[sub_resource type="Resource" id="Resource_7ie6t"]
+script = ExtResource("1_a5b3j")
+id = &"fridge_open"
+label = "Fridge open"
+start_hour = 7.15
+end_hour = 7.3
+
+[sub_resource type="Resource" id="Resource_uesxh"]
+script = ExtResource("1_a5b3j")
+id = &"fridge_open"
+label = "Fridge open"
+start_hour = 7.5
+end_hour = 7.6
+
+[sub_resource type="Resource" id="Resource_kovlr"]
+script = ExtResource("1_a5b3j")
+id = &"sunbeam"
+end_hour = 11.0
+
+[sub_resource type="Resource" id="Resource_kimpd"]
+script = ExtResource("1_a5b3j")
+id = &"lights_on"
+end_hour = 8.25
+
+[sub_resource type="Resource" id="Resource_v3fb1"]
+script = ExtResource("1_a5b3j")
+id = &"quiet"
+label = "Kitchen empty"
+start_hour = 7.75
+end_hour = 8.25
+
+[sub_resource type="Resource" id="Resource_k5ruu"]
+script = ExtResource("1_a5b3j")
+id = &"dishes"
+label = "Doing the dishes"
+start_hour = 8.25
+end_hour = 8.9
+
+[sub_resource type="Resource" id="Resource_kdsp1"]
+script = ExtResource("1_a5b3j")
+id = &"cleaning"
+label = "Cleaning day"
+start_hour = 8.9
+end_hour = 9.8
+
+[sub_resource type="Resource" id="Resource_7qh3s"]
+script = ExtResource("1_a5b3j")
+id = &"lunch"
+label = "Lunch"
+start_hour = 13.0
+end_hour = 13.6
+
+[sub_resource type="Resource" id="Resource_h02bh"]
+script = ExtResource("1_a5b3j")
+id = &"fridge_open"
+label = "Fridge open"
+start_hour = 13.2
+end_hour = 13.3
+
+[sub_resource type="Resource" id="Resource_d327x"]
+script = ExtResource("1_a5b3j")
+id = &"lights_on"
+start_hour = 13.0
+end_hour = 13.6
+
+[sub_resource type="Resource" id="Resource_26l2r"]
+script = ExtResource("1_a5b3j")
+id = &"nap"
+label = "Afternoon nap"
+start_hour = 13.6
+end_hour = 14.3
+
+[sub_resource type="Resource" id="Resource_mvwnl"]
+script = ExtResource("1_a5b3j")
+id = &"cleaning"
+label = "Cleaning day"
+start_hour = 14.3
+end_hour = 15.2
+
+[sub_resource type="Resource" id="Resource_r41b4"]
+script = ExtResource("1_a5b3j")
+id = &"dishes"
+label = "Doing the dishes"
+start_hour = 15.2
+end_hour = 15.8
+
+[sub_resource type="Resource" id="Resource_dcagv"]
+script = ExtResource("1_a5b3j")
+id = &"late_snack"
+label = "Late snack"
+start_hour = 21.5
+end_hour = 22.0
+
+[sub_resource type="Resource" id="Resource_viyh5"]
+script = ExtResource("1_a5b3j")
+id = &"fridge_open"
+label = "Fridge open"
+start_hour = 21.7
+end_hour = 21.85
+
+[sub_resource type="Resource" id="Resource_8xyex"]
+script = ExtResource("1_a5b3j")
+id = &"lights_on"
+start_hour = 21.5
+end_hour = 22.0
+
+[sub_resource type="Resource" id="Resource_v340m"]
+script = ExtResource("1_a5b3j")
+id = &"lights_out"
+label = "Lights out"
+start_hour = 22.0
+end_hour = 5.0
+
+[sub_resource type="Resource" id="Resource_mg2bg"]
+script = ExtResource("1_a5b3j")
+id = &"midnight_snack"
+label = "Midnight snack"
+start_hour = 23.0
+end_hour = 23.4
+
+[sub_resource type="Resource" id="Resource_paukp"]
+script = ExtResource("1_a5b3j")
+id = &"fridge_open"
+label = "Fridge open"
+start_hour = 23.1
+end_hour = 23.2
+
+[resource]
+script = ExtResource("2_7ie6t")
+events = Array[ExtResource("1_a5b3j")]([SubResource("Resource_a5b3j"), SubResource("Resource_7ie6t"), SubResource("Resource_uesxh"), SubResource("Resource_kovlr"), SubResource("Resource_kimpd"), SubResource("Resource_v3fb1"), SubResource("Resource_k5ruu"), SubResource("Resource_kdsp1"), SubResource("Resource_7qh3s"), SubResource("Resource_h02bh"), SubResource("Resource_d327x"), SubResource("Resource_26l2r"), SubResource("Resource_mvwnl"), SubResource("Resource_r41b4"), SubResource("Resource_dcagv"), SubResource("Resource_viyh5"), SubResource("Resource_8xyex"), SubResource("Resource_v340m"), SubResource("Resource_mg2bg"), SubResource("Resource_paukp")])

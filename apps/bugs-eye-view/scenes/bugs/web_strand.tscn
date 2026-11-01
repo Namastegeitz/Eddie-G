@@ -1,0 +1,21 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/bugs/web_strand.gd" id="1_cy1lw"]
+[ext_resource type="Material" path="res://assets/materials/web.tres" id="2_p16nl"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_wo0sp"]
+size = Vector3(0.6, 0.15, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_u66pu"]
+size = Vector3(0.12, 0.06, 1)
+
+[node name="WebStrand" type="StaticBody3D" unique_id=1016983626]
+script = ExtResource("1_cy1lw")
+
+[node name="Shape" type="CollisionShape3D" parent="." unique_id=1809111689]
+shape = SubResource("BoxShape3D_wo0sp")
+
+[node name="Mesh" type="MeshInstance3D" parent="." unique_id=1316017244]
+material_override = ExtResource("2_p16nl")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_u66pu")

@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="UpgradeDef" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/upgrade_def.gd" id="1_su5dm"]
+
+[resource]
+script = ExtResource("1_su5dm")
+id = &"hushed_wings"
+display_name = "Hushed Wings"
+description = "25% quieter buzz and 15% less tiring flight."
+cost = 25
+required_colony = 3
+applies_to = PackedStringArray("fly")
+modifiers = {
+"noise_mult": 0.75,
+"stamina_drain": 0.85
+}

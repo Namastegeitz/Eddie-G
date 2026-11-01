@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="UpgradeDef" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/upgrade_def.gd" id="1_dequb"]
+
+[resource]
+script = ExtResource("1_dequb")
+id = &"keen_senses"
+display_name = "Keen Senses"
+description = "Bigger, faster-charging sense meter with more range."
+cost = 30
+required_colony = 4
+applies_to = PackedStringArray()
+modifiers = {
+"sense_max": 1.4,
+"sense_range": 1.25,
+"sense_regen": 1.3
+}

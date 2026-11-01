@@ -1,0 +1,27 @@
+[gd_resource type="Resource" script_class="BugStats" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/bug_stats.gd" id="1_nds65"]
+
+[resource]
+script = ExtResource("1_nds65")
+id = &"fly"
+display_name = "Fly"
+description = "Erratic, buzzy flight in full 3D. Burst-dodge swats and see strikes in slow motion - but it can't stay airborne forever, and buzzing is loud."
+scene_path = "res://scenes/bugs/fly.tscn"
+color = Color(0.15, 0.15, 0.17, 1)
+unlock_hint = "escape the Kitchen"
+rating_speed = 1.0
+rating_stealth = 0.35
+rating_toughness = 0.2
+move_speed = 4.0
+acceleration = 50.0
+dodge_speed = 22.0
+dodge_duration = 0.15
+dodge_cooldown = 0.7
+visibility_mult = 1.1
+camo_tags = PackedStringArray("dark_wood", "glass")
+sense_max = 6.0
+sense_regen = 0.6
+flight_speed = 13.0
+boost_speed = 21.0
+stamina_regen = 2.5
