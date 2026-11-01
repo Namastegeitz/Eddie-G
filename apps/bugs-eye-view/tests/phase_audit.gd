@@ -15,6 +15,8 @@ func _ready() -> void:
 	print("== Bug's-Eye View phase audit ==")
 	if only in [0, 1]:
 		await _phase1()
+	if only in [0, 2]:
+		await _phase2()
 	finish("phase audit")
 
 
@@ -159,3 +161,187 @@ func _phase1() -> void:
 		check(gpath.size() > 0 and Vector2(gpath[-1].x - lvl.goal.global_position.x, gpath[-1].z - lvl.goal.global_position.z).length() < 4.5,
 			"%s: the exit is reachable on foot" % level)
 		await unload(lvl)
+
+
+# --- Phase 2: full bug roster, bug select, unlocks ---------------------------------
+
+func _phase2() -> void:
+	print("-- Phase 2: fly, spider, bug select and unlocks")
+	SaveSystem.data = SaveSystem.default_data()
+	var lvl := await load_level(&"kitchen", &"fly")
+	var f := lvl.player as Fly
+	await frames(10)
+
+	# Flight: boost is faster, buzz gets louder with speed.
+	f.take_off()
+	face(lvl, PI)
+	f.stamina = f.stats.stamina_max
+	InputRouter.set_touch_move(Vector2(0, 1))
+	await frames(60)
+	var cruise := f.velocity.length()
+	var cruise_noise := f.current_noise()
+	InputRouter.set_touch_action(&"primary", true)
+	await frames(60)
+	var boost := f.velocity.length()
+	var boost_noise := f.current_noise()
+	InputRouter.set_touch_action(&"primary", false)
+	InputRouter.set_touch_move(Vector2.ZERO)
+	check(boost > cruise * 1.2, "fly boost is faster than cruising (%.1f > %.1f)" % [boost, cruise])
+	check(boost_noise > cruise_noise, "the buzz is louder at speed (%.2f > %.2f)" % [boost_noise, cruise_noise])
+
+	# Perch on the kitchen table by holding descend above it.
+	f.teleport_to(Transform3D(Basis.IDENTITY, Vector3(-12, 36, 14)))
+	f.stamina = f.stats.stamina_max
+	await frames(5)
+	InputRouter.set_touch_action(&"secondary", true)
+	for i in 180:
+		await get_tree().physics_frame
+		if not f.flying:
+			break
+	InputRouter.set_touch_action(&"secondary", false)
+	await frames(30)
+	check(not f.flying and f.global_position.y > 30.0 and f.global_position.y < 34.0,
+		"holding descend lands the fly on the table (y=%.1f)" % f.global_position.y)
+	f.stamina = 2.0
+	var before := f.stamina
+	await frames(60)
+	check(f.stamina > before, "a perched fly regains stamina")
+	check(f.is_scent_active(), "a perched fly leaves scent again")
+	f.stamina = 0.2
+	f.take_off()
+	check(not f.flying, "a tired fly can't take off")
+	await unload(lvl)
+
+	# Spider: ceilings, edges, leaping, real web aim.
+	lvl = await load_level(&"kitchen", &"spider")
+	var s := lvl.player as Spider
+	await frames(10)
+	s.teleport_to(Transform3D(Basis(Vector3.RIGHT, PI), Vector3(0, 99.6, 0)))
+	await frames(60)
+	check(s.attached and s.surface_normal.y < -0.9 and s.global_position.y > 98.0, "the spider clings to the ceiling")
+	face(lvl, 0.0)
+	var c0 := s.global_position
+	InputRouter.set_touch_move(Vector2(0, 1))
+	await frames(40)
+	InputRouter.set_touch_move(Vector2.ZERO)
+	check(s.global_position.distance_to(c0) > 2.0 and s.global_position.y > 98.0, "the spider walks along the ceiling without falling")
+
+	s.teleport_to(Transform3D(Basis.IDENTITY, Vector3(4, 32.0, 14)))
+	await frames(10)
+	face(lvl, -PI * 0.5)
+	InputRouter.set_touch_move(Vector2(0, 1))
+	for i in 120:
+		await get_tree().physics_frame
+		if s.surface_normal.y < 0.5:
+			break
+	InputRouter.set_touch_move(Vector2.ZERO)
+	check(s.attached and s.surface_normal.y < 0.5, "walking off the table edge wraps the spider onto its side")
+
+	s.teleport_to(Transform3D(Basis.IDENTITY, Vector3(30, 0.6, 20)))
+	await frames(10)
+	s._jump_queued = true
+	await frames(4)
+	check(not s.attached, "leaping lets go of the surface")
+	await frames(90)
+	check(s.attached, "the spider grabs the next surface it lands on")
+
+	s.teleport_to(Transform3D(Basis.IDENTITY, Vector3(40, 0.6, 30)))
+	await frames(5)
+	lvl.camera.yaw = -PI * 0.5
+	lvl.camera.pitch = 0.0
+	lvl.camera.snap()
+	await frames(3)
+	s._web_cd = 0.0
+	s._fire_web(lvl.camera.screen_center())
+	check(s.zipping, "firing at the reticle starts a web zip toward the wall")
+	for i in 120:
+		await get_tree().physics_frame
+		if not s.zipping:
+			break
+	check(s.attached and s.surface_normal.x < -0.5, "the zip ends attached to the far wall")
+
+	var spoon := lvl.find_child("Spoon", true, false) as LureProp
+	s.teleport_to(Transform3D(Basis.IDENTITY, spoon.global_position + Vector3(8, 0.3, 4)))
+	await frames(10)
+	var to_spoon := spoon.global_position - s.global_position
+	lvl.camera.yaw = atan2(-to_spoon.x, -to_spoon.z)
+	lvl.camera.pitch = -0.35
+	lvl.camera.snap()
+	await frames(3)
+	var lures := lvl.run.lures_used
+	s._web_cd = 0.0
+	s._fire_web(lvl.camera.camera.unproject_position(spoon.global_position))
+	await frames(2)
+	check(lvl.run.lures_used > lures, "a web line can trip the spoon from a distance (a lure)")
+	await unload(lvl)
+
+	lvl = await load_level(&"living_room", &"spider")
+	var cat := first_in_group(Phys.GROUP_PET, lvl) as Pet
+	var trap := (load("res://scenes/bugs/web_trap.tscn") as PackedScene).instantiate() as WebTrap
+	lvl.add_child(trap)
+	trap.setup(cat.global_position, Vector3.UP, 5.0, null)
+	await frames(5)
+	check(cat.web_time > 0.0 and cat.speed_mult() < 0.5, "a web trap slows the cat")
+	await unload(lvl)
+
+	# Bug select / unlock persistence.
+	SaveSystem.data = SaveSystem.default_data()
+	var texts := await _button_texts("res://scenes/ui/bug_select.tscn")
+	check(texts.has("Play as Cockroach") and not texts.has("Play as Fly") and not texts.has("Play as Spider"),
+		"bug select offers only the cockroach at first")
+	SaveSystem.unlock_bug(&"fly")
+	SaveSystem.save_game()
+	SaveSystem.load_game()
+	check(SaveSystem.is_bug_unlocked(&"fly"), "an unlocked bug survives save and reload")
+	texts = await _button_texts("res://scenes/ui/bug_select.tscn")
+	check(texts.has("Play as Fly"), "bug select offers the fly once unlocked")
+	GameManager.current_level = &"living_room"
+	GameManager.begin_run(RunStats.new())
+	GameManager.run.crumbs = 9
+	GameManager.finish_run(true)
+	check(SaveSystem.is_bug_unlocked(&"spider"), "escaping the living room unlocks the spider")
+
+	# Time slots unlock after a room is escaped, and each slot plays.
+	SaveSystem.data = SaveSystem.default_data()
+	var ls: Node = (load("res://scenes/ui/level_select.tscn") as PackedScene).instantiate()
+	get_tree().root.add_child(ls)
+	await frames(2)
+	var night_locked := _find_button(ls, "Night")
+	check(night_locked != null and night_locked.disabled, "night is locked before the kitchen is escaped")
+	ls.queue_free()
+	SaveSystem.record_level_result(&"kitchen", true, 100, 100.0, {})
+	ls = (load("res://scenes/ui/level_select.tscn") as PackedScene).instantiate()
+	get_tree().root.add_child(ls)
+	await frames(2)
+	var night_open := _find_button(ls, "Night")
+	check(night_open != null and not night_open.disabled, "night unlocks after escaping the kitchen")
+	ls.queue_free()
+	await frames(2)
+	for slot in [&"afternoon", &"night"]:
+		lvl = await load_level(&"kitchen", &"cockroach", slot)
+		await frames(30)
+		check(is_equal_approx(floorf(HouseClock.hour), floorf(HouseClock.slot_hour(slot))), "kitchen %s starts at %s" % [slot, HouseClock.clock_text()])
+		if slot == &"night":
+			HouseClock.set_hour(22.5)
+			await frames(70)
+			check(PerceptionSystem.ambient_light <= 0.25, "lights out makes the kitchen dark (ambient %.2f)" % PerceptionSystem.ambient_light)
+		await unload(lvl)
+
+
+func _button_texts(path: String) -> PackedStringArray:
+	var n: Node = (load(path) as PackedScene).instantiate()
+	get_tree().root.add_child(n)
+	await frames(2)
+	var out: PackedStringArray = []
+	for b in n.find_children("*", "Button", true, false):
+		out.append((b as Button).text)
+	n.queue_free()
+	await frames(1)
+	return out
+
+
+func _find_button(root: Node, text: String) -> Button:
+	for b in root.find_children("*", "Button", true, false):
+		if (b as Button).text == text:
+			return b
+	return null

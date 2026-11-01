@@ -100,7 +100,13 @@ func _crawl(_delta: float) -> void:
 			return
 	else:
 		var hn: Vector3 = hit["normal"]
-		surface_normal = n.slerp(hn, 0.35).normalized() if n.dot(hn) > -0.5 else hn
+		# Ease toward the new normal; skip near-identical normals, where slerp's
+		# rotation axis degenerates.
+		var dn := n.dot(hn)
+		if dn > 0.9995 or dn <= -0.5:
+			surface_normal = hn
+		else:
+			surface_normal = n.slerp(hn, 0.35).normalized()
 	n = surface_normal
 	if wish.length() > 0.05:
 		var ahead := _ray(global_position + n * 0.2, global_position + n * 0.2 + wish.normalized() * 0.9)
