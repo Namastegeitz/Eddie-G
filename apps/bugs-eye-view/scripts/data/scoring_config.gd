@@ -7,6 +7,8 @@ extends Resource
 @export var close_call_points: int = 50
 @export var lure_points: int = 75
 @export var stun_points: int = 150
+## Fly: buzzing a person or pet and getting away with it.
+@export var pester_points: int = 60
 @export var ghost_bonus: int = 1000
 @export var speed_bonus_per_second: float = 10.0
 @export var hit_penalty: int = 100

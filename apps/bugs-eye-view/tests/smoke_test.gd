@@ -290,6 +290,12 @@ func _test_perception() -> void:
 	check(chip > towel, "chip bag is louder than the dish towel (%.2f > %.2f)" % [chip, towel])
 	var human := first_in_group(Phys.GROUP_HUMAN, lvl) as Human
 	human.route = PackedVector3Array()
+	human.end_activity()
+	human.activities = {}
+	# The kitchen puppy would join in (and its pounces stun people nearby).
+	for pet in get_tree().get_nodes_in_group(Phys.GROUP_PET):
+		if lvl.is_ancestor_of(pet):
+			pet.process_mode = Node.PROCESS_MODE_DISABLED
 	human.alert.reset()
 	PerceptionSystem.emit_world_noise(human.global_position + Vector3(4, 0, 4), 3.0)
 	await frames(2)

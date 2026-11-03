@@ -482,6 +482,10 @@ static func human(force: bool, path: String, config: String, outfit: String, has
 
 	for n: Node in _pivots(torso):
 		merge_meshes(n)
+	if has_paper:
+		# Held up while reading (human.gd shows it); kept separate from merges.
+		var reading := mesh(torso, "ReadingPaper", box(Vector3(18, 13, 0.3)), "paper", Vector3(0, 64, -13.5), Vector3(-0.15, 0, 0))
+		reading.visible = false
 
 	# Legs: posed every frame from the hip sockets to the feet (two-bone IK).
 	var legs := node3d(h, "Legs")
@@ -510,34 +514,86 @@ static func human(force: bool, path: String, config: String, outfit: String, has
 	pack(h, path, force)
 
 
-static func pet(force: bool, path: String, config: String, color: String, big: bool, is_dog: bool) -> void:
-	var p := scripted(CharacterBody3D.new(), "res://scripts/threats/pet.gd", "Dog" if is_dog else "Cat")
+## A cat or dog with a head that turns, ears that perk or flatten, a
+## two-part tail, four jointed legs and a face. pet.gd animates the pivots
+## (walk cycle, tail wag/swish, ears, head tracking, play bow, sleeping curl).
+## size: 1.0 cat, 1.4 dog, 0.8 puppy.
+static func pet(force: bool, path: String, config: String, color: String, size: float, is_dog: bool,
+		node_name: String = "") -> void:
+	var p := scripted(CharacterBody3D.new(), "res://scripts/threats/pet.gd", node_name if node_name != "" else ("Dog" if is_dog else "Cat"))
 	p.set("config", load(config))
 	p.set("barks", is_dog)
 	p.set("uses_perches", not is_dog)
-	var k := 1.4 if big else 1.0
-	p.set("icon_height", 10.0 * k)
+	p.set("pounce_height", 4.0 * size if is_dog else 8.0)
+	var k := size
+	p.set("icon_height", 11.0 * k)
 	var cap := CapsuleShape3D.new()
 	cap.radius = 2.4 * k
 	cap.height = 10.0 * k
 	# Bottom of the capsule at the origin so the pet's origin matches the navmesh.
 	shape(p, cap, Vector3(0, 2.4 * k, 0), Vector3(PI * 0.5, 0, 0))
 	var v := node3d(p, "Visual")
-	mesh(v, "Body", capsule(2.4 * k, 11.0 * k), color, Vector3(0, 5.0 * k, 0.5), Vector3(PI * 0.5, 0, 0))
-	mesh(v, "Head", sphere(2.3 * k), color, Vector3(0, 7.2 * k, -6.0 * k))
+	var dark := "dark_wood" if is_dog else "leaves"
+	mesh(v, "Body", capsule(2.4 * k, 11.0 * k), color, Vector3(0, 5.0 * k, 0.8 * k), Vector3(PI * 0.5, 0, 0))
+	mesh(v, "Chest", sphere(2.6 * k), color, Vector3(0, 5.4 * k, -3.4 * k), Vector3.ZERO, Vector3(1, 1.05, 1.1))
 	if is_dog:
-		mesh(v, "Snout", box(Vector3(1.8, 1.6, 2.6) * k), color, Vector3(0, 6.6 * k, -8.2 * k))
-		mesh(v, "EarL", box(Vector3(0.6, 2.6, 1.6) * k), "dark_wood", Vector3(-2.0 * k, 7.2 * k, -5.6 * k))
-		mesh(v, "EarR", box(Vector3(0.6, 2.6, 1.6) * k), "dark_wood", Vector3(2.0 * k, 7.2 * k, -5.6 * k))
+		var collar := TorusMesh.new()
+		collar.inner_radius = 1.5 * k
+		collar.outer_radius = 1.95 * k
+		mesh(v, "Collar", collar, "cloth_red", Vector3(0, 6.3 * k, -4.9 * k), Vector3(PI * 0.5 - 0.5, 0, 0))
+		mesh(v, "Patch", sphere(1.8 * k), dark, Vector3(0.6 * k, 6.6 * k, 1.5 * k), Vector3.ZERO, Vector3(1.0, 0.5, 1.6))
 	else:
-		mesh(v, "EarL", PrismMesh.new(), color, Vector3(-1.2, 9.6, -6.0), Vector3.ZERO, Vector3(1.4, 1.8, 0.6))
-		mesh(v, "EarR", PrismMesh.new(), color, Vector3(1.2, 9.6, -6.0), Vector3.ZERO, Vector3(1.4, 1.8, 0.6))
-	mesh(v, "Tail", cyl(0.5 * k, 8.0 * k), color, Vector3(0, 7.0 * k, 7.5 * k), Vector3(0.8, 0, 0))
-	for x in [-1.4, 1.4]:
-		for z in [-3.5, 3.5]:
-			mesh(v, "Leg", cyl(0.7 * k, 4.0 * k), color, Vector3(x * k, 1.8 * k, z * k))
-	mesh(v, "EyeL", sphere(0.45), "fly_eye" if is_dog else "pea", Vector3(-0.9 * k, 7.9 * k, -7.9 * k))
-	mesh(v, "EyeR", sphere(0.45), "fly_eye" if is_dog else "pea", Vector3(0.9 * k, 7.9 * k, -7.9 * k))
+		for i in 3:
+			mesh(v, "Stripe", box(Vector3(4.6, 0.25, 0.7) * k), dark, Vector3(0, 7.3 * k - i * 0.1, -1.0 * k + i * 2.2 * k), Vector3(0, 0, 0))
+
+	var head := node3d(v, "Head", Vector3(0, 7.0 * k, -6.2 * k))
+	mesh(head, "Skull", sphere(2.2 * k if not is_dog else 2.3 * k), color, Vector3(0, 0.2 * k, -0.6 * k))
+	if is_dog:
+		mesh(head, "Snout", box(Vector3(1.8, 1.6, 2.8) * k), color, Vector3(0, -0.45 * k, -2.7 * k))
+		mesh(head, "Nose", sphere(0.5 * k), "spider", Vector3(0, -0.05 * k, -4.15 * k), Vector3.ZERO, Vector3(1.2, 0.8, 0.8))
+		var tongue := mesh(head, "Tongue", box(Vector3(0.9, 0.15, 1.6) * k), "lips", Vector3(0, -1.35 * k, -3.6 * k), Vector3(0.5, 0, 0))
+		tongue.visible = false
+	else:
+		mesh(head, "Muzzle", sphere(1.15 * k), "plastic_white", Vector3(0, -0.55 * k, -2.25 * k), Vector3.ZERO, Vector3(1.25, 0.8, 0.9))
+		mesh(head, "Nose", sphere(0.32 * k), "lips", Vector3(0, -0.15 * k, -3.1 * k))
+		for x in [-1.0, 1.0]:
+			for i in 3:
+				mesh(head, "Whisker", box(Vector3(2.6, 0.05, 0.05) * k), "plastic_white",
+					Vector3(x * 1.7 * k, -0.6 * k + (i - 1) * 0.25 * k, -2.5 * k), Vector3(0, x * 0.15, x * (i - 1) * 0.15))
+	for x in [-1.0, 1.0]:
+		var side := "L" if x < 0.0 else "R"
+		mesh(head, "Eye" + side, sphere(0.48 * k), "fly_eye" if is_dog else "pea", Vector3(x * 0.95 * k, 0.75 * k, -2.1 * k))
+		var pupil: Mesh = box(Vector3(0.12, 0.6, 0.1) * k)
+		if is_dog:
+			pupil = sphere(0.26 * k)
+		mesh(head, "Pupil" + side, pupil, "spider",
+			Vector3(x * 0.95 * k, 0.75 * k, -2.55 * k))
+		var ear := node3d(head, "Ear" + side, Vector3(x * (1.3 if not is_dog else 2.0) * k, (1.9 if not is_dog else 1.1) * k, -0.4 * k))
+		ear.set_meta(&"side", x)
+		if is_dog:
+			mesh(ear, "Flap", box(Vector3(0.6, 3.0, 1.8) * k), dark, Vector3(x * 0.25 * k, -1.4 * k, 0))
+		else:
+			mesh(ear, "Point", PrismMesh.new(), color, Vector3(0, 0.8 * k, 0), Vector3.ZERO, Vector3(1.5, 1.9, 0.6) * k)
+
+	var tail := node3d(v, "Tail", Vector3(0, 6.6 * k, 6.0 * k))
+	var tail_len := 4.0 if is_dog else 5.0
+	tail.rotation = Vector3(-0.7 if is_dog else -0.5, 0, 0)
+	mesh(tail, "Base", cyl(0.6 * k, tail_len * k, 0.5 * k), color, Vector3(0, 0, tail_len * 0.5 * k), Vector3(PI * 0.5, 0, 0))
+	var tip := node3d(tail, "Tip", Vector3(0, 0, tail_len * k))
+	mesh(tip, "Fluff", cyl(0.5 * k, tail_len * 0.9 * k, 0.25 * k), dark if not is_dog else color,
+		Vector3(0, 0, tail_len * 0.45 * k), Vector3(PI * 0.5, 0, 0))
+
+	for leg_name in ["LegFL", "LegFR", "LegBL", "LegBR"]:
+		var x := -1.0 if leg_name.ends_with("L") else 1.0
+		var z := -3.6 if leg_name.contains("F") else 3.6
+		var leg := node3d(v, leg_name, Vector3(x * 1.45 * k, 4.3 * k, z * k))
+		leg.set_meta(&"front", z < 0.0)
+		mesh(leg, "Upper", cyl(0.8 * k, 2.6 * k, 0.65 * k), color, Vector3(0, -1.3 * k, 0))
+		var knee := node3d(leg, "Knee", Vector3(0, -2.5 * k, 0))
+		mesh(knee, "Lower", cyl(0.6 * k, 1.9 * k), color, Vector3(0, -0.95 * k, 0))
+		mesh(knee, "Paw", sphere(0.75 * k), color, Vector3(0, -1.75 * k, -0.25 * k), Vector3.ZERO, Vector3(1, 0.6, 1.3))
+	for n: Node in _pivots(v):
+		merge_meshes(n)
 	add_skin(v, "pet_dog" if is_dog else "pet_cat", Vector3(5.5, 10.0, 18.0) * k, Vector3(0, 5.0 * k, 0.5))
 	var agent := NavigationAgent3D.new()
 	agent.name = "Agent"
@@ -573,8 +629,9 @@ static func threats(force: bool) -> void:
 	human(force, "res://scenes/threats/human.tscn", "res://resources/threats/human.tres", "casual", false)
 	human(force, "res://scenes/threats/human_reader.tscn", "res://resources/threats/human.tres", "reader", true)
 	human(force, "res://scenes/threats/exterminator.tscn", "res://resources/threats/exterminator.tres", "hazmat", false)
-	pet(force, "res://scenes/threats/cat.tscn", "res://resources/threats/cat.tres", "cat_orange", false, false)
-	pet(force, "res://scenes/threats/dog.tscn", "res://resources/threats/dog.tres", "dog_brown", true, true)
+	pet(force, "res://scenes/threats/cat.tscn", "res://resources/threats/cat.tres", "cat_orange", 1.0, false)
+	pet(force, "res://scenes/threats/dog.tscn", "res://resources/threats/dog.tres", "dog_brown", 1.4, true)
+	pet(force, "res://scenes/threats/puppy.tscn", "res://resources/threats/puppy.tres", "fridge_white", 0.8, true, "Puppy")
 	vacuum(force)
 
 

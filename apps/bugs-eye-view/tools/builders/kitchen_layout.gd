@@ -111,6 +111,11 @@ static func build(tree: SceneTree) -> void:
 	g.box("PlaceMat", Vector3(60, -0.2, 64), Vector3(16, 0.5, 10), "rug", &"carpet", &"", 0.0, false)
 	g.deco_box("WindowEast", Vector3(109.85, 52, 30), Vector3(0.2, 30, 24), "window", Vector3.ZERO, false)
 	g.light_zone("SunbeamEast", Vector3(98, 2, 30), Vector3(22, 4, 22), 3, 2, ["sunbeam"], ["lights_out"])
+	g.prop("ball", Vector3(75, 1.6, 66))
+
+	# --- Warm air for the fly: over the stove while cooking, over the toaster ---
+	g.thermal("StoveHeat", Vector3(13, 56, -30), Vector3(22, 36, 20), 7.0, ["breakfast", "lunch", "late_snack", "midnight_snack"])
+	g.thermal("ToasterHeat", Vector3(93, 62, -36), Vector3(12, 28, 10), 6.0, ["breakfast"])
 
 	# --- Crumbs ---
 	for p in [Vector3(30, 0.6, 30), Vector3(14, 0.6, 2), Vector3(-10, 0.6, 14), Vector3(-28, 0.6, 22),
@@ -176,10 +181,23 @@ static func build(tree: SceneTree) -> void:
 	g.deco_box("DoorCrack", Vector3(-59.85, 2.5, 40), Vector3(0.2, 5, 8), "hole", Vector3.ZERO, false)
 
 	# --- Threats ---
+	# The cook: cooks at the stove and does the dishes with their back to the
+	# room, snacks at the table; cooking and snacking drop crumbs.
 	var human := g.human("res://scenes/threats/human.tscn",
-		[Vector3(40, 0, 8), Vector3(22, 0, -1), Vector3(12, 0, 30), Vector3(32, 0, 58), Vector3(85, 0, 62),
-			Vector3(90, 0, 18), Vector3(65, 0, 8)],
-		["breakfast", "dishes", "cleaning", "lunch", "late_snack", "midnight_snack"])
+		[Vector3(40, 0, 8), Vector3(30, 0, -18), Vector3(5, 0, -17.5), Vector3(-38, 0, -16), Vector3(-56, 0, -16),
+			Vector3(-56, 0, 5), Vector3(-20, 0, 34), Vector3(32, 0, 58), Vector3(82, 0, 62), Vector3(90, 0, 18),
+			Vector3(65, 0, 8)],
+		["breakfast", "dishes", "cleaning", "lunch", "late_snack", "midnight_snack"],
+		{"activities": {
+			2: {"kind": &"cook", "time": 10.0, "face": Vector3(7, 36, -33)},
+			3: {"kind": &"dishes", "time": 8.0, "face": Vector3(-35, 38, -33)},
+			6: {"kind": &"snack", "time": 7.0, "face": Vector3(-20, 30, 14)},
+		}})
+	# A playful puppy: plays with its ball, zooms around, naps after lunch.
+	g.pet("res://scenes/threats/puppy.tscn", Vector3(-30, 0.5, 50),
+		[Vector3(-30, 0, 50), Vector3(15, 0, 60), Vector3(60, 0, 68), Vector3(95, 0, 45), Vector3(90, 0, 30),
+			Vector3(35, 0, 12)],
+		["nap"])
 	var vac := g.vacuum(Vector3(30, 0.2, 20), Vector3(-55, 0, -18), Vector3(105, 0, 76), ["cleaning"])
 	g.escalation()
 	g.boss(BossDirector.Kind.CLEANING_DAY, "Cleaning Day",

@@ -34,6 +34,8 @@ func _card(cfg: LevelConfig) -> Control:
 	info += "   |   %s %s %s %s" % ["GHOST" if bool(b["ghost"]) else "ghost", "SPEED" if bool(b["speedrun"]) else "speed",
 		"GOLD" if bool(b["golden"]) else "gold", "GEMS" if bool(b.get("gem_hunter", false)) else "gems"]
 	info += "   |   Boss: %s" % cfg.boss_name
+	var sharp := "relaxed" if cfg.animal_awareness < 1.15 else ("watchful" if cfg.animal_awareness < 1.45 else "sharp")
+	info += "   |   Animals: %s" % sharp
 	v.add_child(UIKit.label(info, 16, UIKit.DIM))
 	var slots := UIKit.hbox(8)
 	slots.alignment = BoxContainer.ALIGNMENT_CENTER

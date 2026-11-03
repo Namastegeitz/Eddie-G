@@ -202,6 +202,15 @@ def build_item_sfx():
     write("shield", (tone(660, 0.6) + 0.6 * tone(990, 0.6) + 0.3 * tone(1320, 0.6)) * np.exp(-t_axis(0.6) * 5))
 
 
+def build_people_sfx():
+    """Snoring for a napping person."""
+    os.makedirs(SFX, exist_ok=True)
+    n = lambda d: int(RATE * d)
+    t = t_axis(1.3)
+    breath = lowpass(noise(n(1.3)), 500) * (0.6 + 0.4 * np.sin(2 * math.pi * 38 * t))
+    write("snore", breath * env(n(1.3), 0.35, 0.5), peak=0.6)
+
+
 def build_icons():
     from PIL import Image, ImageDraw
     os.makedirs(ICONS, exist_ok=True)
@@ -257,5 +266,6 @@ def build_icons():
 if __name__ == "__main__":
     build_sfx()
     build_item_sfx()
+    build_people_sfx()
     build_icons()
     print("assets generated")

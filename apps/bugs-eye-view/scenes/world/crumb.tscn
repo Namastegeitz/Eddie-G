@@ -20,20 +20,20 @@ _surfaces = [{
 "vertex_data": PackedByteArray("jgaAvoiDvD37JRY/jD5qPjyA8D5h9MC+EKMMPySWhj7eC1c+tBYSv/sKmT4AaLm5jD5qvjyA8L5h9MA+jgaAPoiDvL37JRa/tBYSP/sKmb4AaLk5EKMMvySWhr7eC1e+EKMMPySWhj7eC1c+tBYSv/sKmT4AaLm5jD5qPjyA8D5h9MC+jgaAvoiDvD37JRY/tBYSP/sKmb4AaLk5EKMMvySWhr7eC1e+jgaAPoiDvL37JRa/jD5qvjyA8L5h9MA+EKMMPySWhj7eC1c+jD5qvjyA8L5h9MA+jgaAvoiDvD37JRY/tBYSP/sKmb4AaLk5jD5qPjyA8D5h9MC+EKMMvySWhr7eC1e+tBYSv/sKmT4AaLm5jgaAPoiDvL37JRa/I7W5PtRf4z6I1Q8/dJrDvWp8lz6dC6G+NKkPP/J+Gz/0TKE85IOWvra8Bz5GFWk+TnMYP+BLhzsCuQM/upUMPnSME76pRLm+8kFLP352Kz7MQ+K8SJN6vUlknb4uozg+NKkPP/J+Gz/0TKE85IOWvra8Bz5GFWk+dJrDvWp8lz6dC6G+I7W5PtRf4z6I1Q8/8kFLP352Kz7MQ+K8SJN6vUlknb4uozg+upUMPnSME76pRLm+TnMYP+BLhzsCuQM/NKkPP/J+Gz/0TKE8TnMYP+BLhzsCuQM/I7W5PtRf4z6I1Q8/8kFLP352Kz7MQ+K8dJrDvWp8lz6dC6G+SJN6vUlknb4uozg+5IOWvra8Bz5GFWk+upUMPnSME76pRLm+9mAZv1Yi1L0QfHC8n5PAvjKayT4nEiq+CHWhvkZVCz639gg+QvAov/PNHT5QCKG+x9Klvv5mlr5zh2++7JHOvZF3UD7sSMW+GC8kvTGeXb32Ea+9XvHEvn+7E70UpAi/CHWhvkZVCz639gg+QvAov/PNHT5QCKG+n5PAvjKayT4nEiq+9mAZv1Yi1L0QfHC8GC8kvTGeXb32Ea+9XvHEvn+7E70UpAi/7JHOvZF3UD7sSMW+x9Klvv5mlr5zh2++CHWhvkZVCz639gg+x9Klvv5mlr5zh2++9mAZv1Yi1L0QfHC8GC8kvTGeXb32Ea+9n5PAvjKayT4nEiq+XvHEvn+7E70UpAi/QvAov/PNHT5QCKG+7JHOvZF3UD7sSMW+0qQ8aMLvAdrCFyvbBDTht9KkPGjC7wHawhcr2wQ04bfSpDxowu8B2sIXK9sENOG30qQ8aMLvAdrCFyvbBDTht8LvBLTCF5XtBDTDb9KkHbTC7wS0wheV7QQ0w2/SpB20wu8EtMIXle0ENMNv0qQdtMLvBLTCF5XtBDTDb9KkHbSPfLTaBDTht0mlcAPC7wHaj3y02gQ04bdJpXADwu8B2o98tNoENOG3SaVwA8LvAdqPfLTaBDTht0mlcAPC7wHaiMCcnt7o8fGdHolA5WNvtIjAnJ7e6PHxnR6JQOVjb7SIwJye3ujx8Z0eiUDlY2+0iMCcnt7o8fGdHolA5WNvtN7o5OOdHkSg5WPfaIjATc/e6OTjnR5EoOVj32iIwE3P3ujk450eRKDlY99oiMBNz97o5OOdHkSg5WPfaIjATc+dVjTO5WNvtMqxYSne6PHxnVY0zuVjb7TKsWEp3ujx8Z1WNM7lY2+0yrFhKd7o8fGdVjTO5WNvtMqxYSne6PHxlIymShC209ZYNWnzpy0Hm5SMpkoQttPWWDVp86ctB5uUjKZKELbT1lg1afOnLQeblIymShC209ZYNWnzpy0HmxC2p61YNbT5py0QNpSMUqUQtqetWDW0+actEDaUjFKlELanrVg1tPmnLRA2lIxSpRC2p61YNbT5py0QNpSMUqWJTI2jpy0Hm3HcdTMQttPWiUyNo6ctB5tx3HUzELbT1olMjaOnLQebcdx1MxC209aJTI2jpy0Hm3HcdTMQttPW")
 }]
 
-[node name="Crumb" type="Area3D" unique_id=194625674]
+[node name="Crumb" type="Area3D" unique_id=1075965975]
 script = ExtResource("1_x4qah")
 
-[node name="Shape" type="CollisionShape3D" parent="." unique_id=2041133346]
+[node name="Shape" type="CollisionShape3D" parent="." unique_id=1843411452]
 shape = SubResource("SphereShape3D_ai87q")
 
-[node name="Visual" type="Node3D" parent="." unique_id=1163832819]
+[node name="Visual" type="Node3D" parent="." unique_id=197741942]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.15, 0)
 
-[node name="A" type="MeshInstance3D" parent="Visual" unique_id=162339905]
+[node name="A" type="MeshInstance3D" parent="Visual" unique_id=1203048947]
 material_override = ExtResource("2_7c5mo")
 mesh = SubResource("ArrayMesh_80co2")
 
-[node name="Skin" type="Node3D" parent="Visual" unique_id=1796650435]
+[node name="Skin" type="Node3D" parent="Visual" unique_id=1599149538]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, 0)
 script = ExtResource("3_0f4vf")
 model_id = "crumb"

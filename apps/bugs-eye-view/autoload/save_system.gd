@@ -34,6 +34,7 @@ func default_data() -> Dictionary:
 			"look_sensitivity": 1.0,
 			"touch_look_sensitivity": 1.0,
 			"invert_y": false,
+			"fly_follow_look": true,
 		},
 		"bindings": {},
 	}

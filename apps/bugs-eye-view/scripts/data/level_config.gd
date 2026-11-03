@@ -9,6 +9,9 @@ extends Resource
 @export var order: int = 0
 @export var crumbs_required: int = 8
 @export var par_time: float = 180.0
+## How sharp the animals are here (1 = relaxed). Later rooms are higher:
+## faster to notice, see and hear a bit further, play less.
+@export var animal_awareness: float = 1.0
 ## Level that must be completed first ("" = unlocked from the start).
 @export var unlock_after: StringName = &""
 ## Bug unlocked the first time this level is completed.

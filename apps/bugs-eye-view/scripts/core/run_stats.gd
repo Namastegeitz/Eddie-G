@@ -14,6 +14,7 @@ var threats_stunned: int = 0
 var hits_taken: int = 0
 var ever_alerted: bool = false
 var foods_eaten: int = 0
+var pesters: int = 0
 var food_points: int = 0
 ## Ids of crumb gems collected this run.
 var gems: Array[StringName] = []
@@ -43,6 +44,8 @@ func score(cfg: ScoringConfig, par_time: float) -> Dictionary:
 		lines.append(["Crumb gems x%d" % gems.size(), gem_points])
 	if close_calls > 0:
 		lines.append(["Close calls x%d" % close_calls, close_calls * cfg.close_call_points])
+	if pesters > 0:
+		lines.append(["Pestered x%d" % pesters, pesters * cfg.pester_points])
 	if lures_used > 0:
 		lines.append(["Lures used x%d" % lures_used, lures_used * cfg.lure_points])
 	if threats_stunned > 0:

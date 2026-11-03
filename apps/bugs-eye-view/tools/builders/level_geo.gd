@@ -298,6 +298,28 @@ func wind(n: String, center: Vector3, size: Vector3, dir: Vector3, strength: flo
 	return w
 
 
+## Warm rising air: lifts a flying fly and refills its stamina.
+func thermal(n: String, center: Vector3, size: Vector3, lift: float = 7.0, active: Array = []) -> Thermal:
+	var t := Thermal.new()
+	_area(t, n, center, size)
+	t.lift = lift
+	t.active_events = PackedStringArray(active)
+	for i in 1:
+		var ring := MeshInstance3D.new()
+		ring.name = "Shimmer%d" % i
+		var tm := TorusMesh.new()
+		tm.inner_radius = minf(size.x, size.z) * 0.3
+		tm.outer_radius = minf(size.x, size.z) * 0.36
+		tm.rings = 12
+		tm.ring_segments = 6
+		ring.mesh = tm
+		ring.material_override = mat("heat")
+		ring.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		ring.position.y = -size.y * 0.5 + i * size.y / 3.0
+		t.add_child(ring)
+	return t
+
+
 func drain(n: String, center: Vector3, radius: float, respawn: Vector3, active: Array) -> Drain:
 	var d := Drain.new()
 	_area(d, n, center, Vector3(radius * 2, 2.0, radius * 2))

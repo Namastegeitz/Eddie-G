@@ -43,39 +43,39 @@ height = 0.04
 radial_segments = 16
 rings = 1
 
-[node name="GemEmerald" type="Area3D" unique_id=1653041793]
+[node name="GemEmerald" type="Area3D" unique_id=1823770015]
 script = ExtResource("1_0pxmo")
 def = ExtResource("2_hlfnu")
 
-[node name="Shape" type="CollisionShape3D" parent="." unique_id=1411981338]
+[node name="Shape" type="CollisionShape3D" parent="." unique_id=478158521]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.7, 0)
 shape = SubResource("SphereShape3D_vcwq5")
 
-[node name="Visual" type="Node3D" parent="." unique_id=880143580]
+[node name="Visual" type="Node3D" parent="." unique_id=833001676]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.7, 0)
 
-[node name="Table" type="MeshInstance3D" parent="Visual" unique_id=10347842]
+[node name="Table" type="MeshInstance3D" parent="Visual" unique_id=858523372]
 material_override = ExtResource("3_tullb")
 mesh = SubResource("ArrayMesh_7enuy")
 
-[node name="Skin" type="Node3D" parent="Visual" unique_id=160183476]
+[node name="Skin" type="Node3D" parent="Visual" unique_id=832389382]
 script = ExtResource("4_turd5")
 model_id = "gem_emerald"
 fit_size = Vector3(1, 1.3, 1)
 hide_paths = Array[NodePath]([NodePath("../Table")])
 
-[node name="Glow" type="OmniLight3D" parent="Visual" unique_id=794774612]
+[node name="Glow" type="OmniLight3D" parent="Visual" unique_id=1174601331]
 light_color = Color(0.15, 0.9, 0.45, 1)
 light_energy = 1.2
 
-[node name="Sparkles" type="Node3D" parent="Visual" unique_id=795971029]
+[node name="Sparkles" type="Node3D" parent="Visual" unique_id=612397642]
 
-[node name="Sparkle" type="MeshInstance3D" parent="Visual/Sparkles" unique_id=1071501539]
+[node name="Sparkle" type="MeshInstance3D" parent="Visual/Sparkles" unique_id=82785801]
 material_override = ExtResource("5_juemr")
 cast_shadow = 0
 mesh = SubResource("ArrayMesh_qxf3r")
 
-[node name="Halo" type="MeshInstance3D" parent="." unique_id=219683414]
+[node name="Halo" type="MeshInstance3D" parent="." unique_id=1928540325]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, 0)
 material_override = ExtResource("6_3wbo1")
 cast_shadow = 0

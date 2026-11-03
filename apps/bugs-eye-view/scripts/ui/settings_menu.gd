@@ -23,6 +23,7 @@ func _ready() -> void:
 	col.add_child(_section("Feel"))
 	col.add_child(_toggle("Vibration / rumble", "haptics"))
 	col.add_child(_toggle("Invert look Y", "invert_y"))
+	col.add_child(_toggle("Fly where you look", "fly_follow_look"))
 	col.add_child(_slider("Look sensitivity", "look_sensitivity", 0.3, 2.5))
 	col.add_child(_slider("Touch look speed", "touch_look_sensitivity", 0.2, 2.0))
 	col.add_child(_section("Display"))

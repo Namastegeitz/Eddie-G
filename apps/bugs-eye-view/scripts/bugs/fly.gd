@@ -10,6 +10,13 @@ extends BugBase
 ##                    downward gaze, regaining stamina).
 ##   Jinking        - sharp turns at speed make you hard to track.
 ##   Silent glide   - out of stamina you glide down quietly instead of dropping.
+##   Hover          - let go of the stick: hold your height, far less tiring.
+##   Updrafts       - warm air over the stove, toaster, heater, lamps and grill
+##                    lifts you and refills stamina in flight (Thermal zones).
+##   Pester         - Use next to a person's or pet's head: people flail and
+##                    lose sight of you for a moment; pets get playful and leap.
+## Flight is level by default: Up/Down climb and dive, and (setting "Fly where
+## you look") tilting the camera well up or down steers you up or down.
 
 const LOOP_WINDOW := 0.35
 const LOOP_TIME := 0.55
@@ -23,6 +30,15 @@ const JINK_MIN_SPEED := 8.0
 const JINK_VISIBILITY := 0.55
 const GLIDE_SINK := 3.0
 const GLIDE_SPEED_MULT := 0.55
+## Hovering (no input) costs this share of normal flight stamina.
+const HOVER_DRAIN := 0.35
+## Camera tilt past these angles (from the default view) steers the climb.
+const LOOK_CLIMB_DEADZONE := 0.18
+const LOOK_DIVE_DEADZONE := 0.22
+const LOOK_STEER_RANGE := 0.45
+const PESTER_RANGE := 7.0
+const PESTER_COST := 1.0
+const THERMAL_REGEN := 2.0
 
 var flying := false
 var gliding := false
@@ -30,6 +46,12 @@ var clinging := false
 var cling_normal := Vector3.UP
 var stamina := 0.0
 var bullet_time := false
+var hovering := false
+## Lift from the warm air we're in (Thermal zones add to it each frame).
+var thermal_lift := 0.0
+var _thermal_age := 99.0
+var _hover_hinted := false
+var _bank := 0.0
 var _wobble_t := 0.0
 var _since_dodge := 99.0
 var _loop_time := 0.0
@@ -64,7 +86,7 @@ func get_action_labels() -> Dictionary:
 			"dodge": "Burst", "interact": "Use", "sense": "Slow-mo"}
 	if flying:
 		return {"primary": "Boost", "secondary": "Down/Cling", "jump": "Up",
-			"dodge": "Burst", "interact": "Use", "sense": "Slow-mo"}
+			"dodge": "Burst", "interact": "Pester" if pester_target() else "Use", "sense": "Slow-mo"}
 	return {"primary": "Boost", "secondary": "Down/Land", "jump": "Take off",
 		"dodge": "Burst", "interact": "Use", "sense": "Slow-mo"}
 
@@ -190,17 +212,39 @@ func _cling_tick(delta: float) -> void:
 		visual.scale = s
 
 
-func _fly(delta: float, comp: float) -> void:
-	_wobble_t += delta * comp
-	var input := move_input()
-	var fwd := cam.get_forward() if cam else -camera_yaw_basis.z
+## Desired flight direction: level from the stick, Up/Down to climb or dive,
+## and (optionally) the camera's tilt beyond the normal view angle.
+func flight_wish(input: Vector2) -> Vector3:
+	var fwd := -camera_yaw_basis.z
 	var right := camera_yaw_basis.x
 	var wish := fwd * input.y + right * input.x
+	var climb := 0.0
 	if InputRouter.is_held(&"jump") and not gliding:
-		wish += Vector3.UP
+		climb += 1.0
 	if InputRouter.is_held(&"secondary"):
-		wish += Vector3.DOWN
-	wish = wish.limit_length(1.0)
+		climb -= 1.0
+	if cam and input.y > 0.2 and bool(SaveSystem.get_setting("fly_follow_look", true)):
+		var tilt := cam.pitch - cam.DEFAULT_PITCH
+		if tilt > LOOK_CLIMB_DEADZONE:
+			climb += clampf((tilt - LOOK_CLIMB_DEADZONE) / LOOK_STEER_RANGE, 0.0, 1.0) * input.y
+		elif tilt < -LOOK_DIVE_DEADZONE:
+			climb -= clampf((-tilt - LOOK_DIVE_DEADZONE) / LOOK_STEER_RANGE, 0.0, 1.0) * input.y
+	wish.y = clampf(climb, -1.0, 1.0)
+	return wish.limit_length(1.0)
+
+
+func _fly(delta: float, comp: float) -> void:
+	_wobble_t += delta * comp
+	_thermal_age += delta
+	if _thermal_age > 0.1:
+		thermal_lift = 0.0
+	var input := move_input()
+	var wish := flight_wish(input)
+	var was_hovering := hovering
+	hovering = not gliding and wish.length() < 0.1 and _dodge_time <= 0.0
+	if hovering and not was_hovering and not _hover_hinted:
+		_hover_hinted = true
+		show_hint("Hovering - holding height costs little stamina")
 	_check_jink(wish)
 	if _loop_time > 0.0:
 		# Evasive loop: climb steeply while reversing, then come down behind.
@@ -214,18 +258,28 @@ func _fly(delta: float, comp: float) -> void:
 		var g := Vector3(wish.x, 0.0, wish.z) * stats.flight_speed * GLIDE_SPEED_MULT * speed_scale()
 		velocity.x = lerpf(velocity.x, g.x, clampf(2.0 * delta, 0.0, 1.0))
 		velocity.z = lerpf(velocity.z, g.z, clampf(2.0 * delta, 0.0, 1.0))
-		velocity.y = move_toward(velocity.y, -GLIDE_SINK, 10.0 * delta)
+		velocity.y = move_toward(velocity.y, -GLIDE_SINK + thermal_lift, 10.0 * delta)
 	else:
 		var speed := (stats.boost_speed if is_sprinting() else stats.flight_speed) * speed_scale()
-		# Buzzy drift from layered sines (no allocation, no RNG).
+		# Buzzy drift from layered sines (no allocation, no RNG); calmer when
+		# hovering, and never pulling you up or down by more than a bob.
 		var t := _wobble_t
-		var drift := Vector3(sin(t * 7.3) + sin(t * 3.1) * 0.5, sin(t * 5.7) * 0.6,
-			cos(t * 6.1) + sin(t * 2.3) * 0.5) * stats.drift
-		velocity = velocity.lerp(wish * speed + drift, clampf(stats.flight_accel * delta * comp, 0.0, 1.0))
+		var drift := Vector3(sin(t * 7.3) + sin(t * 3.1) * 0.5, sin(t * 5.7) * 0.25,
+			cos(t * 6.1) + sin(t * 2.3) * 0.5) * stats.drift * (0.4 if hovering else 1.0)
+		var target := wish * speed + drift
+		target.y = wish.y * stats.ascend_speed * (1.4 if is_sprinting() else 1.0) + drift.y + thermal_lift
+		velocity = velocity.lerp(target, clampf(stats.flight_accel * delta * comp, 0.0, 1.0))
 		if _dodge_time > 0.0:
 			velocity = _dodge_dir * stats.dodge_speed
 		if not has_effect(&"wired"):
-			stamina -= stats.stamina_drain * (2.0 if is_sprinting() else 1.0) * delta * comp
+			var drain := HOVER_DRAIN if hovering else (2.0 if is_sprinting() else 1.0)
+			stamina -= stats.stamina_drain * drain * delta * comp
+	if thermal_lift > 0.0:
+		stamina = minf(stamina + THERMAL_REGEN * delta, stats.stamina_max)
+		if gliding and stamina >= stats.takeoff_stamina * 2.0:
+			gliding = false
+			AudioManager.start_loop(_buzz)
+			show_hint("Caught an updraft!")
 	var ext := external_velocity
 	velocity = (velocity + ext) * comp
 	move_and_slide()
@@ -252,7 +306,10 @@ func _fly(delta: float, comp: float) -> void:
 	if visual:
 		visual.rotation.y = lerp_angle(visual.rotation.y, atan2(-facing.x, -facing.z), clampf(stats.turn_speed * delta, 0.0, 1.0))
 		visual.rotation.x = lerpf(visual.rotation.x, clampf(-velocity.y * 0.03, -0.5, 0.5), 0.2)
-		visual.rotation.z = 0.0
+		# Bank into turns.
+		var side := Vector3(velocity.x, 0.0, velocity.z).dot(Basis(Vector3.UP, visual.rotation.y).x)
+		_bank = lerpf(_bank, clampf(-side * 0.04, -0.6, 0.6), clampf(6.0 * delta, 0.0, 1.0))
+		visual.rotation.z = _bank
 
 
 ## Steering hard against your flight at speed is a jink: threats struggle
@@ -351,8 +408,47 @@ func _try_dodge() -> void:
 	AudioManager.play(&"dash", -4.0, 1.3)
 
 
+## Warm air (Thermal zones) calls this every physics frame we're inside it.
+func add_thermal_lift(lift: float) -> void:
+	thermal_lift = maxf(thermal_lift, lift)
+	_thermal_age = 0.0
+
+
+## The closest person or pet whose head is within reach, while flying.
+func pester_target() -> Threat:
+	if not flying or gliding or dead:
+		return null
+	var best: Threat = null
+	var best_d := PESTER_RANGE
+	for t in PerceptionSystem.threats:
+		if not t.present or not t.has_method(&"pestered"):
+			continue
+		var d := t.eye_position().distance_to(global_position)
+		if d < best_d:
+			best = t
+			best_d = d
+	return best
+
+
+func _do_interact() -> void:
+	var t := pester_target()
+	if t == null:
+		super._do_interact()
+		return
+	if stamina < PESTER_COST:
+		show_hint("Too tired to pester")
+		return
+	if t.call(&"pestered", self):
+		stamina -= PESTER_COST
+		AudioManager.play(&"buzz", 2.0, 1.4)
+		show_hint("Bzzz! Pestering")
+		if Level.current:
+			Level.current.note_pester()
+
+
 func teleport_to(xform: Transform3D) -> void:
 	_leave_surface()
+	thermal_lift = 0.0
 	_loop_time = 0.0
 	_dive_time = 0.0
 	if flying:

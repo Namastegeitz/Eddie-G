@@ -4,7 +4,7 @@
 - Built end to end from `prompts/claude/bugs-eye-view.md` (all 6 phases, all 16 add-ons).
 - Godot 4.7.2 project: 3 bugs, 3 rooms with boss chases, perception-based stealth,
   escalation chain, daily routines, colony upgrades, menus, touch/keyboard/gamepad.
-- Tests: `tools/run_tests.sh` - 120-check smoke test + 248-check phase audit + offline
+- Tests: `tools/run_tests.sh` - 120-check smoke test + 276-check phase audit + offline
   Meshy client test pass in the project and in an exported build; zero GDScript warnings
   and engine errors.
 - Updates after the build: alarm gauge (threats only investigate until it's full), slower
@@ -13,6 +13,10 @@
   rooms (kitchen 170x125, living room 180x100, backyard 194x164) with 7 more hiding spots,
   full human bodies (faces, hands, outfits, knee-bending legs), detailed jointed bugs with a
   walk cycle, 6 bug foods and 6 crumb gems with effects. 84 model slots.
+- Then: fly flight fixed (level flight, hover, look-to-climb) plus updrafts and pestering;
+  animals playful/alert with moods and body language, a puppy in the kitchen, sharper each
+  room; people do activities (cooking, dishes, snacking, reading, napping, watering, kneeling,
+  fetch).
 - Phase-by-phase audit (all 6 phases) done; fixes it found: human feet were never solid,
   props didn't stun via feet, cereal-box domino layout, spider facing/normal errors, fog strength.
 - Android debug APK committed at `apps/bugs-eye-view/dist/android/bugseyeview-debug.apk`.

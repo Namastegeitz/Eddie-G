@@ -17,6 +17,8 @@ var target: BugBase
 var yaw := 0.0
 var _touch_pending := Vector2.ZERO
 var pitch := -0.35
+## The resting view angle (the fly's look-steering measures tilt from it).
+const DEFAULT_PITCH := -0.35
 var camera: Camera3D
 var arm: SpringArm3D
 var _shake := 0.0

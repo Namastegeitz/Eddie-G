@@ -91,6 +91,12 @@ static func build(tree: SceneTree) -> void:
 	g.light_zone("TankGlow", Vector3(65, 4, 30), Vector3(28, 8, 16), 2, 2, [], ["lights_out"], true, 1.0)
 	g.prop("ball", Vector3(55, 1.6, -8))
 
+	# --- Warm air for the fly: radiator under the window, the lamps ---
+	g.box("Radiator", Vector3(112, 9, -12), Vector3(4, 16, 22), "metal", &"metal")
+	g.thermal("RadiatorHeat", Vector3(108, 36, -12), Vector3(10, 38, 20), 7.0)
+	g.thermal("ReadingLampHeat", Vector3(82, 65, -44), Vector3(12, 16, 12), 6.0, ["reading"])
+	g.thermal("TableLampHeat", Vector3(104, 47, -40), Vector3(10, 18, 10), 5.0, ["lamp_on"])
+
 	# --- Clutter ---
 	g.cylinder("UmbrellaStand", Vector3(30, 6, 44), 4.0, 12, "metal", &"metal")
 	g.rebounder("UmbrellaRebound", Vector3(30, 0, 44), 6.0)
@@ -157,6 +163,7 @@ static func build(tree: SceneTree) -> void:
 	g.skin_region("Plant", "potted_plant", Vector3(-50, 16.5, -44), Vector3(18, 33, 18), ["PlantPot", "Plant"])
 	g.skin_region("Armchair", "armchair", Vector3(62, 15, -39), Vector3(30, 30, 22), ["Armchair"])
 	g.skin_region("FloorLamp", "floor_lamp", Vector3(82, 28, -44), Vector3(14, 57, 14), ["FloorLamp"])
+	g.skin_region("Radiator", "radiator", Vector3(112, 9, -12), Vector3(4, 16, 22), ["Radiator"], -90.0)
 	g.skin_region("Aquarium", "aquarium", Vector3(65, 20, 43), Vector3(30, 40, 12), ["TankStand", "Aquarium", "TankWater", "Fish"])
 
 	# --- Spawn and escape ---
@@ -166,9 +173,12 @@ static func build(tree: SceneTree) -> void:
 
 	# --- Threats ---
 	g.human("res://scenes/threats/human_reader.tscn",
-		[Vector3(40, 0, -20), Vector3(-34, 0, -22), Vector3(-36, 0, 20), Vector3(25, 0, 26), Vector3(70, 0, 28),
-			Vector3(95, 0, 20), Vector3(92, 0, -14), Vector3(60, 0, -16)],
-		["tv_on", "reading"], {"name": "Reader"})
+		[Vector3(40, 0, -20), Vector3(-10, 0, -23), Vector3(-34, 0, -22), Vector3(-36, 0, 20), Vector3(25, 0, 26),
+			Vector3(70, 0, 28), Vector3(95, 0, 20), Vector3(92, 0, -14), Vector3(62, 0, -23)],
+		["tv_on", "reading"], {"name": "Reader", "activities": {
+			1: {"kind": &"nap", "time": 14.0, "face": Vector3(-10, 0, 10)},
+			8: {"kind": &"read", "time": 16.0, "face": Vector3(62, 0, 10)},
+		}})
 	var cat := g.pet("res://scenes/threats/cat.tscn", Vector3(90, 0.5, 40),
 		[Vector3(30, 0, 30), Vector3(-30, 0, 30), Vector3(-40, 0, -15), Vector3(30, 0, -15), Vector3(85, 0, -12),
 			Vector3(95, 0, 10)],

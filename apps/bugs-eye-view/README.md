@@ -17,10 +17,12 @@ and escape. One codebase for Android, iOS, Windows, macOS, Linux and the web.
   hide, survives one extra hit with a knockdown, plays dead near a suspicious
   threat, smells crumbs with its antennae, runs faster in the dark and bolts
   when a light flicks on.
-- **Fly** (escape the Kitchen): buzzy 3D flight with momentum and drift,
-  compound-eye slow motion when a strike is about to land, and escape moves:
-  burst, evasive loop, silent dive, clinging to walls and ceilings, jinking,
-  and a silent glide when stamina runs out.
+- **Fly** (escape the Kitchen): buzzy, level 3D flight that hovers in place
+  when you let go, climbs where you look, rides warm updrafts over the stove,
+  lamps and grill, and pesters people and pets. Compound-eye slow motion when
+  a strike is about to land, and escape moves: burst, evasive loop, silent
+  dive, clinging to walls and ceilings, jinking, and a silent glide when
+  stamina runs out.
 - **Spider** (escape the Living Room): walks on walls and ceilings, zips on
   web lines that stay behind as bridges, spins web traps, feels footsteps as
   ripples through walls.
@@ -43,11 +45,18 @@ give short boosts; six glowing gems give real powers (near-invisibility,
 freezing everyone, calming the alarm, an iron shell, a crumb magnet, an echo
 decoy).
 
-**People and bugs**: humans have full bodies (faces, hair, hands, outfits)
+**People and animals**: humans have full bodies (faces, hair, hands, outfits)
 that walk with bending knees and swinging arms, turn their heads toward
-noises and raise the swatting arm when they spot you. The bugs have jointed
+noises and raise the swatting arm when they spot you. Each room's person has
+things they do: the cook cooks, washes up and snacks (dropping crumbs), the
+reader reads behind the paper and naps on the couch, the gardener waters,
+kneels in the vegetables and plays fetch with the dog. The puppy, cat and dog
+are playful when calm (balls, zoomies, play-pounces), alert when something's
+up, leap at a low-flying fly, and get sharper room by room.
+
+**Bugs**: jointed
 legs that scuttle in a real gait, twitching antennae, wing veins, eight
-spider eyes and fangs, and clean their antennae when left idle.
+spider eyes and fangs; they clean their antennae when left idle.
 
 **Stealth systems**
 - Light and shadow zones, noisy and quiet surfaces, ambient noise that masks
@@ -85,10 +94,10 @@ for a generated 3D model (84 in all); `tools/meshy/generate.py` makes them with 
 (needs your Meshy API key; see [tools/meshy/README.md](tools/meshy/README.md)).
 
 - Two headless test suites pass in the project and in an exported build
-  (`tools/run_tests.sh`): a 120-check smoke test and a 248-check phase audit
+  (`tools/run_tests.sh`): a 120-check smoke test and a 276-check phase audit
   that walks the spec phase by phase, plus every update since (alarm gauge,
   fly moves, hiding spots, model slots, bigger rooms, people, bug detail, food
-  and gems). Zero GDScript warnings, zero engine errors.
+  and gems, flying, animals and people's activities). Zero GDScript warnings, zero engine errors.
 - Ideas and ready-made prompts for what to build next:
   [docs/TOOL_IDEAS.md](docs/TOOL_IDEAS.md),
   [../../prompts/claude/bugs-eye-view-next.md](../../prompts/claude/bugs-eye-view-next.md),

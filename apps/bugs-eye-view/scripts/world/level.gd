@@ -79,6 +79,9 @@ func _ready() -> void:
 			if not crumb.golden:
 				normal += 1
 	crumbs_needed = mini(config.crumbs_required, normal)
+	for t in get_tree().get_nodes_in_group(Phys.GROUP_PET):
+		if is_ancestor_of(t):
+			(t as Threat).awareness = config.animal_awareness
 	for it in get_tree().get_nodes_in_group(Phys.GROUP_ITEM):
 		var item := it as PickupItem
 		if item and is_ancestor_of(item):
@@ -206,6 +209,40 @@ func _on_item_collected(item: PickupItem) -> void:
 	item_picked.emit(item.def)
 
 
+const MAX_DROPPED_CRUMBS := 12
+var _dropped_crumbs := 0
+
+
+## True if a crumb at `pos` would sit on open floor (not inside furniture).
+func is_open_floor(pos: Vector3) -> bool:
+	var space := get_world_3d().direct_space_state
+	var q := PhysicsShapeQueryParameters3D.new()
+	var sphere := SphereShape3D.new()
+	sphere.radius = 0.8
+	q.shape = sphere
+	q.transform = Transform3D(Basis.IDENTITY, pos + Vector3.UP * 0.4)
+	q.collision_mask = Phys.WORLD
+	if not space.intersect_shape(q, 1).is_empty():
+		return false
+	var ray := PhysicsRayQueryParameters3D.create(pos + Vector3.UP * 0.5, pos + Vector3.DOWN * 1.5, Phys.WORLD)
+	return not space.intersect_ray(ray).is_empty()
+
+
+## A crumb dropped during play (the cook's pan, a snacker's plate). Returns
+## null if the spot isn't open floor or enough crumbs have been dropped.
+func spawn_crumb(pos: Vector3) -> Crumb:
+	if _dropped_crumbs >= MAX_DROPPED_CRUMBS or not is_open_floor(pos):
+		return null
+	_dropped_crumbs += 1
+	var c := (load("res://scenes/world/crumb.tscn") as PackedScene).instantiate() as Crumb
+	c.name = "DroppedCrumb%d" % _dropped_crumbs
+	var parent := find_child("Pickups", false, false)
+	(parent if parent else self).add_child(c)
+	c.global_position = pos
+	c.collected.connect(_on_crumb_collected)
+	return c
+
+
 ## Kibble and other big meals count as several crumbs.
 func add_bonus_crumbs(n: int) -> void:
 	if n <= 0:
@@ -253,6 +290,11 @@ func _finish(won: bool, cause: StringName) -> void:
 func note_lure_used() -> void:
 	if run:
 		run.lures_used += 1
+
+
+func note_pester() -> void:
+	if run and not finished:
+		run.pesters += 1
 
 
 func note_close_call() -> void:

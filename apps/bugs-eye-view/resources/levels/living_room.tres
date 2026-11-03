@@ -12,6 +12,7 @@ scene_path = "res://scenes/levels/living_room.tscn"
 order = 1
 crumbs_required = 11
 par_time = 290.0
+animal_awareness = 1.3
 unlock_after = &"kitchen"
 unlocks_bug = &"spider"
 boss_name = "The Cat"

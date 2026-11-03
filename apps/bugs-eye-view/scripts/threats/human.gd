@@ -3,6 +3,15 @@ extends Threat
 ## A person walking through the room. Each footstep is a telegraphed stomp.
 ## The escalation chain decides the weapons: stomps at first, the swatter
 ## from stage 2, a newspaper sweep (if carried) and bug spray at stage 4.
+##
+## Activities: at chosen points on their route people stop and do something
+## (see `activities`): cook and do the dishes with their back to the room,
+## snack and drop crumbs, sit and read behind a newspaper (only glancing up
+## now and then), nap (can't see, barely hears, snores), water the flowers (the
+## spray washes your scent off but knocks you back), kneel to tend the
+## vegetables (low and close: sharp-eyed nearby), and throw the ball for the
+## dog. Anything suspicious interrupts them. A fly pestering them makes them
+## flail and swat at the air: for a few seconds they can't see you.
 
 @export var route: PackedVector3Array = []
 @export var stride: float = 9.0
@@ -14,6 +23,31 @@ extends Threat
 ## Exterminator: heavier, louder stomps.
 @export var heavy_boots: bool = false
 @export var spray_interval: float = 5.0
+## Stops on the route: {route index: {"kind": &"cook", "time": 10.0, "face": Vector3}}.
+## Kinds: cook, dishes, snack, read, nap, water, kneel, fetch.
+@export var activities: Dictionary = {}
+
+const SIT_OFFSET := Vector3(0, -20.5, 10.5)
+const KNEEL_OFFSET := Vector3(0, -15.0, 3.0)
+const PEEK_EVERY := 5.0
+const PEEK_TIME := 1.8
+const FLUSTER_TIME := 3.5
+
+## The activity under way (&"" when walking).
+var activity: StringName = &""
+var flustered := 0.0
+var _act: Dictionary = {}
+var _act_t := 0.0
+var _act_clock := 0.0
+var _act_drops := 0
+var _peek := 0.0
+var _pester_cd := 0.0
+var _stream: WaterStream
+var _ball: PhysicsProp
+var _thrown := false
+var _snore_cd := 0.0
+var _torso_base := Vector3.ZERO
+var _paper: Node3D
 
 var escalation_stage := 0
 var _route_i := 1
@@ -50,6 +84,7 @@ func _setup() -> void:
 	right_foot = get_node_or_null("RightFoot") as FootHazard
 	newspaper = get_node_or_null("Newspaper") as Newspaper
 	_torso = get_node_or_null("Torso")
+	_paper = get_node_or_null("Torso/ReadingPaper") as Node3D
 	if _torso:
 		for side in ["L", "R"]:
 			var sh := _torso.get_node_or_null("Shoulder" + side) as Node3D
@@ -81,6 +116,7 @@ func _plant_feet(center: Vector3, yaw: float) -> void:
 
 
 func _on_presence_changed(now: bool) -> void:
+	end_activity()
 	for f in [left_foot, right_foot]:
 		if f:
 			(f as FootHazard).visible = now
@@ -98,9 +134,18 @@ func _think(delta: float) -> void:
 	_attack_cd -= delta * speed_mult()
 	_spray_cd -= delta
 	_voice_cd -= delta
+	_pester_cd -= delta
+	flustered = maxf(flustered - delta, 0.0)
+	if activity != &"" and alert.state > AlertState.UNAWARE:
+		if activity == &"nap":
+			AudioManager.play_at(&"voice_huh", eye_position(), 0.0, 0.8, &"Muffled")
+		end_activity()
 	match alert.state:
 		AlertState.UNAWARE:
-			_patrol(delta)
+			if activity != &"":
+				_activity_tick(delta)
+			elif flustered <= 0.0:
+				_patrol(delta)
 		AlertState.SUSPICIOUS:
 			face_towards(alert.last_known, delta)
 			if _voice_cd <= 0.0:
@@ -135,6 +180,12 @@ func _patrol(delta: float) -> void:
 	var target := route[_route_i]
 	face_towards(target, delta)
 	if Vector2(target.x - _body_pos.x, target.z - _body_pos.z).length() < stride * 0.6:
+		if activities.has(_route_i):
+			if left_foot and right_foot and (not left_foot.is_planted() or not right_foot.is_planted()):
+				return
+			start_activity(activities[_route_i])
+			_route_i = (_route_i + 1) % route.size()
+			return
 		_route_i = (_route_i + 1) % route.size()
 		if randf() < 0.3:
 			_pause = randf_range(0.8, 2.0)
@@ -269,11 +320,16 @@ func pose_body(delta: float) -> void:
 		swing = clampf(d / maxf(stride, 1.0), -1.0, 1.0) * 0.5
 	var k := clampf(8.0 * delta, 0.0, 1.0)
 	var is_stunned := stun_time > 0.0
+	var pose := _activity_pose()
 	for i in _shoulders.size():
 		var sh := _shoulders[i]
 		var arm_x := -swing if i == 0 else swing
 		var elbow_x := 0.15 + absf(swing) * 0.35
-		if is_stunned:
+		if not pose.is_empty() and not is_stunned:
+			var arm: Vector2 = pose[1 + i]
+			arm_x = arm.x
+			elbow_x = arm.y
+		elif is_stunned:
 			arm_x = 2.5 + sin(_breath * 14.0 + i * 2.0) * 0.35
 			elbow_x = 0.4
 		elif i == 1 and alert.state == AlertState.ALERT:
@@ -290,12 +346,24 @@ func pose_body(delta: float) -> void:
 		var pitch_t := -0.12
 		if alert.state > AlertState.UNAWARE and alert.has_target:
 			var local := global_transform.affine_inverse() * alert.last_known
-			var from_head := local - Vector3(0, 70, BODY_Z)
+			var from_head := local - Vector3(0, 70, BODY_Z) - _torso.position
 			yaw_t = clampf(atan2(-from_head.x, -from_head.z), -0.9, 0.9)
 			pitch_t = clampf(atan2(from_head.y, Vector2(from_head.x, from_head.z).length()), -0.8, 0.3)
+		elif activity == &"read":
+			pitch_t = -0.3 if _peek <= 0.0 else 0.0
+			yaw_t = sin(_breath * 2.5) * 0.8 if _peek > 0.0 else 0.0
+		elif activity == &"nap":
+			pitch_t = -0.65
+			yaw_t = 0.25
+		elif activity in [&"cook", &"dishes", &"kneel", &"water"]:
+			pitch_t = -0.5
+		elif flustered > 0.0:
+			yaw_t = sin(_breath * 9.0) * 0.7
 		_head.rotation.y = lerp_angle(_head.rotation.y, yaw_t, clampf(5.0 * delta, 0.0, 1.0))
 		_head.rotation.x = lerp_angle(_head.rotation.x, pitch_t, clampf(5.0 * delta, 0.0, 1.0))
-	_torso.position.y = sin(_breath * 1.7) * 0.15 - absf(swing) * 1.2
+	var base: Vector3 = pose[0] if not pose.is_empty() else Vector3.ZERO
+	_torso_base = _torso_base.lerp(base, clampf(4.0 * delta, 0.0, 1.0))
+	_torso.position = _torso_base + Vector3(0, sin(_breath * 1.7) * 0.15 - absf(swing) * 1.2, 0)
 	_pose_legs(fwd)
 
 
@@ -308,7 +376,7 @@ func _pose_legs(fwd: Vector3) -> void:
 		var parts: Array = _leg_parts[i]
 		if f == null or parts[0] == null or parts[2] == null:
 			continue
-		var hip := global_transform * Vector3((-1.0 if i == 0 else 1.0) * HIP_X, HIP_Y + _torso.position.y, BODY_Z)
+		var hip := global_transform * (Vector3((-1.0 if i == 0 else 1.0) * HIP_X, HIP_Y, BODY_Z) + _torso.position)
 		var ankle := f.global_transform * ANKLE
 		var knee := knee_point(hip, ankle, fwd)
 		_place_bone(parts[0] as Node3D, hip, knee, 19.5)
@@ -341,3 +409,203 @@ static func _place_bone(mi: Node3D, a: Vector3, b: Vector3, mesh_len: float) -> 
 	var x := y.cross(ref).normalized()
 	var z := x.cross(y)
 	mi.global_transform = Transform3D(Basis(x, y * (length / mesh_len), z), (a + b) * 0.5)
+
+
+# --- Activities -------------------------------------------------------------------
+
+func start_activity(act: Dictionary) -> void:
+	_act = act
+	activity = StringName(act.get("kind", ""))
+	_act_t = float(act.get("time", 8.0))
+	_act_clock = 0.0
+	_act_drops = 0
+	_peek = 0.0
+	_thrown = false
+	_snore_cd = 1.5
+	if activity in [&"read", &"nap", &"kneel"] and act.has("face"):
+		# Turn to sit down / kneel facing the right way.
+		var to: Vector3 = act["face"] - _body_pos
+		rotation.y = atan2(-to.x, -to.z)
+	_plant_feet(_body_pos, rotation.y)
+	if _paper:
+		_paper.visible = activity == &"read"
+	match activity:
+		&"water":
+			var face: Vector3 = _act.get("face", global_position)
+			var from := global_transform * Vector3(4, 48, -14)
+			var to := Vector3(face.x, 0.0, face.z)
+			_stream = WaterStream.make(from, to)
+			get_parent().add_child(_stream)
+			_stream.global_position = to
+			AudioManager.play_at(&"sprinkler", to, -6.0)
+		&"fetch":
+			_ball = _nearest_ball(60.0)
+
+
+func end_activity() -> void:
+	if activity == &"":
+		return
+	activity = &""
+	_act = {}
+	if _paper:
+		_paper.visible = false
+	if _stream and is_instance_valid(_stream):
+		_stream.queue_free()
+	_stream = null
+	_ball = null
+
+
+func is_sitting() -> bool:
+	return activity in [&"read", &"nap"]
+
+
+## Reading with the paper up: only what's right in front of them, until they
+## glance over it.
+func is_reading_blind() -> bool:
+	return activity == &"read" and _peek <= 0.0
+
+
+func _activity_tick(delta: float) -> void:
+	_act_t -= delta
+	_act_clock += delta
+	var face: Vector3 = _act.get("face", global_position - global_basis.z * 10.0)
+	if not is_sitting() and activity != &"kneel":
+		face_towards(face, delta)
+	match activity:
+		&"cook", &"snack":
+			# Crumbs fall from the pan / the plate: grab them under their feet.
+			if _act_clock > 2.5 * (_act_drops + 1) and _act_drops < 2 and Level.current:
+				_act_drops += 1
+				# Behind and beside them (in front is the stove or the table), on
+				# open floor: try a few spots.
+				for attempt in 8:
+					var spot := global_transform * Vector3(randf_range(-6.0, 6.0), 0.0, randf_range(3.0, 8.0))
+					spot.y = global_position.y + 0.6
+					if Level.current.spawn_crumb(spot):
+						break
+		&"read":
+			_peek -= delta
+			if fmod(_act_clock, PEEK_EVERY) > PEEK_EVERY - delta * 1.5 and _peek <= 0.0:
+				_peek = PEEK_TIME
+		&"nap":
+			_snore_cd -= delta
+			if _snore_cd <= 0.0:
+				_snore_cd = 2.6
+				AudioManager.play_at(&"snore", eye_position(), -6.0, randf_range(0.9, 1.05), &"Muffled")
+		&"fetch":
+			if not _thrown and _act_clock > 1.0:
+				_thrown = true
+				_throw_ball()
+	if _act_t <= 0.0:
+		end_activity()
+
+
+func _nearest_ball(radius: float) -> PhysicsProp:
+	var best: PhysicsProp = null
+	var best_d := radius
+	for n in get_tree().get_nodes_in_group(Phys.GROUP_PROP):
+		var prop := n as PhysicsProp
+		if prop and String(prop.name).begins_with("Ball"):
+			var d := prop.global_position.distance_to(global_position)
+			if d < best_d:
+				best = prop
+				best_d = d
+	return best
+
+
+func _throw_ball() -> void:
+	if _ball == null or not is_instance_valid(_ball):
+		return
+	var dog: Pet = null
+	for n in get_tree().get_nodes_in_group(Phys.GROUP_PET):
+		var pet := n as Pet
+		if pet and pet.present and not pet.sleeping and get_parent().is_ancestor_of(pet):
+			dog = pet
+			break
+	var hand := global_transform * Vector3(8, 50, -8)
+	_ball.freeze = false
+	_ball.global_position = hand
+	_ball.linear_velocity = Vector3.ZERO
+	# A gentle lob that rolls to a stop, so the dog can catch up with it.
+	_ball.linear_damp = 1.2
+	_ball.angular_damp = 2.0
+	var dir := (-global_basis.z).rotated(Vector3.UP, randf_range(-0.6, 0.6))
+	dir.y = 0.0
+	_ball.apply_central_impulse((dir.normalized() * 13.0 + Vector3.UP * 4.0) * _ball.mass)
+	_ball.mark_played(4.0)
+	AudioManager.play_at(&"voice_call", eye_position(), 0.0, 1.2, &"Muffled")
+	if dog:
+		dog.fetch(_ball, self)
+
+
+## The head is lower when sitting or kneeling.
+func eye_position() -> Vector3:
+	var off := _torso.position if _torso else Vector3.ZERO
+	return global_transform * (Vector3(0, config.eye_height, 0) + off)
+
+
+func can_see(p: BugBase) -> bool:
+	if flustered > 0.0 or activity == &"nap":
+		return false
+	if is_reading_blind():
+		return global_position.distance_to(p.global_position) < 10.0 and super.can_see(p)
+	if activity == &"kneel" and Vector2(p.global_position.x - global_position.x, p.global_position.z - global_position.z).length() < 14.0:
+		# Kneeling close to the ground: anything near is easy to spot, wherever
+		# they're looking.
+		if not p.is_hidden_safe() and PerceptionSystem.visibility >= config.min_visibility * 0.5 and has_line_of_sight(p):
+			return true
+	return super.can_see(p)
+
+
+func _hearing_mult() -> float:
+	return 0.4 if activity == &"nap" else 1.0
+
+
+## A fly buzzing at their face: they flail and swat at the air, and can't see
+## a thing for a few seconds.
+func pestered(by: BugBase) -> bool:
+	if _pester_cd > 0.0 or stun_time > 0.0:
+		return false
+	_pester_cd = 5.0
+	end_activity()
+	flustered = FLUSTER_TIME
+	AudioManager.play_at(&"voice_huh", eye_position(), 2.0, 1.3, &"Muffled")
+	var at := by.global_position
+	if has_swatter and Level.current and Level.current.swatter_pool:
+		var sw := Level.current.swatter_pool.acquire() as Swatter
+		sw.strike(at, 0.75, self, Level.current.swatter_pool)
+	else:
+		get_tree().create_timer(0.6, false).timeout.connect(func() -> void:
+			if is_inside_tree():
+				Hazard.apply_strike(at, 2.5, &"swatted", self, false))
+	return true
+
+
+## Pose offsets and arm targets for the current activity: [torso offset,
+## left arm (shoulder, elbow), right arm (shoulder, elbow)] or empty.
+func _activity_pose() -> Array:
+	var t := _act_clock
+	if flustered > 0.0:
+		var wave := sin(_breath * 16.0) * 0.5
+		return [Vector3.ZERO, Vector2(2.2 + wave, 1.0), Vector2(2.2 - wave, 1.0)]
+	match activity:
+		&"cook", &"dishes":
+			var stir := sin(t * 6.0) * 0.35
+			return [Vector3.ZERO, Vector2(0.8, 1.2), Vector2(0.9, 1.3 + stir)]
+		&"snack":
+			var bite := 2.3 if fmod(t, 2.4) < 0.7 else 1.0
+			return [Vector3.ZERO, Vector2(0.4, 0.6), Vector2(0.6, bite)]
+		&"read":
+			if _peek > 0.0:
+				return [SIT_OFFSET, Vector2(0.6, 1.0), Vector2(0.6, 1.0)]
+			return [SIT_OFFSET, Vector2(1.35, 1.5), Vector2(1.35, 1.5)]
+		&"nap":
+			return [SIT_OFFSET, Vector2(0.15, 0.6), Vector2(0.15, 0.6)]
+		&"water":
+			return [Vector3.ZERO, Vector2(0.2, 0.3), Vector2(1.0, 0.3)]
+		&"kneel":
+			return [KNEEL_OFFSET, Vector2(0.9, 0.6), Vector2(1.0, 0.7 + sin(t * 3.0) * 0.3)]
+		&"fetch":
+			var arm := -0.9 if t < 1.0 else 2.4
+			return [Vector3.ZERO, Vector2(0.2, 0.3), Vector2(arm, 0.4)]
+	return []

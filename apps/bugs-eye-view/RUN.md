@@ -36,10 +36,20 @@ What each button does depends on the bug (the touch buttons relabel themselves):
 | Jump | Hop | Take off / fly up | Leap off the surface |
 | Sense | Smell: antennae point at the nearest crumb | Slow-mo (also triggers by itself when a strike is about to land) | Feel footsteps as ripples through walls |
 
-**Fly escape moves**
+**Flying.** The stick flies level; Jump climbs and Secondary dives. With
+**Fly where you look** on (Settings, on by default) tilting the camera well
+up or down while flying forward climbs or dives too. Let go of the stick to
+**hover**: you hold your height and it costs a third of the stamina.
+**Updrafts** - warm air rising over the stove (while cooking), the toaster,
+the radiator and lamps, the barbecue, the sunny patio and the compost heap
+(look for the faint rising ring) - lift you and refill stamina in mid-air; a
+gliding fly can catch one and fly again.
+
+**Fly moves**
 
 | Move | How | What it does |
 |---|---|---|
+| Pester | Use, next to a person's or pet's head | People flail and swat at the air (dodge away!) and can't see you for 3.5 s. Pets get playful and leap at you twice. Costs stamina; scores points |
 | Burst | Dodge | Quick sideways dart |
 | Evasive loop | Dodge twice quickly | Loops up and back the way you came, untouchable for half a second (costs stamina) |
 | Dive | Dodge while holding Secondary (Down) | Fast, silent plunge below a threat's sight line |
@@ -84,6 +94,23 @@ Touch one to use it: its name and what it does stay on screen (6 s for gems,
 Food and gems add to your score; find two gems in a run you win for the
 **Gem Hunter** badge. Gems you find are kept in your save.
 
+**Animals** are playful when calm: they bat their ball around, do zoomies,
+play-pounce and (the puppy) chase their tails. While playing they see and
+hear about half as well. Anything suspicious ends the game: ears up, tail
+stiff, they freeze and stare, and the cat stalks low. A fly hovering just
+above a pet gets leapt at. Animals get sharper room by room (kitchen puppy:
+relaxed, living-room cat: watchful, backyard dog: sharp; shown on the room
+select screen) and sharper again as the household escalates.
+
+**People** stop to do things on their rounds, and anything suspicious
+interrupts them:
+
+| Room | Who | Does | What it means for you |
+|---|---|---|---|
+| Kitchen | The cook | Cooks at the stove, does the dishes, snacks at the table | Back turned while cooking and washing up; cooking and snacking drop crumbs you can grab under their feet |
+| Living room | The reader | Reads in the armchair, naps on the couch | Behind the paper they only see what's right in front of them, glancing up now and then; asleep they can't see, barely hear and snore - a loud noise wakes them |
+| Backyard | The gardener | Waters the flowers, kneels at the vegetables, throws the ball for the dog | The spray washes your scent off but knocks you back; kneeling they spot anything close, even behind them; the dog chases the ball and forgets about you |
+
 **Places to hide.** Every bug can crawl into the things lying around the
 house and be completely hidden (no squeezing needed): a paper cup on its side,
 an old sneaker, a tipped-over grocery bag, a recycling box, a folded towel and
@@ -98,7 +125,7 @@ three times faster.
 ## 3. Test it
 
 All checks: import, boot, warnings-as-errors, an offline test of the Meshy
-client, then the 120-check smoke test and the 248-check phase audit
+client, then the 120-check smoke test and the 276-check phase audit
 (`tests/phase_audit.tscn`, one section per build phase plus one per update),
 each run in the project **and** against an exported pack. Any script or
 engine error fails the run:
@@ -118,7 +145,7 @@ Run one section of the audit with
 `godot --headless --path . res://tests/phase_audit.tscn --fixed-fps 60 -- --phase=4`
 (1-6 are the build phases, 7 the alarm gauge and fly moves, 8 cover and model
 slots, 9 bigger rooms, people, bug detail, food and gems, 10 pickup messages
-and touch look).
+and touch look, 11 flying, playful/alert animals and people's activities).
 
 `godot` means the Godot executable, e.g.
 `C:\Godot\Godot_v4.7.2-stable_win64_console.exe`. The smoke test prints

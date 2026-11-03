@@ -42,31 +42,31 @@ height = 2.4
 radial_segments = 16
 rings = 1
 
-[node name="Foot" type="Node3D" unique_id=725908096]
+[node name="Foot" type="Node3D" unique_id=1392725173]
 script = ExtResource("1_nneh1")
 
-[node name="Body" type="AnimatableBody3D" parent="." unique_id=1628402801]
+[node name="Body" type="AnimatableBody3D" parent="." unique_id=1391499738]
 
-[node name="Shape" type="CollisionShape3D" parent="Body" unique_id=1433522271]
+[node name="Shape" type="CollisionShape3D" parent="Body" unique_id=1747876520]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.25, 0)
 shape = SubResource("BoxShape3D_61nh8")
 
-[node name="Visual" type="Node3D" parent="." unique_id=1350276547]
+[node name="Visual" type="Node3D" parent="." unique_id=204137339]
 
-[node name="Shoe" type="MeshInstance3D" parent="Visual" unique_id=581016316]
+[node name="Shoe" type="MeshInstance3D" parent="Visual" unique_id=786099200]
 material_override = ExtResource("2_y01u4")
 mesh = SubResource("ArrayMesh_ug5on")
 
-[node name="Sole" type="MeshInstance3D" parent="Visual" unique_id=1735677224]
+[node name="Sole" type="MeshInstance3D" parent="Visual" unique_id=362197399]
 material_override = ExtResource("3_jhwop")
 mesh = SubResource("ArrayMesh_0rac5")
 
-[node name="Ankle" type="MeshInstance3D" parent="Visual" unique_id=970611417]
+[node name="Ankle" type="MeshInstance3D" parent="Visual" unique_id=687592361]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.4, 2.2)
 material_override = ExtResource("4_08aex")
 mesh = SubResource("CylinderMesh_d04l4")
 
-[node name="Skin" type="Node3D" parent="Visual" unique_id=443891799]
+[node name="Skin" type="Node3D" parent="Visual" unique_id=1360689420]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, -1)
 script = ExtResource("5_lk07s")
 model_id = "human_sneaker"

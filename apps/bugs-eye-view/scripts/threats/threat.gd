@@ -14,6 +14,10 @@ signal stunned(threat: Threat)
 
 var alert := AlertState.new()
 var stun_time := 0.0
+## How sharp this threat is (1 = normal). Rooms set it for animals
+## (LevelConfig.animal_awareness): it speeds up suspicion, stretches sight and
+## hearing a little, and makes them turn faster.
+var awareness := 1.0
 var web_time := 0.0
 var present := true
 var player_visible := false
@@ -104,7 +108,8 @@ func _sense(dt: float) -> void:
 	if player_visible:
 		var flat := Vector2(p.global_position.x - global_position.x, p.global_position.z - global_position.z).length()
 		var proximity := 1.0 - clampf(flat / config.sight_range, 0.0, 1.0)
-		var amount := config.suspicion_gain * PerceptionSystem.visibility * (0.35 + proximity) * dt
+		var amount := config.suspicion_gain * PerceptionSystem.visibility * (0.35 + proximity) * dt \
+			* effective_awareness() * perception_mult()
 		alert.add_suspicion(amount, p.global_position, true)
 		PerceptionSystem.add_alarm_from_sight(amount)
 
@@ -121,7 +126,9 @@ func can_see(p: BugBase) -> bool:
 	# Range is measured across the floor: a human's eyes are ~60 units up, so a
 	# straight-line range would leave the whole floor out of sight.
 	var flat_dist := Vector2(to.x, to.z).length()
-	if flat_dist > config.sight_range or dist < 0.001:
+	var aware := effective_awareness()
+	var sight := config.sight_range * (1.0 + (aware - 1.0) * 0.4) * lerpf(1.0, perception_mult(), 0.5)
+	if flat_dist > sight or dist < 0.001:
 		return false
 	if flat_dist > config.near_sense_radius:
 		var cos_half := cos(deg_to_rad(config.sight_angle_deg * 0.5))
@@ -132,20 +139,36 @@ func can_see(p: BugBase) -> bool:
 	return get_world_3d().direct_space_state.intersect_ray(_ray).is_empty()
 
 
+func has_line_of_sight(p: BugBase) -> bool:
+	_ray.from = eye_position()
+	_ray.to = p.global_position + p.up_direction * 0.3
+	return get_world_3d().direct_space_state.intersect_ray(_ray).is_empty()
+
+
 func hear(pos: Vector3, loudness: float, from_player: bool) -> void:
 	if not present or stun_time > 0.0 or config.hearing_radius <= 0.0:
 		return
-	var reach := config.hearing_radius * loudness * _hearing_mult()
+	var aware := effective_awareness()
+	var reach := config.hearing_radius * loudness * _hearing_mult() * (1.0 + (aware - 1.0) * 0.5)
 	var d := global_position.distance_to(pos)
 	if d > reach:
 		return
-	var strength := (1.0 - d / reach) * loudness * config.hearing_gain
+	var strength := (1.0 - d / reach) * loudness * config.hearing_gain * aware
 	alert.add_suspicion(strength, pos, false, not from_player)
 	if from_player:
 		PerceptionSystem.add_alarm_from_sound(strength)
 
 
 func _hearing_mult() -> float:
+	return 1.0
+
+
+func effective_awareness() -> float:
+	return awareness
+
+
+## Sight multiplier for moods (a playing pet, a flustered person): 1 = normal.
+func perception_mult() -> float:
 	return 1.0
 
 
@@ -216,7 +239,7 @@ func face_towards(target: Vector3, delta: float, turn_speed: float = -1.0) -> vo
 	if to.length_squared() < 0.01:
 		return
 	var yaw := atan2(-to.x, -to.z)
-	var ts := config.turn_speed if turn_speed < 0.0 else turn_speed
+	var ts := (config.turn_speed if turn_speed < 0.0 else turn_speed) * clampf(effective_awareness(), 0.5, 2.0)
 	rotation.y = lerp_angle(rotation.y, yaw, clampf(ts * delta, 0.0, 1.0))
 
 

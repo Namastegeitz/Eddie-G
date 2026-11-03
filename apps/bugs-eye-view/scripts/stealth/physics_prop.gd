@@ -14,6 +14,9 @@ extends RigidBody3D
 var _last_speed := 0.0
 var _cd := 0.0
 var _touched_by_player := 0.0
+## Being batted / thrown in play by a pet or a person: its bumps don't stun
+## anyone and don't count as your trick.
+var _played := 0.0
 
 
 func _ready() -> void:
@@ -32,6 +35,8 @@ func _physics_process(delta: float) -> void:
 		_cd -= delta
 	if _touched_by_player > 0.0:
 		_touched_by_player -= delta
+	if _played > 0.0:
+		_played -= delta
 
 
 ## Pushed by the player (USE or walking into it).
@@ -50,10 +55,24 @@ func mark_touched() -> void:
 	_touched_by_player = 6.0
 
 
+## A pet or person is playing with it (see Pet play, Human fetch).
+func mark_played(seconds: float = 3.0) -> void:
+	_played = seconds
+	_touched_by_player = 0.0
+
+
+func is_in_play() -> bool:
+	return _played > 0.0
+
+
 func _on_body_entered(body: Node) -> void:
 	if _last_speed < impact_speed or _cd > 0.0:
 		return
 	_cd = 0.6
+	if _played > 0.0:
+		AudioManager.play_at(impact_sound, global_position, -8.0, randf_range(1.0, 1.2))
+		PerceptionSystem.emit_world_noise(global_position, noise_on_impact * 0.4)
+		return
 	AudioManager.play_at(impact_sound, global_position, 0.0, randf_range(0.9, 1.15))
 	PerceptionSystem.emit_world_noise(global_position, noise_on_impact)
 	if _touched_by_player > 0.0 and Level.current:
@@ -70,7 +89,7 @@ func _on_body_entered(body: Node) -> void:
 
 ## Called by a FootHazard that lands on this prop.
 func on_stepped_on(by: Threat) -> void:
-	if trip_hazard and by:
+	if trip_hazard and by and _played <= 0.0:
 		AudioManager.play_at(&"squish", global_position)
 		by.stun()
 		apply_central_impulse(Vector3(randf_range(-1, 1), 0.5, randf_range(-1, 1)) * 3.0 * mass)

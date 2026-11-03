@@ -12,6 +12,7 @@ scene_path = "res://scenes/levels/backyard.tscn"
 order = 2
 crumbs_required = 12
 par_time = 340.0
+animal_awareness = 1.6
 unlock_after = &"living_room"
 boss_name = "The Exterminator"
 intensity_ramp_seconds = 300.0

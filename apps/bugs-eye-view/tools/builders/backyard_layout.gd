@@ -109,6 +109,11 @@ static func build(tree: SceneTree) -> void:
 	g.box("Compost", Vector3(-20, -0.2, 86), Vector3(18, 0.5, 13), "leaves", &"leaves", &"soil", 0.0, false)
 	g.light_zone("CompostShade", Vector3(-20, 3, 86), Vector3(18, 6, 13), 1, 2)
 
+	# --- Warm air for the fly: the grill, the sun-baked patio, the compost ---
+	g.thermal("GrillHeat", Vector3(35, 40, -38), Vector3(14, 44, 14), 9.0, ["bbq"])
+	g.thermal("PatioHeat", Vector3(0, 25, -48), Vector3(40, 40, 20), 4.0)
+	g.thermal("CompostHeat", Vector3(-20, 12, 86), Vector3(16, 20, 12), 5.0)
+
 	# --- Crumbs ---
 	for p in [Vector3(-40, 0.6, -10), Vector3(-15, 0.6, -25), Vector3(20, 0.6, -15), Vector3(45, 0.6, 10),
 			Vector3(30, 0.6, 35), Vector3(0, 0.6, 40), Vector3(-30, 0.6, 38), Vector3(-65, 0.6, 10),
@@ -173,9 +178,13 @@ static func build(tree: SceneTree) -> void:
 
 	# --- Threats ---
 	g.human("res://scenes/threats/human.tscn",
-		[Vector3(-45, 0, -25), Vector3(30, 0, -25), Vector3(80, 0, -5), Vector3(82, 0, 55), Vector3(35, 0, 40),
+		[Vector3(-45, 0, -14), Vector3(30, 0, -28), Vector3(80, 0, 22), Vector3(82, 0, 55), Vector3(35, 0, 40),
 			Vector3(25, 0, 88), Vector3(-25, 0, 62), Vector3(-50, 0, 20)],
-		["gardening", "bbq"], {"name": "Gardener"})
+		["gardening", "bbq"], {"name": "Gardener", "activities": {
+			0: {"kind": &"water", "time": 8.0, "face": Vector3(-58, 0, -22)},
+			2: {"kind": &"kneel", "time": 10.0, "face": Vector3(95, 0, 22)},
+			4: {"kind": &"fetch", "time": 9.0},
+		}})
 	g.pet("res://scenes/threats/dog.tscn", Vector3(-48, 0.5, 25),
 		[Vector3(-40, 0, 0), Vector3(20, 0, 0), Vector3(40, 0, 30), Vector3(80, 0, 60), Vector3(20, 0, 60),
 			Vector3(0, 0, 45), Vector3(-45, 0, 25)],

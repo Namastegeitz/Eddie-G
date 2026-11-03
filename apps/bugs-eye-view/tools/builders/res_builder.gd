@@ -128,12 +128,13 @@ static func materials(force: bool) -> void:
 		"gem_diamond": _mat(Color(0.92, 0.97, 1.0, 0.8), 0.02, 0.3, false, false, Color(0.8, 0.95, 1.0, 1.4)),
 		"gem_sapphire": _mat(Color(0.15, 0.35, 1.0, 0.85), 0.05, 0.2, false, false, Color(0.15, 0.4, 1.0, 1.2)),
 		"sparkle": _mat(Color(1.0, 1.0, 0.9), 1.0, 0.0, false, true),
+		"heat": _mat(Color(1.0, 0.6, 0.3, 0.22), 1.0, 0.0, true, true),
 	}
 	for k: String in defs.keys():
 		var mat: StandardMaterial3D = defs[k]
-		if k in ["web", "beacon", "shadow_tint", "light_tint", "gust", "spray", "fog"]:
+		if k in ["web", "beacon", "shadow_tint", "light_tint", "gust", "spray", "fog", "heat"]:
 			mat.cull_mode = BaseMaterial3D.CULL_DISABLED
-		if k in ["shadow_tint", "light_tint", "gust", "beacon"]:
+		if k in ["shadow_tint", "light_tint", "gust", "beacon", "heat"]:
 			mat.disable_receive_shadows = true
 		save(mat, MAT_DIR + k + ".tres", force)
 
@@ -225,7 +226,9 @@ static func bugs(force: bool) -> void:
 	f.acceleration = 50.0
 	f.flight_speed = 13.0
 	f.boost_speed = 21.0
-	f.stamina_max = 8.0
+	f.flight_accel = 5.0
+	f.drift = 1.1
+	f.stamina_max = 10.0
 	f.stamina_regen = 2.5
 	f.visibility_mult = 1.1
 	f.camo_tags = PackedStringArray(["dark_wood", "glass", "wall"])
@@ -338,6 +341,29 @@ static func threats(force: bool) -> void:
 	d.attack_radius = 3.2
 	d.stun_duration = 3.5
 	save(d, "res://resources/threats/dog.tres", force)
+
+	# Puppy (kitchen): curious and playful, short-sighted, easily distracted.
+	var pp := ThreatConfig.new()
+	pp.sight_range = 22.0
+	pp.sight_angle_deg = 110.0
+	pp.eye_height = 4.5
+	pp.gaze_pitch_deg = 8.0
+	pp.min_visibility = 0.14
+	pp.hearing_radius = 20.0
+	pp.hearing_gain = 0.7
+	pp.scent_tracking = true
+	pp.scent_radius = 10.0
+	pp.suspicion_gain = 0.9
+	pp.search_duration = 8.0
+	pp.patrol_speed = 5.5
+	pp.search_speed = 7.5
+	pp.chase_speed = 10.5
+	pp.attack_range = 6.0
+	pp.attack_windup = 1.0
+	pp.attack_cooldown = 2.8
+	pp.attack_radius = 2.6
+	pp.stun_duration = 4.0
+	save(pp, "res://resources/threats/puppy.tres", force)
 
 	var v := ThreatConfig.new()
 	v.sight_range = 0.0
@@ -458,6 +484,7 @@ static func levels(force: bool, routines_by_id: Dictionary) -> void:
 	k.order = 0
 	k.crumbs_required = 10
 	k.par_time = 240.0
+	k.animal_awareness = 1.0
 	k.unlocks_bug = &"fly"
 	k.boss_name = "Cleaning Day"
 	k.routine = routines_by_id["kitchen"]
@@ -472,6 +499,7 @@ static func levels(force: bool, routines_by_id: Dictionary) -> void:
 	l.order = 1
 	l.crumbs_required = 11
 	l.par_time = 290.0
+	l.animal_awareness = 1.3
 	l.unlock_after = &"kitchen"
 	l.unlocks_bug = &"spider"
 	l.boss_name = "The Cat"
@@ -488,6 +516,7 @@ static func levels(force: bool, routines_by_id: Dictionary) -> void:
 	b.order = 2
 	b.crumbs_required = 12
 	b.par_time = 340.0
+	b.animal_awareness = 1.6
 	b.unlock_after = &"living_room"
 	b.boss_name = "The Exterminator"
 	b.routine = routines_by_id["backyard"]

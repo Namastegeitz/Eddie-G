@@ -514,6 +514,12 @@
       "tier": 3,
       "target_polycount": 3000,
       "prompt": "A grey stone bird bath: a wide shallow bowl of water on a pedestal."
+    },
+    {
+      "id": "radiator",
+      "tier": 3,
+      "target_polycount": 3000,
+      "prompt": "A white cast-iron column radiator with vertical fins and a small valve, front facing forward."
     }
   ]
 }
