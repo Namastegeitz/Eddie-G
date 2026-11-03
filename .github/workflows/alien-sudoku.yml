@@ -1,0 +1,298 @@
+# Alien Sudoku: test and build every platform, then publish the builds
+# to the "alien-sudoku-latest" GitHub release.
+#
+# Optional repository secrets (Settings > Secrets and variables > Actions).
+# Without them you still get: web build, Android debug APK, iOS simulator
+# build, and unsigned Windows / macOS / Linux desktop apps.
+#
+#   AdMob (real ads instead of Google test ads)
+#     ADMOB_ANDROID_APP_ID, ADMOB_IOS_APP_ID                (ca-app-pub-…~…)
+#     VITE_ADMOB_ANDROID_BANNER / _INTERSTITIAL / _REWARDED (ca-app-pub-…/…)
+#     VITE_ADMOB_IOS_BANNER / _INTERSTITIAL / _REWARDED
+#   Google Play (signed release AAB + APK)
+#     ANDROID_KEYSTORE_BASE64, ANDROID_KEYSTORE_PASSWORD, ANDROID_KEY_ALIAS, ANDROID_KEY_PASSWORD
+#   App Store / TestFlight (signed upload)
+#     APPLE_TEAM_ID, ASC_KEY_ID, ASC_ISSUER_ID, ASC_KEY_P8_BASE64
+#
+# See apps/alien-sudoku/docs/STORE_CHECKLIST.md.
+
+name: Alien Sudoku
+
+on:
+  push:
+    branches: ['**']
+    paths:
+      - 'apps/alien-sudoku/**'
+      - '.github/workflows/alien-sudoku.yml'
+  workflow_dispatch:
+    inputs:
+      release:
+        description: Publish the builds to the alien-sudoku-latest release
+        type: boolean
+        default: true
+
+permissions:
+  contents: write
+
+concurrency:
+  group: alien-sudoku-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  APP_VERSION: 1.0.0
+  VITE_ADMOB_ANDROID_BANNER: ${{ secrets.VITE_ADMOB_ANDROID_BANNER }}
+  VITE_ADMOB_ANDROID_INTERSTITIAL: ${{ secrets.VITE_ADMOB_ANDROID_INTERSTITIAL }}
+  VITE_ADMOB_ANDROID_REWARDED: ${{ secrets.VITE_ADMOB_ANDROID_REWARDED }}
+  VITE_ADMOB_IOS_BANNER: ${{ secrets.VITE_ADMOB_IOS_BANNER }}
+  VITE_ADMOB_IOS_INTERSTITIAL: ${{ secrets.VITE_ADMOB_IOS_INTERSTITIAL }}
+  VITE_ADMOB_IOS_REWARDED: ${{ secrets.VITE_ADMOB_IOS_REWARDED }}
+
+jobs:
+  web:
+    name: Web (tests + build)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/alien-sudoku
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: apps/alien-sudoku/package-lock.json
+      - run: npm ci
+      - name: Unit tests
+        run: npm test
+      - name: Install browser
+        run: npx playwright install --with-deps chromium
+      - name: End-to-end tests (phone + desktop)
+        run: npx playwright test
+      - name: Build
+        run: npm run build
+      - name: Zip web build
+        run: cd dist && zip -qr ../AlienSudoku-${APP_VERSION}-web.zip .
+      - uses: actions/upload-artifact@v4
+        with:
+          name: web-dist
+          path: apps/alien-sudoku/dist
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release-web
+          path: apps/alien-sudoku/AlienSudoku-*-web.zip
+
+  android:
+    name: Android
+    runs-on: ubuntu-latest
+    env:
+      HAS_KEYSTORE: ${{ secrets.ANDROID_KEYSTORE_BASE64 != '' }}
+    defaults:
+      run:
+        working-directory: apps/alien-sudoku
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: apps/alien-sudoku/package-lock.json
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: gradle
+      - uses: android-actions/setup-android@v3
+      - run: npm ci
+      - name: AdMob app id
+        env:
+          ADMOB_ANDROID_APP_ID: ${{ secrets.ADMOB_ANDROID_APP_ID }}
+        run: |
+          if [ -n "$ADMOB_ANDROID_APP_ID" ]; then node tools/set-admob-ids.mjs; else echo "Using Google test app id"; fi
+      - name: Build web + sync
+        run: npm run build && npx cap sync android
+      - name: Debug APK
+        working-directory: apps/alien-sudoku/android
+        run: ./gradlew --no-daemon assembleDebug -PversionCode=${{ github.run_number }} -PversionName=${APP_VERSION}
+      - name: Signed release (AAB + APK)
+        if: env.HAS_KEYSTORE == 'true'
+        working-directory: apps/alien-sudoku/android
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          echo "$ANDROID_KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/release.jks"
+          export ANDROID_KEYSTORE_PATH="$RUNNER_TEMP/release.jks"
+          ./gradlew --no-daemon bundleRelease assembleRelease -PversionCode=${{ github.run_number }} -PversionName=${APP_VERSION}
+      - name: Collect outputs
+        run: |
+          mkdir -p out
+          cp android/app/build/outputs/apk/debug/app-debug.apk "out/AlienSudoku-${APP_VERSION}-android-debug.apk"
+          if [ -f android/app/build/outputs/bundle/release/app-release.aab ]; then
+            cp android/app/build/outputs/bundle/release/app-release.aab "out/AlienSudoku-${APP_VERSION}-android-release.aab"
+            cp android/app/build/outputs/apk/release/app-release.apk "out/AlienSudoku-${APP_VERSION}-android-release.apk"
+          fi
+          ls -la out
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release-android
+          path: apps/alien-sudoku/out/*
+
+  ios:
+    name: iOS
+    runs-on: macos-latest
+    env:
+      HAS_ASC: ${{ secrets.ASC_KEY_P8_BASE64 != '' && secrets.APPLE_TEAM_ID != '' }}
+    defaults:
+      run:
+        working-directory: apps/alien-sudoku
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: apps/alien-sudoku/package-lock.json
+      - uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: latest-stable
+      - run: npm ci
+      - name: AdMob app id
+        env:
+          ADMOB_IOS_APP_ID: ${{ secrets.ADMOB_IOS_APP_ID }}
+        run: |
+          if [ -n "$ADMOB_IOS_APP_ID" ]; then node tools/set-admob-ids.mjs; else echo "Using Google test app id"; fi
+      - name: Build web + sync
+        run: npm run build && npx cap sync ios
+      - name: Simulator build (compile check, unsigned)
+        working-directory: apps/alien-sudoku/ios/App
+        run: |
+          xcodebuild -project App.xcodeproj -scheme App -configuration Release \
+            -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' \
+            -derivedDataPath "$RUNNER_TEMP/dd" CURRENT_PROJECT_VERSION=${{ github.run_number }} \
+            CODE_SIGNING_ALLOWED=NO build | tail -40
+          test -d "$RUNNER_TEMP/dd/Build/Products/Release-iphonesimulator/App.app"
+          mkdir -p ../../out
+          (cd "$RUNNER_TEMP/dd/Build/Products/Release-iphonesimulator" && zip -qry "$GITHUB_WORKSPACE/apps/alien-sudoku/out/AlienSudoku-${APP_VERSION}-ios-simulator.zip" App.app)
+      - name: Archive + upload to TestFlight
+        if: env.HAS_ASC == 'true'
+        working-directory: apps/alien-sudoku/ios/App
+        env:
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          ASC_KEY_P8_BASE64: ${{ secrets.ASC_KEY_P8_BASE64 }}
+        run: |
+          KEY="$RUNNER_TEMP/AuthKey_${ASC_KEY_ID}.p8"
+          echo "$ASC_KEY_P8_BASE64" | base64 -d > "$KEY"
+          AUTH=(-allowProvisioningUpdates -authenticationKeyPath "$KEY" -authenticationKeyID "$ASC_KEY_ID" -authenticationKeyIssuerID "$ASC_ISSUER_ID")
+          xcodebuild -project App.xcodeproj -scheme App -configuration Release \
+            -destination 'generic/platform=iOS' -archivePath "$RUNNER_TEMP/App.xcarchive" \
+            DEVELOPMENT_TEAM="$APPLE_TEAM_ID" CODE_SIGN_STYLE=Automatic \
+            CURRENT_PROJECT_VERSION=${{ github.run_number }} MARKETING_VERSION=${APP_VERSION} \
+            "${AUTH[@]}" archive | tail -40
+          cat > "$RUNNER_TEMP/ExportOptions.plist" <<PLIST
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0"><dict>
+            <key>method</key><string>app-store-connect</string>
+            <key>destination</key><string>upload</string>
+            <key>teamID</key><string>${APPLE_TEAM_ID}</string>
+            <key>signingStyle</key><string>automatic</string>
+            <key>manageAppVersionAndBuildNumber</key><false/>
+          </dict></plist>
+          PLIST
+          xcodebuild -exportArchive -archivePath "$RUNNER_TEMP/App.xcarchive" \
+            -exportOptionsPlist "$RUNNER_TEMP/ExportOptions.plist" -exportPath "$RUNNER_TEMP/export" \
+            "${AUTH[@]}" | tail -40
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release-ios
+          path: apps/alien-sudoku/out/*
+
+  desktop:
+    name: Desktop (${{ matrix.target }})
+    needs: web
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            target: win
+          - os: macos-latest
+            target: mac
+          - os: ubuntu-latest
+            target: linux
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        working-directory: apps/alien-sudoku/desktop
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: apps/alien-sudoku/desktop/package-lock.json
+      - uses: actions/download-artifact@v4
+        with:
+          name: web-dist
+          path: apps/alien-sudoku/dist
+      - run: npm ci
+      - name: Smoke test (Linux)
+        if: matrix.target == 'linux'
+        run: |
+          npm run copy-web
+          xvfb-run -a npx electron . --smoke-test --no-sandbox
+      - name: Package
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npm run dist:${{ matrix.target }}
+      - name: Collect outputs
+        run: |
+          mkdir -p ../out
+          find out -maxdepth 1 -type f \( -name '*.exe' -o -name '*.dmg' -o -name '*.zip' -o -name '*.AppImage' -o -name '*.deb' \) -exec cp {} ../out/ \;
+          ls -la ../out
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release-desktop-${{ matrix.target }}
+          path: apps/alien-sudoku/out/*
+
+  release:
+    name: Publish release
+    needs: [web, android, ios, desktop]
+    if: always() && needs.web.result == 'success' && (github.event_name == 'push' || inputs.release)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: release-*
+          path: files
+          merge-multiple: true
+      - name: Create release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+        run: |
+          ls -la files
+          cat > notes.md <<NOTES
+          Latest Alien Sudoku builds from \`${GITHUB_REF_NAME}\` (commit ${GITHUB_SHA::7}, build ${{ github.run_number }}).
+
+          | File | What it is |
+          |---|---|
+          | \`*-android-debug.apk\` | Android: download on your phone, open it, allow installs from this source. |
+          | \`*-android-release.aab\` | Google Play upload (only when signing secrets are set). |
+          | \`*-ios-simulator.zip\` | iOS Simulator build for testing on a Mac. Real iPhones need TestFlight (see the store checklist). |
+          | \`*-win-x64.exe\` / \`*-win-portable.exe\` | Windows installer / portable app (unsigned: click "More info" > "Run anyway"). |
+          | \`*-mac-universal.dmg\` | macOS (unsigned: right-click the app > Open the first time). |
+          | \`*-linux-x86_64.AppImage\` / \`.deb\` | Linux. |
+          | \`*-web.zip\` | Static web build for any web host. |
+
+          Ads use Google's test ad units until real AdMob ids are added as repository secrets.
+          NOTES
+          gh release delete alien-sudoku-latest --repo "$REPO" --cleanup-tag --yes || true
+          gh release create alien-sudoku-latest files/* --repo "$REPO" --target "$GITHUB_SHA" \
+            --title "Alien Sudoku ${APP_VERSION} (latest build)" --notes-file notes.md --prerelease
