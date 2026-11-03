@@ -35,6 +35,8 @@ func _ready() -> void:
 		await _phase10()
 	if only in [0, 11]:
 		await _phase11()
+	if only in [0, 12]:
+		await _phase12()
 	finish("phase audit")
 
 
@@ -1965,4 +1967,67 @@ func _phase11() -> void:
 	PerceptionSystem.emit_player_noise(reader.global_position + Vector3(2, 0.5, 2), 3.0)
 	await frames(10)
 	check(reader.activity == &"", "a loud noise right next to them wakes them up")
+	await unload(lvl)
+
+
+
+# --- Update: touch look stick and look-speed button --------------------------------
+
+func _stick_turn(lvl: Level, tc: TouchControls, push: Vector2, n: int) -> float:
+	await frames(45)  # let the previous turn finish easing out
+	var yaw0 := lvl.camera.yaw
+	touch(4, tc.look_center, true)
+	drag(4, tc.look_center + push, push)
+	await frames(n)
+	var turned := absf(lvl.camera.yaw - yaw0)
+	touch(4, tc.look_center + push, false)
+	return turned
+
+
+func _phase12() -> void:
+	print("-- Update: touch look stick with a look-speed button")
+	SaveSystem.data = SaveSystem.default_data()
+	SaveSystem.set_setting("touch_controls", "on")
+	var lvl := await load_level(&"kitchen", &"cockroach")
+	await frames(3)
+	var tc: TouchControls = null
+	for n in lvl.find_children("*", "Control", true, false):
+		if n is TouchControls:
+			tc = n
+	var r := tc.look_radius
+	var sense_top := float(tc._btn_pos[&"sense"].y) - float(tc._btn_r[&"sense"])
+	var overlaps := false
+	for k: StringName in TouchControls.ACTIONS:
+		var bp: Vector2 = tc._btn_pos[k]
+		var br: float = tc._btn_r[k]
+		overlaps = overlaps or bp.distance_to(tc.look_center) < br + r or bp.distance_to(tc.speed_center) < br + tc.speed_radius
+	check(tc.look_center.x > tc.size.x * 0.5 and tc.look_center.y + r <= sense_top and not overlaps
+		and tc.speed_center.distance_to(tc.look_center) < r + tc.speed_radius + 30.0,
+		"a look stick sits on the right above the buttons, with the speed button beside it")
+	var full := tc.look_radius
+	var t1: float = await _stick_turn(lvl, tc, Vector2(full, 0), 60)
+	var t2: float = await _stick_turn(lvl, tc, Vector2(full, 0), 120)
+	check(t1 > 0.8 and t2 > t1 * 1.6, "holding the look stick keeps the view turning (%.2f rad in 1 s, %.2f in 2 s)" % [t1, t2])
+	var gentle: float = await _stick_turn(lvl, tc, Vector2(full * 0.4, 0), 60)
+	check(gentle < t1 * 0.25, "a small push turns gently, for fine aiming (%.2f vs %.2f)" % [gentle, t1])
+	await frames(40)
+	var yaw_after := lvl.camera.yaw
+	await frames(30)
+	check(absf(lvl.camera.yaw - yaw_after) < 0.01, "letting go stops the turn")
+	var pitch0 := lvl.camera.pitch
+	await _stick_turn(lvl, tc, Vector2(0, full), 40)
+	check(lvl.camera.pitch < pitch0 - 0.2, "pushing the stick down looks down")
+	check(TouchControls.speed_label(float(SaveSystem.get_setting("touch_look_sensitivity", 1.0))) == "1x", "the speed button shows the look speed (1x)")
+	touch(5, tc.speed_center, true)
+	await frames(2)
+	touch(5, tc.speed_center, false)
+	var faster := float(SaveSystem.get_setting("touch_look_sensitivity", 1.0))
+	check(is_equal_approx(faster, 1.5), "tapping it steps the look speed up (1x -> %s)" % TouchControls.speed_label(faster))
+	var t3: float = await _stick_turn(lvl, tc, Vector2(full, 0), 60)
+	check(absf(t3 - t1 * 1.5) < t1 * 0.15, "and the stick turns faster to match (%.2f vs %.2f)" % [t3, t1])
+	var seen: Array[String] = [TouchControls.speed_label(faster)]
+	for i in 4:
+		seen.append(TouchControls.speed_label(tc.cycle_look_speed()))
+	check(seen == ["1.5x", "2x", "0.5x", "0.75x", "1x"], "it cycles 1.5x, 2x, 0.5x, 0.75x, back to 1x %s" % str(seen))
+	SaveSystem.set_setting("touch_controls", "auto")
 	await unload(lvl)

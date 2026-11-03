@@ -16,6 +16,9 @@ const REBINDABLE: Array[String] = ["move_forward", "move_back", "move_left", "mo
 	"jump", "primary", "secondary", "interact", "dodge", "sense", "creep"]
 const MOUSE_LOOK_SCALE := 1.0
 const STICK_LOOK_SPEED := 900.0
+## The on-screen look stick at full tilt (gentler than a gamepad; the camera
+## eases it in). Scaled by "Touch look speed".
+const TOUCH_STICK_LOOK_SPEED := 520.0
 const CREEP_SCALE := 0.4
 ## Browsers can report one huge jump right after pointer lock; ignore it.
 const CAPTURE_GRACE := 0.25
@@ -31,6 +34,7 @@ var _touch_mode: bool = false
 var _touch_move: Vector2 = Vector2.ZERO
 var _look_accum: Vector2 = Vector2.ZERO
 var _touch_look_accum: Vector2 = Vector2.ZERO
+var _touch_look_stick: Vector2 = Vector2.ZERO
 var _touch_held: Dictionary = {}
 var _capture_grace := 0.0
 
@@ -203,6 +207,7 @@ func set_enabled(on: bool) -> void:
 		_touch_move = Vector2.ZERO
 		_look_accum = Vector2.ZERO
 		_touch_look_accum = Vector2.ZERO
+		_touch_look_stick = Vector2.ZERO
 		for a: StringName in _touch_held.keys():
 			if _touch_held[a]:
 				action_released.emit(a)
@@ -305,6 +310,27 @@ func set_touch_move(v: Vector2) -> void:
 
 func add_touch_look(d: Vector2) -> void:
 	_touch_look_accum += d
+
+
+## On-screen look stick deflection (-1..1 each axis), from TouchControls.
+func set_touch_look_stick(v: Vector2) -> void:
+	_touch_look_stick = v.limit_length(1.0)
+
+
+func get_touch_look_stick() -> Vector2:
+	return _touch_look_stick
+
+
+## Turn from the look stick this frame. Squared response: small pushes turn
+## gently for aiming, a full push turns quickly.
+func get_touch_stick_look(delta: float) -> Vector2:
+	if not enabled or _touch_look_stick == Vector2.ZERO:
+		return Vector2.ZERO
+	var v := _touch_look_stick * _touch_look_stick.length()
+	var d := v * TOUCH_STICK_LOOK_SPEED * delta * touch_look_sensitivity
+	if invert_y:
+		d.y = -d.y
+	return d
 
 
 ## Touch-drag look since last call (the camera eases it in; see FollowCamera).

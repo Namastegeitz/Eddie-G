@@ -20,7 +20,7 @@
 - Built end to end from `prompts/claude/bugs-eye-view.md` (all 6 phases, all 16 add-ons).
 - Godot 4.7.2 project: 3 bugs, 3 rooms with boss chases, perception-based stealth,
   escalation chain, daily routines, colony upgrades, menus, touch/keyboard/gamepad.
-- Tests: `tools/run_tests.sh` - 120-check smoke test + 276-check phase audit + offline
+- Tests: `tools/run_tests.sh` - 120-check smoke test + 285-check phase audit + offline
   Meshy client test pass in the project and in an exported build; zero GDScript warnings
   and engine errors.
 - Updates after the build: alarm gauge (threats only investigate until it's full), slower

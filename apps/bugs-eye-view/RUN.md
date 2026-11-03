@@ -17,7 +17,7 @@ The first import takes a minute while Godot processes the sounds and icons.
 | Action | Keyboard / mouse | Gamepad | Touch |
 |---|---|---|---|
 | Move | WASD / arrows | Left stick | Joystick (left side, appears where you touch) |
-| Look | Mouse | Right stick | Drag anywhere else (eases in; speed under Settings > Touch look speed) |
+| Look | Mouse | Right stick | Look stick (right, above the buttons: hold it off-centre to keep turning) or drag anywhere else. The SPEED button beside the stick steps the look speed 0.5x - 2x (also in Settings > Touch look speed) |
 | Creep (quieter, harder to see) | Hold C | Click left stick, or push gently | Push the joystick gently |
 | Primary | Left click / F | X / right trigger | Big button |
 | Secondary | Right click / Q | Y / left trigger | Button |
@@ -125,7 +125,7 @@ three times faster.
 ## 3. Test it
 
 All checks: import, boot, warnings-as-errors, an offline test of the Meshy
-client, then the 120-check smoke test and the 276-check phase audit
+client, then the 120-check smoke test and the 285-check phase audit
 (`tests/phase_audit.tscn`, one section per build phase plus one per update),
 each run in the project **and** against an exported pack. Any script or
 engine error fails the run:
@@ -145,7 +145,8 @@ Run one section of the audit with
 `godot --headless --path . res://tests/phase_audit.tscn --fixed-fps 60 -- --phase=4`
 (1-6 are the build phases, 7 the alarm gauge and fly moves, 8 cover and model
 slots, 9 bigger rooms, people, bug detail, food and gems, 10 pickup messages
-and touch look, 11 flying, playful/alert animals and people's activities).
+and touch look, 11 flying, playful/alert animals and people's activities, 12 the
+touch look stick).
 
 `godot` means the Godot executable, e.g.
 `C:\Godot\Godot_v4.7.2-stable_win64_console.exe`. The smoke test prints

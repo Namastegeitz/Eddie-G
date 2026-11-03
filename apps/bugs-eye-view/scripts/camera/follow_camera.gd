@@ -75,7 +75,7 @@ func _process(delta: float) -> void:
 		return
 	var look := InputRouter.get_look_delta(delta)
 	# Touch drags are eased in over a few frames instead of snapping.
-	_touch_pending += InputRouter.get_touch_look_delta()
+	_touch_pending += InputRouter.get_touch_look_delta() + InputRouter.get_touch_stick_look(delta)
 	var step := _touch_pending * (1.0 - exp(-touch_look_smoothing * delta))
 	_touch_pending -= step
 	look += step

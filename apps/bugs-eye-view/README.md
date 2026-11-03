@@ -94,7 +94,7 @@ for a generated 3D model (84 in all); `tools/meshy/generate.py` makes them with 
 (needs your Meshy API key; see [tools/meshy/README.md](tools/meshy/README.md)).
 
 - Two headless test suites pass in the project and in an exported build
-  (`tools/run_tests.sh`): a 120-check smoke test and a 276-check phase audit
+  (`tools/run_tests.sh`): a 120-check smoke test and a 285-check phase audit
   that walks the spec phase by phase, plus every update since (alarm gauge,
   fly moves, hiding spots, model slots, bigger rooms, people, bug detail, food
   and gems, flying, animals and people's activities). Zero GDScript warnings, zero engine errors.

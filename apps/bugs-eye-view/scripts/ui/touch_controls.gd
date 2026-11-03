@@ -1,8 +1,9 @@
 class_name TouchControls
 extends Control
-## On-screen controls for phones: a floating joystick (left), context action
-## buttons (right) labelled for the current bug, drag anywhere else to look,
-## and quick taps aim (spider web). Multi-touch safe; everything goes to
+## On-screen controls for phones: a floating move joystick (left), context
+## action buttons (right) labelled for the current bug, a look stick above the
+## buttons with a look-speed button beside it, drag anywhere else to look, and
+## quick taps aim (spider web). Multi-touch safe; everything goes to
 ## InputRouter. Auto-shown on touchscreens.
 
 const ACTIONS: Array[StringName] = [&"primary", &"jump", &"secondary", &"dodge", &"interact", &"sense"]
@@ -11,6 +12,8 @@ const TAP_MOVE := 14.0
 ## Drag-to-look gain (was 1.4: too twitchy on phones). Players can scale it
 ## with "Touch look speed" in Settings.
 const LOOK_GAIN := 0.6
+## Look speeds the speed button steps through (the "Touch look speed" setting).
+const LOOK_SPEEDS: Array[float] = [0.5, 0.75, 1.0, 1.5, 2.0]
 
 var player: BugBase
 var _labels: Dictionary = {}
@@ -26,6 +29,14 @@ var _stick_base := Vector2.ZERO
 var _stick_knob := Vector2.ZERO
 var _stick_r := 90.0
 var _font: Font
+# Look stick (fixed, right side above the buttons) and its speed button.
+var look_center := Vector2.ZERO
+var look_radius := 80.0
+var speed_center := Vector2.ZERO
+var speed_radius := 34.0
+var _look_index := -1
+var _look_knob := Vector2.ZERO
+var _speed_held := false
 
 
 func _ready() -> void:
@@ -63,7 +74,36 @@ func _layout() -> void:
 	}
 	for k: StringName in ACTIONS:
 		_btn_r[k] = r * (1.35 if k == &"primary" else 1.0)
+	# Look stick just above the button cluster, speed button to its left.
+	look_radius = clampf(m * 0.105, 56.0, 100.0)
+	speed_radius = r * 0.78
+	var buttons_top := float(_btn_pos[&"sense"].y) - r
+	look_center = Vector2(s.x - 16.0 - look_radius - r * 0.4, buttons_top - 16.0 - look_radius)
+	look_center.y = maxf(look_center.y, s.y * 0.13 + look_radius)
+	speed_center = look_center + Vector2(-look_radius - 18.0 - speed_radius, look_radius * 0.3)
+	_look_knob = look_center
 	queue_redraw()
+
+
+## Steps the look speed up through LOOK_SPEEDS, wrapping back to the slowest.
+func cycle_look_speed() -> float:
+	var cur := float(SaveSystem.get_setting("touch_look_sensitivity", 1.0))
+	var next := LOOK_SPEEDS[0]
+	for v in LOOK_SPEEDS:
+		if v > cur + 0.01:
+			next = v
+			break
+	SaveSystem.set_setting("touch_look_sensitivity", next)
+	SaveSystem.save_game()
+	queue_redraw()
+	return next
+
+
+static func speed_label(v: float) -> String:
+	var t := String.num(v, 2)
+	if t.ends_with(".0"):
+		t = t.left(-2)
+	return t + "x"
 
 
 func _process(delta: float) -> void:
@@ -106,6 +146,14 @@ func _on_down(i: int, pos: Vector2) -> void:
 		_touch_kind[i] = b
 		_held[b] = true
 		InputRouter.set_touch_action(b, true)
+	elif pos.distance_to(speed_center) <= speed_radius * 1.2:
+		_touch_kind[i] = &"speed"
+		_speed_held = true
+		cycle_look_speed()
+	elif pos.distance_to(look_center) <= look_radius * 1.25 and _look_index == -1:
+		_touch_kind[i] = &"lookstick"
+		_look_index = i
+		_set_look_knob(pos)
 	elif pos.x < size.x * 0.45 and pos.y > size.y * 0.35 and _stick_index == -1:
 		_touch_kind[i] = &"stick"
 		_stick_index = i
@@ -129,6 +177,10 @@ func _on_drag(i: int, pos: Vector2, rel: Vector2) -> void:
 		queue_redraw()
 	elif kind == &"look":
 		InputRouter.add_touch_look(rel * LOOK_GAIN)
+	elif kind == &"lookstick":
+		_set_look_knob(pos)
+	elif kind == &"speed" or kind == &"released":
+		pass
 	elif kind != &"":
 		# Slid off a button: release it.
 		if pos.distance_to(_btn_pos[kind]) > float(_btn_r[kind]) * 1.6:
@@ -142,6 +194,12 @@ func _on_up(i: int, pos: Vector2) -> void:
 	if kind == &"stick":
 		_stick_index = -1
 		InputRouter.set_touch_move(Vector2.ZERO)
+	elif kind == &"lookstick":
+		_look_index = -1
+		_look_knob = look_center
+		InputRouter.set_touch_look_stick(Vector2.ZERO)
+	elif kind == &"speed":
+		_speed_held = false
 	elif kind == &"look":
 		var dt := Time.get_ticks_msec() / 1000.0 - float(_touch_time.get(i, 0.0))
 		var start: Vector2 = _touch_start.get(i, pos)
@@ -152,6 +210,13 @@ func _on_up(i: int, pos: Vector2) -> void:
 	_touch_kind.erase(i)
 	_touch_start.erase(i)
 	_touch_time.erase(i)
+	queue_redraw()
+
+
+func _set_look_knob(pos: Vector2) -> void:
+	var off := (pos - look_center).limit_length(look_radius)
+	_look_knob = look_center + off
+	InputRouter.set_touch_look_stick(off / look_radius)
 	queue_redraw()
 
 
@@ -173,6 +238,7 @@ func _draw() -> void:
 		var hint := Vector2(_stick_r + 24.0, size.y - _stick_r - 24.0)
 		draw_arc(hint, _stick_r, 0.0, TAU, 40, Color(1, 1, 1, 0.12), 2.0)
 		draw_circle(hint, _stick_r * 0.42, Color(1, 1, 1, 0.08))
+	_draw_look_controls(ring_col)
 	for k: StringName in ACTIONS:
 		var p: Vector2 = _btn_pos[k]
 		var r: float = _btn_r[k]
@@ -184,3 +250,31 @@ func _draw() -> void:
 		var w := _font.get_string_size(text, HORIZONTAL_ALIGNMENT_CENTER, -1, fs).x
 		draw_string(_font, p + Vector2(-w * 0.5, fs * 0.35), text, HORIZONTAL_ALIGNMENT_LEFT, -1, fs,
 			UIKit.INK if held else UIKit.TEXT)
+
+
+func _draw_look_controls(ring_col: Color) -> void:
+	var held := _look_index >= 0
+	draw_circle(look_center, look_radius, Color(0, 0, 0, 0.28 if held else 0.22))
+	draw_arc(look_center, look_radius, 0.0, TAU, 40, ring_col if held else Color(1, 1, 1, 0.55), 3.0)
+	# Direction ticks so it reads as a look stick.
+	for a in [0.0, PI * 0.5, PI, PI * 1.5]:
+		var d := Vector2.from_angle(a)
+		draw_line(look_center + d * look_radius * 0.72, look_center + d * look_radius * 0.88, Color(1, 1, 1, 0.5), 2.0)
+	draw_circle(_look_knob, look_radius * 0.42, Color(UIKit.GOLD.r, UIKit.GOLD.g, UIKit.GOLD.b, 0.7) if held else Color(1, 1, 1, 0.28))
+	var fs := int(clampf(look_radius * 0.2, 12.0, 18.0))
+	var label := "LOOK"
+	var w := _font.get_string_size(label, HORIZONTAL_ALIGNMENT_CENTER, -1, fs).x
+	draw_string(_font, _look_knob + Vector2(-w * 0.5, fs * 0.35), label, HORIZONTAL_ALIGNMENT_LEFT, -1, fs,
+		UIKit.INK if held else UIKit.TEXT)
+	# Look speed button: shows the current speed; tap to step it.
+	draw_circle(speed_center, speed_radius, Color(UIKit.GOLD.r, UIKit.GOLD.g, UIKit.GOLD.b, 0.75) if _speed_held else Color(0, 0, 0, 0.42))
+	draw_arc(speed_center, speed_radius, 0.0, TAU, 32, ring_col, 3.0)
+	var top := "SPEED"
+	var val := speed_label(float(SaveSystem.get_setting("touch_look_sensitivity", 1.0)))
+	var fs1 := int(clampf(speed_radius * 0.3, 10.0, 15.0))
+	var fs2 := int(clampf(speed_radius * 0.48, 13.0, 22.0))
+	var col := UIKit.INK if _speed_held else UIKit.TEXT
+	var w1 := _font.get_string_size(top, HORIZONTAL_ALIGNMENT_CENTER, -1, fs1).x
+	var w2 := _font.get_string_size(val, HORIZONTAL_ALIGNMENT_CENTER, -1, fs2).x
+	draw_string(_font, speed_center + Vector2(-w1 * 0.5, -fs1 * 0.25), top, HORIZONTAL_ALIGNMENT_LEFT, -1, fs1, col)
+	draw_string(_font, speed_center + Vector2(-w2 * 0.5, fs2 * 0.95), val, HORIZONTAL_ALIGNMENT_LEFT, -1, fs2, UIKit.GOLD if not _speed_held else col)
