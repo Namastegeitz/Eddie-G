@@ -1,0 +1,29 @@
+{
+  "appId": "com.eddieg.aliensudoku",
+  "appName": "Alien Sudoku",
+  "webDir": "dist",
+  "backgroundColor": "#05010f",
+  "android": {
+    "backgroundColor": "#05010f"
+  },
+  "ios": {
+    "backgroundColor": "#05010f",
+    "contentInset": "never",
+    "scheme": "Alien Sudoku"
+  },
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 4000,
+      "launchAutoHide": false,
+      "backgroundColor": "#05010f",
+      "showSpinner": false,
+      "androidScaleType": "CENTER_CROP",
+      "splashFullScreen": false,
+      "splashImmersive": false
+    },
+    "SystemBars": {
+      "insetsHandling": "css",
+      "style": "DARK"
+    }
+  }
+}

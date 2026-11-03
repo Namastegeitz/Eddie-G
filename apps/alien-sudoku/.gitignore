@@ -1,0 +1,13 @@
+node_modules/
+dist/
+release/
+test-results/
+playwright-report/
+.env
+.env.local
+*.keystore
+*.jks
+android/keystore.properties
+desktop/node_modules/
+desktop/app/
+desktop/out/

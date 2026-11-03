@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+    <meta name="theme-color" content="#05010f" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="description" content="Alien Sudoku — decode the hieroglyphs of the lost UFO archive. Sudoku with alien glyphs, a 54-level campaign, daily puzzles and synthesized space music." />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Alien Sudoku" />
+    <meta property="og:title" content="Alien Sudoku" />
+    <meta property="og:description" content="Decode the hieroglyphs of the lost UFO archive." />
+    <meta property="og:image" content="./opengraph.jpg" />
+    <title>Alien Sudoku</title>
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+    <link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png" />
+    <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
+    <style>
+      /* Shown before the JS bundle runs. */
+      html, body { margin: 0; background: #05010f; }
+      #boot-splash { position: fixed; inset: 0; z-index: 100; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px;
+        background: radial-gradient(ellipse at 50% 40%, #1a0838 0%, #05010f 70%); color: #39ff9c; font: 600 14px/1.4 system-ui, sans-serif; letter-spacing: .2em; text-transform: uppercase; transition: opacity .5s; }
+      #boot-splash.gone { opacity: 0; pointer-events: none; }
+      #boot-splash svg { width: 96px; height: 96px; filter: drop-shadow(0 0 12px rgba(57,255,156,.7)); animation: bootPulse 1.6s ease-in-out infinite; }
+      @keyframes bootPulse { 50% { opacity: .55; transform: translateY(-4px); } }
+    </style>
+  </head>
+  <body>
+    <div class="starfield" aria-hidden="true">
+      <div class="cosmic-bg"></div>
+      <div class="cosmic-bg"></div>
+      <div class="cosmic-overlay"></div>
+      <div class="stars stars-1"></div>
+      <div class="stars stars-2"></div>
+      <div class="stars stars-3"></div>
+      <div class="nebula"></div>
+    </div>
+
+    <main id="app">
+      <div id="screen-root"></div>
+    </main>
+    <div id="modal-root"></div>
+    <div id="toast-root" aria-live="polite"></div>
+
+    <div id="boot-splash">
+      <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="16" cy="18" rx="12" ry="3.5"/><path d="M8 17 q8-10 16 0"/><circle cx="12" cy="17" r="0.8" fill="currentColor"/><circle cx="16" cy="17" r="0.8" fill="currentColor"/><circle cx="20" cy="17" r="0.8" fill="currentColor"/><line x1="13" y1="22" x2="11" y2="27"/><line x1="19" y1="22" x2="21" y2="27"/></svg>
+      <span class="boot-text">Receiving transmission…</span>
+    </div>
+    <noscript>Alien Sudoku needs JavaScript to run.</noscript>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

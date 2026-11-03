@@ -1,0 +1,126 @@
+import { describe, it, expect, beforeEach, vi } from 'vitest';
+
+// Fresh module state per test (profile + storage keep in-memory caches).
+async function loadProfile() {
+  vi.resetModules();
+  const storage = await import('../../src/core/storage.js');
+  await storage.initStorage();
+  const profile = await import('../../src/core/profile.js');
+  const time = await import('../../src/core/time.js');
+  profile.initProfile();
+  await profile.resetEverything();
+  return { ...profile, ...time };
+}
+
+const win = (extra = {}) => ({ mode: 'quick', difficulty: 'easy', won: true, ms: 200_000, mistakes: 0, hints: 0, revived: false, notes: 0, ...extra });
+
+describe('profile', () => {
+  let P;
+  beforeEach(async () => { P = await loadProfile(); });
+
+  it('records wins, best time and streaks per difficulty', () => {
+    P.recordResult(win({ ms: 300_000 }));
+    const r = P.recordResult(win({ ms: 250_000 }));
+    expect(r.newBest).toBe(true);
+    const s = P.getProfile().stats.byDiff.easy;
+    expect(s.won).toBe(2);
+    expect(s.bestMs).toBe(250_000);
+    expect(s.streak).toBe(2);
+    P.recordResult(win({ won: false }));
+    expect(s.streak).toBe(0);
+    expect(s.bestStreak).toBe(2);
+    expect(s.played).toBe(3);
+  });
+
+  it('first win unlocks achievements (returned, not toasted)', () => {
+    const r = P.recordResult(win());
+    const ids = r.achievements.map((a) => a.id);
+    expect(ids).toContain('first-contact');
+    expect(ids).toContain('flawless');
+    expect(ids).toContain('light-speed');
+  });
+
+  it('campaign: stars, unlock chain, sector reward', () => {
+    expect(P.isLevelUnlocked(0, 0)).toBe(true);
+    expect(P.isLevelUnlocked(0, 1)).toBe(false);
+    const r = P.recordResult(win({ mode: 'campaign', sector: 0, level: 0, mistakes: 1 }));
+    expect(r.stars).toBe(2);
+    expect(P.isLevelUnlocked(0, 1)).toBe(true);
+    // Replay keeps the best stars.
+    P.recordResult(win({ mode: 'campaign', sector: 0, level: 0, mistakes: 2 }));
+    expect(P.levelRecord(0, 0).stars).toBe(2);
+    P.recordResult(win({ mode: 'campaign', sector: 0, level: 0 }));
+    expect(P.levelRecord(0, 0).stars).toBe(3);
+    for (let l = 1; l < 9; l++) P.recordResult(win({ mode: 'campaign', sector: 0, level: l }));
+    expect(P.isSectorUnlocked(1)).toBe(true);
+    // Finishing sector 3 (index 2) unlocks sector 4's symbol set.
+    for (let s = 1; s <= 2; s++) for (let l = 0; l < 9; l++) {
+      const res = P.recordResult(win({ mode: 'campaign', sector: s, level: l }));
+      if (s === 2 && l === 8) expect(res.unlockedSets).toEqual(['spaceships']);
+    }
+    expect(P.isSetUnlocked('spaceships')).toBe(true);
+    expect(P.nextCampaignLevel()).toEqual({ sector: 3, level: 0 });
+  });
+
+  it('daily: streak grows only on consecutive days, played on the day', () => {
+    const today = P.todayStr();
+    const yesterday = P.addDays(today, -1);
+    const prof = P.getProfile();
+    // Simulate a streak that was alive yesterday.
+    prof.daily.streak = 4;
+    prof.daily.lastStreakDate = yesterday;
+    const r = P.recordResult(win({ mode: 'daily', date: today }));
+    expect(r.streak).toBe(5);
+    // Replaying today does not double count.
+    P.recordResult(win({ mode: 'daily', date: today }));
+    expect(P.currentStreak()).toBe(5);
+    // Old days count as completed but not for the streak.
+    P.recordResult(win({ mode: 'daily', date: P.addDays(today, -10) }));
+    expect(P.currentStreak()).toBe(5);
+    expect(P.dailyRecord(P.addDays(today, -10))).toBeTruthy();
+  });
+
+  it('a broken streak restarts at 1', () => {
+    const today = P.todayStr();
+    const prof = P.getProfile();
+    prof.daily.streak = 9;
+    prof.daily.lastStreakDate = P.addDays(today, -3);
+    expect(P.currentStreak()).toBe(0);
+    P.recordResult(win({ mode: 'daily', date: today }));
+    expect(P.currentStreak()).toBe(1);
+    expect(prof.daily.bestStreak).toBe(1); // bestStreak was 0 after reset; 9 was injected without best
+  });
+
+  it('zen wins are separate from difficulty stats', () => {
+    P.recordResult(win({ mode: 'zen', zen: true }));
+    expect(P.getProfile().stats.byDiff.easy.played).toBe(0);
+    expect(P.getProfile().stats.totals.zenWins).toBe(1);
+  });
+
+  it('settings persist through save/load and survive reset', async () => {
+    P.setSetting('symbolSet', 'planets');
+    P.setSetting('music', false);
+    expect(P.settings().symbolSet).toBe('planets');
+    await P.resetEverything();
+    expect(P.settings().music).toBe(false);
+    expect(P.settings().symbolSet).toBe('alien');
+  });
+
+  it('saved game store/clear', () => {
+    P.storeSavedGame({ v: 1, board: [1] });
+    expect(P.loadSavedGame()).toEqual({ v: 1, board: [1] });
+    P.clearSavedGame();
+    expect(P.loadSavedGame()).toBe(null);
+  });
+});
+
+describe('time helpers', () => {
+  it('formats and shifts dates', async () => {
+    const t = await import('../../src/core/time.js');
+    expect(t.formatTime(0)).toBe('0:00');
+    expect(t.formatTime(65_000)).toBe('1:05');
+    expect(t.formatTime(3_725_000)).toBe('1:02:05');
+    expect(t.addDays('2026-03-01', -1)).toBe('2026-02-28');
+    expect(t.addDays('2024-12-31', 1)).toBe('2025-01-01');
+  });
+});

@@ -1,0 +1,137 @@
+import { test, expect } from '@playwright/test';
+
+const errorsOf = (page) => {
+  const errors = [];
+  page.on('pageerror', (e) => errors.push(e.message));
+  page.on('console', (m) => { if (m.type() === 'error') errors.push(m.text()); });
+  return errors;
+};
+
+async function openMenu(page) {
+  await page.goto('/#e2e');
+  await expect(page.locator('.screen-menu')).toBeVisible();
+}
+
+async function startQuick(page, diff = 'easy') {
+  await page.locator('.menu-quick').click();
+  await page.locator(`.diff-option.diff-${diff}`).click();
+  await expect(page.locator('.screen-play')).toBeVisible();
+}
+
+/** Fill every empty cell with the right glyph through the UI. */
+async function solveAll(page, { leave = 0 } = {}) {
+  const { board, solution } = await page.evaluate(() => ({ board: window.__alienSession.board.slice(), solution: window.__alienSession.solution.slice() }));
+  const empties = board.map((v, i) => (v ? -1 : i)).filter((i) => i >= 0);
+  for (const i of empties.slice(0, empties.length - leave)) {
+    await page.locator(`.cell[data-i="${i}"]`).dispatchEvent('pointerdown');
+    await page.locator(`.glyph-btn[data-v="${solution[i]}"]`).click();
+  }
+  return empties.slice(empties.length - leave).map((i) => [i, solution[i]]);
+}
+
+test('quick play: solve a puzzle, see the win card, stats update', async ({ page }) => {
+  const errors = errorsOf(page);
+  await openMenu(page);
+  await startQuick(page, 'easy');
+  await solveAll(page);
+  await expect(page.locator('.win-modal')).toBeVisible({ timeout: 5000 });
+  await expect(page.locator('.win-modal .modal-title')).toHaveText(/decoded/i);
+  await expect(page.locator('.win-modal .ach-row')).toContainText(['First Contact']);
+  await page.getByRole('button', { name: 'Menu', exact: true }).click();
+  await expect(page.locator('.menu-continue')).toHaveCount(0);
+  await page.locator('.icon-tile', { hasText: 'Stats' }).click();
+  await page.getByRole('tab', { name: 'Easy' }).click();
+  await expect(page.locator('.stat-cell', { hasText: 'Won' }).locator('b')).toHaveText('1');
+  expect(errors).toEqual([]);
+});
+
+test('three mistakes lose; second chance restores a life', async ({ page }) => {
+  await openMenu(page);
+  await startQuick(page, 'medium');
+  const [i, wrong] = await page.evaluate(() => {
+    const s = window.__alienSession;
+    const idx = s.board.findIndex((v) => v === 0);
+    return [idx, (s.solution[idx] % 9) + 1];
+  });
+  await page.locator(`.cell[data-i="${i}"]`).dispatchEvent('pointerdown');
+  for (let k = 0; k < 3; k++) await page.locator(`.glyph-btn[data-v="${wrong}"]`).click();
+  await expect(page.locator('.lose-modal')).toBeVisible({ timeout: 5000 });
+  await page.getByRole('button', { name: /second chance/i }).click();
+  await expect(page.locator('.lose-modal')).toHaveCount(0);
+  await expect(page.locator('.life:not(.lost)')).toHaveCount(1);
+});
+
+test('game resumes after reload from the menu', async ({ page }) => {
+  await openMenu(page);
+  await startQuick(page, 'hard');
+  await solveAll(page, { leave: 40 });
+  const before = await page.evaluate(() => window.__alienSession.board.join(''));
+  await page.waitForTimeout(600); // autosave debounce
+  await page.reload();
+  await expect(page.locator('.menu-continue')).toBeVisible();
+  await page.locator('.menu-continue').click();
+  await expect(page.locator('.screen-play')).toBeVisible();
+  const after = await page.evaluate(() => window.__alienSession.board.join(''));
+  expect(after).toBe(before);
+});
+
+test('daily: finishing today starts a streak', async ({ page }) => {
+  await openMenu(page);
+  await page.locator('.menu-daily').click();
+  await page.locator('.daily-card .btn-primary').click();
+  await solveAll(page);
+  await expect(page.locator('.win-modal .result-streak')).toContainText('1-day streak');
+  await page.getByRole('button', { name: 'Daily calendar', exact: true }).click();
+  await expect(page.locator('.cal-day.today.done')).toBeVisible();
+});
+
+test('campaign: level 1 win unlocks level 2 and Next works', async ({ page }) => {
+  await openMenu(page);
+  await page.locator('.menu-campaign').click();
+  await page.locator('.sector-card').first().click();
+  await page.locator('.level-node').first().click();
+  await solveAll(page);
+  await expect(page.locator('.win-modal .big-star.on')).toHaveCount(3);
+  await page.getByRole('button', { name: 'Next transmission', exact: true }).click();
+  await expect(page.locator('.topbar-h1')).toHaveText('Transmission 2 / 9');
+});
+
+test('hint, notes, undo and pause work from the keyboard', async ({ page, isMobile }) => {
+  test.skip(isMobile, 'keyboard test runs on desktop');
+  await openMenu(page);
+  await startQuick(page, 'easy');
+  await page.keyboard.press('h');
+  await expect(page.locator('.status-line')).not.toHaveText('');
+  expect(await page.evaluate(() => window.__alienSession.hints)).toBe(1);
+  const empty = await page.evaluate(() => window.__alienSession.board.findIndex((v) => v === 0));
+  await page.locator(`.cell[data-i="${empty}"]`).dispatchEvent('pointerdown');
+  await page.keyboard.press('n');
+  await page.keyboard.press('3');
+  await expect(page.locator(`.cell[data-i="${empty}"] .notes-grid`)).toBeVisible();
+  await page.keyboard.press('u');
+  await expect(page.locator(`.cell[data-i="${empty}"] .notes-grid`)).toHaveCount(0);
+  await page.keyboard.press('p');
+  await expect(page.locator('.pause-menu')).toBeVisible();
+  await expect(page.locator('.pause-cover')).toBeVisible();
+  await page.keyboard.press('Escape');
+  await expect(page.locator('.pause-cover')).toBeHidden();
+});
+
+test('settings persist and every screen opens cleanly', async ({ page }) => {
+  const errors = errorsOf(page);
+  await openMenu(page);
+  await page.locator('.icon-tile', { hasText: 'Settings' }).click();
+  await page.locator('.set-card', { hasText: 'Planets' }).click();
+  await page.locator('.set-row', { hasText: 'Show timer' }).locator('input').uncheck();
+  await page.reload();
+  await page.locator('.icon-tile', { hasText: 'Settings' }).click();
+  await expect(page.locator('.set-card.active')).toContainText('Planets');
+  await expect(page.locator('.set-row', { hasText: 'Show timer' }).locator('input')).not.toBeChecked();
+  for (const tile of ['Achievements', 'Stats', 'How to play']) {
+    await page.goBack().catch(() => {});
+    await openMenu(page);
+    await page.locator('.icon-tile', { hasText: tile }).click();
+    await expect(page.locator('.page .topbar-h1')).toBeVisible();
+  }
+  expect(errors).toEqual([]);
+});

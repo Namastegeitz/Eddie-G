@@ -1,0 +1,9 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Alien Sudoku</string>
+    <string name="title_activity_main">Alien Sudoku</string>
+    <string name="package_name">com.eddieg.aliensudoku</string>
+    <string name="custom_url_scheme">com.eddieg.aliensudoku</string>
+    <!-- Google's public TEST app id. Replace via: ADMOB_ANDROID_APP_ID=ca-app-pub-xxx~yyy node tools/set-admob-ids.mjs -->
+    <string name="admob_app_id">ca-app-pub-3940256099942544~3347511713</string>
+</resources>
