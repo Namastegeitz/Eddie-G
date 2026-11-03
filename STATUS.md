@@ -29,11 +29,13 @@
 - CI (`.github/workflows/alien-sudoku.yml`) builds APK, iOS simulator app, Windows/macOS/Linux
   installers and publishes the `alien-sudoku-latest` release. BLOCKED: GitHub would not start
   any Actions job on this account (likely billing/spending limit). Fix it, then re-run.
-- Not built in the cloud session: the Android APK (dl.google.com is blocked by the session's
-  network policy) and Electron installers (GitHub release downloads blocked).
-- Next: unblock Actions (or allow dl.google.com), install the APK, AdMob account + real ids,
-  Play Console / App Store Connect setup (`apps/alien-sudoku/docs/STORE_CHECKLIST.md`),
-  host `docs/PRIVACY.md`.
+- Desktop apps built in the cloud session (Electron, smoke-tested) and sent as files:
+  Windows installer + portable, Mac Intel zip, Linux AppImage/deb. Too big to commit (100+ MB).
+- Not built yet: the Android APK (dl.google.com is blocked by the session's network policy,
+  and Actions can't start jobs).
+- Next steps are written as approve-when-ready prompts with their prerequisites:
+  `prompts/claude/alien-sudoku/README.md` (Android APK, Actions, AdMob, Google Play,
+  TestFlight, public website, desktop signing).
 
 ## NeuroForge (not in this repo)
 - Source on the Windows PC: `C:\Users\edwar\Desktop\AI and ALL\Aethertek\content poster\neuroforge`
@@ -43,4 +45,5 @@
 
 ## Prompts
 - `prompts/claude/bugs-eye-view.md` - v2 with the stealth/interactivity add-ons.
+- `prompts/claude/alien-sudoku/` - Alien Sudoku launch board: one prompt per remaining step.
 - Next: collect the rest of the new prompt set (Claude + Codex) into `prompts/`.

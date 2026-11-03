@@ -169,6 +169,25 @@ npm run dist
 
 Installers are written to `desktop/out/`.
 
+To build for other systems from Linux:
+
+```bash
+npx electron-builder --win --publish never
+```
+
+```bash
+npx electron-builder --linux --publish never
+```
+
+```bash
+npx electron-builder --mac zip --publish never
+```
+
+Windows installers built on Linux need Wine with 32-bit support (on Ubuntu:
+`dpkg --add-architecture i386 && apt-get install wine64 wine32:i386`). A Mac
+`.dmg` and a universal (Intel and Apple Silicon) build need a real Mac or CI; from
+Linux you get an Intel `.zip`, which also runs on Apple Silicon through Rosetta.
+
 ```bash
 npm run smoke
 ```
