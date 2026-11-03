@@ -74,7 +74,28 @@
     else if (!deferred) el.textContent = /iphone|ipad|ipod/i.test(navigator.userAgent) ? 'On iPhone/iPad: Share → Add to Home Screen.' : 'Use your browser menu → Install app / Add to Home screen.';
   }
 
+  /* "Open on another phone": QR code of this app's public address. */
+  var PUBLIC_URL = 'https://namastegeitz.github.io/Eddie-G/';
+  function shareApp() {
+    var local = /^(localhost|127\.|192\.168\.|10\.|\[?::1)/.test(location.hostname) || location.protocol === 'file:';
+    var url = local ? PUBLIC_URL : new URL('./', location.href).href;
+    document.getElementById('app-url').textContent = url;
+    if (window.qrcode) {
+      var qr = qrcode(0, 'M'); qr.addData(url); qr.make();
+      document.getElementById('app-qr').innerHTML = qr.createSvgTag({ cellSize: 6, margin: 4, scalable: true });
+    }
+    document.getElementById('app-url-copy').addEventListener('click', function () {
+      if (navigator.clipboard) navigator.clipboard.writeText(url).then(function () { OGSK.toast('Link copied'); }, function () { OGSK.toast(url); });
+      else OGSK.toast(url);
+    });
+    if (navigator.share) {
+      var b = document.getElementById('app-url-share'); b.hidden = false;
+      b.addEventListener('click', function () { navigator.share({ title: 'Off-Grid Survival Kit', url: url }).catch(function () {}); });
+    }
+  }
+
   document.addEventListener('DOMContentLoaded', function () {
+    shareApp();
     document.getElementById('install-btn').addEventListener('click', function () {
       if (!deferred) return;
       deferred.prompt();

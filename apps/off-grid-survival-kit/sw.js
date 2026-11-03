@@ -12,7 +12,7 @@
 'use strict';
 
 // PRECACHE-START (generated — do not edit by hand)
-const VERSION = "c8242093bdde";
+const VERSION = "74a7ae6e89cf";
 const PRECACHE = [
   "./",
   "assets/css/app.css",
