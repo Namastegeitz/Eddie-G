@@ -1,0 +1,822 @@
+<!doctype html>
+<html lang="en" data-root="../" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#000000">
+<meta name="description" content="Offline first aid and field medicine: bleeding, wounds, burns, fractures, cold and heat, shock, CPR, choking, bites and stings, medicines, kit and when to evacuate.">
+<title>First Aid — Off-Grid Survival Kit</title>
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="icon" href="../assets/icons/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../assets/icons/apple-touch-icon.png">
+<link rel="stylesheet" href="../assets/css/app.css">
+<script src="../assets/js/theme.js"></script>
+<script src="../assets/js/common.js" defer></script>
+<style>
+  .em-nums { display: flex; flex-wrap: wrap; gap: 8px; margin: .5em 0 .7em; }
+  .em-nums span { display: inline-block; padding: 4px 12px; border: 2px solid var(--danger); border-radius: 10px; font-weight: 800; font-size: 1.15rem; }
+  .dont { list-style: none; padding-left: 0; }
+  .dont li { padding-left: 1.6em; position: relative; }
+  .dont li::before { content: "\2715"; position: absolute; left: .2em; color: var(--danger); font-weight: 800; }
+  table.data th[scope="row"] { background: transparent; position: static; white-space: nowrap; }
+  .tight li { margin: .1em 0; }
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="app-header">
+  <a class="hdr-btn" href="../index.html" aria-label="Back to hub"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg><span>Hub</span></a>
+  <h1>First Aid &amp; Field Medicine</h1>
+  <span class="net-dot" role="img"></span>
+  <button class="hdr-btn" type="button" data-theme-toggle></button>
+</header>
+<main id="main" class="page">
+
+  <div class="callout danger">
+    <strong class="callout-title">Read this first</strong>
+    <p><strong>This is not a substitute for professional training or medical care.</strong> If there is any way to reach help, <strong>call emergency services first</strong>, then use this page while you wait.</p>
+    <div class="em-nums"><span>911 (US)</span><span>112 (EU / Portugal)</span></div>
+    <ul class="tight">
+      <li>112 works across the EU and on most mobile phones worldwide. Many phones can call 112/911 without a SIM or on another carrier's network — some countries block this, so try anyway.</li>
+      <li>No voice signal? <strong>Text 911</strong> where available (US); texts often get through when calls fail. Climb higher for signal.</li>
+      <li>Newer phones and satellite messengers/PLBs can send <strong>SOS via satellite</strong> with no cell signal. Learn how yours works before you need it.</li>
+      <li>Get the person to real medical help as soon as it is safely possible.</li>
+      <li><strong>Get trained:</strong> Stop the Bleed, CPR/AED, and a Wilderness First Aid course. Practise with your own kit.</li>
+    </ul>
+  </div>
+
+  <p class="lead">Field steps for the first minutes and hours after an injury or illness, when help is far away. Aligned with Red Cross, American Heart Association, Stop the Bleed and Wilderness Medical Society guidance. Short, conservative, step-numbered.</p>
+
+  <div class="row no-print"><button class="btn print-btn" type="button" data-print>Print this page</button>
+    <button class="btn" type="button" data-expand-all="#main">Expand all</button></div>
+
+  <nav class="toc" aria-label="On this page"><ul>
+    <li><a href="#first60">First 60 seconds</a></li>
+    <li><a href="#bleeding">Severe bleeding</a></li>
+    <li><a href="#wounds">Wound care</a></li>
+    <li><a href="#burns">Burns</a></li>
+    <li><a href="#fractures">Fractures &amp; splints</a></li>
+    <li><a href="#environment">Cold, heat &amp; water</a></li>
+    <li><a href="#shock">Shock</a></li>
+    <li><a href="#cpr">CPR</a></li>
+    <li><a href="#choking">Choking</a></li>
+    <li><a href="#quick">Quick cards</a></li>
+    <li><a href="#meds">Medicines</a></li>
+    <li><a href="#plants">Medicinal plants</a></li>
+    <li><a href="#kit">Kit &amp; evacuation</a></li>
+  </ul></nav>
+
+  <!-- ============================================================ -->
+  <section id="first60" class="card">
+    <h2>First 60 seconds</h2>
+    <ol class="steps">
+      <li><strong>Scene safe?</strong> Traffic, fire, water, electricity, falling rock, the animal. Don't become a second casualty. Gloves (or a plastic bag) on if you have them.</li>
+      <li><strong>Check responsiveness and breathing.</strong> Tap the shoulders, shout "Are you OK?" Look at the chest for up to 10 seconds. Occasional gasps are <strong>not</strong> normal breathing.</li>
+      <li><strong>Call for help.</strong> 911 / 112 on speaker. Send someone for an AED and a first-aid kit. Give your location first.</li>
+      <li><strong>Stop major bleeding.</strong> Blood spurting, pooling or soaking through clothing kills in minutes: press hard, pack, or apply a tourniquet. <a href="#bleeding">How &rarr;</a></li>
+      <li><strong>Not breathing normally? Start CPR</strong> — push hard and fast in the centre of the chest. <a href="#cpr">How &rarr;</a></li>
+      <li><strong>Breathing but unresponsive?</strong> Put them in the <a href="#recovery">recovery position</a> to keep the airway clear.</li>
+      <li><strong>Keep them warm and still</strong> (prevent shock): insulate from the ground, cover, reassure, re-check breathing every few minutes. <a href="#shock">Shock &rarr;</a></li>
+    </ol>
+    <p><strong>Tell the dispatcher:</strong> where you are (coordinates from the <a href="../map/index.html">Map</a>), what happened, how many people are hurt, how they are now, and what you have done.</p>
+  </section>
+
+  <!-- ============================================================ -->
+  <section id="bleeding">
+    <h2>Severe bleeding</h2>
+    <p><strong>Life-threatening bleeding:</strong> blood spurting or flowing steadily, pooling on the ground, soaking through clothing or bandages, a partly or fully amputated limb, or a person getting pale, confused or faint.</p>
+
+    <h3>1. Direct pressure</h3>
+    <ol class="steps">
+      <li>Protect yourself: gloves or a plastic bag over your hand if possible — but don't delay.</li>
+      <li>Expose the wound. Cut or tear clothing away so you can see where the blood is coming from.</li>
+      <li>Put a dressing or clean cloth on the wound and <strong>press hard with both hands</strong>, body weight over straight arms. If you have nothing, use your hand.</li>
+      <li><strong>Don't lift to peek.</strong> If blood soaks through, leave the first layer and add more on top — or, for a deep wound, pack it (below).</li>
+      <li>Keep pressing until the bleeding stops and ideally until help takes over. Then wrap a firm pressure bandage over the dressing.</li>
+      <li>Arm or leg still bleeding heavily despite hard pressure? <strong>Tourniquet.</strong></li>
+    </ol>
+
+    <h3>2. Wound packing (deep wounds and junctional wounds)</h3>
+    <p>Use for deep wounds, and for the <strong>neck, armpit and groin</strong> (junctional areas) where a tourniquet <strong>cannot</strong> work — pack and press there instead.</p>
+    <ol class="steps">
+      <li>Open the wound enough to find where the blood is coming from.</li>
+      <li>Push gauze (hemostatic gauze is best, plain gauze or clean cloth will do) <strong>right onto the bleeding point</strong> with your fingers.</li>
+      <li>Keep feeding it in, packing tightly, until the wound cavity is completely full and packing stands slightly proud of the skin.</li>
+      <li><strong>Press hard with both hands</strong> on top of the packing. Hold without letting go — hemostatic gauze needs at least the time on its packet (typically 3 minutes); plain gauze longer. Keep holding if help is coming.</li>
+      <li>Wrap a pressure bandage tightly over the packing (not around the neck — on the neck, keep pressing by hand).</li>
+    </ol>
+    <div class="callout warn">
+      <strong class="callout-title">Neck wounds</strong>
+      <p>Never wrap anything tightly around the neck. Pack and press by hand, keep the airway clear, and evacuate urgently.</p>
+    </div>
+
+    <h3>3. Tourniquet (arms and legs only)</h3>
+    <p>A <strong>commercial windlass tourniquet</strong> (CAT, SOF-T Wide or similar) is strongly preferred. Buy from a reputable supplier — counterfeits break. Practise with it.</p>
+
+    <figure class="diagram">
+      <svg class="diagram" viewBox="0 0 560 230" role="img" aria-label="Leg diagram: the tourniquet goes 2 to 3 inches above the wound, between the wound and the body, never on the knee joint. If the wound site is unclear, place it high and tight near the top of the limb.">
+        <g fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round">
+          <rect x="8" y="34" width="60" height="150" rx="12"/>
+          <path d="M68,58 L292,74 Q318,69 344,76 L500,84 C512,62 520,42 536,42 L542,50 C538,78 534,102 528,116 L500,116 L344,124 Q318,131 292,126 L68,148"/>
+        </g>
+        <ellipse cx="318" cy="100" rx="30" ry="38" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="5 5"/>
+        <path d="M304,86 L332,114 M332,86 L304,114" stroke="currentColor" stroke-width="3"/>
+        <rect x="83" y="50" width="14" height="106" rx="3" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="5 4"/>
+        <rect x="172" y="60" width="14" height="84" rx="3" fill="currentColor"/>
+        <rect x="160" y="50" width="38" height="9" rx="3" fill="currentColor"/>
+        <path d="M222,90 L238,110 M238,90 L222,110 M230,86 L230,114" style="stroke:var(--accent)" stroke-width="4" stroke-linecap="round"/>
+        <g stroke="currentColor" stroke-width="2">
+          <path d="M179,172 L230,172 M179,164 L179,180 M230,164 L230,180"/>
+        </g>
+        <g fill="currentColor" font-size="17">
+          <text x="70" y="22">If the wound site is unclear: high &amp; tight</text>
+          <text x="179" y="44" text-anchor="middle">Tourniquet</text>
+          <text x="252" y="64" text-anchor="middle">Wound</text>
+          <text x="205" y="198" text-anchor="middle">2–3 in (5–7 cm)</text>
+          <text x="318" y="160" text-anchor="middle">Never on a joint</text>
+          <text x="38" y="206" text-anchor="middle">Body</text>
+        </g>
+      </svg>
+      <figcaption>"Above" the wound means between the wound and the body. The dashed band near the hip shows "high and tight" placement when you can't see where the bleeding is.</figcaption>
+    </figure>
+
+    <ol class="steps">
+      <li>Place the band <strong>2–3 in (5–7 cm) above the wound</strong> — between the wound and the body — <strong>not on a joint</strong>. If the wound is just below a knee or elbow, go above the joint. If you can't tell where the wound is, or there are several: <strong>"high and tight"</strong> on the limb.</li>
+      <li>Pull the strap as tight as you can and fasten it. Empty bulky pockets under it if possible.</li>
+      <li><strong>Twist the windlass until the bleeding stops.</strong> It will hurt badly — that is expected. Tell them so.</li>
+      <li>Lock the windlass in its clip so it can't unwind.</li>
+      <li><strong>Write the time</strong> on the patient (forehead: "TK 14:35") or on the tourniquet tag.</li>
+      <li>Still bleeding after it is fully tightened? Put a <strong>second tourniquet just above the first</strong> (closer to the body) and tighten it.</li>
+      <li>Leave it uncovered and visible. Get to emergency care as fast as possible.</li>
+    </ol>
+    <div class="callout danger">
+      <strong class="callout-title">Never loosen a tourniquet</strong>
+      <p>Once applied, <strong>do not loosen or remove it</strong> — leave that to a hospital. Loosening can restart fatal bleeding. A tourniquet on a limb means evacuate now.</p>
+    </div>
+
+    <h3>Improvised tourniquet (last resort)</h3>
+    <p>Improvised tourniquets often fail. Hard direct pressure and packing are better than a bad improvised tourniquet. Use one only if pressure isn't controlling limb bleeding, or you must free your hands for other casualties.</p>
+    <ol class="steps">
+      <li>Band: <strong>at least 1.5 in (4 cm) wide</strong> — folded triangular bandage, strip of strong cloth. Tie it around the limb (placement as above) with a half-knot.</li>
+      <li>Windlass: a strong stick or rod. Lay it on the half-knot and tie a full knot over it.</li>
+      <li>Twist until the bleeding stops.</li>
+      <li>Tie or tape the windlass down so it can't unwind. Write the time.</li>
+    </ol>
+    <div class="callout danger">
+      <strong class="callout-title">Never use</strong>
+      <p>Wire, cord, string, shoelaces, zip ties or thin rope. They cut into the limb and don't compress the artery.</p>
+    </div>
+
+    <h3>Nosebleed</h3>
+    <ol class="steps">
+      <li>Sit up and <strong>lean forward</strong> (not back — swallowed blood causes vomiting).</li>
+      <li>Pinch the <strong>soft part</strong> of the nose firmly, just below the bony bridge. Breathe through the mouth; spit out blood.</li>
+      <li>Hold continuously for 10–15 minutes without checking. Repeat once if needed.</li>
+      <li>Get medical help if it hasn't stopped after about 20 minutes of good pressure, follows a head injury, is very heavy, or the person takes blood thinners.</li>
+    </ol>
+  </section>
+
+  <!-- ============================================================ -->
+  <section id="wounds">
+    <h2>Wound care</h2>
+    <p>Infection, not the cut itself, is the main danger of a wound in the field. The best tool is <strong>a lot of clean water under pressure</strong>.</p>
+    <ol class="steps">
+      <li><strong>Stop the bleeding first.</strong> Wash your hands; gloves on.</li>
+      <li><strong>Irrigate:</strong> flush the wound with lots of clean water — ideally <strong>drinkable (disinfected) water</strong>, a litre (quart) or more for a dirty wound. Use pressure: an irrigation syringe, or a clean plastic bag or bottle with a pinhole, squeezed hard, held close to the wound. See <a href="../water/index.html">Water</a> for disinfecting.</li>
+      <li><strong>Remove debris</strong> you can see with clean tweezers (boil or wipe with alcohol first). Irrigate again.</li>
+      <li>Clean the skin <em>around</em> the wound with soap and water. Don't pour alcohol, hydrogen peroxide or strong iodine into the wound — they damage tissue.</li>
+      <li>Minor, clean wounds: thin layer of antibiotic ointment or petroleum jelly, then a non-stick sterile dressing.</li>
+      <li>Change the dressing daily, or when wet or dirty. Look at the wound each time.</li>
+    </ol>
+    <div class="callout warn">
+      <strong class="callout-title">Don't close these wounds in the field</strong>
+      <p>Dirty wounds, <strong>animal or human bites</strong>, <strong>punctures</strong>, and wounds you couldn't clean well. Closing traps bacteria. Irrigate, pack loosely with a moist clean dressing, cover, and get to care. Only small, clean, well-irrigated cuts may be held together with wound-closure strips.</p>
+    </div>
+    <div class="callout danger">
+      <strong class="callout-title">Infection — evacuate</strong>
+      <p>Increasing pain, swelling and warmth; <strong>spreading redness</strong>; <strong>red streaks</strong> running up the limb; <strong>pus</strong>; <strong>fever or chills</strong>. These need antibiotics. Draw a pen line around the edge of the redness with the time to see if it spreads.</p>
+    </div>
+    <p><strong>Tetanus:</strong> for dirty wounds, punctures and bites, a tetanus booster is needed if the last one was more than 5 years ago (10 years for clean minor wounds), or if unknown. Get it as soon as you reach care.</p>
+
+    <h3>Animal bites and rabies</h3>
+    <ol class="steps">
+      <li><strong>Wash the bite or scratch with soap and running water for 15 minutes.</strong> This greatly lowers rabies risk.</li>
+      <li>Irrigate, cover, don't close it.</li>
+      <li><strong>Seek post-exposure treatment urgently</strong> after any bite or scratch from a bat, fox, raccoon, skunk, a wild mammal behaving oddly, or a dog/cat of unknown health. Bat contact counts even if you can't see a bite.</li>
+    </ol>
+    <div class="callout danger">
+      <strong class="callout-title">Rabies</strong>
+      <p>Once symptoms start, rabies is almost always fatal. Treatment <strong>after</strong> the bite but <strong>before</strong> symptoms works. Don't wait to see if you get sick — go.</p>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section id="burns">
+    <h2>Burns</h2>
+    <ol class="steps">
+      <li><strong>Stop the burning.</strong> Move away from the source. Clothes on fire: stop, drop, roll; smother with a blanket.</li>
+      <li><strong>Cool with cool running water for 20 minutes</strong>, as soon as possible. Cool the burn, not the whole person — keep them warm otherwise.</li>
+      <li>Remove rings, watches and clothing near the burn before swelling starts — unless stuck to the skin.</li>
+      <li><strong>Cover loosely</strong> with cling film (lay strips on, don't wrap tightly) or a clean non-fluffy dressing. A clean plastic bag works for a hand.</li>
+      <li>Don't pop blisters. Give pain relief per label (see <a href="#meds">Medicines</a>).</li>
+    </ol>
+    <ul class="dont">
+      <li>No ice, butter, oil, toothpaste or creams on a fresh burn.</li>
+      <li>Don't pull off anything stuck to the burn.</li>
+    </ul>
+    <div class="callout danger">
+      <strong class="callout-title">Get medical care for</strong>
+      <p>Large burns (bigger than the person's hand), deep burns (white, leathery, charred or painless), burns to the <strong>face, hands, feet, genitals or joints</strong>, any <strong>airway burn</strong> (soot around mouth or nose, singed nose hairs, hoarse voice, coughing — the airway can swell shut), <strong>electrical and chemical burns</strong>, and burns on children or the elderly.</p>
+    </div>
+    <h3>Chemical burns</h3>
+    <ol class="steps">
+      <li>Protect yourself — gloves.</li>
+      <li><strong>Brush off dry chemical</strong> first, then remove contaminated clothing and jewellery.</li>
+      <li><strong>Flush with lots of running water for at least 20 minutes.</strong> Eyes: hold the lids open, flush from the inner corner outward, away from the other eye.</li>
+      <li>Get medical care. Keep the container or label.</li>
+    </ol>
+    <h3>Electrical burns</h3>
+    <ol class="steps">
+      <li><strong>Don't touch the person while they are still in contact with the power.</strong> Switch off at the source if you safely can.</li>
+      <li>Downed or high-voltage lines: stay well back — at least 18 m (about 60 ft) — and wait for the power company or emergency services.</li>
+      <li>Once safe: check breathing; be ready for CPR — electricity can stop the heart.</li>
+      <li>Cool and cover burns. <strong>Always get medical care</strong> — internal damage is far worse than the skin shows, and heart-rhythm problems can follow.</li>
+    </ol>
+  </section>
+
+  <!-- ============================================================ -->
+  <section id="fractures">
+    <h2>Fractures, sprains &amp; splints</h2>
+    <p><strong>Possible fracture:</strong> deformity, swelling and bruising, sharp pain at one spot, can't use or bear weight, grating, or bone visible in a wound. If in doubt, treat it as broken.</p>
+    <h3>Splinting</h3>
+    <ol class="steps">
+      <li>Control bleeding and cover any wound.</li>
+      <li><strong>Check CSM beyond the injury</strong> — Circulation (warm, pink, pulse), Sensation (can feel your touch), Movement (can wiggle fingers/toes). Note it.</li>
+      <li>Support the limb <strong>in the position found</strong>.</li>
+      <li>Immobilise the <strong>joint above and the joint below</strong> a broken bone (for a joint injury: the bones above and below).</li>
+      <li><strong>Pad well</strong> — bony points, hollows, and between legs or arm and body.</li>
+      <li>Tie it on firmly, not tight. Knots on the splint, not over the injury.</li>
+      <li><strong>Re-check CSM after splinting</strong> and every 15–30 minutes. Numbness, tingling, pale/blue or cold fingers or toes: loosen the ties.</li>
+      <li>Elevate if possible; wrapped cold pack 20 minutes at a time; pain relief per label.</li>
+    </ol>
+    <div class="callout info">
+      <strong class="callout-title">Remote, no circulation</strong>
+      <p>If the hand or foot beyond a broken long bone is cold, pale or blue and pulseless, and help is hours away, a <strong>trained</strong> person may gently straighten an angled shaft fracture with steady pull in line with the limb to restore blood flow (WMS). Stop if pain sharply increases or you meet resistance. Never on joints or the spine. Don't try to put dislocations back unless trained.</p>
+    </div>
+    <h3>Improvised splints</h3>
+    <ul>
+      <li><strong>SAM splint:</strong> mould it on your own uninjured limb first, then apply. A curve along its length makes it rigid.</li>
+      <li><strong>Sticks, trekking poles, tent poles</strong> — padded, one each side.</li>
+      <li><strong>Rolled foam sleeping pad</strong> — excellent for legs and arms.</li>
+      <li><strong>Rolled newspaper or magazine</strong> for a forearm or wrist; a pillow or jacket wrapped around an ankle.</li>
+      <li><strong>Buddy splinting:</strong> tape a finger or toe to its neighbour with padding between; tie legs together with padding between knees and ankles.</li>
+      <li>Ties: triangular bandages, strips of cloth, belts, tape — wide is better than narrow.</li>
+    </ul>
+    <h3>Sling and swathe (arm, wrist, collarbone, shoulder)</h3>
+    <ol class="steps">
+      <li>Sling: support the forearm across the chest, hand slightly higher than the elbow, with a triangular bandage or jacket tied around the neck (pad the knot).</li>
+      <li>Swathe: a second wide band around the body and over the arm to bind the arm to the chest.</li>
+      <li>Check fingers for circulation and feeling.</li>
+    </ol>
+    <h3>Open fracture (bone through the skin)</h3>
+    <ol class="steps">
+      <li>Control bleeding with pressure <strong>around</strong> the bone end, not on it.</li>
+      <li>Rinse off gross dirt, then cover with a sterile or clean moist dressing.</li>
+      <li><strong>Don't push the bone back in.</strong> Splint as found.</li>
+      <li>Evacuate — high risk of serious infection. Treat for shock.</li>
+    </ol>
+    <div class="callout danger">
+      <strong class="callout-title">Thigh or pelvis</strong>
+      <p>A broken thigh bone or pelvis can bleed internally enough to kill. Don't rock the pelvis to test it. Treat for shock, keep warm, evacuate urgently.</p>
+    </div>
+    <h3>Suspected spinal injury</h3>
+    <p>Suspect it after falls from height, diving, vehicle crashes, a heavy blow to the head, or if there is neck/back pain, numbness, tingling or weakness, or the person is confused or intoxicated.</p>
+    <ol class="steps">
+      <li><strong>Don't move them</strong> unless they are in danger (fire, water, rockfall, avalanche) or you must to open the airway or do CPR.</li>
+      <li><strong>Manual stabilisation:</strong> kneel at the head, hold it with both hands in line with the body. Tell them not to move.</li>
+      <li>Insulate from the ground and keep warm — tuck padding in with minimal movement.</li>
+      <li>If you must move them: log-roll with several helpers, keeping head, neck and body in one line, on the count of the person at the head.</li>
+      <li>Vomiting or you must leave them: roll onto their side keeping the spine aligned — the airway comes first.</li>
+    </ol>
+    <h3>Sprains — RICE</h3>
+    <ul>
+      <li><strong>Rest</strong> the joint.</li>
+      <li><strong>Ice</strong> (or cold water / cold pack) wrapped in cloth, 20 minutes at a time. Never directly on skin; skip it if they're getting cold.</li>
+      <li><strong>Compression</strong> with an elastic bandage — snug, not tight; check toes/fingers.</li>
+      <li><strong>Elevation</strong> above the heart when resting.</li>
+    </ul>
+    <p>Treat as a fracture and splint if they can't take 4 steps, or there is bone tenderness or deformity.</p>
+  </section>
+
+  <!-- ============================================================ -->
+  <section id="environment">
+    <h2>Cold, heat &amp; cold water</h2>
+
+    <h3>Hypothermia</h3>
+    <div class="table-wrap"><table class="data">
+      <thead><tr><th>Stage</th><th>Signs</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">Mild</th><td>Shivering, cold pale skin, the <strong>"umbles"</strong>: stumbles, mumbles, fumbles, grumbles. Poor judgement.</td></tr>
+        <tr><th scope="row">Moderate</th><td>Violent then weakening shivering, worsening confusion, drowsiness, slurred speech, clumsiness, odd behaviour (may even undress).</td></tr>
+        <tr><th scope="row">Severe</th><td><strong>Shivering stops.</strong> Barely responsive or unresponsive. Slow, weak breathing and pulse — may look dead.</td></tr>
+      </tbody>
+    </table></div>
+    <ol class="steps">
+      <li><strong>Handle gently</strong>, especially in moderate/severe cases — rough handling can trigger cardiac arrest. Keep severe cases lying flat; don't let them walk.</li>
+      <li><strong>Get out of wind and wet.</strong> Shelter, windbreak, tarp.</li>
+      <li><strong>Insulate from the ground</strong> — pads, packs, branches, rope coils.</li>
+      <li><strong>Remove wet clothing</strong> (cut it off to avoid moving them much) and replace with dry layers. If you can't, put a plastic layer around them inside the insulation.</li>
+      <li><strong>Hypothermia wrap ("burrito")</strong> — see diagram. Cover the head and neck; leave the face open.</li>
+      <li><strong>Warm the core:</strong> warm-water bottles or heat packs <strong>wrapped in cloth</strong> to the <strong>armpits, chest and groin</strong> (never directly on skin — burns). Skin-to-skin with a warm person also works.</li>
+      <li><strong>Warm sweet drinks only if fully alert and able to swallow.</strong> High-energy food for mild cases. <strong>No alcohol.</strong></li>
+      <li><strong>Don't rub or massage limbs.</strong> No hot bath or shower for moderate/severe cases.</li>
+      <li>Evacuate moderate and severe hypothermia — gently, lying flat.</li>
+    </ol>
+    <figure class="diagram">
+      <svg class="diagram" viewBox="0 0 560 260" role="img" aria-label="End view of a hypothermia wrap: sleeping pads underneath, sleeping bag around the patient, warm bottles wrapped in cloth at the chest and armpits, and a tarp or plastic sheet wrapped around everything.">
+        <line x1="10" y1="236" x2="550" y2="236" stroke="currentColor" stroke-width="2"/>
+        <rect x="150" y="58" width="260" height="176" rx="64" fill="none" style="stroke:var(--accent)" stroke-width="3" stroke-dasharray="9 6"/>
+        <rect x="164" y="198" width="232" height="26" rx="6" fill="currentColor" fill-opacity=".25" stroke="currentColor" stroke-width="2"/>
+        <ellipse cx="280" cy="142" rx="114" ry="56" fill="none" stroke="currentColor" stroke-width="2.5"/>
+        <ellipse cx="280" cy="148" rx="64" ry="34" fill="currentColor" fill-opacity=".12" stroke="currentColor" stroke-width="2.5"/>
+        <g style="fill:var(--accent)" stroke="currentColor" stroke-width="1.5">
+          <rect x="264" y="100" width="32" height="16" rx="5"/>
+          <rect x="198" y="134" width="16" height="30" rx="5"/>
+          <rect x="346" y="134" width="16" height="30" rx="5"/>
+        </g>
+        <g stroke="currentColor" stroke-width="1.5">
+          <line x1="132" y1="72" x2="168" y2="96"/>
+          <line x1="132" y1="196" x2="166" y2="210"/>
+          <line x1="424" y1="66" x2="372" y2="104"/>
+          <line x1="424" y1="146" x2="364" y2="148"/>
+          <line x1="424" y1="206" x2="332" y2="166"/>
+        </g>
+        <g fill="currentColor" font-size="15">
+          <text x="8" y="50"><tspan x="8">Tarp or plastic</tspan><tspan x="8" dy="17">sheet wrapped</tspan><tspan x="8" dy="17">around it all</tspan></text>
+          <text x="8" y="180"><tspan x="8">Pads/branches:</tspan><tspan x="8" dy="17">insulation from</tspan><tspan x="8" dy="17">the ground</tspan></text>
+          <text x="430" y="54"><tspan x="430">Sleeping bag</tspan><tspan x="430" dy="17">or blankets</tspan></text>
+          <text x="430" y="134"><tspan x="430">Warm bottles</tspan><tspan x="430" dy="17">in cloth: chest,</tspan><tspan x="430" dy="17">armpits, groin</tspan></text>
+          <text x="430" y="206"><tspan x="430">Patient: dry,</tspan><tspan x="430" dy="17">head covered</tspan></text>
+        </g>
+      </svg>
+      <figcaption>Hypothermia wrap, end-on view. Build it on the ground layer by layer, then fold the tarp around the whole bundle. Leave the face uncovered.</figcaption>
+    </figure>
+    <div class="callout danger">
+      <strong class="callout-title">Severe hypothermia</strong>
+      <p>Check breathing for <strong>longer than usual — up to a full minute</strong>, because it may be very slow. If there is no breathing, start CPR and keep going while evacuating if you can. Cold patients can survive long resuscitations: they are not dead until they are warm and still unresponsive in a hospital.</p>
+    </div>
+
+    <h3>Frostbite</h3>
+    <p>Frostnip: numb, pale skin that recovers fully with warming. Frostbite: white or grey waxy skin; deep frostbite is hard and wooden with no feeling.</p>
+    <ol class="steps">
+      <li>Treat hypothermia first if present. Get out of the cold; remove rings and tight items.</li>
+      <li><strong>Don't rub it</strong> — not with snow, not with hands. It destroys tissue.</li>
+      <li><strong>Rewarm only if there is no risk of it refreezing.</strong> Thaw-then-refreeze causes far worse damage. If you must walk out on frozen feet, keep them frozen — <strong>never walk on thawed feet</strong>.</li>
+      <li>Rewarm in <strong>warm water, 37–39 °C (99–102 °F)</strong> — test with a thermometer or an unaffected elbow. Keep it at that temperature until the skin is soft and colour and feeling return (often around 30 minutes). It hurts: give pain relief (ibuprofen per label, if safe for them).</li>
+      <li><strong>No direct heat</strong> — fire, stove, heater, engine. Numb skin burns without feeling it.</li>
+      <li>Leave blisters intact. Loose, dry, padded dressings, with padding between fingers and toes. Elevate. Protect from cold and pressure.</li>
+      <li>Get medical care for anything beyond frostnip.</li>
+    </ol>
+
+    <h3>Heat exhaustion vs heat stroke</h3>
+    <div class="table-wrap"><table class="data">
+      <thead><tr><th></th><th>Heat exhaustion</th><th>Heat stroke — EMERGENCY</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">Mind</th><td>Alert; maybe dizzy, headache, irritable</td><td><strong>Confused, odd behaviour, slurred speech, seizure, collapse</strong> — the key sign</td></tr>
+        <tr><th scope="row">Skin</th><td>Sweaty, pale, clammy</td><td>Hot; may be dry <strong>or still sweating</strong></td></tr>
+        <tr><th scope="row">Body</th><td>Heavy sweating, thirst, cramps, nausea, weakness, fast pulse</td><td>Very high body temperature, fast pulse and breathing, vomiting</td></tr>
+        <tr><th scope="row">Do</th><td>Shade, lie down, raise legs, loosen clothing, wet skin and fan, sip water or electrolyte drink. Should improve within 30 minutes — if not, treat as heat stroke.</td><td>Call 911/112. <strong>Cool immediately and aggressively</strong>: cold-water immersion up to the neck is best. Otherwise soak with water and fan constantly; cold wet cloths or ice packs on neck, armpits, groin, swapped often. Nothing to drink unless fully alert. Recovery position if unresponsive.</td></tr>
+      </tbody>
+    </table></div>
+    <div class="callout danger">
+      <strong class="callout-title">Hot + confused = heat stroke</strong>
+      <p>Don't wait for transport to start cooling. Every minute of high body temperature damages the brain and organs. Keep cooling until they are clearly improving.</p>
+    </div>
+
+    <h3>Cold water: the 1-10-1 rule</h3>
+    <div class="table-wrap"><table class="data">
+      <tbody>
+        <tr><th scope="row">1 minute</th><td><strong>Cold shock.</strong> Gasping and fast breathing. Keep your head up, don't thrash, lean back and float, and get your breathing under control. Most cold-water deaths happen here, from inhaling water.</td></tr>
+        <tr><th scope="row">10 minutes</th><td><strong>Useful movement.</strong> Hands and arms are failing. Self-rescue now: get out, or onto something, or tie yourself to something that keeps your face out of the water.</td></tr>
+        <tr><th scope="row">1 hour</th><td><strong>Before unconsciousness</strong> from hypothermia (roughly — varies). With a lifejacket, keep still: knees to chest (HELP position), or huddle together.</td></tr>
+      </tbody>
+    </table></div>
+    <ul>
+      <li>Rescuers: <strong>reach or throw, don't go</strong>. Use a pole, rope, branch or anything that floats. Lie flat on ice.</li>
+      <li>After rescue: handle gently, keep horizontal, treat for hypothermia. Anyone who inhaled water needs medical checks even if they seem fine.</li>
+    </ul>
+  </section>
+
+  <!-- ============================================================ -->
+  <section id="shock">
+    <h2>Shock</h2>
+    <p>Not enough blood flow to the organs. Causes: bleeding (seen or internal), burns, severe allergic reaction, dehydration, infection, heart problems. It gets worse without treatment.</p>
+    <p><strong>Signs:</strong> pale or grey, cold and clammy skin; fast, weak pulse; fast shallow breathing; anxious or restless, then confused or drowsy; thirst; nausea; weakness; finally unresponsive.</p>
+    <ol class="steps">
+      <li>Call 911/112 / start evacuation planning now.</li>
+      <li><strong>Treat the cause:</strong> stop bleeding; epinephrine for anaphylaxis; cool burns.</li>
+      <li><strong>Lay them flat on their back.</strong> If breathing is difficult, let them sit in the most comfortable position. If vomiting or unresponsive, recovery position.</li>
+      <li>Legs: you <strong>may</strong> raise them about 30 cm (12 in) <strong>only if</strong> there is no injury to the legs, hips, pelvis, neck or back and it doesn't cause pain. If unsure, leave them flat.</li>
+      <li><strong>Keep warm:</strong> insulate from the ground and cover. Prevent heat loss, but don't overheat.</li>
+      <li><strong>Nothing by mouth</strong> if they may need surgery or are not fully alert. (If help is many hours or days away and they are fully alert with no belly injury, small sips of water are reasonable.)</li>
+      <li>Reassure, loosen tight clothing, check breathing and responsiveness every few minutes. Be ready to start CPR.</li>
+      <li><strong>Evacuate.</strong> Shock needs hospital care.</li>
+    </ol>
+  </section>
+
+  <!-- ============================================================ -->
+  <section id="cpr">
+    <h2>CPR basics</h2>
+    <p>Unresponsive and <strong>not breathing normally</strong> (or only gasping) = start CPR. Compressions keep blood moving to the brain.</p>
+    <ol class="steps">
+      <li>Scene safe. Tap and shout. Check breathing for no more than 10 seconds.</li>
+      <li>Call 911/112 on speaker and get an AED. Alone with a phone: call first, then start — the dispatcher will coach you.</li>
+      <li>Person on their back on a firm surface. Kneel beside the chest.</li>
+      <li>Heel of one hand on the <strong>centre of the chest</strong> (lower half of the breastbone), other hand on top, fingers laced. Arms straight, shoulders over hands.</li>
+      <li><strong>Push hard and fast: 100–120 per minute, at least 2 in (5 cm) but not more than 2.4 in (6 cm) deep.</strong> Let the chest <strong>fully recoil</strong> each time. Minimise pauses.</li>
+      <li><strong>Trained and willing:</strong> after 30 compressions, tilt the head back, lift the chin, pinch the nose and give 2 breaths (about 1 second each, just enough to make the chest rise). <strong>30 compressions : 2 breaths.</strong> <strong>Otherwise: hands-only CPR</strong> — continuous compressions.</li>
+      <li><strong>AED as soon as available:</strong> switch it on and follow its voice. Pads on bare, dry chest. Stand clear when it analyses and shocks. Restart compressions immediately after.</li>
+      <li>Don't stop until they breathe normally or move, the AED tells you to, trained help takes over, you are exhausted, or the scene becomes unsafe. Swap compressors about every 2 minutes.</li>
+    </ol>
+    <div class="callout info">
+      <strong class="callout-title">Drowning</strong>
+      <p>The problem is lack of oxygen. If trained, <strong>start with rescue breaths</strong> (European guidance: 5 initial breaths), then continue 30:2. Untrained: compressions are still far better than nothing.</p>
+    </div>
+    <details class="item">
+      <summary>Children and infants <span class="sub">Differences from adult CPR</span></summary>
+      <div class="body">
+        <ul>
+          <li><strong>Child (1 year to puberty):</strong> one or two hands, compress <strong>about 1/3 of the chest depth</strong> (about 2 in / 5 cm), same rate. Rescue breaths matter more in children — give them if you can.</li>
+          <li><strong>Infant (under 1 year):</strong> centre of the chest just below the nipple line, with <strong>two thumbs</strong> (hands encircling the chest) or <strong>two fingers</strong>; depth <strong>about 1/3 of the chest</strong> (about 1.5 in / 4 cm). Cover mouth and nose with your mouth for gentle puffs.</li>
+          <li>Alone with no phone: give about 2 minutes of CPR before leaving to call for help.</li>
+          <li>AED: use child pads if the child is under 8 and they are available; otherwise adult pads (front and back if they would touch).</li>
+        </ul>
+      </div>
+    </details>
+
+    <h3 id="recovery">Recovery position</h3>
+    <p>For someone unresponsive but <strong>breathing normally</strong>. Keeps the airway open and lets vomit drain.</p>
+    <ol class="steps">
+      <li>Kneel beside them. Place the arm nearest you at a right angle to the body, elbow bent, palm up.</li>
+      <li>Bring the far arm across the chest and hold the back of that hand against their near cheek.</li>
+      <li>With your other hand, pull the far knee up so the foot is flat on the ground.</li>
+      <li>Pull on the far knee to roll them toward you onto their side.</li>
+      <li>Adjust the top leg so hip and knee are bent at right angles — this stops them rolling forward.</li>
+      <li>Tilt the head back gently and lift the chin to keep the airway open; mouth angled downward.</li>
+      <li>Keep checking breathing. If it stops, roll them onto their back and start CPR. Pregnant: on the left side.</li>
+    </ol>
+  </section>
+
+  <!-- ============================================================ -->
+  <section id="choking">
+    <h2>Choking</h2>
+    <p><strong>Mild:</strong> can cough forcefully and speak — encourage coughing, stay with them, don't hit them. <strong>Severe:</strong> can't speak, cough or breathe; may clutch the throat; lips turning blue — act now.</p>
+    <h3>Adult or child over 1 year (conscious)</h3>
+    <ol class="steps">
+      <li>Ask "Are you choking?" Get someone to call 911/112.</li>
+      <li>Stand behind and slightly to the side. Support the chest with one hand and lean them well forward.</li>
+      <li><strong>5 back blows:</strong> firm blows between the shoulder blades with the heel of your hand. Check after each.</li>
+      <li><strong>5 abdominal thrusts:</strong> arms around the waist, fist (thumb side in) just above the belly button, well below the breastbone. Grab the fist with your other hand and pull sharply <strong>in and up</strong>.</li>
+      <li><strong>Repeat 5 back blows and 5 abdominal thrusts</strong> until the object comes out or they become unresponsive.</li>
+      <li><strong>Unresponsive:</strong> lower them to the ground, call 911/112, <strong>start CPR</strong>. Each time you open the airway, look in the mouth and remove any object you can see. No blind finger sweeps.</li>
+      <li>Anyone who received abdominal thrusts must be checked by a doctor afterwards.</li>
+    </ol>
+    <div class="callout warn">
+      <strong class="callout-title">Pregnant or large person</strong>
+      <p>If you can't get around the waist, or in late pregnancy: give <strong>chest thrusts</strong> instead — hands on the lower half of the breastbone, pull sharply straight back.</p>
+    </div>
+    <h3>Choking alone</h3>
+    <ol class="steps">
+      <li>Call 911/112 even if you can't speak — leave the line open.</li>
+      <li>Give yourself abdominal thrusts with your fist, or <strong>throw your upper belly hard against the back of a chair</strong>, a table edge or a railing. Repeat until it comes out.</li>
+    </ol>
+    <h3>Infant under 1 year</h3>
+    <ol class="steps">
+      <li>Sit or kneel. Lay the baby face down along your forearm, head lower than the chest, supporting the jaw with your hand (don't cover the mouth or press the throat). Rest your arm on your thigh.</li>
+      <li><strong>Up to 5 back blows</strong> between the shoulder blades with the heel of your hand.</li>
+      <li>Turn the baby face up on your other forearm, supporting the head, head lower than chest.</li>
+      <li><strong>Up to 5 chest thrusts:</strong> two fingers in the centre of the chest just below the nipple line, push down sharply about 1/3 of the chest depth.</li>
+      <li>Repeat until the object is out or the baby becomes unresponsive — then start infant CPR and call 911/112.</li>
+    </ol>
+    <div class="callout danger">
+      <strong class="callout-title">Infants</strong>
+      <p><strong>Never give abdominal thrusts to an infant.</strong> Never do blind finger sweeps. Don't hold a baby upside down by the legs.</p>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section id="quick">
+    <h2>Quick cards</h2>
+
+    <details class="item">
+      <summary>Severe allergic reaction (anaphylaxis) <span class="sub">Epinephrine first, always evacuate</span></summary>
+      <div class="body">
+        <p><strong>Signs (usually within minutes):</strong> swelling of lips, tongue, face or throat; hoarse voice; trouble breathing or wheezing; hives spreading over the body; vomiting; dizziness or collapse — after a sting, food or medicine.</p>
+        <ol class="steps">
+          <li>Call 911/112.</li>
+          <li><strong>Use their epinephrine auto-injector immediately</strong> into the <strong>outer mid-thigh</strong> — through clothing if needed. Hold it in place for the time printed on the device.</li>
+          <li>Position: sitting up if breathing is hard; lying flat with legs raised if faint or dizzy; recovery position if unresponsive and breathing. Don't let them stand or walk suddenly — they can collapse.</li>
+          <li><strong>No improvement after 5–15 minutes and a second injector is available? Give it</strong> (other thigh).</li>
+          <li>Antihistamine tablets help itching and hives only — they <strong>do not treat anaphylaxis</strong>. Never delay epinephrine for them.</li>
+          <li><strong>Always evacuate</strong>, even if they recover — symptoms can return hours later.</li>
+          <li>CPR if they stop breathing normally.</li>
+        </ol>
+        <p class="muted">An expired auto-injector is better than none in an emergency — but replace them before expiry.</p>
+      </div>
+    </details>
+
+    <details class="item">
+      <summary>Asthma attack <span class="sub">Reliever inhaler, upright, calm</span></summary>
+      <div class="body">
+        <ol class="steps">
+          <li>Sit them upright, leaning slightly forward. Stay calm; loosen tight clothing.</li>
+          <li>Help them use their own <strong>reliever inhaler</strong> (usually blue; salbutamol/albuterol), with a spacer if they have one. Follow their written asthma plan if they have one. UK guidance: <strong>1 puff every 30–60 seconds, up to 10 puffs</strong>.</li>
+          <li>Worse at any point, or not better after 10 puffs: call 911/112. If help hasn't come within 10 minutes, repeat.</li>
+        </ol>
+        <p><strong>Emergency signs:</strong> can't speak full sentences, blue or grey lips, exhaustion, drowsiness or confusion.</p>
+      </div>
+    </details>
+
+    <details class="item">
+      <summary>Snakebite <span class="sub">Keep still, immobilise, evacuate</span></summary>
+      <div class="body">
+        <ol class="steps">
+          <li>Move away from the snake. Don't try to catch or kill it; a photo from a safe distance is enough.</li>
+          <li>Keep the person <strong>calm and still</strong>, lying down. Movement spreads venom — carry them out if you can.</li>
+          <li>Call 911/112 and get to hospital. <strong>Antivenom is the only real treatment.</strong></li>
+          <li><strong>Remove rings, watches, bracelets</strong> and tight clothing or boots from the bitten limb before it swells.</li>
+          <li><strong>Immobilise the limb</strong> with a splint, roughly at heart level.</li>
+          <li><strong>Mark the edge of the swelling</strong> with a pen and write the time. Repeat every 15–30 minutes.</li>
+          <li>Wash gently with soap and water and cover loosely. For pain, acetaminophen/paracetamol — not ibuprofen or aspirin.</li>
+        </ol>
+        <ul class="dont">
+          <li>No cutting, no sucking (by mouth or pump), no tourniquet, no ice, no electric shock, no alcohol.</li>
+        </ul>
+        <div class="callout warn">
+          <strong class="callout-title">Pressure bandages</strong>
+          <p>Pressure-immobilisation (tight wrapping of the whole limb) is for <strong>some Australian and other elapid bites only</strong>. In North America and Europe most dangerous bites are from <strong>vipers</strong> (rattlesnakes, copperheads, European vipers and adders): <strong>immobilise without tight pressure</strong>.</p>
+        </div>
+      </div>
+    </details>
+
+    <details class="item">
+      <summary>Tick removal <span class="sub">Tweezers close to the skin, steady pull</span></summary>
+      <div class="body">
+        <ol class="steps">
+          <li>Use <strong>fine-tipped tweezers</strong>. Grip the tick <strong>as close to the skin as possible</strong>.</li>
+          <li><strong>Pull straight up with steady, even pressure.</strong> Don't twist, jerk or squeeze the body.</li>
+          <li>Mouthparts left behind: remove with tweezers if easy; otherwise leave them and let the skin heal.</li>
+          <li>Clean the bite and your hands with soap and water or alcohol. Seal the tick in tape or a bag; note the date.</li>
+        </ol>
+        <ul class="dont"><li>No burning, nail polish, petroleum jelly or other smothering — they delay removal.</li></ul>
+        <p><strong>Watch for 3–30 days:</strong> an expanding rash (sometimes a "bull's-eye"), fever, chills, aches, fatigue. See a doctor and mention the tick bite.</p>
+      </div>
+    </details>
+
+    <details class="item">
+      <summary>Bee and wasp stings <span class="sub">Remove fast, cool, watch for anaphylaxis</span></summary>
+      <div class="body">
+        <ol class="steps">
+          <li>Bee stinger left in the skin: <strong>remove it quickly</strong> — scrape or pull; speed matters more than method.</li>
+          <li>Wash; cold pack or cold water 10–20 minutes; elevate.</li>
+          <li>Itch and swelling: antihistamine or hydrocortisone cream; pain relief per label.</li>
+          <li><strong>Any sign of anaphylaxis</strong> (face/throat swelling, breathing trouble, collapse): epinephrine and 911/112.</li>
+          <li>Many stings, or a sting inside the mouth or throat: get medical help.</li>
+        </ol>
+      </div>
+    </details>
+
+    <details class="item">
+      <summary>Diarrhoea, vomiting &amp; dehydration <span class="sub">Oral rehydration solution recipe</span></summary>
+      <div class="body">
+        <p>Dehydration is the danger. Replace water <strong>and</strong> salts.</p>
+        <div class="callout ok">
+          <strong class="callout-title">Home oral rehydration solution (WHO-style)</strong>
+          <p><strong>1 litre clean water</strong> (boiled and cooled, or disinfected) + <strong>6 level teaspoons sugar</strong> + <strong>1/2 level teaspoon salt</strong>. Stir until dissolved. Make fresh daily. Commercial ORS packets are better if you have them.</p>
+        </div>
+        <ol class="steps">
+          <li>Sip small amounts often — a few mouthfuls every few minutes, even if vomiting.</li>
+          <li>Keep eating simple food when able. Keep breastfeeding infants.</li>
+          <li>Wash hands; disinfect water (see <a href="../water/index.html">Water</a>).</li>
+        </ol>
+        <div class="callout warn">
+          <strong class="callout-title">Don't make it stronger</strong>
+          <p>Too much salt is dangerous, especially for children. Measure level teaspoons exactly.</p>
+        </div>
+        <p><strong>Get medical help for:</strong> blood or black stool, high fever, severe belly pain, very little or dark urine, dizziness on standing, sunken eyes, confusion or drowsiness, can't keep fluids down, lasting more than 2–3 days, or any infant, elderly or frail person.</p>
+      </div>
+    </details>
+
+    <details class="item">
+      <summary>Head injury red flags <span class="sub">Evacuate urgently if any are present</span></summary>
+      <div class="body">
+        <ul>
+          <li>Any loss of consciousness, or drowsiness that is getting worse</li>
+          <li>Confusion, unusual behaviour, memory loss</li>
+          <li>Repeated vomiting; worsening headache</li>
+          <li>Seizure</li>
+          <li>Unequal pupils, slurred speech, weakness or numbness on one side</li>
+          <li>Clear fluid or blood from the ears or nose; bruising behind the ears or around both eyes</li>
+          <li>On blood thinners</li>
+        </ul>
+        <p>Suspect a neck injury with any significant head injury. Don't leave the person alone for 24 hours. No more activity that day, even if they "feel fine".</p>
+      </div>
+    </details>
+
+    <details class="item">
+      <summary>Eye injuries <span class="sub">Flush, don't rub, protect</span></summary>
+      <div class="body">
+        <ul>
+          <li><strong>Grit or speck:</strong> don't rub. Blink; flush with clean water from the inner corner outward; pull the upper lid down over the lower lid.</li>
+          <li><strong>Chemical:</strong> flush with running water for at least 20 minutes, lids held open. Get care.</li>
+          <li><strong>Object stuck in the eye, or something hit it at speed</strong> (hammering, grinding): don't remove it or press on the eye. Cover loosely with a paper cup or padded ring and evacuate.</li>
+          <li><strong>Blow to the eye:</strong> cold pack without pressure. Get care if vision changes, there's blood in the front of the eye, or pain persists.</li>
+          <li><strong>Snow blindness</strong> (UV burn, gritty painful eyes): rest in the dark, cool compresses; usually heals in 1–2 days. Prevent with sunglasses or slit goggles.</li>
+        </ul>
+      </div>
+    </details>
+
+    <details class="item">
+      <summary>Blisters <span class="sub">Treat hot spots early</span></summary>
+      <div class="body">
+        <ol class="steps">
+          <li><strong>Hot spot</strong> (rubbing, warm, red): stop and cover it with smooth tape or moleskin now.</li>
+          <li>Small intact blister: leave it intact; protect it with a "doughnut" of moleskin around it.</li>
+          <li>Large, tense blister likely to burst: clean it, drain at the edge with a sterile needle (boiled or alcohol-wiped), <strong>leave the roof on</strong>, cover with a dressing.</li>
+          <li>Torn blister: clean gently, cover, watch for infection.</li>
+        </ol>
+        <p class="muted">People with diabetes or poor circulation: don't drain — protect and get care.</p>
+      </div>
+    </details>
+  </section>
+
+  <!-- ============================================================ -->
+  <section id="meds">
+    <h2>Common medicines</h2>
+    <div class="callout warn">
+      <strong class="callout-title">Follow the package label — adult maximums only</strong>
+      <p>Doses below are <strong>adult</strong> limits. <strong>Children: only children's products, dosed by weight per the label.</strong> Ask about allergies first. Check for interactions (especially blood thinners, other painkillers, alcohol, sedatives) and for combination products containing the same drug. Pregnant or breastfeeding, kidney or liver disease, stomach ulcers, heart disease: check with a clinician or pharmacist first. <strong>Check expiry dates.</strong> Keep the leaflets.</p>
+    </div>
+    <div class="table-wrap"><table class="data">
+      <thead><tr><th>Medicine</th><th>For</th><th>Adult use</th><th>Avoid / cautions</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>Acetaminophen / paracetamol</strong></td>
+          <td>Pain, fever</td>
+          <td>Dose per label (strengths differ). <strong>No more than 3,000 mg/day</strong> without doctor advice (label max 4,000 mg).</td>
+          <td>Liver damage in overdose, often with no early symptoms — get help at once if too much was taken. Liver disease or regular alcohol use: ask first. Many cold/flu and "PM" products contain it — count all sources.</td>
+        </tr>
+        <tr>
+          <td><strong>Ibuprofen</strong></td>
+          <td>Pain, fever, swelling (sprains)</td>
+          <td><strong>200–400 mg every 4–6 h</strong>, with food. <strong>Max 1,200 mg/day</strong> unless a doctor directs.</td>
+          <td>Stomach bleeding, kidney risk — <strong>avoid when dehydrated</strong>. Not with ulcers, kidney disease, heart failure, blood thinners, aspirin or other NSAIDs, aspirin-sensitive asthma, pregnancy (unless a doctor advises), snakebite or bleeding.</td>
+        </tr>
+        <tr>
+          <td><strong>Aspirin</strong></td>
+          <td>Suspected heart attack (chest pressure or pain, often spreading to arm, jaw or back; sweating; breathlessness)</td>
+          <td><strong>Chew 162–325 mg once</strong> (e.g. 2–4 low-dose 81 mg tablets, or one 300–325 mg tablet) — <strong>only if</strong> not allergic, no bleeding problems, and ideally on the advice of emergency services. Pain: per label.</td>
+          <td><strong>Never for under-19s</strong> (Reye's syndrome). Not with blood thinners, bleeding disorders, ulcers, aspirin allergy or aspirin-sensitive asthma, pregnancy (unless a doctor advises). <strong>Not for suspected stroke</strong> — it may be a bleed.</td>
+        </tr>
+        <tr>
+          <td><strong>Diphenhydramine</strong> (sedating antihistamine)</td>
+          <td>Itch, hives, stings, mild allergic reactions</td>
+          <td>Per label.</td>
+          <td><strong>Causes drowsiness</strong> and slow reactions — no driving, no hazardous tasks, no alcohol. Confusion and falls in the elderly. Glaucoma, enlarged prostate: ask first. <strong>Does not treat anaphylaxis.</strong></td>
+        </tr>
+        <tr>
+          <td><strong>Cetirizine / loratadine</strong> (non-drowsy antihistamines)</td>
+          <td>Hay fever, itch, hives</td>
+          <td>Per label (usually once a day).</td>
+          <td>Less sedating (cetirizine can still cause some drowsiness). <strong>Does not treat anaphylaxis.</strong></td>
+        </tr>
+        <tr>
+          <td><strong>Loperamide</strong></td>
+          <td>Diarrhoea in adults when you must keep moving</td>
+          <td>Per label. <strong>Never exceed the daily maximum on the pack.</strong></td>
+          <td><strong>Not with fever or bloody/black diarrhoea</strong>, or severe belly pain. Overdose can cause dangerous heart rhythms. Children only per label. Keep drinking ORS. Stop and seek care if no better in 48 h.</td>
+        </tr>
+        <tr>
+          <td><strong>Oral rehydration salts (ORS)</strong></td>
+          <td>Dehydration from diarrhoea, vomiting, heat</td>
+          <td>Mix with <strong>exactly</strong> the volume of clean water on the packet; sip often.</td>
+          <td>Wrong strength can harm, especially children. No extra powder. Home recipe: see <a href="#quick">Quick cards</a>.</td>
+        </tr>
+        <tr>
+          <td><strong>Hydrocortisone 1% cream</strong></td>
+          <td>Itchy rashes, bites, poison ivy</td>
+          <td>Thin layer, per label (often up to 3–4 times a day).</td>
+          <td>Not on broken or infected skin or in eyes. Stop and ask a doctor if no better after 7 days.</td>
+        </tr>
+        <tr>
+          <td><strong>Antibiotic ointment</strong> (bacitracin, "triple antibiotic")</td>
+          <td>Minor cuts and scrapes after cleaning</td>
+          <td>Thin layer per label (often 1–3 times a day), then cover.</td>
+          <td>Not for deep wounds, punctures, bites or serious burns. Allergy (especially neomycin): stop if a rash appears. Plain petroleum jelly also keeps minor wounds moist.</td>
+        </tr>
+      </tbody>
+    </table></div>
+    <p>Pack any personal prescriptions (with spare), epinephrine auto-injectors if prescribed, and inhalers. Don't use someone else's prescription medicine.</p>
+  </section>
+
+  <!-- ============================================================ -->
+  <section id="plants">
+    <h2>Medicinal plants (comfort measures)</h2>
+    <div class="callout danger">
+      <strong class="callout-title">Positive ID or don't use</strong>
+      <p>Only use a plant you can identify with <strong>complete certainty</strong> — see <a href="../foraging/index.html">Foraging</a>. These are <strong>comfort measures, not cures</strong>. Clean wounds properly first; never put plant material into deep or dirty wounds. Test on a small patch of skin; stop if it itches or reddens. Avoid plants from sprayed lawns and roadsides.</p>
+    </div>
+
+    <details class="item">
+      <summary>Common plantain <span class="sub">Plantago major (broadleaf) · P. lanceolata (ribwort) · skin use</span></summary>
+      <div class="body">
+        <p><strong>ID:</strong> low rosette on lawns, paths and field edges. Broadleaf: oval leaves; ribwort: narrow, lance-shaped leaves. Both have <strong>strong parallel veins</strong> that pull out as stringy threads when you tear a leaf, and stiff leafless stalks topped with a spike of tiny flowers.</p>
+        <p><strong>Use:</strong> crush or bruise a clean leaf until juicy and hold it on a <strong>sting, bite, itchy spot or minor scrape</strong> (after cleaning). Replace as it dries. Traditional use; lab studies suggest mild anti-inflammatory effects, clinical evidence is limited.</p>
+        <p class="muted">Lily-of-the-valley (poisonous) also has parallel-veined leaves. Plantain grows as a flat rosette with a stiff flower spike — if unsure, don't.</p>
+      </div>
+    </details>
+
+    <details class="item">
+      <summary>Aloe vera <span class="sub">Gel only · minor burns and sunburn</span></summary>
+      <div class="body">
+        <p><strong>Use:</strong> after cooling a minor burn for 20 minutes, cut a leaf, let the yellow sap drain away, and apply the <strong>clear inner gel</strong> to <strong>minor (superficial) burns and sunburn</strong>.</p>
+        <ul>
+          <li><strong>Gel only:</strong> the yellow latex just under the skin is an irritant and laxative. Rinse it off.</li>
+          <li><strong>Not on deep, large, blistered or open burns.</strong> Not to be eaten.</li>
+          <li>Some people are allergic — test a small patch.</li>
+          <li><strong>Agave</strong> (common in the Algarve and other dry places) looks similar and its sap <strong>irritates skin</strong>. Be sure it's aloe: soft, fleshy, gel-filled leaves.</li>
+        </ul>
+      </div>
+    </details>
+
+    <details class="item">
+      <summary>Jewelweed <span class="sub">Impatiens capensis / pallida · poison ivy (weak evidence)</span></summary>
+      <div class="body">
+        <p>North American plant of damp, shady ground; orange or yellow hanging flowers; juicy, translucent stems. Crushed stem juice is a traditional remedy for poison ivy.</p>
+        <p><strong>Evidence is weak</strong> — studies found it no better than washing with soap. What actually works: <strong>wash the skin with soap and plenty of water as soon as possible</strong> after contact (and wash clothes and tools), then hydrocortisone cream for the itch.</p>
+      </div>
+    </details>
+
+    <details class="item">
+      <summary>Willow bark <span class="sub">Salix species · aspirin-like pain relief — same cautions as aspirin</span></summary>
+      <div class="body">
+        <p>Willow bark contains <strong>salicin</strong>, which the body converts into a relative of aspirin. Traditionally the inner bark of young branches is made into a bitter tea for aches and fever.</p>
+        <div class="callout warn">
+          <strong class="callout-title">Same cautions as aspirin</strong>
+          <p><strong>Not for children or teens under 19</strong> (Reye's), pregnancy or breastfeeding, aspirin/NSAID allergy or aspirin-sensitive asthma, blood thinners or bleeding problems, stomach ulcers, kidney disease. Don't combine with aspirin or ibuprofen. The amount of salicin varies hugely between trees — <strong>you can't know the dose</strong>.</p>
+        </div>
+      </div>
+    </details>
+
+    <details class="item">
+      <summary>Why yarrow isn't recommended here <span class="sub">Identification risk</span></summary>
+      <div class="body">
+        <p>Yarrow (<em>Achillea millefolium</em>) has a long traditional history on minor cuts. But its <strong>feathery leaves and flat clusters of small white flowers</strong> are confused by beginners with <strong>poison hemlock and water hemlock</strong> — among the most poisonous plants in the Northern Hemisphere. The small benefit isn't worth that risk unless you are already an expert at telling them apart.</p>
+      </div>
+    </details>
+  </section>
+
+  <!-- ============================================================ -->
+  <section id="kit">
+    <h2>First-aid kit &amp; when to evacuate</h2>
+    <div class="grid-2">
+      <div class="card">
+        <h3>Compact kit</h3>
+        <ul class="tight">
+          <li><strong>Bleeding:</strong> commercial tourniquet (CAT / SOF-T Wide), hemostatic or compressed gauze, pressure bandage, nitrile gloves, trauma shears</li>
+          <li><strong>Wounds:</strong> irrigation syringe, sterile gauze pads, non-stick dressings, wound-closure strips, adhesive bandages, medical tape, fine-tipped tweezers, safety pins</li>
+          <li><strong>Blisters:</strong> moleskin or blister dressings, smooth tape</li>
+          <li><strong>Splints:</strong> SAM splint, elastic bandage, 2 triangular bandages</li>
+          <li><strong>Environment:</strong> emergency blanket or bivvy bag, chemical heat packs, instant cold pack, ORS packets</li>
+          <li><strong>Medicines:</strong> see <a href="#meds">table</a>; personal prescriptions, epinephrine and inhalers if prescribed</li>
+          <li><strong>Other:</strong> CPR face shield or pocket mask, thermometer, headlamp, permanent marker (tourniquet time, swelling edges), notebook and pencil, whistle, duct tape</li>
+        </ul>
+        <p class="muted">Know how to use everything in it. Check expiry dates every few months.</p>
+      </div>
+      <div class="card">
+        <h3>Evacuate now</h3>
+        <ul class="tight">
+          <li>Any <strong>tourniquet</strong>, or bleeding that isn't controlled</li>
+          <li>Chest pain; difficulty breathing; anaphylaxis (even if better after epinephrine)</li>
+          <li>Unresponsive, confused, seizure, or head injury red flags</li>
+          <li>Signs of <strong>shock</strong></li>
+          <li>Moderate/severe hypothermia; heat stroke; frostbite beyond frostnip</li>
+          <li>Serious burns (see <a href="#burns">Burns</a>), electrical or chemical burns, airway burns</li>
+          <li>Suspected spinal injury; open fracture; thigh or pelvis fracture; fracture with poor circulation; dislocation</li>
+          <li>Deep or gaping wounds; bites; punctures to hands, feet or joints; signs of infection</li>
+          <li>Snakebite; any bite with rabies risk</li>
+          <li>Bloody diarrhoea, severe dehydration, can't keep fluids down</li>
+          <li>Eye injury affecting vision, or anything stuck in the eye</li>
+          <li>Severe or worsening belly pain; pregnancy complications</li>
+        </ul>
+        <p><strong>When in doubt, go early</strong> — in daylight, while the patient can still help and the weather allows.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer class="page-foot">
+    <p>Based on guidance from the American Red Cross, American Heart Association, Stop the Bleed (American College of Surgeons), Wilderness Medical Society practice guidelines, WHO, CDC and NHS. Guidelines change — refresh your training. This page does not replace a trained responder or medical care.</p>
+  </footer>
+</main>
+</body>
+</html>

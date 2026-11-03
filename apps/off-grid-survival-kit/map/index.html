@@ -1,0 +1,386 @@
+<!doctype html>
+<html lang="en" data-root="../" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#000000">
+<meta name="description" content="Offline map: saved tiles, GPS, compass, waypoints, tracks, measuring, MGRS/UTM, sun and moon, triangulation, QR location share and SOS beacon.">
+<title>Map — Off-Grid Survival Kit</title>
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="icon" href="../assets/icons/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../assets/icons/apple-touch-icon.png">
+<link rel="stylesheet" href="../assets/vendor/leaflet/leaflet.css">
+<link rel="stylesheet" href="../assets/css/app.css">
+<link rel="stylesheet" href="../assets/css/map.css">
+<script src="../assets/js/theme.js"></script>
+<script src="../assets/js/common.js" defer></script>
+<!-- bundled libraries (no CDN) -->
+<script src="../assets/vendor/leaflet/leaflet.js" defer></script>
+<script src="../assets/vendor/suncalc.js" defer></script>
+<script src="../assets/vendor/qrcode.js" defer></script>
+<script src="../assets/vendor/mgrs.min.js" defer></script>
+<!-- app -->
+<script src="../assets/js/store.js" defer></script>
+<script src="../assets/js/geo.js" defer></script>
+<script src="../assets/js/map/core.js" defer></script>
+<script src="../assets/js/map/tiles.js" defer></script>
+<script src="../assets/js/map/grid.js" defer></script>
+<script src="../assets/js/map/dem.js" defer></script>
+<script src="../assets/js/map/gps.js" defer></script>
+<script src="../assets/js/map/waypoints.js" defer></script>
+<script src="../assets/js/map/tracks.js" defer></script>
+<script src="../assets/js/map/measure.js" defer></script>
+<script src="../assets/js/map/sunmoon.js" defer></script>
+<script src="../assets/js/map/triangulate.js" defer></script>
+<script src="../assets/js/map/share.js" defer></script>
+<script src="../assets/js/map/data.js" defer></script>
+<script src="../assets/js/map/main.js" defer></script>
+</head>
+<body class="map-page">
+<a class="skip-link" href="#fab-menu">Skip to map menu</a>
+<header class="app-header">
+  <a class="hdr-btn" href="../index.html" aria-label="Back to hub"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg><span>Hub</span></a>
+  <h1>Map</h1>
+  <span class="net-dot" role="img"></span>
+  <button class="hdr-btn" type="button" data-theme-toggle></button>
+</header>
+
+<!-- live telemetry -->
+<div class="telemetry" id="telemetry">
+  <button class="tl-cell tl-coords" id="tl-coords" type="button" title="Tap to change coordinate format (DD / DMS / DDM)">
+    <span class="tl-k" id="tl-pos-k">GPS · DD</span><span id="tl-pos">No GPS fix yet</span></button>
+  <div class="tl-cell"><span class="tl-k">Altitude</span><span id="tl-alt">—</span></div>
+  <div class="tl-cell"><span class="tl-k">Speed</span><span id="tl-spd">—</span></div>
+  <div class="tl-cell"><span class="tl-k">Accuracy</span><span id="tl-acc">—</span></div>
+  <div class="tl-cell"><span class="tl-k">Heading</span><span id="tl-hdg">—</span></div>
+  <button class="tl-cell tl-sun" id="tl-sun" type="button" title="Daylight left — tap for sun &amp; moon details">
+    <span class="tl-k">Daylight left</span><span id="tl-daylight">—</span></button>
+</div>
+
+<div id="map-wrap">
+  <div id="map" role="application" aria-label="Map. Use the buttons on the right for tools."></div>
+  <div id="crosshair" aria-hidden="true"></div>
+  <div id="banner" class="map-banner" role="alert" hidden></div>
+
+  <div class="fabs" role="toolbar" aria-label="Map tools">
+    <button class="fab" id="fab-locate" type="button" aria-pressed="false" aria-label="Locate and follow me">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="2.5"/><path d="M12 1.5v3M12 19.5v3M1.5 12h3M19.5 12h3"/></svg><span>Follow</span></button>
+    <button class="fab" id="fab-pin" type="button" aria-label="Add waypoint">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s7-6.2 7-12a7 7 0 0 0-14 0c0 5.8 7 12 7 12z"/><path d="M12 7v6M9 10h6"/></svg><span>Pin</span></button>
+    <button class="fab rec" id="fab-track" type="button" aria-pressed="false" aria-label="Record track">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3.5" fill="currentColor"/></svg><span>Track</span></button>
+    <button class="fab" id="fab-measure" type="button" aria-pressed="false" aria-label="Measure distance">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 17L17 3l4 4L7 21z"/><path d="M7 13l2 2M10 10l2 2M13 7l2 2"/></svg><span>Measure</span></button>
+    <button class="fab" id="fab-layers" type="button" aria-label="Map layers and offline maps">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13l9 5 9-5"/></svg><span>Layers</span></button>
+    <button class="fab sos" id="fab-sos" type="button" aria-label="SOS beacon and location share">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18v.5"/></svg><span>SOS</span></button>
+    <button class="fab" id="fab-menu" type="button" aria-label="Open map menu">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg><span>Menu</span></button>
+  </div>
+</div>
+
+<!-- Bottom panels: moved into a Leaflet control (bottom-left) at start-up -->
+<div id="bottom-stack" class="bottom-stack">
+  <section id="panel-nav" class="map-panel" hidden aria-live="polite">
+    <div class="nav-grid">
+      <svg class="nav-arrow" viewBox="0 0 100 100" aria-hidden="true">
+        <circle cx="50" cy="50" r="46" fill="none" stroke="currentColor" stroke-width="4" opacity=".4"/>
+        <g class="arr" id="nav-arrow"><path d="M50 6 L72 66 L50 54 L28 66 Z" fill="var(--accent)" stroke="currentColor" stroke-width="2"/></g>
+      </svg>
+      <div class="nav-txt">
+        <div class="nav-name">To <strong id="nav-name"></strong></div>
+        <div class="big" id="nav-dist">—</div>
+        <div class="nav-brg"><strong id="nav-brg">—</strong> <span class="muted" id="nav-from"></span></div>
+      </div>
+      <div class="nav-btns"><button class="btn" type="button" id="nav-center" aria-label="Show me and the target">Both</button><button class="btn danger" type="button" id="nav-stop">Stop</button></div>
+    </div>
+    <div class="muted nav-eta" id="nav-eta"></div>
+  </section>
+
+  <section id="panel-track" class="map-panel" hidden>
+    <div class="stats">
+      <div><span class="k">Track <span id="trk-state" class="tag"></span></span><span class="v" id="trk-dist">0</span></div>
+      <div><span class="k">Time</span><span class="v" id="trk-time">0</span></div>
+      <div><span class="k">Points</span><span class="v" id="trk-pts">0</span></div>
+    </div>
+    <div class="row">
+      <button class="btn" type="button" id="trk-pause">Pause</button>
+      <button class="btn primary" type="button" id="trk-save">Stop &amp; save</button>
+      <button class="btn danger" type="button" id="trk-discard">Discard</button>
+    </div>
+  </section>
+
+  <section id="panel-measure" class="map-panel" hidden>
+    <div class="stats">
+      <div><span class="k">Total</span><span class="v" id="ms-total">0</span></div>
+      <div><span class="k">Last leg</span><span class="v" id="ms-leg">—</span></div>
+      <div><span class="k">Bearing</span><span class="v" id="ms-brg">—</span></div>
+    </div>
+    <div class="legs" id="ms-legs"></div>
+    <div class="row">
+      <button class="btn" type="button" id="ms-center">+ Crosshair</button>
+      <button class="btn" type="button" id="ms-undo">Undo</button>
+      <button class="btn" type="button" id="ms-clear">Clear</button>
+      <button class="btn primary" type="button" id="ms-done">Done</button>
+    </div>
+  </section>
+
+  <section id="panel-pick" class="map-panel" hidden>
+    <h3 id="pick-msg">Tap the map to pick a point</h3>
+    <div class="row"><button class="btn primary" type="button" id="pick-center">Use crosshair</button><button class="btn" type="button" id="pick-cancel">Cancel</button></div>
+  </section>
+
+  <div id="center-readout" class="center-readout" role="button" tabindex="0" title="Map centre (crosshair). Tap for position details."></div>
+</div>
+
+<!-- ======================= MENU DRAWER ======================= -->
+<aside id="drawer" class="drawer" hidden aria-labelledby="drawer-title">
+  <div class="drawer-head">
+    <h2 id="drawer-title">Map menu</h2>
+    <button class="hdr-btn" type="button" id="drawer-close" aria-label="Close menu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+  </div>
+  <nav class="drawer-tabs" role="tablist" aria-label="Map menu sections">
+    <button role="tab" type="button" data-tab="waypoints">Waypoints</button>
+    <button role="tab" type="button" data-tab="tracks">Tracks</button>
+    <button role="tab" type="button" data-tab="layers">Layers</button>
+    <button role="tab" type="button" data-tab="offline">Offline maps</button>
+    <button role="tab" type="button" data-tab="sun">Sun &amp; Moon</button>
+    <button role="tab" type="button" data-tab="position">Position / MGRS</button>
+    <button role="tab" type="button" data-tab="triangulate">Triangulate</button>
+    <button role="tab" type="button" data-tab="share">QR &amp; SOS</button>
+    <button role="tab" type="button" data-tab="data">Import / Export</button>
+    <button role="tab" type="button" data-tab="settings">Settings</button>
+  </nav>
+  <div class="drawer-body">
+
+    <!-- WAYPOINTS -->
+    <section class="pane" data-pane="waypoints" role="tabpanel">
+      <div class="row" style="margin-top:10px">
+        <button class="btn primary" type="button" id="wp-add-center">+ Pin at crosshair</button>
+        <button class="btn" type="button" id="wp-add-gps">+ Pin at my GPS</button>
+      </div>
+      <div class="field"><label for="wp-filter">Search</label><input type="search" id="wp-filter" placeholder="Name, note or category"></div>
+      <div class="row"><span class="muted">Sort:</span>
+        <div class="seg" id="wp-sort"><button class="btn" type="button" data-sort="dist" aria-pressed="true">Nearest</button><button class="btn" type="button" data-sort="name" aria-pressed="false">Name</button><button class="btn" type="button" data-sort="new" aria-pressed="false">Newest</button></div></div>
+      <ul class="list" id="wp-list"></ul>
+      <p class="help">Tip: long-press (or right-click) anywhere on the map to drop a pin there. Tap a pin to edit it or navigate to it.</p>
+    </section>
+
+    <!-- TRACKS -->
+    <section class="pane" data-pane="tracks" role="tabpanel" hidden>
+      <div class="row" style="margin-top:10px"><button class="btn primary" type="button" id="trk-start2">● Start recording</button></div>
+      <p class="help">Recording uses GPS while this screen is on. Browsers pause GPS when the screen locks or the app is in the background, so keep the screen on (the app requests a wake lock) or the track will have gaps.</p>
+      <ul class="list" id="trk-list"></ul>
+    </section>
+
+    <!-- LAYERS -->
+    <section class="pane" data-pane="layers" role="tabpanel" hidden>
+      <h3>Base map</h3>
+      <div class="seg" id="src-seg" role="radiogroup" aria-label="Base map source"></div>
+      <div id="src-custom" hidden>
+        <div class="field"><label for="custom-url">Custom tile URL</label>
+          <input type="url" id="custom-url" placeholder="http://192.168.1.10:8080/tiles/{z}/{x}/{y}.png" autocomplete="off" spellcheck="false"></div>
+        <div class="grid-2">
+          <div class="field"><label for="custom-name">Name</label><input type="text" id="custom-name" placeholder="My tiles"></div>
+          <div class="field"><label for="custom-max">Max zoom</label><input type="number" id="custom-max" min="1" max="22" value="18"></div>
+        </div>
+        <div class="field"><label for="custom-attr">Attribution (credit the data source)</label><input type="text" id="custom-attr" placeholder="© data source"></div>
+        <button class="btn primary" type="button" id="custom-apply">Use custom tiles</button>
+        <p class="help">Use <code>{z}</code>, <code>{x}</code>, <code>{y}</code> (and optionally <code>{s}</code> for a/b/c subdomains, <code>{-y}</code> for TMS/MBTiles row order). Point it at your own tile server — for example an MBTiles file served on your laptop or a Raspberry Pi on the local Wi-Fi (see README). The server must send CORS headers for tiles to be saved offline.</p>
+      </div>
+      <p class="help" id="src-note"></p>
+
+      <h3>Overlays</h3>
+      <label class="check"><input type="checkbox" id="ov-contours"> Contour lines (from elevation data)</label>
+      <label class="check"><input type="checkbox" id="ov-tracks" checked> Saved tracks</label>
+      <label class="check"><input type="checkbox" id="ov-wplabels" checked> Waypoint names</label>
+      <label class="check"><input type="checkbox" id="ov-areas"> Outline saved offline areas</label>
+
+      <h3>Coordinate grid</h3>
+      <div class="seg" id="grid-seg">
+        <button class="btn" type="button" data-grid="auto">Auto</button>
+        <button class="btn" type="button" data-grid="latlon">Lat/Lon</button>
+        <button class="btn" type="button" data-grid="utm">UTM / MGRS</button>
+        <button class="btn" type="button" data-grid="off">Off</button>
+      </div>
+      <p class="help"><strong>Auto</strong> draws a lat/lon graticule whenever no map tiles are available for the view (no signal and nothing saved), so your GPS dot and waypoints are always on a usable grid.</p>
+      <h3>Jump to</h3>
+      <div class="row" id="preset-row"></div>
+      <div class="row" style="margin-top:8px"><button class="btn" type="button" id="bm-add">+ Bookmark this view</button></div>
+      <ul class="list" id="bm-list"></ul>
+    </section>
+
+    <!-- OFFLINE MAPS -->
+    <section class="pane" data-pane="offline" role="tabpanel" hidden>
+      <h3>Save this area offline</h3>
+      <p class="help">Downloads every tile of the current base map inside the visible area, from this zoom level down to more detail, so the map works with no signal. Browsing the map while online also saves what you look at.</p>
+      <div class="field"><label for="dl-levels">Extra zoom levels of detail</label>
+        <select id="dl-levels">
+          <option value="1">+1 level</option><option value="2">+2 levels</option>
+          <option value="3" selected>+3 levels</option><option value="4">+4 levels</option><option value="5">+5 levels</option>
+        </select></div>
+      <label class="check"><input type="checkbox" id="dl-dem" checked> Include elevation data (altitude, slope, contours)</label>
+      <div class="card" id="dl-estimate" aria-live="polite"></div>
+      <div class="row">
+        <button class="btn primary" type="button" id="dl-start">Save this area</button>
+        <button class="btn danger" type="button" id="dl-cancel" hidden>Cancel download</button>
+      </div>
+      <div id="dl-progress" hidden>
+        <div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-label="Download progress"><div id="dl-bar"></div></div>
+        <div id="dl-status" class="muted" aria-live="polite"></div>
+      </div>
+      <h3>Saved on this device</h3>
+      <dl class="kv" id="tile-stats"></dl>
+      <ul class="list" id="area-list"></ul>
+      <div class="row">
+        <button class="btn" type="button" id="tiles-refresh">Refresh</button>
+        <button class="btn danger" type="button" id="tiles-clear-src">Clear this base map's tiles</button>
+        <button class="btn danger" type="button" id="tiles-clear">Clear ALL saved tiles</button>
+      </div>
+      <div class="callout warn"><strong class="callout-title">Be kind to free tile servers</strong>
+        <p>OpenStreetMap and OpenTopoMap are run by volunteers. Their usage policies forbid heavy bulk downloading — OSM specifically forbids downloading zoom 17+ in bulk. This app caps each job, limits parallel downloads, and won't bulk-download OSM beyond zoom 16. Save only the areas you actually need. For large regions, use your own tile server (Layers → Custom).</p></div>
+    </section>
+
+    <!-- SUN & MOON -->
+    <section class="pane" data-pane="sun" role="tabpanel" hidden>
+      <div class="row" style="margin-top:10px">
+        <div class="seg" id="sun-where"><button class="btn" type="button" data-where="gps" aria-pressed="true">My GPS</button><button class="btn" type="button" data-where="center" aria-pressed="false">Map centre</button></div>
+      </div>
+      <div class="field"><label for="sun-date">Date</label><input type="date" id="sun-date"></div>
+      <div id="sun-out"></div>
+    </section>
+
+    <!-- POSITION / MGRS -->
+    <section class="pane" data-pane="position" role="tabpanel" hidden>
+      <div id="pos-out"></div>
+      <h3>Go to coordinates</h3>
+      <div class="field"><label for="goto-in">Lat/lon (DD, DMS or DDM), MGRS or UTM</label>
+        <input type="text" id="goto-in" placeholder="40.7128, -74.0060  ·  18T WL 83959 07350" autocomplete="off" spellcheck="false"></div>
+      <div class="row"><button class="btn primary" type="button" id="goto-go">Go</button><button class="btn" type="button" id="goto-pin">Go &amp; drop pin</button></div>
+      <p class="help" id="goto-msg"></p>
+    </section>
+
+    <!-- TRIANGULATE -->
+    <section class="pane" data-pane="triangulate" role="tabpanel" hidden>
+      <p class="help" style="margin-top:10px">Find where you are from compass bearings to 2–3 landmarks you can see and can find on the map (peaks, towers, bridges). Best results when the landmarks are 60–120° apart.</p>
+      <div class="field"><label for="tri-type">My bearings are</label>
+        <select id="tri-type"><option value="mag">Magnetic (from a compass)</option><option value="true">True (already corrected)</option></select></div>
+      <p class="help" id="tri-decl"></p>
+      <div id="tri-rows"></div>
+      <div class="row">
+        <button class="btn" type="button" id="tri-add">+ Third landmark</button>
+        <button class="btn primary" type="button" id="tri-solve">Plot my position</button>
+        <button class="btn" type="button" id="tri-clear">Clear</button>
+      </div>
+      <div id="tri-out" aria-live="polite"></div>
+    </section>
+
+    <!-- SHARE / SOS -->
+    <section class="pane" data-pane="share" role="tabpanel" hidden>
+      <div class="row" style="margin-top:10px"><button class="btn danger block" type="button" id="sos-open" style="min-height:64px;font-size:1.2rem">Open SOS beacon (full screen)</button></div>
+      <h3>Share my location by QR code</h3>
+      <p class="help">Works with no network: the other phone just scans the code with its camera.</p>
+      <div class="seg" id="qr-src"><button class="btn" type="button" data-src="gps" aria-pressed="true">My GPS</button><button class="btn" type="button" data-src="center" aria-pressed="false">Map centre</button></div>
+      <div class="seg" id="qr-fmt" style="margin-top:6px"><button class="btn" type="button" data-fmt="geo" aria-pressed="true">geo: link</button><button class="btn" type="button" data-fmt="text" aria-pressed="false">Text (coords + MGRS)</button></div>
+      <div class="qr-box" id="qr-box"></div>
+      <div class="qr-text" id="qr-text"></div>
+      <div class="row" style="margin-top:8px"><button class="btn" type="button" id="qr-copy">Copy text</button><button class="btn" type="button" id="qr-share" hidden>Share…</button></div>
+      <p class="help">A <code>geo:</code> link opens directly in map apps on most Android phones. The text format is readable by any QR scanner (including iPhone) and includes MGRS for rescuers.</p>
+    </section>
+
+    <!-- DATA -->
+    <section class="pane" data-pane="data" role="tabpanel" hidden>
+      <h3>Export</h3>
+      <div class="row"><button class="btn primary" type="button" id="gpx-export">Export GPX (waypoints + tracks)</button></div>
+      <div class="row" style="margin-top:8px"><button class="btn" type="button" id="json-export">Full backup (JSON)</button></div>
+      <p class="help">GPX opens in almost every GPS app and handheld. The JSON backup includes waypoints, tracks, checklists, rendezvous plan and settings (not map tiles).</p>
+      <h3>Import</h3>
+      <div class="field"><label for="file-in">GPX file or JSON backup</label><input type="file" id="file-in" accept=".gpx,.json,application/gpx+xml,application/json,text/xml"></div>
+      <label class="check"><input type="checkbox" id="restore-replace"> Replace existing data when restoring a backup (otherwise merge)</label>
+      <p class="help" id="import-msg" aria-live="polite"></p>
+    </section>
+
+    <!-- SETTINGS -->
+    <section class="pane" data-pane="settings" role="tabpanel" hidden>
+      <h3>Units</h3>
+      <div class="seg" id="set-units"><button class="btn" type="button" data-v="metric">Metric (m, km)</button><button class="btn" type="button" data-v="imperial">Imperial (ft, mi)</button></div>
+      <h3>Coordinate format</h3>
+      <div class="seg" id="set-fmt"><button class="btn" type="button" data-v="dd">Decimal °</button><button class="btn" type="button" data-v="dms">D° M′ S″</button><button class="btn" type="button" data-v="ddm">D° M.mmm′</button></div>
+      <h3>Compass</h3>
+      <div class="field"><label for="set-decl">Magnetic declination (° East = +, West = −)</label>
+        <input type="number" id="set-decl" step="0.1" min="-90" max="90" value="0"></div>
+      <p class="help">Phone compasses point to magnetic north. Enter your local declination to get true bearings that match the map. Approximate values (they drift yearly — check a current chart): New Jersey ≈ −12.5 (12–13° W), Algarve ≈ −1 (about 1° W).</p>
+      <button class="btn" type="button" id="set-compass">Enable / recalibrate compass</button>
+      <p class="help">To calibrate, move the phone in a slow figure-8. Keep it flat and away from metal, magnets and vehicles.</p>
+      <h3>GPS &amp; tracking</h3>
+      <label class="check"><input type="checkbox" id="set-autogps" checked> Start GPS when the map opens</label>
+      <label class="check"><input type="checkbox" id="set-wake" checked> Keep screen on while recording / navigating</label>
+      <div class="field"><label for="set-minacc">Ignore track points less accurate than</label>
+        <select id="set-minacc"><option value="25">25 m</option><option value="50" selected>50 m</option><option value="100">100 m</option><option value="250">250 m</option></select></div>
+      <h3>Map display</h3>
+      <label class="check"><input type="checkbox" id="set-dim" checked> Dim map tiles in night mode</label>
+      <label class="check"><input type="checkbox" id="set-cross" checked> Show centre crosshair</label>
+      <label class="check"><input type="checkbox" id="set-saveview" checked> Save tiles I browse while online (prime the offline cache)</label>
+      <h3>Elevation data source</h3>
+      <div class="field"><label for="set-dem">Terrarium-format elevation tile URL</label>
+        <input type="url" id="set-dem" autocomplete="off" spellcheck="false"></div>
+      <p class="help">Default: open Terrain Tiles hosted on AWS (Mapzen “Terrarium” encoding; SRTM, USGS 3DEP and other public sources). Replace with your own server if you host elevation tiles.</p>
+      <h3>Storage</h3>
+      <dl class="kv" id="storage-info"></dl>
+    </section>
+  </div>
+</aside>
+
+<!-- ======================= WAYPOINT EDITOR ======================= -->
+<dialog id="dlg-wp" aria-labelledby="wp-title">
+  <form method="dialog" id="wp-form">
+    <h2 id="wp-title">New waypoint</h2>
+    <div class="seg" id="wp-where" role="group" aria-label="Location">
+      <button class="btn" type="button" data-where="center">At crosshair</button>
+      <button class="btn" type="button" data-where="gps">At my GPS</button>
+    </div>
+    <div class="field"><label for="wp-name">Name</label><input type="text" id="wp-name" required maxlength="80" autocomplete="off"></div>
+    <fieldset style="border:0;padding:0;margin:0"><legend style="font-weight:600;margin-bottom:6px">Category</legend>
+      <div class="cat-grid" id="wp-cats"></div></fieldset>
+    <div class="field"><label for="wp-note">Note</label><textarea id="wp-note" maxlength="2000" placeholder="e.g. spring flows year-round; filter + boil"></textarea></div>
+    <div class="field"><label for="wp-coords">Coordinates</label><input type="text" id="wp-coords" autocomplete="off" spellcheck="false">
+      <small class="muted" id="wp-coords-msg"></small></div>
+    <div class="dlg-actions">
+      <button class="btn primary" type="submit" id="wp-save" value="save">Save</button>
+      <button class="btn" type="button" id="wp-nav">Navigate</button>
+      <button class="btn" type="button" id="wp-qr">QR</button>
+      <span class="spacer"></span>
+      <button class="btn danger" type="button" id="wp-del">Delete</button>
+      <button class="btn" type="button" id="wp-cancel">Cancel</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- generic confirm / prompt -->
+<dialog id="dlg-ask" aria-labelledby="ask-title">
+  <form method="dialog" class="dlg" id="ask-form">
+    <h2 id="ask-title">Confirm</h2>
+    <div id="ask-body"></div>
+    <div class="field" id="ask-field" hidden><label for="ask-input" id="ask-label">Name</label><input type="text" id="ask-input" maxlength="80" autocomplete="off"></div>
+    <div class="dlg-actions"><button class="btn primary" type="submit" value="ok" id="ask-ok">OK</button><button class="btn" type="submit" value="cancel" id="ask-cancel" formnovalidate>Cancel</button></div>
+  </form>
+</dialog>
+
+<!-- ======================= SOS BEACON ======================= -->
+<div id="sos-beacon" class="sos-beacon" hidden role="dialog" aria-modal="true" aria-label="SOS beacon">
+  <p class="sos-title">SOS · MY POSITION</p>
+  <p class="sos-coord" id="sos-dd">—</p>
+  <p class="sos-sub" id="sos-dms">—</p>
+  <p class="sos-sub" id="sos-mgrs">—</p>
+  <p class="sos-small" id="sos-phon"></p>
+  <p class="sos-small" id="sos-meta"></p>
+  <div class="sos-ctrls">
+    <button type="button" id="sos-mode">Flash: slow</button>
+    <button type="button" id="sos-close">Close</button>
+  </div>
+</div>
+
+<noscript><p style="padding:16px">The map needs JavaScript enabled.</p></noscript>
+</body>
+</html>

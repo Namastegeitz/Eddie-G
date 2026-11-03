@@ -1,0 +1,421 @@
+<!doctype html>
+<html lang="en" data-root="../" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#000000">
+<meta name="description" content="Offline emergency tools: SOS strobe and Morse light, whistle and alarm tones, gear checklists, group rendezvous plan, timer and GPS position card.">
+<title>Tools — Off-Grid Survival Kit</title>
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="icon" href="../assets/icons/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../assets/icons/apple-touch-icon.png">
+<link rel="stylesheet" href="../assets/css/app.css">
+<script src="../assets/js/theme.js"></script>
+<script src="../assets/js/common.js" defer></script>
+<script src="../assets/vendor/mgrs.min.js" defer></script>
+<script src="../assets/js/store.js" defer></script>
+<script src="../assets/js/geo.js" defer></script>
+<script src="tools.js" defer></script>
+<style>
+/* ---------------------------------------------------------------------
+   Tools page extras. Colours come from the theme variables in app.css.
+   The only literal colours are the strobe's light output (pure white,
+   pure red, black), which are the point of the tool, not theme colours.
+   --------------------------------------------------------------------- */
+.btn.big { min-height: 64px; font-size: 1.15rem; padding: 0 20px; }
+[hidden] { display: none !important; }   /* .btn's display would otherwise beat the hidden attribute */
+.stack { display: grid; gap: 10px; margin: 12px 0; }
+.seg { display: flex; flex-wrap: wrap; gap: 8px; margin: 6px 0 4px; }
+.seg .btn { flex: 1 1 0; }
+.val { font-variant-numeric: tabular-nums; color: var(--muted); font-weight: 600; }
+.hint { font-size: .95rem; color: var(--muted); margin: .3em 0 .8em; }
+.err { color: var(--danger); font-weight: 600; }
+.okmsg { color: var(--ok); font-weight: 600; }
+.mono { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; }
+.print-only { display: none; }
+
+/* Morse preview + reference */
+.morse-preview {
+  background: var(--surface-2); border: 1px solid var(--border); border-radius: 10px;
+  padding: 8px 10px; min-height: 56px; margin: 8px 0; line-height: 1.3;
+}
+.mtok { display: inline-block; margin: 2px 4px 2px 0; padding: 3px 7px; border-radius: 8px; text-align: center; vertical-align: top; }
+.mtok b { display: block; font-size: .95rem; }
+.mtok .code { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 1.05rem; white-space: nowrap; }
+.mtok.sep { color: var(--muted); padding: 3px 2px; }
+.mtok.cur { background: var(--accent); color: var(--accent-text); }
+.morse-ref { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 2px 14px; font-size: 1.05rem; margin: 8px 0; }
+.morse-ref div { white-space: nowrap; }
+.morse-ref b { display: inline-block; width: 1.7em; }
+.morse-ref span { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; letter-spacing: .08em; }
+
+/* Full-screen strobe / Morse / torch overlay (above the sticky header). */
+.strobe {
+  --strobe-off: #000; --strobe-white: #fff; --strobe-red: #f00; /* light output, not theme colours */
+  position: fixed; inset: 0; z-index: 4000;
+  background: var(--strobe-off); cursor: pointer;
+  user-select: none; -webkit-user-select: none; -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent; touch-action: manipulation;
+}
+.strobe:focus { outline: none; }
+.strobe.lit { background: var(--strobe-white); }
+.strobe.lit.red { background: var(--strobe-red); }
+.strobe-stop {
+  position: absolute; left: 50%; top: calc(14px + env(safe-area-inset-top)); transform: translateX(-50%);
+  padding: 8px 18px; border-radius: 999px; white-space: nowrap;
+  background: var(--bg); color: var(--text); border: 2px solid var(--border); font-weight: 800; font-size: 1rem;
+}
+.strobe-info {
+  position: absolute; left: 12px; right: 12px; bottom: calc(12px + env(safe-area-inset-bottom));
+  max-height: 34vh; overflow: hidden; padding: 8px 10px;
+  background: var(--bg); color: var(--text); border: 2px solid var(--border); border-radius: 12px;
+}
+.strobe-info[hidden] { display: none; }
+.strobe-mode { font-weight: 800; margin-bottom: 2px; }
+body.strobe-open { overflow: hidden; }
+
+/* Sound */
+.snd-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 12px 0; }
+.snd-grid .btn { flex-direction: column; gap: 0; min-height: 72px; padding: 6px 10px; line-height: 1.2; text-align: center; }
+.snd-grid .btn small { font-weight: 500; font-size: .85rem; color: inherit; opacity: .85; }
+.snd-grid .btn:last-child:nth-child(odd) { grid-column: 1 / -1; }
+.snd-status { display: flex; align-items: center; gap: 10px; min-height: 48px; font-weight: 600; }
+.tone-dot { width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--border); background: var(--surface-2); flex: 0 0 auto; }
+.tone-dot.on { background: var(--accent); border-color: var(--accent); }
+
+/* Checklists */
+.cl-list > summary .sub { margin-top: 2px; }
+.meter { height: 12px; background: var(--surface-2); border: 1px solid var(--border); border-radius: 999px; overflow: hidden; margin: 12px 0 4px; }
+.meter > span { display: block; height: 100%; width: 0; background: var(--ok); }
+ul.cl-items { list-style: none; padding: 0; margin: 6px 0 10px; }
+.cl-item { display: flex; align-items: center; gap: 6px; margin: 0; border-bottom: 1px solid var(--border); }
+.cl-item .check { flex: 1 1 auto; min-width: 0; min-height: 56px; padding: 6px 0; }
+.cl-item .check input { width: 32px; height: 32px; flex: 0 0 auto; }
+.cl-text { overflow-wrap: anywhere; }
+.cl-item.done .cl-text { text-decoration: line-through; color: var(--muted); }
+.icon-btn { width: 48px; padding: 0; flex: 0 0 auto; }
+.cl-edit { display: flex; flex-wrap: wrap; gap: 6px; flex: 1 1 auto; padding: 6px 0; }
+.cl-edit input { flex: 1 1 180px; min-width: 0; }
+.cl-add { display: flex; gap: 8px; margin: 8px 0; }
+.cl-add input { flex: 1 1 auto; min-width: 0; }
+.cl-undo { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 4px 4px 4px 12px; margin: 6px 0; background: var(--surface-2); border-radius: 10px; }
+.cl-rename { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0; }
+.cl-rename input { flex: 1 1 200px; min-width: 0; }
+.tpl-grid { display: grid; grid-template-columns: 1fr; gap: 8px; margin: 8px 0 12px; }
+@media (min-width: 560px) { .tpl-grid { grid-template-columns: 1fr 1fr; } }
+.tpl-grid .btn { justify-content: flex-start; text-align: left; min-height: 56px; line-height: 1.25; }
+.tpl-grid .btn small { display: block; font-weight: 500; color: inherit; opacity: .8; }
+
+/* Rendezvous */
+.rv-point h3 .num {
+  display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; margin-right: 8px;
+  border-radius: 50%; background: var(--accent); color: var(--accent-text); font-weight: 800;
+}
+.rv-loc { background: var(--surface-2); border-radius: 10px; padding: 10px 12px; margin: 10px 0; }
+.rv-loc:empty { display: none; }
+.rv-loc .big { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-weight: 700; font-size: 1.1rem; overflow-wrap: anywhere; }
+.rv-loc p { margin: .2em 0; }
+.saved-ind { color: var(--muted); font-weight: 600; min-height: 48px; display: inline-flex; align-items: center; }
+.saved-ind.ok { color: var(--ok); }
+.saved-ind.bad { color: var(--danger); }
+.rv-sheet h3 { margin: .8em 0 .2em; }
+.rv-sheet p { margin: .2em 0; }
+.rv-sheet .pre { white-space: pre-wrap; }
+
+/* Timer */
+.clock { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-weight: 800; font-size: 3rem; line-height: 1.15; text-align: center; font-variant-numeric: tabular-nums; padding: 8px 0; border-radius: 12px; }
+.clock.alarm { background: var(--danger-bg); color: var(--danger); }
+.clock-sub { text-align: center; color: var(--muted); min-height: 1.5em; margin: 0 0 8px; }
+.chips .btn { min-height: 48px; }
+.cd-set { display: flex; gap: 10px; }
+.cd-set .field { flex: 1 1 0; margin-top: 0; }
+
+/* GPS position card */
+.pos-big { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-weight: 800; font-size: 1.4rem; overflow-wrap: anywhere; }
+dl.pos { display: grid; grid-template-columns: max-content 1fr; gap: 4px 12px; margin: 10px 0; }
+dl.pos dt { font-weight: 700; color: var(--muted); }
+dl.pos dd { margin: 0; font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; overflow-wrap: anywhere; }
+
+@media print {
+  /* Paper is white: draw form controls light so empty checkboxes print as empty boxes. */
+  :root, :root[data-theme] { color-scheme: light; }
+  details.item[open] > summary::after { content: ""; }
+  .print-only { display: block !important; }
+  .strobe { display: none !important; }
+  /* "Print plan" / "Print list": show only the chosen section */
+  body.print-scope main > :not(.print-target) { display: none !important; }
+  body.print-one .cl-list:not(.print-this) { display: none !important; }
+  .cl-item .check { min-height: 0; padding: 2px 0; }
+  .cl-item .check input { width: 14pt; height: 14pt; }
+  .cl-item { break-inside: avoid; }
+  .meter { display: none; }
+  .rv-sheet { font-size: 11pt; }
+}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="app-header">
+  <a class="hdr-btn" href="../index.html" aria-label="Back to hub"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg><span>Hub</span></a>
+  <h1>Emergency Device Tools</h1>
+  <span class="net-dot" role="img"></span>
+  <button class="hdr-btn" type="button" data-theme-toggle></button>
+</header>
+<main id="main" class="page">
+  <p class="lead">Signal for help with light and sound, keep your gear lists, and agree where your group meets if you get separated. Everything works with no signal and stays on this phone.</p>
+  <div class="disclaimer">If you have any signal, call emergency services first (911 in the US and Canada, 112 in Europe). A phone is a weak signal and its battery runs out: also carry a real whistle, a flashlight and a signal mirror.</div>
+  <noscript><div class="callout danger"><strong class="callout-title">JavaScript needed</strong><p>These tools need JavaScript turned on.</p></div></noscript>
+  <div class="row no-print"><button class="btn print-btn" type="button" data-print>Print this page</button></div>
+  <nav class="toc" aria-label="On this page"><ul>
+    <li><a href="#sos">SOS light</a></li>
+    <li><a href="#whistle">Whistle &amp; alarm</a></li>
+    <li><a href="#checklists">Checklists</a></li>
+    <li><a href="#rendezvous">Rendezvous plan</a></li>
+    <li><a href="#timer">Timer</a></li>
+    <li><a href="#gps">My position</a></li>
+  </ul></nav>
+
+  <!-- =============================================================== -->
+  <section id="sos">
+    <h2>SOS strobe &amp; Morse light</h2>
+    <div class="callout warn"><strong class="callout-title">Flashing light warning</strong>
+      <p>The strobe flashes on and off. It can trigger seizures in people with photosensitive epilepsy. Point it away from people near you.</p></div>
+
+    <div class="stack no-print">
+      <button class="btn primary big block" type="button" id="sos-start">Start SOS strobe</button>
+      <button class="btn big block" type="button" id="steady-start">Steady light (screen torch)</button>
+    </div>
+    <p class="hint no-print">Turn screen brightness all the way up first — a web page can't do it for you. To stop: tap anywhere on the light, or press Back / Esc.</p>
+
+    <div class="card no-print">
+      <h3>Light settings</h3>
+      <p id="color-label"><strong>Colour</strong></p>
+      <div class="seg" role="group" aria-labelledby="color-label">
+        <button class="btn" type="button" data-color="white" aria-pressed="false">White</button>
+        <button class="btn" type="button" data-color="red" aria-pressed="false">Red</button>
+      </div>
+      <p class="hint">White is brightest and seen furthest. Red protects night vision (yours and your group's) but is seen less far. In the red night theme the light is red unless you pick White there; that choice is remembered separately.</p>
+
+      <div class="field">
+        <label for="unit">Morse speed (light and sound): <span class="val" id="unit-val"></span></label>
+        <input type="range" id="unit" min="120" max="600" step="10" value="250" aria-describedby="unit-hint">
+        <p class="hint" id="unit-hint">Length of one dot. Slower is easier to read at a distance.</p>
+      </div>
+
+      <label class="check"><input type="checkbox" id="torch-on"> Use phone flashlight (where supported)</label>
+      <p class="hint" id="torch-hint">Flashes the camera LED as well as the screen. Works in Chrome on many Android phones. Not possible in Safari on iPhone or iPad (Apple doesn't let web pages control the flashlight) — the screen is used instead. The browser asks for camera permission; nothing is recorded.</p>
+    </div>
+
+    <h3>Send a message in Morse</h3>
+    <div class="field no-print">
+      <label for="morse-text">Message</label>
+      <input type="text" id="morse-text" maxlength="120" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="e.g. SOS NEED WATER">
+    </div>
+    <div class="morse-preview no-print" id="morse-preview" aria-live="polite"></div>
+    <p class="err no-print" id="morse-skip" hidden></p>
+    <label class="check no-print"><input type="checkbox" id="morse-repeat" checked> Repeat until stopped</label>
+    <button class="btn primary big block no-print" type="button" id="morse-start">Flash message</button>
+
+    <details class="item">
+      <summary>Morse code reference <span class="sub">Letters, numbers and timing</span></summary>
+      <div class="body">
+        <p><strong>Timing:</strong> dot = 1 unit · dash = 3 units · gap inside a letter = 1 · between letters = 3 · between words = 7. SOS is sent as one run: <span class="mono">· · · — — — · · ·</span></p>
+        <div class="morse-ref" id="morse-ref"></div>
+      </div>
+    </details>
+
+    <h3>How to signal with light</h3>
+    <ol class="steps">
+      <li>Turn the screen brightness all the way up.</li>
+      <li>Get to an open spot — a clearing, ridge, roof or shoreline — where searchers can see you.</li>
+      <li>Point the screen (or flashlight) straight at the searchers: an aircraft, boat, vehicle or distant light. Hold the phone still.</li>
+      <li>Signal when you see or hear searchers. Rest in between to save battery.</li>
+      <li>In daylight a phone screen is hard to see. Use a signal mirror, bright clothing, or three of anything (3 fires, 3 rock piles).</li>
+    </ol>
+  </section>
+
+  <!-- =============================================================== -->
+  <section id="whistle">
+    <h2>Whistle &amp; alarm tones</h2>
+    <div class="callout danger"><strong class="callout-title">Protect hearing</strong>
+      <p>Never hold the speaker to anyone's ear, including your own. These tones are made to be piercing.</p></div>
+    <p class="no-print">Turn the phone's volume all the way up, then tap a sound. Tap it again (or Stop) to stop. One sound plays at a time.</p>
+
+    <div class="snd-grid no-print" id="snd-grid">
+      <button class="btn" type="button" data-sound="whistle" aria-pressed="false">Whistle<small>steady ~3,150 Hz</small></button>
+      <button class="btn" type="button" data-sound="blasts" aria-pressed="false">3 blasts<small>distress, repeats</small></button>
+      <button class="btn" type="button" data-sound="sos" aria-pressed="false">SOS<small>Morse audio</small></button>
+      <button class="btn" type="button" data-sound="siren" aria-pressed="false">Siren<small>sweep 600–1,400 Hz</small></button>
+      <button class="btn" type="button" data-sound="alarm" aria-pressed="false">Alarm<small>two-tone</small></button>
+    </div>
+    <button class="btn danger big block no-print" type="button" id="snd-stop">Stop sound</button>
+    <div class="snd-status no-print"><span class="tone-dot" id="tone-dot" aria-hidden="true"></span><span id="snd-status" role="status" aria-live="polite">Not playing.</span></div>
+
+    <div class="card no-print">
+      <h3>Sound settings</h3>
+      <div class="field">
+        <label for="vol">Volume: <span class="val" id="vol-val"></span></label>
+        <input type="range" id="vol" min="10" max="100" step="5" value="100">
+      </div>
+      <p id="wave-label"><strong>Tone shape</strong></p>
+      <div class="seg" role="group" aria-labelledby="wave-label">
+        <button class="btn" type="button" data-wave="square" aria-pressed="false">Square</button>
+        <button class="btn" type="button" data-wave="sawtooth" aria-pressed="false">Sawtooth</button>
+        <button class="btn" type="button" data-wave="sine" aria-pressed="false">Sine</button>
+      </div>
+      <p class="hint">Square sounds loudest on small phone speakers. Sine is the smoothest. Morse speed is set under Light settings.</p>
+    </div>
+
+    <div class="callout ok"><strong class="callout-title">Carry a real whistle</strong>
+      <p>A pea-less plastic or metal whistle is louder than a phone speaker, works wet or frozen, and never runs out of battery. Keep one on your jacket zip.</p></div>
+    <div class="callout info"><strong class="callout-title">Get the most from the phone</strong>
+      <p>Volume all the way up. On iPhone, set the Ring/Silent switch to Ring — silent mode can mute web sounds. Point the speaker (usually the bottom edge) toward searchers. Human hearing is most sensitive at about 2–4 kHz, which is why whistles are pitched there.</p></div>
+
+    <h3>Signalling conventions</h3>
+    <ul>
+      <li><strong>Three of anything means distress:</strong> 3 whistle blasts, 3 flashes, 3 shots, 3 fires in a triangle. Pause, listen for a reply, repeat.</li>
+      <li>A common hiking and scouting whistle convention: <strong>1 blast</strong> = “Where are you?” · <strong>2 blasts</strong> = “Come to me” · <strong>3 blasts</strong> = “Help / emergency”. It is a convention, not a law — agree it with your group beforehand.</li>
+      <li>UK and European mountains: the <strong>International Mountain Distress Signal</strong> is 6 blasts or flashes spread over one minute, a one-minute pause, then repeat. The reply is 3 per minute.</li>
+      <li><strong>SOS</strong> (· · · — — — · · ·) is understood worldwide, by light or sound.</li>
+    </ul>
+  </section>
+
+  <!-- =============================================================== -->
+  <section id="checklists">
+    <h2>Gear &amp; inventory checklists</h2>
+    <p class="no-print">Start from a template or a blank list, then edit it to fit your gear. Tick items as you pack. Lists are saved on this phone.</p>
+    <div class="card no-print">
+      <h3>Start from a template</h3>
+      <p class="hint">Each tap adds a new copy you can edit.</p>
+      <div class="tpl-grid" id="cl-templates"></div>
+      <h3>New blank list</h3>
+      <form class="cl-add" id="cl-new">
+        <label class="sr-only" for="cl-new-name">List name</label>
+        <input type="text" id="cl-new-name" maxlength="80" placeholder="List name, e.g. Day hike" autocomplete="off">
+        <button class="btn primary" type="submit">Create</button>
+      </form>
+    </div>
+    <p class="hint" id="cl-empty" hidden>No lists yet. Add a template or make a blank list above.</p>
+    <div id="cl-lists"></div>
+    <div class="row no-print"><button class="btn" type="button" id="cl-print-all">Print all lists</button></div>
+  </section>
+
+  <!-- =============================================================== -->
+  <section id="rendezvous">
+    <h2>Group rendezvous plan</h2>
+    <p class="no-print">Agree this plan <strong>before</strong> you need it. Everyone in the group should know all three meeting points, the times, and what to do if separated — or carry a printed copy.</p>
+    <div class="row no-print">
+      <span class="saved-ind" id="rv-saved" role="status" aria-live="polite">Loading…</span>
+      <button class="btn" type="button" id="rv-print">Print plan</button>
+    </div>
+    <div id="rv-points" class="no-print"></div>
+
+    <div class="card no-print">
+      <h3>When to meet</h3>
+      <div class="field">
+        <label for="rv-muster">Muster times</label>
+        <input type="text" id="rv-muster" data-rv="muster" placeholder="e.g. Every day at 09:00 and 17:00, for 30 min">
+      </div>
+      <div class="field">
+        <label for="rv-wait">How long to wait before moving to the next point</label>
+        <input type="text" id="rv-wait" data-rv="wait" placeholder="e.g. Wait 24 hours at Primary, then go to Secondary">
+      </div>
+    </div>
+
+    <div class="card no-print">
+      <h3>Contacts &amp; radio</h3>
+      <div class="field">
+        <label for="rv-contact">Out-of-area contact (name and phone)</label>
+        <input type="text" id="rv-contact" data-rv="contact" placeholder="e.g. Aunt Maria, +1 555 0100 (lives 300 mi away)">
+      </div>
+      <div class="field">
+        <label for="rv-radio">Radio channel / frequency</label>
+        <input type="text" id="rv-radio" data-rv="radio" placeholder="e.g. FRS ch 3 (US) or PMR446 ch 1 (EU); backup ch 7">
+      </div>
+      <div class="field">
+        <label for="rv-checkin">Radio check-in times</label>
+        <input type="text" id="rv-checkin" data-rv="checkin" placeholder="e.g. On the hour, listen for 5 min">
+      </div>
+      <div class="field">
+        <label for="rv-code">Code word</label>
+        <input type="text" id="rv-code" data-rv="code" placeholder="A word only your group knows" autocomplete="off">
+      </div>
+      <p class="hint">Radios: in the US, FRS radios (22 channels) need no licence; GMRS needs an FCC licence. In Europe, PMR446 radios (16 channels on 446 MHz) are licence-free. “Privacy codes” (CTCSS/DCS) only filter what you hear — anyone on that channel can still hear you. A text message often gets through when calls don't.</p>
+    </div>
+
+    <div class="card no-print">
+      <h3>If separated</h3>
+      <div class="field">
+        <label for="rv-separated">What everyone does if separated</label>
+        <textarea id="rv-separated" data-rv="separated" rows="9"></textarea>
+      </div>
+      <button class="btn" type="button" id="rv-reset-text">Restore suggested text</button>
+    </div>
+
+    <div class="print-only rv-sheet" id="rv-sheet"></div>
+  </section>
+
+  <!-- =============================================================== -->
+  <section id="timer" class="no-print">
+    <h2>Stopwatch &amp; countdown</h2>
+    <p>Useful for tourniquet time, muster waits, a 1-minute rolling boil (3 minutes above 6,500 ft / 2,000 m), or the 30-minute wait after adding bleach to water.</p>
+    <div class="card">
+      <h3>Stopwatch</h3>
+      <div class="clock" id="sw-clock" aria-live="off">00:00.0</div>
+      <p class="clock-sub" id="sw-sub"></p>
+      <div class="grid-2">
+        <button class="btn primary big" type="button" id="sw-start">Start</button>
+        <button class="btn big" type="button" id="sw-reset">Reset</button>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Countdown</h3>
+      <div class="clock" id="cd-clock" aria-live="off">05:00</div>
+      <p class="clock-sub" id="cd-sub" role="status" aria-live="polite"></p>
+      <div class="cd-set">
+        <div class="field"><label for="cd-min">Minutes</label><input type="number" id="cd-min" min="0" max="999" value="5" inputmode="numeric"></div>
+        <div class="field"><label for="cd-sec">Seconds</label><input type="number" id="cd-sec" min="0" max="59" value="0" inputmode="numeric"></div>
+      </div>
+      <div class="row chips" id="cd-presets">
+        <button class="btn" type="button" data-min="1">1 min · boil</button>
+        <button class="btn" type="button" data-min="3">3 min · boil, high altitude</button>
+        <button class="btn" type="button" data-min="30">30 min · bleach wait</button>
+        <button class="btn" type="button" data-min="10">10 min</button>
+        <button class="btn" type="button" data-min="60">1 hour</button>
+      </div>
+      <div class="grid-2" style="margin-top:12px">
+        <button class="btn primary big" type="button" id="cd-start">Start</button>
+        <button class="btn big" type="button" id="cd-reset">Reset</button>
+      </div>
+      <p class="hint">Keep this page open: phones pause web timers when the screen turns off. The screen is kept awake while a countdown runs. At zero the phone beeps and vibrates (where supported).</p>
+    </div>
+  </section>
+
+  <!-- =============================================================== -->
+  <section id="gps">
+    <h2>GPS position card</h2>
+    <p class="no-print">Your phone's GPS works with no phone signal or data. To be found, read rescuers your MGRS grid or latitude/longitude, the accuracy, and what is around you. Read it twice, slowly.</p>
+    <button class="btn primary big block no-print" type="button" id="gps-get">Get my position</button>
+    <p id="gps-status" class="hint" role="status" aria-live="polite"></p>
+    <div class="card" id="gps-card" hidden>
+      <p class="pos-big" id="gps-mgrs"></p>
+      <dl class="pos" id="gps-dl"></dl>
+      <p class="hint" id="gps-phon"></p>
+      <div class="row no-print"><button class="btn" type="button" id="gps-save">Save as map waypoint</button><a class="btn" id="gps-map" href="../map/index.html" hidden>Show on map</a></div>
+    </div>
+    <p class="hint no-print">Needs location permission, and the app must be opened from a secure address (https:// or an installed app). The first fix can take a minute or more — go outside, away from buildings and tree cover.</p>
+  </section>
+
+  <footer class="page-foot">Morse timing follows ITU-R M.1677-1. Whistle signals are widely used conventions, not laws. These tools help you signal; they do not replace a real whistle, flashlight, signal mirror, personal locator beacon (PLB) or a call to emergency services.</footer>
+</main>
+
+<!-- Full-screen light (strobe / Morse / steady). Shown by tools.js. -->
+<div class="strobe no-print" id="strobe" hidden tabindex="-1" role="dialog" aria-modal="true" aria-label="Signal light. Tap anywhere to stop.">
+  <div class="strobe-stop">Tap anywhere to stop</div>
+  <div class="strobe-info" id="strobe-info" hidden>
+    <div class="strobe-mode" id="strobe-mode"></div>
+    <div id="strobe-morse"></div>
+  </div>
+</div>
+</body>
+</html>

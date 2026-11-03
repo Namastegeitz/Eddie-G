@@ -1,0 +1,575 @@
+<!doctype html>
+<html lang="en" data-root="../" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#000000">
+<meta name="description" content="Find water, make it safe to drink (boiling, bleach, SODIS, filters, solar still), spot water no home method can fix, and store it safely.">
+<title>Water — Off-Grid Survival Kit</title>
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="icon" href="../assets/icons/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../assets/icons/apple-touch-icon.png">
+<link rel="stylesheet" href="../assets/css/app.css">
+<script src="../assets/js/theme.js"></script>
+<script src="../assets/js/common.js" defer></script>
+<style>
+  /* Page-only additions. Theme variables only. */
+  .callout.big .callout-title { font-size: 1.35rem; letter-spacing: .06em; }
+  .callout.big p { font-size: 1.05rem; }
+  .quick ol { padding-left: 1.4em; }
+  .quick li { margin: .45em 0; }
+  .formula {
+    display: block; margin: 10px 0 14px; padding: 10px 12px;
+    background: var(--surface-2); border: 1px solid var(--border); border-radius: 10px;
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 1rem;
+    overflow-x: auto;
+  }
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="app-header">
+  <a class="hdr-btn" href="../index.html" aria-label="Back to hub"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg><span>Hub</span></a>
+  <h1>Finding &amp; Purifying Water</h1>
+  <span class="net-dot" role="img"></span>
+  <button class="hdr-btn" type="button" data-theme-toggle></button>
+</header>
+<main id="main" class="page">
+  <p class="lead">Water comes before food: you can last only about 3 days without it. Find the cleanest source you can, clear it, kill the germs, and learn to recognise water that no home method can make safe.</p>
+
+  <div class="disclaimer">For emergencies and learning. These methods lower the risk; none is perfect. Get medical help for severe diarrhoea, vomiting, or signs of severe dehydration.</div>
+
+  <div class="row no-print"><button class="btn print-btn" type="button" data-print>Print this page</button>
+    <button class="btn" type="button" data-expand-all="#main">Expand all</button></div>
+
+  <section id="quick" class="card quick">
+    <h2>Quick reference</h2>
+    <ol>
+      <li><strong>Drink what you need. Don't ration water.</strong> Plan on at least 1 gal (3.8 L) per person per day, and more in heat or hard work. Ration sweat, not water.</li>
+      <li><strong>Pick the cleanest source:</strong> rain or spring, then fast-moving stream, then lake, then stagnant water. <strong>Never</strong> use floodwater, water with a fuel sheen or chemical smell, or water under algae scum.</li>
+      <li><strong>Clear it first:</strong> let it settle, then pour it through folded cloth or a filter.</li>
+      <li><strong>Kill the germs:</strong> a rolling boil for 1 minute (3 minutes above 6,500 ft / 2,000 m), <em>or</em> unscented bleach (6%: 2 drops per litre, 8 drops per gallon) and wait 30 minutes, <em>or</em> SODIS for 6 hours in full sun.</li>
+      <li><strong>Store it clean and covered</strong> in labelled, food-grade containers. Keep dirty and clean containers apart.</li>
+    </ol>
+  </section>
+
+  <div class="callout danger big">
+    <strong class="callout-title">Boil if in doubt</strong>
+    <p>Unsure about a source, a filter or a method? <strong>Boil it.</strong> A rolling boil for <strong>1 minute</strong> (<strong>3 minutes above 6,500 ft / 2,000 m</strong>) kills bacteria, viruses and parasites, including Cryptosporidium, which bleach misses.</p>
+    <p>Boiling does <strong>not</strong> remove chemicals. If you suspect fuel, metals, pesticides or toxic algae, <a href="#contam">find another source</a>.</p>
+  </div>
+
+  <nav class="toc" aria-label="On this page"><ul>
+    <li><a href="#need">How much you need</a></li>
+    <li><a href="#find">Finding water</a></li>
+    <li><a href="#rank">Source ranking</a></li>
+    <li><a href="#treat">Treatment overview</a></li>
+    <li><a href="#boil">Boiling</a></li>
+    <li><a href="#chem">Chemical treatment</a></li>
+    <li><a href="#sodis">SODIS (sunlight)</a></li>
+    <li><a href="#filter">Filtering</a></li>
+    <li><a href="#still">Solar still</a></li>
+    <li><a href="#contam">When it can't be fixed</a></li>
+    <li><a href="#store">Storing water</a></li>
+    <li><a href="#travel">Backcountry &amp; travel</a></li>
+  </ul></nav>
+
+  <!-- ============================================================ -->
+  <section id="need">
+    <h2>How much water you need</h2>
+    <div class="table-wrap"><table class="data">
+      <thead><tr><th>Situation</th><th>Per person, per day</th></tr></thead>
+      <tbody>
+        <tr><td>Drinking only, mild weather, resting</td><td>About 3–4 L (3–4 qt) minimum</td></tr>
+        <tr><td>Heat, hard work, illness, pregnancy or breastfeeding</td><td>Much more, often double</td></tr>
+        <tr><td><strong>Planning figure</strong> (drinking + basic hygiene)</td><td><strong>1 gal (3.8 L)</strong>. That barely covers drinking in mild weather, so store more if you can.</td></tr>
+        <tr><td>How much to store at home</td><td>At least 3 days' worth; 2 weeks is better. Add extra for pets.</td></tr>
+      </tbody>
+    </table></div>
+    <ul>
+      <li><strong>Don't ration water.</strong> Drink what you need today and look for more tomorrow. Rationing leads to collapse sooner.</li>
+      <li><strong>Ration sweat instead.</strong> Work in the cool of morning and evening. Rest in shade. Keep skin covered. Don't drink alcohol. If water is short, eat less, especially salty and high-protein food, because digesting it uses water.</li>
+      <li><strong>Never drink</strong> seawater, urine or alcohol. They make dehydration worse.</li>
+      <li>Aim for <strong>pale straw-coloured urine</strong>.</li>
+    </ul>
+    <h3>Dehydration signs</h3>
+    <div class="table-wrap"><table class="data">
+      <thead><tr><th>Stage</th><th>Signs</th><th>Do this</th></tr></thead>
+      <tbody>
+        <tr><td><span class="tag warn">Early</span></td><td>Thirst, dark yellow urine, peeing less, dry mouth, headache, tiredness, irrit&shy;ability</td><td>Drink now: small sips, often. Rest in shade.</td></tr>
+        <tr><td><span class="tag warn">Serious</span></td><td>Dizziness, very little urine, fast heartbeat, cramps, sunken eyes</td><td>Stop work. Rehydrate with oral rehydration solution (below).</td></tr>
+        <tr><td><span class="tag danger">Emergency</span></td><td>Confusion, fainting, no urine for many hours, very fast breathing or heartbeat. Babies: dry nappies (diapers) for hours, no tears, sunken soft spot on the head</td><td><strong>Get medical help.</strong> Give sips only if they're fully awake and can swallow.</td></tr>
+      </tbody>
+    </table></div>
+    <div class="callout ok">
+      <strong class="callout-title">Oral rehydration solution (ORS)</strong>
+      <p>Use ORS packets if you have them. Home recipe (WHO): <strong>1 litre of safe water + 6 level teaspoons of sugar + ½ level teaspoon of salt</strong>. Stir until dissolved and sip. Measure carefully, because too much salt is harmful. Useful after diarrhoea, vomiting or heavy sweating. For heat illness see <a href="../firstaid/index.html">First aid</a>.</p>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section id="find">
+    <h2>Finding water</h2>
+    <p>Think like water: it runs downhill and collects in low, shady places. Save your strength. Wandering in the heat costs more water than it finds.</p>
+
+    <details class="item">
+      <summary>Water already in your home <span class="sub">water heater, pipes, ice</span></summary>
+      <div class="body">
+        <ul>
+          <li><strong>Water heater tank</strong> (often 30–80 gal / 110–300 L): <strong>turn off the gas or power first</strong>. Close the cold-water inlet valve so no contaminated water gets in. Open a hot tap somewhere to let air in, then drain from the valve at the bottom. Let the sediment settle. Careful: it may be scalding hot.</li>
+          <li><strong>Pipes:</strong> close the main water valve, open the highest tap in the house, then drain from the lowest tap.</li>
+          <li><strong>Ice cubes</strong>, and the liquid in canned fruit and vegetables.</li>
+          <li>If there was a boil-water notice <em>before</em> you closed the supply, treat this water too.</li>
+          <li><strong>Not for drinking:</strong> heating radiators and boilers, waterbeds, swimming pools and hot tubs (use them for washing and flushing only).</li>
+        </ul>
+      </div>
+    </details>
+
+    <details class="item">
+      <summary>Reading the land <span class="sub">clues that point to water</span></summary>
+      <div class="body">
+        <ul>
+          <li><strong>Low ground:</strong> valley floors, gullies, the foot of cliffs and rock outcrops, shaded hollows.</li>
+          <li><strong>Green lines</strong> in dry country: willows, cottonwoods, sycamores, reeds, rushes and cattails grow where water is at or near the surface.</li>
+          <li><strong>Insects:</strong> mosquitoes and flies stay near water. Bees fly regularly to and from water.</li>
+          <li><strong>Birds at dawn and dusk:</strong> seed-eating birds (doves, pigeons, finches) often fly low and direct towards water. Birds of prey are no guide.</li>
+          <li><strong>Animal trails</strong> that converge and lead downhill often end at water.</li>
+          <li><strong>Rock:</strong> after rain, look for water held in hollows and cracks in rock.</li>
+          <li><strong>Listen</strong> for running water, and for frogs at night.</li>
+        </ul>
+        <p>These are clues, not guarantees.</p>
+      </div>
+    </details>
+
+    <details class="item">
+      <summary>Springs <span class="sub">often the best natural source</span></summary>
+      <div class="body">
+        <ul>
+          <li>Look at the base of slopes and where rock layers meet the ground, often marked by a patch of lush green.</li>
+          <li>Collect right where the water comes out of the ground, before animals or surface run-off can foul it.</li>
+          <li>Dig out a small pool, let it clear, and dip water gently from the top.</li>
+          <li><strong>Still treat it.</strong> Clear and cold doesn't mean safe.</li>
+        </ul>
+      </div>
+    </details>
+
+    <details class="item">
+      <summary>Dig a seep in a dry stream bed <span class="sub">outside of the bend, lowest point</span></summary>
+      <div class="body">
+        <figure class="diagram">
+          <svg class="diagram" viewBox="0 0 400 200" role="img" aria-label="Top view of a bend in a dry stream bed. The place to dig is marked on the outside of the bend, where the current cut deepest. The inside of the bend is a gravel bar and usually driest.">
+            <path d="M0 170 C100 170 120 70 200 70 C280 70 300 170 400 170" fill="none" stroke="currentColor" stroke-opacity=".25" stroke-width="46"/>
+            <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <path d="M165 44 V32 M165 44 L158 35 M165 44 L172 35"/>
+              <path d="M235 44 V32 M235 44 L228 35 M235 44 L242 35"/>
+              <circle cx="186" cy="99" r="3"/><circle cx="200" cy="102" r="3"/><circle cx="214" cy="99" r="3"/>
+              <circle cx="193" cy="109" r="3"/><circle cx="207" cy="109" r="3"/>
+              <path d="M191 47 L209 65 M209 47 L191 65" stroke-width="4" style="stroke:var(--accent)"/>
+            </g>
+            <g fill="currentColor" font-size="13">
+              <text x="200" y="20" text-anchor="middle" font-weight="700">DIG HERE: outside of the bend</text>
+              <text x="200" y="138" text-anchor="middle">Inside bend: gravel bar,</text>
+              <text x="200" y="154" text-anchor="middle">usually driest</text>
+              <text x="10" y="176">Dry stream bed</text>
+            </g>
+          </svg>
+          <figcaption>Water lingers longest under the outside of a bend, where the current dug deepest. Damp sand or green plants there are a good sign.</figcaption>
+        </figure>
+        <ol class="steps">
+          <li><strong>Pick the spot:</strong> the lowest point on the outside of a bend in a dry stream bed. Look for damp sand or water-loving plants.</li>
+          <li><strong>Dig in the cool of the day,</strong> about 30–60 cm (1–2 ft) down, or until the sand turns damp and then a little deeper. If it's still bone-dry after a short dig, try another spot rather than sweat away water.</li>
+          <li><strong>Wait.</strong> Water may take minutes to hours to seep in.</li>
+          <li><strong>Let the silt settle,</strong> then scoop gently from the top and strain through cloth.</li>
+          <li><strong>Disinfect it</strong> (<a href="#boil">boil</a> or <a href="#chem">chemicals</a>).</li>
+        </ol>
+        <p><strong>On a beach:</strong> dig behind the first dune, well above the high-tide line. Fresh water can collect on top of salt water underground. Taste a small sip, and if it's salty, don't drink it. Disinfect before drinking.</p>
+      </div>
+    </details>
+
+    <details class="item">
+      <summary>Dew collection <span class="sub">before sunrise, with cloth</span></summary>
+      <div class="body">
+        <ol class="steps">
+          <li><strong>Before dawn,</strong> tie clean absorbent cloth (cotton or wool) around your shins and walk through tall grass. Or wipe a cloth over grass, leaves, a tarp or a car body.</li>
+          <li><strong>Wring it into a container.</strong> Repeat until the dew is gone. That happens soon after sunrise.</li>
+          <li><strong>Disinfect</strong> before drinking.</li>
+        </ol>
+        <p>Worth doing on heavy-dew mornings, but the yield is often small. <strong>Avoid</strong> poisonous plants, sprayed crops and roadside verges.</p>
+      </div>
+    </details>
+
+    <details class="item">
+      <summary>Transpiration bags <span class="sub">clear bag over a leafy branch; small yield</span></summary>
+      <div class="body">
+        <ol class="steps">
+          <li><strong>Choose a sunny, leafy branch of a plant you know is non-toxic.</strong> Never use poisonous plants such as oleander, yew, or poison ivy, oak or sumac. If you can't identify it, don't use it.</li>
+          <li><strong>Slip a clear plastic bag over the branch.</strong> Put a small pebble in one corner to make a low point.</li>
+          <li><strong>Tie the open end tightly</strong> around the branch.</li>
+          <li><strong>Leave it in full sun.</strong> Water collects in the low corner.</li>
+          <li><strong>Drain it</strong> by untying or making a small cut, then retie. Move the bag to fresh leaves each day.</li>
+        </ol>
+        <p><strong>Yield is small:</strong> often a cupful or less per bag per day, so use several bags. Discard bitter or odd-tasting water.</p>
+      </div>
+    </details>
+
+    <details class="item">
+      <summary>Snow and ice <span class="sub">melt first, never eat it when cold</span></summary>
+      <div class="body">
+        <ul>
+          <li><strong>Never eat snow or ice when you're cold.</strong> It steals body heat and pushes you towards hypothermia. Melt it first.</li>
+          <li><strong>Prefer ice to snow.</strong> Snow is mostly air, so it takes many potfuls (and lots of fuel) to make one pot of water. Ice gives far more water per pot.</li>
+          <li><strong>Melting snow in a pot:</strong> start with a little water in the bottom, then add snow a bit at a time. This keeps the pot from scorching.</li>
+          <li><strong>Without fire:</strong> pack snow in a bottle and carry it inside your jacket, between layers (not against bare skin).</li>
+          <li>Use clean white snow away from roads, camps and animal areas.</li>
+          <li><strong>Treat the meltwater</strong> like any surface water. Freezing doesn't kill germs.</li>
+        </ul>
+      </div>
+    </details>
+
+    <details class="item">
+      <summary>Rain capture <span class="sub">tarp, roof, gutters, first flush</span></summary>
+      <div class="body">
+        <p class="formula">1 mm of rain on 1 m² = 1 litre<br>1 in of rain on 1,000 sq ft ≈ 620 gal</p>
+        <p>Measure the roof's footprint (its area seen from above), not its slope. You'll catch somewhat less because of splash and the first flush.</p>
+        <ol class="steps">
+          <li><strong>Tarp:</strong> tie it at the corners with one low point over a clean container. Let the first rain rinse it. Avoid tarps that smell of chemicals.</li>
+          <li><strong>Roof:</strong> clean the gutters and screen them against leaves. Let the first few minutes of rain wash the roof before collecting, or fit a <strong>first-flush diverter</strong> that dumps the dirtiest first water (dust, bird droppings).</li>
+          <li><strong>Collect into covered containers</strong> so mosquitoes can't breed and debris can't fall in.</li>
+          <li><strong>Treat roof water before drinking.</strong> Rain is clean when it falls, but it picks up germs and dirt from the roof.</li>
+        </ol>
+        <div class="callout warn">
+          <strong class="callout-title">Roof cautions</strong>
+          <p><strong>Best:</strong> painted or coated metal, clay or concrete tile, a clean tarp.</p>
+          <p><strong>Use for washing only if you have a better drinking source:</strong> asphalt shingles, treated wood shakes, old asbestos-cement sheets, copper roofs or gutters, roofs with lead flashing or old lead paint, and roofs treated with moss killer. Heavy smoke, ash or industrial air pollution can also contaminate rainwater.</p>
+        </div>
+      </div>
+    </details>
+  </section>
+
+  <!-- ============================================================ -->
+  <section id="rank">
+    <h2>Source ranking</h2>
+    <p>Choose the best source you can reach, and <strong>treat it anyway</strong>.</p>
+    <div class="table-wrap"><table class="data">
+      <thead><tr><th>Rank</th><th>Source</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td><span class="tag ok">1</span></td><td><strong>Rain</strong> (collected cleanly) or a <strong>spring</strong> at its source</td><td>Usually the cleanest. Roof water still needs treating.</td></tr>
+        <tr><td><span class="tag ok">2</span></td><td><strong>Fast-moving, clear stream</strong></td><td>Collect upstream of people, farms, livestock, roads and mines.</td></tr>
+        <tr><td><span class="tag warn">3</span></td><td><strong>Lake or pond</strong></td><td>Take it from a clean spot, not the edge where animals drink, and from below the surface.</td></tr>
+        <tr><td><span class="tag warn">4</span></td><td><strong>Stagnant water</strong>: puddles, ditches, ponds with no outflow</td><td>Last resort. Settle, filter, then boil.</td></tr>
+        <tr><td><span class="tag danger">Never</span></td><td>Floodwater, fuel or oil sheen, chemical smell, algae scum, near dead animals, mine run-off, below industry</td><td>No home method fixes it. <a href="#contam">See why</a>.</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section id="treat">
+    <h2>Treatment overview: clear, disinfect, store</h2>
+    <ol class="steps">
+      <li><strong>Clear it.</strong> Let it settle, pour off the top, and strain through cloth or a filter. Cloudy water shields germs from chemicals and sunlight. <a href="#filter">How to</a>.</li>
+      <li><strong>Disinfect it.</strong> <a href="#boil">Boil</a> (best), use <a href="#chem">chemicals</a>, or use <a href="#sodis">SODIS</a>. A filter rated for bacteria and protozoa plus a chemical covers viruses too.</li>
+      <li><strong>Store it clean.</strong> Covered, labelled, in a clean container. <a href="#store">How to</a>.</li>
+    </ol>
+    <h3>What each method does</h3>
+    <div class="table-wrap"><table class="data">
+      <thead><tr><th>Method</th><th>Handles</th><th>Does NOT handle</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Boiling</strong></td><td>All germs: bacteria, viruses, Giardia, Crypto&shy;sporidium</td><td>Chemicals, fuel, metals. Can concentrate them.</td></tr>
+        <tr><td><strong>Bleach</strong> (chlorine)</td><td>Bacteria, viruses; Giardia only partly</td><td><strong>Crypto&shy;sporidium</strong> (not reliably); chemicals</td></tr>
+        <tr><td><strong>Iodine</strong></td><td>Bacteria, viruses; Giardia only partly</td><td><strong>Crypto&shy;sporidium</strong>; chemicals</td></tr>
+        <tr><td><strong>Chlorine dioxide</strong></td><td>Bacteria, viruses, Giardia; Crypto&shy;sporidium given up to 4 h</td><td>Chemicals</td></tr>
+        <tr><td><strong>Hollow-fibre filter</strong> (0.1–0.2 micron)</td><td>Bacteria, Giardia, Crypto&shy;sporidium</td><td><strong>Viruses</strong>; chemicals</td></tr>
+        <tr><td><strong>SODIS</strong> (done exactly right)</td><td>Most germs, but less certain than boiling</td><td>Chemicals; cloudy water; rainy days</td></tr>
+        <tr><td><strong>Sand/charcoal improvised filter</strong></td><td><strong>No germs.</strong> Clarity and taste only.</td><td><strong>All germs</strong>; chemicals</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section id="boil">
+    <h2>Boiling: the most reliable method</h2>
+    <ol class="steps">
+      <li><strong>If it's cloudy, settle it and strain it through cloth first.</strong></li>
+      <li><strong>Bring it to a rolling boil:</strong> big bubbles that keep coming even when you stir.</li>
+      <li><strong>Keep it rolling for 1 minute.</strong> Above <strong>6,500 ft (2,000 m)</strong>, boil for <strong>3 minutes</strong>.</li>
+      <li><strong>Let it cool, covered.</strong> Don't add ice unless the ice was made from safe water.</li>
+      <li><strong>Store it covered</strong> in a clean container.</li>
+      <li><strong>Flat taste?</strong> Pour it back and forth between two clean containers, or add a pinch of salt per litre.</li>
+    </ol>
+    <ul>
+      <li>Boiling longer than this wastes fuel and doesn't make it safer. A lid gets it to the boil faster.</li>
+      <li>Boiling does <strong>not</strong> remove salt, fuel, metals or other chemicals.</li>
+      <li>No pot? Any clean metal container or can will do. (See <a href="../fireshelter/index.html">Fire &amp; shelter</a> for making fire.)</li>
+    </ul>
+  </section>
+
+  <!-- ============================================================ -->
+  <section id="chem">
+    <h2>Chemical treatment</h2>
+    <div class="callout warn">
+      <strong class="callout-title">Use the right bleach</strong>
+      <p>Use plain, <strong>unscented</strong> household bleach (sodium hypochlorite). Check the strength on the label: <strong>6% or 8.25%</strong>. Do <strong>not</strong> use scented, "splash-less", colour-safe, or bleach with added cleaners. Bleach weakens with age and heat, so use a fresh bottle if you can.</p>
+    </div>
+    <div class="table-wrap"><table class="data">
+      <thead><tr><th>Product (clear water)</th><th>Per litre (qt)</th><th>Per gallon (3.8 L)</th><th>Wait</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Bleach, 6%</strong></td><td>2 drops</td><td>8 drops (≈ ⅛ tsp)</td><td>At least 30 min</td></tr>
+        <tr><td><strong>Bleach, 8.25%</strong></td><td>2 drops</td><td>6 drops</td><td>At least 30 min</td></tr>
+        <tr><td><strong>Bleach: cloudy, coloured or very cold water</strong></td><td colspan="2"><strong>Double the dose</strong> (and settle or filter it first)</td><td>At least 30 min</td></tr>
+        <tr><td><strong>Chlorine dioxide</strong> tablets or drops</td><td colspan="2">Follow the label</td><td>Per label. <strong>Up to 4 h</strong> to kill Crypto&shy;sporidium.</td></tr>
+        <tr><td><strong>Iodine</strong> tablets or drops</td><td colspan="2">Follow the label</td><td>Per label; longer if cold</td></tr>
+      </tbody>
+    </table></div>
+    <p>For bigger containers, multiply the per-gallon dose by the number of gallons.</p>
+
+    <h3>Bleach, step by step</h3>
+    <ol class="steps">
+      <li><strong>Settle and filter cloudy water</strong> first.</li>
+      <li><strong>Add the drops</strong> from the table with a clean dropper. Double them for cloudy, coloured or very cold water.</li>
+      <li><strong>Stir or shake</strong> well.</li>
+      <li><strong>Wait at least 30 minutes.</strong></li>
+      <li><strong>Smell it.</strong> It should have a slight chlorine smell. If not, <strong>repeat the dose and wait another 15 minutes</strong>.</li>
+      <li><strong>Too strong?</strong> Pour it back and forth between two clean containers to air it.</li>
+    </ol>
+    <div class="callout danger">
+      <strong class="callout-title">Know the limits</strong>
+      <ul>
+        <li><strong>Bleach does NOT reliably kill Cryptosporidium. Boiling does.</strong> Chlorine dioxide can, but needs up to 4 hours.</li>
+        <li><strong>Iodine:</strong> not for pregnancy, thyroid problems, iodine allergy, or long-term use (more than a few weeks). Follow the product label. It doesn't kill Cryptosporidium.</li>
+        <li>No chemical removes fuel, metals, pesticides or algae toxins.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section id="sodis">
+    <h2>SODIS: solar disinfection</h2>
+    <p>Ultraviolet light and heat from the sun kill most germs in clear water in clear bottles. It's free and needs no fuel, but you need clear water and strong sun.</p>
+    <ol class="steps">
+      <li><strong>Bottle:</strong> clear <strong>PET</strong> plastic (recycling code 1, "PET" or "PETE"), <strong>2 L or smaller</strong>. Remove the labels. Replace bottles that are badly scratched or cloudy.</li>
+      <li><strong>Water must be clear.</strong> Stand the filled bottle on a newspaper headline and look down through the opening. If you can't read the headline, settle or filter the water first.</li>
+      <li><strong>Fill and cap</strong> the bottle.</li>
+      <li><strong>Lay the bottles flat in full sun</strong>, ideally on a metal roof or sheet. Make sure nothing will shade them during the day.</li>
+      <li><strong>Leave for 6 hours</strong> of full sun. If <strong>more than half the sky is cloudy, leave for 2 consecutive days</strong>.</li>
+      <li><strong>Drink straight from the bottle</strong> or a clean cup. Don't pour it into a dirty container.</li>
+    </ol>
+    <div class="callout warn">
+      <strong class="callout-title">SODIS limits</strong>
+      <p><strong>Don't use it on rainy days.</strong> It does nothing for chemicals. It doesn't work in coloured glass or in big containers. When in doubt, boil.</p>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section id="filter">
+    <h2>Filtering: settling, commercial filters, improvised filters</h2>
+
+    <h3>Settle and pre-filter (always worth doing)</h3>
+    <ol class="steps">
+      <li><strong>Let cloudy water stand</strong> in a bucket until the sediment sinks: 30 minutes for slightly cloudy water, overnight for muddy water.</li>
+      <li><strong>Pour or siphon the clear top water</strong> into another container without stirring up the bottom.</li>
+      <li><strong>Pour it through folded clean cloth</strong>: several layers of cotton such as a T-shirt or bandana, or a coffee filter.</li>
+      <li><strong>Now disinfect it.</strong> Clear water lets boiling, chemicals and sunlight work properly.</li>
+    </ol>
+
+    <h3>Commercial filters</h3>
+    <ul>
+      <li><strong>Hollow-fibre filters (0.1–0.2 micron)</strong> remove bacteria and protozoa (Giardia, Cryptosporidium) but <strong>not viruses</strong>.</li>
+      <li>Water that may carry sewage (near towns, floodwater, farm run-off, countries with poor sanitation) also needs <strong>chemical treatment or boiling after filtering</strong>. Filters labelled as <em>purifiers</em> are rated to handle viruses as well.</li>
+      <li><strong>Keep them from freezing.</strong> A wet filter that freezes can crack with no visible sign. Sleep with it in your sleeping bag in cold weather. If it may have frozen, treat its output with chemicals or boil it, or replace the filter.</li>
+      <li>Keep the dirty and clean sides apart. Backflush as the maker says. Pre-filter muddy water so it doesn't clog.</li>
+      <li>A carbon stage improves taste, but <strong>don't rely on it</strong> for fuel, metals or algae toxins.</li>
+    </ul>
+
+    <h3>Improvised sand and charcoal filter</h3>
+    <div class="callout danger">
+      <strong class="callout-title">It does not make water safe</strong>
+      <p><strong>An improvised sand/charcoal filter improves clarity and taste only. It does NOT make water safe. Always disinfect afterwards</strong> (boil, chemicals or SODIS).</p>
+    </div>
+
+    <figure class="diagram">
+      <svg class="diagram" viewBox="0 0 440 390" role="img" aria-label="Cross-section of an improvised filter in an upside-down cut bottle. From top to bottom: cloth, a thick layer of fine sand, crushed charcoal, coarse sand, gravel, and a cloth plug in the neck. Water drips out into a cup and must still be disinfected.">
+        <defs>
+          <clipPath id="wf-clip"><path d="M100 40 V250 C100 275 140 280 145 292 V315 H175 V292 C180 280 220 275 220 250 V40 Z"/></clipPath>
+          <pattern id="wf-fine" width="6" height="6" patternUnits="userSpaceOnUse"><circle cx="1.5" cy="1.5" r=".9" fill="currentColor"/><circle cx="4.5" cy="4.5" r=".9" fill="currentColor"/></pattern>
+          <pattern id="wf-coarse" width="10" height="10" patternUnits="userSpaceOnUse"><circle cx="3" cy="3" r="1.8" fill="currentColor"/><circle cx="8" cy="8" r="1.6" fill="currentColor"/></pattern>
+          <pattern id="wf-char" width="14" height="12" patternUnits="userSpaceOnUse"><path d="M1 3 L5 1 L8 4 L6 8 L2 7 Z M9 6 L13 5 L13 11 L9 10 Z" fill="currentColor"/></pattern>
+          <pattern id="wf-gravel" width="18" height="16" patternUnits="userSpaceOnUse"><circle cx="5" cy="5" r="4" fill="none" stroke="currentColor" stroke-width="1.2"/><circle cx="14" cy="12" r="3.5" fill="none" stroke="currentColor" stroke-width="1.2"/></pattern>
+          <pattern id="wf-cloth" width="6" height="6" patternUnits="userSpaceOnUse"><path d="M0 6 L6 0" stroke="currentColor" stroke-width="1.2"/></pattern>
+          <marker id="wf-ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 Z" fill="currentColor"/></marker>
+        </defs>
+        <g clip-path="url(#wf-clip)">
+          <rect x="95" y="46" width="130" height="16" fill="currentColor" fill-opacity=".12"/>
+          <rect x="95" y="62" width="130" height="10" fill="url(#wf-cloth)"/>
+          <rect x="95" y="72" width="130" height="80" fill="url(#wf-fine)"/>
+          <rect x="95" y="152" width="130" height="40" fill="url(#wf-char)"/>
+          <rect x="95" y="192" width="130" height="30" fill="url(#wf-coarse)"/>
+          <rect x="95" y="222" width="130" height="70" fill="url(#wf-gravel)"/>
+          <rect x="95" y="292" width="130" height="23" fill="url(#wf-cloth)"/>
+          <path d="M95 62 H225 M95 72 H225 M95 152 H225 M95 192 H225 M95 222 H225 M95 292 H225" stroke="currentColor" stroke-width="1"/>
+        </g>
+        <g fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round">
+          <path d="M100 40 V250 C100 275 140 280 145 292 V315 M175 315 V292 C180 280 220 275 220 250 V40"/>
+          <path d="M160 6 V36" stroke-width="2" marker-end="url(#wf-ah)"/>
+          <path d="M132 350 L137 382 H183 L188 350" stroke-width="2"/>
+          <path d="M135 366 H185" stroke-width="1.2" stroke-dasharray="4 3"/>
+          <path d="M222 67 H246 M222 112 H246 M222 172 H246 M222 207 H246 M222 250 H246 M177 305 H246" stroke-width="1"/>
+        </g>
+        <g fill="currentColor">
+          <path d="M160 322 C157 327 157 330 160 331 C163 330 163 327 160 322 Z"/>
+          <path d="M160 336 C157 341 157 344 160 345 C163 344 163 341 160 336 Z"/>
+        </g>
+        <g fill="currentColor" font-size="14">
+          <text x="150" y="22" text-anchor="end">Pour in slowly</text>
+          <text x="250" y="72">Cloth: spreads the flow</text>
+          <text x="250" y="110" font-weight="700">Fine sand</text>
+          <text x="250" y="126">(thickest layer)</text>
+          <text x="250" y="170" font-weight="700">Crushed charcoal</text>
+          <text x="250" y="186">(own fire, rinsed)</text>
+          <text x="250" y="212">Coarse sand</text>
+          <text x="250" y="255">Gravel</text>
+          <text x="250" y="310">Cloth plug in the neck</text>
+          <text x="124" y="360" text-anchor="end" font-weight="700">NOT SAFE YET:</text>
+          <text x="124" y="376" text-anchor="end">disinfect next</text>
+        </g>
+      </svg>
+      <figcaption>Water goes in at the top and drips out of the neck. Coarse layers at the bottom stop the fine layers washing out.</figcaption>
+    </figure>
+
+    <details class="item">
+      <summary>Build it, step by step <span class="sub">bottle or bucket</span></summary>
+      <div class="body">
+        <ol class="steps">
+          <li><strong>Container:</strong> a large plastic bottle with the bottom cut off, hung upside down with the cap removed. Or a bucket with a small hole near the bottom.</li>
+          <li><strong>Plug the neck or hole</strong> with clean cloth or cotton.</li>
+          <li><strong>Make charcoal</strong> from your own fire: black, burned-through pieces of untreated wood (not ash, not painted or treated wood, <strong>not barbecue briquettes</strong>, which contain additives). Crush to pea-size or smaller and rinse out the dust.</li>
+          <li><strong>Rinse the sand and gravel</strong> until the rinse water runs fairly clear.</li>
+          <li><strong>Add layers from the bottom up:</strong> gravel, coarse sand, crushed charcoal, fine sand, then cloth on top. In a bucket, roughly: gravel 5 cm (2 in), coarse sand 5 cm (2 in), charcoal 5–8 cm (2–3 in), fine sand 10–15 cm (4–6 in). In a bottle, scale down but keep fine sand the thickest layer, and leave room at the top for water.</li>
+          <li><strong>Pour water in slowly</strong> so you don't dig holes in the sand.</li>
+          <li><strong>Throw away the first few runs</strong> until what comes out is clear.</li>
+          <li><strong>Collect into a clean container and DISINFECT IT</strong> by boiling, chemicals or SODIS.</li>
+          <li><strong>Rinse or replace the sand and charcoal</strong> when flow slows or the water stops clearing. Germs build up in it.</li>
+        </ol>
+      </div>
+    </details>
+  </section>
+
+  <!-- ============================================================ -->
+  <section id="still">
+    <h2>Solar still</h2>
+    <p>The sun evaporates moisture under a plastic sheet. It condenses on the underside and drips into a container. The condensed water is distilled, so it's free of salt and usually free of germs.</p>
+    <div class="callout warn">
+      <strong class="callout-title">Honest yield</strong>
+      <p><strong>Realistic yield is small, often a few hundred mL per day per pit. It is not a primary water source.</strong> In heat you can sweat out more digging the pit than it gives back, so dig in the cool of the day.</p>
+    </div>
+
+    <figure class="diagram">
+      <svg class="diagram" viewBox="0 0 400 250" role="img" aria-label="Cross-section of a solar still: a pit with a container at the bottom, green plants around it, and a clear plastic sheet over the pit, sealed with soil at the edges and weighted with a small stone above the container. Water condenses under the sheet and drips into the container. An optional drinking tube runs out of the pit.">
+        <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M0 70 H60 M340 70 H400"/>
+          <path d="M60 70 C70 190 330 190 340 70"/>
+          <path d="M36 66 L200 118 L364 66" stroke-width="2.5" style="stroke:var(--accent)"/>
+          <path d="M28 70 Q45 54 66 70 Z M334 70 Q355 54 372 70 Z" fill="currentColor" fill-opacity=".35"/>
+          <path d="M183 132 V160 H217 V132"/>
+          <path d="M200 122 V130" stroke-dasharray="2 3"/>
+          <path d="M190 146 C150 110 80 60 8 56" stroke-width="1.5"/>
+          <ellipse cx="130" cy="141" rx="8" ry="3.5" transform="rotate(-25 130 141)" fill="currentColor" fill-opacity=".45"/>
+          <ellipse cx="155" cy="150" rx="8" ry="3.5" transform="rotate(20 155 150)" fill="currentColor" fill-opacity=".45"/>
+          <ellipse cx="245" cy="150" rx="8" ry="3.5" transform="rotate(-20 245 150)" fill="currentColor" fill-opacity=".45"/>
+          <ellipse cx="270" cy="141" rx="8" ry="3.5" transform="rotate(25 270 141)" fill="currentColor" fill-opacity=".45"/>
+          <circle cx="365" cy="28" r="10"/>
+          <path d="M365 10 V4 M365 46 V52 M347 28 H341 M383 28 H389 M352 15 L348 11 M378 15 L382 11 M352 41 L348 45 M378 41 L382 45"/>
+          <path d="M250 30 V97 M200 162 V198 M130 146 L95 198 M206 112 L300 198" stroke-width="1"/>
+        </g>
+        <g fill="currentColor">
+          <ellipse cx="200" cy="111" rx="9" ry="6"/>
+          <rect x="185" y="150" width="30" height="9" fill-opacity=".35"/>
+          <circle cx="110" cy="94" r="2.2"/><circle cx="140" cy="103" r="2.2"/>
+          <circle cx="260" cy="103" r="2.2"/><circle cx="290" cy="94" r="2.2"/>
+        </g>
+        <g fill="currentColor" font-size="13">
+          <text x="190" y="24" text-anchor="middle">Clear plastic sheet, edges sealed with soil</text>
+          <text x="6" y="46">Drinking tube</text>
+          <text x="200" y="212" text-anchor="middle" font-weight="700">Container</text>
+          <text x="90" y="212" text-anchor="middle">Green plants, salt</text>
+          <text x="90" y="227" text-anchor="middle">water or urine</text>
+          <text x="90" y="242" text-anchor="middle">around it</text>
+          <text x="310" y="212" text-anchor="middle">Stone makes the</text>
+          <text x="310" y="227" text-anchor="middle">low point over</text>
+          <text x="310" y="242" text-anchor="middle">the container</text>
+        </g>
+      </svg>
+      <figcaption>Moisture condenses under the sheet, runs down to the low point and drips into the container.</figcaption>
+    </figure>
+
+    <details class="item">
+      <summary>Build it, step by step <span class="sub">pit, container, sheet, stone</span></summary>
+      <div class="body">
+        <ol class="steps">
+          <li><strong>Pick a sunny spot</strong> with damp-looking soil if possible, such as a low area or a dry stream bed.</li>
+          <li><strong>Dig a bowl-shaped pit</strong> about 1 m (3 ft) across and 60 cm (2 ft) deep.</li>
+          <li><strong>Set a container in the centre</strong> at the bottom. Add a drinking tube running from it out of the pit if you have one.</li>
+          <li><strong>Add moisture around (not into) the container:</strong> chopped green non-toxic plants, or salt water, urine or dirty water poured into the soil.</li>
+          <li><strong>Cover the pit with clear plastic.</strong> Seal the edges all round with soil and rocks so no vapour escapes.</li>
+          <li><strong>Put a small stone in the middle</strong> of the sheet so it sags into a cone, with the low point directly over the container but not touching it.</li>
+          <li><strong>Leave it.</strong> Drink through the tube so you don't open the still and lose the trapped moisture.</li>
+        </ol>
+        <p>Don't put fuel-contaminated water in a still. Some fuels evaporate and condense along with the water.</p>
+      </div>
+    </details>
+  </section>
+
+  <!-- ============================================================ -->
+  <section id="contam">
+    <h2>When purification isn't enough</h2>
+    <div class="callout danger">
+      <strong class="callout-title">No home method fixes chemical contamination</strong>
+      <p><strong>No home method removes fuel, heavy metals, pesticides, industrial chemicals or toxic algae toxins. Boiling can concentrate some of them.</strong> Find another source.</p>
+    </div>
+    <h3>Red flags: walk away</h3>
+    <ul>
+      <li><strong>Fuel or oil sheen</strong>, a rainbow film on the surface.</li>
+      <li><strong>Chemical, fuel or solvent smell</strong>, or unusual foam.</li>
+      <li><strong>Dead fish or dead animals</strong> in or near the water.</li>
+      <li><strong>Mine drainage and tailings:</strong> orange, red or white-stained rocks, unnaturally clear or oddly coloured water, piles of crushed rock nearby.</li>
+      <li><strong>Agricultural run-off:</strong> below fields, feedlots and orchards (pesticides, fertiliser, manure).</li>
+      <li><strong>Below industry</strong>, dumps, roads after a spill, or wrecked vehicles.</li>
+      <li><strong>Floodwater:</strong> presume it's contaminated with sewage, fuel and chemicals. Don't drink it or wash dishes in it. Wash your skin after contact.</li>
+      <li><strong>Blue-green algae scum:</strong> water that looks like pea soup or spilled paint, green or blue-green streaks, or mats. Its toxins survive boiling. Keep pets and livestock away, because it can kill dogs quickly. Don't use it for cooking or bathing either.</li>
+    </ul>
+    <p><strong>Instead:</strong> collect rain, find a spring, go upstream of the problem, or use stored water.</p>
+  </section>
+
+  <!-- ============================================================ -->
+  <section id="store">
+    <h2>Storing treated water</h2>
+    <ol class="steps">
+      <li><strong>Use food-grade containers:</strong> water jugs or barrels made for drinking water, or PET drink bottles. <strong>Never</strong> use containers that held chemicals, fuel or non-food products. Avoid milk and juice jugs, which are hard to clean and break down.</li>
+      <li><strong>Wash</strong> with soap and water, then rinse.</li>
+      <li><strong>Sanitize:</strong> mix <strong>1 teaspoon (5 mL) of unscented bleach in 1 quart (about 1 L) of water</strong>. Pour it in, cap, and shake so it touches every inside surface. Wait at least 30 seconds, pour it out, then air-dry or rinse with safe water.</li>
+      <li><strong>Fill with safe water</strong> (treated, or from a safe tap). Don't touch the inside of the cap or neck.</li>
+      <li><strong>Label it</strong> "Drinking water" with the date.</li>
+      <li><strong>Store it cool and dark</strong>, away from fuel, pesticides and chemicals, whose vapours can pass through plastic.</li>
+      <li><strong>Rotate it about every 6 months.</strong> Use the old water for washing or cooking and refill.</li>
+      <li><strong>Pour, don't dip.</strong> Use a tap or a clean scoop. Never put hands or used cups into stored water.</li>
+    </ol>
+  </section>
+
+  <!-- ============================================================ -->
+  <section id="travel">
+    <h2>Backcountry and travel notes</h2>
+    <ul>
+      <li><strong>Carry two methods</strong>, such as a filter plus tablets, or a stove plus tablets, in case one fails, freezes or runs out.</li>
+      <li><strong>Collect upstream</strong> of trails, camps, livestock and toilets.</li>
+      <li><strong>Bury human waste at least 200 ft (60 m) from water</strong> in a hole 6–8 in (15–20 cm) deep.</li>
+      <li><strong>Mark "dirty" and "clean" bottles.</strong> Don't let untreated water drip onto drinking threads or caps.</li>
+      <li><strong>Wash or sanitize your hands</strong> before eating and after the toilet. Many "water" illnesses actually come from hands.</li>
+      <li><strong>Cold weather:</strong> keep filters from freezing (sleep with them). Store bottles upside-down so ice forms at the bottom, not in the lid. Chemicals work slower in cold water, so give them longer and double the bleach dose.</li>
+      <li><strong>Where tap water isn't safe:</strong> use sealed bottled water or treated water for drinking, brushing teeth and ice. Hot drinks made with boiled water are fine.</li>
+      <li><strong>Plan your carry:</strong> know where the next reliable water is before you leave the last one.</li>
+    </ul>
+  </section>
+
+  <footer class="page-foot">Based on guidance from the CDC (emergency and backcountry water treatment), US EPA, WHO, the SODIS programme (Eawag), Ready.gov/FEMA and US Army survival manuals. For emergencies and learning. When in doubt, boil, and if chemicals are suspected, find another source. <a href="#main">Back to top</a></footer>
+</main>
+</body>
+</html>

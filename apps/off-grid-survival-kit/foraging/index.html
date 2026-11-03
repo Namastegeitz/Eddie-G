@@ -1,0 +1,1089 @@
+<!doctype html>
+<html lang="en" data-root="../" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#000000">
+<meta name="description" content="Identify, harvest and process wild nuts, fruits and berries in the north-east US and the Algarve, with toxic look-alikes, season charts and what to do if poisoned.">
+<title>Foraging — Off-Grid Survival Kit</title>
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="icon" href="../assets/icons/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../assets/icons/apple-touch-icon.png">
+<link rel="stylesheet" href="../assets/css/app.css">
+<script src="../assets/js/theme.js"></script>
+<script src="../assets/js/common.js" defer></script>
+<style>
+  .facts { margin: .5em 0 .9em; }
+  .facts dt { font-weight: 700; margin-top: .6em; }
+  .facts dd { margin: .1em 0 0; }
+  .facts dd ul { margin: .3em 0; padding-left: 1.2em; }
+  details.item > .body h4 { margin-top: 1em; }
+  /* Look-alike table: one block per plant on narrow screens */
+  @media screen and (max-width: 640px) {
+    table.stack thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+    table.stack, table.stack tbody, table.stack tr, table.stack th, table.stack td { display: block; width: auto; }
+    table.stack tr { border-bottom: 2px solid var(--border); padding-bottom: 6px; }
+    table.stack tr:last-child { border-bottom: 0; }
+    table.stack th[scope="row"] { position: static; border-bottom: 1px solid var(--border); }
+    table.stack td { border-bottom: 0; padding: 6px 10px 2px; }
+    table.stack td[data-label]::before { content: attr(data-label) ": "; font-weight: 700; color: var(--muted); }
+  }
+  .legend .sw.in { background: color-mix(in srgb, var(--ok) 35%, transparent); }
+  .legend .sw.peak { background: var(--ok); }
+  @media print {
+    .legend .sw { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .legend .sw.in { background: #bbb; }
+    .legend .sw.peak { background: #000; }
+  }
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="app-header">
+  <a class="hdr-btn" href="../index.html" aria-label="Back to hub"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg><span>Hub</span></a>
+  <h1>Nuts, Fruits &amp; Wild Edibles</h1>
+  <span class="net-dot" role="img"></span>
+  <button class="hdr-btn" type="button" data-theme-toggle></button>
+</header>
+<main id="main" class="page">
+  <p class="lead">How to find, identify, pick and process wild nuts and fruit in the temperate north-east US (New Jersey, USDA zones 6–7) and the Mediterranean (Algarve, Portugal). Conservative by design: when in doubt, leave it.</p>
+  <div class="row no-print"><button class="btn print-btn" type="button" data-print>Print this page</button>
+    <button class="btn" type="button" data-expand-all="#main">Expand all</button></div>
+
+  <div class="callout danger">
+    <strong class="callout-title">If you are not 100% sure of the identification, do not eat it</strong>
+    <ul>
+      <li>Confirm every plant with a <strong>regional field guide</strong> and, ideally, a <strong>local expert</strong>. Check several features (leaf, bark, flower, fruit, seed, habitat), not just one. <strong>This app is a reference, not a positive ID.</strong></li>
+      <li><strong>Never eat white berries, or any berry you cannot name.</strong></li>
+      <li><strong>Never eat wild mushrooms based on this page.</strong> Fungi are out of scope.</li>
+      <li>Even with a known, safe food, <strong>try a small amount first</strong> and wait several hours before eating more.</li>
+      <li><strong>Allergies:</strong> anyone allergic to one tree nut may react to others. Chestnut and fig can cross-react with latex allergy. Know who in your group has allergies and where their epinephrine auto-injector is.</li>
+      <li><strong>Don't pick near</strong> roads, rail lines, power-line corridors, sprayed fields, orchards or lawns, golf courses, industrial sites, dumps or polluted water. Pick above knee height (dogs).</li>
+    </ul>
+  </div>
+
+  <div class="callout warn">
+    <strong class="callout-title">Suspected poisoning</strong>
+    <p>Stop eating. Keep a sample. Call <strong>US Poison Control 1-800-222-1222</strong> · <strong>Portugal CIAV 800 250 250</strong>. Collapse, seizures or trouble breathing: <strong>911</strong> (US) / <strong>112</strong> (Portugal/EU). Don't make anyone vomit unless told to. <a href="#poison">Full steps</a></p>
+  </div>
+
+  <p class="disclaimer">Reference only. Written descriptions can't replace hands-on identification by an expert. Plants vary by region and season, and people vary in how they react. Get permission on private land and follow local rules. Children, pregnant or breastfeeding people and anyone on medication: be extra cautious.</p>
+
+  <nav class="toc" aria-label="On this page"><ul>
+    <li><a href="#season">What's ripe when</a></li>
+    <li><a href="#nuts">Nuts</a></li>
+    <li><a href="#fruits">Fruits &amp; berries</a></li>
+    <li><a href="#med">Mediterranean fruits</a></li>
+    <li><a href="#lookalikes">Toxic look-alikes</a></li>
+    <li><a href="#harvest">Harvesting &amp; tools</a></li>
+    <li><a href="#storage">Processing &amp; storage</a></li>
+    <li><a href="#edibility">Edibility test</a></li>
+    <li><a href="#poison">Poisoning</a></li>
+  </ul></nav>
+
+  <!-- ============================================================ SEASON -->
+  <section id="season">
+    <h2>What's ripe when</h2>
+    <p>Month-by-month guide. Timing shifts with elevation, latitude, microclimate and the year's weather (late frost, drought), often by 2–4 weeks. <strong>Treat it as approximate</strong> and judge ripeness on the plant itself.</p>
+    <p class="legend"><span><span class="sw in"></span>Available</span><span><span class="sw peak"></span>Peak</span></p>
+
+    <h3>Temperate NE US (New Jersey, zones 6–7)</h3>
+    <div class="table-wrap"><table class="season">
+      <caption class="sr-only">Season chart, temperate north-east US: months when each nut or fruit is available or at peak</caption>
+      <thead><tr><th scope="col">Plant</th><th scope="col">Jan</th><th scope="col">Feb</th><th scope="col">Mar</th><th scope="col">Apr</th><th scope="col">May</th><th scope="col">Jun</th><th scope="col">Jul</th><th scope="col">Aug</th><th scope="col">Sep</th><th scope="col">Oct</th><th scope="col">Nov</th><th scope="col">Dec</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">Serviceberry</th><td></td><td></td><td></td><td></td><td class="in"><span class="sr-only">yes</span></td><td class="peak"><span class="sr-only">peak</span></td><td class="in"><span class="sr-only">yes</span></td><td></td><td></td><td></td><td></td><td></td></tr>
+        <tr><th scope="row">Mulberry</th><td></td><td></td><td></td><td></td><td></td><td class="peak"><span class="sr-only">peak</span></td><td class="in"><span class="sr-only">yes</span></td><td></td><td></td><td></td><td></td><td></td></tr>
+        <tr><th scope="row">Raspberry, wineberry</th><td></td><td></td><td></td><td></td><td></td><td class="in"><span class="sr-only">yes</span></td><td class="peak"><span class="sr-only">peak</span></td><td class="in"><span class="sr-only">yes</span></td><td></td><td></td><td></td><td></td></tr>
+        <tr><th scope="row">Blackberry</th><td></td><td></td><td></td><td></td><td></td><td></td><td class="peak"><span class="sr-only">peak</span></td><td class="peak"><span class="sr-only">peak</span></td><td class="in"><span class="sr-only">yes</span></td><td></td><td></td><td></td></tr>
+        <tr><th scope="row">Hazelnut</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="peak"><span class="sr-only">peak</span></td><td class="in"><span class="sr-only">yes</span></td><td></td><td></td><td></td></tr>
+        <tr><th scope="row">Elderberry (cook)</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="peak"><span class="sr-only">peak</span></td><td class="in"><span class="sr-only">yes</span></td><td></td><td></td><td></td></tr>
+        <tr><th scope="row">Wild grape</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="in"><span class="sr-only">yes</span></td><td class="peak"><span class="sr-only">peak</span></td><td class="in"><span class="sr-only">yes</span></td><td></td><td></td></tr>
+        <tr><th scope="row">Pawpaw</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="in"><span class="sr-only">yes</span></td><td class="peak"><span class="sr-only">peak</span></td><td class="in"><span class="sr-only">yes</span></td><td></td><td></td></tr>
+        <tr><th scope="row">Prickly pear (coast)</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="in"><span class="sr-only">yes</span></td><td class="in"><span class="sr-only">yes</span></td><td class="in"><span class="sr-only">yes</span></td><td></td><td></td></tr>
+        <tr><th scope="row">Rose hips</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="in"><span class="sr-only">yes</span></td><td class="in"><span class="sr-only">yes</span></td><td class="peak"><span class="sr-only">peak</span></td><td class="peak"><span class="sr-only">peak</span></td><td class="in"><span class="sr-only">yes</span></td></tr>
+        <tr><th scope="row">Chestnut (Chinese)</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="peak"><span class="sr-only">peak</span></td><td class="in"><span class="sr-only">yes</span></td><td></td><td></td></tr>
+        <tr><th scope="row">Black walnut</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="peak"><span class="sr-only">peak</span></td><td class="peak"><span class="sr-only">peak</span></td><td class="in"><span class="sr-only">yes</span></td><td></td></tr>
+        <tr><th scope="row">Hickory</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="in"><span class="sr-only">yes</span></td><td class="peak"><span class="sr-only">peak</span></td><td class="in"><span class="sr-only">yes</span></td><td></td></tr>
+        <tr><th scope="row">Acorns (leach)</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="in"><span class="sr-only">yes</span></td><td class="peak"><span class="sr-only">peak</span></td><td class="in"><span class="sr-only">yes</span></td><td></td></tr>
+        <tr><th scope="row">Beechnut</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="in"><span class="sr-only">yes</span></td><td class="peak"><span class="sr-only">peak</span></td><td></td><td></td></tr>
+        <tr><th scope="row">Crabapple</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="in"><span class="sr-only">yes</span></td><td class="peak"><span class="sr-only">peak</span></td><td class="in"><span class="sr-only">yes</span></td><td></td></tr>
+        <tr><th scope="row">American persimmon</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="in"><span class="sr-only">yes</span></td><td class="peak"><span class="sr-only">peak</span></td><td class="peak"><span class="sr-only">peak</span></td><td class="in"><span class="sr-only">yes</span></td></tr>
+        <tr><th scope="row">Pecan (planted)</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="in"><span class="sr-only">yes</span></td><td class="in"><span class="sr-only">yes</span></td><td></td></tr>
+      </tbody>
+    </table></div>
+    <p class="muted">Chestnut and pecan: planted trees only. American chestnut rarely bears (blight). Figs grow in NE gardens but not wild.</p>
+
+    <h3>Mediterranean (Algarve, Portugal)</h3>
+    <div class="table-wrap"><table class="season">
+      <caption class="sr-only">Season chart, Algarve, Portugal: months when each nut or fruit is available or at peak</caption>
+      <thead><tr><th scope="col">Plant</th><th scope="col">Jan</th><th scope="col">Feb</th><th scope="col">Mar</th><th scope="col">Apr</th><th scope="col">May</th><th scope="col">Jun</th><th scope="col">Jul</th><th scope="col">Aug</th><th scope="col">Sep</th><th scope="col">Oct</th><th scope="col">Nov</th><th scope="col">Dec</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">Loquat</th><td></td><td></td><td class="in"><span class="sr-only">yes</span></td><td class="peak"><span class="sr-only">peak</span></td><td class="in"><span class="sr-only">yes</span></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+        <tr><th scope="row">Prickly pear pads</th><td></td><td></td><td class="in"><span class="sr-only">yes</span></td><td class="in"><span class="sr-only">yes</span></td><td class="in"><span class="sr-only">yes</span></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+        <tr><th scope="row">Mulberry</th><td></td><td></td><td></td><td></td><td class="in"><span class="sr-only">yes</span></td><td class="peak"><span class="sr-only">peak</span></td><td class="peak"><span class="sr-only">peak</span></td><td class="in"><span class="sr-only">yes</span></td><td></td><td></td><td></td><td></td></tr>
+        <tr><th scope="row">Fig</th><td></td><td></td><td></td><td></td><td></td><td class="in"><span class="sr-only">yes</span></td><td class="in"><span class="sr-only">yes</span></td><td class="peak"><span class="sr-only">peak</span></td><td class="peak"><span class="sr-only">peak</span></td><td class="in"><span class="sr-only">yes</span></td><td></td><td></td></tr>
+        <tr><th scope="row">Blackberry</th><td></td><td></td><td></td><td></td><td></td><td class="in"><span class="sr-only">yes</span></td><td class="peak"><span class="sr-only">peak</span></td><td class="peak"><span class="sr-only">peak</span></td><td class="in"><span class="sr-only">yes</span></td><td></td><td></td><td></td></tr>
+        <tr><th scope="row">Almond (sweet only)</th><td></td><td></td><td></td><td></td><td></td><td></td><td class="in"><span class="sr-only">yes</span></td><td class="peak"><span class="sr-only">peak</span></td><td class="in"><span class="sr-only">yes</span></td><td></td><td></td><td></td></tr>
+        <tr><th scope="row">Prickly pear fruit</th><td></td><td></td><td></td><td></td><td></td><td></td><td class="in"><span class="sr-only">yes</span></td><td class="peak"><span class="sr-only">peak</span></td><td class="peak"><span class="sr-only">peak</span></td><td class="in"><span class="sr-only">yes</span></td><td></td><td></td></tr>
+        <tr><th scope="row">Elderberry (scattered)</th><td></td><td></td><td></td><td></td><td></td><td></td><td class="in"><span class="sr-only">yes</span></td><td class="in"><span class="sr-only">yes</span></td><td class="in"><span class="sr-only">yes</span></td><td></td><td></td><td></td></tr>
+        <tr><th scope="row">Carob</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="peak"><span class="sr-only">peak</span></td><td class="peak"><span class="sr-only">peak</span></td><td class="in"><span class="sr-only">yes</span></td><td></td><td></td></tr>
+        <tr><th scope="row">Olive (cure)</th><td class="in"><span class="sr-only">yes</span></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="in"><span class="sr-only">yes</span></td><td class="peak"><span class="sr-only">peak</span></td><td class="peak"><span class="sr-only">peak</span></td><td class="in"><span class="sr-only">yes</span></td></tr>
+        <tr><th scope="row">Rose hips (scattered)</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="in"><span class="sr-only">yes</span></td><td class="in"><span class="sr-only">yes</span></td><td class="in"><span class="sr-only">yes</span></td><td></td></tr>
+        <tr><th scope="row">Sweet chestnut (hills)</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="peak"><span class="sr-only">peak</span></td><td class="peak"><span class="sr-only">peak</span></td><td></td></tr>
+        <tr><th scope="row">Medronho</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="in"><span class="sr-only">yes</span></td><td class="peak"><span class="sr-only">peak</span></td><td class="in"><span class="sr-only">yes</span></td></tr>
+        <tr><th scope="row">Acorns (holm, cork oak)</th><td class="in"><span class="sr-only">yes</span></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="in"><span class="sr-only">yes</span></td><td class="peak"><span class="sr-only">peak</span></td><td class="in"><span class="sr-only">yes</span></td></tr>
+        <tr><th scope="row">Stone pine (cones)</th><td class="peak"><span class="sr-only">peak</span></td><td class="peak"><span class="sr-only">peak</span></td><td class="peak"><span class="sr-only">peak</span></td><td class="in"><span class="sr-only">yes</span></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="in"><span class="sr-only">yes</span></td><td class="peak"><span class="sr-only">peak</span></td></tr>
+      </tbody>
+    </table></div>
+    <p class="muted">Coast and low hills. The Serra de Monchique (up to about 900 m / 2,950 ft) runs later. Hazelnut and walnut are left out because they are uncommon in the Algarve.</p>
+  </section>
+
+  <!-- ============================================================ NUTS -->
+  <section id="nuts">
+    <h2>Nuts</h2>
+    <p>Most nuts are ripe when they fall on their own. These rules apply to every nut:</p>
+    <ul>
+      <li><strong>Collect often</strong>, daily if you can. Squirrels, mould and insects take nuts left on the ground.</li>
+      <li><strong>Discard</strong> nuts with small round holes (weevil exits), cracks or mould, and any that feel light for their size.</li>
+      <li><strong>Float test</strong> (acorns, hulled walnuts, hickory, chestnuts, hazelnuts): tip them into a bucket of water. Floaters are usually empty or wormy, so throw them out. Sinkers are usually good. The test isn't perfect, so still check every kernel.</li>
+      <li><strong>Mouldy, shrivelled or discoloured kernels can carry aflatoxin</strong>, a liver toxin that cooking doesn't destroy. When in doubt, throw it out.</li>
+      <li><strong>Kill hidden larvae:</strong> freeze nuts for <strong>at least 48 hours</strong> at 0 °F (−18 °C) before storing.</li>
+    </ul>
+
+    <details class="item">
+      <summary>Acorns (oaks) <span class="sub">Quercus spp. · NE US Sep–Nov · Algarve Oct–Jan</span></summary>
+      <div class="body">
+        <p><span class="tag warn">Leach out tannins first</span></p>
+        <dl class="facts">
+          <dt>Identify</dt>
+          <dd>A nut sitting in a scaly cup (cap). Three groups:
+            <ul>
+              <li><strong>White oak group</strong> (NE US): leaves with rounded lobes and no bristle tips. Acorns ripen in one season and are <strong>lower in tannin</strong> (milder). They often sprout soon after falling, so process them promptly.</li>
+              <li><strong>Red oak group</strong> (NE US): leaf lobes pointed, with bristle tips. Acorns take two seasons to mature and are <strong>higher in tannin</strong>, so they are more bitter and need longer leaching. They keep better before processing.</li>
+              <li><strong>Iberia</strong>: holm oak (azinheira) and cork oak (sobreiro) are evergreen with small, leathery leaves. Cork oak has thick, spongy, corky bark. Holm oak bears the mildest acorns, and some trees' acorns need only brief leaching. Taste-test every tree. Cork oak acorns are usually more bitter.</li>
+            </ul>
+          </dd>
+          <dt>Where</dt>
+          <dd>NE US: forests, parks, old fields, everywhere. Algarve: inland hills and cork-oak woodland (Serra do Caldeirão, Monchique).</dd>
+          <dt>When</dt>
+          <dd>NE US: Sep–Nov, peak Oct. Algarve: Oct–Jan. Ripe acorns are brown or tan, and the cap twists off easily. Heavy crops ("mast years") come every 2–5 years.</dd>
+          <dt>Collect</dt>
+          <dd>Pick them up from the ground daily. Skip green, cracked, mouldy or holed acorns. Float test, then discard the floaters. Spread them out to dry the same day, because damp piles mould fast.</dd>
+          <dt>Shell</dt>
+          <dd>Dry for a few days until the shells are brittle, then crack with a hammer, rock or nutcracker and peel. Rub off as much of the thin brown inner skin as you can, because it is very bitter. Discard dark, mushy or wormy kernels.</dd>
+        </dl>
+
+        <h4>Leach the tannins: method 1, cold water</h4>
+        <p>Slow. Keeps the starch intact, so the flour binds for bread and pancakes.</p>
+        <ol class="steps">
+          <li>Grind or chop fresh shelled kernels coarsely. A blender with water works. Smaller pieces leach faster.</li>
+          <li>Put the meal in a large jar or bucket and cover it with 3–4 times its volume of cold, clean water. Stir.</li>
+          <li><strong>Change the water 1–2 times a day</strong>: let it settle, pour off the brown water and refill. You can also hang the meal in a cloth bag and change the water around it.</li>
+          <li>Keep going until it tastes bland. This usually takes several days to two weeks, longest for red oak acorns.</li>
+          <li>Do the taste test (below). Then strain through a cloth and squeeze dry.</li>
+        </ol>
+
+        <h4>Leach the tannins: method 2, hot water</h4>
+        <p>Fast, but it cooks the starch, so the flour won't bind well. Best for whole or chunked acorns that you will roast or add to stews.</p>
+        <ol class="steps">
+          <li>Put shelled kernels (whole or halved) in a pot of water and bring to a boil. <strong>Keep a second pot of water heating.</strong></li>
+          <li>When the water turns tea-brown, drain and move the acorns straight into the second pot of already-hot water. Refill and reheat the first pot.</li>
+          <li>Repeat. Expect many changes (often 5–10 or more) over 1–3 hours. Red oak acorns need more.</li>
+          <li>Stop when the water stays nearly clear and a piece passes the taste test.</li>
+        </ol>
+
+        <div class="callout info">
+          <strong class="callout-title">Taste test for bitterness</strong>
+          <p>Chew a small piece for a few seconds, then spit it out. If it tastes bitter, or your mouth feels dry and puckered, tannins remain, so keep leaching. Fully leached acorns taste bland to mildly nutty. Unleached acorns can upset the stomach, and large amounts of tannin may harm the kidneys.</p>
+        </div>
+
+        <dl class="facts">
+          <dt>Flour</dt>
+          <dd>Spread the leached, squeezed meal thinly on a tray. Dry it in the sun, near (not over) a stove, or in an oven on its lowest setting with the door propped open. Stir often until it is completely dry and crumbly. Grind fine, sieve, and re-grind the coarse part. It has no gluten, so mix it with wheat flour for bread, or use it in pancakes, flatbread or to thicken stews.</dd>
+          <dt>Store</dt>
+          <dd>Whole dried acorns in the shell keep for several months somewhere cool, dry, airy and rodent-proof. Leached wet meal keeps 2–3 days in the fridge, or freeze it. Keep dry flour airtight, in the freezer if possible, because acorns contain oil that goes rancid.</dd>
+        </dl>
+      </div>
+    </details>
+
+    <details class="item">
+      <summary>Black walnut <span class="sub">Juglans nigra · Sep–Nov (NE US)</span></summary>
+      <div class="body">
+        <p><span class="tag warn">Husk stains: wear gloves</span> <span class="tag warn">Very hard shell</span></p>
+        <dl class="facts">
+          <dt>Identify</dt>
+          <dd>Large tree. Leaves are 1–2 ft (30–60 cm) long and compound, with 15–23 narrow, toothed leaflets. The end leaflet is often small or missing. Bark is dark and deeply furrowed in a diamond pattern. The fruit is a round green husk, 1.5–2.5 in (4–6 cm), with a strong citrus-spicy smell when scratched. Inside is a deeply ridged, black-brown, very hard nut. Cut a twig lengthwise and the pith is chambered, like a ladder.</dd>
+          <dt>Look-alikes</dt>
+          <dd><strong>Tree-of-heaven</strong> (Ailanthus) has similar leaves, but they smell rank, each leaflet has a gland-tipped tooth near its base, and it makes papery winged seeds, not nuts. <strong>Hickories</strong> have fewer leaflets (5–9) and husks that split into 4. <strong>Butternut</strong> (rare) has oblong, sticky husks and is also edible.</dd>
+          <dt>Where</dt>
+          <dd>NE US: field edges, river bottoms, fence rows, parks. The English (Persian) walnut, Juglans regia, grows in northern Portugal. Process it the same way, but its husk splits open by itself and its shell is thin.</dd>
+          <dt>When</dt>
+          <dd>Sep–Oct, into Nov. The nut is ripe when the husk turns yellow-green and dents under thumb pressure. Nuts fall on their own.</dd>
+          <dt>Collect</dt>
+          <dd>Gather from the ground within a few days of falling, before the husks turn black and mushy, which darkens the kernel and makes it harsh. Or shake branches over a tarp. <strong>Falling walnuts are heavy: wear a hat and eye protection, and never stand under the branch you are shaking.</strong></dd>
+        </dl>
+
+        <h4>Hull</h4>
+        <p>Wear waterproof gloves (rubber or nitrile), old clothes and eye protection. The juice stains skin brown for 1–2 weeks and can irritate it.</p>
+        <ol class="steps">
+          <li>Split the husks by rolling each nut under your boot on concrete or a hard board, or stomp on them. Some people spread them on a gravel drive and drive over them.</li>
+          <li>Pull or scrape off the husk. Small white maggots in the husk are walnut husk fly larvae. They don't harm the nut.</li>
+          <li>Scrub the nuts in a bucket of water with a stiff brush. Discard floaters, which are usually empty.</li>
+          <li>Dump husks away from vegetable gardens, because walnut husks and roots release juglone, which harms tomatoes and many other plants.</li>
+        </ol>
+
+        <dl class="facts">
+          <dt>Cure</dt>
+          <dd>Spread the nuts 1–2 layers deep on screens or in mesh bags in a cool, dry, airy, shaded place, out of reach of squirrels, for <strong>2–3 weeks</strong>. They are cured when a kernel snaps crisply instead of bending.</dd>
+          <dt>Crack</dt>
+          <dd>Stand the nut on its point on a hard surface (anvil, block or flat rock) and strike the top with a hammer. Or squeeze it in a bench vise until it cracks, then rotate and repeat. Wear eye protection, because shell fragments fly. Some people soak the nuts in hot water for an hour or two first so the kernels come out in bigger pieces. Pick out the meat with a nutpick or a nail. Expect a small yield for the effort.</dd>
+          <dt>Store</dt>
+          <dd>Cured nuts in the shell keep up to about a year somewhere cool, dry and rodent-proof. Kernels keep for months airtight in the fridge, or 1–2 years in the freezer. Discard kernels that smell of paint, taste harsh (rancid) or look mouldy.</dd>
+        </dl>
+      </div>
+    </details>
+
+    <details class="item">
+      <summary>Hickory nuts <span class="sub">Carya ovata (shagbark), C. laciniosa (shellbark) · Sep–Nov (NE US)</span></summary>
+      <div class="body">
+        <p><span class="tag warn">Bitternut hickory: too bitter to eat</span></p>
+        <dl class="facts">
+          <dt>Identify</dt>
+          <dd><strong>Shagbark</strong>: grey bark peeling in long, loose, vertical strips. Compound leaves, usually with 5 leaflets (sometimes 7), the end three the largest. <strong>Shellbark</strong>: similar shaggy bark, usually 7 leaflets and larger nuts; grows in bottomlands. The husk is thick, green turning brown, and splits into 4 parts all the way to the base when ripe. The nut is pale tan, 4-ridged and hard-shelled, with a sweet kernel.</dd>
+          <dt>Avoid</dt>
+          <dd><strong>Bitternut hickory</strong> (Carya cordiformis) has bright sulphur-yellow buds, 7–11 slender leaflets, fairly smooth bark and a thin husk with 4 ridges on its upper half. The kernel is intensely bitter and not worth eating. Pignut and mockernut hickory are edible but variable or tiny. Taste a crumb of any hickory and spit out a bitter one.</dd>
+          <dt>Where</dt>
+          <dd>NE US: upland and bottomland forest, field edges. Not native to Europe.</dd>
+          <dt>When</dt>
+          <dd>Sep–Nov, peak Oct. Husks open on the tree and the nuts fall.</dd>
+          <dt>Collect</dt>
+          <dd>Gather from the ground often, or shake over a tarp. Discard nuts with weevil holes, and float-test to remove the floaters.</dd>
+          <dt>Cure</dt>
+          <dd>Dry in the shell for 1–2 weeks somewhere airy, until the kernel snaps.</dd>
+          <dt>Crack</dt>
+          <dd>Lay the nut on its side on a hard surface and strike the edge (the seam), not the point, with a hammer. A vise also works. The kernel sits in chambers, so break the shell into quarters and pick out the meat.</dd>
+          <dt>Shortcut: hickory "milk"</dt>
+          <dd>This is a traditional Native American method. Pound whole nuts, shell and all, into coarse bits. Simmer them in water, then let it settle: most of the shell sinks. Ladle off the rich, nutty liquid and strain it through a cloth. Use it in porridge, soup or as a drink.</dd>
+          <dt>Store</dt>
+          <dd>As for black walnut.</dd>
+        </dl>
+      </div>
+    </details>
+
+    <details class="item">
+      <summary>Chestnuts <span class="sub">Castanea mollissima, C. sativa, C. dentata · NE US Sep–Oct · Portugal Oct–Nov</span></summary>
+      <div class="body">
+        <p><span class="tag danger">Toxic look-alike: horse chestnut / buckeye</span> <span class="tag warn">Cook before eating</span></p>
+        <dl class="facts">
+          <dt>Which chestnuts</dt>
+          <dd><strong>American chestnut</strong> (C. dentata) was nearly wiped out by chestnut blight in the early 1900s. It survives mostly as root sprouts that rarely bear. In the NE US the usual source is planted <strong>Chinese chestnut</strong> (C. mollissima) in yards, parks and old orchards. In Portugal it is the <strong>European sweet chestnut</strong> (C. sativa, castanheiro), common in the north and centre. In the Algarve it grows mainly in the Serra de Monchique.</dd>
+          <dt>Identify</dt>
+          <dd><strong>Leaves</strong> are simple (one blade per stalk), long and narrow, usually 5–10 in (12–25 cm). Straight parallel veins each end in a sharp, bristle-tipped tooth. <strong>Flowers</strong> are long, creamy catkins in early summer, with a strong smell. The <strong>bur</strong> (husk) is round and densely covered in long, sharp, needle-like spines, and splits into 2–4 sections. <strong>Nuts</strong>: usually 2–3 per bur. They are glossy brown, flattened on one or two sides, with a pointed tip topped by a small tassel and a pale, rough base.</dd>
+          <dt>When</dt>
+          <dd>NE US (Chinese chestnut): mid-Sep–Oct. Portugal: Oct–Nov. São Martinho (11 Nov) is chestnut-roasting season.</dd>
+          <dt>Collect</dt>
+          <dd>Gather fallen nuts and burs every day or two, because chestnuts dry out, mould and get weevils quickly. <strong>Wear thick leather gloves</strong>: spines go through cloth. Roll a bur under your boot to open it, then pick the nuts out with gloves or tongs. Skip flat, empty nuts and any with holes. Float-test and discard the floaters.</dd>
+          <dt>Store</dt>
+          <dd>Unlike most nuts, chestnuts are moist and starchy and spoil like fruit. Keep them in a paper or perforated bag in the fridge (32–40 °F / 0–4 °C) and use within a few weeks. For longer storage, cook, peel and freeze them. Peeled chestnuts dried until rock-hard keep for months and can be ground into flour.</dd>
+        </dl>
+        <h4>Score and cook</h4>
+        <ol class="steps">
+          <li><strong>Score every nut.</strong> Cut an X or a slit through the shell on the rounded side with a sharp knife. Unscored chestnuts can burst violently when heated.</li>
+          <li><strong>Roast</strong> in an oven at 400–425 °F (200–220 °C) for 15–25 min, or in a perforated pan over a fire, shaking often. They are done when the shells curl back and the flesh is tender. <strong>Or boil</strong> them for 15–20 min.</li>
+          <li>Wrap them in a towel for 5 minutes, then peel while warm. Remove the shell <em>and</em> the bitter brown inner skin.</li>
+        </ol>
+        <p>Raw chestnuts are astringent and hard to digest, so cook them.</p>
+      </div>
+    </details>
+
+    <h3 id="chestnut-vs-horse">Sweet chestnut vs horse chestnut</h3>
+    <div class="callout danger">
+      <strong class="callout-title">Horse chestnut and buckeyes are toxic</strong>
+      <p>Horse chestnut (Aesculus hippocastanum) is a common park and street tree in Europe and the US, and native US buckeyes are the same genus. Eating them causes vomiting and diarrhoea, and larger amounts cause muscle twitching, weakness and collapse. Children are most at risk. They are not edible raw, roasted or boiled. <strong>Never taste-test to tell the two apart.</strong></p>
+    </div>
+    <div class="table-wrap"><table class="data">
+      <caption class="sr-only">How to tell sweet chestnut from toxic horse chestnut</caption>
+      <thead><tr><th scope="col">Feature</th><th scope="col">Sweet chestnut (edible, cooked)</th><th scope="col">Horse chestnut / buckeye (TOXIC)</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">Husk</th><td>Dense, sharp, <strong>needle-like spines</strong> all over, like a hedgehog</td><td>Thick, <strong>leathery</strong> husk with a <strong>few short spikes</strong>, warts, or smooth</td></tr>
+        <tr><th scope="row">Nuts per husk</th><td>Usually <strong>2–3</strong></td><td>Usually <strong>1</strong> (sometimes 2)</td></tr>
+        <tr><th scope="row">Nut shape</th><td><strong>Flattened</strong> on one or two sides, with a <strong>pointed tip and a small tassel</strong></td><td><strong>Round</strong>, smooth, very glossy, with a large pale circular scar. <strong>No point, no tassel.</strong></td></tr>
+        <tr><th scope="row">Leaves</th><td><strong>Single long leaf</strong> with bristle-tipped teeth</td><td><strong>Palmate</strong>: 5–7 leaflets spreading from one point, like the fingers of a hand</td></tr>
+        <tr><th scope="row">Flowers</th><td>Long, creamy, stringy catkins (early summer)</td><td>Upright "candles" of white or pink flowers (spring)</td></tr>
+      </tbody>
+    </table></div>
+    <figure class="diagram">
+      <div class="grid-2">
+<svg class="diagram" viewBox="0 0 320 350" role="img" aria-labelledby="sc-t"><title id="sc-t">Sweet chestnut: spiny bur, two to three pointed nuts with a tassel, one long saw-toothed leaf</title>
+<text x="160" y="24" text-anchor="middle" font-size="19" font-weight="800" fill="currentColor">SWEET CHESTNUT</text>
+<text x="160" y="44" text-anchor="middle" font-size="14" style="fill:var(--ok)">Castanea · edible, cook first</text>
+<circle cx="78" cy="122" r="30" fill="none" stroke="currentColor" stroke-width="2.5"/><path d="M108 122L131.8 126.3M107.8 125.4L124.1 131M107.2 128.7L129.5 138.2M106.3 131.9L121 141M105 135L124.6 149.2M103.4 138L115.7 150.1M101.5 140.7L117.4 158.9M99.2 143.2L108.5 157.8M96.7 145.5L108.2 166.8M94 147.4L99.7 163.7M91 149L97.5 172.4M87.9 150.3L89.9 167.5M84.7 151.2L85.8 175.4M81.4 151.8L79.5 169M78 152L73.7 175.8M74.6 151.8L69 168.1M71.3 151.2L61.8 173.5M68.1 150.3L59 165M65 149L50.8 168.6M62 147.4L49.9 159.7M59.3 145.5L41.1 161.4M56.8 143.2L42.2 152.5M54.5 140.7L33.2 152.2M52.6 138L36.3 143.7M51 135L27.6 141.5M49.7 131.9L32.5 133.9M48.8 128.7L24.6 129.8M48.2 125.4L31 123.5M48 122L24.2 117.7M48.2 118.6L31.9 113M48.8 115.3L26.5 105.8M49.7 112.1L35 103M51 109L31.4 94.8M52.6 106L40.3 93.9M54.5 103.3L38.6 85.1M56.8 100.8L47.5 86.2M59.3 98.5L47.8 77.2M62 96.6L56.3 80.3M65 95L58.5 71.6M68.1 93.7L66.1 76.5M71.3 92.8L70.2 68.6M74.6 92.2L76.5 75M78 92L82.3 68.2M81.4 92.2L87 75.9M84.7 92.8L94.2 70.5M87.9 93.7L97 79M91 95L105.2 75.4M94 96.6L106.1 84.3M96.7 98.5L114.9 82.6M99.2 100.8L113.8 91.5M101.5 103.3L122.8 91.8M103.4 106L119.7 100.3M105 109L128.4 102.5M106.3 112.1L123.5 110.1M107.2 115.3L131.4 114.2M107.8 118.6L125 120.5" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+<path d="M178 158C172 128 186 102 204 90C222 102 236 128 230 158Z" fill="none" stroke="currentColor" stroke-width="2.5"/><path d="M180 148Q204 142 228 148" fill="none" stroke="currentColor" stroke-width="1.5" stroke-dasharray="4 3"/><path d="M204 90L198 76M204 90L204 73M204 90L210 76" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M252 158C249 130 258 104 268 92C278 104 287 130 284 158Z" fill="none" stroke="currentColor" stroke-width="2.5"/><path d="M254 148Q268 144 282 148" fill="none" stroke="currentColor" stroke-width="1.5" stroke-dasharray="4 3"/><path d="M268 92L264 78M268 92L268 75M268 92L272 78" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+<path d="M40 292L49 287.7L58 279.8L55 285.4L64 282.3L73 274.8L70 280.5L79 277.9L88 270.6L85 276.4L94 274.4L103 267.3L100 273.2L109 271.6L118 264.8L115 270.7L124 269.6L133 263.1L130 269L139 268.4L148 262.2L145 268.2L154 268L163 262L160 268L169 268.3L178 262.6L175 268.6L184 269.3L193 263.8L190 269.9L199 270.9L208 265.6L205 271.7L214 273.1L223 267.9L220 274.1L229 275.7L238 270.7L235 276.9L244 278.7L253 273.8L250 280L259 282.1L268 277.2L265 283.5L274 285.6L283 280.8L280 287.1L300 292L280 296.9L283 303.2L274 298.4L265 300.5L268 306.8L259 301.9L250 304L253 310.2L244 305.3L235 307.1L238 313.3L229 308.3L220 309.9L223 316.1L214 310.9L205 312.3L208 318.4L199 313.1L190 314.1L193 320.2L184 314.7L175 315.4L178 321.4L169 315.7L160 316L163 322L154 316L145 315.8L148 321.8L139 315.6L130 315L133 320.9L124 314.4L115 313.3L118 319.2L109 312.4L100 310.8L103 316.7L94 309.6L85 307.6L88 313.4L79 306.1L70 303.5L73 309.2L64 301.7L55 298.6L58 304.2L49 296.3Z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/><path d="M14 292L296 292M40 292L56 287.8M40 292L56 296.2M55 292L71 282.8M55 292L71 301.2M70 292L86 278.6M70 292L86 305.4M85 292L101 275.3M85 292L101 308.7M100 292L116 272.8M100 292L116 311.2M115 292L131 271.1M115 292L131 312.9M130 292L146 270.2M130 292L146 313.8M145 292L161 270M145 292L161 314M160 292L176 270.6M160 292L176 313.4M175 292L191 271.8M175 292L191 312.2M190 292L206 273.6M190 292L206 310.4M205 292L221 275.9M205 292L221 308.1M220 292L236 278.7M220 292L236 305.3M235 292L251 281.8M235 292L251 302.2M250 292L266 285.2M250 292L266 298.8" fill="none" stroke="currentColor" stroke-width="1.2"/>
+<text x="78" y="200" text-anchor="middle" font-size="14" fill="currentColor">Bur: dense, sharp</text>
+<text x="78" y="217" text-anchor="middle" font-size="14" fill="currentColor">needle-like spines</text>
+<text x="236" y="182" text-anchor="middle" font-size="14" fill="currentColor">Usually 2–3 nuts:</text>
+<text x="236" y="199" text-anchor="middle" font-size="14" fill="currentColor">flat side, pointed</text>
+<text x="236" y="216" text-anchor="middle" font-size="14" fill="currentColor">tip with a tassel</text>
+<text x="160" y="250" text-anchor="middle" font-size="14" fill="currentColor">Leaf: ONE long leaf, saw-toothed</text>
+</svg>
+<svg class="diagram" viewBox="0 0 320 350" role="img" aria-labelledby="hc-t"><title id="hc-t">Horse chestnut: thick leathery husk with few short spikes, one round glossy nut with a large pale scar and no point, leaf of five to seven leaflets from one point</title>
+<text x="160" y="24" text-anchor="middle" font-size="19" font-weight="800" fill="currentColor">HORSE CHESTNUT</text>
+<text x="160" y="44" text-anchor="middle" font-size="14" style="fill:var(--danger)">Aesculus · TOXIC, do not eat</text>
+<circle cx="78" cy="122" r="40" fill="none" stroke="currentColor" stroke-width="5"/><path d="M117.9 124.8L128.2 130.9L116.5 133M106.8 149.8L110.8 161.1L100.4 155.2M82.2 161.8L78 173L73.8 161.8M55.6 155.2L45.2 161.1L49.2 149.8M39.5 133L27.8 130.9L38.1 124.8M41.5 105.7L33.8 96.5L45.6 98.5M60.5 86L60.6 74.1L68.3 83.2M87.7 83.2L95.4 74.1L95.5 86M110.4 98.5L122.2 96.5L114.5 105.7" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+<circle cx="232" cy="122" r="38" fill="none" stroke="currentColor" stroke-width="2.5"/><ellipse cx="232" cy="138" rx="25" ry="15" fill="currentColor" fill-opacity=".28" stroke="currentColor" stroke-width="1.5" stroke-dasharray="4 3"/><path d="M208 108A28 28 0 0 1 226 96" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+<path d="M156 333.4C141.9 323.1 117.7 315.5 112.5 327.3C114.2 340.2 139.6 339.5 156 333.4ZM156 333.4L114.6 327.6M156.8 331.5C147.6 310.4 124.9 285.7 111.1 295.8C104.7 311.6 134.1 327.7 156.8 331.5ZM156.8 331.5L113.4 297.6M158.4 330.3C160.4 303.4 150.5 265.4 130.7 268.2C115.3 281 137 313.8 158.4 330.3ZM158.4 330.3L132.1 271.3M160 330C173.6 304.8 180.4 263.8 160 258C139.6 263.8 146.4 304.8 160 330ZM160 330L160 261.6M161.6 330.3C183 313.8 204.7 281 189.3 268.2C169.5 265.4 159.6 303.4 161.6 330.3ZM161.6 330.3L187.9 271.3M163.2 331.5C185.9 327.7 215.3 311.6 208.9 295.8C195.1 285.7 172.4 310.4 163.2 331.5ZM163.2 331.5L206.6 297.6M164 333.4C180.4 339.5 205.8 340.2 207.5 327.3C202.3 315.5 178.1 323.1 164 333.4ZM164 333.4L205.4 327.6" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M160 334L160 348" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+<text x="78" y="200" text-anchor="middle" font-size="14" fill="currentColor">Husk: thick, leathery,</text>
+<text x="78" y="217" text-anchor="middle" font-size="14" fill="currentColor">few short spikes</text>
+<text x="232" y="182" text-anchor="middle" font-size="14" fill="currentColor">Usually 1 nut: round,</text>
+<text x="232" y="199" text-anchor="middle" font-size="14" fill="currentColor">smooth, glossy, big</text>
+<text x="232" y="216" text-anchor="middle" font-size="14" fill="currentColor">pale scar, NO point</text>
+<text x="160" y="244" text-anchor="middle" font-size="14" fill="currentColor">Leaf: 5–7 leaflets from one point</text>
+</svg>
+      </div>
+      <figcaption>Check all three: husk, nut and leaf. If any one doesn't match sweet chestnut, don't eat it.</figcaption>
+    </figure>
+
+    <details class="item">
+      <summary>Hazelnut / filbert <span class="sub">Corylus americana, C. avellana · Aug–Sep</span></summary>
+      <div class="body">
+        <p><span class="tag">Pick early or the squirrels win</span></p>
+        <dl class="facts">
+          <dt>Identify</dt>
+          <dd>A multi-stemmed shrub, 3–10 ft (1–3 m); European hazel can grow taller. Leaves are simple, roundish-oval, double-toothed, slightly heart-shaped at the base and soft-hairy. Long dangling male catkins appear in late winter. Nuts grow in clusters of 2–6, each wrapped in a leafy husk with a ragged edge. <strong>Beaked hazel</strong> (C. cornuta) has a long tubular husk with irritating bristles, so wear gloves.</dd>
+          <dt>Where</dt>
+          <dd>NE US: American hazel at woodland edges, hedgerows and clearings. Iberia: European hazel (aveleira) in damp mountain valleys of northern Portugal and Spain. Uncommon in the Algarve.</dd>
+          <dt>When</dt>
+          <dd>Aug–Sep. <strong>Pick when the husks start to brown at the edges</strong> and the nut inside has turned tan to brown, even if the husk is still mostly green. Squirrels, chipmunks and jays usually strip the bushes before the nuts fall.</dd>
+          <dt>Husk and dry</dt>
+          <dd>Spread the clusters somewhere warm, dry and airy for 1–2 weeks, until the husks dry and loosen, then rub them off (gloves on). Float-test and discard the floaters (empty "blanks"). Dry the nuts in the shell for another 2–3 weeks, until the kernel is crisp.</dd>
+          <dt>Crack</dt>
+          <dd>Use a nutcracker or pliers, or tap lightly with a hammer or stone on a hard surface. Eat raw, or toast lightly and rub off the skins.</dd>
+          <dt>Store</dt>
+          <dd>In the shell, kept dry and cool, they last several months. Store shelled nuts in the fridge or freezer.</dd>
+        </dl>
+      </div>
+    </details>
+
+    <details class="item">
+      <summary>Pecan <span class="sub">Carya illinoinensis · Oct–Nov</span></summary>
+      <div class="body">
+        <p><span class="tag">NE US: planted trees only</span></p>
+        <dl class="facts">
+          <dt>Identify</dt>
+          <dd>A tall hickory. Compound leaves have 9–17 narrow leaflets, often slightly sickle-curved. Bark is grey with scaly ridges. The husk is thin with 4 ridges and splits into 4 when ripe. The nut is smooth, oblong and thin-shelled, brown with dark streaks.</dd>
+          <dt>Where</dt>
+          <dd>Native to the south-central US (Mississippi valley, Texas). In New Jersey only planted trees grow, and they often bear poorly or produce partly filled nuts.</dd>
+          <dt>Collect</dt>
+          <dd>Oct–Nov, after the husks split. Gather from the ground, or shake or pole the branches over a tarp. Discard nuts with weevil holes and any dark or shrivelled kernels.</dd>
+          <dt>Dry and crack</dt>
+          <dd>Dry in the shell for 1–2 weeks somewhere airy, until the kernel snaps. Squeeze two nuts together in your hand, or use a nutcracker. Remove the bitter papery partitions.</dd>
+          <dt>Store</dt>
+          <dd>Shelled nuts keep for months in the fridge, or a year or more in the freezer.</dd>
+        </dl>
+      </div>
+    </details>
+
+    <details class="item">
+      <summary>Beechnuts <span class="sub">Fagus grandifolia, F. sylvatica · Sep–Oct</span></summary>
+      <div class="body">
+        <p><span class="tag warn">Only small amounts raw</span></p>
+        <dl class="facts">
+          <dt>Identify</dt>
+          <dd>Smooth, pale grey bark: the tree people carve initials into. Leaves are simple and oval, with straight parallel veins. They are sharply toothed on American beech and wavy-edged on European beech. Young trees often keep dead, papery tan leaves all winter. The husk is small, 4-parted and covered in soft prickles. It opens to release 2 small, 3-sided nuts with a thin, shiny brown shell.</dd>
+          <dt>Where</dt>
+          <dd>NE US: mature forest. Europe: forests of central and northern Europe; rare in southern Portugal.</dd>
+          <dt>When</dt>
+          <dd>Sep–Oct, often after the first frost. Good crops come only every few years. In off years most nuts are empty, so squeeze or cut a few to check.</dd>
+          <dt>Collect</dt>
+          <dd>Shake over a tarp, or pick them out of the leaf litter. They are small and slow to gather.</dd>
+          <dt>Process</dt>
+          <dd>Peel the thin shell with a thumbnail or knife. <strong>Raw beechnuts in quantity can upset the stomach</strong>, so eat only a handful raw. Roast them in a dry pan until fragrant before eating more. They are oily, so store shelled nuts cold.</dd>
+        </dl>
+      </div>
+    </details>
+
+    <details class="item">
+      <summary>Pine nuts <span class="sub">Pinus pinea (stone pine), P. edulis &amp; P. monophylla (pinyon) · cones Dec–Mar (Portugal) · Sep–Oct (US West)</span></summary>
+      <div class="body">
+        <p><span class="tag danger">Never confuse with yew</span></p>
+        <dl class="facts">
+          <dt>Identify</dt>
+          <dd><strong>Stone pine</strong> (pinheiro-manso) has a flat-topped, umbrella-shaped crown, long needles in pairs and reddish, plated bark. Its cones are large (3–6 in / 8–15 cm), heavy, roundish and glossy brown, and take about 3 years to mature. The seeds are about ¾ in (2 cm) long, with a hard, dark shell coated in black powder. <strong>Pinyon</strong> (US Southwest and Great Basin) is a small, bushy pine with short needles and small cones holding large, wingless seeds.</dd>
+          <dt>Where</dt>
+          <dd>Stone pine is very common across Portugal, including sandy coastal areas and the inland Algarve. Pinyon grows in the dry hills of the US West, not the NE.</dd>
+          <dt>Other pines</dt>
+          <dd>The seeds of nearly all true pines are edible, but most species' seeds (e.g. the NE's white and pitch pine) are too tiny to be worth the effort. To confirm a true pine, look for needles in bundles with a papery sheath at the base, and woody cones.</dd>
+          <dt>Yew warning</dt>
+          <dd><strong>Yew (Taxus) is not a pine.</strong> It has flat, soft, dark-green needles in two rows, no woody cones, and single seeds sitting in a red, fleshy, open cup. The seed and foliage are deadly: a small amount can stop the heart.</dd>
+          <dt>Collect (stone pine)</dt>
+          <dd>Mature cones are brown and closed. Gather them in winter (Dec–Mar) from the tree or the ground. In summer heat, cones left on the tree open and drop their seeds, which you can pick up underneath. In Portugal stone pine cones are a valuable, regulated crop that belongs to the landowner, so ask first.</dd>
+          <dt>Open the cones</dt>
+          <dd>Spread the cones in full summer sun for a few weeks until the scales open. Or warm them near a fire or in a low oven until they open. Then shake or knock out the seeds. <strong>The resin is flammable</strong>, so never put cones in or directly over flames, and stay with them. For pinyon, pick the cones just before they open and dry them in the sun, or gather fallen seeds. Wear gloves, and remove sticky pitch from skin with cooking oil.</dd>
+          <dt>Crack</dt>
+          <dd>Stone pine shells are thick. Tap them with a hammer or between two flat stones, or use pliers. The black dust stains, so rinse or rub it off first. Peel off the thin papery skin if it is loose.</dd>
+          <dt>Store</dt>
+          <dd>In the shell, kept cool, dry and airtight, they last for months. Shelled pine nuts are very oily and go rancid fast, so keep them in the fridge or freezer.</dd>
+        </dl>
+      </div>
+    </details>
+  </section>
+
+  <!-- ============================================================ FRUITS -->
+  <section id="fruits">
+    <h2>Fruits &amp; berries</h2>
+    <div class="callout ok">
+      <strong class="callout-title">Good practice for all fruit</strong>
+      <ul>
+        <li>Ripe fruit comes away easily. If you have to tug, it isn't ready.</li>
+        <li>Pick into shallow, rigid containers. Soft berries crush under their own weight, so keep layers to about 4 in (10 cm).</li>
+        <li>Keep fruit shaded and cool. Refrigerate it unwashed, and wash just before eating or processing.</li>
+        <li>Eat only ripe fruit. Many edible fruits are harmful unripe, and many seeds and pits are toxic.</li>
+      </ul>
+    </div>
+
+    <details class="item">
+      <summary>Blackberry <span class="sub">Rubus spp. (NE: R. allegheniensis; Iberia: R. ulmifolius, silva) · NE Jul–Sep · Algarve Jun–Sep</span></summary>
+      <div class="body">
+        <p><span class="tag ok">Among the safest groups</span> <span class="tag warn">Thorns, ticks</span></p>
+        <dl class="facts">
+          <dt>Identify</dt>
+          <dd>Thorny canes that arch or trail. Leaves are compound, with 3–5 toothed leaflets. Flowers are white or pink with 5 petals. The fruit is a cluster of many small juicy beads (an aggregate). <strong>The white core stays inside the berry when you pick it</strong>; raspberries come off hollow. Fruit grows on second-year canes.</dd>
+          <dt>Look-alikes</dt>
+          <dd>Other Rubus (dewberry, raspberry) are edible. No dangerous plant has the same aggregate fruit on thorny canes, but still confirm the plant. Mulberry fruit looks similar but grows on a tree.</dd>
+          <dt>Ripe</dt>
+          <dd>Fully black (red berries are unripe and sour), plump, slightly dull rather than shiny, and drops into your hand with a gentle pull.</dd>
+          <dt>Harvest</dt>
+          <dd>Wear long sleeves, trousers and leather-palmed gloves, or at least one gloved hand to hold the canes. Draw canes toward you with a hooked stick. Pick above knee height. Check for ticks afterwards (NE US: Lyme disease). Watch for wasps, and for snakes in dense brambles.</dd>
+          <dt>Keep</dt>
+          <dd>1–2 days in the fridge. To freeze, spread them on a tray, freeze, then bag. Use for jam, jelly, syrup or fruit leather (seedy). Skip mouldy or fermented fruit.</dd>
+        </dl>
+      </div>
+    </details>
+
+    <details class="item">
+      <summary>Raspberries &amp; wineberry <span class="sub">Rubus idaeus, R. occidentalis, R. phoenicolasius · Jun–Aug (NE US)</span></summary>
+      <div class="body">
+        <p><span class="tag ok">Among the safest groups</span></p>
+        <dl class="facts">
+          <dt>Identify</dt>
+          <dd>Prickly canes. Compound leaves (3–5 leaflets), often whitish underneath. The fruit comes off its core <strong>hollow, like a thimble</strong>.
+            <ul>
+              <li><strong>Black raspberry</strong>: arching canes with a waxy blue-white coating that rubs off; black fruit (Jun–Jul).</li>
+              <li><strong>Red raspberry</strong>: red fruit (Jul–Aug).</li>
+              <li><strong>Wineberry</strong> (invasive, common in NJ): stems covered in red bristly hairs; bright orange-red, glossy fruit (Jul).</li>
+            </ul>
+          </dd>
+          <dt>Ripe</dt>
+          <dd>Full colour, and slips off the core with almost no pull.</dd>
+          <dt>Harvest</dt>
+          <dd>Very fragile, so use small, shallow containers. Same gear and tick precautions as for blackberry. Not common wild in the Algarve.</dd>
+          <dt>Keep</dt>
+          <dd>Eat within a day, or freeze on a tray. Use for jam or syrup, or dry them.</dd>
+        </dl>
+      </div>
+    </details>
+
+    <details class="item">
+      <summary>Mulberry <span class="sub">Morus rubra, M. alba, M. nigra · NE Jun–Jul · Algarve May–Aug</span></summary>
+      <div class="body">
+        <p><span class="tag warn">Ripe fruit only</span></p>
+        <dl class="facts">
+          <dt>Identify</dt>
+          <dd>A tree, not a bramble. Leaves are toothed and very variable on the same tree: unlobed and heart-shaped, mitten-shaped, or with several lobes. Broken leaf stalks ooze milky sap. The fruit looks like an elongated blackberry, ½–1¼ in (1–3 cm) long, on a short stalk.</dd>
+          <dt>Where</dt>
+          <dd>NE US: red (native) and white (introduced) mulberry on streets, fence lines, woods edges and vacant lots. Portugal: black mulberry (amoreira) in villages, farmyards and gardens.</dd>
+          <dt>Ripe</dt>
+          <dd>Dark purple to black (or deep red-black), soft and juicy; it falls at a touch. <strong>Unripe fruit (green, red or hard) and the milky sap can upset the stomach.</strong> Some white mulberry trees bear white fruit. Beginners should skip them: the no-white-berries rule has no exceptions on this page.</dd>
+          <dt>Harvest</dt>
+          <dd>Spread a tarp or old sheet under the branches and shake. Ripe fruit falls; unripe fruit stays. The juice stains hands and clothes purple.</dd>
+          <dt>Keep</dt>
+          <dd>Very perishable: eat or process within a day. Freeze them, dry them like raisins, or make jam (they are low in acid, so add lemon juice). The little green stalk is harmless; snip it off for jam.</dd>
+        </dl>
+      </div>
+    </details>
+
+    <details class="item">
+      <summary>Elderberry <span class="sub">Sambucus canadensis, S. nigra · NE Aug–Sep · Iberia Jul–Sep</span></summary>
+      <div class="body">
+        <p><span class="tag danger">Must cook</span> <span class="tag danger">Deadly look-alikes</span> <span class="tag warn">Stems, leaves, seeds toxic</span></p>
+        <div class="callout danger">
+          <strong class="callout-title">Never eat raw elderberries</strong>
+          <p>The raw berries (especially unripe ones), seeds, stems, leaves, bark and roots contain cyanide-producing compounds (cyanogenic glycosides) that cause nausea, vomiting and diarrhoea. Use only the <strong>dark purple-black berries of Sambucus nigra / S. canadensis</strong>, completely destemmed, and cook them.</p>
+        </div>
+        <dl class="facts">
+          <dt>Identify</dt>
+          <dd>A <strong>woody shrub</strong>, 5–12 ft (1.5–4 m), with many stems. The bark has raised warty dots, and young stems have soft white pith inside. Leaves are <strong>opposite</strong> and compound, with 5–11 (usually 5–7) toothed leaflets. In early summer it has flat-topped, umbrella-like clusters of tiny cream-white flowers, 4–10 in (10–25 cm) across. The berries are about ¼ in (5 mm), purple-black, in large flat-topped clusters that <strong>droop</strong> when ripe.</dd>
+          <dt>Do NOT use</dt>
+          <dd><ul>
+            <li><strong>Red elderberry</strong> (S. racemosa): red berries in dome- or pyramid-shaped clusters. Ripens earlier in summer.</li>
+            <li><strong>Dwarf elder / danewort</strong> (S. ebulus; Europe, including Iberia): <strong>not woody</strong>. It dies back to the ground each winter, grows 3–6 ft (1–2 m), holds its black berries in <strong>upright</strong> clusters and smells unpleasant. Toxic.</li>
+            <li><strong>Pokeweed</strong>: purple-black berries in long, narrow, drooping spikes on smooth magenta stems, with large simple leaves. All parts are toxic.</li>
+            <li><strong>Water hemlock, poison hemlock, hemlock water-dropwort</strong> (carrot family): also have white umbrella flower heads, but they are non-woody, with hollow stems and alternate, finely divided leaves. Deadly. Elder is a woody shrub with opposite leaves.</li>
+            <li><strong>Devil's walking stick</strong> (Aralia spinosa, NE US): very spiny stems, huge compound leaves, black berries on pinkish stalks. Not a food.</li>
+          </ul></dd>
+          <dt>Ripe</dt>
+          <dd>Every berry in the cluster is dark purple-black and soft, and the cluster has started to droop. Leave clusters that still have green or red berries.</dd>
+          <dt>Harvest</dt>
+          <dd>Snip whole clusters into a bucket with scissors or pruners. Birds compete, so check daily once the berries start to colour.</dd>
+        </dl>
+        <h4>Destem, cook, strain</h4>
+        <ol class="steps">
+          <li><strong>Destem completely.</strong> Freeze the clusters on a tray for a few hours, then rub or shake the berries off, or strip them with a fork. Pick out every bit of stem and leaf, and every green or red berry.</li>
+          <li>Rinse in a bowl of water and skim off debris and any berries that float.</li>
+          <li><strong>Cook</strong>: bring to a boil with a little water and simmer for at least 15 minutes, crushing the berries.</li>
+          <li>For juice, syrup or jelly, <strong>strain out the seeds</strong> through a fine sieve or cloth.</li>
+          <li>Keep syrup in the fridge. Can it only with a tested recipe (see the <a href="../food/index.html">Food page</a>).</li>
+        </ol>
+        <p>The flowers (early summer) are also used for cordial and fritters. Shake out the insects and use only the flowers, no stems or leaves. Eat elderberry in moderation.</p>
+      </div>
+    </details>
+
+    <details class="item">
+      <summary>Wild grape <span class="sub">Vitis spp. (riverbank, fox, frost, summer grape) · Aug–Oct (NE US)</span></summary>
+      <div class="body">
+        <p><span class="tag danger">Deadly look-alike: moonseed</span></p>
+        <dl class="facts">
+          <dt>Identify</dt>
+          <dd>A woody climbing vine with <strong>forked (branched) tendrils</strong> opposite the leaves. Leaves are simple, heart-shaped and often 3-lobed, with <strong>toothed edges</strong>. The leaf stalk joins at the leaf's edge, in the notch. Older vines have shreddy bark peeling in strips, and brown pith. Fruit hangs in clusters, blue-black to purple and often with a whitish bloom. Each berry has <strong>1–4 pear-shaped seeds</strong>.</dd>
+          <dt>Where</dt>
+          <dd>NE US: woods edges, riversides, fences, hedgerows.</dd>
+          <dt>Ripe</dt>
+          <dd>Aug–Oct. Soft and fully coloured, with some sweetness under the tartness. Frost grape is best after a frost.</dd>
+          <dt>Check every vine</dt>
+          <dd><strong>Before eating from any vine, cut several berries open. You must see 1–4 teardrop-shaped seeds.</strong> One flat, crescent-shaped seed means moonseed: discard everything from that vine. Also confirm tendrils and toothed leaves on the vine the cluster actually hangs from, because vines tangle together.</dd>
+          <dt>Harvest</dt>
+          <dd>Clip whole clusters with scissors or pruners. Lower high vines gently with a hooked stick instead of tearing them down.</dd>
+          <dt>Process</dt>
+          <dd>Crush and simmer the grapes, then strain through a cloth for juice or jelly. Wild grapes are tart, so add sugar. Wild grape juice can irritate skin and mouth because of tartrate crystals. Wear gloves for big batches, let the juice settle in the fridge for 1–2 days, then pour the clear juice off the gritty sediment. Young leaves (late spring) can be blanched and used as wraps.</dd>
+        </dl>
+      </div>
+    </details>
+
+    <h3 id="grape-vs-moonseed">Wild grape vs moonseed and other look-alikes</h3>
+    <div class="callout danger">
+      <strong class="callout-title">Moonseed can kill</strong>
+      <p>Canada moonseed (Menispermum canadense) grows in the same places as wild grape and fruits at the same time, and its clusters look like grapes. Eating the fruit has caused deaths. Check every vine.</p>
+    </div>
+    <div class="table-wrap"><table class="data">
+      <caption class="sr-only">How to tell wild grape from moonseed</caption>
+      <thead><tr><th scope="col">Feature</th><th scope="col">Wild grape (edible)</th><th scope="col">Moonseed (DEADLY)</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">Seeds per berry</th><td><strong>1–4, pear/teardrop-shaped</strong></td><td><strong>1, flat, crescent (moon) shaped</strong>, ridged</td></tr>
+        <tr><th scope="row">Tendrils</th><td><strong>Yes</strong>: forked, opposite the leaves</td><td><strong>None</strong>: the stem twines around supports</td></tr>
+        <tr><th scope="row">Leaf edge</th><td><strong>Toothed</strong></td><td><strong>Smooth</strong> (untoothed), sometimes with 3–7 shallow, angular lobes</td></tr>
+        <tr><th scope="row">Leaf stalk</th><td>Joins at the leaf edge, in the notch</td><td>Joins <strong>slightly inside the margin</strong>, on the underside</td></tr>
+      </tbody>
+    </table></div>
+    <p>Two more vines are <strong>not food</strong>:</p>
+    <ul>
+      <li><strong>Virginia creeper</strong> (Parthenocissus quinquefolia) has a compound leaf of <strong>5 leaflets from one point</strong> and tendrils ending in sticky pads. Its small blue-black berries sit on bright red stalks in autumn. The berries are toxic (oxalate crystals).</li>
+      <li><strong>Porcelain berry</strong> (Ampelopsis) has grape-like, toothed, lobed leaves and tendrils, but its berries are <strong>speckled pink, lilac, turquoise and blue</strong>. The pith is white (grape pith is brown), and the bark is dotted, not shreddy.</li>
+    </ul>
+
+    <details class="item">
+      <summary>Serviceberry / Juneberry <span class="sub">Amelanchier spp. · late May–Jul, peak Jun (NE US)</span></summary>
+      <div class="body">
+        <p><span class="tag">Look for the crown</span></p>
+        <dl class="facts">
+          <dt>Identify</dt>
+          <dd>A shrub or small tree with smooth grey bark, often with faint vertical stripes. Leaves are simple, oval and finely toothed. In early spring it is one of the first trees to bloom, covered in white flowers with 5 narrow, strap-like petals. Fruit is about ⅓ in (8–10 mm) on long stalks, red turning dark purple-blue, with a <strong>small 5-pointed crown at the bottom end</strong>, like a blueberry. The soft seeds taste mildly of almond.</dd>
+          <dt>Look-alikes</dt>
+          <dd><strong>Buckthorns</strong> (Rhamnus, Frangula) have black berries <strong>with no crown</strong>, often a thorn at the twig tip, and leaf veins that curve toward the tip. They are strongly laxative. No crown: don't eat it.</dd>
+          <dt>Where</dt>
+          <dd>NE US: woods edges and hillsides; also very common in parks and along streets.</dd>
+          <dt>Ripe</dt>
+          <dd>Dark purple, soft and sweet. Birds strip the trees fast.</dd>
+          <dt>Harvest</dt>
+          <dd>Hand-pick, or gently pull branches down with a hooked stick, or shake over a tarp. Don't break limbs.</dd>
+          <dt>Keep</dt>
+          <dd>A few days in the fridge. Freeze, dry, or use for jam and pies.</dd>
+        </dl>
+      </div>
+    </details>
+
+    <details class="item">
+      <summary>Pawpaw <span class="sub">Asimina triloba · Aug–Oct, peak Sep (NE US)</span></summary>
+      <div class="body">
+        <p><span class="tag warn">Don't eat seeds or skin</span> <span class="tag warn">Small amount first</span></p>
+        <dl class="facts">
+          <dt>Identify</dt>
+          <dd>A small understory tree, usually growing in patches in rich, moist bottomland. It has very large, simple, drooping leaves, 6–12 in (15–30 cm), widest toward the tip, which smell of green pepper when crushed. Maroon 6-petalled flowers open in spring before the leaves. The fruit is oblong, 3–6 in (7–15 cm) and green, often in clusters. Inside is soft, yellow, custard-like flesh with two rows of large brown bean-shaped seeds.</dd>
+          <dt>Where</dt>
+          <dd>Eastern US river valleys. Scattered in NJ; more common in PA, MD and the Ohio valley.</dd>
+          <dt>Ripe</dt>
+          <dd>The fruit gives slightly to the touch like a ripe peach or avocado and smells strongly fruity. The skin may yellow or get dark blotches. Ripe fruit falls or comes off with a gentle tug. Shake the trunk gently and collect daily.</dd>
+          <dt>Eat</dt>
+          <dd>Cut in half and scoop out the flesh. <strong>Don't eat the skin or the seeds, and don't chew or crush the seeds</strong>, which contain toxic compounds. Some people get nausea, vomiting or a skin rash from pawpaw, so try a small amount first. Eat in moderation.</dd>
+          <dt>Keep</dt>
+          <dd>2–3 days at room temperature, about a week in the fridge. For longer, freeze the pulp with the seeds removed. Freeze it; don't can it.</dd>
+        </dl>
+      </div>
+    </details>
+
+    <details class="item">
+      <summary>American persimmon <span class="sub">Diospyros virginiana · Sep–Dec, peak Oct–Nov (NE US)</span></summary>
+      <div class="body">
+        <p><span class="tag warn">Fully soft only</span></p>
+        <dl class="facts">
+          <dt>Identify</dt>
+          <dd>A tree with dark, thick bark broken into small, square, blocky plates, like alligator skin. Leaves are simple, oval, glossy and smooth-edged. The fruit is round, 1–2 in (2.5–5 cm), orange to purplish-orange, with a 4-lobed cap and several flat brown seeds.</dd>
+          <dt>Ripeness is everything</dt>
+          <dd>Unripe fruit is fiercely astringent: chalky and mouth-drying. Ripe fruit is <strong>very soft, wrinkled, almost translucent and mushy</strong>, and falls on its own or with a light shake. Ripening often follows a frost, but frost isn't required; softness is what counts. If it isn't squishy, wait.</dd>
+          <dt>Caution</dt>
+          <dd>Eating large amounts of unripe persimmon can form a hard mass (bezoar) in the stomach that may need endoscopy or surgery to remove. The risk is higher in people who have had stomach surgery. Eat only fully ripe fruit, in moderation.</dd>
+          <dt>Harvest</dt>
+          <dd>Collect from the ground daily, or shake the tree over a tarp. Handle gently.</dd>
+          <dt>Process</dt>
+          <dd>Press the fruit through a colander or food mill to remove skin, cap and seeds. Frozen pulp keeps for months. Use it in puddings and breads, or spread it thin and dry it as fruit leather.</dd>
+        </dl>
+      </div>
+    </details>
+
+    <details class="item">
+      <summary>Crabapple <span class="sub">Malus spp. · Sep–Nov (NE US)</span></summary>
+      <div class="body">
+        <p><span class="tag warn">No seeds or cores in quantity</span></p>
+        <dl class="facts">
+          <dt>Identify</dt>
+          <dd>A small tree, often with short spur shoots, sometimes thorny. Leaves are simple and toothed. It has pink or white apple blossom in spring. The fruit is a small apple, under 2 in (5 cm), red, yellow or green. It has a stem on top, the dried remains of the flower at the bottom, and a star-shaped seed core when cut across.</dd>
+          <dt>Ripe</dt>
+          <dd>Sep–Nov: full colour, with brown seeds. Very sour, and often better after frost.</dd>
+          <dt>Harvest</dt>
+          <dd>Pick by hand or shake. Ornamental crabapples are edible, but trees in parks and yards may be sprayed, so ask first.</dd>
+          <dt>Process</dt>
+          <dd>Crabapples are high in pectin. Simmer chopped fruit, strain, and make jelly, or add it to low-pectin fruit. Strain out the seeds and cores: <strong>apple seeds contain amygdalin, which releases cyanide</strong>. A few swallowed whole are harmless, but never crush or grind them in quantity.</dd>
+        </dl>
+      </div>
+    </details>
+
+    <details class="item">
+      <summary>Rose hips <span class="sub">Rosa rugosa, R. multiflora, R. canina · NE Aug–Dec · Algarve Sep–Nov</span></summary>
+      <div class="body">
+        <p><span class="tag warn">Remove the irritating hairs</span> <span class="tag ok">Rich in vitamin C</span></p>
+        <dl class="facts">
+          <dt>Identify</dt>
+          <dd>A prickly rose shrub with compound leaves of 5–9 toothed leaflets and 5-petalled flowers. The hips are red to orange, round or oval, with dried sepals at the tip.
+            <ul>
+              <li><strong>Rugosa</strong> (beach rose, common on the NJ shore): large hips, about the size of a cherry tomato.</li>
+              <li><strong>Multiflora</strong> (invasive): tiny hips in clusters.</li>
+              <li><strong>Dog rose</strong> (Europe, roseira-brava): oval hips. Scattered in the Algarve hills.</li>
+            </ul>
+          </dd>
+          <dt>Ripe</dt>
+          <dd>Deep red-orange and slightly soft. After the first frost they are sweeter and softer, but you can pick earlier.</dd>
+          <dt>Harvest</dt>
+          <dd>Wear gloves for the prickles. Never use hips from sprayed garden or florist roses.</dd>
+          <dt>Process</dt>
+          <dd>The seeds are covered in fine hairs that irritate the mouth, throat and gut ("itching powder"). Either cut the hips in half and scrape out every seed and hair (gloves on), or simmer chopped whole hips and strain through a fine cloth (a jelly bag or doubled cotton) to catch the hairs. Dry the cleaned halves for tea (1–2 tsp per cup), or make syrup or jelly. Heat and long storage reduce the vitamin C.</dd>
+        </dl>
+      </div>
+    </details>
+  </section>
+
+  <!-- ============================================================ MEDITERRANEAN -->
+  <section id="med">
+    <h2>Mediterranean fruits (Algarve)</h2>
+    <p>Sweet chestnut, stone pine nuts and acorns are under <a href="#nuts">Nuts</a>. Blackberry, mulberry, elderberry and rose hips are under <a href="#fruits">Fruits &amp; berries</a>.</p>
+    <div class="callout info">
+      <strong class="callout-title">Ask first</strong>
+      <p>Most fig, almond, carob, olive, loquat and chestnut trees in the Algarve belong to someone, even when they look abandoned.</p>
+    </div>
+
+    <details class="item">
+      <summary>Fig <span class="sub">Ficus carica · Jun–Oct, peak Aug–Sep (Algarve)</span></summary>
+      <div class="body">
+        <p><span class="tag warn">Sap burns skin in sunlight</span></p>
+        <div class="callout warn">
+          <strong class="callout-title">Fig sap + sun = burns</strong>
+          <p>The milky latex from leaves, stems and unripe fruit irritates skin. With sunlight it can cause blistering burns and dark patches that last months (phytophotodermatitis). Wear gloves and long sleeves. Wash any sap off with soap and water straight away, and keep that skin out of the sun for the rest of the day. People with latex allergy may react to figs.</p>
+        </div>
+        <dl class="facts">
+          <dt>Identify</dt>
+          <dd>A shrub or spreading tree with smooth grey bark and large, rough, thick leaves with 3–5 deep lobes. Any break oozes milky sap. The fruit is pear-shaped, green, purple or brown, with a small opening at the bottom.</dd>
+          <dt>Where</dt>
+          <dd>All over the Algarve: farms, walls, gullies and waste ground. In the NE US figs grow only as garden trees (fruit Aug–Oct).</dd>
+          <dt>Ripe</dt>
+          <dd>The fruit <strong>droops</strong> on a softened neck, feels soft, may split or show a drop of nectar at the bottom, and lifts off with little or no milky sap. Firm, upright fruit with milky sap at the stem is unripe, and figs barely ripen after picking. Some trees bear an early crop (brebas) in Jun–Jul; the main crop is Aug–Sep.</dd>
+          <dt>Harvest</dt>
+          <dd>Lift and twist gently, and lay the figs in one layer in a shallow tray. Wasps and ants share the tree, so look before you grab.</dd>
+          <dt>Keep</dt>
+          <dd>Fresh figs last 1–2 days, a little longer in the fridge. To dry them, halve them (or leave small figs whole) and lay them on screens in full sun under fine mesh against insects. Turn them daily and bring them in at night. After several days they should be leathery with no moist centre. Or dehydrate at about 135 °F (57 °C). They also freeze well. For jam, note figs are low in acid, so tested recipes add lemon juice.</dd>
+        </dl>
+      </div>
+    </details>
+
+    <details class="item">
+      <summary>Carob <span class="sub">Ceratonia siliqua (alfarroba) · Aug–Oct, peak Aug–Sep (Algarve)</span></summary>
+      <div class="body">
+        <p><span class="tag">Discard the hard seeds</span></p>
+        <dl class="facts">
+          <dt>Identify</dt>
+          <dd>An evergreen tree with a dense, rounded crown. Its compound leaves have 2–5 pairs of round, leathery, glossy leaflets and no end leaflet. The pods are 4–12 in (10–30 cm) long, flat and leathery, green turning <strong>dark brown and glossy</strong> when ripe, with a sweet smell. Inside are very hard, flat brown seeds.</dd>
+          <dt>Where</dt>
+          <dd>Very common in the Algarve's dry limestone hills (barrocal) and farmland. It is a commercial crop, so ask the owner.</dd>
+          <dt>Harvest</dt>
+          <dd>Late summer, when the pods are dark brown and dry. The traditional way is to spread tarps or sheets under the tree and knock the pods down with a long pole. You can also pick up clean fallen pods. Skip mouldy ones.</dd>
+          <dt>Process</dt>
+          <dd>Chew a dry pod and spit out the seeds, which can crack teeth and jam grinders.
+            <ul>
+              <li><strong>Powder</strong>: break the pods, remove every seed, and dry the pieces until brittle (in the sun or a low oven). Roast lightly for a darker flavour if you like, then grind and sieve.</li>
+              <li><strong>Syrup</strong>: soak broken pods in water overnight, simmer, strain, and boil down.</li>
+            </ul>
+          </dd>
+          <dt>Keep</dt>
+          <dd>Fully dry pods keep for months in a dry, insect-proof container. Moths and beetles love them; freeze for 48 hours if you see larvae.</dd>
+        </dl>
+      </div>
+    </details>
+
+    <details class="item">
+      <summary>Almond <span class="sub">Prunus dulcis (amêndoa) · Jul–Sep, peak Aug (Algarve)</span></summary>
+      <div class="body">
+        <p><span class="tag danger">Bitter almonds are poisonous</span></p>
+        <div class="callout danger">
+          <strong class="callout-title">Only sweet almonds are food</strong>
+          <p>Bitter almonds contain amygdalin, which releases cyanide when chewed. A small handful can seriously poison a child. Many wild, feral and old seedling trees in the Algarve bear bitter almonds, and you can't tell by looking. <strong>If a raw kernel tastes bitter, spit it out, rinse your mouth, and don't eat from that tree.</strong> Roasting does not make bitter almonds safe. Never eat apricot, peach, plum or cherry kernels as "almonds" either.</p>
+        </div>
+        <dl class="facts">
+          <dt>Identify</dt>
+          <dd>A small tree with narrow, pointed, finely toothed leaves and pink or white blossom in Jan–Feb, before the leaves. The fruit is a flattened, velvety green oval, 1–2 in (3–5 cm). Its leathery hull dries and splits open when ripe, showing a pitted shell with one (sometimes two) kernels.</dd>
+          <dt>Test each tree</dt>
+          <dd>Adults only. Crack one nut, bite a tiny piece off the raw kernel, chew briefly and spit it out. Mild and sweet means a sweet almond. Bitter, burning, or a strong marzipan or cherry-pit flavour means bitter: leave that tree alone. Test every tree separately.</dd>
+          <dt>Harvest</dt>
+          <dd>Aug–Sep, when most hulls have split and are drying. Tap or shake the branches with a pole over a tarp. Don't thrash them, because that damages next year's fruiting spurs.</dd>
+          <dt>Hull, dry, crack</dt>
+          <dd>Strip off the hulls. Dry the nuts in the shell in the sun for several days to 2 weeks, until the kernel rattles and snaps cleanly. Crack with a nutcracker or a hammer on a stone; many Algarve almonds have very hard shells. Discard shrivelled, discoloured or mouldy kernels.</dd>
+          <dt>Keep</dt>
+          <dd>In the shell, kept dry and cool, up to a year. Store shelled nuts airtight, cool and dark, or in the fridge or freezer for long storage.</dd>
+        </dl>
+      </div>
+    </details>
+
+    <details class="item">
+      <summary>Olive <span class="sub">Olea europaea (azeitona) · Sep–Jan, peak Oct–Nov (Algarve)</span></summary>
+      <div class="body">
+        <p><span class="tag warn">Inedible raw: must be cured</span> <span class="tag danger">Lye burns</span></p>
+        <dl class="facts">
+          <dt>Identify</dt>
+          <dd>An evergreen tree with a gnarled grey trunk. Narrow, leathery leaves grow in opposite pairs, grey-green above and silvery below. The fruit is an oval stone fruit, green ripening through purple to black. Wild olive (zambujeiro) has smaller leaves and small fruit with little flesh.</dd>
+          <dt>Raw</dt>
+          <dd>Raw olives are intensely bitter. They aren't dangerous, but they are inedible until cured.</dd>
+          <dt>Harvest</dt>
+          <dd>Green olives Sep–Oct; ripe purple-black olives Nov–Jan. Hand-pick, or comb the branches over a tarp. Discard bruised fruit and olives with tiny holes or brown spots (olive fly).</dd>
+          <dt>Containers</dt>
+          <dd>Glass, glazed ceramic, stainless steel or food-grade plastic. Never aluminium, copper or iron.</dd>
+        </dl>
+        <h4>Simple water cure, then brine (green or turning olives)</h4>
+        <ol class="steps">
+          <li>Wash the olives. <strong>Crack</strong> each one with a flat stone or mallet until the flesh splits to the pit (don't smash the pit), or cut 2–3 slits to the pit with a knife.</li>
+          <li>Put them in your container and cover with clean water. Keep them under with a plate or a water-filled bag on top.</li>
+          <li><strong>Change the water every day</strong>; twice a day is faster. Cracked olives usually take <strong>about 1–2 weeks</strong>. Slit olives take longer.</li>
+          <li>From about day 5, taste a small piece and spit it out. Stop when it is only mildly bitter, to your taste.</li>
+          <li>Drain and cover with brine: <strong>100 g salt per 1 litre of water</strong> (about 13 oz per US gallon). Add garlic, oregano, bay leaf or lemon slices if you like. They are ready to eat after about a week.</li>
+          <li>Keep them in the fridge, fully covered by brine, and use within a few months. If they are too salty, soak them in fresh water for a few hours before serving. Throw out olives that turn mushy or slimy, smell off, or grow fuzzy mould.</li>
+        </ol>
+        <p><strong>Brine only:</strong> whole, uncut olives, especially ripe black ones, can go straight into the same brine. Change it every few weeks. This is slower, usually 3–6 months.</p>
+        <div class="callout danger">
+          <strong class="callout-title">Lye (caustic soda) curing: tested recipe only</strong>
+          <p>Commercial-style cures use food-grade sodium hydroxide. They take days rather than weeks, but lye can blind and burn in seconds. Don't improvise it off-grid, and never use home-made wood-ash lye of unknown strength. If you follow a tested recipe:</p>
+          <ul>
+            <li>Wear goggles, rubber gloves and long sleeves. Keep children and pets away, and work outdoors or with good ventilation.</li>
+            <li>Add lye to cold water, never water to lye, which makes it boil and spatter. Use glass, stainless steel or food-grade plastic only: lye attacks aluminium and gives off flammable hydrogen.</li>
+            <li>If lye splashes you, flush skin with running water for at least 15–20 minutes, and eyes for at least 20 minutes, then get medical help.</li>
+            <li>Rinse the olives in many changes of fresh water over several days, as the recipe says, until no slippery feel remains.</li>
+          </ul>
+        </div>
+        <div class="callout warn">
+          <strong class="callout-title">Botulism</strong>
+          <p>Olives are a low-acid food. Never can them in a water bath, and never store them in oil at room temperature. Keep cured olives in brine in the fridge. See the <a href="../food/index.html">Food page</a>.</p>
+        </div>
+      </div>
+    </details>
+
+    <details class="item">
+      <summary>Prickly pear <span class="sub">Opuntia ficus-indica (figo-da-índia), O. humifusa (NE US) · fruit Jul–Oct · pads Mar–May</span></summary>
+      <div class="body">
+        <p><span class="tag warn">Glochids: tongs and gloves</span> <span class="tag warn">Hard seeds</span></p>
+        <dl class="facts">
+          <dt>Identify</dt>
+          <dd>A cactus with flat, oval, jointed pads. Pads and fruit carry large spines <em>and</em> tufts of tiny, barbed, hair-like spines (<strong>glochids</strong>) that come off at a touch and lodge in skin. Even "spineless" plants have glochids. The fruit is egg-shaped, 2–4 in (5–10 cm), growing on the pad edges and ripening to red, purple, orange or yellow-orange.</dd>
+          <dt>Where</dt>
+          <dd>Algarve: everywhere on dry ground, walls and field edges. NE US: the native eastern prickly pear is low and sprawling, with small red-purple fruit (Aug–Oct), on sandy coastal sites. Patches are small, so take very little.</dd>
+          <dt>Ripe</dt>
+          <dd>Full, deep colour, slightly soft, and twists off easily.</dd>
+          <dt>Gear</dt>
+          <dd>Kitchen tongs, thick leather gloves (or several layers) and a bucket. Stand upwind, because glochids blow about. Never rub your eyes.</dd>
+        </dl>
+        <h4>Clean and peel the fruit</h4>
+        <ol class="steps">
+          <li>Twist each fruit off with tongs and drop it in the bucket. Don't touch them bare-handed.</li>
+          <li>Remove the glochids. Hold the fruit with tongs or a fork and singe it over a flame, turning until the hairs burn off. Or scrub it under running water with a stiff brush (gloves on). Or roll the fruit in sand or gravel with a broom, then rinse.</li>
+          <li>On a board, hold the fruit with a fork. Cut off both ends, slit the skin lengthwise, and peel the thick skin back with a knife and fork.</li>
+          <li>Eat the flesh, ideally chilled. The seeds are hard, so swallow them whole or press the pulp through a sieve for juice. <strong>Eating a lot of seeds at once can cause constipation or a blockage</strong>, so keep portions moderate.</li>
+        </ol>
+        <p><strong>Pads (nopales):</strong> in spring, cut young, bright green, palm-sized pads at the joint (tongs and gloves). Scrape off every spine cluster with a knife, trim the edge and rinse. Slice them, then boil until tender and rinse off the slime, or grill them.</p>
+        <p><strong>Glochids in skin:</strong> don't rub. Pat sticky tape on and peel it off, or spread on white glue, let it dry and peel it. Use tweezers for big spines.</p>
+      </div>
+    </details>
+
+    <details class="item">
+      <summary>Medronho / strawberry tree <span class="sub">Arbutus unedo (medronheiro) · Oct–Dec, peak Nov (Algarve)</span></summary>
+      <div class="body">
+        <p><span class="tag warn">Eat in moderation</span></p>
+        <dl class="facts">
+          <dt>Identify</dt>
+          <dd>An evergreen shrub or small tree with reddish-brown bark that flakes and peels. Leaves are glossy, dark green, leathery and finely toothed. Clusters of small white to pinkish urn-shaped flowers appear in autumn. <strong>Flowers and ripe fruit appear together</strong>, because the fruit takes about a year to ripen. The fruit is round, ½–1 in (1.5–2.5 cm), covered in tiny bumps, and turns yellow, then orange, then <strong>deep red</strong> when ripe.</dd>
+          <dt>Where</dt>
+          <dd>The Algarve hills (Serra de Monchique, Serra do Caldeirão): cork-oak woodland, scrub and roadside slopes.</dd>
+          <dt>Ripe</dt>
+          <dd>Oct–Dec: deep red all over and soft. Sweet but mealy or grainy. Orange fruit is unripe and dry.</dd>
+          <dt>Caution</dt>
+          <dd>Overripe and fallen fruit ferments and contains alcohol. Eating a lot can cause stomach upset or mild intoxication. Eat a moderate amount, and skip fallen, mushy or wine-smelling fruit.</dd>
+          <dt>Harvest</dt>
+          <dd>Hand-pick into a shallow container, because the fruit is very soft. In the hills the fruit is gathered to make medronho brandy, so ask landowners.</dd>
+          <dt>Keep</dt>
+          <dd>A few days in the fridge. Make jam (cook with sugar and lemon), or dry or freeze it.</dd>
+        </dl>
+      </div>
+    </details>
+
+    <details class="item">
+      <summary>Loquat <span class="sub">Eriobotrya japonica (nêspera) · Mar–May, peak Apr (Algarve)</span></summary>
+      <div class="body">
+        <p><span class="tag danger">Seeds toxic</span></p>
+        <dl class="facts">
+          <dt>Identify</dt>
+          <dd>A small evergreen tree. Its leaves are large (4–12 in / 10–30 cm), stiff, leathery, dark green, deeply veined and toothed, with a rusty, woolly underside. Fragrant white flowers appear in autumn and winter. The fruit grows in clusters, oval to pear-shaped, 1–2 in (3–5 cm), yellow-orange with slightly fuzzy skin and 1–5 large, glossy brown seeds.</dd>
+          <dt>Where</dt>
+          <dd>Gardens, farmyards and around houses across the Algarve, sometimes self-seeded. It doesn't fruit outdoors in the NE US.</dd>
+          <dt>Ripe</dt>
+          <dd>Spring: full yellow-orange, slightly soft and sweet-tart. Unripe fruit is greenish-yellow and sour.</dd>
+          <dt>Harvest</dt>
+          <dd>Clip whole clusters with scissors, because the fruit bruises easily.</dd>
+          <dt>Eat</dt>
+          <dd>Peel if you like. <strong>Throw away the seeds: they contain cyanide-producing compounds. Never eat, grind or steep them.</strong></dd>
+          <dt>Keep</dt>
+          <dd>Only a few days, in the fridge. Peel, seed and freeze, or make jam (slightly underripe fruit sets better).</dd>
+        </dl>
+      </div>
+    </details>
+  </section>
+
+  <!-- ============================================================ LOOK-ALIKES -->
+  <section id="lookalikes">
+    <h2>Toxic look-alikes</h2>
+    <div class="callout danger">
+      <strong class="callout-title">The rules that keep you alive</strong>
+      <ul>
+        <li><strong>If it is not 100% identified, do not eat it.</strong></li>
+        <li><strong>Never eat white berries, or any berry you cannot name.</strong></li>
+        <li><strong>Aggregate berries</strong> (blackberry, raspberry, wineberry, dewberry) are among the safest groups for beginners, but still confirm the plant.</li>
+        <li><strong>As a beginner, never forage anything in the carrot family</strong> (umbrella-shaped flower clusters, ferny leaves). Poison hemlock, water hemlock and hemlock water-dropwort kill, and a single bite can be enough.</li>
+        <li>Birds eating a berry proves nothing. Birds eat pokeweed, yew and holly berries.</li>
+        <li>Cooking does not make most poisonous plants safe.</li>
+        <li>Garden, hedge and park plants cause many poisonings, especially in children. Teach kids never to eat anything outdoors without asking an adult.</li>
+        <li>Check the plant the fruit is <em>attached to</em>. Vines and shrubs tangle together.</li>
+      </ul>
+    </div>
+
+    <div class="table-wrap"><table class="data stack">
+      <caption class="sr-only">Toxic plants often confused with wild food</caption>
+      <thead><tr><th scope="col">Plant · where</th><th scope="col">Recognise it</th><th scope="col">Mistaken for</th><th scope="col">Toxic parts</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">Pokeweed<br><small>Phytolacca americana · NE US; naturalised in Portugal</small></th><td data-label="Recognise it">Tall (4–10 ft / 1–3 m) non-woody plant with thick, smooth <strong>magenta stems</strong> and large simple leaves. <strong>Purple-black, flattened berries in long drooping spikes.</strong> The juice stains magenta.</td><td data-label="Mistaken for">Elderberry, grapes, blueberries</td><td data-label="Toxic parts"><strong>All parts</strong>, the root most</td></tr>
+        <tr><th scope="row">Horse chestnut, buckeye<br><small>Aesculus · both</small></th><td data-label="Recognise it">Palmate leaves (5–7 leaflets). Leathery husk with few short spikes. <strong>One round, glossy nut</strong> with a big pale scar, no point.</td><td data-label="Mistaken for">Sweet chestnut</td><td data-label="Toxic parts">Nuts, leaves, bark</td></tr>
+        <tr><th scope="row">Moonseed<br><small>Menispermum canadense · NE US</small></th><td data-label="Recognise it">Vine <strong>without tendrils</strong>. Smooth-edged leaves with the stalk attached inside the margin. <strong>One crescent-shaped seed</strong> per berry.</td><td data-label="Mistaken for">Wild grape</td><td data-label="Toxic parts">Fruit and seeds; <strong>can kill</strong></td></tr>
+        <tr><th scope="row">Virginia creeper<br><small>Parthenocissus quinquefolia · NE US; planted in Europe</small></th><td data-label="Recognise it">5 leaflets from one point, tendrils with sticky pads, blue-black berries on red stalks.</td><td data-label="Mistaken for">Wild grape</td><td data-label="Toxic parts">Berries</td></tr>
+        <tr><th scope="row">Yew<br><small>Taxus · both (hedges, gardens, churchyards)</small></th><td data-label="Recognise it">Evergreen with flat, soft, dark needles in 2 rows and no woody cones. A single seed sits in a <strong>red, fleshy, open cup</strong> (aril).</td><td data-label="Mistaken for">Red berries; pines (for pine nuts)</td><td data-label="Toxic parts"><strong>Seed, needles, bark: can stop the heart within hours</strong></td></tr>
+        <tr><th scope="row">Deadly nightshade<br><small>Atropa belladonna · Europe; rare in N. America</small></th><td data-label="Recognise it">Bushy plant, 2–5 ft (0.6–1.5 m), with dull purple-brown bell flowers. <strong>A shiny black berry the size of a cherry sitting on a green, star-shaped calyx</strong>. The berries taste sweetish.</td><td data-label="Mistaken for">Blueberries, black cherries</td><td data-label="Toxic parts"><strong>All parts</strong>; a few berries can kill a child</td></tr>
+        <tr><th scope="row">Bittersweet nightshade<br><small>Solanum dulcamara · both</small></th><td data-label="Recognise it">Scrambling vine with purple star-shaped flowers around a yellow centre cone. Oval, glossy berries turn green to <strong>bright red</strong>, in drooping clusters.</td><td data-label="Mistaken for">Red currants, small tomatoes</td><td data-label="Toxic parts">Berries (especially unripe), leaves</td></tr>
+        <tr><th scope="row">Holly<br><small>Ilex · both</small></th><td data-label="Recognise it">Evergreen with glossy, spiny-edged leaves and red (sometimes black or yellow) berries in winter.</td><td data-label="Mistaken for">Any red berry</td><td data-label="Toxic parts">Berries, leaves</td></tr>
+        <tr><th scope="row">Privet<br><small>Ligustrum · both (hedges)</small></th><td data-label="Recognise it">Hedge shrub with small, opposite, smooth-edged oval leaves and clusters of small <strong>blue-black berries</strong> in autumn and winter.</td><td data-label="Mistaken for">Elderberry, blueberries</td><td data-label="Toxic parts">Berries, leaves</td></tr>
+        <tr><th scope="row">Poison hemlock<br><small>Conium maculatum · both</small></th><td data-label="Recognise it">Carrot family. Tall, with a hairless, hollow stem with <strong>purple blotches</strong>, ferny leaves and white umbrella flower clusters. Musty, "mousy" smell.</td><td data-label="Mistaken for">Wild carrot, parsley, elderflower</td><td data-label="Toxic parts"><strong>All parts; deadly</strong></td></tr>
+        <tr><th scope="row">Water hemlock / hemlock water-dropwort<br><small>Cicuta (NE US) · Oenanthe crocata (common along streams in Portugal)</small></th><td data-label="Recognise it">Carrot family, in wet ground, ditches and stream banks. White umbrella clusters. Thick, chambered or tuberous roots with yellowish sap.</td><td data-label="Mistaken for">Wild parsnip, celery, parsley, elderflower</td><td data-label="Toxic parts"><strong>All parts, roots most; one bite can cause seizures and death</strong></td></tr>
+        <tr><th scope="row">Daphne<br><small>D. mezereum (gardens) · D. gnidium (trovisco, very common in Algarve scrub)</small></th><td data-label="Recognise it">Small shrub with narrow leaves, small fragrant flowers and <strong>red</strong> (sometimes orange or black) berries.</td><td data-label="Mistaken for">Currants, red berries</td><td data-label="Toxic parts">All parts; berries burn the mouth</td></tr>
+        <tr><th scope="row">Lily-of-the-valley<br><small>Convallaria majalis · gardens; wild in N. Europe; naturalised in NE US</small></th><td data-label="Recognise it">Low plant with 2 broad, smooth leaves and fragrant white bell flowers on a one-sided stalk in spring. <strong>Orange-red berries</strong> in late summer.</td><td data-label="Mistaken for">Leaves look like wild garlic / ramps (which smell of garlic)</td><td data-label="Toxic parts"><strong>All parts</strong> (heart toxins)</td></tr>
+        <tr><th scope="row">Castor bean<br><small>Ricinus communis · very common in Algarve stream beds and roadsides; ornamental in US</small></th><td data-label="Recognise it">Tall shrub-like plant with large, glossy, star-shaped leaves (5–11 pointed, toothed lobes), often reddish. Spiny seed capsules hold <strong>shiny, mottled, bean-like seeds</strong>.</td><td data-label="Mistaken for">Beans, nuts</td><td data-label="Toxic parts"><strong>Seeds (ricin); chewed seeds can kill</strong></td></tr>
+        <tr><th scope="row">Oleander<br><small>Nerium oleander · very common in the Algarve; houseplant in NE US</small></th><td data-label="Recognise it">Evergreen shrub with narrow, leathery leaves (often in 3s), pink, white or red flowers, and long, thin seed pods.</td><td data-label="Mistaken for">Not usually mistaken for food. The danger is using it as skewers, firewood or food wrapping.</td><td data-label="Toxic parts"><strong>Everything</strong>, including the smoke (heart toxins)</td></tr>
+        <tr><th scope="row">Jerusalem cherry<br><small>Solanum pseudocapsicum · houseplant; escapes in mild climates</small></th><td data-label="Recognise it">Small shrub with narrow glossy leaves and <strong>round orange-red berries like cherry tomatoes</strong>.</td><td data-label="Mistaken for">Cherry tomatoes, cherries</td><td data-label="Toxic parts">Berries, leaves</td></tr>
+        <tr><th scope="row">Dwarf elder<br><small>Sambucus ebulus · Europe incl. Iberia</small></th><td data-label="Recognise it"><strong>Non-woody</strong>, 3–6 ft (1–2 m), black berries in <strong>upright</strong> clusters, unpleasant smell.</td><td data-label="Mistaken for">Elderberry</td><td data-label="Toxic parts">All parts</td></tr>
+      </tbody>
+    </table></div>
+
+    <div class="callout danger">
+      <strong class="callout-title">Oleander (everywhere in the Algarve)</strong>
+      <p>Every part is poisonous to people and animals: leaves, flowers, sap and seeds. <strong>Never burn it</strong>, because the smoke is toxic. Never use the stems as skewers or roasting sticks, and never stir, wrap or cook food with it. Don't let children chew the flowers.</p>
+    </div>
+    <p>Learn these locally too: black and white bryony (red berries, Europe), buckthorns (black berries, laxative), jimsonweed (datura, spiny seed pods), foxglove and monkshood.</p>
+  </section>
+
+  <!-- ============================================================ HARVEST -->
+  <section id="harvest">
+    <h2>Harvesting technique &amp; tools</h2>
+    <h3>Kit</h3>
+    <ul>
+      <li><strong>Containers</strong>: shallow baskets or rigid tubs for soft fruit. A bucket hung from your belt or neck leaves both hands free. Use mesh or cloth bags for nuts so air can flow. Avoid closed plastic bags for anything warm or wet.</li>
+      <li><strong>Tarp or old sheet</strong>, about 10 × 10 ft (3 × 3 m), for shaking.</li>
+      <li><strong>Long pole</strong> (bamboo or similar) for tapping branches. A <strong>hooked stick</strong> (a forked branch or a cane with a hook) for gently pulling branches down.</li>
+      <li><strong>Gloves</strong>: leather for chestnut burs, brambles and prickly pear; waterproof nitrile or rubber for walnut husks and fig sap.</li>
+      <li><strong>Tongs</strong> (prickly pear), <strong>pruners or scissors</strong> (grape, elderberry and loquat clusters), and a small knife.</li>
+      <li><strong>Hand rake</strong> or leaf rake to pull nuts out of leaf litter. A rolling <strong>nut gatherer</strong> (a wire cage on a handle) picks up walnuts, pecans, chestnuts and acorns without bending.</li>
+      <li>A hat and eye protection when shaking trees. Long sleeves and trousers, insect repellent and water.</li>
+    </ul>
+
+    <h3>Pole and tarp method</h3>
+    <ol class="steps">
+      <li>Spread the tarp under the branch, out to the edge of the canopy. Clear away sticks and stones so nothing bruises.</li>
+      <li>Put on a hat and eye protection, and stand clear of where things will fall. Shake the branch by hand, or tap it sharply with the pole near the fruit or nuts.</li>
+      <li>Ripe nuts and fruit drop and unripe ones stay, which is the point. Don't thrash or break limbs, because that damages next year's crop.</li>
+      <li>Gather up the corners and pour the harvest into containers. Pick out leaves, unripe fruit, and anything mouldy or holed.</li>
+    </ol>
+    <ul>
+      <li><strong>Shaking works best for</strong> mulberries, serviceberries, almonds, carob, pecans and beechnuts.</li>
+      <li><strong>Gathering from the ground is better</strong> for nuts and fruit that drop on their own as they ripen (acorns, walnuts, hickory, chestnuts, pawpaw, persimmon), because you get only ripe ones. Go daily or every other day: whatever lies around gets mouldy, wormy or eaten. Skip anything that has sat in wet leaves for days.</li>
+      <li><strong>Pick by hand</strong> soft fruit that bruises (berries, figs, loquat, medronho), and hazelnuts before they fall.</li>
+    </ul>
+    <div class="callout warn">
+      <strong class="callout-title">Falls are the commonest foraging injury</strong>
+      <p>Don't climb trees to forage. Use a stable stepladder only on level ground and with a helper. Never shake a branch you are standing under.</p>
+    </div>
+
+    <h3>Ethics &amp; the law</h3>
+    <ul>
+      <li><strong>Take no more than about a third</strong> of what's on a plant or patch, and less if the patch is small. Spread your picking out.</li>
+      <li><strong>Leave plenty for wildlife.</strong> Nuts and fruit are their winter food.</li>
+      <li><strong>Don't damage plants.</strong> No breaking branches, stripping bark or pulling up roots.</li>
+      <li><strong>Get permission</strong> on private land. In Portugal, olives, almonds, carob, figs, chestnuts and pine cones usually belong to a landowner, even on unfenced, untidy land.</li>
+      <li><strong>Protected areas</strong> have rules on collecting: limits or outright bans. That includes many US state and national parks, and Portugal's natural parks (e.g. Ria Formosa, Costa Vicentina). Check before you pick, and never take rare or protected plants.</li>
+    </ul>
+
+    <h3>Where not to pick</h3>
+    <p>Roadsides (exhaust, old lead, de-icing salt, herbicide), rail lines and power-line corridors (herbicide), sprayed fields and orchards, lawns, golf courses and parks, industrial sites, dumps and mine spoil, ditches and floodplains that take sewage or polluted runoff, and dog-walking edges. Wash everything in clean water.</p>
+  </section>
+
+  <!-- ============================================================ STORAGE -->
+  <section id="storage">
+    <h2>Processing &amp; storage</h2>
+    <h3>Drying</h3>
+    <ul>
+      <li><strong>Sun drying</strong> works in hot, dry, sunny weather, such as an Algarve summer (figs, carob, almonds). Lay produce in a single layer on screens or racks off the ground, under fine mesh against insects and birds. Turn it daily and bring it in at night, because dew re-wets it. It takes days.</li>
+      <li><strong>Solar dryer</strong>: a box with a dark base, a clear lid and screened vents top and bottom. Faster and cleaner than open sun.</li>
+      <li><strong>Air drying</strong> in shade suits nuts in the shell. Use screens or mesh bags somewhere cool, dry, airy and safe from rodents.</li>
+      <li><strong>Low oven, or near a stove</strong>: use the lowest setting with the door propped open, and stir often. Fruit and fruit leather dry well at 135–140 °F (57–60 °C). <strong>Dry nuts below about 100 °F (38 °C)</strong>, because more heat speeds rancidity. Roasting is a separate, final step.</li>
+      <li><strong>When is it done?</strong> Dried fruit is leathery with no moist centre when squeezed; nut kernels snap rather than bend. Then condition dried fruit: pack it loosely in a jar and shake daily for a week. Any condensation means it needs more drying.</li>
+    </ul>
+
+    <h3>Cold storage &amp; freezing</h3>
+    <ul>
+      <li><strong>Fresh fruit</strong>: keep in the fridge at 32–40 °F (0–4 °C), unwashed, in shallow containers. Most berries last 1–3 days; figs, mulberries and medronho 1–2.</li>
+      <li><strong>Chestnuts</strong>: keep in the fridge in a breathable bag, and use within a few weeks.</li>
+      <li><strong>Freezing</strong>: spread berries on a tray, freeze, then bag them so they stay loose. Freeze persimmon and pawpaw as seedless pulp, chestnuts cooked and peeled, and nut kernels in airtight bags (a year or more).</li>
+    </ul>
+
+    <h3>Simple preserving</h3>
+    <ul>
+      <li><strong>Jam and jelly</strong> need enough sugar, acid and pectin to set and keep. Low-sugar jams must be refrigerated or frozen. Low-acid fruits such as figs, mulberries and elderberries need added lemon juice; follow tested recipes.</li>
+      <li><strong>Canning</strong>: a water bath is safe only for high-acid foods (pH 4.6 or lower, such as most fruit and jams). Low-acid foods, including olives, need pressure canning. Use tested recipes and read the canning safety rules on the <a href="../food/index.html">Food page</a>. Throw out bulging, leaking or off-smelling jars without tasting.</li>
+      <li><strong>Fruit leather</strong>: purée the fruit, sieve out the seeds, spread it ⅛–¼ in (3–6 mm) thick, and dry until it is no longer sticky.</li>
+      <li><strong>Syrups</strong> (elderberry, rose hip, carob): keep in the fridge.</li>
+    </ul>
+
+    <h3>Nuts: rancidity, mould and insects</h3>
+    <ul>
+      <li><strong>Rancidity</strong>: nut oils go rancid with heat, light and air. Rancid nuts smell of paint, crayons or old oil and taste sharp or bitter. Throw them out: they have lost their value and can upset the stomach.</li>
+      <li><strong>Storage</strong>: keep nuts in the shell where possible, because the shell protects them. Stored cool, dry, dark and rodent-proof, they last months. Shelled nuts last only weeks at room temperature, months airtight in the fridge, and a year or more in the freezer.</li>
+      <li><strong>Mould</strong>: throw out mouldy, shrivelled or discoloured kernels. Mould can produce aflatoxin, which cooking doesn't destroy.</li>
+      <li><strong>Weevils and moth larvae</strong>: freeze nuts and dried fruit for <strong>at least 48 hours</strong> at 0 °F (−18 °C) to kill eggs and larvae, then store airtight. Larvae often crawl out of freshly gathered acorns and chestnuts, so process those quickly.</li>
+    </ul>
+  </section>
+
+  <!-- ============================================================ EDIBILITY TEST -->
+  <section id="edibility">
+    <h2>Universal edibility test: last resort only</h2>
+    <div class="callout danger">
+      <strong class="callout-title">Passing this test does not make a plant safe</strong>
+      <p>It is a slow, risky last resort for a genuine survival emergency, and it only screens for fast, obvious reactions. <strong>Many plants that pass are still harmful.</strong> Some toxins are slow or cumulative: they damage the liver, kidneys or heart, and show up hours or days later, or only after repeated meals. Some plants (water hemlock, yew, oleander, castor bean) are so toxic that even the tiny test amounts can seriously harm or kill. Identification always beats testing.</p>
+    </div>
+
+    <h3>Do NOT use it</h3>
+    <ul>
+      <li><strong>Never on mushrooms or any other fungus.</strong></li>
+      <li>If you have food, can wait for rescue, or can walk out. You can survive about 3 weeks without food; water and shelter matter far more.</li>
+      <li>If you can't spare 24+ hours, or you are already weak. The test costs energy and fluids.</li>
+      <li>On any plant with:
+        <ul>
+          <li>milky or discoloured sap;</li>
+          <li>a bitter or soapy taste (if one appears at any step, stop);</li>
+          <li>an almond scent in crushed leaves or woody parts;</li>
+          <li>umbrella-shaped flower clusters, or dill-, carrot- or parsley-like leaves (the deadly carrot family);</li>
+          <li>three-leaved growth (poison ivy and others);</li>
+          <li>beans, bulbs or seeds inside pods;</li>
+          <li>spines, fine hairs or thorns;</li>
+          <li>grain heads with pink, purple or black spurs (ergot);</li>
+          <li>wilted or mouldy parts.</li>
+        </ul>
+      </li>
+      <li>On anything you have already identified as toxic, or that resembles a toxic plant on this page.</li>
+      <li>On children, or anyone pregnant or ill.</li>
+    </ul>
+
+    <h3>The procedure: one part of one plant at a time</h3>
+    <ol class="steps">
+      <li><strong>Pick one part to test</strong>: leaf, stem, root, bud, flower or fruit. A part that passes says nothing about the plant's other parts, or about the same part prepared another way. Test only plants that are plentiful, or it isn't worth the effort.</li>
+      <li><strong>Smell it.</strong> Reject anything with a strong, unpleasant or almond-like smell.</li>
+      <li><strong>Fast for 8 hours</strong> before you start. For the whole test, take nothing by mouth except purified water and the plant part you are testing.</li>
+      <li><strong>Skin contact test</strong> (do it during the fast): crush the part and hold it against the inside of your elbow or wrist. Watch for burning, itching, redness, rash or swelling for at least 15 minutes, and preferably the whole 8 hours. Any reaction: reject the plant.</li>
+      <li><strong>Prepare a small portion</strong> exactly as you plan to eat it, raw or boiled. Each preparation method needs its own test.</li>
+      <li><strong>Lip</strong>: touch a small piece to the outer surface of your lip and wait 3 minutes. Any burning, itching, numbness or tingling: stop and reject.</li>
+      <li><strong>Tongue</strong>: place a piece on your tongue and hold it there for <strong>15 minutes</strong>. Don't chew or swallow.</li>
+      <li><strong>Chew and hold</strong>: chew a pinch thoroughly and hold it in your mouth for <strong>15 minutes</strong>. Don't swallow. Bitter or soapy taste, burning, stinging or numbness: spit it out, rinse, and reject.</li>
+      <li><strong>Swallow</strong> that small amount, then <strong>wait 8 hours</strong>. Eat nothing else.</li>
+      <li>No reaction at all? <strong>Eat a larger amount</strong>, about ¼ cup (60 mL), prepared the same way. <strong>Wait another 8 hours.</strong></li>
+      <li>Still no reaction: that one part, prepared that way, is <em>probably</em> safe in moderation. Start with small meals and watch for problems over the following days.</li>
+    </ol>
+    <p><strong>Total: about 24 hours or more for each plant part.</strong></p>
+    <div class="callout warn">
+      <strong class="callout-title">Stop at the first sign of a reaction</strong>
+      <p>Nausea, cramps, dizziness, mouth irritation, a racing or pounding heart, or anything unusual: stop, spit out what is in your mouth, rinse, and eat no more. <strong>Do not make yourself vomit.</strong> Drink some water and follow the poisoning steps below.</p>
+    </div>
+  </section>
+
+  <!-- ============================================================ POISONING -->
+  <section id="poison">
+    <h2>Plant poisoning: signs and what to do</h2>
+    <h3>Early signs</h3>
+    <p>Signs can start minutes or hours after eating; some much later.</p>
+    <ul>
+      <li>Burning, tingling, numbness or swelling of the lips, mouth or throat; drooling, or a very dry mouth.</li>
+      <li>Nausea, vomiting, stomach cramps, diarrhoea.</li>
+      <li>Dizziness, headache, sweating, weakness, trembling.</li>
+      <li>Big pupils, blurred vision, hot, dry, flushed skin, confusion, agitation or hallucinations (nightshades, datura).</li>
+      <li>A slow, fast or irregular heartbeat, or fainting (yew, oleander, lily-of-the-valley, foxglove).</li>
+      <li>Muscle twitching or seizures (water hemlock, hemlock water-dropwort).</li>
+      <li>Trouble breathing, hives, or swelling of the face or tongue: this is an allergic reaction (anaphylaxis).</li>
+      <li>On the skin: rash, blisters or burns (fig sap plus sun, glochids, irritant sap).</li>
+    </ul>
+    <p>Some poisonings (castor bean, for example) start hours later, after a gap with no symptoms. Don't relax just because someone feels fine.</p>
+
+    <h3>What to do</h3>
+    <ol class="steps">
+      <li><strong>Stop eating.</strong> Spit out what is in the mouth and rinse with water. Stop everyone else eating the same thing.</li>
+      <li><strong>Call emergency now</strong> on <strong>911</strong> (US) or <strong>112</strong> (Portugal/EU) if they have collapsed, are unresponsive, are having seizures, have trouble breathing or chest pain, or have a very slow or irregular pulse. If they have an epinephrine auto-injector and show signs of anaphylaxis, use it. If they are not breathing normally, start CPR (see <a href="../firstaid/index.html">First aid</a>). If they are unresponsive but breathing, put them in the recovery position. With no signal, try anyway: emergency calls can connect through any network.</li>
+      <li><strong>Otherwise, call poison control right away, even if symptoms are mild</strong>: <strong>US Poison Control 1-800-222-1222</strong> (24/7, free) · <strong>Portugal CIAV 800 250 250</strong>. Have ready: the person's age and weight, the plant (or a description), which part, how much, when, and the symptoms.</li>
+      <li><strong>Don't make them vomit</strong> unless poison control or a doctor tells you to. No salt water and no fingers down the throat. Give nothing by mouth to anyone drowsy, confused or seizing. Give activated charcoal only if advised to.</li>
+      <li><strong>Keep a sample</strong> of the plant (leaves, fruit, seeds) in a bag or paper, and take photos. Keep any vomit too. Bring it all to the hospital.</li>
+      <li><strong>Write down</strong> when they ate and when each symptom started. Watch them closely for at least 24 hours, and don't leave them alone.</li>
+      <li><strong>Skin or eyes</strong>: remove contaminated clothing and wash skin with soap and plenty of water. Keep fig-sap areas out of the sun. Rinse eyes with clean running water for 15 minutes.</li>
+    </ol>
+  </section>
+
+  <a class="btn back-top no-print" href="#main">Back to top</a>
+
+  <footer class="page-foot">
+    <p>Compiled from regional field guides, university extension and USDA/NCHFP food-safety guidance, the US Army survival manual (edibility test) and poison-centre advice. Seasons are approximate. Confirm emergency numbers locally. Reference only: not a substitute for an expert's identification or for medical care.</p>
+  </footer>
+</main>
+</body>
+</html>
