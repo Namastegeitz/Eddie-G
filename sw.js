@@ -12,10 +12,11 @@
 'use strict';
 
 // PRECACHE-START (generated — do not edit by hand)
-const VERSION = "74a7ae6e89cf";
+const VERSION = "38338feae12a";
 const PRECACHE = [
   "./",
   "assets/css/app.css",
+  "assets/css/compass.css",
   "assets/css/map.css",
   "assets/icons/apple-touch-icon.png",
   "assets/icons/favicon-32.png",
@@ -25,6 +26,8 @@ const PRECACHE = [
   "assets/icons/icon-maskable.svg",
   "assets/icons/icon.svg",
   "assets/js/common.js",
+  "assets/js/compass-ui.js",
+  "assets/js/compass.js",
   "assets/js/geo.js",
   "assets/js/hub.js",
   "assets/js/map/core.js",
@@ -55,6 +58,7 @@ const PRECACHE = [
   "assets/vendor/mgrs.min.js",
   "assets/vendor/qrcode.js",
   "assets/vendor/suncalc.js",
+  "compass/index.html",
   "electricity/index.html",
   "emergency/index.html",
   "emergency/off-grid-emergency-guide.pdf",

@@ -230,8 +230,29 @@ let failures = 0;
     console.log('   PDF:', JSON.stringify(r));
     if (r[0] !== 200 || r[3] !== '%PDF-') throw new Error('PDF not cached');
   });
+  await step('offline: compass (simulated sensor) + map compass overlay', async () => {
+    await page.goto(BASE + 'compass/index.html');
+    await page.waitForTimeout(500);
+    const ori = (a, be, g) => page.evaluate(([a, be, g]) => { for (let i = 0; i < 80; i++) window.dispatchEvent(new DeviceOrientationEvent('deviceorientationabsolute', { alpha: a, beta: be, gamma: g, absolute: true })); }, [a, be, g]);
+    await page.evaluate(() => { OGCompass.setDeclination(0); localStorage.setItem('ogsk.compass.ref', 'mag'); localStorage.removeItem('ogsk.compass.lock'); });
+    await page.reload(); await page.waitForTimeout(400);
+    await ori(90, 0, 0); await page.waitForTimeout(300);
+    const deg = (await page.textContent('.cmp-deg')).trim(), cd = await page.textContent('.cmp-cardtxt');
+    console.log('   compass reads', deg, cd);
+    if (deg !== '270°' || cd !== 'W') throw new Error('expected 270° W');
+    await page.click('.cmp-lock');
+    await ori(60, 0, 0); await page.waitForTimeout(300);
+    const st = await page.textContent('.cmp-steer'); console.log('   steering:', st);
+    if (!/LEFT 30°/.test(st)) throw new Error('steering wrong');
+    await page.click('.cmp-lock');
+    await page.goto(BASE + 'map/index.html#compass');
+    await page.waitForSelector('html[data-map-ready="1"]');
+    await page.waitForTimeout(400);
+    if (!(await page.isVisible('#cmp-overlay'))) throw new Error('map compass overlay did not open');
+    await page.click('#cmp-close');
+  });
   await step('offline: other pages open', async () => {
-    for (const p of ['index.html', 'tools/index.html', 'water/index.html', 'foraging/index.html', 'firstaid/index.html', 'fireshelter/index.html', 'food/index.html', 'electricity/index.html', 'emergency/index.html']) {
+    for (const p of ['index.html', 'compass/index.html', 'tools/index.html', 'water/index.html', 'foraging/index.html', 'firstaid/index.html', 'fireshelter/index.html', 'food/index.html', 'electricity/index.html', 'emergency/index.html']) {
       const r = await page.goto(BASE + p).catch(e => null);
       const title = await page.title().catch(() => '?');
       console.log('   ', p, r ? r.status() : 'FAILED', title);

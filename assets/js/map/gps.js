@@ -120,36 +120,17 @@
   }
   App.paintTelemetry = paintTelemetry;
 
-  /* ---------------- compass / heading ---------------- */
-  var compassOn = false, magHeading = null, magT = 0, sx = 0, sy = 0;
+  /* ---------------- compass / heading ----------------
+     The sensor work (iOS permission, Android absolute orientation, tilt modes,
+     smoothing) lives in the shared engine assets/js/compass.js (OGCompass). */
   var compassCtl = null;
 
-  function onOrientation(e) {
-    var h = null;
-    if (typeof e.webkitCompassHeading === 'number' && !isNaN(e.webkitCompassHeading)) h = e.webkitCompassHeading; // iOS (magnetic)
-    else if (e.absolute === true && e.alpha != null) h = 360 - e.alpha;                                            // Android absolute
-    else if (e.type === 'deviceorientationabsolute' && e.alpha != null) h = 360 - e.alpha;
-    if (h == null) return;
-    var ang = (screen.orientation && typeof screen.orientation.angle === 'number') ? screen.orientation.angle : (window.orientation || 0);
-    h = OGGeo.norm360(h + ang);
-    // circular low-pass filter to steady the needle
-    var r = h * Math.PI / 180, k = 0.25;
-    sx = sx * (1 - k) + Math.sin(r) * k; sy = sy * (1 - k) + Math.cos(r) * k;
-    magHeading = OGGeo.norm360(Math.atan2(sx, sy) * 180 / Math.PI); magT = Date.now();
-    schedulePaint();
-  }
-  var paintQueued = false;
-  function schedulePaint() {
-    if (paintQueued) return;
-    paintQueued = true;
-    requestAnimationFrame(function () { paintQueued = false; updateHeading(); });
-  }
   function updateHeading() {
     var f = App.gps.fix, now = Date.now();
     var deg = null, src = null;
-    if (magHeading != null && now - magT < 3000) { deg = App.toTrue(magHeading); src = 'compass'; }
+    if (OGCompass.source === 'compass' && OGCompass.magHeading != null) { deg = App.toTrue(OGCompass.magHeading); src = 'compass'; }
     else if (f && f.course != null && f.speed != null && f.speed > 0.7 && now - f.t < 10000) { deg = f.course; src = 'gps'; }
-    App.heading = { deg: deg, src: src, mag: src === 'compass' ? magHeading : null, t: now };
+    App.heading = { deg: deg, src: src, mag: src === 'compass' ? OGCompass.magHeading : null, t: now };
     paintHeading(); paintCone();
     App.emit('heading', App.heading);
   }
@@ -157,44 +138,60 @@
     var h = App.heading;
     $('tl-hdg').textContent = h.deg == null ? '—' : Math.round(h.deg) + '° ' + OGGeo.cardinal(h.deg);
     if (!compassCtl) return;
-    var rose = compassCtl.querySelector('.rose'), deg = compassCtl.querySelector('.cmp-deg'), src = compassCtl.querySelector('.cmp-src');
+    var rose = compassCtl.querySelector('.rose'), deg = compassCtl.querySelector('.ctl-deg'), src = compassCtl.querySelector('.ctl-src');
     if (h.deg == null) {
       rose.style.transform = 'rotate(0deg)';
       deg.textContent = '—';
-      src.textContent = compassOn ? 'move phone' : 'tap: compass';
+      src.textContent = OGCompass.status === 'ok' || OGCompass.status === 'waiting' ? 'move phone' : 'tap: compass';
     } else {
       rose.style.transform = 'rotate(' + (-h.deg) + 'deg)';
       deg.textContent = String(Math.round(h.deg) % 360).padStart(3, '0') + '° ' + OGGeo.cardinal(h.deg);
-      src.textContent = h.src === 'compass' ? ((+App.settings.declination ? 'true · ' : 'magnetic · ') + 'compass') : 'GPS course';
+      src.textContent = h.src === 'compass' ? ((+App.settings.declination ? 'true' : 'magnetic') + ' · tap') : 'GPS course';
     }
   }
   function enableCompass(fromUser) {
-    if (typeof DeviceOrientationEvent === 'undefined') { if (fromUser) OGSK.toast('No compass sensor available in this browser', { error: true }); return; }
-    function listen() {
-      if (compassOn) return;
-      compassOn = true;
-      if ('ondeviceorientationabsolute' in window) window.addEventListener('deviceorientationabsolute', onOrientation);
-      else window.addEventListener('deviceorientation', onOrientation);
-      setTimeout(function () {
-        if (magHeading == null && fromUser) OGSK.toast('No compass reading — this device or browser may not expose one. GPS course is used while walking.');
+    return OGCompass.start(fromUser).then(function (ok) {
+      if (!fromUser) return ok;
+      if (OGCompass.status === 'denied') OGSK.toast('Compass permission denied', { error: true });
+      else if (OGCompass.status === 'unsupported') OGSK.toast('No compass sensor available in this browser', { error: true });
+      else setTimeout(function () {
+        if (OGCompass.status === 'nosensor') OGSK.toast('No compass reading — this device or browser may not expose one. GPS course is used while walking.');
       }, 3000);
-      paintHeading();
-    }
-    if (typeof DeviceOrientationEvent.requestPermission === 'function') {   // iOS 13+
-      if (!fromUser) return;  // must come from a tap
-      DeviceOrientationEvent.requestPermission().then(function (state) {
-        if (state === 'granted') listen(); else OGSK.toast('Compass permission denied', { error: true });
-      }).catch(function () { OGSK.toast('Compass permission could not be requested', { error: true }); });
-    } else listen();
+      return ok;
+    });
   }
   App.enableCompass = enableCompass;
+
+  /* ---------------- full compass overlay (shared UI from compass-ui.js) ---------------- */
+  var cmpUI = null, bearingLine = null, lockBrg = null;
+  function liveFix() { var f = App.gps.fix; return f && Date.now() - f.t < 120000 ? f : null; }
+  function drawBearing() {
+    if (bearingLine) { App.map.removeLayer(bearingLine); bearingLine = null; }
+    if (lockBrg == null) return;
+    var f = liveFix(), c = App.map.getCenter();
+    var from = f ? [f.lat, f.lon] : [c.lat, c.lng];
+    var end = OGGeo.destination(from[0], from[1], lockBrg, 5000);
+    bearingLine = L.polyline([from, end], { color: '#2fbf71', weight: 4, dashArray: '4 9', lineCap: 'round', interactive: false }).addTo(App.map);
+  }
+  App.openCompass = function () {
+    if (!cmpUI) cmpUI = OGCompassUI.mount($('cmp-host'), { getFix: liveFix, onLock: function (b) { lockBrg = b; drawBearing(); } });
+    $('cmp-overlay').hidden = false;
+    cmpUI.setActive(true);
+    $('cmp-close').focus();
+  };
+  App.closeCompass = function () {
+    if ($('cmp-overlay').hidden) return;
+    $('cmp-overlay').hidden = true;
+    if (cmpUI) cmpUI.setActive(false);
+    if (lockBrg != null && bearingLine) App.map.fitBounds(bearingLine.getBounds().pad(0.1), { maxZoom: 15 });
+  };
 
   var CompassControl = L.Control.extend({
     options: { position: 'topleft' },
     onAdd: function () {
       var b = L.DomUtil.create('button', 'compass-ctl');
       b.type = 'button';
-      b.setAttribute('aria-label', 'Compass. Tap to enable the compass sensor.');
+      b.setAttribute('aria-label', 'Compass. Tap to open the full compass.');
       b.innerHTML =
         '<svg viewBox="0 0 100 100" aria-hidden="true">' +
         '<path d="M50 2 L46 10 L54 10 Z" fill="var(--accent)"/>' +  // fixed lubber mark (phone's top)
@@ -206,11 +203,11 @@
         '<text x="81" y="58" text-anchor="middle" font-size="10" font-weight="800" fill="currentColor">E</text>' +
         '<text x="50" y="84" text-anchor="middle" font-size="10" font-weight="800" fill="currentColor">S</text>' +
         '<text x="19" y="58" text-anchor="middle" font-size="10" font-weight="800" fill="currentColor">W</text>' +
-        '</g></svg><div class="cmp-deg">—</div><div class="cmp-src">tap: compass</div>';
+        '</g></svg><div class="ctl-deg">—</div><div class="ctl-src">tap: compass</div>';
       L.DomEvent.disableClickPropagation(b);
       L.DomEvent.on(b, 'click', function () {
-        if (!compassOn || magHeading == null) enableCompass(true);
-        else OGSK.toast('Heading ' + Math.round(App.heading.deg) + '° ' + (App.heading.src === 'compass' ? (+App.settings.declination ? 'true (declination ' + App.settings.declination + '°)' : 'magnetic — set declination in Settings for true') : 'from GPS course'));
+        enableCompass(true);     // inside the tap, so iOS can ask for permission
+        App.openCompass();
       });
       compassCtl = b;
       return b;
@@ -250,12 +247,17 @@
       var order = ['dd', 'dms', 'ddm'];
       App.set('coordFmt', order[(order.indexOf(App.settings.coordFmt) + 1) % 3]);
     });
+    $('cmp-close').addEventListener('click', App.closeCompass);
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') App.closeCompass(); });
+    App.on('gps', function () { if (lockBrg != null) drawBearing(); });
     $('set-compass').addEventListener('click', function () { enableCompass(true); OGSK.toast('Move the phone in a slow figure-8 to calibrate'); });
     App.on('settings', function (e) {
       if (e.key === 'coordFmt' || e.key === 'units') paintTelemetry();
-      if (e.key === 'declination') updateHeading();
+      if (e.key === 'declination') { OGCompass.declination = +e.value || 0; updateHeading(); }
     });
-    App.on('gps', function () { if (magHeading == null || Date.now() - magT > 3000) updateHeading(); });
+    App.on('gps', function (f) { OGCompass.feedGps(f); if (OGCompass.source !== 'compass') updateHeading(); });
+    OGCompass.on(updateHeading);
+    OGCompass.declination = +App.settings.declination || 0;
     setInterval(function () { if (App.gps.fix) paintTelemetry(); }, 5000);
     // restore last known fix (shown grey/stale until a live one arrives)
     try {

@@ -122,6 +122,8 @@
       App.map.setView([+m[1], +m[2]], m[3] ? +m[3] : 15);
     } else if (h === 'sos') {
       App.openBeacon();
+    } else if (h === 'compass') {
+      App.openCompass();
     } else if ((m = /^tab=(\w+)/.exec(h))) {
       App.openDrawer(m[1]);
     } else return;
