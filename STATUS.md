@@ -1,5 +1,21 @@
 # Status
 
+## Off-Grid Survival Kit (`apps/off-grid-survival-kit`)
+- Built from `prompts/claude/off-grid-survival-kit.md`: hub + map + 8 module folders, PWA (manifest,
+  service worker precaching 53 files), everything on-device (IndexedDB/localStorage), no CDN.
+- Map: IndexedDB tiles (browse-to-prime, capped "save this area" with elevation, parent-tile fallback,
+  graticule when blank), OSM/OpenTopoMap/custom URL, GPS + follow + telemetry, compass (iOS prompt),
+  waypoints (9 categories) + navigate-to, tracks, measure, GPX/JSON import-export, sun & moon,
+  MGRS/UTM grid, triangulation, elevation/slope + contours, QR share, SOS beacon, NJ/Algarve presets.
+- Content: foraging, water, first aid, fire/shelter/knots (SVG knot steps), food, electricity, tools
+  (strobe/Morse/tones/checklists/rendezvous), emergency PDF (18 pages, reportlab) + HTML version.
+- Tests: `tests/acceptance.js` (Playwright, mock tile server) — 24 checks online→offline all pass;
+  Chrome reports no PWA installability errors; print preview checked.
+- Not verified on real hardware yet: install + offline launch on a phone, real GPS/compass, torch,
+  and whether tile.openstreetmap.org / OpenTopoMap allow CORS saving (sandbox couldn't reach them).
+- Zip: `apps/off-grid-survival-kit/dist/off-grid-survival-kit.zip`.
+- Next: host it on HTTPS (e.g. GitHub Pages), install on a phone, save NJ/Algarve areas, field test.
+
 ## Bug's-Eye View (`apps/bugs-eye-view`)
 - Built end to end from `prompts/claude/bugs-eye-view.md` (all 6 phases, all 16 add-ons).
 - Godot 4.7.2 project: 3 bugs, 3 rooms with boss chases, perception-based stealth,

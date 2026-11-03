@@ -1,0 +1,757 @@
+<!doctype html>
+<html lang="en" data-root="../" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#000000">
+<meta name="description" content="Fire safety, fire without matches, fire lays, emergency shelters, snow shelters, tarp set-ups, staying warm, and the five knots that matter most.">
+<title>Fire &amp; Shelter — Off-Grid Survival Kit</title>
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="icon" href="../assets/icons/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../assets/icons/apple-touch-icon.png">
+<link rel="stylesheet" href="../assets/css/app.css">
+<script src="../assets/js/theme.js"></script>
+<script src="../assets/js/common.js" defer></script>
+<style>
+.diagram .rope{fill:none;stroke:currentColor;stroke-width:7;stroke-linecap:round;stroke-linejoin:round}
+.diagram .ln{fill:none;stroke:currentColor;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.diagram .thin{fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.diagram .dash{stroke-dasharray:5 6}
+.diagram .gap{fill:none;stroke:var(--surface-2);stroke-width:15;stroke-linecap:butt}
+.diagram .gap.onpost{stroke:var(--surface)}
+.diagram .lbl{font:600 13px system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;fill:currentColor;stroke:none}
+.diagram .lbl.sm{font-size:11.5px}
+.diagram .lbl.acc{fill:var(--accent)}
+.diagram .fc{fill:currentColor}
+.diagram .fa{fill:var(--accent)}
+.diagram .nf{fill:none}
+.diagram .sa{stroke:var(--accent)}
+.diagram .hatch{fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;opacity:.75}
+.panels{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;align-items:flex-start}
+figure.diagram .panels svg{flex:1 1 200px;width:auto;max-width:300px;height:auto}
+figure.diagram .panels.small svg{flex:1 1 140px;max-width:220px}
+@media print{.diagram .we,.diagram .sa{stroke:var(--border)!important}.diagram .fa,.diagram .lbl.acc{fill:var(--border)!important}}
+[id]{scroll-margin-top:72px}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="app-header">
+  <a class="hdr-btn" href="../index.html" aria-label="Back to hub"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg><span>Hub</span></a>
+  <h1>Fire, Shelter &amp; Knots</h1>
+  <span class="net-dot" role="img"></span>
+  <button class="hdr-btn" type="button" data-theme-toggle></button>
+</header>
+<main id="main" class="page">
+  <p class="lead">Get out of wind and wet first. Get off the cold ground. Then make fire. Every method below is numbered so you can follow it with cold hands.</p>
+  <div class="disclaimer"><strong>Read this first:</strong> practise these skills before you need them. Fire can kill you through burns, wildfire or carbon monoxide. Obey local fire bans. Knots here are for camp use — anything that holds a person's weight (climbing, rescue, lowering) needs proper training and rated gear.</div>
+  <div class="row no-print"><button class="btn print-btn" type="button" data-print>Print this page</button>
+    <button class="btn" type="button" data-expand-all="#main">Expand all</button></div>
+  <nav class="toc" aria-label="On this page"><ul>
+    <li><a href="#priorities">Priorities</a></li>
+    <li><a href="#fire-safety">Fire safety</a></li>
+    <li><a href="#fire-basics">Fire basics</a></li>
+    <li><a href="#fire-methods">Fire without matches</a></li>
+    <li><a href="#fire-lays">Fire lays</a></li>
+    <li><a href="#fire-use">Using fire</a></li>
+    <li><a href="#shelter-site">Shelter site</a></li>
+    <li><a href="#shelters">Debris hut &amp; lean-to</a></li>
+    <li><a href="#snow">Snow shelters</a></li>
+    <li><a href="#tarps">Tarp set-ups</a></li>
+    <li><a href="#warmth">Staying warm</a></li>
+    <li><a href="#knots">Knots</a></li>
+    <li><a href="#dangers">Killers: CO, wildfire, wet cold</a></li>
+  </ul></nav>
+
+  <section id="priorities">
+    <h2>Priorities</h2>
+    <p><strong>Rule of 3s</strong> (typical, not absolute): you can last about</p>
+    <ul>
+      <li><strong>3 minutes</strong> without air (or in icy water, or with severe bleeding)</li>
+      <li><strong>3 hours</strong> without shelter in harsh weather</li>
+      <li><strong>3 days</strong> without water</li>
+      <li><strong>3 weeks</strong> without food</li>
+    </ul>
+    <p>So in cold, wet or windy weather, <strong>shelter usually comes before fire</strong>. A fire can be rained out, burn down while you sleep, or run out of fuel. A good shelter keeps working all night.</p>
+    <ol class="steps">
+      <li><strong>Stay dry.</strong> Wet clothing loses most of its insulation and pulls heat from you fast. Avoid sweating: slow down and open layers <em>before</em> you get hot.</li>
+      <li><strong>Get out of the wind.</strong> Use terrain, thick trees, boulders, or your pack and gear as a windbreak.</li>
+      <li><strong>Insulate from the ground.</strong> This matters more than a roof over your head. Cold ground steals heat far faster than cold air. Pile up a thick, springy bed of dry leaves, pine needles, grass or boughs — at least a hand-span thick once compressed.</li>
+      <li><strong>Then overhead cover, then fire.</strong> Fire is for warmth, drying out, boiling water, signalling and morale.</li>
+    </ol>
+    <div class="callout info"><strong class="callout-title">Tip</strong><p>Collect everything — insulation, fuel, water — <strong>before dark</strong>. Night work in the cold is slow, clumsy and dangerous.</p></div>
+  </section>
+
+  <section id="fire-safety">
+    <h2>Fire safety &amp; choosing a site</h2>
+    <div class="callout danger"><strong class="callout-title">Danger — wet rocks can explode</strong><p>Never build a fire ring from <strong>wet, porous or river-bed rocks</strong>. Water trapped inside turns to steam and the rock can crack violently and throw hot fragments. Use dry rocks from high ground, or no ring at all. Do not sleep right against a rock face you have heated: it can flake off (spall).</p></div>
+    <ol class="steps">
+      <li><strong>Check the rules.</strong> Obey fire bans and restrictions. In a true emergency, keep the fire as small as will do the job.</li>
+      <li><strong>Clear a circle of about 10 ft (3 m)</strong> down to bare mineral soil: no leaves, needles, dry grass or roots that can carry fire.</li>
+      <li><strong>Look up.</strong> No overhanging branches, dry foliage or tarps above the fire.</li>
+      <li><strong>Avoid peat, deep duff and root mats.</strong> Fire can creep underground and pop up later, metres away.</li>
+      <li><strong>Mind the wind.</strong> Sparks travel downwind. Put the fire downwind of your shelter and gear, and do not light it in strong wind.</li>
+      <li><strong>Keep water, a pot of soil or a shovel</strong> ready before you light anything.</li>
+      <li><strong>Never leave a fire unattended</strong> — not even for a few minutes.</li>
+    </ol>
+    <h3>Put it out completely</h3>
+    <ol class="steps">
+      <li><strong>Drown</strong> it with water (or damp soil if water is scarce — not dry leaves).</li>
+      <li><strong>Stir</strong> the ashes and embers, scrape partly burnt sticks, and drown again.</li>
+      <li><strong>Feel</strong> with the back of your hand just above, then on, the ashes. If anything is warm, repeat. <strong>If it's too hot to touch, it's too hot to leave.</strong></li>
+    </ol>
+  </section>
+
+  <section id="fire-basics">
+    <h2>Fire basics</h2>
+    <div class="grid-2">
+      <figure class="diagram">
+        <svg class="diagram" viewBox="0 0 240 180" role="img" aria-label="Fire triangle: heat, fuel and oxygen. Remove any one and the fire goes out.">
+          <path class="ln" d="M120,22 L214,160 L26,160 Z"/>
+          <path class="fa" d="M120,128 C100,128 96,110 106,96 C108,108 114,108 114,100 C114,88 122,80 126,70 C130,84 146,96 138,114 C135,122 128,128 120,128 Z"/>
+          <text x="120" y="14" text-anchor="middle" class="lbl">HEAT</text>
+          <text x="14" y="176" class="lbl">FUEL</text>
+          <text x="226" y="176" text-anchor="end" class="lbl">OXYGEN (AIR)</text>
+        </svg>
+        <figcaption>Fire needs heat, fuel and air. Most failures: wet fuel, too-big fuel, or smothering it (no air).</figcaption>
+      </figure>
+      <figure class="diagram">
+        <svg class="diagram" viewBox="0 0 260 180" role="img" aria-label="Fuel sizes from left to right: tinder, pencil-lead thickness, pencil thickness, thumb thickness, wrist thickness">
+          <path class="thin" d="M10,92 C16,70 26,98 32,74 C36,96 46,72 48,92 C42,106 18,106 10,92 Z"/>
+          <circle cx="80" cy="88" r="2" class="fc"/>
+          <circle cx="128" cy="88" r="4" class="fc"/>
+          <circle cx="176" cy="88" r="9" class="fc"/>
+          <circle cx="230" cy="88" r="22" class="fa"/>
+          <text x="29" y="132" text-anchor="middle" class="lbl sm">tinder</text>
+          <text x="80" y="132" text-anchor="middle" class="lbl sm">pencil</text>
+          <text x="80" y="146" text-anchor="middle" class="lbl sm">lead</text>
+          <text x="128" y="132" text-anchor="middle" class="lbl sm">pencil</text>
+          <text x="176" y="132" text-anchor="middle" class="lbl sm">thumb</text>
+          <text x="230" y="132" text-anchor="middle" class="lbl sm">wrist</text>
+          <path class="thin" d="M24,162 L236,162 M226,156 L236,162 L226,168"/>
+          <text x="130" y="178" text-anchor="middle" class="lbl sm">add in this order, gently</text>
+        </svg>
+        <figcaption>End-on view of fuel thickness. Do not jump sizes.</figcaption>
+      </figure>
+    </div>
+    <div class="table-wrap"><table class="data">
+      <thead><tr><th>Stage</th><th>Size</th><th>Examples</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Tinder</strong></td><td>Fluffy, hair-fine</td><td>Birch bark, dry grass, cattail fluff, shredded inner bark, wood shavings, cotton balls with petroleum jelly, char cloth</td></tr>
+        <tr><td><strong>Kindling</strong></td><td>Pencil-lead to pencil thick</td><td>Dead twigs that <strong>snap</strong> cleanly, feather sticks, split sticks</td></tr>
+        <tr><td><strong>Small fuel</strong></td><td>Thumb thick</td><td>Dead branches, split wood</td></tr>
+        <tr><td><strong>Fuel</strong></td><td>Wrist thick and up</td><td>Add only once the fire is strong and has a bed of coals</td></tr>
+      </tbody>
+    </table></div>
+    <div class="callout ok"><strong class="callout-title">Gather twice what you think</strong><p>Before you strike anything, gather <strong>at least twice</strong> the tinder and kindling you think you need, sorted by size within arm's reach. Fires usually die in the first two minutes because the next size wasn't ready.</p></div>
+
+    <h3>Dry fuel in wet weather</h3>
+    <ul>
+      <li><strong>Standing dead wood</strong> and dead branches still on trees — drier than anything on the ground. If it bends instead of snapping, it's too wet.</li>
+      <li><strong>Split it.</strong> The core of a wet stick is often dry. Split wrist-thick dead wood with a knife and a baton.</li>
+      <li><strong>Feather sticks:</strong> shave thin curls down a dry split stick, leaving them attached. They catch like tinder.</li>
+      <li><strong>Birch bark</strong> (papery outer bark) burns even when damp — peel it from dead or fallen trees where you can.</li>
+      <li><strong>Fatwood:</strong> resin-soaked wood from dead pine stumps and branch joints. Smells of turpentine; shavings light even when wet.</li>
+      <li><strong>Dry grass, cattail fluff, old man's beard lichen</strong> — dry inside your clothing if damp.</li>
+      <li><strong>From your kit:</strong> cotton balls smeared with petroleum jelly (pull apart before lighting), char cloth, wax, hand sanitiser (alcohol gel — burns with a near-invisible flame).</li>
+      <li>Build on a <strong>platform of dry sticks</strong> laid side by side, not on wet ground or snow.</li>
+    </ul>
+    <details class="item"><summary>Make char cloth <span class="sub">catches a spark from flint &amp; steel or a ferro rod</span></summary><div class="body">
+      <ol class="steps">
+        <li>Cut <strong>100% cotton</strong> (old jeans, T-shirt, flannel) into squares about 2 in (5 cm). Synthetics melt — they won't work.</li>
+        <li>Put them in a small metal tin with a lid (mint or shoe-polish tin). Punch <strong>one small hole</strong> in the lid with a nail.</li>
+        <li>Put the tin in a fire or on coals. Smoke and gas will jet from the hole — sometimes alight. That's normal.</li>
+        <li>When the smoke stops (often 5–10 minutes), remove the tin and let it <strong>cool completely before opening</strong>. Plug the hole with a twig while it cools so air can't get in.</li>
+        <li>Good char cloth is <strong>black all through</strong> and flexible, not brown (undercooked) or crumbling to ash (overcooked). Store it dry in the tin.</li>
+      </ol>
+    </div></details>
+  </section>
+
+  <section id="fire-methods">
+    <h2>Fire without matches</h2>
+    <p>Carry three ways to light a fire (e.g. lighter, ferro rod, waterproof matches) and dry tinder in a sealed bag. The methods below are for when those fail. All of them make an <strong>ember or spark</strong> that you grow in a <strong>tinder bundle</strong>:</p>
+    <ol class="steps">
+      <li>Make a fist-sized "bird's nest" of fine, dry tinder: coarser material outside, finest fibres in the middle.</li>
+      <li>Put the ember or burning material in the centre and fold the nest loosely around it.</li>
+      <li>Hold it up, <strong>below and upwind of your face</strong>, and blow <strong>gently and steadily</strong>. Smoke thickens, then it flames.</li>
+      <li>Place it at once under your kindling (already laid — see <a href="#fire-lays">fire lays</a>).</li>
+    </ol>
+
+    <details class="item"><summary>Ferro rod (ferrocerium) <span class="sub">most reliable; works wet, in wind and at altitude</span></summary><div class="body">
+      <ol class="steps">
+        <li>New rods have a black coating — scrape it off first until you get sparks.</li>
+        <li>Prepare a tinder bundle, cotton-and-petroleum-jelly ball, fatwood shavings or birch bark shavings on a dry base.</li>
+        <li>Put the rod tip <strong>right in or against the tinder</strong>.</li>
+        <li>Hold the striker (or the <strong>90° spine of a knife</strong> — never the cutting edge) still, pressing firmly on the rod at a steep angle.</li>
+        <li><strong>Pull the rod back</strong> toward you while the striker stays put. This keeps your hand from smashing the tinder and puts sparks exactly where you aimed.</li>
+        <li>Use slow, firm, full-length scrapes. Once the tinder catches, feed kindling.</li>
+      </ol>
+    </div></details>
+
+    <details class="item"><summary>Bow drill <span class="sub">friction fire — hard work; practise in good conditions first</span></summary><div class="body">
+      <figure class="diagram">
+        <div class="panels">
+          <svg class="diagram" viewBox="0 0 260 212" role="img" aria-label="Bow drill set from the side: a vertical spindle stands on a fireboard held down by your foot; a bearing block presses on top; the bow's cord takes one turn round the spindle; a leaf under the notch catches the ember">
+            <path class="thin" d="M6,190 L254,190"/>
+            <rect x="26" y="176" width="208" height="13" rx="2" class="ln"/>
+            <path class="ln" d="M34,176 L34,150 C34,140 58,140 64,150 L88,168 C94,172 92,176 86,176"/>
+            <rect x="150" y="70" width="16" height="106" rx="5" class="ln"/>
+            <rect x="126" y="52" width="64" height="18" rx="6" class="ln"/>
+            <path class="ln" style="stroke-width:5" d="M16,122 C70,92 196,86 250,114"/>
+            <path class="thin sa" style="stroke-width:2.5" d="M18,124 L150,122 M166,128 L150,134 M166,140 L248,116"/>
+            <path class="fa" d="M144,191 L174,191 L170,197 L148,197 Z"/>
+            <text x="158" y="42" text-anchor="middle" class="lbl sm">bearing block (lubricated)</text>
+            <text x="172" y="166" class="lbl sm">spindle</text>
+            <text x="20" y="104" class="lbl sm">bow</text>
+            <text x="62" y="118" class="lbl sm acc">cord: one turn</text>
+            <text x="96" y="160" class="lbl sm">foot</text>
+            <text x="20" y="206" class="lbl sm">fireboard</text>
+            <text x="180" y="206" class="lbl sm acc">leaf</text>
+          </svg>
+          <svg class="diagram" viewBox="0 0 240 200" role="img" aria-label="Fireboard seen from above: a round burned depression near the edge, with a V notch cut from the edge to the centre of the depression, about one eighth of the circle">
+            <rect x="20" y="40" width="200" height="110" rx="4" class="ln"/>
+            <circle cx="120" cy="125" r="20" class="ln"/>
+            <path class="fa" d="M120,125 L112.3,143.5 L106,150 L134,150 L127.7,143.5 Z"/>
+            <circle cx="120" cy="125" r="3" class="fc"/>
+            <text x="120" y="30" text-anchor="middle" class="lbl sm">fireboard from above</text>
+            <text x="150" y="110" class="lbl sm">depression</text>
+            <text x="120" y="176" text-anchor="middle" class="lbl sm acc">notch: edge to centre,</text>
+            <text x="120" y="192" text-anchor="middle" class="lbl sm acc">about 1/8 of the circle</text>
+          </svg>
+        </div>
+        <figcaption>Left: the set from the side. Right: the notch, cut after burning in the depression.</figcaption>
+      </figure>
+      <ol class="steps">
+        <li><strong>Wood:</strong> dead, bone-dry, fairly soft wood — <strong>cedar, willow, poplar/aspen/cottonwood, basswood (linden), yucca</strong> stalk. Using the <strong>same wood</strong> for spindle and fireboard usually works. Your thumbnail should just dent it.</li>
+        <li><strong>Spindle:</strong> straight, about thumb-thick and a hand-span long (roughly 2 cm × 20 cm). Round the bottom; point the top slightly.</li>
+        <li><strong>Fireboard:</strong> flat, about finger-thick (1.5–2 cm), wider than the spindle.</li>
+        <li><strong>Bow:</strong> a stiff stick about arm-length with cord (shoelace, paracord) tied so the spindle twists into it tightly.</li>
+        <li><strong>Bearing block:</strong> hardwood, stone with a dimple, or bone. <strong>Lubricate</strong> its socket (grease, soap, lip balm, crushed green leaves) so friction happens at the bottom, not the top.</li>
+        <li>Kneel, foot on the board, wrist braced against your shin so the spindle stays <strong>vertical</strong>. Burn a shallow depression near the board's edge.</li>
+        <li><strong>Cut the notch:</strong> a V from the board's edge <strong>to the centre of the depression</strong>, about <strong>1/8 of the circle</strong>. Put a dry leaf or bark under it.</li>
+        <li>Drill with <strong>long, full strokes</strong> using the whole bow. Start steady, then add speed and downward pressure as smoke builds and dark powder fills the notch.</li>
+        <li>When there is heavy smoke and the powder keeps smoking on its own, stop. Let it sit a few seconds; fan gently. Tap the board and lift it away.</li>
+        <li>Move the <strong>ember on its leaf/bark into the tinder bundle</strong> and blow gently until it flames.</li>
+      </ol>
+      <div class="callout warn"><strong class="callout-title">Caution</strong><p>This takes a lot of energy and sweat. In the cold, sweat chills you — work in short bursts and open layers. Don't burn energy on it if you have any other option.</p></div>
+    </div></details>
+
+    <details class="item"><summary>Lens (sunlight) <span class="sub">only in strong, direct sun</span></summary><div class="body">
+      <ol class="steps">
+        <li><strong>Lens options:</strong> magnifying glass; <strong>reading glasses with strong magnifying (positive) lenses</strong> — glasses for short-sightedness will not work; a clear water-filled bottle or clear plastic bag twisted into a ball; or a lens shaped from <strong>very clear ice</strong>, smoothed with warm hands (cloudy ice will not work).</li>
+        <li>Use <strong>dark tinder</strong> — char cloth, punky wood, or tinder blackened with charcoal catches far faster.</li>
+        <li>Angle the lens square to the sun. Move it toward and away from the tinder until the spot is the <strong>smallest, brightest point</strong>.</li>
+        <li>Hold it <strong>perfectly still</strong> and shield it from wind. When it glows, transfer to a tinder bundle and blow gently.</li>
+      </ol>
+      <p class="muted">Don't stare at the bright spot for long. Midday sun works best; hazy or low sun often fails.</p>
+    </div></details>
+
+    <details class="item"><summary>Battery + steel wool <span class="sub">fast and easy if you carry both</span></summary><div class="body">
+      <ol class="steps">
+        <li>Use <strong>fine steel wool (grade 0000)</strong>. Fluff out a pad on top of your tinder bundle.</li>
+        <li><strong>9 V battery:</strong> touch <strong>both terminals</strong> to the wool at the same time. It glows and spreads instantly.</li>
+        <li><strong>AA / D cells:</strong> hold two or more end to end (+ to −), and touch a thin strip of wool across the two free ends.</li>
+        <li>Fold the tinder around the glowing wool and blow gently.</li>
+      </ol>
+      <div class="callout danger"><strong class="callout-title">Fire risk in your pack</strong><p>Store steel wool <strong>sealed, away from batteries</strong> (separate bag or tin). A 9 V battery touching loose steel wool in a pack can start a fire.</p></div>
+    </div></details>
+
+    <details class="item"><summary>Other methods <span class="sub">flint &amp; steel, fire piston, chemical</span></summary><div class="body">
+      <ul>
+        <li><strong>Flint &amp; steel:</strong> strike a high-carbon steel striker down along the sharp edge of a hard rock (flint, chert, quartz) with <strong>char cloth</strong> held on top of the rock. Sparks land on the cloth and make a glowing spot; put it in a tinder bundle and blow.</li>
+        <li><strong>Fire piston:</strong> a cylinder and plunger. Put char cloth in the plunger tip, drive it in hard and fast, then pull out at once — compressed air heats enough to make an ember.</li>
+        <li><strong>Chemical:</strong> some kits use potassium permanganate with glycerin, which ignites by itself after a delay. It is a strong oxidiser and can flare violently. Use only if you have practised with it and follow the kit's instructions.</li>
+      </ul>
+    </div></details>
+  </section>
+
+  <section id="fire-lays">
+    <h2>Fire lays</h2>
+    <p>Lay the kindling <strong>before</strong> you make the spark or ember. Leave gaps for air. Light from the <strong>upwind side</strong> so the wind pushes flame into the fuel.</p>
+
+    <details class="item"><summary>Teepee <span class="sub">fast start, hot flame — best for lighting and boiling</span></summary><div class="body">
+      <figure class="diagram"><svg class="diagram" viewBox="0 0 240 150" role="img" aria-label="Teepee fire lay: kindling leaning together in a cone over a tinder bundle, with a gap on the upwind side">
+        <path class="thin" d="M10,134 L230,134"/>
+        <path class="fa" d="M100,134 C100,114 140,114 140,134 Z"/>
+        <path class="ln" d="M64,134 L120,30 M176,134 L120,30 M86,134 L121,28 M156,134 L119,28 M74,134 L123,34 M166,134 L117,34"/>
+        <path class="thin sa" d="M16,52 L58,108 M48,102 L58,108 L58,96"/>
+        <text x="6" y="44" class="lbl sm acc">wind / light here</text>
+        <text x="146" y="60" class="lbl sm">kindling</text>
+        <text x="120" y="148" text-anchor="middle" class="lbl sm acc">tinder</text>
+      </svg><figcaption>Lean kindling over the tinder; leave a door on the upwind side to light it.</figcaption></figure>
+      <ol class="steps">
+        <li>Put the tinder bundle on a dry base.</li>
+        <li>Lean pencil-lead and pencil-thick sticks around it in a cone; leave a <strong>door facing the wind</strong>.</li>
+        <li>Add a looser outer layer of thumb-thick sticks.</li>
+        <li>Light through the door. Add fuel to the outside as it burns; it collapses into coals.</li>
+      </ol>
+    </div></details>
+
+    <details class="item"><summary>Log cabin <span class="sub">stable, lots of coals — cooking and long burns</span></summary><div class="body">
+      <figure class="diagram"><svg class="diagram" viewBox="0 0 240 150" role="img" aria-label="Log cabin fire lay: sticks stacked in alternating layers to form a square crib around a small teepee">
+        <path class="thin" d="M10,140 L230,140"/>
+        <circle cx="56" cy="130" r="9" class="ln"/><circle cx="184" cy="130" r="9" class="ln"/>
+        <rect x="40" y="106" width="160" height="14" rx="7" class="ln"/>
+        <circle cx="64" cy="94" r="8" class="ln"/><circle cx="176" cy="94" r="8" class="ln"/>
+        <rect x="50" y="72" width="140" height="13" rx="6.5" class="ln"/>
+        <circle cx="72" cy="61" r="7" class="ln"/><circle cx="168" cy="61" r="7" class="ln"/>
+        <path class="thin sa" d="M104,104 L120,66 L136,104 M112,104 L120,70 L128,104"/>
+        <text x="120" y="24" text-anchor="middle" class="lbl sm">layers cross at right angles,</text>
+        <text x="120" y="40" text-anchor="middle" class="lbl sm">getting smaller as you go up</text>
+      </svg><figcaption>A crib of crossed sticks around a small teepee.</figcaption></figure>
+      <ol class="steps">
+        <li>Build a small teepee of tinder and kindling.</li>
+        <li>Lay two thumb-to-wrist-thick sticks on either side, then two across them, like a cabin. Keep going, using slightly smaller sticks.</li>
+        <li>Optionally lay a "roof" of kindling across the top.</li>
+        <li>Light the teepee inside.</li>
+      </ol>
+    </div></details>
+
+    <details class="item"><summary>Lean-to fire lay <span class="sub">for wind — a log shelters the tinder</span></summary><div class="body">
+      <figure class="diagram"><svg class="diagram" viewBox="0 0 240 150" role="img" aria-label="Lean-to fire lay: a large log on the upwind side, tinder against its downwind side, and kindling leaning from the ground onto the log">
+        <path class="thin" d="M10,136 L230,136"/>
+        <circle cx="80" cy="114" r="22" class="ln"/>
+        <path class="fa" d="M104,136 C104,120 128,120 128,136 Z"/>
+        <path class="ln" d="M180,136 L92,94 M190,136 L96,100 M168,136 L90,90"/>
+        <path class="thin sa" d="M14,60 L52,60 M44,54 L52,60 L44,66"/>
+        <text x="14" y="50" class="lbl sm acc">wind</text>
+        <text x="80" y="82" text-anchor="middle" class="lbl sm">big log</text>
+        <text x="116" y="150" text-anchor="middle" class="lbl sm acc">tinder</text>
+      </svg><figcaption>The log goes on the windward side.</figcaption></figure>
+      <ol class="steps">
+        <li>Lay a large log (or rock that is <strong>dry</strong>) on the upwind side.</li>
+        <li>Put the tinder against its downwind side.</li>
+        <li>Lean kindling from the ground onto the log, over the tinder.</li>
+        <li>Light from the end, keeping your body as an extra windbreak.</li>
+      </ol>
+    </div></details>
+
+    <details class="item"><summary>Star fire <span class="sub">saves fuel; long, slow burn with no chopping</span></summary><div class="body">
+      <figure class="diagram"><svg class="diagram" viewBox="0 0 240 150" role="img" aria-label="Star fire seen from above: five logs with their ends meeting in the fire at the centre; push them inward as they burn">
+        <path class="ln" style="stroke-width:10" d="M120,75 L120,12 M120,75 L196,52 M120,75 L170,140 M120,75 L70,140 M120,75 L44,52"/>
+        <circle cx="120" cy="75" r="16" class="fa"/>
+        <path class="thin sa" d="M206,22 L184,40 M184,30 L184,40 L194,40"/>
+        <text x="206" y="16" text-anchor="end" class="lbl sm acc">push in</text>
+      </svg><figcaption>Top view. Only the tips burn; slide each log in as it shortens.</figcaption></figure>
+      <ol class="steps">
+        <li>Start a small fire.</li>
+        <li>Lay 4–6 long logs with their ends meeting in the fire, like spokes.</li>
+        <li>Push the logs in as the ends burn. Pull them out to cut the heat.</li>
+      </ol>
+    </div></details>
+
+    <details class="item"><summary>Dakota fire hole <span class="sub">low visibility, strong draught, good in wind</span></summary><div class="body">
+      <figure class="diagram"><svg class="diagram" viewBox="0 0 240 160" role="img" aria-label="Dakota fire hole in cross-section: a fire pit and a smaller air hole on the upwind side, joined by a tunnel at the bottom">
+        <path class="ln" d="M8,50 L66,50 M114,50 L160,50 M190,50 L232,50"/>
+        <path class="ln" d="M66,50 L66,124 C66,140 114,140 114,124 L114,108 C134,104 150,96 160,50 M190,50 C178,104 150,124 114,128"/>
+        <path class="fa" d="M76,130 C72,114 84,112 84,100 C92,110 96,96 100,92 C104,108 108,112 104,130 Z"/>
+        <path class="hatch" d="M20,62 L32,74 M40,62 L52,74 M20,90 L32,102 M40,90 L52,102 M20,118 L32,130 M128,62 L140,74 M200,70 L212,82 M210,100 L222,112 M140,140 L152,152 M170,130 L182,142 M30,140 L42,152"/>
+        <path class="thin sa" d="M226,20 L194,40 M196,30 L194,40 L204,42"/>
+        <text x="232" y="14" text-anchor="end" class="lbl sm acc">wind</text>
+        <text x="90" y="40" text-anchor="middle" class="lbl sm">fire hole</text>
+        <text x="176" y="36" text-anchor="middle" class="lbl sm">air hole</text>
+      </svg><figcaption>Cross-section. The air hole is on the upwind side.</figcaption></figure>
+      <ol class="steps">
+        <li>Dig a fire hole roughly 1 ft (30 cm) wide and deep.</li>
+        <li>About a hand-span or two away, <strong>on the upwind side</strong>, dig a smaller air hole angled down to meet the bottom of the fire hole.</li>
+        <li>Build the fire in the bottom of the fire hole. Air is drawn through the tunnel.</li>
+        <li>Pots can sit across the top on green sticks.</li>
+      </ol>
+      <div class="callout warn"><strong class="callout-title">Don't dig in peat or roots</strong><p>Never dig a Dakota hole in <strong>peat, deep duff or a mat of roots</strong>: fire can smoulder underground and spread unseen. Use mineral soil only. Refill the holes and soak them when done.</p></div>
+    </div></details>
+
+    <details class="item"><summary>Long fire <span class="sub">warms your whole body when sleeping out</span></summary><div class="body">
+      <figure class="diagram"><svg class="diagram" viewBox="0 0 240 140" role="img" aria-label="Long fire seen from above: two long logs side by side with the fire burning in the gap between them, and a sleeper lying parallel to it">
+        <rect x="24" y="20" width="192" height="16" rx="8" class="ln"/>
+        <rect x="24" y="52" width="192" height="16" rx="8" class="ln"/>
+        <path class="fa" d="M30,44 C40,38 46,48 56,42 C66,36 72,48 84,42 C96,36 102,48 114,42 C126,36 132,48 144,42 C156,36 162,48 174,42 C186,36 192,48 210,44 L210,48 L30,48 Z"/>
+        <rect x="34" y="96" width="172" height="26" rx="13" class="thin"/>
+        <circle cx="52" cy="109" r="8" class="thin"/>
+        <path class="thin" d="M120,72 L120,92 M114,86 L120,92 L126,86 M114,78 L120,72 L126,78"/>
+        <text x="128" y="88" class="lbl sm">clear gap</text>
+        <text x="120" y="136" text-anchor="middle" class="lbl sm">about as long as you are</text>
+      </svg><figcaption>Top view. Fire burns between two long logs.</figcaption></figure>
+      <ol class="steps">
+        <li>Lay two long logs side by side about a hand-span apart, as long as your body.</li>
+        <li>Build the fire in the gap along its full length. Feed it to keep an even bed of coals.</li>
+        <li>Sleep parallel to it with a <strong>clear, swept gap</strong> (about 3 ft / 1 m or more) — <strong>never downwind</strong>, and with nothing burnable between you and the fire.</li>
+        <li>Someone stays awake to tend it, or you wake regularly. Pair it with a reflector wall behind the fire.</li>
+      </ol>
+    </div></details>
+
+    <details class="item"><summary>Reflector wall <span class="sub">throws heat back toward you and your shelter</span></summary><div class="body">
+      <figure class="diagram"><svg class="diagram" viewBox="0 0 260 150" role="img" aria-label="Reflector wall in side view: stacked logs held by stakes behind the fire; heat radiates from the fire to the person and bounces off the wall toward the person">
+        <path class="thin" d="M8,134 L252,134"/>
+        <path class="ln" d="M22,134 L18,58 M50,134 L46,58"/>
+        <rect x="12" y="116" width="44" height="16" rx="8" class="ln"/>
+        <rect x="12" y="98" width="44" height="16" rx="8" class="ln"/>
+        <rect x="12" y="80" width="44" height="16" rx="8" class="ln"/>
+        <rect x="12" y="62" width="44" height="16" rx="8" class="ln"/>
+        <path class="fa" d="M96,134 C88,118 100,114 100,102 C108,112 112,98 116,94 C120,110 126,114 120,134 Z"/>
+        <path class="thin sa" d="M126,110 L190,104 M182,99 L190,104 L183,110 M98,104 L62,96 M62,96 L196,86 M188,82 L196,86 L189,92"/>
+        <path class="ln" d="M206,134 L250,56 L250,134"/>
+        <circle cx="218" cy="110" r="7" class="thin"/>
+        <path class="thin" d="M212,126 L240,126"/>
+        <text x="34" y="50" text-anchor="middle" class="lbl sm">wall</text>
+        <text x="108" y="150" text-anchor="middle" class="lbl sm acc">fire</text>
+        <text x="224" y="48" text-anchor="middle" class="lbl sm">you</text>
+      </svg><figcaption>Logs stacked between stakes, on the far side of the fire from you.</figcaption></figure>
+      <ol class="steps">
+        <li>Drive two pairs of stakes about 1–2 ft (30–60 cm) behind where the fire will be.</li>
+        <li>Stack green or damp logs between them to knee-to-waist height. A dry rock face also works, but heat it gently and don't sleep against it.</li>
+        <li>Build the fire between the wall and your shelter. Heat that would escape is bounced toward you.</li>
+      </ol>
+    </div></details>
+  </section>
+
+  <section id="fire-use">
+    <h2>Using fire</h2>
+    <h3>Signalling</h3>
+    <ul>
+      <li><strong>Three fires in a triangle</strong> (or a straight line), spaced well apart (roughly 75–100 ft / 25–30 m), is an internationally recognised distress signal. Three of anything = help.</li>
+      <li><strong>Daytime:</strong> smoke is seen better than flame. Pile <strong>green vegetation</strong> (fresh leaves, boughs, moss) on a hot fire for thick <strong>white smoke</strong> — best against dark forest.</li>
+      <li>Over <strong>snow</strong> or pale ground, <strong>black smoke</strong> shows better: burn a little rubber or oil (spare tyre strips, oily rags). Stay upwind — that smoke is toxic.</li>
+      <li><strong>Night:</strong> bright flame. Keep signal fires <strong>built and ready</strong> (dry tinder protected under bark, green boughs nearby) so you can light them the moment you hear an aircraft.</li>
+      <li>Use open ground or a clearing so smoke rises and the fire can't spread.</li>
+    </ul>
+    <h3>Cooking &amp; water</h3>
+    <ul>
+      <li>Cook over <strong>coals</strong>, not flame — steadier heat, less burning. A log cabin lay makes good coals.</li>
+      <li>Boil water at a rolling boil for <strong>1 minute</strong> (<strong>3 minutes above 6,500 ft / 2,000 m</strong>). See <a href="../water/index.html">Water</a>.</li>
+      <li>Never put sealed cans or containers in a fire — they can burst.</li>
+    </ul>
+    <h3>Drying clothes safely</h3>
+    <ul>
+      <li>Hang wet items on sticks <strong>beside</strong> the fire, not over it, and never leave them unattended. Turn them often.</li>
+      <li>Synthetics <strong>melt</strong> and fleece can catch fire quickly; feel them often. Keep boots back — leather cracks and soles delaminate if too hot.</li>
+      <li>Dry socks and gloves first, then base layers. Drying clothes on your body near a fire also works but takes time.</li>
+      <li><strong>Never</strong> bring a fire, stove or coals inside a tent or snow shelter to dry things. See <a href="#dangers">carbon monoxide</a>.</li>
+    </ul>
+  </section>
+
+  <section id="shelter-site">
+    <h2>Choosing a shelter site</h2>
+    <div class="callout danger"><strong class="callout-title">Look up, look down</strong><p><strong>Widowmakers</strong> — dead trees and dead or hung-up branches — kill campers every year, often in wind at night. Never shelter under or within falling distance of them. Never shelter in a <strong>dry wash, gully or stream bed</strong>: flash floods can arrive from rain you can't see or hear.</p></div>
+    <ul>
+      <li><strong>Avoid valley bottoms and hollows</strong> — cold air sinks and pools there at night, and they collect fog, frost and water.</li>
+      <li><strong>Avoid exposed ridgetops</strong> — wind and lightning. A flat bench partway up a slope is often warmest.</li>
+      <li><strong>Near materials and water, but not right beside water</strong> — a short walk away (roughly 200 ft / 60 m): drier, fewer insects, safer from rising water and animals coming to drink.</li>
+      <li><strong>Use natural windbreaks:</strong> boulders, thickets, the lee side of a ridge or a big fallen log (check it's stable).</li>
+      <li><strong>Drainage:</strong> a slight rise with firm, dry ground. Water must run away from your bed, not into it.</li>
+      <li>Avoid avalanche and rockfall paths, ant nests, animal trails and lone tall trees.</li>
+      <li>If you want to be found, stay near an open area where you can lay out signals and build signal fires.</li>
+    </ul>
+  </section>
+
+  <section id="shelters">
+    <h2>Debris hut &amp; lean-to</h2>
+
+    <details class="item"><summary>Debris hut <span class="sub">no tools or tarp needed; warm without a fire</span></summary><div class="body">
+      <figure class="diagram"><svg class="diagram" viewBox="0 0 320 180" role="img" aria-label="Debris hut in side view: a ridgepole rests on a stump or forked prop at the head end and slopes to the ground at the feet end; ribs lean against it; it is buried under 2 to 3 feet of debris; a thick bed of debris lies inside; the small entrance at the high end faces away from the wind">
+        <path class="thin" d="M6,156 L314,156"/>
+        <path class="ln" d="M14,156 C14,80 66,58 112,64 C176,74 262,112 314,156"/>
+        <path d="M10,156 L10,136 C10,124 34,124 34,136 L34,156 Z" style="fill:var(--surface-2);stroke:currentColor;stroke-width:2.5"/>
+        <text x="22" y="174" text-anchor="middle" class="lbl sm">door</text>
+        <path class="hatch" d="M30,120 L44,108 M40,140 L56,126 M70,80 L84,70 M100,76 L114,68 M140,82 L156,76 M180,92 L196,86 M220,106 L236,100 M260,122 L276,116 M290,140 L302,134 M30,96 L42,86 M64,100 L76,92 M160,100 L170,96"/>
+        <rect x="38" y="108" width="22" height="48" rx="3" class="ln"/>
+        <path class="ln" style="stroke-width:6" d="M44,104 L300,156"/>
+        <path class="ln" d="M92,114 L84,156 M130,122 L124,156 M168,130 L163,156 M206,138 L202,156 M244,145 L241,156"/>
+        <path class="fa" style="opacity:.55" d="M62,156 L262,156 L262,148 C200,142 120,140 62,146 Z"/>
+        <path class="thin sa" d="M120,112 L120,68 M114,76 L120,68 L126,76 M114,104 L120,112 L126,104"/>
+        <text x="126" y="88" class="lbl sm acc">2–3 ft</text>
+        <text x="126" y="101" class="lbl sm acc">(60–90 cm)</text>
+        <text x="126" y="114" class="lbl sm acc">of debris</text>
+        <text x="160" y="174" text-anchor="middle" class="lbl sm">thick debris bed inside, under you</text>
+        <text x="10" y="40" class="lbl sm">entrance: high end,</text>
+        <text x="10" y="54" class="lbl sm">away from wind</text>
+        <path class="thin" d="M300,40 L262,58 M268,50 L262,58 L272,60"/>
+        <text x="312" y="34" text-anchor="end" class="lbl sm">wind</text>
+      </svg><figcaption>Side view. Ridgepole on a stump or forked prop; ribs leaning on it; then a deep pile of leaves and debris.</figcaption></figure>
+      <ol class="steps">
+        <li><strong>Ridgepole:</strong> a sturdy pole about <strong>1.5× your height</strong>. Rest one end on a stump, rock or forked prop about hip-to-waist high; the other end on the ground.</li>
+        <li><strong>Check the size:</strong> lie under it. You want just enough room to roll over — <strong>small is warm</strong>; your body heats the space.</li>
+        <li><strong>Ribs:</strong> lean sticks closely along both sides of the ridgepole, steep enough to shed rain. Leave a small entrance at the high end.</li>
+        <li><strong>Lattice:</strong> lay brushy twigs across the ribs so the debris doesn't fall through.</li>
+        <li><strong>Debris:</strong> pile dry leaves, needles, grass and ferns on top — <strong>at least 2–3 ft (60–90 cm) thick</strong>, more in cold or rain. It takes far more than you think. Top with branches to stop it blowing away.</li>
+        <li><strong>Bed:</strong> fill the inside with a thick layer of dry debris and compress it. You'll lie on and under debris — insulation underneath matters most.</li>
+        <li><strong>Door:</strong> keep the entrance small and facing away from the wind (leeward). Once inside, <strong>plug it</strong> with a pile of debris or a stuffed pack.</li>
+      </ol>
+      <div class="callout warn"><strong class="callout-title">No fire inside</strong><p>Never have a fire, stove or candle in or near a debris hut — it is a pile of dry fuel.</p></div>
+    </div></details>
+
+    <details class="item"><summary>Lean-to <span class="sub">quick; best with a fire and reflector in front</span></summary><div class="body">
+      <figure class="diagram"><svg class="diagram" viewBox="0 0 300 170" role="img" aria-label="Lean-to in side view: roof slopes down to the ground on the windward side; a fire burns in front of the open side with a reflector wall beyond it">
+        <path class="thin" d="M6,150 L294,150"/>
+        <circle cx="96" cy="62" r="6" class="ln"/>
+        <path class="ln" d="M96,68 L96,150"/>
+        <path class="ln" style="stroke-width:6" d="M100,58 L22,150"/>
+        <path class="hatch" d="M40,118 L58,124 M52,104 L70,110 M64,90 L82,96 M76,76 L94,82"/>
+        <path class="fa" style="opacity:.55" d="M40,150 L94,150 L94,142 L44,142 Z"/>
+        <path class="thin sa" d="M10,64 L46,90 M36,88 L46,90 L42,80"/>
+        <text x="8" y="56" class="lbl sm acc">wind</text>
+        <path class="fa" d="M160,150 C152,134 164,130 164,118 C172,128 176,114 180,110 C184,126 190,130 184,150 Z"/>
+        <rect x="226" y="134" width="40" height="14" rx="7" class="ln"/>
+        <rect x="226" y="118" width="40" height="14" rx="7" class="ln"/>
+        <rect x="226" y="102" width="40" height="14" rx="7" class="ln"/>
+        <path class="ln" d="M230,150 L228,94 M262,150 L260,94"/>
+        <path class="thin sa" d="M156,124 L112,116 M120,112 L112,116 L120,121 M222,112 L190,116"/>
+        <text x="60" y="30" class="lbl sm">roof: back to the wind</text>
+        <text x="172" y="166" text-anchor="middle" class="lbl sm">fire</text>
+        <text x="246" y="88" text-anchor="middle" class="lbl sm">reflector</text>
+      </svg><figcaption>Side view. Open side faces the fire; the roof takes the wind.</figcaption></figure>
+      <ol class="steps">
+        <li>Check the wind. Plan for the <strong>back of the roof to face into it</strong>. (Wind can shift at night — in valleys cold air often flows downhill.)</li>
+        <li>Lash or wedge a ridgepole between two trees or on two forked uprights, about waist-to-chest high.</li>
+        <li>Lean poles from the ridgepole to the ground on the windward side, fairly steep so rain runs off.</li>
+        <li>Cover with boughs, bark or debris, <strong>starting at the bottom and overlapping upward</strong> like roof tiles. Make it thick.</li>
+        <li>Build a thick bed of dry debris under the roof.</li>
+        <li>Build a fire in front of the open side with a <a href="#fire-lays">reflector wall</a> beyond it. Keep a clear gap between bed and fire.</li>
+      </ol>
+    </div></details>
+  </section>
+
+  <section id="snow">
+    <h2>Snow shelters</h2>
+    <p>Snow is a good insulator: inside a well-built snow shelter it often stays near freezing even when it is far colder outside. They take hours and make you wet — <strong>work slowly to avoid sweating</strong>, and wear waterproof outer layers.</p>
+    <div class="callout danger"><strong class="callout-title">Danger — suffocation &amp; carbon monoxide</strong>
+      <p><strong>Always keep a ventilation hole open</strong> and check it often, especially while snow is falling or drifting. Inner walls glaze over and seal as you breathe and warm the space.</p>
+      <p><strong>Never run a stove, heater, grill or generator inside a tent, snow shelter, vehicle or home: carbon monoxide kills.</strong> Even a candle burns oxygen and gives off some CO — only with the vent open, and never left lit while you sleep.</p>
+      <p><strong>Keep a digging tool inside</strong> with you in case of collapse or drifting at the entrance. Build away from avalanche slopes and their run-out zones.</p></div>
+
+    <details class="item"><summary>Quinzhee (snow mound) <span class="sub">works with any snow, even shallow or powdery</span></summary><div class="body">
+      <figure class="diagram"><svg class="diagram" viewBox="0 0 320 196" role="img" aria-label="Quinzhee cross-section: a hollowed snow dome with walls about 30 centimetres thick, measured by sticks pushed in from outside; a vent hole through the roof; a raised sleeping platform; a low entrance trench where cold air collects">
+        <path class="thin" d="M4,166 L316,166"/>
+        <path class="ln" d="M22,166 C22,10 298,10 298,166"/>
+        <rect x="8" y="142" width="46" height="23" class="nf" style="fill:var(--surface-2);stroke:none"/>
+        <path class="ln" d="M8,142 L54,142 M54,142 C56,64 264,64 264,140 L112,140 L112,166"/>
+        <path class="fa" style="opacity:.45" d="M112,140 L264,140 L264,150 L112,150 Z"/>
+        <path class="rope we" style="stroke:var(--accent);stroke-width:4" d="M160,48 L160,80 M84,58 L102,84 M236,58 L218,84 M30,104 L60,108 M290,104 L260,108"/>
+        <path class="ln" style="stroke:var(--surface-2);stroke-width:8" d="M200,86 L210,52"/>
+        <path class="thin" d="M195,86 L205,51 M205,86 L215,51"/>
+        <text x="216" y="34" class="lbl sm">vent hole</text>
+        <text x="216" y="48" class="lbl sm">(always open)</text>
+        <text x="160" y="104" text-anchor="middle" class="lbl sm acc">gauge sticks ~1 ft (30 cm)</text>
+        <text x="188" y="132" text-anchor="middle" class="lbl sm">raised sleeping platform</text>
+        <text x="60" y="186" class="lbl sm">entrance trench: cold air sinks here</text>
+        <path class="thin" d="M26,154 L4,154 M12,148 L4,154 L12,160"/>
+      </svg><figcaption>Cross-section. Dig out until you reach the stick ends — that leaves walls about 1 ft (30 cm) thick.</figcaption></figure>
+      <ol class="steps">
+        <li>Pile snow into a mound about <strong>6–7 ft (2 m) high and 8–10 ft (2.5–3 m) across</strong>. Mix and stir the snow as you pile it — it helps it set.</li>
+        <li><strong>Let it sinter (settle and harden) for 1–2 hours</strong>, longer in very cold, dry snow. Rest, eat and drink meanwhile — don't get sweaty.</li>
+        <li>Push dozens of sticks about <strong>1 ft (30 cm)</strong> long into the mound all over, pointing at the centre. These are depth gauges.</li>
+        <li>Dig a low entrance on the downwind side. Tunnel in, then hollow out upward and outward.</li>
+        <li>Stop digging wherever you <strong>reach the end of a stick</strong>: that leaves walls about <strong>30 cm (1 ft)</strong> thick.</li>
+        <li>Leave a <strong>raised sleeping platform</strong> above the entrance level. Cold air sinks into the low entrance trench, away from you.</li>
+        <li>Smooth the ceiling into a dome so drips run down the walls instead of onto you.</li>
+        <li>Push a <strong>fist-sized vent hole</strong> through the roof at an angle. Keep a stick in it and wiggle it clear regularly.</li>
+        <li>Insulate the platform (pad, boughs, pack). Partly block the door with a pack or snow block — <strong>never airtight</strong>. Mark the outside with a pole or bright item.</li>
+      </ol>
+    </div></details>
+
+    <details class="item"><summary>Snow trench <span class="sub">fastest snow shelter in firm, deep snow</span></summary><div class="body">
+      <ol class="steps">
+        <li>Mark a trench a little longer than you and about shoulder-width.</li>
+        <li>Dig down about 3 ft (1 m) in firm snow, keeping walls straight. Cut blocks if the snow allows.</li>
+        <li>Roof it: lean snow blocks together in an A shape, or lay branches, skis or a tarp across and cover with snow.</li>
+        <li>Make the entrance at one end, lower than your bed, so cold air drains out of the sleeping area.</li>
+        <li>Insulate the floor, open a vent, keep your digging tool inside.</li>
+      </ol>
+    </div></details>
+
+    <details class="item"><summary>Tree-well shelter <span class="sub">under big conifers where snow is shallow by the trunk</span></summary><div class="body">
+      <ol class="steps">
+        <li>Choose a large evergreen with low, dense branches. Check for dead branches and heavy snow loads above.</li>
+        <li>Dig down beside the trunk into the well under the branches.</li>
+        <li>Line the floor thickly with boughs; add boughs over gaps in the roof.</li>
+        <li>Keep any fire outside and away from the branches — heat melts the snow above, which can dump onto you or the fire.</li>
+      </ol>
+      <div class="callout warn"><strong class="callout-title">Tree wells can trap you</strong><p>Deep, loose snow around trees can collapse inward. People who fall in head-first can suffocate. Approach carefully, and never dig a deep well alone in loose powder.</p></div>
+    </div></details>
+  </section>
+
+  <section id="tarps">
+    <h2>Tarp set-ups</h2>
+    <p>Run a taut ridgeline between two trees (use a <a href="#knot-bowline">bowline</a> at one end and a <a href="#knot-taut">taut-line hitch</a> or <a href="#knot-extra">trucker's hitch</a> at the other). Point the <strong>lowest, most closed side into the wind</strong>. Pitch the tarp tight so rain runs off.</p>
+    <figure class="diagram">
+      <div class="panels small">
+        <svg class="diagram" viewBox="0 0 170 120" role="img" aria-label="A-frame: tarp draped over a ridgeline, both sides staked down">
+          <path class="thin" d="M4,100 L166,100 M10,26 L160,26"/>
+          <path class="ln" d="M24,100 L85,26 L146,100 M24,100 L18,108 M146,100 L152,108"/>
+          <text x="85" y="16" text-anchor="middle" class="lbl">A-frame</text>
+        </svg>
+        <svg class="diagram" viewBox="0 0 170 120" role="img" aria-label="Lean-to tarp in side view: one edge high on the ridgeline, the other staked to the ground on the windward side, open toward a fire">
+          <path class="thin" d="M4,100 L166,100"/>
+          <path class="ln" d="M120,30 L120,100 M26,100 L120,32"/>
+          <path class="fa" d="M140,100 C136,92 142,90 142,84 C146,90 148,84 150,82 C152,90 154,92 150,100 Z"/>
+          <path class="thin sa" d="M8,40 L36,60 M28,60 L36,60 L32,52"/>
+          <text x="85" y="16" text-anchor="middle" class="lbl">Lean-to</text>
+        </svg>
+        <svg class="diagram" viewBox="0 0 170 120" role="img" aria-label="Plough point or diamond: one corner tied high to a tree, the opposite corner staked into the wind, side corners staked out">
+          <path class="thin" d="M4,100 L166,100 M30,14 L30,100"/>
+          <path class="ln" d="M30,30 L56,104 L150,100 Z M30,30 L112,84 L150,100"/>
+          <path class="thin sa" d="M166,70 L152,92 M150,82 L152,92 L161,88"/>
+          <text x="100" y="24" text-anchor="middle" class="lbl">Plough point</text>
+        </svg>
+        <svg class="diagram" viewBox="0 0 170 120" role="img" aria-label="Wedge or tarp tent in side view: high at the doorway, sloping down to the ground at the back, which faces the wind">
+          <path class="thin" d="M4,100 L166,100"/>
+          <path class="ln" d="M40,36 L40,100 M40,36 L150,100 M40,36 L66,100"/>
+          <path class="thin sa" d="M164,60 L140,74 M146,66 L140,74 L150,76"/>
+          <text x="85" y="16" text-anchor="middle" class="lbl">Wedge / tarp tent</text>
+        </svg>
+        <svg class="diagram" viewBox="0 0 170 120" role="img" aria-label="C-fly in side view: tarp hangs from the ridgeline as a roof and back wall, and the lower part folds back under as a groundsheet, making a C shape">
+          <path class="thin" d="M4,102 L166,102"/>
+          <path class="ln" d="M110,30 L110,102 M24,48 L110,30 L140,98 L38,98"/>
+          <path class="thin" d="M24,48 L14,100"/>
+          <text x="85" y="16" text-anchor="middle" class="lbl">C-fly</text>
+        </svg>
+      </div>
+      <figcaption>Basic tarp shapes (accent arrows = wind).</figcaption>
+    </figure>
+    <div class="table-wrap"><table class="data">
+      <thead><tr><th>Set-up</th><th>Best when</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td><strong>A-frame</strong></td><td>Rain, wind from changing directions</td><td>Simple and stable. Pitch low and close the ends with gear or brush in bad weather.</td></tr>
+        <tr><td><strong>Lean-to</strong></td><td>Mild weather with a fire in front</td><td>Lots of open space and heat from the fire. Poor if wind or rain swings round.</td></tr>
+        <tr><td><strong>Plough point (diamond)</strong></td><td>Steady wind from one direction; solo</td><td>One corner high on a tree or pole, opposite corner staked into the wind. Quick, needs one anchor.</td></tr>
+        <tr><td><strong>Wedge / tarp tent</strong></td><td>Strong wind and driving rain</td><td>Low back into the wind, sides staked to the ground. Warmest tarp shape, least room.</td></tr>
+        <tr><td><strong>C-fly</strong></td><td>Wet ground; with a fire in front</td><td>A lean-to whose lower part folds back under you as a groundsheet — roof, back wall and floor from one tarp.</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <section id="warmth">
+    <h2>Staying warm</h2>
+    <ol class="steps">
+      <li><strong>Insulate underneath first.</strong> Pad, thick boughs, leaves, your pack under your legs. You lose heat into the ground far faster than into the air.</li>
+      <li><strong>Layers:</strong> a wicking base (wool or synthetic — cotton stays wet and cold), an insulating middle, a wind- and waterproof shell. Add and remove layers to stay just cool, not sweaty.</li>
+      <li><strong>Vent before you sweat.</strong> Open zips and remove a layer before hard work. Sweat freezes and soaks insulation.</li>
+      <li><strong>Cover head, neck, hands and feet.</strong> Change into <strong>dry socks and base layer</strong> for sleeping; keep one dry set just for that.</li>
+      <li><strong>Eat and drink before sleeping.</strong> A snack with fat and carbs fuels heat through the night. Dehydration makes you colder. Empty your bladder before settling in.</li>
+      <li><strong>Hot water bottle:</strong> fill a leak-proof bottle made for hot liquids with hot water, close it tightly, check for leaks, <strong>wrap it in a sock or cloth</strong> and put it in your sleeping bag by your core or thighs. Never against bare skin — it can burn.</li>
+      <li><strong>Share heat:</strong> sleep close together; put the coldest person in the middle.</li>
+      <li><strong>Vapour barrier (deep cold only):</strong> a plastic bag or liner inside your insulation, over a thin base layer, stops body moisture soaking your bag on multi-day trips well below freezing. It feels clammy — use it briefly and only when it's very cold.</li>
+    </ol>
+    <p>Spot and treat hypothermia: see <a href="../firstaid/index.html">First aid</a>.</p>
+  </section>
+
+  <section id="knots">
+    <h2>Knots</h2>
+    <p>Five knots cover most camp jobs. In the diagrams the <span style="color:var(--accent);font-weight:700">coloured rope is the working end</span> (the end you move) and the plain rope is the <strong>standing part</strong> (the rest of the rope). A gap in a line means that strand passes <strong>underneath</strong>.</p>
+    <div class="callout danger"><strong class="callout-title">Not for life support without training</strong><p>Climbing, rescue, lowering people or anything where a failure could kill needs proper instruction, rated rope and hardware. Practise every knot until you can tie it with your eyes closed — and with cold hands.</p></div>
+
+    <details class="item" id="knot-bowline"><summary>Bowline <span class="sub">a fixed loop that won't slip or jam</span></summary><div class="body">
+      <p><strong>Use it for:</strong> a loop round a tree or post (one end of a ridgeline), a loop to hang or haul things. Easy to untie even after a heavy load.</p>
+      <figure class="diagram"><div class="panels"><svg class="diagram" viewBox="0 0 210 272" role="img" aria-label="Bowline step 1: make a small loop, the hole, with the working-end side lying on top of the standing part"><circle cx="14" cy="14" r="11" class="fa"/><text x="14" y="18" text-anchor="middle" class="lbl" style="fill:var(--accent-text)">1</text><path class="rope" d="M110,8 L110,60 C110,76 106,88 100,98 C93,110 62,112 62,140"/><path class="rope" d="M62,140 C62,172 138,172 138,140 C138,114 112,106 100,98 C90,91 78,88 64,94 C48,101 40,116 40,140 L40,215 C40,265 160,265 160,215"/><path class="rope we" style="stroke:var(--accent)" d="M160,215 L160,186"/><path class="gap" d="M108.7,103.0 L108.6,102.9 L107.8,102.5 L107.0,102.1 L106.2,101.7 L105.5,101.2 L104.7,100.8 L104.0,100.4 L103.3,100.0 L102.6,99.6 L101.9,99.2 L101.2,98.8 L100.6,98.4 L100.0,98.0 L99.5,97.7 L99.0,97.3 L98.5,97.0 L98.0,96.7 L97.5,96.3 L96.9,96.0 L96.4,95.7 L95.9,95.4 L95.4,95.1 L94.8,94.9 L94.3,94.6 L93.8,94.3 L93.2,94.1 L92.7,93.8 L92.1,93.6 L91.6,93.3 L91.2,93.2"/><path class="rope" d="M108.7,103.0 L108.6,102.9 L107.8,102.5 L107.0,102.1 L106.2,101.7 L105.5,101.2 L104.7,100.8 L104.0,100.4 L103.3,100.0 L102.6,99.6 L101.9,99.2 L101.2,98.8 L100.6,98.4 L100.0,98.0 L99.5,97.7 L99.0,97.3 L98.5,97.0 L98.0,96.7 L97.5,96.3 L96.9,96.0 L96.4,95.7 L95.9,95.4 L95.4,95.1 L94.8,94.9 L94.3,94.6 L93.8,94.3 L93.2,94.1 L92.7,93.8 L92.1,93.6 L91.6,93.3 L91.2,93.2" stroke-linecap="butt"/><text x="118" y="20" text-anchor="start" class="lbl">standing part</text><text x="146" y="144" text-anchor="start" class="lbl">hole</text><text x="122" y="84" text-anchor="start" class="lbl sm">end side on top</text><path class="thin" d="M120,86 L108,94"/><text x="154" y="192" text-anchor="end" class="lbl acc">working end</text><text x="100" y="238" text-anchor="middle" class="lbl sm">loop</text></svg><svg class="diagram" viewBox="0 0 210 272" role="img" aria-label="Bowline steps 2 to 4: the working end comes up through the hole from underneath, goes round behind the standing part, and goes back down through the hole"><circle cx="14" cy="14" r="11" class="fa"/><text x="14" y="18" text-anchor="middle" class="lbl" style="fill:var(--accent-text)">2</text><path class="rope" d="M110,8 L110,60 C110,76 106,88 100,98 C93,110 62,112 62,140"/><path class="rope" d="M62,140 C62,172 138,172 138,140 C138,114 112,106 100,98 C90,91 78,88 64,94 C48,101 40,116 40,140 L40,215 C40,265 160,265 160,215"/><path class="rope we" style="stroke:var(--accent)" d="M160,215 L160,200 C160,180 122,190 120,170 L120,128 C120,108 126,92 126,62 C126,30 84,30 84,62 L84,205"/><path class="gap" d="M108.7,103.0 L108.6,102.9 L107.8,102.5 L107.0,102.1 L106.2,101.7 L105.5,101.2 L104.7,100.8 L104.0,100.4 L103.3,100.0 L102.6,99.6 L101.9,99.2 L101.2,98.8 L100.6,98.4 L100.0,98.0 L99.5,97.7 L99.0,97.3 L98.5,97.0 L98.0,96.7 L97.5,96.3 L96.9,96.0 L96.4,95.7 L95.9,95.4 L95.4,95.1 L94.8,94.9 L94.3,94.6 L93.8,94.3 L93.2,94.1 L92.7,93.8 L92.1,93.6 L91.6,93.3 L91.2,93.2"/><path class="rope" d="M108.7,103.0 L108.6,102.9 L107.8,102.5 L107.0,102.1 L106.2,101.7 L105.5,101.2 L104.7,100.8 L104.0,100.4 L103.3,100.0 L102.6,99.6 L101.9,99.2 L101.2,98.8 L100.6,98.4 L100.0,98.0 L99.5,97.7 L99.0,97.3 L98.5,97.0 L98.0,96.7 L97.5,96.3 L96.9,96.0 L96.4,95.7 L95.9,95.4 L95.4,95.1 L94.8,94.9 L94.3,94.6 L93.8,94.3 L93.2,94.1 L92.7,93.8 L92.1,93.6 L91.6,93.3 L91.2,93.2" stroke-linecap="butt"/><path class="gap" d="M110.0,28.0 L110.0,28.0 L110.0,30.0 L110.0,32.0 L110.0,34.0 L110.0,36.0 L110.0,38.0 L110.0,40.0 L110.0,42.0 L110.0,44.0 L110.0,46.0 L110.0,48.0 L110.0,48.0"/><path class="rope" d="M110.0,28.0 L110.0,28.0 L110.0,30.0 L110.0,32.0 L110.0,34.0 L110.0,36.0 L110.0,38.0 L110.0,40.0 L110.0,42.0 L110.0,44.0 L110.0,46.0 L110.0,48.0 L110.0,48.0" stroke-linecap="butt"/><path class="gap" d="M84.0,100.3 L84.0,102.3 L84.0,104.3 L84.0,106.3 L84.0,108.3 L84.0,110.3 L84.0,112.4 L84.0,114.4 L84.0,116.4 L84.0,118.4 L84.0,120.3"/><path class="rope we" style="stroke:var(--accent)" d="M84.0,100.3 L84.0,102.3 L84.0,104.3 L84.0,106.3 L84.0,108.3 L84.0,110.3 L84.0,112.4 L84.0,114.4 L84.0,116.4 L84.0,118.4 L84.0,120.3" stroke-linecap="butt"/><path class="gap" d="M74.1,158.1 L75.3,158.8 L76.8,159.5 L78.4,160.2 L80.0,160.8 L81.7,161.3 L83.4,161.8 L85.2,162.3 L86.9,162.7 L88.8,163.0 L90.6,163.3 L92.4,163.6 L93.2,163.7"/><path class="rope" d="M74.1,158.1 L75.3,158.8 L76.8,159.5 L78.4,160.2 L80.0,160.8 L81.7,161.3 L83.4,161.8 L85.2,162.3 L86.9,162.7 L88.8,163.0 L90.6,163.3 L92.4,163.6 L93.2,163.7" stroke-linecap="butt"/><path class="gap" d="M110.3,163.2 L111.2,163.0 L113.1,162.7 L114.8,162.3 L116.6,161.8 L118.3,161.3 L120.0,160.8 L121.6,160.2 L123.2,159.5 L124.7,158.8 L126.1,158.0 L127.5,157.2 L128.8,156.3 L128.9,156.3"/><path class="rope" d="M110.3,163.2 L111.2,163.0 L113.1,162.7 L114.8,162.3 L116.6,161.8 L118.3,161.3 L120.0,160.8 L121.6,160.2 L123.2,159.5 L124.7,158.8 L126.1,158.0 L127.5,157.2 L128.8,156.3 L128.9,156.3" stroke-linecap="butt"/><path class="gap" d="M120.3,120.5 L120.3,120.2 L120.4,119.2 L120.4,118.3 L120.5,117.3 L120.6,116.3 L120.7,115.4 L120.8,114.4 L120.9,113.5 L121.1,112.5 L121.2,111.6 L121.3,110.6 L121.4,109.6 L121.6,108.7 L121.7,107.7 L121.8,106.7 L122.0,105.7 L122.1,104.8 L122.3,103.8 L122.4,102.8 L122.6,101.8 L122.7,100.8 L122.7,100.7"/><path class="rope we" style="stroke:var(--accent)" d="M120.3,120.5 L120.3,120.2 L120.4,119.2 L120.4,118.3 L120.5,117.3 L120.6,116.3 L120.7,115.4 L120.8,114.4 L120.9,113.5 L121.1,112.5 L121.2,111.6 L121.3,110.6 L121.4,109.6 L121.6,108.7 L121.7,107.7 L121.8,106.7 L122.0,105.7 L122.1,104.8 L122.3,103.8 L122.4,102.8 L122.6,101.8 L122.7,100.8 L122.7,100.7" stroke-linecap="butt"/><path class="gap" d="M84.0,80.2 L84.0,82.1 L84.0,84.2 L84.0,86.2 L84.0,88.2 L84.0,90.2 L84.0,92.2 L84.0,94.2 L84.0,96.2 L84.0,98.3 L84.0,100.2"/><path class="rope we" style="stroke:var(--accent)" d="M84.0,80.2 L84.0,82.1 L84.0,84.2 L84.0,86.2 L84.0,88.2 L84.0,90.2 L84.0,92.2 L84.0,94.2 L84.0,96.2 L84.0,98.3 L84.0,100.2" stroke-linecap="butt"/><text x="118" y="20" text-anchor="start" class="lbl">standing part</text><text x="136" y="52" text-anchor="start" class="lbl sm acc">round</text><text x="136" y="65" text-anchor="start" class="lbl sm acc">behind</text><text x="78" y="212" text-anchor="end" class="lbl acc">tail</text><text x="100" y="238" text-anchor="middle" class="lbl sm">loop</text></svg></div>
+        <figcaption>1: make the hole with the end side on top. 2: up through the hole, round behind the standing part, back down the hole.</figcaption></figure>
+      <ol class="steps">
+        <li>Leave enough rope for the loop size you want. Make a <strong>small loop (the "hole")</strong> in the standing part, with the part leading to the working end lying <strong>on top</strong>.</li>
+        <li><strong>"The rabbit comes up out of the hole":</strong> pass the working end <strong>up through the hole from underneath</strong>.</li>
+        <li><strong>"Round the tree":</strong> take it round <strong>behind the standing part</strong>.</li>
+        <li><strong>"Back down the hole":</strong> pass it back down through the hole, alongside where it came up.</li>
+        <li>Hold the tail and the loop side together and pull the standing part to tighten. <strong>Leave a long tail</strong> — at least a hand-width.</li>
+      </ol>
+      <p><strong>Check:</strong> the tail ends up <strong>inside</strong> the big loop; a neat collar wraps the standing part; the small loop grips both strands. If the tail is outside the loop or it pulls into a slip knot, untie and retie.</p>
+      <div class="callout warn"><strong class="callout-title">Limitations</strong><p>A bowline can <strong>shake loose when it isn't loaded</strong> (flapping guy lines, stiff or slippery rope), and it can't be tied or untied under load. For anything important, back it up: tie a <strong>stopper knot</strong> (double overhand) with the tail around the loop leg next to it, or use a <strong>Yosemite finish</strong> (tail round that loop leg and back up through the collar beside the standing part).</p></div>
+    </div></details>
+
+    <details class="item" id="knot-taut"><summary>Taut-line hitch <span class="sub">adjustable tension for guy lines and ridgelines</span></summary><div class="body">
+      <p><strong>Use it for:</strong> tent and tarp guy lines, a ridgeline end. Slide it to tighten or loosen; it grips under load.</p>
+      <figure class="diagram"><svg class="diagram" viewBox="0 0 360 166" role="img" aria-label="Taut-line hitch: the rope goes round the stake; the working end makes two turns round the standing part inside the loop, working toward the stake, then one more turn outside the loop, tucked under itself" style="max-width:560px"><circle cx="30" cy="83" r="7" class="thin"/><path class="rope" d="M352,70 L30,70 C13,70 13,96 30,96"/><path class="rope we" style="stroke:var(--accent)" d="M30,96 C40,96 44,136 58,136 L176,136 C200,136 200,96 176,96 L170,96"/><path class="rope we" style="stroke:var(--accent)" d="M170.0,96.0 L169.4,95.9 L168.8,95.7 L168.2,95.3 L167.6,94.7 L167.0,94.0 L166.4,93.2 L165.8,92.2 L165.2,91.0 L164.6,89.8 L164.0,88.4 L163.4,86.9 L162.8,85.3 L162.2,83.6 L161.6,81.8 L161.0,79.9 L160.4,78.0 L159.8,76.1 L159.2,74.1 L158.6,72.0 L158.0,70.0 L157.4,68.0 L156.8,65.9 L156.2,63.9 L155.6,62.0 L155.0,60.1 L154.4,58.2 L153.8,56.4 L153.2,54.7 L152.6,53.1 L152.0,51.6 L151.4,50.2 L150.8,49.0 L150.2,47.8 L149.6,46.8 L149.0,46.0 L148.4,45.3 L147.8,44.7 L147.2,44.3 L146.6,44.1 L146.0,44.0 L145.4,44.1 L144.8,44.3 L144.2,44.7 L143.6,45.3 L143.0,46.0 L142.4,46.8 L141.8,47.8 L141.2,49.0 L140.6,50.2 L140.0,51.6 L139.4,53.1 L138.8,54.7 L138.2,56.4 L137.6,58.2 L137.0,60.1 L136.4,62.0 L135.8,63.9 L135.2,65.9 L134.6,68.0 L134.0,70.0 L133.4,72.0 L132.8,74.1 L132.2,76.1 L131.6,78.0 L131.0,79.9 L130.4,81.8 L129.8,83.6 L129.2,85.3 L128.6,86.9 L128.0,88.4 L127.4,89.8 L126.8,91.0 L126.2,92.2 L125.6,93.2 L125.0,94.0 L124.4,94.7 L123.8,95.3 L123.2,95.7 L122.6,95.9 L122.0,96.0 L121.4,95.9 L120.8,95.7 L120.2,95.3 L119.6,94.7 L119.0,94.0 L118.4,93.2 L117.8,92.2 L117.2,91.0 L116.6,89.8 L116.0,88.4 L115.4,86.9 L114.8,85.3 L114.2,83.6 L113.6,81.8 L113.0,79.9 L112.4,78.0 L111.8,76.1 L111.2,74.1 L110.6,72.0 L110.0,70.0 L109.4,68.0 L108.8,65.9 L108.2,63.9 L107.6,62.0 L107.0,60.1 L106.4,58.2 L105.8,56.4 L105.2,54.7 L104.6,53.1 L104.0,51.6 L103.4,50.2 L102.8,49.0 L102.2,47.8 L101.6,46.8 L101.0,46.0 L100.4,45.3 L99.8,44.7 L99.2,44.3 L98.6,44.1 L98.0,44.0 L97.4,44.1 L96.8,44.3 L96.2,44.7 L95.6,45.3 L95.0,46.0 L94.4,46.8 L93.8,47.8 L93.2,49.0 L92.6,50.2 L92.0,51.6 L91.4,53.1 L90.8,54.7 L90.2,56.4 L89.6,58.2 L89.0,60.1 L88.4,62.0 L87.8,63.9 L87.2,65.9 L86.6,68.0 L86.0,70.0 L85.4,72.0 L84.8,74.1 L84.2,76.1 L83.6,78.0 L83.0,79.9 L82.4,81.8 L81.8,83.6 L81.2,85.3 L80.6,86.9 L80.0,88.4 L79.4,89.8 L78.8,91.0 L78.2,92.2 L77.6,93.2 L77.0,94.0 L76.4,94.7 L75.8,95.3 L75.2,95.7 L74.6,95.9 L74.0,96.0"/><path class="rope we" style="stroke:var(--accent)" d="M74,96 C60,96 60,114 74,114 L280,114 C298,114 298,96 280,96 L280.0,96.0 L279.4,95.9 L278.8,95.7 L278.2,95.3 L277.6,94.7 L277.0,94.0 L276.4,93.2 L275.8,92.2 L275.2,91.0 L274.6,89.8 L274.0,88.4 L273.4,86.9 L272.8,85.3 L272.2,83.6 L271.6,81.8 L271.0,79.9 L270.4,78.0 L269.8,76.1 L269.2,74.1 L268.6,72.0 L268.0,70.0 L267.4,68.0 L266.8,65.9 L266.2,63.9 L265.6,62.0 L265.0,60.1 L264.4,58.2 L263.8,56.4 L263.2,54.7 L262.6,53.1 L262.0,51.6 L261.4,50.2 L260.8,49.0 L260.2,47.8 L259.6,46.8 L259.0,46.0 L258.4,45.3 L257.8,44.7 L257.2,44.3 L256.6,44.1 L256.0,44.0 L255.4,44.1 L254.8,44.3 L254.2,44.7 L253.6,45.3 L253.0,46.0 L252.4,46.8 L251.8,47.8 L251.2,49.0 L250.6,50.2 L250.0,51.6 L249.4,53.1 L248.8,54.7 L248.2,56.4 L247.6,58.2 L247.0,60.1 L246.4,62.0 L245.8,63.9 L245.2,65.9 L244.6,68.0 L244.0,70.0 L243.4,72.0 L242.8,74.1 L242.2,76.1 L241.6,78.0 L241.0,79.9 L240.4,81.8 L239.8,83.6 L239.2,85.3 L238.6,86.9 L238.0,88.4 L237.4,89.8 L236.8,91.0 L236.2,92.2 L235.6,93.2 L235.0,94.0 L234.4,94.7 L233.8,95.3 L233.2,95.7 L232.6,95.9 L232.0,96.0"/><path class="rope we" style="stroke:var(--accent)" d="M232,96 C222,96 219,108 221,122 C223,134 240,144 280,144"/><path class="gap" d="M160.9,79.6 L160.7,79.0 L160.4,78.0 L160.1,77.0 L159.8,76.1 L159.5,75.1 L159.2,74.1 L158.9,73.0 L158.6,72.0 L158.3,71.0 L158.0,70.0 L157.7,69.0 L157.4,68.0 L157.1,67.0 L156.8,65.9 L156.5,64.9 L156.2,63.9 L155.9,63.0 L155.6,62.0 L155.3,61.0 L155.1,60.4"/><path class="rope we" style="stroke:var(--accent)" d="M160.9,79.6 L160.7,79.0 L160.4,78.0 L160.1,77.0 L159.8,76.1 L159.5,75.1 L159.2,74.1 L158.9,73.0 L158.6,72.0 L158.3,71.0 L158.0,70.0 L157.7,69.0 L157.4,68.0 L157.1,67.0 L156.8,65.9 L156.5,64.9 L156.2,63.9 L155.9,63.0 L155.6,62.0 L155.3,61.0 L155.1,60.4" stroke-linecap="butt"/><path class="gap" d="M144.0,70.0 L144.0,70.0 L142.0,70.0 L140.0,70.0 L138.0,70.0 L136.0,70.0 L134.0,70.0 L132.0,70.0 L130.0,70.0 L128.0,70.0 L126.0,70.0 L124.0,70.0 L124.0,70.0"/><path class="rope" d="M144.0,70.0 L144.0,70.0 L142.0,70.0 L140.0,70.0 L138.0,70.0 L136.0,70.0 L134.0,70.0 L132.0,70.0 L130.0,70.0 L128.0,70.0 L126.0,70.0 L124.0,70.0 L124.0,70.0" stroke-linecap="butt"/><path class="gap" d="M112.9,79.6 L112.7,79.0 L112.4,78.0 L112.1,77.0 L111.8,76.1 L111.5,75.1 L111.2,74.1 L110.9,73.0 L110.6,72.0 L110.3,71.0 L110.0,70.0 L109.7,69.0 L109.4,68.0 L109.1,67.0 L108.8,65.9 L108.5,64.9 L108.2,63.9 L107.9,63.0 L107.6,62.0 L107.3,61.0 L107.1,60.4"/><path class="rope we" style="stroke:var(--accent)" d="M112.9,79.6 L112.7,79.0 L112.4,78.0 L112.1,77.0 L111.8,76.1 L111.5,75.1 L111.2,74.1 L110.9,73.0 L110.6,72.0 L110.3,71.0 L110.0,70.0 L109.7,69.0 L109.4,68.0 L109.1,67.0 L108.8,65.9 L108.5,64.9 L108.2,63.9 L107.9,63.0 L107.6,62.0 L107.3,61.0 L107.1,60.4" stroke-linecap="butt"/><path class="gap" d="M96.0,70.0 L96.0,70.0 L94.0,70.0 L92.0,70.0 L90.0,70.0 L88.0,70.0 L86.0,70.0 L84.0,70.0 L82.0,70.0 L80.0,70.0 L78.0,70.0 L76.0,70.0 L76.0,70.0"/><path class="rope" d="M96.0,70.0 L96.0,70.0 L94.0,70.0 L92.0,70.0 L90.0,70.0 L88.0,70.0 L86.0,70.0 L84.0,70.0 L82.0,70.0 L80.0,70.0 L78.0,70.0 L76.0,70.0 L76.0,70.0" stroke-linecap="butt"/><path class="gap" d="M270.9,79.6 L270.7,79.0 L270.4,78.0 L270.1,77.0 L269.8,76.1 L269.5,75.1 L269.2,74.1 L268.9,73.0 L268.6,72.0 L268.3,71.0 L268.0,70.0 L267.7,69.0 L267.4,68.0 L267.1,67.0 L266.8,65.9 L266.5,64.9 L266.2,63.9 L265.9,63.0 L265.6,62.0 L265.3,61.0 L265.1,60.4"/><path class="rope we" style="stroke:var(--accent)" d="M270.9,79.6 L270.7,79.0 L270.4,78.0 L270.1,77.0 L269.8,76.1 L269.5,75.1 L269.2,74.1 L268.9,73.0 L268.6,72.0 L268.3,71.0 L268.0,70.0 L267.7,69.0 L267.4,68.0 L267.1,67.0 L266.8,65.9 L266.5,64.9 L266.2,63.9 L265.9,63.0 L265.6,62.0 L265.3,61.0 L265.1,60.4" stroke-linecap="butt"/><path class="gap" d="M254.0,70.0 L254.0,70.0 L252.0,70.0 L250.0,70.0 L248.0,70.0 L246.0,70.0 L244.0,70.0 L242.0,70.0 L240.0,70.0 L238.0,70.0 L236.0,70.0 L234.0,70.0 L234.0,70.0"/><path class="rope" d="M254.0,70.0 L254.0,70.0 L252.0,70.0 L250.0,70.0 L248.0,70.0 L246.0,70.0 L244.0,70.0 L242.0,70.0 L240.0,70.0 L238.0,70.0 L236.0,70.0 L234.0,70.0 L234.0,70.0" stroke-linecap="butt"/><path class="gap" d="M184.0,114.0 L184.0,114.0 L186.0,114.0 L188.0,114.0 L190.0,114.0 L192.0,114.0 L194.0,114.0 L196.0,114.0 L198.0,114.0 L200.0,114.0 L202.0,114.0 L204.0,114.0 L204.0,114.0"/><path class="rope we" style="stroke:var(--accent)" d="M184.0,114.0 L184.0,114.0 L186.0,114.0 L188.0,114.0 L190.0,114.0 L192.0,114.0 L194.0,114.0 L196.0,114.0 L198.0,114.0 L200.0,114.0 L202.0,114.0 L204.0,114.0 L204.0,114.0" stroke-linecap="butt"/><path class="gap" d="M210.0,114.0 L210.0,114.0 L212.0,114.0 L214.0,114.0 L216.0,114.0 L218.0,114.0 L220.0,114.0 L222.0,114.0 L224.0,114.0 L226.0,114.0 L228.0,114.0 L230.0,114.0 L230.0,114.0"/><path class="rope we" style="stroke:var(--accent)" d="M210.0,114.0 L210.0,114.0 L212.0,114.0 L214.0,114.0 L216.0,114.0 L218.0,114.0 L220.0,114.0 L222.0,114.0 L224.0,114.0 L226.0,114.0 L228.0,114.0 L230.0,114.0 L230.0,114.0" stroke-linecap="butt"/><text x="30" y="52" text-anchor="middle" class="lbl">stake</text><text x="352" y="58" text-anchor="end" class="lbl sm">to tent / tarp</text><text x="122" y="30" text-anchor="middle" class="lbl acc">2 turns inside loop</text><text x="256" y="30" text-anchor="middle" class="lbl acc">1 turn outside</text><text x="286" y="149" text-anchor="start" class="lbl acc">end</text><text x="60" y="160" text-anchor="start" class="lbl">slide the knot to tension the line</text></svg>
+        <figcaption>Two turns inside the loop (toward the stake), one turn outside tucked under itself. Gaps show where the cord passes behind the standing part.</figcaption></figure>
+      <ol class="steps">
+        <li>Pass the working end around the stake, peg or tree and back toward the load, alongside the standing part.</li>
+        <li>Wrap it <strong>twice around the standing part, working back toward the stake</strong> — these two turns are <strong>inside the loop</strong>.</li>
+        <li>Bring the end back out past those turns, to the side away from the stake (<strong>outside the loop</strong>).</li>
+        <li>Make <strong>one more turn</strong> around the standing part in the same direction, and <strong>tuck the end under itself</strong> (a half hitch). Pull snug.</li>
+        <li>Slide the knot along the standing part to set the tension. Let go: it should hold.</li>
+      </ol>
+      <p><strong>Check:</strong> two turns between the outside hitch and the stake, one hitch outside, all turns going the same way round. It should slide only when you push the knot itself.</p>
+      <div class="callout warn"><strong class="callout-title">Limitations</strong><p>Slips on slippery, stiff, very thin or icy cord — add a third inside turn. Re-check tension after rain or a temperature change.</p></div>
+    </div></details>
+
+    <details class="item" id="knot-clove"><summary>Clove hitch <span class="sub">quick attachment to a post, pole or tree</span></summary><div class="body">
+      <p><strong>Use it for:</strong> tying a line to a pole or stake quickly, starting and finishing lashings, adjusting a line midway along a rope.</p>
+      <figure class="diagram"><div class="panels"><svg class="diagram" viewBox="0 0 220 200" role="img" aria-label="Clove hitch step 1: pass the end around the post, then cross over the standing part diagonally"><circle cx="14" cy="14" r="11" class="fa"/><text x="14" y="18" text-anchor="middle" class="lbl" style="fill:var(--accent-text)">1</text><rect x="88" y="22" width="36" height="170" rx="4" style="fill:var(--surface);stroke:currentColor;stroke-width:2.5"/><path class="thin dash" d="M124,106 L88,62"/><path class="thin dash sa" d="M124,150 L88,140"/><path class="rope" d="M8,118 C40,118 70,118 88,117 L124,106"/><path class="rope we" style="stroke:var(--accent)" d="M88,62 L124,150"/><path class="rope we" style="stroke:var(--accent)" d="M88,140 C76,142 66,150 60,162"/><path class="gap onpost" d="M104.1,101.4 L104.9,103.2 L105.6,105.1 L106.4,106.9 L107.1,108.8 L107.9,110.7 L108.7,112.6 L109.4,114.4 L110.2,116.3 L111.0,118.2 L111.7,119.9"/><path class="rope we" style="stroke:var(--accent)" d="M104.1,101.4 L104.9,103.2 L105.6,105.1 L106.4,106.9 L107.1,108.8 L107.9,110.7 L108.7,112.6 L109.4,114.4 L110.2,116.3 L111.0,118.2 L111.7,119.9" stroke-linecap="butt"/><text x="4" y="108" text-anchor="start" class="lbl sm">standing part</text><text x="56" y="178" text-anchor="middle" class="lbl acc">working end</text><text x="130" y="92" text-anchor="start" class="lbl sm acc">rider</text></svg><svg class="diagram" viewBox="0 0 220 200" role="img" aria-label="Clove hitch step 2: go around the post again and tuck the end under the rider; the two ends leave in opposite directions"><circle cx="14" cy="14" r="11" class="fa"/><text x="14" y="18" text-anchor="middle" class="lbl" style="fill:var(--accent-text)">2</text><rect x="88" y="22" width="36" height="170" rx="4" style="fill:var(--surface);stroke:currentColor;stroke-width:2.5"/><path class="thin dash" d="M124,106 L88,62"/><path class="thin dash sa" d="M124,150 L88,140"/><path class="rope" d="M8,118 C40,118 70,118 88,117 L124,106"/><path class="rope we" style="stroke:var(--accent)" d="M88,62 L124,150"/><path class="rope we" style="stroke:var(--accent)" d="M88,140 L124,134 C150,134 180,134 212,134"/><path class="gap onpost" d="M104.1,101.4 L104.9,103.2 L105.6,105.1 L106.4,106.9 L107.1,108.8 L107.9,110.7 L108.7,112.6 L109.4,114.4 L110.2,116.3 L111.0,118.2 L111.7,119.9"/><path class="rope we" style="stroke:var(--accent)" d="M104.1,101.4 L104.9,103.2 L105.6,105.1 L106.4,106.9 L107.1,108.8 L107.9,110.7 L108.7,112.6 L109.4,114.4 L110.2,116.3 L111.0,118.2 L111.7,119.9" stroke-linecap="butt"/><path class="gap onpost" d="M114.1,125.8 L114.8,127.5 L115.6,129.4 L116.3,131.3 L117.1,133.1 L117.9,135.0 L118.6,136.9 L119.4,138.8 L120.2,140.6 L120.9,142.5 L121.7,144.3"/><path class="rope we" style="stroke:var(--accent)" d="M114.1,125.8 L114.8,127.5 L115.6,129.4 L116.3,131.3 L117.1,133.1 L117.9,135.0 L118.6,136.9 L119.4,138.8 L120.2,140.6 L120.9,142.5 L121.7,144.3" stroke-linecap="butt"/><text x="4" y="108" text-anchor="start" class="lbl sm">standing part</text><text x="212" y="154" text-anchor="end" class="lbl acc">working end</text><text x="130" y="92" text-anchor="start" class="lbl sm acc">rider</text></svg></div>
+        <figcaption>Front of a post. Dashed lines run behind the post. The rider (diagonal) crosses over both rope ends.</figcaption></figure>
+      <ol class="steps">
+        <li>Pass the working end around the post.</li>
+        <li>Cross over the standing part — this diagonal is the <strong>rider</strong> — and go around the post a second time, <strong>in the same direction</strong>.</li>
+        <li><strong>Tuck the end under the rider</strong>, so it comes out between the two turns.</li>
+        <li>Pull both ends tight.</li>
+      </ol>
+      <p><strong>Check:</strong> from the front, one diagonal rider with both ends coming out from under it, in opposite directions. From the back, two neat parallel turns.</p>
+      <div class="callout warn"><strong class="callout-title">Limitations</strong><p>A clove hitch can <strong>slip or roll</strong> on its own — when the pull comes from the side, the pole turns, or the load keeps shifting. Secure it with <strong>two half hitches</strong> of the tail around the standing part.</p></div>
+    </div></details>
+
+    <details class="item" id="knot-reef"><summary>Square (reef) knot <span class="sub">bandages, bundles, tying the two ends of one cord</span></summary><div class="body">
+      <p><strong>Use it for:</strong> tying off a bandage or sling, closing a bundle or bag — the two ends of the same cord around something. Lies flat; easy to untie.</p>
+      <figure class="diagram"><svg class="diagram" viewBox="-40 0 300 162" role="img" aria-label="Square or reef knot, loose: two interlocked bights; both short ends come out on the same side" style="max-width:420px"><path class="rope" d="M-30,50 L150,50 C190,50 190,110 150,110 L-30,110"/><path class="rope we" style="stroke:var(--accent)" d="M250,80 L110,80 C70,80 70,140 110,140 L250,140"/><path class="gap" d="M178.5,70.2 L178.8,71.1 L179.2,72.6 L179.5,74.0 L179.7,75.5 L179.9,77.0 L180.0,78.5 L180.0,80.0 L180.0,81.5 L179.9,83.0 L179.7,84.5 L179.5,86.0 L179.2,87.4 L178.8,88.9 L178.5,89.8"/><path class="rope" d="M178.5,70.2 L178.8,71.1 L179.2,72.6 L179.5,74.0 L179.7,75.5 L179.9,77.0 L180.0,78.5 L180.0,80.0 L180.0,81.5 L179.9,83.0 L179.7,84.5 L179.5,86.0 L179.2,87.4 L178.8,88.9 L178.5,89.8" stroke-linecap="butt"/><path class="gap" d="M81.5,100.2 L81.2,101.1 L80.8,102.6 L80.5,104.0 L80.3,105.5 L80.1,107.0 L80.0,108.5 L80.0,110.0 L80.0,111.5 L80.1,113.0 L80.3,114.5 L80.5,116.0 L80.8,117.4 L81.2,118.9 L81.5,119.8"/><path class="rope we" style="stroke:var(--accent)" d="M81.5,100.2 L81.2,101.1 L80.8,102.6 L80.5,104.0 L80.3,105.5 L80.1,107.0 L80.0,108.5 L80.0,110.0 L80.0,111.5 L80.1,113.0 L80.3,114.5 L80.5,116.0 L80.8,117.4 L81.2,118.9 L81.5,119.8" stroke-linecap="butt"/><text x="-28" y="40" text-anchor="start" class="lbl">end</text><text x="-28" y="100" text-anchor="start" class="lbl">standing part</text><text x="248" y="70" text-anchor="end" class="lbl acc">end</text><text x="248" y="156" text-anchor="end" class="lbl acc">standing part</text></svg>
+        <figcaption>Loose square knot: two interlocked loops; both short ends on the same side.</figcaption></figure>
+      <ol class="steps">
+        <li><strong>Right over left</strong> and tuck under (like starting to tie a shoe).</li>
+        <li><strong>Left over right</strong> and tuck under.</li>
+        <li>Pull both ends evenly. Each end lies beside its own standing part.</li>
+      </ol>
+      <p><strong>Check:</strong> it lies <strong>flat and symmetric</strong>, with both short ends on the same side. If you did right-over-left twice you get a <strong>granny knot</strong>: it looks twisted, the ends stick out crosswise, and it slips or jams — retie it.</p>
+      <div class="callout danger"><strong class="callout-title">Not for joining ropes</strong><p>Never use a square knot to join two ropes — especially of different size or material — or for any load that matters. It can capsize and pull apart. <strong>To join two ropes use a sheet bend</strong> (below).</p></div>
+    </div></details>
+
+    <details class="item" id="knot-prusik"><summary>Prusik <span class="sub">friction hitch that grips when loaded and slides when not</span></summary><div class="body">
+      <p><strong>Use it for:</strong> a movable attachment point on a ridgeline (e.g. tensioning a tarp), a grip to pull on a rope, a hauling or backup grab. You need a <strong>closed loop of cord thinner than the main rope</strong> — typically <strong>5–7 mm cord on 10–11 mm rope</strong>.</p>
+      <figure class="diagram"><svg class="diagram" viewBox="0 0 210 232" role="img" aria-label="Prusik hitch seen from the side where the cord legs come out: a thinner cord loop wrapped three times round a thicker main rope, giving six neat coils, three above and three below the legs"><path class="rope" style="stroke-width:14" d="M100,6 L100,226"/><path class="rope we" style="stroke:var(--accent);stroke-width:6" d="M84,55 L116,45"/><path class="rope we" style="stroke:var(--accent);stroke-width:6" d="M84,71 L116,61"/><path class="rope we" style="stroke:var(--accent);stroke-width:6" d="M84,87 L116,77"/><path class="rope we" style="stroke:var(--accent);stroke-width:6" d="M84,135 L116,125"/><path class="rope we" style="stroke:var(--accent);stroke-width:6" d="M84,151 L116,141"/><path class="rope we" style="stroke:var(--accent);stroke-width:6" d="M84,167 L116,157"/><path class="rope we" style="stroke:var(--accent);stroke-width:5" d="M108,100 C130,104 140,130 146,168"/><path class="rope we" style="stroke:var(--accent);stroke-width:5" d="M108,112 C126,116 132,140 140,170"/><ellipse cx="143" cy="184" rx="9" ry="15" class="ln"/><text x="112" y="20" text-anchor="start" class="lbl">main rope</text><text x="112" y="34" text-anchor="start" class="lbl sm">(thicker)</text><text x="78" y="70" text-anchor="end" class="lbl sm acc">3 coils</text><text x="78" y="150" text-anchor="end" class="lbl sm acc">3 coils</text><text x="150" y="128" text-anchor="start" class="lbl sm acc">legs</text><text x="158" y="190" text-anchor="start" class="lbl sm">load</text></svg>
+        <figcaption>Seen from the side the legs come out: three wraps make six neat coils.</figcaption></figure>
+      <ol class="steps">
+        <li>Hold the cord loop behind the main rope.</li>
+        <li>Pass the far end of the loop over the rope and <strong>through itself</strong> (a girth hitch), but don't tighten.</li>
+        <li>Keep wrapping through the inside of the loop, each wrap beside the last, for <strong>3 wraps</strong> in total.</li>
+        <li>Dress it: wraps neat and parallel with <strong>no crossovers</strong>, a straight bridge on one side, legs coming out of the middle.</li>
+        <li>Pull the legs to test: it should grip. To move it, unload it and <strong>push the knot body</strong>, not the legs.</li>
+      </ol>
+      <p><strong>Check:</strong> six tidy coils, legs centred, grips firmly when you hang on it. If it slips, add a wrap or use thinner cord; if it won't slide, take a wrap off.</p>
+      <div class="callout warn"><strong class="callout-title">Limitations</strong><p>Grips poorly on icy, wet, muddy or slick rope, and with cord too close to the main rope's thickness. A sudden shock can make it slip and melt the cord. <strong>Using a prusik to hold a person (climbing, ascending, rescue) requires training and rated gear.</strong></p></div>
+    </div></details>
+
+    <details class="item" id="knot-extra"><summary>Also useful <span class="sub">sheet bend, trucker's hitch, two half hitches, figure-eight stopper</span></summary><div class="body">
+      <ul>
+        <li><strong>Sheet bend — joins two ropes, even of different thickness.</strong> Make a U-shaped bight in the thicker rope. Pass the thinner end up through the bight, around behind <strong>both</strong> legs of the bight, then tuck it under itself (not under the bight). Both short ends should end up on the same side. Go around twice (double sheet bend) for slippery or very unequal ropes. Leave long tails.</li>
+        <li><strong>Trucker's hitch — high tension.</strong> Tie a fixed loop partway along the standing part (e.g. a figure-eight on a bight). Take the end round the anchor, back up through that loop, and pull down — it multiplies your pull (less in practice, because of friction). Pinch it and finish with two half hitches. Friction wears the rope where it runs through the loop.</li>
+        <li><strong>Two half hitches — tie a rope end to a ring, post or tree.</strong> Pass the end around the object, then around the standing part and through (one half hitch); repeat <strong>in the same direction</strong>. Start with a full extra turn around the object (round turn and two half hitches) to take a heavy load.</li>
+        <li><strong>Figure-eight stopper — stops a rope end pulling through.</strong> Make a loop near the end, take the end around behind the standing part, then down through the loop. It looks like an 8, holds well and unties easily.</li>
+      </ul>
+    </div></details>
+  </section>
+
+  <section id="dangers">
+    <h2>The quiet killers</h2>
+    <div class="callout danger"><strong class="callout-title">Carbon monoxide (CO)</strong>
+      <p><strong>Never run a stove, heater, grill or generator inside a tent, snow shelter, vehicle or home: carbon monoxide kills.</strong> You can't see or smell it. A generator must be at least <strong>20 ft (6 m) from doors and windows, exhaust pointed away</strong>.</p>
+      <p>Warning signs: headache, dizziness, nausea, weakness, confusion, sleepiness — often several people at once. <strong>Get everyone into fresh air immediately</strong> and get medical help. Stuck in a vehicle in snow? Keep the exhaust pipe clear of snow.</p></div>
+    <div class="callout danger"><strong class="callout-title">Wildfire</strong>
+      <p>Most wildfires are started by people. Clear the site, keep fires small, never leave one unattended, and <a href="#fire-safety">put it out cold</a>. Skip fire entirely in high wind or very dry conditions.</p>
+      <p>If a fire gets away or a wildfire approaches: <strong>leave early</strong>. Fire moves fastest <strong>uphill and downwind</strong> — don't try to outrun it uphill. Head for natural firebreaks: wide rocky ground, water, roads or already-burned ground. Avoid narrow canyons and gullies, which act like chimneys.</p></div>
+    <div class="callout danger"><strong class="callout-title">Hypothermia from wet clothing</strong>
+      <p>Wet clothes plus wind can make you dangerously cold <strong>even well above freezing</strong>. Watch for shivering, clumsiness, slurred speech, poor decisions — shivering that <em>stops</em> is a bad sign.</p>
+      <p>Handle the person gently. Get them out of wind and wet, <strong>remove wet clothing</strong>, insulate them from the ground, and warm the core (armpits, chest, groin). Warm sweet drinks only if fully alert and able to swallow. No alcohol. Don't rub limbs. More in <a href="../firstaid/index.html">First aid</a>.</p></div>
+    <a class="btn back-top" href="#main">Back to top</a>
+  </section>
+
+  <footer class="page-foot">Compiled from widely taught wilderness-survival and outdoor-education practice (e.g. military survival manuals, scouting and mountaineering instruction) and CDC guidance for water and carbon monoxide. Practise in safe conditions before you depend on any of it. This is not a substitute for training or professional help.</footer>
+</main>
+<script>
+/* Open a collapsed card when a link points into it (e.g. #knot-bowline). */
+(function () {
+  function openTo() {
+    var id = decodeURIComponent(location.hash.slice(1));
+    if (!id) return;
+    var el = document.getElementById(id);
+    if (!el) return;
+    var d = el.closest('details');
+    while (d) { d.open = true; d = d.parentElement && d.parentElement.closest('details'); }
+    el.scrollIntoView();
+  }
+  window.addEventListener('hashchange', openTo);
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', openTo); else openTo();
+})();
+</script>
+</body>
+</html>

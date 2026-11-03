@@ -209,6 +209,27 @@ let failures = 0;
     console.log('   tri:', (await page.textContent('#tri-out')).replace(/\s+/g, ' ').slice(0, 260));
     await page.screenshot({ path: S + 'map-tri.png' });
   });
+  await step('offline: checklist item added and persists across an offline reload', async () => {
+    await page.goto(BASE + 'tools/index.html');
+    await page.click('#cl-templates [data-tpl="0"]');
+    await page.waitForSelector('.cl-add-input');
+    const input = page.locator('.cl-add-input').first();
+    await input.fill('Offline test item');
+    await input.press('Enter');
+    await page.waitForTimeout(600);
+    await page.reload();
+    await page.waitForTimeout(800);
+    const found = await page.evaluate(() => OGStore.all('checklists').then(ls => ls.some(l => l.items.some(i => i.text === 'Offline test item'))));
+    const shown = await page.locator('text=Offline test item').count();
+    console.log('   in IndexedDB:', found, '| on screen:', shown);
+    if (!found || !shown) throw new Error('checklist item did not persist');
+  });
+  await step('offline: emergency PDF is available', async () => {
+    await page.goto(BASE + 'emergency/index.html');
+    const r = await page.evaluate(async () => { const res = await fetch('off-grid-emergency-guide.pdf'); const b = await res.arrayBuffer(); return [res.status, res.headers.get('content-type'), b.byteLength, String.fromCharCode(...new Uint8Array(b.slice(0, 5)))]; });
+    console.log('   PDF:', JSON.stringify(r));
+    if (r[0] !== 200 || r[3] !== '%PDF-') throw new Error('PDF not cached');
+  });
   await step('offline: other pages open', async () => {
     for (const p of ['index.html', 'tools/index.html', 'water/index.html', 'foraging/index.html', 'firstaid/index.html', 'fireshelter/index.html', 'food/index.html', 'electricity/index.html', 'emergency/index.html']) {
       const r = await page.goto(BASE + p).catch(e => null);
