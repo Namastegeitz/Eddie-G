@@ -17,6 +17,7 @@ STATUS.md        running log of what's done and what's next
 | App | What it is | Status |
 |---|---|---|
 | [Bug's-Eye View](apps/bugs-eye-view/) | Action-stealth survival game (Godot 4.7) as a tiny bug in a giant house. Android, iOS, Windows, macOS, Linux, Web. | All 6 phases built and tested; placeholder art. |
+| [Alien Sudoku](apps/alien-sudoku/) | Sudoku with alien glyphs: 54-level campaign, daily puzzles, zen mode, achievements, synthesized space music. Free with AdMob ads on phones. Android, iOS, Windows, macOS, Linux, Web/PWA. | Complete; 86 unit + 13 end-to-end tests; CI builds every platform. |
 
 ## Working across devices
 

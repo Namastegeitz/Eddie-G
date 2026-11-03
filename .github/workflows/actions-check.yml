@@ -1,0 +1,15 @@
+# Temporary: checks whether GitHub Actions can start jobs in this repository.
+name: Actions check
+on:
+  push:
+    paths: ['.github/workflows/actions-check.yml']
+jobs:
+  plain:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "runner works"
+  with-checkout:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: echo "checkout works"
