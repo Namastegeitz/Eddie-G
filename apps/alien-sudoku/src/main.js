@@ -85,7 +85,7 @@ async function boot() {
 function registerServiceWorker() {
   if (isNative || isElectron || !('serviceWorker' in navigator)) return;
   if (!/^https?:$/.test(location.protocol)) return;
-  if (import.meta.env.DEV) return;
+  if (import.meta.env.DEV || import.meta.env.VITE_NO_SW) return;
   import('virtual:pwa-register')
     .then(({ registerSW }) => registerSW({ immediate: true }))
     .catch(() => { /* not available in this build */ });

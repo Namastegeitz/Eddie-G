@@ -16,6 +16,25 @@
 - Next: real art/audio, Google Play AAB (needs Android SDK locally), iOS signing via a
   Mac or Codemagic (`docs/ci/codemagic.yaml`), playtesting and tuning.
 
+## Alien Sudoku (`apps/alien-sudoku`)
+- Built from the uploaded `alien-sudoku-export.zip` (original single-page game kept in spirit:
+  glyph sets, space art, synthesized music, reject-on-wrong rule).
+- Full game: campaign (6 sectors x 9), daily transmission + streak calendar, quick play, zen,
+  24 achievements, stats, settings, how-to, autosave/resume, notes/undo/explained hints.
+- Puzzle engine: 1,000 graded unique-solution puzzles + transforms; logical hint engine.
+- Platforms: Vite web/PWA, Capacitor 8 Android + iOS (SPM), Electron desktop. App id
+  `com.eddieg.aliensudoku`. Free with AdMob on phones (Google TEST ids until real ones are set).
+- Tests: 86 unit (`npm test`) + 13 Playwright end-to-end on phone and desktop (`npm run test:e2e`).
+- Playable private web build: https://claude.ai/artifact/NdYUzQJYiAGjCra9nF7MHn
+- CI (`.github/workflows/alien-sudoku.yml`) builds APK, iOS simulator app, Windows/macOS/Linux
+  installers and publishes the `alien-sudoku-latest` release. BLOCKED: GitHub would not start
+  any Actions job on this account (likely billing/spending limit). Fix it, then re-run.
+- Not built in the cloud session: the Android APK (dl.google.com is blocked by the session's
+  network policy) and Electron installers (GitHub release downloads blocked).
+- Next: unblock Actions (or allow dl.google.com), install the APK, AdMob account + real ids,
+  Play Console / App Store Connect setup (`apps/alien-sudoku/docs/STORE_CHECKLIST.md`),
+  host `docs/PRIVACY.md`.
+
 ## NeuroForge (not in this repo)
 - Source on the Windows PC: `C:\Users\edwar\Desktop\AI and ALL\Aethertek\content poster\neuroforge`
 - Live web: https://neuroforged.surge.sh and https://neuroforge.surge.sh

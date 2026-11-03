@@ -270,7 +270,7 @@ h1:focus, h2:focus, [tabindex="-1"]:focus, [tabindex="-1"]:focus-visible { outli
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: calc(var(--sat) + 16px) calc(var(--sar) + 14px) calc(var(--sab) + 16px) calc(var(--sal) + 14px);
+  padding: calc(var(--sat) + 16px) calc(var(--sar) + 14px) calc(var(--sab) + var(--ad-h) + 16px) calc(var(--sal) + 14px);
   background: rgba(3, 0, 10, 0.66);
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
