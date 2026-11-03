@@ -40,6 +40,7 @@
 [ext_resource type="AudioStream" path="res://assets/sfx/stun.wav" id="32_uowyk"]
 [ext_resource type="AudioStream" path="res://assets/sfx/swoosh.wav" id="33_5fyfp"]
 [ext_resource type="AudioStream" path="res://assets/sfx/snore.wav" id="34_18mw2"]
+[ext_resource type="AudioStream" path="res://assets/sfx/sniff.wav" id="34_ewecc"]
 [ext_resource type="AudioStream" path="res://assets/sfx/thud.wav" id="34_kq1by"]
 [ext_resource type="AudioStream" path="res://assets/sfx/tv_blare.wav" id="35_n6xs0"]
 [ext_resource type="AudioStream" path="res://assets/sfx/tv_mumble.wav" id="36_afmb2"]
@@ -91,6 +92,7 @@ sounds = {
 &"skitter": ExtResource("25_0adl8"),
 &"slowmo": ExtResource("26_yvme6"),
 &"smack": ExtResource("27_xfmrt"),
+&"sniff": ExtResource("34_ewecc"),
 &"snore": ExtResource("34_18mw2"),
 &"spray": ExtResource("28_0r01i"),
 &"sprinkler": ExtResource("29_cy23i"),

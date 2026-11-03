@@ -10,6 +10,12 @@ extends Threat
 ## ALERT (freezes and stares, ears up, tail stiff; the cat stalks low) and
 ## SLEEP. Animals get sharper in later rooms (LevelConfig.animal_awareness)
 ## and as the house escalates. A low-flying fly gets snapped at.
+##
+## Dogs sniff along with their nose to the ground, and sniff out a bug hiding
+## nearby: they stand barking at the spot (the alarm climbs and the people come
+## to look) until you leave or they give up. A cat and a dog in the same room
+## play together - chase, tag, swap, play-pounce - distracted while they do,
+## and if one spots you it puts the other on guard too.
 
 enum Pounce { NONE, WINDUP, LEAP, RECOVER }
 enum Mood { CALM, PLAY, ALERT, SLEEP }
@@ -20,6 +26,10 @@ const PLAY_TIME := Vector2(5.0, 9.0)
 const PLAY_GAP := Vector2(6.0, 14.0)
 const TOY_RANGE := 40.0
 const SNAP_REACH := 12.0
+## How close a dog must get to sniff out a hiding bug (times its awareness).
+const SNIFF_OUT_RADIUS := 7.0
+const POINT_TIME := 6.0
+const BUDDY_RANGE := 45.0
 
 @export var waypoints: PackedVector3Array = []
 ## Routine events during which the pet naps (blind, nearly deaf).
@@ -68,6 +78,18 @@ var _snaps := 0
 var _pester_cd := 0.0
 var _snap_cd := 0.0
 var _harmless_pounce := false
+## Seconds left standing and barking at a hiding bug it sniffed out.
+var pointing := 0.0
+var _point_at := Vector3.ZERO
+var _point_cd := 0.0
+var _point_bark := 0.0
+var sniffing := false
+var _sniff_sound := 0.0
+## The other pet in a game of chase, and who's "it".
+var buddy: Pet = null
+var buddy_role: StringName = &""
+var _flee := Vector3.INF
+var _flee_t := 0.0
 # Body pose (visual): pivots and a running clock.
 var _head: Node3D
 var _tail: Node3D
@@ -155,16 +177,31 @@ func _think(delta: float) -> void:
 	_bark_cd -= delta
 	_pester_cd -= delta
 	_snap_cd -= delta
+	_point_cd -= delta
 	_woken = maxf(_woken - delta, 0.0)
+	sniffing = false
 	sleeping = _woken <= 0.0 and HouseClock.any_active(nap_events) and alert.state <= AlertState.SUSPICIOUS
 	if sleeping:
 		mood = Mood.SLEEP
 		stop_playing()
+		pointing = 0.0
 	elif alert.state >= AlertState.SUSPICIOUS and play != &"snap":
+		if play == &"buddy" and buddy and is_instance_valid(buddy):
+			# Spotted something mid-game: the other one stops and looks too.
+			var other := buddy
+			stop_playing()
+			other.force_alert(AlertState.SUSPICIOUS, alert.last_known)
 		mood = Mood.ALERT
 		stop_playing()
 	else:
 		mood = Mood.PLAY if play != &"" else Mood.CALM
+	if pointing > 0.0:
+		mood = Mood.ALERT
+		_point_tick(delta)
+		return
+	if barks and not sleeping and not is_distracted() and _pounce == Pounce.NONE and _point_cd <= 0.0 and _smells_hiding_bug():
+		_start_pointing()
+		return
 	if _pounce != Pounce.NONE:
 		_pounce_tick(delta)
 		return
@@ -253,6 +290,7 @@ func _search(delta: float) -> void:
 			_scent_target = PerceptionSystem.scent.positions[idx]
 		if _scent_target != Vector3.INF:
 			target = _scent_target
+			sniffing = true
 			if _flat_dist(target, global_position) < 1.5:
 				_scent_target = Vector3.INF
 	if uses_perches and target.y > global_position.y + 4.0 and _try_perch(target):
@@ -261,6 +299,7 @@ func _search(delta: float) -> void:
 		_move_to(target, config.search_speed, delta)
 		return
 	# Arrived: sniff around nearby spots.
+	sniffing = barks
 	_sniff_timer -= delta
 	if _sniff_target == Vector3.INF or _sniff_timer <= 0.0 or _flat_dist(_sniff_target, global_position) < 1.5:
 		_sniff_timer = 1.5
@@ -444,7 +483,14 @@ func start_playing(kind: StringName = &"") -> void:
 				options.append(&"tail")
 		else:
 			options.append(&"pounce")
+		var friend := _find_buddy()
+		if friend:
+			for i in 3:
+				options.append(&"buddy")
 		kind = options.pick_random()
+		if kind == &"buddy":
+			start_buddy_play(friend)
+			return
 	play = kind
 	_play_t = randf_range(PLAY_TIME.x, PLAY_TIME.y)
 	_play_point = global_position
@@ -465,8 +511,13 @@ func stop_playing() -> void:
 	if _carrying and _toy:
 		_toy.freeze = false
 	_carrying = false
+	var other := buddy
 	play = &""
+	buddy = null
+	buddy_role = &""
 	_play_cd = randf_range(PLAY_GAP.x, PLAY_GAP.y)
+	if other and is_instance_valid(other) and other.play == &"buddy" and other.buddy == self:
+		other.stop_playing()
 
 
 func is_puppy() -> bool:
@@ -546,6 +597,8 @@ func _play_tick(delta: float) -> void:
 				_stop(delta)
 		&"fetch":
 			_fetch_tick(delta)
+		&"buddy":
+			_buddy_tick(delta)
 		&"snap":
 			var fly := PerceptionSystem.player as Fly
 			if fly == null or _snaps >= 2 or not fly.flying:
@@ -695,9 +748,125 @@ func pose_body(delta: float) -> void:
 			hx = clampf(atan2(local.y, Vector2(local.x, local.z).length()), -0.6, 0.8)
 		if lying:
 			hx = -0.5
+		elif sniffing and barks:
+			# Nose to the ground, snuffling.
+			hx = -0.75 + sin(_pose_t * 14.0) * 0.08
+			hy = sin(_pose_t * 1.7) * 0.25
+			_sniff_sound -= delta
+			if _sniff_sound <= 0.0:
+				_sniff_sound = 1.1
+				AudioManager.play_at(&"sniff", eye_position(), -8.0, randf_range(0.9, 1.1))
 		elif mood == Mood.CALM and play == &"" and speed < 1.0:
 			hy = sin(_pose_t * 0.7) * 0.4
 			hx = -0.2 if barks and fmod(_pose_t, 5.0) < 2.0 else 0.0
 		_head.rotation = _head.rotation.lerp(Vector3(hx, hy, 0), k)
 	if _tongue:
 		_tongue.visible = barks and (mood == Mood.PLAY or speed > config.patrol_speed * 1.2)
+
+
+# --- Playing together (cat and dog) ---------------------------------------------
+
+## Another pet in this room that's free to play.
+func _find_buddy() -> Pet:
+	for n in get_tree().get_nodes_in_group(Phys.GROUP_PET):
+		var o := n as Pet
+		if o and o != self and o.present and not o.sleeping and o.play == &"" and o.pointing <= 0.0 \
+				and o.alert.state == AlertState.UNAWARE and o.get_parent() == get_parent() \
+				and _flat_dist(o.global_position, global_position) < BUDDY_RANGE:
+			return o
+	return null
+
+
+## Start a game of chase with `other` (this one is "it").
+func start_buddy_play(other: Pet) -> bool:
+	if other == null or other == self:
+		return false
+	var t := randf_range(9.0, 13.0)
+	_begin_buddy(other, &"chase", t)
+	other._begin_buddy(self, &"run", t)
+	AudioManager.play_at(&"bark" if barks else &"meow", eye_position(), -6.0, 1.4)
+	return true
+
+
+func _begin_buddy(other: Pet, role: StringName, t: float) -> void:
+	play = &"buddy"
+	buddy = other
+	buddy_role = role
+	_play_t = t
+	_flee = Vector3.INF
+	_bat_cd = 0.6
+
+
+func _buddy_tick(delta: float) -> void:
+	if buddy == null or not is_instance_valid(buddy) or buddy.play != &"buddy" or not buddy.present:
+		stop_playing()
+		return
+	var d := _flat_dist(buddy.global_position, global_position)
+	if buddy_role == &"chase":
+		if _bat_cd > 0.0:
+			# Just tagged: a play bow / a crouch before giving chase.
+			_stop(delta)
+			face_towards(buddy.global_position, delta, 8.0)
+			return
+		if d < 5.0:
+			# Tag! Now the other one is "it".
+			buddy_role = &"run"
+			buddy.buddy_role = &"chase"
+			buddy._bat_cd = 0.8
+			_flee = Vector3.INF
+			AudioManager.play_at(&"bark" if barks else &"meow", eye_position(), -10.0, 1.5)
+			if not barks:
+				_start_pounce(buddy.global_position, true)
+			return
+		# The chaser sprints; the runner only trots, so tags happen.
+		_move_to(buddy.global_position, config.chase_speed * 0.8, delta)
+	else:
+		_flee_t -= delta
+		if _flee == Vector3.INF or _flee_t <= 0.0 or _flat_dist(_flee, global_position) < 2.0:
+			_flee_t = 1.2
+			var away := global_position - buddy.global_position
+			away.y = 0.0
+			if away.length() < 0.1:
+				away = -global_basis.z
+			_flee = global_position + away.normalized().rotated(Vector3.UP, randf_range(-0.9, 0.9)) * 14.0
+		_move_to(_flee, config.search_speed * 0.75, delta)
+
+
+# --- Dogs sniff out hiding bugs --------------------------------------------------
+
+func _smells_hiding_bug() -> bool:
+	var p := PerceptionSystem.player
+	if p == null or p.dead or not p.is_hidden_safe():
+		return false
+	return _flat_dist(p.global_position, global_position) < SNIFF_OUT_RADIUS * effective_awareness() \
+		and absf(p.global_position.y - global_position.y) < 8.0
+
+
+func _start_pointing() -> void:
+	pointing = POINT_TIME
+	_point_at = PerceptionSystem.player.global_position
+	_point_bark = 0.4
+	stop_playing()
+	# The people come to see what the dog has found.
+	for h in get_tree().get_nodes_in_group(Phys.GROUP_HUMAN):
+		var human := h as Threat
+		if human.present and human.get_parent() == get_parent():
+			human.force_alert(AlertState.SEARCHING, _point_at)
+
+
+func _point_tick(delta: float) -> void:
+	pointing -= delta
+	_stop(delta)
+	face_towards(_point_at, delta, 8.0)
+	sniffing = true
+	_point_bark -= delta
+	if _point_bark <= 0.0:
+		_point_bark = 1.4
+		AudioManager.play_at(&"bark", eye_position(), 2.0, randf_range(0.95, 1.1))
+		PerceptionSystem.add_alarm_from_sound(1.5)
+	var p := PerceptionSystem.player
+	# You slipped away (or it gave up): back to normal.
+	if pointing <= 0.0 or p == null or not p.is_hidden_safe() \
+			or _flat_dist(p.global_position, _point_at) > 4.0:
+		pointing = 0.0
+		_point_cd = 8.0

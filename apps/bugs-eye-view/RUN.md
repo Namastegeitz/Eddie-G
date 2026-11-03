@@ -94,13 +94,23 @@ Touch one to use it: its name and what it does stay on screen (6 s for gems,
 Food and gems add to your score; find two gems in a run you win for the
 **Gem Hunter** badge. Gems you find are kept in your save.
 
-**Animals** are playful when calm: they bat their ball around, do zoomies,
-play-pounce and (the puppy) chase their tails. While playing they see and
-hear about half as well. Anything suspicious ends the game: ears up, tail
-stiff, they freeze and stare, and the cat stalks low. A fly hovering just
-above a pet gets leapt at. Animals get sharper room by room (kitchen puppy:
-relaxed, living-room cat: watchful, backyard dog: sharp; shown on the room
-select screen) and sharper again as the household escalates.
+**Animals.** The kitchen has a playful puppy; the living room and the
+backyard each have a cat *and* a dog. Calm animals play: they bat their ball
+around, do zoomies, play-pounce, the puppy chases its tail - and the cat and
+the dog play chase together, tagging and swapping who's "it". While playing
+they see and hear about half as well. Anything suspicious ends the game: ears
+up, tail stiff, they freeze and stare, the cat stalks low - and if one of a
+playing pair spots something, the other is on guard too. A fly hovering just
+above a pet gets leapt at. The backyard cat leaps onto the picnic table, the
+doghouse and the shed.
+
+Dogs sniff along with their nose to the ground. Hide near one and it sniffs
+you out: it stands barking at your hiding spot, the alarm climbs and the
+people come to look. You're still safe in there, but move before it fills.
+
+Animals get sharper room by room (relaxed in the kitchen, watchful in the
+living room, sharp in the backyard; shown on the room select screen) and
+sharper again as the household escalates.
 
 **People** stop to do things on their rounds, and anything suspicious
 interrupts them:
@@ -125,7 +135,7 @@ three times faster.
 ## 3. Test it
 
 All checks: import, boot, warnings-as-errors, an offline test of the Meshy
-client, then the 120-check smoke test and the 285-check phase audit
+client, then the 120-check smoke test and the 296-check phase audit
 (`tests/phase_audit.tscn`, one section per build phase plus one per update),
 each run in the project **and** against an exported pack. Any script or
 engine error fails the run:
@@ -146,7 +156,7 @@ Run one section of the audit with
 (1-6 are the build phases, 7 the alarm gauge and fly moves, 8 cover and model
 slots, 9 bigger rooms, people, bug detail, food and gems, 10 pickup messages
 and touch look, 11 flying, playful/alert animals and people's activities, 12 the
-touch look stick).
+touch look stick, 13 the upgraded dog and cat-and-dog rooms).
 
 `godot` means the Godot executable, e.g.
 `C:\Godot\Godot_v4.7.2-stable_win64_console.exe`. The smoke test prints

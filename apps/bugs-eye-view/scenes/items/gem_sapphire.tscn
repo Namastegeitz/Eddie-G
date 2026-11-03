@@ -36,40 +36,40 @@ height = 0.04
 radial_segments = 16
 rings = 1
 
-[node name="GemSapphire" type="Area3D" unique_id=1770009874]
+[node name="GemSapphire" type="Area3D" unique_id=1628437567]
 script = ExtResource("1_wu1mi")
 def = ExtResource("2_5u44w")
 
-[node name="Shape" type="CollisionShape3D" parent="." unique_id=1147278140]
+[node name="Shape" type="CollisionShape3D" parent="." unique_id=301307325]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.7, 0)
 shape = SubResource("SphereShape3D_uebev")
 
-[node name="Visual" type="Node3D" parent="." unique_id=2056399643]
+[node name="Visual" type="Node3D" parent="." unique_id=1860555597]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.7, 0)
 
-[node name="Oval" type="MeshInstance3D" parent="Visual" unique_id=738394114]
+[node name="Oval" type="MeshInstance3D" parent="Visual" unique_id=462514880]
 transform = Transform3D(0.8, 0, 0, 0, 1.15, 0, 0, 0, 0.55, 0, 0, 0)
 material_override = ExtResource("3_t73fk")
 mesh = SubResource("SphereMesh_rrf43")
 
-[node name="Skin" type="Node3D" parent="Visual" unique_id=948366405]
+[node name="Skin" type="Node3D" parent="Visual" unique_id=1324858213]
 script = ExtResource("4_evgbv")
 model_id = "gem_sapphire"
 fit_size = Vector3(1.1, 1.5, 0.8)
 hide_paths = Array[NodePath]([NodePath("../Oval")])
 
-[node name="Glow" type="OmniLight3D" parent="Visual" unique_id=1366394634]
+[node name="Glow" type="OmniLight3D" parent="Visual" unique_id=1440893437]
 light_color = Color(0.15, 0.35, 1, 1)
 light_energy = 1.2
 
-[node name="Sparkles" type="Node3D" parent="Visual" unique_id=1809183515]
+[node name="Sparkles" type="Node3D" parent="Visual" unique_id=814557939]
 
-[node name="Sparkle" type="MeshInstance3D" parent="Visual/Sparkles" unique_id=1016197143]
+[node name="Sparkle" type="MeshInstance3D" parent="Visual/Sparkles" unique_id=137411525]
 material_override = ExtResource("5_8qutk")
 cast_shadow = 0
 mesh = SubResource("ArrayMesh_7auwj")
 
-[node name="Halo" type="MeshInstance3D" parent="." unique_id=735193642]
+[node name="Halo" type="MeshInstance3D" parent="." unique_id=1470003434]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, 0)
 material_override = ExtResource("6_16sma")
 cast_shadow = 0

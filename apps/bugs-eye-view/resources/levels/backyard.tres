@@ -7,7 +7,7 @@
 script = ExtResource("2_8cmsv")
 id = &"backyard"
 display_name = "Backyard"
-description = "Open sky, a dog with a nose for bugs, sprinklers and the exterminator's fog."
+description = "Open sky, a dog with a nose for bugs and a cat on the prowl, sprinklers and the exterminator's fog."
 scene_path = "res://scenes/levels/backyard.tscn"
 order = 2
 crumbs_required = 12

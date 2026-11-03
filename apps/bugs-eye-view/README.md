@@ -34,8 +34,11 @@ and escape. One codebase for Android, iOS, Windows, macOS, Linux and the web.
 - **Living Room**: the TV masks your noise but its glow exposes you, a fan
   blows flyers off course, a reading corner with an armchair and an aquarium
   (bubbles mask you, its glow gives you away), the cat leaps onto furniture
-  and knocks things over. Boss: *The Cat*.
-- **Backyard**: open sky, a dog that follows your scent trail, sprinklers,
+  and knocks things over, and the dog is in too - the two play chase. Boss:
+  *The Cat*.
+- **Backyard**: open sky, a dog that follows your scent trail and sniffs out
+  your hiding spots, a cat prowling the beds and leaping onto the picnic
+  table and shed, sprinklers,
   puddles and a bird bath that wash it away, crunchy leaf piles and compost, a
   vegetable garden and a garden shed. Boss: *The Exterminator*, a fog front
   that sweeps the yard.
@@ -51,8 +54,10 @@ noises and raise the swatting arm when they spot you. Each room's person has
 things they do: the cook cooks, washes up and snacks (dropping crumbs), the
 reader reads behind the paper and naps on the couch, the gardener waters,
 kneels in the vegetables and plays fetch with the dog. The puppy, cat and dog
-are playful when calm (balls, zoomies, play-pounces), alert when something's
-up, leap at a low-flying fly, and get sharper room by room.
+are playful when calm (balls, zoomies, play-pounces, cat-and-dog chase),
+alert when something's up, leap at a low-flying fly, and get sharper room by
+room. The dog is a tri-colour beagle that sniffs with its nose to the ground
+and barks at your hiding spot when it finds you.
 
 **Bugs**: jointed
 legs that scuttle in a real gait, twitching antennae, wing veins, eight
@@ -94,7 +99,7 @@ for a generated 3D model (84 in all); `tools/meshy/generate.py` makes them with 
 (needs your Meshy API key; see [tools/meshy/README.md](tools/meshy/README.md)).
 
 - Two headless test suites pass in the project and in an exported build
-  (`tools/run_tests.sh`): a 120-check smoke test and a 285-check phase audit
+  (`tools/run_tests.sh`): a 120-check smoke test and a 296-check phase audit
   that walks the spec phase by phase, plus every update since (alarm gauge,
   fly moves, hiding spots, model slots, bigger rooms, people, bug detail, food
   and gems, flying, animals and people's activities). Zero GDScript warnings, zero engine errors.

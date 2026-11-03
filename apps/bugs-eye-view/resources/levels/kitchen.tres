@@ -5,7 +5,7 @@
 
 [resource]
 script = ExtResource("2_djwyv")
-description = "Breakfast rush, a swatter by the sink and a robot vacuum on cleaning day. Learn to hide in the shadows."
+description = "Breakfast rush, a swatter by the sink, a playful puppy and a robot vacuum on cleaning day. Learn to hide in the shadows."
 scene_path = "res://scenes/levels/kitchen.tscn"
 crumbs_required = 10
 par_time = 240.0

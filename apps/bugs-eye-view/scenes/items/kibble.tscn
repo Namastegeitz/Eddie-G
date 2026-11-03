@@ -21,22 +21,22 @@ _surfaces = [{
 "vertex_data": PackedByteArray("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")
 }]
 
-[node name="Kibble" type="Area3D" unique_id=707491061]
+[node name="Kibble" type="Area3D" unique_id=1828543462]
 script = ExtResource("1_v6nmy")
 def = ExtResource("2_aquiy")
 
-[node name="Shape" type="CollisionShape3D" parent="." unique_id=549376063]
+[node name="Shape" type="CollisionShape3D" parent="." unique_id=2043196424]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.65, 0)
 shape = SubResource("SphereShape3D_f6qb8")
 
-[node name="Visual" type="Node3D" parent="." unique_id=507721597]
+[node name="Visual" type="Node3D" parent="." unique_id=1089327734]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.65, 0)
 
-[node name="Kibble" type="MeshInstance3D" parent="Visual" unique_id=1838273968]
+[node name="Kibble" type="MeshInstance3D" parent="Visual" unique_id=1577086742]
 material_override = ExtResource("3_4v8fa")
 mesh = SubResource("ArrayMesh_6viu2")
 
-[node name="Skin" type="Node3D" parent="Visual" unique_id=1202594683]
+[node name="Skin" type="Node3D" parent="Visual" unique_id=1062320705]
 script = ExtResource("4_1xyy1")
 model_id = "kibble"
 fit_size = Vector3(1.7, 0.9, 1.3)

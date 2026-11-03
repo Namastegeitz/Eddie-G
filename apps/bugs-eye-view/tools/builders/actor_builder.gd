@@ -194,7 +194,7 @@ static func _leg(v: Node3D, name: String, side: float, fwd: float, hip: Vector3,
 	mesh(pivot, "Femur", box(Vector3(femur, thick, thick)), mat_f, Vector3(side * femur * 0.5, 0, 0))
 	var knee := node3d(pivot, "Knee", Vector3(side * femur, 0, 0))
 	knee.rotation = Vector3(0, 0, -side * (up + down))
-	mesh(knee, "Joint", sphere(thick * 0.75), mat_f)
+	mesh(knee, "Joint", sphere(thick * 0.75), mat_t)
 	mesh(knee, "Tibia", box(Vector3(tibia, thick * 0.8, thick * 0.8)), mat_t, Vector3(side * tibia * 0.5, 0, 0))
 	mesh(knee, "Foot", box(Vector3(tibia * 0.3, thick * 0.6, thick * 0.6)), mat_t,
 		Vector3(side * tibia * 1.08, -thick * 0.2, 0), Vector3(0, 0, side * 0.6))
@@ -386,9 +386,8 @@ static func foot(force: bool) -> void:
 	mesh(v, "Toe", sphere(2.1), "shoe", Vector3(0, 1.2, -5.2), Vector3.ZERO, Vector3(1, 0.6, 0.6))
 	mesh(v, "Sole", box(Vector3(4.4, 0.5, 11.2)), "plastic_white", Vector3(0, 0.25, -0.9))
 	mesh(v, "Laces", box(Vector3(2.0, 0.3, 4.0)), "plastic_white", Vector3(0, 2.65, -2.4))
-	mesh(v, "Ankle", cyl(2.0, 2.4, 2.2), "jeans", Vector3(0, 3.4, 2.2))
-	merge_meshes(v, ["Ankle"])
-	add_skin(v, "human_sneaker", Vector3(4.6, 3.2, 11.6), Vector3(0, 1.6, -1.0), ["Ankle"])
+	merge_meshes(v)
+	add_skin(v, "human_sneaker", Vector3(4.6, 3.2, 11.6), Vector3(0, 1.6, -1.0))
 	pack(f, "res://scenes/hazards/foot.tscn", force)
 
 
@@ -533,55 +532,67 @@ static func pet(force: bool, path: String, config: String, color: String, size: 
 	# Bottom of the capsule at the origin so the pet's origin matches the navmesh.
 	shape(p, cap, Vector3(0, 2.4 * k, 0), Vector3(PI * 0.5, 0, 0))
 	var v := node3d(p, "Visual")
+	# Dogs: a beagle-style tri-colour coat (tan body, white chest, muzzle, legs
+	# and tail tip, a black saddle). Cats: an orange tabby.
 	var dark := "dark_wood" if is_dog else "leaves"
-	mesh(v, "Body", capsule(2.4 * k, 11.0 * k), color, Vector3(0, 5.0 * k, 0.8 * k), Vector3(PI * 0.5, 0, 0))
-	mesh(v, "Chest", sphere(2.6 * k), color, Vector3(0, 5.4 * k, -3.4 * k), Vector3.ZERO, Vector3(1, 1.05, 1.1))
+	var white := "dog_white" if is_dog else "plastic_white"
+	var black := "dog_black"
+	mesh(v, "Body", capsule(2.35 * k, 11.5 * k), color, Vector3(0, 5.0 * k, 0.8 * k), Vector3(PI * 0.5, 0, 0))
+	mesh(v, "Chest", sphere(2.6 * k), white if is_dog else color, Vector3(0, 5.3 * k, -3.4 * k), Vector3.ZERO, Vector3(1, 1.05, 1.1))
 	if is_dog:
+		mesh(v, "Saddle", sphere(2.4 * k), black, Vector3(0, 6.75 * k, 1.4 * k), Vector3.ZERO, Vector3(1.02, 0.5, 1.65))
 		var collar := TorusMesh.new()
-		collar.inner_radius = 1.5 * k
-		collar.outer_radius = 1.95 * k
+		collar.inner_radius = 1.55 * k
+		collar.outer_radius = 2.0 * k
 		mesh(v, "Collar", collar, "cloth_red", Vector3(0, 6.3 * k, -4.9 * k), Vector3(PI * 0.5 - 0.5, 0, 0))
-		mesh(v, "Patch", sphere(1.8 * k), dark, Vector3(0.6 * k, 6.6 * k, 1.5 * k), Vector3.ZERO, Vector3(1.0, 0.5, 1.6))
+		mesh(v, "Tag", cyl(0.45 * k, 0.15 * k), "golden", Vector3(0, 4.75 * k, -5.95 * k), Vector3(PI * 0.5, 0, 0))
 	else:
 		for i in 3:
 			mesh(v, "Stripe", box(Vector3(4.6, 0.25, 0.7) * k), dark, Vector3(0, 7.3 * k - i * 0.1, -1.0 * k + i * 2.2 * k), Vector3(0, 0, 0))
 
 	var head := node3d(v, "Head", Vector3(0, 7.0 * k, -6.2 * k))
-	mesh(head, "Skull", sphere(2.2 * k if not is_dog else 2.3 * k), color, Vector3(0, 0.2 * k, -0.6 * k))
 	if is_dog:
-		mesh(head, "Snout", box(Vector3(1.8, 1.6, 2.8) * k), color, Vector3(0, -0.45 * k, -2.7 * k))
-		mesh(head, "Nose", sphere(0.5 * k), "spider", Vector3(0, -0.05 * k, -4.15 * k), Vector3.ZERO, Vector3(1.2, 0.8, 0.8))
-		var tongue := mesh(head, "Tongue", box(Vector3(0.9, 0.15, 1.6) * k), "lips", Vector3(0, -1.35 * k, -3.6 * k), Vector3(0.5, 0, 0))
+		mesh(head, "Skull", sphere(2.2 * k), color, Vector3(0, 0.35 * k, -0.4 * k), Vector3.ZERO, Vector3(1.0, 0.95, 1.05))
+		for x in [-1.0, 1.0]:
+			mesh(head, "Brow", sphere(0.55 * k), color, Vector3(x * 0.9 * k, 1.35 * k, -1.85 * k), Vector3.ZERO, Vector3(1.2, 0.6, 0.8))
+		mesh(head, "Snout", box(Vector3(1.9, 1.5, 3.1) * k), color, Vector3(0, -0.5 * k, -2.75 * k))
+		mesh(head, "Muzzle", sphere(1.1 * k), white, Vector3(0, -0.75 * k, -3.6 * k), Vector3.ZERO, Vector3(1.0, 0.75, 1.15))
+		mesh(head, "Blaze", box(Vector3(0.55, 0.2, 3.2) * k), white, Vector3(0, 0.3 * k, -2.4 * k), Vector3(-0.25, 0, 0))
+		for x in [-1.0, 1.0]:
+			mesh(head, "Jowl", sphere(0.62 * k), white, Vector3(x * 0.7 * k, -1.15 * k, -3.25 * k), Vector3.ZERO, Vector3(0.9, 1.1, 1.3))
+		mesh(head, "Nose", sphere(0.5 * k), black, Vector3(0, -0.15 * k, -4.4 * k), Vector3.ZERO, Vector3(1.25, 0.85, 0.8))
+		var tongue := mesh(head, "Tongue", box(Vector3(0.9, 0.15, 1.6) * k), "lips", Vector3(0, -1.55 * k, -3.8 * k), Vector3(0.5, 0, 0))
 		tongue.visible = false
 	else:
-		mesh(head, "Muzzle", sphere(1.15 * k), "plastic_white", Vector3(0, -0.55 * k, -2.25 * k), Vector3.ZERO, Vector3(1.25, 0.8, 0.9))
+		mesh(head, "Skull", sphere(2.2 * k), color, Vector3(0, 0.2 * k, -0.6 * k))
+		mesh(head, "Muzzle", sphere(1.15 * k), white, Vector3(0, -0.55 * k, -2.25 * k), Vector3.ZERO, Vector3(1.25, 0.8, 0.9))
 		mesh(head, "Nose", sphere(0.32 * k), "lips", Vector3(0, -0.15 * k, -3.1 * k))
 		for x in [-1.0, 1.0]:
 			for i in 3:
-				mesh(head, "Whisker", box(Vector3(2.6, 0.05, 0.05) * k), "plastic_white",
+				mesh(head, "Whisker", box(Vector3(2.6, 0.05, 0.05) * k), white,
 					Vector3(x * 1.7 * k, -0.6 * k + (i - 1) * 0.25 * k, -2.5 * k), Vector3(0, x * 0.15, x * (i - 1) * 0.15))
 	for x in [-1.0, 1.0]:
 		var side := "L" if x < 0.0 else "R"
-		mesh(head, "Eye" + side, sphere(0.48 * k), "fly_eye" if is_dog else "pea", Vector3(x * 0.95 * k, 0.75 * k, -2.1 * k))
+		mesh(head, "Eye" + side, sphere(0.46 * k), "coffee" if is_dog else "pea", Vector3(x * 0.95 * k, 0.75 * k, -2.05 * k))
 		var pupil: Mesh = box(Vector3(0.12, 0.6, 0.1) * k)
 		if is_dog:
-			pupil = sphere(0.26 * k)
-		mesh(head, "Pupil" + side, pupil, "spider",
-			Vector3(x * 0.95 * k, 0.75 * k, -2.55 * k))
-		var ear := node3d(head, "Ear" + side, Vector3(x * (1.3 if not is_dog else 2.0) * k, (1.9 if not is_dog else 1.1) * k, -0.4 * k))
+			pupil = sphere(0.22 * k)
+		mesh(head, "Pupil" + side, pupil, black if is_dog else "spider", Vector3(x * 0.95 * k, 0.78 * k, -2.48 * k))
+		var ear := node3d(head, "Ear" + side, Vector3(x * (1.3 if not is_dog else 2.05) * k, (1.9 if not is_dog else 1.2) * k, -0.2 * k))
 		ear.set_meta(&"side", x)
 		if is_dog:
-			mesh(ear, "Flap", box(Vector3(0.6, 3.0, 1.8) * k), dark, Vector3(x * 0.25 * k, -1.4 * k, 0))
+			# Long, soft, floppy ears.
+			mesh(ear, "Flap", capsule(0.95 * k, 4.4 * k), dark, Vector3(x * 0.3 * k, -1.9 * k, 0.1 * k), Vector3(0, 0, 0), Vector3(0.45, 1.0, 1.0))
 		else:
 			mesh(ear, "Point", PrismMesh.new(), color, Vector3(0, 0.8 * k, 0), Vector3.ZERO, Vector3(1.5, 1.9, 0.6) * k)
 
-	var tail := node3d(v, "Tail", Vector3(0, 6.6 * k, 6.0 * k))
-	var tail_len := 4.0 if is_dog else 5.0
+	var tail := node3d(v, "Tail", Vector3(0, 6.6 * k, 6.2 * k))
+	var tail_len := 4.2 if is_dog else 5.0
 	tail.rotation = Vector3(-0.7 if is_dog else -0.5, 0, 0)
-	mesh(tail, "Base", cyl(0.6 * k, tail_len * k, 0.5 * k), color, Vector3(0, 0, tail_len * 0.5 * k), Vector3(PI * 0.5, 0, 0))
+	mesh(tail, "Base", cyl(0.6 * k, tail_len * k, 0.45 * k), color, Vector3(0, 0, tail_len * 0.5 * k), Vector3(PI * 0.5, 0, 0))
 	var tip := node3d(tail, "Tip", Vector3(0, 0, tail_len * k))
-	mesh(tip, "Fluff", cyl(0.5 * k, tail_len * 0.9 * k, 0.25 * k), dark if not is_dog else color,
-		Vector3(0, 0, tail_len * 0.45 * k), Vector3(PI * 0.5, 0, 0))
+	mesh(tip, "Fluff", cyl(0.45 * k, tail_len * 0.8 * k, 0.2 * k), white if is_dog else dark,
+		Vector3(0, 0, tail_len * 0.4 * k), Vector3(PI * 0.5, 0, 0))
 
 	for leg_name in ["LegFL", "LegFR", "LegBL", "LegBR"]:
 		var x := -1.0 if leg_name.ends_with("L") else 1.0
@@ -590,8 +601,9 @@ static func pet(force: bool, path: String, config: String, color: String, size: 
 		leg.set_meta(&"front", z < 0.0)
 		mesh(leg, "Upper", cyl(0.8 * k, 2.6 * k, 0.65 * k), color, Vector3(0, -1.3 * k, 0))
 		var knee := node3d(leg, "Knee", Vector3(0, -2.5 * k, 0))
-		mesh(knee, "Lower", cyl(0.6 * k, 1.9 * k), color, Vector3(0, -0.95 * k, 0))
-		mesh(knee, "Paw", sphere(0.75 * k), color, Vector3(0, -1.75 * k, -0.25 * k), Vector3.ZERO, Vector3(1, 0.6, 1.3))
+		var lower := white if is_dog else color
+		mesh(knee, "Lower", cyl(0.6 * k, 1.9 * k), lower, Vector3(0, -0.95 * k, 0))
+		mesh(knee, "Paw", sphere(0.75 * k), lower, Vector3(0, -1.75 * k, -0.25 * k), Vector3.ZERO, Vector3(1, 0.6, 1.3))
 	for n: Node in _pivots(v):
 		merge_meshes(n)
 	add_skin(v, "pet_dog" if is_dog else "pet_cat", Vector3(5.5, 10.0, 18.0) * k, Vector3(0, 5.0 * k, 0.5))

@@ -202,6 +202,15 @@ def build_item_sfx():
     write("shield", (tone(660, 0.6) + 0.6 * tone(990, 0.6) + 0.3 * tone(1320, 0.6)) * np.exp(-t_axis(0.6) * 5))
 
 
+def build_pet_sfx():
+    """A dog snuffling along the ground."""
+    os.makedirs(SFX, exist_ok=True)
+    n = lambda d: int(RATE * d)
+    puff = lowpass(highpass(noise(n(0.09)), 900), 3500) * env(n(0.09), 0.01, 0.06)
+    gap = np.zeros(n(0.06))
+    write("sniff", np.concatenate([puff, gap, puff * 0.8, gap, puff * 0.9]), peak=0.7)
+
+
 def build_people_sfx():
     """Snoring for a napping person."""
     os.makedirs(SFX, exist_ok=True)
@@ -267,5 +276,6 @@ if __name__ == "__main__":
     build_sfx()
     build_item_sfx()
     build_people_sfx()
+    build_pet_sfx()
     build_icons()
     print("assets generated")

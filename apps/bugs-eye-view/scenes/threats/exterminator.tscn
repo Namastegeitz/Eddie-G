@@ -249,154 +249,154 @@ height = 19.0
 radial_segments = 12
 rings = 4
 
-[node name="Human" type="CharacterBody3D" unique_id=639083545]
+[node name="Human" type="CharacterBody3D" unique_id=692623373]
 script = ExtResource("1_58omx")
 route = PackedVector3Array()
 config = ExtResource("2_36xj6")
 active_events = PackedStringArray()
 icon_height = 80.0
 
-[node name="Shape" type="CollisionShape3D" parent="." unique_id=65891187]
+[node name="Shape" type="CollisionShape3D" parent="." unique_id=814240895]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 55, 0)
 shape = SubResource("CapsuleShape3D_4e1ll")
 
-[node name="Torso" type="Node3D" parent="." unique_id=462512832]
+[node name="Torso" type="Node3D" parent="." unique_id=1256321470]
 
-[node name="Pelvis" type="MeshInstance3D" parent="Torso" unique_id=453340217]
+[node name="Pelvis" type="MeshInstance3D" parent="Torso" unique_id=447246051]
 material_override = ExtResource("3_snyx8")
 mesh = SubResource("ArrayMesh_8rkup")
 
-[node name="Belt" type="MeshInstance3D" parent="Torso" unique_id=688503529]
+[node name="Belt" type="MeshInstance3D" parent="Torso" unique_id=1297765251]
 material_override = ExtResource("4_ypejt")
 mesh = SubResource("ArrayMesh_jmte3")
 
-[node name="Buckle" type="MeshInstance3D" parent="Torso" unique_id=1562074377]
+[node name="Buckle" type="MeshInstance3D" parent="Torso" unique_id=2040473712]
 material_override = ExtResource("5_yba81")
 mesh = SubResource("ArrayMesh_odf57")
 
-[node name="Head" type="Node3D" parent="Torso" unique_id=1027768890]
+[node name="Head" type="Node3D" parent="Torso" unique_id=805206781]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 65.5, 2)
 
-[node name="Skull" type="MeshInstance3D" parent="Torso/Head" unique_id=343210777]
+[node name="Skull" type="MeshInstance3D" parent="Torso/Head" unique_id=1903880593]
 material_override = ExtResource("6_28sgx")
 mesh = SubResource("ArrayMesh_oa2aj")
 
-[node name="EyeL" type="MeshInstance3D" parent="Torso/Head" unique_id=809342065]
+[node name="EyeL" type="MeshInstance3D" parent="Torso/Head" unique_id=1692645314]
 material_override = ExtResource("7_n40o6")
 mesh = SubResource("ArrayMesh_fkfdd")
 
-[node name="IrisL" type="MeshInstance3D" parent="Torso/Head" unique_id=1457118905]
+[node name="IrisL" type="MeshInstance3D" parent="Torso/Head" unique_id=927455280]
 material_override = ExtResource("8_txu1w")
 mesh = SubResource("ArrayMesh_vdx4n")
 
-[node name="BrowL" type="MeshInstance3D" parent="Torso/Head" unique_id=1192165820]
+[node name="BrowL" type="MeshInstance3D" parent="Torso/Head" unique_id=1417367890]
 material_override = ExtResource("9_nijau")
 mesh = SubResource("ArrayMesh_seflg")
 
-[node name="Mouth" type="MeshInstance3D" parent="Torso/Head" unique_id=1628546350]
+[node name="Mouth" type="MeshInstance3D" parent="Torso/Head" unique_id=412132199]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.55, -4.1)
 material_override = ExtResource("10_131ee")
 mesh = SubResource("BoxMesh_wtypo")
 
-[node name="Hood" type="MeshInstance3D" parent="Torso/Head" unique_id=1719614933]
+[node name="Hood" type="MeshInstance3D" parent="Torso/Head" unique_id=505611086]
 transform = Transform3D(1.05, 0, 0, 0, 1.15, 0, 0, 0, 1.12, 0, 5.6, 0.6)
 material_override = ExtResource("3_snyx8")
 mesh = SubResource("SphereMesh_44v4s")
 
-[node name="Goggles" type="MeshInstance3D" parent="Torso/Head" unique_id=1597340220]
+[node name="Goggles" type="MeshInstance3D" parent="Torso/Head" unique_id=789107244]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5.4, -4.3)
 material_override = ExtResource("11_vr0b5")
 mesh = SubResource("BoxMesh_p8p67")
 
-[node name="Respirator" type="MeshInstance3D" parent="Torso/Head" unique_id=194484388]
+[node name="Respirator" type="MeshInstance3D" parent="Torso/Head" unique_id=217515614]
 material_override = ExtResource("4_ypejt")
 mesh = SubResource("ArrayMesh_f0jrf")
 
-[node name="ShoulderL" type="Node3D" parent="Torso" unique_id=1370144423]
+[node name="ShoulderL" type="Node3D" parent="Torso" unique_id=126877054]
 transform = Transform3D(0.997551, -0.06994285, 0, 0.06994285, 0.997551, 0, 0, 0, 1, -8.4, 59.5, 2)
 
-[node name="Deltoid" type="MeshInstance3D" parent="Torso/ShoulderL" unique_id=753582329]
+[node name="Deltoid" type="MeshInstance3D" parent="Torso/ShoulderL" unique_id=515757580]
 material_override = ExtResource("3_snyx8")
 mesh = SubResource("ArrayMesh_b3bg7")
 
-[node name="Elbow" type="Node3D" parent="Torso/ShoulderL" unique_id=1828526577]
+[node name="Elbow" type="Node3D" parent="Torso/ShoulderL" unique_id=2111692412]
 transform = Transform3D(1, 0, 0, 0, 0.9887711, -0.14943814, 0, 0.14943814, 0.9887711, 0, -12, 0)
 
-[node name="Forearm" type="MeshInstance3D" parent="Torso/ShoulderL/Elbow" unique_id=2029445236]
+[node name="Forearm" type="MeshInstance3D" parent="Torso/ShoulderL/Elbow" unique_id=1501328425]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -5.2, 0)
 material_override = ExtResource("3_snyx8")
 mesh = SubResource("CapsuleMesh_5x6ch")
 
-[node name="Cuff" type="MeshInstance3D" parent="Torso/ShoulderL/Elbow" unique_id=1345025144]
+[node name="Cuff" type="MeshInstance3D" parent="Torso/ShoulderL/Elbow" unique_id=1976980376]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -10.4, 0)
 material_override = ExtResource("4_ypejt")
 mesh = SubResource("CylinderMesh_da75m")
 
-[node name="Hand" type="Node3D" parent="Torso/ShoulderL/Elbow" unique_id=1798704325]
+[node name="Hand" type="Node3D" parent="Torso/ShoulderL/Elbow" unique_id=1070060879]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -11.3, 0)
 
-[node name="Palm" type="MeshInstance3D" parent="Torso/ShoulderL/Elbow/Hand" unique_id=1008869447]
+[node name="Palm" type="MeshInstance3D" parent="Torso/ShoulderL/Elbow/Hand" unique_id=1052125496]
 material_override = ExtResource("12_w05ey")
 mesh = SubResource("ArrayMesh_ccv26")
 
-[node name="ShoulderR" type="Node3D" parent="Torso" unique_id=1468388586]
+[node name="ShoulderR" type="Node3D" parent="Torso" unique_id=1563254718]
 transform = Transform3D(0.997551, 0.06994285, 0, -0.06994285, 0.997551, 0, 0, 0, 1, 8.4, 59.5, 2)
 
-[node name="Deltoid" type="MeshInstance3D" parent="Torso/ShoulderR" unique_id=2078661123]
+[node name="Deltoid" type="MeshInstance3D" parent="Torso/ShoulderR" unique_id=773923449]
 material_override = ExtResource("3_snyx8")
 mesh = SubResource("ArrayMesh_v451n")
 
-[node name="Elbow" type="Node3D" parent="Torso/ShoulderR" unique_id=1253511228]
+[node name="Elbow" type="Node3D" parent="Torso/ShoulderR" unique_id=1632303501]
 transform = Transform3D(1, 0, 0, 0, 0.9887711, -0.14943814, 0, 0.14943814, 0.9887711, 0, -12, 0)
 
-[node name="Forearm" type="MeshInstance3D" parent="Torso/ShoulderR/Elbow" unique_id=705351589]
+[node name="Forearm" type="MeshInstance3D" parent="Torso/ShoulderR/Elbow" unique_id=1705838717]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -5.2, 0)
 material_override = ExtResource("3_snyx8")
 mesh = SubResource("CapsuleMesh_ijler")
 
-[node name="Cuff" type="MeshInstance3D" parent="Torso/ShoulderR/Elbow" unique_id=167603315]
+[node name="Cuff" type="MeshInstance3D" parent="Torso/ShoulderR/Elbow" unique_id=175752512]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -10.4, 0)
 material_override = ExtResource("4_ypejt")
 mesh = SubResource("CylinderMesh_lwc0p")
 
-[node name="Hand" type="Node3D" parent="Torso/ShoulderR/Elbow" unique_id=1538454749]
+[node name="Hand" type="Node3D" parent="Torso/ShoulderR/Elbow" unique_id=1036462342]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -11.3, 0)
 
-[node name="Palm" type="MeshInstance3D" parent="Torso/ShoulderR/Elbow/Hand" unique_id=887568574]
+[node name="Palm" type="MeshInstance3D" parent="Torso/ShoulderR/Elbow/Hand" unique_id=9243289]
 material_override = ExtResource("12_w05ey")
 mesh = SubResource("ArrayMesh_4w5hv")
 
-[node name="Legs" type="Node3D" parent="." unique_id=1506146414]
+[node name="Legs" type="Node3D" parent="." unique_id=257442481]
 top_level = true
 
-[node name="ThighL" type="MeshInstance3D" parent="Legs" unique_id=1562636765]
+[node name="ThighL" type="MeshInstance3D" parent="Legs" unique_id=501821088]
 material_override = ExtResource("3_snyx8")
 mesh = SubResource("CapsuleMesh_r4alq")
 
-[node name="KneeL" type="MeshInstance3D" parent="Legs" unique_id=929239707]
+[node name="KneeL" type="MeshInstance3D" parent="Legs" unique_id=1021038843]
 material_override = ExtResource("3_snyx8")
 mesh = SubResource("SphereMesh_8l155")
 
-[node name="ShinL" type="MeshInstance3D" parent="Legs" unique_id=2026961600]
+[node name="ShinL" type="MeshInstance3D" parent="Legs" unique_id=709314823]
 material_override = ExtResource("3_snyx8")
 mesh = SubResource("CapsuleMesh_tahnj")
 
-[node name="ThighR" type="MeshInstance3D" parent="Legs" unique_id=166036914]
+[node name="ThighR" type="MeshInstance3D" parent="Legs" unique_id=1583025481]
 material_override = ExtResource("3_snyx8")
 mesh = SubResource("CapsuleMesh_xkmdl")
 
-[node name="KneeR" type="MeshInstance3D" parent="Legs" unique_id=1730708952]
+[node name="KneeR" type="MeshInstance3D" parent="Legs" unique_id=1004953137]
 material_override = ExtResource("3_snyx8")
 mesh = SubResource("SphereMesh_5qmei")
 
-[node name="ShinR" type="MeshInstance3D" parent="Legs" unique_id=1334311373]
+[node name="ShinR" type="MeshInstance3D" parent="Legs" unique_id=1678082391]
 material_override = ExtResource("3_snyx8")
 mesh = SubResource("CapsuleMesh_dr3ma")
 
-[node name="LeftFoot" type="Node3D" parent="." unique_id=1392725173 instance=ExtResource("13_2vhw5")]
+[node name="LeftFoot" type="Node3D" parent="." unique_id=1913305022 instance=ExtResource("13_2vhw5")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.7, 0, 0)
 script = ExtResource("14_fddf2")
 
-[node name="RightFoot" type="Node3D" parent="." unique_id=1880913234 instance=ExtResource("13_2vhw5")]
+[node name="RightFoot" type="Node3D" parent="." unique_id=2025926618 instance=ExtResource("13_2vhw5")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.7, 0, 0)
 script = ExtResource("14_fddf2")

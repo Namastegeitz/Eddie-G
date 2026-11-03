@@ -183,6 +183,11 @@ static func build(tree: SceneTree) -> void:
 		[Vector3(30, 0, 30), Vector3(-30, 0, 30), Vector3(-40, 0, -15), Vector3(30, 0, -15), Vector3(85, 0, -12),
 			Vector3(95, 0, 10)],
 		["cat_nap"])
+	# The family dog is in too (naps while the paper is read); it and the cat
+	# play chase when nobody is watching.
+	g.pet("res://scenes/threats/dog.tscn", Vector3(45, 0.5, 12),
+		[Vector3(45, 0, 12), Vector3(20, 0, -18), Vector3(-30, 0, -14), Vector3(-40, 0, 30), Vector3(10, 0, 32)],
+		["reading"])
 	g.escalation()
 	g.boss(BossDirector.Kind.THE_CAT, "The Cat",
 		"It has been watching you all along. Stalk, hunt, pounce - get to the door!",

@@ -7,7 +7,7 @@
 script = ExtResource("2_s3oyq")
 id = &"living_room"
 display_name = "Living Room"
-description = "The TV hides your noise, the rug muffles your steps - and the cat is always watching."
+description = "The TV hides your noise, the rug muffles your steps - and now the cat and the dog are both home, playing chase."
 scene_path = "res://scenes/levels/living_room.tscn"
 order = 1
 crumbs_required = 11

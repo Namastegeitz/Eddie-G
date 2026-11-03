@@ -10,21 +10,21 @@ size = Vector3(5, 9, 2)
 [sub_resource type="BoxMesh" id="BoxMesh_e2e5i"]
 size = Vector3(5, 9, 2)
 
-[node name="CerealBox" type="RigidBody3D" unique_id=2034956233]
+[node name="CerealBox" type="RigidBody3D" unique_id=433962969]
 mass = 1.2
 script = ExtResource("1_xm24l")
 impact_sound = &"thud"
 
-[node name="Shape" type="CollisionShape3D" parent="." unique_id=856203633]
+[node name="Shape" type="CollisionShape3D" parent="." unique_id=1722869091]
 shape = SubResource("BoxShape3D_yt4ae")
 
-[node name="Visual" type="Node3D" parent="." unique_id=1094094979]
+[node name="Visual" type="Node3D" parent="." unique_id=1170445834]
 
-[node name="Mesh" type="MeshInstance3D" parent="Visual" unique_id=1667497387]
+[node name="Mesh" type="MeshInstance3D" parent="Visual" unique_id=543902353]
 material_override = ExtResource("2_r054l")
 mesh = SubResource("BoxMesh_e2e5i")
 
-[node name="Skin" type="Node3D" parent="Visual" unique_id=331066357]
+[node name="Skin" type="Node3D" parent="Visual" unique_id=1444222318]
 script = ExtResource("3_1pdes")
 model_id = "prop_cereal_box"
 fit_size = Vector3(5, 9, 2)

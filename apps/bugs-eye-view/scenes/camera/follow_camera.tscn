@@ -2,9 +2,9 @@
 
 [ext_resource type="Script" path="res://scripts/camera/follow_camera.gd" id="1_llf1f"]
 
-[node name="FollowCamera" type="Node3D" unique_id=764322654]
+[node name="FollowCamera" type="Node3D" unique_id=622795365]
 script = ExtResource("1_llf1f")
 
-[node name="Arm" type="SpringArm3D" parent="." unique_id=130553251]
+[node name="Arm" type="SpringArm3D" parent="." unique_id=1182241896]
 
-[node name="Camera" type="Camera3D" parent="Arm" unique_id=1548315706]
+[node name="Camera" type="Camera3D" parent="Arm" unique_id=280479027]

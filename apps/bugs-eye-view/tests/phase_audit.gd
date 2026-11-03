@@ -37,6 +37,8 @@ func _ready() -> void:
 		await _phase11()
 	if only in [0, 12]:
 		await _phase12()
+	if only in [0, 13]:
+		await _phase13()
 	finish("phase audit")
 
 
@@ -414,6 +416,12 @@ func _phase3() -> void:
 	check(cat.sleeping and not cat.can_see(p), "the cat naps on its routine and sees nothing")
 	HouseClock.set_hour(7.2)
 	await frames(10)
+	# A calm cat on its own (not mid-game with the dog, which halves its watch).
+	for pet in get_tree().get_nodes_in_group(Phys.GROUP_PET):
+		if lvl.is_ancestor_of(pet) and (pet as Pet).barks:
+			pet.process_mode = Node.PROCESS_MODE_DISABLED
+	cat.stop_playing()
+	cat._play_cd = 999.0
 	cat.alert.reset()
 	cat.waypoints = PackedVector3Array()
 	cat.global_position = Vector3(0, 0.5, 10)
@@ -1055,6 +1063,11 @@ func _phase7() -> void:
 	HouseClock.set_hour(7.2)
 	var cat := first_in_group(Phys.GROUP_PET, lvl) as Pet
 	var reader := first_in_group(Phys.GROUP_HUMAN, lvl) as Human
+	# This is about the cat and the reader: keep the dog out of it (its pounces
+	# stun the cat, and it would sniff you out under the couch).
+	for pet in get_tree().get_nodes_in_group(Phys.GROUP_PET):
+		if lvl.is_ancestor_of(pet) and (pet as Pet).barks:
+			pet.process_mode = Node.PROCESS_MODE_DISABLED
 	reader.route = PackedVector3Array()
 	cat.waypoints = PackedVector3Array()
 	cat.global_position = Vector3(0, 0.5, 10)
@@ -2030,4 +2043,169 @@ func _phase12() -> void:
 		seen.append(TouchControls.speed_label(tc.cycle_look_speed()))
 	check(seen == ["1.5x", "2x", "0.5x", "0.75x", "1x"], "it cycles 1.5x, 2x, 0.5x, 0.75x, back to 1x %s" % str(seen))
 	SaveSystem.set_setting("touch_controls", "auto")
+	await unload(lvl)
+
+
+
+# --- Update: the upgraded dog, and a cat and a dog together in the harder rooms ---
+
+func _pets(lvl: Node) -> Array[Pet]:
+	var out: Array[Pet] = []
+	for n in get_tree().get_nodes_in_group(Phys.GROUP_PET):
+		if lvl.is_ancestor_of(n):
+			out.append(n as Pet)
+	return out
+
+
+func _mats_under(root: Node) -> Dictionary:
+	var have := {}
+	for m in root.find_children("*", "MeshInstance3D", true, false):
+		var mi := m as MeshInstance3D
+		if mi.material_override:
+			have[mi.material_override.resource_path.get_file().get_basename()] = true
+	return have
+
+
+func _phase13() -> void:
+	print("-- Update: upgraded dog; a cat and a dog playing together in the harder rooms")
+	SaveSystem.data = SaveSystem.default_data()
+
+	# The dog's new coat and face.
+	var dog_scene := (load("res://scenes/threats/dog.tscn") as PackedScene).instantiate()
+	var mats := _mats_under(dog_scene.get_node("Visual"))
+	var head := dog_scene.get_node("Visual/Head")
+	check(mats.has("dog_brown") and mats.has("dog_white") and mats.has("dog_black") and mats.has("golden")
+		and head.get_node_or_null("Muzzle") and head.get_node_or_null("EarL/Flap") and _mats_under(head.get_node("EarL")).size() == 1,
+		"the dog has a tan, white and black coat, a white muzzle, floppy ears and a collar tag")
+	dog_scene.free()
+
+	# Who lives where.
+	var who := {}
+	for room in ROOMS:
+		var rl := await load_level(room, &"cockroach")
+		var kinds: Array[String] = []
+		for pet in _pets(rl):
+			kinds.append("puppy" if pet.is_puppy() else ("dog" if pet.barks else "cat"))
+		kinds.sort()
+		who[room] = kinds
+		await unload(rl)
+	check(who[&"kitchen"] == ["puppy"] and who[&"living_room"] == ["cat", "dog"] and who[&"backyard"] == ["cat", "dog"],
+		"the kitchen has the puppy; the living room and backyard each have a cat and a dog %s" % str(who))
+
+	# Playing chase together.
+	var lvl := await load_level(&"living_room", &"cockroach")
+	HouseClock.set_hour(7.2)
+	var p := lvl.player
+	p.invuln = 1000.0
+	p.global_position = Vector3(-60, 0.6, 46)
+	var cat: Pet = null
+	var dog: Pet = null
+	for pet in _pets(lvl):
+		if pet.barks:
+			dog = pet
+		else:
+			cat = pet
+	for pet in [cat, dog]:
+		pet.force_present(true)
+		pet.stop_playing()
+		pet.alert.reset()
+	cat.global_position = Vector3(0, 0.5, 18)
+	dog.global_position = Vector3(10, 0.5, 18)
+	await frames(3)
+	check(dog.start_buddy_play(cat) and dog.play == &"buddy" and cat.play == &"buddy" and dog.buddy == cat
+		and dog.buddy_role != cat.buddy_role, "the dog starts a game of chase with the cat")
+	var roles := {}
+	var cat_ran := 0.0
+	var dog_ran := 0.0
+	var cat_last := cat.global_position
+	var dog_last := dog.global_position
+	var both_distracted := false
+	for i in 420:
+		await get_tree().physics_frame
+		if dog.play != &"buddy":
+			break
+		roles[String(dog.buddy_role)] = true
+		cat_ran += cat.global_position.distance_to(cat_last)
+		dog_ran += dog.global_position.distance_to(dog_last)
+		cat_last = cat.global_position
+		dog_last = dog.global_position
+		both_distracted = both_distracted or (dog.perception_mult() < 1.0 and cat.perception_mult() < 1.0)
+	check(roles.size() == 2 and cat_ran > 8.0 and dog_ran > 8.0,
+		"they chase, tag and swap who's 'it' %s (ran %.0f and %.0f)" % [str(roles.keys()), cat_ran, dog_ran])
+	check(both_distracted, "while they play, both are distracted")
+	cat.stop_playing()
+	cat.alert.reset()
+	dog.alert.reset()
+	await frames(2)
+	dog.start_buddy_play(cat)
+	await frames(10)
+	cat.force_alert(AlertState.SUSPICIOUS, cat.global_position + Vector3(5, 0, 5))
+	await frames(3)
+	check(cat.play == &"" and dog.play == &"" and dog.alert.state >= AlertState.SUSPICIOUS,
+		"if one of them spots something, the game stops and the other is on guard too")
+	await unload(lvl)
+
+	# The dog sniffs out a bug hiding nearby.
+	lvl = await load_level(&"backyard", &"cockroach")
+	HouseClock.set_hour(7.2)
+	p = lvl.player
+	dog = null
+	cat = null
+	for pet in _pets(lvl):
+		if pet.barks:
+			dog = pet
+		else:
+			cat = pet
+	var gardener: Human = null
+	for n in get_tree().get_nodes_in_group(Phys.GROUP_HUMAN):
+		if lvl.is_ancestor_of(n) and String(n.name).begins_with("Gardener"):
+			gardener = n
+	gardener.force_present(true)
+	_place_human(gardener, Vector3(20, 0, -20), 0.0)
+	cat.process_mode = Node.PROCESS_MODE_DISABLED
+	dog.force_present(true)
+	dog.stop_playing()
+	dog._play_cd = 999.0
+	dog.alert.reset()
+	dog.global_position = Vector3(-50, 0.5, 49)
+	p.global_position = Vector3(-55, 0.6, 40)
+	InputRouter.set_touch_action(&"secondary", true)
+	await frames(5)
+	var hits := p.hits_left
+	var pointed := false
+	var nose_down := false
+	for i in 240:
+		await get_tree().physics_frame
+		pointed = pointed or dog.pointing > 0.0
+		nose_down = nose_down or (dog.pointing > 0.0 and (dog.get_node("Visual/Head") as Node3D).rotation.x < -0.5)
+		if pointed and nose_down and PerceptionSystem.alarm > 0.1:
+			break
+	check(p.is_hidden_safe() and pointed, "a dog sniffs out a bug hiding under the doghouse")
+	check(nose_down and PerceptionSystem.alarm > 0.1 and gardener.alert.state >= AlertState.SEARCHING,
+		"nose to the ground, it barks at the spot: the alarm climbs and the gardener comes to look (%.2f)" % PerceptionSystem.alarm)
+	check(p.hits_left == hits, "you're still safe in there - but it's time to move")
+	InputRouter.set_touch_action(&"secondary", false)
+	p.global_position = Vector3(-20, 0.6, 70)
+	await frames(10)
+	check(dog.pointing <= 0.0, "slip away and it stops barking at the empty spot")
+
+	# The backyard cat leaps up onto things.
+	cat.process_mode = Node.PROCESS_MODE_INHERIT
+	dog.process_mode = Node.PROCESS_MODE_DISABLED
+	var perches := 0
+	for n in get_tree().get_nodes_in_group(Phys.GROUP_PERCH):
+		if lvl.is_ancestor_of(n):
+			perches += 1
+	cat.stop_playing()
+	cat._play_cd = 999.0
+	cat.global_position = Vector3(-20, 0.5, 40)
+	cat.force_present(true)
+	cat.force_alert(AlertState.SEARCHING, Vector3(-20, 27.5, 16))
+	var top := 0.0
+	for i in 600:
+		await get_tree().physics_frame
+		top = maxf(top, cat.global_position.y)
+		if top > 20.0:
+			break
+	check(perches >= 3 and top > 20.0, "the backyard cat leaps up onto the picnic table (%d perches, up %.1f)" % [perches, top])
 	await unload(lvl)

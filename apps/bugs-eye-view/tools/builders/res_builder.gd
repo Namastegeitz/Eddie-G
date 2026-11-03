@@ -69,7 +69,7 @@ static func materials(force: bool) -> void:
 		"shoe": _mat(Color(0.2, 0.17, 0.15)),
 		"hazmat": _mat(Color(0.95, 0.85, 0.15)),
 		"cat_orange": _mat(Color(0.9, 0.55, 0.2)),
-		"dog_brown": _mat(Color(0.5, 0.33, 0.18)),
+		"dog_brown": _mat(Color(0.7, 0.47, 0.24)),
 		"vacuum": _mat(Color(0.12, 0.12, 0.14), 0.3, 0.5),
 		"swatter": _mat(Color(0.85, 0.15, 0.12), 0.6),
 		"roach": _mat(Color(0.42, 0.24, 0.1), 0.35),
@@ -129,6 +129,8 @@ static func materials(force: bool) -> void:
 		"gem_sapphire": _mat(Color(0.15, 0.35, 1.0, 0.85), 0.05, 0.2, false, false, Color(0.15, 0.4, 1.0, 1.2)),
 		"sparkle": _mat(Color(1.0, 1.0, 0.9), 1.0, 0.0, false, true),
 		"heat": _mat(Color(1.0, 0.6, 0.3, 0.22), 1.0, 0.0, true, true),
+		"dog_white": _mat(Color(0.95, 0.92, 0.85), 0.9),
+		"dog_black": _mat(Color(0.1, 0.09, 0.08), 0.6),
 	}
 	for k: String in defs.keys():
 		var mat: StandardMaterial3D = defs[k]
@@ -479,7 +481,7 @@ static func levels(force: bool, routines_by_id: Dictionary) -> void:
 	var k := LevelConfig.new()
 	k.id = &"kitchen"
 	k.display_name = "Kitchen"
-	k.description = "Breakfast rush, a swatter by the sink and a robot vacuum on cleaning day. Learn to hide in the shadows."
+	k.description = "Breakfast rush, a swatter by the sink, a playful puppy and a robot vacuum on cleaning day. Learn to hide in the shadows."
 	k.scene_path = "res://scenes/levels/kitchen.tscn"
 	k.order = 0
 	k.crumbs_required = 10
@@ -494,7 +496,7 @@ static func levels(force: bool, routines_by_id: Dictionary) -> void:
 	var l := LevelConfig.new()
 	l.id = &"living_room"
 	l.display_name = "Living Room"
-	l.description = "The TV hides your noise, the rug muffles your steps - and the cat is always watching."
+	l.description = "The TV hides your noise, the rug muffles your steps - and now the cat and the dog are both home, playing chase."
 	l.scene_path = "res://scenes/levels/living_room.tscn"
 	l.order = 1
 	l.crumbs_required = 11
@@ -511,7 +513,7 @@ static func levels(force: bool, routines_by_id: Dictionary) -> void:
 	var b := LevelConfig.new()
 	b.id = &"backyard"
 	b.display_name = "Backyard"
-	b.description = "Open sky, a dog with a nose for bugs, sprinklers and the exterminator's fog."
+	b.description = "Open sky, a dog with a nose for bugs and a cat on the prowl, sprinklers and the exterminator's fog."
 	b.scene_path = "res://scenes/levels/backyard.tscn"
 	b.order = 2
 	b.crumbs_required = 12

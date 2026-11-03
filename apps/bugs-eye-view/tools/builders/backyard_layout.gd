@@ -163,6 +163,10 @@ static func build(tree: SceneTree) -> void:
 	g.cover_block("Woodpile", Vector3(-60, 0, 72), Vector3(16, 8, 8), "dark_wood", "woodpile", "cover_woodpile", &"wood")
 	g.shelter("Wheelbarrow", Vector3(10, 0, 70), Vector3(14, 8, 10), "dark_metal", true, "tipped wheelbarrow", "cover_wheelbarrow", &"metal")
 	g.cover_block("RockD", Vector3(60, 0, 92), Vector3(7, 4, 6), "patio", "rock", "cover_rock", &"stone")
+	# Places the cat leaps up onto (and knocks things off).
+	g.perch("PicnicPerch", Vector3(-20, 0, 34), Vector3(0, 26.75, -17), 9.0)
+	g.perch("DoghousePerch", Vector3(-55, 0, 52), Vector3(0, 20.0, -12), 6.0)
+	g.perch("ShedPerch", Vector3(92, 0, 70), Vector3(0, 39.0, 14), 8.0)
 
 	# --- Model slots for the furniture ---
 	g.skin_region("Picnic", "picnic_table", Vector3(-20, 13.4, 15), Vector3(36, 26.8, 30), ["Picnic", "Bench"])
@@ -189,6 +193,12 @@ static func build(tree: SceneTree) -> void:
 		[Vector3(-40, 0, 0), Vector3(20, 0, 0), Vector3(40, 0, 30), Vector3(80, 0, 60), Vector3(20, 0, 60),
 			Vector3(0, 0, 45), Vector3(-45, 0, 25)],
 		["dog_nap"])
+	# The cat is out too: suns itself while the gardener works, plays chase
+	# with the dog, and prowls the garden beds.
+	g.pet("res://scenes/threats/cat.tscn", Vector3(70, 0.5, 70),
+		[Vector3(70, 0, 70), Vector3(40, 0, 60), Vector3(60, 0, 20), Vector3(75, 0, -5), Vector3(20, 0, 10),
+			Vector3(-10, 0, 50)],
+		["gardening"])
 	var ext := g.human("res://scenes/threats/exterminator.tscn",
 		[Vector3(-60, 0, -50), Vector3(0, 0, -30), Vector3(40, 0, 0), Vector3(30, 0, 50)],
 		["exterminator_visit"], {"name": "Exterminator", "heavy_boots": true, "has_swatter": false, "spray_interval": 3.5})
