@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en" data-root="./" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#000000">
+<meta name="description" content="Off-Grid Survival Kit: an offline field app with a GPS map that works with no signal, plus survival guides for water, food, fire, shelter, first aid and power.">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Survival Kit">
+<title>Off-Grid Survival Kit</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="assets/icons/icon.svg" type="image/svg+xml">
+<link rel="icon" href="assets/icons/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
+<link rel="stylesheet" href="assets/css/app.css">
+<script src="assets/js/theme.js"></script>
+<script src="assets/js/common.js" defer></script>
+<script src="assets/js/store.js" defer></script>
+<script src="assets/js/hub.js" defer></script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="app-header">
+  <svg viewBox="0 0 512 512" width="40" height="40" aria-hidden="true" style="flex:0 0 auto"><rect width="512" height="512" rx="104" fill="#0b0f14"/><circle cx="256" cy="256" r="176" fill="none" stroke="#ffb000" stroke-width="28"/><path d="M256 126 L296 256 L256 238 L216 256 Z" fill="#ff3b30"/><path d="M256 386 L296 256 L256 274 L216 256 Z" fill="#f2f5f8"/></svg>
+  <h1>Off-Grid Survival Kit</h1>
+  <span class="net-dot" role="img"></span>
+  <button class="hdr-btn" type="button" data-theme-toggle></button>
+</header>
+
+<main id="main" class="page">
+  <div class="chips" id="status" aria-live="polite">
+    <span class="chip" id="chip-net">Checking signal…</span>
+    <span class="chip" id="chip-offline">Checking offline copy…</span>
+    <span class="chip" id="chip-gps">GPS: checking…</span>
+    <span class="chip" id="chip-tiles">Saved map: …</span>
+  </div>
+
+  <nav class="hub-grid" aria-label="Modules">
+    <a class="hub-tile big" href="map/index.html">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4L3 6v14l6-2 6 2 6-2V4l-6 2z"/><path d="M9 4v14M15 6v14"/></svg>
+      <div><strong>Map</strong><br><span>Offline tiles · GPS · compass · waypoints · tracks · MGRS · sun &amp; moon · triangulate · QR share</span></div>
+    </a>
+    <a class="hub-tile sos" href="map/index.html#sos">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18v.5"/></svg>
+      <div><strong>SOS beacon</strong><br><span>Giant flashing coordinates</span></div>
+    </a>
+    <a class="hub-tile" href="tools/index.html">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z"/></svg>
+      <div><strong>Device tools</strong><br><span>Strobe, Morse, whistle, checklists, rendezvous</span></div>
+    </a>
+    <a class="hub-tile" href="water/index.html">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3c3 4.5 6 7.6 6 11a6 6 0 0 1-12 0c0-3.4 3-6.5 6-11z"/></svg>
+      <div><strong>Water</strong><br><span>Find &amp; purify</span></div>
+    </a>
+    <a class="hub-tile" href="firstaid/index.html">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="18" height="14" rx="2"/><path d="M9 6V4h6v2M12 10v6M9 13h6"/></svg>
+      <div><strong>First aid</strong><br><span>Bleeding, CPR, burns, cold &amp; heat</span></div>
+    </a>
+    <a class="hub-tile" href="fireshelter/index.html">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22c4 0 7-2.7 7-6.5 0-3.5-2.5-5.5-4-8.5-1 2-2 3-3.5 3.5C12 7 11 4.5 9 2.5 9 7 5 9.5 5 15.5 5 19.3 8 22 12 22z"/></svg>
+      <div><strong>Fire, shelter &amp; knots</strong><br><span>No-match fire, debris hut, bowline</span></div>
+    </a>
+    <a class="hub-tile" href="foraging/index.html">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19c0-8 5-14 15-14 0 10-6 15-14 15"/><path d="M5 19l8-8"/></svg>
+      <div><strong>Foraging</strong><br><span>Nuts, fruits, look-alikes</span></div>
+    </a>
+    <a class="hub-tile" href="food/index.html">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12c3-4 7-6 11-6 4 0 7 3 9 6-2 3-5 6-9 6-4 0-8-2-11-6z"/><path d="M17 11v.5"/></svg>
+      <div><strong>Food</strong><br><span>Trapping, fishing, preserving</span></div>
+    </a>
+    <a class="hub-tile" href="electricity/index.html">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></svg>
+      <div><strong>Electricity</strong><br><span>Old-school power</span></div>
+    </a>
+    <a class="hub-tile" href="emergency/index.html">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 2h9l5 5v15H6z"/><path d="M14 2v6h6M9 13h8M9 17h8"/></svg>
+      <div><strong>Emergency PDF</strong><br><span>Printable guide &amp; scenarios</span></div>
+    </a>
+  </nav>
+
+  <section class="card" id="install-card">
+    <h2>Install it before you need it</h2>
+    <p id="install-state" class="muted">Checking…</p>
+    <div class="row"><button class="btn primary" type="button" id="install-btn" hidden>Install app</button></div>
+    <details class="item" style="margin-top:10px">
+      <summary>How to install on a phone</summary>
+      <div class="body">
+        <p><strong>Android (Chrome):</strong> tap <em>Install app</em> above, or the ⋮ menu → <em>Install app / Add to Home screen</em>.</p>
+        <p><strong>iPhone / iPad (Safari):</strong> tap the Share button → <em>Add to Home Screen</em>. Open it once from the home screen while online so it saves itself.</p>
+        <p><strong>GPS needs a secure address:</strong> open the app from an <code>https://</code> address or <code>http://localhost</code>. Opening the HTML file directly (<code>file://</code>) blocks GPS and offline install.</p>
+      </div>
+    </details>
+  </section>
+
+  <section class="card">
+    <h2>Before you lose signal</h2>
+    <ol class="steps">
+      <li><strong>Open every page once</strong> while online (this happens automatically when the app installs) — check the “Offline-ready” chip above is green.</li>
+      <li><strong>Save your map areas:</strong> Map → Layers → <em>Offline maps</em> → <em>Save this area</em>. Do home, routes and destinations at the detail you need. Include elevation data.</li>
+      <li><strong>Get a GPS fix</strong> once and allow location permission, so it isn't a question you face in an emergency.</li>
+      <li><strong>Set magnetic declination</strong> for your area (Map → Settings) so compass bearings match the map.</li>
+      <li><strong>Mark rally points, water and caches</strong> as waypoints, and fill in the group rendezvous plan in Tools.</li>
+      <li><strong>Print the Emergency PDF</strong> and keep it with your kit — paper doesn't need a battery.</li>
+    </ol>
+  </section>
+
+  <div class="disclaimer">
+    <strong>Reference only.</strong> This app supports good judgement and real training; it does not replace them. In an emergency, call for help first if you can (911 in the US, 112 in Europe and on most phones). Foraging, first aid, electricity and food-preservation content carries real risk — read the safety notes and, when in doubt, don't.
+  </div>
+
+  <footer class="page-foot">
+    <p>Everything stays on this device: waypoints, tracks, saved map tiles, checklists and settings are stored locally and never uploaded. Map data © OpenStreetMap contributors; terrain style © OpenTopoMap (CC-BY-SA); elevation data from public SRTM/USGS sources via Terrain Tiles.</p>
+    <p id="version" class="muted"></p>
+  </footer>
+</main>
+</body>
+</html>

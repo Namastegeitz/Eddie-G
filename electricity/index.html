@@ -1,0 +1,860 @@
+<!doctype html>
+<html lang="en" data-root="../" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#000000">
+<meta name="description" content="Make small, honest amounts of off-grid electricity from water, wind, pedals, stove heat and scavenged motors, and wire it safely at 12 V.">
+<title>Electricity — Off-Grid Survival Kit</title>
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="icon" href="../assets/icons/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../assets/icons/apple-touch-icon.png">
+<link rel="stylesheet" href="../assets/css/app.css">
+<script src="../assets/js/theme.js"></script>
+<script src="../assets/js/common.js" defer></script>
+<style>
+  /* Page-only additions. Theme variables only. */
+  .formula {
+    display: block; margin: 10px 0 14px; padding: 10px 12px;
+    background: var(--surface-2); border: 1px solid var(--border); border-radius: 10px;
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 1rem;
+    overflow-x: auto;
+  }
+  figure.diagram.tall svg { max-height: 640px; }
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="app-header">
+  <a class="hdr-btn" href="../index.html" aria-label="Back to hub"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg><span>Hub</span></a>
+  <h1>Free Electricity, Old-School</h1>
+  <span class="net-dot" role="img"></span>
+  <button class="hdr-btn" type="button" data-theme-toggle></button>
+</header>
+<main id="main" class="page">
+  <p class="lead">Small, steady power from water, wind, muscle and stove heat: enough for lights, a radio and phones. Below you'll find honest numbers, simple builds, and the wiring and safety rules that stop you burning the place down.</p>
+
+  <div class="disclaimer">For emergencies and learning. At 12 V a shock is unlikely, but batteries can start fires, and some home-built generators make voltages that can kill. Anything connected to house wiring or the grid is a job for a licensed electrician.</div>
+
+  <div class="row no-print"><button class="btn print-btn" type="button" data-print>Print this page</button>
+    <button class="btn" type="button" data-expand-all="#main">Expand all</button></div>
+
+  <div class="callout danger">
+    <strong class="callout-title">Two rules that save lives</strong>
+    <p><strong>Never back-feed a house through an outlet (a "suicide cord").</strong> It can electrocute line workers and neighbours. Use a properly installed transfer switch or interlock.</p>
+    <p><strong>Never run a fuel generator, stove, heater or grill inside a home, garage, tent, snow shelter or vehicle.</strong> Carbon monoxide kills. Keep generators at least 20 ft (6 m) from doors and windows, with the exhaust pointed away.</p>
+  </div>
+
+  <nav class="toc" aria-label="On this page"><ul>
+    <li><a href="#glance">At a glance</a></li>
+    <li><a href="#basics">Power basics</a></li>
+    <li><a href="#hydro">Micro-hydro</a></li>
+    <li><a href="#wind">Wind</a></li>
+    <li><a href="#pedal">Pedal &amp; hand crank</a></li>
+    <li><a href="#teg">Stove thermoelectric</a></li>
+    <li><a href="#cells">Earth battery &amp; voltaic pile</a></li>
+    <li><a href="#scavenge">Scavenged generators</a></li>
+    <li><a href="#wiring">Wiring basics</a></li>
+    <li><a href="#safety">Safety</a></li>
+  </ul></nav>
+
+  <!-- ============================================================ -->
+  <section id="glance">
+    <h2>At a glance: what you can really get</h2>
+    <p>These are honest numbers for home-built gear. Most methods give <strong>watts, not kilowatts</strong>: enough for lights, a radio and phones. Not heaters, kettles or fridges.</p>
+    <div class="table-wrap"><table class="data">
+      <thead><tr><th>Method</th><th>Realistic output</th><th>What it can run</th></tr></thead>
+      <tbody>
+        <tr><td><a href="#hydro">Micro-hydro</a></td><td>10–100 W, day and night (good sites more).<br><strong>0.25–2.4 kWh/day</strong></td><td>Lights, radio, phones, laptop. The best option here if you have a stream with a drop.</td></tr>
+        <tr><td><a href="#wind">Small wind</a> (1.2–1.5 m rotor)</td><td>About 10–40 W average at a good open site; zero when calm.<br><strong>0–1 kWh/day</strong>, very variable</td><td>Battery top-up for lights and phones</td></tr>
+        <tr><td><a href="#pedal">Pedal generator</a></td><td>About 50 W over an hour (fit adult 75–100 W).<br><strong>30–70 Wh stored per hour</strong></td><td>About 2 phone charges per hour of steady pedalling</td></tr>
+        <tr><td><a href="#pedal">Hand crank</a></td><td>5–20 W.<br><strong>3–15 Wh per hour</strong> of cranking</td><td>Radio, LED light, part of a phone charge</td></tr>
+        <tr><td><a href="#teg">Stove thermo&shy;electric</a></td><td>0.5–3 W per DIY module; commercial units about 5–20 W.<br><strong>10–200 Wh/day</strong> while the stove burns</td><td>Phone trickle charge, LED light</td></tr>
+        <tr><td><a href="#cells">Earth battery, voltaic pile, lemon</a></td><td>Microwatts to milliwatts.<br><strong>Effectively zero</strong></td><td>A dim LED or an LCD clock. <strong>Not a phone.</strong></td></tr>
+        <tr><td>For comparison: one 100 W solar panel</td><td>Up to about 70–80 W in full sun.<br><strong>Roughly 200–500 Wh</strong> on a clear day; much less in winter or cloud</td><td>If you have a panel, start with it.</td></tr>
+      </tbody>
+    </table></div>
+    <div class="callout warn">
+      <strong class="callout-title">Forget these on home-built power</strong>
+      <p>Anything that heats (kettle, space heater, hair dryer, toaster, electric cooker) needs 1,000–2,000+ W. A household fridge uses roughly 1–2 kWh per day. Cook and heat with fire. Save electricity for light, radio and communication.</p>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section id="basics">
+    <h2>Power basics in 2 minutes</h2>
+    <div class="table-wrap"><table class="data">
+      <thead><tr><th>Term</th><th>What it means</th><th>Water-pipe picture</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Volts (V)</strong></td><td>Electrical "pressure"</td><td>Water pressure</td></tr>
+        <tr><td><strong>Amps (A)</strong></td><td>How much current flows</td><td>Flow rate</td></tr>
+        <tr><td><strong>Watts (W)</strong></td><td>Power: how fast energy is made or used. W = V × A</td><td>Pressure × flow</td></tr>
+        <tr><td><strong>Watt-hours (Wh)</strong></td><td>Energy: how much is in the "tank". Wh = W × hours. 1 kWh = 1,000 Wh</td><td>A bucket of water</td></tr>
+        <tr><td><strong>Amp-hours (Ah)</strong></td><td>Battery capacity. Ah × volts = Wh</td><td>Bucket size at a given pressure</td></tr>
+      </tbody>
+    </table></div>
+    <p class="formula">Watts = Volts × Amps<br>Watt-hours = Watts × Hours<br>Battery Wh = Ah × Volts (12 V × 100 Ah = 1,200 Wh)</p>
+
+    <h3>What things need</h3>
+    <div class="table-wrap"><table class="data">
+      <thead><tr><th>Device</th><th>Power while running</th><th>Energy</th></tr></thead>
+      <tbody>
+        <tr><td>Phone</td><td>5–20 W while charging</td><td>About 10–20 Wh per full charge (more counting losses)</td></tr>
+        <tr><td>LED lamp</td><td>1–5 W</td><td>5–25 Wh for a 5-hour evening</td></tr>
+        <tr><td>Small AM/FM radio</td><td>0.2–2 W</td><td>1–10 Wh for 5 hours</td></tr>
+        <tr><td>Handheld two-way radio</td><td>Under 1 W listening; several watts transmitting</td><td>A few Wh per day of light use</td></tr>
+        <tr><td>Small 12 V fan</td><td>3–10 W</td><td>Adds up fast if left on all night</td></tr>
+        <tr><td>Laptop</td><td>Often 15–60 W</td><td>Battery holds about 40–100 Wh</td></tr>
+        <tr><td>Household fridge</td><td>Runs on and off</td><td>Roughly 1–2 kWh per day. Too much for these methods.</td></tr>
+        <tr><td>Kettle, heater, hair dryer</td><td>1,000–2,000+ W</td><td>Forget it.</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3>Sizing example</h3>
+    <div class="card">
+      <ol class="steps">
+        <li><strong>List daily needs.</strong> 2 phone charges (2 × 15 Wh = 30 Wh) + 2 LED lamps at 3 W for 5 h (30 Wh) + radio at 1 W for 5 h (5 Wh) = <strong>65 Wh</strong>.</li>
+        <li><strong>Add about 30% for losses</strong> (wires, battery, converters): 65 × 1.3 ≈ <strong>85 Wh per day</strong>.</li>
+        <li><strong>Battery for 2 days with no input:</strong> 2 × 85 = 170 Wh usable.
+          <ul>
+            <li>Lead-acid (use only the top half): 340 Wh ÷ 12 V ≈ 28 Ah, so buy a 35 Ah or bigger deep-cycle battery.</li>
+            <li>LiFePO4 (use about 80%): 213 Wh ÷ 12.8 V ≈ 17 Ah, so a 20 Ah pack.</li>
+          </ul></li>
+        <li><strong>Generation to match 85 Wh/day:</strong> a hydro setup giving just 3.5 W around the clock, <em>or</em> about 2.5 hours of pedalling at 50 W, <em>or</em> a 1.5 m wind turbine on a steadily breezy day.</li>
+      </ol>
+    </div>
+
+    <h3>DC vs AC</h3>
+    <ul>
+      <li><strong>DC</strong> (direct current) flows one way. Batteries, solar panels, USB and cars are DC.</li>
+      <li><strong>AC</strong> (alternating current) reverses many times a second. House mains are AC: 120 V 60 Hz in North America, 230 V 50 Hz in Europe.</li>
+      <li>Many home-built generators make AC, or a "wild" DC that rises and falls with speed. It must be <a href="#wiring">rectified and regulated</a> before it touches a battery.</li>
+      <li>Turning battery DC into mains AC needs an <strong>inverter</strong>, which wastes power. Run things on DC wherever you can.</li>
+    </ul>
+
+    <h3>Why 12 V systems are everywhere</h3>
+    <ul>
+      <li>Car, boat and RV parts all run on 12 V: batteries, lights, fans, radios, USB chargers, fuses, switches. You can scavenge them almost anywhere.</li>
+      <li>12 V is very unlikely to shock you through dry skin. The danger is <strong>fire</strong> from short circuits.</li>
+      <li>Downside: low voltage means high current for the same power, so wires must be thick and short. 1,000 W is about 83 A at 12 V, but only about 8 A at 120 V. Bigger systems use 24 V or 48 V to keep currents down.</li>
+    </ul>
+  </section>
+
+  <!-- ============================================================ -->
+  <section id="hydro">
+    <h2>Micro-hydro: water wheel or turbine</h2>
+    <p>Falling or flowing water spins a wheel or turbine. The wheel spins a generator (usually a permanent-magnet DC motor run backwards). If you have a stream with some drop, this is the best option on this page because <strong>it runs 24 hours a day</strong>. Just 50 W around the clock is 1.2 kWh per day, far more than you could ever pedal.</p>
+
+    <h3>How much power? Head and flow</h3>
+    <p><strong>Head</strong> is the vertical drop from where you take the water to the turbine. <strong>Flow</strong> is how much water goes through, in litres per second.</p>
+    <p class="formula">Power (W) ≈ 9.81 × flow (L/s) × head (m) × efficiency</p>
+    <p>For efficiency, use <strong>0.5 for a decent improvised build</strong>. Use 0.3 for a crude wheel with several belt stages. (1 L/s ≈ 16 US gal/min. 1 m ≈ 3.3 ft.)</p>
+    <div class="callout info">
+      <strong class="callout-title">Worked example</strong>
+      <p>A 10 L bucket fills from your pipe in about 7 seconds, so flow ≈ 1.5 L/s. The pipe drops 8 m (26 ft).</p>
+      <p>Power ≈ 9.81 × 1.5 × 8 × 0.5 ≈ <strong>59 W</strong>. Over 24 hours that's about <strong>1.4 kWh per day</strong>, plenty for lights, phones, a radio and a laptop.</p>
+    </div>
+
+    <figure class="diagram">
+      <svg class="diagram" viewBox="0 0 420 250" role="img" aria-label="Side view of a micro-hydro setup. A screened intake in a stream pool feeds a pipe running downhill to a turbine and generator. Head is the vertical drop from the intake water surface to the turbine, not the pipe length.">
+        <defs>
+          <marker id="hy-ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 Z" fill="currentColor"/></marker>
+        </defs>
+        <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M5 82 H92 L322 210 H415"/>
+          <rect x="5" y="64" width="65" height="18" fill="currentColor" fill-opacity=".2" stroke="none"/>
+          <path d="M5 64 H70"/>
+          <rect x="70" y="58" width="22" height="24"/>
+          <path d="M70 60 V80" stroke-dasharray="2 3" stroke-width="3"/>
+          <path d="M92 72 L316 196" stroke-width="6" style="stroke:var(--accent)"/>
+          <circle cx="300" cy="187" r="5"/>
+          <path d="M300 182 V175 M294 175 H306"/>
+          <rect x="318" y="176" width="62" height="34"/>
+          <circle cx="337" cy="194" r="11"/>
+          <path d="M337 183 V205 M326 194 H348"/>
+          <rect x="356" y="186" width="18" height="16"/>
+          <path d="M348 194 H356"/>
+          <path d="M382 202 H410" marker-end="url(#hy-ah)"/>
+          <path d="M92 64 H400" stroke-dasharray="6 5" stroke-width="1.5"/>
+          <path d="M350 194 H400" stroke-dasharray="6 5" stroke-width="1.5"/>
+          <path d="M398 68 V190" marker-start="url(#hy-ah)" marker-end="url(#hy-ah)" stroke-width="2.5"/>
+          <path d="M298 194 V224" stroke-width="1"/>
+        </g>
+        <g fill="currentColor" font-size="14">
+          <text x="8" y="40">Pool + screened intake</text>
+          <text x="390" y="122" text-anchor="end" font-weight="700" font-size="16">HEAD</text>
+          <text x="390" y="140" text-anchor="end">vertical drop</text>
+          <text x="40" y="150">Penstock pipe:</text>
+          <text x="40" y="166">all downhill, no humps</text>
+          <text x="349" y="168" text-anchor="middle">Turbine + generator</text>
+          <text x="296" y="238" text-anchor="end">Valve: close slowly</text>
+          <text x="414" y="232" text-anchor="end">Back to stream</text>
+        </g>
+      </svg>
+      <figcaption>Head is the vertical drop from the intake's water surface to the turbine. It is not the length of the pipe.</figcaption>
+    </figure>
+
+    <h3>Measure flow</h3>
+    <ul>
+      <li><strong>Small stream (bucket method):</strong> Run the whole flow, or the share you'll use, through a pipe into a bucket of known size. Time how long it takes to fill. Flow (L/s) = litres ÷ seconds. Do it 3 times and average.</li>
+      <li><strong>Bigger stream (float method):</strong> Pick a straight 10 m stretch. Measure the average width and depth in metres. Time a floating stick over the 10 m. Flow (L/s) ≈ width × depth × (10 ÷ seconds) × 0.8 × 1,000.</li>
+      <li>Measure in the <strong>dry season</strong> and design for the lowest flow. Plan to take only a share of the stream.</li>
+    </ul>
+    <h3>Measure head</h3>
+    <ul>
+      <li>Hold a straight board or pole level (check it with a spirit level), one end on the slope, pointing downhill. Measure straight down from the far end to the ground. That is one step of drop.</li>
+      <li>Move to that spot and repeat all the way down from the intake to the turbine site. Add up the steps.</li>
+      <li>Phone altimeters and GPS are too inaccurate for drops of a few metres.</li>
+      <li>Pipe friction eats some head. Use pipe big enough that you lose no more than about 10–15% of it, and go bigger if in doubt. As a rough guide, 2 in (50 mm) pipe suits about 1–2 L/s over a run of up to about 50 m (160 ft).</li>
+    </ul>
+
+    <h3>Pick the right wheel</h3>
+    <div class="table-wrap"><table class="data">
+      <thead><tr><th>Type</th><th>Best for</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Pelton / Turgo runner</strong> (jet from a nozzle hits cups on a disc)</td><td>Several metres of head or more, small flow</td><td>Fast and efficient. Often drives the generator directly. Cups can be cut from split pipe or made from steel spoons.</td></tr>
+        <tr><td><strong>Overshot wheel</strong> (water poured onto the top)</td><td>A drop about as tall as the wheel, more flow</td><td>Can be efficient if well built, but slow (often 5–30 rpm). Needs big step-up gearing.</td></tr>
+        <tr><td><strong>Undershot wheel</strong> (paddles dipped in a current)</td><td>Flat streams with no drop</td><td>Very weak. A stream moving at walking pace (about 1 m/s) gives only about 15–30 W from a crude wheel with about 0.3 m² (3 sq ft) of paddle in the water.</td></tr>
+      </tbody>
+    </table></div>
+    <ul>
+      <li><strong>Pelton speed:</strong> the jet moves at about √(2 × 9.81 × head) m/s, and the cups should move at about half the jet speed. At 10 m head the jet is about 14 m/s, so a 20 cm (8 in) runner turns roughly 650 rpm.</li>
+      <li><strong>Gearing:</strong> pulley ratio = big pulley diameter ÷ small pulley diameter. A 30 cm pulley driving a 5 cm one is 6:1. Two stages give 36:1. Each belt or chain stage loses about 5–10%.</li>
+      <li><strong>Generator speed:</strong> a permanent-magnet DC motor's voltage rises with rpm. Speed needed ≈ rated rpm × (14 V ÷ rated volts). For example, a motor labelled 130 V at 5,000 rpm needs about 540 rpm to make 14 V, plus a bit more to push current into a battery.</li>
+    </ul>
+
+    <details class="item">
+      <summary>Parts list <span class="sub">Pelton-style setup; swap in a wheel for low-head sites</span></summary>
+      <div class="body">
+        <ul>
+          <li>Intake: bucket or box with mesh screen (fine enough to keep out fish, leaves and gravel)</li>
+          <li>Penstock pipe (PVC or HDPE), as large as you can get</li>
+          <li>Gate valve at the bottom of the pipe</li>
+          <li>Nozzle: pipe cap or reducer with a drilled hole</li>
+          <li>Runner: metal disc with 12 or more evenly spaced cups; or a wheel with buckets or paddles</li>
+          <li>Shaft, two bearings, solid frame, and a cover to contain spray</li>
+          <li>Generator: permanent-magnet DC motor (treadmill motor) or washing-machine direct-drive motor (see <a href="#scavenge">scavenging</a>)</li>
+          <li>Pulleys and belts or chain, if the wheel is slow</li>
+          <li>Rectifier or blocking diode, <strong>diversion charge controller with a dump load</strong>, fuses, battery, wire (see <a href="#wiring">wiring</a>)</li>
+          <li>Waterproof box for the electrics, mounted above flood level</li>
+        </ul>
+      </div>
+    </details>
+
+    <details class="item">
+      <summary>Build it, step by step <span class="sub">intake, pipe, turbine, generator, wiring</span></summary>
+      <div class="body">
+        <ol class="steps">
+          <li><strong>Check you're allowed.</strong> In most places diverting a stream needs permission (water rights, fish and wildlife rules). Even in a true emergency, take only a share of the flow, never fully dam the stream, and return all the water to the same stream.</li>
+          <li><strong>Measure flow and head</strong> (above). Calculate the power. If it's under a few watts, put your effort elsewhere.</li>
+          <li><strong>Build the intake</strong> in a small pool. Pile rocks so some water is held back, but don't block the stream. Fit a screened box with the pipe mouth well below the surface so it never sucks air.</li>
+          <li><strong>Lay the penstock</strong> so it runs downhill all the way with no humps, which trap air. Anchor it, protect it from falling rocks and frost, and avoid sharp bends.</li>
+          <li><strong>Fit a valve and nozzle</strong> at the bottom. Start with a small nozzle hole and enlarge it until the pipe still stays full and the intake never runs dry. As a guide, 1.5 L/s at 8 m head needs a jet about 12–13 mm (½ in) across.</li>
+          <li><strong>Build the runner or wheel.</strong> Space the cups or paddles evenly and balance the runner so it spins without wobbling. Enclose it.</li>
+          <li><strong>Couple the generator.</strong> Drive it directly if the runner is fast enough. Otherwise use belts or chain to reach the rpm the generator needs.</li>
+          <li><strong>Wire it:</strong> generator → rectifier/diode → <strong>diversion controller with dump load</strong> → fuse → battery. The turbine must <strong>always</strong> have a load.</li>
+          <li><strong>Lead the outflow (tailrace) back</strong> into the same stream. Line it with rocks so it doesn't erode the bank.</li>
+          <li><strong>Check it daily at first:</strong> clear the intake screen, listen for bearing noise, and look for leaks and hot wires.</li>
+        </ol>
+      </div>
+    </details>
+
+    <div class="callout danger">
+      <strong class="callout-title">Hydro safety</strong>
+      <ul>
+        <li><strong>Floods:</strong> streams can rise fast after rain upstream, even under a blue sky. Mount electrics above the flood line. Never wade in fast water above knee depth.</li>
+        <li><strong>Water hammer:</strong> closing a valve fast on a long full pipe can burst it. Close slowly.</li>
+        <li><strong>Runaway:</strong> an unloaded turbine overspeeds and its voltage soars. Never disconnect the load while water is running. Shut the water off at the intake first.</li>
+        <li><strong>Rotating parts:</strong> stop the water before touching the wheel, belts or shaft. Guard belts and pulleys.</li>
+        <li><strong>Water + electricity:</strong> keep connections dry and in a box. Never handle wiring while standing in water.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section id="wind">
+    <h2>Wind turbine from scavenged parts</h2>
+    <p>Blades turn a generator on a pole. Wind is free but fickle. <strong>Power rises with the cube of wind speed</strong>: double the wind gives 8× the power. Half the wind gives one-eighth. Height and an open site matter more than anything else.</p>
+    <p class="formula">Power (W) ≈ 0.07 × rotor diameter² (m) × wind speed³ (m/s)</p>
+    <p>That assumes about 15% overall efficiency for a home-built machine. Good commercial small turbines do roughly twice that.</p>
+    <div class="table-wrap"><table class="data">
+      <thead><tr><th>Wind</th><th>What you see</th><th>1.2 m rotor</th><th>1.5 m rotor</th></tr></thead>
+      <tbody>
+        <tr><td>4 m/s (9 mph)</td><td>Leaves and small twigs constantly moving</td><td>~6 W</td><td>~10 W</td></tr>
+        <tr><td>5 m/s (11 mph)</td><td>Light flags fully out</td><td>~13 W</td><td>~20 W</td></tr>
+        <tr><td>7 m/s (16 mph)</td><td>Dust and loose paper lifted, small branches move</td><td>~35 W</td><td>~55 W</td></tr>
+        <tr><td>10 m/s (22 mph)</td><td>Small trees in leaf sway</td><td>~100 W</td><td>~160 W</td></tr>
+      </tbody>
+    </table></div>
+    <div class="callout info">
+      <strong class="callout-title">Realistic output</strong>
+      <p>A 1.2–1.5 m rotor at a good, open site averages roughly <strong>10–40 W: tens of watts, not hundreds</strong>. Behind trees, near buildings or on a short pole you'll get far less. Calm days give nothing, so you need a battery.</p>
+    </div>
+
+    <h3>Why a car alternator is a poor choice</h3>
+    <ul>
+      <li>It needs roughly <strong>1,000–2,000+ rpm</strong> at the alternator shaft before it charges usefully. In a car the belt spins it 2–3 times faster than the engine. A 1.5 m rotor turns only about 250–350 rpm in a 5 m/s breeze.</li>
+      <li>It has <strong>no permanent magnets</strong>. Its rotor is an electromagnet that needs field (excitation) current, a few amps from your battery, before it makes anything. In light wind it can use more than it makes.</li>
+      <li>Gearing it up 5:1 or more adds friction and losses, and the rotor then struggles to start.</li>
+      <li>Alternators suit engine drives or a fast Pelton runner. For wind, use a <strong>permanent-magnet</strong> motor.</li>
+    </ul>
+    <h3>Better: a permanent-magnet motor</h3>
+    <p>Treadmill motors (often rated about 90–130 V DC at several thousand rpm) reach 12–14 V at a few hundred to about 1,000 rpm. That's a reasonable match for a small rotor with direct drive and no gearbox. Washing-machine direct-drive motors are another popular choice. See <a href="#scavenge">scavenging</a>.</p>
+
+    <details class="item">
+      <summary>Parts list <span class="sub">~1.2–1.5 m rotor on a tilt-up pole</span></summary>
+      <div class="body">
+        <ul>
+          <li>Permanent-magnet DC motor (treadmill motor) or direct-drive washing-machine motor</li>
+          <li>Blades: 6–8 in (150–200 mm) thick-wall PVC pipe, about 60–75 cm (2–2½ ft) long</li>
+          <li>Hub: thick steel or aluminium disc that bolts to the motor shaft; bolts with lock nuts</li>
+          <li>Head frame: square tube or angle iron to carry the motor and a tail boom; flat tail vane (sheet metal or plywood)</li>
+          <li>Yaw pivot: a short pipe on the frame that slips over the top of the tower pipe (greased)</li>
+          <li>Tower: steel pipe with a hinged base; guy wire, ground anchors, turnbuckles, shackles; a gin pole for raising</li>
+          <li>Cable down the tower, a <strong>brake switch</strong> at the bottom, ground rod</li>
+          <li>Rectifier/diode, <strong>diversion charge controller with dump load</strong>, fuses, battery</li>
+        </ul>
+      </div>
+    </details>
+
+    <details class="item">
+      <summary>Build it, step by step <span class="sub">blades, balance, tail, tower, wiring</span></summary>
+      <div class="body">
+        <ol class="steps">
+          <li><strong>Pick the site.</strong> It must be open to the prevailing wind. Rule of thumb: the lowest blade tip should be at least 30 ft (9 m) above anything within 500 ft (150 m). Don't mount on a house roof; vibration and turbulence make it noisy and weak.</li>
+          <li><strong>Test the motor</strong> (see <a href="#test-motor">how to test a motor</a>). You want about 14 V or more at a few hundred rpm.</li>
+          <li><strong>Make 3 identical blades.</strong> Cut the PVC pipe lengthwise into quarters; each quarter makes one blade. Taper each from full width at the root to narrow at the tip. Use the first as a template for the others. Sand the edges smooth.</li>
+          <li><strong>Bolt them to the hub</strong> exactly 120° apart, all set the same way, with two bolts each and lock nuts or thread-locker. If the rotor won't start or turns the wrong way, flip all three blades over.</li>
+          <li><strong>Balance the rotor.</strong> Mount it on the shaft and let it come to rest. If one blade always ends up at the bottom, it's heavy. Trim it or add small washers to the others until the rotor stays put in any position.</li>
+          <li><strong>Build the head:</strong> motor at the front of the frame, a long tail boom with a flat vane behind it to keep the rotor facing the wind. Fit the yaw pipe so the whole head turns freely on the tower top.</li>
+          <li><strong>Run the cable down the inside of the tower.</strong> Check every few weeks that it hasn't twisted, and untwist it if needed.</li>
+          <li><strong>Raise a tilt-up tower:</strong> hinge at the base, guy wires in 4 directions, anchors at least half the tower height out from the base. With the rotor tied, raise it with helpers and a gin pole. <strong>Never climb it</strong>; lower it to work on it.</li>
+          <li><strong>Wire at the bottom:</strong> brake switch → rectifier/diode → <strong>diversion controller + dump load</strong> → fuse → battery. Ground the tower with a ground rod.</li>
+          <li><strong>Untie the rotor only</strong> with the battery and dump load connected.</li>
+          <li><strong>Inspect monthly</strong> (lower it to do so): blade cracks, bolt tightness, guy tension, bearing noise. Never fly a cracked blade. Paint PVC blades, because sunlight makes PVC brittle.</li>
+        </ol>
+      </div>
+    </details>
+
+    <div class="callout danger">
+      <strong class="callout-title">Wind safety</strong>
+      <ul>
+        <li><strong>Blade throw:</strong> a broken blade can fly a long way. Never stand in line with the spinning rotor. Keep people and animals out of the area around the tower.</li>
+        <li><strong>Tower falls:</strong> keep everyone out of a circle at least 1.5× the tower height while raising, lowering or in storms. Check anchors and guys.</li>
+        <li><strong>Runaway:</strong> a turbine with no load overspeeds until blades break. <strong>Never leave it disconnected from a load in wind.</strong> Use a diversion (dump-load) controller. Never use a solar controller that simply disconnects.</li>
+        <li><strong>Storms:</strong> stop it <em>before</em> a storm, while the wind is still moderate. Close the brake switch (it shorts the generator, which brakes it hard), then tie the rotor or lower the tower. Shorting at full speed can burn the brake switch or motor.</li>
+        <li><strong>High voltage:</strong> treadmill motors spinning fast with no load can make well over 60 V DC, enough to give a dangerous shock.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section id="pedal">
+    <h2>Pedal power and hand cranks</h2>
+    <p>A bike on a stand drives a permanent-magnet DC motor, which charges a battery. It's reliable and works in any weather, but human muscles are weak engines.</p>
+    <div class="callout info">
+      <strong class="callout-title">Realistic output</strong>
+      <ul>
+        <li><strong>Fit adult:</strong> about 75–100 W sustained. <strong>Most people:</strong> about 50 W over an hour.</li>
+        <li>After losses that's roughly <strong>30–70 Wh stored per hour</strong>, or about 2 phone charges per hour at 50 W.</li>
+        <li><strong>Hand crank:</strong> 5–20 W, and arms tire fast. Fine for a radio or LED, but only part of a phone charge.</li>
+      </ul>
+    </div>
+
+    <details class="item">
+      <summary>Parts list <span class="sub">bike generator</span></summary>
+      <div class="body">
+        <ul>
+          <li>Bicycle and a trainer stand (or a solid frame that lifts the back wheel)</li>
+          <li>Permanent-magnet DC motor: treadmill motor or 24 V e-scooter motor (about 250–350 W)</li>
+          <li>Roller on the motor shaft pressing on the tyre (a slick tyre works best), <em>or</em> a belt from the wheel rim (tyre removed) to a pulley on the motor</li>
+          <li>Blocking diode: Schottky, rated 15–20 A, on a small heat sink (or a bridge rectifier)</li>
+          <li>Charge controller for your battery. A solar PWM or MPPT controller works if the motor can't exceed the controller's maximum input voltage.</li>
+          <li>12 V battery, inline fuse, 12 or 14 AWG (4 or 2.5 mm²) wire</li>
+          <li>Cheap panel meter (volts/amps/watts)</li>
+          <li>12 V → USB converter (car type) for phones</li>
+          <li>Flywheel (many treadmill motors come with one) and a guard over the roller or belt</li>
+        </ul>
+      </div>
+    </details>
+
+    <details class="item">
+      <summary>Build it, step by step <span class="sub">bike on stand → motor → battery</span></summary>
+      <div class="body">
+        <ol class="steps">
+          <li><strong>Lift the back wheel</strong> on a trainer stand and make it rock-solid. It must not tip when you stand on the pedals.</li>
+          <li><strong>Mount the motor</strong> on a hinged bracket so a spring or bungee presses its roller firmly against the tyre. Or run a belt from the rim to a pulley on the motor.</li>
+          <li><strong>Check the speed.</strong> At a comfortable 60–80 pedal rpm, the motor should give about 14–18 V with nothing connected. Measure with a meter. Change the roller or pulley size if it's too low or too high.</li>
+          <li><strong>Add a flywheel.</strong> A heavy flywheel on the motor, or the trainer's own, smooths out the pulses of each pedal stroke.</li>
+          <li><strong>Wire it:</strong> motor + → blocking diode → controller input +; motor − → controller input −. Controller battery terminals → fuse → battery. <strong>Connect the battery to the controller first.</strong></li>
+          <li><strong>Fit the meter</strong> so you can see the watts you're making.</li>
+          <li><strong>Run phones from the battery</strong> through the 12 V → USB converter. <strong>Never connect a phone straight to the motor.</strong></li>
+          <li><strong>Pedal in steady 20–30 minute sessions</strong> and drink water. Pedalling burns water and food, so weigh that cost in a crisis.</li>
+        </ol>
+      </div>
+    </details>
+
+    <details class="item">
+      <summary>Hand-crank generator <span class="sub">5–20 W, for radio and lights</span></summary>
+      <div class="body">
+        <ol class="steps">
+          <li><strong>Motor:</strong> a cordless-drill motor, a small permanent-magnet motor, or a stepper motor (see <a href="#scavenge">scavenging</a>).</li>
+          <li><strong>Gear it up.</strong> A hand crank turns about 60–120 rpm and small motors need 1,000+ rpm. Use a large pulley or gear on the crank driving a small one on the motor.</li>
+          <li><strong>Rectify</strong> with a bridge rectifier. You get the right polarity whichever way you crank, and the battery can't drive the motor backwards.</li>
+          <li><strong>Charge a small battery</strong> through a proper charger or regulator, then run the radio or light from that.</li>
+        </ol>
+      </div>
+    </details>
+
+    <div class="callout danger">
+      <strong class="callout-title">Pedal and crank safety</strong>
+      <ul>
+        <li><strong>Entanglement:</strong> rollers, belts and chains grab hair, laces, drawstrings and loose sleeves. Guard them, tie back hair, and keep children and pets away.</li>
+        <li><strong>Blocking diode or rectifier is not optional.</strong> Without it, the battery drives the motor when you stop pedalling.</li>
+        <li><strong>Regulate for USB.</strong> Raw generator output swings with speed and will destroy phones. Always charge through a battery and a proper 12 V → USB buck converter.</li>
+        <li>A treadmill motor spun fast with nothing connected can exceed 60 V. Treat its terminals as live.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section id="teg">
+    <h2>Thermoelectric power from a wood stove</h2>
+    <p>A thermoelectric generator (TEG) module is a thin ceramic tile. Heat one face and cool the other, and it makes a small DC voltage (the Seebeck effect). It has no moving parts and runs whenever the stove burns, but the output is small.</p>
+    <ul>
+      <li><strong>The temperature difference (ΔT) is everything.</strong> Power rises roughly with the square of ΔT: double the difference gives about 4× the power. A hot stove is only half the job. <strong>The cold side must stay cold.</strong></li>
+      <li><strong>TEG vs Peltier (TEC):</strong> Peltier cooler modules (TEC) also work as generators in a pinch. They're built for cooling, though, so they usually tolerate much less heat (their solder can melt well below stove-top temperatures) and give less power. Buy modules sold as TEGs if you can.</li>
+      <li><strong>Hot-side limit:</strong> many common bismuth-telluride modules are rated for a hot side of about 150–250 °C (300–480 °F). <strong>Check the specific module and never exceed it.</strong> A wood stove top can run hotter than that.</li>
+    </ul>
+    <div class="callout info">
+      <strong class="callout-title">Realistic output</strong>
+      <p>One 40 mm module with an air-cooled heat sink on a wood stove typically gives about <strong>0.5–3 W</strong>. Commercial stove-top thermoelectric chargers are typically rated about <strong>5–20 W</strong>. Over a day of burning that's roughly 10–200 Wh: a slow phone charge and some LED light.</p>
+    </div>
+
+    <figure class="diagram">
+      <svg class="diagram" viewBox="0 0 420 250" role="img" aria-label="Cross-section of a stove-top thermoelectric generator. From the bottom: stove top, thick aluminium spreader plate, thermal paste, the thin TEG module, thermal paste, and a large finned heat sink on top. Two bolts with insulating washers clamp the stack.">
+        <defs>
+          <marker id="tg-ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 Z" fill="currentColor"/></marker>
+        </defs>
+        <g fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round">
+          <rect x="20" y="208" width="380" height="24" fill="currentColor" fill-opacity=".3"/>
+          <rect x="130" y="186" width="160" height="22" fill="currentColor" fill-opacity=".12"/>
+          <path d="M170 185 H250 M170 171 H250" stroke-width="2.5" style="stroke:var(--accent)"/>
+          <rect x="170" y="172" width="80" height="12"/>
+          <path d="M180 172 V184 M190 172 V184 M200 172 V184 M210 172 V184 M220 172 V184 M230 172 V184 M240 172 V184" stroke-width="1"/>
+          <rect x="140" y="156" width="140" height="14" fill="currentColor" fill-opacity=".12"/>
+          <path d="M162 156 V86 M174 156 V86 M186 156 V86 M198 156 V86 M210 156 V86 M222 156 V86 M234 156 V86 M246 156 V86 M258 156 V86" stroke-width="4"/>
+          <path d="M150 150 V204 M270 150 V204" stroke-width="3"/>
+          <path d="M143 148 H157 M263 148 H277" stroke-width="4"/>
+          <path d="M144 154 H156 M264 154 H276" stroke-width="3" style="stroke:var(--accent)"/>
+          <path d="M186 80 V56 M210 80 V50 M234 80 V56" stroke-width="1.8" marker-end="url(#tg-ah)"/>
+          <path d="M128 176 H168 M292 178 H252 M292 197 H286 M292 150 H272" stroke-width="1"/>
+        </g>
+        <g fill="currentColor" font-size="13">
+          <text x="210" y="40" text-anchor="middle">Warm air out (a small fan helps)</text>
+          <text x="128" y="104" text-anchor="end" font-weight="700">COLD SIDE</text>
+          <text x="128" y="120" text-anchor="end">big finned heat sink</text>
+          <text x="128" y="136" text-anchor="end">(or cold water)</text>
+          <text x="124" y="172" text-anchor="end" font-weight="700">TEG module</text>
+          <text x="296" y="140">Insulated bolts,</text>
+          <text x="296" y="155">even pressure</text>
+          <text x="296" y="182">Thermal paste</text>
+          <text x="296" y="201">Spreader plate</text>
+          <text x="210" y="225" text-anchor="middle" font-weight="700">HOT: STOVE TOP. Keep below the module's rating.</text>
+        </g>
+      </svg>
+      <figcaption>Stack: stove → thick aluminium spreader → paste → TEG → paste → heat sink. The bigger the temperature difference, the more power.</figcaption>
+    </figure>
+
+    <details class="item">
+      <summary>Parts list <span class="sub">one or more 40 mm modules</span></summary>
+      <div class="body">
+        <ul>
+          <li>TEG modules rated for your hot-side temperature (check the datasheet or label)</li>
+          <li>Aluminium plate about 6–10 mm (¼–⅜ in) thick as a heat spreader</li>
+          <li>Large finned heat sink (an old computer CPU cooler works), <em>or</em> a flat-bottomed pot of cold water</li>
+          <li>Thermal paste rated for the temperature</li>
+          <li>Stainless steel bolts, springs or spring washers, heat-resistant insulating washers</li>
+          <li>Stove thermometer</li>
+          <li>DC–DC converter (boost or buck-boost) with USB output, or a small battery charger</li>
+          <li>Heat-resistant wire near the stove</li>
+        </ul>
+      </div>
+    </details>
+
+    <details class="item">
+      <summary>Build it, step by step <span class="sub">sandwich, clamp, measure, convert</span></summary>
+      <div class="body">
+        <ol class="steps">
+          <li><strong>Find a spot on the stove that stays below the module's hot-side rating.</strong> Measure it with a stove thermometer. Use a cooler edge, or raise the plate on spacers if needed. <strong>Never put a module directly on very hot steel</strong> without a spreader plate and a temperature check.</li>
+          <li><strong>Clean all faces flat.</strong> Spread a thin, even layer of thermal paste on both faces of the module.</li>
+          <li><strong>Stack it:</strong> spreader plate, then module (hot face down; check the marking or datasheet), then heat sink.</li>
+          <li><strong>Clamp</strong> with two bolts through the heat sink and plate, using springs for even pressure. Add insulating washers so the bolts don't carry heat around the module. Don't over-tighten, because the ceramic cracks.</li>
+          <li><strong>Measure</strong> open-circuit voltage with a meter as it heats up. Wire several modules in series for more voltage.</li>
+          <li><strong>Feed a DC–DC converter</strong> to get a steady 5 V USB or to charge a small battery. A small fan on the heat sink raises output but uses some of it. If you use a pot of water on the cold side, swap in cold water as it warms.</li>
+          <li><strong>Keep checking temperatures.</strong> Take it off with gloves before the stove gets hotter than the module's rating.</li>
+        </ol>
+      </div>
+    </details>
+
+    <div class="callout danger">
+      <strong class="callout-title">Stove safety</strong>
+      <ul>
+        <li><strong>Carbon monoxide:</strong> a wood stove must vent through a proper flue. Fit a CO alarm. Never bring a grill, camp stove or heater indoors to run a thermoelectric charger.</li>
+        <li><strong>Burns and fire:</strong> the plate and heat sink get very hot. Keep wires, plastic and fabric away from the stove.</li>
+        <li>An overheated module is ruined for good, often without warning.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section id="cells">
+    <h2>Earth battery, voltaic pile and lemon cells</h2>
+    <p>Two different metals (zinc and copper) in a salty or acidic electrolyte make a small battery. These are fun and educational, but <strong>be honest about what you'll get.</strong></p>
+    <div class="callout warn">
+      <strong class="callout-title">Honest expectations</strong>
+      <ul>
+        <li>About <strong>0.5–1 V per cell</strong>, at microamps to a few milliamps.</li>
+        <li><strong>Red LED</strong> needs about 1.8–2 V: <strong>3–4 cells in series</strong>. <strong>White LED</strong> needs about 3 V: <strong>4–6 cells</strong>. Expect a dim glow.</li>
+        <li>An LCD clock or calculator (microamps) can run for a while.</li>
+        <li><strong>It cannot charge a phone in any useful time.</strong> A phone charges at 5–20 W. A lemon cell gives under a thousandth of a watt. You'd need thousands of cells.</li>
+      </ul>
+    </div>
+
+    <figure class="diagram">
+      <svg class="diagram" viewBox="0 0 360 250" role="img" aria-label="A voltaic pile: four cells stacked, each made of zinc, wet paper and copper. The copper end at the top is positive, the zinc end at the bottom is negative. Wires run to an LED, long leg to positive.">
+        <g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round">
+          <rect x="150" y="210" width="100" height="10" fill="currentColor" fill-opacity=".15"/>
+          <rect x="156" y="204" width="88" height="6" stroke-dasharray="3 2"/>
+          <rect x="150" y="194" width="100" height="10" fill="currentColor" fill-opacity=".7"/>
+          <rect x="150" y="184" width="100" height="10" fill="currentColor" fill-opacity=".15"/>
+          <rect x="156" y="178" width="88" height="6" stroke-dasharray="3 2"/>
+          <rect x="150" y="168" width="100" height="10" fill="currentColor" fill-opacity=".7"/>
+          <rect x="150" y="158" width="100" height="10" fill="currentColor" fill-opacity=".15"/>
+          <rect x="156" y="152" width="88" height="6" stroke-dasharray="3 2"/>
+          <rect x="150" y="142" width="100" height="10" fill="currentColor" fill-opacity=".7"/>
+          <rect x="150" y="132" width="100" height="10" fill="currentColor" fill-opacity=".15"/>
+          <rect x="156" y="126" width="88" height="6" stroke-dasharray="3 2"/>
+          <rect x="150" y="116" width="100" height="10" fill="currentColor" fill-opacity=".7"/>
+          <path d="M200 116 V40 H132"/>
+          <path d="M110 40 H40 V215 H150"/>
+          <path d="M132 29 V51 L112 40 Z" fill="currentColor" fill-opacity=".25"/>
+          <path d="M110 29 V51" stroke-width="2.5"/>
+          <path d="M112 24 L100 12 M122 24 L110 12" style="stroke:var(--accent)"/>
+          <path d="M256 194 H262 V220 H256" stroke-width="1.5"/>
+        </g>
+        <g fill="currentColor" font-size="12">
+          <text x="140" y="12" font-weight="700">LED: long leg to +</text>
+          <text x="258" y="122" font-weight="700">+ copper end</text>
+          <text x="258" y="146">4 cells ≈ 2–4 V</text>
+          <text x="258" y="160">(less under load)</text>
+          <text x="268" y="203">1 cell:</text>
+          <text x="268" y="217">copper · wet</text>
+          <text x="268" y="231">paper · zinc</text>
+          <text x="150" y="240" font-weight="700">− zinc end</text>
+        </g>
+      </svg>
+      <figcaption>Each cell is zinc | wet paper | copper. The copper of one cell touches the zinc of the next, so the cells add up in series.</figcaption>
+    </figure>
+
+    <details class="item">
+      <summary>Voltaic pile, step by step <span class="sub">coins, washers and salt water</span></summary>
+      <div class="body">
+        <ol class="steps">
+          <li><strong>Gather metals.</strong> Zinc: galvanized (zinc-coated) washers. Copper: copper coins, slices of copper pipe or copper foil. Trick: US pennies dated 1983 or later are copper-plated zinc. Sand one face down to the grey zinc and each penny becomes a zinc/copper pair.</li>
+          <li><strong>Cut card or paper-towel discs</strong> slightly smaller than the metal discs, so they don't touch the neighbouring discs.</li>
+          <li><strong>Soak the paper</strong> in strong salt water or vinegar. Blot it so it's damp, not dripping. Drips down the side short the cells out.</li>
+          <li><strong>Stack:</strong> zinc, wet paper, copper; zinc, wet paper, copper; and so on. Each zinc–paper–copper set is one cell. (With sanded pennies, stack them all the same way up with wet paper between: N pennies make N − 1 cells.)</li>
+          <li><strong>Squeeze lightly</strong> (a rubber band or a clamp with a non-metal tube around the stack) so the discs touch well.</li>
+          <li><strong>Measure</strong> with a meter. The copper end is +, the zinc end is −. Connect an LED's long leg to +. If it doesn't light, add cells.</li>
+          <li><strong>Re-wet the paper</strong> when the output fades. Replace badly corroded discs.</li>
+        </ol>
+      </div>
+    </details>
+
+    <details class="item">
+      <summary>Earth battery, step by step <span class="sub">metal rods in damp soil</span></summary>
+      <div class="body">
+        <ol class="steps">
+          <li><strong>Drive a copper rod or pipe and a galvanized steel rod, pipe or large nail</strong> into damp soil about 30 cm (1 ft) apart. They must not touch.</li>
+          <li><strong>Wet the soil around them.</strong> A little salt water helps, but salt harms plants and soil, so use it sparingly.</li>
+          <li><strong>Measure:</strong> expect about 0.5–1 V and a tiny current. Copper is +.</li>
+          <li><strong>For more voltage, add pairs in series:</strong> wire the copper of one pair to the zinc of the next. Space the pairs apart so current doesn't leak between them through the soil.</li>
+        </ol>
+      </div>
+    </details>
+
+    <details class="item">
+      <summary>Lemon and potato batteries <span class="sub">demonstration value only</span></summary>
+      <div class="body">
+        <p>Push a galvanized nail and a piece of copper (wire, coin or pipe) into a lemon or potato without letting them touch. Each fruit gives about 0.9 V at around 1 mA or less. Wire 3–4 in series (copper to zinc) to make a red LED glow dimly, or to run an LCD clock.</p>
+        <p><strong>Don't eat the fruit or potato afterwards.</strong> Metal from the electrodes gets into it.</p>
+      </div>
+    </details>
+  </section>
+
+  <!-- ============================================================ -->
+  <section id="scavenge">
+    <h2>Scavenging usable generators</h2>
+    <p><strong>Rule:</strong> a motor generates electricity only if it has <strong>permanent magnets</strong>. Most motors that run straight off household AC don't, so spinning them gives you nothing.</p>
+    <div class="table-wrap"><table class="data">
+      <thead><tr><th>Source</th><th>Good for</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Treadmill motor</strong><br><small>Permanent-magnet DC, brushed. Often rated about 90–130 V DC at a few thousand rpm.</small></td><td>Pedal, wind, hydro</td><td>One of the best finds. Reaches 12–14 V at a few hundred to about 1,000 rpm. Can make dangerous voltage if spun fast with no load.</td></tr>
+        <tr><td><strong>Washing-machine direct-drive motor</strong> (e.g. Fisher &amp; Paykel "Smart Drive", LG direct drive)<br><small>3-phase AC, brushless, permanent magnet</small></td><td>Hydro, wind</td><td>Popular for both. Strong output at low rpm, from tens to a few hundred watts depending on the setup. Needs a 3-phase bridge rectifier. Often rewired for the voltage you want. (Older belt-drive washer motors are induction motors: no good.)</td></tr>
+        <tr><td><strong>E-scooter / e-bike motor</strong><br><small>Brushed: DC. Hub (brushless): 3-phase AC.</small></td><td>Pedal, small wind</td><td>24–36 V, 250–350 W brushed scooter motors make good bike generators. Rectify brushless types.</td></tr>
+        <tr><td><strong>Cordless drill motor</strong><br><small>DC, 12–20 V types</small></td><td>Hand crank, small pedal</td><td>A few watts. Needs high rpm.</td></tr>
+        <tr><td><strong>Car / truck alternator</strong><br><small>DC (built-in rectifier and regulator)</small></td><td>Engine drive, fast Pelton runner</td><td>Needs about 1,000–2,000+ rpm and field current. Poor for direct wind. Many newer cars use computer-controlled alternators that won't regulate on their own; older self-regulating types are easier.</td></tr>
+        <tr><td><strong>Bicycle hub dynamo</strong> or bottle dynamo<br><small>AC, standard rating 6 V 3 W</small></td><td>Lights; trickle USB charge with a dynamo USB charger</td><td>Very reliable and efficient. Great for bike lights while riding.</td></tr>
+        <tr><td><strong>Printer / stepper motors</strong><br><small>AC from two coils</small></td><td>Hand-crank LED or tiny charger</td><td>Usually a fraction of a watt to a few watts. Rectify each coil with its own bridge rectifier, then join the DC outputs.</td></tr>
+        <tr><td><strong>Ceiling fan, box fan, most fridge, pump and older washer motors</strong><br><small>Usually AC induction, no magnets</small></td><td><strong>Not a generator</strong></td><td><strong>Won't produce useful power without major modification.</strong> Skip them.</td></tr>
+        <tr><td><strong>Corded drill, blender, vacuum motors</strong> ("universal" motors)<br><small>Field coils, no magnets</small></td><td><strong>Not a generator</strong></td><td>Only a trace of output. Skip them.</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3 id="test-motor">How to test any motor as a generator</h3>
+    <ol class="steps">
+      <li><strong>Look at it.</strong> Two wires usually means a brushed DC motor. Three thick wires means a brushless 3-phase motor. Four to six thin wires usually means a stepper.</li>
+      <li><strong>Short test:</strong> twist the leads together (all three for 3-phase) and turn the shaft by hand. If it gets <strong>much harder to turn</strong> than with the leads apart, it has magnets and will generate. No change means no magnets.</li>
+      <li><strong>Voltage test:</strong> separate the leads. Set a multimeter to DC volts (AC volts for brushless, stepper and dynamo types). Spin the shaft at a steady, known speed (for example with a drill in the chuck) and read the open-circuit volts. Voltage rises roughly in step with rpm.</li>
+      <li><strong>Load test (the real number):</strong> connect a load, such as a 12 V car bulb (5–21 W) or a power resistor. Measure the volts across it and the amps through it. Watts = volts × amps. Open-circuit volts always look better than real output.</li>
+      <li><strong>Work out the gearing</strong> you need to reach about 14–15 V <em>under load</em> at the speed your wheel, rotor or pedals can give.</li>
+    </ol>
+    <div class="callout warn">
+      <strong class="callout-title">Testing safety</strong>
+      <p>Clamp the motor down before spinning it with a drill. Keep fingers, sleeves and hair clear of the chuck. High-voltage motors (treadmill motors) spun fast can exceed 60 V, so keep the leads apart and don't touch them.</p>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section id="wiring">
+    <h2>Wiring basics</h2>
+    <p>Wire it right and it's safe. Wire it wrong and the battery becomes a fire-starter. Follow this order:</p>
+
+    <figure class="diagram tall">
+      <svg class="diagram" viewBox="0 0 360 580" role="img" aria-label="Block diagram of a small off-grid system. Generator, then rectifier, then blocking diode, then charge controller with a dump load for wind or hydro, then a fuse, then the 12 volt battery, then a fuse and switch, then the loads: 12 volt DC loads, a 12 volt to USB converter, and a small inverter.">
+        <defs>
+          <marker id="wr-ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 Z" fill="currentColor"/></marker>
+        </defs>
+        <g fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="20" y="8" width="200" height="46" rx="8"/>
+          <rect x="20" y="80" width="200" height="46" rx="8"/>
+          <rect x="20" y="152" width="200" height="46" rx="8"/>
+          <rect x="20" y="224" width="200" height="46" rx="8"/>
+          <rect x="20" y="296" width="200" height="46" rx="8" style="stroke:var(--accent)" stroke-width="3"/>
+          <rect x="20" y="368" width="200" height="46" rx="8" stroke-width="3"/>
+          <rect x="20" y="440" width="200" height="46" rx="8" style="stroke:var(--accent)" stroke-width="3"/>
+          <rect x="244" y="224" width="110" height="46" rx="8" stroke-dasharray="6 4"/>
+          <rect x="4" y="526" width="112" height="48" rx="8"/>
+          <rect x="124" y="526" width="112" height="48" rx="8"/>
+          <rect x="244" y="526" width="112" height="48" rx="8"/>
+          <path d="M120 54 V78" marker-end="url(#wr-ah)"/>
+          <path d="M120 126 V150" marker-end="url(#wr-ah)"/>
+          <path d="M120 198 V222" marker-end="url(#wr-ah)"/>
+          <path d="M120 270 V294" marker-end="url(#wr-ah)"/>
+          <path d="M120 342 V366" marker-end="url(#wr-ah)"/>
+          <path d="M120 414 V438" marker-end="url(#wr-ah)"/>
+          <path d="M220 247 H242" marker-end="url(#wr-ah)"/>
+          <path d="M120 486 V506 M60 506 H300"/>
+          <path d="M60 506 V524" marker-end="url(#wr-ah)"/>
+          <path d="M180 506 V524" marker-end="url(#wr-ah)"/>
+          <path d="M300 506 V524" marker-end="url(#wr-ah)"/>
+        </g>
+        <g fill="currentColor" text-anchor="middle">
+          <text x="120" y="28" font-size="15" font-weight="700">Generator</text>
+          <text x="120" y="45" font-size="12">hydro · wind · pedal · TEG</text>
+          <text x="120" y="100" font-size="15" font-weight="700">Rectifier</text>
+          <text x="120" y="117" font-size="12">AC → DC (skip if already DC)</text>
+          <text x="120" y="172" font-size="15" font-weight="700">Blocking diode</text>
+          <text x="120" y="189" font-size="12">stops battery back-flow</text>
+          <text x="120" y="244" font-size="15" font-weight="700">Charge controller</text>
+          <text x="120" y="261" font-size="12">diversion type: wind &amp; hydro</text>
+          <text x="120" y="316" font-size="15" font-weight="700">Fuse</text>
+          <text x="120" y="333" font-size="12">right at battery +</text>
+          <text x="120" y="388" font-size="15" font-weight="700">Battery 12 V</text>
+          <text x="120" y="405" font-size="12">lead-acid or LiFePO4 + BMS</text>
+          <text x="120" y="460" font-size="15" font-weight="700">Fuse + switch</text>
+          <text x="120" y="477" font-size="12">right at battery +</text>
+          <text x="299" y="244" font-size="14" font-weight="700">Dump load</text>
+          <text x="299" y="261" font-size="12">wind &amp; hydro</text>
+          <text x="60" y="546" font-size="14" font-weight="700">12 V DC</text>
+          <text x="60" y="563" font-size="12">lights, radio</text>
+          <text x="180" y="546" font-size="14" font-weight="700">12 V → USB</text>
+          <text x="180" y="563" font-size="12">phones</text>
+          <text x="300" y="546" font-size="14" font-weight="700">Inverter</text>
+          <text x="300" y="563" font-size="12">small AC only</text>
+        </g>
+        <g fill="currentColor" font-size="12">
+          <text x="232" y="27">wind/hydro: never</text>
+          <text x="232" y="42">run unloaded</text>
+          <text x="232" y="99">≈1.4 V lost;</text>
+          <text x="232" y="114">heat-sink it</text>
+          <text x="232" y="171">skip if a bridge</text>
+          <text x="232" y="186">rectifier is fitted</text>
+          <text x="232" y="315">sized to protect</text>
+          <text x="232" y="330">the wire</text>
+          <text x="232" y="387">lead-acid vents</text>
+          <text x="232" y="402">hydrogen: ventilate</text>
+          <text x="232" y="459">sized to protect</text>
+          <text x="232" y="474">the load wires</text>
+        </g>
+      </svg>
+      <figcaption>Power flows top to bottom. Fuses go on the battery's positive side, as close to the battery as possible.</figcaption>
+    </figure>
+
+    <h3>Rectifier: AC → DC</h3>
+    <ul>
+      <li>A <strong>bridge rectifier</strong> (4 diodes in one block) turns AC, or DC of either polarity, into DC. Use a 3-phase bridge (6 diodes) for 3-phase motors and alternators.</li>
+      <li>Rate it for at least <strong>twice</strong> your maximum current and well above the highest voltage your generator can make. Metal-cased 35 A bridges are cheap and common.</li>
+      <li>A silicon bridge drops about <strong>1.4 V</strong> (two diodes in the path). At 12 V that's over 10% lost as heat. At 10 A it makes about 14 W of heat, so <strong>bolt it to a metal heat sink</strong> with thermal paste.</li>
+    </ul>
+    <h3>Blocking diode</h3>
+    <ul>
+      <li>It stops the battery pushing current back into the generator and spinning it as a motor (or draining the battery) when the generator slows or stops.</li>
+      <li>Use a <strong>Schottky</strong> diode (only about 0.3–0.5 V lost), rated for at least twice your current and well above your generator's maximum voltage. Heat-sink it.</li>
+      <li>A bridge rectifier already blocks back-flow, so you don't need both.</li>
+    </ul>
+    <h3>Charge controller</h3>
+    <ul>
+      <li><strong>Why you need one:</strong> overcharging boils lead-acid batteries dry, gives off lots of hydrogen and kills them. Overcharged lithium packs can catch fire. Running any battery flat also ruins it.</li>
+      <li><strong>PWM:</strong> cheap and simple. Works best when the source voltage is only a little above the battery's.</li>
+      <li><strong>MPPT:</strong> converts a higher source voltage down efficiently. It harvests noticeably more (often 10–30% with solar) when the source voltage is well above the battery's.</li>
+      <li><strong>Wind and hydro: use a diversion (dump-load) controller.</strong> When the battery is full, it sends surplus power into a dump load (a heating element or power resistors) instead of disconnecting the generator. The turbine always stays loaded and can't run away. Rate the dump load for more than the generator's maximum output, and mount it where its heat is safe. Solar-type controllers that disconnect are fine for solar and pedal only.</li>
+      <li><strong>Low-voltage disconnect:</strong> use the controller's LOAD output or a separate disconnect so lights and gadgets can't drain the battery flat.</li>
+      <li>Connect the <strong>battery to the controller first</strong>, then the generator. Disconnect in reverse order.</li>
+    </ul>
+
+    <h3>Batteries</h3>
+    <ul>
+      <li><strong>Lead-acid deep-cycle</strong> (flooded, AGM, gel): cheap, heavy and forgiving. For long life, use only the top half: don't go below about 50%. Recharge fully and often; leaving one discharged ruins it. Flooded types need distilled-water top-ups and vent the most hydrogen. A flat lead-acid battery can freeze and crack in winter.</li>
+      <li><strong>Car starting batteries</strong> die quickly if discharged deeply. Use one only in an emergency.</li>
+      <li><strong>LiFePO4</strong> (lithium iron phosphate): lighter, about 80–90% usable, long life. <strong>It must have a BMS</strong> (battery management system). <strong>Don't charge it below 0 °C (32 °F)</strong> unless it has built-in low-temperature protection or a heater.</li>
+      <li><strong>Other lithium packs</strong> (phone, laptop, power-tool, e-bike): charge only with their own chargers. Don't connect home-built generators to them.</li>
+    </ul>
+    <div class="table-wrap"><table class="data">
+      <thead><tr><th>12 V battery</th><th>Charging voltages</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td>Flooded lead-acid</td><td>Absorb: about 14.4–14.8 V<br>Float: about 13.2–13.6 V</td><td>Resting (2+ h, no load): 12.6–12.7 V ≈ full; about 12.2 V ≈ half; under 12.0 V ≈ nearly empty, so recharge now.</td></tr>
+        <tr><td>AGM / gel</td><td>Per the label (usually a bit lower; gel lowest)</td><td>Overcharging dries them out permanently.</td></tr>
+        <tr><td>LiFePO4</td><td>Absorb: about 14.2–14.6 V<br>Float: not needed, or per the maker</td><td>BMS required. Voltage stays almost flat until nearly empty, so it's a poor fuel gauge.</td></tr>
+      </tbody>
+    </table></div>
+    <p><strong>Always follow the battery's own spec</strong> when you have it.</p>
+
+    <h3>Wire size (12 V, copper)</h3>
+    <p>Too-thin wire wastes power as heat and can catch fire. This table is conservative. It keeps voltage loss to about 3% and stays well within what the wire can carry. Distance is <strong>one-way</strong> (the cable length from battery to device). Use stranded copper.</p>
+    <div class="table-wrap"><table class="data">
+      <thead><tr><th>Wire size</th><th>Max fuse</th><th>Max current, run up to 1.5 m (5 ft)</th><th>Max current, run up to 3 m (10 ft)</th></tr></thead>
+      <tbody>
+        <tr><td>16 AWG / 1.5 mm²</td><td>10 A</td><td>8 A</td><td>4 A</td></tr>
+        <tr><td>14 AWG / 2.5 mm²</td><td>15 A</td><td>12 A</td><td>7 A</td></tr>
+        <tr><td>12 AWG / 4 mm²</td><td>20 A</td><td>16 A</td><td>11 A</td></tr>
+        <tr><td>10 AWG / 6 mm²</td><td>30 A</td><td>24 A</td><td>18 A</td></tr>
+        <tr><td>8 AWG / 10 mm²</td><td>50 A</td><td>40 A</td><td>28 A</td></tr>
+        <tr><td>6 AWG / 16 mm²</td><td>65 A</td><td>50 A</td><td>45 A</td></tr>
+        <tr><td>4 AWG / 25 mm²</td><td>85 A</td><td>65 A</td><td>65 A</td></tr>
+        <tr><td>2 AWG / 35 mm²</td><td>115 A</td><td>90 A</td><td>90 A</td></tr>
+      </tbody>
+    </table></div>
+    <ul>
+      <li><strong>Longer run?</strong> Twice the distance needs roughly twice the copper (about 3 AWG sizes thicker), or halve the current.</li>
+      <li>At 24 V the same watts need half the amps, so thinner wire works.</li>
+      <li>Big inverters need very thick, short cables. Follow the inverter's manual.</li>
+    </ul>
+
+    <h3>Fuses and switches</h3>
+    <ul>
+      <li><strong>Fuse every battery positive lead as close to the battery as possible</strong> (within about 7 in / 18 cm). A fuse protects the <em>wire</em> from melting and burning.</li>
+      <li>Fuse rating: about 1.25× the normal current, and <strong>never larger than the "max fuse" for that wire</strong> in the table above.</li>
+      <li>Use DC-rated fuses (blade fuses for small circuits, ANL or MIDI types for big ones). Large lithium banks need fuses with a high interrupt rating (e.g. class T).</li>
+      <li>Use <strong>DC-rated switches</strong>. DC arcs harder than AC, and an AC-only switch can weld shut or burn. Fit a battery disconnect switch you can reach quickly.</li>
+      <li>Red = positive, black = negative. Crimp terminals properly, cover them with heat-shrink, and support cables so they can't chafe.</li>
+    </ul>
+
+    <h3>Inverters (12 V DC → mains AC)</h3>
+    <ul>
+      <li>Use them only for small AC loads you can't run on DC. Run lights, radios and USB directly from 12 V.</li>
+      <li><strong>Idle draw:</strong> an inverter uses power even with nothing plugged in, often about 5–25 W. That can be up to 0.6 kWh a day doing nothing, which is enough to flatten a small battery. <strong>Switch it off</strong> when not in use.</li>
+      <li><strong>Big current:</strong> a 1,000 W load pulls about 90–100 A from a 12 V battery.</li>
+      <li>Pure sine wave is safest for electronics, motors and medical devices. Modified sine wave can make some devices overheat or fail.</li>
+      <li>Inverter output is mains voltage and <strong>can kill</strong>. Treat it like a wall socket. <strong>Never connect an inverter to house wiring through an outlet.</strong></li>
+    </ul>
+
+    <h3>Putting it together</h3>
+    <ol class="steps">
+      <li><strong>Draw your system on paper</strong> like the diagram above. Write the maximum current at each point, and pick wire and fuse sizes from the table.</li>
+      <li><strong>Mount everything on a non-flammable board</strong> in a dry, ventilated place. Put lead-acid batteries in a vented box. Batteries never go in a sealed box or a living space without ventilation.</li>
+      <li><strong>Fit the battery fuse holders with the fuses out.</strong></li>
+      <li><strong>Connect the controller to the battery</strong> (through the fuse holder), then the dump load if you have one.</li>
+      <li><strong>Connect the generator</strong> through the rectifier or diode with the generator <strong>stopped</strong> (water off, rotor tied, pedals still).</li>
+      <li><strong>Check polarity with a meter at every point</strong>, then insert the fuses.</li>
+      <li><strong>Connect loads</strong> through their own fuse and switch.</li>
+      <li><strong>After 30 minutes of running, feel for warm wires and connections.</strong> Warm means loose or too thin, so fix it before carrying on.</li>
+    </ol>
+  </section>
+
+  <!-- ============================================================ -->
+  <section id="safety">
+    <h2>Safety</h2>
+    <div class="callout danger">
+      <strong class="callout-title">Shock</strong>
+      <ul>
+        <li><strong>DC above about 50–60 V, and any mains AC, can kill.</strong> Treadmill motors spun fast, and solar panels wired in series, can easily exceed this.</li>
+        <li>Work on circuits only when they're dead: generator stopped, battery fuse out. Use one hand where possible and keep the other away from metal.</li>
+      </ul>
+    </div>
+    <div class="callout danger">
+      <strong class="callout-title">Short circuits and fire</strong>
+      <ul>
+        <li>A 12 V battery can deliver <strong>hundreds of amps</strong> into a short. That melts wrenches, welds rings and watches to terminals, and causes severe burns.</li>
+        <li>Remove rings, watches and metal bracelets. Insulate tool handles. Cover battery terminals.</li>
+        <li>Fuse every battery positive lead as close to the battery as possible.</li>
+      </ul>
+    </div>
+    <div class="callout danger">
+      <strong class="callout-title">Battery gas and acid</strong>
+      <ul>
+        <li>Lead-acid batteries <strong>vent hydrogen</strong> while charging, and it's explosive. Ventilate, and no sparks, flames or smoking nearby. Make the final connection at the fuse or switch, never with a spark at the terminal.</li>
+        <li>Wear goggles and gloves. Neutralize acid spills with <strong>baking soda</strong>. Acid in the eyes: flush with clean water for at least 15 minutes and get medical help. On skin: rinse with plenty of water.</li>
+      </ul>
+    </div>
+    <div class="callout danger">
+      <strong class="callout-title">Lithium thermal runaway</strong>
+      <ul>
+        <li>Lithium packs can burn fiercely and re-ignite. Packs need a proper BMS. Don't overcharge, puncture, crush, or charge LiFePO4 below 0 °C (32 °F).</li>
+        <li>If a pack is <strong>swelling, hot, hissing or smoking</strong>: get everyone away and outside, and don't breathe the fumes. Move a merely swollen pack (not smoking) outdoors onto bare ground or concrete, away from anything that burns.</li>
+      </ul>
+    </div>
+    <div class="callout danger">
+      <strong class="callout-title">Never back-feed the house</strong>
+      <p>Never back-feed a house through an outlet (a "suicide cord"). It can electrocute line workers and neighbours. Use a properly installed transfer switch or interlock.</p>
+    </div>
+    <div class="callout danger">
+      <strong class="callout-title">Carbon monoxide</strong>
+      <p>Never run a stove, heater, grill or generator inside a tent, snow shelter, vehicle or home. Carbon monoxide kills. Keep generators at least 20 ft (6 m) from doors and windows, with the exhaust pointed away. Use a CO alarm.</p>
+    </div>
+    <div class="callout warn">
+      <strong class="callout-title">Water and moving parts</strong>
+      <ul>
+        <li><strong>Water + electricity:</strong> keep connections dry and boxed. Never handle wiring with wet hands or while standing in water.</li>
+        <li><strong>Rotating machinery:</strong> wheels, rotors, belts and rollers grab clothing, hair and gloves. Guard them, and stop and secure the machine before touching it.</li>
+      </ul>
+    </div>
+    <div class="callout danger">
+      <strong class="callout-title">If someone gets a shock</strong>
+      <ul>
+        <li><strong>Don't touch them</strong> until the source is off or disconnected. Stay far back from downed power lines, at least 10 m (33 ft), and assume they're live.</li>
+        <li>Once it's safe, check breathing. If they're not breathing normally, call for help and start CPR: 100–120 compressions a minute (see <a href="../firstaid/index.html">First aid</a>).</li>
+        <li>Cool burns under cool running water for 20 minutes. All electrical burns and mains shocks need medical assessment, even if the person seems fine.</li>
+      </ul>
+    </div>
+    <div class="callout info">
+      <strong class="callout-title">Stop and get an electrician</strong>
+      <p>Get an electrician for anything touching house wiring, the breaker panel, a transfer switch or the grid. Also for systems above 48 V, and for wiring inside a building that people sleep in. If you smell hot insulation or see melted wire, stop and disconnect (if it's safe), then get help.</p>
+    </div>
+  </section>
+
+  <footer class="page-foot">Numbers are conservative estimates for home-built equipment: physics formulas, typical manufacturer ratings and common field results. The wire table assumes copper at 12 V with about 3% voltage loss. For emergencies and learning, not a substitute for a licensed electrician. <a href="#main">Back to top</a></footer>
+</main>
+</body>
+</html>

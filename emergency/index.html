@@ -1,0 +1,735 @@
+<!doctype html>
+<!-- GENERATED FILE: do not edit by hand.
+     Content: scripts/emergency_content.py   Layout: scripts/build_emergency.py
+     Rebuild (regenerates this page AND off-grid-emergency-guide.pdf), from the app root:
+         python3 scripts/build_emergency.py -->
+<html lang="en" data-root="../" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#000000">
+<meta name="description" content="Printable emergency guide: step-by-step responses for nine emergencies plus water, signalling, Morse, knots and first-aid reference cards.">
+<title>Emergency — Off-Grid Survival Kit</title>
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="icon" href="../assets/icons/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../assets/icons/apple-touch-icon.png">
+<link rel="stylesheet" href="../assets/css/app.css">
+<script src="../assets/js/theme.js"></script>
+<script src="../assets/js/common.js" defer></script>
+<style>
+.pdf-actions .btn { flex: 1 1 auto; }
+.pdf-note { font-size: .95rem; color: var(--muted); margin-top: 4px; }
+[id] { scroll-margin-top: 76px; }
+ol.sc-index { columns: 2 220px; column-gap: 24px; padding-left: 1.6em; margin: 8px 0 12px; }
+ol.sc-index li { break-inside: avoid; margin: 0 0 6px; }
+ol.sc-index a { display: inline-block; min-height: 32px; padding: 4px 0; }
+.lists-2 { display: grid; grid-template-columns: 1fr; gap: 12px; margin: 12px 0 4px; }
+@media (min-width: 720px) { .lists-2 { grid-template-columns: 1fr 1fr; } }
+.lists-2 > div { border: 1px solid var(--border); border-radius: 10px; padding: 0 14px 6px; background: var(--surface-2); }
+.lists-2 h3 { margin: .6em 0 .3em; font-size: 1rem; text-transform: uppercase; letter-spacing: .04em; }
+ul.dont { list-style: none; padding-left: 0; }
+ul.dont > li { position: relative; padding-left: 1.5em; }
+ul.dont > li::before { content: "\2715"; position: absolute; left: 0; font-weight: 800; color: var(--danger); }
+ul.ready { list-style: none; padding-left: 0; }
+ul.ready > li { position: relative; padding-left: 1.5em; }
+ul.ready > li::before { content: ""; position: absolute; left: 0; top: .3em; width: .85em; height: .85em; border: 2px solid currentColor; border-radius: 3px; }
+table.g2a td.sym { width: 76px; text-align: center; vertical-align: middle; }
+table.g2a td.letter { width: 64px; font-weight: 800; font-size: 1.2rem; vertical-align: middle; }
+table.g2a td { vertical-align: middle; }
+.g2a-sym { width: 52px; height: 52px; display: block; margin: 0 auto; }
+table.morse { font-size: 1rem; }
+table.morse th.ch { width: 2.2em; font-size: 1.15rem; background: var(--surface-2); }
+table.morse td.mc { font-weight: 800; letter-spacing: .08em; white-space: nowrap; }
+table.morse td.mc + th.ch { border-left: 2px solid var(--border); }
+table.data td.k { font-weight: 700; white-space: nowrap; }
+.stop-letter { font-size: 1.4rem; font-weight: 800; width: 2em; }
+@media screen and (max-width: 600px) {
+  /* stack the 3-column water table into cards on phones */
+  table.stack thead { display: none; }
+  table.stack tr { display: block; border-bottom: 1px solid var(--border); padding: 4px 0 8px; }
+  table.stack tr:last-child { border-bottom: 0; }
+  table.stack th, table.stack td { display: block; border: 0; padding: 4px 12px; }
+  table.stack th[scope="row"] { position: static; font-size: 1.05rem; }
+  table.stack td[data-label]::before { content: attr(data-label) ": "; font-weight: 700; color: var(--muted); }
+}
+@media print {
+  .pb { break-before: page; }
+  /* long scenarios: let them flow across pages (app.css keeps details whole), one scenario per page start */
+  #main details.item { break-inside: auto; }
+  #scenarios details.item + details.item { break-before: page; }
+  .lists-2, .lists-2 > div, table.g2a tr, table.morse { break-inside: avoid; }
+  table.morse { font-size: 10pt; }
+  .lists-2 { grid-template-columns: 1fr 1fr; }
+  .lists-2 > div { background: #fff; }
+  ul.dont > li::before { color: #000; }
+  ol.sc-index { columns: 2; }
+}
+</style>
+<script>
+(function () {
+  'use strict';
+  // Open the <details> that holds a link target (TOC chips, cross-references, #hash on load).
+  function reveal(id) {
+    var el = id && document.getElementById(id);
+    if (!el) return;
+    for (var d = el.closest('details'); d; d = d.parentElement && d.parentElement.closest('details')) d.open = true;
+  }
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest && e.target.closest('a[href^="#"]');
+    if (a) reveal(decodeURIComponent(a.getAttribute('href').slice(1)));
+  });
+  function fromHash() {
+    var id = decodeURIComponent(location.hash.slice(1));
+    reveal(id);
+    var el = id && document.getElementById(id);
+    if (el) el.scrollIntoView();
+  }
+  window.addEventListener('hashchange', fromHash);
+  if (location.hash) document.addEventListener('DOMContentLoaded', fromHash);
+})();
+</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="app-header">
+  <a class="hdr-btn" href="../index.html" aria-label="Back to hub"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg><span>Hub</span></a>
+  <h1>Emergency Guide &amp; Scenarios</h1>
+  <span class="net-dot" role="img"></span>
+  <button class="hdr-btn" type="button" data-theme-toggle></button>
+</header>
+<main id="main" class="page">
+<p class="lead">Step-by-step responses for 9 emergencies, plus reference cards for water, signalling, Morse code, knots and first aid. Print the PDF and keep it in your go-bag and car — it works with no phone, no power and no signal.</p>
+<div class="callout danger"><strong class="callout-title">Life in danger?</strong><p><strong>Call 911</strong> (US/Canada) <strong>or 112</strong> (Europe and many other countries) — on any phone, even with "No service" or "Emergency calls only" showing. If a call won't connect, <strong>send a text</strong> (texts often get through on one bar). Then: STOP, and follow the priorities below.</p></div>
+<div class="row no-print pdf-actions">
+  <a class="btn primary" href="off-grid-emergency-guide.pdf" target="_blank" rel="noopener">Open the PDF</a>
+  <a class="btn" href="off-grid-emergency-guide.pdf" download="off-grid-emergency-guide.pdf">Download PDF</a>
+  <button class="btn print-btn" type="button" data-print>Print this page</button>
+  <button class="btn" type="button" data-expand-all="#main">Expand all</button>
+</div>
+<p class="pdf-note no-print">PDF: 18 pages, US Letter (also fits A4), black-and-white friendly, 78 KB. On some phones the PDF opens in a separate viewer app or simply downloads — the HTML version below has the same content.</p>
+<p class="disclaimer">General guidance for emergencies — not medical advice and not a substitute for first-aid training, professional care or official instructions. Always follow emergency services and local authorities.</p>
+<nav class="toc" aria-label="On this page"><ul><li><a href="#priorities">Priorities</a></li><li><a href="#scenarios">Scenarios</a></li><li><a href="#water">Water</a></li><li><a href="#signals">Signalling</a></li><li><a href="#morse">Morse code</a></li><li><a href="#knots">Knots</a></li><li><a href="#firstaid">First aid</a></li><li><a href="#fill-in">Fill-in pages</a></li><li><a href="#how-to-use">How to use</a></li></ul></nav>
+<section id="priorities">
+<h2>Priorities: STOP, rule of 3s, order</h2>
+<h3>1. STOP</h3>
+<div class="table-wrap"><table class="data"><tbody>
+<tr><td class="stop-letter">S</td><td><strong>Stop</strong> — Stop moving. Sit down, breathe. Don't make it worse.</td></tr>
+<tr><td class="stop-letter">T</td><td><strong>Think</strong> — What is the danger now? What do you have? Who knows where you are?</td></tr>
+<tr><td class="stop-letter">O</td><td><strong>Observe</strong> — Surroundings, weather, daylight left, injuries, gear.</td></tr>
+<tr><td class="stop-letter">P</td><td><strong>Plan</strong> — Decide the next steps, then act in the order below.</td></tr>
+</tbody></table></div>
+<h3>2. Rule of 3s — you can survive about:</h3>
+<div class="table-wrap"><table class="data"><tbody>
+<tr><td class="k">3 minutes</td><td>without air (or in icy water, or with severe bleeding)</td></tr>
+<tr><td class="k">3 hours</td><td>without shelter in harsh weather</td></tr>
+<tr><td class="k">3 days</td><td>without water</td></tr>
+<tr><td class="k">3 weeks</td><td>without food</td></tr>
+</tbody></table></div>
+<p class="muted">Typical, not absolute — use it to set priorities, not to judge how long someone can last.</p>
+<h3>3. In this order</h3>
+<ol class="steps">
+  <li><strong>Safety</strong> — Get away from danger: traffic, fire, water, rockfall, carbon monoxide. Call for help.</li>
+  <li><strong>First aid</strong> — Stop severe bleeding; check breathing.</li>
+  <li><strong>Shelter</strong> — Out of wind and wet, off cold ground (or out of the sun).</li>
+  <li><strong>Water</strong> — Drink enough; treat water you are not sure of.</li>
+  <li><strong>Signalling</strong> — Make it easy to be found: sound, light, colour, threes.</li>
+  <li><strong>Food</strong> — Least urgent; helps warmth and morale.</li>
+</ol>
+<div class="callout info"><strong class="callout-title">Note</strong><p>Adapt to the situation: if you hear an aircraft or searchers, signal now.</p></div>
+</section>
+<section id="scenarios" class="pb">
+<h2>Scenarios</h2>
+<p>Tap a scenario to open it. Each has numbered steps, what <strong>not</strong> to do, and what to have ready.</p>
+<ol class="sc-index"><li><a href="#sc-lost">Lost while hiking</a></li><li><a href="#sc-vehicle">Vehicle breakdown in a remote area</a></li><li><a href="#sc-power">Power grid down (multi-day)</a></li><li><a href="#sc-flood">Severe storm or flood</a></li><li><a href="#sc-wildfire">Wildfire evacuation</a></li><li><a href="#sc-winter">Winter: stranded in a vehicle or on foot</a></li><li><a href="#sc-water">Water contamination</a></li><li><a href="#sc-injury">Injury far from help</a></li><li><a href="#sc-separated">Separated from your group</a></li></ol>
+<details class="item" id="sc-lost">
+<summary>1. Lost while hiking <span class="sub">STOP · stay put · make yourself easy to find</span></summary>
+<div class="body">
+<div class="callout ok"><strong class="callout-title">Remember</strong><p>If you are lost, <strong>stop moving</strong>. Searchers start from your last known point — staying put makes you far easier to find.</p></div>
+<h3>Step by step</h3>
+<ol class="steps">
+  <li><strong>STOP.</strong> Sit down, drink some water, eat a snack. Panic is the biggest danger — calm down before you decide anything.</li>
+  <li><strong>Think and observe.</strong> Where did you last know exactly where you were? Look and listen for trails, roads, power lines, traffic or water. Check map, compass, GPS or the app's Map page.</li>
+  <li><strong>Call for help early</strong> if you have any signal: <strong>911 / 112</strong>. Give your coordinates, what you're wearing and your battery level. If calls fail, <strong>text</strong> your coordinates to someone who can call for you (or text 911 where available).</li>
+  <li><strong>Save battery:</strong> airplane mode between check-ins, screen dim, phone kept warm in an inside pocket.</li>
+  <li><strong>Go back only if you are sure</strong> of the way (clear trail, your own footprints, known landmarks). Otherwise <strong>stay where you are</strong> — especially if someone knows your route and return time.</li>
+  <li><strong>Be visible:</strong> move only to the nearest open spot (clearing, trail edge). Spread out bright clothing or gear and build ground signals (<a href="#signals">Signalling card</a>).</li>
+  <li><strong>Make noise:</strong> <strong>3 whistle blasts</strong>, pause, listen, repeat. A whistle carries much farther than shouting and saves your voice.</li>
+  <li><strong>Shelter before dark.</strong> Start at least 1–2 hours before sunset: out of wind and wet, a thick layer of branches or leaves under you, all layers on.</li>
+  <li><strong>Water and fire, if safe:</strong> treat stream water (<a href="#water">Water card</a>); a small fire for warmth and signalling only where it can't spread.</li>
+  <li><strong>Keep signalling</strong> at intervals, night and morning. Answer anyone calling your name. Stay put until found.</li>
+</ol>
+<div class="callout info"><strong class="callout-title">Note: Children</strong><p>Teach kids to <strong>"hug a tree"</strong>: stay in one place, blow the whistle, and answer anyone who calls their name — searchers are friends.</p></div>
+<div class="lists-2">
+<div><h3>Do NOT</h3><ul class="dont">
+  <li>Don't keep walking "to find the trail" — most lost people walk farther from where searchers will look.</li>
+  <li>Don't follow streams or gullies downhill into steep ground — they often end at cliffs, waterfalls or thick brush.</li>
+  <li>Don't split up a group.</li>
+  <li>Don't travel at night, in fog or in a whiteout.</li>
+  <li>Don't drain your phone with constant map checks.</li>
+  <li>Don't hide from searchers or helicopters — answer them and wave.</li>
+</ul></div>
+<div><h3>Have ready</h3><ul class="ready">
+  <li>Trip plan left with someone: route, return time, <strong>when to call for help</strong>.</li>
+  <li>Map + compass (and the skill to use them); charged phone + power bank.</li>
+  <li>Whistle, headlamp + spare batteries, signal mirror, something bright.</li>
+  <li>Extra layers, rain gear, emergency blanket or bivy bag.</li>
+  <li>Water and a way to treat it; extra food.</li>
+  <li>Fire starter, knife, small first-aid kit.</li>
+  <li>In remote areas: a personal locator beacon (PLB) or satellite messenger.</li>
+</ul></div>
+</div>
+</div></details>
+<details class="item" id="sc-vehicle">
+<summary>2. Vehicle breakdown in a remote area <span class="sub">Stay with the vehicle · be visible · beware carbon monoxide</span></summary>
+<div class="body">
+<div class="callout ok"><strong class="callout-title">Remember</strong><p><strong>Stay with the vehicle.</strong> It is shelter, and it is far easier to spot from the road or the air than a person on foot.</p></div>
+<h3>Step by step</h3>
+<ol class="steps">
+  <li><strong>Get safe first:</strong> pull as far off the road as you can, hazard lights on. On a road with traffic, wait away from the vehicle and behind a barrier if there is one; in a remote area with little traffic, the vehicle is your best shelter.</li>
+  <li><strong>Call or text for help:</strong> 911 / 112 or roadside assistance. Give the road name, mile marker or coordinates. No signal? Don't walk off to find one unless help is close and visible and the weather is safe.</li>
+  <li><strong>Make the vehicle visible:</strong> tie a bright cloth to the antenna or a door; raise the hood once snow stops falling (a common sign of trouble); at night, turn on the inside light while the engine runs.</li>
+  <li><strong>Cold weather: clear the exhaust pipe of snow first</strong>, and check it often. Then <strong>run the engine and heater about 10 minutes each hour</strong> with a downwind window cracked open slightly.</li>
+  <li><strong>Keep warm:</strong> all extra clothing on; blankets, floor mats or newspaper for insulation; huddle together. Move arms and legs. Take turns sleeping — one person stays awake.</li>
+  <li><strong>Hot weather:</strong> rest in shade beside the vehicle, not inside a closed hot car. Cover skin, move little in the heat of the day, and drink your water when thirsty — don't save it.</li>
+  <li><strong>Signal:</strong> horn in 3 blasts, mirror flashes at aircraft or distant traffic, ground signals in an open area (<a href="#signals">Signalling card</a>). A signal fire only if safe, well away from the vehicle and fuel.</li>
+  <li><strong>Drink:</strong> melt snow before drinking it — eating snow chills you. Ration food, not water.</li>
+  <li><strong>Walk out only if</strong> you know exactly where help is, it is close, the weather is safe and someone knows your plan. Leave a note on the vehicle: your route and the time you left.</li>
+</ol>
+<div class="callout danger"><strong class="callout-title">Danger: Carbon monoxide</strong><p>Colourless and odourless. Headache, dizziness, nausea, drowsiness or confusion: <strong>turn the engine off and get fresh air at once.</strong></p></div>
+<div class="lists-2">
+<div><h3>Do NOT</h3><ul class="dont">
+  <li>Don't leave the vehicle in a storm, whiteout or extreme heat.</li>
+  <li>Don't run the engine with the exhaust blocked, or in an enclosed space — <strong>carbon monoxide</strong> kills without warning.</li>
+  <li>Don't use a stove, grill or fuel heater inside the vehicle.</li>
+  <li>Don't sleep with the engine running.</li>
+  <li>Don't drain the battery: use lights, hazards and the heater fan sparingly.</li>
+</ul></div>
+<div><h3>Have ready</h3><ul class="ready">
+  <li>Fuel tank at least half full on remote or winter trips.</li>
+  <li>Blankets or sleeping bags, hat, gloves, boots, dry socks.</li>
+  <li>Water, high-energy food, phone charger cable.</li>
+  <li>Flashlight + spare batteries, first-aid kit.</li>
+  <li>Small shovel, ice scraper, sand or cat litter for traction, jumper cables, tow strap.</li>
+  <li>Bright cloth, whistle, signal mirror, warning triangles.</li>
+  <li>Paper map; route and arrival time left with someone.</li>
+</ul></div>
+</div>
+</div></details>
+<details class="item" id="sc-power">
+<summary>3. Power grid down (multi-day) <span class="sub">Food safety · generator CO · water · medical devices · comms · cash</span></summary>
+<div class="body">
+<div class="callout ok"><strong class="callout-title">Remember</strong><p><strong>Keep the fridge and freezer closed, never run fuel-burning equipment indoors,</strong> and check on anyone who depends on power for their health.</p></div>
+<h3>Step by step</h3>
+<ol class="steps">
+  <li><strong>Check and report:</strong> neighbours' lights, your breaker panel; report the outage. Stay at least <strong>60 ft (18 m)</strong> from downed lines — assume they are live.</li>
+  <li><strong>Food (USDA):</strong> keep doors <strong>closed</strong>. A closed fridge keeps food safe about <strong>4 hours</strong>; a <strong>full freezer about 48 hours (half-full about 24 hours)</strong>. After 4 hours without power, throw out perishable fridge food (meat, poultry, seafood, milk, eggs, leftovers). Freezer food that still has ice crystals or is at <strong>40 °F (4 °C)</strong> or below can be refrozen or cooked.</li>
+  <li><strong>Generator:</strong> outdoors only, <strong>at least 20 ft (6 m) from doors, windows and vents, exhaust pointed away</strong> — never in a home, garage, basement, crawlspace or shed, even with doors open. Let it cool before refuelling. <strong>Never back-feed the house through an outlet</strong> ("suicide cord") — it can electrocute line workers and neighbours; use extension cords, or a properly installed transfer switch or interlock.</li>
+  <li><strong>Water:</strong> while taps still run, fill containers (and the bathtub for flushing). Aim for <strong>1 gal (3.8 L) per person per day</strong> for at least 3 days. Follow any boil-water notice (<a href="#sc-water">Water contamination</a>).</li>
+  <li><strong>Medical devices and medicines:</strong> oxygen, CPAP, dialysis, powered wheelchairs, refrigerated medicine such as insulin — backup batteries, a place to go (family with power, hospital, shelter), and ask a pharmacist how long each medicine keeps unrefrigerated.</li>
+  <li><strong>Communications:</strong> battery or hand-crank radio for official updates. Save phone battery. <strong>Texts get through when calls don't.</strong> Charge from power banks, or from a car running outdoors — never in a closed garage.</li>
+  <li><strong>Stay warm or cool:</strong> cold — live in one room, doors closed, windows covered at night, layers, hats, sleeping bags; <strong>never heat the home with a gas oven or range, grill, camp stove or outdoor heater.</strong> Heat — lowest floor, drink water, wet cloths, cooling centre. Check on older neighbours.</li>
+  <li><strong>Cash, roads, lights:</strong> card readers and ATMs fail — keep small bills. Treat dark traffic lights as an all-way stop (check local law). Flashlights, not candles. Unplug electronics; leave one lamp on to know when power returns.</li>
+</ol>
+<div class="callout danger"><strong class="callout-title">Danger: Carbon monoxide</strong><p>Generators and fuel heaters kill people in their homes in almost every big outage. Keep battery CO alarms near sleeping areas. Headache, dizziness, weakness, nausea, confusion, or an alarm: <strong>get everyone outside into fresh air and call 911 / 112.</strong></p></div>
+<div class="lists-2">
+<div><h3>Do NOT</h3><ul class="dont">
+  <li>Don't run a generator, grill, camp stove or fuel heater indoors, in a garage or near windows.</li>
+  <li>Don't back-feed the house through an outlet.</li>
+  <li>Don't open the fridge or freezer "just to check".</li>
+  <li>Don't taste food to decide if it's safe — when in doubt, throw it out.</li>
+  <li>Don't touch or drive over downed lines.</li>
+</ul></div>
+<div><h3>Have ready</h3><ul class="ready">
+  <li>Flashlights or headlamps + batteries; battery or hand-crank radio.</li>
+  <li>Power banks; car charger; backup power for medical devices.</li>
+  <li>Water (1 gal / 3.8 L per person per day, 3+ days); food that needs no cooking.</li>
+  <li>Battery CO alarm; fire extinguisher; fridge/freezer thermometers.</li>
+  <li>Cash in small bills; paper list of phone numbers.</li>
+  <li>Spare medication; if you rely on powered medical equipment, register with your utility if it keeps a list.</li>
+</ul></div>
+</div>
+</div></details>
+<details class="item" id="sc-flood">
+<summary>4. Severe storm or flood <span class="sub">Turn around, don't drown · go high · avoid floodwater</span></summary>
+<div class="body">
+<div class="callout ok"><strong class="callout-title">Remember</strong><p><strong>Turn around, don't drown.</strong> Never walk, swim or drive into floodwater — you can't see how deep or fast it is, or what is in it.</p></div>
+<h3>Step by step</h3>
+<ol class="steps">
+  <li><strong>Get warnings:</strong> phone alerts, weather radio, local radio. If told to evacuate, <strong>go now</strong> by the recommended route.</li>
+  <li><strong>Know the numbers:</strong> <strong>6 in (15 cm)</strong> of moving water can knock you down. <strong>12 in (30 cm)</strong> can float a car. <strong>2 ft (60 cm)</strong> can sweep away most vehicles.</li>
+  <li><strong>Water rising at home:</strong> go to the <strong>highest floor</strong>. <strong>Do not climb into a closed attic</strong> — rising water can trap you there. Go onto the roof only if you must, and signal for help from it.</li>
+  <li><strong>Driving:</strong> turn around at flooded or washed-out roads and barricades. If your vehicle is trapped in fast-moving water, stay inside; if water rises inside the vehicle, get onto the roof and call for help.</li>
+  <li><strong>Thunderstorm:</strong> when thunder roars, go indoors — a solid building or a hard-topped vehicle with windows closed. Keep away from trees, poles, water and high ground. Wait <strong>30 minutes after the last thunder</strong>.</li>
+  <li><strong>Tornado warning:</strong> basement, or a small interior room on the lowest floor away from windows. Cover your head and neck.</li>
+  <li><strong>Electricity:</strong> turn off power at the main switch only if told to and you are dry and not standing in water. Never touch electrical equipment while wet.</li>
+  <li><strong>After:</strong> return only when officials say it is safe. Watch for downed lines, weak floors and stairs, gas smell (leave, call from outside) and animals. Throw out food that touched floodwater. Assume tap water is unsafe until told otherwise.</li>
+</ol>
+<div class="callout danger"><strong class="callout-title">Danger: Floodwater</strong><p>Presume all floodwater is contaminated, and that it may hide <strong>live electrical wires</strong>, open manholes and debris. Wash skin that touches it with soap and clean water.</p></div>
+<div class="lists-2">
+<div><h3>Do NOT</h3><ul class="dont">
+  <li>Don't walk, swim or drive through floodwater — not even a few inches of moving water.</li>
+  <li>Don't touch floodwater if you can avoid it: sewage, chemicals, fuel, debris — and possibly <strong>live wires</strong>.</li>
+  <li>Don't go into a closed attic to escape rising water.</li>
+  <li>Don't drive around barricades.</li>
+  <li>Don't shelter under trees in a thunderstorm.</li>
+  <li>Don't run a generator indoors to dry the house out.</li>
+</ul></div>
+<div><h3>Have ready</h3><ul class="ready">
+  <li>Go-bag: water, food, medicines, documents in a waterproof bag, charger, cash.</li>
+  <li>Alerts switched on; battery or hand-crank radio.</li>
+  <li>Know your flood risk, your evacuation route and where higher ground is.</li>
+  <li>Roof signalling kit: whistle, flashlight, bright cloth, phone in a waterproof bag.</li>
+  <li>Boots, gloves and bleach for clean-up.</li>
+</ul></div>
+</div>
+</div></details>
+<details class="item" id="sc-wildfire">
+<summary>5. Wildfire evacuation <span class="sub">Leave early · go-bag · N95 · if trapped in a vehicle or on foot</span></summary>
+<div class="body">
+<div class="callout ok"><strong class="callout-title">Remember</strong><p><strong>Leave early.</strong> Don't wait for an order if you feel unsafe — wind-driven fire can move faster than you can run, and roads jam quickly.</p></div>
+<h3>Step by step</h3>
+<ol class="steps">
+  <li><strong>Watch alerts and smoke.</strong> Know two ways out. When told to go — or when you feel unsafe — <strong>go immediately</strong>.</li>
+  <li><strong>Grab the go-bag</strong>, medicines, documents, phone and charger, pets. Wear long cotton or wool clothes, sturdy shoes and an <strong>N95 (or better) respirator</strong> for smoke.</li>
+  <li><strong>Only if time allows:</strong> close all windows and doors but leave them unlocked; shut off gas at the meter; move flammable furniture away from the house; leave outside lights on so firefighters can see the house in smoke.</li>
+  <li><strong>Drive out</strong> with headlights on, windows up and air on recirculate. Drive slowly; watch for people, animals and fire crews. Follow official routes.</li>
+  <li><strong>Trapped in a vehicle:</strong> park in an area clear of vegetation (wide road, gravel, parking lot). Engine on if it will run, air on recirculate, headlights on. <strong>Close the windows and all vents. Lie on the floor and cover yourself with a wool or cotton blanket or coat.</strong> Call 911 / 112. Stay inside until the fire front passes — it will get hot and smoky, but it is far safer than running.</li>
+  <li><strong>Trapped on foot:</strong> get to the best refuge you can reach — a cleared area with little to burn, a body of water, a road, or ground that has already burned once it is safe to cross. <strong>Lie face down</strong>, cover exposed skin, protect your airway, and stay low until the fire front passes.</li>
+  <li><strong>Trapped at home:</strong> stay inside, away from outside walls and windows. Fill sinks and tubs with water. Keep doors closed but unlocked. Call 911 / 112.</li>
+  <li><strong>Afterwards:</strong> return only when officials say it is safe. Watch for hot spots, ash pits, fallen lines and damaged trees. Wear an N95 and gloves in ash. Follow water notices.</li>
+</ol>
+<div class="callout danger"><strong class="callout-title">Danger: Smoke and heat</strong><p>Smoke and radiant heat kill before flames reach you. Stay low where the air is clearer, protect your airway, and put solid objects between you and the fire.</p></div>
+<div class="lists-2">
+<div><h3>Do NOT</h3><ul class="dont">
+  <li>Don't wait to see flames before leaving.</li>
+  <li>Don't try to outrun a fire uphill — fire spreads fastest uphill.</li>
+  <li>Don't leave a vehicle to run while the fire front passes.</li>
+  <li>Don't rely on cloth or paper dust masks — they don't stop fine smoke.</li>
+  <li>Don't wear synthetic fabrics near fire — they can melt onto skin.</li>
+  <li>Don't go back before officials allow it.</li>
+</ul></div>
+<div><h3>Have ready</h3><ul class="ready">
+  <li>Go-bag by the door: water, food, medicines, document copies, chargers, cash, glasses.</li>
+  <li>N95 (or P100) respirators for everyone; goggles.</li>
+  <li>Car parked facing out, fuel at least half full, keys in a known place.</li>
+  <li>Wool or cotton blanket in the car; flashlight.</li>
+  <li>Two evacuation routes and a meeting place outside the area; plan for pets.</li>
+  <li>Dead vegetation and flammables cleared from around the house.</li>
+</ul></div>
+</div>
+</div></details>
+<details class="item" id="sc-winter">
+<summary>6. Winter: stranded in a vehicle or on foot <span class="sub">Shelter first · stay dry · off the ground · beware CO and frostbite</span></summary>
+<div class="body">
+<div class="callout ok"><strong class="callout-title">Remember</strong><p><strong>Shelter comes first:</strong> out of wind and wet, off the cold ground. In a vehicle, stay with it.</p></div>
+<h3>Step by step</h3>
+<ol class="steps">
+  <li><strong>In a vehicle: stay with it</strong> (<a href="#sc-vehicle">Vehicle breakdown</a>). <strong>Clear the exhaust pipe of snow</strong> and keep checking it. Run engine and heater <strong>about 10 minutes each hour</strong> with a downwind window cracked. Bright cloth on the antenna; inside light on at night while the engine runs.</li>
+  <li><strong>In a vehicle: insulate and move.</strong> All layers on, heads covered, blankets, seat covers and floor mats around you; huddle. Exercise arms and legs now and then; one person stays awake.</li>
+  <li><strong>On foot: stop early.</strong> Make shelter before you are exhausted or soaked with sweat — at least 1–2 hours before dark, or as soon as the weather turns.</li>
+  <li><strong>Pick a safe spot:</strong> out of the wind (lee of trees, rocks or a snow bank). Keep away from slopes of about 30° or steeper and the run-out below them (avalanche paths). Beware deep loose snow around tree trunks (tree wells).</li>
+  <li><strong>Insulate from the ground:</strong> a thick layer of branches, your pack or a foam pad — you lose heat fastest to snow and cold ground.</li>
+  <li><strong>Stay dry:</strong> open or remove layers before you sweat; change into dry socks and gloves; dry damp items with body heat.</li>
+  <li><strong>Snow shelter</strong> (only if you know how): keep a ventilation hole open, keep your digging tool inside, and mark the outside so you can be found. Never use a stove or fire inside.</li>
+  <li><strong>Drink and eat:</strong> melt snow before drinking it (warm if you can); eat to fuel shivering. Signal from open ground — dark branches or clothing on snow show up well.</li>
+  <li><strong>Watch each other</strong> for hypothermia (shivering, stumbling, slurred speech, fumbling hands, poor judgement) and frostbite (<a href="#fa-hypothermia">Hypothermia card</a>).</li>
+</ol>
+<div class="callout warn"><strong class="callout-title">Caution: Frostbite</strong><p>Numb, white or grey, hard skin. Protect it from more cold; do <strong>not</strong> rub it. Don't thaw it if it could freeze again. Rewarm gently (body heat or warm — not hot — water) once you are in lasting shelter, then get medical care.</p></div>
+<div class="lists-2">
+<div><h3>Do NOT</h3><ul class="dont">
+  <li>Don't eat snow without melting it — it chills you and costs energy.</li>
+  <li>Don't drink alcohol — it speeds heat loss.</li>
+  <li>Don't run a stove, heater or engine in a closed vehicle, tent or snow shelter — <strong>carbon monoxide</strong>.</li>
+  <li>Don't sit or sleep directly on snow or cold ground.</li>
+  <li>Don't keep travelling in a whiteout or in the dark.</li>
+</ul></div>
+<div><h3>Have ready</h3><ul class="ready">
+  <li>Layers: wool or synthetic base, warm mid-layer, wind/waterproof shell; hat; spare gloves and socks.</li>
+  <li>Sleeping bag or blankets in the car; emergency bivy; foam pad.</li>
+  <li>Shovel, scraper, traction aids; fuel at least half full.</li>
+  <li>Headlamp, fire starter, stove and pot for melting snow (used outside or well ventilated).</li>
+  <li>High-energy food; thermos of hot drink; water kept from freezing.</li>
+  <li>Forecast and road conditions checked; route and arrival time left with someone.</li>
+</ul></div>
+</div>
+</div></details>
+<details class="item" id="sc-water">
+<summary>7. Water contamination <span class="sub">Boil-water notice vs do-not-drink notice — boiling doesn't fix chemicals</span></summary>
+<div class="body">
+<div class="callout ok"><strong class="callout-title">Remember</strong><p><strong>Read which notice it is.</strong> Boiling kills germs. It does <strong>not</strong> remove chemicals, fuel or metals — and it can concentrate them.</p></div>
+<h3>Step by step</h3>
+<ol class="steps">
+  <li><strong>Boil-water notice (germs):</strong> for drinking, cooking, ice, brushing teeth, washing food and baby formula use only bottled water or water brought to a <strong>rolling boil for 1 minute (3 minutes above 6,500 ft / 2,000 m)</strong>. Let it cool; store covered.</li>
+  <li><strong>Can't boil?</strong> Disinfect clear water with plain unscented bleach: <strong>6%: 2 drops per litre, 8 drops per gallon. 8.25%: 2 drops per litre, 6 drops per gallon. Double for cloudy, coloured or very cold water. Wait at least 30 minutes</strong> (<a href="#water">Water card</a>). Bleach does not reliably kill Cryptosporidium — boiling does.</li>
+  <li><strong>Do-not-drink notice (chemicals, or unknown):</strong> do not drink the tap water <strong>even if boiled</strong>. Use bottled or delivered water for drinking, cooking, ice, brushing teeth and formula. Follow the notice about washing.</li>
+  <li><strong>Do-not-use notice:</strong> don't use the tap water for anything — not even washing or bathing.</li>
+  <li><strong>Washing under a boil-water notice:</strong> showering is usually fine — don't swallow any; sponge-bathe babies. Wash hands with soap and safe water, or use hand sanitizer. Give pets safe water too.</li>
+  <li><strong>Floodwater or an unknown source:</strong> presume it is contaminated. No home method removes fuel, heavy metals, pesticides, industrial chemicals or algae toxins — find another source.</li>
+  <li><strong>When the notice ends:</strong> follow your water utility — run the taps to flush the pipes, throw out ice made during the notice, and replace filter cartridges.</li>
+</ol>
+<div class="callout warn"><strong class="callout-title">Caution: Chemical contamination</strong><p>Fuel smell, oily film, unusual colour, dead fish, or an algae bloom: treat the water as chemically contaminated. Boiling, bleach, SODIS and most filters will not make it safe.</p></div>
+<div class="lists-2">
+<div><h3>Do NOT</h3><ul class="dont">
+  <li>Don't boil water under a do-not-drink notice expecting it to be safe.</li>
+  <li>Don't trust fridge or pitcher filters unless the notice says they work for this problem.</li>
+  <li>Don't use water that smells of fuel or chemicals or has an oily sheen.</li>
+  <li>Don't use ice made during the notice.</li>
+  <li>Don't make baby formula with untreated tap water.</li>
+  <li>Don't count on a sand/charcoal filter — it only improves clarity and taste.</li>
+</ul></div>
+<div><h3>Have ready</h3><ul class="ready">
+  <li>Stored water: 1 gal (3.8 L) per person per day for at least 3 days.</li>
+  <li>Pot and a safe way to heat it (camp stoves outdoors only).</li>
+  <li>Plain unscented bleach (check strength and date) and a dropper, or purification tablets.</li>
+  <li>Clean containers with lids; a marker to label "treated" and the date.</li>
+  <li>Hand sanitizer; a filter for germs in clear water (not chemicals).</li>
+</ul></div>
+</div>
+</div></details>
+<details class="item" id="sc-injury">
+<summary>8. Injury far from help <span class="sub">Stop bleeding · breathing · call · keep warm · plan the evacuation</span></summary>
+<div class="body">
+<div class="callout ok"><strong class="callout-title">Remember</strong><p><strong>Deal with what kills first:</strong> severe bleeding, then breathing, then cold. Get help coming as early as you can.</p></div>
+<h3>Step by step</h3>
+<ol class="steps">
+  <li><strong>Scene safe?</strong> Rockfall, traffic, water, avalanche, fire — don't create a second casualty. Wear gloves if you have them.</li>
+  <li><strong>Severe bleeding:</strong> firm direct pressure or pack the wound. Life-threatening limb bleeding not controlled: <strong>tourniquet 2–3 in (5–7 cm) above the wound, not on a joint</strong> (high and tight if unclear); tighten until bleeding stops; <strong>note the time</strong>; do not loosen (<a href="#fa-bleeding">Bleeding card</a>).</li>
+  <li><strong>Responsive? Breathing normally?</strong> Not breathing normally: start CPR (<a href="#fa-cpr">CPR card</a>). Unresponsive but breathing: recovery position to keep the airway clear.</li>
+  <li><strong>Call for help:</strong> 911 / 112; text if calls fail; PLB or satellite messenger. Give location (coordinates), what happened, how many are hurt, and their condition.</li>
+  <li><strong>Protect from cold:</strong> insulate from the ground, cover with layers or an emergency blanket, shelter from wind. Injured people get hypothermic even in mild weather.</li>
+  <li><strong>Check head to toe and treat:</strong> cover wounds; splint suspected fractures in the position found (pad well, immobilise the joints above and below). Suspected neck or back injury: keep them still unless they are in danger.</li>
+  <li><strong>Write it down:</strong> time of injury, what happened, responsiveness, breathing and pulse every 15 minutes, treatment given, tourniquet time, medicines given.</li>
+  <li><strong>Decide the plan:</strong> wait for rescue, walk out together (only if the injured person can walk safely), or send for help. Send two people together with a <strong>written note</strong> (location, injuries, condition, what you need); someone stays with the casualty.</li>
+</ol>
+<div class="callout info"><strong class="callout-title">Note: Pain relief (adults)</strong><p>Follow the package label. Acetaminophen/paracetamol: no more than <strong>3,000 mg a day</strong> without a doctor's advice. Ibuprofen: <strong>200–400 mg every 4–6 hours, max 1,200 mg a day</strong> unless a doctor directs (avoid if dehydrated). No aspirin for under-19s.</p></div>
+<div class="lists-2">
+<div><h3>Do NOT</h3><ul class="dont">
+  <li>Don't loosen a tourniquet once applied.</li>
+  <li>Don't pull out an impaled object — pad around it and secure it.</li>
+  <li>Don't give food or drink to anyone who is not fully alert.</li>
+  <li>Don't move a suspected spinal injury unless they are in danger.</li>
+  <li>Don't give alcohol.</li>
+  <li>Don't leave a casualty alone if you can avoid it. If you must: sheltered, insulated, with water, a whistle and a note of when you left.</li>
+</ul></div>
+<div><h3>Have ready</h3><ul class="ready">
+  <li>First-aid kit: commercial tourniquet, gauze for packing, compression bandage, gloves, tape, splint, triangular bandage, emergency blanket.</li>
+  <li>Training: first aid and CPR — wilderness first aid if you go remote.</li>
+  <li>Charged phone and power bank; PLB or satellite messenger.</li>
+  <li>Pencil and waterproof paper for notes.</li>
+  <li>Foam pad, extra warm layer, bivy bag.</li>
+</ul></div>
+</div>
+</div></details>
+<details class="item" id="sc-separated">
+<summary>9. Separated from your group <span class="sub">Plan before you go · stay put · rendezvous · signal</span></summary>
+<div class="body">
+<div class="callout ok"><strong class="callout-title">Remember</strong><p><strong>Agree the plan before you start:</strong> anyone who gets separated <strong>stays put</strong> and signals; the group comes back for them.</p></div>
+<h3>Step by step</h3>
+<ol class="steps">
+  <li><strong>Before the trip — agree the rule:</strong> if separated, STOP and stay where you are. Searchers and your group look for you near where you were last seen.</li>
+  <li><strong>Before the trip — set rendezvous points:</strong> the last junction or landmark you passed together; then the trailhead or vehicle by a set time ("if we're apart at 4 pm, meet at the car").</li>
+  <li><strong>Before the trip — agree signals:</strong> for example 1 whistle blast = "where are you?", 2 = "come to me", <strong>3 = help</strong>. Everyone carries a whistle, light, water and a warm layer, and has everyone's phone numbers.</li>
+  <li><strong>On the trail:</strong> head count at every junction, break and river crossing. Keep the slowest person in front and a trusted "sweep" at the back. Nobody walks ahead or drops behind out of sight.</li>
+  <li><strong>If you are the one separated:</strong> stop. Call out, then <strong>3 whistle blasts</strong>, pause, listen. Call or text the group (or 911 / 112). Stay put — move only to the agreed rendezvous if it is close and you are certain of the way.</li>
+  <li><strong>Be found:</strong> move into the open nearby, use bright clothing, keep signalling at intervals. Answer anyone calling your name.</li>
+  <li><strong>If you are the group:</strong> stop and count. Go back <strong>together</strong> to where you last saw the person; mark that spot. Don't send people off alone.</li>
+  <li><strong>Not found quickly — or it's getting dark or the weather is turning? Call 911 / 112 now.</strong> Early calls make searches shorter. Leave a note at the vehicle and don't leave the area until everyone is accounted for.</li>
+</ol>
+<div class="callout info"><strong class="callout-title">Note: Children</strong><p>Give every child a whistle and teach them to <strong>"hug a tree"</strong>: stay put, blow 3 blasts, and answer when anyone calls their name.</p></div>
+<div class="lists-2">
+<div><h3>Do NOT</h3><ul class="dont">
+  <li>Don't wander off alone to search.</li>
+  <li>Don't let anyone hike on ahead or fall behind out of sight.</li>
+  <li>Don't change the plan mid-trip without everyone knowing.</li>
+  <li>Don't wait too long before calling for help.</li>
+  <li>Don't drive away from the trailhead until everyone is accounted for.</li>
+</ul></div>
+<div><h3>Have ready</h3><ul class="ready">
+  <li>Written trip plan left with someone at home.</li>
+  <li>Whistle, light and map for every person — children too.</li>
+  <li>Everyone knows the rendezvous points and the whistle code.</li>
+  <li>Phone numbers of all members; charged phones.</li>
+  <li>A photo of everyone (and their shoe soles) at the start — it helps searchers.</li>
+</ul></div>
+</div>
+</div></details>
+</section>
+<section id="water" class="pb">
+<h2>Water purification</h2>
+<p>Filter or settle cloudy water first, then disinfect. Store treated water covered, in clean containers. <strong>Floodwater is presumed contaminated.</strong></p>
+<div class="table-wrap"><table class="data stack"><thead><tr><th scope="col">Method</th><th scope="col">How</th><th scope="col">Works against / limits</th></tr></thead><tbody>
+<tr><th scope="row">Boil</th><td data-label="How">Rolling boil for <strong>1 minute</strong>; <strong>3 minutes above 6,500 ft (2,000 m)</strong>. Let cool; store covered.</td><td data-label="Limits">Best method. Kills bacteria, viruses and protozoa, including Cryptosporidium. Does nothing for chemicals.</td></tr>
+<tr><th scope="row">Bleach</th><td data-label="How">Plain, unscented household bleach (no scented, "splash-less" or cleaner additives). Dose: table below. Stir, <strong>wait at least 30 minutes</strong>.</td><td data-label="Limits">Does <strong>not</strong> reliably kill Cryptosporidium. Needs a slight chlorine smell after 30 min — if none, repeat the dose and wait another 15 min.</td></tr>
+<tr><th scope="row">Chlorine dioxide tablets</th><td data-label="How">Follow the product label.</td><td data-label="Limits">Up to <strong>4 hours</strong> contact time for Cryptosporidium.</td></tr>
+<tr><th scope="row">Iodine</th><td data-label="How">Follow the product label.</td><td data-label="Limits">Not for pregnancy, thyroid problems, iodine allergy, or use longer than a few weeks.</td></tr>
+<tr><th scope="row">SODIS (sunlight)</th><td data-label="How">Clear PET bottle, 2 L or smaller, clear (low-turbidity) water, full sun for <strong>6 hours</strong>; <strong>2 consecutive days</strong> if the sky is more than 50% cloudy.</td><td data-label="Limits">Not for rainy days. Does nothing for chemicals.</td></tr>
+<tr><th scope="row">Portable filter</th><td data-label="How">Follow the maker's instructions; pre-filter murky water.</td><td data-label="Limits">Most remove bacteria and protozoa but <strong>not viruses</strong> unless rated as a purifier — add a disinfectant if in doubt. Freezing can crack hollow-fibre filters. Doesn't make chemically polluted water safe.</td></tr>
+<tr><th scope="row">Sand / charcoal filter (improvised)</th><td data-label="How">Layers of cloth, sand, gravel and charcoal.</td><td data-label="Limits"><strong>Improves clarity and taste only — it does NOT make water safe.</strong> Always disinfect afterwards.</td></tr>
+</tbody></table></div>
+<h3>Bleach dose (CDC)</h3>
+<div class="table-wrap"><table class="data"><thead><tr><th scope="col">Bleach strength (sodium hypochlorite)</th><th scope="col">1 litre (1 quart)</th><th scope="col">1 gallon (3.8 L)</th></tr></thead><tbody>
+<tr><th scope="row">6%</th><td><strong>2 drops</strong></td><td><strong>8 drops (about 1/8 tsp)</strong></td></tr>
+<tr><th scope="row">8.25%</th><td><strong>2 drops</strong></td><td><strong>6 drops</strong></td></tr>
+</tbody></table></div>
+<ul>
+  <li><strong>Double the dose</strong> if the water is cloudy, coloured or very cold.</li>
+  <li>Stir, then <strong>wait at least 30 minutes</strong>. It should smell slightly of chlorine; if not, repeat the dose and wait another 15 minutes.</li>
+  <li>Check the strength on the label. Bleach slowly loses strength in storage — rotate your supply.</li>
+</ul>
+<div class="callout danger"><strong class="callout-title">Danger: Chemicals</strong><p>No home method removes fuel, heavy metals, pesticides, industrial chemicals or toxic algae toxins — boiling can concentrate some of them. Find another source.</p></div>
+<div class="callout info"><strong class="callout-title">Note: Solar still</strong><p>Realistic yield is small — often a few hundred mL per day per pit. Not a primary water source.</p></div>
+<p>More detail: <a href="../water/index.html">Water page</a>.</p>
+</section>
+<section id="signals" class="pb">
+<h2>Signalling</h2>
+<h3>Ground-to-air emergency code (ICAO)</h3>
+<div class="table-wrap"><table class="data g2a"><thead><tr><th scope="col">Lay out</th><th scope="col">Symbol</th><th scope="col">Meaning</th></tr></thead><tbody>
+<tr><td class="sym"><svg class="g2a-sym" viewBox="0 0 60 60" role="img" aria-label="V symbol" fill="none" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 10 L30 50 L48 10"/></svg></td><td class="letter">V</td><td>Require assistance</td></tr>
+<tr><td class="sym"><svg class="g2a-sym" viewBox="0 0 60 60" role="img" aria-label="X symbol" fill="none" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 10 L48 50"/><path d="M48 10 L12 50"/></svg></td><td class="letter">X</td><td>Require medical assistance</td></tr>
+<tr><td class="sym"><svg class="g2a-sym" viewBox="0 0 60 60" role="img" aria-label="N symbol" fill="none" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"><path d="M14 50 L14 10 L46 50 L46 10"/></svg></td><td class="letter">N</td><td>No / negative</td></tr>
+<tr><td class="sym"><svg class="g2a-sym" viewBox="0 0 60 60" role="img" aria-label="Y symbol" fill="none" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 10 L30 30 L48 10"/><path d="M30 30 L30 52"/></svg></td><td class="letter">Y</td><td>Yes / affirmative</td></tr>
+<tr><td class="sym"><svg class="g2a-sym" viewBox="0 0 60 60" role="img" aria-label="Arrow symbol" fill="none" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"><path d="M8 30 L52 30"/><path d="M36 14 L52 30 L36 46"/></svg></td><td class="letter">Arrow</td><td>Proceeding in this direction (point it the way you are going)</td></tr>
+</tbody></table></div>
+<ul>
+  <li>Make each symbol <strong>at least 10 ft (3 m) tall</strong> — bigger is better — with thick, straight lines.</li>
+  <li>Use <strong>strong contrast</strong>: dark branches or rocks on snow or sand, bright fabric on dark ground, or trenches that cast shadows.</li>
+  <li>Build in the most open place nearby, away from tree cover. Straight lines and sharp angles rarely occur in nature, so they catch the eye.</li>
+  <li><strong>SOS</strong> or <strong>HELP</strong> in large letters is also widely understood.</li>
+</ul>
+<p><strong>To a helicopter or aircraft:</strong> both arms raised in a <strong>Y</strong> = "Yes, we need help". One arm up and one down (like an <strong>N</strong>) = "No, we don't need help". Don't wave casually at aircraft — it can be misread.</p>
+<div class="callout info"><strong class="callout-title">Note: Distress</strong><p><strong>Three of anything = distress:</strong> 3 fires (in a triangle or a line), 3 whistle blasts, 3 horn blasts, 3 flashes of light, 3 shots, 3 piles of rocks.</p></div>
+<h3>Whistle</h3>
+<ul>
+  <li><strong>3 blasts = help.</strong> Blow 3 long blasts, pause about a minute, listen, repeat.</li>
+  <li>In European mountains you may hear the alpine distress signal: <strong>6 blasts in a minute, a minute's pause, repeat</strong>; the reply is 3 blasts a minute. Answer either one.</li>
+  <li>A whistle carries much farther than a voice and uses far less energy.</li>
+</ul>
+<h3>Light: SOS</h3>
+<ul>
+  <li><strong>SOS = 3 short, 3 long, 3 short</strong>, then a pause; repeat.</li>
+  <li>Timing: short flash about <strong>1 count</strong>, long flash <strong>3 counts</strong>, <strong>1 count</strong> dark between flashes, <strong>3 counts</strong> between letters, <strong>7 counts or more</strong> before repeating. A count is about half a second.</li>
+  <li>Slow and steady is easier to read than fast. Aim at the aircraft, boat or distant observer.</li>
+</ul>
+<h3>Signal mirror</h3>
+<ol class="steps">
+  <li>Hold the mirror close under your eye. Stretch your other arm toward the target (aircraft, ship, vehicle) and make a <strong>V with two fingers</strong>, with the target in the V.</li>
+  <li>Tilt the mirror until the spot of sunlight it reflects lands on your fingers.</li>
+  <li>Keep the light spot on your fingers and the target inside the V — the flash is now hitting the target.</li>
+  <li><strong>Rock the mirror slightly</strong> so the flash sweeps across the target. A signal mirror with a sighting hole: look through the hole and put its bright aiming spot on the target.</li>
+  <li>Sweep the horizon now and then even when you see nothing — a flash can be seen from many miles away. Once they have seen you, stop flashing directly at the cockpit.</li>
+</ol>
+<h3>Phone, beacon and radio</h3>
+<ul>
+  <li><strong>Phones:</strong> in many places, dialling <strong>911</strong> or <strong>112</strong> works on any phone with any network in range — not just your own — and in many countries even without a SIM card. Try it even when the phone shows "No service" or "Emergency calls only".</li>
+  <li><strong>Texts</strong> often get through when calls don't. In the US you can text 911 in many areas (you get a bounce-back message if not). Some newer phones can send emergency messages by satellite — learn how before you go.</li>
+  <li><strong>PLB / satellite messenger:</strong> extend the antenna, keep a clear view of the sky, activate and leave it on.</li>
+  <li><strong>Marine VHF:</strong> <strong>channel 16</strong> (156.8 MHz) is the distress, safety and calling channel. On a DSC radio, hold the red DISTRESS button for a few seconds first.</li>
+  <li><strong>"MAYDAY, MAYDAY, MAYDAY"</strong> = grave and imminent danger to life or vessel. <strong>"PAN-PAN, PAN-PAN, PAN-PAN"</strong> = urgent, but not immediately life-threatening.</li>
+  <li>Then: "This is" + vessel/name 3 times; your <strong>position</strong>; <strong>what is wrong</strong>; <strong>help needed</strong>; <strong>number of people</strong>; "Over". Repeat if no answer.</li>
+  <li><strong>Other radios:</strong> in the US, CB channel 9 is for emergencies and traveller assistance. 121.5 MHz is the aviation emergency frequency.</li>
+</ul>
+</section>
+<section id="morse">
+<h2>Morse code</h2>
+<div class="table-wrap"><table class="data morse"><thead><tr><th scope="col">Char</th><th scope="col">Code</th><th scope="col">Char</th><th scope="col">Code</th></tr></thead><tbody>
+<tr><th scope="row" class="ch">A</th><td class="mc"><span aria-hidden="true">• —</span><span class="sr-only">dot dash</span></td><th scope="row" class="ch">S</th><td class="mc"><span aria-hidden="true">• • •</span><span class="sr-only">dot dot dot</span></td></tr>
+<tr><th scope="row" class="ch">B</th><td class="mc"><span aria-hidden="true">— • • •</span><span class="sr-only">dash dot dot dot</span></td><th scope="row" class="ch">T</th><td class="mc"><span aria-hidden="true">—</span><span class="sr-only">dash</span></td></tr>
+<tr><th scope="row" class="ch">C</th><td class="mc"><span aria-hidden="true">— • — •</span><span class="sr-only">dash dot dash dot</span></td><th scope="row" class="ch">U</th><td class="mc"><span aria-hidden="true">• • —</span><span class="sr-only">dot dot dash</span></td></tr>
+<tr><th scope="row" class="ch">D</th><td class="mc"><span aria-hidden="true">— • •</span><span class="sr-only">dash dot dot</span></td><th scope="row" class="ch">V</th><td class="mc"><span aria-hidden="true">• • • —</span><span class="sr-only">dot dot dot dash</span></td></tr>
+<tr><th scope="row" class="ch">E</th><td class="mc"><span aria-hidden="true">•</span><span class="sr-only">dot</span></td><th scope="row" class="ch">W</th><td class="mc"><span aria-hidden="true">• — —</span><span class="sr-only">dot dash dash</span></td></tr>
+<tr><th scope="row" class="ch">F</th><td class="mc"><span aria-hidden="true">• • — •</span><span class="sr-only">dot dot dash dot</span></td><th scope="row" class="ch">X</th><td class="mc"><span aria-hidden="true">— • • —</span><span class="sr-only">dash dot dot dash</span></td></tr>
+<tr><th scope="row" class="ch">G</th><td class="mc"><span aria-hidden="true">— — •</span><span class="sr-only">dash dash dot</span></td><th scope="row" class="ch">Y</th><td class="mc"><span aria-hidden="true">— • — —</span><span class="sr-only">dash dot dash dash</span></td></tr>
+<tr><th scope="row" class="ch">H</th><td class="mc"><span aria-hidden="true">• • • •</span><span class="sr-only">dot dot dot dot</span></td><th scope="row" class="ch">Z</th><td class="mc"><span aria-hidden="true">— — • •</span><span class="sr-only">dash dash dot dot</span></td></tr>
+<tr><th scope="row" class="ch">I</th><td class="mc"><span aria-hidden="true">• •</span><span class="sr-only">dot dot</span></td><th scope="row" class="ch">0</th><td class="mc"><span aria-hidden="true">— — — — —</span><span class="sr-only">dash dash dash dash dash</span></td></tr>
+<tr><th scope="row" class="ch">J</th><td class="mc"><span aria-hidden="true">• — — —</span><span class="sr-only">dot dash dash dash</span></td><th scope="row" class="ch">1</th><td class="mc"><span aria-hidden="true">• — — — —</span><span class="sr-only">dot dash dash dash dash</span></td></tr>
+<tr><th scope="row" class="ch">K</th><td class="mc"><span aria-hidden="true">— • —</span><span class="sr-only">dash dot dash</span></td><th scope="row" class="ch">2</th><td class="mc"><span aria-hidden="true">• • — — —</span><span class="sr-only">dot dot dash dash dash</span></td></tr>
+<tr><th scope="row" class="ch">L</th><td class="mc"><span aria-hidden="true">• — • •</span><span class="sr-only">dot dash dot dot</span></td><th scope="row" class="ch">3</th><td class="mc"><span aria-hidden="true">• • • — —</span><span class="sr-only">dot dot dot dash dash</span></td></tr>
+<tr><th scope="row" class="ch">M</th><td class="mc"><span aria-hidden="true">— —</span><span class="sr-only">dash dash</span></td><th scope="row" class="ch">4</th><td class="mc"><span aria-hidden="true">• • • • —</span><span class="sr-only">dot dot dot dot dash</span></td></tr>
+<tr><th scope="row" class="ch">N</th><td class="mc"><span aria-hidden="true">— •</span><span class="sr-only">dash dot</span></td><th scope="row" class="ch">5</th><td class="mc"><span aria-hidden="true">• • • • •</span><span class="sr-only">dot dot dot dot dot</span></td></tr>
+<tr><th scope="row" class="ch">O</th><td class="mc"><span aria-hidden="true">— — —</span><span class="sr-only">dash dash dash</span></td><th scope="row" class="ch">6</th><td class="mc"><span aria-hidden="true">— • • • •</span><span class="sr-only">dash dot dot dot dot</span></td></tr>
+<tr><th scope="row" class="ch">P</th><td class="mc"><span aria-hidden="true">• — — •</span><span class="sr-only">dot dash dash dot</span></td><th scope="row" class="ch">7</th><td class="mc"><span aria-hidden="true">— — • • •</span><span class="sr-only">dash dash dot dot dot</span></td></tr>
+<tr><th scope="row" class="ch">Q</th><td class="mc"><span aria-hidden="true">— — • —</span><span class="sr-only">dash dash dot dash</span></td><th scope="row" class="ch">8</th><td class="mc"><span aria-hidden="true">— — — • •</span><span class="sr-only">dash dash dash dot dot</span></td></tr>
+<tr><th scope="row" class="ch">R</th><td class="mc"><span aria-hidden="true">• — •</span><span class="sr-only">dot dash dot</span></td><th scope="row" class="ch">9</th><td class="mc"><span aria-hidden="true">— — — — •</span><span class="sr-only">dash dash dash dash dot</span></td></tr>
+</tbody></table></div>
+<p>Dot = 1 unit, dash = 3 units; 1 unit gap inside a letter, 3 between letters, 7 between words. SOS is sent as one run with no letter gaps: 3 short, 3 long, 3 short.</p>
+</section>
+<section id="knots" class="pb">
+<h2>Knots</h2>
+<p>Practise each knot with real cord at home, until you can tie it with cold hands and your eyes closed.</p>
+<details class="item" id="knot-bowline">
+<summary>Bowline <span class="sub">A fixed loop that won't slip or jam — around a tree, a post, a person in a rescue.</span></summary>
+<div class="body">
+<ol class="steps">
+  <li>Make a small loop in the standing part, with the working end side lying <strong>on top</strong>.</li>
+  <li>Pass the working end <strong>up through</strong> the small loop from underneath.</li>
+  <li>Take it <strong>around behind</strong> the standing part.</li>
+  <li>Bring it back <strong>down through</strong> the small loop.</li>
+  <li>Hold the working end against the big loop and pull the standing part to tighten. Leave a tail at least 10–12 rope-widths long.</li>
+</ol>
+<div class="callout warn"><strong class="callout-title">Caution</strong><p>Can shake loose when not under load — back it up with a stopper knot.</p></div>
+</div></details>
+<details class="item" id="knot-taut-line">
+<summary>Taut-line hitch <span class="sub">An adjustable loop for tent and tarp guy-lines; slides to tighten, holds under load.</span></summary>
+<div class="body">
+<ol class="steps">
+  <li>Pass the working end around the stake or anchor.</li>
+  <li>Wrap it <strong>twice</strong> around the standing part, working <strong>inside the loop</strong> toward the anchor.</li>
+  <li>Bring it out past the two wraps and make <strong>one more turn</strong> around the standing part, outside the loop.</li>
+  <li>Tuck the end under that last turn and pull snug.</li>
+  <li>Slide the knot along the line to adjust the tension.</li>
+</ol>
+<div class="callout warn"><strong class="callout-title">Caution</strong><p>Can slip on slick or stiff modern cord — test it before trusting it.</p></div>
+</div></details>
+<details class="item" id="knot-clove">
+<summary>Clove hitch <span class="sub">Quick hitch to a post, pole or tree; starting point for lashings.</span></summary>
+<div class="body">
+<ol class="steps">
+  <li>Wrap the working end once around the post.</li>
+  <li>Cross it <strong>over</strong> the standing part and wrap around the post again, forming an X.</li>
+  <li>Tuck the end <strong>under</strong> the second wrap, so both ends come out of the middle of the X, in opposite directions.</li>
+  <li>Pull both ends to tighten.</li>
+</ol>
+<div class="callout warn"><strong class="callout-title">Caution</strong><p>Slips when the load changes direction or the post rotates — add two half hitches for security.</p></div>
+</div></details>
+<details class="item" id="knot-square">
+<summary>Square (reef) knot <span class="sub">Binding knot: tying off bandages, slings and bundles.</span></summary>
+<div class="body">
+<ol class="steps">
+  <li><strong>Right over left</strong> and under.</li>
+  <li><strong>Left over right</strong> and under.</li>
+  <li>Check: both loops lie flat and match, and each end lies alongside its own standing part. (If not, it's a granny knot — retie.)</li>
+</ol>
+<div class="callout warn"><strong class="callout-title">Caution</strong><p><strong>Not</strong> for joining two ropes that will carry a load — it can spill apart.</p></div>
+</div></details>
+<details class="item" id="knot-prusik">
+<summary>Prusik <span class="sub">A friction hitch that grips a rope under load and slides when loose — ascending, hauling, tensioning lines.</span></summary>
+<div class="body">
+<ol class="steps">
+  <li>Make a closed loop of cord <strong>thinner</strong> than the main rope.</li>
+  <li>Lay the loop behind the main rope and pass it <strong>through itself</strong> around the rope.</li>
+  <li>Repeat so the cord wraps the rope <strong>3 times</strong>, each pass going through the loop.</li>
+  <li>Dress the wraps neat and parallel, with no crossings; the loop comes out of the middle.</li>
+  <li>Load the loop to make it grip; push the knot (not the loop) to slide it.</li>
+</ol>
+<div class="callout warn"><strong class="callout-title">Caution</strong><p>Climbing, rescue or any life-safety use needs proper training and equipment.</p></div>
+</div></details>
+</section>
+<section id="firstaid" class="pb">
+<h2>First-aid quick steps</h2>
+<p>Call 911 / 112 early. Protect yourself first. These are reminders — take a hands-on course. More detail: <a href="../firstaid/index.html">First Aid page</a>.</p>
+<details class="item" id="fa-bleeding">
+<summary>Severe bleeding / tourniquet</summary>
+<div class="body">
+<ol class="steps">
+  <li>Protect yourself (gloves if you have them). Call or send for help: 911 / 112.</li>
+  <li>Press <strong>firmly and directly</strong> on the wound with a dressing or cloth. Pack deep wounds with gauze or cloth and keep pressing hard.</li>
+  <li>Life-threatening limb bleeding not controlled by pressure: apply a <strong>tourniquet 2–3 in (5–7 cm) above the wound, not on a joint</strong> ("high and tight" on the limb if you can't see where it is coming from).</li>
+  <li><strong>Tighten until the bleeding stops.</strong> It will hurt — that is expected.</li>
+  <li><strong>Note the time</strong> (write it on the tourniquet or skin). <strong>Do NOT loosen it</strong> once applied. Get to emergency care.</li>
+  <li>Keep the person warm and lying down; treat for shock.</li>
+</ol>
+<p>Improvised tourniquet: a wide band (not wire or thin cord) tightened with a stick as a windlass, then the stick secured.</p>
+</div></details>
+<details class="item" id="fa-cpr">
+<summary>CPR (adult)</summary>
+<div class="body">
+<ol class="steps">
+  <li>Safe to approach? Not responsive and <strong>not breathing normally</strong> (gasping is not normal)?</li>
+  <li>Call 911 / 112 (speaker on) and send someone for an <strong>AED</strong>.</li>
+  <li>Push <strong>hard and fast</strong> in the centre of the chest: <strong>100–120 per minute</strong>, <strong>at least 2 in (5 cm) but not more than 2.4 in (6 cm)</strong> deep, letting the chest fully recoil.</li>
+  <li>If trained and willing: <strong>30 compressions : 2 breaths</strong>. Otherwise <strong>hands-only</strong> — keep pushing without stopping.</li>
+  <li><strong>Use the AED as soon as it arrives:</strong> switch it on and follow its voice prompts.</li>
+  <li>Keep going until help takes over, the person starts breathing normally, or you are too exhausted or in danger.</li>
+</ol>
+</div></details>
+<details class="item" id="fa-choking">
+<summary>Choking</summary>
+<div class="body">
+<ol class="steps">
+  <li>Can they cough or speak? Encourage them to keep coughing.</li>
+  <li>Adult or child over 1 year who can't cough, speak or breathe: <strong>5 back blows</strong> between the shoulder blades, then <strong>5 abdominal thrusts</strong>. Repeat.</li>
+  <li><strong>Infant under 1 year:</strong> 5 back blows + <strong>5 chest thrusts</strong> (two fingers, centre of chest). <strong>Never abdominal thrusts.</strong></li>
+  <li>Becomes unresponsive: call 911 / 112 and <strong>start CPR</strong>.</li>
+  <li>Anyone who received abdominal thrusts should be checked by a doctor afterwards.</li>
+</ol>
+</div></details>
+<details class="item" id="fa-burns">
+<summary>Burns</summary>
+<div class="body">
+<ol class="steps">
+  <li>Stop the burning. <strong>Cool with cool running water for 20 minutes</strong> as soon as possible.</li>
+  <li>Remove jewellery and clothing near the burn unless it is stuck to the skin.</li>
+  <li><strong>No ice, butter or toothpaste.</strong></li>
+  <li>Cover loosely with cling film or a clean, non-fluffy dressing. Keep the person warm.</li>
+  <li>Get medical care for burns that are large or deep; on the face, hands, genitals or airway; or electrical or chemical burns.</li>
+</ol>
+</div></details>
+<details class="item" id="fa-hypothermia">
+<summary>Hypothermia</summary>
+<div class="body">
+<ol class="steps">
+  <li>Signs: shivering, clumsiness, slurred speech, confusion. Shivering that stops while they are still cold is a bad sign — get help.</li>
+  <li><strong>Handle gently.</strong> Get out of wind and wet; <strong>remove wet clothing</strong> and replace with dry layers.</li>
+  <li><strong>Insulate from the ground</strong> and cover the head.</li>
+  <li><strong>Warm the core</strong> — armpits, chest, groin — with warm packs, warm bottles wrapped in cloth, or body-to-body contact.</li>
+  <li>Warm sweet drinks <strong>only if fully alert and able to swallow</strong>. <strong>No alcohol. Don't rub the limbs.</strong></li>
+</ol>
+</div></details>
+<details class="item" id="fa-heat">
+<summary>Heat stroke</summary>
+<div class="body">
+<ol class="steps">
+  <li><strong>Hot + confused, collapsed or very drowsy = heat stroke — an emergency.</strong> Call 911 / 112.</li>
+  <li><strong>Cool immediately and aggressively.</strong> Cold-water immersion (up to the neck) is best.</li>
+  <li>If you can't immerse: soak with water and fan hard; cold packs to neck, armpits and groin; shade.</li>
+  <li>Give sips of cool water only if fully alert. Keep cooling until help arrives or they are clearly recovering.</li>
+</ol>
+<p>Heat exhaustion (heavy sweating, weakness, headache, nausea, still thinking clearly): rest in shade, cool down, sip water. Getting confused? Treat it as heat stroke.</p>
+</div></details>
+<details class="item" id="fa-shock">
+<summary>Shock</summary>
+<div class="body">
+<ol class="steps">
+  <li>Signs: pale, cold, clammy skin; fast weak pulse; fast breathing; anxious, confused or drowsy.</li>
+  <li>Call 911 / 112. <strong>Treat the cause</strong> — stop the bleeding.</li>
+  <li>Lay them flat. If there is no injury to the legs, hips, spine or head, you may raise the legs about 12 in (30 cm).</li>
+  <li><strong>Keep them warm</strong> — insulate from the ground; loosen tight clothing.</li>
+  <li>Nothing to eat or drink unless fully alert and help is many hours away (then small sips of water). Reassure them; check breathing often.</li>
+</ol>
+</div></details>
+<details class="item" id="fa-recovery">
+<summary>Recovery position</summary>
+<div class="body">
+<ol class="steps">
+  <li>For someone <strong>unresponsive but breathing normally</strong>. Kneel beside them.</li>
+  <li>Place the arm nearest you at a right angle to the body, palm up.</li>
+  <li>Bring the far arm across the chest and hold the back of that hand against their near cheek.</li>
+  <li>With your other hand, lift the far knee so the foot is flat, then pull on the knee to roll them toward you onto their side.</li>
+  <li>Bend the top leg so hip and knee are at right angles. Tilt the head back gently so the airway stays open and fluids can drain.</li>
+  <li>Check breathing continuously. If it stops or becomes abnormal: call and start CPR. Keep them warm.</li>
+</ol>
+</div></details>
+<div class="callout info"><strong class="callout-title">Note: Medicines</strong><p><strong>Pain relief (adults):</strong> follow the package label. Acetaminophen/paracetamol: no more than <strong>3,000 mg a day</strong> without a doctor's advice (label max 4,000 mg; liver risk, avoid alcohol). Ibuprofen: <strong>200–400 mg every 4–6 hours, max 1,200 mg a day</strong> unless a doctor directs (stomach bleeding and kidney risk; avoid when dehydrated). No aspirin for under-19s (Reye's syndrome).</p></div>
+</section>
+<section id="fill-in">
+<h2>Fill-in pages (in the PDF)</h2>
+<p>The printed PDF has a <strong>fill-in box on page 1</strong> (name, date of birth, blood type, allergies, medications, conditions, emergency contacts) and a <strong>ruled page 17</strong> for ICE contacts, meeting points and waypoints. Fill them in by hand in pencil or waterproof pen. In the app, you can also save waypoints on the <a href="../map/index.html">Map page</a>.</p>
+</section>
+<section id="how-to-use">
+<h2>How to use this guide</h2>
+<ol class="steps">
+  <li><strong>Print it now</strong>, before you need it. It is laid out for US Letter and also fits A4 (choose "Actual size" or "Fit to page"). Black-and-white printing is fine.</li>
+  <li><strong>Fill in page 1 and the contacts and waypoints page by hand</strong>, in pencil or waterproof pen. Update them once a year.</li>
+  <li><strong>Keep copies where emergencies happen:</strong> go-bag, vehicle glovebox, first-aid kit, near your home's main water and power shut-offs. Store each in a zip-top bag.</li>
+  <li><strong>In an emergency:</strong> start at page 1 — call for help, STOP, follow the priorities — then turn to your scenario using the quick-action index.</li>
+  <li>Steps are numbered in the order that usually matters most. Adapt them to what you see — your own safety comes first.</li>
+  <li><strong>Read it through once now, and practise:</strong> knots, mirror signalling, map and compass. Take a first-aid and CPR course.</li>
+  <li>The app's Emergency page has the same content, works offline, and may have a newer edition.</li>
+</ol>
+<div class="disclaimer"><strong>Disclaimer.</strong> This guide gives general information for emergencies. It is not medical advice and is not a substitute for training, professional medical care, or instructions from emergency services and local authorities — always follow official orders. Situations differ: use your judgement. Figures are typical values from the sources below; always check product labels and local rules. Use at your own risk.</div>
+<p class="muted">Based on public guidance from: CDC (drinking water, carbon monoxide, generators), USDA (food safety in power outages), NWS/NOAA (floods, lightning, winter travel), FEMA / Ready.gov, American Red Cross and American Heart Association (first aid, CPR), CAL FIRE (wildfire evacuation), ICAO Annex 12 (ground-to-air signals) and international marine radio procedures.</p>
+</section>
+<footer class="page-foot">Off-Grid Survival Kit — Emergency Guide (Edition 2026-11). Not a substitute for training or professional care. Related: <a href="../firstaid/index.html">First aid</a> · <a href="../water/index.html">Water</a> · <a href="../fireshelter/index.html">Fire &amp; shelter</a> · <a href="../map/index.html">Map</a> · <a href="../index.html">Hub</a></footer>
+</main>
+</body>
+</html>
