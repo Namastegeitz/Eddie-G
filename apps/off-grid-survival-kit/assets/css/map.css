@@ -110,8 +110,8 @@ body.hide-crosshair #crosshair { display: none; }
 }
 .compass-ctl svg { width: 84px; height: 84px; display: block; margin: 0 auto; }
 .compass-ctl .rose { transition: transform .15s linear; transform-origin: 50% 50%; }
-.compass-ctl .cmp-deg { font-size: .95rem; font-weight: 800; line-height: 1.1; font-variant-numeric: tabular-nums; }
-.compass-ctl .cmp-src { font-size: .62rem; color: var(--muted); font-weight: 700; text-transform: uppercase; }
+.compass-ctl .ctl-deg { font-size: .95rem; font-weight: 800; line-height: 1.1; font-variant-numeric: tabular-nums; }
+.compass-ctl .ctl-src { font-size: .62rem; color: var(--muted); font-weight: 700; text-transform: uppercase; }
 @media (max-width: 400px) { .compass-ctl { width: 78px; } .compass-ctl svg { width: 66px; height: 66px; } }
 
 /* ---------- GPS marker ---------- */

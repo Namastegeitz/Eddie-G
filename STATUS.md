@@ -9,10 +9,16 @@
   MGRS/UTM grid, triangulation, elevation/slope + contours, QR share, SOS beacon, NJ/Algarve presets.
 - Content: foraging, water, first aid, fire/shelter/knots (SVG knot steps), food, electricity, tools
   (strobe/Morse/tones/checklists/rendezvous), emergency PDF (18 pages, reportlab) + HTML version.
-- Tests: `tests/acceptance.js` (Playwright, mock tile server) — 24 checks online→offline all pass;
+- Tests: `tests/acceptance.js` (Playwright, mock tile server) — 25 checks online→offline all pass;
   Chrome reports no PWA installability errors; print preview checked.
 - Not verified on real hardware yet: install + offline launch on a phone, real GPS/compass, torch,
   and whether tile.openstreetmap.org / OpenTopoMap allow CORS saving (sandbox couldn't reach them).
+- Live compass: standalone `/compass/` page + full-screen compass from the map's rose (shared engine
+  `assets/js/compass.js`): true/magnetic, bearing lock + steering, back bearing, level, sun/moon check,
+  point-to-waypoint, camera sighting tape, bearing log, spoken heading; locked bearing drawn on the map.
+- Hub has an "Open on another phone" QR (points at https://namastegeitz.github.io/Eddie-G/).
+- Hosting: `scripts/publish_pages.sh` pushes the app to a gh-pages branch for GitHub Pages. Not run yet —
+  publishing a public site needs the owner's go-ahead (the session's permission check blocked it).
 - Zip: `apps/off-grid-survival-kit/dist/off-grid-survival-kit.zip`.
 - Next: host it on HTTPS (e.g. GitHub Pages), install on a phone, save NJ/Algarve areas, field test.
 
