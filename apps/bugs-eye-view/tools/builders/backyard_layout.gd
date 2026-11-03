@@ -1,7 +1,9 @@
 class_name BackyardLayout
-## The Backyard: open sky, patio by the house, flower beds (soil camo), a
-## picnic table, BBQ, doghouse (hide underneath), sprinklers and puddles that
-## wash away your scent, leaf piles that crunch. The dog tracks your scent.
+## The Backyard: 194 x 164 (x -82..112, z -62..102). Open sky, patio by the
+## house, flower beds (soil camo), a picnic table, BBQ, doghouse (hide
+## underneath), a vegetable garden, a garden shed (hide underneath), a bird
+## bath, sprinklers and puddles that wash away your scent, leaf piles and a
+## compost heap that crunch. The dog tracks your scent.
 ## Secret route: a foundation crack (roach) or a torn window screen
 ## (fly/spider) into the crawlspace. Boss: the exterminator's fog.
 
@@ -10,16 +12,16 @@ static func build(tree: SceneTree) -> void:
 	var g := LevelGeo.new("Backyard")
 	g.environment(Color(0.45, 0.65, 0.9), Color(0.85, 0.9, 1.0), 0.9)
 	g.sun(Vector3(-50, 25, 0), 1.1, Color(1.0, 0.96, 0.86))
-	g.box("Lawn", Vector3(0, -1, 0), Vector3(164, 2, 124), "grass", &"grass")
-	g.box("HouseWall", Vector3(0, 40, -62), Vector3(164, 80, 4), "wall_paint", &"default", &"", 0.0, false)
-	g.box("FenceFront", Vector3(0, 15, 63), Vector3(164, 30, 2), "fence", &"wood", &"dark_wood")
-	g.box("FenceLeft", Vector3(-83, 15, 0), Vector3(2, 30, 128), "fence", &"wood", &"dark_wood")
-	g.box("FenceRight", Vector3(83, 15, 0), Vector3(2, 30, 128), "fence", &"wood", &"dark_wood")
+	g.box("Lawn", Vector3(15, -1, 20), Vector3(198, 2, 168), "grass", &"grass")
+	g.box("HouseWall", Vector3(15, 40, -62), Vector3(198, 80, 4), "wall_paint", &"default", &"", 0.0, false)
+	g.box("FenceFront", Vector3(15, 15, 103), Vector3(198, 30, 2), "fence", &"wood", &"dark_wood")
+	g.box("FenceLeft", Vector3(-83, 15, 20), Vector3(2, 30, 168), "fence", &"wood", &"dark_wood")
+	g.box("FenceRight", Vector3(113, 15, 20), Vector3(2, 30, 168), "fence", &"wood", &"dark_wood")
 	# Invisible boundary so flyers can't leave the yard.
-	g.invisible_wall("SkyFront", Vector3(0, 70, 63), Vector3(170, 80, 2))
-	g.invisible_wall("SkyLeft", Vector3(-83, 70, 0), Vector3(2, 80, 130))
-	g.invisible_wall("SkyRight", Vector3(83, 70, 0), Vector3(2, 80, 130))
-	g.invisible_wall("SkyLid", Vector3(0, 110, 0), Vector3(170, 2, 130))
+	g.invisible_wall("SkyFront", Vector3(15, 70, 103), Vector3(200, 80, 2))
+	g.invisible_wall("SkyLeft", Vector3(-83, 70, 20), Vector3(2, 80, 170))
+	g.invisible_wall("SkyRight", Vector3(113, 70, 20), Vector3(2, 80, 170))
+	g.invisible_wall("SkyLid", Vector3(15, 110, 20), Vector3(200, 2, 170))
 
 	# --- Patio, back door, porch light ---
 	g.box("Patio", Vector3(0, -0.2, -48), Vector3(70, 0.5, 24), "patio", &"patio", &"", 0.0, false)
@@ -79,12 +81,54 @@ static func build(tree: SceneTree) -> void:
 	g.prop("acorn", Vector3(40, 0.7, 50))
 	g.prop("acorn", Vector3(-30, 0.7, 50))
 
+	# --- Vegetable garden (soil camo, shade under the leaves) ---
+	g.box("VeggieBed", Vector3(95, -0.2, 28), Vector3(24, 0.5, 44), "soil", &"soil", &"soil", 0.0, false)
+	g.light_zone("VeggieShade", Vector3(95, 3, 28), Vector3(24, 6, 44), 1, 2)
+	for i in 4:
+		for j in 2:
+			var p := Vector3(88 + j * 14, 0, 12 + i * 11)
+			g.deco("Lettuce", _sphere(3.2), "leaf_green", p + Vector3(0, 2.2, 0))
+			if (i + j) % 2 == 0:
+				g.deco("TomatoStake", _cyl(0.3, 18.0), "dark_wood", p + Vector3(3, 9, 3))
+				g.deco("Tomato", _sphere(1.4), "cloth_red", p + Vector3(3.5, 7, 2.5))
+
+	# --- Garden shed (raised on blocks: hide underneath) ---
+	g.box("Shed", Vector3(92, 21, 86), Vector3(30, 36, 22), "fence", &"wood", &"dark_wood")
+	for p in [Vector3(79, 1.5, 77), Vector3(105, 1.5, 77), Vector3(79, 1.5, 95), Vector3(105, 1.5, 95)]:
+		g.box("ShedBlock", p, Vector3(3, 3, 3), "patio", &"stone")
+	g.deco("ShedRoof", PrismMesh.new(), "dark_wood", Vector3(92, 43, 86), Vector3.ZERO, Vector3(33, 10, 25))
+	g.deco_box("ShedDoor", Vector3(92, 19, 74.9), Vector3(10, 26, 0.2), "dark_wood", Vector3.ZERO, false)
+	g.hiding_spot("UnderShed", Vector3(92, 1.5, 86), Vector3(26, 3, 18))
+	g.light_zone("UnderShedShadow", Vector3(92, 1.5, 86), Vector3(28, 3, 20), 0, 3)
+
+	# --- Bird bath (water on top washes scent), woodpile, wheelbarrow, compost ---
+	g.cylinder("BirdBathPost", Vector3(55, 10, 72), 2.5, 20, "patio", &"stone")
+	g.cylinder("BirdBathBowl", Vector3(55, 21.5, 72), 8.0, 3, "patio", &"stone")
+	g.deco("BirdBathWater", _cyl(7.2, 0.2), "water", Vector3(55, 23.05, 72))
+	g.scent_wiper("BirdBathPool", Vector3(55, 23.6, 72), Vector3(12, 1.2, 12), [], false)
+	g.box("Compost", Vector3(-20, -0.2, 86), Vector3(18, 0.5, 13), "leaves", &"leaves", &"soil", 0.0, false)
+	g.light_zone("CompostShade", Vector3(-20, 3, 86), Vector3(18, 6, 13), 1, 2)
+
 	# --- Crumbs ---
 	for p in [Vector3(-40, 0.6, -10), Vector3(-15, 0.6, -25), Vector3(20, 0.6, -15), Vector3(45, 0.6, 10),
 			Vector3(30, 0.6, 35), Vector3(0, 0.6, 40), Vector3(-30, 0.6, 38), Vector3(-65, 0.6, 10),
 			Vector3(-20, 0.6, 15), Vector3(60, 0.6, 40), Vector3(-58, 0.6, -22), Vector3(56, 0.6, -20),
-			Vector3(-28, 15.4, 3), Vector3(-26, 27.4, 12), Vector3(-12, 27.4, 18), Vector3(35, 17.6, -38)]:
+			Vector3(-28, 15.4, 3), Vector3(-26, 27.4, 12), Vector3(-12, 27.4, 18), Vector3(35, 17.6, -38),
+			Vector3(90, 0.6, 5), Vector3(102, 0.6, 40), Vector3(75, 0.6, 88), Vector3(45, 0.6, 70),
+			Vector3(10, 0.6, 92), Vector3(-30, 0.6, 72), Vector3(-62, 0.6, 52), Vector3(30, 0.6, 85),
+			Vector3(72, 0.6, 55)]:
 		g.crumb(p)
+
+	# --- Bug food and crumb gems ---
+	g.item("mint_leaf", Vector3(95, 0, 34))
+	g.item("mint_leaf", Vector3(-40, 0, 60))
+	g.item("honey_drop", Vector3(-58, 0, -18))
+	g.item("kibble", Vector3(-44, 0, 30))
+	g.item("sugar_cube", Vector3(-25, 26.75, 18))
+	g.item("cheese", Vector3(-20, 0, 15))
+	g.item("coffee_bean", Vector3(-20, 0, 86))
+	g.item("gem_ruby", Vector3(55, 23, 72))
+	g.item("gem_emerald", Vector3(109, 0, 99))
 
 	# --- Secret route: the crawlspace under the house ---
 	g.box("CrawlFloor", Vector3(-25, -1, -72), Vector3(30, 2, 14), "soil", &"soil", &"soil")
@@ -109,29 +153,37 @@ static func build(tree: SceneTree) -> void:
 	g.cover_block("Gnome", Vector3(30, 0, -10), Vector3(5, 12, 5), "cloth_red", "garden gnome", "cover_garden_gnome")
 	g.tall_grass("GrassA", Vector3(65, 0, 15), Vector3(12, 6, 12))
 	g.tall_grass("GrassB", Vector3(-25, 0, 30), Vector3(10, 6, 8))
+	g.tall_grass("GrassC", Vector3(40, 0, 88), Vector3(14, 6, 10))
+	g.tall_grass("GrassD", Vector3(72, 0, 30), Vector3(10, 6, 14))
+	g.cover_block("Woodpile", Vector3(-60, 0, 72), Vector3(16, 8, 8), "dark_wood", "woodpile", "cover_woodpile", &"wood")
+	g.shelter("Wheelbarrow", Vector3(10, 0, 70), Vector3(14, 8, 10), "dark_metal", true, "tipped wheelbarrow", "cover_wheelbarrow", &"metal")
+	g.cover_block("RockD", Vector3(60, 0, 92), Vector3(7, 4, 6), "patio", "rock", "cover_rock", &"stone")
 
 	# --- Model slots for the furniture ---
 	g.skin_region("Picnic", "picnic_table", Vector3(-20, 13.4, 15), Vector3(36, 26.8, 30), ["Picnic", "Bench"])
 	g.skin_region("Grill", "bbq_grill", Vector3(35, 8.5, -38), Vector3(12, 17, 12), ["Grill"])
 	g.skin_region("Doghouse", "doghouse", Vector3(-55, 14, 40), Vector3(22, 28, 18), ["Doghouse", "Roof", "DogDoor"])
+	g.skin_region("Shed", "garden_shed", Vector3(92, 24, 86), Vector3(33, 48, 25), ["Shed", "ShedRoof", "ShedDoor"])
+	g.skin_region("BirdBath", "bird_bath", Vector3(55, 11.5, 72), Vector3(16, 23, 16), ["BirdBath"])
 
 	# --- Spawn and escape ---
 	g.spawn(Vector3(-5, 0.8, -54), PI)
-	g.goal(Vector3(60, 0, 59), "gap under the fence")
-	g.deco_box("FenceGap", Vector3(60, 2.5, 61.9), Vector3(8, 5, 0.2), "hole", Vector3.ZERO, false)
+	g.goal(Vector3(30, 0, 99), "gap under the fence")
+	g.deco_box("FenceGap", Vector3(30, 2.5, 101.9), Vector3(8, 5, 0.2), "hole", Vector3.ZERO, false)
 
 	# --- Threats ---
 	g.human("res://scenes/threats/human.tscn",
-		[Vector3(-45, 0, -25), Vector3(30, 0, -25), Vector3(45, 0, 15), Vector3(35, 0, 40),
-			Vector3(-20, 0, 44), Vector3(-50, 0, 20)],
+		[Vector3(-45, 0, -25), Vector3(30, 0, -25), Vector3(80, 0, -5), Vector3(82, 0, 55), Vector3(35, 0, 40),
+			Vector3(25, 0, 88), Vector3(-25, 0, 62), Vector3(-50, 0, 20)],
 		["gardening", "bbq"], {"name": "Gardener"})
 	g.pet("res://scenes/threats/dog.tscn", Vector3(-48, 0.5, 25),
-		[Vector3(-40, 0, 0), Vector3(20, 0, 0), Vector3(40, 0, 30), Vector3(0, 0, 45), Vector3(-45, 0, 25)],
+		[Vector3(-40, 0, 0), Vector3(20, 0, 0), Vector3(40, 0, 30), Vector3(80, 0, 60), Vector3(20, 0, 60),
+			Vector3(0, 0, 45), Vector3(-45, 0, 25)],
 		["dog_nap"])
 	var ext := g.human("res://scenes/threats/exterminator.tscn",
-		[Vector3(-60, 0, -50), Vector3(0, 0, -30), Vector3(40, 0, 0)],
+		[Vector3(-60, 0, -50), Vector3(0, 0, -30), Vector3(40, 0, 0), Vector3(30, 0, 50)],
 		["exterminator_visit"], {"name": "Exterminator", "heavy_boots": true, "has_swatter": false, "spray_interval": 3.5})
-	var fog := g.fog(Vector3(0, 0, -58), PI, 115.0, 75.0, 170.0)
+	var fog := g.fog(Vector3(15, 0, -58), PI, 150.0, 98.0, 205.0)
 	g.escalation()
 	g.boss(BossDirector.Kind.EXTERMINATOR, "The Exterminator",
 		"Fog is rolling across the yard. Get through the fence before it reaches you!",

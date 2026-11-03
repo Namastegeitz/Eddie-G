@@ -218,7 +218,7 @@ func add_alarm_from_sound(amount: float) -> void:
 
 
 func _add_alarm(amount: float) -> void:
-	if player == null or player.dead or amount <= 0.0:
+	if player == null or player.dead or amount <= 0.0 or player.has_effect(&"calm"):
 		return
 	alarm = minf(alarm + amount, 1.0)
 	_since_noticed = 0.0
@@ -238,6 +238,18 @@ func raise_alarm() -> void:
 	AudioManager.play(&"boss_sting", -6.0, 1.4)
 	Feedback.rumble(0.5, 0.3)
 	alarm_raised.emit()
+
+
+## Emerald gem: the alarm empties and everyone stops looking for you.
+func calm_down() -> void:
+	alarm = 0.0
+	_since_noticed = 99.0
+	for t in threats:
+		if t.present and t.alert.state > AlertState.UNAWARE:
+			t.alert.reset()
+	if alarm_active:
+		alarm_active = false
+		alarm_cleared.emit()
 
 
 func _tick_alarm(delta: float) -> void:

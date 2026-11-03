@@ -50,6 +50,45 @@ static func mesh(parent: Node, name: String, m: Mesh, material: String, pos: Vec
 	return mi
 
 
+## Merges the plain mesh children of `parent` that share a material into one
+## mesh per material (far fewer draw calls on phones, same look). Pivots
+## (nodes with children) and names in `skip` stay separate. A merged mesh keeps
+## the first part's name.
+static func merge_meshes(parent: Node, skip: Array = []) -> void:
+	var groups := {}
+	var order: Array = []
+	for c in parent.get_children():
+		var mi := c as MeshInstance3D
+		if mi == null or mi.get_child_count() > 0 or mi.mesh == null or skip.has(String(mi.name)):
+			continue
+		var key: Material = mi.material_override
+		if not groups.has(key):
+			groups[key] = []
+			order.append(key)
+		groups[key].append(mi)
+	for key: Material in order:
+		var list: Array = groups[key]
+		if list.size() < 2:
+			continue
+		var st := SurfaceTool.new()
+		st.begin(Mesh.PRIMITIVE_TRIANGLES)
+		for mi: MeshInstance3D in list:
+			st.append_from(mi.mesh, 0, mi.transform)
+		var first := list[0] as MeshInstance3D
+		var merged := MeshInstance3D.new()
+		merged.mesh = st.commit()
+		merged.material_override = key
+		merged.cast_shadow = first.cast_shadow
+		var keep_name := first.name
+		var idx := first.get_index()
+		for mi: MeshInstance3D in list:
+			parent.remove_child(mi)
+			mi.free()
+		parent.add_child(merged)
+		parent.move_child(merged, mini(idx, parent.get_child_count() - 1))
+		merged.name = keep_name
+
+
 static func box(size: Vector3) -> BoxMesh:
 	var b := BoxMesh.new()
 	b.size = size
@@ -141,58 +180,175 @@ static func scripted(type_node: Node, script_path: String, name: String) -> Node
 
 # --- Bugs ---------------------------------------------------------------------
 
-static func _legs(v: Node3D, count_per_side: int, length: float, material: String, y: float, spread: float) -> void:
-	for side in [-1.0, 1.0]:
-		for i in count_per_side:
-			var z := lerpf(-spread, spread, float(i) / maxf(count_per_side - 1, 1))
-			mesh(v, "Leg", box(Vector3(length, 0.06, 0.06)), material,
-				Vector3(side * length * 0.45, y, z), Vector3(0, -side * (z / spread) * 0.5, side * -0.35))
+## One jointed leg: hip pivot (swings around Y, lifts around Z) -> femur ->
+## knee pivot -> tibia -> foot. `fwd` angles it forward (+) or back (-).
+## BugRig animates the pivots using the metadata stored here.
+static func _leg(v: Node3D, name: String, side: float, fwd: float, hip: Vector3, femur: float, tibia: float,
+		up: float, down: float, mat_f: String, mat_t: String, thick: float, group: int, spines: bool = false) -> Node3D:
+	var pivot := node3d(v, name, hip)
+	pivot.rotation = Vector3(0, side * fwd, side * up)
+	pivot.set_meta(&"side", side)
+	pivot.set_meta(&"group", group)
+	pivot.set_meta(&"base_yaw", side * fwd)
+	pivot.set_meta(&"base_z", side * up)
+	mesh(pivot, "Femur", box(Vector3(femur, thick, thick)), mat_f, Vector3(side * femur * 0.5, 0, 0))
+	var knee := node3d(pivot, "Knee", Vector3(side * femur, 0, 0))
+	knee.rotation = Vector3(0, 0, -side * (up + down))
+	mesh(knee, "Joint", sphere(thick * 0.75), mat_f)
+	mesh(knee, "Tibia", box(Vector3(tibia, thick * 0.8, thick * 0.8)), mat_t, Vector3(side * tibia * 0.5, 0, 0))
+	mesh(knee, "Foot", box(Vector3(tibia * 0.3, thick * 0.6, thick * 0.6)), mat_t,
+		Vector3(side * tibia * 1.08, -thick * 0.2, 0), Vector3(0, 0, side * 0.6))
+	if spines:
+		for k in 2:
+			mesh(knee, "Spine", box(Vector3(0.015, 0.09, 0.015)), "roach_dark",
+				Vector3(side * tibia * (0.35 + k * 0.3), thick * 0.5, 0), Vector3(0, 0, -side * 0.5))
+	return pivot
+
+
+## A two-segment antenna on a pivot (BugRig sways it).
+static func _antenna(v: Node3D, name: String, side: float, pos: Vector3, seg: float, thick: float, material: String) -> Node3D:
+	var a := node3d(v, name, pos)
+	a.rotation = Vector3(0.3, side * 0.35, 0)
+	a.set_meta(&"side", side)
+	a.set_meta(&"base", a.rotation)
+	mesh(a, "Base", box(Vector3(thick, thick, seg)), material, Vector3(0, 0, -seg * 0.5))
+	var tip := node3d(a, "Tip", Vector3(0, 0, -seg))
+	tip.rotation = Vector3(0.12, side * 0.15, 0)
+	mesh(tip, "Whip", box(Vector3(thick * 0.8, thick * 0.8, seg * 1.15)), material, Vector3(0, 0, -seg * 0.57))
+	return a
+
+
+static func _merge_bug(v: Node3D) -> void:
+	merge_meshes(v, ["Abdomen"])
+	for n: Node in _pivots(v).slice(1):
+		merge_meshes(n)
+
+
+## `root` and every non-mesh node under it (collected before any merging).
+static func _pivots(root: Node) -> Array:
+	var out: Array = [root]
+	for n in root.find_children("*", "Node3D", true, false):
+		if not n is MeshInstance3D:
+			out.append(n)
+	return out
+
+
+static func _rig(bug: Node, gait: String) -> void:
+	var rig := scripted(Node.new(), "res://scripts/bugs/bug_rig.gd", "Rig")
+	rig.set("gait", gait)
+	bug.add_child(rig)
 
 
 static func bugs(force: bool) -> void:
-	# Cockroach
+	# Cockroach: pale-ringed head shield, glossy wing covers, segmented
+	# abdomen, long two-part antennae, tail cerci, spiny jointed legs.
 	var r := scripted(CharacterBody3D.new(), "res://scripts/bugs/cockroach.gd", "Cockroach")
 	r.set("stats", load("res://resources/bugs/cockroach.tres"))
 	shape(r, sphere_shape(0.35))
 	var rv := node3d(r, "Visual")
-	mesh(rv, "Body", sphere(0.5), "roach", Vector3(0, 0, 0.1), Vector3.ZERO, Vector3(0.75, 0.42, 1.25))
-	mesh(rv, "Head", sphere(0.22), "roach", Vector3(0, 0.02, -0.62))
-	mesh(rv, "AntennaL", box(Vector3(0.03, 0.03, 0.9)), "roach", Vector3(-0.15, 0.12, -1.05), Vector3(0.25, 0.3, 0))
-	mesh(rv, "AntennaR", box(Vector3(0.03, 0.03, 0.9)), "roach", Vector3(0.15, 0.12, -1.05), Vector3(0.25, -0.3, 0))
-	_legs(rv, 3, 0.7, "roach", -0.15, 0.4)
+	mesh(rv, "Abdomen", sphere(0.5), "roach", Vector3(0, -0.04, 0.15), Vector3.ZERO, Vector3(0.7, 0.36, 1.2))
+	for i in 3:
+		mesh(rv, "Segment", sphere(0.5), "roach_dark", Vector3(0, -0.1, 0.42 + i * 0.13), Vector3.ZERO,
+			Vector3(0.62 - i * 0.12, 0.2, 0.18))
+	for x in [-1.0, 1.0]:
+		mesh(rv, "WingCover", sphere(0.5), "roach_wing", Vector3(x * 0.15, 0.1, 0.22), Vector3(0, -x * 0.06, 0),
+			Vector3(0.42, 0.13, 1.28))
+	mesh(rv, "Shield", sphere(0.32), "roach_light", Vector3(0, 0.06, -0.47), Vector3(-0.15, 0, 0), Vector3(1.15, 0.32, 0.85))
+	for x in [-1.0, 1.0]:
+		mesh(rv, "ShieldSpot", sphere(0.1), "roach_dark", Vector3(x * 0.1, 0.15, -0.47), Vector3.ZERO, Vector3(1.0, 0.3, 1.3))
+	mesh(rv, "Head", sphere(0.19), "roach_dark", Vector3(0, -0.05, -0.68), Vector3.ZERO, Vector3(1, 0.8, 0.9))
+	for x in [-1.0, 1.0]:
+		mesh(rv, "Eye", sphere(0.075), "spider_eye", Vector3(x * 0.13, 0.0, -0.73), Vector3.ZERO, Vector3(0.7, 1.2, 0.7))
+		mesh(rv, "Palp", box(Vector3(0.04, 0.04, 0.18)), "roach", Vector3(x * 0.06, -0.14, -0.8), Vector3(0.6, x * 0.2, 0))
+		mesh(rv, "Cercus", cyl(0.035, 0.28, 0.005), "roach", Vector3(x * 0.1, -0.02, 0.92), Vector3(PI * 0.5, 0, -x * 0.35))
+		_antenna(rv, "AntennaL" if x < 0.0 else "AntennaR", x, Vector3(x * 0.08, 0.02, -0.78), 0.55, 0.035, "roach")
+	var roach_fwd := [0.65, 0.05, -0.6]
+	for i in 3:
+		for x in [-1.0, 1.0]:
+			_leg(rv, "Leg%s%d" % ["L" if x < 0.0 else "R", i + 1], x, roach_fwd[i], Vector3(x * 0.17, -0.08, -0.25 + i * 0.25),
+				0.36 + i * 0.04, 0.48 + i * 0.06, 0.35, 1.0, "roach", "roach_dark", 0.06, (i + (1 if x > 0.0 else 0)) % 2, true)
+	_merge_bug(rv)
 	add_skin(rv, "bug_cockroach", Vector3(1.1, 0.6, 2.2), Vector3(0, -0.05, -0.3))
+	_rig(r, "tripod")
 	var arrow := node3d(r, "SenseArrow", Vector3(0, 1.4, 0))
 	var am := mesh(arrow, "Arrow", PrismMesh.new(), "arrow", Vector3(0, 0, -0.6), Vector3(-PI * 0.5, 0, 0), Vector3(0.6, 0.8, 0.15))
 	am.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	pack(r, "res://scenes/bugs/cockroach.tscn", force)
 
-	# Fly
+	# Fly: huge red compound eyes, striped bristly thorax, checkered abdomen,
+	# proboscis, veined wings with halteres, jointed legs with sticky pads.
 	var f := scripted(CharacterBody3D.new(), "res://scripts/bugs/fly.gd", "Fly")
 	f.set("stats", load("res://resources/bugs/fly.tres"))
 	shape(f, sphere_shape(0.35))
 	var fv := node3d(f, "Visual")
-	mesh(fv, "Body", sphere(0.4), "fly", Vector3(0, 0, 0.15), Vector3.ZERO, Vector3(0.85, 0.75, 1.2))
-	mesh(fv, "Head", sphere(0.28), "fly", Vector3(0, 0.05, -0.45))
-	mesh(fv, "EyeL", sphere(0.17), "fly_eye", Vector3(-0.18, 0.12, -0.55))
-	mesh(fv, "EyeR", sphere(0.17), "fly_eye", Vector3(0.18, 0.12, -0.55))
-	var wl := node3d(fv, "WingL", Vector3(-0.2, 0.3, 0.1))
-	mesh(wl, "Wing", box(Vector3(0.9, 0.02, 0.45)), "wing", Vector3(-0.45, 0, 0.1))
-	var wr := node3d(fv, "WingR", Vector3(0.2, 0.3, 0.1))
-	mesh(wr, "Wing", box(Vector3(0.9, 0.02, 0.45)), "wing", Vector3(0.45, 0, 0.1))
-	_legs(fv, 3, 0.5, "fly", -0.25, 0.25)
+	mesh(fv, "Thorax", sphere(0.33), "fly", Vector3(0, 0.05, -0.1), Vector3.ZERO, Vector3(1, 0.95, 1.1))
+	for x in [-0.12, 0.0, 0.12]:
+		mesh(fv, "Stripe", box(Vector3(0.05, 0.03, 0.5)), "fly_stripe", Vector3(x, 0.36, -0.1))
+	for i in 6:
+		var bx := (i % 3 - 1) * 0.15
+		mesh(fv, "Bristle", box(Vector3(0.02, 0.14, 0.02)), "fly", Vector3(bx, 0.36, -0.25 + floorf(i / 3.0) * 0.3), Vector3(0.4, 0, bx))
+	mesh(fv, "Abdomen", sphere(0.32), "fly_belly", Vector3(0, 0.0, 0.36), Vector3.ZERO, Vector3(0.95, 0.78, 1.15))
+	for i in 3:
+		for x in [-1.0, 1.0]:
+			if (i + (1 if x > 0.0 else 0)) % 2 == 0:
+				mesh(fv, "Checker", sphere(0.14), "fly", Vector3(x * 0.12, 0.2, 0.22 + i * 0.13), Vector3.ZERO, Vector3(1.0, 0.35, 0.8))
+	mesh(fv, "Head", sphere(0.24), "fly", Vector3(0, 0.02, -0.46))
+	for x in [-1.0, 1.0]:
+		mesh(fv, "Eye", sphere(0.2), "fly_eye", Vector3(x * 0.16, 0.07, -0.5), Vector3.ZERO, Vector3(0.85, 1.1, 0.95))
+		mesh(fv, "Feeler", box(Vector3(0.025, 0.025, 0.12)), "fly", Vector3(x * 0.05, 0.12, -0.68), Vector3(0.5, x * 0.3, 0))
+	mesh(fv, "Proboscis", cyl(0.04, 0.24), "fly", Vector3(0, -0.2, -0.56), Vector3(0.35, 0, 0))
+	mesh(fv, "Pad", sphere(0.07), "fly", Vector3(0, -0.32, -0.6), Vector3.ZERO, Vector3(1.4, 0.6, 1.0))
+	for x in [-1.0, 1.0]:
+		var wing := node3d(fv, "WingL" if x < 0.0 else "WingR", Vector3(x * 0.2, 0.3, 0.05))
+		mesh(wing, "Wing", sphere(0.5), "wing", Vector3(x * 0.45, 0, 0.12), Vector3(0, x * 0.2, 0), Vector3(0.95, 0.04, 0.42))
+		for k in 3:
+			mesh(wing, "Vein", box(Vector3(0.8 - k * 0.15, 0.015, 0.012)), "wing_vein",
+				Vector3(x * (0.42 - k * 0.04), 0.012, 0.0 + k * 0.1), Vector3(0, x * (0.2 + k * 0.08), 0))
+		mesh(fv, "Haltere", sphere(0.04), "fly_stripe", Vector3(x * 0.16, 0.15, 0.22))
+	var fly_fwd := [0.55, 0.0, -0.55]
+	for i in 3:
+		for x in [-1.0, 1.0]:
+			_leg(fv, "Leg%s%d" % ["L" if x < 0.0 else "R", i + 1], x, fly_fwd[i], Vector3(x * 0.14, -0.2, -0.25 + i * 0.17),
+				0.27, 0.32, 0.2, 1.1, "fly", "fly", 0.045, (i + (1 if x > 0.0 else 0)) % 2)
+	_merge_bug(fv)
 	add_skin(fv, "bug_fly", Vector3(0.9, 0.7, 1.3), Vector3(0, -0.05, -0.05), ["WingL", "WingR"])
+	_rig(f, "tripod")
 	pack(f, "res://scenes/bugs/fly.tscn", force)
 
-	# Spider
+	# Spider: eight eyes, fangs, pedipalps, chevron-marked abdomen with
+	# spinnerets, tall-kneed banded legs.
 	var s := scripted(CharacterBody3D.new(), "res://scripts/bugs/spider.gd", "Spider")
 	s.set("stats", load("res://resources/bugs/spider.tres"))
 	shape(s, sphere_shape(0.35))
 	var sv := node3d(s, "Visual")
 	mesh(sv, "Abdomen", sphere(0.42), "spider", Vector3(0, 0.1, 0.45), Vector3.ZERO, Vector3(1, 0.85, 1.15))
-	mesh(sv, "Thorax", sphere(0.26), "spider", Vector3(0, 0.02, -0.15))
-	mesh(sv, "Eyes", box(Vector3(0.22, 0.06, 0.04)), "fly_eye", Vector3(0, 0.12, -0.38))
-	_legs(sv, 4, 1.1, "spider", -0.05, 0.4)
+	mesh(sv, "Stripe", box(Vector3(0.06, 0.03, 0.5)), "spider_mark", Vector3(0, 0.45, 0.42), Vector3(-0.1, 0, 0))
+	for i in 3:
+		for x in [-1.0, 1.0]:
+			mesh(sv, "Chevron", box(Vector3(0.22 - i * 0.04, 0.025, 0.05)), "spider_mark",
+				Vector3(x * 0.09, 0.44 - i * 0.03, 0.38 + i * 0.13), Vector3(0, x * 0.6, 0))
+	for x in [-1.0, 1.0]:
+		mesh(sv, "Spinneret", cyl(0.05, 0.12, 0.02), "spider_band", Vector3(x * 0.04, 0.02, 0.93), Vector3(PI * 0.5, 0, 0))
+	mesh(sv, "Thorax", sphere(0.28), "spider", Vector3(0, 0.02, -0.15), Vector3.ZERO, Vector3(1, 0.7, 1.1))
+	mesh(sv, "ThoraxBand", box(Vector3(0.1, 0.03, 0.4)), "spider_band", Vector3(0, 0.21, -0.15))
+	for x in [-1.0, 1.0]:
+		mesh(sv, "EyeBig", sphere(0.065), "spider_eye", Vector3(x * 0.055, 0.13, -0.42))
+		mesh(sv, "EyeSide", sphere(0.045), "spider_eye", Vector3(x * 0.13, 0.12, -0.38))
+		mesh(sv, "EyeTop", sphere(0.035), "spider_eye", Vector3(x * 0.06, 0.19, -0.34))
+		mesh(sv, "EyeBack", sphere(0.035), "spider_eye", Vector3(x * 0.14, 0.18, -0.3))
+		mesh(sv, "Chelicera", sphere(0.07), "spider", Vector3(x * 0.06, -0.04, -0.44), Vector3.ZERO, Vector3(0.8, 1.3, 0.8))
+		mesh(sv, "Fang", cyl(0.025, 0.1, 0.0), "fang", Vector3(x * 0.06, -0.14, -0.46))
+		var palp := node3d(sv, "Palp" + ("L" if x < 0.0 else "R"), Vector3(x * 0.11, -0.02, -0.4))
+		mesh(palp, "Seg", box(Vector3(0.04, 0.04, 0.2)), "spider", Vector3(0, 0.03, -0.09), Vector3(0.4, x * 0.2, 0))
+		mesh(palp, "Club", sphere(0.04), "spider_band", Vector3(0, -0.02, -0.2))
+	var spider_fwd := [0.95, 0.35, -0.3, -0.9]
+	for i in 4:
+		for x in [-1.0, 1.0]:
+			_leg(sv, "Leg%s%d" % ["L" if x < 0.0 else "R", i + 1], x, spider_fwd[i], Vector3(x * 0.16, 0.0, -0.3 + i * 0.1),
+				0.75, 0.95, 0.9, 1.3, "spider", "spider_band", 0.07, (i + (1 if x > 0.0 else 0)) % 2)
+	_merge_bug(sv)
 	add_skin(sv, "bug_spider", Vector3(2.3, 0.8, 2.3), Vector3(0, 0.0, 0.1))
+	_rig(s, "alternate")
 	var zl := mesh(s, "ZipLine", box(Vector3(0.06, 0.06, 1.0)), "web")
 	zl.top_level = true
 	zl.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
@@ -228,25 +384,113 @@ static func foot(force: bool) -> void:
 	var v := node3d(f, "Visual")
 	mesh(v, "Shoe", box(Vector3(4.2, 2.6, 10.4)), "shoe", Vector3(0, 1.3, -0.6))
 	mesh(v, "Toe", sphere(2.1), "shoe", Vector3(0, 1.2, -5.2), Vector3.ZERO, Vector3(1, 0.6, 0.6))
-	mesh(v, "Leg", cyl(1.9, 36.0, 2.6), "jeans", Vector3(0, 20.5, 2.0))
-	add_skin(v, "human_sneaker", Vector3(4.6, 3.2, 11.6), Vector3(0, 1.6, -1.0), ["Leg"])
+	mesh(v, "Sole", box(Vector3(4.4, 0.5, 11.2)), "plastic_white", Vector3(0, 0.25, -0.9))
+	mesh(v, "Laces", box(Vector3(2.0, 0.3, 4.0)), "plastic_white", Vector3(0, 2.65, -2.4))
+	mesh(v, "Ankle", cyl(2.0, 2.4, 2.2), "jeans", Vector3(0, 3.4, 2.2))
+	merge_meshes(v, ["Ankle"])
+	add_skin(v, "human_sneaker", Vector3(4.6, 3.2, 11.6), Vector3(0, 1.6, -1.0), ["Ankle"])
 	pack(f, "res://scenes/hazards/foot.tscn", force)
 
 
-static func human(force: bool, path: String, config: String, torso_mat: String, has_paper: bool) -> void:
+## A person: jointed arms with hands, a face, hair, and legs that bend at the
+## knee to reach each foot (posed every frame by human.gd). Forward is -Z;
+## the body's centre line is at z = 2 (above the heels).
+## outfit: "casual" (t-shirt, watch), "reader" (cardigan, glasses),
+## "hazmat" (exterminator suit, hood, goggles, respirator, tank).
+static func human(force: bool, path: String, config: String, outfit: String, has_paper: bool) -> void:
 	var h := scripted(CharacterBody3D.new(), "res://scripts/threats/human.gd", "Human")
 	h.set("config", load(config))
-	h.set("icon_height", 78.0)
+	h.set("icon_height", 80.0)
 	var cap := CapsuleShape3D.new()
 	cap.radius = 6.0
 	cap.height = 34.0
 	shape(h, cap, Vector3(0, 55, 0))
+	var top: String = {"casual": "shirt", "reader": "cloth_blue", "hazmat": "hazmat"}[outfit]
+	var pants := "hazmat" if outfit == "hazmat" else "jeans"
+	var hand := "shoe" if outfit == "hazmat" else "skin"
+	var sleeve_long := outfit != "casual"
+
 	var torso := node3d(h, "Torso")
-	mesh(torso, "Hips", box(Vector3(13, 9, 7)), "jeans", Vector3(0, 39, 2))
-	mesh(torso, "Chest", box(Vector3(15, 20, 8)), torso_mat, Vector3(0, 53, 2))
-	mesh(torso, "ArmL", cyl(1.6, 20), "skin", Vector3(-9.5, 52, 2), Vector3(0, 0, 0.12))
-	mesh(torso, "ArmR", cyl(1.6, 20), "skin", Vector3(9.5, 52, 2), Vector3(0, 0, -0.12))
-	mesh(torso, "Head", sphere(5.0), "skin", Vector3(0, 68, 2))
+	mesh(torso, "Pelvis", sphere(1.0), pants, Vector3(0, 38.5, 2), Vector3.ZERO, Vector3(7.2, 5.5, 4.6))
+	mesh(torso, "Belt", cyl(6.9, 1.6), "belt" if outfit != "hazmat" else "dark_metal", Vector3(0, 42.5, 2), Vector3.ZERO, Vector3(1, 1, 0.68))
+	mesh(torso, "Buckle", box(Vector3(2.0, 1.4, 0.4)), "metal", Vector3(0, 42.5, -2.75))
+	mesh(torso, "Waist", cyl(6.2, 7.0, 7.0), top, Vector3(0, 46.6, 2), Vector3.ZERO, Vector3(1, 1, 0.66))
+	mesh(torso, "Chest", sphere(1.0), top, Vector3(0, 54.5, 2), Vector3.ZERO, Vector3(8.0, 9.0, 5.0))
+	mesh(torso, "Collar", cyl(2.7, 1.4), top, Vector3(0, 62.6, 2))
+	mesh(torso, "Neck", cyl(2.0, 4.0), "skin" if outfit != "hazmat" else "hazmat", Vector3(0, 64.2, 2))
+	if outfit == "reader":
+		for x in [-1.0, 1.0]:
+			mesh(torso, "Button", sphere(0.35), "belt", Vector3(0, 50 + x * 3.0, -2.95))
+		mesh(torso, "Placket", box(Vector3(0.5, 16, 0.3)), "belt", Vector3(0, 53, -2.85))
+	if outfit == "hazmat":
+		mesh(torso, "Tank", cyl(2.6, 14.0), "metal", Vector3(0, 52, 7.6))
+		mesh(torso, "TankCap", cyl(1.0, 1.6), "dark_metal", Vector3(0, 59.8, 7.6))
+		mesh(torso, "Strap", box(Vector3(1.2, 16, 0.4)), "dark_metal", Vector3(-3.5, 54, -2.9))
+		mesh(torso, "Strap", box(Vector3(1.2, 16, 0.4)), "dark_metal", Vector3(3.5, 54, -2.9))
+
+	var head := node3d(torso, "Head", Vector3(0, 65.5, 2))
+	mesh(head, "Skull", sphere(4.4), "skin", Vector3(0, 4.8, 0), Vector3.ZERO, Vector3(1, 1.18, 1.08))
+	mesh(head, "Jaw", sphere(3.4), "skin", Vector3(0, 2.6, -0.8), Vector3.ZERO, Vector3(1, 0.72, 1))
+	for x in [-1.0, 1.0]:
+		var side := "L" if x < 0.0 else "R"
+		mesh(head, "Eye" + side, sphere(0.7), "eye_white", Vector3(x * 1.6, 5.3, -4.05))
+		mesh(head, "Iris" + side, sphere(0.36), "iris", Vector3(x * 1.6, 5.3, -4.65))
+		mesh(head, "Brow" + side, box(Vector3(1.9, 0.35, 0.45)), "hair", Vector3(x * 1.6, 6.55, -4.25), Vector3(0, 0, -x * 0.08))
+		mesh(head, "Ear" + side, sphere(0.9), "skin", Vector3(x * 4.35, 4.8, 0.4), Vector3.ZERO, Vector3(0.5, 1.3, 1))
+	mesh(head, "Nose", sphere(0.6), "skin", Vector3(0, 4.2, -4.85), Vector3.ZERO, Vector3(0.8, 1.25, 1.3))
+	mesh(head, "Mouth", box(Vector3(2.0, 0.35, 0.3)), "lips", Vector3(0, 2.55, -4.1))
+	if outfit == "hazmat":
+		mesh(head, "Hood", sphere(4.9), "hazmat", Vector3(0, 5.6, 0.6), Vector3.ZERO, Vector3(1.05, 1.15, 1.12))
+		mesh(head, "Goggles", box(Vector3(6.4, 1.8, 1.2)), "goggles", Vector3(0, 5.4, -4.3))
+		mesh(head, "Respirator", cyl(1.5, 1.8, 1.1), "dark_metal", Vector3(0, 2.6, -4.6), Vector3(PI * 0.5, 0, 0))
+		for x in [-1.0, 1.0]:
+			mesh(head, "Filter", cyl(0.9, 1.0), "dark_metal", Vector3(x * 2.0, 2.2, -4.2), Vector3(PI * 0.5, 0, x * 0.6))
+	else:
+		mesh(head, "Hair", sphere(4.6), "hair", Vector3(0, 7.2, 0.7), Vector3.ZERO, Vector3(1.04, 0.8, 1.1))
+		mesh(head, "HairBack", sphere(4.3), "hair", Vector3(0, 5.0, 2.6), Vector3.ZERO, Vector3(1.0, 1.0, 0.62))
+	if outfit == "reader":
+		for x in [-1.0, 1.0]:
+			var ring := TorusMesh.new()
+			ring.inner_radius = 0.95
+			ring.outer_radius = 1.25
+			mesh(head, "Lens", ring, "dark_metal", Vector3(x * 1.65, 5.3, -4.75), Vector3(PI * 0.5, 0, 0))
+		mesh(head, "Bridge", box(Vector3(0.9, 0.2, 0.2)), "dark_metal", Vector3(0, 5.5, -4.95))
+
+	for x in [-1.0, 1.0]:
+		var side := "L" if x < 0.0 else "R"
+		var sh := node3d(torso, "Shoulder" + side, Vector3(x * 8.4, 59.5, 2))
+		sh.rotation = Vector3(0, 0, -x * 0.07)
+		mesh(sh, "Deltoid", sphere(2.6), top)
+		if sleeve_long:
+			mesh(sh, "UpperArm", capsule(1.95, 13.0), top, Vector3(0, -6.0, 0))
+		else:
+			mesh(sh, "Sleeve", capsule(2.1, 7.0), top, Vector3(0, -3.0, 0))
+			mesh(sh, "UpperArm", capsule(1.6, 9.5), "skin", Vector3(0, -7.4, 0))
+		var el := node3d(sh, "Elbow", Vector3(0, -12.0, 0))
+		el.rotation = Vector3(0.15, 0, 0)
+		mesh(el, "Forearm", capsule(1.55 if not sleeve_long else 1.75, 11.5), "skin" if not sleeve_long else top, Vector3(0, -5.2, 0))
+		if outfit == "hazmat":
+			mesh(el, "Cuff", cyl(1.9, 1.2), "dark_metal", Vector3(0, -10.4, 0))
+		elif x < 0.0 and outfit == "casual":
+			mesh(el, "Watch", cyl(1.75, 1.0), "dark_metal", Vector3(0, -9.6, 0))
+		var hd := node3d(el, "Hand", Vector3(0, -11.3, 0))
+		mesh(hd, "Palm", sphere(1.0), hand, Vector3(0, -1.0, 0), Vector3.ZERO, Vector3(1.5, 1.9, 0.85))
+		mesh(hd, "Thumb", capsule(0.45, 2.4), hand, Vector3(-x * 1.2, -1.2, -0.9), Vector3(0.5, 0, x * 0.5))
+		for i in 4:
+			mesh(hd, "Finger", capsule(0.36, 2.5 if i in [1, 2] else 2.1), hand,
+				Vector3(lerpf(-1.05, 1.05, i / 3.0), -3.5, 0), Vector3(0.12, 0, 0))
+
+	for n: Node in _pivots(torso):
+		merge_meshes(n)
+
+	# Legs: posed every frame from the hip sockets to the feet (two-bone IK).
+	var legs := node3d(h, "Legs")
+	legs.top_level = true
+	for side in ["L", "R"]:
+		mesh(legs, "Thigh" + side, capsule(2.75, 19.5), pants)
+		mesh(legs, "Knee" + side, sphere(2.45), pants)
+		mesh(legs, "Shin" + side, capsule(2.3, 19.0), pants)
+
 	var foot_scene: PackedScene = load("res://scenes/hazards/foot.tscn")
 	var lf := foot_scene.instantiate()
 	lf.name = "LeftFoot"
@@ -326,8 +570,8 @@ static func vacuum(force: bool) -> void:
 
 static func threats(force: bool) -> void:
 	foot(force)
-	human(force, "res://scenes/threats/human.tscn", "res://resources/threats/human.tres", "shirt", false)
-	human(force, "res://scenes/threats/human_reader.tscn", "res://resources/threats/human.tres", "cloth_blue", true)
+	human(force, "res://scenes/threats/human.tscn", "res://resources/threats/human.tres", "casual", false)
+	human(force, "res://scenes/threats/human_reader.tscn", "res://resources/threats/human.tres", "reader", true)
 	human(force, "res://scenes/threats/exterminator.tscn", "res://resources/threats/exterminator.tres", "hazmat", false)
 	pet(force, "res://scenes/threats/cat.tscn", "res://resources/threats/cat.tres", "cat_orange", false, false)
 	pet(force, "res://scenes/threats/dog.tscn", "res://resources/threats/dog.tres", "dog_brown", true, true)
@@ -380,6 +624,7 @@ static func pickups(force: bool) -> void:
 		mesh(v, "A", box(Vector3(0.9, 0.6, 0.7)), mname, Vector3.ZERO, Vector3(0.3, 0.5, 0.2))
 		mesh(v, "B", box(Vector3(0.6, 0.5, 0.8)), mname, Vector3(0.25, 0.15, 0.1), Vector3(-0.4, 1.1, 0.3))
 		mesh(v, "C", box(Vector3(0.4, 0.4, 0.4)), mname, Vector3(-0.35, 0.05, -0.2), Vector3(0.7, 0.2, 0.9))
+		merge_meshes(v)
 		add_skin(v, "golden_crumb" if golden else "crumb", Vector3(1.3, 0.9, 1.3), Vector3(0, 0.05, 0))
 		if golden:
 			var glow := OmniLight3D.new()
@@ -400,6 +645,114 @@ static func pickups(force: bool) -> void:
 	ring.outer_radius = 3.0
 	mesh(beacon, "Ring", ring, "arrow", Vector3(0, 0.3, 0))
 	pack(g, "res://scenes/world/goal.tscn", force)
+
+
+## Bug food and crumb gems: one scene per item, all using PickupItem.
+static func items(force: bool) -> void:
+	var foods := ["sugar_cube", "cheese", "mint_leaf", "honey_drop", "coffee_bean", "kibble"]
+	var gems := ["gem_amethyst", "gem_amber", "gem_emerald", "gem_ruby", "gem_diamond", "gem_sapphire"]
+	for id: String in foods + gems:
+		var gem := id.begins_with("gem_")
+		var it := scripted(Area3D.new(), "res://scripts/world/pickup_item.gd", id.to_pascal_case())
+		it.set("def", load("res://resources/items/%s.tres" % id))
+		var h := 1.7 if gem else 0.65
+		shape(it, sphere_shape(1.5 if gem else 1.3), Vector3(0, h, 0))
+		var v := node3d(it, "Visual", Vector3(0, h, 0))
+		var fit := _item_visual(v, id)
+		merge_meshes(v)
+		var keep := ["Glow", "Sparkles"]
+		add_skin(v, id, fit, Vector3.ZERO, keep, 180.0)
+		if gem:
+			var glow := OmniLight3D.new()
+			glow.name = "Glow"
+			glow.light_color = (load("res://resources/items/%s.tres" % id) as ItemDef).color
+			glow.omni_range = 5.0
+			glow.light_energy = 1.2
+			v.add_child(glow)
+			var sp := node3d(v, "Sparkles")
+			for i in 4:
+				var a := TAU * i / 4.0
+				var m := mesh(sp, "Sparkle", box(Vector3(0.12, 0.12, 0.12)), "sparkle",
+					Vector3(cos(a) * 1.1, 0.35 * sin(a * 2.0), sin(a) * 1.1), Vector3(0.6, a, 0.6))
+				m.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+			merge_meshes(sp)
+			var halo := mesh(it, "Halo", cyl(1.2, 0.04), "light_tint", Vector3(0, 0.05, 0))
+			halo.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		pack(it, "res://scenes/items/%s.tscn" % id, force)
+
+
+## Builds an item's placeholder look; returns the box a generated model fits in.
+static func _item_visual(v: Node3D, id: String) -> Vector3:
+	match id:
+		"sugar_cube":
+			mesh(v, "Cube", box(Vector3(1.1, 1.1, 1.1)), "sugar", Vector3.ZERO, Vector3(0.1, 0.4, 0.05))
+			for p in [Vector3(0.8, -0.45, 0.3), Vector3(-0.7, -0.5, -0.4), Vector3(0.2, -0.5, -0.85)]:
+				mesh(v, "Grain", box(Vector3(0.22, 0.22, 0.22)), "sugar", p, Vector3(0.5, p.x, 0.3))
+			return Vector3(1.8, 1.3, 1.8)
+		"cheese":
+			var w := PrismMesh.new()
+			w.size = Vector3(1.6, 1.0, 1.2)
+			w.left_to_right = 0.0
+			mesh(v, "Wedge", w, "cheese", Vector3(0, -0.1, 0))
+			for p in [Vector3(-0.2, -0.05, 0.61), Vector3(0.25, -0.35, 0.61), Vector3(-0.45, -0.4, -0.61), Vector3(0.1, -0.2, -0.61)]:
+				mesh(v, "Hole", sphere(0.13), "cheese_hole", p, Vector3.ZERO, Vector3(1, 1, 0.4))
+			return Vector3(1.7, 1.1, 1.3)
+		"mint_leaf":
+			mesh(v, "Leaf", sphere(0.75), "mint", Vector3(0, -0.4, 0), Vector3(0, 0.3, 0), Vector3(0.8, 0.12, 1.5))
+			mesh(v, "Rib", box(Vector3(0.06, 0.06, 1.9)), "leaf_green", Vector3(0, -0.3, 0), Vector3(0, 0.3, 0))
+			mesh(v, "Stem", cyl(0.05, 0.6), "leaf_green", Vector3(0.38, -0.35, 0.95), Vector3(PI * 0.5, 0.3, 0))
+			return Vector3(1.4, 0.4, 2.4)
+		"honey_drop":
+			mesh(v, "Drop", sphere(0.55), "honey", Vector3(0, -0.1, 0))
+			mesh(v, "Tip", cyl(0.53, 0.75, 0.02), "honey", Vector3(0, 0.45, 0))
+			mesh(v, "Puddle", cyl(0.75, 0.08), "honey", Vector3(0, -0.6, 0))
+			return Vector3(1.5, 1.4, 1.5)
+		"coffee_bean":
+			mesh(v, "Bean", sphere(0.55), "coffee", Vector3(0, -0.2, 0), Vector3.ZERO, Vector3(0.85, 0.6, 1.2))
+			mesh(v, "Crease", box(Vector3(0.07, 0.06, 1.15)), "roach_dark", Vector3(0, 0.12, 0), Vector3(0, 0, 0))
+			return Vector3(1.0, 0.8, 1.4)
+		"kibble":
+			for p in [Vector3(-0.35, -0.4, 0.1), Vector3(0.4, -0.4, -0.15), Vector3(0.05, -0.05, 0.05)]:
+				var k := cyl(0.42, 0.32)
+				k.radial_segments = 6
+				mesh(v, "Kibble", k, "kibble", p, Vector3(0.2 * p.x, p.z * 3.0, 0.15))
+			return Vector3(1.7, 0.9, 1.3)
+		"gem_amethyst":
+			var col := cyl(0.42, 1.1)
+			col.radial_segments = 6
+			mesh(v, "Crystal", col, id, Vector3(0, -0.15, 0))
+			var tip := cyl(0.42, 0.55, 0.0)
+			tip.radial_segments = 6
+			mesh(v, "Tip", tip, id, Vector3(0, 0.67, 0))
+			var small := cyl(0.22, 0.7)
+			small.radial_segments = 6
+			mesh(v, "Shard", small, id, Vector3(0.45, -0.35, 0.1), Vector3(0, 0, -0.5))
+			return Vector3(1.2, 1.9, 1.0)
+		"gem_amber":
+			mesh(v, "Amber", sphere(0.7), id, Vector3.ZERO, Vector3.ZERO, Vector3(0.85, 1.0, 0.7))
+			# A tiny ancient bug trapped inside.
+			mesh(v, "Fossil", sphere(0.16), "roach_dark", Vector3(0, -0.05, 0), Vector3.ZERO, Vector3(0.7, 0.5, 1.4))
+			return Vector3(1.2, 1.4, 1.0)
+		"gem_emerald":
+			mesh(v, "Table", box(Vector3(0.8, 1.2, 0.45)), id)
+			mesh(v, "Bevel", box(Vector3(0.6, 1.0, 0.6)), id, Vector3.ZERO, Vector3(0, PI * 0.25, 0))
+			return Vector3(1.0, 1.3, 1.0)
+		"gem_ruby", "gem_diamond":
+			var segs := 8 if id == "gem_diamond" else 6
+			var crown := cyl(0.75, 0.32, 0.5)
+			crown.radial_segments = segs
+			mesh(v, "Crown", crown, id, Vector3(0, 0.25, 0))
+			var pav := cyl(0.0, 0.85, 0.75)
+			pav.radial_segments = segs
+			mesh(v, "Pavilion", pav, id, Vector3(0, -0.33, 0))
+			return Vector3(1.6, 1.3, 1.6)
+		"gem_sapphire":
+			var ov := sphere(0.6)
+			ov.radial_segments = 8
+			ov.rings = 4
+			mesh(v, "Oval", ov, id, Vector3.ZERO, Vector3.ZERO, Vector3(0.8, 1.15, 0.55))
+			return Vector3(1.1, 1.5, 0.8)
+	return Vector3.ONE
 
 
 static func _prop(force: bool, name: String, m: Mesh, s: Shape3D, material: String, mass: float,

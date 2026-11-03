@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="ItemDef" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/item_def.gd" id="1_7scfa"]
+
+[resource]
+script = ExtResource("1_7scfa")
+id = &"gem_sapphire"
+display_name = "Sapphire Gem"
+kind = 1
+effect = &"decoy"
+amount = 3.0
+points = 300
+color = Color(0.15, 0.35, 1, 1)
+blurb = "Echo Decoy: a humming shard lures threats to where you stood."

@@ -77,6 +77,10 @@ func _ready() -> void:
 			if not crumb.golden:
 				normal += 1
 	crumbs_needed = mini(config.crumbs_required, normal)
+	for it in get_tree().get_nodes_in_group(Phys.GROUP_ITEM):
+		var item := it as PickupItem
+		if item and is_ancestor_of(item):
+			item.collected.connect(_on_item_collected)
 	goal = find_child("Goal", true, false) as Goal
 	if goal:
 		goal.reached.connect(_on_goal_reached)
@@ -181,6 +185,37 @@ func _on_crumb_collected(c: Crumb) -> void:
 		crumbs_got += 1
 		run.crumbs = crumbs_got
 	crumbs_changed.emit(crumbs_got, crumbs_needed)
+	_check_goal()
+
+
+## Bug food and crumb gems.
+func _on_item_collected(item: PickupItem) -> void:
+	if item.def == null or player == null:
+		return
+	var line := PowerUps.apply(item.def, player)
+	if run:
+		if item.is_gem():
+			run.gems.append(item.def.id)
+			run.gem_points += item.def.points
+			SaveSystem.record_gem(item.def.id)
+		else:
+			run.foods_eaten += 1
+			run.food_points += item.def.points
+	set_hint(line)
+
+
+## Kibble and other big meals count as several crumbs.
+func add_bonus_crumbs(n: int) -> void:
+	if n <= 0:
+		return
+	crumbs_got += n
+	if run:
+		run.crumbs = crumbs_got
+	crumbs_changed.emit(crumbs_got, crumbs_needed)
+	_check_goal()
+
+
+func _check_goal() -> void:
 	if goal and crumbs_got >= crumbs_needed and not goal.active:
 		goal.set_active(true)
 		AudioManager.play(&"goal_open")

@@ -58,19 +58,46 @@ Standing still blends you in. Shadows hide you, bright light and noisy
 surfaces (chip bags, foil, dishes, leaves) give you away. Keys can be rebound
 in **Settings**.
 
+**Bug food and crumb gems.** Food is common and gives a short boost; gems
+are rare (two per room, one always on the floor), glow, and have real powers.
+Touch one to use it. Active effects and their timers show under your crumbs.
+
+| Food | Effect |
+|---|---|
+| Sugar Cube | Sugar Rush: 35% faster for 8 s, meters topped up |
+| Cheese Crumb | One extra shell (one more hit) |
+| Mint Leaf | No scent trail for 15 s - dogs lose you |
+| Honey Drop | Steps 70% quieter for 12 s |
+| Coffee Bean | Wired for 10 s: fast dodges, Sense and stamina don't run out |
+| Dog Kibble | Counts as 2 crumbs |
+
+| Gem | Power |
+|---|---|
+| Amethyst | Shadow Cloak: almost invisible for 12 s |
+| Amber | Time Freeze: every person and pet stops for 5 s |
+| Emerald | Calm: the alarm empties and stays empty for 12 s |
+| Ruby | Iron Shell: nothing can hurt you for 8 s |
+| Diamond | Crumb Magnet: nearby crumbs fly to you for 12 s |
+| Sapphire | Echo Decoy: a humming shard lures threats to where you stood |
+
+Food and gems add to your score; find two gems in a run you win for the
+**Gem Hunter** badge. Gems you find are kept in your save.
+
 **Places to hide.** Every bug can crawl into the things lying around the
 house and be completely hidden (no squeezing needed): a paper cup on its side,
-an old sneaker, a tipped-over grocery bag, a folded towel and a napkin tent on
-the counters, slippers, a fallen pillow, a shoe, an overturned flowerpot, a
-coiled garden hose. A stack of mail, a magazine pile, toy blocks, rocks and a
-garden gnome block sight lines, and tall grass in the backyard keeps you in
-shade. Inside a shelter you can't be seen or hit, and the alarm gauge drains
+an old sneaker, a tipped-over grocery bag, a recycling box, a folded towel and
+a napkin tent on the counters, slippers, a fallen pillow, a shoe, a laundry
+basket, an overturned flowerpot, a coiled garden hose, a tipped wheelbarrow.
+A stack of mail, a flour sack, a magazine pile, toy blocks, a cat bed, rocks,
+a woodpile and a garden gnome block sight lines, and tall grass in the
+backyard keeps you in shade. You can also hide under the fridge, the couch,
+the armchair, the doghouse and the garden shed. Inside a shelter you can't be seen or hit, and the alarm gauge drains
 three times faster.
 
 ## 3. Test it
 
 All checks: import, boot, warnings-as-errors, an offline test of the Meshy
-client, then the 120-check smoke test and the 205-check phase audit
+client, then the 120-check smoke test and the 241-check phase audit
 (`tests/phase_audit.tscn`, one section per build phase plus one per update),
 each run in the project **and** against an exported pack. Any script or
 engine error fails the run:
@@ -89,7 +116,7 @@ godot --headless --path . res://tests/smoke_test.tscn --fixed-fps 60
 Run one section of the audit with
 `godot --headless --path . res://tests/phase_audit.tscn --fixed-fps 60 -- --phase=4`
 (1-6 are the build phases, 7 the alarm gauge and fly moves, 8 cover and model
-slots).
+slots, 9 bigger rooms, people, bug detail, food and gems).
 
 `godot` means the Godot executable, e.g.
 `C:\Godot\Godot_v4.7.2-stable_win64_console.exe`. The smoke test prints
@@ -140,6 +167,7 @@ need the AAB from the *Android AAB* preset instead (see the checklist).
 | Daily routine per room (when the human, TV, sprinklers... are on) | `resources/routines/*.tres` |
 | Crumb targets, par time, unlocks | `resources/levels/*.tres` |
 | Colony upgrades | `resources/upgrades/*.tres` |
+| Bug food and gem effects (duration, strength, points) | `resources/items/*.tres` |
 | Level layouts | open `scenes/levels/*.tscn` in the editor |
 
 All of these open in the Godot inspector.
@@ -161,7 +189,7 @@ All of these open in the Godot inspector.
 Every bug, threat, pickup, hiding spot and big piece of furniture has a model
 slot. Drop `assets/models/<model_id>.glb` into the project and it replaces the
 placeholder automatically, fitted to the same space. `tools/meshy/generate.py`
-makes all 57 with Meshy's text-to-3D API from the prompts in
+makes all 84 with Meshy's text-to-3D API from the prompts in
 `tools/meshy/assets.json`; see [tools/meshy/README.md](tools/meshy/README.md).
 
 ### Regenerating content from code

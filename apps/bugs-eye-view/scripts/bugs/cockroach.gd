@@ -41,7 +41,7 @@ func _move(delta: float) -> void:
 		speed *= 1.0 + stats.scatter_boost
 	if is_squeezing:
 		speed *= stats.squeeze_speed_mult
-	speed *= slow_mult
+	speed *= speed_scale()
 	ground_move(delta, speed)
 	face_velocity(delta)
 	_playing_dead = is_frozen() and _suspicious_threat_near()

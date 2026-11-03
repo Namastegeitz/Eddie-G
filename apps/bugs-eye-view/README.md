@@ -25,16 +25,29 @@ and escape. One codebase for Android, iOS, Windows, macOS, Linux and the web.
   web lines that stay behind as bridges, spins web traps, feels footsteps as
   ripples through walls.
 
-**Three rooms, each with a boss chase when the exit opens**
+**Three big rooms, each with a boss chase when the exit opens**
 - **Kitchen**: the human's feet and swatter, a sink drain, a glue trap, the
-  fridge light. Boss: *Cleaning Day* (the robot vacuum hunts your noise,
-  then the spray comes out).
+  fridge light, an island, a pantry, pet bowls and a mop bucket. Boss:
+  *Cleaning Day* (the robot vacuum hunts your noise, then the spray comes out).
 - **Living Room**: the TV masks your noise but its glow exposes you, a fan
-  blows flyers off course, the cat leaps onto furniture and knocks things
-  over. Boss: *The Cat*.
-- **Backyard**: open sky, a dog that follows your scent trail, sprinklers and
-  puddles that wash it away, crunchy leaf piles. Boss: *The Exterminator*,
-  a fog front that sweeps the yard.
+  blows flyers off course, a reading corner with an armchair and an aquarium
+  (bubbles mask you, its glow gives you away), the cat leaps onto furniture
+  and knocks things over. Boss: *The Cat*.
+- **Backyard**: open sky, a dog that follows your scent trail, sprinklers,
+  puddles and a bird bath that wash it away, crunchy leaf piles and compost, a
+  vegetable garden and a garden shed. Boss: *The Exterminator*, a fog front
+  that sweeps the yard.
+
+**Bug food and crumb gems**: sugar, cheese, mint, honey, coffee and kibble
+give short boosts; six glowing gems give real powers (near-invisibility,
+freezing everyone, calming the alarm, an iron shell, a crumb magnet, an echo
+decoy).
+
+**People and bugs**: humans have full bodies (faces, hair, hands, outfits)
+that walk with bending knees and swinging arms, turn their heads toward
+noises and raise the swatting arm when they spot you. The bugs have jointed
+legs that scuttle in a real gait, twitching antennae, wing veins, eight
+spider eyes and fangs, and clean their antennae when left idle.
 
 **Stealth systems**
 - Light and shadow zones, noisy and quiet surfaces, ambient noise that masks
@@ -68,13 +81,18 @@ giant muffled human voices, a heartbeat that rises when you're hunted.
 All six build phases from the prompt are done. Placeholder art and sound
 throughout (generated primitives and synthesized audio), ready to swap.
 Every bug, threat, pickup, hiding spot and big piece of furniture has a slot
-for a generated 3D model; `tools/meshy/generate.py` makes them with Meshy
+for a generated 3D model (84 in all); `tools/meshy/generate.py` makes them with Meshy
 (needs your Meshy API key; see [tools/meshy/README.md](tools/meshy/README.md)).
 
 - Two headless test suites pass in the project and in an exported build
-  (`tools/run_tests.sh`): a 120-check smoke test and a 205-check phase audit
-  that walks the spec phase by phase, plus the alarm gauge, fly moves, hiding
-  spots and model slots. Zero GDScript warnings, zero engine errors.
+  (`tools/run_tests.sh`): a 120-check smoke test and a 241-check phase audit
+  that walks the spec phase by phase, plus every update since (alarm gauge,
+  fly moves, hiding spots, model slots, bigger rooms, people, bug detail, food
+  and gems). Zero GDScript warnings, zero engine errors.
+- Ideas and ready-made prompts for what to build next:
+  [docs/TOOL_IDEAS.md](docs/TOOL_IDEAS.md),
+  [../../prompts/claude/bugs-eye-view-next.md](../../prompts/claude/bugs-eye-view-next.md),
+  [../../prompts/codex/bugs-eye-view-tasks.md](../../prompts/codex/bugs-eye-view-tasks.md).
 - Android test app (debug-signed): [dist/android/bugseyeview-debug.apk](dist/android/bugseyeview-debug.apk).
 - Builds produced and checked: Android debug APK (signed), Windows, macOS,
   Linux, Web, and the iOS Xcode project. The web build was played in a

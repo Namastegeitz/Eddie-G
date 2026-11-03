@@ -151,14 +151,16 @@ func _hearing_mult() -> float:
 
 # --- Reactions --------------------------------------------------------------
 
-func stun(seconds: float = -1.0) -> void:
+## `quiet`: frozen by a gem rather than tricked, so it doesn't count as a
+## threat you turned.
+func stun(seconds: float = -1.0, quiet: bool = false) -> void:
 	if not present:
 		return
 	var was_stunned := stun_time > 0.0
 	stun_time = config.stun_duration if seconds < 0.0 else seconds
 	alert.lose_track()
 	velocity = Vector3.ZERO
-	if not was_stunned:
+	if not was_stunned and not quiet:
 		stunned.emit(self)
 		PerceptionSystem.notify_stunned(self)
 		AudioManager.play_at(&"stun", eye_position(), 0.0)

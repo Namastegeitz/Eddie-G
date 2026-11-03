@@ -2,5 +2,5 @@
 
 [ext_resource type="Script" path="res://scripts/fx/ripple.gd" id="1_fcn4q"]
 
-[node name="Ripple" type="Node3D" unique_id=2101444964]
+[node name="Ripple" type="Node3D" unique_id=645876530]
 script = ExtResource("1_fcn4q")

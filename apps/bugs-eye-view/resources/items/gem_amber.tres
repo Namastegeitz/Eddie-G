@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="ItemDef" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/item_def.gd" id="1_ousa2"]
+
+[resource]
+script = ExtResource("1_ousa2")
+id = &"gem_amber"
+display_name = "Amber Gem"
+kind = 1
+effect = &"freeze"
+duration = 5.0
+points = 300
+color = Color(1, 0.6, 0.1, 1)
+blurb = "Time Freeze: every person and pet stops for 5 seconds."

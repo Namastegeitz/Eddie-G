@@ -31,7 +31,8 @@ func _card(cfg: LevelConfig) -> Control:
 		return p
 	var b: Dictionary = rec["badges"]
 	var info := "Best %d" % int(rec["best_score"]) if bool(rec["completed"]) else "Not escaped yet"
-	info += "   |   %s %s %s" % ["GHOST" if bool(b["ghost"]) else "ghost", "SPEED" if bool(b["speedrun"]) else "speed", "GOLD" if bool(b["golden"]) else "gold"]
+	info += "   |   %s %s %s %s" % ["GHOST" if bool(b["ghost"]) else "ghost", "SPEED" if bool(b["speedrun"]) else "speed",
+		"GOLD" if bool(b["golden"]) else "gold", "GEMS" if bool(b.get("gem_hunter", false)) else "gems"]
 	info += "   |   Boss: %s" % cfg.boss_name
 	v.add_child(UIKit.label(info, 16, UIKit.DIM))
 	var slots := UIKit.hbox(8)

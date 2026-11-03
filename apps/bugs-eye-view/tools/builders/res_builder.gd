@@ -94,6 +94,40 @@ static func materials(force: bool) -> void:
 		"grape": _mat(Color(0.45, 0.15, 0.5), 0.3),
 		"pea": _mat(Color(0.4, 0.75, 0.25), 0.4),
 		"ball": _mat(Color(0.9, 0.2, 0.2), 0.5),
+		# People
+		"hair": _mat(Color(0.23, 0.15, 0.09), 0.9),
+		"eye_white": _mat(Color(0.96, 0.95, 0.92), 0.3),
+		"iris": _mat(Color(0.2, 0.32, 0.45), 0.2),
+		"lips": _mat(Color(0.72, 0.38, 0.36), 0.6),
+		"belt": _mat(Color(0.25, 0.16, 0.1), 0.5),
+		"goggles": _mat(Color(0.15, 0.25, 0.3, 0.75), 0.1, 0.3),
+		# Bug detail
+		"roach_light": _mat(Color(0.78, 0.6, 0.38), 0.4),
+		"roach_wing": _mat(Color(0.55, 0.3, 0.12), 0.15, 0.1),
+		"roach_dark": _mat(Color(0.2, 0.11, 0.05), 0.4),
+		"fly_stripe": _mat(Color(0.55, 0.55, 0.52), 0.6),
+		"fly_belly": _mat(Color(0.42, 0.38, 0.3), 0.6),
+		"wing_vein": _mat(Color(0.25, 0.22, 0.2, 0.7), 0.4),
+		"spider_mark": _mat(Color(0.82, 0.78, 0.7), 0.6),
+		"spider_band": _mat(Color(0.38, 0.28, 0.2), 0.6),
+		"spider_eye": _mat(Color(0.05, 0.05, 0.06), 0.05, 0.4, false, false, Color(0.6, 0.1, 0.1, 0.4)),
+		"fang": _mat(Color(0.4, 0.05, 0.05), 0.3),
+		# Bug food
+		"sugar": _mat(Color(0.98, 0.98, 1.0), 0.25, 0.0, false, false, Color(1, 1, 1, 0.25)),
+		"cheese": _mat(Color(1.0, 0.8, 0.25), 0.5),
+		"cheese_hole": _mat(Color(0.75, 0.55, 0.12), 0.7),
+		"mint": _mat(Color(0.3, 0.8, 0.45), 0.5),
+		"honey": _mat(Color(1.0, 0.65, 0.08, 0.85), 0.05, 0.0, false, false, Color(1.0, 0.55, 0.05, 0.6)),
+		"coffee": _mat(Color(0.3, 0.17, 0.08), 0.35),
+		"kibble": _mat(Color(0.55, 0.33, 0.16), 0.9),
+		# Crumb gems (glow a little so they read from a distance)
+		"gem_amethyst": _mat(Color(0.62, 0.3, 0.95, 0.85), 0.05, 0.2, false, false, Color(0.6, 0.25, 1.0, 1.2)),
+		"gem_amber": _mat(Color(1.0, 0.6, 0.1, 0.85), 0.05, 0.2, false, false, Color(1.0, 0.5, 0.05, 1.2)),
+		"gem_emerald": _mat(Color(0.15, 0.9, 0.45, 0.85), 0.05, 0.2, false, false, Color(0.1, 0.9, 0.4, 1.2)),
+		"gem_ruby": _mat(Color(0.95, 0.12, 0.2, 0.85), 0.05, 0.2, false, false, Color(1.0, 0.1, 0.15, 1.2)),
+		"gem_diamond": _mat(Color(0.92, 0.97, 1.0, 0.8), 0.02, 0.3, false, false, Color(0.8, 0.95, 1.0, 1.4)),
+		"gem_sapphire": _mat(Color(0.15, 0.35, 1.0, 0.85), 0.05, 0.2, false, false, Color(0.15, 0.4, 1.0, 1.2)),
+		"sparkle": _mat(Color(1.0, 1.0, 0.9), 1.0, 0.0, false, true),
 	}
 	for k: String in defs.keys():
 		var mat: StandardMaterial3D = defs[k]
@@ -102,6 +136,48 @@ static func materials(force: bool) -> void:
 		if k in ["shadow_tint", "light_tint", "gust", "beacon"]:
 			mat.disable_receive_shadows = true
 		save(mat, MAT_DIR + k + ".tres", force)
+
+
+## Bug food (short boosts) and crumb gems (rare powers).
+static func items(force: bool) -> void:
+	var defs := [
+		["sugar_cube", "Sugar Cube", ItemDef.Kind.FOOD, &"speed", 8.0, 1.35, 40, Color(1, 1, 1),
+			"Faster for 8 seconds, and your meters are topped up."],
+		["cheese", "Cheese Crumb", ItemDef.Kind.FOOD, &"hearty", 0.0, 1.0, 60, Color(1, 0.8, 0.25),
+			"One extra shell: you can take another hit."],
+		["mint_leaf", "Mint Leaf", ItemDef.Kind.FOOD, &"fresh", 15.0, 1.0, 40, Color(0.3, 0.8, 0.45),
+			"No scent trail for 15 seconds. Dogs lose you."],
+		["honey_drop", "Honey Drop", ItemDef.Kind.FOOD, &"soft_step", 12.0, 0.3, 40, Color(1, 0.65, 0.1),
+			"Sticky, quiet feet: 70% quieter for 12 seconds."],
+		["coffee_bean", "Coffee Bean", ItemDef.Kind.FOOD, &"wired", 10.0, 1.0, 40, Color(0.45, 0.25, 0.1),
+			"Wired: fast dodges, Sense and stamina never run out (10 s)."],
+		["kibble", "Dog Kibble", ItemDef.Kind.FOOD, &"big_meal", 0.0, 2.0, 30, Color(0.55, 0.33, 0.16),
+			"A feast - counts as 2 crumbs."],
+		["gem_amethyst", "Amethyst Gem", ItemDef.Kind.GEM, &"cloak", 12.0, 0.2, 300, Color(0.62, 0.3, 0.95),
+			"Shadow Cloak: almost invisible for 12 seconds."],
+		["gem_amber", "Amber Gem", ItemDef.Kind.GEM, &"freeze", 5.0, 1.0, 300, Color(1, 0.6, 0.1),
+			"Time Freeze: every person and pet stops for 5 seconds."],
+		["gem_emerald", "Emerald Gem", ItemDef.Kind.GEM, &"calm", 12.0, 1.0, 300, Color(0.15, 0.9, 0.45),
+			"Calm: the alarm empties and stays empty for 12 seconds."],
+		["gem_ruby", "Ruby Gem", ItemDef.Kind.GEM, &"iron_shell", 8.0, 1.0, 300, Color(0.95, 0.12, 0.2),
+			"Iron Shell: nothing can hurt you for 8 seconds."],
+		["gem_diamond", "Diamond Gem", ItemDef.Kind.GEM, &"magnet", 12.0, 25.0, 300, Color(0.92, 0.97, 1),
+			"Crumb Magnet: nearby crumbs fly to you for 12 seconds."],
+		["gem_sapphire", "Sapphire Gem", ItemDef.Kind.GEM, &"decoy", 8.0, 3.0, 300, Color(0.15, 0.35, 1),
+			"Echo Decoy: a humming shard lures threats to where you stood."],
+	]
+	for d: Array in defs:
+		var it := ItemDef.new()
+		it.id = StringName(d[0])
+		it.display_name = d[1]
+		it.kind = d[2]
+		it.effect = d[3]
+		it.duration = d[4]
+		it.amount = d[5]
+		it.points = d[6]
+		it.color = d[7]
+		it.blurb = d[8]
+		save(it, "res://resources/items/%s.tres" % d[0], force)
 
 
 static func configs(force: bool) -> void:
@@ -380,8 +456,8 @@ static func levels(force: bool, routines_by_id: Dictionary) -> void:
 	k.description = "Breakfast rush, a swatter by the sink and a robot vacuum on cleaning day. Learn to hide in the shadows."
 	k.scene_path = "res://scenes/levels/kitchen.tscn"
 	k.order = 0
-	k.crumbs_required = 8
-	k.par_time = 180.0
+	k.crumbs_required = 10
+	k.par_time = 240.0
 	k.unlocks_bug = &"fly"
 	k.boss_name = "Cleaning Day"
 	k.routine = routines_by_id["kitchen"]
@@ -394,8 +470,8 @@ static func levels(force: bool, routines_by_id: Dictionary) -> void:
 	l.description = "The TV hides your noise, the rug muffles your steps - and the cat is always watching."
 	l.scene_path = "res://scenes/levels/living_room.tscn"
 	l.order = 1
-	l.crumbs_required = 9
-	l.par_time = 220.0
+	l.crumbs_required = 11
+	l.par_time = 290.0
 	l.unlock_after = &"kitchen"
 	l.unlocks_bug = &"spider"
 	l.boss_name = "The Cat"
@@ -410,8 +486,8 @@ static func levels(force: bool, routines_by_id: Dictionary) -> void:
 	b.description = "Open sky, a dog with a nose for bugs, sprinklers and the exterminator's fog."
 	b.scene_path = "res://scenes/levels/backyard.tscn"
 	b.order = 2
-	b.crumbs_required = 10
-	b.par_time = 260.0
+	b.crumbs_required = 12
+	b.par_time = 340.0
 	b.unlock_after = &"living_room"
 	b.boss_name = "The Exterminator"
 	b.routine = routines_by_id["backyard"]

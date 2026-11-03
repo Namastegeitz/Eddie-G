@@ -21,6 +21,7 @@ var _meters: StealthMeters
 var _markers: ThreatMarkers
 var _touch: TouchControls
 var _alarm: AlarmGauge
+var _effects: Label
 var _root: Control
 
 
@@ -113,6 +114,9 @@ func _build_top() -> void:
 	_crumbs = _make_label("", 24, UIKit.GOLD)
 	_crumbs.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 	left.add_child(_crumbs)
+	_effects = _make_label("", 18, UIKit.GREEN)
+	_effects.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	left.add_child(_effects)
 	var mid := UIKit.vbox(2)
 	mid.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	mid.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -156,6 +160,7 @@ func bind(lvl: Level) -> void:
 		_update_lives()
 		toast("Hit! Shake it off"))
 	player.died.connect(func(_c: StringName) -> void: _update_lives())
+	player.effects_changed.connect(_update_lives)
 	player.hint_changed.connect(func(t: String) -> void: _hint.text = t)
 	player.sense_changed.connect(func(on: bool) -> void: _tint.visible = on and player is Fly)
 	PerceptionSystem.alert_level_changed.connect(_on_alert_level)
@@ -165,6 +170,19 @@ func bind(lvl: Level) -> void:
 	_update_lives()
 	_update_threat()
 	_update_clock()
+
+
+func _process(_delta: float) -> void:
+	if _effects == null:
+		return
+	var text := ""
+	if player and not player.effects.is_empty():
+		var parts: PackedStringArray = []
+		for k: StringName in player.effects.keys():
+			parts.append("%s %ds" % [PowerUps.label(k).to_upper(), ceili(player.effect_left(k))])
+		text = "  ".join(parts)
+	if text != _effects.text:
+		_effects.text = text
 
 
 func _on_alarm_raised() -> void:
@@ -191,7 +209,7 @@ func _update_lives() -> void:
 	if player == null:
 		return
 	var s := ""
-	for i in player.stats.max_hits:
+	for i in maxi(player.stats.max_hits, player.hits_left):
 		s += "O " if i < player.hits_left else "x "
 	_lives.text = "SHELL " + s if player.stats.max_hits > 1 else "LIFE " + s
 

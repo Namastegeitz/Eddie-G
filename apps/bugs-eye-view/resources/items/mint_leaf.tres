@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="ItemDef" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/item_def.gd" id="1_xuqay"]
+
+[resource]
+script = ExtResource("1_xuqay")
+id = &"mint_leaf"
+display_name = "Mint Leaf"
+effect = &"fresh"
+duration = 15.0
+points = 40
+color = Color(0.3, 0.8, 0.45, 1)
+blurb = "No scent trail for 15 seconds. Dogs lose you."

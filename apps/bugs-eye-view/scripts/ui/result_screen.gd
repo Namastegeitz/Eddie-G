@@ -60,7 +60,7 @@ func show_result(r: Dictionary) -> void:
 	var newly: Array = r.get("new_badges", [])
 	var brow := UIKit.hbox(8)
 	brow.alignment = BoxContainer.ALIGNMENT_CENTER
-	for b in [["ghost", "GHOST"], ["speedrun", "SPEEDRUN"], ["golden", "GOLDEN CRUMB"]]:
+	for b in [["ghost", "GHOST"], ["speedrun", "SPEEDRUN"], ["golden", "GOLDEN CRUMB"], ["gem_hunter", "GEM HUNTER"]]:
 		var got := bool(badges.get(b[0], false))
 		var text := String(b[1]) + (" NEW!" if newly.has(b[0]) else "")
 		brow.add_child(UIKit.label(text, 16, UIKit.GOLD if got else Color(0.35, 0.33, 0.3)))

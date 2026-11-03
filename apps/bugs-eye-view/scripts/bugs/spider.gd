@@ -117,7 +117,7 @@ func _crawl(_delta: float) -> void:
 				n = an
 				wish = surface_wish(input, n)
 	var on_floor := n.dot(Vector3.UP) > 0.7
-	var speed := (stats.move_speed * stats.floor_speed_mult if on_floor else stats.wall_speed) * slow_mult
+	var speed := (stats.move_speed * stats.floor_speed_mult if on_floor else stats.wall_speed) * speed_scale()
 	up_direction = n
 	var v := wish * speed
 	if _dodge_time > 0.0:

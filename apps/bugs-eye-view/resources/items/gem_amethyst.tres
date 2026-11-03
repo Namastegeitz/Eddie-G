@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="ItemDef" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/item_def.gd" id="1_82p3u"]
+
+[resource]
+script = ExtResource("1_82p3u")
+id = &"gem_amethyst"
+display_name = "Amethyst Gem"
+kind = 1
+effect = &"cloak"
+duration = 12.0
+amount = 0.2
+points = 300
+color = Color(0.62, 0.3, 0.95, 1)
+blurb = "Shadow Cloak: almost invisible for 12 seconds."

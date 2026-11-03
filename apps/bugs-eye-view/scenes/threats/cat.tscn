@@ -71,7 +71,7 @@ height = 0.9
 radial_segments = 16
 rings = 8
 
-[node name="Cat" type="CharacterBody3D" unique_id=1852126313]
+[node name="Cat" type="CharacterBody3D" unique_id=1207838103]
 script = ExtResource("1_mkqp4")
 waypoints = PackedVector3Array()
 nap_events = PackedStringArray()
@@ -80,75 +80,75 @@ config = ExtResource("2_vlovx")
 active_events = PackedStringArray()
 icon_height = 10.0
 
-[node name="Shape" type="CollisionShape3D" parent="." unique_id=1114876865]
+[node name="Shape" type="CollisionShape3D" parent="." unique_id=509481745]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 2.4, 0)
 shape = SubResource("CapsuleShape3D_vtqyv")
 
-[node name="Visual" type="Node3D" parent="." unique_id=1938247486]
+[node name="Visual" type="Node3D" parent="." unique_id=239408283]
 
-[node name="Body" type="MeshInstance3D" parent="Visual" unique_id=1960599447]
+[node name="Body" type="MeshInstance3D" parent="Visual" unique_id=1085737943]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 5, 0.5)
 material_override = ExtResource("3_k6uo4")
 mesh = SubResource("CapsuleMesh_qfxdt")
 
-[node name="Head" type="MeshInstance3D" parent="Visual" unique_id=1240141647]
+[node name="Head" type="MeshInstance3D" parent="Visual" unique_id=1781227055]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7.2, -6)
 material_override = ExtResource("3_k6uo4")
 mesh = SubResource("SphereMesh_q2awg")
 
-[node name="EarL" type="MeshInstance3D" parent="Visual" unique_id=1799001602]
+[node name="EarL" type="MeshInstance3D" parent="Visual" unique_id=1766219828]
 transform = Transform3D(1.4, 0, 0, 0, 1.8, 0, 0, 0, 0.6, -1.2, 9.6, -6)
 material_override = ExtResource("3_k6uo4")
 mesh = SubResource("PrismMesh_jsnjl")
 
-[node name="EarR" type="MeshInstance3D" parent="Visual" unique_id=1146647016]
+[node name="EarR" type="MeshInstance3D" parent="Visual" unique_id=1010688462]
 transform = Transform3D(1.4, 0, 0, 0, 1.8, 0, 0, 0, 0.6, 1.2, 9.6, -6)
 material_override = ExtResource("3_k6uo4")
 mesh = SubResource("PrismMesh_xfu1e")
 
-[node name="Tail" type="MeshInstance3D" parent="Visual" unique_id=1083956434]
+[node name="Tail" type="MeshInstance3D" parent="Visual" unique_id=1514469936]
 transform = Transform3D(1, 0, 0, 0, 0.6967067, -0.7173561, 0, 0.7173561, 0.6967067, 0, 7, 7.5)
 material_override = ExtResource("3_k6uo4")
 mesh = SubResource("CylinderMesh_pb7u4")
 
-[node name="Leg" type="MeshInstance3D" parent="Visual" unique_id=240863964]
+[node name="Leg" type="MeshInstance3D" parent="Visual" unique_id=1417326317]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.4, 1.8, -3.5)
 material_override = ExtResource("3_k6uo4")
 mesh = SubResource("CylinderMesh_12jxs")
 
-[node name="Leg2" type="MeshInstance3D" parent="Visual" unique_id=1926255881]
+[node name="Leg2" type="MeshInstance3D" parent="Visual" unique_id=1006462803]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.4, 1.8, 3.5)
 material_override = ExtResource("3_k6uo4")
 mesh = SubResource("CylinderMesh_jiaki")
 
-[node name="Leg3" type="MeshInstance3D" parent="Visual" unique_id=2138547393]
+[node name="Leg3" type="MeshInstance3D" parent="Visual" unique_id=1603080967]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.4, 1.8, -3.5)
 material_override = ExtResource("3_k6uo4")
 mesh = SubResource("CylinderMesh_7t5q1")
 
-[node name="Leg4" type="MeshInstance3D" parent="Visual" unique_id=350866283]
+[node name="Leg4" type="MeshInstance3D" parent="Visual" unique_id=10464917]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.4, 1.8, 3.5)
 material_override = ExtResource("3_k6uo4")
 mesh = SubResource("CylinderMesh_1mqco")
 
-[node name="EyeL" type="MeshInstance3D" parent="Visual" unique_id=1313113208]
+[node name="EyeL" type="MeshInstance3D" parent="Visual" unique_id=980049151]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.9, 7.9, -7.9)
 material_override = ExtResource("4_j72cu")
 mesh = SubResource("SphereMesh_4yel8")
 
-[node name="EyeR" type="MeshInstance3D" parent="Visual" unique_id=2098727164]
+[node name="EyeR" type="MeshInstance3D" parent="Visual" unique_id=1540492641]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.9, 7.9, -7.9)
 material_override = ExtResource("4_j72cu")
 mesh = SubResource("SphereMesh_1faii")
 
-[node name="Skin" type="Node3D" parent="Visual" unique_id=1633352158]
+[node name="Skin" type="Node3D" parent="Visual" unique_id=1744251176]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5, 0.5)
 script = ExtResource("5_svxue")
 model_id = "pet_cat"
 fit_size = Vector3(5.5, 10, 18)
 hide_paths = Array[NodePath]([NodePath("../Body"), NodePath("../Head"), NodePath("../EarL"), NodePath("../EarR"), NodePath("../Tail"), NodePath("../Leg"), NodePath("../Leg2"), NodePath("../Leg3"), NodePath("../Leg4"), NodePath("../EyeL"), NodePath("../EyeR")])
 
-[node name="Agent" type="NavigationAgent3D" parent="." unique_id=2005781806]
+[node name="Agent" type="NavigationAgent3D" parent="." unique_id=2056454042]
 path_desired_distance = 2.0
 target_desired_distance = 2.0
 path_max_distance = 6.0

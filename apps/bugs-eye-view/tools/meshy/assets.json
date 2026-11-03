@@ -1,5 +1,5 @@
 {
-  "about": "Meshy text-to-3D jobs for Bug's-Eye View. Each id matches a SkinAnchor model_id in the game; the generated model is saved as assets/models/<id>.glb and swapped in automatically. Prompts get the style suffix appended. Tier 1 = characters and threats, 2 = cover/props/lures, 3 = furniture.",
+  "about": "Meshy text-to-3D jobs for Bug's-Eye View. Each id matches a SkinAnchor model_id in the game; the generated model is saved as assets/models/<id>.glb and swapped in automatically. Prompts get the style suffix appended. Tier 1 = characters, threats, bug food and crumb gems, 2 = cover/props/lures, 3 = furniture.",
   "style": "Stylized realistic 3D game asset, clean readable silhouette, single isolated object, centered, no base, no ground plane, no background, no text.",
   "defaults": {
     "ai_model": "latest",
@@ -11,64 +11,509 @@
     "enable_pbr": true
   },
   "assets": [
-    {"id": "bug_cockroach", "tier": 1, "target_polycount": 9000, "prompt": "An American cockroach seen at insect scale: glossy reddish-brown wing covers, pale ring behind the head, two very long thin antennae swept forward, six spiny legs splayed low to the ground, body flat and oval, facing forward."},
-    {"id": "bug_fly", "tier": 1, "target_polycount": 8000, "prompt": "A common housefly body WITHOUT wings: big dark red compound eyes, grey striped hairy thorax, checkered grey-black abdomen, six thin black legs tucked under, facing forward."},
-    {"id": "bug_spider", "tier": 1, "target_polycount": 9000, "prompt": "A small black house spider: round glossy abdomen, compact head with tiny eyes, eight long jointed hairy legs spread wide in a symmetrical crouch, facing forward."},
-    {"id": "human_sneaker", "tier": 1, "target_polycount": 6000, "prompt": "A single adult white canvas sneaker, grey rubber sole, white laces, slightly worn, toe pointing forward, as worn on a right foot."},
-    {"id": "pet_cat", "tier": 1, "target_polycount": 10000, "prompt": "An orange tabby house cat standing on all four legs in a stalking pose, head low and forward, ears up, tail raised in a curve, green eyes, facing forward."},
-    {"id": "pet_dog", "tier": 1, "target_polycount": 10000, "prompt": "A friendly beagle standing on all four legs, nose down sniffing, floppy brown ears, tan white and black coat, tail up, facing forward."},
-    {"id": "robot_vacuum", "tier": 1, "target_polycount": 5000, "prompt": "A round black robot vacuum cleaner seen at floor level: low disc body, gold rubber bumper ring, small glowing blue sensor on top, side brush at the front edge."},
-    {"id": "fly_swatter", "tier": 1, "target_polycount": 3000, "prompt": "A red plastic fly swatter: flat square mesh paddle with a grid of holes and a long thin red handle, lying flat with the handle pointing back."},
-    {"id": "crumb", "tier": 1, "target_polycount": 1500, "prompt": "A single small crumb of toasted bread, golden-brown crust on one side, porous crumb texture, irregular chunky shape."},
-    {"id": "golden_crumb", "tier": 1, "target_polycount": 1500, "prompt": "A single crumb of bread made of shiny polished gold, irregular chunky shape, sparkling, treasure-like."},
-
-    {"id": "rolled_newspaper", "tier": 2, "target_polycount": 3000, "prompt": "A tightly rolled-up newspaper held with a rubber band, printed grey columns visible, lying on its side."},
-    {"id": "prop_grape", "tier": 2, "target_polycount": 1500, "prompt": "A single round purple grape, glossy skin with a faint bloom, tiny stem stub."},
-    {"id": "prop_pea", "tier": 2, "target_polycount": 1000, "prompt": "A single bright green garden pea, perfectly round, glossy."},
-    {"id": "prop_bottle_cap", "tier": 2, "target_polycount": 2000, "prompt": "A single metal crown bottle cap lying flat, crimped silver edge, red top."},
-    {"id": "prop_mug", "tier": 2, "target_polycount": 3000, "prompt": "A plain white ceramic coffee mug with a handle, standing upright, empty."},
-    {"id": "prop_cereal_box", "tier": 2, "target_polycount": 2000, "prompt": "A small single-serve cereal box standing upright, bright yellow and orange cardboard with an abstract pattern, no readable text."},
-    {"id": "prop_ball", "tier": 2, "target_polycount": 2000, "prompt": "A small red rubber dog ball, slightly scuffed."},
-    {"id": "prop_acorn", "tier": 2, "target_polycount": 2000, "prompt": "A single brown acorn with its textured cap."},
-    {"id": "lure_spoon", "tier": 2, "target_polycount": 2000, "prompt": "A stainless steel teaspoon lying flat, bowl facing up."},
-    {"id": "lure_phone", "tier": 2, "target_polycount": 2500, "prompt": "A modern smartphone lying flat face-up, black glass screen, thin dark frame."},
-    {"id": "lure_remote", "tier": 2, "target_polycount": 2500, "prompt": "A black TV remote control lying flat, rows of grey rubber buttons, red power button."},
-    {"id": "lure_watering_can", "tier": 2, "target_polycount": 4000, "prompt": "A galvanized metal garden watering can with a long spout and top handle."},
-    {"id": "cover_paper_cup", "tier": 2, "target_polycount": 2500, "prompt": "A white paper coffee cup lying on its side on the floor, open end facing sideways, slightly crumpled rim."},
-    {"id": "cover_sneaker", "tier": 2, "target_polycount": 5000, "prompt": "An old worn blue canvas sneaker lying on its side, laces loose, the opening big enough to crawl into."},
-    {"id": "cover_grocery_bag", "tier": 2, "target_polycount": 3000, "prompt": "A brown paper grocery bag tipped over on its side, opening facing forward, slightly crumpled."},
-    {"id": "cover_mail_stack", "tier": 2, "target_polycount": 2500, "prompt": "A messy stack of envelopes and folded letters on the floor, no readable text."},
-    {"id": "cover_folded_towel", "tier": 2, "target_polycount": 3000, "prompt": "A red cotton dish towel folded loosely into a tent shape, soft fabric folds."},
-    {"id": "cover_napkin", "tier": 2, "target_polycount": 2000, "prompt": "A white paper napkin folded into a little tent standing on a table."},
-    {"id": "cover_slipper", "tier": 2, "target_polycount": 4000, "prompt": "A single fluffy blue house slipper, closed toe, soft plush texture."},
-    {"id": "cover_throw_pillow", "tier": 2, "target_polycount": 3000, "prompt": "A square red throw pillow fallen on the floor and propped up, soft fabric, gap underneath on one side."},
-    {"id": "cover_magazines", "tier": 2, "target_polycount": 2500, "prompt": "A small untidy pile of glossy magazines on the floor, colorful covers, no readable text."},
-    {"id": "cover_toy_blocks", "tier": 2, "target_polycount": 3000, "prompt": "A small stack of colorful wooden toy building blocks, red blue and yellow cubes."},
-    {"id": "cover_flowerpot", "tier": 2, "target_polycount": 3000, "prompt": "A terracotta flowerpot tipped over on its side, open mouth facing forward, a little soil spilling out."},
-    {"id": "cover_hose_coil", "tier": 2, "target_polycount": 5000, "prompt": "A coiled green garden hose lying flat on the ground, loose loops forming a tunnel."},
-    {"id": "cover_rock", "tier": 2, "target_polycount": 3000, "prompt": "A rounded grey garden rock with moss in the cracks, wider than it is tall."},
-    {"id": "cover_garden_gnome", "tier": 2, "target_polycount": 6000, "prompt": "A classic garden gnome statue with a tall red pointed hat, white beard, blue coat, standing."},
-
-    {"id": "kitchen_fridge", "tier": 3, "target_polycount": 6000, "prompt": "A tall white two-door refrigerator with a freezer on top, vertical handles, small feet, front facing forward."},
-    {"id": "kitchen_stove", "tier": 3, "target_polycount": 6000, "prompt": "A dark grey kitchen stove with four black burners on top and an oven door with a handle, front facing forward."},
-    {"id": "frying_pan", "tier": 3, "target_polycount": 3000, "prompt": "A black cast-iron frying pan with a long handle, lying flat."},
-    {"id": "cooking_pot", "tier": 3, "target_polycount": 3000, "prompt": "A stainless steel cooking pot with two side handles, no lid."},
-    {"id": "kitchen_table", "tier": 3, "target_polycount": 4000, "prompt": "A rectangular wooden kitchen table with four straight legs, warm oak finish."},
-    {"id": "kitchen_chair", "tier": 3, "target_polycount": 4000, "prompt": "A simple dark wooden kitchen chair with a slatted backrest, facing forward."},
-    {"id": "kitchen_trash_can", "tier": 3, "target_polycount": 3000, "prompt": "A round brushed-steel kitchen trash can with a pedal and a closed lid."},
-    {"id": "living_couch", "tier": 3, "target_polycount": 8000, "prompt": "A red fabric three-seat sofa with square arms, low wooden legs and a gap underneath, front facing forward."},
-    {"id": "coffee_table", "tier": 3, "target_polycount": 4000, "prompt": "A rectangular wooden coffee table with four legs, mid-century style."},
-    {"id": "tv_stand", "tier": 3, "target_polycount": 4000, "prompt": "A low dark wooden TV stand cabinet with two doors, front facing forward."},
-    {"id": "flat_tv", "tier": 3, "target_polycount": 3000, "prompt": "A thin black flat-screen television, screen facing forward, no stand."},
-    {"id": "bookshelf", "tier": 3, "target_polycount": 6000, "prompt": "A tall dark wooden bookshelf filled with colorful books, front facing forward."},
-    {"id": "side_table", "tier": 3, "target_polycount": 3000, "prompt": "A small square wooden side table with one drawer."},
-    {"id": "table_lamp", "tier": 3, "target_polycount": 3000, "prompt": "A table lamp with a brass base and a cream fabric drum shade."},
-    {"id": "desk_fan", "tier": 3, "target_polycount": 5000, "prompt": "A white standing electric fan with a round grille, fan head facing forward."},
-    {"id": "cat_tree", "tier": 3, "target_polycount": 6000, "prompt": "A carpeted cat tree with a sisal scratching post and two square platforms."},
-    {"id": "umbrella_stand", "tier": 3, "target_polycount": 2500, "prompt": "A cylindrical metal umbrella stand."},
-    {"id": "potted_plant", "tier": 3, "target_polycount": 6000, "prompt": "A leafy green houseplant in a round terracotta pot."},
-    {"id": "picnic_table", "tier": 3, "target_polycount": 5000, "prompt": "A wooden picnic table with two attached benches, weathered pine."},
-    {"id": "bbq_grill", "tier": 3, "target_polycount": 5000, "prompt": "A black kettle charcoal barbecue grill on three legs with a domed lid."},
-    {"id": "doghouse", "tier": 3, "target_polycount": 5000, "prompt": "A wooden doghouse with a red pitched roof and an arched door, door facing forward."}
+    {
+      "id": "bug_cockroach",
+      "tier": 1,
+      "target_polycount": 9000,
+      "prompt": "An American cockroach seen at insect scale: glossy reddish-brown wing covers, pale ring behind the head, two very long thin antennae swept forward, six spiny legs splayed low to the ground, body flat and oval, facing forward."
+    },
+    {
+      "id": "bug_fly",
+      "tier": 1,
+      "target_polycount": 8000,
+      "prompt": "A common housefly body WITHOUT wings: big dark red compound eyes, grey striped hairy thorax, checkered grey-black abdomen, six thin black legs tucked under, facing forward."
+    },
+    {
+      "id": "bug_spider",
+      "tier": 1,
+      "target_polycount": 9000,
+      "prompt": "A small black house spider: round glossy abdomen, compact head with tiny eyes, eight long jointed hairy legs spread wide in a symmetrical crouch, facing forward."
+    },
+    {
+      "id": "human_sneaker",
+      "tier": 1,
+      "target_polycount": 6000,
+      "prompt": "A single adult white canvas sneaker, grey rubber sole, white laces, slightly worn, toe pointing forward, as worn on a right foot."
+    },
+    {
+      "id": "pet_cat",
+      "tier": 1,
+      "target_polycount": 10000,
+      "prompt": "An orange tabby house cat standing on all four legs in a stalking pose, head low and forward, ears up, tail raised in a curve, green eyes, facing forward."
+    },
+    {
+      "id": "pet_dog",
+      "tier": 1,
+      "target_polycount": 10000,
+      "prompt": "A friendly beagle standing on all four legs, nose down sniffing, floppy brown ears, tan white and black coat, tail up, facing forward."
+    },
+    {
+      "id": "robot_vacuum",
+      "tier": 1,
+      "target_polycount": 5000,
+      "prompt": "A round black robot vacuum cleaner seen at floor level: low disc body, gold rubber bumper ring, small glowing blue sensor on top, side brush at the front edge."
+    },
+    {
+      "id": "fly_swatter",
+      "tier": 1,
+      "target_polycount": 3000,
+      "prompt": "A red plastic fly swatter: flat square mesh paddle with a grid of holes and a long thin red handle, lying flat with the handle pointing back."
+    },
+    {
+      "id": "crumb",
+      "tier": 1,
+      "target_polycount": 1500,
+      "prompt": "A single small crumb of toasted bread, golden-brown crust on one side, porous crumb texture, irregular chunky shape."
+    },
+    {
+      "id": "golden_crumb",
+      "tier": 1,
+      "target_polycount": 1500,
+      "prompt": "A single crumb of bread made of shiny polished gold, irregular chunky shape, sparkling, treasure-like."
+    },
+    {
+      "id": "rolled_newspaper",
+      "tier": 2,
+      "target_polycount": 3000,
+      "prompt": "A tightly rolled-up newspaper held with a rubber band, printed grey columns visible, lying on its side."
+    },
+    {
+      "id": "prop_grape",
+      "tier": 2,
+      "target_polycount": 1500,
+      "prompt": "A single round purple grape, glossy skin with a faint bloom, tiny stem stub."
+    },
+    {
+      "id": "prop_pea",
+      "tier": 2,
+      "target_polycount": 1000,
+      "prompt": "A single bright green garden pea, perfectly round, glossy."
+    },
+    {
+      "id": "prop_bottle_cap",
+      "tier": 2,
+      "target_polycount": 2000,
+      "prompt": "A single metal crown bottle cap lying flat, crimped silver edge, red top."
+    },
+    {
+      "id": "prop_mug",
+      "tier": 2,
+      "target_polycount": 3000,
+      "prompt": "A plain white ceramic coffee mug with a handle, standing upright, empty."
+    },
+    {
+      "id": "prop_cereal_box",
+      "tier": 2,
+      "target_polycount": 2000,
+      "prompt": "A small single-serve cereal box standing upright, bright yellow and orange cardboard with an abstract pattern, no readable text."
+    },
+    {
+      "id": "prop_ball",
+      "tier": 2,
+      "target_polycount": 2000,
+      "prompt": "A small red rubber dog ball, slightly scuffed."
+    },
+    {
+      "id": "prop_acorn",
+      "tier": 2,
+      "target_polycount": 2000,
+      "prompt": "A single brown acorn with its textured cap."
+    },
+    {
+      "id": "lure_spoon",
+      "tier": 2,
+      "target_polycount": 2000,
+      "prompt": "A stainless steel teaspoon lying flat, bowl facing up."
+    },
+    {
+      "id": "lure_phone",
+      "tier": 2,
+      "target_polycount": 2500,
+      "prompt": "A modern smartphone lying flat face-up, black glass screen, thin dark frame."
+    },
+    {
+      "id": "lure_remote",
+      "tier": 2,
+      "target_polycount": 2500,
+      "prompt": "A black TV remote control lying flat, rows of grey rubber buttons, red power button."
+    },
+    {
+      "id": "lure_watering_can",
+      "tier": 2,
+      "target_polycount": 4000,
+      "prompt": "A galvanized metal garden watering can with a long spout and top handle."
+    },
+    {
+      "id": "cover_paper_cup",
+      "tier": 2,
+      "target_polycount": 2500,
+      "prompt": "A white paper coffee cup lying on its side on the floor, open end facing sideways, slightly crumpled rim."
+    },
+    {
+      "id": "cover_sneaker",
+      "tier": 2,
+      "target_polycount": 5000,
+      "prompt": "An old worn blue canvas sneaker lying on its side, laces loose, the opening big enough to crawl into."
+    },
+    {
+      "id": "cover_grocery_bag",
+      "tier": 2,
+      "target_polycount": 3000,
+      "prompt": "A brown paper grocery bag tipped over on its side, opening facing forward, slightly crumpled."
+    },
+    {
+      "id": "cover_mail_stack",
+      "tier": 2,
+      "target_polycount": 2500,
+      "prompt": "A messy stack of envelopes and folded letters on the floor, no readable text."
+    },
+    {
+      "id": "cover_folded_towel",
+      "tier": 2,
+      "target_polycount": 3000,
+      "prompt": "A red cotton dish towel folded loosely into a tent shape, soft fabric folds."
+    },
+    {
+      "id": "cover_napkin",
+      "tier": 2,
+      "target_polycount": 2000,
+      "prompt": "A white paper napkin folded into a little tent standing on a table."
+    },
+    {
+      "id": "cover_slipper",
+      "tier": 2,
+      "target_polycount": 4000,
+      "prompt": "A single fluffy blue house slipper, closed toe, soft plush texture."
+    },
+    {
+      "id": "cover_throw_pillow",
+      "tier": 2,
+      "target_polycount": 3000,
+      "prompt": "A square red throw pillow fallen on the floor and propped up, soft fabric, gap underneath on one side."
+    },
+    {
+      "id": "cover_magazines",
+      "tier": 2,
+      "target_polycount": 2500,
+      "prompt": "A small untidy pile of glossy magazines on the floor, colorful covers, no readable text."
+    },
+    {
+      "id": "cover_toy_blocks",
+      "tier": 2,
+      "target_polycount": 3000,
+      "prompt": "A small stack of colorful wooden toy building blocks, red blue and yellow cubes."
+    },
+    {
+      "id": "cover_flowerpot",
+      "tier": 2,
+      "target_polycount": 3000,
+      "prompt": "A terracotta flowerpot tipped over on its side, open mouth facing forward, a little soil spilling out."
+    },
+    {
+      "id": "cover_hose_coil",
+      "tier": 2,
+      "target_polycount": 5000,
+      "prompt": "A coiled green garden hose lying flat on the ground, loose loops forming a tunnel."
+    },
+    {
+      "id": "cover_rock",
+      "tier": 2,
+      "target_polycount": 3000,
+      "prompt": "A rounded grey garden rock with moss in the cracks, wider than it is tall."
+    },
+    {
+      "id": "cover_garden_gnome",
+      "tier": 2,
+      "target_polycount": 6000,
+      "prompt": "A classic garden gnome statue with a tall red pointed hat, white beard, blue coat, standing."
+    },
+    {
+      "id": "kitchen_fridge",
+      "tier": 3,
+      "target_polycount": 6000,
+      "prompt": "A tall white two-door refrigerator with a freezer on top, vertical handles, small feet, front facing forward."
+    },
+    {
+      "id": "kitchen_stove",
+      "tier": 3,
+      "target_polycount": 6000,
+      "prompt": "A dark grey kitchen stove with four black burners on top and an oven door with a handle, front facing forward."
+    },
+    {
+      "id": "frying_pan",
+      "tier": 3,
+      "target_polycount": 3000,
+      "prompt": "A black cast-iron frying pan with a long handle, lying flat."
+    },
+    {
+      "id": "cooking_pot",
+      "tier": 3,
+      "target_polycount": 3000,
+      "prompt": "A stainless steel cooking pot with two side handles, no lid."
+    },
+    {
+      "id": "kitchen_table",
+      "tier": 3,
+      "target_polycount": 4000,
+      "prompt": "A rectangular wooden kitchen table with four straight legs, warm oak finish."
+    },
+    {
+      "id": "kitchen_chair",
+      "tier": 3,
+      "target_polycount": 4000,
+      "prompt": "A simple dark wooden kitchen chair with a slatted backrest, facing forward."
+    },
+    {
+      "id": "kitchen_trash_can",
+      "tier": 3,
+      "target_polycount": 3000,
+      "prompt": "A round brushed-steel kitchen trash can with a pedal and a closed lid."
+    },
+    {
+      "id": "living_couch",
+      "tier": 3,
+      "target_polycount": 8000,
+      "prompt": "A red fabric three-seat sofa with square arms, low wooden legs and a gap underneath, front facing forward."
+    },
+    {
+      "id": "coffee_table",
+      "tier": 3,
+      "target_polycount": 4000,
+      "prompt": "A rectangular wooden coffee table with four legs, mid-century style."
+    },
+    {
+      "id": "tv_stand",
+      "tier": 3,
+      "target_polycount": 4000,
+      "prompt": "A low dark wooden TV stand cabinet with two doors, front facing forward."
+    },
+    {
+      "id": "flat_tv",
+      "tier": 3,
+      "target_polycount": 3000,
+      "prompt": "A thin black flat-screen television, screen facing forward, no stand."
+    },
+    {
+      "id": "bookshelf",
+      "tier": 3,
+      "target_polycount": 6000,
+      "prompt": "A tall dark wooden bookshelf filled with colorful books, front facing forward."
+    },
+    {
+      "id": "side_table",
+      "tier": 3,
+      "target_polycount": 3000,
+      "prompt": "A small square wooden side table with one drawer."
+    },
+    {
+      "id": "table_lamp",
+      "tier": 3,
+      "target_polycount": 3000,
+      "prompt": "A table lamp with a brass base and a cream fabric drum shade."
+    },
+    {
+      "id": "desk_fan",
+      "tier": 3,
+      "target_polycount": 5000,
+      "prompt": "A white standing electric fan with a round grille, fan head facing forward."
+    },
+    {
+      "id": "cat_tree",
+      "tier": 3,
+      "target_polycount": 6000,
+      "prompt": "A carpeted cat tree with a sisal scratching post and two square platforms."
+    },
+    {
+      "id": "umbrella_stand",
+      "tier": 3,
+      "target_polycount": 2500,
+      "prompt": "A cylindrical metal umbrella stand."
+    },
+    {
+      "id": "potted_plant",
+      "tier": 3,
+      "target_polycount": 6000,
+      "prompt": "A leafy green houseplant in a round terracotta pot."
+    },
+    {
+      "id": "picnic_table",
+      "tier": 3,
+      "target_polycount": 5000,
+      "prompt": "A wooden picnic table with two attached benches, weathered pine."
+    },
+    {
+      "id": "bbq_grill",
+      "tier": 3,
+      "target_polycount": 5000,
+      "prompt": "A black kettle charcoal barbecue grill on three legs with a domed lid."
+    },
+    {
+      "id": "doghouse",
+      "tier": 3,
+      "target_polycount": 5000,
+      "prompt": "A wooden doghouse with a red pitched roof and an arched door, door facing forward."
+    },
+    {
+      "id": "sugar_cube",
+      "tier": 1,
+      "target_polycount": 1500,
+      "prompt": "A single white sugar cube with sparkling crystalline grains, a few loose sugar grains beside it."
+    },
+    {
+      "id": "cheese",
+      "tier": 1,
+      "target_polycount": 2000,
+      "prompt": "A small wedge of yellow Swiss cheese with round holes, lying on its side."
+    },
+    {
+      "id": "mint_leaf",
+      "tier": 1,
+      "target_polycount": 1500,
+      "prompt": "A single fresh green mint leaf with serrated edges and visible veins, lying flat."
+    },
+    {
+      "id": "honey_drop",
+      "tier": 1,
+      "target_polycount": 1500,
+      "prompt": "A single glossy golden drop of honey in a teardrop shape sitting in a tiny puddle of honey."
+    },
+    {
+      "id": "coffee_bean",
+      "tier": 1,
+      "target_polycount": 1500,
+      "prompt": "A single roasted coffee bean, dark brown and glossy, with the center crease on top."
+    },
+    {
+      "id": "kibble",
+      "tier": 1,
+      "target_polycount": 1500,
+      "prompt": "Three pieces of brown dry dog food kibble, small rounded star-shaped nuggets."
+    },
+    {
+      "id": "gem_amethyst",
+      "tier": 1,
+      "target_polycount": 2000,
+      "prompt": "A purple amethyst crystal cluster: one tall hexagonal pointed crystal with a smaller crystal beside it, translucent and glowing."
+    },
+    {
+      "id": "gem_amber",
+      "tier": 1,
+      "target_polycount": 2000,
+      "prompt": "A polished oval piece of golden-orange amber with a tiny ancient insect trapped inside, translucent and glowing."
+    },
+    {
+      "id": "gem_emerald",
+      "tier": 1,
+      "target_polycount": 1500,
+      "prompt": "A green emerald gemstone with a rectangular step cut, translucent and glowing."
+    },
+    {
+      "id": "gem_ruby",
+      "tier": 1,
+      "target_polycount": 1500,
+      "prompt": "A red ruby gemstone with a classic faceted brilliant cut, translucent and glowing."
+    },
+    {
+      "id": "gem_diamond",
+      "tier": 1,
+      "target_polycount": 1500,
+      "prompt": "A clear diamond with a round brilliant cut, sparkling white facets."
+    },
+    {
+      "id": "gem_sapphire",
+      "tier": 1,
+      "target_polycount": 1500,
+      "prompt": "A deep blue sapphire gemstone with an oval faceted cut, translucent and glowing."
+    },
+    {
+      "id": "cover_cardboard_box",
+      "tier": 2,
+      "target_polycount": 2500,
+      "prompt": "An empty brown cardboard recycling box tipped on its side with the open end facing forward, flaps bent."
+    },
+    {
+      "id": "cover_flour_sack",
+      "tier": 2,
+      "target_polycount": 3000,
+      "prompt": "A slumped paper sack of flour lying on its side, folded top, a little flour dusted around it, no readable text."
+    },
+    {
+      "id": "cover_laundry_basket",
+      "tier": 2,
+      "target_polycount": 4000,
+      "prompt": "A blue plastic laundry basket tipped on its side with a few folded clothes spilling out."
+    },
+    {
+      "id": "cover_cat_bed",
+      "tier": 2,
+      "target_polycount": 3000,
+      "prompt": "A round plush red cat bed with a raised soft rim."
+    },
+    {
+      "id": "cover_woodpile",
+      "tier": 2,
+      "target_polycount": 5000,
+      "prompt": "A small stack of split firewood logs, rough bark on the round sides."
+    },
+    {
+      "id": "cover_wheelbarrow",
+      "tier": 2,
+      "target_polycount": 5000,
+      "prompt": "A dark green metal wheelbarrow tipped over on its side, one wheel, wooden handles."
+    },
+    {
+      "id": "kitchen_island",
+      "tier": 3,
+      "target_polycount": 5000,
+      "prompt": "A kitchen island cabinet with a grey stone countertop overhanging on one side, wooden cabinet doors."
+    },
+    {
+      "id": "toaster",
+      "tier": 3,
+      "target_polycount": 3000,
+      "prompt": "A chrome two-slice toaster with a lever on the side."
+    },
+    {
+      "id": "pet_bowl",
+      "tier": 3,
+      "target_polycount": 2000,
+      "prompt": "A stainless steel pet food bowl, wide and shallow, empty."
+    },
+    {
+      "id": "mop_bucket",
+      "tier": 3,
+      "target_polycount": 4000,
+      "prompt": "A blue plastic mop bucket with a metal handle and a little water inside."
+    },
+    {
+      "id": "armchair",
+      "tier": 3,
+      "target_polycount": 6000,
+      "prompt": "A blue fabric armchair with square arms and short wooden legs leaving a gap underneath, front facing forward."
+    },
+    {
+      "id": "floor_lamp",
+      "tier": 3,
+      "target_polycount": 3000,
+      "prompt": "A tall thin black metal floor lamp with a cream fabric shade on top."
+    },
+    {
+      "id": "aquarium",
+      "tier": 3,
+      "target_polycount": 6000,
+      "prompt": "A glass fish tank aquarium on a dark wooden cabinet stand, water, green plants, small orange fish, front facing forward."
+    },
+    {
+      "id": "garden_shed",
+      "tier": 3,
+      "target_polycount": 6000,
+      "prompt": "A small wooden garden shed with a pitched dark roof and a single door, raised on concrete blocks, door facing forward."
+    },
+    {
+      "id": "bird_bath",
+      "tier": 3,
+      "target_polycount": 3000,
+      "prompt": "A grey stone bird bath: a wide shallow bowl of water on a pedestal."
+    }
   ]
 }

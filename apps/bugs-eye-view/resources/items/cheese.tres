@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="ItemDef" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/item_def.gd" id="1_tvq4q"]
+
+[resource]
+script = ExtResource("1_tvq4q")
+id = &"cheese"
+display_name = "Cheese Crumb"
+effect = &"hearty"
+duration = 0.0
+points = 60
+color = Color(1, 0.8, 0.25, 1)
+blurb = "One extra shell: you can take another hit."

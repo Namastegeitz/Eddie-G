@@ -166,17 +166,20 @@ func deco_box(n: String, pos: Vector3, size: Vector3, material: String, rot: Vec
 	return deco(n, bm, material, pos, rot, Vector3.ONE, shadow)
 
 
-## Floor, four walls and (optionally) a ceiling for a room.
-func room(size: Vector3, floor_mat: String, floor_surface: StringName, wall_mat: String, ceiling: bool) -> void:
+## Floor, four walls and (optionally) a ceiling for a room centred on `c`
+## (x/z; the floor is always at y = 0).
+func room(size: Vector3, floor_mat: String, floor_surface: StringName, wall_mat: String, ceiling: bool,
+		c: Vector3 = Vector3.ZERO) -> void:
 	var hx := size.x * 0.5
 	var hz := size.z * 0.5
-	box("Floor", Vector3(0, -1, 0), Vector3(size.x + 4, 2, size.z + 4), floor_mat, floor_surface)
-	box("WallBack", Vector3(0, size.y * 0.5, -hz - 1), Vector3(size.x + 4, size.y, 2), wall_mat, &"default", &"", 0.0, false)
-	box("WallFront", Vector3(0, size.y * 0.5, hz + 1), Vector3(size.x + 4, size.y, 2), wall_mat, &"default", &"", 0.0, false)
-	box("WallLeft", Vector3(-hx - 1, size.y * 0.5, 0), Vector3(2, size.y, size.z + 4), wall_mat, &"default", &"", 0.0, false)
-	box("WallRight", Vector3(hx + 1, size.y * 0.5, 0), Vector3(2, size.y, size.z + 4), wall_mat, &"default", &"", 0.0, false)
+	c.y = 0.0
+	box("Floor", c + Vector3(0, -1, 0), Vector3(size.x + 4, 2, size.z + 4), floor_mat, floor_surface)
+	box("WallBack", c + Vector3(0, size.y * 0.5, -hz - 1), Vector3(size.x + 4, size.y, 2), wall_mat, &"default", &"", 0.0, false)
+	box("WallFront", c + Vector3(0, size.y * 0.5, hz + 1), Vector3(size.x + 4, size.y, 2), wall_mat, &"default", &"", 0.0, false)
+	box("WallLeft", c + Vector3(-hx - 1, size.y * 0.5, 0), Vector3(2, size.y, size.z + 4), wall_mat, &"default", &"", 0.0, false)
+	box("WallRight", c + Vector3(hx + 1, size.y * 0.5, 0), Vector3(2, size.y, size.z + 4), wall_mat, &"default", &"", 0.0, false)
 	if ceiling:
-		box("Ceiling", Vector3(0, size.y + 1, 0), Vector3(size.x + 4, 2, size.z + 4), "ceiling", &"default", &"", 0.0, false)
+		box("Ceiling", c + Vector3(0, size.y + 1, 0), Vector3(size.x + 4, 2, size.z + 4), "ceiling", &"default", &"", 0.0, false)
 
 
 ## Collision-only boundary (keeps flyers inside open levels).
@@ -369,6 +372,15 @@ func crumb(pos: Vector3, golden: bool = false) -> Node3D:
 	c.position = pos
 	pickups.add_child(c)
 	return c
+
+
+## Bug food or a crumb gem resting on the surface at `base`.
+func item(id: String, base: Vector3) -> Node3D:
+	var it := (load("res://scenes/items/%s.tscn" % id) as PackedScene).instantiate() as Node3D
+	it.name = uniq(id.to_pascal_case())
+	it.position = base
+	pickups.add_child(it)
+	return it
 
 
 func goal(pos: Vector3, label: String, rot_y: float = 0.0) -> Node3D:

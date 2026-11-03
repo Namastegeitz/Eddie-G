@@ -12,21 +12,21 @@ radius = 0.7
 radial_segments = 16
 rings = 8
 
-[node name="Acorn" type="RigidBody3D" unique_id=1339158204]
+[node name="Acorn" type="RigidBody3D" unique_id=1117670828]
 mass = 0.2
 script = ExtResource("1_pjoc1")
 noise_on_impact = 1.2
 
-[node name="Shape" type="CollisionShape3D" parent="." unique_id=1848138656]
+[node name="Shape" type="CollisionShape3D" parent="." unique_id=914340437]
 shape = SubResource("SphereShape3D_ocmwu")
 
-[node name="Visual" type="Node3D" parent="." unique_id=268430899]
+[node name="Visual" type="Node3D" parent="." unique_id=1223281392]
 
-[node name="Mesh" type="MeshInstance3D" parent="Visual" unique_id=390247706]
+[node name="Mesh" type="MeshInstance3D" parent="Visual" unique_id=196385188]
 material_override = ExtResource("2_ps0ws")
 mesh = SubResource("SphereMesh_lux3n")
 
-[node name="Skin" type="Node3D" parent="Visual" unique_id=72567544]
+[node name="Skin" type="Node3D" parent="Visual" unique_id=13298224]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -2.9802322e-08, 0)
 script = ExtResource("3_c0q10")
 model_id = "prop_acorn"

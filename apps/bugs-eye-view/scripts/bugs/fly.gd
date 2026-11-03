@@ -153,7 +153,7 @@ func _move(delta: float) -> void:
 		_fly(delta, comp)
 	else:
 		stamina = minf(stamina + stats.stamina_regen * delta, stats.stamina_max)
-		ground_move(delta, stats.move_speed * slow_mult)
+		ground_move(delta, stats.move_speed * speed_scale())
 		face_velocity(delta)
 	meter_changed.emit(&"stamina", stamina, stats.stamina_max)
 	if _wing_l and _wing_r:
@@ -211,12 +211,12 @@ func _fly(delta: float, comp: float) -> void:
 		_dive_time -= delta * comp
 		velocity = Vector3.DOWN * DIVE_SPEED + _dive_dir * 6.0
 	elif gliding:
-		var g := Vector3(wish.x, 0.0, wish.z) * stats.flight_speed * GLIDE_SPEED_MULT * slow_mult
+		var g := Vector3(wish.x, 0.0, wish.z) * stats.flight_speed * GLIDE_SPEED_MULT * speed_scale()
 		velocity.x = lerpf(velocity.x, g.x, clampf(2.0 * delta, 0.0, 1.0))
 		velocity.z = lerpf(velocity.z, g.z, clampf(2.0 * delta, 0.0, 1.0))
 		velocity.y = move_toward(velocity.y, -GLIDE_SINK, 10.0 * delta)
 	else:
-		var speed := (stats.boost_speed if is_sprinting() else stats.flight_speed) * slow_mult
+		var speed := (stats.boost_speed if is_sprinting() else stats.flight_speed) * speed_scale()
 		# Buzzy drift from layered sines (no allocation, no RNG).
 		var t := _wobble_t
 		var drift := Vector3(sin(t * 7.3) + sin(t * 3.1) * 0.5, sin(t * 5.7) * 0.6,
@@ -224,7 +224,8 @@ func _fly(delta: float, comp: float) -> void:
 		velocity = velocity.lerp(wish * speed + drift, clampf(stats.flight_accel * delta * comp, 0.0, 1.0))
 		if _dodge_time > 0.0:
 			velocity = _dodge_dir * stats.dodge_speed
-		stamina -= stats.stamina_drain * (2.0 if is_sprinting() else 1.0) * delta * comp
+		if not has_effect(&"wired"):
+			stamina -= stats.stamina_drain * (2.0 if is_sprinting() else 1.0) * delta * comp
 	var ext := external_velocity
 	velocity = (velocity + ext) * comp
 	move_and_slide()
@@ -404,3 +405,8 @@ func die(cause: StringName) -> void:
 	_end_bullet_time()
 	land()
 	super.die(cause)
+
+
+func refill() -> void:
+	super()
+	stamina = stats.stamina_max

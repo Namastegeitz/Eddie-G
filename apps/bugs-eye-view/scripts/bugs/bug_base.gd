@@ -10,6 +10,8 @@ signal died(cause: StringName)
 signal sense_changed(active: bool)
 signal meter_changed(meter: StringName, value: float, max_value: float)
 signal hint_changed(text: String)
+## Bug food / gem effects started, ended or healed (see PowerUps).
+signal effects_changed
 
 enum Motion { STILL, CREEP, WALK, SPRINT }
 
@@ -39,6 +41,10 @@ var sense_active := false
 var camera_yaw_basis: Basis = Basis.IDENTITY
 var cam: FollowCamera = null
 var facing := Vector3.FORWARD
+## Timed effects from bug food and crumb gems: effect id -> seconds left.
+var effects: Dictionary = {}
+## Strength of each active effect (speed multiplier, radius...).
+var effect_amount: Dictionary = {}
 
 var _spots: Array[HidingSpot] = []
 var _interactables: Array[Node] = []
@@ -99,6 +105,7 @@ func _physics_process(delta: float) -> void:
 		_probe_surface()
 	_emit_noise(delta)
 	_update_sense(delta)
+	_magnet_tick(delta)
 	_hint_timer -= delta
 	if _hint_timer <= 0.0:
 		_hint_timer = HINT_INTERVAL
@@ -115,7 +122,8 @@ func _move(_delta: float) -> void:
 func _tick_timers(delta: float) -> void:
 	invuln = maxf(invuln - delta, 0.0)
 	knockdown = maxf(knockdown - delta, 0.0)
-	_dodge_cd = maxf(_dodge_cd - delta, 0.0)
+	_dodge_cd = maxf(_dodge_cd - delta * (3.0 if has_effect(&"wired") else 1.0), 0.0)
+	_tick_effects(delta)
 	_dodge_time = maxf(_dodge_time - delta, 0.0)
 	stuck_time = maxf(stuck_time - delta, 0.0)
 	if _slow_timer > 0.0:
@@ -275,7 +283,8 @@ func compute_visibility(light: float, cfg: StealthConfig) -> float:
 	var camo := 1.0
 	if is_frozen() and has_camo():
 		camo = cfg.camo_factor / maxf(stats.camo_mult, 0.01)
-	return clampf(light * m * camo * stats.visibility_mult * _extra_visibility_mult(), 0.0, 1.5)
+	var cloak := float(effect_amount.get(&"cloak", 0.2)) if has_effect(&"cloak") else 1.0
+	return clampf(light * m * camo * cloak * stats.visibility_mult * _extra_visibility_mult(), 0.0, 1.5)
 
 
 func is_frozen() -> bool:
@@ -324,13 +333,13 @@ func _emit_noise(delta: float) -> void:
 	if _noise_timer > 0.0:
 		return
 	_noise_timer = _cfg.noise_interval
-	var l := current_noise()
+	var l := current_noise() * noise_scale()
 	if l > 0.01:
 		PerceptionSystem.emit_player_noise(global_position, l)
 
 
 func is_scent_active() -> bool:
-	return wiper_count <= 0 and not is_hidden_safe() and _leaves_scent()
+	return wiper_count <= 0 and not is_hidden_safe() and not has_effect(&"fresh") and _leaves_scent()
 
 
 func _leaves_scent() -> bool:
@@ -359,7 +368,8 @@ func _end_sense() -> void:
 
 func _update_sense(delta: float) -> void:
 	if sense_active:
-		sense_meter -= delta
+		if not has_effect(&"wired"):
+			sense_meter -= delta
 		_sense_tick(delta)
 		if sense_meter <= 0.0:
 			sense_meter = 0.0
@@ -386,6 +396,10 @@ func _sense_end() -> void:
 ## Returns true if the hit landed.
 func take_hit(cause: StringName, from: Vector3) -> bool:
 	if dead or invuln > 0.0 or is_hidden_safe():
+		return false
+	if has_effect(&"iron_shell"):
+		AudioManager.play(&"shield", -2.0, 1.3)
+		invuln = 0.5
 		return false
 	hits_left -= 1
 	Feedback.rumble(1.0, 0.4)
@@ -446,6 +460,77 @@ func set_stuck(seconds: float) -> void:
 
 func is_on_ground_surface() -> bool:
 	return is_on_floor()
+
+
+# --- Bug food & gem effects ------------------------------------------------
+
+func add_effect(effect: StringName, seconds: float, amount: float = 1.0) -> void:
+	effects[effect] = maxf(float(effects.get(effect, 0.0)), seconds)
+	effect_amount[effect] = amount
+	effects_changed.emit()
+
+
+func has_effect(effect: StringName) -> bool:
+	return float(effects.get(effect, 0.0)) > 0.0
+
+
+func effect_left(effect: StringName) -> float:
+	return maxf(float(effects.get(effect, 0.0)), 0.0)
+
+
+func clear_effects() -> void:
+	effects.clear()
+	effect_amount.clear()
+	effects_changed.emit()
+
+
+func _tick_effects(delta: float) -> void:
+	if effects.is_empty():
+		return
+	var ended := false
+	for k: StringName in effects.keys():
+		effects[k] = float(effects[k]) - delta
+		if effects[k] <= 0.0:
+			effects.erase(k)
+			effect_amount.erase(k)
+			ended = true
+	if ended:
+		effects_changed.emit()
+
+
+## Movement speed multiplier: slowdowns (glue, sticky webs) and Sugar Rush.
+func speed_scale() -> float:
+	var s := slow_mult
+	if has_effect(&"speed"):
+		s *= float(effect_amount.get(&"speed", 1.35))
+	return s
+
+
+func noise_scale() -> float:
+	return float(effect_amount.get(&"soft_step", 0.3)) if has_effect(&"soft_step") else 1.0
+
+
+## Sugar Rush tops up the bug's meters. Subclasses add their own (stamina).
+func refill() -> void:
+	sense_meter = stats.sense_max
+
+
+## Cheese: one more hit of shell, up to one above the bug's normal maximum.
+func heal(amount: int = 1) -> void:
+	hits_left = mini(hits_left + amount, stats.max_hits + 1)
+	effects_changed.emit()
+
+
+func _magnet_tick(delta: float) -> void:
+	if not has_effect(&"magnet"):
+		return
+	var radius := float(effect_amount.get(&"magnet", 25.0))
+	for c in get_tree().get_nodes_in_group(Phys.GROUP_CRUMB):
+		var crumb := c as Crumb
+		if crumb == null or crumb.taken or crumb.golden:
+			continue
+		if crumb.global_position.distance_to(global_position) < radius:
+			crumb.global_position = crumb.global_position.move_toward(global_position, 30.0 * delta)
 
 
 # --- Hiding & interaction ---------------------------------------------------

@@ -343,7 +343,7 @@ func _test_spider() -> void:
 	print("-- spider")
 	var lvl := await load_level(&"kitchen", &"spider")
 	var p := lvl.player as Spider
-	p.global_position = Vector3(52, 0.6, 30)
+	p.global_position = Vector3(102, 0.6, 30)
 	face(lvl, -PI * 0.5)
 	await frames(10)
 	InputRouter.set_touch_move(Vector2(0, 1))
@@ -353,10 +353,10 @@ func _test_spider() -> void:
 	check(p.global_position.y > 3.0, "spider is up the wall (y=%.1f)" % p.global_position.y)
 	await frames(60)
 	check(p.current_camo_tag() == &"wall" and p.has_camo(), "a still spider on a wall is camouflaged")
-	p.teleport_to(Transform3D(Basis.IDENTITY, Vector3(30, 0.6, 30)))
+	p.teleport_to(Transform3D(Basis.IDENTITY, Vector3(90, 0.6, 30)))
 	await frames(5)
 	p._zip_start = p.global_position
-	p._zip_target = Vector3(59.6, 20, 30)
+	p._zip_target = Vector3(109.6, 20, 30)
 	p._zip_normal = Vector3(-1, 0, 0)
 	p.zipping = true
 	p.attached = false

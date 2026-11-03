@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="ItemDef" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/item_def.gd" id="1_cg5cj"]
+
+[resource]
+script = ExtResource("1_cg5cj")
+id = &"gem_ruby"
+display_name = "Ruby Gem"
+kind = 1
+effect = &"iron_shell"
+points = 300
+color = Color(0.95, 0.12, 0.2, 1)
+blurb = "Iron Shell: nothing can hurt you for 8 seconds."

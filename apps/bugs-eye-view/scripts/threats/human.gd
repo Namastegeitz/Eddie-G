@@ -29,6 +29,20 @@ var right_foot: FootHazard
 var newspaper: Newspaper
 var _torso: Node3D
 
+# Body pose (visual only): hip sockets, leg bone lengths, arm/head joints.
+const HIP_X := 3.6
+const HIP_Y := 37.0
+const BODY_Z := 2.0
+const THIGH := 17.5
+const SHIN := 17.0
+const ANKLE := Vector3(0, 3.6, 2.2)
+var _shoulders: Array[Node3D] = []
+var _elbows: Array[Node3D] = []
+var _head: Node3D
+var _legs: Node3D
+var _leg_parts: Array = []
+var _breath := 0.0
+
 
 func _setup() -> void:
 	add_to_group(Phys.GROUP_HUMAN)
@@ -36,6 +50,18 @@ func _setup() -> void:
 	right_foot = get_node_or_null("RightFoot") as FootHazard
 	newspaper = get_node_or_null("Newspaper") as Newspaper
 	_torso = get_node_or_null("Torso")
+	if _torso:
+		for side in ["L", "R"]:
+			var sh := _torso.get_node_or_null("Shoulder" + side) as Node3D
+			if sh:
+				_shoulders.append(sh)
+				_elbows.append(sh.get_node_or_null("Elbow") as Node3D)
+		_head = _torso.get_node_or_null("Head") as Node3D
+	_legs = get_node_or_null("Legs") as Node3D
+	if _legs:
+		for side in ["L", "R"]:
+			_leg_parts.append([_legs.get_node_or_null("Thigh" + side), _legs.get_node_or_null("Knee" + side),
+				_legs.get_node_or_null("Shin" + side)])
 	for f in [left_foot, right_foot]:
 		if f:
 			(f as FootHazard).set_owner_threat(self)
@@ -218,3 +244,100 @@ func _stunned_tick(delta: float) -> void:
 	if _torso:
 		_torso.rotation.z = sin(Time.get_ticks_msec() * 0.012) * 0.15
 	_update_torso(delta)
+
+
+# --- Body pose (visual) -----------------------------------------------------
+
+func _process(delta: float) -> void:
+	if present and is_visible_in_tree():
+		pose_body(delta)
+
+
+## Arms swing against the feet, the head turns to whatever it's after, the
+## right arm comes up ready to swat when it has spotted you, and the legs bend
+## at the knee to reach each foot.
+func pose_body(delta: float) -> void:
+	if _torso == null:
+		return
+	_breath += delta
+	var fwd := -global_basis.z
+	fwd.y = 0.0
+	fwd = fwd.normalized() if fwd.length() > 0.01 else Vector3.FORWARD
+	var swing := 0.0
+	if left_foot and right_foot:
+		var d := (left_foot.global_position - right_foot.global_position).dot(fwd)
+		swing = clampf(d / maxf(stride, 1.0), -1.0, 1.0) * 0.5
+	var k := clampf(8.0 * delta, 0.0, 1.0)
+	var is_stunned := stun_time > 0.0
+	for i in _shoulders.size():
+		var sh := _shoulders[i]
+		var arm_x := -swing if i == 0 else swing
+		var elbow_x := 0.15 + absf(swing) * 0.35
+		if is_stunned:
+			arm_x = 2.5 + sin(_breath * 14.0 + i * 2.0) * 0.35
+			elbow_x = 0.4
+		elif i == 1 and alert.state == AlertState.ALERT:
+			arm_x = 1.9
+			elbow_x = 0.9
+		elif alert.state == AlertState.SEARCHING:
+			arm_x *= 0.5
+			elbow_x = 0.5
+		sh.rotation.x = lerp_angle(sh.rotation.x, arm_x, k)
+		if _elbows[i]:
+			_elbows[i].rotation.x = lerp_angle(_elbows[i].rotation.x, elbow_x, k)
+	if _head:
+		var yaw_t := 0.0
+		var pitch_t := -0.12
+		if alert.state > AlertState.UNAWARE and alert.has_target:
+			var local := global_transform.affine_inverse() * alert.last_known
+			var from_head := local - Vector3(0, 70, BODY_Z)
+			yaw_t = clampf(atan2(-from_head.x, -from_head.z), -0.9, 0.9)
+			pitch_t = clampf(atan2(from_head.y, Vector2(from_head.x, from_head.z).length()), -0.8, 0.3)
+		_head.rotation.y = lerp_angle(_head.rotation.y, yaw_t, clampf(5.0 * delta, 0.0, 1.0))
+		_head.rotation.x = lerp_angle(_head.rotation.x, pitch_t, clampf(5.0 * delta, 0.0, 1.0))
+	_torso.position.y = sin(_breath * 1.7) * 0.15 - absf(swing) * 1.2
+	_pose_legs(fwd)
+
+
+func _pose_legs(fwd: Vector3) -> void:
+	if _legs == null or _leg_parts.size() < 2:
+		return
+	var feet := [left_foot, right_foot]
+	for i in 2:
+		var f := feet[i] as FootHazard
+		var parts: Array = _leg_parts[i]
+		if f == null or parts[0] == null or parts[2] == null:
+			continue
+		var hip := global_transform * Vector3((-1.0 if i == 0 else 1.0) * HIP_X, HIP_Y + _torso.position.y, BODY_Z)
+		var ankle := f.global_transform * ANKLE
+		var knee := knee_point(hip, ankle, fwd)
+		_place_bone(parts[0] as Node3D, hip, knee, 19.5)
+		if parts[1]:
+			(parts[1] as Node3D).global_position = knee
+		_place_bone(parts[2] as Node3D, knee, ankle, 19.0)
+
+
+## Two-bone IK: where the knee goes for a hip and an ankle (bends forward).
+static func knee_point(hip: Vector3, ankle: Vector3, fwd: Vector3) -> Vector3:
+	var d := ankle - hip
+	var dist := clampf(d.length(), 0.5, THIGH + SHIN - 0.01)
+	var dn := d.normalized() if d.length() > 0.001 else Vector3.DOWN
+	var a := (THIGH * THIGH - SHIN * SHIN + dist * dist) / (2.0 * dist)
+	var h := sqrt(maxf(THIGH * THIGH - a * a, 0.0))
+	var bend := fwd - dn * fwd.dot(dn)
+	if bend.length() < 0.01:
+		bend = Vector3.FORWARD
+	return hip + dn * a + bend.normalized() * h
+
+
+## Stretches a Y-axis mesh (of length `mesh_len`) from a to b.
+static func _place_bone(mi: Node3D, a: Vector3, b: Vector3, mesh_len: float) -> void:
+	var y := b - a
+	var length := y.length()
+	if length < 0.01:
+		return
+	y /= length
+	var ref := Vector3.FORWARD if absf(y.dot(Vector3.FORWARD)) < 0.95 else Vector3.RIGHT
+	var x := y.cross(ref).normalized()
+	var z := x.cross(y)
+	mi.global_transform = Transform3D(Basis(x, y * (length / mesh_len), z), (a + b) * 0.5)

@@ -1,15 +1,16 @@
 class_name KitchenLayout
-## The Kitchen: 120 x 90 floor (1 unit ~ 2.5 cm), counters + sink + stove on
-## the back wall, fridge in the back-right corner, table and chairs in the
-## middle. Secret route: the gap beside the fridge (roach) or the high air
-## vent (fly/spider) leads into a wall cavity with the Golden Crumb.
+## The Kitchen: 170 x 125 floor (1 unit ~ 2.5 cm; x -60..110, z -45..80).
+## Counters + sink + stove on the back wall, fridge between them and the
+## pantry, table and chairs in the middle, an island, pet bowls and a mop
+## bucket in the east half. Secret route: the gap beside the fridge (roach) or
+## the high air vent (fly/spider) leads into a wall cavity with the Golden Crumb.
 
 
 static func build(tree: SceneTree) -> void:
 	var g := LevelGeo.new("Kitchen")
 	g.environment(Color(0.1, 0.085, 0.07), Color(0.95, 0.88, 0.75), 0.8)
 	g.sun(Vector3(-58, 35, 0), 0.9)
-	g.room(Vector3(120, 100, 90), "tile", &"tile", "wall_paint", true)
+	g.room(Vector3(170, 100, 125), "tile", &"tile", "wall_paint", true, Vector3(25, 0, 17.5))
 
 	# --- Counter run along the back wall (x -60..0) with a toe-kick gap ---
 	g.box("ToeKick", Vector3(-30, 2, -34.5), Vector3(60, 4, 21), "dark_wood", &"wood", &"dark_wood")
@@ -78,17 +79,58 @@ static func build(tree: SceneTree) -> void:
 	g.prop("grape", Vector3(-22, 0.9, 37))
 
 	# --- Light: ceiling lamp while people are in, morning sunbeam ---
-	g.light_zone("CeilingLight", Vector3(0, 20, 0), Vector3(118, 40, 88), 2, 1,
+	g.light_zone("CeilingLight", Vector3(25, 20, 17.5), Vector3(168, 40, 123), 2, 1,
 		["breakfast", "lunch", "late_snack", "dishes", "midnight_snack", "lights_on"], [], false, 0.45)
 	g.light_zone("Sunbeam", Vector3(-46, 2, 0), Vector3(26, 4, 22), 3, 2, ["sunbeam"], ["lights_out"])
 	g.deco_box("Window", Vector3(-59.85, 52, 0), Vector3(0.2, 30, 24), "window", Vector3.ZERO, false)
+
+	# --- East half: pantry, second counter, island, pet bowls, mop bucket ---
+	g.box("Pantry", Vector3(72, 36, -33), Vector3(24, 68, 24), "wood", &"wood")
+	g.box("PantryKick", Vector3(72, 1, -35), Vector3(24, 2, 20), "dark_wood", &"wood", &"dark_wood")
+	g.deco_box("PantryDoor", Vector3(72, 36, -20.9), Vector3(22, 64, 0.3), "dark_wood")
+	g.deco_box("PantryKnob", Vector3(80, 36, -20.5), Vector3(1.2, 1.2, 1.2), "metal")
+	g.box("ToeKick2", Vector3(97, 2, -34.5), Vector3(26, 4, 21), "dark_wood", &"wood", &"dark_wood")
+	g.box("Cabinets2", Vector3(97, 20, -33), Vector3(26, 32, 24), "wood", &"wood")
+	g.box("Countertop2", Vector3(97, 37, -32.5), Vector3(27, 2, 27), "counter_stone", &"stone")
+	g.hiding_spot("ToeKickGap2", Vector3(97, 1.6, -22.5), Vector3(24, 3.2, 3.0))
+	g.light_zone("ToeKickShadow2", Vector3(97, 2, -22.5), Vector3(24, 4, 3.2), 0, 3)
+	g.box("Toaster", Vector3(93, 43, -36), Vector3(10, 10, 7), "metal", &"metal")
+	g.box("BreadBox", Vector3(104, 42, -37), Vector3(9, 8, 8), "wood", &"wood")
+	g.box("Island", Vector3(60, 14, 35), Vector3(36, 28, 20), "wood", &"wood")
+	g.box("IslandTop", Vector3(60, 29, 35), Vector3(40, 2, 24), "counter_stone", &"stone")
+	g.light_zone("UnderIslandLip", Vector3(60, 3, 35), Vector3(40, 6, 24), 1, 2)
+	for x in [48.0, 72.0]:
+		g.cylinder("StoolPost", Vector3(x, 12, 52), 1.0, 24, "metal", &"metal")
+		g.cylinder("StoolSeat", Vector3(x, 25, 52), 5.5, 2, "dark_wood", &"wood", &"dark_wood")
+	g.cylinder("FoodBowl", Vector3(92, 1.5, 64), 5.0, 3, "metal", &"metal")
+	g.cylinder("WaterBowl", Vector3(102, 1.5, 64), 5.0, 3, "metal", &"metal")
+	g.deco("BowlWater", _cyl(4.4, 0.2), "water", Vector3(102, 3.05, 64))
+	g.scent_wiper("BowlSplash", Vector3(100, 0.6, 56), Vector3(7, 1.2, 5))
+	g.cylinder("MopBucket", Vector3(98, 6, 8), 6.0, 12, "cloth_blue", &"metal")
+	g.scent_wiper("MopSpill", Vector3(88, 0.6, 10), Vector3(8, 1.2, 7))
+	g.box("PlaceMat", Vector3(60, -0.2, 64), Vector3(16, 0.5, 10), "rug", &"carpet", &"", 0.0, false)
+	g.deco_box("WindowEast", Vector3(109.85, 52, 30), Vector3(0.2, 30, 24), "window", Vector3.ZERO, false)
+	g.light_zone("SunbeamEast", Vector3(98, 2, 30), Vector3(22, 4, 22), 3, 2, ["sunbeam"], ["lights_out"])
 
 	# --- Crumbs ---
 	for p in [Vector3(30, 0.6, 30), Vector3(14, 0.6, 2), Vector3(-10, 0.6, 14), Vector3(-28, 0.6, 22),
 			Vector3(-45, 0.6, -17), Vector3(-20, 0.6, -22.5), Vector3(43, 0.6, -13), Vector3(52, 0.6, 5),
 			Vector3(-55, 0.6, 20), Vector3(27, 0.6, 22), Vector3(-24, 19.4, -7), Vector3(-16, 32.2, 18),
-			Vector3(-2, 32.2, 8), Vector3(-28, 38.6, -27), Vector3(5, 36.6, -28)]:
+			Vector3(-2, 32.2, 8), Vector3(-28, 38.6, -27), Vector3(5, 36.6, -28),
+			Vector3(75, 0.6, 10), Vector3(95, 0.6, 22), Vector3(105, 0.6, 48), Vector3(75, 0.6, 72),
+			Vector3(40, 0.6, 62), Vector3(10, 0.6, 70), Vector3(-30, 0.6, 62), Vector3(-50, 0.6, 58),
+			Vector3(100, 38.6, -28), Vector3(52, 30.6, 32), Vector3(68, 30.6, 40)]:
 		g.crumb(p)
+
+	# --- Bug food and crumb gems ---
+	g.item("sugar_cube", Vector3(-40, 38, -24))
+	g.item("cheese", Vector3(-12, 0, 18))
+	g.item("kibble", Vector3(87, 0, 60))
+	g.item("kibble", Vector3(95, 0, 57))
+	g.item("coffee_bean", Vector3(72, 0, 12))
+	g.item("honey_drop", Vector3(66, 0, -16))
+	g.item("gem_amber", Vector3(0, 0, 55))
+	g.item("gem_diamond", Vector3(43, 72, -30))
 
 	# --- Secret route into the wall cavity behind the back wall ---
 	g.box("CavityFloor", Vector3(44, -1, -53), Vector3(32, 2, 12), "dark_wood", &"wood", &"dark_wood")
@@ -111,6 +153,8 @@ static func build(tree: SceneTree) -> void:
 	g.cover_block("MailStack", Vector3(-15, 0, -16), Vector3(8, 2.6, 4.5), "paper", "stack of mail", "cover_mail_stack", &"paper")
 	g.shelter("FoldedTowel", Vector3(-50, 38, -38), Vector3(8, 2.6, 6), "cloth_red", true, "folded towel", "cover_folded_towel", &"cloth")
 	g.shelter("NapkinTent", Vector3(-20, 31.5, 8), Vector3(6, 2.4, 5), "paper", false, "napkin", "cover_napkin")
+	g.shelter("RecycleBox", Vector3(102, 0, -6), Vector3(10, 8, 12), "paper", false, "recycling box", "cover_cardboard_box")
+	g.cover_block("FlourSack", Vector3(30, 0, 72), Vector3(12, 6, 8), "paper", "flour sack", "cover_flour_sack", &"cloth")
 
 	# --- Model slots for the furniture ---
 	g.skin_region("Fridge", "kitchen_fridge", Vector3(43, 36, -30), Vector3(28, 72, 26), ["Fridge"])
@@ -121,17 +165,22 @@ static func build(tree: SceneTree) -> void:
 	g.skin_region("ChairA", "kitchen_chair", Vector3(-24, 19, -7), Vector3(14, 38, 14), ["Chair"], 180.0)
 	g.skin_region("ChairB", "kitchen_chair", Vector3(0, 19, 35), Vector3(14, 38, 14), ["Chair"], 0.0)
 	g.skin_region("TrashCan", "kitchen_trash_can", Vector3(-50, 16, 30), Vector3(14, 32, 14), ["TrashCan"])
+	g.skin_region("Island", "kitchen_island", Vector3(60, 15, 35), Vector3(40, 30, 24), ["Island"])
+	g.skin_region("Toaster", "toaster", Vector3(93, 43, -36), Vector3(10, 10, 7), ["Toaster"])
+	g.skin_region("PetBowls", "pet_bowl", Vector3(92, 1.5, 64), Vector3(10, 3, 10), ["FoodBowl"])
+	g.skin_region("MopBucket", "mop_bucket", Vector3(98, 6, 8), Vector3(12, 12, 12), ["MopBucket"])
 
 	# --- Spawn and escape ---
-	g.spawn(Vector3(50, 0.8, 34), PI * 0.5)
+	g.spawn(Vector3(84, 0.8, 74), PI * 0.5)
 	g.goal(Vector3(-58, 0, 40), "crack under the back door")
 	g.deco_box("DoorCrack", Vector3(-59.85, 2.5, 40), Vector3(0.2, 5, 8), "hole", Vector3.ZERO, false)
 
 	# --- Threats ---
 	var human := g.human("res://scenes/threats/human.tscn",
-		[Vector3(40, 0, 8), Vector3(22, 0, -1), Vector3(12, 0, 30), Vector3(40, 0, 38)],
+		[Vector3(40, 0, 8), Vector3(22, 0, -1), Vector3(12, 0, 30), Vector3(32, 0, 58), Vector3(85, 0, 62),
+			Vector3(90, 0, 18), Vector3(65, 0, 8)],
 		["breakfast", "dishes", "cleaning", "lunch", "late_snack", "midnight_snack"])
-	var vac := g.vacuum(Vector3(30, 0.2, 20), Vector3(-55, 0, -18), Vector3(57, 0, 42), ["cleaning"])
+	var vac := g.vacuum(Vector3(30, 0.2, 20), Vector3(-55, 0, -18), Vector3(105, 0, 76), ["cleaning"])
 	g.escalation()
 	g.boss(BossDirector.Kind.CLEANING_DAY, "Cleaning Day",
 		"The robot vacuum hunts your noise - then the spray comes out. Run for the door!",

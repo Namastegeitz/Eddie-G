@@ -23,6 +23,7 @@ func default_data() -> Dictionary:
 		"unlocked_bugs": ["cockroach"],
 		"levels": {},
 		"colony": {"banked": 0, "lifetime": 0, "upgrades": []},
+		"gems": {},
 		"settings": {
 			"master_volume": 0.9,
 			"music_volume": 0.6,
@@ -97,7 +98,7 @@ func get_level_record(id: StringName) -> Dictionary:
 	var key := String(id)
 	if not levels.has(key):
 		levels[key] = {"completed": false, "best_score": 0, "best_time": 0.0,
-			"badges": {"ghost": false, "speedrun": false, "golden": false}}
+			"badges": {"ghost": false, "speedrun": false, "golden": false, "gem_hunter": false}}
 	return levels[key]
 
 
@@ -122,6 +123,20 @@ func record_level_result(id: StringName, won: bool, score: int, time: float, bad
 			newly.append(b)
 	progress_changed.emit()
 	return newly
+
+
+# --- Crumb gems ----------------------------------------------------------
+
+## Lifetime count of each crumb gem found.
+func record_gem(id: StringName) -> void:
+	var g: Dictionary = data.get("gems", {})
+	g[String(id)] = int(g.get(String(id), 0)) + 1
+	data["gems"] = g
+	progress_changed.emit()
+
+
+func gems_found() -> Dictionary:
+	return data.get("gems", {})
 
 
 # --- Colony -------------------------------------------------------------

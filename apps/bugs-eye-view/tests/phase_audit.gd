@@ -29,6 +29,8 @@ func _ready() -> void:
 		await _phase7()
 	if only in [0, 8]:
 		await _phase8()
+	if only in [0, 9]:
+		await _phase9()
 	finish("phase audit")
 
 
@@ -479,14 +481,14 @@ func _phase3() -> void:
 	await unload(lvl)
 	lvl = await load_level(&"backyard", &"fly")
 	var fly := lvl.player as Fly
-	fly.teleport_to(Transform3D(Basis.IDENTITY, Vector3(0, 45, 40)))
+	fly.teleport_to(Transform3D(Basis.IDENTITY, Vector3(0, 45, 70)))
 	fly.take_off()
 	fly.stamina = 999.0
 	face(lvl, PI)
 	InputRouter.set_touch_move(Vector2(0, 1))
 	await frames(240)
 	InputRouter.set_touch_move(Vector2.ZERO)
-	check(fly.global_position.z < 62.0 and fly.global_position.y < 110.0, "invisible walls keep the fly inside the yard (z=%.1f)" % fly.global_position.z)
+	check(fly.global_position.z < 102.0 and fly.global_position.y < 110.0, "invisible walls keep the fly inside the yard (z=%.1f)" % fly.global_position.z)
 	await unload(lvl)
 
 	# Both new rooms can be won and unlock what follows.
@@ -692,7 +694,7 @@ func _phase4() -> void:
 	lvl = await load_level(&"living_room", &"fly")
 	var f := lvl.player as Fly
 	HouseClock.set_hour(7.2)
-	f.teleport_to(Transform3D(Basis.IDENTITY, Vector3(35, 15, 18)))
+	f.teleport_to(Transform3D(Basis.IDENTITY, Vector3(85, 15, 18)))
 	f.take_off()
 	await frames(20)
 	check(f.external_velocity.x < -2.0, "the fan pushes a flying fly (wind %.1f)" % f.external_velocity.x)
@@ -702,8 +704,8 @@ func _phase4() -> void:
 		if lvl.is_ancestor_of(n) and (n as PhysicsProp).mass > 2.0:
 			lmug = n
 	var mug_y := lmug.global_position.y
-	cat.global_position = Vector3(50, 0.5, -18)
-	cat.force_alert(AlertState.SEARCHING, Vector3(48, 25.5, -33))
+	cat.global_position = Vector3(100, 0.5, -18)
+	cat.force_alert(AlertState.SEARCHING, Vector3(98, 25.5, -33))
 	await frames(360)
 	check(lmug.global_position.y < mug_y - 5.0, "the cat leaps onto the side table and knocks the mug off")
 	await unload(lvl)
@@ -1087,7 +1089,7 @@ func _phase7() -> void:
 	check(hud != null and hud._alarm is AlarmGauge, "the HUD shows the alarm gauge")
 
 	# Cling to a wall, blend in, take off again.
-	f.teleport_to(Transform3D(Basis.IDENTITY, Vector3(50, 20, 30)))
+	f.teleport_to(Transform3D(Basis.IDENTITY, Vector3(98, 20, 30)))
 	f.take_off()
 	face(lvl, -PI * 0.5)
 	f.stamina = 4.0
@@ -1341,3 +1343,260 @@ func _phase8() -> void:
 		if not listed.has(id):
 			unlisted.append(id)
 	check(not listed.is_empty() and unlisted.is_empty(), "every model slot has a Meshy job in tools/meshy/assets.json %s" % str(unlisted))
+
+
+# --- Update: bigger rooms, human bodies, detailed bugs, bug food & crumb gems ---
+
+func _floor_area(lvl: Node) -> float:
+	for n in ["Floor", "Lawn"]:
+		var body := lvl.find_child(n, true, false)
+		if body:
+			var cs := body.get_node_or_null("Shape") as CollisionShape3D
+			if cs and cs.shape is BoxShape3D:
+				var sz := (cs.shape as BoxShape3D).size
+				return (sz.x - 4.0) * (sz.z - 4.0)
+	return 0.0
+
+
+func _items(lvl: Node, gem: bool) -> Array[PickupItem]:
+	var out: Array[PickupItem] = []
+	for n in get_tree().get_nodes_in_group(Phys.GROUP_ITEM):
+		var it := n as PickupItem
+		if it and lvl.is_ancestor_of(it) and it.is_gem() == gem:
+			out.append(it)
+	return out
+
+
+func _item(lvl: Node, id: StringName) -> PickupItem:
+	for n in get_tree().get_nodes_in_group(Phys.GROUP_ITEM):
+		var it := n as PickupItem
+		if it and lvl.is_ancestor_of(it) and it.def.id == id and not it.taken:
+			return it
+	return null
+
+
+func _grab(lvl: Level, id: StringName) -> PickupItem:
+	var it := _item(lvl, id)
+	if it:
+		lvl.player.teleport_to(Transform3D(Basis.IDENTITY, it.global_position + Vector3.UP * 0.8))
+		await frames(4)
+	return it
+
+
+func _phase9() -> void:
+	print("-- Update: bigger rooms, human-like people, detailed bugs, bug food and crumb gems")
+	SaveSystem.data = SaveSystem.default_data()
+
+	# Bigger rooms, each stocked with food and gems.
+	var old_area := {&"kitchen": 120.0 * 90.0, &"living_room": 130.0 * 100.0, &"backyard": 164.0 * 124.0}
+	for room in ROOMS:
+		var rl := await load_level(room, &"cockroach")
+		var area := _floor_area(rl)
+		check(area >= old_area[room] * 1.35, "%s: floor is %d%% of its old size" % [room, int(area / old_area[room] * 100.0)])
+		var foods := _items(rl, false)
+		var gems := _items(rl, true)
+		var floor_gem := gems.any(func(g: PickupItem) -> bool: return g.global_position.y < 1.0)
+		check(foods.size() >= 4 and gems.size() >= 2 and floor_gem,
+			"%s: %d bug foods and %d crumb gems (one on the floor for the cockroach)" % [room, foods.size(), gems.size()])
+		var crumbs := 0
+		for c in get_tree().get_nodes_in_group(Phys.GROUP_CRUMB):
+			if rl.is_ancestor_of(c) and not (c as Crumb).golden:
+				crumbs += 1
+		check(crumbs >= rl.config.crumbs_required + 5, "%s: %d crumbs for a target of %d" % [room, crumbs, rl.config.crumbs_required])
+		await unload(rl)
+
+	# People: a full body that walks like one.
+	var klvl := await load_level(&"kitchen", &"cockroach")
+	HouseClock.set_hour(7.2)
+	var h := first_in_group(Phys.GROUP_HUMAN, klvl) as Human
+	h.force_present(true)
+	# Rigid parts are merged per material at build time, so look for materials.
+	var want_mats := {"Torso/Head": ["skin", "hair", "eye_white", "iris", "lips"], "Torso": ["shirt", "jeans", "belt"],
+		"Torso/ShoulderL/Elbow/Hand": ["skin"], "Torso/ShoulderR/Elbow": ["skin"], "Legs": ["jeans"]}
+	var missing: PackedStringArray = []
+	for path: String in want_mats.keys():
+		var node := h.get_node_or_null(path)
+		var have := {}
+		if node:
+			for c in node.get_children():
+				if c is MeshInstance3D and (c as MeshInstance3D).material_override:
+					have[(c as MeshInstance3D).material_override.resource_path.get_file().get_basename()] = true
+		for m: String in want_mats[path]:
+			if not have.has(m):
+				missing.append("%s:%s" % [path, m])
+	for path: String in ["Legs/ThighL", "Legs/KneeR", "Legs/ShinR", "Torso/ShoulderL/Elbow/Hand"]:
+		if h.get_node_or_null(path) == null:
+			missing.append(path)
+	check(missing.is_empty(), "a human has a head with a face and hair, jointed arms with hands, a torso and knee-jointed legs %s" % str(missing))
+	h.alert.reset()
+	var sl := h.get_node("Torso/ShoulderL") as Node3D
+	var lo := 9.0
+	var hi := -9.0
+	for i in 240:
+		await get_tree().process_frame
+		lo = minf(lo, sl.rotation.x)
+		hi = maxf(hi, sl.rotation.x)
+	check(hi - lo > 0.2, "arms swing while the human walks (%.2f rad)" % (hi - lo))
+	h.pose_body(0.0)
+	var gaps: Array = []
+	var bends := true
+	for i in 2:
+		var foot := h.left_foot if i == 0 else h.right_foot
+		var side := "L" if i == 0 else "R"
+		var thigh := h.get_node("Legs/Thigh" + side) as Node3D
+		var shin := h.get_node("Legs/Shin" + side) as Node3D
+		var hip := h.global_transform * Vector3((-1.0 if i == 0 else 1.0) * Human.HIP_X, Human.HIP_Y + (h.get_node("Torso") as Node3D).position.y, Human.BODY_Z)
+		var ankle := foot.global_transform * Human.ANKLE
+		# Bones run along +Y from the upper joint to the lower one.
+		gaps.append(snappedf((thigh.global_transform * Vector3(0, -9.75, 0)).distance_to(hip), 0.01))
+		gaps.append(snappedf((shin.global_transform * Vector3(0, 9.5, 0)).distance_to(ankle), 0.01))
+		var knee := (h.get_node("Legs/Knee" + side) as Node3D).global_position
+		var fwd := -h.global_basis.z
+		fwd.y = 0.0
+		bends = bends and (knee - (hip + ankle) * 0.5).dot(fwd.normalized()) > 0.0
+	check(gaps.all(func(g: float) -> bool: return g < 0.5) and bends,
+		"legs run from hip to foot and bend forward at the knee %s" % str(gaps))
+	var head := h.get_node("Torso/Head") as Node3D
+	h.alert.force(AlertState.SUSPICIOUS, h.global_transform * Vector3(-40, 0, -12))
+	for i in 30:
+		h.pose_body(0.1)
+	check(head.rotation.y > 0.3, "its head turns toward a noise (%.2f rad)" % head.rotation.y)
+	h.alert.force(AlertState.ALERT, h.global_transform * Vector3(0, 0, -20))
+	for i in 30:
+		h.pose_body(0.1)
+	check((h.get_node("Torso/ShoulderR") as Node3D).rotation.x > 1.2, "when it spots you it raises its swatting arm")
+	await unload(klvl)
+
+	# Bugs: jointed legs, antennae, eyes, wing veins; legs walk and tuck.
+	var want := {"cockroach": 6, "fly": 6, "spider": 8}
+	for b: String in want.keys():
+		var inst := (load("res://scenes/bugs/%s.tscn" % b) as PackedScene).instantiate()
+		var v := inst.get_node("Visual")
+		var legs := 0
+		var jointed := 0
+		for c in v.get_children():
+			if c.has_meta(&"group"):
+				legs += 1
+				var knee_node := c.get_node_or_null("Knee")
+				if knee_node and knee_node.get_child_count() > 0 and c.get_child_count() > 1:
+					jointed += 1
+		var extra := ""
+		match b:
+			"cockroach":
+				extra = "antennae" if v.get_node_or_null("AntennaL/Tip") and v.get_node_or_null("WingCover") else ""
+			"fly":
+				extra = "veined wings" if v.get_node_or_null("WingL/Vein") and v.get_node_or_null("Eye") else ""
+			"spider":
+				var eye := v.get_node_or_null("EyeBig") as MeshInstance3D
+				var eye_verts := 0
+				if eye:
+					eye_verts = (eye.mesh.surface_get_arrays(0)[Mesh.ARRAY_VERTEX] as PackedVector3Array).size()
+				extra = "eight eyes and fangs" if eye_verts >= 8 * 100 and v.get_node_or_null("Fang") else ""
+		check(legs == want[b] and jointed == legs and extra != "" and inst.get_node_or_null("Rig") is BugRig,
+			"%s: %d jointed legs, %s, animated by a rig" % [b, legs, extra if extra != "" else "MISSING DETAIL"])
+		inst.free()
+	var lvl := await load_level(&"kitchen", &"cockroach")
+	var p := lvl.player
+	p.invuln = 1000.0
+	var leg := p.get_node("Visual/LegL1") as Node3D
+	face(lvl, 0.0)
+	InputRouter.set_touch_move(Vector2(0, 1))
+	var ylo := 9.0
+	var yhi := -9.0
+	for i in 60:
+		await get_tree().process_frame
+		ylo = minf(ylo, leg.rotation.y)
+		yhi = maxf(yhi, leg.rotation.y)
+	InputRouter.set_touch_move(Vector2.ZERO)
+	check(yhi - ylo > 0.2, "the cockroach's legs scuttle as it runs (%.2f rad)" % (yhi - ylo))
+	for i in 60:
+		await get_tree().process_frame
+	check(absf(leg.rotation.y - float(leg.get_meta(&"base_yaw"))) < 0.05, "and settle when it stops")
+	await unload(lvl)
+	lvl = await load_level(&"kitchen", &"fly")
+	var fl := lvl.player as Fly
+	fl.teleport_to(Transform3D(Basis.IDENTITY, Vector3(0, 20, 10)))
+	fl.take_off()
+	await frames(30)
+	var fleg := fl.get_node("Visual/LegR2") as Node3D
+	check(absf(fleg.rotation.z - float(fleg.get_meta(&"base_z"))) > 0.3, "the fly tucks its legs in flight")
+	await unload(lvl)
+
+	# Bug food.
+	lvl = await load_level(&"kitchen", &"cockroach")
+	HouseClock.set_hour(13.5)
+	p = lvl.player
+	var hud := _hud(lvl)
+	await _grab(lvl, &"sugar_cube")
+	check(p.has_effect(&"speed") and is_equal_approx(p.speed_scale(), 1.35), "Sugar Cube: Sugar Rush makes you 35% faster")
+	await get_tree().process_frame
+	check(String(hud._effects.text).contains("SUGAR RUSH"), "the HUD shows active effects and their timers (%s)" % hud._effects.text)
+	var before := p.hits_left
+	await _grab(lvl, &"cheese")
+	check(p.hits_left == before + 1 and String(hud._lives.text).count("O") == before + 1, "Cheese Crumb: one extra shell (%s)" % hud._lives.text)
+	var got := lvl.crumbs_got
+	await _grab(lvl, &"kibble")
+	check(lvl.crumbs_got == got + 2, "Dog Kibble counts as two crumbs")
+	await _grab(lvl, &"coffee_bean")
+	p._dodge_cd = 1.0
+	p.sense_active = true
+	var sense0 := p.sense_meter
+	await frames(10)
+	check(p.has_effect(&"wired") and p._dodge_cd < 0.6 and p.sense_meter >= sense0, "Coffee Bean: dodges recharge fast and Sense doesn't run down")
+	p._end_sense()
+	await _grab(lvl, &"honey_drop")
+	check(is_equal_approx(p.noise_scale(), 0.3), "Honey Drop: steps 70% quieter")
+	PowerUps.apply(load("res://resources/items/mint_leaf.tres"), p)
+	p.global_position = Vector3(20, 0.8, 60)
+	await frames(3)
+	check(not p.is_scent_active(), "Mint Leaf: no scent trail for the dog")
+	check(lvl.run.foods_eaten == 5 and lvl.run.score(GameManager.scoring, 240.0)["lines"].any(
+		func(l: Array) -> bool: return String(l[0]).begins_with("Bug food")), "eating counts on the score screen")
+
+	# Crumb gems.
+	var stunned0 := lvl.run.threats_stunned
+	var human := first_in_group(Phys.GROUP_HUMAN, lvl) as Human
+	human.force_present(true)
+	await _grab(lvl, &"gem_amber")
+	var frozen := PerceptionSystem.threats.filter(func(t: Threat) -> bool: return t.present and t.stun_time > 0.0)
+	check(frozen.size() > 0 and frozen.size() == PerceptionSystem.threats.filter(func(t: Threat) -> bool: return t.present).size()
+		and lvl.run.threats_stunned == stunned0, "Amber: every person and pet freezes (%d), without counting as tricked" % frozen.size())
+	var crumb: Crumb = null
+	for c in get_tree().get_nodes_in_group(Phys.GROUP_CRUMB):
+		if lvl.is_ancestor_of(c) and not (c as Crumb).taken and not (c as Crumb).golden:
+			crumb = c
+			break
+	var diamond := _item(lvl, &"gem_diamond")
+	diamond.collect()
+	p.global_position = crumb.global_position + Vector3(15, 0.2, 0)
+	var d0 := crumb.global_position.distance_to(p.global_position)
+	await frames(10)
+	check(p.has_effect(&"magnet") and (crumb.taken or crumb.global_position.distance_to(p.global_position) < d0 - 3.0),
+		"Diamond: crumbs fly toward you")
+	PerceptionSystem.add_alarm_from_sight(1.0)
+	PowerUps.apply(load("res://resources/items/gem_emerald.tres"), p)
+	PerceptionSystem.add_alarm_from_sight(5.0)
+	check(PerceptionSystem.alarm == 0.0 and not PerceptionSystem.alarm_active, "Emerald: the alarm empties and stays empty")
+	p.invuln = 0.0
+	PowerUps.apply(load("res://resources/items/gem_ruby.tres"), p)
+	var hits := p.hits_left
+	check(not p.take_hit(&"test", p.global_position) and p.hits_left == hits, "Ruby: Iron Shell blocks a hit")
+	p.global_position = Vector3(-20, 0.8, 60)
+	p.clear_effects()
+	await frames(70)
+	var vis0 := p.compute_visibility(1.0, PerceptionSystem.config)
+	PowerUps.apply(load("res://resources/items/gem_amethyst.tres"), p)
+	var vis1 := p.compute_visibility(1.0, PerceptionSystem.config)
+	check(vis1 > 0.0 and vis1 <= vis0 * 0.21, "Amethyst: Shadow Cloak makes you near-invisible (%.2f -> %.2f)" % [vis0, vis1])
+	human.stun_time = 0.0
+	human.alert.reset()
+	p.global_position = human.global_position + Vector3(8, 0.8, 0)
+	PowerUps.apply(load("res://resources/items/gem_sapphire.tres"), p)
+	var decoy := lvl.find_children("*", "DecoyEcho", true, false)
+	await frames(40)
+	check(not decoy.is_empty() and human.alert.state > AlertState.UNAWARE and human.alert.last_known.distance_to((decoy[0] as Node3D).global_position) < 2.0,
+		"Sapphire: the echo decoy draws the human to where you stood")
+	check(lvl.run.gems.size() == 2 and SaveSystem.gems_found().has("gem_amber"), "found gems are kept in your save")
+	lvl.run.won = true
+	check(bool(lvl.run.badges(240.0)["gem_hunter"]), "two gems in a won run earns the Gem Hunter badge")
+	await unload(lvl)

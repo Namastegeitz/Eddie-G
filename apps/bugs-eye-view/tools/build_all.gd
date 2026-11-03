@@ -22,6 +22,7 @@ func _ready() -> void:
 		ResBuilder.bugs(force)
 		ResBuilder.threats(force)
 		ResBuilder.upgrades(force)
+		ResBuilder.items(force)
 		var routines := ResBuilder.routines(force)
 		ResBuilder.levels(force, routines)
 		ResBuilder.sound_library(force)
@@ -31,6 +32,7 @@ func _ready() -> void:
 		ActorBuilder.threats(force)
 		ActorBuilder.hazards(force)
 		ActorBuilder.pickups(force)
+		ActorBuilder.items(force)
 		ActorBuilder.props(force)
 		print("  actor scenes done")
 	if only == "" or only == "levels":

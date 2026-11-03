@@ -183,6 +183,25 @@ def build_sfx():
     write("music_ambient", lowpass(pad, 1200) * 0.6 + plucks * 0.25, loop=True, peak=0.55)
 
 
+def build_item_sfx():
+    """Pickups: bug food, crumb gems and their powers."""
+    os.makedirs(SFX, exist_ok=True)
+    n = lambda d: int(RATE * d)
+    # Two quick bites.
+    bite = lowpass(noise(n(0.07)), 2200) * env(n(0.07), 0.001, 0.05)
+    gap = np.zeros(n(0.05))
+    write("munch", np.concatenate([bite, gap, bite * 0.8]))
+    # Sparkly rising arpeggio with a shimmer tail.
+    write("gem", sum(tone(f, 0.7) * env(n(0.7), 0.003, 0.55) * (t_axis(0.7) > d) * 0.8
+                     for f, d in [(1047, 0), (1319, 0.06), (1568, 0.12), (2093, 0.18), (2637, 0.24)])
+          + 0.15 * highpass(noise(n(0.7)), 6000) * env(n(0.7), 0.05, 0.6))
+    write("powerup", tone(lambda t: 260 + 900 * t, 0.45, "tri") * env(n(0.45), 0.01, 0.15))
+    write("freeze", tone(lambda t: 2400 - 1800 * t, 0.8) * env(n(0.8), 0.005, 0.6) * 0.6
+          + 0.4 * highpass(noise(n(0.8)), 5000) * env(n(0.8), 0.01, 0.7))
+    write("clink", tone(1900, 0.25) * np.exp(-t_axis(0.25) * 18) + 0.4 * tone(2850, 0.25) * np.exp(-t_axis(0.25) * 25))
+    write("shield", (tone(660, 0.6) + 0.6 * tone(990, 0.6) + 0.3 * tone(1320, 0.6)) * np.exp(-t_axis(0.6) * 5))
+
+
 def build_icons():
     from PIL import Image, ImageDraw
     os.makedirs(ICONS, exist_ok=True)
@@ -237,5 +256,6 @@ def build_icons():
 
 if __name__ == "__main__":
     build_sfx()
+    build_item_sfx()
     build_icons()
     print("assets generated")

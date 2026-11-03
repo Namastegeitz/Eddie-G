@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="ItemDef" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/item_def.gd" id="1_0x3qw"]
+
+[resource]
+script = ExtResource("1_0x3qw")
+id = &"coffee_bean"
+display_name = "Coffee Bean"
+effect = &"wired"
+duration = 10.0
+points = 40
+color = Color(0.45, 0.25, 0.1, 1)
+blurb = "Wired: fast dodges, Sense and stamina never run out (10 s)."
