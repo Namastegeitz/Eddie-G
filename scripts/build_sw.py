@@ -15,7 +15,7 @@ import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 INCLUDE_EXT = {'.html', '.css', '.js', '.png', '.svg', '.webmanifest', '.pdf', '.json', '.txt', '.ico', '.webp', '.jpg'}
-EXCLUDE_DIRS = {'scripts', 'tests', 'node_modules', '.git', '__pycache__'}
+EXCLUDE_DIRS = {'scripts', 'tests', 'dist', 'node_modules', '.git', '__pycache__'}
 EXCLUDE_FILES = {'sw.js'}
 
 

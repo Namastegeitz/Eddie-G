@@ -10,6 +10,8 @@ An installable web app that works with **no internet and no cell signal** once i
 
 ---
 
+**Ready-made zip:** `dist/off-grid-survival-kit.zip` (unzip anywhere, then run the one-liner below inside the folder).
+
 ## Run it locally (one line)
 
 ```bash
