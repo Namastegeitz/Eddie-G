@@ -1,29 +1,36 @@
 [gd_scene format=3]
 
-[ext_resource type="Script" path="res://scripts/stealth/physics_prop.gd" id="1_fhb8w"]
-[ext_resource type="Material" path="res://assets/materials/metal.tres" id="2_r70py"]
+[ext_resource type="Script" path="res://scripts/stealth/physics_prop.gd" id="1_r70py"]
+[ext_resource type="Material" path="res://assets/materials/metal.tres" id="2_1dlkf"]
+[ext_resource type="Script" path="res://scripts/core/skin_anchor.gd" id="3_4bfnq"]
 
-[sub_resource type="CylinderShape3D" id="CylinderShape3D_1dlkf"]
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_n8ybc"]
 height = 0.4
 radius = 1.0
 
-[sub_resource type="CylinderMesh" id="CylinderMesh_4bfnq"]
+[sub_resource type="CylinderMesh" id="CylinderMesh_38y6t"]
 top_radius = 1.0
 bottom_radius = 1.0
 height = 0.4
 radial_segments = 16
 rings = 1
 
-[node name="BottleCap" type="RigidBody3D" unique_id=197891048]
+[node name="BottleCap" type="RigidBody3D" unique_id=1086938341]
 mass = 0.2
-script = ExtResource("1_fhb8w")
+script = ExtResource("1_r70py")
 noise_on_impact = 2.2
 
-[node name="Shape" type="CollisionShape3D" parent="." unique_id=62629543]
-shape = SubResource("CylinderShape3D_1dlkf")
+[node name="Shape" type="CollisionShape3D" parent="." unique_id=503986600]
+shape = SubResource("CylinderShape3D_n8ybc")
 
-[node name="Visual" type="Node3D" parent="." unique_id=1650664651]
+[node name="Visual" type="Node3D" parent="." unique_id=545629555]
 
-[node name="Mesh" type="MeshInstance3D" parent="Visual" unique_id=1899469729]
-material_override = ExtResource("2_r70py")
-mesh = SubResource("CylinderMesh_4bfnq")
+[node name="Mesh" type="MeshInstance3D" parent="Visual" unique_id=759466509]
+material_override = ExtResource("2_1dlkf")
+mesh = SubResource("CylinderMesh_38y6t")
+
+[node name="Skin" type="Node3D" parent="Visual" unique_id=731191906]
+script = ExtResource("3_4bfnq")
+model_id = "prop_bottle_cap"
+fit_size = Vector3(2, 0.4, 2)
+hide_paths = Array[NodePath]([NodePath("../Mesh")])

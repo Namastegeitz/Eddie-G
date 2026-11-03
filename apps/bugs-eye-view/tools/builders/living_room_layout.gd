@@ -22,7 +22,7 @@ static func build(tree: SceneTree) -> void:
 		g.box("CouchLeg", p, Vector3(2, 3, 2), "dark_wood", &"wood", &"dark_wood")
 	g.hiding_spot("UnderCouch", Vector3(-10, 1.4, -39), Vector3(56, 2.8, 18))
 	g.light_zone("UnderCouchShadow", Vector3(-10, 1.5, -39), Vector3(58, 3, 20), 0, 3)
-	g.lure("Phone", LureProp.Kind.PHONE, Vector3(22.5, 22.3, -38), Vector3(3.2, 0.5, 6.4), "dark_metal", 2.2)
+	g.lure("Phone", LureProp.Kind.PHONE, Vector3(22.5, 22.3, -38), Vector3(3.2, 0.5, 6.4), "dark_metal", 2.2, "lure_phone")
 
 	# --- Coffee table + blanket ramp ---
 	g.box("CoffeeTable", Vector3(-8, 16, -8), Vector3(34, 1.5, 18), "wood", &"wood")
@@ -37,7 +37,7 @@ static func build(tree: SceneTree) -> void:
 	g.deco_box("Screen", Vector3(-8, 34, 45.9), Vector3(36, 20, 0.2), "tv_screen", Vector3.ZERO, false)
 	var tv := g.ambient("TVSound", Vector3(-8, 30, 40), 55.0, 0.9, "tv_mumble", ["tv_on"], [], -6.0)
 	g.light_zone("TVGlow", Vector3(-8, 5, 25), Vector3(44, 10, 26), 2, 2, ["tv_on"], [], true, 1.2)
-	var remote := g.lure("Remote", LureProp.Kind.REMOTE, Vector3(-2, 17.0, -10), Vector3(2.5, 0.5, 7), "dark_metal", 3.5)
+	var remote := g.lure("Remote", LureProp.Kind.REMOTE, Vector3(-2, 17.0, -10), Vector3(2.5, 0.5, 7), "dark_metal", 3.5, "lure_remote")
 	remote.linked_path = remote.get_path_to(tv)
 
 	# --- Bookshelf (spider highway) ---
@@ -97,6 +97,27 @@ static func build(tree: SceneTree) -> void:
 		Vector3.UP, Vector3(4, 7, 7))
 	g.deco_box("VentGrille", Vector3(-64.85, 70, -10), Vector3(0.3, 6, 8), "dark_metal")
 	g.passage("CavityExit", Vector3(-73, 1.5, -18), Vector3(-55, 0.8, -20), [], "crack back to the room")
+
+	# --- Cover ---
+	g.shelter("SlipperA", Vector3(-45, 0, 12), Vector3(4.6, 3.6, 9.5), "cloth_blue", false, "slipper", "cover_slipper", &"cloth")
+	g.shelter("SlipperB", Vector3(-40, 0, -24), Vector3(9.5, 3.6, 4.6), "cloth_blue", true, "slipper", "cover_slipper", &"cloth")
+	g.shelter("FallenPillow", Vector3(20, 0, 16), Vector3(9, 3.2, 9), "cloth_red", true, "fallen pillow", "cover_throw_pillow", &"cloth")
+	g.shelter("Shoe", Vector3(34, 0, -46), Vector3(10, 4.2, 4.6), "shoe", true, "shoe", "cover_sneaker", &"cloth")
+	g.cover_block("MagazinePile", Vector3(-20, 0, 10), Vector3(10, 2.2, 7), "paper", "magazine pile", "cover_magazines", &"paper")
+	g.cover_block("ToyBlocks", Vector3(22, 0, 38), Vector3(6, 5, 6), "ball", "toy blocks", "cover_toy_blocks", &"wood")
+
+	# --- Model slots for the furniture ---
+	g.skin_region("Couch", "living_couch", Vector3(-10, 17, -39), Vector3(70, 34, 20), ["Couch"])
+	g.skin_region("CoffeeTable", "coffee_table", Vector3(-8, 8.4, -8), Vector3(34, 16.8, 18), ["CoffeeTable", "CoffeeLeg"])
+	g.skin_region("TVStand", "tv_stand", Vector3(-8, 10, 44), Vector3(40, 20, 10), ["TVStand"])
+	g.skin_region("TV", "flat_tv", Vector3(-8, 34, 46.5), Vector3(40, 24, 3), ["TV", "Screen"])
+	g.skin_region("Bookshelf", "bookshelf", Vector3(-62, 35, 12), Vector3(6, 70, 32), ["Bookshelf", "Books"], 90.0)
+	g.skin_region("SideTable", "side_table", Vector3(50, 12, -36), Vector3(16, 24, 16), ["SideTable"])
+	g.skin_region("Lamp", "table_lamp", Vector3(54, 31, -40), Vector3(10, 14, 10), ["Lamp"])
+	g.skin_region("Fan", "desk_fan", Vector3(57.5, 10, 18), Vector3(4, 20, 12), ["Fan"], -90.0)
+	g.skin_region("CatTree", "cat_tree", Vector3(55, 16.2, 40), Vector3(14, 32.4, 14), ["CatTree"])
+	g.skin_region("UmbrellaStand", "umbrella_stand", Vector3(30, 6, 44), Vector3(8, 12, 8), ["UmbrellaStand"])
+	g.skin_region("Plant", "potted_plant", Vector3(-50, 16.5, -44), Vector3(18, 33, 18), ["PlantPot", "Plant"])
 
 	# --- Spawn and escape ---
 	g.spawn(Vector3(-55, 0.8, 42), -PI * 0.5)

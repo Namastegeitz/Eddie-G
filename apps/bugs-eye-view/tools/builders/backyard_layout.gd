@@ -26,7 +26,7 @@ static func build(tree: SceneTree) -> void:
 	g.deco_box("BackDoor", Vector3(0, 15, -59.9), Vector3(14, 30, 0.2), "dark_wood", Vector3.ZERO, false)
 	g.light_zone("PorchLight", Vector3(0, 3, -50), Vector3(30, 6, 18), 3, 3, ["porch_light"], [], true, 2.5)
 	g.drain("PatioDrain", Vector3(5, 0.9, -40), 3.5, Vector3(5, 0.8, -30), ["watering"])
-	g.lure("WateringCan", LureProp.Kind.SPOON, Vector3(-10, 2.5, -40), Vector3(6, 5, 4), "metal", 3.0)
+	g.lure("WateringCan", LureProp.Kind.SPOON, Vector3(-10, 2.5, -40), Vector3(6, 5, 4), "metal", 3.0, "lure_watering_can")
 	g.sticky_trap("FlyPaper", Vector3(15, 25, -45), Vector3(2, 10, 2), true)
 
 	# --- Flower beds (soil camo + shade) ---
@@ -49,7 +49,7 @@ static func build(tree: SceneTree) -> void:
 		g.box("BenchLeg", p, Vector3(1.2, 13.25, 4), "dark_wood", &"wood", &"dark_wood")
 	g.light_zone("UnderPicnic", Vector3(-20, 6, 15), Vector3(34, 12, 30), 1, 2)
 	g.ramp("Rake", Vector3(-60, 0, 3), Vector3(-38.2, 14.75, 3), 5.0, "dark_wood", &"wood", &"dark_wood")
-	g.lure("Phone", LureProp.Kind.PHONE, Vector3(-14, 27.0, 20), Vector3(3.2, 0.5, 6.4), "dark_metal", 2.2)
+	g.lure("Phone", LureProp.Kind.PHONE, Vector3(-14, 27.0, 20), Vector3(3.2, 0.5, 6.4), "dark_metal", 2.2, "lure_phone")
 
 	# --- BBQ (bright while grilling, metal clang) ---
 	g.cylinder("Grill", Vector3(35, 14, -38), 6.0, 6, "dark_metal", &"metal")
@@ -99,6 +99,21 @@ static func build(tree: SceneTree) -> void:
 		Vector3.UP, Vector3(6, 6, 4))
 	g.deco_box("Screen", Vector3(20, 45, -59.9), Vector3(10, 10, 0.2), "glass", Vector3.ZERO, false)
 	g.passage("CrawlExit", Vector3(-14, 1.5, -72), Vector3(-25, 0.8, -52), [], "crack back to the patio")
+
+	# --- Cover ---
+	g.shelter("Flowerpot", Vector3(2, 0, 15), Vector3(6.5, 5.0, 6.5), "soil", true, "overturned flowerpot", "cover_flowerpot", &"soil", &"soil")
+	g.shelter("HoseCoil", Vector3(10, 0, -15), Vector3(5, 3.2, 10), "leaf_green", false, "coiled garden hose", "cover_hose_coil")
+	g.cover_block("RockA", Vector3(55, 0, 30), Vector3(8, 5, 6), "patio", "rock", "cover_rock", &"stone")
+	g.cover_block("RockB", Vector3(-62, 0, -5), Vector3(7, 4, 6), "patio", "rock", "cover_rock", &"stone")
+	g.cover_block("RockC", Vector3(5, 0, 53), Vector3(9, 4, 5), "patio", "rock", "cover_rock", &"stone")
+	g.cover_block("Gnome", Vector3(30, 0, -10), Vector3(5, 12, 5), "cloth_red", "garden gnome", "cover_garden_gnome")
+	g.tall_grass("GrassA", Vector3(65, 0, 15), Vector3(12, 6, 12))
+	g.tall_grass("GrassB", Vector3(-25, 0, 30), Vector3(10, 6, 8))
+
+	# --- Model slots for the furniture ---
+	g.skin_region("Picnic", "picnic_table", Vector3(-20, 13.4, 15), Vector3(36, 26.8, 30), ["Picnic", "Bench"])
+	g.skin_region("Grill", "bbq_grill", Vector3(35, 8.5, -38), Vector3(12, 17, 12), ["Grill"])
+	g.skin_region("Doghouse", "doghouse", Vector3(-55, 14, 40), Vector3(22, 28, 18), ["Doghouse", "Roof", "DogDoor"])
 
 	# --- Spawn and escape ---
 	g.spawn(Vector3(-5, 0.8, -54), PI)

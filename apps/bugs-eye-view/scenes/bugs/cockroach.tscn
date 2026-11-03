@@ -1,34 +1,29 @@
 [gd_scene format=3]
 
-[ext_resource type="Script" path="res://scripts/bugs/cockroach.gd" id="1_pr0cp"]
-[ext_resource type="Resource" path="res://resources/bugs/cockroach.tres" id="2_xqyit"]
-[ext_resource type="Material" path="res://assets/materials/roach.tres" id="3_r2tmv"]
-[ext_resource type="Material" path="res://assets/materials/arrow.tres" id="4_dmoow"]
+[ext_resource type="Script" path="res://scripts/bugs/cockroach.gd" id="1_xqyit"]
+[ext_resource type="Resource" path="res://resources/bugs/cockroach.tres" id="2_r2tmv"]
+[ext_resource type="Material" path="res://assets/materials/roach.tres" id="3_dmoow"]
+[ext_resource type="Script" path="res://scripts/core/skin_anchor.gd" id="4_m85se"]
+[ext_resource type="Material" path="res://assets/materials/arrow.tres" id="5_ht6ha"]
 
-[sub_resource type="SphereShape3D" id="SphereShape3D_m85se"]
+[sub_resource type="SphereShape3D" id="SphereShape3D_00h0l"]
 radius = 0.35
 
-[sub_resource type="SphereMesh" id="SphereMesh_ht6ha"]
+[sub_resource type="SphereMesh" id="SphereMesh_m1wuv"]
 radial_segments = 16
 rings = 8
 
-[sub_resource type="SphereMesh" id="SphereMesh_00h0l"]
+[sub_resource type="SphereMesh" id="SphereMesh_aqhrq"]
 radius = 0.22
 height = 0.44
 radial_segments = 16
 rings = 8
 
-[sub_resource type="BoxMesh" id="BoxMesh_m1wuv"]
-size = Vector3(0.03, 0.03, 0.9)
-
-[sub_resource type="BoxMesh" id="BoxMesh_aqhrq"]
-size = Vector3(0.03, 0.03, 0.9)
-
 [sub_resource type="BoxMesh" id="BoxMesh_r5psg"]
-size = Vector3(0.7, 0.06, 0.06)
+size = Vector3(0.03, 0.03, 0.9)
 
 [sub_resource type="BoxMesh" id="BoxMesh_2gejw"]
-size = Vector3(0.7, 0.06, 0.06)
+size = Vector3(0.03, 0.03, 0.9)
 
 [sub_resource type="BoxMesh" id="BoxMesh_xrbph"]
 size = Vector3(0.7, 0.06, 0.06)
@@ -42,72 +37,85 @@ size = Vector3(0.7, 0.06, 0.06)
 [sub_resource type="BoxMesh" id="BoxMesh_hvsmm"]
 size = Vector3(0.7, 0.06, 0.06)
 
-[sub_resource type="PrismMesh" id="PrismMesh_7jque"]
+[sub_resource type="BoxMesh" id="BoxMesh_7jque"]
+size = Vector3(0.7, 0.06, 0.06)
 
-[node name="Cockroach" type="CharacterBody3D" unique_id=866931819]
-script = ExtResource("1_pr0cp")
-stats = ExtResource("2_xqyit")
+[sub_resource type="BoxMesh" id="BoxMesh_iqjvi"]
+size = Vector3(0.7, 0.06, 0.06)
 
-[node name="Shape" type="CollisionShape3D" parent="." unique_id=1171946887]
-shape = SubResource("SphereShape3D_m85se")
+[sub_resource type="PrismMesh" id="PrismMesh_5lt4s"]
 
-[node name="Visual" type="Node3D" parent="." unique_id=1189914909]
+[node name="Cockroach" type="CharacterBody3D" unique_id=895486087]
+script = ExtResource("1_xqyit")
+stats = ExtResource("2_r2tmv")
 
-[node name="Body" type="MeshInstance3D" parent="Visual" unique_id=128340178]
+[node name="Shape" type="CollisionShape3D" parent="." unique_id=2009575893]
+shape = SubResource("SphereShape3D_00h0l")
+
+[node name="Visual" type="Node3D" parent="." unique_id=121338713]
+
+[node name="Body" type="MeshInstance3D" parent="Visual" unique_id=1702131885]
 transform = Transform3D(0.75, 0, 0, 0, 0.42, 0, 0, 0, 1.25, 0, 0, 0.1)
-material_override = ExtResource("3_r2tmv")
-mesh = SubResource("SphereMesh_ht6ha")
+material_override = ExtResource("3_dmoow")
+mesh = SubResource("SphereMesh_m1wuv")
 
-[node name="Head" type="MeshInstance3D" parent="Visual" unique_id=110920293]
+[node name="Head" type="MeshInstance3D" parent="Visual" unique_id=826207601]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.02, -0.62)
-material_override = ExtResource("3_r2tmv")
-mesh = SubResource("SphereMesh_00h0l")
+material_override = ExtResource("3_dmoow")
+mesh = SubResource("SphereMesh_aqhrq")
 
-[node name="AntennaL" type="MeshInstance3D" parent="Visual" unique_id=100409954]
+[node name="AntennaL" type="MeshInstance3D" parent="Visual" unique_id=234719333]
 transform = Transform3D(0.9553365, 0.073112875, 0.2863332, 0, 0.9689124, -0.24740396, -0.29552022, 0.23635404, 0.9256374, -0.15, 0.12, -1.05)
-material_override = ExtResource("3_r2tmv")
-mesh = SubResource("BoxMesh_m1wuv")
-
-[node name="AntennaR" type="MeshInstance3D" parent="Visual" unique_id=882301530]
-transform = Transform3D(0.9553365, -0.073112875, -0.2863332, 0, 0.9689124, -0.24740396, 0.29552022, 0.23635404, 0.9256374, 0.15, 0.12, -1.05)
-material_override = ExtResource("3_r2tmv")
-mesh = SubResource("BoxMesh_aqhrq")
-
-[node name="Leg" type="MeshInstance3D" parent="Visual" unique_id=617590036]
-transform = Transform3D(0.8243771, -0.30092114, -0.47942555, 0.3428978, 0.9393727, 0, 0.45035928, -0.16439396, 0.87758255, -0.315, -0.15, -0.4)
-material_override = ExtResource("3_r2tmv")
+material_override = ExtResource("3_dmoow")
 mesh = SubResource("BoxMesh_r5psg")
 
-[node name="@MeshInstance3D@32" type="MeshInstance3D" parent="Visual" unique_id=1933051370]
-transform = Transform3D(0.9393727, -0.3428978, 0, 0.3428978, 0.9393727, 0, 0, 0, 1, -0.315, -0.15, 0)
-material_override = ExtResource("3_r2tmv")
+[node name="AntennaR" type="MeshInstance3D" parent="Visual" unique_id=1508791389]
+transform = Transform3D(0.9553365, -0.073112875, -0.2863332, 0, 0.9689124, -0.24740396, 0.29552022, 0.23635404, 0.9256374, 0.15, 0.12, -1.05)
+material_override = ExtResource("3_dmoow")
 mesh = SubResource("BoxMesh_2gejw")
 
-[node name="@MeshInstance3D@33" type="MeshInstance3D" parent="Visual" unique_id=1214359140]
-transform = Transform3D(0.8243771, -0.30092114, 0.47942555, 0.3428978, 0.9393727, 0, -0.45035928, 0.16439396, 0.87758255, -0.315, -0.15, 0.4)
-material_override = ExtResource("3_r2tmv")
+[node name="Leg" type="MeshInstance3D" parent="Visual" unique_id=12307572]
+transform = Transform3D(0.8243771, -0.30092114, -0.47942555, 0.3428978, 0.9393727, 0, 0.45035928, -0.16439396, 0.87758255, -0.315, -0.15, -0.4)
+material_override = ExtResource("3_dmoow")
 mesh = SubResource("BoxMesh_xrbph")
 
-[node name="@MeshInstance3D@34" type="MeshInstance3D" parent="Visual" unique_id=21715636]
-transform = Transform3D(0.8243771, 0.30092114, 0.47942555, -0.3428978, 0.9393727, 0, -0.45035928, -0.16439396, 0.87758255, 0.315, -0.15, -0.4)
-material_override = ExtResource("3_r2tmv")
+[node name="Leg2" type="MeshInstance3D" parent="Visual" unique_id=518517567]
+transform = Transform3D(0.9393727, -0.3428978, 0, 0.3428978, 0.9393727, 0, 0, 0, 1, -0.315, -0.15, 0)
+material_override = ExtResource("3_dmoow")
 mesh = SubResource("BoxMesh_uwt8t")
 
-[node name="@MeshInstance3D@35" type="MeshInstance3D" parent="Visual" unique_id=130150298]
-transform = Transform3D(0.9393727, 0.3428978, 0, -0.3428978, 0.9393727, 0, 0, 0, 1, 0.315, -0.15, 0)
-material_override = ExtResource("3_r2tmv")
+[node name="Leg3" type="MeshInstance3D" parent="Visual" unique_id=381905563]
+transform = Transform3D(0.8243771, -0.30092114, 0.47942555, 0.3428978, 0.9393727, 0, -0.45035928, 0.16439396, 0.87758255, -0.315, -0.15, 0.4)
+material_override = ExtResource("3_dmoow")
 mesh = SubResource("BoxMesh_kob3u")
 
-[node name="@MeshInstance3D@36" type="MeshInstance3D" parent="Visual" unique_id=1384289944]
-transform = Transform3D(0.8243771, 0.30092114, -0.47942555, -0.3428978, 0.9393727, 0, 0.45035928, 0.16439396, 0.87758255, 0.315, -0.15, 0.4)
-material_override = ExtResource("3_r2tmv")
+[node name="Leg4" type="MeshInstance3D" parent="Visual" unique_id=1306471848]
+transform = Transform3D(0.8243771, 0.30092114, 0.47942555, -0.3428978, 0.9393727, 0, -0.45035928, -0.16439396, 0.87758255, 0.315, -0.15, -0.4)
+material_override = ExtResource("3_dmoow")
 mesh = SubResource("BoxMesh_hvsmm")
 
-[node name="SenseArrow" type="Node3D" parent="." unique_id=736479216]
+[node name="Leg5" type="MeshInstance3D" parent="Visual" unique_id=1156138548]
+transform = Transform3D(0.9393727, 0.3428978, 0, -0.3428978, 0.9393727, 0, 0, 0, 1, 0.315, -0.15, 0)
+material_override = ExtResource("3_dmoow")
+mesh = SubResource("BoxMesh_7jque")
+
+[node name="Leg6" type="MeshInstance3D" parent="Visual" unique_id=1071709389]
+transform = Transform3D(0.8243771, 0.30092114, -0.47942555, -0.3428978, 0.9393727, 0, 0.45035928, 0.16439396, 0.87758255, 0.315, -0.15, 0.4)
+material_override = ExtResource("3_dmoow")
+mesh = SubResource("BoxMesh_iqjvi")
+
+[node name="Skin" type="Node3D" parent="Visual" unique_id=1904478247]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.05, -0.3)
+script = ExtResource("4_m85se")
+model_id = "bug_cockroach"
+fit_size = Vector3(1.1, 0.6, 2.2)
+hide_paths = Array[NodePath]([NodePath("../Body"), NodePath("../Head"), NodePath("../AntennaL"), NodePath("../AntennaR"), NodePath("../Leg"), NodePath("../Leg2"), NodePath("../Leg3"), NodePath("../Leg4"), NodePath("../Leg5"), NodePath("../Leg6")])
+
+[node name="SenseArrow" type="Node3D" parent="." unique_id=758463378]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.4, 0)
 
-[node name="Arrow" type="MeshInstance3D" parent="SenseArrow" unique_id=513870312]
+[node name="Arrow" type="MeshInstance3D" parent="SenseArrow" unique_id=2069535319]
 transform = Transform3D(0.6, 0, 0, 0, -3.4969112e-08, 0.15, 0, -0.8, -6.5567085e-09, 0, 0, -0.6)
-material_override = ExtResource("4_dmoow")
+material_override = ExtResource("5_ht6ha")
 cast_shadow = 0
-mesh = SubResource("PrismMesh_7jque")
+mesh = SubResource("PrismMesh_5lt4s")

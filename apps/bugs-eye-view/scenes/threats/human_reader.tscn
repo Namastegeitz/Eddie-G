@@ -1,105 +1,114 @@
 [gd_scene format=3]
 
-[ext_resource type="Script" path="res://scripts/threats/human.gd" id="1_fx2vc"]
-[ext_resource type="Resource" path="res://resources/threats/human.tres" id="2_68snj"]
-[ext_resource type="Material" path="res://assets/materials/jeans.tres" id="3_ftp6i"]
-[ext_resource type="Material" path="res://assets/materials/cloth_blue.tres" id="4_b4oug"]
-[ext_resource type="Material" path="res://assets/materials/skin.tres" id="5_jboqh"]
-[ext_resource type="PackedScene" path="res://scenes/hazards/foot.tscn" id="6_nhurr"]
-[ext_resource type="Script" path="res://scripts/hazards/foot_hazard.gd" id="7_36svo"]
-[ext_resource type="Script" path="res://scripts/hazards/newspaper.gd" id="8_hycs0"]
-[ext_resource type="Material" path="res://assets/materials/paper.tres" id="9_iib63"]
+[ext_resource type="Script" path="res://scripts/threats/human.gd" id="1_68snj"]
+[ext_resource type="Resource" path="res://resources/threats/human.tres" id="2_ftp6i"]
+[ext_resource type="Material" path="res://assets/materials/jeans.tres" id="3_b4oug"]
+[ext_resource type="Material" path="res://assets/materials/cloth_blue.tres" id="4_jboqh"]
+[ext_resource type="Material" path="res://assets/materials/skin.tres" id="5_nhurr"]
+[ext_resource type="PackedScene" path="res://scenes/hazards/foot.tscn" id="6_36svo"]
+[ext_resource type="Script" path="res://scripts/hazards/foot_hazard.gd" id="7_hycs0"]
+[ext_resource type="Script" path="res://scripts/hazards/newspaper.gd" id="8_iib63"]
+[ext_resource type="Material" path="res://assets/materials/paper.tres" id="9_n66m2"]
+[ext_resource type="Script" path="res://scripts/core/skin_anchor.gd" id="10_qe1b4"]
 
-[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_n66m2"]
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_tk5se"]
 radius = 6.0
 height = 34.0
 
-[sub_resource type="BoxMesh" id="BoxMesh_qe1b4"]
+[sub_resource type="BoxMesh" id="BoxMesh_jhhm7"]
 size = Vector3(13, 9, 7)
 
-[sub_resource type="BoxMesh" id="BoxMesh_tk5se"]
+[sub_resource type="BoxMesh" id="BoxMesh_rf14u"]
 size = Vector3(15, 20, 8)
 
-[sub_resource type="CylinderMesh" id="CylinderMesh_jhhm7"]
+[sub_resource type="CylinderMesh" id="CylinderMesh_bid3i"]
 top_radius = 1.6
 bottom_radius = 1.6
 height = 20.0
 radial_segments = 16
 rings = 1
 
-[sub_resource type="CylinderMesh" id="CylinderMesh_rf14u"]
+[sub_resource type="CylinderMesh" id="CylinderMesh_ivbyq"]
 top_radius = 1.6
 bottom_radius = 1.6
 height = 20.0
 radial_segments = 16
 rings = 1
 
-[sub_resource type="SphereMesh" id="SphereMesh_bid3i"]
+[sub_resource type="SphereMesh" id="SphereMesh_qy7dw"]
 radius = 5.0
 height = 10.0
 radial_segments = 16
 rings = 8
 
-[sub_resource type="CylinderMesh" id="CylinderMesh_ivbyq"]
+[sub_resource type="CylinderMesh" id="CylinderMesh_6dntj"]
 top_radius = 1.2
 bottom_radius = 1.2
 height = 16.0
 radial_segments = 16
 rings = 1
 
-[node name="Human" type="CharacterBody3D" unique_id=1651542711]
-script = ExtResource("1_fx2vc")
+[node name="Human" type="CharacterBody3D" unique_id=1114156077]
+script = ExtResource("1_68snj")
 route = PackedVector3Array()
 has_newspaper = true
-config = ExtResource("2_68snj")
+config = ExtResource("2_ftp6i")
 active_events = PackedStringArray()
 icon_height = 78.0
 
-[node name="Shape" type="CollisionShape3D" parent="." unique_id=1543597661]
+[node name="Shape" type="CollisionShape3D" parent="." unique_id=2108002057]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 55, 0)
-shape = SubResource("CapsuleShape3D_n66m2")
+shape = SubResource("CapsuleShape3D_tk5se")
 
-[node name="Torso" type="Node3D" parent="." unique_id=1882491586]
+[node name="Torso" type="Node3D" parent="." unique_id=1917733035]
 
-[node name="Hips" type="MeshInstance3D" parent="Torso" unique_id=1927286464]
+[node name="Hips" type="MeshInstance3D" parent="Torso" unique_id=1347854505]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 39, 2)
-material_override = ExtResource("3_ftp6i")
-mesh = SubResource("BoxMesh_qe1b4")
+material_override = ExtResource("3_b4oug")
+mesh = SubResource("BoxMesh_jhhm7")
 
-[node name="Chest" type="MeshInstance3D" parent="Torso" unique_id=186028571]
+[node name="Chest" type="MeshInstance3D" parent="Torso" unique_id=174785795]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 53, 2)
-material_override = ExtResource("4_b4oug")
-mesh = SubResource("BoxMesh_tk5se")
+material_override = ExtResource("4_jboqh")
+mesh = SubResource("BoxMesh_rf14u")
 
-[node name="ArmL" type="MeshInstance3D" parent="Torso" unique_id=214963543]
+[node name="ArmL" type="MeshInstance3D" parent="Torso" unique_id=666594469]
 transform = Transform3D(0.99280864, -0.119712204, 0, 0.119712204, 0.99280864, 0, 0, 0, 1, -9.5, 52, 2)
-material_override = ExtResource("5_jboqh")
-mesh = SubResource("CylinderMesh_jhhm7")
+material_override = ExtResource("5_nhurr")
+mesh = SubResource("CylinderMesh_bid3i")
 
-[node name="ArmR" type="MeshInstance3D" parent="Torso" unique_id=1652162251]
+[node name="ArmR" type="MeshInstance3D" parent="Torso" unique_id=878209364]
 transform = Transform3D(0.99280864, 0.119712204, 0, -0.119712204, 0.99280864, 0, 0, 0, 1, 9.5, 52, 2)
-material_override = ExtResource("5_jboqh")
-mesh = SubResource("CylinderMesh_rf14u")
-
-[node name="Head" type="MeshInstance3D" parent="Torso" unique_id=653471433]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 68, 2)
-material_override = ExtResource("5_jboqh")
-mesh = SubResource("SphereMesh_bid3i")
-
-[node name="LeftFoot" type="Node3D" parent="." unique_id=942298477 instance=ExtResource("6_nhurr")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.7, 0, 0)
-script = ExtResource("7_36svo")
-
-[node name="RightFoot" type="Node3D" parent="." unique_id=1823407775 instance=ExtResource("6_nhurr")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.7, 0, 0)
-script = ExtResource("7_36svo")
-
-[node name="Newspaper" type="Node3D" parent="." unique_id=897765845]
-script = ExtResource("8_hycs0")
-
-[node name="Paper" type="Node3D" parent="Newspaper" unique_id=1827913667]
-
-[node name="Roll" type="MeshInstance3D" parent="Newspaper/Paper" unique_id=225016176]
-transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, -8)
-material_override = ExtResource("9_iib63")
+material_override = ExtResource("5_nhurr")
 mesh = SubResource("CylinderMesh_ivbyq")
+
+[node name="Head" type="MeshInstance3D" parent="Torso" unique_id=695047829]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 68, 2)
+material_override = ExtResource("5_nhurr")
+mesh = SubResource("SphereMesh_qy7dw")
+
+[node name="LeftFoot" type="Node3D" parent="." unique_id=1369214150 instance=ExtResource("6_36svo")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.7, 0, 0)
+script = ExtResource("7_hycs0")
+
+[node name="RightFoot" type="Node3D" parent="." unique_id=1150873448 instance=ExtResource("6_36svo")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.7, 0, 0)
+script = ExtResource("7_hycs0")
+
+[node name="Newspaper" type="Node3D" parent="." unique_id=568761613]
+script = ExtResource("8_iib63")
+
+[node name="Paper" type="Node3D" parent="Newspaper" unique_id=993380840]
+
+[node name="Roll" type="MeshInstance3D" parent="Newspaper/Paper" unique_id=1351045586]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, -8)
+material_override = ExtResource("9_n66m2")
+mesh = SubResource("CylinderMesh_6dntj")
+
+[node name="Skin" type="Node3D" parent="Newspaper/Paper" unique_id=1301027990]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -8)
+script = ExtResource("10_qe1b4")
+model_id = "rolled_newspaper"
+fit_size = Vector3(2.6, 2.6, 16)
+hide_paths = Array[NodePath]([NodePath("../Roll")])
+yaw_offset_deg = 90.0

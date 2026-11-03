@@ -27,6 +27,8 @@ func _ready() -> void:
 		await _phase6()
 	if only in [0, 7]:
 		await _phase7()
+	if only in [0, 8]:
+		await _phase8()
 	finish("phase audit")
 
 
@@ -1179,3 +1181,163 @@ func _phase7() -> void:
 	InputRouter.set_touch_action(&"primary", false)
 	check(straight == 1.0 and jinked and f._extra_visibility_mult() < 0.7, "a sharp reversal at speed is a jink that lowers your visibility")
 	await unload(lvl)
+
+
+# --- Update: more places to hide, and slots for generated models --------------
+
+const ROOMS: Array[StringName] = [&"kitchen", &"living_room", &"backyard"]
+const BUGS: Array[StringName] = [&"cockroach", &"fly", &"spider"]
+
+
+func _covers(lvl: Node, kind: String = "") -> Array[Marker3D]:
+	var out: Array[Marker3D] = []
+	for n in get_tree().get_nodes_in_group(Phys.GROUP_COVER):
+		if lvl.is_ancestor_of(n) and (kind == "" or String(n.get_meta(&"kind", "")) == kind):
+			out.append(n as Marker3D)
+	return out
+
+
+func _skins(root: Node) -> Array[SkinAnchor]:
+	var out: Array[SkinAnchor] = []
+	for n in root.find_children("*", "SkinAnchor", true, false):
+		out.append(n as SkinAnchor)
+	if root is SkinAnchor:
+		out.append(root as SkinAnchor)
+	return out
+
+
+func _phase8() -> void:
+	print("-- Update: more cover to hide behind, model slots for generated art")
+	SaveSystem.data = SaveSystem.default_data()
+
+	# Every room has several new hiding places, and every bug fits in every shelter.
+	for room in ROOMS:
+		for bug in BUGS:
+			var lvl := await load_level(room, bug)
+			var p := lvl.player
+			p.invuln = 0.0
+			var shelters := _covers(lvl, "shelter")
+			if bug == &"cockroach":
+				check(_covers(lvl).size() >= 5 and shelters.size() >= 2,
+					"%s: %d new cover spots, %d of them shelters you can crawl into" % [room, _covers(lvl).size(), shelters.size()])
+			var hidden: PackedStringArray = []
+			var exposed: PackedStringArray = []
+			for m in shelters:
+				p.teleport_to(Transform3D(Basis.IDENTITY, m.global_position))
+				await frames(6)
+				var label := String(m.get_meta(&"label"))
+				if p.is_hidden_safe() and PerceptionSystem.visibility == 0.0 \
+						and not p.take_hit(&"test", m.global_position):
+					hidden.append(label)
+				else:
+					exposed.append(label)
+			check(exposed.is_empty(), "%s: the %s hides inside every shelter, invisible and out of reach %s" % [room, bug, str(exposed if not exposed.is_empty() else hidden)])
+			await unload(lvl)
+
+	# Solid cover blocks a pet's line of sight; step out from behind it and you're seen.
+	var yard := await load_level(&"backyard", &"cockroach")
+	HouseClock.set_hour(7.2)
+	var dog := first_in_group(Phys.GROUP_PET, yard) as Pet
+	dog.force_present(true)
+	dog.process_mode = Node.PROCESS_MODE_DISABLED
+	dog.global_position = Vector3(30, 0.5, 6)
+	dog.rotation.y = 0.0
+	var pl := yard.player
+	pl.invuln = 1000.0
+	pl.global_position = Vector3(30, 0.6, -14)
+	await frames(4)
+	var behind := dog.can_see(pl)
+	pl.global_position = Vector3(38, 0.6, -14)
+	await frames(4)
+	var beside := dog.can_see(pl)
+	check(not behind and beside, "the garden gnome blocks the dog's view; step out beside it and the dog sees you (%s, %s)" % [behind, beside])
+	dog.process_mode = Node.PROCESS_MODE_INHERIT
+	if not DirAccess.dir_exists_absolute("res://assets/models"):
+		var live := _skins(yard)
+		check(live.size() > 10 and live.all(func(s: SkinAnchor) -> bool: return s.model == null),
+			"with no generated models yet, all %d slots in a live level keep their placeholders" % live.size())
+	await unload(yard)
+
+	# Model slots: every slot points at real placeholder meshes and a listed Meshy job.
+	var ids := {}
+	var bad_paths: PackedStringArray = []
+	var scenes: Array[String] = []
+	for room in ROOMS:
+		scenes.append(GameManager.get_level(room).scene_path)
+	for dir in ["res://scenes/bugs/", "res://scenes/threats/", "res://scenes/props/", "res://scenes/world/", "res://scenes/hazards/"]:
+		for f in ResourceLoader.list_directory(dir):
+			if f.ends_with(".tscn"):
+				scenes.append(dir + f)
+	for path in scenes:
+		# Inspected detached from the tree, so no gameplay code runs.
+		var inst := (load(path) as PackedScene).instantiate()
+		for a in _skins(inst):
+			ids[a.model_id] = true
+			if a.hide_paths.is_empty():
+				bad_paths.append("%s:%s (no placeholder)" % [path.get_file(), a.name])
+			for hp in a.hide_paths:
+				var n := a.get_node_or_null(hp) as Node3D
+				if n == null or not n.visible:
+					bad_paths.append("%s:%s -> %s" % [path.get_file(), a.name, hp])
+		inst.free()
+	check(ids.size() >= 50, "%d model slots across the bugs, threats, props and rooms" % ids.size())
+	check(bad_paths.is_empty(), "every model slot points at visible placeholder meshes %s" % str(bad_paths.slice(0, 5)))
+
+	# A generated model drops in: loaded at runtime, fitted to its box, placeholders hidden.
+	var dir_path := "user://skin_test"
+	DirAccess.make_dir_recursive_absolute(dir_path)
+	var src := Node3D.new()
+	var mi := MeshInstance3D.new()
+	var bm := BoxMesh.new()
+	bm.size = Vector3(2, 4, 1)
+	mi.mesh = bm
+	mi.position = Vector3(5, 7, -3)
+	src.add_child(mi)
+	mi.owner = src
+	var doc := GLTFDocument.new()
+	var state := GLTFState.new()
+	doc.append_from_scene(src, state)
+	var glb := dir_path.path_join("fixture_box.glb")
+	check(doc.write_to_filesystem(state, glb) == OK, "wrote a test model")
+	src.free()
+	var holder := Node3D.new()
+	var placeholder := MeshInstance3D.new()
+	placeholder.name = "Placeholder"
+	placeholder.mesh = BoxMesh.new()
+	holder.add_child(placeholder)
+	var a := SkinAnchor.new()
+	a.model_dir = dir_path
+	a.model_id = "fixture_box"
+	a.fit_size = Vector3(3, 2, 3)
+	a.yaw_offset_deg = 0.0
+	a.hide_paths = [NodePath("../Placeholder")]
+	holder.add_child(a)
+	add_child(holder)
+	await get_tree().process_frame
+	var bounds := SkinAnchor.mesh_bounds(a.model, a) if a.model else AABB()
+	check(a.model != null and not placeholder.visible, "a model file swaps in and hides the placeholder")
+	check(is_equal_approx(bounds.size.y, 2.0) and is_equal_approx(bounds.position.y, -1.0)
+			and absf(bounds.get_center().x) < 0.01 and absf(bounds.get_center().z) < 0.01,
+		"the model is scaled to fit its box, centred and standing on the floor %s" % str(bounds))
+	var missing := SkinAnchor.new()
+	missing.model_id = "not_generated_yet"
+	holder.add_child(missing)
+	check(missing.model == null and not missing.apply(), "a slot with no model file changes nothing")
+	holder.queue_free()
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(glb))
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(dir_path))
+
+	# The Meshy job list is a project file (not shipped in a build).
+	if not FileAccess.file_exists("res://export_presets.cfg"):
+		print("     (running from an exported build: Meshy manifest check skipped)")
+		return
+	var manifest = JSON.parse_string(FileAccess.get_file_as_string("res://tools/meshy/assets.json"))
+	var listed := {}
+	if manifest is Dictionary:
+		for job in manifest.get("assets", []):
+			listed[String(job["id"])] = true
+	var unlisted: PackedStringArray = []
+	for id in ids:
+		if not listed.has(id):
+			unlisted.append(id)
+	check(not listed.is_empty() and unlisted.is_empty(), "every model slot has a Meshy job in tools/meshy/assets.json %s" % str(unlisted))

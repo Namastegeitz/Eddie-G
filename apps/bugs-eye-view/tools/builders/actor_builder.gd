@@ -35,7 +35,12 @@ static func pack(root: Node, path: String, force: bool) -> void:
 static func mesh(parent: Node, name: String, m: Mesh, material: String, pos: Vector3 = Vector3.ZERO,
 		rot: Vector3 = Vector3.ZERO, scl: Vector3 = Vector3.ONE) -> MeshInstance3D:
 	var mi := MeshInstance3D.new()
-	mi.name = name
+	var unique := name
+	var i := 2
+	while parent.has_node(NodePath(unique)):
+		unique = "%s%d" % [name, i]
+		i += 1
+	mi.name = unique
 	mi.mesh = m
 	mi.material_override = mat(material)
 	mi.position = pos
@@ -109,6 +114,25 @@ static func node3d(parent: Node, name: String, pos: Vector3 = Vector3.ZERO) -> N
 	return n
 
 
+## Adds a model slot to a visual: a generated model with this id replaces
+## every placeholder child except those named in `keep`.
+static func add_skin(visual: Node3D, model_id: String, fit: Vector3, center: Vector3 = Vector3.ZERO,
+		keep: Array = [], yaw_deg: float = 180.0) -> SkinAnchor:
+	var a := SkinAnchor.new()
+	a.name = "Skin"
+	a.model_id = model_id
+	a.fit_size = fit
+	a.position = center
+	a.yaw_offset_deg = yaw_deg
+	var paths: Array[NodePath] = []
+	for c in visual.get_children():
+		if not keep.has(String(c.name)):
+			paths.append(NodePath("../" + String(c.name)))
+	a.hide_paths = paths
+	visual.add_child(a)
+	return a
+
+
 static func scripted(type_node: Node, script_path: String, name: String) -> Node:
 	type_node.name = name
 	type_node.set_script(load(script_path))
@@ -136,6 +160,7 @@ static func bugs(force: bool) -> void:
 	mesh(rv, "AntennaL", box(Vector3(0.03, 0.03, 0.9)), "roach", Vector3(-0.15, 0.12, -1.05), Vector3(0.25, 0.3, 0))
 	mesh(rv, "AntennaR", box(Vector3(0.03, 0.03, 0.9)), "roach", Vector3(0.15, 0.12, -1.05), Vector3(0.25, -0.3, 0))
 	_legs(rv, 3, 0.7, "roach", -0.15, 0.4)
+	add_skin(rv, "bug_cockroach", Vector3(1.1, 0.6, 2.2), Vector3(0, -0.05, -0.3))
 	var arrow := node3d(r, "SenseArrow", Vector3(0, 1.4, 0))
 	var am := mesh(arrow, "Arrow", PrismMesh.new(), "arrow", Vector3(0, 0, -0.6), Vector3(-PI * 0.5, 0, 0), Vector3(0.6, 0.8, 0.15))
 	am.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
@@ -155,6 +180,7 @@ static func bugs(force: bool) -> void:
 	var wr := node3d(fv, "WingR", Vector3(0.2, 0.3, 0.1))
 	mesh(wr, "Wing", box(Vector3(0.9, 0.02, 0.45)), "wing", Vector3(0.45, 0, 0.1))
 	_legs(fv, 3, 0.5, "fly", -0.25, 0.25)
+	add_skin(fv, "bug_fly", Vector3(0.9, 0.7, 1.3), Vector3(0, -0.05, -0.05), ["WingL", "WingR"])
 	pack(f, "res://scenes/bugs/fly.tscn", force)
 
 	# Spider
@@ -166,6 +192,7 @@ static func bugs(force: bool) -> void:
 	mesh(sv, "Thorax", sphere(0.26), "spider", Vector3(0, 0.02, -0.15))
 	mesh(sv, "Eyes", box(Vector3(0.22, 0.06, 0.04)), "fly_eye", Vector3(0, 0.12, -0.38))
 	_legs(sv, 4, 1.1, "spider", -0.05, 0.4)
+	add_skin(sv, "bug_spider", Vector3(2.3, 0.8, 2.3), Vector3(0, 0.0, 0.1))
 	var zl := mesh(s, "ZipLine", box(Vector3(0.06, 0.06, 1.0)), "web")
 	zl.top_level = true
 	zl.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
@@ -202,6 +229,7 @@ static func foot(force: bool) -> void:
 	mesh(v, "Shoe", box(Vector3(4.2, 2.6, 10.4)), "shoe", Vector3(0, 1.3, -0.6))
 	mesh(v, "Toe", sphere(2.1), "shoe", Vector3(0, 1.2, -5.2), Vector3.ZERO, Vector3(1, 0.6, 0.6))
 	mesh(v, "Leg", cyl(1.9, 36.0, 2.6), "jeans", Vector3(0, 20.5, 2.0))
+	add_skin(v, "human_sneaker", Vector3(4.6, 3.2, 11.6), Vector3(0, 1.6, -1.0), ["Leg"])
 	pack(f, "res://scenes/hazards/foot.tscn", force)
 
 
@@ -232,6 +260,7 @@ static func human(force: bool, path: String, config: String, torso_mat: String, 
 		var np := scripted(Node3D.new(), "res://scripts/hazards/newspaper.gd", "Newspaper")
 		var paper := node3d(np, "Paper")
 		mesh(paper, "Roll", cyl(1.2, 16.0), "paper", Vector3(0, 0, -8.0), Vector3(PI * 0.5, 0, 0))
+		add_skin(paper, "rolled_newspaper", Vector3(2.6, 2.6, 16.0), Vector3(0, 0, -8.0), [], 90.0)
 		h.add_child(np)
 		h.set("has_newspaper", true)
 	pack(h, path, force)
@@ -265,6 +294,7 @@ static func pet(force: bool, path: String, config: String, color: String, big: b
 			mesh(v, "Leg", cyl(0.7 * k, 4.0 * k), color, Vector3(x * k, 1.8 * k, z * k))
 	mesh(v, "EyeL", sphere(0.45), "fly_eye" if is_dog else "pea", Vector3(-0.9 * k, 7.9 * k, -7.9 * k))
 	mesh(v, "EyeR", sphere(0.45), "fly_eye" if is_dog else "pea", Vector3(0.9 * k, 7.9 * k, -7.9 * k))
+	add_skin(v, "pet_dog" if is_dog else "pet_cat", Vector3(5.5, 10.0, 18.0) * k, Vector3(0, 5.0 * k, 0.5))
 	var agent := NavigationAgent3D.new()
 	agent.name = "Agent"
 	agent.path_desired_distance = 2.0
@@ -290,6 +320,7 @@ static func vacuum(force: bool) -> void:
 	mesh(vis, "Sensor", cyl(0.8, 0.6), "screen_glow", Vector3(0, 2.5, -1.5))
 	var brush := cyl(1.2, 0.2)
 	mesh(vis, "Brush", brush, "metal", Vector3(-2.8, 0.15, -2.8))
+	add_skin(vis, "robot_vacuum", Vector3(8.4, 2.8, 8.4), Vector3(0, 1.4, 0))
 	pack(v, "res://scenes/threats/robot_vacuum.tscn", force)
 
 
@@ -313,6 +344,7 @@ static func hazards(force: bool) -> void:
 	for i in 4:
 		mesh(paddle, "Slot", box(Vector3(5.6, 0.4, 0.25)), "dark_metal", Vector3(0, 0.22, -2.4 + i * 1.6))
 	mesh(paddle, "Handle", box(Vector3(0.7, 0.5, 22.0)), "swatter", Vector3(0, 3.5, 14.5), Vector3(0.32, 0, 0))
+	add_skin(paddle, "fly_swatter", Vector3(7.5, 8.0, 29.0), Vector3(0, 4.0, 10.75))
 	pack(s, "res://scenes/hazards/swatter.tscn", force)
 
 	var c := scripted(Node3D.new(), "res://scripts/hazards/spray_cloud.gd", "SprayCloud")
@@ -348,6 +380,7 @@ static func pickups(force: bool) -> void:
 		mesh(v, "A", box(Vector3(0.9, 0.6, 0.7)), mname, Vector3.ZERO, Vector3(0.3, 0.5, 0.2))
 		mesh(v, "B", box(Vector3(0.6, 0.5, 0.8)), mname, Vector3(0.25, 0.15, 0.1), Vector3(-0.4, 1.1, 0.3))
 		mesh(v, "C", box(Vector3(0.4, 0.4, 0.4)), mname, Vector3(-0.35, 0.05, -0.2), Vector3(0.7, 0.2, 0.9))
+		add_skin(v, "golden_crumb" if golden else "crumb", Vector3(1.3, 0.9, 1.3), Vector3(0, 0.05, 0))
 		if golden:
 			var glow := OmniLight3D.new()
 			glow.name = "Glow"
@@ -379,6 +412,7 @@ static func _prop(force: bool, name: String, m: Mesh, s: Shape3D, material: Stri
 	shape(p, s, offset)
 	var v := node3d(p, "Visual")
 	mesh(v, "Mesh", m, material, offset)
+	add_skin(v, "prop_" + name, m.get_aabb().size, offset + m.get_aabb().get_center())
 	pack(p, "res://scenes/props/%s.tscn" % name, force)
 
 

@@ -42,6 +42,10 @@ and escape. One codebase for Android, iOS, Windows, macOS, Linux and the web.
 - A house-wide alarm gauge fills while you're seen or heard. On their own,
   threats only investigate (? then searching); at 100% every human and pet in
   the room is alerted at once. Hiding drains it.
+- Places to hide in every room: crawl inside a paper cup, a sneaker, a
+  grocery bag, a slipper, a fallen pillow, a flowerpot or a coiled hose and
+  you're invisible and out of reach; mail stacks, toy blocks, rocks and a
+  garden gnome block sight lines; tall grass keeps you in shade.
 - Escalation chain: a human who spots you shouts, grabs the swatter, calls the
   pet, then brings out the bug spray.
 - Lures (phone, spoon, TV remote, knocked-off peas) and turning threats on
@@ -63,10 +67,14 @@ giant muffled human voices, a heartbeat that rises when you're hunted.
 
 All six build phases from the prompt are done. Placeholder art and sound
 throughout (generated primitives and synthesized audio), ready to swap.
+Every bug, threat, pickup, hiding spot and big piece of furniture has a slot
+for a generated 3D model; `tools/meshy/generate.py` makes them with Meshy
+(needs your Meshy API key; see [tools/meshy/README.md](tools/meshy/README.md)).
 
 - Two headless test suites pass in the project and in an exported build
-  (`tools/run_tests.sh`): a 120-check smoke test and a 184-check phase audit
-  that walks the spec phase by phase, plus the alarm gauge and fly moves. Zero GDScript warnings, zero engine errors.
+  (`tools/run_tests.sh`): a 120-check smoke test and a 205-check phase audit
+  that walks the spec phase by phase, plus the alarm gauge, fly moves, hiding
+  spots and model slots. Zero GDScript warnings, zero engine errors.
 - Android test app (debug-signed): [dist/android/bugseyeview-debug.apk](dist/android/bugseyeview-debug.apk).
 - Builds produced and checked: Android debug APK (signed), Windows, macOS,
   Linux, Web, and the iOS Xcode project. The web build was played in a

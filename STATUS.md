@@ -4,8 +4,12 @@
 - Built end to end from `prompts/claude/bugs-eye-view.md` (all 6 phases, all 16 add-ons).
 - Godot 4.7.2 project: 3 bugs, 3 rooms with boss chases, perception-based stealth,
   escalation chain, daily routines, colony upgrades, menus, touch/keyboard/gamepad.
-- Tests: `tools/run_tests.sh` - 118-check smoke test + 162-check phase audit pass in the
-  project and in an exported build; zero GDScript warnings and engine errors.
+- Tests: `tools/run_tests.sh` - 120-check smoke test + 205-check phase audit + offline
+  Meshy client test pass in the project and in an exported build; zero GDScript warnings
+  and engine errors.
+- Updates after the build: alarm gauge (threats only investigate until it's full), slower
+  and less sharp-eyed humans/pets, fly escape moves (loop, dive, cling, jink, glide),
+  20 new places to hide (11 shelters, 7 sight blockers, 2 tall-grass patches), 57 model slots.
 - Phase-by-phase audit (all 6 phases) done; fixes it found: human feet were never solid,
   props didn't stun via feet, cereal-box domino layout, spider facing/normal errors, fog strength.
 - Android debug APK committed at `apps/bugs-eye-view/dist/android/bugseyeview-debug.apk`.
@@ -13,7 +17,11 @@
   iOS Xcode project (not committed; rebuild with the commands in RUN.md).
 - Playable web build published as a private Claude artifact:
   https://claude.ai/artifact/Gmpx6M1Qb9WmCn1BY1Qbh4
-- Next: real art/audio, Google Play AAB (needs Android SDK locally), iOS signing via a
+- Meshy: `apps/bugs-eye-view/tools/meshy/generate.py` + `assets.json` (57 prompts) are ready
+  but not run yet. The cloud session couldn't reach api.meshy.ai; to run it here, allow
+  api.meshy.ai and assets.meshy.ai in the environment's network settings and add
+  MESHY_API_KEY as an environment variable, or run it on the PC.
+- Next: generate the Meshy models (tier 1 first), real audio, Google Play AAB (needs Android SDK locally), iOS signing via a
   Mac or Codemagic (`docs/ci/codemagic.yaml`), playtesting and tuning.
 
 ## NeuroForge (not in this repo)

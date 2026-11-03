@@ -30,7 +30,7 @@ static func build(tree: SceneTree) -> void:
 	g.prop("bottle_cap", Vector3(-50, 38.3, -20.8))
 	for i in 3:
 		g.prop("cereal_box", Vector3(-14 + i * 4.0, 42.6, -26), Vector3(0, PI * 0.5, 0))
-	g.lure("Spoon", LureProp.Kind.SPOON, Vector3(-46, 38.3, -27), Vector3(1.2, 0.4, 7), "metal", 2.6)
+	g.lure("Spoon", LureProp.Kind.SPOON, Vector3(-46, 38.3, -27), Vector3(1.2, 0.4, 7), "metal", 2.6, "lure_spoon")
 
 	# --- Stove with a hanging pan, and a metal pot on the floor ---
 	g.box("Stove", Vector3(13, 18, -33), Vector3(26, 36, 24), "dark_metal", &"metal")
@@ -64,7 +64,7 @@ static func build(tree: SceneTree) -> void:
 	_chair(g, Vector3(0, 0, 35), PI)
 	g.ramp("CuttingBoard", Vector3(-52, 0.0, -7), Vector3(-31, 18.75, -7), 6.0, "dark_wood", &"wood", &"dark_wood")
 	g.ramp("Cookbook", Vector3(-24, 18.75, -12.4), Vector3(-24, 31.55, 0.3), 7.0, "cloth_red", &"paper")
-	g.lure("Phone", LureProp.Kind.PHONE, Vector3(-4, 31.75, 20), Vector3(3.2, 0.5, 6.4), "dark_metal", 2.2)
+	g.lure("Phone", LureProp.Kind.PHONE, Vector3(-4, 31.75, 20), Vector3(3.2, 0.5, 6.4), "dark_metal", 2.2, "lure_phone")
 	g.prop("mug", Vector3(6.5, 33.6, 25.5))
 
 	# --- Floor clutter: noisy, quiet and camo surfaces ---
@@ -103,6 +103,24 @@ static func build(tree: SceneTree) -> void:
 		Vector3.UP, Vector3(7, 7, 4))
 	g.deco_box("VentGrille", Vector3(-50, 62, -44.8), Vector3(8, 6, 0.4), "dark_metal")
 	g.passage("CavityExit", Vector3(31, 1.5, -53), Vector3(56, 0.8, -10), [], "crack back to the kitchen")
+
+	# --- Cover: places to duck into and things to hide behind ---
+	g.shelter("PaperCup", Vector3(-40, 0, 8), Vector3(6.5, 3.4, 3.8), "plastic_white", true, "paper cup", "cover_paper_cup")
+	g.shelter("Sneaker", Vector3(-36, 0, 42), Vector3(10, 4.2, 4.6), "cloth_blue", true, "old sneaker", "cover_sneaker", &"cloth")
+	g.shelter("GroceryBag", Vector3(54, 0, 16), Vector3(6.5, 5.0, 9.0), "paper", false, "grocery bag", "cover_grocery_bag")
+	g.cover_block("MailStack", Vector3(-15, 0, -16), Vector3(8, 2.6, 4.5), "paper", "stack of mail", "cover_mail_stack", &"paper")
+	g.shelter("FoldedTowel", Vector3(-50, 38, -38), Vector3(8, 2.6, 6), "cloth_red", true, "folded towel", "cover_folded_towel", &"cloth")
+	g.shelter("NapkinTent", Vector3(-20, 31.5, 8), Vector3(6, 2.4, 5), "paper", false, "napkin", "cover_napkin")
+
+	# --- Model slots for the furniture ---
+	g.skin_region("Fridge", "kitchen_fridge", Vector3(43, 36, -30), Vector3(28, 72, 26), ["Fridge"])
+	g.skin_region("Stove", "kitchen_stove", Vector3(13, 18.2, -33), Vector3(26, 36.4, 24), ["Stove", "Burner"])
+	g.skin_region("Pan", "frying_pan", Vector3(13, 58, -35), Vector3(12, 2, 24), ["Pan"])
+	g.skin_region("Pot", "cooking_pot", Vector3(14, 5, -11), Vector3(9, 10, 9), ["Pot"])
+	g.skin_region("Table", "kitchen_table", Vector3(-12, 15.75, 14), Vector3(40, 31.5, 28), ["TableTop", "TableLeg"])
+	g.skin_region("ChairA", "kitchen_chair", Vector3(-24, 19, -7), Vector3(14, 38, 14), ["Chair"], 180.0)
+	g.skin_region("ChairB", "kitchen_chair", Vector3(0, 19, 35), Vector3(14, 38, 14), ["Chair"], 0.0)
+	g.skin_region("TrashCan", "kitchen_trash_can", Vector3(-50, 16, 30), Vector3(14, 32, 14), ["TrashCan"])
 
 	# --- Spawn and escape ---
 	g.spawn(Vector3(50, 0.8, 34), PI * 0.5)

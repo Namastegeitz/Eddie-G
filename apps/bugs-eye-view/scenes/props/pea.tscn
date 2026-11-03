@@ -1,24 +1,32 @@
 [gd_scene format=3]
 
-[ext_resource type="Script" path="res://scripts/stealth/physics_prop.gd" id="1_54ojw"]
-[ext_resource type="Material" path="res://assets/materials/pea.tres" id="2_8wmp6"]
+[ext_resource type="Script" path="res://scripts/stealth/physics_prop.gd" id="1_8wmp6"]
+[ext_resource type="Material" path="res://assets/materials/pea.tres" id="2_g6ix3"]
+[ext_resource type="Script" path="res://scripts/core/skin_anchor.gd" id="3_gqsvp"]
 
-[sub_resource type="SphereShape3D" id="SphereShape3D_g6ix3"]
+[sub_resource type="SphereShape3D" id="SphereShape3D_g8vb2"]
 
-[sub_resource type="SphereMesh" id="SphereMesh_gqsvp"]
+[sub_resource type="SphereMesh" id="SphereMesh_sjqsd"]
 radial_segments = 16
 rings = 8
 
-[node name="Pea" type="RigidBody3D" unique_id=1906444190]
+[node name="Pea" type="RigidBody3D" unique_id=81071765]
 mass = 0.1
-script = ExtResource("1_54ojw")
+script = ExtResource("1_8wmp6")
 noise_on_impact = 1.4
 
-[node name="Shape" type="CollisionShape3D" parent="." unique_id=576115114]
-shape = SubResource("SphereShape3D_g6ix3")
+[node name="Shape" type="CollisionShape3D" parent="." unique_id=1405100379]
+shape = SubResource("SphereShape3D_g8vb2")
 
-[node name="Visual" type="Node3D" parent="." unique_id=1030578714]
+[node name="Visual" type="Node3D" parent="." unique_id=1399672842]
 
-[node name="Mesh" type="MeshInstance3D" parent="Visual" unique_id=1656832985]
-material_override = ExtResource("2_8wmp6")
-mesh = SubResource("SphereMesh_gqsvp")
+[node name="Mesh" type="MeshInstance3D" parent="Visual" unique_id=454518690]
+material_override = ExtResource("2_g6ix3")
+mesh = SubResource("SphereMesh_sjqsd")
+
+[node name="Skin" type="Node3D" parent="Visual" unique_id=723606385]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -2.9802322e-08, 0)
+script = ExtResource("3_gqsvp")
+model_id = "prop_pea"
+fit_size = Vector3(0.9848077, 0.99999994, 0.9848077)
+hide_paths = Array[NodePath]([NodePath("../Mesh")])

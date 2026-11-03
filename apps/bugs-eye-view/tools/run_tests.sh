@@ -13,6 +13,9 @@ if grep -E "SCRIPT ERROR|Parse Error" /tmp/bev_import.log; then fail=1; fi
 echo "== boot"; "$GODOT" --headless --path . --quit > /tmp/bev_boot.log 2>&1
 if grep -E "SCRIPT ERROR|ERROR:" /tmp/bev_boot.log | grep -v "resources still in use"; then fail=1; fi
 echo "== warnings"; tools/check_warnings.sh || fail=1
+echo "== meshy client (offline)"
+PYTHONDONTWRITEBYTECODE=1 python3 tools/meshy/test_generate.py > /tmp/bev_meshy.log 2>&1 || fail=1
+grep -E "^  FAIL|passed" /tmp/bev_meshy.log
 echo "== smoke test (project)"
 "$GODOT" --headless --path . res://tests/smoke_test.tscn --fixed-fps 60 > /tmp/bev_smoke.log 2>&1 || fail=1
 grep -E "FAIL|passed" /tmp/bev_smoke.log

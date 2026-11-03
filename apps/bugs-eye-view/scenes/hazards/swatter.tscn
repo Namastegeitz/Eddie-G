@@ -1,17 +1,12 @@
 [gd_scene format=3]
 
-[ext_resource type="Script" path="res://scripts/hazards/swatter.gd" id="1_ilo8t"]
-[ext_resource type="Material" path="res://assets/materials/swatter.tres" id="2_aclsy"]
-[ext_resource type="Material" path="res://assets/materials/dark_metal.tres" id="3_yy2at"]
-
-[sub_resource type="BoxMesh" id="BoxMesh_2g2b1"]
-size = Vector3(7, 0.35, 7.5)
-
-[sub_resource type="BoxMesh" id="BoxMesh_340jc"]
-size = Vector3(5.6, 0.4, 0.25)
+[ext_resource type="Script" path="res://scripts/hazards/swatter.gd" id="1_aclsy"]
+[ext_resource type="Material" path="res://assets/materials/swatter.tres" id="2_yy2at"]
+[ext_resource type="Material" path="res://assets/materials/dark_metal.tres" id="3_2g2b1"]
+[ext_resource type="Script" path="res://scripts/core/skin_anchor.gd" id="4_340jc"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_hwtkx"]
-size = Vector3(5.6, 0.4, 0.25)
+size = Vector3(7, 0.35, 7.5)
 
 [sub_resource type="BoxMesh" id="BoxMesh_h3ya3"]
 size = Vector3(5.6, 0.4, 0.25)
@@ -20,40 +15,53 @@ size = Vector3(5.6, 0.4, 0.25)
 size = Vector3(5.6, 0.4, 0.25)
 
 [sub_resource type="BoxMesh" id="BoxMesh_djaap"]
+size = Vector3(5.6, 0.4, 0.25)
+
+[sub_resource type="BoxMesh" id="BoxMesh_wttfc"]
+size = Vector3(5.6, 0.4, 0.25)
+
+[sub_resource type="BoxMesh" id="BoxMesh_3dt2t"]
 size = Vector3(0.7, 0.5, 22)
 
-[node name="Swatter" type="Node3D" unique_id=35759077]
-script = ExtResource("1_ilo8t")
+[node name="Swatter" type="Node3D" unique_id=1693307936]
+script = ExtResource("1_aclsy")
 impact_radius = 3.2
 
-[node name="Paddle" type="Node3D" parent="." unique_id=1995580165]
+[node name="Paddle" type="Node3D" parent="." unique_id=1957312793]
 
-[node name="Head" type="MeshInstance3D" parent="Paddle" unique_id=1958351374]
+[node name="Head" type="MeshInstance3D" parent="Paddle" unique_id=36241892]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.2, 0)
-material_override = ExtResource("2_aclsy")
-mesh = SubResource("BoxMesh_2g2b1")
-
-[node name="Slot" type="MeshInstance3D" parent="Paddle" unique_id=1918921239]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.22, -2.4)
-material_override = ExtResource("3_yy2at")
-mesh = SubResource("BoxMesh_340jc")
-
-[node name="@MeshInstance3D@58" type="MeshInstance3D" parent="Paddle" unique_id=2123937862]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.22, -0.8)
-material_override = ExtResource("3_yy2at")
+material_override = ExtResource("2_yy2at")
 mesh = SubResource("BoxMesh_hwtkx")
 
-[node name="@MeshInstance3D@59" type="MeshInstance3D" parent="Paddle" unique_id=1538591405]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.22, 0.8)
-material_override = ExtResource("3_yy2at")
+[node name="Slot" type="MeshInstance3D" parent="Paddle" unique_id=872871091]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.22, -2.4)
+material_override = ExtResource("3_2g2b1")
 mesh = SubResource("BoxMesh_h3ya3")
 
-[node name="@MeshInstance3D@60" type="MeshInstance3D" parent="Paddle" unique_id=1499073214]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.22, 2.4)
-material_override = ExtResource("3_yy2at")
+[node name="Slot2" type="MeshInstance3D" parent="Paddle" unique_id=1108033997]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.22, -0.8)
+material_override = ExtResource("3_2g2b1")
 mesh = SubResource("BoxMesh_ful1k")
 
-[node name="Handle" type="MeshInstance3D" parent="Paddle" unique_id=1990304155]
-transform = Transform3D(1, 0, 0, 0, 0.94923544, -0.31456655, 0, 0.31456655, 0.94923544, 0, 3.5, 14.5)
-material_override = ExtResource("2_aclsy")
+[node name="Slot3" type="MeshInstance3D" parent="Paddle" unique_id=292618248]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.22, 0.8)
+material_override = ExtResource("3_2g2b1")
 mesh = SubResource("BoxMesh_djaap")
+
+[node name="Slot4" type="MeshInstance3D" parent="Paddle" unique_id=1102117825]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.22, 2.4)
+material_override = ExtResource("3_2g2b1")
+mesh = SubResource("BoxMesh_wttfc")
+
+[node name="Handle" type="MeshInstance3D" parent="Paddle" unique_id=30388989]
+transform = Transform3D(1, 0, 0, 0, 0.94923544, -0.31456655, 0, 0.31456655, 0.94923544, 0, 3.5, 14.5)
+material_override = ExtResource("2_yy2at")
+mesh = SubResource("BoxMesh_3dt2t")
+
+[node name="Skin" type="Node3D" parent="Paddle" unique_id=85947647]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4, 10.75)
+script = ExtResource("4_340jc")
+model_id = "fly_swatter"
+fit_size = Vector3(7.5, 8, 29)
+hide_paths = Array[NodePath]([NodePath("../Head"), NodePath("../Slot"), NodePath("../Slot2"), NodePath("../Slot3"), NodePath("../Slot4"), NodePath("../Handle")])

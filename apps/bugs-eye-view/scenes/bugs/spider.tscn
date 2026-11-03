@@ -1,34 +1,29 @@
 [gd_scene format=3]
 
-[ext_resource type="Script" path="res://scripts/bugs/spider.gd" id="1_sgubl"]
-[ext_resource type="Resource" path="res://resources/bugs/spider.tres" id="2_qjqjt"]
-[ext_resource type="Material" path="res://assets/materials/spider.tres" id="3_ybd0d"]
-[ext_resource type="Material" path="res://assets/materials/fly_eye.tres" id="4_unwhd"]
-[ext_resource type="Material" path="res://assets/materials/web.tres" id="5_b6tna"]
+[ext_resource type="Script" path="res://scripts/bugs/spider.gd" id="1_qjqjt"]
+[ext_resource type="Resource" path="res://resources/bugs/spider.tres" id="2_ybd0d"]
+[ext_resource type="Material" path="res://assets/materials/spider.tres" id="3_unwhd"]
+[ext_resource type="Material" path="res://assets/materials/fly_eye.tres" id="4_b6tna"]
+[ext_resource type="Script" path="res://scripts/core/skin_anchor.gd" id="5_pbl60"]
+[ext_resource type="Material" path="res://assets/materials/web.tres" id="6_q834i"]
 
-[sub_resource type="SphereShape3D" id="SphereShape3D_pbl60"]
+[sub_resource type="SphereShape3D" id="SphereShape3D_6v5px"]
 radius = 0.35
 
-[sub_resource type="SphereMesh" id="SphereMesh_q834i"]
+[sub_resource type="SphereMesh" id="SphereMesh_pblx6"]
 radius = 0.42
 height = 0.84
 radial_segments = 16
 rings = 8
 
-[sub_resource type="SphereMesh" id="SphereMesh_6v5px"]
+[sub_resource type="SphereMesh" id="SphereMesh_yxmua"]
 radius = 0.26
 height = 0.52
 radial_segments = 16
 rings = 8
 
-[sub_resource type="BoxMesh" id="BoxMesh_pblx6"]
-size = Vector3(0.22, 0.06, 0.04)
-
-[sub_resource type="BoxMesh" id="BoxMesh_yxmua"]
-size = Vector3(1.1, 0.06, 0.06)
-
 [sub_resource type="BoxMesh" id="BoxMesh_aprlq"]
-size = Vector3(1.1, 0.06, 0.06)
+size = Vector3(0.22, 0.06, 0.04)
 
 [sub_resource type="BoxMesh" id="BoxMesh_h5mjt"]
 size = Vector3(1.1, 0.06, 0.06)
@@ -49,74 +44,87 @@ size = Vector3(1.1, 0.06, 0.06)
 size = Vector3(1.1, 0.06, 0.06)
 
 [sub_resource type="BoxMesh" id="BoxMesh_awllc"]
+size = Vector3(1.1, 0.06, 0.06)
+
+[sub_resource type="BoxMesh" id="BoxMesh_65k1t"]
+size = Vector3(1.1, 0.06, 0.06)
+
+[sub_resource type="BoxMesh" id="BoxMesh_377xu"]
 size = Vector3(0.06, 0.06, 1)
 
-[node name="Spider" type="CharacterBody3D" unique_id=184087768]
-script = ExtResource("1_sgubl")
-stats = ExtResource("2_qjqjt")
+[node name="Spider" type="CharacterBody3D" unique_id=41275572]
+script = ExtResource("1_qjqjt")
+stats = ExtResource("2_ybd0d")
 
-[node name="Shape" type="CollisionShape3D" parent="." unique_id=962558069]
-shape = SubResource("SphereShape3D_pbl60")
+[node name="Shape" type="CollisionShape3D" parent="." unique_id=1136463992]
+shape = SubResource("SphereShape3D_6v5px")
 
-[node name="Visual" type="Node3D" parent="." unique_id=261457035]
+[node name="Visual" type="Node3D" parent="." unique_id=500467377]
 
-[node name="Abdomen" type="MeshInstance3D" parent="Visual" unique_id=308850932]
+[node name="Abdomen" type="MeshInstance3D" parent="Visual" unique_id=1344219287]
 transform = Transform3D(1, 0, 0, 0, 0.85, 0, 0, 0, 1.15, 0, 0.1, 0.45)
-material_override = ExtResource("3_ybd0d")
-mesh = SubResource("SphereMesh_q834i")
+material_override = ExtResource("3_unwhd")
+mesh = SubResource("SphereMesh_pblx6")
 
-[node name="Thorax" type="MeshInstance3D" parent="Visual" unique_id=1441532740]
+[node name="Thorax" type="MeshInstance3D" parent="Visual" unique_id=1946853275]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.02, -0.15)
-material_override = ExtResource("3_ybd0d")
-mesh = SubResource("SphereMesh_6v5px")
+material_override = ExtResource("3_unwhd")
+mesh = SubResource("SphereMesh_yxmua")
 
-[node name="Eyes" type="MeshInstance3D" parent="Visual" unique_id=1513184065]
+[node name="Eyes" type="MeshInstance3D" parent="Visual" unique_id=1067310449]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.12, -0.38)
-material_override = ExtResource("4_unwhd")
-mesh = SubResource("BoxMesh_pblx6")
-
-[node name="Leg" type="MeshInstance3D" parent="Visual" unique_id=320013213]
-transform = Transform3D(0.8243771, -0.30092114, -0.47942555, 0.3428978, 0.9393727, 0, 0.45035928, -0.16439396, 0.87758255, -0.495, -0.05, -0.4)
-material_override = ExtResource("3_ybd0d")
-mesh = SubResource("BoxMesh_yxmua")
-
-[node name="@MeshInstance3D@42" type="MeshInstance3D" parent="Visual" unique_id=1386591495]
-transform = Transform3D(0.9263561, -0.33814636, -0.16589613, 0.3428978, 0.9393727, 0, 0.1558383, -0.056885418, 0.98614323, -0.495, -0.05, -0.13333334)
-material_override = ExtResource("3_ybd0d")
+material_override = ExtResource("4_b6tna")
 mesh = SubResource("BoxMesh_aprlq")
 
-[node name="@MeshInstance3D@43" type="MeshInstance3D" parent="Visual" unique_id=2050133428]
-transform = Transform3D(0.9263561, -0.33814636, 0.16589613, 0.3428978, 0.9393727, 0, -0.1558383, 0.056885418, 0.98614323, -0.495, -0.05, 0.13333334)
-material_override = ExtResource("3_ybd0d")
+[node name="Leg" type="MeshInstance3D" parent="Visual" unique_id=1031729845]
+transform = Transform3D(0.8243771, -0.30092114, -0.47942555, 0.3428978, 0.9393727, 0, 0.45035928, -0.16439396, 0.87758255, -0.495, -0.05, -0.4)
+material_override = ExtResource("3_unwhd")
 mesh = SubResource("BoxMesh_h5mjt")
 
-[node name="@MeshInstance3D@44" type="MeshInstance3D" parent="Visual" unique_id=708123459]
-transform = Transform3D(0.8243771, -0.30092114, 0.47942555, 0.3428978, 0.9393727, 0, -0.45035928, 0.16439396, 0.87758255, -0.495, -0.05, 0.4)
-material_override = ExtResource("3_ybd0d")
+[node name="Leg2" type="MeshInstance3D" parent="Visual" unique_id=1095572244]
+transform = Transform3D(0.9263561, -0.33814636, -0.16589613, 0.3428978, 0.9393727, 0, 0.1558383, -0.056885418, 0.98614323, -0.495, -0.05, -0.13333334)
+material_override = ExtResource("3_unwhd")
 mesh = SubResource("BoxMesh_stacm")
 
-[node name="@MeshInstance3D@45" type="MeshInstance3D" parent="Visual" unique_id=4239171]
-transform = Transform3D(0.8243771, 0.30092114, 0.47942555, -0.3428978, 0.9393727, 0, -0.45035928, -0.16439396, 0.87758255, 0.495, -0.05, -0.4)
-material_override = ExtResource("3_ybd0d")
+[node name="Leg3" type="MeshInstance3D" parent="Visual" unique_id=1779098883]
+transform = Transform3D(0.9263561, -0.33814636, 0.16589613, 0.3428978, 0.9393727, 0, -0.1558383, 0.056885418, 0.98614323, -0.495, -0.05, 0.13333334)
+material_override = ExtResource("3_unwhd")
 mesh = SubResource("BoxMesh_2cjh1")
 
-[node name="@MeshInstance3D@46" type="MeshInstance3D" parent="Visual" unique_id=266747902]
-transform = Transform3D(0.9263561, 0.33814636, 0.16589613, -0.3428978, 0.9393727, 0, -0.1558383, -0.056885418, 0.98614323, 0.495, -0.05, -0.13333334)
-material_override = ExtResource("3_ybd0d")
+[node name="Leg4" type="MeshInstance3D" parent="Visual" unique_id=757268655]
+transform = Transform3D(0.8243771, -0.30092114, 0.47942555, 0.3428978, 0.9393727, 0, -0.45035928, 0.16439396, 0.87758255, -0.495, -0.05, 0.4)
+material_override = ExtResource("3_unwhd")
 mesh = SubResource("BoxMesh_gsggy")
 
-[node name="@MeshInstance3D@47" type="MeshInstance3D" parent="Visual" unique_id=1881349605]
-transform = Transform3D(0.9263561, 0.33814636, -0.16589613, -0.3428978, 0.9393727, 0, 0.1558383, 0.056885418, 0.98614323, 0.495, -0.05, 0.13333334)
-material_override = ExtResource("3_ybd0d")
+[node name="Leg5" type="MeshInstance3D" parent="Visual" unique_id=2053904884]
+transform = Transform3D(0.8243771, 0.30092114, 0.47942555, -0.3428978, 0.9393727, 0, -0.45035928, -0.16439396, 0.87758255, 0.495, -0.05, -0.4)
+material_override = ExtResource("3_unwhd")
 mesh = SubResource("BoxMesh_mcm8g")
 
-[node name="@MeshInstance3D@48" type="MeshInstance3D" parent="Visual" unique_id=477676627]
-transform = Transform3D(0.8243771, 0.30092114, -0.47942555, -0.3428978, 0.9393727, 0, 0.45035928, 0.16439396, 0.87758255, 0.495, -0.05, 0.4)
-material_override = ExtResource("3_ybd0d")
+[node name="Leg6" type="MeshInstance3D" parent="Visual" unique_id=1521032782]
+transform = Transform3D(0.9263561, 0.33814636, 0.16589613, -0.3428978, 0.9393727, 0, -0.1558383, -0.056885418, 0.98614323, 0.495, -0.05, -0.13333334)
+material_override = ExtResource("3_unwhd")
 mesh = SubResource("BoxMesh_ei5tq")
 
-[node name="ZipLine" type="MeshInstance3D" parent="." unique_id=370349383]
-top_level = true
-material_override = ExtResource("5_b6tna")
-cast_shadow = 0
+[node name="Leg7" type="MeshInstance3D" parent="Visual" unique_id=1718802176]
+transform = Transform3D(0.9263561, 0.33814636, -0.16589613, -0.3428978, 0.9393727, 0, 0.1558383, 0.056885418, 0.98614323, 0.495, -0.05, 0.13333334)
+material_override = ExtResource("3_unwhd")
 mesh = SubResource("BoxMesh_awllc")
+
+[node name="Leg8" type="MeshInstance3D" parent="Visual" unique_id=417712937]
+transform = Transform3D(0.8243771, 0.30092114, -0.47942555, -0.3428978, 0.9393727, 0, 0.45035928, 0.16439396, 0.87758255, 0.495, -0.05, 0.4)
+material_override = ExtResource("3_unwhd")
+mesh = SubResource("BoxMesh_65k1t")
+
+[node name="Skin" type="Node3D" parent="Visual" unique_id=1563014058]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.1)
+script = ExtResource("5_pbl60")
+model_id = "bug_spider"
+fit_size = Vector3(2.3, 0.8, 2.3)
+hide_paths = Array[NodePath]([NodePath("../Abdomen"), NodePath("../Thorax"), NodePath("../Eyes"), NodePath("../Leg"), NodePath("../Leg2"), NodePath("../Leg3"), NodePath("../Leg4"), NodePath("../Leg5"), NodePath("../Leg6"), NodePath("../Leg7"), NodePath("../Leg8")])
+
+[node name="ZipLine" type="MeshInstance3D" parent="." unique_id=14708460]
+top_level = true
+material_override = ExtResource("6_q834i")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_377xu")

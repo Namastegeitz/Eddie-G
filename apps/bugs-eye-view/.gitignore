@@ -5,3 +5,5 @@ build/
 export_credentials.cfg
 *.keystore
 *.jks
+__pycache__/
+*.part

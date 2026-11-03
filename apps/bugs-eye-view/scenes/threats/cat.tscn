@@ -1,46 +1,33 @@
 [gd_scene format=3]
 
-[ext_resource type="Script" path="res://scripts/threats/pet.gd" id="1_55shx"]
-[ext_resource type="Resource" path="res://resources/threats/cat.tres" id="2_mkqp4"]
-[ext_resource type="Material" path="res://assets/materials/cat_orange.tres" id="3_vlovx"]
-[ext_resource type="Material" path="res://assets/materials/pea.tres" id="4_k6uo4"]
+[ext_resource type="Script" path="res://scripts/threats/pet.gd" id="1_mkqp4"]
+[ext_resource type="Resource" path="res://resources/threats/cat.tres" id="2_vlovx"]
+[ext_resource type="Material" path="res://assets/materials/cat_orange.tres" id="3_k6uo4"]
+[ext_resource type="Material" path="res://assets/materials/pea.tres" id="4_j72cu"]
+[ext_resource type="Script" path="res://scripts/core/skin_anchor.gd" id="5_svxue"]
 
-[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_j72cu"]
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_vtqyv"]
 radius = 2.4
 height = 10.0
 
-[sub_resource type="CapsuleMesh" id="CapsuleMesh_svxue"]
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_qfxdt"]
 radius = 2.4
 height = 11.0
 radial_segments = 12
 rings = 4
 
-[sub_resource type="SphereMesh" id="SphereMesh_vtqyv"]
+[sub_resource type="SphereMesh" id="SphereMesh_q2awg"]
 radius = 2.3
 height = 4.6
 radial_segments = 16
 rings = 8
 
-[sub_resource type="PrismMesh" id="PrismMesh_qfxdt"]
+[sub_resource type="PrismMesh" id="PrismMesh_jsnjl"]
 
-[sub_resource type="PrismMesh" id="PrismMesh_q2awg"]
-
-[sub_resource type="CylinderMesh" id="CylinderMesh_jsnjl"]
-height = 8.0
-radial_segments = 16
-rings = 1
-
-[sub_resource type="CylinderMesh" id="CylinderMesh_xfu1e"]
-top_radius = 0.7
-bottom_radius = 0.7
-height = 4.0
-radial_segments = 16
-rings = 1
+[sub_resource type="PrismMesh" id="PrismMesh_xfu1e"]
 
 [sub_resource type="CylinderMesh" id="CylinderMesh_pb7u4"]
-top_radius = 0.7
-bottom_radius = 0.7
-height = 4.0
+height = 8.0
 radial_segments = 16
 rings = 1
 
@@ -58,89 +45,110 @@ height = 4.0
 radial_segments = 16
 rings = 1
 
-[sub_resource type="SphereMesh" id="SphereMesh_7t5q1"]
+[sub_resource type="CylinderMesh" id="CylinderMesh_7t5q1"]
+top_radius = 0.7
+bottom_radius = 0.7
+height = 4.0
+radial_segments = 16
+rings = 1
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_1mqco"]
+top_radius = 0.7
+bottom_radius = 0.7
+height = 4.0
+radial_segments = 16
+rings = 1
+
+[sub_resource type="SphereMesh" id="SphereMesh_4yel8"]
 radius = 0.45
 height = 0.9
 radial_segments = 16
 rings = 8
 
-[sub_resource type="SphereMesh" id="SphereMesh_1mqco"]
+[sub_resource type="SphereMesh" id="SphereMesh_1faii"]
 radius = 0.45
 height = 0.9
 radial_segments = 16
 rings = 8
 
-[node name="Cat" type="CharacterBody3D" unique_id=1365537621]
-script = ExtResource("1_55shx")
+[node name="Cat" type="CharacterBody3D" unique_id=1852126313]
+script = ExtResource("1_mkqp4")
 waypoints = PackedVector3Array()
 nap_events = PackedStringArray()
 uses_perches = true
-config = ExtResource("2_mkqp4")
+config = ExtResource("2_vlovx")
 active_events = PackedStringArray()
 icon_height = 10.0
 
-[node name="Shape" type="CollisionShape3D" parent="." unique_id=955976447]
+[node name="Shape" type="CollisionShape3D" parent="." unique_id=1114876865]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 2.4, 0)
-shape = SubResource("CapsuleShape3D_j72cu")
+shape = SubResource("CapsuleShape3D_vtqyv")
 
-[node name="Visual" type="Node3D" parent="." unique_id=911591510]
+[node name="Visual" type="Node3D" parent="." unique_id=1938247486]
 
-[node name="Body" type="MeshInstance3D" parent="Visual" unique_id=1928319910]
+[node name="Body" type="MeshInstance3D" parent="Visual" unique_id=1960599447]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 5, 0.5)
-material_override = ExtResource("3_vlovx")
-mesh = SubResource("CapsuleMesh_svxue")
+material_override = ExtResource("3_k6uo4")
+mesh = SubResource("CapsuleMesh_qfxdt")
 
-[node name="Head" type="MeshInstance3D" parent="Visual" unique_id=1787646453]
+[node name="Head" type="MeshInstance3D" parent="Visual" unique_id=1240141647]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7.2, -6)
-material_override = ExtResource("3_vlovx")
-mesh = SubResource("SphereMesh_vtqyv")
+material_override = ExtResource("3_k6uo4")
+mesh = SubResource("SphereMesh_q2awg")
 
-[node name="EarL" type="MeshInstance3D" parent="Visual" unique_id=302836703]
+[node name="EarL" type="MeshInstance3D" parent="Visual" unique_id=1799001602]
 transform = Transform3D(1.4, 0, 0, 0, 1.8, 0, 0, 0, 0.6, -1.2, 9.6, -6)
-material_override = ExtResource("3_vlovx")
-mesh = SubResource("PrismMesh_qfxdt")
+material_override = ExtResource("3_k6uo4")
+mesh = SubResource("PrismMesh_jsnjl")
 
-[node name="EarR" type="MeshInstance3D" parent="Visual" unique_id=554889025]
+[node name="EarR" type="MeshInstance3D" parent="Visual" unique_id=1146647016]
 transform = Transform3D(1.4, 0, 0, 0, 1.8, 0, 0, 0, 0.6, 1.2, 9.6, -6)
-material_override = ExtResource("3_vlovx")
-mesh = SubResource("PrismMesh_q2awg")
+material_override = ExtResource("3_k6uo4")
+mesh = SubResource("PrismMesh_xfu1e")
 
-[node name="Tail" type="MeshInstance3D" parent="Visual" unique_id=1077737831]
+[node name="Tail" type="MeshInstance3D" parent="Visual" unique_id=1083956434]
 transform = Transform3D(1, 0, 0, 0, 0.6967067, -0.7173561, 0, 0.7173561, 0.6967067, 0, 7, 7.5)
-material_override = ExtResource("3_vlovx")
-mesh = SubResource("CylinderMesh_jsnjl")
-
-[node name="Leg" type="MeshInstance3D" parent="Visual" unique_id=1068257222]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.4, 1.8, -3.5)
-material_override = ExtResource("3_vlovx")
-mesh = SubResource("CylinderMesh_xfu1e")
-
-[node name="@MeshInstance3D@52" type="MeshInstance3D" parent="Visual" unique_id=1073705051]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.4, 1.8, 3.5)
-material_override = ExtResource("3_vlovx")
+material_override = ExtResource("3_k6uo4")
 mesh = SubResource("CylinderMesh_pb7u4")
 
-[node name="@MeshInstance3D@53" type="MeshInstance3D" parent="Visual" unique_id=1487494624]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.4, 1.8, -3.5)
-material_override = ExtResource("3_vlovx")
+[node name="Leg" type="MeshInstance3D" parent="Visual" unique_id=240863964]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.4, 1.8, -3.5)
+material_override = ExtResource("3_k6uo4")
 mesh = SubResource("CylinderMesh_12jxs")
 
-[node name="@MeshInstance3D@54" type="MeshInstance3D" parent="Visual" unique_id=730554917]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.4, 1.8, 3.5)
-material_override = ExtResource("3_vlovx")
+[node name="Leg2" type="MeshInstance3D" parent="Visual" unique_id=1926255881]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.4, 1.8, 3.5)
+material_override = ExtResource("3_k6uo4")
 mesh = SubResource("CylinderMesh_jiaki")
 
-[node name="EyeL" type="MeshInstance3D" parent="Visual" unique_id=237262844]
+[node name="Leg3" type="MeshInstance3D" parent="Visual" unique_id=2138547393]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.4, 1.8, -3.5)
+material_override = ExtResource("3_k6uo4")
+mesh = SubResource("CylinderMesh_7t5q1")
+
+[node name="Leg4" type="MeshInstance3D" parent="Visual" unique_id=350866283]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.4, 1.8, 3.5)
+material_override = ExtResource("3_k6uo4")
+mesh = SubResource("CylinderMesh_1mqco")
+
+[node name="EyeL" type="MeshInstance3D" parent="Visual" unique_id=1313113208]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.9, 7.9, -7.9)
-material_override = ExtResource("4_k6uo4")
-mesh = SubResource("SphereMesh_7t5q1")
+material_override = ExtResource("4_j72cu")
+mesh = SubResource("SphereMesh_4yel8")
 
-[node name="EyeR" type="MeshInstance3D" parent="Visual" unique_id=1815660715]
+[node name="EyeR" type="MeshInstance3D" parent="Visual" unique_id=2098727164]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.9, 7.9, -7.9)
-material_override = ExtResource("4_k6uo4")
-mesh = SubResource("SphereMesh_1mqco")
+material_override = ExtResource("4_j72cu")
+mesh = SubResource("SphereMesh_1faii")
 
-[node name="Agent" type="NavigationAgent3D" parent="." unique_id=85430200]
+[node name="Skin" type="Node3D" parent="Visual" unique_id=1633352158]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5, 0.5)
+script = ExtResource("5_svxue")
+model_id = "pet_cat"
+fit_size = Vector3(5.5, 10, 18)
+hide_paths = Array[NodePath]([NodePath("../Body"), NodePath("../Head"), NodePath("../EarL"), NodePath("../EarR"), NodePath("../Tail"), NodePath("../Leg"), NodePath("../Leg2"), NodePath("../Leg3"), NodePath("../Leg4"), NodePath("../EyeL"), NodePath("../EyeR")])
+
+[node name="Agent" type="NavigationAgent3D" parent="." unique_id=2005781806]
 path_desired_distance = 2.0
 target_desired_distance = 2.0
 path_max_distance = 6.0

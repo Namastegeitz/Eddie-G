@@ -13,6 +13,7 @@ var props: Node3D
 var actors: Node3D
 var lights: Node3D
 var decor: Node3D
+var skins: Node3D
 var _names: Dictionary = {}
 
 
@@ -39,6 +40,7 @@ func _init(level_name: String) -> void:
 	actors = _group("Actors", root)
 	lights = _group("Lights", root)
 	decor = _group("Decor", root)
+	skins = _group("Skins", root)
 
 
 func _group(n: String, parent: Node) -> Node3D:
@@ -389,7 +391,8 @@ func spawn(pos: Vector3, yaw: float) -> void:
 
 # --- Interactables --------------------------------------------------------------
 
-func lure(n: String, kind: int, pos: Vector3, size: Vector3, material: String, loud: float = 2.5) -> LureProp:
+func lure(n: String, kind: int, pos: Vector3, size: Vector3, material: String, loud: float = 2.5,
+		model_id: String = "") -> LureProp:
 	var l := LureProp.new()
 	_area(l, n, pos, size + Vector3(2.0, 2.0, 2.0), props)
 	l.kind = kind as LureProp.Kind
@@ -401,6 +404,8 @@ func lure(n: String, kind: int, pos: Vector3, size: Vector3, material: String, l
 	mi.mesh = bm
 	mi.material_override = mat(material)
 	l.add_child(mi)
+	if model_id != "":
+		skin(n, model_id, pos, size, [mi])
 	if kind == LureProp.Kind.PHONE:
 		var glow := MeshInstance3D.new()
 		glow.name = "Glow"
@@ -553,6 +558,114 @@ func sun(rot_deg: Vector3, energy: float, color: Color = Color(1.0, 0.94, 0.82))
 	s.shadow_enabled = true
 	s.directional_shadow_max_distance = 180.0
 	lights.add_child(s)
+
+
+# --- Cover & model slots --------------------------------------------------------
+
+func _cover_marker(n: String, center: Vector3, kind: String, label: String) -> Marker3D:
+	var m := Marker3D.new()
+	m.name = uniq(n + "Cover")
+	m.position = center
+	m.set_meta(&"kind", kind)
+	m.set_meta(&"label", label)
+	m.add_to_group(Phys.GROUP_COVER, true)
+	zones.add_child(m)
+	return m
+
+
+## A hollow shelter any bug can crawl into (a paper cup on its side, a shoe, a
+## bag, a pillow tent): a roof and two side walls, open at both ends, with a
+## hiding spot and shade inside. `base` is the centre of its footprint on the
+## floor; `size` is its outer size; `along_x` says which way it is open.
+func shelter(n: String, base: Vector3, size: Vector3, material: String, along_x: bool,
+		label: String, model_id: String = "", surface: StringName = &"paper",
+		camo: StringName = &"") -> Array[StaticBody3D]:
+	var t := 0.45
+	var h := size.y
+	var parts: Array[StaticBody3D] = []
+	parts.append(box(n + "Roof", base + Vector3(0, h - t * 0.5, 0), Vector3(size.x, t, size.z), material, surface, camo))
+	var wall_h := h - t
+	if along_x:
+		for side in [-1.0, 1.0]:
+			parts.append(box(n + "Side", base + Vector3(0, wall_h * 0.5, side * (size.z - t) * 0.5),
+				Vector3(size.x, wall_h, t), material, surface, camo))
+	else:
+		for side in [-1.0, 1.0]:
+			parts.append(box(n + "Side", base + Vector3(side * (size.x - t) * 0.5, wall_h * 0.5, 0),
+				Vector3(t, wall_h, size.z), material, surface, camo))
+	var inner := Vector3(size.x - 0.4, wall_h - 0.2, size.z - 2.0 * t - 0.2) if along_x \
+		else Vector3(size.x - 2.0 * t - 0.2, wall_h - 0.2, size.z - 0.4)
+	var mid := base + Vector3(0, wall_h * 0.5, 0)
+	hiding_spot(n + "Inside", mid, inner, false, [], "Hidden in the " + label)
+	light_zone(n + "Shade", mid, inner + Vector3(0.2, 0.2, 0.2), 0, 3)
+	_cover_marker(n, mid, "shelter", label)
+	if model_id != "":
+		skin(n, model_id, base + Vector3(0, h * 0.5, 0), size, parts)
+	return parts
+
+
+## A solid object that blocks sight lines (a stack of mail, a rock, toy blocks).
+func cover_block(n: String, base: Vector3, size: Vector3, material: String, label: String,
+		model_id: String = "", surface: StringName = &"default", camo: StringName = &"") -> StaticBody3D:
+	var b := box(n, base + Vector3(0, size.y * 0.5, 0), size, material, surface, camo)
+	_cover_marker(n, base + Vector3(0, size.y * 0.5, 0), "block", label)
+	if model_id != "":
+		skin(n, model_id, base + Vector3(0, size.y * 0.5, 0), size, [b])
+	return b
+
+
+## Tall grass or leafy shade: dims the light (no collision).
+func tall_grass(n: String, base: Vector3, size: Vector3) -> void:
+	light_zone(n + "Shade", base + Vector3(0, size.y * 0.5, 0), size, 1, 2, [], [], false)
+	var blade := BoxMesh.new()
+	blade.size = Vector3(0.35, size.y, 0.35)
+	var count := int(clampf(size.x * size.z / 6.0, 6.0, 40.0))
+	var rng := RandomNumberGenerator.new()
+	rng.seed = hash(n)
+	for i in count:
+		var p := base + Vector3(rng.randf_range(-size.x, size.x) * 0.5, size.y * 0.5, rng.randf_range(-size.z, size.z) * 0.5)
+		deco(n + "Blade", blade, "leaf_green", p, Vector3(rng.randf_range(-0.25, 0.25), rng.randf() * TAU, rng.randf_range(-0.25, 0.25)))
+	_cover_marker(n, base + Vector3(0, size.y * 0.5, 0), "grass", "tall grass")
+
+
+## A model slot for a piece of furniture built from several parts: every
+## geometry/decor node whose name starts with one of `prefixes` and that sits
+## inside the box is replaced by the model.
+func skin_region(n: String, model_id: String, center: Vector3, size: Vector3, prefixes: Array,
+		yaw_deg: float = 180.0) -> SkinAnchor:
+	var region := AABB(center - size * 0.5, size).grow(1.0)
+	var found: Array = []
+	for parent in [geo, decor]:
+		for c in (parent as Node).get_children():
+			var c3 := c as Node3D
+			if c3 == null or not region.has_point(c3.position):
+				continue
+			for pre: String in prefixes:
+				if String(c3.name).begins_with(pre):
+					found.append(c3)
+					break
+	assert(not found.is_empty(), "skin_region %s matched nothing" % n)
+	return skin(n, model_id, center, size, found, yaw_deg)
+
+
+## A slot for a generated model fitted to `size` around `center`, replacing
+## the meshes of `bodies` (StaticBody3D with a "Mesh" child, or meshes).
+func skin(n: String, model_id: String, center: Vector3, size: Vector3, bodies: Array, yaw_deg: float = 180.0) -> SkinAnchor:
+	var a := SkinAnchor.new()
+	a.name = uniq(n + "Skin")
+	a.model_id = model_id
+	a.fit_size = size
+	a.yaw_offset_deg = yaw_deg
+	a.position = center
+	skins.add_child(a)
+	var paths: Array[NodePath] = []
+	for b in bodies:
+		var node := b as Node
+		var mesh := node.get_node_or_null("Mesh") if not node is MeshInstance3D else node
+		if mesh:
+			paths.append(a.get_path_to(mesh))
+	a.hide_paths = paths
+	return a
 
 
 # --- Finish ---------------------------------------------------------------------
