@@ -34,10 +34,13 @@ const body = html.match(/<body>([\s\S]*?)<\/body>/)[1];
 const jsFiles = readdirSync(join(build, 'assets')).filter((f) => f.endsWith('.js'));
 if (jsFiles.length !== 1) throw new Error(`expected one JS bundle, got ${jsFiles.join(', ')}`);
 let js = readFileSync(join(build, 'assets', jsFiles[0]), 'utf8');
-if (/<\/script|<!--/i.test(js)) {
-  // Only safe inside string literals; check where they occur before trusting this.
-  js = js.replace(/<\/script/gi, '<\\/script').replace(/<!--/g, '<\\!--');
-}
+if (/<\/script|<!--/i.test(js)) throw new Error('bundle contains </script or <!-- and cannot be inlined as-is');
+// Run it as a classic script (no type="module"): the only module-only syntax in the
+// single-chunk bundle is import.meta in Vite's lazy-import helper, which is unused here.
+js = js.replace(/import\.meta\.resolve/g, 'undefined').replace(/import\.meta\.url/g, 'document.baseURI');
+if (/import\.meta|^\s*(import|export)\s/m.test(js)) throw new Error('bundle still has module-only syntax');
+js = `(function(){"use strict";\n${js}\n})();`;
+new Function(js); // throws if it doesn't parse as a classic script
 
 // CSS: inline fonts (woff2 only; drop the woff fallbacks).
 const cssFile = readdirSync(join(build, 'assets')).find((f) => f.endsWith('.css'));
@@ -51,15 +54,38 @@ const assets = {};
 for (const f of readdirSync(join(build, 'space'))) assets[`space/${f}`] = dataUri(join(build, 'space', f));
 
 const bootStyle = (head.match(/<style>[\s\S]*?<\/style>/) || [''])[0];
+
+// Runs first: if anything fails, say so on screen instead of leaving a blank page.
+const guard = `<script>
+(function () {
+  var shown = false;
+  function show(msg) {
+    if (shown) return; shown = true;
+    var box = document.createElement('div');
+    box.id = 'boot-error';
+    box.setAttribute('role', 'alert');
+    box.style.cssText = 'position:fixed;left:12px;right:12px;bottom:12px;z-index:200;padding:12px 14px;border:1px solid #ff4d6d;border-radius:12px;background:#1a0614;color:#ffd6de;font:13px/1.45 system-ui,sans-serif;white-space:pre-wrap;word-break:break-word';
+    box.textContent = 'Alien Sudoku could not start.\\n' + msg;
+    (document.body || document.documentElement).appendChild(box);
+  }
+  window.__alienBootError = show;
+  window.addEventListener('error', function (e) { show((e.message || 'Script error') + (e.filename ? ' (' + e.filename.split('/').pop() + ':' + e.lineno + ')' : '')); });
+  window.addEventListener('unhandledrejection', function (e) { show('Unhandled: ' + (e.reason && (e.reason.message || e.reason))); });
+  setTimeout(function () {
+    if (!document.querySelector('.screen-menu, .screen')) show('The menu did not appear after 8 seconds. Scripts may be blocked in this viewer.');
+  }, 8000);
+})();
+</script>`;
 const page = `<title>Alien Sudoku</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <meta name="theme-color" content="#05010f">
 <meta name="color-scheme" content="dark">
+${guard}
 ${bootStyle}
 <style>${css}</style>
 ${body.replace(/<script[\s\S]*?<\/script>/g, '').trim()}
 <script>window.__ALIEN_ASSETS__=${JSON.stringify(assets)};</script>
-<script type="module">${js}</script>
+<script>${js}</script>
 `;
 
 mkdirSync(out, { recursive: true });

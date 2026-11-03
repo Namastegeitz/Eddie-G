@@ -96,4 +96,5 @@ boot().catch((err) => {
   hideSplash();
   const el = document.getElementById('boot-splash');
   if (el) el.querySelector('.boot-text').textContent = 'Something went wrong starting the game. Please reload.';
+  window.__alienBootError?.(String((err && (err.stack || err.message)) || err));
 });

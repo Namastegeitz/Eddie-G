@@ -25,6 +25,9 @@
       #boot-splash.gone { opacity: 0; pointer-events: none; }
       #boot-splash svg { width: 96px; height: 96px; filter: drop-shadow(0 0 12px rgba(57,255,156,.7)); animation: bootPulse 1.6s ease-in-out infinite; }
       @keyframes bootPulse { 50% { opacity: .55; transform: translateY(-4px); } }
+      /* Shown only if the game never starts (e.g. scripts blocked); needs no JavaScript. */
+      .boot-hint { max-width: 34ch; margin: 0 16px; text-align: center; text-transform: none; letter-spacing: 0; font-weight: 400; color: #b9b3d4; opacity: 0; animation: bootHint 0s 9s forwards; }
+      @keyframes bootHint { to { opacity: 1; } }
     </style>
   </head>
   <body>
@@ -47,6 +50,7 @@
     <div id="boot-splash">
       <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="16" cy="18" rx="12" ry="3.5"/><path d="M8 17 q8-10 16 0"/><circle cx="12" cy="17" r="0.8" fill="currentColor"/><circle cx="16" cy="17" r="0.8" fill="currentColor"/><circle cx="20" cy="17" r="0.8" fill="currentColor"/><line x1="13" y1="22" x2="11" y2="27"/><line x1="19" y1="22" x2="21" y2="27"/></svg>
       <span class="boot-text">Receiving transmission…</span>
+      <span class="boot-hint">Still loading? This viewer may be blocking the game's scripts. Try reloading, or open the offline file AlienSudoku.html in your browser.</span>
     </div>
     <noscript>Alien Sudoku needs JavaScript to run.</noscript>
 
