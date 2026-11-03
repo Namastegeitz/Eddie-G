@@ -9,8 +9,8 @@ import { formatTime } from '../../core/time.js';
 import { sfx } from '../../audio/audio.js';
 import { toast } from '../modal.js';
 import { confirmAbandon } from './menu.js';
+import { assetUrl } from '../background.js';
 
-const base = (import.meta.env && import.meta.env.BASE_URL) || './';
 
 function topbar(title, eyebrow, nav) {
   return h('header', { class: 'topbar' },
@@ -50,7 +50,7 @@ export const campaignScreen = {
           return h('button', {
             class: `sector-card${unlocked ? '' : ' locked'}`,
             type: 'button',
-            style: { '--accent': s.accent, backgroundImage: `linear-gradient(90deg, rgba(5,1,15,0.92) 35%, rgba(5,1,15,0.35)), url("${base}${s.bg}")` },
+            style: { '--accent': s.accent, backgroundImage: `linear-gradient(90deg, rgba(5,1,15,0.92) 35%, rgba(5,1,15,0.35)), url("${assetUrl(s.bg)}")` },
             'aria-label': `${s.name}${unlocked ? `, ${stars} of 27 stars` : ', locked'}`,
             onclick: () => {
               if (!unlocked) { sfx.reject(); toast(`Finish ${SECTORS[s.id - 1].name} to unlock ${s.name}.`); return; }

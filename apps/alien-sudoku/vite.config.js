@@ -15,6 +15,8 @@ export default defineConfig({
     target: ['es2020', 'safari15', 'chrome90'],
     assetsInlineLimit: 0,
     chunkSizeWarningLimit: 800,
+    // SINGLE_FILE=1 (tools/package-artifact.mjs): one JS bundle, no lazy chunks.
+    rollupOptions: process.env.SINGLE_FILE ? { output: { inlineDynamicImports: true } } : {},
   },
   server: { host: true, port: 5173 },
   plugins: [

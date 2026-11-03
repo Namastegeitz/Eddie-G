@@ -61,17 +61,26 @@ itch.io as an HTML game, or `npx surge dist`). It uses relative paths, so a
 sub-folder works too. In Chrome/Edge, the install icon in the address bar
 installs it as a desktop app. On iPhone, use Share → Add to Home Screen.
 
-### Playable link (claude.ai artifact)
+### Playable link and offline file
 
-A private, playable copy of the web build is published at
-<https://claude.ai/artifact/NdYUzQJYiAGjCra9nF7MHn>. It works on phones and computers, and progress is saved in that browser.
-To republish after changes:
+A private, playable copy is published at
+<https://claude.ai/artifact/NdYUzQJYiAGjCra9nF7MHn>. It works on phones and
+computers, and progress is saved in that browser.
+
+The same game is also one self-contained file: `play/AlienSudoku.html`.
+Download it and double-click it to play in any browser, with no internet needed.
+
+Both come from:
 
 ```bash
 node tools/package-artifact.mjs /tmp/alien-sudoku-artifact
 ```
 
-This writes `alien-sudoku.html` and its files into that folder, ready to publish to the same artifact.
+That command builds one bundle and inlines the code, styles, fonts and space
+images into `alien-sudoku.html` (about 1.2 MB). The artifact viewer's sandbox
+doesn't reliably load scripts from separate files, so the page has to be one
+file. Copy the result to `play/AlienSudoku.html` and publish it to the same
+artifact.
 
 ## Automatic builds (GitHub Actions)
 

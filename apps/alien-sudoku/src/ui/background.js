@@ -10,6 +10,12 @@ export const BACKGROUNDS = [
 ];
 
 const base = (import.meta.env && import.meta.env.BASE_URL) || './';
+
+/** URL for a bundled image. Single-file builds embed images in window.__ALIEN_ASSETS__. */
+export function assetUrl(path) {
+  const embedded = typeof window !== 'undefined' && window.__ALIEN_ASSETS__;
+  return (embedded && embedded[path]) || base + path;
+}
 let layers = [];
 let active = 0;
 let currentUrl = null;
@@ -32,7 +38,7 @@ export function setBackground(path) {
   if (path === 'random') path = currentUrl ? null : randomBackground();
   if (!path || path === currentUrl) return;
   currentUrl = path;
-  const url = base + path;
+  const url = assetUrl(path);
   const img = new Image();
   img.onload = () => {
     if (currentUrl !== path) return;
