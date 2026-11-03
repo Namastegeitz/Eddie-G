@@ -32,6 +32,7 @@ func default_data() -> Dictionary:
 			"quality": "medium",
 			"touch_controls": "auto",
 			"look_sensitivity": 1.0,
+			"touch_look_sensitivity": 1.0,
 			"invert_y": false,
 		},
 		"bindings": {},

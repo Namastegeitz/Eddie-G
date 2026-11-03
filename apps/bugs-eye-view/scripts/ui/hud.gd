@@ -22,7 +22,15 @@ var _markers: ThreatMarkers
 var _touch: TouchControls
 var _alarm: AlarmGauge
 var _effects: Label
+var _pickup: PanelContainer
+var _pickup_title: Label
+var _pickup_text: Label
+var _pickup_tween: Tween
 var _root: Control
+
+## How long a pickup's name and description stay up (seconds, before fading).
+const PICKUP_TIME_GEM := 6.0
+const PICKUP_TIME_FOOD := 3.5
 
 
 func _ready() -> void:
@@ -74,6 +82,7 @@ func _ready() -> void:
 	_toast.offset_bottom = 90
 	_toast.modulate.a = 0.0
 	_root.add_child(_toast)
+	_build_pickup_panel()
 	_reticle = Control.new()
 	_reticle.set_anchors_preset(Control.PRESET_CENTER)
 	_reticle.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -92,6 +101,52 @@ func _make_label(text: String, size: int, color: Color) -> Label:
 	l.add_theme_constant_override("outline_size", 6)
 	l.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.9))
 	return l
+
+
+## A panel for bug food and crumb gems: the name in the item's colour and what
+## it does, on its own so other messages don't cut it short.
+func _build_pickup_panel() -> void:
+	_pickup = PanelContainer.new()
+	_pickup.add_theme_stylebox_override("panel", UIKit._box(Color(0.06, 0.05, 0.04, 0.85), UIKit.GOLD, 2))
+	_pickup.anchor_left = 0.0
+	_pickup.anchor_right = 1.0
+	_pickup.anchor_top = 0.0
+	_pickup.anchor_bottom = 0.0
+	_pickup.offset_top = 196
+	_pickup.offset_bottom = 196
+	_pickup.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_pickup.modulate.a = 0.0
+	_pickup.visible = false
+	var box := UIKit.vbox(4)
+	box.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_pickup.add_child(box)
+	_pickup_title = _make_label("", 30, UIKit.GOLD)
+	box.add_child(_pickup_title)
+	_pickup_text = _make_label("", 22, UIKit.TEXT)
+	_pickup_text.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	box.add_child(_pickup_text)
+	_root.add_child(_pickup)
+
+
+func show_pickup(def: ItemDef) -> void:
+	if def == null:
+		return
+	var gem := def.kind == ItemDef.Kind.GEM
+	_pickup_title.text = def.display_name.to_upper()
+	_pickup_title.add_theme_color_override("font_color", def.color.lerp(Color.WHITE, 0.25))
+	_pickup_text.text = def.blurb
+	# Stay clear of the stealth meters on the left, centred on wide screens.
+	var w := _root.size.x
+	_pickup.offset_left = maxf(170.0, w * 0.15)
+	_pickup.offset_right = -maxf(16.0, w * 0.15)
+	_pickup.visible = true
+	_pickup.modulate.a = 1.0
+	if _pickup_tween:
+		_pickup_tween.kill()
+	_pickup_tween = create_tween()
+	_pickup_tween.tween_interval(PICKUP_TIME_GEM if gem else PICKUP_TIME_FOOD)
+	_pickup_tween.tween_property(_pickup, "modulate:a", 0.0, 0.8)
+	_pickup_tween.tween_callback(func() -> void: _pickup.visible = false)
 
 
 func _build_top() -> void:
@@ -153,6 +208,7 @@ func bind(lvl: Level) -> void:
 	lvl.objective_changed.connect(func(t: String) -> void: _objective.text = t)
 	lvl.hint_changed.connect(func(t: String) -> void: toast(t))
 	lvl.boss_announced.connect(_on_boss)
+	lvl.item_picked.connect(show_pickup)
 	lvl.close_call.connect(func() -> void: toast("CLOSE CALL!"))
 	PerceptionSystem.alarm_raised.connect(_on_alarm_raised)
 	PerceptionSystem.alarm_cleared.connect(_on_alarm_cleared)

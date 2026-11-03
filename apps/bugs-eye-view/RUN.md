@@ -17,7 +17,7 @@ The first import takes a minute while Godot processes the sounds and icons.
 | Action | Keyboard / mouse | Gamepad | Touch |
 |---|---|---|---|
 | Move | WASD / arrows | Left stick | Joystick (left side, appears where you touch) |
-| Look | Mouse | Right stick | Drag anywhere else |
+| Look | Mouse | Right stick | Drag anywhere else (eases in; speed under Settings > Touch look speed) |
 | Creep (quieter, harder to see) | Hold C | Click left stick, or push gently | Push the joystick gently |
 | Primary | Left click / F | X / right trigger | Big button |
 | Secondary | Right click / Q | Y / left trigger | Button |
@@ -60,7 +60,8 @@ in **Settings**.
 
 **Bug food and crumb gems.** Food is common and gives a short boost; gems
 are rare (two per room, one always on the floor), glow, and have real powers.
-Touch one to use it. Active effects and their timers show under your crumbs.
+Touch one to use it: its name and what it does stay on screen (6 s for gems,
+3.5 s for food). Active effects and their timers show under your crumbs.
 
 | Food | Effect |
 |---|---|
@@ -97,7 +98,7 @@ three times faster.
 ## 3. Test it
 
 All checks: import, boot, warnings-as-errors, an offline test of the Meshy
-client, then the 120-check smoke test and the 241-check phase audit
+client, then the 120-check smoke test and the 248-check phase audit
 (`tests/phase_audit.tscn`, one section per build phase plus one per update),
 each run in the project **and** against an exported pack. Any script or
 engine error fails the run:
@@ -116,7 +117,8 @@ godot --headless --path . res://tests/smoke_test.tscn --fixed-fps 60
 Run one section of the audit with
 `godot --headless --path . res://tests/phase_audit.tscn --fixed-fps 60 -- --phase=4`
 (1-6 are the build phases, 7 the alarm gauge and fly moves, 8 cover and model
-slots, 9 bigger rooms, people, bug detail, food and gems).
+slots, 9 bigger rooms, people, bug detail, food and gems, 10 pickup messages
+and touch look).
 
 `godot` means the Godot executable, e.g.
 `C:\Godot\Godot_v4.7.2-stable_win64_console.exe`. The smoke test prints

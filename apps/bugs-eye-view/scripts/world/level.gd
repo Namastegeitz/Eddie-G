@@ -9,6 +9,8 @@ signal objective_changed(text: String)
 signal hint_changed(text: String)
 signal boss_announced(title: String, subtitle: String)
 signal close_call
+## Bug food or a crumb gem was picked up (the HUD shows what it does).
+signal item_picked(def: ItemDef)
 
 static var current: Level = null
 
@@ -192,7 +194,7 @@ func _on_crumb_collected(c: Crumb) -> void:
 func _on_item_collected(item: PickupItem) -> void:
 	if item.def == null or player == null:
 		return
-	var line := PowerUps.apply(item.def, player)
+	PowerUps.apply(item.def, player)
 	if run:
 		if item.is_gem():
 			run.gems.append(item.def.id)
@@ -201,7 +203,7 @@ func _on_item_collected(item: PickupItem) -> void:
 		else:
 			run.foods_eaten += 1
 			run.food_points += item.def.points
-	set_hint(line)
+	item_picked.emit(item.def)
 
 
 ## Kibble and other big meals count as several crumbs.

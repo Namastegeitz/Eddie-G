@@ -31,6 +31,8 @@ func _ready() -> void:
 		await _phase8()
 	if only in [0, 9]:
 		await _phase9()
+	if only in [0, 10]:
+		await _phase10()
 	finish("phase audit")
 
 
@@ -1599,4 +1601,58 @@ func _phase9() -> void:
 	check(lvl.run.gems.size() == 2 and SaveSystem.gems_found().has("gem_amber"), "found gems are kept in your save")
 	lvl.run.won = true
 	check(bool(lvl.run.badges(240.0)["gem_hunter"]), "two gems in a won run earns the Gem Hunter badge")
+	await unload(lvl)
+
+
+# --- Update: time to read pickups, gentler touch look ----------------------------
+
+func _touch_turn(lvl: Level, at: Vector2, px: float) -> Array:
+	var cam := lvl.camera
+	var yaw0 := cam.yaw
+	touch(3, at, true)
+	drag(3, at + Vector2(px, 0), Vector2(px, 0))
+	await get_tree().process_frame
+	var first := absf(cam.yaw - yaw0)
+	await frames(60)
+	touch(3, at + Vector2(px, 0), false)
+	return [first, absf(cam.yaw - yaw0)]
+
+
+func _phase10() -> void:
+	print("-- Update: pickups stay on screen longer, slower and smoother touch look")
+	SaveSystem.data = SaveSystem.default_data()
+	var lvl := await load_level(&"kitchen", &"cockroach")
+	HouseClock.set_hour(13.5)
+	var hud := _hud(lvl)
+	await _grab(lvl, &"gem_amber")
+	check(hud._pickup.visible and String(hud._pickup_title.text).contains("AMBER") and String(hud._pickup_text.text).contains("Freeze"),
+		"picking up a gem shows its name and what it does (%s)" % hud._pickup_title.text)
+	lvl.set_hint("Threat stunned!")
+	await frames(5 * 60)
+	check(hud._pickup.visible and hud._pickup.modulate.a > 0.95 and String(hud._pickup_text.text).contains("Freeze"),
+		"the gem's description stays fully readable for 5 seconds, even when other messages pop up")
+	await frames(150)
+	check(not hud._pickup.visible, "then fades away")
+	await _grab(lvl, &"sugar_cube")
+	await frames(3 * 60)
+	var food_up: bool = hud._pickup.visible and hud._pickup.modulate.a > 0.95
+	await frames(2 * 60)
+	check(food_up and not hud._pickup.visible, "bug food shows for about 3.5 seconds")
+
+	# Touch look: drag on the open screen (not the stick or buttons).
+	SaveSystem.set_setting("touch_controls", "on")
+	await frames(2)
+	var tc: TouchControls = null
+	for n in lvl.find_children("*", "Control", true, false):
+		if n is TouchControls:
+			tc = n
+	var at := Vector2(tc.size.x * 0.55, tc.size.y * 0.3)
+	var turn: Array = await _touch_turn(lvl, at, 100.0)
+	check(turn[1] > 0.15 and turn[1] < 0.3, "a 100-pixel drag turns the view gently (%.2f rad; it was 0.56)" % turn[1])
+	check(turn[0] < turn[1] * 0.4, "the turn eases in over several frames instead of snapping (%.2f of %.2f)" % [turn[0], turn[1]])
+	SaveSystem.set_setting("touch_look_sensitivity", 0.5)
+	var slow: Array = await _touch_turn(lvl, at, 100.0)
+	check(absf(slow[1] - turn[1] * 0.5) < 0.03, "\"Touch look speed\" in Settings scales it (%.2f at 0.5x)" % slow[1])
+	SaveSystem.set_setting("touch_look_sensitivity", 1.0)
+	SaveSystem.set_setting("touch_controls", "auto")
 	await unload(lvl)

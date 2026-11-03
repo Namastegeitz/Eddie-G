@@ -23,11 +23,14 @@ const MAX_MOUSE_STEP := 250.0
 
 var enabled: bool = false
 var look_sensitivity: float = 1.0
+## Separate from mouse/stick: how fast dragging on the touch screen turns the view.
+var touch_look_sensitivity: float = 1.0
 var invert_y: bool = false
 
 var _touch_mode: bool = false
 var _touch_move: Vector2 = Vector2.ZERO
 var _look_accum: Vector2 = Vector2.ZERO
+var _touch_look_accum: Vector2 = Vector2.ZERO
 var _touch_held: Dictionary = {}
 var _capture_grace := 0.0
 
@@ -102,6 +105,7 @@ func _axis(axis: JoyAxis, value: float) -> InputEventJoypadMotion:
 
 func _on_settings_changed() -> void:
 	look_sensitivity = float(SaveSystem.get_setting("look_sensitivity", 1.0))
+	touch_look_sensitivity = float(SaveSystem.get_setting("touch_look_sensitivity", 1.0))
 	invert_y = bool(SaveSystem.get_setting("invert_y", false))
 	refresh_touch_mode()
 
@@ -198,6 +202,7 @@ func set_enabled(on: bool) -> void:
 	if not on:
 		_touch_move = Vector2.ZERO
 		_look_accum = Vector2.ZERO
+		_touch_look_accum = Vector2.ZERO
 		for a: StringName in _touch_held.keys():
 			if _touch_held[a]:
 				action_released.emit(a)
@@ -299,7 +304,18 @@ func set_touch_move(v: Vector2) -> void:
 
 
 func add_touch_look(d: Vector2) -> void:
-	_look_accum += d
+	_touch_look_accum += d
+
+
+## Touch-drag look since last call (the camera eases it in; see FollowCamera).
+func get_touch_look_delta() -> Vector2:
+	var d := _touch_look_accum * touch_look_sensitivity
+	_touch_look_accum = Vector2.ZERO
+	if not enabled:
+		return Vector2.ZERO
+	if invert_y:
+		d.y = -d.y
+	return d
 
 
 func set_touch_action(action: StringName, pressed: bool) -> void:

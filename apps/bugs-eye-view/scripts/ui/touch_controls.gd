@@ -8,7 +8,9 @@ extends Control
 const ACTIONS: Array[StringName] = [&"primary", &"jump", &"secondary", &"dodge", &"interact", &"sense"]
 const TAP_TIME := 0.25
 const TAP_MOVE := 14.0
-const LOOK_GAIN := 1.4
+## Drag-to-look gain (was 1.4: too twitchy on phones). Players can scale it
+## with "Touch look speed" in Settings.
+const LOOK_GAIN := 0.6
 
 var player: BugBase
 var _labels: Dictionary = {}

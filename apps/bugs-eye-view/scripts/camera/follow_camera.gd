@@ -12,7 +12,10 @@ extends Node3D
 @export var look_scale: float = 0.004
 
 var target: BugBase
+## How quickly a touch drag turns the view: lower = smoother and slower.
+@export var touch_look_smoothing: float = 9.0
 var yaw := 0.0
+var _touch_pending := Vector2.ZERO
 var pitch := -0.35
 var camera: Camera3D
 var arm: SpringArm3D
@@ -58,6 +61,7 @@ func set_target(t: BugBase) -> void:
 
 
 func snap() -> void:
+	_touch_pending = Vector2.ZERO
 	if target:
 		global_position = target.global_position + Vector3.UP * height
 		rotation = Vector3(pitch, yaw, 0.0)
@@ -68,6 +72,11 @@ func _process(delta: float) -> void:
 	if target == null or not is_instance_valid(target):
 		return
 	var look := InputRouter.get_look_delta(delta)
+	# Touch drags are eased in over a few frames instead of snapping.
+	_touch_pending += InputRouter.get_touch_look_delta()
+	var step := _touch_pending * (1.0 - exp(-touch_look_smoothing * delta))
+	_touch_pending -= step
+	look += step
 	yaw -= look.x * look_scale
 	pitch = clampf(pitch - look.y * look_scale, min_pitch, max_pitch)
 	rotation = Vector3(pitch, yaw, 0.0)
