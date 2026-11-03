@@ -4,20 +4,21 @@
 
 [resource]
 script = ExtResource("1_ine8r")
-sight_range = 45.0
-sight_angle_deg = 140.0
-near_sense_radius = 4.0
+sight_range = 36.0
+sight_angle_deg = 115.0
 eye_height = 5.0
 gaze_pitch_deg = 10.0
-hearing_radius = 26.0
+min_visibility = 0.12
+hearing_radius = 20.0
 hearing_gain = 0.7
-suspicion_gain = 2.0
+suspicion_gain = 1.3
 suspicion_decay = 0.3
 search_duration = 10.0
-search_speed = 10.0
-chase_speed = 17.0
-turn_speed = 6.0
-attack_range = 9.0
-attack_windup = 0.55
-attack_cooldown = 1.8
+patrol_speed = 5.0
+search_speed = 8.0
+chase_speed = 12.5
+turn_speed = 5.0
+attack_range = 8.0
+attack_windup = 0.8
+attack_cooldown = 2.4
 attack_radius = 2.8

@@ -8,6 +8,10 @@ signal strike_incoming(position: Vector3, time_to_impact: float, radius: float)
 signal alert_level_changed(level: int)
 signal escalation_changed(stage: int)
 signal threat_stunned(threat: Node)
+## The house-wide alarm gauge filled: every threat is alerted.
+signal alarm_raised
+## The gauge drained back down: the alarm is called off.
+signal alarm_cleared
 
 const CONFIG_PATH := "res://resources/config/stealth_config.tres"
 
@@ -22,6 +26,10 @@ var ambient_light: float = 0.7
 var ambient_noise_floor: float = 0.0
 var max_alert: int = 0
 var escalation_stage: int = 0
+## 0..1 house-wide alarm. Fills while threats see or hear you; full = alarm.
+var alarm: float = 0.0
+var alarm_active: bool = false
+var _since_noticed := 99.0
 
 var _light_zones: Array[LightZone] = []
 var _noise_sources: Array[AmbientNoise] = []
@@ -42,6 +50,7 @@ func begin_level(p: BugBase, amb_light: float, amb_noise: float) -> void:
 	visibility = 0.0
 	max_alert = 0
 	escalation_stage = 0
+	_reset_alarm()
 
 
 func end_level() -> void:
@@ -52,6 +61,7 @@ func end_level() -> void:
 	scent.clear()
 	max_alert = 0
 	escalation_stage = 0
+	_reset_alarm()
 	AudioManager.set_tension(0.0)
 
 
@@ -124,6 +134,7 @@ func _physics_process(delta: float) -> void:
 	_loud_decay -= delta
 	if _loud_decay <= 0.0:
 		player_loudness = 0.0
+	_tick_alarm(delta)
 	_alert_timer -= delta
 	if _alert_timer <= 0.0:
 		_alert_timer = 0.2
@@ -146,7 +157,7 @@ func _update_max_alert() -> void:
 			tension = 0.55
 		AlertState.ALERT:
 			tension = 1.0
-	AudioManager.set_tension(maxf(tension, escalation_stage * 0.15))
+	AudioManager.set_tension(maxf(maxf(tension, escalation_stage * 0.15), alarm * 0.7))
 
 
 # --- Events -----------------------------------------------------------------
@@ -188,3 +199,55 @@ func set_escalation(stage: int) -> void:
 
 func notify_stunned(t: Node) -> void:
 	threat_stunned.emit(t)
+
+
+# --- Alarm gauge ------------------------------------------------------------------
+
+func _reset_alarm() -> void:
+	alarm = 0.0
+	alarm_active = false
+	_since_noticed = 99.0
+
+
+func add_alarm_from_sight(amount: float) -> void:
+	_add_alarm(amount * config.alarm_sight_gain)
+
+
+func add_alarm_from_sound(amount: float) -> void:
+	_add_alarm(amount * config.alarm_sound_gain)
+
+
+func _add_alarm(amount: float) -> void:
+	if player == null or player.dead or amount <= 0.0:
+		return
+	alarm = minf(alarm + amount, 1.0)
+	_since_noticed = 0.0
+	if alarm >= 1.0 and not alarm_active:
+		raise_alarm()
+
+
+## Full alarm: every threat in the house drops what it's doing and comes for you.
+func raise_alarm() -> void:
+	alarm = 1.0
+	alarm_active = true
+	_since_noticed = 0.0
+	var target := player.global_position if player else Vector3.ZERO
+	for t in threats:
+		if t.present:
+			t.force_alert(AlertState.ALERT, target)
+	AudioManager.play(&"boss_sting", -6.0, 1.4)
+	Feedback.rumble(0.5, 0.3)
+	alarm_raised.emit()
+
+
+func _tick_alarm(delta: float) -> void:
+	_since_noticed += delta
+	if _since_noticed < config.alarm_grace or alarm <= 0.0:
+		return
+	var rate := config.alarm_decay
+	if player and player.is_hidden_safe():
+		rate *= config.alarm_hidden_decay_mult
+	alarm = maxf(alarm - rate * delta, 0.0)
+	if alarm_active and alarm <= config.alarm_clear_level:
+		alarm_active = false
+		alarm_cleared.emit()

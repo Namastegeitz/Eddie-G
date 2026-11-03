@@ -6,7 +6,7 @@ extends Threat
 
 @export var route: PackedVector3Array = []
 @export var stride: float = 9.0
-@export var step_time: float = 0.6
+@export var step_time: float = 0.8
 @export var foot_spacing: float = 3.4
 @export var has_swatter: bool = true
 @export var has_newspaper: bool = false

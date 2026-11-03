@@ -1,8 +1,10 @@
 class_name AlertState
 extends RefCounted
 ## Shared threat awareness: UNAWARE -> SUSPICIOUS (?) -> SEARCHING -> ALERT (!).
-## Sight can raise a threat all the way to ALERT; sound alone only makes it
-## SEARCH. Losing sight drops ALERT to SEARCHING, then it cools back down.
+## On its own a threat only gets as far as SEARCHING (it goes to look where it
+## noticed you). ALERT - the chase - comes from the house-wide alarm gauge in
+## PerceptionSystem: when it fills, every threat is alerted at once. Losing
+## sight drops ALERT back to SEARCHING, then it cools down.
 
 signal changed(new_state: int)
 
@@ -33,9 +35,7 @@ func add_suspicion(amount: float, pos: Vector3, seen: bool, is_lure: bool = fals
 	target_is_lure = is_lure
 	if seen:
 		since_seen = 0.0
-	if seen and suspicion >= cfg.alert_threshold:
-		_set_state(ALERT)
-	elif suspicion >= cfg.alert_threshold and state != ALERT:
+	if suspicion >= cfg.alert_threshold and state != ALERT:
 		search_time = cfg.search_duration
 		_set_state(SEARCHING)
 	elif suspicion >= cfg.suspicious_threshold and state == UNAWARE:

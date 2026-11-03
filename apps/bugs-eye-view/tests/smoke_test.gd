@@ -299,15 +299,22 @@ func _test_perception() -> void:
 	var target := human.global_position + Vector3(0, 0.8, 25)
 	human.rotation.y = PI
 	p.global_position = target
+	p.invuln = 1000.0
+	# Hold the human in place: walking right up to a bug puts it under the
+	# human's downward gaze, where it loses sight (fine in play, slow in a test).
+	human._step_timer = 1e9
+	var early_alarm := -1.0
 	var saw_alert := false
-	for i in 300:
+	for i in 1200:
 		await get_tree().physics_frame
-		if human.alert.state == AlertState.ALERT:
-			saw_alert = true
+		if i == 60:
+			early_alarm = PerceptionSystem.alarm
+		if PerceptionSystem.alarm_active:
+			saw_alert = human.alert.state == AlertState.ALERT
 			break
-		if p.dead:
-			break
-	check(saw_alert, "the human spots a bug standing in plain view")
+	check(early_alarm > 0.0 and early_alarm < 0.5, "the alarm gauge fills gradually (%.2f after 1 s)" % early_alarm)
+	check(saw_alert, "a bug left in plain view fills the gauge and the human goes on full alert")
+	p.invuln = 0.0
 	await unload(lvl)
 
 
@@ -405,8 +412,13 @@ func _test_fly() -> void:
 	await frames(int(60 * p.stats.bullet_time_duration) + 10)
 	check(not p.bullet_time and is_equal_approx(Engine.time_scale, 1.0), "bullet time ends and time returns to normal")
 	p.stamina = 0.05
-	await frames(60)
-	check(not p.flying, "out of stamina, the fly drops and must perch")
+	await frames(10)
+	check(p.gliding and p.current_noise() <= 0.05, "out of stamina, the fly glides silently")
+	for i in 900:
+		await get_tree().physics_frame
+		if not p.flying:
+			break
+	check(not p.flying, "the gliding fly comes down and must perch")
 	await unload(lvl)
 
 

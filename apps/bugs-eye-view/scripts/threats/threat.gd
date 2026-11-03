@@ -104,8 +104,9 @@ func _sense(dt: float) -> void:
 	if player_visible:
 		var flat := Vector2(p.global_position.x - global_position.x, p.global_position.z - global_position.z).length()
 		var proximity := 1.0 - clampf(flat / config.sight_range, 0.0, 1.0)
-		alert.add_suspicion(config.suspicion_gain * PerceptionSystem.visibility * (0.35 + proximity) * dt,
-			p.global_position, true)
+		var amount := config.suspicion_gain * PerceptionSystem.visibility * (0.35 + proximity) * dt
+		alert.add_suspicion(amount, p.global_position, true)
+		PerceptionSystem.add_alarm_from_sight(amount)
 
 
 func can_see(p: BugBase) -> bool:
@@ -117,9 +118,11 @@ func can_see(p: BugBase) -> bool:
 	var target := p.global_position + p.up_direction * 0.3
 	var to := target - eye
 	var dist := to.length()
-	if dist > config.sight_range or dist < 0.001:
-		return false
+	# Range is measured across the floor: a human's eyes are ~60 units up, so a
+	# straight-line range would leave the whole floor out of sight.
 	var flat_dist := Vector2(to.x, to.z).length()
+	if flat_dist > config.sight_range or dist < 0.001:
+		return false
 	if flat_dist > config.near_sense_radius:
 		var cos_half := cos(deg_to_rad(config.sight_angle_deg * 0.5))
 		if look_direction().dot(to / dist) < cos_half:
@@ -138,6 +141,8 @@ func hear(pos: Vector3, loudness: float, from_player: bool) -> void:
 		return
 	var strength := (1.0 - d / reach) * loudness * config.hearing_gain
 	alert.add_suspicion(strength, pos, false, not from_player)
+	if from_player:
+		PerceptionSystem.add_alarm_from_sound(strength)
 
 
 func _hearing_mult() -> float:

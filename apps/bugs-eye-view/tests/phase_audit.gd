@@ -25,6 +25,8 @@ func _ready() -> void:
 		await _phase5()
 	if only in [0, 6]:
 		await _phase6()
+	if only in [0, 7]:
+		await _phase7()
 	finish("phase audit")
 
 
@@ -435,7 +437,7 @@ func _phase3() -> void:
 	var s0 := lvl.hazard_speed()
 	lvl._elapsed = lvl.config.intensity_ramp_seconds
 	await frames(2)
-	check(lvl.hazard_speed() > s0 + 0.3, "threats speed up as the run goes on (%.2f -> %.2f)" % [s0, lvl.hazard_speed()])
+	check(lvl.hazard_speed() > s0 + 0.2, "threats speed up as the run goes on (%.2f -> %.2f)" % [s0, lvl.hazard_speed()])
 	await unload(lvl)
 	var r := RunStats.new()
 	r.crumbs = 8
@@ -990,3 +992,190 @@ func _phase6() -> void:
 		check(platforms.has(want), "export preset for " + want)
 	check(ProjectSettings.get_setting("display/window/handheld/orientation") == 6, "phones rotate freely (sensor orientation)")
 	check(ProjectSettings.get_setting("rendering/textures/vram_compression/import_etc2_astc") == true, "mobile texture compression is enabled")
+
+
+# --- Update: alarm gauge, gentler threats, fly escape tactics -----------------------
+
+func _phase7() -> void:
+	print("-- Update: alarm gauge, slower threats, fly escape tactics")
+	SaveSystem.data = SaveSystem.default_data()
+
+	# Threats are slower and less sharp-eyed than the bugs they chase.
+	var roach := GameManager.get_bug_stats(&"cockroach")
+	var cat_cfg: ThreatConfig = load("res://resources/threats/cat.tres")
+	var dog_cfg: ThreatConfig = load("res://resources/threats/dog.tres")
+	var human_cfg: ThreatConfig = load("res://resources/threats/human.tres")
+	check(cat_cfg.chase_speed < roach.sprint_speed and dog_cfg.chase_speed < roach.sprint_speed,
+		"a sprinting cockroach outruns the cat and the dog")
+	check(human_cfg.attack_windup >= 1.0 and human_cfg.sight_range <= 60.0 and human_cfg.min_visibility >= 0.15,
+		"humans wind up slower and see less far")
+	var klvl := await load_level(&"kitchen", &"cockroach")
+	HouseClock.set_hour(7.2)
+	var kh := first_in_group(Phys.GROUP_HUMAN, klvl) as Human
+	kh.route = PackedVector3Array()
+	kh._step_timer = 1e9
+	# Stand at the front-right of the kitchen looking down its long side (-X).
+	kh._plant_feet(Vector3(45, 0, 43), PI * 0.5)
+	kh.global_position = Vector3(45, 0, 43)
+	kh.rotation.y = PI * 0.5
+	await frames(5)
+	var seen_at := []
+	for d in [8.0, 30.0, 50.0, 70.0]:
+		klvl.player.global_position = Vector3(45.0 - d, 0.8, 43)
+		await frames(4)
+		seen_at.append(kh.can_see(klvl.player))
+	check(seen_at == [false, true, true, false], "a human sees the floor 30-50 units ahead, not right under its nose or past its range %s" % str(seen_at))
+	await unload(klvl)
+
+	# The gauge: gradual, house-wide, and it drains when you hide.
+	var lvl := await load_level(&"living_room", &"cockroach")
+	var p := lvl.player
+	HouseClock.set_hour(7.2)
+	var cat := first_in_group(Phys.GROUP_PET, lvl) as Pet
+	var reader := first_in_group(Phys.GROUP_HUMAN, lvl) as Human
+	reader.route = PackedVector3Array()
+	cat.waypoints = PackedVector3Array()
+	cat.global_position = Vector3(0, 0.5, 10)
+	cat.rotation.y = PI
+	p.global_position = Vector3(0, 0.8, 22)
+	p.invuln = 1000.0
+	await frames(60)
+	check(PerceptionSystem.alarm > 0.0 and PerceptionSystem.alarm < 0.5 and not PerceptionSystem.alarm_active,
+		"one second in view only part-fills the gauge (%.2f)" % PerceptionSystem.alarm)
+	check(cat.alert.state < AlertState.ALERT, "seen on its own, the cat investigates but doesn't attack")
+	var raised := false
+	for i in 1200:
+		await get_tree().physics_frame
+		if PerceptionSystem.alarm_active:
+			raised = true
+			break
+	check(raised, "staying in view fills the gauge to full alarm")
+	await frames(2)
+	check(cat.alert.state == AlertState.ALERT and reader.alert.state == AlertState.ALERT,
+		"full alarm alerts every threat in the room, not just the one that saw you")
+	p.global_position = Vector3(-10, 0.6, -39)
+	InputRouter.set_touch_action(&"secondary", true)
+	var cleared := false
+	for i in 900:
+		await get_tree().physics_frame
+		if not PerceptionSystem.alarm_active:
+			cleared = true
+			break
+	InputRouter.set_touch_action(&"secondary", false)
+	check(cleared, "hiding drains the gauge and calls the alarm off (%.2f)" % PerceptionSystem.alarm)
+	await unload(lvl)
+
+	lvl = await load_level(&"kitchen", &"cockroach")
+	HouseClock.set_hour(7.2)
+	var human := first_in_group(Phys.GROUP_HUMAN, lvl) as Human
+	human.route = PackedVector3Array()
+	PerceptionSystem.emit_world_noise(human.global_position + Vector3(3, 0, 3), 3.0)
+	check(PerceptionSystem.alarm == 0.0, "a lure's noise doesn't count against you")
+	for i in 4:
+		PerceptionSystem.emit_player_noise(human.global_position + Vector3(4, 0.8, 4), 1.5)
+		await frames(15)
+	check(PerceptionSystem.alarm > 0.0 and PerceptionSystem.alarm < 1.0, "your own noise nudges the gauge up (%.2f)" % PerceptionSystem.alarm)
+	await unload(lvl)
+
+	# Fly escape tactics.
+	lvl = await load_level(&"kitchen", &"fly")
+	var f := lvl.player as Fly
+	await frames(10)
+	var hud := _hud(lvl)
+	check(hud != null and hud._alarm is AlarmGauge, "the HUD shows the alarm gauge")
+
+	# Cling to a wall, blend in, take off again.
+	f.teleport_to(Transform3D(Basis.IDENTITY, Vector3(50, 20, 30)))
+	f.take_off()
+	face(lvl, -PI * 0.5)
+	f.stamina = 4.0
+	InputRouter.set_touch_move(Vector2(0, 1))
+	InputRouter.set_touch_action(&"secondary", true)
+	for i in 120:
+		await get_tree().physics_frame
+		if f.clinging:
+			break
+	InputRouter.set_touch_action(&"secondary", false)
+	InputRouter.set_touch_move(Vector2.ZERO)
+	check(f.clinging and f.cling_normal.x < -0.5, "flying into a wall holding Down clings to it")
+	var st := f.stamina
+	await frames(70)
+	check(f.clinging and f.stamina > st and f.current_noise() == 0.0, "clinging is silent and restores stamina")
+	check(f.has_camo() and f.is_frozen(), "a still fly on a wall blends in")
+	InputRouter.set_touch_action(&"jump", true)
+	await frames(3)
+	InputRouter.set_touch_action(&"jump", false)
+	check(f.flying and not f.clinging, "Up takes off from the wall")
+
+	# Cling to the ceiling: fly up into it holding Up.
+	f.teleport_to(Transform3D(Basis.IDENTITY, Vector3(0, 92, 0)))
+	f.stamina = f.stats.stamina_max
+	InputRouter.set_touch_action(&"jump", true)
+	for i in 120:
+		await get_tree().physics_frame
+		if f.clinging:
+			break
+	InputRouter.set_touch_action(&"jump", false)
+	check(f.clinging and f.cling_normal.y < -0.7, "flying up into the ceiling holding Up clings to it")
+	await frames(30)
+	check(f.clinging and f.global_position.y > 95.0, "the fly hangs on the ceiling")
+	InputRouter.set_touch_action(&"jump", true)
+	await frames(3)
+	InputRouter.set_touch_action(&"jump", false)
+
+	# Evasive loop: double-tap Burst.
+	f.teleport_to(Transform3D(Basis.IDENTITY, Vector3(0, 30, 40)))
+	f.take_off()
+	f.stamina = f.stats.stamina_max
+	f._dodge_cd = 0.0
+	await frames(20)
+	var face0 := f.facing
+	var st2 := f.stamina
+	InputRouter.set_touch_action(&"dodge", true)
+	await frames(1)
+	InputRouter.set_touch_action(&"dodge", false)
+	await frames(6)
+	InputRouter.set_touch_action(&"dodge", true)
+	await frames(1)
+	InputRouter.set_touch_action(&"dodge", false)
+	await frames(3)
+	check(f.is_looping() and f.invuln > 0.3, "a quick double Burst starts an evasive loop with invulnerability")
+	check(f.velocity.y > 5.0, "the loop climbs first")
+	check(f.facing.dot(face0) < -0.5 and f.stamina < st2 - 1.0, "the loop turns you around and costs stamina")
+	await frames(40)
+
+	# Dive: Burst while holding Down.
+	f.teleport_to(Transform3D(Basis.IDENTITY, Vector3(0, 60, 40)))
+	f.stamina = f.stats.stamina_max
+	f._dodge_cd = 0.0
+	await frames(5)
+	InputRouter.set_touch_action(&"secondary", true)
+	InputRouter.set_touch_action(&"dodge", true)
+	await frames(2)
+	InputRouter.set_touch_action(&"dodge", false)
+	await frames(3)
+	check(f.is_diving() and f.velocity.y < -15.0 and f.current_noise() <= 0.05, "Burst while holding Down dives fast and silently")
+	InputRouter.set_touch_action(&"secondary", false)
+	await frames(40)
+
+	# Jinking: a sharp turn at speed makes you harder to see.
+	f.teleport_to(Transform3D(Basis.IDENTITY, Vector3(0, 50, 0)))
+	if not f.flying:
+		f.take_off()
+	f.stamina = f.stats.stamina_max
+	face(lvl, 0.0)
+	InputRouter.set_touch_move(Vector2(0, 1))
+	InputRouter.set_touch_action(&"primary", true)
+	await frames(45)
+	var straight := f._extra_visibility_mult()
+	InputRouter.set_touch_move(Vector2(0, -1))
+	var jinked := false
+	for i in 45:
+		await get_tree().physics_frame
+		if f.is_jinking():
+			jinked = true
+			break
+	InputRouter.set_touch_move(Vector2.ZERO)
+	InputRouter.set_touch_action(&"primary", false)
+	check(straight == 1.0 and jinked and f._extra_visibility_mult() < 0.7, "a sharp reversal at speed is a jink that lowers your visibility")
+	await unload(lvl)

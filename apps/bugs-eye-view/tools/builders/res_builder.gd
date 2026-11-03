@@ -152,7 +152,7 @@ static func bugs(force: bool) -> void:
 	f.stamina_max = 8.0
 	f.stamina_regen = 2.5
 	f.visibility_mult = 1.1
-	f.camo_tags = PackedStringArray(["dark_wood", "glass"])
+	f.camo_tags = PackedStringArray(["dark_wood", "glass", "wall"])
 	f.sense_max = 6.0
 	f.sense_regen = 0.6
 	f.dodge_speed = 22.0
@@ -192,71 +192,73 @@ static func bugs(force: bool) -> void:
 
 static func threats(force: bool) -> void:
 	var h := ThreatConfig.new()
-	h.sight_range = 70.0
-	h.sight_angle_deg = 80.0
-	h.near_sense_radius = 6.0
+	h.sight_range = 58.0
+	h.sight_angle_deg = 70.0
+	h.near_sense_radius = 4.0
 	h.eye_height = 62.0
 	h.gaze_pitch_deg = 38.0
-	h.min_visibility = 0.12
-	h.hearing_radius = 22.0
+	h.min_visibility = 0.18
+	h.hearing_radius = 18.0
 	h.hearing_gain = 0.5
-	h.suspicion_gain = 1.8
+	h.suspicion_gain = 1.2
 	h.lose_sight_time = 2.0
 	h.search_duration = 9.0
-	h.turn_speed = 3.0
+	h.turn_speed = 2.4
 	h.attack_range = 30.0
-	h.attack_windup = 0.85
-	h.attack_cooldown = 2.2
+	h.attack_windup = 1.05
+	h.attack_cooldown = 2.8
 	h.stun_duration = 4.5
 	save(h, "res://resources/threats/human.tres", force)
 
 	var x: ThreatConfig = h.duplicate()
-	x.sight_range = 80.0
-	x.hearing_radius = 28.0
-	x.attack_cooldown = 1.6
-	x.attack_windup = 0.75
+	x.sight_range = 65.0
+	x.hearing_radius = 22.0
+	x.attack_cooldown = 2.2
+	x.attack_windup = 0.95
 	x.search_duration = 12.0
 	save(x, "res://resources/threats/exterminator.tres", force)
 
 	var c := ThreatConfig.new()
-	c.sight_range = 45.0
-	c.sight_angle_deg = 140.0
-	c.near_sense_radius = 4.0
+	c.sight_range = 36.0
+	c.sight_angle_deg = 115.0
+	c.near_sense_radius = 3.0
 	c.eye_height = 5.0
 	c.gaze_pitch_deg = 10.0
-	c.hearing_radius = 26.0
+	c.min_visibility = 0.12
+	c.hearing_radius = 20.0
 	c.hearing_gain = 0.7
-	c.suspicion_gain = 2.0
+	c.suspicion_gain = 1.3
 	c.suspicion_decay = 0.3
 	c.search_duration = 10.0
-	c.patrol_speed = 6.0
-	c.search_speed = 10.0
-	c.chase_speed = 17.0
-	c.turn_speed = 6.0
-	c.attack_range = 9.0
-	c.attack_windup = 0.55
-	c.attack_cooldown = 1.8
+	c.patrol_speed = 5.0
+	c.search_speed = 8.0
+	c.chase_speed = 12.5
+	c.turn_speed = 5.0
+	c.attack_range = 8.0
+	c.attack_windup = 0.8
+	c.attack_cooldown = 2.4
 	c.attack_radius = 2.8
 	c.stun_duration = 4.0
 	save(c, "res://resources/threats/cat.tres", force)
 
 	var d := ThreatConfig.new()
-	d.sight_range = 35.0
-	d.sight_angle_deg = 120.0
+	d.sight_range = 28.0
+	d.sight_angle_deg = 100.0
 	d.eye_height = 6.0
 	d.gaze_pitch_deg = 5.0
-	d.hearing_radius = 34.0
+	d.min_visibility = 0.12
+	d.hearing_radius = 26.0
 	d.hearing_gain = 0.8
 	d.scent_tracking = true
-	d.scent_radius = 16.0
-	d.suspicion_gain = 1.4
+	d.scent_radius = 13.0
+	d.suspicion_gain = 1.0
 	d.search_duration = 14.0
-	d.patrol_speed = 6.0
-	d.search_speed = 9.0
-	d.chase_speed = 15.0
+	d.patrol_speed = 5.0
+	d.search_speed = 7.0
+	d.chase_speed = 11.5
 	d.attack_range = 7.0
-	d.attack_windup = 0.7
-	d.attack_cooldown = 2.0
+	d.attack_windup = 0.9
+	d.attack_cooldown = 2.6
 	d.attack_radius = 3.2
 	d.stun_duration = 3.5
 	save(d, "res://resources/threats/dog.tres", force)

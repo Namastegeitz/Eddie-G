@@ -18,8 +18,9 @@ and escape. One codebase for Android, iOS, Windows, macOS, Linux and the web.
   threat, smells crumbs with its antennae, runs faster in the dark and bolts
   when a light flicks on.
 - **Fly** (escape the Kitchen): buzzy 3D flight with momentum and drift,
-  burst dodge, stamina that forces it to perch, and compound-eye slow motion
-  when a strike is about to land.
+  compound-eye slow motion when a strike is about to land, and escape moves:
+  burst, evasive loop, silent dive, clinging to walls and ceilings, jinking,
+  and a silent glide when stamina runs out.
 - **Spider** (escape the Living Room): walks on walls and ceilings, zips on
   web lines that stay behind as bridges, spins web traps, feels footsteps as
   ripples through walls.
@@ -38,8 +39,9 @@ and escape. One codebase for Android, iOS, Windows, macOS, Linux and the web.
 **Stealth systems**
 - Light and shadow zones, noisy and quiet surfaces, ambient noise that masks
   you, freezing in place and camouflage on matching surfaces.
-- Every threat goes unaware > suspicious (?) > searching > alert (!), checks
-  where it last noticed you, and calms down if you stay hidden.
+- A house-wide alarm gauge fills while you're seen or heard. On their own,
+  threats only investigate (? then searching); at 100% every human and pet in
+  the room is alerted at once. Hiding drains it.
 - Escalation chain: a human who spots you shouts, grabs the swatter, calls the
   pet, then brings out the bug spray.
 - Lures (phone, spoon, TV remote, knocked-off peas) and turning threats on
@@ -63,8 +65,8 @@ All six build phases from the prompt are done. Placeholder art and sound
 throughout (generated primitives and synthesized audio), ready to swap.
 
 - Two headless test suites pass in the project and in an exported build
-  (`tools/run_tests.sh`): a 118-check smoke test and a 162-check phase audit
-  that walks the spec phase by phase. Zero GDScript warnings, zero engine errors.
+  (`tools/run_tests.sh`): a 120-check smoke test and a 184-check phase audit
+  that walks the spec phase by phase, plus the alarm gauge and fly moves. Zero GDScript warnings, zero engine errors.
 - Android test app (debug-signed): [dist/android/bugseyeview-debug.apk](dist/android/bugseyeview-debug.apk).
 - Builds produced and checked: Android debug APK (signed), Windows, macOS,
   Linux, Web, and the iOS Xcode project. The web build was played in a

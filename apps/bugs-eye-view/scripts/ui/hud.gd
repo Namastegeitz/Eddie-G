@@ -20,6 +20,7 @@ var _tint: ColorRect
 var _meters: StealthMeters
 var _markers: ThreatMarkers
 var _touch: TouchControls
+var _alarm: AlarmGauge
 var _root: Control
 
 
@@ -123,6 +124,10 @@ func _build_top() -> void:
 	mid.add_child(_clock)
 	_threat = _make_label("", 20, UIKit.GREEN)
 	mid.add_child(_threat)
+	_alarm = AlarmGauge.new()
+	_alarm.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_alarm.custom_minimum_size.y = 38
+	mid.add_child(_alarm)
 	_stages = _make_label("", 15, UIKit.DIM)
 	mid.add_child(_stages)
 	var pause := Button.new()
@@ -145,6 +150,8 @@ func bind(lvl: Level) -> void:
 	lvl.hint_changed.connect(func(t: String) -> void: toast(t))
 	lvl.boss_announced.connect(_on_boss)
 	lvl.close_call.connect(func() -> void: toast("CLOSE CALL!"))
+	PerceptionSystem.alarm_raised.connect(_on_alarm_raised)
+	PerceptionSystem.alarm_cleared.connect(_on_alarm_cleared)
 	player.hit_taken.connect(func(_l: int) -> void:
 		_update_lives()
 		toast("Hit! Shake it off"))
@@ -158,6 +165,14 @@ func bind(lvl: Level) -> void:
 	_update_lives()
 	_update_threat()
 	_update_clock()
+
+
+func _on_alarm_raised() -> void:
+	toast("FULL ALARM! Everyone is after you")
+
+
+func _on_alarm_cleared() -> void:
+	toast("The alarm died down")
 
 
 func _on_alert_level(_v: int) -> void:

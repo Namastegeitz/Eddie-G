@@ -3,7 +3,7 @@ extends Threat
 ## Robot vacuum: bumps around the floor and sucks in anything nearby. In the
 ## Cleaning Day boss it "learns" to home in on your noise. Web traps jam it.
 
-@export var speed: float = 7.0
+@export var speed: float = 5.5
 @export var suction_radius: float = 7.0
 @export var suction_strength: float = 26.0
 @export var contact_radius: float = 2.6

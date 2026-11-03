@@ -36,14 +36,32 @@ What each button does depends on the bug (the touch buttons relabel themselves):
 | Jump | Hop | Take off / fly up | Leap off the surface |
 | Sense | Smell: antennae point at the nearest crumb | Slow-mo (also triggers by itself when a strike is about to land) | Feel footsteps as ripples through walls |
 
+**Fly escape moves**
+
+| Move | How | What it does |
+|---|---|---|
+| Burst | Dodge | Quick sideways dart |
+| Evasive loop | Dodge twice quickly | Loops up and back the way you came, untouchable for half a second (costs stamina) |
+| Dive | Dodge while holding Secondary (Down) | Fast, silent plunge below a threat's sight line |
+| Cling | Fly into a wall holding Down, or up into the ceiling holding Up | Perch there: silent, camouflaged on walls, out of a human's downward gaze, stamina refills |
+| Jink | Steer hard against your direction at speed | You're much harder to see for a moment |
+| Silent glide | Happens when stamina runs out | Glide down quietly instead of dropping |
+
+**The alarm gauge** (top of the screen) fills while a human or pet can see
+you, and a little when they hear you. On their own, threats only come to
+investigate. At **100% everyone in the room is alerted** and comes after you.
+Break line of sight and the gauge drains; it drains three times faster while
+you're hidden, and the alarm is called off below 30%. Humans can't see the
+floor right under their own feet.
+
 Standing still blends you in. Shadows hide you, bright light and noisy
 surfaces (chip bags, foil, dishes, leaves) give you away. Keys can be rebound
 in **Settings**.
 
 ## 3. Test it
 
-All checks: import, boot, warnings-as-errors, then the 118-check smoke test
-and the 162-check phase audit (`tests/phase_audit.tscn`, one section per
+All checks: import, boot, warnings-as-errors, then the 120-check smoke test
+and the 184-check phase audit (`tests/phase_audit.tscn`, one section per
 build phase), each run in the project **and** against an exported pack. Any
 script or engine error fails the run:
 

@@ -49,13 +49,27 @@ extends Resource
 @export var shout_radius: float = 70.0
 @export var stage_names: PackedStringArray = ["Calm", "Shout", "Swatter", "Pet called", "Bug spray"]
 
+@export_group("Alarm gauge")
+## Share of a threat's sighting suspicion that fills the house-wide alarm.
+@export var alarm_sight_gain: float = 0.45
+## Share of heard-noise suspicion that fills the alarm.
+@export var alarm_sound_gain: float = 0.2
+## Seconds after the last sighting/noise before the alarm starts draining.
+@export var alarm_grace: float = 1.5
+## Alarm drained per second once nobody notices you.
+@export var alarm_decay: float = 0.07
+## Drain multiplier while you are safely hidden.
+@export var alarm_hidden_decay_mult: float = 3.0
+## A raised alarm is called off once the gauge drains below this.
+@export var alarm_clear_level: float = 0.3
+
 @export_group("Hazards")
 ## Extra distance beyond a strike's radius that still counts as a close call.
 @export var close_call_margin: float = 2.5
 @export var spray_exposure_to_hit: float = 1.2
 @export var spray_exposure_decay: float = 0.6
 ## Hazard speed-up at full intensity (time-based floor).
-@export var intensity_speedup: float = 0.45
+@export var intensity_speedup: float = 0.3
 
 
 func light_value(level: int) -> float:
