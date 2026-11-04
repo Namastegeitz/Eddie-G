@@ -76,6 +76,7 @@
   voice call-outs, captions, reduce motion, rhythm calibration.
 - Tests: `node tests/unit.mjs` (443 checks) and `node tests/acceptance.js` (25-step Playwright play-through,
   incl. offline reload) pass.
+- Playable as a private Claude artifact: https://claude.ai/artifact/6ARndyKdPDcqbRxZ7ohyMY
 - Not verified on real hardware yet: touch feel and audio latency on an actual phone, install to home screen.
 - Next: pick add-ons from `prompts/claude/monkey-see-monkey-do-next.md` (14 prompts: replay review, Daily
   Dance, choreographer + share codes, accessibility pack, grown-up panel, stickers, World 4, pass-and-play,
