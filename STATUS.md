@@ -164,8 +164,17 @@
   complete +5, or swap 100 bananas for 1). No real money. Old fur saves migrate to skins. Wardrobe Skins tab with
   rarity frames, set progress, filters, goal progress bars, lazy-painted portraits, unlock card; How it works lists
   every premium skin with goal and price. Tests: 464 unit checks, 29-step play-through.
+- Gear and Shop (fourth pass): 88 gear items in 8 slots (hat, eyes, neck, back, hands, feet, face, aura; js/gear.js
+  builds and animates them, 3D wardrobe thumbnails), 20 premium gear items for golden bananas, 6 saved outfits.
+  Real-money Shop in the phone apps only (js/store.js, js/billing.js, js/storeui.js; cordova-plugin-purchase 13.19.1):
+  Starter Pack $0.99 (once), banana packs 500-8,000 and golden packs 12-190 at $0.99/$1.99/$4.99/$9.99, Party $2.99
+  and Mega Party $7.99 combos, 7 bundles $2.99, 8 premium skin sets $4.99. Grown-up check, monthly limit, Restore,
+  Purchases list, honest bonus labels, no timers, nothing only for sale. Web build shows the Shop, sells nothing;
+  `?billing=test` / `#store-test` = pretend purchases. Store setup: mobile/README.md, docs/STORE_PRODUCTS.md,
+  mobile/ios/App/MonkeyDo.storekit. Tests: 507 unit checks, 33-step play-through (incl. test-mode purchases).
+  Not verified: real App Store / Google Play purchases (need developer accounts, products created, a device).
 - Not verified on real hardware yet: touch feel and audio latency on an actual phone, install to home screen.
-- Next: pick add-ons from `prompts/claude/monkey-see-monkey-do-next.md` (14 prompts: replay review, Daily
+- Next: pick add-ons from `prompts/claude/monkey-see-monkey-do-next.md` (prompt 15 is done; replay review, Daily
   Dance, choreographer + share codes, accessibility pack, grown-up panel, stickers, World 4, pass-and-play,
   real music, GitHub Pages, Android/iOS builds, opt-in leaderboard, Spanish/Portuguese) and
   `prompts/codex/monkey-see-monkey-do-tasks.md` (10 small tasks).

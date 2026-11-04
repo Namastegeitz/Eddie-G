@@ -4,6 +4,7 @@ import { DEFAULT_OWNED, DEFAULT_EQUIPPED, getItem } from './shop.js';
 import { WORLDS } from './levels.js';
 import { SKINS, SETS, getSkin, newlyEarned, setProgress } from './skins.js';
 import { RULES } from './rules.js';
+import { OWNED_REFUND_GOLDEN, spentThisMonth } from './store.js';
 
 const KEY = 'msmd.save.v1';
 const LEDGER_MAX = 60;
@@ -25,6 +26,8 @@ export const DEFAULT_SETTINGS = {
   reduceMotion: false,
   quality: 'auto', // 'auto' | 'high' | 'low'
   latencyMs: 0, // rhythm calibration
+  parentGate: true, // ask a grown-up question before any real-money purchase
+  spendLimit: 0, // monthly real-money limit in the store's currency (0 = no limit)
 };
 
 function defaults() {
@@ -40,6 +43,10 @@ function defaults() {
     goldOnce: { threeStar: {}, world: {}, sets: {} }, // one-time golden rewards already paid
     skinEarned: {}, // premium skin id -> time it was unlocked by its play goal
     newSkins: [], // unlocked but not looked at yet (NEW badge)
+    outfits: [], // saved looks: [{ name, look, t } or null] x 6
+    purchases: [], // real-money purchases: [{ t, id, title, price, micros, currency, test }]
+    ownedProducts: [], // one-time products already delivered (bundles, sets, starter)
+    processedTx: [], // store transaction ids already delivered (never grant twice)
     levels: {}, // id -> { stars, best, clears }
     endless: { bestRounds: 0, bestScore: 0, plays: 0 },
     owned: JSON.parse(JSON.stringify(DEFAULT_OWNED)),
@@ -244,6 +251,55 @@ export const Save = {
     return { skins: earned, golden, sets };
   },
 
+  /**
+   * Give what a purchased product contains (see js/store.js). Safe to call
+   * twice for the same transaction. Returns what was added, or null.
+   */
+  deliverPurchase(p, tx, price) {
+    const d = this.data;
+    if (d.processedTx.includes(tx)) return null;
+    d.processedTx.push(tx);
+    if (d.processedTx.length > 300) d.processedTx.splice(0, d.processedTx.length - 300);
+    if (p.type === 'nonconsumable' && d.ownedProducts.includes(p.id)) { this.persist(); return null; }
+    const got = { bananas: p.grants.bananas, golden: p.grants.golden, skins: [], gear: [], refunded: 0 };
+    if (p.grants.bananas) this.addBananas(p.grants.bananas, `Purchased ${p.title}`);
+    if (p.grants.golden) this.addGolden(p.grants.golden, `Purchased ${p.title}`);
+    for (const id of p.grants.skins) {
+      if (this.owns('skin', id)) { got.refunded++; continue; }
+      d.owned.skin.push(id);
+      if (!d.newSkins.includes(id)) d.newSkins.push(id);
+      got.skins.push(id);
+    }
+    for (const g of p.grants.gear) {
+      const [slot, id] = g.split(':');
+      if (this.owns(slot, id)) { got.refunded++; continue; }
+      if (!d.owned[slot]) d.owned[slot] = ['none'];
+      d.owned[slot].push(id);
+      got.gear.push(g);
+    }
+    if (got.refunded) this.addGolden(got.refunded * OWNED_REFUND_GOLDEN, `${p.title}: ${got.refunded} item${got.refunded === 1 ? '' : 's'} you already had`);
+    if (p.type === 'nonconsumable') d.ownedProducts.push(p.id);
+    d.purchases.unshift({
+      t: Date.now(), id: p.id, title: p.title,
+      price: price ? price.price : `$${p.usd.toFixed(2)}`,
+      micros: price ? price.micros : Math.round(p.usd * 1e6),
+      currency: price ? price.currency : 'USD',
+      test: String(tx).startsWith('test-'),
+    });
+    if (d.purchases.length > 200) d.purchases.length = 200;
+    this.syncUnlocks();
+    this.persist();
+    return got;
+  },
+
+  /** Would this purchase go over the monthly limit? */
+  overLimit(price) {
+    const limit = this.data.settings.spendLimit || 0;
+    if (!limit || !price) return false;
+    const spent = spentThisMonth(this.data.purchases)[price.currency] || 0;
+    return spent + price.micros / 1e6 > limit + 1e-6;
+  },
+
   spend(amount, reason) {
     if (this.data.bananas < amount) return false;
     this.addBananas(-amount, reason);
@@ -296,7 +352,11 @@ export const Save = {
   buy(cat, id) {
     const item = getItem(cat, id);
     if (!item || this.owns(cat, id)) return false;
-    if (!this.spend(item.price, `Bought ${item.name}`)) return false;
+    if (item.currency === 'golden') {
+      if (this.data.golden < item.price) return false;
+      this.addGolden(-item.price, `Bought ${item.name}`);
+    } else if (!this.spend(item.price, `Bought ${item.name}`)) return false;
+    if (!this.data.owned[cat]) this.data.owned[cat] = ['none'];
     this.data.owned[cat].push(id);
     this.persist();
     return true;

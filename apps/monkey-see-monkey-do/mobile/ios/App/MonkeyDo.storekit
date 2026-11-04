@@ -1,0 +1,407 @@
+{
+  "identifier": "C0FFEE00",
+  "nonRenewingSubscriptions": [],
+  "products": [
+    {
+      "displayPrice": "0.99",
+      "familyShareable": false,
+      "internalID": "6500000000",
+      "localizations": [
+        {
+          "description": "1,000 bananas, 15 golden + 2 items",
+          "displayName": "Starter Pack",
+          "locale": "en_US"
+        }
+      ],
+      "productID": "com.namastegeitz.monkeydo.starter",
+      "referenceName": "Starter Pack",
+      "type": "NonConsumable"
+    },
+    {
+      "displayPrice": "2.99",
+      "familyShareable": false,
+      "internalID": "6500000001",
+      "localizations": [
+        {
+          "description": "1,500 bananas + 20 golden bananas",
+          "displayName": "Party Pack",
+          "locale": "en_US"
+        }
+      ],
+      "productID": "com.namastegeitz.monkeydo.combo_party",
+      "referenceName": "Party Pack",
+      "type": "Consumable"
+    },
+    {
+      "displayPrice": "7.99",
+      "familyShareable": false,
+      "internalID": "6500000002",
+      "localizations": [
+        {
+          "description": "5,000 bananas + 70 golden bananas",
+          "displayName": "Mega Party Pack",
+          "locale": "en_US"
+        }
+      ],
+      "productID": "com.namastegeitz.monkeydo.combo_mega",
+      "referenceName": "Mega Party Pack",
+      "type": "Consumable"
+    },
+    {
+      "displayPrice": "0.99",
+      "familyShareable": false,
+      "internalID": "6500000003",
+      "localizations": [
+        {
+          "description": "500 bananas",
+          "displayName": "Handful of Bananas",
+          "locale": "en_US"
+        }
+      ],
+      "productID": "com.namastegeitz.monkeydo.bananas_500",
+      "referenceName": "Handful of Bananas",
+      "type": "Consumable"
+    },
+    {
+      "displayPrice": "1.99",
+      "familyShareable": false,
+      "internalID": "6500000004",
+      "localizations": [
+        {
+          "description": "1,200 bananas",
+          "displayName": "Bunch of Bananas",
+          "locale": "en_US"
+        }
+      ],
+      "productID": "com.namastegeitz.monkeydo.bananas_1200",
+      "referenceName": "Bunch of Bananas",
+      "type": "Consumable"
+    },
+    {
+      "displayPrice": "4.99",
+      "familyShareable": false,
+      "internalID": "6500000005",
+      "localizations": [
+        {
+          "description": "3,500 bananas",
+          "displayName": "Banana Crate",
+          "locale": "en_US"
+        }
+      ],
+      "productID": "com.namastegeitz.monkeydo.bananas_3500",
+      "referenceName": "Banana Crate",
+      "type": "Consumable"
+    },
+    {
+      "displayPrice": "9.99",
+      "familyShareable": false,
+      "internalID": "6500000006",
+      "localizations": [
+        {
+          "description": "8,000 bananas",
+          "displayName": "Banana Truck",
+          "locale": "en_US"
+        }
+      ],
+      "productID": "com.namastegeitz.monkeydo.bananas_8000",
+      "referenceName": "Banana Truck",
+      "type": "Consumable"
+    },
+    {
+      "displayPrice": "0.99",
+      "familyShareable": false,
+      "internalID": "6500000007",
+      "localizations": [
+        {
+          "description": "12 golden bananas",
+          "displayName": "Pocket of Golden Bananas",
+          "locale": "en_US"
+        }
+      ],
+      "productID": "com.namastegeitz.monkeydo.golden_12",
+      "referenceName": "Pocket of Golden Bananas",
+      "type": "Consumable"
+    },
+    {
+      "displayPrice": "1.99",
+      "familyShareable": false,
+      "internalID": "6500000008",
+      "localizations": [
+        {
+          "description": "30 golden bananas",
+          "displayName": "Pouch of Golden Bananas",
+          "locale": "en_US"
+        }
+      ],
+      "productID": "com.namastegeitz.monkeydo.golden_30",
+      "referenceName": "Pouch of Golden Bananas",
+      "type": "Consumable"
+    },
+    {
+      "displayPrice": "4.99",
+      "familyShareable": false,
+      "internalID": "6500000009",
+      "localizations": [
+        {
+          "description": "85 golden bananas",
+          "displayName": "Chest of Golden Bananas",
+          "locale": "en_US"
+        }
+      ],
+      "productID": "com.namastegeitz.monkeydo.golden_85",
+      "referenceName": "Chest of Golden Bananas",
+      "type": "Consumable"
+    },
+    {
+      "displayPrice": "9.99",
+      "familyShareable": false,
+      "internalID": "6500000010",
+      "localizations": [
+        {
+          "description": "190 golden bananas",
+          "displayName": "Vault of Golden Bananas",
+          "locale": "en_US"
+        }
+      ],
+      "productID": "com.namastegeitz.monkeydo.golden_190",
+      "referenceName": "Vault of Golden Bananas",
+      "type": "Consumable"
+    },
+    {
+      "displayPrice": "2.99",
+      "familyShareable": false,
+      "internalID": "6500000011",
+      "localizations": [
+        {
+          "description": "Astronaut skin + 4 matching items",
+          "displayName": "Space Explorer",
+          "locale": "en_US"
+        }
+      ],
+      "productID": "com.namastegeitz.monkeydo.bundle_space",
+      "referenceName": "Space Explorer",
+      "type": "NonConsumable"
+    },
+    {
+      "displayPrice": "2.99",
+      "familyShareable": false,
+      "internalID": "6500000012",
+      "localizations": [
+        {
+          "description": "Pirate skin + 4 matching items",
+          "displayName": "Pirate Captain",
+          "locale": "en_US"
+        }
+      ],
+      "productID": "com.namastegeitz.monkeydo.bundle_pirate",
+      "referenceName": "Pirate Captain",
+      "type": "NonConsumable"
+    },
+    {
+      "displayPrice": "2.99",
+      "familyShareable": false,
+      "internalID": "6500000013",
+      "localizations": [
+        {
+          "description": "Rock Star skin + 4 matching items",
+          "displayName": "Rock Legend",
+          "locale": "en_US"
+        }
+      ],
+      "productID": "com.namastegeitz.monkeydo.bundle_rock",
+      "referenceName": "Rock Legend",
+      "type": "NonConsumable"
+    },
+    {
+      "displayPrice": "2.99",
+      "familyShareable": false,
+      "internalID": "6500000014",
+      "localizations": [
+        {
+          "description": "Royal skin + 4 matching items",
+          "displayName": "Royal Court",
+          "locale": "en_US"
+        }
+      ],
+      "productID": "com.namastegeitz.monkeydo.bundle_royal",
+      "referenceName": "Royal Court",
+      "type": "NonConsumable"
+    },
+    {
+      "displayPrice": "2.99",
+      "familyShareable": false,
+      "internalID": "6500000015",
+      "localizations": [
+        {
+          "description": "Ocean skin + 4 matching items",
+          "displayName": "Beach Day",
+          "locale": "en_US"
+        }
+      ],
+      "productID": "com.namastegeitz.monkeydo.bundle_beach",
+      "referenceName": "Beach Day",
+      "type": "NonConsumable"
+    },
+    {
+      "displayPrice": "2.99",
+      "familyShareable": false,
+      "internalID": "6500000016",
+      "localizations": [
+        {
+          "description": "Vampire skin + 4 matching items",
+          "displayName": "Spooky Night",
+          "locale": "en_US"
+        }
+      ],
+      "productID": "com.namastegeitz.monkeydo.bundle_spooky",
+      "referenceName": "Spooky Night",
+      "type": "NonConsumable"
+    },
+    {
+      "displayPrice": "2.99",
+      "familyShareable": false,
+      "internalID": "6500000017",
+      "localizations": [
+        {
+          "description": "Pop Star skin + 4 matching items",
+          "displayName": "Party Animal",
+          "locale": "en_US"
+        }
+      ],
+      "productID": "com.namastegeitz.monkeydo.bundle_party",
+      "referenceName": "Party Animal",
+      "type": "NonConsumable"
+    },
+    {
+      "displayPrice": "4.99",
+      "familyShareable": false,
+      "internalID": "6500000018",
+      "localizations": [
+        {
+          "description": "All 5 Precious Metals skins",
+          "displayName": "Precious Metals set",
+          "locale": "en_US"
+        }
+      ],
+      "productID": "com.namastegeitz.monkeydo.set_metals",
+      "referenceName": "Precious Metals set",
+      "type": "NonConsumable"
+    },
+    {
+      "displayPrice": "4.99",
+      "familyShareable": false,
+      "internalID": "6500000019",
+      "localizations": [
+        {
+          "description": "All 6 Cosmic skins",
+          "displayName": "Cosmic set",
+          "locale": "en_US"
+        }
+      ],
+      "productID": "com.namastegeitz.monkeydo.set_cosmic",
+      "referenceName": "Cosmic set",
+      "type": "NonConsumable"
+    },
+    {
+      "displayPrice": "4.99",
+      "familyShareable": false,
+      "internalID": "6500000020",
+      "localizations": [
+        {
+          "description": "All 6 Elements skins",
+          "displayName": "Elements set",
+          "locale": "en_US"
+        }
+      ],
+      "productID": "com.namastegeitz.monkeydo.set_elements",
+      "referenceName": "Elements set",
+      "type": "NonConsumable"
+    },
+    {
+      "displayPrice": "4.99",
+      "familyShareable": false,
+      "internalID": "6500000021",
+      "localizations": [
+        {
+          "description": "All 7 Mythic skins",
+          "displayName": "Mythic set",
+          "locale": "en_US"
+        }
+      ],
+      "productID": "com.namastegeitz.monkeydo.set_mythic",
+      "referenceName": "Mythic set",
+      "type": "NonConsumable"
+    },
+    {
+      "displayPrice": "4.99",
+      "familyShareable": false,
+      "internalID": "6500000022",
+      "localizations": [
+        {
+          "description": "All 6 Spooky skins",
+          "displayName": "Spooky set",
+          "locale": "en_US"
+        }
+      ],
+      "productID": "com.namastegeitz.monkeydo.set_spooky",
+      "referenceName": "Spooky set",
+      "type": "NonConsumable"
+    },
+    {
+      "displayPrice": "4.99",
+      "familyShareable": false,
+      "internalID": "6500000023",
+      "localizations": [
+        {
+          "description": "All 6 Tech skins",
+          "displayName": "Tech set",
+          "locale": "en_US"
+        }
+      ],
+      "productID": "com.namastegeitz.monkeydo.set_tech",
+      "referenceName": "Tech set",
+      "type": "NonConsumable"
+    },
+    {
+      "displayPrice": "4.99",
+      "familyShareable": false,
+      "internalID": "6500000024",
+      "localizations": [
+        {
+          "description": "All 7 Party & Music skins",
+          "displayName": "Party & Music set",
+          "locale": "en_US"
+        }
+      ],
+      "productID": "com.namastegeitz.monkeydo.set_party",
+      "referenceName": "Party & Music set",
+      "type": "NonConsumable"
+    },
+    {
+      "displayPrice": "4.99",
+      "familyShareable": false,
+      "internalID": "6500000025",
+      "localizations": [
+        {
+          "description": "All 7 Heroes skins",
+          "displayName": "Heroes set",
+          "locale": "en_US"
+        }
+      ],
+      "productID": "com.namastegeitz.monkeydo.set_heroes",
+      "referenceName": "Heroes set",
+      "type": "NonConsumable"
+    }
+  ],
+  "settings": {
+    "_failTransactionsEnabled": false,
+    "_locale": "en_US",
+    "_storefront": "USA",
+    "_storeKitErrors": []
+  },
+  "subscriptionGroups": [],
+  "version": {
+    "major": 2,
+    "minor": 0
+  }
+}

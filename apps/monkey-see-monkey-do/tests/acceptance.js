@@ -364,7 +364,7 @@ let passes = 0;
     const rows = await page.$$eval('#help-body table', (t) => t.map((x) => x.querySelectorAll('tbody tr').length));
     expect(rows.includes(30), 'level table rows ' + rows);
     const text = await page.textContent('#help-body');
-    expect(text.includes('90 ms') && text.includes("can't be bought"), 'rules text');
+    expect(text.includes('90 ms') && text.includes('You never need to pay') && text.includes('grown-up check'), 'rules text');
     await shot('13-how-it-works');
     await page.click('#scr-help .back');
   });
@@ -375,6 +375,80 @@ let passes = 0;
     expect(t.includes('Banana history') && t.includes('Expected'), 'stats text');
     await shot('14-stats');
     await page.click('#scr-stats .back');
+  });
+
+  await step('Gear: back, hands, feet, face and aura items buy and show on the monkey', async () => {
+    await ev(() => { MSMD.Save.addBananas(1000, 'test top-up'); MSMD.Save.addGolden(40, 'test top-up'); });
+    await page.click('#scr-title .mini[data-go="shop"]');
+    for (const [cat, id] of [['back', 'cape'], ['hands', 'mic'], ['feet', 'sneakers'], ['face', 'mustache'], ['aura', 'sparkle']]) {
+      await page.click(`#shop-tabs [data-cat="${cat}"]`);
+      await page.click(`#shop-grid [data-id="${id}"]`);
+      await page.click('#shop-buy');
+      expect(await ev(([c, i]) => MSMD.Save.data.equipped[c] === i, [cat, id]), `${cat} equipped`);
+    }
+    expect(await ev(() => !!MSMD.monkey.accessories.back && !!MSMD.monkey.accessories.hands && MSMD.monkey.accessories.feet.length === 2), 'gear on the monkey');
+    expect(await ev(() => MSMD.monkey.aura && MSMD.monkey.aura.type === 'sparkle'), 'aura on');
+    expect(await ev(() => MSMD.Save.data.ledger.some((e) => e.cur === 'golden' && e.reason === 'Bought Sparkles')), 'aura paid in golden bananas');
+    const thumbs = await page.$$eval('#shop-grid canvas[data-gear]', (c) => c.length);
+    await page.click('#shop-tabs [data-cat="hat"]');
+    await page.waitForTimeout(600);
+    const drawn = await ev(() => { const c = document.querySelector('#shop-grid canvas[data-gear]'); const d = c.getContext('2d').getImageData(0, 0, c.width, c.height).data; let n = 0; for (let i = 3; i < d.length; i += 4) if (d[i] > 0) n++; return n; });
+    expect(drawn > 200, 'hat thumbnail painted ' + drawn);
+    void thumbs;
+    await shot('14b-gear');
+  });
+
+  await step('Outfits: save the look, change it, put the outfit back on', async () => {
+    await page.click('#shop-tabs [data-cat="outfits"]');
+    await page.click('[data-save="0"]');
+    const saved = await ev(() => JSON.stringify(MSMD.Save.data.equipped));
+    await ev(() => { MSMD.Save.equip('hat', 'none'); MSMD.Save.equip('back', 'none'); MSMD.app.applyLook(MSMD.Save.data.equipped); MSMD.ui.renderShop(); });
+    await page.click('[data-wear="0"]');
+    expect(await ev(() => JSON.stringify(MSMD.Save.data.equipped)) === saved, 'outfit restored');
+    await page.click('#scr-shop .back');
+  });
+
+  await step('Shop on the web: shows everything, says purchases are in the apps', async () => {
+    await page.click('#scr-title .mini[data-go="store"]');
+    const t = await page.textContent('#store-body');
+    expect(t.includes('iPhone and Android apps') && t.includes('Banana Truck') && t.includes('Mythic set'), 'web shop text');
+    expect(await page.$$eval('[data-buy]', (b) => b.length) === 0, 'no buy buttons on the web');
+    await page.click('#scr-store .back');
+  });
+
+  await step('Shop test mode: grown-up check, a pack, a bundle, then the monthly limit', async () => {
+    await page.goto(BASE + '?billing=test');
+    await page.waitForSelector('html[data-ready="1"]');
+    await page.click('#scr-title .mini[data-go="store"]');
+    expect((await page.textContent('#store-body')).includes('TEST MODE'), 'test banner');
+    const b0 = await ev(() => MSMD.Save.data.bananas);
+    await page.click('[data-buy="bananas_1200"]');
+    expect(await page.isDisabled('#buy-go'), 'buy waits for the grown-up check');
+    const wrong = await ev(() => [...document.querySelectorAll('[data-gate]')].map((x) => x.dataset.gate).find((v) => v !== document.getElementById('buy-card').dataset.right));
+    await page.click(`[data-gate="${wrong}"]`);
+    expect(await page.isDisabled('#buy-go'), 'wrong answer keeps it locked');
+    const right = await ev(() => document.getElementById('buy-card').dataset.right);
+    await page.click(`[data-gate="${right}"]`);
+    await page.click('#buy-go');
+    await page.waitForSelector('#buy-done', { timeout: 5000 });
+    expect(await ev(() => MSMD.Save.data.bananas) === b0 + 1200, 'got 1,200 bananas');
+    await page.click('#buy-done');
+    await page.click('[data-buy="bundle_rock"]');
+    const r2 = await ev(() => document.getElementById('buy-card').dataset.right);
+    await page.click(`[data-gate="${r2}"]`);
+    await page.click('#buy-go');
+    await page.waitForSelector('#buy-done', { timeout: 5000 });
+    expect(await ev(() => MSMD.Save.owns('skin', 'rockstar') && MSMD.Save.owns('back', 'guitar') && MSMD.Save.data.ownedProducts.includes('bundle_rock')), 'bundle delivered');
+    await page.click('#buy-done');
+    expect(await page.$eval('#store-body', (b) => b.textContent.includes('Owned')), 'bundle shows Owned');
+    expect(await ev(() => MSMD.Save.data.purchases.length) === 2, 'two purchases logged');
+    await ev(() => MSMD.Save.setSetting('spendLimit', 5));
+    await page.click('[data-buy="golden_190"]');
+    expect((await page.textContent('#buy-card')).includes('monthly limit') && await page.isDisabled('#buy-go'), 'limit blocks a $9.99 pack');
+    await shot('14c-shop-limit');
+    await page.click('#buy-cancel');
+    await ev(() => MSMD.Save.setSetting('spendLimit', 0));
+    await page.click('#scr-store .back');
   });
 
   await step('level map shows stars, the next level and locked worlds', async () => {

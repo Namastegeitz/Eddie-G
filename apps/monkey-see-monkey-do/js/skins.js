@@ -1,7 +1,9 @@
 // 100 monkey skins: 50 standard (bought with bananas) and 50 premium.
 // Every premium skin unlocks two ways:
 //   - for free, by reaching its play goal (shown on its card with progress), or
-//   - early, with Golden Bananas (earned by playing; see GOLDEN in rules.js).
+//   - early, with Golden Bananas (earned by playing; see rules.js), which the
+//     phone apps' Shop also sells (js/store.js). Each premium set can be bought
+//     whole in the apps, but no skin is only for sale.
 // Skins are looks only: no skin changes timing, scoring or difficulty.
 // Pure data + pure functions (tests/unit.mjs checks it in Node).
 

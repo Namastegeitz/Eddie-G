@@ -37,5 +37,6 @@
     </application>
 
     <!-- Permissions: none for the network. The game runs entirely on the phone.
-         (The Haptics plugin adds VIBRATE for the buzz on taps.) -->
+         (The Haptics plugin adds VIBRATE for the buzz on taps, and
+         cordova-plugin-purchase adds com.android.vending.BILLING for the Shop.) -->
 </manifest>

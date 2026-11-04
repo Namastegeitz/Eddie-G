@@ -33,8 +33,8 @@ export const RULES = {
   // Spending inside a level
   replayCost: 5,
   continueCost: 15,
-  // Golden Bananas (the premium-skin currency). Earned only by playing, or
-  // swapped from bananas. Never sold for money.
+  // Golden Bananas (the premium currency). Earned by playing or swapped from
+  // bananas. The phone apps also sell packs (js/store.js); nothing needs them.
   goldFirstThreeStar: 2, // first time a level gets 3 stars
   goldWorldClear: 10, // first clear of level 10, 20 and 30
   goldEndlessEvery: 10, // 1 golden banana per this many rounds in an Endless run

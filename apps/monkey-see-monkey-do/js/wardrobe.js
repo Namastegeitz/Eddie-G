@@ -4,6 +4,8 @@ import { SKINS, SETS, RARITY, GOALS, getSkin, goalContext, goalProgress, setProg
 import { drawPortrait } from './patterns.js';
 import { RULES } from './rules.js';
 import { Save } from './save.js';
+import { getItem } from './shop.js';
+import { gearThumb } from './gear.js';
 
 export const GOLDEN_ICON = '<svg viewBox="0 0 32 32" aria-hidden="true"><path d="M6 9c1 9 7 16 18 15 2 0 3-1 3-2-9 0-14-6-16-14-.4-2-5.4-1-5 1z" fill="#ffbf1a" stroke="#5a3a00" stroke-width="2" stroke-linejoin="round"/><path d="M8.3 10.5c1.6 5.6 5.4 9.6 11.6 11" fill="none" stroke="#fff3a6" stroke-width="2.2" stroke-linecap="round"/><path d="M5 9l1-3 3 1" fill="#8a5a10" stroke="#5a3a00" stroke-width="1.6" stroke-linejoin="round"/><path d="M24 2.5l1.3 3.2 3.2 1.3-3.2 1.3L24 11.5l-1.3-3.2L19.5 7l3.2-1.3z" fill="#fff" stroke="#c88a00" stroke-width=".8"/></svg>';
 const LOCK = '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10" width="14" height="11" rx="3" fill="currentColor"/><path d="M8 10V7a4 4 0 0 1 8 0v3" fill="none" stroke="currentColor" stroke-width="2.4"/></svg>';
@@ -198,11 +200,12 @@ export function showExchange(ui) {
     $('#exchange-card').innerHTML = `
       <div class="eyebrow">Golden bananas</div>
       <h2 id="exchange-title">Swap bananas</h2>
-      <p>Golden bananas unlock premium skins early. You earn them by playing (see How it works), or swap bananas for them here. They can't be bought with money.</p>
+      <p>Golden bananas unlock premium skins and gear early. You earn them by playing (see How it works) or swap bananas for them here${ui.app.billing && ui.app.billing.mode === 'native' ? ', and the Shop sells packs' : ''}.</p>
       <div class="exchange-rate">${ui.icons.banana} ${rate} = 1 ${GOLDEN_ICON}</div>
       <p class="note" style="color:var(--cream-dim);font-size:14px">You have ${d.bananas} bananas and ${d.golden} golden bananas.</p>
       <div class="actions">
         ${opts.map((n) => `<button class="btn ${d.bananas >= n * rate ? 'primary' : ''}" data-swap="${n}" ${d.bananas >= n * rate ? '' : 'disabled'}>Swap ${(n * rate).toLocaleString()} for ${n} ${GOLDEN_ICON.replace('<svg ', '<svg style="width:22px;height:22px" ')}</button>`).join('')}
+        ${ui.app.billing && ui.app.billing.mode !== 'none' ? '<button class="btn" id="exchange-shop">More in the Shop</button>' : ''}
         <button class="btn ghost" id="exchange-close">Close</button>
       </div>`;
     $$('[data-swap]', $('#exchange-card')).forEach((b) => b.addEventListener('click', () => {
@@ -216,6 +219,8 @@ export function showExchange(ui) {
       }
     }));
     $('#exchange-close').addEventListener('click', () => { ui.click(); ui.closeOverlay('ov-exchange'); });
+    const shopBtn = $('#exchange-shop');
+    if (shopBtn) shopBtn.addEventListener('click', () => { ui.click(); ui.closeOverlay('ov-exchange'); ui.show('store'); });
   };
   render();
   ui.openOverlay('ov-exchange');
@@ -275,8 +280,101 @@ export function skinsHelp(ui) {
       <li>+1 for every ${RULES.goldEndlessEvery} rounds you clear in one Endless run.</li>
       <li>+${RULES.goldSetComplete} for each completed skin set.</li>
       <li>Swap ${RULES.exchangeRate} bananas for 1 golden banana in the Wardrobe (tap the golden chip).</li>
-      <li>They can't be bought with money. Every golden banana earned or spent is in Stats > Banana history.</li>
+      <li>In the iPhone and Android apps the Shop also sells golden banana packs. You never need them: every premium skin keeps its free play goal. Every golden banana earned, bought or spent is in Stats > Banana history.</li>
     </ul>
     <h3>All premium skins</h3>
     <div class="table-wrap"><table><thead><tr><th>Skin</th><th>Rarity</th><th>Free when you...</th><th>Or golden</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+}
+
+// ---------------------------------------------------------------- gear thumbnails
+
+let gearObserver = null;
+/** Paint 3D gear thumbnails when their cards scroll into view. */
+export function lazyGearThumbs(root, kit) {
+  const els = [...root.querySelectorAll('canvas[data-gear]')];
+  if (!els.length) return;
+  const paint = (el) => {
+    const [slot, id] = el.dataset.gear.split(':');
+    gearThumb(el, slot, id, kit);
+  };
+  if (!('IntersectionObserver' in window)) { els.forEach(paint); return; }
+  if (gearObserver) gearObserver.disconnect();
+  gearObserver = new IntersectionObserver((entries) => {
+    for (const e of entries) {
+      if (!e.isIntersecting) continue;
+      paint(e.target);
+      gearObserver.unobserve(e.target);
+    }
+  }, { rootMargin: '120px' });
+  els.forEach((el) => gearObserver.observe(el));
+}
+
+// ---------------------------------------------------------------- outfits
+
+export const OUTFIT_SLOTS = 6;
+
+function outfitName(look) {
+  const skin = getSkin(look.skin).name;
+  for (const k of ['hat', 'back', 'eyes', 'hands', 'neck', 'feet', 'face', 'aura']) {
+    const v = look[k];
+    if (v && v !== 'none') {
+      const it = getItem(k, v);
+      return `${skin} + ${it ? it.name : v}`;
+    }
+  }
+  return skin;
+}
+
+/** Wardrobe > Outfits: save and switch complete looks. */
+export function renderOutfits(ui) {
+  const grid = $('#shop-grid');
+  grid.classList.remove('skins');
+  const list = Save.data.outfits;
+  let html = '<div class="skin-head"><span class="count">Outfits</span><span class="note" style="font-size:13px;color:var(--cream-dim)">Save your whole look (skin and every item) and put it back on with one tap.</span></div>';
+  for (let i = 0; i < OUTFIT_SLOTS; i++) {
+    const o = list[i];
+    if (o) {
+      const items = Object.entries(o.look).filter(([k, v]) => !['skin', 'flair', 'stage'].includes(k) && v && v !== 'none').length;
+      const wearing = JSON.stringify(o.look) === JSON.stringify(Save.data.equipped);
+      html += `<div class="outfit${wearing ? ' equipped' : ''}">${portraitTag(getSkin(o.look.skin), 144)}<div class="o-text"><b>${esc(o.name)}</b><small>${esc(getSkin(o.look.skin).name)} skin · ${items} item${items === 1 ? '' : 's'}</small></div>
+        <div class="o-btns"><button class="btn small primary" data-wear="${i}" ${wearing ? 'disabled' : ''}>${wearing ? 'Wearing' : 'Wear'}</button><button class="btn small" data-save="${i}">Save here</button><button class="btn small ghost" data-del="${i}" aria-label="Delete outfit ${i + 1}">Delete</button></div></div>`;
+    } else {
+      html += `<div class="outfit empty"><div class="o-text"><b>Empty slot ${i + 1}</b><small>Saves what the monkey is wearing now.</small></div><div class="o-btns"><button class="btn small primary" data-save="${i}">Save current look</button></div></div>`;
+    }
+  }
+  grid.innerHTML = html;
+  lazyPortraits(grid);
+  grid.querySelectorAll('[data-save]').forEach((b) => b.addEventListener('click', () => {
+    ui.click();
+    const i = Number(b.dataset.save);
+    const look = { ...Save.data.equipped };
+    Save.data.outfits[i] = { name: outfitName(look), look, t: Date.now() };
+    Save.persist();
+    ui.toast(`Saved as outfit ${i + 1}.`);
+    renderOutfits(ui);
+  }));
+  grid.querySelectorAll('[data-wear]').forEach((b) => b.addEventListener('click', () => {
+    ui.click();
+    const o = Save.data.outfits[Number(b.dataset.wear)];
+    let missing = 0;
+    for (const [slot, id] of Object.entries(o.look)) {
+      if (slot === 'stage' && id === 'auto') { Save.data.equipped.stage = 'auto'; continue; }
+      if (Save.owns(slot, id)) Save.data.equipped[slot] = id;
+      else missing++;
+    }
+    Save.persist();
+    ui.preview = null;
+    ui.app.applyLook(Save.data.equipped);
+    ui.app.monkey.play('CHEER', 1.4);
+    ui.toast(missing ? `Put on what you own (${missing} item${missing === 1 ? '' : 's'} not owned).` : `Wearing ${o.name}.`);
+    renderOutfits(ui);
+  }));
+  grid.querySelectorAll('[data-del]').forEach((b) => b.addEventListener('click', async () => {
+    const i = Number(b.dataset.del);
+    const ok = await ui.confirm({ title: 'Delete this outfit?', text: 'Only the saved outfit is removed. You keep every item.', ok: 'Delete', danger: true });
+    if (!ok) return;
+    Save.data.outfits[i] = null;
+    Save.persist();
+    renderOutfits(ui);
+  }));
 }

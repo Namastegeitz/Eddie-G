@@ -9,6 +9,8 @@ import { UI } from './ui.js';
 import { Game } from './game.js';
 import { Input } from './input.js';
 import { setupPlatform } from './native.js';
+import { Billing } from './billing.js';
+import { purchaseDone } from './storeui.js';
 
 const VERSION = '1.0.0';
 
@@ -53,6 +55,7 @@ async function boot() {
   setupPlatform(app);
   game.onHaptic = app.haptic;
   game.onAwake = app.keepAwake;
+  app.billing = new Billing();
 
   let lastQuality = null;
   app.applySettings = () => {
@@ -134,6 +137,15 @@ async function boot() {
   } catch { /* fine */ }
   ui.show('title');
   setLoading(100, 'Ready!');
+  // Payments (apps only; test mode with ?billing=test or #store-test)
+  app.billing.init({
+    onDeliver: (product, tx, price) => {
+      const got = Save.deliverPurchase(product, tx, price);
+      if (got) purchaseDone(ui, product, got);
+    },
+    onChange: () => { if (ui.current === 'store') import('./storeui.js').then((m) => m.renderStore(ui)); },
+    onError: (msg) => ui.toast(msg, 4000),
+  });
   document.getElementById('loading').classList.remove('show');
 
   // ------------------------------------------------------------ main loop

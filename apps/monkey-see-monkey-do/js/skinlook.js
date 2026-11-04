@@ -18,7 +18,7 @@ function canvasTexture(cv, srgb = true) {
 /** A shiny "matcap" ball for metal finishes: highlight, body colour, dark rim. */
 const matcaps = new Map();
 const matcapTextures = new Set();
-function matcap(color) {
+export function matcap(color) {
   if (matcaps.has(color)) return matcaps.get(color);
   const S = 128;
   const cv = document.createElement('canvas');
@@ -129,8 +129,9 @@ export function applySkin(m, skin) {
   m.outlineMat.needsUpdate = true;
   m.rainbow = !!skin.rainbow;
   buildExtras(m, skin.extras || [], skin);
-  setAura(m, skin.aura || null, skin.auraColor || '#ffffff');
   m.skin = skin;
+  if (m.gearAura) setAura(m, m.gearAura.type, m.gearAura.color);
+  else setAura(m, skin.aura || null, skin.auraColor || '#ffffff');
 }
 
 /** Light a material up in a move's colour (k: 0..1) and back. */
@@ -165,7 +166,7 @@ function outlined(m, group, geo, mat, scale = 1.08) {
   return mesh;
 }
 
-function wingShape(kind) {
+export function wingShape(kind) {
   const s = new THREE.Shape();
   if (kind === 'dragon') {
     s.moveTo(0, 0);
@@ -212,12 +213,20 @@ function clearExtras(m) {
   m.skinFx = [];
 }
 
+const BACK_EXTRAS = new Set(['cape', 'wings', 'jetpack', 'fin']);
+
+/** Rebuild the current skin's extras (after back gear is put on or taken off). */
+export function refreshSkinExtras(m) {
+  if (m.skin) buildExtras(m, m.skin.extras || [], m.skin);
+}
+
 function buildExtras(m, extras, skin) {
   clearExtras(m);
   const add = (parent, g) => { parent.add(g); m.extraGroups.push(g); return g; };
   const fx = (type, obj, extra = {}) => m.skinFx.push({ type, obj, ...extra });
   for (const e of extras) {
     const [name, a1, a2] = e.split(':');
+    if (m.hideBackExtras && BACK_EXTRAS.has(name)) continue; // a back gear item is worn instead
     if (name === 'cape') {
       const g = add(m.chest, new THREE.Group());
       g.position.set(0, 0.86, -0.36);
@@ -424,6 +433,8 @@ const AURA = {
   leaves: { n: 14, rise: -0.25, size: 0.45, add: false, life: [3, 4.5] },
   pixels: { n: 28, rise: 0.35, size: 0.36, add: true, life: [1, 2.2] },
   smoke: { n: 16, rise: 0.2, size: 1.1, add: false, life: [2, 3.5] },
+  hearts: { n: 18, rise: 0.4, size: 0.5, add: false, life: [1.8, 3] },
+  confetti: { n: 30, rise: -0.5, size: 0.3, add: false, life: [2.5, 4] },
 };
 
 const sprites = new Map();
@@ -458,6 +469,8 @@ function spriteTexture(type, color) {
     g.fill();
   };
   if (type === 'sparkle') { soft(16, 0.6); starPath(30, 4, 0.18); }
+  else if (type === 'hearts') { g.beginPath(); g.moveTo(0, 22); g.bezierCurveTo(-34, 0, -16, -26, 0, -9); g.bezierCurveTo(16, -26, 34, 0, 0, 22); g.fill(); }
+  else if (type === 'confetti') { const cols = ['#ff4f9a', '#ffd23f', '#2e8bff', '#1fb57a']; cols.forEach((c, i) => { g.fillStyle = c; g.save(); g.rotate(i * 0.9); g.fillRect(-6 + (i % 2) * 10, -18 + i * 8, 12, 7); g.restore(); }); }
   else if (type === 'stars') { soft(14, 0.5); starPath(26, 5, 0.45); }
   else if (type === 'embers') soft(28);
   else if (type === 'bubbles') { g.lineWidth = 4; g.beginPath(); g.arc(0, 0, 24, 0, TAU); g.stroke(); g.globalAlpha = 0.8; g.beginPath(); g.arc(-9, -9, 5, 0, TAU); g.fill(); }
@@ -472,7 +485,7 @@ function spriteTexture(type, color) {
   return t;
 }
 
-function setAura(m, type, color) {
+export function setAura(m, type, color) {
   if (m.aura) {
     m.root.remove(m.aura.points);
     m.aura.points.geometry.dispose();
@@ -535,7 +548,7 @@ export function updateSkinFx(m, time, dt, energy) {
     const t = p.life / p.max;
     p.y += cfg.rise * dt * (1 + energy);
     p.a += dt * (cfg.rise < 0 ? 0.3 : 0.6);
-    const sway = au.type === 'bubbles' || au.type === 'snow' || au.type === 'leaves' ? Math.sin(time * 2 + i) * 0.08 : 0;
+    const sway = au.type === 'bubbles' || au.type === 'snow' || au.type === 'leaves' || au.type === 'confetti' ? Math.sin(time * 2 + i) * 0.08 : 0;
     pos.setXYZ(i, Math.cos(p.a) * p.r + sway, p.y, Math.sin(p.a) * p.r * 0.7);
     const fade = Math.min(1, t * 5) * Math.min(1, (1 - t) * 3);
     col.setXYZW(i, 1, 1, 1, au.type === 'sparkle' || au.type === 'stars' ? fade * (0.6 + 0.4 * Math.sin(time * 9 + i * 2)) : fade);

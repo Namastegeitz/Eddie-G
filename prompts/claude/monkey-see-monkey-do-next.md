@@ -121,6 +121,11 @@ load, keep the beat clock exact (tempo metadata per track), and add a recorded
 
 ### 15. Optional: real-money golden banana packs (only if you want them)
 
+Done (fourth pass): the Shop sells banana and golden packs, combos, a Starter
+Pack, bundles and skin sets in the apps, with a grown-up check, monthly limit
+and Restore. Product IDs are in js/store.js (not rules.js). Next step is
+yours: create the products (mobile/README.md > In-app purchases).
+
 ```
 Add optional in-app purchases of golden bananas to the iOS and Android apps only
 (never the web build), using the store's own billing (StoreKit / Google Play

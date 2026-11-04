@@ -5,7 +5,10 @@ import { RULES, timeLimit } from './rules.js';
 import { WORLDS, LEVELS, TWISTS, ENDLESS, getLevel } from './levels.js';
 import { CATEGORIES, ITEMS, itemsIn, getItem } from './shop.js';
 import { Save } from './save.js';
-import { renderSkins, renderSkinAction, showExchange, showUnlocks, updateGolden, skinsHelp, portrait, lazyPortraits, GOLDEN_ICON } from './wardrobe.js';
+import { renderSkins, renderSkinAction, showExchange, showUnlocks, updateGolden, skinsHelp, portrait, lazyPortraits, lazyGearThumbs, renderOutfits, GOLDEN_ICON } from './wardrobe.js';
+import { GEAR_SLOTS } from './shop.js';
+import { renderStore, storeHelp } from './storeui.js';
+import { spentThisMonth, SPEND_LIMITS } from './store.js';
 import { SKINS } from './skins.js';
 
 export const ICON = {
@@ -19,6 +22,7 @@ export const ICON = {
   gear: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7zm8 4.6v-2.2l-2.4-.5a6 6 0 0 0-.7-1.6l1.4-2-1.6-1.6-2 1.4a6 6 0 0 0-1.6-.7L12.6 3h-2.2l-.5 2.4a6 6 0 0 0-1.6.7l-2-1.4-1.6 1.6 1.4 2a6 6 0 0 0-.7 1.6L3 10.4v2.2l2.4.5a6 6 0 0 0 .7 1.6l-1.4 2 1.6 1.6 2-1.4a6 6 0 0 0 1.6.7l.5 2.4h2.2l.5-2.4a6 6 0 0 0 1.6-.7l2 1.4 1.6-1.6-1.4-2a6 6 0 0 0 .7-1.6z" fill="currentColor"/></svg>',
   info: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9.5" fill="none" stroke="currentColor" stroke-width="2.4"/><rect x="10.7" y="10" width="2.6" height="7.5" rx="1.3" fill="currentColor"/><circle cx="12" cy="7" r="1.6" fill="currentColor"/></svg>',
   chart: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="12" width="4" height="8" rx="1.4" fill="currentColor"/><rect x="10" y="7" width="4" height="13" rx="1.4" fill="currentColor"/><rect x="16" y="3.5" width="4" height="16.5" rx="1.4" fill="currentColor"/></svg>',
+  bag: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 8h14l-1.2 12.2a1 1 0 0 1-1 .8H7.2a1 1 0 0 1-1-.8z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/><path d="M9 10V7a3 3 0 0 1 6 0v3" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>',
   hanger: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8.5V7.6c1.3-.4 2.2-1.4 2.2-2.7a2.2 2.2 0 1 0-4.4 0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M12 8.5L2.8 15.6c-.8.6-.4 1.9.6 1.9h17.2c1 0 1.4-1.3.6-1.9z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/></svg>',
   check: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>',
   eye: '<svg viewBox="0 0 64 40" aria-hidden="true"><path d="M4 20C12 8 22 3 32 3s20 5 28 17c-8 12-18 17-28 17S12 32 4 20z" fill="#fff8e6" stroke="#23160c" stroke-width="3"/><circle cx="32" cy="20" r="10" fill="#23160c"/><circle cx="35" cy="16" r="3" fill="#fff"/></svg>',
@@ -74,6 +78,12 @@ function glyph(item) {
     'stage:disco': '<rect x="2" y="2" width="36" height="36" rx="8" fill="#2c0f55"/><circle cx="20" cy="17" r="9" fill="#d8d8f0"/><path d="M11 17h18M20 8v18M13 11l14 12M27 11L13 23" stroke="#9aa" stroke-width="1"/><path d="M6 36l6-10M34 36l-6-10" stroke="#ff4fd8" stroke-width="3"/>',
     'stage:moon': '<rect x="2" y="2" width="36" height="36" rx="8" fill="#0b1236"/><path d="M24 8a10 10 0 1 0 8 15 8 8 0 0 1-8-15z" fill="#f4f0d0"/><circle cx="10" cy="10" r="1.3" fill="#fff"/><circle cx="14" cy="28" r="1" fill="#fff"/><circle cx="33" cy="32" r="1.2" fill="#fff"/>',
   };
+  if (item.cat === 'aura') {
+    if (item.id === 'none') return c('<circle cx="20" cy="22" r="9" fill="#8a5230"/><circle cx="20" cy="20" r="15" fill="none" stroke="#cfe0d4" stroke-width="2" stroke-dasharray="3 4"/>');
+    const col = item.auraColor || '#ffffff';
+    const dots = [[8, 10], [32, 9], [6, 26], [34, 27], [14, 34], [27, 35], [20, 5]].map(([x, y], i) => (i % 2 ? `<path d="M${x} ${y - 4}l1.2 2.8 2.8 1.2-2.8 1.2L${x} ${y + 4}l-1.2-2.8-2.8-1.2 2.8-1.2z" fill="${col}"/>` : `<circle cx="${x}" cy="${y}" r="2.6" fill="${col}"/>`)).join('');
+    return c(`<circle cx="20" cy="22" r="9" fill="#8a5230"/><circle cx="20" cy="24" r="5" fill="#f3c9a0"/>${dots}`);
+  }
   return c(G[k] || '<circle cx="20" cy="20" r="12" fill="#cfe0d4"/>');
 }
 
@@ -98,12 +108,24 @@ const SETTINGS = [
     { key: 'haptics', type: 'toggle', label: 'Vibration', help: 'A short buzz on taps and mistakes, on phones that support it.' },
     { type: 'action', label: 'Rhythm calibration', action: 'calibrate', button: 'Calibrate', help: () => `Adjusts timing for your device's sound delay (useful with Bluetooth headphones). Current: ${Save.settings.latencyMs} ms.` },
   ] },
+  { group: 'Purchases', items: [
+    { key: 'parentGate', type: 'toggle', label: 'Ask a grown-up before buying', help: 'A times-table question comes before every real-money purchase. Turning this off also needs the answer.' },
+    { key: 'spendLimit', type: 'seg', label: 'Monthly limit', options: SPEND_LIMITS.map((v) => [v, v ? String(v) : 'None']), help: 'Most real money that can be spent in a calendar month, in your store\'s currency. Raising it needs a grown-up.' },
+    { type: 'action', label: 'Restore purchases', action: 'restore', button: 'Restore', help: 'Brings back bundles and sets bought on another phone (iPhone and Android apps).' },
+  ] },
   { group: 'Display', items: [
     { key: 'captions', type: 'toggle', label: 'Move names during Watch', help: 'Shows the name of each move as the monkey does it.' },
     { key: 'reduceMotion', type: 'toggle', label: 'Reduce motion', help: 'No camera shake, less confetti, calmer menus.' },
     { key: 'quality', type: 'seg', label: 'Graphics', options: [['auto', 'Auto'], ['high', 'High'], ['low', 'Low']], help: 'Low drops outlines and resolution. Easier on older phones and batteries.' },
   ] },
 ];
+
+function purchasesHtml(d) {
+  if (!d.purchases.length) return '<p class="note" style="color:var(--cream-dim)">No purchases. Everything in the game can be earned by playing.</p>';
+  const spent = spentThisMonth(d.purchases);
+  const month = Object.entries(spent).map(([c, v]) => `${v.toFixed(2)} ${c}`).join(', ') || '0';
+  return `<p class="note" style="margin:0 0 6px;color:var(--cream-dim);font-size:13px">This month: ${esc(month)}.</p><ul class="ledger">${d.purchases.map((p) => `<li><span>${esc(p.title)}${p.test ? ' (test)' : ''}<br><small style="color:var(--cream-dim)">${new Date(p.t).toLocaleString()}</small></span><span>${esc(p.price || '')}</span></li>`).join('')}</ul>`;
+}
 
 function goldRows(items) {
   if (!items || !items.length) return '';
@@ -143,6 +165,7 @@ export class UI {
     fill('.i-info', ICON.info);
     fill('.i-chart', ICON.chart);
     fill('.i-hanger', ICON.hanger);
+    fill('.i-bag', ICON.bag);
     fill('.icon-btn.back', ICON.back);
     fill('.icon-btn.pause', ICON.pause);
     this.buildPad();
@@ -191,6 +214,7 @@ export class UI {
     if (open('ov-calibrate')) { this.calRunning = false; this.closeOverlay('ov-calibrate'); return true; }
     if (open('ov-howto')) { this.closeOverlay('ov-howto'); return true; }
     if (open('ov-exchange')) { this.closeOverlay('ov-exchange'); return true; }
+    if (open('ov-buy')) { this.closeOverlay('ov-buy'); return true; }
     if (open('ov-unlock')) { this.closeOverlay('ov-unlock'); return true; }
     if (this.game.paused) { this.game.resume(); return true; }
     if (open('ov-intro')) { this.closeOverlay('ov-intro'); this.show('map'); return true; }
@@ -235,8 +259,8 @@ export class UI {
   show(name) {
     if (this.current === 'shop' && name !== 'shop') this.endPreview();
     if (name !== this.current && ['title', 'map', 'hud', 'shop'].includes(this.current)) this.prev = this.current;
-    if (['title', 'map', 'shop', 'stats'].includes(name) && this.game.mode !== 'menu' && !this.game.paused) this.game.toMenu();
-    if (['title', 'map', 'shop', 'stats'].includes(name) && this.game.paused) { this.game.paused = false; this.game.toMenu(); }
+    if (['title', 'map', 'shop', 'stats', 'store'].includes(name) && this.game.mode !== 'menu' && !this.game.paused) this.game.toMenu();
+    if (['title', 'map', 'shop', 'stats', 'store'].includes(name) && this.game.paused) { this.game.paused = false; this.game.toMenu(); }
     $$('.screen').forEach((s) => s.classList.toggle('show', s.id === (name === 'hud' ? 'hud' : 'scr-' + name)));
     this.current = name;
     if (name !== 'hud') this.hideOverlays(['ov-pause']);
@@ -246,6 +270,7 @@ export class UI {
     if (name === 'settings') this.renderSettings();
     if (name === 'help') this.renderHelp();
     if (name === 'stats') this.renderStats();
+    if (name === 'store') renderStore(this);
     if (name === 'title') this.updateBananas();
     if (['title', 'map', 'shop'].includes(name)) {
       const res = Save.checkSkinGoals();
@@ -827,10 +852,29 @@ export class UI {
   }
 
   hideOverlays(only) {
-    const ids = only || ['ov-intro', 'ov-result', 'ov-pause', 'ov-howto', 'ov-calibrate', 'ov-exchange'];
+    const ids = only || ['ov-intro', 'ov-result', 'ov-pause', 'ov-howto', 'ov-calibrate', 'ov-exchange', 'ov-buy'];
     for (const id of ids) $('#' + id).classList.remove('show');
     $('#mistake').hidden = true;
     this.reframe();
+  }
+
+  /** A times-table question for grown-ups. Resolves true when answered right. */
+  grownUpCheck() {
+    return new Promise((resolve) => {
+      const a = 3 + Math.floor(Math.random() * 6);
+      const b = 4 + Math.floor(Math.random() * 6);
+      const right = a * b;
+      const opts = [right, right + 3, right - 4].sort(() => Math.random() - 0.5);
+      this.confirmResolve = resolve;
+      $('#confirm-card').innerHTML = `<h2>Grown-ups only</h2><p>What is ${a} × ${b}?</p><div class="actions"><div class="btn-row three">${opts.map((o) => `<button class="btn" data-ans="${o}">${o}</button>`).join('')}</div><button class="btn ghost" id="cf-cancel">Cancel</button></div>`;
+      this.openOverlay('ov-confirm');
+      document.querySelectorAll('#confirm-card [data-ans]').forEach((x) => x.addEventListener('click', () => {
+        const ok = Number(x.dataset.ans) === right;
+        if (!ok) this.toast('Not quite.');
+        this.closeConfirm(ok);
+      }));
+      $('#cf-cancel').addEventListener('click', () => this.closeConfirm(false));
+    });
   }
 
   confirm({ title, text, ok = 'OK', cancel = 'Cancel', danger = false }) {
@@ -865,6 +909,12 @@ export class UI {
       this.updateBananas();
       return;
     }
+    if (this.shopCat === 'outfits') {
+      renderOutfits(this);
+      this.renderShopAction();
+      this.updateBananas();
+      return;
+    }
     $('#shop-grid').classList.remove('skins');
     const eq = Save.data.equipped;
     const reached = Save.worldReached();
@@ -879,10 +929,12 @@ export class UI {
       if (equipped) state = `<span class="state">${ICON.check}Wearing</span>`;
       else if (owned) state = '<span class="state">Owned</span>';
       else if (it.unlockWorld && reached < it.unlockWorld) state = `<span class="state price">${ICON.banana}${it.price} <span style="color:var(--cream-dim);font-weight:600">or reach World ${it.unlockWorld}</span></span>`;
-      else state = `<span class="state price">${ICON.banana}${it.price}</span>`;
-      const g = it.id === 'auto' ? glyph({ cat: 'stage', id: 'jungle' }) : glyph(it);
-      return `<button class="item${equipped ? ' equipped' : ''}${pv === it.id ? ' previewing' : ''}" data-id="${it.id}" aria-label="${esc(it.name)}"><span class="glyph">${g}</span><span class="name">${esc(it.name)}</span>${state}</button>`;
+      else state = `<span class="state price">${it.currency === 'golden' ? GOLDEN_ICON : ICON.banana}${it.price}</span>`;
+      const isGear = GEAR_SLOTS.includes(it.cat) && it.id !== 'none' && it.cat !== 'aura';
+      const g = it.id === 'auto' ? glyph({ cat: 'stage', id: 'jungle' }) : isGear ? `<canvas data-gear="${it.cat}:${it.id}" width="104" height="104" aria-hidden="true"></canvas>` : glyph(it);
+      return `<button class="item${equipped ? ' equipped' : ''}${pv === it.id ? ' previewing' : ''}${it.premium ? ' premium' : ''}" data-id="${it.id}" aria-label="${esc(it.name)}"><span class="glyph">${g}</span><span class="name">${esc(it.name)}</span>${state}</button>`;
     }).join('');
+    lazyGearThumbs($('#shop-grid'), { gradient: this.app.monkey.gradient, outlineMat: this.app.monkey.outlineMat });
     $$('#shop-grid .item').forEach((b) => b.addEventListener('click', () => { this.click(); this.tryOn(this.shopCat, b.dataset.id); }));
     this.renderShopAction();
     this.updateBananas();
@@ -898,6 +950,10 @@ export class UI {
       document.querySelectorAll('#shop-grid .skin-card').forEach((b) => b.classList.toggle('previewing', b.dataset.skin === id));
     }
     else if (cat === 'stage') { /* environment changes in applyLook */ }
+    else if (cat === 'back') this.app.monkey.play('TURN', 2.2);
+    else if (cat === 'hands') { this.app.monkey.play('LA', 0.7); this.app.monkey.play('RA', 0.7, this.app.monkey.time + 0.5); }
+    else if (cat === 'feet') { this.app.monkey.play('LL', 0.6); this.app.monkey.play('RL', 0.6, this.app.monkey.time + 0.5); }
+    else if (cat === 'aura') this.app.monkey.play('CHEER', 1.4);
     else this.app.monkey.play('HOP', 0.5);
     $$('#shop-grid .item').forEach((b) => b.classList.toggle('previewing', b.dataset.id === id));
     this.renderShopAction();
@@ -929,12 +985,15 @@ export class UI {
     const item = pv.id === 'auto' ? { id: 'auto', cat: 'stage', name: 'Match the world', price: 0, desc: 'Levels use their world\'s stage.' } : getItem(pv.cat, pv.id);
     const owned = pv.id === 'auto' || Save.owns(pv.cat, pv.id);
     const equipped = Save.data.equipped[pv.cat] === pv.id;
-    const have = Save.data.bananas;
+    const golden = item.currency === 'golden';
+    const have = golden ? Save.data.golden : Save.data.bananas;
+    const unit = golden ? 'golden bananas' : 'bananas';
+    const icon = golden ? GOLDEN_ICON : ICON.banana;
     let btn, text;
     if (equipped) { text = `${item.name}: ${item.desc}`; btn = `<button class="btn small" disabled>Wearing</button>`; }
     else if (owned) { text = `${item.name}: ${item.desc}`; btn = `<button class="btn small primary" id="shop-equip">Wear it</button>`; }
-    else if (have >= item.price) { text = `${item.desc} You have ${have}; ${have - item.price} left after.`; btn = `<button class="btn small primary" id="shop-buy">Buy <span class="cost">${ICON.banana}${item.price}</span></button>`; }
-    else { text = `${item.desc} You need ${item.price - have} more bananas.`; btn = `<button class="btn small" disabled>Buy <span class="cost">${ICON.banana}${item.price}</span></button>`; }
+    else if (have >= item.price) { text = `${item.name}${item.premium ? ' (premium)' : ''}: ${item.desc} You have ${have} ${unit}; ${have - item.price} left after.`; btn = `<button class="btn small primary" id="shop-buy">Buy <span class="cost">${icon}${item.price}</span></button>`; }
+    else { text = `${item.name}${item.premium ? ' (premium)' : ''}: ${item.desc} You need ${item.price - have} more ${unit}.`; btn = `<button class="btn small" disabled>Buy <span class="cost">${icon}${item.price}</span></button>`; }
     bar.innerHTML = `<p>${esc(text)}</p>${btn}`;
     const eq = $('#shop-equip');
     if (eq) eq.addEventListener('click', () => {
@@ -955,7 +1014,7 @@ export class UI {
         this.app.monkey.play('CHEER', 1.4);
         this.renderShop();
         this.updateBananas(true);
-        this.toast(`Bought ${item.name} for ${item.price} bananas.`);
+        this.toast(`Bought ${item.name} for ${item.price} ${golden ? 'golden bananas' : 'bananas'}.`);
       }
     });
   }
@@ -983,8 +1042,9 @@ export class UI {
     const about = `<div class="group"><h3>About</h3><p class="note" style="margin:0;color:var(--cream-dim);font-size:14px;line-height:1.45">Monkey See, Monkey Do · version ${esc(this.app.version)}. Made with three.js (MIT licence). Fonts: Lilita One and Baloo 2 (SIL Open Font Licence). All music and sounds are generated live by the game.</p></div>`;
     $('#settings-body').innerHTML = groups + dataGroup + about;
     const body = $('#settings-body');
-    $$('.toggle', body).forEach((b) => b.addEventListener('click', () => {
+    $$('.toggle', body).forEach((b) => b.addEventListener('click', async () => {
       const v = b.getAttribute('aria-checked') !== 'true';
+      if (b.dataset.key === 'parentGate' && !v && !(await this.grownUpCheck())) return;
       b.setAttribute('aria-checked', String(v));
       Save.setSetting(b.dataset.key, v);
       this.app.applySettings();
@@ -994,16 +1054,26 @@ export class UI {
       Save.setSetting(r.dataset.key, Number(r.value));
       this.app.applySettings();
     }));
-    $$('.seg button', body).forEach((b) => b.addEventListener('click', () => {
+    $$('.seg button', body).forEach((b) => b.addEventListener('click', async () => {
       const key = b.dataset.key;
       const raw = b.dataset.val;
       const v = isNaN(Number(raw)) ? raw : Number(raw);
+      if (key === 'spendLimit') {
+        const cur = Save.settings.spendLimit || 0;
+        const loosen = v === 0 ? cur !== 0 : cur !== 0 && v > cur;
+        if (loosen && !(await this.grownUpCheck())) return;
+      }
       Save.setSetting(key, v);
       $$(`.seg button[data-key="${key}"]`, body).forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
       this.app.applySettings();
       this.click();
     }));
     $('#act-calibrate').addEventListener('click', () => { this.audio.unlock(); this.showCalibrate(); });
+    $('#act-restore').addEventListener('click', async () => {
+      this.click();
+      const r = await this.app.billing.restore();
+      this.toast(r.ok ? (r.test ? 'Test mode: nothing to restore.' : 'Asked the store to restore your purchases.') : r.error);
+    });
     $('#data-view').addEventListener('click', () => {
       $('#data-out').innerHTML = `<pre class="save-view">${esc(JSON.stringify(Save.data, null, 2))}</pre>`;
     });
@@ -1182,7 +1252,7 @@ export class UI {
         <li>Levels: ${RULES.bananasPerStep} banana per move in each round you clear (added right away), plus ${RULES.bananasPerStar} per star when you clear the level, plus ${RULES.firstClearBananas} the first time you clear it. Replaying a level earns bananas again.</li>
         <li>Endless: ${RULES.endlessPerRound} per round, ${RULES.endlessMilestoneBananas} extra for every ${RULES.endlessMilestoneEvery} rounds, and ${RULES.endlessBestBonus} for a new best.</li>
         <li>Spend them in the Wardrobe, on "Watch again" during your turn (${RULES.replayCost}, free in Assist mode), or to continue a level with 1 life after running out (${RULES.continueCost}, once per try).</li>
-        <li>Bananas can't be bought with money. There are no ads and nothing to buy for real money anywhere in the game.</li>
+        <li>You never need to pay. Every banana, golden banana, skin and item can be earned by playing. The iPhone and Android apps also sell packs in the Shop (see Shop below); the web version sells nothing. There are no ads.</li>
       </ul>
       <p class="note">Every banana you earn or spend is listed under Stats > Banana history.</p>
 
@@ -1208,9 +1278,11 @@ export class UI {
       <p class="note">Looks are just for fun: nothing in the wardrobe changes scores, timers or difficulty.</p>
 
       ${skinsHelp(this)}
+      ${storeHelp()}
 
       <h3>Your privacy</h3>
-      <p>The game runs entirely on your device. Progress is saved in this browser's storage. No account, no ads, no analytics, no data sent anywhere. Settings > Your data shows exactly what is saved, and lets you copy it or delete it.</p>`;
+      <p>The game runs entirely on your device. Progress is saved in this browser's storage. No account, no ads, no analytics, no data sent anywhere. Settings > Your data shows exactly what is saved, and lets you copy it or delete it.</p>
+      <p>In the iPhone and Android apps, purchases are made and paid for in the App Store or Google Play. The game never sees your card or account details; it keeps only a list of what was bought, on this device (Stats > Purchases).</p>`;
     lazyPortraits($('#help-body'));
   }
 
@@ -1248,6 +1320,7 @@ export class UI {
       <div class="tiles">${tiles.map(([v, l]) => `<div class="tile"><b>${v}</b><span>${esc(l)}</span></div>`).join('')}</div>
       <div class="group"><h3>Moves you get right</h3>${moveBars}</div>
       <div class="group"><h3>Most common mix-ups</h3>${mixHtml}</div>
+      <div class="group"><h3>Purchases</h3>${purchasesHtml(d)}</div>
       <div class="group"><h3>Banana history</h3><p class="note" style="margin:0 0 6px;color:var(--cream-dim);font-size:13px">The last ${d.ledger.length} changes. Earned in total: ${d.earned}. Spent: ${d.spent}.</p>${ledger}</div>`;
   }
 }

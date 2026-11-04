@@ -5,7 +5,9 @@
 import * as THREE from './vendor/three.module.min.js';
 import { MOVES } from './moves.js';
 import { getSkin } from './skins.js';
-import { applySkin, flashMaterial, updateSkinFx } from './skinlook.js';
+import { applySkin, flashMaterial, updateSkinFx, setAura, refreshSkinExtras } from './skinlook.js';
+import { buildGear, updateGearFx } from './gear.js';
+import { getItem, GEAR_SLOTS } from './shop.js';
 
 const TAU = Math.PI * 2;
 const clamp01 = (x) => (x < 0 ? 0 : x > 1 ? 1 : x);
@@ -276,7 +278,14 @@ function stretchYawn(p, t) {
   setFace(p, 1, 'o', 'closed', 0.5);
 }
 
+function turnAround(p, t) {
+  // show off the back: turn, hold, turn back
+  p.ry += Math.PI * hump(t, 0.3, 0.7);
+  setFace(p, 1, 'grin', 'happy', 0.5);
+}
+
 const ACTIONS = {
+  TURN: turnAround,
   LA: (p, t) => armUp(p, 'L', t),
   RA: (p, t) => armUp(p, 'R', t),
   LL: (p, t, el, ctx) => legStomp(p, 'L', t, el, ctx),
@@ -522,6 +531,12 @@ export class Monkey {
     this.neckAnchor = new THREE.Group();
     this.neckAnchor.position.set(0, 0.86, 0.06);
     torso.add(this.neckAnchor);
+    this.backAnchor = new THREE.Group();
+    this.backAnchor.position.set(0, 0.55, -0.42);
+    torso.add(this.backAnchor);
+    this.shoulderAnchor = new THREE.Group();
+    this.shoulderAnchor.position.set(0.44, 0.88, -0.04);
+    torso.add(this.shoulderAnchor);
 
     // arms
     for (const side of ['L', 'R']) {
@@ -564,7 +579,9 @@ export class Monkey {
       parent = g;
     }
 
-    this.accessories = { hat: null, eyes: null, neck: null };
+    this.accessories = {};
+    this.gearFx = {};
+    this.gearAura = null;
     // pick points for tapping the monkey
     this.hitPoints = {
       LA: [this.j.haL, this.j.elL],
@@ -602,137 +619,59 @@ export class Monkey {
   }
 
   clearAccessory(slot) {
-    const a = this.accessories[slot];
-    if (a) {
-      a.parent.remove(a);
-      a.traverse((o) => { if (o.isMesh && !o.userData.shared) o.geometry.dispose(); });
+    for (const g of this.accessories[slot] || []) {
+      if (g.parent) g.parent.remove(g);
+      g.traverse((o) => {
+        if (o.geometry) o.geometry.dispose();
+        if (o.material && o.material !== this.outlineMat) o.material.dispose();
+      });
     }
     this.accessories[slot] = null;
+    this.gearFx[slot] = [];
   }
 
+  anchorFor(name) {
+    return {
+      hat: this.hatAnchor, head: this.j.head, eyes: this.eyesAnchor, neck: this.neckAnchor,
+      back: this.backAnchor, shoulder: this.shoulderAnchor,
+      handL: this.j.haL, handR: this.j.haR, footL: this.j.ftL, footR: this.j.ftR,
+    }[name];
+  }
+
+  /** Put gear (js/gear.js) in a slot; 'none' takes it off. */
   setAccessory(slot, id) {
-    this.clearAccessory(slot);
-    if (!id || id === 'none') return;
-    const g = new THREE.Group();
-    const T = (c) => this.toon(c);
-    const add = (geo, mat, pos, rot, scale) => {
-      const m = new THREE.Mesh(geo, mat);
-      if (pos) m.position.set(...pos);
-      if (rot) m.rotation.set(...rot);
-      if (scale) m.scale.set(...scale);
-      g.add(m);
-      if (this.outlines) {
-        const o = new THREE.Mesh(geo, this.outlineMat);
-        o.position.copy(m.position); o.rotation.copy(m.rotation); o.scale.copy(m.scale).multiplyScalar(1.07);
-        g.add(o);
-      }
-      return m;
-    };
-    if (slot === 'hat') {
-      if (id === 'party') {
-        add(new THREE.ConeGeometry(0.24, 0.6, 24), T(0xff4f9a), [0.05, 0.26, 0], [0, 0, -0.18]);
-        add(new THREE.SphereGeometry(0.08, 16, 12), T(0xffd23f), [0.15, 0.56, 0]);
-        add(new THREE.TorusGeometry(0.2, 0.03, 8, 24), T(0xffd23f), [0.02, 0.1, 0], [Math.PI / 2, 0.18, 0]);
-      } else if (id === 'flower') {
-        const cols = [0xff6fae, 0xffd23f, 0xffffff, 0xff8a1f, 0xb07cff, 0x55d0ff];
-        for (let k = 0; k < 9; k++) {
-          const a = (k / 9) * TAU;
-          const x = Math.sin(a) * 0.46, z = Math.cos(a) * 0.43;
-          add(new THREE.SphereGeometry(0.075, 12, 8), T(cols[k % cols.length]), [x, -0.12, z]);
-          add(new THREE.SphereGeometry(0.03, 8, 6), T(0xffe066), [x * 1.08, -0.12, z * 1.08]);
-        }
-        add(new THREE.TorusGeometry(0.45, 0.025, 6, 30), T(0x3f9a3a), [0, -0.12, 0], [Math.PI / 2, 0, 0]);
-      } else if (id === 'propeller') {
-        const cap = add(new THREE.SphereGeometry(0.42, 24, 12, 0, TAU, 0, Math.PI / 2), T(0x2e8bff), [0, -0.12, 0], null, [1, 0.62, 1]);
-        cap.material.side = THREE.DoubleSide;
-        add(new THREE.CylinderGeometry(0.3, 0.3, 0.02, 20, 1, false, -0.9, 1.8), T(0xffd23f), [0, -0.1, 0.28], null, [1, 1, 0.8]);
-        add(new THREE.CylinderGeometry(0.02, 0.02, 0.16, 8), T(0x333333), [0, 0.2, 0]);
-        const prop = new THREE.Group();
-        prop.position.set(0, 0.28, 0);
-        const blade = new THREE.Mesh(new THREE.BoxGeometry(0.62, 0.015, 0.08), T(0xff4f4f));
-        prop.add(blade);
-        const blade2 = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.015, 0.62), T(0xffd23f));
-        prop.add(blade2);
-        g.add(prop);
-        g.userData.spin = prop;
-      } else if (id === 'headphones') {
-        add(new THREE.TorusGeometry(0.6, 0.045, 8, 28, Math.PI), T(0x2b2b38), [0, -0.45, -0.02], [0, 0, 0]);
-        for (const s of [-1, 1]) {
-          add(new THREE.CylinderGeometry(0.17, 0.17, 0.14, 20), T(0xff4f9a), [s * 0.62, -0.47, -0.02], [0, 0, Math.PI / 2]);
-          add(new THREE.CylinderGeometry(0.12, 0.12, 0.15, 20), T(0x2b2b38), [s * 0.66, -0.47, -0.02], [0, 0, Math.PI / 2]);
-        }
-      } else if (id === 'tophat') {
-        add(new THREE.CylinderGeometry(0.28, 0.3, 0.5, 24), T(0x1f1f2a), [0, 0.18, 0], [-0.08, 0, 0.06]);
-        add(new THREE.CylinderGeometry(0.46, 0.46, 0.04, 28), T(0x1f1f2a), [0, -0.06, 0], [-0.08, 0, 0.06]);
-        add(new THREE.CylinderGeometry(0.295, 0.305, 0.09, 24), T(0xd33a3a), [0, 0.0, 0.0], [-0.08, 0, 0.06]);
-      } else if (id === 'crown') {
-        const gold = T(0xffc928);
-        add(new THREE.CylinderGeometry(0.3, 0.27, 0.18, 24, 1, true), gold, [0, 0.0, 0]).material.side = THREE.DoubleSide;
-        for (let k = 0; k < 6; k++) {
-          const a = (k / 6) * TAU;
-          add(new THREE.ConeGeometry(0.07, 0.18, 10), gold, [Math.sin(a) * 0.28, 0.17, Math.cos(a) * 0.28]);
-          add(new THREE.SphereGeometry(0.035, 10, 8), T(k % 2 ? 0x2e8bff : 0xff3b5c), [Math.sin(a) * 0.295, 0.0, Math.cos(a) * 0.295]);
-        }
-        g.rotation.z = 0.12;
-      }
-      this.hatAnchor.add(g);
-    } else if (slot === 'eyes') {
-      if (id === 'round') {
-        const frame = T(0x3a2a1a);
-        for (const s of [-1, 1]) add(new THREE.TorusGeometry(0.15, 0.02, 8, 26), frame, [s * 0.165, 0, 0.0]);
-        add(new THREE.CylinderGeometry(0.015, 0.015, 0.06, 6), frame, [0, 0.02, 0], [0, 0, Math.PI / 2]);
-      } else if (id === 'shades') {
-        const m = new THREE.MeshToonMaterial({ color: 0x111122, gradientMap: this.gradient });
-        for (const s of [-1, 1]) add(new THREE.SphereGeometry(0.16, 20, 12), m, [s * 0.175, 0, 0.0], null, [1.15, 0.8, 0.25]);
-        add(new THREE.BoxGeometry(0.12, 0.03, 0.03), m, [0, 0.03, 0.02]);
-        add(new THREE.SphereGeometry(0.035, 8, 6), new THREE.MeshBasicMaterial({ color: 0xffffff }), [-0.12, 0.05, 0.05]);
-      } else if (id === 'stars') {
-        const shape = new THREE.Shape();
-        for (let k = 0; k < 10; k++) {
-          const r = k % 2 ? 0.08 : 0.19;
-          const a = (k / 10) * TAU + Math.PI / 2;
-          const x = Math.cos(a) * r, y = Math.sin(a) * r;
-          if (k === 0) shape.moveTo(x, y); else shape.lineTo(x, y);
-        }
-        const geo = new THREE.ExtrudeGeometry(shape, { depth: 0.03, bevelEnabled: false });
-        for (const s of [-1, 1]) add(geo, T(s < 0 ? 0xff4f9a : 0xffc926), [s * 0.18, 0, -0.01]);
-        add(new THREE.BoxGeometry(0.08, 0.025, 0.025), T(0xffffff), [0, 0.03, 0.01]);
-      }
-      this.eyesAnchor.add(g);
-    } else if (slot === 'neck') {
-      if (id === 'bowtie') {
-        const red = T(0xe0303f);
-        add(new THREE.ConeGeometry(0.12, 0.2, 4), red, [-0.11, 0, 0.12], [0, 0, -Math.PI / 2], [1, 1, 0.5]);
-        add(new THREE.ConeGeometry(0.12, 0.2, 4), red, [0.11, 0, 0.12], [0, 0, Math.PI / 2], [1, 1, 0.5]);
-        add(new THREE.SphereGeometry(0.06, 12, 8), red, [0, 0, 0.15]);
-      } else if (id === 'scarf') {
-        const c = T(0x2e8bff);
-        add(new THREE.TorusGeometry(0.33, 0.085, 10, 26), c, [0, 0, -0.05], [Math.PI / 2 - 0.15, 0, 0]);
-        const tail = new THREE.Group();
-        tail.position.set(0.16, -0.02, 0.26);
-        const tm = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.42, 0.05), c);
-        tm.position.y = -0.2;
-        tail.add(tm);
-        const stripe = new THREE.Mesh(new THREE.BoxGeometry(0.145, 0.05, 0.055), T(0xffd23f));
-        stripe.position.y = -0.33;
-        tail.add(stripe);
-        g.add(tail);
-        g.userData.flap = tail;
-      } else if (id === 'lei') {
-        const cols = [0xff4f9a, 0xffd23f, 0xff8a1f, 0xffffff, 0xb07cff];
-        for (let k = 0; k < 16; k++) {
-          const a = (k / 16) * TAU;
-          add(new THREE.SphereGeometry(0.065, 10, 8), T(cols[k % cols.length]), [Math.sin(a) * 0.36, -0.02 + Math.cos(a) * 0.06, Math.cos(a) * 0.3 - 0.04]);
-        }
-      } else if (id === 'chain') {
-        const gold = T(0xffc928);
-        add(new THREE.TorusGeometry(0.34, 0.025, 8, 30), gold, [0, -0.04, -0.03], [Math.PI / 2 - 0.35, 0, 0]);
-        add(new THREE.TorusGeometry(0.09, 0.035, 8, 16, Math.PI * 0.9), gold, [0, -0.2, 0.3], [0, 0, 2.6]);
-      }
-      this.neckAnchor.add(g);
+    if (slot === 'aura') {
+      const item = id && id !== 'none' ? getItem('aura', id) : null;
+      this.gearAura = item ? { type: item.id, color: item.auraColor || '#ffffff' } : null;
+      this.refreshAura();
+      return;
     }
-    this.accessories[slot] = g;
+    this.clearAccessory(slot);
+    const built = buildGear(slot, id, { gradient: this.gradient, outlineMat: this.outlineMat });
+    if (built) {
+      this.accessories[slot] = built.parts.map((p) => {
+        const a = this.anchorFor(p.anchor);
+        a.add(p.group);
+        p.group.traverse((o) => { if (o.isMesh) o.frustumCulled = false; });
+        return p.group;
+      });
+      this.gearFx[slot] = built.fx;
+    }
+    if (slot === 'back') {
+      // a back item replaces the skin's own wings / cape / jetpack / fin
+      const hide = !!built;
+      if (hide !== !!this.hideBackExtras) {
+        this.hideBackExtras = hide;
+        refreshSkinExtras(this);
+      }
+    }
     this.setOutlines(this.outlinesOn);
+  }
+
+  /** Gear aura wins over the skin's aura. */
+  refreshAura() {
+    if (this.gearAura) setAura(this, this.gearAura.type, this.gearAura.color);
+    else if (this.skin) setAura(this, this.skin.aura || null, this.skin.auraColor || '#ffffff');
   }
 
   /** Show or hide the cartoon outlines (hidden on Low graphics). */
@@ -744,11 +683,15 @@ export class Monkey {
   }
 
   applyLook(equipped) {
+    const before = this.skin;
     this.setSkin(equipped.skin || equipped.fur || 'cocoa');
     this.setFlair(equipped.flair);
-    this.setAccessory('hat', equipped.hat);
-    this.setAccessory('eyes', equipped.eyes);
-    this.setAccessory('neck', equipped.neck);
+    for (const slot of GEAR_SLOTS) {
+      if (this.wearing && this.wearing[slot] === (equipped[slot] || 'none') && slot !== 'aura') continue;
+      this.setAccessory(slot, equipped[slot] || 'none');
+    }
+    if (before !== this.skin) this.refreshAura();
+    this.wearing = { ...equipped };
   }
 
   // ------------------------------------------------------------ playing moves
@@ -848,10 +791,8 @@ export class Monkey {
       }
     }
     updateSkinFx(this, time, dt, Math.min(1, this.anims.length * 0.5));
-    const hat = this.accessories.hat;
-    if (hat && hat.userData.spin) hat.userData.spin.rotation.y += dt * (4 + 14 * Math.min(1, this.anims.length));
-    const neck = this.accessories.neck;
-    if (neck && neck.userData.flap) neck.userData.flap.rotation.x = 0.1 + 0.25 * Math.sin(time * 6) * Math.min(1, this.anims.length + 0.2) - p.hipsY * 1.5;
+    const energy = Math.min(1, this.anims.length * 0.5);
+    for (const list of Object.values(this.gearFx)) if (list && list.length) updateGearFx(list, time, dt, energy, beat);
   }
 
   applyPose(p, time) {

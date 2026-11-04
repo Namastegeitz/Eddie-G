@@ -48,6 +48,7 @@
       <nav class="mini-row" aria-label="More">
         <button class="mini" data-go="shop" id="mini-wardrobe"><span class="i-hanger"></span>Wardrobe<span class="new-dot" hidden></span></button>
         <button class="mini" data-go="help"><span class="i-info"></span>How it works</button>
+        <button class="mini" data-go="store"><span class="i-bag"></span>Shop</button>
         <button class="mini" data-go="stats"><span class="i-chart"></span>Stats</button>
         <button class="mini" data-go="settings"><span class="i-gear"></span>Settings</button>
       </nav>
@@ -82,7 +83,22 @@
     <div class="sheet">
       <div id="shop-tabs" class="tabs scroll" role="tablist"></div>
       <div id="shop-grid" class="shop-grid"></div>
-      <p class="fineprint">Bananas and golden bananas are earned by playing. Neither can be bought with money.</p>
+      <p class="fineprint">Bananas and golden bananas are earned by playing. In the iPhone and Android apps you can also get them in the Shop.</p>
+    </div>
+  </section>
+
+  <!-- SHOP (real money, in the apps) -->
+  <section id="scr-store" class="screen panel-screen" aria-label="Shop">
+    <div class="panel">
+      <div class="panel-head">
+        <button class="icon-btn back" data-go="back" aria-label="Back"></button>
+        <h2>Shop</h2>
+        <div class="chips small-chips">
+          <span class="chip golden small"><span class="i-golden"></span><span class="golden-count">0</span></span>
+          <span class="chip bananas small"><span class="i-banana"></span><span class="banana-count">0</span></span>
+        </div>
+      </div>
+      <div id="store-body" class="panel-body"></div>
     </div>
   </section>
 
@@ -162,6 +178,7 @@
   <div id="ov-confirm" class="overlay" role="dialog" aria-modal="true"><div class="card" id="confirm-card"></div></div>
   <div id="ov-calibrate" class="overlay" role="dialog" aria-modal="true"><div class="card" id="calibrate-card"></div></div>
   <div id="ov-exchange" class="overlay" role="dialog" aria-modal="true" aria-labelledby="exchange-title"><div class="card" id="exchange-card"></div></div>
+  <div id="ov-buy" class="overlay" role="dialog" aria-modal="true" aria-labelledby="buy-title"><div class="card" id="buy-card"></div></div>
   <div id="ov-unlock" class="overlay" role="dialog" aria-modal="true" aria-labelledby="unlock-title"><div class="card unlock-card" id="unlock-card"></div></div>
   <div id="rotate" class="rotate" aria-live="polite"><div class="rotate-phone"></div><p>Turn your phone upright to play</p></div>
   <div id="toast" class="toast" role="status" aria-live="polite"></div>

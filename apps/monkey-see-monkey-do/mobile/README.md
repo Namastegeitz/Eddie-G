@@ -112,8 +112,9 @@ log), so check Settings > Billing and plans > Actions first.
   back by itself), Graphics: Auto drops to Low when frames are slow, and the
   Android app shows an "update Android System WebView" page if the phone's
   WebView is older than version 87.
-- **No network at all.** The Android app doesn't request the Internet
-  permission, and neither app makes network requests. Saves stay on the phone.
+- **No network of its own.** The Android app doesn't request the Internet
+  permission, and the game makes no network requests. The Shop talks only to
+  the App Store / Google Play app on the phone. Saves stay on the phone.
 
 ## Project facts
 
@@ -123,17 +124,104 @@ log), so check Settings > Billing and plans > Actions first.
 | App ID / bundle ID | `com.namastegeitz.monkeydo` (change before the first store upload if you want a different one: `capacitor.config.json`, `android/app/build.gradle`, the Java package folder, and the iOS target's bundle identifier) |
 | Version | 1.0.0 (Android versionCode 1, iOS build 1) |
 | Minimum OS | Android 7.0 (API 24), iOS 15 |
-| Engine | Capacitor 8.5.3 with App, Haptics, Splash Screen, Keep Awake |
+| Engine | Capacitor 8.5.3 with App, Haptics, Splash Screen, Keep Awake, and cordova-plugin-purchase 13.19.1 (StoreKit 2 / Play Billing 9) |
 | Icons and splash | made from `assets/icons/icon.svg` by `node scripts/make_app_icons.js` |
+
+## In-app purchases (the Shop)
+
+The Shop sells 26 products (packs, combo packs, a one-time Starter Pack,
+themed bundles and premium skin sets, $0.99 to $9.99). It only takes money in
+these apps; the web build shows the same Shop with a note that buying is in
+the apps. The list with IDs, types, names and prices is
+[`docs/STORE_PRODUCTS.md`](../docs/STORE_PRODUCTS.md) (also as
+`docs/store-products.csv`). Both come from `js/store.js`; after changing a
+product there, run `node scripts/make_store_files.mjs`.
+
+Every product ID starts with `com.namastegeitz.monkeydo.` (for example
+`com.namastegeitz.monkeydo.bananas_1200`). Packs are consumables (can be
+bought again); the Starter Pack, bundles and sets are non-consumables (bought
+once, brought back by *Restore purchases*).
+
+**Always run `npx cap sync` in `mobile/` after `npm install`.** It recreates
+`android/capacitor-cordova-android-plugins` and
+`ios/capacitor-cordova-ios-plugins` (not in git), which hold the purchase plugin.
+
+### Try purchases without a store account
+
+- **Browser:** add `?billing=test` to the address (or `#store-test` on the
+  artifact link). Purchases are pretend, instant and marked "test" in Stats.
+- **iPhone Simulator:** `mobile/ios/App/MonkeyDo.storekit` is an Xcode
+  StoreKit file with all 26 products. In Xcode: Product > Scheme > Edit
+  Scheme > Run > Options > StoreKit Configuration > `MonkeyDo.storekit`. Then
+  buy in the Simulator; Debug > StoreKit > Manage Transactions shows them,
+  and you can refund or delete them there.
+- **Android:** Play Billing only works with a build installed from Play (an
+  internal testing track is enough) and a Google account listed as a
+  license tester. Test cards never charge.
+
+### App Store Connect (iPhone)
+
+1. Agreements, Tax, and Banking: accept the **Paid Apps** agreement and fill
+   in banking and tax. Products stay "Missing Metadata" until this is done.
+2. Your app > Monetization > In-App Purchases: create each product from
+   `docs/STORE_PRODUCTS.md` with exactly that Product ID, type, display name
+   and description. Pick the price from the US price column and let Apple
+   set the other countries. Add a review screenshot (the Shop screen; `node
+   tests/devices.js` saves one).
+3. In Xcode, Signing & Capabilities > + Capability > **In-App Purchase**.
+4. Attach the products to the version you submit (the first products must go
+   in with an app version). Test with a Sandbox account (Users and Access >
+   Sandbox) or TestFlight.
+
+### Google Play Console (Android)
+
+1. Set up a **payments profile** (Settings > Payments profile) so the
+   account can sell.
+2. Upload a signed `.aab` with the purchase plugin in it to **Internal
+   testing** first. Play only lets you create products once a build that
+   uses billing has been uploaded.
+3. Monetize > Products > In-app products: create each product from
+   `docs/STORE_PRODUCTS.md` with the same ID (the full
+   `com.namastegeitz.monkeydo....` text), name, description and price, and
+   activate it.
+4. Settings > License testing: add the Google accounts that will test.
+   Install from the internal testing link (not with `adb install`).
+
+### Rules the Shop already follows
+
+- Prices come from the store, in the buyer's currency, and are shown before
+  any tap. The web and test builds show US prices.
+- A grown-up question (a times-table sum) comes before every purchase. It is
+  on by default and needs the answer to turn off (Settings > Purchases). This
+  is the parental gate Apple's Kids Category and Google's Families policy ask for.
+- Optional monthly limit (5, 10, 20 or 50 in the store's currency). Raising
+  or removing it needs the grown-up answer.
+- No timers, no countdown offers, no pop-ups. The Shop opens only from its button.
+- "Best value" goes to the pack with the most bananas per dollar, and each
+  pack shows its bonus over the smallest pack. Bundles list what the items
+  would cost separately in bananas and golden bananas.
+- Nothing is only for sale: every skin and item can be earned by playing.
+  If a bundle or set includes something already owned, it pays back 5 golden
+  bananas per item.
+- Every purchase is listed in Stats > Purchases, and the bananas it added are
+  in Stats > Banana history. A transaction is never delivered twice.
+
+### Not verified yet
+
+Purchases were tested in the browser test mode only. The real App Store and
+Google Play flows (prices loading, buying, *Restore*, refunds, pending
+"Ask to Buy" purchases) need the store setup above and a real device.
 
 ## Store checklist
 
 Both stores:
 
 - **Privacy:** no data collected or shared, no ads, no accounts, no network.
+  Purchases go through Apple and Google, and the purchase record stays on the phone.
   Both stores ask for a privacy policy link; `PRIVACY.md` in the app folder
   is written for that (link to it on GitHub).
-- **Age rating:** suitable for everyone (no violence, no chat, no purchases).
+- **Age rating:** suitable for everyone (no violence, no chat). Answer "yes"
+  to in-app purchases; both stores show "In-app purchases" on the listing.
 - **Screenshots:** `node tests/devices.js` saves phone and tablet screenshots in
   `tests/output/devices/`. The App Store wants 6.9" iPhone and 13" iPad sizes;
   Play wants at least 2 phone screenshots.

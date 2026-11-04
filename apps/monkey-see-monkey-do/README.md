@@ -40,12 +40,13 @@ names to the monkey's own sides; the buttons never move.
 - **Endless:** classic memory loop. Starts at 2 moves, +1 each round, tempo
   rises to 160 BPM, one mistake ends it. Best is saved.
 - **Free Dance:** tap anything, no score, no timer. Good for learning the moves.
-- **100 skins** in 13 themed sets (see below), plus 6 hats, 3 glasses, 4 neck
-  items, 4 Flair moves (wiggle, shimmy, spin, robot) and 4 stages. Try anything
-  on before you get it. Looks never change difficulty.
-- **Bananas:** earned only by playing. Spent on standard skins and the rest of the
-  wardrobe, "Watch again" (5) and continuing a level after running out of lives
-  (15, once per try).
+- **100 skins** in 13 themed sets (see below), **88 pieces of gear** in 8
+  slots (see below), 6 saved outfits, 4 Flair moves (wiggle, shimmy, spin,
+  robot) and 4 stages. Try anything on before you get it. Looks never change
+  difficulty.
+- **Bananas:** earned by playing. Spent on standard skins and gear, "Watch
+  again" (5) and continuing a level after running out of lives (15, once per
+  try). The phone apps' Shop also sells them (see below); you never need to.
 
 ## Skins and premium skins
 
@@ -68,11 +69,54 @@ names to the monkey's own sides; the buttons never move.
   and more; 50 goals, one per skin), or early with **golden bananas**.
 - **Golden bananas** come from playing: +2 the first time a level gets 3 stars,
   +10 for each world cleared, +1 per 10 Endless rounds in a run, +5 per completed
-  skin set, or swap 100 bananas for 1 in the Wardrobe. They can't be bought with money.
+  skin set, or swap 100 bananas for 1 in the Wardrobe. The phone apps' Shop also sells them.
 - Rarity frames, set progress with completion bonuses, filters (standard,
   premium, owned, not yet), NEW badges, and an "unlocked!" card when a goal is reached.
 - All the numbers live in `js/skins.js` and `js/rules.js`; How it works lists
   every premium skin with its goal and price.
+## Gear and outfits
+
+- **8 gear slots, all worn at once:** hats (22: crowns, a tiara, pirate hat,
+  cat ears, space helmet...), eyes (12), neck (11: bow tie, feather boa, a
+  parrot on the shoulder...), back (10: cape, backpack, guitar, jetpack,
+  angel/bat/butterfly wings), hands (11: maracas, microphone, magic wand,
+  glow sticks, scepter...), feet (6: sneakers, flippers, rocket boots...),
+  face (6) and auras (10 particle effects: sparkles, hearts, notes, stars,
+  confetti, embers, pixels, bubbles, leaves, snow).
+- Gear moves with the dance: capes and wings flap, jetpacks and rocket boots
+  flame, propellers spin, glow sticks pulse with the beat. Trying on a back
+  item turns the monkey around; hand items make it wave them.
+- 68 items cost bananas, 20 premium ones cost golden bananas. Wardrobe cards
+  show a live 3D thumbnail of each item.
+- **Outfits:** save up to 6 complete looks (skin + every slot) and put one
+  back on with a tap.
+
+## Shop (iPhone and Android apps)
+
+Optional real-money packs, sold only through the App Store and Google Play:
+
+| | Price (US) |
+|---|---|
+| Starter Pack (once): 1,000 bananas, 15 golden, sneakers, backpack | $0.99 |
+| Bananas: 500 / 1,200 / 3,500 / 8,000 | $0.99 / $1.99 / $4.99 / $9.99 |
+| Golden bananas: 12 / 30 / 85 / 190 | $0.99 / $1.99 / $4.99 / $9.99 |
+| Party Pack: 1,500 bananas + 20 golden | $2.99 |
+| Mega Party Pack: 5,000 bananas + 70 golden | $7.99 |
+| 7 themed bundles (a premium skin + 3-4 matching items) | $2.99 each |
+| 8 premium skin sets (all skins in the set) | $4.99 each |
+
+- Prices show in the buyer's currency. Bigger packs give up to 60% more per
+  dollar, and the label says exactly how much; "Best value" is the real best.
+- **Grown-up check** before every purchase (on by default), optional monthly
+  limit, *Restore purchases*, and a Purchases list in Stats.
+- No timers, no pop-up offers, nothing only for sale. Items you already own
+  in a bundle pay back 5 golden bananas each.
+- The web build shows the Shop but sells nothing. Add `?billing=test` (or
+  `#store-test` on the artifact link) to try the whole flow with pretend purchases.
+- Store setup (product IDs, App Store Connect, Play Console, Xcode StoreKit
+  testing): [mobile/README.md](mobile/README.md#in-app-purchases-the-shop) and
+  [docs/STORE_PRODUCTS.md](docs/STORE_PRODUCTS.md).
+
 - **Music:** generated live per stage (marimba jungle groove, steel-drum beach,
   four-on-the-floor disco, echoey moon). No audio files.
 
@@ -104,8 +148,11 @@ setting, WebGL 1 support for older GPUs, no network permission in the Android ap
 - **Banana history** (Stats): every banana earned or spent, with the reason.
 - **Mistake cards** show the move you missed next to the one you tapped.
   Stats track your most common mix-ups.
-- **No money, no ads, no tracking, no network.** Settings > Your data shows the
+- **No ads, no tracking, no network.** Settings > Your data shows the
   exact saved JSON, lets you copy a save code to another device, load one, or reset.
+- **Honest Shop:** prices before any tap, bonus percentages that are the real
+  maths, "separately it would cost" on bundles, a grown-up check, a monthly
+  limit and a Purchases list. Everything can still be earned by playing.
 - **Comfort options:** timer Normal / Relaxed (2x) / Off; game speed 100 / 85 / 70%;
   Assist mode (free Watch again, hint on the missed move, wider combo window);
   voice call-outs; move captions; reduce motion; vibration; graphics quality;
@@ -120,7 +167,8 @@ setting, WebGL 1 support for older GPUs, no network permission in the Android ap
 The design document stopped at "Players earn bananas/coins". I filled in:
 bananas per move/star/first clear, a wardrobe with prices from 30 to 300 (and
 later 100 skins with golden bananas for premium ones), stages unlocked free by reaching their world, a paid "Watch again" and
-one paid continue per try, and no real-money purchases at all. Timing is a
+one paid continue per try. Real-money packs came later, on request, in the
+phone apps only and with nothing locked behind them. Timing is a
 bonus (points and the third star) and never decides whether a move counts, so
 the game stays a memory game first. All of these numbers live in
 `js/rules.js` and `js/shop.js` if you want to tune them.
@@ -141,23 +189,29 @@ js/audio.js           beat clock, synth music per stage, move notes, effects
 js/input.js           pad, keyboard, swipe, tap-the-monkey
 js/ui.js              menus, map, wardrobe, settings, How it works, stats, HUD
 js/save.js            local save, ledger, export/import
-js/shop.js            hats, glasses, neckwear, Flair moves, stages
+js/shop.js            gear in 8 slots, Flair moves, stages (prices)
+js/gear.js            builds each gear item in 3D, its animation, wardrobe thumbnails
+js/store.js           Shop products, prices, bonuses (pure)
+js/billing.js         App Store / Google Play purchases (cordova-plugin-purchase), test mode
+js/storeui.js         Shop screen, grown-up check, thank-you card
 js/skins.js           the 100 skins, 13 sets, 50 play goals (pure)
 js/patterns.js        fur pattern painter + 2D skin portraits
 js/skinlook.js        puts a skin on the 3D monkey (finishes, extras, auras)
-js/wardrobe.js        Skins tab, golden banana swap, unlock card
+js/wardrobe.js        Skins and Outfits tabs, golden banana swap, unlock card
 js/native.js          phone features: app bridge (haptics, back button, keep awake), wake lock, silent switch
 js/vendor/            three.js r162 (MIT; the last version that also runs on WebGL 1 phones)
 sw.js                 offline cache (list generated by scripts/build_sw.py)
 manifest.webmanifest  install as an app
-tests/unit.mjs        464 checks on the rules, generator and skins (Node)
-tests/acceptance.js   29-step play-through in Chromium (Playwright)
+tests/unit.mjs        507 checks on the rules, generator, skins, gear and Shop (Node)
+tests/acceptance.js   33-step play-through in Chromium (Playwright), incl. Shop test mode
 tests/devices.js      12 phone checks: simulated iOS/Android app shell, WebGL 1, 320 px to tablet, sideways
 scripts/              icons, service-worker list, web/phone/single-file builds
 mobile/               iOS + Android app projects (Capacitor 8), CI configs, phone guide
 dist/www/             the phone/web build (host it, or the apps load it)
 dist/                 single-file builds (see RUN.md)
 PRIVACY.md            privacy policy for the stores (nothing is collected)
+docs/STORE_PRODUCTS.md  the 26 in-app products to create in each store
+scripts/make_store_files.mjs  writes that list and the Xcode StoreKit test file
 ```
 
 See [RUN.md](RUN.md) for running, testing, building and installing on a phone.

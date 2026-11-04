@@ -134,12 +134,17 @@ check('endless bananas', eb.total === 12 + 20 + 10, eb.total);
 check('screen naming', moveName('LA') === 'Left Arm');
 check('monkey naming swaps sides', moveName('LA', 'monkey') === 'Right Arm' && moveName('HD', 'monkey') === 'Head Bob');
 check('chord lookup ignores order', chordFor(['RA', 'LA']).id === 'BA');
-for (const cat of CATEGORIES.filter((c) => c.id !== 'skin')) {
+for (const cat of CATEGORIES.filter((c) => c.id !== 'skin' && c.id !== 'outfits')) {
   const ids = ITEMS.filter((i) => i.cat === cat.id).map((i) => i.id);
   check(`${cat.id}: unique ids`, new Set(ids).size === ids.length);
   check(`${cat.id}: default owned exists`, DEFAULT_OWNED[cat.id].every((id) => getItem(cat.id, id)));
 }
 check('prices are whole, non-negative numbers', ITEMS.every((i) => Number.isInteger(i.price) && i.price >= 0));
+check('gear: every slot has a free "none"', ['hat', 'eyes', 'neck', 'back', 'hands', 'feet', 'face', 'aura'].every((c) => getItem(c, 'none') && getItem(c, 'none').price === 0));
+check('gear: at least 80 items to wear', ITEMS.filter((i) => !['flair', 'stage'].includes(i.cat) && i.id !== 'none').length >= 80, ITEMS.length);
+check('gear: currencies are bananas or golden', ITEMS.every((i) => i.currency === 'banana' || i.currency === 'golden'));
+check('gear: golden prices are small, banana prices sane', ITEMS.every((i) => (i.currency === 'golden' ? i.price > 0 && i.price <= 40 : i.price <= 300)));
+check('gear: auras have a colour', ITEMS.filter((i) => i.cat === 'aura' && i.id !== 'none').every((i) => /^#/.test(i.auraColor)));
 check('default look is free', Object.entries(DEFAULT_EQUIPPED).every(([cat, id]) => id === 'auto' || (cat === 'skin' ? getSkin(id).price === 0 : getItem(cat, id).price === 0)));
 
 // ---- skins
@@ -181,6 +186,49 @@ check('set progress', JSON.stringify(setProgress('metals', ['bronze', 'gold'])) 
 check('endless golden: 1 per 10 rounds', endlessGolden(9) === 0 && endlessGolden(10) === 1 && endlessGolden(35) === 3);
 const mig = migrateRaw({ owned: { fur: ['cocoa', 'rainbow'], hat: ['none'] }, equipped: { fur: 'rainbow', hat: 'none' } });
 check('old fur saves move to skins', JSON.stringify(mig.owned.skin) === JSON.stringify(['cocoa', 'rainbow']) && mig.equipped.skin === 'rainbow' && !('fur' in mig.owned));
+
+
+// ---- shop (real money)
+const { PRODUCTS, PRODUCT_PREFIX, GROUPS, bonusPercent, bestValueId, spentThisMonth, getProduct, OWNED_REFUND_GOLDEN } = await import('../js/store.js');
+const { Save } = await import('../js/save.js');
+const { skinsInSet } = await import('../js/skins.js');
+check('product ids unique', new Set(PRODUCTS.map((p) => p.id)).size === PRODUCTS.length);
+check('store ids are valid', PRODUCTS.every((p) => /^[a-z0-9._]+$/.test(PRODUCT_PREFIX + p.id)));
+check('prices $0.99-$9.99 ending in .99', PRODUCTS.every((p) => p.usd >= 0.99 && p.usd <= 9.99 && Math.round(p.usd * 100) % 100 === 99));
+check('every product is in a group', PRODUCTS.every((p) => GROUPS.some((g) => g.id === p.group)));
+check('packs you can buy again only hold currency', PRODUCTS.filter((p) => p.type === 'consumable').every((p) => !p.grants.skins.length && !p.grants.gear.length));
+check('bundles and sets hold real skins', PRODUCTS.every((p) => p.grants.skins.every((id) => getSkin(id).id === id)));
+check('bundle gear exists in the wardrobe', PRODUCTS.every((p) => p.grants.gear.every((g) => { const [c, i] = g.split(':'); return getItem(c, i) && getItem(c, i).price > 0; })));
+check('each set product holds exactly its skin set', PRODUCTS.filter((p) => p.group === 'sets').every((p) => { const set = SETS.find((st) => p.title.startsWith(st.name)); return set && JSON.stringify(skinsInSet(set.id).map((x) => x.id).sort()) === JSON.stringify([...p.grants.skins].sort()); }));
+check('8 premium set products', PRODUCTS.filter((p) => p.group === 'sets').length === SETS.filter((st) => st.tier === 'premium').length);
+check('nothing is only for money: every skin in the shop also has a play goal or banana price', PRODUCTS.every((p) => p.grants.skins.every((id) => getSkin(id).goal || getSkin(id).currency === 'banana')));
+for (const g of ['bananas', 'golden']) {
+  const list = PRODUCTS.filter((p) => p.group === g).sort((a, b) => a.usd - b.usd);
+  check(`${g}: smallest pack is the base price`, bonusPercent(list[0]) === 0);
+  check(`${g}: bigger packs give more per dollar`, list.every((p, i) => i === 0 || bonusPercent(p) > bonusPercent(list[i - 1])));
+  check(`${g}: best value is the biggest pack`, bestValueId(g) === list[list.length - 1].id);
+  check(`${g}: bonuses stay modest (under 70%)`, list.every((p) => bonusPercent(p) < 70));
+}
+const now = new Date(2026, 10, 15);
+check('monthly spend counts this month only', JSON.stringify(spentThisMonth([{ t: new Date(2026, 10, 2).getTime(), micros: 1990000, currency: 'USD' }, { t: new Date(2026, 9, 30).getTime(), micros: 9990000, currency: 'USD' }, { t: new Date(2026, 10, 3).getTime(), micros: 990000, currency: 'EUR' }], now)) === JSON.stringify({ USD: 1.99, EUR: 0.99 }));
+// delivery: never twice, refunds for things already owned
+Save.data.bananas = 0;
+Save.data.golden = 0;
+const pack = getProduct('bananas_1200');
+check('pack delivers', Save.deliverPurchase(pack, 'tx1', null).bananas === 1200 && Save.data.bananas === 1200);
+check('same transaction never delivers twice', Save.deliverPurchase(pack, 'tx1', null) === null && Save.data.bananas === 1200);
+check('packs can be bought again', Save.deliverPurchase(pack, 'tx2', null) !== null && Save.data.bananas === 2400);
+Save.data.owned.skin.push('pirate');
+const pirate = getProduct('bundle_pirate');
+const got = Save.deliverPurchase(pirate, 'tx3', null);
+check('bundle gives its items', got.gear.length === 4 && Save.owns('back', 'parrot') && Save.data.equipped.back === 'none');
+check('already-owned skin gives golden instead', got.refunded === 1 && Save.data.golden === OWNED_REFUND_GOLDEN);
+check('one-time product is not given twice (restore)', Save.deliverPurchase(pirate, 'tx4', null) === null);
+check('purchases are logged', Save.data.purchases.length === 3);
+Save.data.settings.spendLimit = 5;
+check('monthly limit blocks going over', Save.overLimit({ micros: 9990000, currency: 'USD' }) === true);
+Save.data.purchases = [];
+check('monthly limit allows within it', Save.overLimit({ micros: 4990000, currency: 'USD' }) === false);
 
 console.log(`${pass} passed, ${fail} failed`);
 process.exit(fail ? 1 : 0);
