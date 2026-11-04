@@ -1080,7 +1080,7 @@ func _first_person() -> void:
 			zone_has_things = true
 	check("first person shows what's under the canopy", under > 0 or not zone_has_things, "%d" % under)
 	check("first person builds the lanes ahead", gs.wv3._lanes.size() >= 20)
-	var meshes := gs.wv3.world3.find_children("*", "MeshInstance3D", true, false).size()
+	var meshes: int = gs.wv3.world3.find_children("*", "MeshInstance3D", true, false).size()
 	print("  first-person meshes in view: %d" % meshes)
 	check("first-person scene stays light (< 500 meshes)", meshes < 500, str(meshes))
 	check("no canopy tip while already in first person", not gs.canopy_tip.visible)

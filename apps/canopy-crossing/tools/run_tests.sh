@@ -14,9 +14,9 @@ bad_lines() { grep -E "SCRIPT ERROR|^ERROR:" "$1" | grep -v "resources still in 
 echo "== import"; timeout 300 "$GODOT" --headless --path . --import > /tmp/cc_import.log 2>&1
 if grep -E "SCRIPT ERROR|Parse Error" /tmp/cc_import.log; then fail=1; fi
 echo "== compile"; tools/parse_check.sh | tee /tmp/cc_parse.log
-grep -q "bad=0" /tmp/cc_parse.log || fail=1
+if ! grep -q "bad=0" /tmp/cc_parse.log; then echo "compile errors: stopping"; exit 1; fi
 echo "== phase audit (project)"
-timeout 1800 "$GODOT" --headless --path . res://tests/phase_audit.tscn -- --no-boot $EXTRA > /tmp/cc_audit.log 2>&1 || fail=1
+timeout 1500 "$GODOT" --headless --path . res://tests/phase_audit.tscn -- --no-boot $EXTRA > /tmp/cc_audit.log 2>&1 || fail=1
 grep -E "FAIL|phase audit" /tmp/cc_audit.log
 if bad_lines /tmp/cc_audit.log; then fail=1; fi
 echo "== phase audit (exported pack)"
