@@ -1,0 +1,182 @@
+// Boot: load the save, build the 3D stage and the monkey, wire input and UI,
+// then run one animation loop for everything.
+import * as THREE from './vendor/three.module.min.js';
+import { Save } from './save.js';
+import { AudioEngine } from './audio.js';
+import { Monkey } from './monkey.js';
+import { Stage } from './stage.js';
+import { UI } from './ui.js';
+import { Game } from './game.js';
+import { Input } from './input.js';
+
+const VERSION = '1.0.0';
+
+function setLoading(pct, text) {
+  const f = document.getElementById('loading-fill');
+  if (f) f.style.width = pct + '%';
+  if (text) {
+    const t = document.getElementById('loading-text');
+    if (t) t.textContent = text;
+  }
+}
+
+function fail(msg) {
+  setLoading(100, msg);
+  const t = document.getElementById('loading-text');
+  if (t) t.style.color = '#ffb3b3';
+}
+
+async function boot() {
+  setLoading(20, 'Loading your save...');
+  Save.load();
+  const s = Save.settings;
+  const canvas = document.getElementById('scene');
+  let stage;
+  try {
+    stage = new Stage(canvas, { quality: s.quality });
+  } catch (e) {
+    fail("This browser can't show 3D graphics (WebGL is off or not supported). Try Chrome, Safari or Firefox, or turn on hardware acceleration.");
+    return;
+  }
+  setLoading(45, 'Building the monkey...');
+  const monkey = new Monkey({ outlines: true });
+  stage.scene.add(monkey.root);
+  const audio = new AudioEngine();
+  const app = { version: VERSION, stage, monkey, audio, THREE };
+  const ui = new UI(app);
+  app.ui = ui;
+  const game = new Game({ audio, monkey, stage, ui });
+  app.game = game;
+
+  let lastQuality = null;
+  app.applySettings = () => {
+    const st = Save.settings;
+    audio.setVolumes(st.music, st.sfx);
+    audio.voiceOn = st.voice;
+    document.body.classList.toggle('reduce-motion', !!st.reduceMotion);
+    stage.reduceMotion = !!st.reduceMotion || matchMedia('(prefers-reduced-motion: reduce)').matches;
+    monkey.danceAmp = st.reduceMotion ? 0.5 : 1;
+    if (st.quality !== lastQuality) {
+      lastQuality = st.quality;
+      stage.setQuality(st.quality === 'auto' ? (app.autoLow ? 'low' : 'auto') : st.quality);
+      monkey.setOutlines(st.quality === 'low' ? false : !(st.quality === 'auto' && app.autoLow));
+    }
+    ui.relabelPad();
+  };
+
+  app.applyLook = (look) => {
+    monkey.applyLook(look);
+    monkey.setOutlines(stage.quality !== 'low');
+    if (game.mode === 'menu') {
+      const env = look.stage && look.stage !== 'auto' ? look.stage : 'jungle';
+      stage.setEnvironment(env);
+      audio.startMusic(env === 'jungle' ? 'menu' : stage.musicFor(env), 96);
+    }
+  };
+
+  ui.init();
+  const onResize = () => {
+    stage.resize();
+    ui.reframe();
+  };
+  window.addEventListener('resize', onResize);
+  window.addEventListener('orientationchange', () => setTimeout(onResize, 250));
+  new Input({
+    pad: document.getElementById('pad'),
+    surface: canvas,
+    settings: () => Save.settings,
+    onMove: (id, t) => game.onInput(id, t),
+    onPause: () => (game.paused ? game.resume() : game.pause()),
+    pick: (x, y) => monkey.pick(x, y, stage.camera, stage.width, stage.height),
+    onLook: (x, y) => {
+      const head = monkey.j.head.getWorldPosition(new THREE.Vector3()).project(stage.camera);
+      const hx = (head.x * 0.5 + 0.5) * stage.width;
+      const hy = (-head.y * 0.5 + 0.5) * stage.height;
+      monkey.setLook((x - hx) / (stage.width * 0.4), -(y - hy) / (stage.height * 0.4));
+    },
+  });
+  // First tap anywhere unlocks sound (browsers need a gesture).
+  const unlock = () => {
+    audio.unlock();
+    app.applySettings();
+  };
+  window.addEventListener('pointerdown', unlock, { capture: true });
+  window.addEventListener('keydown', unlock, { capture: true });
+
+  app.applySettings();
+  app.applyLook(Save.data.equipped);
+  game.toMenu();
+  setLoading(80, 'Tuning the bongos...');
+
+  // Wait briefly for fonts so the logo doesn't jump.
+  try {
+    await Promise.race([document.fonts && document.fonts.ready, new Promise((r) => setTimeout(r, 1500))]);
+  } catch { /* fine */ }
+  ui.show('title');
+  setLoading(100, 'Ready!');
+  document.getElementById('loading').classList.remove('show');
+
+  // ------------------------------------------------------------ main loop
+  let last = audio.now();
+  let lastBeat = Math.floor(audio.beatAt(last));
+  let slowFrames = 0;
+  let sampled = 0;
+  const loop = () => {
+    const now = audio.now();
+    const dt = Math.min(0.05, Math.max(0, now - last));
+    last = now;
+    const beat = audio.beatAt(now);
+    const bi = Math.floor(beat);
+    if (bi !== lastBeat) {
+      lastBeat = bi;
+      stage.onBeat(bi);
+      game.onBeat(bi);
+    }
+    try {
+      game.update(now);
+    } catch (e) {
+      console.error(e);
+    }
+    monkey.update(now, dt, beat);
+    stage.update(now, dt, beat, monkey);
+    // Auto graphics: if the first few seconds are slow, drop to low quality
+    if (Save.settings.quality === 'auto' && !app.autoLow && !document.hidden && sampled < 240) {
+      sampled++;
+      if (dt > 1 / 38) slowFrames++;
+      if (sampled === 240 && slowFrames > 120) {
+        app.autoLow = true;
+        stage.setQuality('low');
+        monkey.setOutlines(false);
+        ui.toast('Graphics set to Low for smoother play. Change it in Settings.');
+      }
+    }
+    requestAnimationFrame(loop);
+  };
+  requestAnimationFrame(loop);
+
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+      game.pause();
+      audio.suspend();
+    } else {
+      audio.resume();
+    }
+  });
+  window.addEventListener('pagehide', () => Save.persist());
+
+  // Offline support when served from a web host (not inside a sandboxed preview).
+  if (!window.MSMD_NO_SW && 'serviceWorker' in navigator && /^https?:$/.test(location.protocol)) {
+    navigator.serviceWorker.register('sw.js').catch(() => { /* offline install not available here */ });
+  }
+
+  // Handy for tests and for curious players poking around in the console.
+  window.MSMD = { version: VERSION, app, game, Save, audio, monkey, stage, ui };
+  document.documentElement.dataset.ready = '1';
+}
+
+const hot = window.claude && window.claude.hot;
+if (hot && typeof hot.snapshot === 'function') {
+  try { hot.snapshot(() => ({ v: VERSION })); } catch { /* not in a viewer */ }
+}
+if (hot && typeof hot.ready === 'function') hot.ready(() => boot());
+else boot();

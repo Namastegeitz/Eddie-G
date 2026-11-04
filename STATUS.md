@@ -59,6 +59,29 @@
 - Next: generate the Meshy models (tier 1 first), real audio, Google Play AAB (needs Android SDK locally), iOS signing via a
   Mac or Codemagic (`docs/ci/codemagic.yaml`), playtesting and tuning.
 
+## Monkey See, Monkey Do (`apps/monkey-see-monkey-do`)
+- Built from `prompts/claude/monkey-see-monkey-do.md` (the brief stopped at "Players earn bananas/coins";
+  the economy, wardrobe and transparency features were filled in and are listed at the end of that file).
+- Web game (three.js r180 vendored, vanilla JS modules, no build step), installable PWA, offline service worker,
+  plus a one-file build: `dist/monkey-see-monkey-do.html` (opens from disk) and `dist/artifact/index.html`.
+- Cel-shaded 3D monkey built in code: jointed arms/legs, curly tail, 6 mouths, blinking eyes that follow taps,
+  brows, moves + reactions (cheer, dizzy oops with stars, sad slump, point-and-wink, idle fidgets),
+  hats/glasses/neckwear, 7 furs. 4 stages (jungle, beach, temple disco, moon) with a light-up dance pad.
+- Play: Watch -> Your turn on a beat clock; 6 moves + 4 combos; pad, tap-the-monkey, swipe, keyboard.
+  30 levels / 3 worlds (levels 1-10 per the brief; build-up, speed-up, backwards twists later), 3 lives,
+  3 stars, Endless (best saved), Free Dance. Synth music per stage, one note per move.
+- Transparency: How it works generated from js/rules.js + js/levels.js + js/shop.js; itemised results that match
+  the banana ledger; routine codes; mistake cards (missed vs tapped); mix-up stats; local-only save with
+  view / copy code / load / reset. Comfort: timer Normal/Relaxed/Off, speed 100/85/70%, Assist mode,
+  voice call-outs, captions, reduce motion, rhythm calibration.
+- Tests: `node tests/unit.mjs` (443 checks) and `node tests/acceptance.js` (25-step Playwright play-through,
+  incl. offline reload) pass.
+- Not verified on real hardware yet: touch feel and audio latency on an actual phone, install to home screen.
+- Next: pick add-ons from `prompts/claude/monkey-see-monkey-do-next.md` (14 prompts: replay review, Daily
+  Dance, choreographer + share codes, accessibility pack, grown-up panel, stickers, World 4, pass-and-play,
+  real music, GitHub Pages, Android/iOS builds, opt-in leaderboard, Spanish/Portuguese) and
+  `prompts/codex/monkey-see-monkey-do-tasks.md` (10 small tasks).
+
 ## NeuroForge (not in this repo)
 - Source on the Windows PC: `C:\Users\edwar\Desktop\AI and ALL\Aethertek\content poster\neuroforge`
 - Live web: https://neuroforged.surge.sh and https://neuroforge.surge.sh
@@ -66,6 +89,8 @@
 - Next: push the source to a private GitHub repo so cloud/phone sessions can read it.
 
 ## Prompts
+- `prompts/claude/monkey-see-monkey-do.md` - the brief + what was filled in; `monkey-see-monkey-do-next.md` -
+  14 add-on/next-build prompts; `prompts/codex/monkey-see-monkey-do-tasks.md` - 10 small tasks.
 - `prompts/claude/bugs-eye-view.md` - v2 with the stealth/interactivity add-ons.
 - `prompts/claude/bugs-eye-view-next.md` - 10 prompts for the next features (Meshy run,
   Gem Shrine, Bathroom level, living humans, skins, debug overlay, playtest bot, sound, CI,

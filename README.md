@@ -17,6 +17,7 @@ STATUS.md        running log of what's done and what's next
 | App | What it is | Status |
 |---|---|---|
 | [Off-Grid Survival Kit](apps/off-grid-survival-kit/) | Offline installable field app (vanilla HTML/CSS/JS PWA): GPS map with saved tiles, waypoints, tracks, MGRS, sun/moon, triangulation, QR/SOS; survival guides; device tools; printable emergency PDF. | Built; offline acceptance test passes (25 checks). Zip in `apps/off-grid-survival-kit/dist/`. |
+| [Monkey See, Monkey Do](apps/monkey-see-monkey-do/) | Rhythm-memory game: a 3D cartoon monkey dances a routine, you copy it. 30 levels in 3 worlds, Endless, Free Dance, banana wardrobe, How it works screen built from the rules. Web/PWA (three.js), offline, one-file build. | Built; 443 unit checks + 25-step play-through pass. |
 | [Bug's-Eye View](apps/bugs-eye-view/) | Action-stealth survival game (Godot 4.7) as a tiny bug in a giant house. Android, iOS, Windows, macOS, Linux, Web. | All 6 phases built and tested; placeholder art. |
 
 ## Working across devices
