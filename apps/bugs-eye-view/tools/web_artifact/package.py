@@ -10,7 +10,7 @@ extension, and copies the custom page that stitches them back together.
 Then publish build/web_artifact/bugs-eye-view.html with the other files
 in that folder alongside it. Any static host also works with build/web as-is.
 """
-import json, os, re, shutil, sys
+import json, os, re, shutil, subprocess, sys, time
 
 src, dst = sys.argv[1], sys.argv[2]
 here = os.path.dirname(os.path.abspath(__file__))
@@ -25,5 +25,12 @@ for i in range(3):
 page = open(os.path.join(here, "bugs-eye-view.html")).read()
 sizes = {"index.pck": os.path.getsize(os.path.join(src, "index.pck")), "index.wasm": len(wasm)}
 page = re.sub(r'"fileSizes":\{[^}]*\}', '"fileSizes":' + json.dumps(sizes, separators=(",", ":")), page)
+page = re.sub(r'const SIZES = \{[^}]*\};', 'const SIZES = ' + json.dumps(sizes, separators=(",", ":")) + ';', page)
+try:
+    commit = subprocess.run(["git", "rev-parse", "--short", "HEAD"], cwd=here, capture_output=True, text=True).stdout.strip()
+except OSError:
+    commit = ""
+stamp = time.strftime("%Y-%m-%d") + (" - " + commit if commit else "")
+page = page.replace('<div id="build">Build dev</div>', '<div id="build">Build ' + stamp + '</div>')
 open(os.path.join(dst, "bugs-eye-view.html"), "w").write(page)
 print("packaged into", dst)

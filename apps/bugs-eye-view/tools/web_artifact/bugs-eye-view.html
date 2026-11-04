@@ -71,6 +71,18 @@ body {
 .meter span { display: block; height: 100%; width: 0; background: var(--gold); transition: width 0.2s ease-out; }
 #meter-label { font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold-dim); font-variant-numeric: tabular-nums; }
 #notice { display: none; max-width: 40ch; padding: 14px 16px; border: 1px solid var(--danger); border-radius: 10px; color: var(--text); font-size: 14px; line-height: 1.45; }
+#build { font-size: 11px; color: var(--muted); opacity: 0.7; font-variant-numeric: tabular-nums; }
+#reload, #crash-reload {
+  min-height: 48px; padding: 10px 28px; border-radius: 12px; border: 1px solid var(--gold);
+  background: var(--panel); color: var(--gold); font: 600 16px var(--font-body);
+}
+#crash {
+  position: absolute; left: 16px; right: 16px; top: 30%; padding: 18px; border-radius: 14px;
+  background: rgba(14, 12, 10, 0.94); border: 1px solid var(--danger); color: var(--text);
+  display: flex; flex-direction: column; gap: 14px; align-items: center; text-align: center;
+  font-size: 15px; line-height: 1.45;
+}
+#crash[hidden], #reload[hidden] { display: none; }
 @media (prefers-reduced-motion: reduce) { .meter span { transition: none; } }
 </style>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Archivo:wght@400;600&display=swap">
@@ -82,34 +94,87 @@ body {
     <h1>Bug's-Eye View</h1>
     <p>Sneak, scavenge and survive the house as a tiny bug. Stand still to blend in; shadows hide you; noisy floors give you away.</p>
     <div class="meter" aria-hidden="true"><span id="meter-fill"></span></div>
-    <div id="meter-label">Loading engine 0 MB / 40 MB</div>
+    <div id="meter-label">Starting download</div>
     <div id="notice" role="alert"></div>
+    <button id="reload" type="button" hidden>Reload</button>
+    <div id="build">Build dev</div>
+  </div>
+  <div id="crash" role="alert" hidden>
+    <div id="crash-text"></div>
+    <button id="crash-reload" type="button">Reload</button>
   </div>
 </div>
 
 <script>
 // The engine (index.wasm, ~40 MB) is published in three parts to fit the
 // hosting limit per file, and the game data (index.pck) under a binary name
-// the host serves; this maps both back before Godot asks for them.
+// the host serves. This maps both back before Godot asks for them, stitching
+// the parts into one buffer as they stream in (one copy in memory, which
+// matters on phones) and showing real download progress.
 (function () {
   const PARTS = {
     "index.wasm": ["index.part0.wasm", "index.part1.wasm", "index.part2.wasm"],
     "index.pck": ["index-gamedata.wasm"],
   };
+  const SIZES = {"index.pck":0,"index.wasm":0};
+  const TOTAL = SIZES["index.pck"] + SIZES["index.wasm"];
   const realFetch = window.fetch.bind(window);
+  let got = 0;
+  window.__bev = { lastProgress: Date.now(), done: false, got: () => got, total: TOTAL };
+
+  function progress(n) {
+    got += n;
+    window.__bev.lastProgress = Date.now();
+    const fill = document.getElementById("meter-fill");
+    const label = document.getElementById("meter-label");
+    if (fill && label && TOTAL > 0) {
+      fill.style.width = Math.min(100, 100 * got / TOTAL).toFixed(1) + "%";
+      label.textContent = "Downloading " + Math.round(got / 1048576) + " / " + Math.round(TOTAL / 1048576) + " MB";
+    }
+  }
+
+  async function readInto(resp, out, offset) {
+    if (!resp.body || !resp.body.getReader) {
+      const buf = new Uint8Array(await resp.arrayBuffer());
+      out.set(buf, offset);
+      progress(buf.length);
+      return offset + buf.length;
+    }
+    const reader = resp.body.getReader();
+    for (;;) {
+      const chunk = await reader.read();
+      if (chunk.done) return offset;
+      out.set(chunk.value, offset);
+      offset += chunk.value.length;
+      progress(chunk.value.length);
+    }
+  }
+
   window.fetch = async function (input, init) {
     const url = typeof input === "string" ? input : (input && input.url) || "";
     const name = url.split("/").pop().split("?")[0];
     if (!PARTS[name]) return realFetch(input, init);
-    const bufs = [];
-    for (const part of PARTS[name]) {
-      const r = await realFetch(part);
-      if (!r.ok) return r;
-      bufs.push(await r.arrayBuffer());
+    try {
+      const out = new Uint8Array(SIZES[name]);
+      let offset = 0;
+      for (const part of PARTS[name]) {
+        let r;
+        try {
+          r = await realFetch(part);
+        } catch (e) {
+          throw new Error("couldn't download " + part + " - check your connection");
+        }
+        if (!r.ok) throw new Error("couldn't download " + part + " (HTTP " + r.status + ")");
+        offset = await readInto(r, out, offset);
+      }
+      if (offset !== out.length) throw new Error(name + " arrived incomplete (" + offset + " of " + out.length + " bytes)");
+      const type = name.endsWith(".wasm") ? "application/wasm" : "application/octet-stream";
+      return new Response(out, { status: 200, headers: { "Content-Type": type, "Content-Length": String(out.length) } });
+    } catch (e) {
+      // Godot may swallow a failed download; tell the player straight away.
+      if (window.__bevOnError) window.__bevOnError(e);
+      throw e;
     }
-    const type = name.endsWith(".wasm") ? "application/wasm" : "application/octet-stream";
-    const blob = new Blob(bufs, { type: type });
-    return new Response(blob, { status: 200, headers: { "Content-Type": type, "Content-Length": String(blob.size) } });
   };
 
   // Keep the canvas backing size matched to its box (resize policy "none"),
@@ -132,18 +197,54 @@ body {
 (function () {
   const GODOT_CONFIG = {"args":[],"canvasResizePolicy":0,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":false,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":1112336,"index.wasm":39514754},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4};
   const status = document.getElementById("status");
-  const fill = document.getElementById("meter-fill");
   const label = document.getElementById("meter-label");
   const notice = document.getElementById("notice");
+  const reload = document.getElementById("reload");
+  reload.addEventListener("click", function () { location.reload(); });
+  window.__bevOnError = function (e) { fail(e); };
+  document.getElementById("crash-reload").addEventListener("click", function () { location.reload(); });
 
   function fail(err) {
     console.error(err);
-    notice.textContent = "The game engine could not start in this viewer (" +
+    if (window.__bev.done) return crashed(err);
+    notice.textContent = "The game couldn't start here (" +
       (err && err.message ? err.message : String(err)) +
-      "). Open this page in Safari or Chrome, or install the Android build.";
+      "). Try Reload. If it keeps happening, open the link in Chrome or Safari, or install the Android app.";
     notice.style.display = "block";
+    reload.hidden = false;
     label.textContent = "Stopped";
   }
+
+  // After the game is running: an engine crash (out of memory, a fatal error)
+  // shows a message instead of a frozen screen.
+  function crashed(err) {
+    const msg = err && err.message ? err.message : String(err);
+    document.getElementById("crash-text").textContent =
+      "The game stopped (" + msg + "). Reload to carry on - your progress is saved.";
+    document.getElementById("crash").hidden = false;
+  }
+  function looksFatal(msg) {
+    return /abort|RuntimeError|out of memory|unreachable|memory access out of bounds/i.test(String(msg || ""));
+  }
+  window.addEventListener("error", function (e) {
+    const msg = e && (e.message || (e.error && e.error.message));
+    if (looksFatal(msg)) (window.__bev.done ? crashed : fail)(e.error || new Error(msg));
+  });
+  window.addEventListener("unhandledrejection", function (e) {
+    const r = e && e.reason;
+    if (looksFatal(r && r.message ? r.message : r)) (window.__bev.done ? crashed : fail)(r instanceof Error ? r : new Error(String(r)));
+  });
+
+  // A download that stops moving (patchy signal): say so instead of sitting still.
+  const watchdog = setInterval(function () {
+    if (window.__bev.done) { clearInterval(watchdog); return; }
+    if (Date.now() - window.__bev.lastProgress > 25000 && notice.style.display !== "block") {
+      notice.textContent = "The download has stalled at " + Math.round(window.__bev.got() / 1048576) +
+        " MB. Check your connection and tap Reload.";
+      notice.style.display = "block";
+      reload.hidden = false;
+    }
+  }, 5000);
 
   let engine;
   try {
@@ -153,11 +254,11 @@ body {
   if (missing.length) { fail(new Error("missing browser features: " + missing.join(", "))); return; }
   engine.startGame({
     onProgress: function (current, total) {
-      if (current > 0 && total > 0) {
-        fill.style.width = (100 * current / total).toFixed(1) + "%";
-        label.textContent = "Loading engine " + Math.round(current / 1048576) + " MB / " + Math.round(total / 1048576) + " MB";
+      window.__bev.lastProgress = Date.now();
+      if (window.__bev.got() >= window.__bev.total && current > 0 && total > 0) {
+        label.textContent = "Starting the game";
       }
     },
-  }).then(function () { status.remove(); }, fail);
+  }).then(function () { window.__bev.done = true; status.remove(); }, fail);
 })();
 </script>

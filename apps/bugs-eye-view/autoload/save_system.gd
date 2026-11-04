@@ -42,14 +42,27 @@ func default_data() -> Dictionary:
 
 func load_game() -> void:
 	data = default_data()
-	if not FileAccess.file_exists(save_path):
-		return
-	var f := FileAccess.open(save_path, FileAccess.READ)
-	if f == null:
-		return
-	var parsed: Variant = JSON.parse_string(f.get_as_text())
-	if parsed is Dictionary:
-		_merge(data, parsed as Dictionary)
+	if FileAccess.file_exists(save_path):
+		var f := FileAccess.open(save_path, FileAccess.READ)
+		if f:
+			var parsed: Variant = JSON.parse_string(f.get_as_text())
+			if parsed is Dictionary:
+				_merge(data, parsed as Dictionary)
+	_tune_for_phone_browser()
+
+
+func is_phone_browser() -> bool:
+	return OS.has_feature("web") and (OS.has_feature("web_android") or OS.has_feature("web_ios"))
+
+
+## In a phone's browser (or an app's web viewer) start on Low quality once:
+## no shadows, 75% render scale, 30 fps - the rooms are big now. The player
+## can raise it again in Settings.
+func _tune_for_phone_browser() -> void:
+	var settings: Dictionary = data["settings"]
+	if is_phone_browser() and not bool(settings.get("web_phone_tuned", false)):
+		settings["quality"] = "low"
+		settings["web_phone_tuned"] = true
 
 
 func save_game() -> void:
