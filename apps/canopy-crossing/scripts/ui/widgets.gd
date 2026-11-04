@@ -119,6 +119,7 @@ class HazardIcon extends Control:
 		hz = h
 		custom_minimum_size = s
 		mouse_filter = Control.MOUSE_FILTER_IGNORE
+		clip_contents = true
 
 	func _process(dt: float) -> void:
 		if is_visible_in_tree():
