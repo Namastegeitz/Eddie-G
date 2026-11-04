@@ -1,0 +1,50 @@
+{
+  "id": "leopard",
+  "number": 20,
+  "name": "Leopard",
+  "region": "congo",
+  "home": "Congo Basin",
+  "pack": "congo",
+  "rarity": "epic",
+  "unlock": {
+    "type": "pack",
+    "pack": "congo",
+    "amber": 150
+  },
+  "starter": false,
+  "ability": {
+    "name": "Climb",
+    "summary": "Climbs — skips a ground hazard briefly",
+    "modules": [
+      {
+        "module": "climb",
+        "duration": 2.0,
+        "cooldown": 9.0
+      }
+    ]
+  },
+  "stats": {
+    "hop_time": 0.14,
+    "hitbox": 0.6
+  },
+  "look": {
+    "base": "mammal",
+    "colors": {
+      "primary": "#e8b84a",
+      "secondary": "#1d1408",
+      "belly": "#f7ead0",
+      "accent": "#d49a2a",
+      "eye": "#c4d65a"
+    },
+    "head": "cat",
+    "ears": "round",
+    "snout": "cat",
+    "tail": "long",
+    "pattern": "rosettes_small",
+    "size": 0.8
+  },
+  "skins": [],
+  "conservation": "Vulnerable",
+  "fact": "Leopards often haul their prey up into trees.",
+  "sprite": ""
+}

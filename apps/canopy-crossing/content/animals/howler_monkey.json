@@ -1,0 +1,55 @@
+{
+  "id": "howler_monkey",
+  "number": 6,
+  "name": "Howler Monkey",
+  "region": "amazon",
+  "home": "Amazon Basin",
+  "pack": "amazon",
+  "rarity": "epic",
+  "unlock": {
+    "type": "pack",
+    "pack": "amazon",
+    "amber": 150
+  },
+  "starter": false,
+  "ability": {
+    "name": "Vine swing",
+    "summary": "Vine-swing across a gap",
+    "modules": [
+      {
+        "module": "vine_swing",
+        "max_rows": 3,
+        "target": "safe",
+        "cooldown": 8.0
+      }
+    ]
+  },
+  "stats": {
+    "hop_time": 0.14,
+    "hitbox": 0.6
+  },
+  "look": {
+    "base": "mammal",
+    "colors": {
+      "primary": "#8e3b1c",
+      "secondary": "#5e2410",
+      "belly": "#a5532c",
+      "accent": "#2b1a12",
+      "face": "#2b1a12",
+      "eye": "#f2d06b"
+    },
+    "head": "round",
+    "ears": "small",
+    "snout": "short",
+    "tail": "long_curl",
+    "extras": [
+      "beard",
+      "long_arms"
+    ],
+    "size": 0.76
+  },
+  "skins": [],
+  "conservation": "Least Concern (red howler)",
+  "fact": "Its calls can be heard several kilometres away.",
+  "sprite": ""
+}

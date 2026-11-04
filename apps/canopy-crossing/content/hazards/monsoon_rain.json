@@ -1,0 +1,25 @@
+{
+  "id": "monsoon_rain",
+  "name": "Monsoon rain",
+  "kind": "downpour",
+  "lane": "event",
+  "period": [
+    14.0,
+    20.0
+  ],
+  "duration": [
+    6.0,
+    8.0
+  ],
+  "boost": 0.5,
+  "art": {
+    "painter": "rain",
+    "colors": {
+      "body": "#9ab8d8"
+    }
+  },
+  "desc": "Heavy rain: rivers run faster.",
+  "predator": false,
+  "sprite": "",
+  "warn": 2.0
+}

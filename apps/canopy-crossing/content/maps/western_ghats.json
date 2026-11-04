@@ -1,0 +1,184 @@
+{
+  "id": "western_ghats",
+  "order": 8,
+  "name": "Western Ghats",
+  "location": "India",
+  "lat": 11.0,
+  "lon": 76.5,
+  "status": "available",
+  "access": {
+    "type": "pack",
+    "product": "map_western_ghats"
+  },
+  "flag": {
+    "colors": [
+      "#f2902a",
+      "#1a7a3a"
+    ],
+    "code": "WGH"
+  },
+  "palette": {
+    "safe": "#3a9a4a",
+    "safe_alt": "#44a652",
+    "ground": "#8a5a3a",
+    "ground_alt": "#7e5234",
+    "water": "#4a7a8a",
+    "water_deep": "#3a6272",
+    "foam": "#e0ece8",
+    "canopy": "#1e6a2e",
+    "canopy_dark": "#0e421a",
+    "accent": "#f2902a",
+    "goal": "#c8f0a0",
+    "sky": "#2a4a3a",
+    "ui": "#1a7a3a"
+  },
+  "atmosphere": {
+    "mist": 0.2,
+    "light_shafts": 0.0,
+    "rain": 0.45
+  },
+  "music": {
+    "file": "res://assets/audio/music/western_ghats.ogg",
+    "tempo": 98,
+    "root": "A",
+    "scale": "dorian",
+    "lead": "bansuri",
+    "drums": "tabla"
+  },
+  "facts": [
+    "The Western Ghats are older than the Himalayas.",
+    "They are a UNESCO World Heritage Site and one of the world's biodiversity hotspots."
+  ],
+  "generator": "classic",
+  "hazards": {
+    "ground_movers": [
+      {
+        "id": "tea_truck",
+        "weight": 2
+      },
+      {
+        "id": "scooter",
+        "weight": 2
+      },
+      {
+        "id": "gaur_herd",
+        "weight": 1
+      }
+    ],
+    "platforms": [
+      {
+        "id": "rapids_log",
+        "weight": 2
+      },
+      {
+        "id": "floating_log",
+        "weight": 2
+      },
+      {
+        "id": "stepping_stones",
+        "weight": 1
+      }
+    ],
+    "water_predators": [
+      {
+        "id": "mugger_croc",
+        "weight": 1
+      }
+    ],
+    "safe_specials": [
+      {
+        "id": "king_cobra",
+        "weight": 2
+      }
+    ],
+    "safe_effects": [
+      {
+        "id": "monsoon_flood",
+        "weight": 2
+      }
+    ],
+    "tiles": [],
+    "events": [
+      {
+        "id": "monsoon_rain",
+        "weight": 1
+      }
+    ],
+    "swoopers": [
+      {
+        "id": "hawk_eagle_swoop",
+        "weight": 1
+      }
+    ]
+  },
+  "intro_hazards": [
+    "monsoon_flood",
+    "monsoon_rain",
+    "tea_truck",
+    "rapids_log"
+  ],
+  "difficulty": {
+    "speed": [
+      0.85,
+      1.55
+    ],
+    "density": [
+      0.34,
+      0.66
+    ],
+    "band": [
+      [
+        1,
+        3
+      ],
+      [
+        2,
+        4
+      ]
+    ],
+    "safe_chance": [
+      1.0,
+      0.5
+    ],
+    "special_chance": [
+      0.15,
+      0.5
+    ],
+    "rows_to_max": 130,
+    "move_timer": 0
+  },
+  "stages": [
+    {
+      "name": "Tea Estates",
+      "rows": 26,
+      "difficulty": [
+        0.0,
+        0.3
+      ]
+    },
+    {
+      "name": "Waterfall Gorge",
+      "rows": 36,
+      "difficulty": [
+        0.25,
+        0.6
+      ]
+    },
+    {
+      "name": "Monsoon",
+      "rows": 48,
+      "difficulty": [
+        0.5,
+        0.85
+      ]
+    }
+  ],
+  "endless": {
+    "creep": [
+      0.25,
+      0.9
+    ]
+  },
+  "native_animals": [],
+  "sprite": ""
+}

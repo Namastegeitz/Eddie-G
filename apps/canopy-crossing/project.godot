@@ -1,0 +1,71 @@
+; Engine configuration file.
+; Canopy Crossing — a jungle arcade crosser. Animals, maps, hazards and the
+; store catalog are content files under res://content (see docs/CONTENT.md).
+
+config_version=5
+
+[application]
+
+config/name="Canopy Crossing"
+config/description="Guide real jungle animals across rivers, trails and swamps in real rainforests."
+config/version="0.9.0"
+run/main_scene="res://scenes/main.tscn"
+config/features=PackedStringArray("4.7", "GL Compatibility")
+boot_splash/bg_color=Color(0.055, 0.165, 0.11, 1)
+boot_splash/show_image=false
+config/icon="res://assets/icons/icon.png"
+
+[autoload]
+
+Content="*res://autoload/content.gd"
+Save="*res://autoload/save.gd"
+Analytics="*res://autoload/analytics.gd"
+Economy="*res://autoload/economy.gd"
+Progress="*res://autoload/progress.gd"
+Store="*res://autoload/store.gd"
+Ads="*res://autoload/ads.gd"
+Sfx="*res://autoload/sfx.gd"
+Game="*res://autoload/game.gd"
+
+[canopy]
+
+billing/backend="mock"
+ads/backend="mock"
+analytics/endpoint=""
+debug/fast_ads=false
+
+[display]
+
+window/size/viewport_width=720
+window/size/viewport_height=1280
+window/size/window_width_override=450
+window/size/window_height_override=800
+window/stretch/mode="canvas_items"
+window/stretch/aspect="expand"
+window/handheld/orientation=1
+window/energy_saving/keep_screen_on=true
+
+[editor]
+
+export/convert_text_resources_to_binary=false
+
+[gui]
+
+theme/default_font_antialiasing=1
+
+[input_devices]
+
+pointing/emulate_touch_from_mouse=true
+pointing/emulate_mouse_from_touch=true
+
+[physics]
+
+common/physics_ticks_per_second=60
+
+[rendering]
+
+renderer/rendering_method="gl_compatibility"
+renderer/rendering_method.mobile="gl_compatibility"
+textures/vram_compression/import_etc2_astc=true
+environment/defaults/default_clear_color=Color(0.055, 0.165, 0.11, 1)
+anti_aliasing/quality/msaa_2d=0

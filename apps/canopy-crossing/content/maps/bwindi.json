@@ -1,0 +1,193 @@
+{
+  "id": "bwindi",
+  "order": 9,
+  "name": "Bwindi",
+  "location": "Uganda",
+  "lat": -1.0,
+  "lon": 29.7,
+  "status": "available",
+  "access": {
+    "type": "pack",
+    "product": "map_bwindi"
+  },
+  "flag": {
+    "colors": [
+      "#1a1a1a",
+      "#f6d43a",
+      "#d8242a"
+    ],
+    "code": "BWI"
+  },
+  "palette": {
+    "safe": "#2e6a3a",
+    "safe_alt": "#367442",
+    "ground": "#5a4632",
+    "ground_alt": "#523f2c",
+    "water": "#3a6272",
+    "water_deep": "#2c4e5c",
+    "foam": "#b8d0d4",
+    "canopy": "#183e22",
+    "canopy_dark": "#0a2412",
+    "accent": "#d8e0a0",
+    "goal": "#c0e8b0",
+    "sky": "#4a6058",
+    "ui": "#2e5a3a"
+  },
+  "atmosphere": {
+    "mist": 0.45,
+    "light_shafts": 0.1,
+    "rain": 0.0,
+    "fog_color": "#c8d4cc"
+  },
+  "music": {
+    "file": "res://assets/audio/music/bwindi.ogg",
+    "tempo": 88,
+    "root": "Bb",
+    "scale": "pentatonic_minor",
+    "lead": "kalimba",
+    "drums": "toms"
+  },
+  "facts": [
+    "Bwindi is home to about half of the world's mountain gorillas.",
+    "Its full name is Bwindi Impenetrable National Park — and the forest earns it."
+  ],
+  "generator": "highlands",
+  "hazards": {
+    "ground_movers": [
+      {
+        "id": "rolling_boulder",
+        "weight": 2
+      },
+      {
+        "id": "red_river_hogs",
+        "weight": 1
+      }
+    ],
+    "platforms": [
+      {
+        "id": "drifting_branch",
+        "weight": 2
+      },
+      {
+        "id": "stepping_stones",
+        "weight": 2
+      }
+    ],
+    "bridges": [
+      {
+        "id": "rope_bridge",
+        "weight": 1
+      }
+    ],
+    "ridges": [
+      {
+        "id": "ridge_drop",
+        "weight": 1
+      }
+    ],
+    "safe_specials": [
+      {
+        "id": "gaboon_viper",
+        "weight": 1
+      },
+      {
+        "id": "falling_branch",
+        "weight": 1
+      }
+    ],
+    "ground_effects": [
+      {
+        "id": "mudslide",
+        "weight": 2
+      }
+    ],
+    "safe_effects": [
+      {
+        "id": "mudslide",
+        "weight": 1
+      }
+    ],
+    "tiles": [
+      {
+        "id": "thick_brush",
+        "weight": 1
+      }
+    ],
+    "swoopers": [
+      {
+        "id": "crowned_eagle_swoop",
+        "weight": 1
+      }
+    ]
+  },
+  "intro_hazards": [
+    "mudslide",
+    "ridge_drop",
+    "rolling_boulder",
+    "rope_bridge"
+  ],
+  "difficulty": {
+    "speed": [
+      0.8,
+      1.45
+    ],
+    "density": [
+      0.3,
+      0.6
+    ],
+    "band": [
+      [
+        1,
+        2
+      ],
+      [
+        2,
+        3
+      ]
+    ],
+    "safe_chance": [
+      1.0,
+      0.55
+    ],
+    "special_chance": [
+      0.15,
+      0.5
+    ],
+    "rows_to_max": 130,
+    "move_timer": 9
+  },
+  "stages": [
+    {
+      "name": "Gorilla Slopes",
+      "rows": 26,
+      "difficulty": [
+        0.0,
+        0.3
+      ]
+    },
+    {
+      "name": "Narrow Ridges",
+      "rows": 36,
+      "difficulty": [
+        0.25,
+        0.6
+      ]
+    },
+    {
+      "name": "Impenetrable",
+      "rows": 48,
+      "difficulty": [
+        0.5,
+        0.85
+      ]
+    }
+  ],
+  "endless": {
+    "creep": [
+      0.22,
+      0.8
+    ]
+  },
+  "native_animals": [],
+  "sprite": ""
+}

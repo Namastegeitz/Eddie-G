@@ -1,0 +1,24 @@
+{
+  "id": "falling_branch",
+  "name": "Falling branches",
+  "kind": "faller",
+  "lane": "safe",
+  "cause": "crushed",
+  "cause_text": "Bonked by a falling branch",
+  "period": [
+    4.0,
+    7.0
+  ],
+  "warn": 1.0,
+  "impact": 0.35,
+  "art": {
+    "painter": "branch_fall",
+    "colors": {
+      "body": "#6a4a2a",
+      "leaf": "#4a9a3a"
+    }
+  },
+  "desc": "Look for the shadow before it lands.",
+  "predator": false,
+  "sprite": ""
+}

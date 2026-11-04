@@ -1,0 +1,52 @@
+{
+  "id": "aye_aye",
+  "number": 41,
+  "name": "Aye-Aye",
+  "region": "masoala",
+  "home": "Madagascar",
+  "pack": "masoala",
+  "rarity": "epic",
+  "unlock": {
+    "type": "pack",
+    "pack": "masoala",
+    "amber": 150
+  },
+  "starter": false,
+  "ability": {
+    "name": "Night vision",
+    "summary": "Night vision — reveals hidden hazards",
+    "modules": [
+      {
+        "module": "reveal"
+      }
+    ]
+  },
+  "stats": {
+    "hop_time": 0.15,
+    "hitbox": 0.6
+  },
+  "look": {
+    "base": "mammal",
+    "colors": {
+      "primary": "#2e2620",
+      "secondary": "#18120e",
+      "belly": "#5a4a3c",
+      "accent": "#d8c8b0",
+      "face": "#8a7a68",
+      "eye": "#f4a21a"
+    },
+    "head": "round",
+    "ears": "huge",
+    "snout": "short",
+    "tail": "bushy",
+    "eyes": "huge",
+    "extras": [
+      "shaggy"
+    ],
+    "size": 0.66
+  },
+  "skins": [],
+  "conservation": "Endangered",
+  "fact": "It taps on wood to find grubs, then hooks them out with a long middle finger.",
+  "sprite": ""
+}

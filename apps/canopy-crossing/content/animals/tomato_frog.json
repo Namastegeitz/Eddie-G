@@ -1,0 +1,53 @@
+{
+  "id": "tomato_frog",
+  "number": 44,
+  "name": "Tomato Frog",
+  "region": "masoala",
+  "home": "Madagascar",
+  "pack": "masoala",
+  "rarity": "rare",
+  "unlock": {
+    "type": "berries",
+    "price": 600
+  },
+  "starter": false,
+  "ability": {
+    "name": "Startle puff",
+    "summary": "Startle puff — pushes back one hazard",
+    "modules": [
+      {
+        "module": "scare",
+        "targets": "any",
+        "count": 1,
+        "radius": 1,
+        "push": 2.5,
+        "duration": 0.0,
+        "cooldown": 6.0,
+        "style": "puff"
+      }
+    ]
+  },
+  "stats": {
+    "hop_time": 0.14,
+    "hitbox": 0.6
+  },
+  "look": {
+    "base": "frog",
+    "colors": {
+      "primary": "#e8481e",
+      "secondary": "#b8300e",
+      "belly": "#f6b05a",
+      "accent": "#2a1a10",
+      "eye": "#2a1a10"
+    },
+    "pattern": "none",
+    "extras": [
+      "puffy"
+    ],
+    "size": 0.62
+  },
+  "skins": [],
+  "conservation": "Least Concern",
+  "fact": "It puffs itself up to look bigger when threatened.",
+  "sprite": ""
+}

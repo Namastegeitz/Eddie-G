@@ -1,0 +1,31 @@
+{
+  "id": "tea_truck",
+  "name": "Tea-estate truck",
+  "kind": "mover",
+  "lane": "ground",
+  "cause": "crushed",
+  "cause_text": "Flattened by a tea-estate truck",
+  "length": [
+    2.2,
+    2.4
+  ],
+  "speed": [
+    1.8,
+    2.6
+  ],
+  "gap": [
+    3.0,
+    5.0
+  ],
+  "art": {
+    "painter": "truck",
+    "colors": {
+      "body": "#2a8a4a",
+      "cab": "#f2e6c0",
+      "cargo": "#6ab83a"
+    }
+  },
+  "desc": "Hauls tea leaves down the hill roads.",
+  "predator": false,
+  "sprite": ""
+}

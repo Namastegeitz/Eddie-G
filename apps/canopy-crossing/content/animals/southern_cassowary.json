@@ -1,0 +1,55 @@
+{
+  "id": "southern_cassowary",
+  "number": 32,
+  "name": "Southern Cassowary",
+  "region": "daintree",
+  "home": "Daintree",
+  "pack": "daintree",
+  "rarity": "epic",
+  "unlock": {
+    "type": "free"
+  },
+  "starter": true,
+  "ability": {
+    "name": "Charge",
+    "summary": "Powerful forward charge (2 tiles)",
+    "modules": [
+      {
+        "module": "multi_hop",
+        "tiles": 2,
+        "cooldown": 4.5,
+        "style": "charge"
+      }
+    ]
+  },
+  "stats": {
+    "hop_time": 0.14,
+    "hitbox": 0.6
+  },
+  "look": {
+    "base": "bird",
+    "colors": {
+      "primary": "#15151a",
+      "secondary": "#22222a",
+      "belly": "#15151a",
+      "accent": "#2a6fe0",
+      "wattle": "#e0242c",
+      "casque": "#8a6a3a",
+      "beak_tip": "#2a2a2a",
+      "eye": "#a83a1a"
+    },
+    "beak": "short",
+    "tail": "shaggy",
+    "extras": [
+      "casque",
+      "wattle",
+      "blue_neck"
+    ],
+    "flightless": true,
+    "size": 0.9
+  },
+  "skins": [],
+  "conservation": "Least Concern (IUCN)",
+  "fact": "Each foot has a dagger-like inner claw.",
+  "sprite": ""
+}

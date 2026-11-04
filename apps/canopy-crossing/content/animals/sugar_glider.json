@@ -1,0 +1,47 @@
+{
+  "id": "sugar_glider",
+  "number": 35,
+  "name": "Sugar Glider",
+  "region": "daintree",
+  "home": "Daintree",
+  "pack": "daintree",
+  "rarity": "rare",
+  "unlock": {
+    "type": "berries",
+    "price": 600
+  },
+  "starter": false,
+  "ability": {
+    "name": "Glide",
+    "summary": "Glides a lane",
+    "modules": [
+      {
+        "module": "glide",
+        "tiles": 2,
+        "cooldown": 5.0,
+        "style": "membrane"
+      }
+    ]
+  },
+  "stats": {
+    "hop_time": 0.14,
+    "hitbox": 0.6
+  },
+  "look": {
+    "base": "glider",
+    "colors": {
+      "primary": "#a4a6ac",
+      "secondary": "#3a3a40",
+      "belly": "#efece6",
+      "accent": "#3a3a40",
+      "eye": "#141414"
+    },
+    "pattern": "dorsal_stripe",
+    "eyes": "big",
+    "size": 0.58
+  },
+  "skins": [],
+  "conservation": "Least Concern",
+  "fact": "It glides between trees on a thin skin membrane.",
+  "sprite": ""
+}

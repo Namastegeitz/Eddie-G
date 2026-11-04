@@ -1,0 +1,30 @@
+{
+  "id": "tourist_4wd",
+  "name": "Tourist 4WD",
+  "kind": "mover",
+  "lane": "ground",
+  "cause": "crushed",
+  "cause_text": "Run down by a tourist 4WD",
+  "length": [
+    1.7,
+    1.8
+  ],
+  "speed": [
+    2.0,
+    3.0
+  ],
+  "gap": [
+    3.0,
+    5.2
+  ],
+  "art": {
+    "painter": "jeep",
+    "colors": {
+      "body": "#f2f0ea",
+      "roof": "#3a6aa0"
+    }
+  },
+  "desc": "Sightseers in a hurry.",
+  "predator": false,
+  "sprite": ""
+}

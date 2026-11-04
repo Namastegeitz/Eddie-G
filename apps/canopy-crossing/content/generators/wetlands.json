@@ -1,0 +1,93 @@
+{
+  "id": "wetlands",
+  "description": "Water everywhere: tidal channels, boat traffic, and banks that flood.",
+  "start_rows": 3,
+  "bands": [
+    {
+      "id": "channel",
+      "lane": "water",
+      "slot": "platforms",
+      "weight": [
+        3.5,
+        3.5
+      ],
+      "rows": "band",
+      "predators": {
+        "slot": "water_predators",
+        "chance": [
+          0.05,
+          0.45
+        ]
+      }
+    },
+    {
+      "id": "tidal",
+      "lane": "water",
+      "slot": "tidal_platforms",
+      "weight": [
+        1.0,
+        2.0
+      ],
+      "rows": [
+        1,
+        2
+      ],
+      "repeat": false
+    },
+    {
+      "id": "mudflat",
+      "lane": "ground",
+      "slot": "ground_movers",
+      "weight": [
+        2.0,
+        2.0
+      ],
+      "rows": "band",
+      "effects": {
+        "slot": "ground_effects",
+        "chance": [
+          0.0,
+          0.25
+        ]
+      }
+    }
+  ],
+  "between": {
+    "lane": "safe",
+    "chance": "safe_chance",
+    "specials": {
+      "slot": "safe_specials",
+      "chance": "special_chance"
+    },
+    "tiles": {
+      "slot": "tiles",
+      "chance": [
+        0.2,
+        0.5
+      ]
+    },
+    "effects": {
+      "slot": "safe_effects",
+      "chance": [
+        0.05,
+        0.45
+      ]
+    },
+    "swoopers": {
+      "slot": "swoopers",
+      "chance": [
+        0.0,
+        0.2
+      ]
+    }
+  },
+  "collectibles": {
+    "safe": [
+      0.4,
+      0.3
+    ],
+    "platform": 0.14,
+    "ground": 0.05,
+    "bonus": 0.25
+  }
+}

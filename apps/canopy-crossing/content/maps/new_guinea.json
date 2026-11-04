@@ -1,0 +1,194 @@
+{
+  "id": "new_guinea",
+  "order": 10,
+  "name": "New Guinea Highlands",
+  "location": "Papua New Guinea",
+  "lat": -5.9,
+  "lon": 144.2,
+  "status": "available",
+  "access": {
+    "type": "pack",
+    "product": "map_new_guinea"
+  },
+  "flag": {
+    "colors": [
+      "#1a1a1a",
+      "#d8242a",
+      "#f6d43a"
+    ],
+    "code": "PNG"
+  },
+  "palette": {
+    "safe": "#3a7a3a",
+    "safe_alt": "#448442",
+    "ground": "#6a5a42",
+    "ground_alt": "#60523c",
+    "water": "#3a6a7a",
+    "water_deep": "#2a5262",
+    "foam": "#c0dce4",
+    "canopy": "#1a4a2a",
+    "canopy_dark": "#0c2c16",
+    "accent": "#f6d43a",
+    "goal": "#c8f0b8",
+    "sky": "#3a5248",
+    "ui": "#8a2a2a"
+  },
+  "atmosphere": {
+    "mist": 0.3,
+    "light_shafts": 0.2,
+    "rain": 0.0
+  },
+  "music": {
+    "file": "res://assets/audio/music/new_guinea.ogg",
+    "tempo": 104,
+    "root": "C#",
+    "scale": "minor",
+    "lead": "bamboo_flute",
+    "drums": "log_drum"
+  },
+  "facts": [
+    "New Guinea is the world's largest tropical island.",
+    "Most of the world's birds-of-paradise live on New Guinea."
+  ],
+  "generator": "highlands",
+  "hazards": {
+    "ground_movers": [
+      {
+        "id": "wild_boar",
+        "weight": 2
+      },
+      {
+        "id": "rolling_boulder",
+        "weight": 1
+      }
+    ],
+    "platforms": [
+      {
+        "id": "floating_log",
+        "weight": 2
+      },
+      {
+        "id": "rapids_log",
+        "weight": 2
+      }
+    ],
+    "bridges": [
+      {
+        "id": "rope_bridge",
+        "weight": 1
+      }
+    ],
+    "ridges": [
+      {
+        "id": "ridge_drop",
+        "weight": 1
+      }
+    ],
+    "water_predators": [
+      {
+        "id": "new_guinea_croc",
+        "weight": 1
+      }
+    ],
+    "safe_specials": [
+      {
+        "id": "amethystine_python",
+        "weight": 1
+      },
+      {
+        "id": "falling_branch",
+        "weight": 1
+      }
+    ],
+    "tiles": [
+      {
+        "id": "thick_brush",
+        "weight": 1
+      }
+    ],
+    "events": [
+      {
+        "id": "sudden_downpour",
+        "weight": 1
+      }
+    ],
+    "swoopers": [
+      {
+        "id": "sea_eagle_swoop",
+        "weight": 1
+      }
+    ]
+  },
+  "intro_hazards": [
+    "rope_bridge",
+    "sudden_downpour",
+    "rapids_log",
+    "wild_boar"
+  ],
+  "difficulty": {
+    "speed": [
+      0.85,
+      1.5
+    ],
+    "density": [
+      0.32,
+      0.64
+    ],
+    "band": [
+      [
+        1,
+        2
+      ],
+      [
+        2,
+        4
+      ]
+    ],
+    "safe_chance": [
+      1.0,
+      0.5
+    ],
+    "special_chance": [
+      0.15,
+      0.5
+    ],
+    "rows_to_max": 130,
+    "move_timer": 0
+  },
+  "stages": [
+    {
+      "name": "River Gorge",
+      "rows": 26,
+      "difficulty": [
+        0.0,
+        0.3
+      ]
+    },
+    {
+      "name": "Rope Bridges",
+      "rows": 36,
+      "difficulty": [
+        0.25,
+        0.6
+      ]
+    },
+    {
+      "name": "Downpour",
+      "rows": 48,
+      "difficulty": [
+        0.5,
+        0.85
+      ]
+    }
+  ],
+  "endless": {
+    "creep": [
+      0.25,
+      0.9
+    ]
+  },
+  "native_animals": [
+    "bird_of_paradise"
+  ],
+  "sprite": ""
+}

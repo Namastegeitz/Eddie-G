@@ -1,0 +1,24 @@
+{
+  "id": "falling_coconut",
+  "name": "Falling fruit",
+  "kind": "faller",
+  "lane": "safe",
+  "cause": "crushed",
+  "cause_text": "Bonked by a falling durian",
+  "period": [
+    3.8,
+    6.2
+  ],
+  "warn": 0.9,
+  "impact": 0.3,
+  "art": {
+    "painter": "fruit_fall",
+    "colors": {
+      "body": "#8a9a2a",
+      "spike": "#5a6a1a"
+    }
+  },
+  "desc": "Spiky fruit drops from the canopy.",
+  "predator": false,
+  "sprite": ""
+}

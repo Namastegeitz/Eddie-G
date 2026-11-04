@@ -1,0 +1,38 @@
+{
+  "id": "caiman_back",
+  "name": "Caiman back",
+  "kind": "platform",
+  "lane": "water",
+  "length": [
+    1.7,
+    2.0
+  ],
+  "speed": [
+    0.8,
+    1.3
+  ],
+  "gap": [
+    1.3,
+    2.6
+  ],
+  "dive": {
+    "chance": 1.0,
+    "period": [
+      6.0,
+      8.0
+    ],
+    "warn": 1.2,
+    "under": 1.8
+  },
+  "art": {
+    "painter": "caiman_back",
+    "colors": {
+      "body": "#4a5a32",
+      "ridge": "#2e3a20",
+      "eye": "#e8c547"
+    }
+  },
+  "desc": "A free ride, until it dives.",
+  "predator": false,
+  "sprite": ""
+}

@@ -1,0 +1,29 @@
+{
+  "id": "harpy_swoop",
+  "name": "Harpy eagle",
+  "kind": "swooper",
+  "lane": "safe",
+  "predator": true,
+  "cause": "eaten",
+  "cause_text": "Snatched by a harpy eagle",
+  "period": [
+    6.5,
+    9.0
+  ],
+  "warn": 1.3,
+  "swoop": 0.55,
+  "rows": [
+    -1,
+    3
+  ],
+  "art": {
+    "painter": "raptor",
+    "colors": {
+      "body": "#55565e",
+      "wing": "#2a2a30",
+      "belly": "#f4f4f2"
+    }
+  },
+  "desc": "A shadow sweeps a column. Step aside.",
+  "sprite": ""
+}

@@ -1,0 +1,46 @@
+{
+  "id": "bairds_tapir",
+  "number": 49,
+  "name": "Baird's Tapir",
+  "region": "monteverde",
+  "home": "Costa Rica",
+  "pack": "monteverde",
+  "rarity": "rare",
+  "unlock": {
+    "type": "berries",
+    "price": 600
+  },
+  "starter": false,
+  "ability": {
+    "name": "Plow",
+    "summary": "Plows through brush obstacles",
+    "modules": [
+      {
+        "module": "plow"
+      }
+    ]
+  },
+  "stats": {
+    "hop_time": 0.16,
+    "hitbox": 0.66
+  },
+  "look": {
+    "base": "mammal",
+    "colors": {
+      "primary": "#4a525a",
+      "secondary": "#323840",
+      "belly": "#d8d0c4",
+      "accent": "#f2f0ea",
+      "eye": "#140d08"
+    },
+    "head": "long",
+    "ears": "round_tipped",
+    "snout": "tapir",
+    "tail": "stub",
+    "size": 0.9
+  },
+  "skins": [],
+  "conservation": "Endangered",
+  "fact": "The largest native land mammal in Central America.",
+  "sprite": ""
+}

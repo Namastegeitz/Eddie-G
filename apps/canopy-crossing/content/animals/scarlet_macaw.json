@@ -1,0 +1,49 @@
+{
+  "id": "scarlet_macaw",
+  "number": 8,
+  "name": "Scarlet Macaw",
+  "region": "amazon",
+  "home": "Amazon Basin",
+  "pack": "amazon",
+  "rarity": "epic",
+  "unlock": {
+    "type": "pack",
+    "pack": "amazon",
+    "amber": 150
+  },
+  "starter": false,
+  "ability": {
+    "name": "Hover",
+    "summary": "Short hover over a lane",
+    "modules": [
+      {
+        "module": "hover",
+        "duration": 2.0,
+        "cooldown": 9.0
+      }
+    ]
+  },
+  "stats": {
+    "hop_time": 0.14,
+    "hitbox": 0.6
+  },
+  "look": {
+    "base": "bird",
+    "colors": {
+      "primary": "#e0242c",
+      "secondary": "#f5d01e",
+      "wing2": "#2a6fe0",
+      "belly": "#e0242c",
+      "accent": "#f4f0e6",
+      "beak_tip": "#1a1a1a",
+      "eye": "#f4f0e6"
+    },
+    "beak": "hooked",
+    "tail": "long",
+    "size": 0.72
+  },
+  "skins": [],
+  "conservation": "Least Concern",
+  "fact": "Flocks gather at clay licks along Amazon riverbanks.",
+  "sprite": ""
+}

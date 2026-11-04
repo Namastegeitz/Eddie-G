@@ -1,0 +1,677 @@
+class_name HazardPainter
+extends RefCounted
+## Draws every hazard, tile, lane effect and collectible from its content
+## file's "art" block: {"painter": id, "colors": {...}}. Painters are shared,
+## so a new hazard file can reuse one with new colours, or name a "sprite".
+##
+## Entities: origin at the entity's left edge, lane centre at y = 0.
+
+const ANIMATED := ["roll_log", "boulder", "ants", "herd", "runner", "vine", "caiman_back", "lilypad", "boat", "bridge", "lizard"]
+
+static var _sprites := {}
+
+
+static func c(colors: Dictionary, key: String, fallback := "#888888") -> Color:
+	return Color(String(colors.get(key, fallback)))
+
+
+static func animated(painter: String) -> bool:
+	return painter in ANIMATED
+
+
+static func draw_entity(ci: CanvasItem, hz: Dictionary, len_px: float, T: float, o: Dictionary) -> void:
+	var art: Dictionary = hz.get("art", {})
+	var cl: Dictionary = art.get("colors", {})
+	var dir := int(o.get("dir", 1))
+	var t := float(o.get("t", 0.0))
+	var sprite := String(hz.get("sprite", ""))
+	if sprite != "" and ResourceLoader.exists(sprite):
+		if not _sprites.has(sprite):
+			_sprites[sprite] = load(sprite)
+		var tex: Texture2D = _sprites[sprite]
+		ci.draw_texture_rect(tex, Rect2(0, -T * 0.45, len_px, T * 0.9), false)
+		return
+	var L := len_px
+	match String(art.get("painter", "")):
+		"truck":
+			_truck(ci, cl, L, T, dir)
+		"jeep":
+			_jeep(ci, cl, L, T, dir)
+		"tractor":
+			_tractor(ci, cl, L, T, dir)
+		"cart":
+			_cart(ci, cl, L, T, dir)
+		"scooter":
+			_scooter(ci, cl, L, T, dir)
+		"herd":
+			_beast(ci, cl, L, T, dir, t)
+		"ants":
+			_ant(ci, cl, L, T, dir, t)
+		"roll_log":
+			_roll_log(ci, cl, L, T, t * float(o.get("speed", 1.0)))
+		"elephant":
+			_elephant(ci, cl, L, T, dir, t)
+		"runner":
+			_runner(ci, cl, L, T, dir, t)
+		"vine":
+			_vine(ci, cl, L, T, t)
+		"boulder":
+			_boulder(ci, cl, L, T, t * float(o.get("speed", 1.0)))
+		"lizard":
+			_lizard(ci, cl, L, T, dir, t)
+		"log":
+			_log(ci, cl, L, T)
+		"lilypad":
+			_lilypad(ci, cl, L, T, t)
+		"caiman_back":
+			_caiman_back(ci, cl, L, T, dir, t)
+		"branch":
+			_branch(ci, cl, L, T)
+		"boat":
+			_boat(ci, cl, L, T, dir, t)
+		"bridge":
+			_bridge(ci, cl, L, T, t)
+		"stones":
+			_stone(ci, cl, L, T)
+		_:
+			Draw.slab(ci, Rect2(0, -T * 0.3, L, T * 0.6), T * 0.15, c(cl, "body"))
+	if o.get("colorblind", false):
+		if hz.get("kind", "") == "platform":
+			var pts := Draw.rrect_points(Rect2(2, -T * 0.36, L - 4, T * 0.72), T * 0.2)
+			pts.append(pts[0])
+			ci.draw_polyline(pts, Color.WHITE, 3.0, true)
+		else:
+			_hazard_marker(ci, Vector2(L * 0.5, -T * 0.05), T * 0.16)
+
+
+static func _hazard_marker(ci: CanvasItem, p: Vector2, r: float) -> void:
+	var tri := PackedVector2Array([p + Vector2(0, -r), p + Vector2(r * 0.95, r * 0.7), p + Vector2(-r * 0.95, r * 0.7)])
+	ci.draw_colored_polygon(tri, Color.BLACK)
+	var inner := PackedVector2Array([p + Vector2(0, -r * 0.62), p + Vector2(r * 0.6, r * 0.48), p + Vector2(-r * 0.6, r * 0.48)])
+	ci.draw_colored_polygon(inner, Color("ffd400"))
+	ci.draw_line(p + Vector2(0, -r * 0.3), p + Vector2(0, r * 0.1), Color.BLACK, r * 0.18)
+	Draw.ellipse(ci, p + Vector2(0, r * 0.3), r * 0.1, r * 0.1, Color.BLACK)
+
+
+# ------------------------------------------------------------------ movers
+
+static func _front(L: float, dir: int, w: float) -> Rect2:
+	return Rect2(L - w if dir > 0 else 0.0, 0, w, 0)
+
+
+static func _truck(ci: CanvasItem, cl: Dictionary, L: float, T: float, dir: int) -> void:
+	var cab_w := minf(T * 0.7, L * 0.28)
+	var bed := Rect2(0 if dir > 0 else cab_w + 4, -T * 0.34, L - cab_w - 4, T * 0.62)
+	var cab := Rect2(L - cab_w if dir > 0 else 0, -T * 0.3, cab_w, T * 0.56)
+	Draw.slab(ci, bed, 8, c(cl, "body"), 9)
+	var cargo := c(cl, "cargo")
+	var n := maxi(2, int(bed.size.x / (T * 0.3)))
+	for i in 3:
+		var y := bed.position.y + T * 0.1 + i * T * 0.15
+		Draw.rrect(ci, Rect2(bed.position.x + 6, y - 2, bed.size.x - 12, T * 0.15), 6, cargo.darkened(0.05 * i))
+		Draw.ellipse(ci, Vector2(bed.position.x + (bed.size.x - 8 if dir > 0 else 8), y + T * 0.06), T * 0.06, T * 0.06, cargo.lightened(0.35))
+	Draw.slab(ci, cab, 10, c(cl, "cab"), 11)
+	var ws := Rect2(cab.position.x + (cab.size.x * 0.55 if dir > 0 else cab.size.x * 0.1), cab.position.y + 6, cab.size.x * 0.32, cab.size.y - 12)
+	Draw.rrect(ci, ws, 5, Color("9fd0e8"))
+	for wx in [bed.position.x + T * 0.3, bed.position.x + bed.size.x - T * 0.3]:
+		for wy in [-T * 0.38, T * 0.3]:
+			Draw.rrect(ci, Rect2(wx - T * 0.12, wy, T * 0.24, T * 0.1), 4, Color("1e1e1e"))
+	var _n := n
+
+
+static func _jeep(ci: CanvasItem, cl: Dictionary, L: float, T: float, dir: int) -> void:
+	Draw.slab(ci, Rect2(0, -T * 0.32, L, T * 0.6), 14, c(cl, "body"), 9)
+	Draw.rrect(ci, Rect2(L * 0.22, -T * 0.26, L * 0.5, T * 0.48), 10, c(cl, "roof"))
+	var wx := L * 0.74 if dir > 0 else L * 0.08
+	Draw.rrect(ci, Rect2(wx, -T * 0.24, L * 0.16, T * 0.44), 6, Color("9fd0e8"))
+	var sp := L * 0.04 if dir > 0 else L * 0.86
+	Draw.ellipse(ci, Vector2(sp + L * 0.05, 0), T * 0.12, T * 0.16, Color("222222"))
+	for x in [L * 0.2, L * 0.8]:
+		for y in [-T * 0.38, T * 0.28]:
+			Draw.rrect(ci, Rect2(x - T * 0.11, y, T * 0.22, T * 0.1), 4, Color("1e1e1e"))
+
+
+static func _tractor(ci: CanvasItem, cl: Dictionary, L: float, T: float, dir: int) -> void:
+	var cab_w := L * 0.38
+	var trailer := Rect2(0 if dir > 0 else cab_w + 6, -T * 0.32, L - cab_w - 6, T * 0.6)
+	Draw.slab(ci, trailer, 8, c(cl, "cargo").darkened(0.35), 8)
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 7
+	for i in 18:
+		Draw.ellipse(ci, trailer.position + Vector2(rng.randf_range(8, trailer.size.x - 8), rng.randf_range(8, trailer.size.y - 10)), T * 0.07, T * 0.07, c(cl, "cargo").lerp(Color("c83a1a"), rng.randf() * 0.5))
+	var cx := L - cab_w if dir > 0 else 0.0
+	for wy in [-T * 0.42, T * 0.26]:
+		Draw.rrect(ci, Rect2(cx + cab_w * 0.1, wy, cab_w * 0.45, T * 0.18), 6, Color("1a1a1a"))
+	Draw.slab(ci, Rect2(cx, -T * 0.26, cab_w, T * 0.5), 10, c(cl, "body"), 9)
+	Draw.rrect(ci, Rect2(cx + cab_w * 0.15, -T * 0.18, cab_w * 0.4, T * 0.34), 6, c(cl, "cab"))
+
+
+static func _cart(ci: CanvasItem, cl: Dictionary, L: float, T: float, dir: int) -> void:
+	var cart := Rect2(0 if dir > 0 else L * 0.45, -T * 0.3, L * 0.55, T * 0.56)
+	Draw.slab(ci, cart, 6, c(cl, "body"), 7)
+	for i in 4:
+		ci.draw_line(cart.position + Vector2(0, 6 + i * cart.size.y / 4.0), cart.position + Vector2(cart.size.x, 6 + i * cart.size.y / 4.0), c(cl, "body").darkened(0.25), 2)
+	for wy in [-T * 0.4, T * 0.28]:
+		Draw.ellipse(ci, Vector2(cart.get_center().x, wy + T * 0.05), T * 0.16, T * 0.05, Color("3a2a1a"))
+	var bx := L * 0.78 if dir > 0 else L * 0.22
+	var a := c(cl, "animal")
+	Draw.shadow(ci, Vector2(bx + 4, 6), T * 0.36, T * 0.24, 0.2)
+	Draw.ellipse(ci, Vector2(bx, 0), T * 0.34, T * 0.22, a)
+	Draw.ellipse(ci, Vector2(bx - dir * T * 0.05, -T * 0.02), T * 0.12, T * 0.1, a.darkened(0.08))
+	Draw.ellipse(ci, Vector2(bx + dir * T * 0.36, 0), T * 0.13, T * 0.11, a.darkened(0.05))
+	for sy in [-1.0, 1.0]:
+		ci.draw_line(Vector2(bx + dir * T * 0.38, sy * T * 0.08), Vector2(bx + dir * T * 0.44, sy * T * 0.18), Color("e8e0c0"), 4, true)
+	ci.draw_line(Vector2(cart.get_center().x + dir * cart.size.x * 0.5, 0), Vector2(bx - dir * T * 0.3, 0), Color("5a3a1a"), 4)
+
+
+static func _scooter(ci: CanvasItem, cl: Dictionary, L: float, T: float, dir: int) -> void:
+	Draw.slab(ci, Rect2(L * 0.05, -T * 0.13, L * 0.9, T * 0.26), 10, c(cl, "body"), 6)
+	var hx := L * 0.82 if dir > 0 else L * 0.18
+	ci.draw_line(Vector2(hx, -T * 0.22), Vector2(hx, T * 0.22), Color("333333"), 5, true)
+	Draw.ellipse(ci, Vector2(L * 0.45, 0), T * 0.17, T * 0.17, c(cl, "rider"))
+	Draw.ellipse(ci, Vector2(L * 0.45 + dir * T * 0.03, 0), T * 0.1, T * 0.1, c(cl, "rider").darkened(0.25))
+
+
+static func _beast(ci: CanvasItem, cl: Dictionary, L: float, T: float, dir: int, t: float) -> void:
+	var b := c(cl, "body")
+	var a := c(cl, "accent")
+	var cx := L * 0.5
+	var step := sin(t * 14.0) * T * 0.04
+	Draw.shadow(ci, Vector2(cx + 4, 8), L * 0.48, T * 0.24, 0.22)
+	for lx in [-0.25, 0.25]:
+		for ly in [-1.0, 1.0]:
+			Draw.ellipse(ci, Vector2(cx + lx * L + step * ly, ly * T * 0.2), T * 0.06, T * 0.05, b.darkened(0.3))
+	Draw.ellipse(ci, Vector2(cx, 0), L * 0.42, T * 0.22, b)
+	ci.draw_line(Vector2(cx - L * 0.3, -T * 0.02), Vector2(cx + L * 0.25, -T * 0.02), b.darkened(0.25), 3, true)
+	var hx := cx + dir * L * 0.42
+	Draw.ellipse(ci, Vector2(hx, 0), T * 0.15, T * 0.13, b.darkened(0.08))
+	Draw.ellipse(ci, Vector2(hx + dir * T * 0.13, 0), T * 0.07, T * 0.06, b.lightened(0.2))
+	for sy in [-1.0, 1.0]:
+		Draw.ellipse(ci, Vector2(hx - dir * T * 0.05, sy * T * 0.1), T * 0.05, T * 0.035, a)
+	Draw.ellipse(ci, Vector2(cx - dir * L * 0.44, 0), T * 0.05, T * 0.03, b.darkened(0.3))
+
+
+static func _ant(ci: CanvasItem, cl: Dictionary, L: float, T: float, dir: int, t: float) -> void:
+	var b := c(cl, "body")
+	var cx := L * 0.5
+	var wig := sin(t * 20.0 + L) * 2.0
+	for i in 3:
+		var lx := cx + (i - 1) * L * 0.18
+		ci.draw_line(Vector2(lx, 0), Vector2(lx + wig, -T * 0.13), b.darkened(0.3), 2, true)
+		ci.draw_line(Vector2(lx, 0), Vector2(lx - wig, T * 0.13), b.darkened(0.3), 2, true)
+	Draw.ellipse(ci, Vector2(cx - dir * L * 0.25, 0), L * 0.2, T * 0.07, b)
+	Draw.ellipse(ci, Vector2(cx, 0), L * 0.12, T * 0.05, b.darkened(0.1))
+	Draw.ellipse(ci, Vector2(cx + dir * L * 0.25, 0), L * 0.14, T * 0.065, b)
+	var leaf := c(cl, "leaf")
+	Draw.leaf(ci, Vector2(cx + dir * L * 0.2, -T * 0.06), Vector2(dir * 0.3, -1), T * 0.24, T * 0.09, leaf)
+
+
+static func _roll_log(ci: CanvasItem, cl: Dictionary, L: float, T: float, roll: float) -> void:
+	var b := c(cl, "body")
+	Draw.shadow(ci, Vector2(L * 0.5 + 4, T * 0.3), L * 0.5, T * 0.14, 0.25)
+	Draw.rrect(ci, Rect2(0, -T * 0.32, L, T * 0.64), T * 0.3, b)
+	Draw.rrect(ci, Rect2(0, -T * 0.32, L, T * 0.18), T * 0.12, b.lightened(0.12))
+	var off := fposmod(roll * T * 0.6, T * 0.32)
+	var x := off
+	while x < L - 4:
+		ci.draw_line(Vector2(x, -T * 0.3), Vector2(x - T * 0.08, T * 0.3), b.darkened(0.25), 3, true)
+		x += T * 0.32
+	for ex in [T * 0.08, L - T * 0.08]:
+		Draw.ellipse(ci, Vector2(ex, 0), T * 0.08, T * 0.3, c(cl, "ring"))
+		Draw.ellipse_line(ci, Vector2(ex, 0), T * 0.05, T * 0.19, b.darkened(0.2), 2)
+
+
+static func _elephant(ci: CanvasItem, cl: Dictionary, L: float, T: float, dir: int, t: float) -> void:
+	var b := c(cl, "body")
+	var cx := L * 0.45 if dir > 0 else L * 0.55
+	var step := sin(t * 6.0) * T * 0.04
+	Draw.shadow(ci, Vector2(cx + 6, 10), L * 0.45, T * 0.42, 0.25)
+	for lx in [-0.25, 0.22]:
+		for ly in [-1.0, 1.0]:
+			Draw.ellipse(ci, Vector2(cx + lx * L + step * ly, ly * T * 0.36), T * 0.1, T * 0.08, b.darkened(0.3))
+	Draw.ellipse(ci, Vector2(cx, 0), L * 0.38, T * 0.4, b)
+	Draw.ellipse(ci, Vector2(cx - dir * L * 0.05, -T * 0.06), L * 0.26, T * 0.24, b.lightened(0.07))
+	var hx := cx + dir * L * 0.36
+	for sy in [-1.0, 1.0]:
+		Draw.ellipse(ci, Vector2(hx - dir * T * 0.05, sy * T * 0.26), T * 0.22, T * 0.2, c(cl, "ear"), sy * 0.3)
+	Draw.ellipse(ci, Vector2(hx, 0), T * 0.24, T * 0.22, b.darkened(0.05))
+	var trunk := PackedVector2Array()
+	for i in 6:
+		var k := i / 5.0
+		trunk.append(Vector2(hx + dir * (T * 0.18 + k * T * 0.32), sin(t * 3.0 + k * 2.0) * T * 0.06))
+	ci.draw_polyline(trunk, b.darkened(0.1), T * 0.11, true)
+	for sy in [-1.0, 1.0]:
+		ci.draw_line(Vector2(hx + dir * T * 0.15, sy * T * 0.08), Vector2(hx + dir * T * 0.32, sy * T * 0.12), Color("f2ece0"), 4, true)
+
+
+static func _runner(ci: CanvasItem, cl: Dictionary, L: float, T: float, dir: int, t: float) -> void:
+	var b := c(cl, "body")
+	var cx := L * 0.45 if dir > 0 else L * 0.55
+	var step := sin(t * 16.0) * T * 0.08
+	Draw.shadow(ci, Vector2(cx + 4, 8), L * 0.42, T * 0.26, 0.22)
+	for ly in [-1.0, 1.0]:
+		ci.draw_line(Vector2(cx, ly * T * 0.08), Vector2(cx + step * ly, ly * T * 0.26), Color("5a5a4a"), 4, true)
+	var pts := PackedVector2Array()
+	for i in 14:
+		var a := TAU * i / 14.0
+		pts.append(Vector2(cx, 0) + Vector2(cos(a) * L * 0.38, sin(a) * T * 0.26) * (1.0 + 0.1 * (i % 2)))
+	ci.draw_colored_polygon(pts, b)
+	var nx := cx + dir * L * 0.32
+	ci.draw_line(Vector2(nx, 0), Vector2(nx + dir * T * 0.3, 0), c(cl, "neck"), T * 0.1, true)
+	Draw.ellipse(ci, Vector2(nx + dir * T * 0.08, T * 0.06), T * 0.04, T * 0.06, c(cl, "wattle"))
+	Draw.ellipse(ci, Vector2(nx + dir * T * 0.34, 0), T * 0.1, T * 0.08, c(cl, "neck"))
+	Draw.ellipse(ci, Vector2(nx + dir * T * 0.3, 0), T * 0.07, T * 0.05, Color("8a6a3a"))
+
+
+static func _vine(ci: CanvasItem, cl: Dictionary, L: float, T: float, t: float) -> void:
+	var cx := L * 0.5
+	ci.draw_line(Vector2(cx, -T * 0.5), Vector2(cx, 0), c(cl, "body"), 5, true)
+	Draw.shadow(ci, Vector2(cx + 6, T * 0.18), T * 0.3, T * 0.12, 0.25)
+	for i in 7:
+		var a := TAU * i / 7.0 + t * 0.5
+		Draw.leaf(ci, Vector2(cx, 0), Vector2(cos(a), sin(a)), T * 0.32, T * 0.11, c(cl, "leaf").darkened(0.08 * (i % 3)))
+	Draw.ellipse(ci, Vector2(cx, 0), T * 0.1, T * 0.1, c(cl, "body"))
+
+
+static func _boulder(ci: CanvasItem, cl: Dictionary, L: float, T: float, roll: float) -> void:
+	var cx := L * 0.5
+	var r := minf(L, T) * 0.45
+	Draw.shadow(ci, Vector2(cx + 5, r * 0.6), r, r * 0.4, 0.28)
+	var pts := PackedVector2Array()
+	for i in 10:
+		var a := TAU * i / 10.0 + roll
+		var rr := r * (0.88 + 0.12 * sin(i * 2.7))
+		pts.append(Vector2(cx, 0) + Vector2(cos(a), sin(a)) * rr)
+	ci.draw_colored_polygon(pts, c(cl, "body"))
+	Draw.ellipse(ci, Vector2(cx - r * 0.25, -r * 0.3), r * 0.35, r * 0.22, c(cl, "body").lightened(0.2), roll)
+	ci.draw_line(Vector2(cx, 0) + Vector2(cos(roll), sin(roll)) * r * 0.2, Vector2(cx, 0) + Vector2(cos(roll + 0.6), sin(roll + 0.6)) * r * 0.8, c(cl, "shade"), 3, true)
+
+
+static func _lizard(ci: CanvasItem, cl: Dictionary, L: float, T: float, dir: int, t: float) -> void:
+	var b := c(cl, "body")
+	var cx := L * 0.5
+	var sway := sin(t * 8.0) * T * 0.05
+	Draw.shadow(ci, Vector2(cx + 4, 6), L * 0.45, T * 0.16, 0.2)
+	ci.draw_polyline(PackedVector2Array([Vector2(cx - dir * L * 0.15, 0), Vector2(cx - dir * L * 0.32, sway), Vector2(cx - dir * L * 0.5, -sway)]), b.darkened(0.1), T * 0.08, true)
+	for lx in [-0.12, 0.12]:
+		for ly in [-1.0, 1.0]:
+			ci.draw_line(Vector2(cx + lx * L, 0), Vector2(cx + lx * L + dir * T * 0.08, ly * T * 0.2 + sway * ly), b.darkened(0.2), 4, true)
+	Draw.ellipse(ci, Vector2(cx, 0), L * 0.24, T * 0.13, b)
+	_spot_row(ci, Vector2(cx, 0), L * 0.2, T * 0.08, c(cl, "spots"))
+	Draw.ellipse(ci, Vector2(cx + dir * L * 0.3, 0), T * 0.13, T * 0.09, b.darkened(0.05))
+	ci.draw_line(Vector2(cx + dir * L * 0.4, 0), Vector2(cx + dir * L * 0.47, 0), Color("d8242a"), 2, true)
+
+
+static func _spot_row(ci: CanvasItem, c0: Vector2, rx: float, ry: float, color: Color) -> void:
+	for i in 5:
+		var k := (i / 4.0) * 2.0 - 1.0
+		Draw.ellipse(ci, c0 + Vector2(k * rx * 0.8, (i % 2 - 0.5) * ry), ry * 0.35, ry * 0.3, color)
+
+
+# ------------------------------------------------------------------ platforms
+
+static func _log(ci: CanvasItem, cl: Dictionary, L: float, T: float) -> void:
+	var b := c(cl, "body")
+	Draw.shadow(ci, Vector2(L * 0.5 + 4, T * 0.22), L * 0.5, T * 0.16, 0.25)
+	Draw.rrect(ci, Rect2(0, -T * 0.34, L, T * 0.66), T * 0.3, b)
+	Draw.rrect(ci, Rect2(T * 0.1, -T * 0.32, L - T * 0.2, T * 0.2), T * 0.1, b.lightened(0.14))
+	var rng := RandomNumberGenerator.new()
+	rng.seed = int(L * 13.0)
+	var x := T * 0.3
+	while x < L - T * 0.3:
+		var w := rng.randf_range(T * 0.25, T * 0.6)
+		ci.draw_line(Vector2(x, rng.randf_range(-T * 0.2, T * 0.15)), Vector2(minf(L - T * 0.2, x + w), rng.randf_range(-T * 0.2, T * 0.15)), b.darkened(0.22), 3, true)
+		x += w + rng.randf_range(T * 0.1, T * 0.3)
+	for i in int(L / T):
+		Draw.ellipse(ci, Vector2(rng.randf_range(T * 0.4, L - T * 0.4), rng.randf_range(-T * 0.22, T * 0.1)), T * 0.12, T * 0.07, c(cl, "moss"))
+	Draw.ellipse(ci, Vector2(L - T * 0.12, 0), T * 0.12, T * 0.32, c(cl, "ring"))
+	Draw.ellipse_line(ci, Vector2(L - T * 0.12, 0), T * 0.07, T * 0.2, b.darkened(0.15), 2)
+	Draw.ellipse(ci, Vector2(T * 0.12, 0), T * 0.12, T * 0.32, c(cl, "ring").darkened(0.1))
+
+
+static func _lilypad(ci: CanvasItem, cl: Dictionary, L: float, T: float, t: float) -> void:
+	var r := minf(L, T) * 0.46
+	var cx := L * 0.5
+	var bob := sin(t * 2.0 + L) * 1.5
+	Draw.ellipse(ci, Vector2(cx + 3, 5), r, r * 0.9, Color(0, 0, 0, 0.18))
+	var pts := PackedVector2Array([Vector2(cx, bob)])
+	for i in 21:
+		var a := 0.35 + (TAU - 0.7) * i / 20.0
+		pts.append(Vector2(cx, bob) + Vector2(cos(a), sin(a)) * r)
+	ci.draw_colored_polygon(pts, c(cl, "body"))
+	for i in 5:
+		var a2 := 0.6 + i * 1.1
+		ci.draw_line(Vector2(cx, bob), Vector2(cx, bob) + Vector2(cos(a2), sin(a2)) * r * 0.85, c(cl, "vein"), 2, true)
+	if int(L * 10) % 3 == 0:
+		Draw.star(ci, Vector2(cx - r * 0.3, bob - r * 0.3), r * 0.35, c(cl, "flower"), 6, 0.45)
+		Draw.ellipse(ci, Vector2(cx - r * 0.3, bob - r * 0.3), r * 0.1, r * 0.1, Color("f6e05a"))
+
+
+static func _caiman_back(ci: CanvasItem, cl: Dictionary, L: float, T: float, dir: int, t: float) -> void:
+	var b := c(cl, "body")
+	var hx := L - T * 0.25 if dir > 0 else T * 0.25
+	var tx := 0.0 if dir > 0 else L
+	var body := PackedVector2Array([Vector2(tx, 0), Vector2(L * 0.3 if dir > 0 else L * 0.7, -T * 0.26), Vector2(hx - dir * T * 0.3, -T * 0.24),
+		Vector2(hx + dir * T * 0.25, -T * 0.1), Vector2(hx + dir * T * 0.25, T * 0.1), Vector2(hx - dir * T * 0.3, T * 0.24), Vector2(L * 0.3 if dir > 0 else L * 0.7, T * 0.26)])
+	Draw.shadow(ci, Vector2(L * 0.5 + 4, T * 0.1), L * 0.5, T * 0.2, 0.2)
+	ci.draw_colored_polygon(body, b)
+	var n := int(L / (T * 0.22))
+	for i in n:
+		var x := T * 0.4 + i * (L - T * 0.8) / maxf(1.0, n - 1)
+		Draw.ellipse(ci, Vector2(x, -T * 0.06), T * 0.06, T * 0.04, c(cl, "ridge"))
+		Draw.ellipse(ci, Vector2(x, T * 0.06), T * 0.06, T * 0.04, c(cl, "ridge"))
+	for sy in [-1.0, 1.0]:
+		Draw.ellipse(ci, Vector2(hx - dir * T * 0.12, sy * T * 0.12), T * 0.06, T * 0.06, c(cl, "eye"))
+		Draw.ellipse(ci, Vector2(hx - dir * T * 0.12, sy * T * 0.12), T * 0.02, T * 0.045, Color("111111"))
+	var _tt := t
+
+
+static func _branch(ci: CanvasItem, cl: Dictionary, L: float, T: float) -> void:
+	var b := c(cl, "body")
+	Draw.shadow(ci, Vector2(L * 0.5 + 4, T * 0.2), L * 0.5, T * 0.15, 0.2)
+	Draw.rrect(ci, Rect2(0, -T * 0.16, L, T * 0.32), T * 0.15, b)
+	var rng := RandomNumberGenerator.new()
+	rng.seed = int(L * 31.0)
+	for i in int(L / (T * 0.4)) + 1:
+		var x := rng.randf_range(T * 0.2, L - T * 0.2)
+		var sy := -1.0 if i % 2 == 0 else 1.0
+		var tip := Vector2(x + rng.randf_range(-T * 0.2, T * 0.2), sy * T * 0.38)
+		ci.draw_line(Vector2(x, 0), tip, b.darkened(0.1), 4, true)
+		Draw.leaf(ci, tip, Vector2(rng.randf_range(-1, 1), sy), T * 0.2, T * 0.08, c(cl, "leaf"))
+	Draw.rrect(ci, Rect2(T * 0.1, -T * 0.14, L - T * 0.2, T * 0.08), T * 0.04, b.lightened(0.15))
+
+
+static func _boat(ci: CanvasItem, cl: Dictionary, L: float, T: float, dir: int, t: float) -> void:
+	var b := c(cl, "body")
+	var hull := PackedVector2Array([Vector2(0, 0), Vector2(T * 0.4, -T * 0.34), Vector2(L - T * 0.4, -T * 0.34), Vector2(L, 0), Vector2(L - T * 0.4, T * 0.34), Vector2(T * 0.4, T * 0.34)])
+	var wake := Vector2(0 if dir > 0 else L, 0)
+	for i in 3:
+		Draw.ellipse_line(ci, wake - Vector2(dir * (8 + i * 10), 0), T * 0.1 + i * 4, T * 0.25 + i * 3, Color(1, 1, 1, 0.25 - i * 0.07), 2)
+	var sh := hull.duplicate()
+	for i in sh.size():
+		sh[i] += Vector2(4, 8)
+	ci.draw_colored_polygon(sh, Color(0, 0, 0, 0.22))
+	ci.draw_colored_polygon(hull, b.darkened(0.2))
+	var inner := PackedVector2Array()
+	for p in hull:
+		inner.append(Vector2(L * 0.5, 0) + (p - Vector2(L * 0.5, 0)) * Vector2(0.92, 0.78))
+	ci.draw_colored_polygon(inner, b)
+	for i in int(L / (T * 0.35)):
+		var x := T * 0.4 + i * T * 0.35
+		ci.draw_line(Vector2(x, -T * 0.25), Vector2(x, T * 0.25), b.darkened(0.15), 2)
+	var trim := hull.duplicate()
+	trim.append(hull[0])
+	ci.draw_polyline(trim, c(cl, "trim"), 4, true)
+	Draw.rrect(ci, Rect2(L * 0.35, -T * 0.22, L * 0.3, T * 0.44), 8, c(cl, "canopy"))
+	var _tt := t
+
+
+static func _bridge(ci: CanvasItem, cl: Dictionary, L: float, T: float, t: float) -> void:
+	var plank := c(cl, "plank")
+	Draw.shadow(ci, Vector2(L * 0.5, T * 0.38), L * 0.5, T * 0.1, 0.25)
+	var n := maxi(1, int(L / (T * 0.22)))
+	for i in n:
+		var x := i * L / n
+		var sag := sin(float(i) / n * PI) * 2.0
+		Draw.rrect(ci, Rect2(x + 1, -T * 0.32 + sag, L / n - 3, T * 0.64), 3, plank.lightened(0.06 * (i % 3)))
+	for sy in [-1.0, 1.0]:
+		ci.draw_line(Vector2(0, sy * T * 0.34), Vector2(L, sy * T * 0.34), c(cl, "rope"), 4, true)
+		for i in range(0, n + 1, 3):
+			Draw.ellipse(ci, Vector2(i * L / n, sy * T * 0.34), 4, 4, c(cl, "body"))
+	var _tt := t
+
+
+static func _stone(ci: CanvasItem, cl: Dictionary, L: float, T: float) -> void:
+	var cx := L * 0.5
+	var r := minf(L, T) * 0.42
+	Draw.shadow(ci, Vector2(cx + 4, r * 0.5), r, r * 0.45, 0.25)
+	var pts := PackedVector2Array()
+	for i in 12:
+		var a := TAU * i / 12.0
+		pts.append(Vector2(cx, 0) + Vector2(cos(a) * r * (0.95 + 0.08 * sin(i * 1.7)), sin(a) * r * 0.85))
+	ci.draw_colored_polygon(pts, c(cl, "body"))
+	Draw.ellipse(ci, Vector2(cx - r * 0.2, -r * 0.25), r * 0.5, r * 0.3, c(cl, "body").lightened(0.15))
+	Draw.ellipse(ci, Vector2(cx + r * 0.25, -r * 0.1), r * 0.35, r * 0.22, c(cl, "moss"))
+
+
+# ------------------------------------------------------------------ predators
+
+static func draw_pred(ci: CanvasItem, hz: Dictionary, p: Dictionary, T: float, state: String, prog: float, t: float, reveal: float) -> void:
+	var cl: Dictionary = hz.get("art", {}).get("colors", {})
+	match String(p.kind):
+		"surfacer":
+			_croc(ci, cl, float(p.span) * T, T, state, prog, t)
+		"striker":
+			if String(hz.get("art", {}).get("painter", "")) == "tiger":
+				_tiger(ci, cl, p, T, state, prog, t, reveal)
+			else:
+				_snake(ci, cl, p, T, state, prog, t)
+		"faller":
+			_faller(ci, hz, cl, T, state, prog, t)
+
+
+static func _croc(ci: CanvasItem, cl: Dictionary, span: float, T: float, state: String, prog: float, t: float) -> void:
+	match state:
+		"warn":
+			for i in 3:
+				var k := fposmod(prog + i / 3.0, 1.0)
+				Draw.ellipse_line(ci, Vector2.ZERO, span * 0.25 + k * span * 0.35, T * 0.12 + k * T * 0.2, Color(1, 1, 1, 0.55 * (1.0 - k)), 3)
+			Draw.ellipse(ci, Vector2(-span * 0.15, 0), 5, 4, Color(1, 1, 1, 0.5))
+			Draw.ellipse(ci, Vector2(span * 0.12, -4), 4, 3, Color(1, 1, 1, 0.5))
+		"active":
+			var open := sin(minf(1.0, prog * 2.5) * PI) * 0.5 + 0.2
+			var b := c(cl, "body")
+			Draw.ellipse(ci, Vector2(0, 0), span * 0.55, T * 0.32, Color(1, 1, 1, 0.25))
+			var jaw := T * 0.08 + open * T * 0.22
+			ci.draw_colored_polygon(PackedVector2Array([Vector2(-span * 0.5, -jaw), Vector2(span * 0.45, -T * 0.06), Vector2(span * 0.45, T * 0.06), Vector2(-span * 0.5, jaw)]), Color("8a2a2a"))
+			ci.draw_colored_polygon(PackedVector2Array([Vector2(-span * 0.5, -jaw - T * 0.08), Vector2(span * 0.5, -T * 0.12), Vector2(span * 0.5, -T * 0.02), Vector2(-span * 0.5, -jaw)]), b)
+			ci.draw_colored_polygon(PackedVector2Array([Vector2(-span * 0.5, jaw), Vector2(span * 0.5, T * 0.02), Vector2(span * 0.5, T * 0.12), Vector2(-span * 0.5, jaw + T * 0.08)]), b.darkened(0.1))
+			for i in 5:
+				var x := -span * 0.4 + i * span * 0.18
+				ci.draw_colored_polygon(PackedVector2Array([Vector2(x, -jaw), Vector2(x + 5, -jaw), Vector2(x + 2.5, -jaw + 8)]), Color.WHITE)
+			Draw.ellipse(ci, Vector2(span * 0.42, -T * 0.13), 7, 7, c(cl, "eye"))
+			Draw.ellipse(ci, Vector2(span * 0.42, -T * 0.13), 2.5, 5, Color.BLACK)
+		_:
+			var b2 := sin(t * 3.0) * 0.5 + 0.5
+			Draw.ellipse(ci, Vector2(0, 0), 4 + b2 * 2, 3, Color(1, 1, 1, 0.18))
+
+
+static func _snake(ci: CanvasItem, cl: Dictionary, p: Dictionary, T: float, state: String, prog: float, t: float) -> void:
+	var b := c(cl, "body")
+	var pat := c(cl, "pattern")
+	var dir := int(p.dir)
+	var center := Vector2(T * 0.5, 0)
+	Draw.shadow(ci, center + Vector2(4, 8), T * 0.36, T * 0.16, 0.2)
+	for i in 2:
+		var pts := Draw.ellipse_points(center + Vector2(0, -i * 6), T * (0.3 - i * 0.08), T * (0.16 - i * 0.04), 0.0, 20)
+		pts.append(pts[0])
+		ci.draw_polyline(pts, b.darkened(0.1), T * 0.1, true)
+		ci.draw_polyline(pts, b, T * 0.075, true)
+	var head := center + Vector2(dir * T * 0.18, -T * 0.16)
+	if state == "warn":
+		head += Vector2(sin(t * 40.0) * 3.0, -prog * T * 0.12)
+	elif state == "active":
+		var ext := sin(minf(1.0, prog) * PI) * float(p.span) * T
+		var neck := PackedVector2Array()
+		for i in 10:
+			var k := i / 9.0
+			neck.append(center + Vector2(dir * (T * 0.1 + k * ext), sin(k * 9.0) * T * 0.08 * (1.0 - k) - T * 0.05))
+		ci.draw_polyline(neck, b, T * 0.11, true)
+		for i in range(1, 9, 2):
+			Draw.ellipse(ci, neck[i], T * 0.035, T * 0.03, pat)
+		head = neck[-1]
+	Draw.ellipse(ci, head, T * 0.13, T * 0.1, b.darkened(0.05))
+	Draw.ellipse(ci, head + Vector2(dir * T * 0.04, -T * 0.04), 3.5, 3.5, c(cl, "eye"))
+	if state == "active":
+		ci.draw_line(head + Vector2(dir * T * 0.12, 0), head + Vector2(dir * T * 0.22, 0), Color("d8242a"), 2, true)
+	if state == "warn":
+		_hazard_marker(ci, center + Vector2(0, -T * 0.42), T * 0.13)
+
+
+static func _tiger(ci: CanvasItem, cl: Dictionary, p: Dictionary, T: float, state: String, prog: float, t: float, reveal: float) -> void:
+	var dir := int(p.dir)
+	var center := Vector2(T * 0.5, 0)
+	var rustle := 0.0
+	if state == "warn":
+		rustle = sin(t * 30.0) * 4.0 * prog
+	for i in 7:
+		var bx := center.x + (i - 3) * T * 0.11
+		Draw.leaf(ci, Vector2(bx, T * 0.3), Vector2(sin(i * 1.3) * 0.4 + rustle * 0.05, -1), T * (0.6 + 0.12 * (i % 2)), T * 0.07, Color("8a9a4a").darkened(0.1 * (i % 3)))
+	if reveal > 0.0 or state == "warn":
+		var a := clampf(reveal + (prog if state == "warn" else 0.0), 0.0, 1.0)
+		for sx in [-1.0, 1.0]:
+			Draw.ellipse(ci, center + Vector2(sx * T * 0.08, -T * 0.05), 4, 3, Color(1.0, 0.85, 0.2, a))
+	if state == "active":
+		var ext := sin(minf(1.0, prog) * PI) * float(p.span) * T
+		var tc := center + Vector2(dir * ext, 0)
+		Draw.ellipse(ci, tc - Vector2(dir * T * 0.3, 0), T * 0.45, T * 0.24, c(cl, "body"))
+		for i in 4:
+			ci.draw_line(tc + Vector2(-dir * T * (0.6 - i * 0.14), -T * 0.2), tc + Vector2(-dir * T * (0.55 - i * 0.14), T * 0.2), c(cl, "stripe"), 4, true)
+		Draw.ellipse(ci, tc + Vector2(dir * T * 0.1, 0), T * 0.2, T * 0.19, c(cl, "body"))
+		Draw.ellipse(ci, tc + Vector2(dir * T * 0.22, T * 0.02), T * 0.09, T * 0.08, Color("fbf2e2"))
+
+
+static func _faller(ci: CanvasItem, hz: Dictionary, cl: Dictionary, T: float, state: String, prog: float, t: float) -> void:
+	var center := Vector2(T * 0.5, 0)
+	var fruit := String(hz.get("art", {}).get("painter", "")) == "fruit_fall"
+	match state:
+		"warn":
+			Draw.ellipse(ci, center, T * (0.15 + prog * 0.3), T * (0.08 + prog * 0.16), Color(0, 0, 0, 0.15 + prog * 0.3))
+			for i in 2:
+				var y := -T * 0.5 + fposmod(t * 90.0 + i * 37.0, T * 0.6)
+				Draw.leaf(ci, center + Vector2((i - 0.5) * T * 0.3, y), Vector2(sin(t * 4.0 + i), 1), T * 0.12, T * 0.05, c(cl, "leaf", "#4a9a3a"))
+		"active":
+			var drop := (1.0 - minf(1.0, prog * 3.0)) * T * 0.6
+			if fruit:
+				Draw.ellipse(ci, center - Vector2(0, drop), T * 0.22, T * 0.22, c(cl, "body"))
+				for i in 8:
+					var a := TAU * i / 8.0
+					ci.draw_line(center - Vector2(0, drop) + Vector2(cos(a), sin(a)) * T * 0.18, center - Vector2(0, drop) + Vector2(cos(a), sin(a)) * T * 0.28, c(cl, "spike"), 3)
+			else:
+				ci.draw_line(center - Vector2(T * 0.42, drop + 6), center + Vector2(T * 0.42, -drop + 4), c(cl, "body"), T * 0.13, true)
+				Draw.leaf(ci, center + Vector2(T * 0.3, -drop), Vector2(1, -1), T * 0.25, T * 0.1, c(cl, "leaf"))
+				Draw.leaf(ci, center + Vector2(-T * 0.25, -drop), Vector2(-1, -0.5), T * 0.22, T * 0.09, c(cl, "leaf"))
+			if prog > 0.3:
+				Draw.ellipse_line(ci, center + Vector2(0, T * 0.1), T * 0.3 * prog, T * 0.12 * prog, Color(0.9, 0.8, 0.6, 1.0 - prog), 3)
+		"idle":
+			if prog < 0.25:
+				var a2 := 1.0 - prog * 4.0
+				ci.draw_line(center - Vector2(T * 0.35, -6), center + Vector2(T * 0.35, 10), Color(c(cl, "body"), a2), T * 0.1, true)
+
+
+# ------------------------------------------------------------------ tiles
+
+static func draw_tile(ci: CanvasItem, hz: Dictionary, T: float, t: float, salt: int) -> void:
+	var cl: Dictionary = hz.get("art", {}).get("colors", {})
+	var center := Vector2(T * 0.5, 0)
+	match String(hz.get("art", {}).get("painter", "")):
+		"quicksand":
+			Draw.ellipse(ci, center, T * 0.44, T * 0.38, c(cl, "body"))
+			var pts := PackedVector2Array()
+			for i in 30:
+				var k := i / 29.0
+				var a := k * 9.0 + t * 1.5
+				pts.append(center + Vector2(cos(a), sin(a) * 0.85) * T * 0.36 * (1.0 - k))
+			ci.draw_polyline(pts, c(cl, "swirl"), 3, true)
+		"gully":
+			var rng := RandomNumberGenerator.new()
+			rng.seed = salt
+			var poly := PackedVector2Array()
+			for i in 10:
+				var a2 := TAU * i / 10.0
+				poly.append(center + Vector2(cos(a2) * T * rng.randf_range(0.42, 0.52), sin(a2) * T * rng.randf_range(0.38, 0.5)))
+			ci.draw_colored_polygon(poly, c(cl, "edge"))
+			var inner := PackedVector2Array()
+			for p in poly:
+				inner.append(center + (p - center) * 0.82)
+			ci.draw_colored_polygon(inner, c(cl, "body"))
+			Draw.ellipse(ci, center + Vector2(0, T * 0.06), T * 0.25, T * 0.18, c(cl, "body").darkened(0.4))
+		"roots":
+			for i in 5:
+				var a3 := i * 1.3 + salt
+				var pts2 := PackedVector2Array()
+				for k in 6:
+					pts2.append(center + Vector2(cos(a3) * T * 0.4 * (k / 5.0 - 0.5) * 2.0, sin(k * 1.4 + a3) * T * 0.25))
+				ci.draw_polyline(pts2, c(cl, "body").darkened(0.08 * (i % 3)), 7, true)
+			for i in 3:
+				Draw.leaf(ci, center + Vector2((i - 1) * T * 0.25, -T * 0.15), Vector2(i - 1, -1), T * 0.22, T * 0.08, c(cl, "leaf"))
+		"bush":
+			Draw.shadow(ci, center + Vector2(4, 10), T * 0.45, T * 0.25, 0.25)
+			for i in 6:
+				var a4 := TAU * i / 6.0 + salt
+				Draw.ellipse(ci, center + Vector2(cos(a4) * T * 0.2, sin(a4) * T * 0.15 - T * 0.05), T * 0.22, T * 0.2, c(cl, "body").lightened(0.05 * (i % 3)))
+			Draw.ellipse(ci, center + Vector2(0, -T * 0.1), T * 0.2, T * 0.18, c(cl, "leaf"))
+
+
+# ------------------------------------------------------------------ lane effects
+
+static func draw_effect(ci: CanvasItem, hz: Dictionary, width: float, T: float, state: String, prog: float, t: float) -> void:
+	var cl: Dictionary = hz.get("art", {}).get("colors", {})
+	match String(hz.get("art", {}).get("painter", "")):
+		"fire":
+			if state == "warn":
+				ci.draw_rect(Rect2(0, -T * 0.5, width, T), Color(0.9, 0.3, 0.05, 0.12 + prog * 0.2))
+				for i in int(width / (T * 0.7)):
+					var x := i * T * 0.7 + T * 0.35
+					Draw.ellipse(ci, Vector2(x, -prog * T * 0.4 - fposmod(t * 30.0 + i * 13.0, 20.0)), T * 0.18, T * 0.14, Color(c(cl, "smoke"), 0.35 * prog))
+			elif state == "active":
+				ci.draw_rect(Rect2(0, -T * 0.5, width, T), Color(0.25, 0.08, 0.02, 0.45))
+				for i in int(width / (T * 0.33)):
+					var x2 := i * T * 0.33 + T * 0.16
+					var h := T * (0.45 + 0.2 * sin(t * 18.0 + i * 1.7))
+					ci.draw_colored_polygon(PackedVector2Array([Vector2(x2 - T * 0.16, T * 0.3), Vector2(x2, T * 0.3 - h), Vector2(x2 + T * 0.16, T * 0.3)]), c(cl, "body"))
+					ci.draw_colored_polygon(PackedVector2Array([Vector2(x2 - T * 0.08, T * 0.3), Vector2(x2, T * 0.3 - h * 0.55), Vector2(x2 + T * 0.08, T * 0.3)]), c(cl, "core"))
+		"tide":
+			var water := c(cl, "body")
+			if state == "warn":
+				var w2 := width * 0.5 * prog
+				ci.draw_rect(Rect2(0, -T * 0.5, w2, T), Color(water, 0.75))
+				ci.draw_rect(Rect2(width - w2, -T * 0.5, w2, T), Color(water, 0.75))
+			elif state == "active":
+				ci.draw_rect(Rect2(0, -T * 0.5, width, T), Color(water, 0.88))
+				for i in int(width / (T * 0.8)):
+					var x3 := fposmod(i * T * 0.8 + t * 30.0, width)
+					ci.draw_line(Vector2(x3, -T * 0.15 + (i % 3) * 10), Vector2(x3 + T * 0.3, -T * 0.15 + (i % 3) * 10), Color(1, 1, 1, 0.35), 3, true)
+		"mud":
+			if state == "warn":
+				for i in int(width / (T * 0.6)):
+					var x4 := i * T * 0.6 + sin(t * 25.0 + i) * 3.0
+					ci.draw_line(Vector2(x4, -T * 0.3), Vector2(x4 + T * 0.2, T * 0.1), Color(c(cl, "body"), 0.5 * prog), 4, true)
+			elif state == "active":
+				ci.draw_rect(Rect2(0, -T * 0.5, width, T), Color(c(cl, "body"), 0.55))
+				for i in int(width / (T * 0.4)):
+					var x5 := i * T * 0.4
+					var y := -T * 0.5 + prog * T
+					ci.draw_line(Vector2(x5, y - T * 0.4), Vector2(x5 + 4, y), c(cl, "body").darkened(0.2), 6, true)
+
+
+# ------------------------------------------------------------------ items
+
+static func draw_item(ci: CanvasItem, def: Dictionary, T: float, t: float, ghost := false) -> void:
+	var cl: Dictionary = def.get("art", {}).get("colors", {})
+	var bob := sin(t * 3.0) * 4.0
+	var p := Vector2(0, -T * 0.12 + bob)
+	Draw.shadow(ci, Vector2(0, T * 0.12), T * 0.16, T * 0.06, 0.25)
+	var a := 0.55 if ghost else 1.0
+	match String(def.get("art", {}).get("painter", "")):
+		"berry":
+			ci.draw_set_transform(p, 0, Vector2.ONE * 0.9)
+			Draw.berry_icon(ci, Vector2.ZERO, T * 0.2)
+			ci.draw_set_transform(Vector2.ZERO)
+		"beetle":
+			Draw.ellipse(ci, p, T * 0.16, T * 0.2, Color(c(cl, "body"), a))
+			ci.draw_line(p + Vector2(0, -T * 0.18), p + Vector2(0, T * 0.18), Color(0, 0, 0, 0.4 * a), 2)
+			Draw.ellipse(ci, p + Vector2(-T * 0.05, -T * 0.07), T * 0.05, T * 0.07, Color(c(cl, "shine"), 0.8 * a))
+			Draw.ellipse(ci, p + Vector2(0, -T * 0.22), T * 0.07, T * 0.05, Color(0.1, 0.1, 0.1, a))
+		"fruit":
+			Draw.ellipse(ci, p, T * 0.2, T * 0.22, Color(c(cl, "body"), a))
+			Draw.ellipse(ci, p + Vector2(-T * 0.06, -T * 0.08), T * 0.06, T * 0.05, Color(1, 1, 1, 0.7 * a))
+			Draw.leaf(ci, p + Vector2(0, -T * 0.2), Vector2(1, -1), T * 0.15, T * 0.06, c(cl, "leaf"))
+			Draw.star(ci, p + Vector2(T * 0.18, -T * 0.2), T * 0.06 + sin(t * 6.0) * 2.0, Color(1, 1, 0.8, 0.9 * a), 4, 0.35)
+		"amber":
+			Draw.amber_icon(ci, p, T * 0.2)
+			Draw.star(ci, p + Vector2(T * 0.16, -T * 0.18), T * 0.06 + sin(t * 6.0) * 2.0, Color(1, 1, 0.8, 0.9), 4, 0.35)
+		"truffle":
+			Draw.ellipse(ci, p, T * 0.17, T * 0.14, Color(c(cl, "body"), a))
+			_spot_row(ci, p, T * 0.12, T * 0.08, Color(c(cl, "shine"), 0.6 * a))
+			Draw.star(ci, p + Vector2(T * 0.16, -T * 0.16), T * 0.07, Color(1, 0.95, 0.6, a), 4, 0.35)

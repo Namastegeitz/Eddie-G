@@ -1,0 +1,31 @@
+{
+  "id": "palm_oil_tractor",
+  "name": "Palm-oil tractor",
+  "kind": "mover",
+  "lane": "ground",
+  "cause": "crushed",
+  "cause_text": "Flattened by a palm-oil tractor",
+  "length": [
+    2.2,
+    2.4
+  ],
+  "speed": [
+    1.0,
+    1.6
+  ],
+  "gap": [
+    2.8,
+    4.6
+  ],
+  "art": {
+    "painter": "tractor",
+    "colors": {
+      "body": "#e0a21a",
+      "cab": "#3a3a3a",
+      "cargo": "#d8641a"
+    }
+  },
+  "desc": "Slow, wide and loaded with fruit.",
+  "predator": false,
+  "sprite": ""
+}

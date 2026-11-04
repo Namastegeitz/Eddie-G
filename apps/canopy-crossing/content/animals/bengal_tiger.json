@@ -1,0 +1,68 @@
+{
+  "id": "bengal_tiger",
+  "number": 50,
+  "name": "Bengal Tiger",
+  "region": "sundarbans",
+  "home": "Sundarbans",
+  "pack": "sundarbans",
+  "rarity": "legendary",
+  "unlock": {
+    "type": "amber",
+    "price": 400
+  },
+  "starter": false,
+  "ability": {
+    "name": "Apex sprint",
+    "summary": "Apex sprint and strong swim",
+    "modules": [
+      {
+        "module": "dash",
+        "tiles": 3,
+        "cooldown": 6.0
+      },
+      {
+        "module": "swim",
+        "current": 0.4
+      }
+    ]
+  },
+  "stats": {
+    "hop_time": 0.14,
+    "hitbox": 0.6
+  },
+  "look": {
+    "base": "mammal",
+    "colors": {
+      "primary": "#f07a1a",
+      "secondary": "#16100a",
+      "belly": "#fbf2e2",
+      "accent": "#fbf2e2",
+      "eye": "#d2d84a"
+    },
+    "head": "cat",
+    "ears": "round",
+    "snout": "cat",
+    "tail": "long_banded",
+    "pattern": "stripes",
+    "extras": [
+      "cheek_ruff"
+    ],
+    "size": 0.92
+  },
+  "skins": [
+    {
+      "id": "white",
+      "name": "White Tiger",
+      "colors": {
+        "primary": "#f4f2ee",
+        "secondary": "#2a2a30",
+        "belly": "#ffffff",
+        "accent": "#ffffff",
+        "eye": "#5aa0e0"
+      }
+    }
+  ],
+  "conservation": "Endangered",
+  "fact": "Tigers in the Sundarbans swim between islands.",
+  "sprite": ""
+}

@@ -1,0 +1,46 @@
+{
+  "id": "panther_chameleon",
+  "number": 43,
+  "name": "Panther Chameleon",
+  "region": "masoala",
+  "home": "Madagascar",
+  "pack": "masoala",
+  "rarity": "legendary",
+  "unlock": {
+    "type": "amber",
+    "price": 400
+  },
+  "starter": false,
+  "ability": {
+    "name": "Vanish",
+    "summary": "Camouflage — invisible briefly",
+    "modules": [
+      {
+        "module": "invincible",
+        "duration": 2.0,
+        "cooldown": 14.0,
+        "style": "cloak"
+      }
+    ]
+  },
+  "stats": {
+    "hop_time": 0.14,
+    "hitbox": 0.6
+  },
+  "look": {
+    "base": "lizard",
+    "colors": {
+      "primary": "#21a89a",
+      "secondary": "#e8502a",
+      "belly": "#f2e05a",
+      "accent": "#f2e05a",
+      "eye": "#21a89a"
+    },
+    "pattern": "bands",
+    "size": 0.64
+  },
+  "skins": [],
+  "conservation": "Least Concern",
+  "fact": "Males change colour to signal rivals and mates.",
+  "sprite": ""
+}

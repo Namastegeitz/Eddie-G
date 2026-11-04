@@ -1,0 +1,29 @@
+{
+  "id": "floating_log",
+  "name": "Floating log",
+  "kind": "platform",
+  "lane": "water",
+  "length": [
+    2.0,
+    3.2
+  ],
+  "speed": [
+    0.9,
+    1.6
+  ],
+  "gap": [
+    1.2,
+    2.8
+  ],
+  "art": {
+    "painter": "log",
+    "colors": {
+      "body": "#7a5232",
+      "ring": "#c09a6a",
+      "moss": "#5a8a3a"
+    }
+  },
+  "desc": "Hop on and ride it across.",
+  "predator": false,
+  "sprite": ""
+}

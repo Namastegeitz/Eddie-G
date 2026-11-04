@@ -1,0 +1,35 @@
+{
+  "id": "swinging_vine",
+  "name": "Swinging vine",
+  "kind": "mover",
+  "lane": "ground",
+  "cause": "crushed",
+  "cause_text": "Knocked flying by a swinging vine",
+  "motion": "pendulum",
+  "length": [
+    0.6,
+    0.6
+  ],
+  "amplitude": [
+    2.6,
+    3.6
+  ],
+  "period": [
+    2.6,
+    3.6
+  ],
+  "count": [
+    1,
+    2
+  ],
+  "art": {
+    "painter": "vine",
+    "colors": {
+      "body": "#3a7a2a",
+      "leaf": "#6ac23a"
+    }
+  },
+  "desc": "Swings back and forth across the trail.",
+  "predator": false,
+  "sprite": ""
+}

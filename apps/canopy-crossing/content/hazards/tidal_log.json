@@ -1,0 +1,34 @@
+{
+  "id": "tidal_log",
+  "name": "Tidal driftwood",
+  "kind": "platform",
+  "lane": "water",
+  "motion": "tidal",
+  "length": [
+    2.2,
+    3.0
+  ],
+  "amplitude": [
+    2.5,
+    3.5
+  ],
+  "period": [
+    6.0,
+    8.0
+  ],
+  "count": [
+    3,
+    4
+  ],
+  "art": {
+    "painter": "log",
+    "colors": {
+      "body": "#8a7a62",
+      "ring": "#c8b89a",
+      "moss": "#6a8a5a"
+    }
+  },
+  "desc": "The tide pulls it one way, then the other.",
+  "predator": false,
+  "sprite": ""
+}

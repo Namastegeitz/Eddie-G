@@ -1,0 +1,29 @@
+{
+  "id": "crowned_eagle_swoop",
+  "name": "Crowned eagle",
+  "kind": "swooper",
+  "lane": "safe",
+  "predator": true,
+  "cause": "eaten",
+  "cause_text": "Snatched by a crowned eagle",
+  "period": [
+    6.5,
+    9.0
+  ],
+  "warn": 1.3,
+  "swoop": 0.55,
+  "rows": [
+    -1,
+    3
+  ],
+  "art": {
+    "painter": "raptor",
+    "colors": {
+      "body": "#5a4a3a",
+      "wing": "#2e241c",
+      "belly": "#e8dcc8"
+    }
+  },
+  "desc": "A shadow sweeps a column. Step aside.",
+  "sprite": ""
+}

@@ -1,0 +1,181 @@
+{
+  "id": "masoala",
+  "order": 5,
+  "name": "Masoala",
+  "location": "Madagascar",
+  "lat": -15.7,
+  "lon": 50.0,
+  "status": "available",
+  "access": {
+    "type": "pack",
+    "product": "map_masoala"
+  },
+  "flag": {
+    "colors": [
+      "#e8392f",
+      "#2a8a3a"
+    ],
+    "code": "MSL"
+  },
+  "palette": {
+    "safe": "#5a8a3a",
+    "safe_alt": "#64963e",
+    "ground": "#b8582a",
+    "ground_alt": "#a84e24",
+    "water": "#4a7a8a",
+    "water_deep": "#3a6272",
+    "foam": "#c8e0e8",
+    "canopy": "#2a5a22",
+    "canopy_dark": "#163a12",
+    "accent": "#f2a03a",
+    "goal": "#f0e07a",
+    "sky": "#2a3a16",
+    "ui": "#c8442a"
+  },
+  "atmosphere": {
+    "mist": 0.0,
+    "light_shafts": 0.5,
+    "rain": 0.0,
+    "dust": 0.3
+  },
+  "music": {
+    "file": "res://assets/audio/music/masoala.ogg",
+    "tempo": 112,
+    "root": "C",
+    "scale": "lydian",
+    "lead": "valiha",
+    "drums": "shaker"
+  },
+  "facts": [
+    "Masoala is Madagascar's largest protected area.",
+    "Most of Madagascar's wildlife — around 90% — is found nowhere else on Earth."
+  ],
+  "generator": "classic",
+  "hazards": {
+    "ground_movers": [
+      {
+        "id": "zebu_cart",
+        "weight": 2
+      },
+      {
+        "id": "rolling_log",
+        "weight": 1
+      }
+    ],
+    "platforms": [
+      {
+        "id": "rapids_log",
+        "weight": 2
+      },
+      {
+        "id": "drifting_branch",
+        "weight": 2
+      },
+      {
+        "id": "stepping_stones",
+        "weight": 1
+      }
+    ],
+    "safe_specials": [
+      {
+        "id": "falling_branch",
+        "weight": 1
+      }
+    ],
+    "ground_effects": [
+      {
+        "id": "slash_and_burn",
+        "weight": 3
+      }
+    ],
+    "safe_effects": [
+      {
+        "id": "slash_and_burn",
+        "weight": 1
+      }
+    ],
+    "tiles": [
+      {
+        "id": "eroded_gully",
+        "weight": 3
+      }
+    ],
+    "swoopers": []
+  },
+  "intro_hazards": [
+    "slash_and_burn",
+    "eroded_gully",
+    "rapids_log",
+    "zebu_cart"
+  ],
+  "difficulty": {
+    "speed": [
+      0.85,
+      1.55
+    ],
+    "density": [
+      0.32,
+      0.64
+    ],
+    "band": [
+      [
+        1,
+        2
+      ],
+      [
+        2,
+        4
+      ]
+    ],
+    "safe_chance": [
+      1.0,
+      0.55
+    ],
+    "special_chance": [
+      0.1,
+      0.45
+    ],
+    "rows_to_max": 130,
+    "move_timer": 0
+  },
+  "stages": [
+    {
+      "name": "Red-earth Road",
+      "rows": 26,
+      "difficulty": [
+        0.0,
+        0.3
+      ]
+    },
+    {
+      "name": "Burning Fields",
+      "rows": 36,
+      "difficulty": [
+        0.25,
+        0.6
+      ]
+    },
+    {
+      "name": "Fast Streams",
+      "rows": 48,
+      "difficulty": [
+        0.5,
+        0.85
+      ]
+    }
+  ],
+  "endless": {
+    "creep": [
+      0.25,
+      0.9
+    ]
+  },
+  "native_animals": [
+    "ring_tailed_lemur",
+    "aye_aye",
+    "fossa",
+    "panther_chameleon",
+    "tomato_frog"
+  ],
+  "sprite": ""
+}

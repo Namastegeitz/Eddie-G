@@ -1,0 +1,48 @@
+{
+  "id": "capybara",
+  "number": 3,
+  "name": "Capybara",
+  "region": "amazon",
+  "home": "Amazon Basin",
+  "pack": "amazon",
+  "rarity": "rare",
+  "unlock": {
+    "type": "berries",
+    "price": 600
+  },
+  "starter": false,
+  "ability": {
+    "name": "Float",
+    "summary": "Floats — safe on one water lane",
+    "modules": [
+      {
+        "module": "swim",
+        "max_streak": 1,
+        "current": 0.7
+      }
+    ]
+  },
+  "stats": {
+    "hop_time": 0.14,
+    "hitbox": 0.6
+  },
+  "look": {
+    "base": "mammal",
+    "colors": {
+      "primary": "#a0704a",
+      "secondary": "#7a5236",
+      "belly": "#c79b72",
+      "accent": "#3d2a1c",
+      "eye": "#1d140e"
+    },
+    "head": "blocky",
+    "ears": "small",
+    "snout": "broad",
+    "tail": "none",
+    "size": 0.8
+  },
+  "skins": [],
+  "conservation": "Least Concern",
+  "fact": "The world's largest rodent, and a strong swimmer.",
+  "sprite": ""
+}

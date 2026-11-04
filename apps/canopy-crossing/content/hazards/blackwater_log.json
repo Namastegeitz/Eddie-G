@@ -1,0 +1,29 @@
+{
+  "id": "blackwater_log",
+  "name": "Blackwater log",
+  "kind": "platform",
+  "lane": "water",
+  "length": [
+    2.0,
+    3.0
+  ],
+  "speed": [
+    0.9,
+    1.5
+  ],
+  "gap": [
+    1.2,
+    2.8
+  ],
+  "art": {
+    "painter": "log",
+    "colors": {
+      "body": "#4a3020",
+      "ring": "#8a6a48",
+      "moss": "#4a7a3a"
+    }
+  },
+  "desc": "Tea-dark water hides what's below.",
+  "predator": false,
+  "sprite": ""
+}

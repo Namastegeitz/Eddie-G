@@ -1,0 +1,51 @@
+{
+  "id": "slow_loris",
+  "number": 26,
+  "name": "Slow Loris",
+  "region": "borneo",
+  "home": "Borneo",
+  "pack": "borneo",
+  "rarity": "rare",
+  "unlock": {
+    "type": "berries",
+    "price": 600
+  },
+  "starter": false,
+  "ability": {
+    "name": "Toxic",
+    "summary": "Toxic — predators avoid it",
+    "modules": [
+      {
+        "module": "predator_ward",
+        "mode": "passive",
+        "charges": 99,
+        "style": "toxic"
+      }
+    ]
+  },
+  "stats": {
+    "hop_time": 0.2,
+    "hitbox": 0.52
+  },
+  "look": {
+    "base": "mammal",
+    "colors": {
+      "primary": "#b49a7c",
+      "secondary": "#6a4c34",
+      "belly": "#e6d8c4",
+      "accent": "#5a3c26",
+      "eye": "#c4581a"
+    },
+    "head": "round",
+    "ears": "small",
+    "snout": "short",
+    "tail": "none",
+    "eyes": "huge",
+    "pattern": "eye_rings",
+    "size": 0.6
+  },
+  "skins": [],
+  "conservation": "Vulnerable",
+  "fact": "One of the few venomous mammals.",
+  "sprite": ""
+}

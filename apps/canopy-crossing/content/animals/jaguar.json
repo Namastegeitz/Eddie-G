@@ -1,0 +1,72 @@
+{
+  "id": "jaguar",
+  "number": 9,
+  "name": "Jaguar",
+  "region": "amazon",
+  "home": "Amazon Basin",
+  "pack": "amazon",
+  "rarity": "epic",
+  "unlock": {
+    "type": "pack",
+    "pack": "amazon",
+    "amber": 150
+  },
+  "starter": false,
+  "ability": {
+    "name": "Sprint dash",
+    "summary": "Sprint dash (3-tile burst)",
+    "modules": [
+      {
+        "module": "dash",
+        "tiles": 3,
+        "cooldown": 7.0
+      }
+    ]
+  },
+  "stats": {
+    "hop_time": 0.14,
+    "hitbox": 0.6
+  },
+  "look": {
+    "base": "mammal",
+    "colors": {
+      "primary": "#e9a524",
+      "secondary": "#1d1408",
+      "belly": "#f7e7c4",
+      "accent": "#d4881a",
+      "eye": "#c9e05a"
+    },
+    "head": "cat",
+    "ears": "round",
+    "snout": "cat",
+    "tail": "long",
+    "pattern": "rosettes",
+    "size": 0.86
+  },
+  "skins": [
+    {
+      "id": "golden",
+      "name": "Golden Jaguar",
+      "colors": {
+        "primary": "#ffd54a",
+        "secondary": "#b8860b",
+        "belly": "#fff6cf",
+        "accent": "#ffe58a"
+      }
+    },
+    {
+      "id": "melanistic",
+      "name": "Black Jaguar",
+      "colors": {
+        "primary": "#2a2a2e",
+        "secondary": "#111114",
+        "belly": "#3a3a40",
+        "accent": "#202024",
+        "eye": "#f2d24a"
+      }
+    }
+  ],
+  "conservation": "Near Threatened",
+  "fact": "The biggest cat in the Americas, and a confident swimmer.",
+  "sprite": ""
+}

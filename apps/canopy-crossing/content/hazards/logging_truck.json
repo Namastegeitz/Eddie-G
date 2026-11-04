@@ -1,0 +1,31 @@
+{
+  "id": "logging_truck",
+  "name": "Logging truck",
+  "kind": "mover",
+  "lane": "ground",
+  "cause": "crushed",
+  "cause_text": "Flattened by a logging truck",
+  "length": [
+    2.6,
+    3.2
+  ],
+  "speed": [
+    1.8,
+    2.8
+  ],
+  "gap": [
+    3.0,
+    5.5
+  ],
+  "art": {
+    "painter": "truck",
+    "colors": {
+      "body": "#c8342a",
+      "cab": "#f2c26a",
+      "cargo": "#8a5a32"
+    }
+  },
+  "desc": "Long and fast. Wait for the gap.",
+  "predator": false,
+  "sprite": ""
+}

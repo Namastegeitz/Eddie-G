@@ -1,0 +1,47 @@
+{
+  "id": "platypus",
+  "number": 36,
+  "name": "Platypus",
+  "region": "daintree",
+  "home": "Daintree",
+  "pack": "daintree",
+  "rarity": "rare",
+  "unlock": {
+    "type": "berries",
+    "price": 600
+  },
+  "starter": false,
+  "ability": {
+    "name": "Swimmer",
+    "summary": "Swims safely in water",
+    "modules": [
+      {
+        "module": "swim",
+        "current": 0.5
+      }
+    ]
+  },
+  "stats": {
+    "hop_time": 0.14,
+    "hitbox": 0.6
+  },
+  "look": {
+    "base": "mammal",
+    "colors": {
+      "primary": "#6a4a32",
+      "secondary": "#4a3020",
+      "belly": "#a5876a",
+      "accent": "#3a3e44",
+      "eye": "#140d08"
+    },
+    "head": "otter",
+    "ears": "none",
+    "snout": "bill",
+    "tail": "flat",
+    "size": 0.68
+  },
+  "skins": [],
+  "conservation": "Near Threatened",
+  "fact": "A mammal that lays eggs.",
+  "sprite": ""
+}

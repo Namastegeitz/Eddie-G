@@ -1,0 +1,16 @@
+{
+  "id": "mangrove_roots",
+  "name": "Mangrove roots",
+  "kind": "brush",
+  "lane": "safe",
+  "art": {
+    "painter": "roots",
+    "colors": {
+      "body": "#5a4a3a",
+      "leaf": "#3a7a4a"
+    }
+  },
+  "desc": "A tangle you have to go around.",
+  "predator": false,
+  "sprite": ""
+}

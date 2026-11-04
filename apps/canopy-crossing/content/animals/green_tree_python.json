@@ -1,0 +1,57 @@
+{
+  "id": "green_tree_python",
+  "number": 34,
+  "name": "Green Tree Python",
+  "region": "daintree",
+  "home": "Daintree",
+  "pack": "daintree",
+  "rarity": "common",
+  "unlock": {
+    "type": "berries",
+    "price": 250
+  },
+  "starter": false,
+  "ability": {
+    "name": "Slither-climb",
+    "summary": "Slither-climb",
+    "modules": [
+      {
+        "module": "climb",
+        "duration": 1.8,
+        "cooldown": 8.0,
+        "style": "slither"
+      }
+    ]
+  },
+  "stats": {
+    "hop_time": 0.16,
+    "hitbox": 0.6
+  },
+  "look": {
+    "base": "snake",
+    "colors": {
+      "primary": "#2fb04a",
+      "secondary": "#f4f4e8",
+      "belly": "#d6e86a",
+      "accent": "#f4f4e8",
+      "eye": "#e8c52a"
+    },
+    "pattern": "dots",
+    "size": 0.72
+  },
+  "skins": [
+    {
+      "id": "albino",
+      "name": "Albino Python",
+      "colors": {
+        "primary": "#f5efe0",
+        "secondary": "#f3d36a",
+        "belly": "#fff9ea",
+        "eye": "#e0505a"
+      }
+    }
+  ],
+  "conservation": "Least Concern",
+  "fact": "Young ones are often yellow or red before turning green.",
+  "sprite": ""
+}

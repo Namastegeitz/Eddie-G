@@ -1,0 +1,43 @@
+{
+  "id": "lily_pads",
+  "name": "Lily pads",
+  "kind": "platform",
+  "lane": "water",
+  "group": [
+    2,
+    3
+  ],
+  "length": [
+    0.95,
+    0.95
+  ],
+  "spacing": 0.1,
+  "speed": [
+    0.5,
+    0.9
+  ],
+  "gap": [
+    1.0,
+    2.2
+  ],
+  "dive": {
+    "chance": 0.35,
+    "period": [
+      6.5,
+      8.5
+    ],
+    "warn": 1.2,
+    "under": 1.6
+  },
+  "art": {
+    "painter": "lilypad",
+    "colors": {
+      "body": "#3aa24a",
+      "vein": "#2a7a36",
+      "flower": "#f2a0c8"
+    }
+  },
+  "desc": "Some pads sink for a moment. Watch for bubbles.",
+  "predator": false,
+  "sprite": ""
+}

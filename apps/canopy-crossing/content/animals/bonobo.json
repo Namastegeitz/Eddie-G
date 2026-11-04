@@ -1,0 +1,55 @@
+{
+  "id": "bonobo",
+  "number": 19,
+  "name": "Bonobo",
+  "region": "congo",
+  "home": "Congo Basin",
+  "pack": "congo",
+  "rarity": "rare",
+  "unlock": {
+    "type": "berries",
+    "price": 600
+  },
+  "starter": false,
+  "ability": {
+    "name": "Double swing",
+    "summary": "Agile double swing",
+    "modules": [
+      {
+        "module": "vine_swing",
+        "max_rows": 2,
+        "target": "safe",
+        "swings": 2,
+        "cooldown": 9.0
+      }
+    ]
+  },
+  "stats": {
+    "hop_time": 0.14,
+    "hitbox": 0.6
+  },
+  "look": {
+    "base": "mammal",
+    "colors": {
+      "primary": "#1e1a18",
+      "secondary": "#0e0c0b",
+      "belly": "#2c2724",
+      "accent": "#e8a0a0",
+      "face": "#2a2420",
+      "eye": "#3a2412"
+    },
+    "head": "ape",
+    "ears": "small",
+    "snout": "ape",
+    "tail": "none",
+    "extras": [
+      "part",
+      "long_arms"
+    ],
+    "size": 0.78
+  },
+  "skins": [],
+  "conservation": "Endangered",
+  "fact": "Bonobos live only south of the Congo River.",
+  "sprite": ""
+}

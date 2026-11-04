@@ -1,0 +1,201 @@
+{
+  "tutorial": {
+    "map": "amazon",
+    "animal": "poison_dart_frog",
+    "layout": [
+      {
+        "lane": "safe"
+      },
+      {
+        "lane": "safe"
+      },
+      {
+        "lane": "safe"
+      },
+      {
+        "lane": "ground",
+        "hazard": "leafcutter_ants",
+        "speed": 0.9,
+        "dir": 1,
+        "entities": [
+          [
+            0.0
+          ],
+          [
+            8.0
+          ]
+        ]
+      },
+      {
+        "lane": "safe"
+      },
+      {
+        "lane": "ground",
+        "hazard": "rolling_log",
+        "speed": 1.1,
+        "dir": -1,
+        "length": 1.6,
+        "entities": [
+          [
+            1.0
+          ],
+          [
+            9.0
+          ]
+        ]
+      },
+      {
+        "lane": "safe",
+        "collectibles": [
+          [
+            4,
+            "berry"
+          ],
+          [
+            6,
+            "beetle"
+          ]
+        ]
+      },
+      {
+        "lane": "water",
+        "hazard": "floating_log",
+        "speed": 0.8,
+        "dir": 1,
+        "length": 3.0,
+        "entities": [
+          [
+            0.0
+          ],
+          [
+            5.5
+          ],
+          [
+            11.0
+          ]
+        ]
+      },
+      {
+        "lane": "water",
+        "hazard": "floating_log",
+        "speed": 0.9,
+        "dir": -1,
+        "length": 3.0,
+        "entities": [
+          [
+            2.0
+          ],
+          [
+            8.0
+          ],
+          [
+            13.5
+          ]
+        ]
+      },
+      {
+        "lane": "safe",
+        "collectibles": [
+          [
+            2,
+            "berry"
+          ],
+          [
+            5,
+            "golden_fruit"
+          ]
+        ]
+      },
+      {
+        "lane": "safe"
+      }
+    ],
+    "steps": [
+      {
+        "id": "tap_hop",
+        "text": "Tap ahead to hop",
+        "hint": "tap",
+        "trigger": "start",
+        "until": "row>=2"
+      },
+      {
+        "id": "wait_gap",
+        "text": "Wait for the gap",
+        "hint": "wait",
+        "trigger": "next_lane:ground",
+        "until": "row>=4"
+      },
+      {
+        "id": "swipe",
+        "text": "Swipe to hop sideways or back",
+        "hint": "swipe",
+        "trigger": "row>=5",
+        "until": "row>=7",
+        "optional": true
+      },
+      {
+        "id": "ride_log",
+        "text": "Ride the log across the river",
+        "hint": "tap",
+        "trigger": "next_lane:water",
+        "until": "row>=9"
+      },
+      {
+        "id": "reach_goal",
+        "text": "Reach the glowing safe zone",
+        "hint": "goal",
+        "trigger": "row>=9",
+        "until": "goal"
+      }
+    ]
+  },
+  "store_prompts": {
+    "revive": {
+      "title": "Keep going?",
+      "text": "Revive right here for {cost} Amber.",
+      "cooldown_runs": 0
+    },
+    "revive_ad": {
+      "text": "Or watch a short video to revive.",
+      "cooldown_runs": 0
+    },
+    "milestone": {
+      "title": "You've reached {region}!",
+      "text": "Unlock the {product} to explore it, with its native animals.",
+      "cooldown_runs": 3
+    },
+    "low_lives": {
+      "title": "Last life",
+      "text": "Use an Extra Life before you go on?",
+      "cooldown_runs": 2
+    },
+    "locked_animal": {
+      "title": "{animal} is locked",
+      "text": "{how}"
+    },
+    "double_rewards": {
+      "text": "Watch a video to double this run's Berries?"
+    }
+  },
+  "nudges": {
+    "daily_reward": {
+      "title": "Daily reward",
+      "text": "Day {day} of 7. Come back tomorrow for more."
+    },
+    "daily_challenge": {
+      "title": "Daily challenge",
+      "text": "Today: {region}. One seed, everyone gets the same lanes."
+    },
+    "animal_of_week": {
+      "title": "Animal of the week",
+      "text": "{animal} is {discount}% off this week."
+    },
+    "pass": {
+      "title": "Expedition Pass",
+      "text": "Tier {tier} of 30. Every run earns XP."
+    }
+  },
+  "facts_ui": {
+    "conservation_label": "Conservation status"
+  }
+}

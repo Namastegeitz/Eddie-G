@@ -1,0 +1,32 @@
+{
+  "id": "xishuangbanna",
+  "order": 12,
+  "name": "Xishuangbanna",
+  "location": "Yunnan, China",
+  "lat": 22.0,
+  "lon": 100.8,
+  "status": "coming_soon",
+  "access": {
+    "type": "pack",
+    "product": ""
+  },
+  "flag": {
+    "colors": [
+      "#d8242a",
+      "#f6d43a"
+    ],
+    "code": "XSB"
+  },
+  "palette": {
+    "ui": "#d8242a",
+    "safe": "#3c9a3a",
+    "canopy": "#14592a"
+  },
+  "facts": [
+    "Xishuangbanna is home to China's last wild Asian elephants."
+  ],
+  "hazards": {},
+  "stages": [],
+  "native_animals": [],
+  "sprite": ""
+}

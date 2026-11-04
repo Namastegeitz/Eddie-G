@@ -1,0 +1,56 @@
+{
+  "id": "spider_monkey",
+  "number": 46,
+  "name": "Spider Monkey",
+  "region": "monteverde",
+  "home": "Costa Rica",
+  "pack": "monteverde",
+  "rarity": "epic",
+  "unlock": {
+    "type": "pack",
+    "pack": "monteverde",
+    "amber": 150
+  },
+  "starter": false,
+  "ability": {
+    "name": "Chain swing",
+    "summary": "Chained vine swings",
+    "modules": [
+      {
+        "module": "vine_swing",
+        "max_rows": 3,
+        "target": "safe",
+        "swings": 3,
+        "cooldown": 10.0
+      }
+    ]
+  },
+  "stats": {
+    "hop_time": 0.14,
+    "hitbox": 0.6
+  },
+  "look": {
+    "base": "mammal",
+    "colors": {
+      "primary": "#b07a45",
+      "secondary": "#3a2618",
+      "belly": "#e0b88a",
+      "accent": "#3a2618",
+      "face": "#e8c8a8",
+      "eye": "#2a1608"
+    },
+    "head": "round",
+    "ears": "none",
+    "snout": "short",
+    "tail": "long_curl",
+    "extras": [
+      "long_arms",
+      "dark_hands"
+    ],
+    "size": 0.74
+  },
+  "skins": [],
+  "conservation": "Endangered",
+  "fact": "Its tail can grip branches like an extra hand.",
+  "sprite": ""
+}

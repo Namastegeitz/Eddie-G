@@ -1,0 +1,25 @@
+{
+  "id": "sudden_downpour",
+  "name": "Sudden downpour",
+  "kind": "downpour",
+  "lane": "event",
+  "period": [
+    16.0,
+    22.0
+  ],
+  "duration": [
+    5.0,
+    7.0
+  ],
+  "boost": 0.6,
+  "art": {
+    "painter": "rain",
+    "colors": {
+      "body": "#a8c8e8"
+    }
+  },
+  "desc": "Rain speeds up every river.",
+  "predator": false,
+  "sprite": "",
+  "warn": 2.0
+}

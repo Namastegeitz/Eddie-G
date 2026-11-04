@@ -1,0 +1,19 @@
+{
+  "id": "ridge_drop",
+  "name": "Narrow ridge",
+  "kind": "gap",
+  "lane": "safe",
+  "cause": "fell",
+  "cause_text": "Slipped off the ridge",
+  "layout": "ridge",
+  "art": {
+    "painter": "gully",
+    "colors": {
+      "body": "#1e2a22",
+      "edge": "#5a7a5a"
+    }
+  },
+  "desc": "Only a narrow path is safe.",
+  "predator": false,
+  "sprite": ""
+}

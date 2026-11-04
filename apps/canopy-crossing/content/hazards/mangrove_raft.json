@@ -1,0 +1,28 @@
+{
+  "id": "mangrove_raft",
+  "name": "Mangrove raft",
+  "kind": "platform",
+  "lane": "water",
+  "length": [
+    1.6,
+    2.4
+  ],
+  "speed": [
+    0.7,
+    1.2
+  ],
+  "gap": [
+    1.2,
+    2.6
+  ],
+  "art": {
+    "painter": "branch",
+    "colors": {
+      "body": "#5a4a32",
+      "leaf": "#3a7a4a"
+    }
+  },
+  "desc": "A tangle of roots and leaves.",
+  "predator": false,
+  "sprite": ""
+}

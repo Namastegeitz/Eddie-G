@@ -1,0 +1,19 @@
+{
+  "id": "swamp_mud",
+  "name": "Sucking swamp mud",
+  "kind": "quicksand",
+  "lane": "safe",
+  "cause": "drowned",
+  "cause_text": "Stuck fast in swamp mud",
+  "sink": 1.1,
+  "art": {
+    "painter": "quicksand",
+    "colors": {
+      "body": "#5a4a32",
+      "swirl": "#3a2e20"
+    }
+  },
+  "desc": "Keep moving through the mud.",
+  "predator": false,
+  "sprite": ""
+}

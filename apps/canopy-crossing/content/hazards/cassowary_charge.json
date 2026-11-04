@@ -1,0 +1,36 @@
+{
+  "id": "cassowary_charge",
+  "name": "Charging cassowary",
+  "kind": "mover",
+  "lane": "ground",
+  "cause": "crushed",
+  "cause_text": "Bowled over by a cassowary",
+  "group": [
+    1,
+    2
+  ],
+  "length": [
+    0.9,
+    0.9
+  ],
+  "spacing": 0.5,
+  "speed": [
+    2.4,
+    3.4
+  ],
+  "gap": [
+    3.0,
+    5.4
+  ],
+  "art": {
+    "painter": "runner",
+    "colors": {
+      "body": "#15151a",
+      "neck": "#2a6fe0",
+      "wattle": "#e0242c"
+    }
+  },
+  "desc": "Cassowary territory. They charge without warning.",
+  "predator": false,
+  "sprite": ""
+}

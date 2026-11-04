@@ -1,0 +1,53 @@
+{
+  "id": "poison_dart_frog",
+  "number": 1,
+  "name": "Poison Dart Frog",
+  "region": "amazon",
+  "home": "Amazon Basin",
+  "pack": "amazon",
+  "rarity": "common",
+  "unlock": {
+    "type": "free"
+  },
+  "starter": true,
+  "ability": {
+    "name": "Precise hop",
+    "summary": "Precise reliable hop (baseline)",
+    "modules": [
+      {
+        "module": "hop"
+      }
+    ]
+  },
+  "stats": {
+    "hop_time": 0.12,
+    "hitbox": 0.52
+  },
+  "look": {
+    "base": "frog",
+    "colors": {
+      "primary": "#1e6fd9",
+      "secondary": "#0b1a33",
+      "belly": "#123f86",
+      "accent": "#7fd3ff",
+      "eye": "#0b1a33"
+    },
+    "pattern": "spots",
+    "size": 0.56
+  },
+  "skins": [
+    {
+      "id": "golden",
+      "name": "Golden Dart Frog",
+      "colors": {
+        "primary": "#f6c026",
+        "secondary": "#6b4a00",
+        "belly": "#d89c00",
+        "accent": "#fff4b0"
+      }
+    }
+  ],
+  "conservation": "Varies by species",
+  "fact": "Its bright colours warn predators that its skin is toxic.",
+  "sprite": ""
+}

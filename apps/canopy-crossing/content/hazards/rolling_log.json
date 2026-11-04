@@ -1,0 +1,30 @@
+{
+  "id": "rolling_log",
+  "name": "Rolling log",
+  "kind": "mover",
+  "lane": "ground",
+  "cause": "crushed",
+  "cause_text": "Flattened by a rolling log",
+  "length": [
+    1.4,
+    2.0
+  ],
+  "speed": [
+    1.2,
+    2.0
+  ],
+  "gap": [
+    2.4,
+    4.5
+  ],
+  "art": {
+    "painter": "roll_log",
+    "colors": {
+      "body": "#7a5232",
+      "ring": "#c09a6a"
+    }
+  },
+  "desc": "Thunders down the slope.",
+  "predator": false,
+  "sprite": ""
+}

@@ -1,0 +1,35 @@
+{
+  "id": "red_river_hogs",
+  "name": "Red river hogs",
+  "kind": "mover",
+  "lane": "ground",
+  "cause": "crushed",
+  "cause_text": "Bowled over by red river hogs",
+  "group": [
+    2,
+    3
+  ],
+  "length": [
+    0.8,
+    0.8
+  ],
+  "spacing": 0.25,
+  "speed": [
+    1.7,
+    2.5
+  ],
+  "gap": [
+    2.6,
+    4.4
+  ],
+  "art": {
+    "painter": "herd",
+    "colors": {
+      "body": "#b8462a",
+      "accent": "#f2f0ea"
+    }
+  },
+  "desc": "Bright, bristly and in a hurry.",
+  "predator": false,
+  "sprite": ""
+}

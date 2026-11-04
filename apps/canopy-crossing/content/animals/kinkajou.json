@@ -1,0 +1,53 @@
+{
+  "id": "kinkajou",
+  "number": 47,
+  "name": "Kinkajou",
+  "region": "monteverde",
+  "home": "Costa Rica",
+  "pack": "monteverde",
+  "rarity": "rare",
+  "unlock": {
+    "type": "berries",
+    "price": 600
+  },
+  "starter": false,
+  "ability": {
+    "name": "Night climb",
+    "summary": "Night climber",
+    "modules": [
+      {
+        "module": "climb",
+        "duration": 1.6,
+        "cooldown": 8.0
+      },
+      {
+        "module": "reveal",
+        "strength": 0.5
+      }
+    ]
+  },
+  "stats": {
+    "hop_time": 0.14,
+    "hitbox": 0.6
+  },
+  "look": {
+    "base": "mammal",
+    "colors": {
+      "primary": "#c58a3e",
+      "secondary": "#8a5a24",
+      "belly": "#e0b06a",
+      "accent": "#5a3a1a",
+      "eye": "#1a1008"
+    },
+    "head": "round",
+    "ears": "small",
+    "snout": "short",
+    "tail": "long_curl",
+    "eyes": "big",
+    "size": 0.66
+  },
+  "skins": [],
+  "conservation": "Least Concern",
+  "fact": "A rainforest relative of raccoons that loves nectar and fruit.",
+  "sprite": ""
+}

@@ -1,0 +1,26 @@
+{
+  "id": "slender_snouted_croc",
+  "name": "Slender-snouted crocodile",
+  "kind": "surfacer",
+  "lane": "water",
+  "predator": true,
+  "cause": "eaten",
+  "cause_text": "Snapped up by a slender-snouted crocodile",
+  "period": [
+    5.0,
+    8.0
+  ],
+  "warn": 1.1,
+  "up": 1.0,
+  "span": 1.2,
+  "art": {
+    "painter": "croc",
+    "colors": {
+      "body": "#5a5a3a",
+      "belly": "#d0c890",
+      "eye": "#e8c547"
+    }
+  },
+  "desc": "Watch for ripples: it surfaces right there.",
+  "sprite": ""
+}

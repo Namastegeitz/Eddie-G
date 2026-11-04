@@ -1,0 +1,195 @@
+{
+  "id": "borneo",
+  "order": 3,
+  "name": "Borneo",
+  "location": "Malaysia / Indonesia",
+  "lat": 1.0,
+  "lon": 114.0,
+  "status": "available",
+  "access": {
+    "type": "pack",
+    "product": "map_borneo"
+  },
+  "flag": {
+    "colors": [
+      "#c8342a",
+      "#f2f0ea"
+    ],
+    "code": "BOR"
+  },
+  "palette": {
+    "safe": "#4a8a32",
+    "safe_alt": "#549636",
+    "ground": "#9a6a3a",
+    "ground_alt": "#8c6034",
+    "water": "#2f4a46",
+    "water_deep": "#223836",
+    "foam": "#8aa49a",
+    "canopy": "#1e5a22",
+    "canopy_dark": "#0e3412",
+    "accent": "#f2a03a",
+    "goal": "#b8f07a",
+    "sky": "#16401a",
+    "ui": "#c8342a"
+  },
+  "atmosphere": {
+    "mist": 0.15,
+    "light_shafts": 0.35,
+    "rain": 0.0,
+    "steam": 0.4
+  },
+  "music": {
+    "file": "res://assets/audio/music/borneo.ogg",
+    "tempo": 92,
+    "root": "A",
+    "scale": "pentatonic_minor",
+    "lead": "gamelan",
+    "drums": "gong"
+  },
+  "facts": [
+    "Borneo's rainforest is one of the oldest on Earth, often put at around 130 million years.",
+    "Borneo is the only place where Bornean orangutans live in the wild."
+  ],
+  "generator": "classic",
+  "hazards": {
+    "ground_movers": [
+      {
+        "id": "logging_truck",
+        "weight": 3
+      },
+      {
+        "id": "palm_oil_tractor",
+        "weight": 2
+      },
+      {
+        "id": "swinging_vine",
+        "weight": 2
+      }
+    ],
+    "platforms": [
+      {
+        "id": "blackwater_log",
+        "weight": 3
+      },
+      {
+        "id": "drifting_branch",
+        "weight": 2
+      }
+    ],
+    "water_predators": [
+      {
+        "id": "false_gharial",
+        "weight": 1
+      }
+    ],
+    "safe_specials": [
+      {
+        "id": "reticulated_python",
+        "weight": 2
+      },
+      {
+        "id": "falling_coconut",
+        "weight": 2
+      }
+    ],
+    "ground_effects": [
+      {
+        "id": "slash_and_burn",
+        "weight": 1
+      }
+    ],
+    "tiles": [
+      {
+        "id": "thick_brush",
+        "weight": 1
+      }
+    ],
+    "swoopers": [
+      {
+        "id": "serpent_eagle_swoop",
+        "weight": 1
+      }
+    ]
+  },
+  "intro_hazards": [
+    "logging_truck",
+    "swinging_vine",
+    "blackwater_log",
+    "palm_oil_tractor"
+  ],
+  "difficulty": {
+    "speed": [
+      0.85,
+      1.55
+    ],
+    "density": [
+      0.34,
+      0.66
+    ],
+    "band": [
+      [
+        1,
+        3
+      ],
+      [
+        2,
+        4
+      ]
+    ],
+    "safe_chance": [
+      1.0,
+      0.45
+    ],
+    "special_chance": [
+      0.15,
+      0.55
+    ],
+    "rows_to_max": 130,
+    "move_timer": 0
+  },
+  "stages": [
+    {
+      "name": "Palm-oil Edge",
+      "rows": 26,
+      "difficulty": [
+        0.0,
+        0.3
+      ]
+    },
+    {
+      "name": "Logging Road",
+      "rows": 36,
+      "difficulty": [
+        0.25,
+        0.6
+      ]
+    },
+    {
+      "name": "Blackwater",
+      "rows": 48,
+      "difficulty": [
+        0.5,
+        0.85
+      ]
+    }
+  ],
+  "endless": {
+    "creep": [
+      0.25,
+      0.9
+    ]
+  },
+  "native_animals": [
+    "orangutan",
+    "proboscis_monkey",
+    "sun_bear",
+    "rhinoceros_hornbill",
+    "slow_loris",
+    "colugo",
+    "binturong",
+    "wallaces_flying_frog",
+    "sunda_clouded_leopard",
+    "sumatran_tiger"
+  ],
+  "sprite": ""
+}

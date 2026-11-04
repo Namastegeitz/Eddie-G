@@ -1,0 +1,200 @@
+{
+  "id": "daintree",
+  "order": 4,
+  "name": "Daintree",
+  "location": "Queensland, Australia",
+  "lat": -16.2,
+  "lon": 145.4,
+  "status": "available",
+  "access": {
+    "type": "pack",
+    "product": "map_daintree"
+  },
+  "flag": {
+    "colors": [
+      "#1a4a8a",
+      "#e8392f"
+    ],
+    "code": "DTR"
+  },
+  "palette": {
+    "safe": "#3a8a4a",
+    "safe_alt": "#449652",
+    "ground": "#a08a62",
+    "ground_alt": "#94805a",
+    "water": "#2a6a6a",
+    "water_deep": "#1e5252",
+    "foam": "#a8d8d0",
+    "canopy": "#1a5a3a",
+    "canopy_dark": "#0c3622",
+    "accent": "#5ad8e8",
+    "goal": "#a8f0c8",
+    "sky": "#123a2a",
+    "ui": "#1a4a8a"
+  },
+  "atmosphere": {
+    "mist": 0.05,
+    "light_shafts": 0.4,
+    "rain": 0.0
+  },
+  "music": {
+    "file": "res://assets/audio/music/daintree.ogg",
+    "tempo": 96,
+    "root": "E",
+    "scale": "pentatonic_major",
+    "lead": "pluck",
+    "drums": "clap",
+    "drone": true
+  },
+  "facts": [
+    "The Daintree is often called the oldest surviving tropical rainforest, at roughly 180 million years old.",
+    "Here the rainforest runs right down to meet the Great Barrier Reef."
+  ],
+  "generator": "wetlands",
+  "hazards": {
+    "ground_movers": [
+      {
+        "id": "cassowary_charge",
+        "weight": 2
+      },
+      {
+        "id": "tourist_4wd",
+        "weight": 2
+      }
+    ],
+    "platforms": [
+      {
+        "id": "floating_log",
+        "weight": 2
+      },
+      {
+        "id": "mangrove_raft",
+        "weight": 2
+      }
+    ],
+    "tidal_platforms": [
+      {
+        "id": "tidal_log",
+        "weight": 1
+      }
+    ],
+    "water_predators": [
+      {
+        "id": "saltwater_croc",
+        "weight": 1
+      }
+    ],
+    "safe_specials": [
+      {
+        "id": "amethystine_python",
+        "weight": 1
+      },
+      {
+        "id": "falling_branch",
+        "weight": 1
+      }
+    ],
+    "safe_effects": [
+      {
+        "id": "mangrove_tide",
+        "weight": 1
+      }
+    ],
+    "tiles": [
+      {
+        "id": "mangrove_roots",
+        "weight": 1
+      }
+    ],
+    "events": [
+      {
+        "id": "cyclone_gust",
+        "weight": 1
+      }
+    ],
+    "swoopers": [
+      {
+        "id": "sea_eagle_swoop",
+        "weight": 1
+      }
+    ]
+  },
+  "intro_hazards": [
+    "mangrove_tide",
+    "saltwater_croc",
+    "cassowary_charge",
+    "cyclone_gust"
+  ],
+  "difficulty": {
+    "speed": [
+      0.8,
+      1.5
+    ],
+    "density": [
+      0.32,
+      0.64
+    ],
+    "band": [
+      [
+        1,
+        2
+      ],
+      [
+        2,
+        4
+      ]
+    ],
+    "safe_chance": [
+      1.0,
+      0.55
+    ],
+    "special_chance": [
+      0.15,
+      0.5
+    ],
+    "rows_to_max": 130,
+    "move_timer": 0
+  },
+  "stages": [
+    {
+      "name": "Mangrove Edge",
+      "rows": 26,
+      "difficulty": [
+        0.0,
+        0.3
+      ]
+    },
+    {
+      "name": "Croc Creek",
+      "rows": 36,
+      "difficulty": [
+        0.25,
+        0.6
+      ]
+    },
+    {
+      "name": "Cyclone Coast",
+      "rows": 48,
+      "difficulty": [
+        0.5,
+        0.85
+      ]
+    }
+  ],
+  "endless": {
+    "creep": [
+      0.24,
+      0.85
+    ]
+  },
+  "native_animals": [
+    "southern_cassowary",
+    "tree_kangaroo",
+    "green_tree_python",
+    "sugar_glider",
+    "platypus",
+    "kookaburra",
+    "short_beaked_echidna"
+  ],
+  "sprite": ""
+}

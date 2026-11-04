@@ -1,0 +1,47 @@
+{
+  "id": "forest_elephant",
+  "number": 16,
+  "name": "Forest Elephant",
+  "region": "congo",
+  "home": "Congo Basin",
+  "pack": "congo",
+  "rarity": "rare",
+  "unlock": {
+    "type": "berries",
+    "price": 600
+  },
+  "starter": false,
+  "ability": {
+    "name": "Unstoppable",
+    "summary": "Cannot be knocked back; slower",
+    "modules": [
+      {
+        "module": "anchor",
+        "knockback": true
+      }
+    ]
+  },
+  "stats": {
+    "hop_time": 0.19,
+    "hitbox": 0.74
+  },
+  "look": {
+    "base": "mammal",
+    "colors": {
+      "primary": "#7d8790",
+      "secondary": "#5c656d",
+      "belly": "#8e98a0",
+      "accent": "#f2ece0",
+      "eye": "#1b1b1b"
+    },
+    "head": "elephant",
+    "ears": "elephant",
+    "snout": "trunk",
+    "tail": "thin",
+    "size": 1.0
+  },
+  "skins": [],
+  "conservation": "Critically Endangered",
+  "fact": "Forest elephants spread the seeds of many trees in their dung.",
+  "sprite": ""
+}

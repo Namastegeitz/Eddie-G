@@ -1,0 +1,35 @@
+{
+  "id": "leafcutter_ants",
+  "name": "Leafcutter ant highway",
+  "kind": "mover",
+  "lane": "ground",
+  "cause": "crushed",
+  "cause_text": "Overrun by leafcutter ants",
+  "group": [
+    5,
+    8
+  ],
+  "length": [
+    0.32,
+    0.32
+  ],
+  "spacing": 0.1,
+  "speed": [
+    0.8,
+    1.4
+  ],
+  "gap": [
+    2.2,
+    4.0
+  ],
+  "art": {
+    "painter": "ants",
+    "colors": {
+      "body": "#7a3a1a",
+      "leaf": "#56b33a"
+    }
+  },
+  "desc": "A marching column. Slow, but long.",
+  "predator": false,
+  "sprite": ""
+}

@@ -1,0 +1,56 @@
+{
+  "id": "bird_of_paradise",
+  "number": 37,
+  "name": "Bird of Paradise",
+  "region": "new_guinea",
+  "home": "New Guinea",
+  "pack": "daintree",
+  "rarity": "epic",
+  "unlock": {
+    "type": "pack",
+    "pack": "daintree",
+    "amber": 150
+  },
+  "starter": false,
+  "ability": {
+    "name": "Dazzle",
+    "summary": "Dazzle — distracts a predator",
+    "modules": [
+      {
+        "module": "scare",
+        "targets": "predators",
+        "count": 1,
+        "radius": 4,
+        "duration": 5.0,
+        "cooldown": 10.0,
+        "style": "dazzle"
+      }
+    ]
+  },
+  "stats": {
+    "hop_time": 0.14,
+    "hitbox": 0.6
+  },
+  "look": {
+    "base": "bird",
+    "colors": {
+      "primary": "#6e2a1a",
+      "secondary": "#4e1c10",
+      "belly": "#5a2214",
+      "accent": "#f6d43a",
+      "throat": "#1f8a4a",
+      "beak_tip": "#cfd6e0",
+      "eye": "#f6d43a"
+    },
+    "beak": "short",
+    "tail": "plumes",
+    "extras": [
+      "plumes"
+    ],
+    "size": 0.72
+  },
+  "skins": [],
+  "conservation": "Least Concern (most species)",
+  "fact": "Males perform elaborate courtship dances.",
+  "sprite": ""
+}

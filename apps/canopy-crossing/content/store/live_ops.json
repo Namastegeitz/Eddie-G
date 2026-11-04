@@ -1,0 +1,90 @@
+{
+  "daily_deals": {
+    "count": 3,
+    "pool": [
+      {
+        "kind": "consumable",
+        "id": "shield_totem",
+        "discount": 0.5,
+        "currency": "berries"
+      },
+      {
+        "kind": "consumable",
+        "id": "extra_life",
+        "discount": 0.5,
+        "currency": "berries"
+      },
+      {
+        "kind": "consumable",
+        "id": "vine_grapple",
+        "discount": 0.4,
+        "currency": "berries"
+      },
+      {
+        "kind": "consumable",
+        "id": "time_slow",
+        "discount": 0.4,
+        "currency": "berries"
+      },
+      {
+        "kind": "consumable",
+        "id": "berry_doubler",
+        "discount": 0.25,
+        "currency": "amber"
+      },
+      {
+        "kind": "animal",
+        "rarity": "rare",
+        "discount": 0.3
+      },
+      {
+        "kind": "animal",
+        "rarity": "common",
+        "discount": 0.4
+      },
+      {
+        "kind": "cosmetic",
+        "type": "trail",
+        "discount": 0.3
+      },
+      {
+        "kind": "cosmetic",
+        "type": "emote",
+        "discount": 0.3
+      }
+    ]
+  },
+  "weekend": {
+    "days": [
+      6,
+      0
+    ],
+    "berry_multiplier": 2.0,
+    "label": "Weekend: 2x Berries"
+  },
+  "animal_of_week": {
+    "discount": 0.3,
+    "exclude_rarity": [
+      "legendary"
+    ],
+    "exclude_starters": true
+  },
+  "seasons": [
+    {
+      "id": "s1_amazon",
+      "name": "Amazon Expedition",
+      "featured_map": "amazon",
+      "start": "2026-10-01",
+      "end": "2026-11-30",
+      "pass": "expedition_amazon"
+    },
+    {
+      "id": "s2_borneo",
+      "name": "Borneo Expedition",
+      "featured_map": "borneo",
+      "start": "2026-12-01",
+      "end": "2027-01-31",
+      "pass": "expedition_borneo"
+    }
+  ]
+}

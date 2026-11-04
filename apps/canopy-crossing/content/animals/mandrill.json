@@ -1,0 +1,56 @@
+{
+  "id": "mandrill",
+  "number": 17,
+  "name": "Mandrill",
+  "region": "congo",
+  "home": "Congo Basin",
+  "pack": "congo",
+  "rarity": "epic",
+  "unlock": {
+    "type": "pack",
+    "pack": "congo",
+    "amber": 150
+  },
+  "starter": false,
+  "ability": {
+    "name": "Intimidate",
+    "summary": "Intimidate — nearby predators pause",
+    "modules": [
+      {
+        "module": "scare",
+        "targets": "predators",
+        "radius": 3,
+        "duration": 3.0,
+        "cooldown": 12.0
+      }
+    ]
+  },
+  "stats": {
+    "hop_time": 0.14,
+    "hitbox": 0.6
+  },
+  "look": {
+    "base": "mammal",
+    "colors": {
+      "primary": "#5e5a32",
+      "secondary": "#3e3b20",
+      "belly": "#a6a07a",
+      "accent": "#e8392f",
+      "face": "#e8392f",
+      "ridge": "#3a7be0",
+      "eye": "#f0b43a"
+    },
+    "head": "round",
+    "ears": "small",
+    "snout": "mandrill",
+    "tail": "stub",
+    "extras": [
+      "beard"
+    ],
+    "size": 0.82
+  },
+  "skins": [],
+  "conservation": "Vulnerable",
+  "fact": "The world's largest monkey.",
+  "sprite": ""
+}

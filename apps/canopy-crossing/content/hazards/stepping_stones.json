@@ -1,0 +1,38 @@
+{
+  "id": "stepping_stones",
+  "name": "Stepping stones",
+  "kind": "platform",
+  "lane": "water",
+  "motion": "static",
+  "group": [
+    1,
+    1
+  ],
+  "length": [
+    1.0,
+    1.0
+  ],
+  "count": [
+    3,
+    4
+  ],
+  "dive": {
+    "chance": 0.25,
+    "period": [
+      7.0,
+      9.0
+    ],
+    "warn": 1.4,
+    "under": 1.4
+  },
+  "art": {
+    "painter": "stones",
+    "colors": {
+      "body": "#7a7a72",
+      "moss": "#4a8a3a"
+    }
+  },
+  "desc": "Mossy stones. Some get washed over.",
+  "predator": false,
+  "sprite": ""
+}

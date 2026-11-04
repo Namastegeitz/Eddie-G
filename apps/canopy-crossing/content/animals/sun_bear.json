@@ -1,0 +1,50 @@
+{
+  "id": "sun_bear",
+  "number": 24,
+  "name": "Sun Bear",
+  "region": "borneo",
+  "home": "Borneo",
+  "pack": "borneo",
+  "rarity": "common",
+  "unlock": {
+    "type": "berries",
+    "price": 250
+  },
+  "starter": false,
+  "ability": {
+    "name": "Fast climb",
+    "summary": "Fast climber",
+    "modules": [
+      {
+        "module": "climb",
+        "duration": 1.4,
+        "cooldown": 5.0
+      }
+    ]
+  },
+  "stats": {
+    "hop_time": 0.14,
+    "hitbox": 0.6
+  },
+  "look": {
+    "base": "mammal",
+    "colors": {
+      "primary": "#1d1b1a",
+      "secondary": "#0f0e0d",
+      "belly": "#2a2826",
+      "accent": "#f2b04a",
+      "face": "#d6a067",
+      "eye": "#140d08"
+    },
+    "head": "bear",
+    "ears": "round",
+    "snout": "bear",
+    "tail": "none",
+    "pattern": "chest_crescent",
+    "size": 0.78
+  },
+  "skins": [],
+  "conservation": "Vulnerable",
+  "fact": "The smallest bear in the world.",
+  "sprite": ""
+}

@@ -1,0 +1,27 @@
+{
+  "id": "gaboon_viper",
+  "name": "Gaboon viper",
+  "kind": "striker",
+  "lane": "safe",
+  "predator": true,
+  "cause": "eaten",
+  "cause_text": "Bitten by a gaboon viper",
+  "period": [
+    3.6,
+    5.2
+  ],
+  "warn": 0.8,
+  "strike": 0.45,
+  "span": 2,
+  "hidden": false,
+  "art": {
+    "painter": "snake",
+    "colors": {
+      "body": "#b89a7a",
+      "pattern": "#5a3a6a",
+      "eye": "#1a1a1a"
+    }
+  },
+  "desc": "Lurks in the grass, then strikes along the lane.",
+  "sprite": ""
+}

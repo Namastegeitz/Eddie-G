@@ -1,0 +1,78 @@
+{
+  "items": [
+    {
+      "id": "berry",
+      "name": "Berry",
+      "reward": {
+        "berries": 1
+      },
+      "weight": 10,
+      "art": {
+        "painter": "berry",
+        "colors": {
+          "body": "#d8242a",
+          "leaf": "#3a9a3a"
+        }
+      }
+    },
+    {
+      "id": "beetle",
+      "name": "Jewel beetle",
+      "reward": {
+        "berries": 3
+      },
+      "weight": 3,
+      "art": {
+        "painter": "beetle",
+        "colors": {
+          "body": "#1fb07a",
+          "shine": "#a8f0d0"
+        }
+      }
+    },
+    {
+      "id": "golden_fruit",
+      "name": "Golden fruit",
+      "reward": {
+        "berries": 10
+      },
+      "weight": 0.6,
+      "art": {
+        "painter": "fruit",
+        "colors": {
+          "body": "#f6c826",
+          "leaf": "#3a9a3a"
+        }
+      }
+    },
+    {
+      "id": "amber_drop",
+      "name": "Amber drop",
+      "reward": {
+        "amber": 1
+      },
+      "weight": 0.06,
+      "art": {
+        "painter": "amber",
+        "colors": {
+          "body": "#f2a01a",
+          "shine": "#fff0b0"
+        }
+      }
+    }
+  ],
+  "bonus": {
+    "id": "truffle",
+    "name": "Hidden truffle",
+    "reward": {
+      "berries": 5
+    },
+    "art": {
+      "painter": "truffle",
+      "colors": {
+        "body": "#6a4a32",
+        "shine": "#e8c8a0"
+      }
+    }
+  }
+}

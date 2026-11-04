@@ -1,0 +1,293 @@
+{
+  "id": "expedition_borneo",
+  "name": "Borneo Expedition",
+  "featured_map": "borneo",
+  "days": 30,
+  "xp_per_tier": 120,
+  "xp": {
+    "per_row": 1,
+    "stage_clear": 30,
+    "daily_challenge": 40,
+    "per_collectible": 1
+  },
+  "tiers": [
+    {
+      "tier": 1,
+      "free": {
+        "berries": 45
+      },
+      "premium": {
+        "berries": 120
+      }
+    },
+    {
+      "tier": 2,
+      "free": {
+        "berries": 50
+      },
+      "premium": {
+        "berries": 120
+      }
+    },
+    {
+      "tier": 3,
+      "free": {
+        "berries": 55
+      },
+      "premium": {
+        "amber": 10
+      }
+    },
+    {
+      "tier": 4,
+      "free": {
+        "berries": 60
+      },
+      "premium": {
+        "item": "shield_totem",
+        "count": 2
+      }
+    },
+    {
+      "tier": 5,
+      "free": {
+        "item": "extra_life",
+        "count": 1
+      },
+      "premium": {
+        "berries": 120
+      }
+    },
+    {
+      "tier": 6,
+      "free": {
+        "berries": 45
+      },
+      "premium": {
+        "amber": 10
+      }
+    },
+    {
+      "tier": 7,
+      "free": {
+        "berries": 50
+      },
+      "premium": {
+        "berries": 120
+      }
+    },
+    {
+      "tier": 8,
+      "free": {
+        "berries": 55
+      },
+      "premium": {
+        "cosmetic": "trail_fireflies"
+      }
+    },
+    {
+      "tier": 9,
+      "free": {
+        "berries": 60
+      },
+      "premium": {
+        "amber": 10
+      }
+    },
+    {
+      "tier": 10,
+      "free": {
+        "item": "shield_totem",
+        "count": 1
+      },
+      "premium": {
+        "animal": "colugo"
+      }
+    },
+    {
+      "tier": 11,
+      "free": {
+        "berries": 45
+      },
+      "premium": {
+        "berries": 120
+      }
+    },
+    {
+      "tier": 12,
+      "free": {
+        "berries": 50
+      },
+      "premium": {
+        "item": "shield_totem",
+        "count": 2
+      }
+    },
+    {
+      "tier": 13,
+      "free": {
+        "berries": 55
+      },
+      "premium": {
+        "berries": 120
+      }
+    },
+    {
+      "tier": 14,
+      "free": {
+        "berries": 60
+      },
+      "premium": {
+        "berries": 120
+      }
+    },
+    {
+      "tier": 15,
+      "free": {
+        "amber": 10
+      },
+      "premium": {
+        "amber": 10
+      }
+    },
+    {
+      "tier": 16,
+      "free": {
+        "berries": 45
+      },
+      "premium": {
+        "cosmetic": "emote_spin"
+      }
+    },
+    {
+      "tier": 17,
+      "free": {
+        "berries": 50
+      },
+      "premium": {
+        "berries": 120
+      }
+    },
+    {
+      "tier": 18,
+      "free": {
+        "berries": 55
+      },
+      "premium": {
+        "amber": 10
+      }
+    },
+    {
+      "tier": 19,
+      "free": {
+        "berries": 60
+      },
+      "premium": {
+        "berries": 120
+      }
+    },
+    {
+      "tier": 20,
+      "free": {
+        "item": "time_slow",
+        "count": 1
+      },
+      "premium": {
+        "cosmetic": "skin_python_albino"
+      }
+    },
+    {
+      "tier": 21,
+      "free": {
+        "berries": 45
+      },
+      "premium": {
+        "amber": 10
+      }
+    },
+    {
+      "tier": 22,
+      "free": {
+        "berries": 50
+      },
+      "premium": {
+        "berries": 120
+      }
+    },
+    {
+      "tier": 23,
+      "free": {
+        "berries": 55
+      },
+      "premium": {
+        "berries": 120
+      }
+    },
+    {
+      "tier": 24,
+      "free": {
+        "berries": 60
+      },
+      "premium": {
+        "cosmetic": "flag_orchid"
+      }
+    },
+    {
+      "tier": 25,
+      "free": {
+        "item": "revive",
+        "count": 1
+      },
+      "premium": {
+        "berries": 120
+      }
+    },
+    {
+      "tier": 26,
+      "free": {
+        "berries": 45
+      },
+      "premium": {
+        "berries": 120
+      }
+    },
+    {
+      "tier": 27,
+      "free": {
+        "berries": 50
+      },
+      "premium": {
+        "amber": 10
+      }
+    },
+    {
+      "tier": 28,
+      "free": {
+        "berries": 55
+      },
+      "premium": {
+        "item": "shield_totem",
+        "count": 2
+      }
+    },
+    {
+      "tier": 29,
+      "free": {
+        "berries": 60
+      },
+      "premium": {
+        "berries": 120
+      }
+    },
+    {
+      "tier": 30,
+      "free": {
+        "item": "extra_life",
+        "count": 1
+      },
+      "premium": {
+        "animal": "sunda_clouded_leopard"
+      }
+    }
+  ]
+}

@@ -1,0 +1,51 @@
+{
+  "id": "proboscis_monkey",
+  "number": 23,
+  "name": "Proboscis Monkey",
+  "region": "borneo",
+  "home": "Borneo",
+  "pack": "borneo",
+  "rarity": "rare",
+  "unlock": {
+    "type": "berries",
+    "price": 600
+  },
+  "starter": false,
+  "ability": {
+    "name": "River leap",
+    "summary": "Big leap over a full water lane",
+    "modules": [
+      {
+        "module": "vine_swing",
+        "max_rows": 4,
+        "target": "non_water",
+        "cooldown": 8.0,
+        "style": "leap"
+      }
+    ]
+  },
+  "stats": {
+    "hop_time": 0.14,
+    "hitbox": 0.6
+  },
+  "look": {
+    "base": "mammal",
+    "colors": {
+      "primary": "#d2894e",
+      "secondary": "#9e9a94",
+      "belly": "#efe3cf",
+      "accent": "#e8a37a",
+      "face": "#e8a37a",
+      "eye": "#2a1608"
+    },
+    "head": "round",
+    "ears": "small",
+    "snout": "proboscis",
+    "tail": "long",
+    "size": 0.8
+  },
+  "skins": [],
+  "conservation": "Endangered",
+  "fact": "A strong swimmer with partly webbed feet.",
+  "sprite": ""
+}

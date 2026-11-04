@@ -1,0 +1,26 @@
+{
+  "id": "mangrove_tide",
+  "name": "Mangrove tide",
+  "kind": "tide",
+  "lane": "safe",
+  "cause": "drowned",
+  "cause_text": "Caught by the rising tide",
+  "period": [
+    8.0,
+    10.0
+  ],
+  "flood": [
+    2.4,
+    3.2
+  ],
+  "warn": 1.4,
+  "art": {
+    "painter": "tide",
+    "colors": {
+      "body": "#4a8a8a"
+    }
+  },
+  "desc": "The bank floods, then drains.",
+  "predator": false,
+  "sprite": ""
+}

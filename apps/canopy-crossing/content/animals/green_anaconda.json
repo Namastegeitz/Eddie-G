@@ -1,0 +1,62 @@
+{
+  "id": "green_anaconda",
+  "number": 7,
+  "name": "Green Anaconda",
+  "region": "amazon",
+  "home": "Amazon Basin",
+  "pack": "amazon",
+  "rarity": "epic",
+  "unlock": {
+    "type": "pack",
+    "pack": "amazon",
+    "amber": 150
+  },
+  "starter": false,
+  "ability": {
+    "name": "Slither",
+    "summary": "Slithers 2 tiles fast; cannot idle on water",
+    "modules": [
+      {
+        "module": "dash",
+        "tiles": 2,
+        "cooldown": 5.0
+      },
+      {
+        "module": "swim",
+        "idle_limit": 1.2,
+        "current": 0.8
+      }
+    ]
+  },
+  "stats": {
+    "hop_time": 0.14,
+    "hitbox": 0.6
+  },
+  "look": {
+    "base": "snake",
+    "colors": {
+      "primary": "#6d7a2a",
+      "secondary": "#1f2410",
+      "belly": "#c9c46a",
+      "accent": "#e8c547",
+      "eye": "#e8c547"
+    },
+    "pattern": "spots",
+    "size": 0.82
+  },
+  "skins": [
+    {
+      "id": "albino",
+      "name": "Albino Anaconda",
+      "colors": {
+        "primary": "#f3eadc",
+        "secondary": "#f2c14e",
+        "belly": "#fff8ec",
+        "eye": "#e0505a"
+      }
+    }
+  ],
+  "conservation": "Least Concern",
+  "fact": "The heaviest snake in the world.",
+  "sprite": ""
+}

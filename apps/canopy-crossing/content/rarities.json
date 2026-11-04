@@ -1,0 +1,26 @@
+{
+  "common": {
+    "name": "Common",
+    "order": 0,
+    "gem": "#66bb6a",
+    "berries": 250
+  },
+  "rare": {
+    "name": "Rare",
+    "order": 1,
+    "gem": "#42a5f5",
+    "berries": 600
+  },
+  "epic": {
+    "name": "Epic",
+    "order": 2,
+    "gem": "#ab47bc",
+    "amber": 150
+  },
+  "legendary": {
+    "name": "Legendary",
+    "order": 3,
+    "gem": "#ffca28",
+    "amber": 400
+  }
+}

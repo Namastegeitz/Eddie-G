@@ -1,0 +1,192 @@
+{
+  "id": "sundarbans",
+  "order": 7,
+  "name": "Sundarbans",
+  "location": "India / Bangladesh",
+  "lat": 21.9,
+  "lon": 89.2,
+  "status": "available",
+  "access": {
+    "type": "pack",
+    "product": "map_sundarbans"
+  },
+  "flag": {
+    "colors": [
+      "#1a6a3a",
+      "#e8392f"
+    ],
+    "code": "SDB"
+  },
+  "palette": {
+    "safe": "#5a7a42",
+    "safe_alt": "#64844a",
+    "ground": "#6a6450",
+    "ground_alt": "#605a48",
+    "water": "#4a7f86",
+    "water_deep": "#3a666c",
+    "foam": "#cfe0dc",
+    "canopy": "#2e4a2a",
+    "canopy_dark": "#1a2e18",
+    "accent": "#f07a1a",
+    "goal": "#d8f0a0",
+    "sky": "#2a3a2a",
+    "ui": "#3a6a3a"
+  },
+  "atmosphere": {
+    "mist": 0.1,
+    "light_shafts": 0.15,
+    "rain": 0.0
+  },
+  "music": {
+    "file": "res://assets/audio/music/sundarbans.ogg",
+    "tempo": 90,
+    "root": "D",
+    "scale": "phrygian_dominant",
+    "lead": "sitar",
+    "drums": "tabla",
+    "drone": true
+  },
+  "facts": [
+    "The Sundarbans is the largest mangrove forest on Earth.",
+    "Its Bengal tigers are famous for swimming between the islands."
+  ],
+  "generator": "wetlands",
+  "hazards": {
+    "ground_movers": [
+      {
+        "id": "water_monitor",
+        "weight": 2
+      },
+      {
+        "id": "wild_boar",
+        "weight": 1
+      }
+    ],
+    "platforms": [
+      {
+        "id": "river_boat",
+        "weight": 3
+      },
+      {
+        "id": "mangrove_raft",
+        "weight": 2
+      }
+    ],
+    "tidal_platforms": [
+      {
+        "id": "tidal_log",
+        "weight": 1
+      }
+    ],
+    "water_predators": [
+      {
+        "id": "saltwater_croc",
+        "weight": 1
+      }
+    ],
+    "safe_specials": [
+      {
+        "id": "tiger_ambush",
+        "weight": 3
+      },
+      {
+        "id": "king_cobra",
+        "weight": 1
+      }
+    ],
+    "safe_effects": [
+      {
+        "id": "mangrove_tide",
+        "weight": 2
+      }
+    ],
+    "tiles": [
+      {
+        "id": "mangrove_roots",
+        "weight": 2
+      },
+      {
+        "id": "swamp_mud",
+        "weight": 1
+      }
+    ],
+    "swoopers": [
+      {
+        "id": "sea_eagle_swoop",
+        "weight": 1
+      }
+    ]
+  },
+  "intro_hazards": [
+    "tiger_ambush",
+    "mangrove_tide",
+    "river_boat",
+    "tidal_log"
+  ],
+  "difficulty": {
+    "speed": [
+      0.8,
+      1.5
+    ],
+    "density": [
+      0.32,
+      0.64
+    ],
+    "band": [
+      [
+        1,
+        2
+      ],
+      [
+        2,
+        4
+      ]
+    ],
+    "safe_chance": [
+      1.0,
+      0.55
+    ],
+    "special_chance": [
+      0.15,
+      0.55
+    ],
+    "rows_to_max": 130,
+    "move_timer": 0
+  },
+  "stages": [
+    {
+      "name": "Tidal Channels",
+      "rows": 26,
+      "difficulty": [
+        0.0,
+        0.3
+      ]
+    },
+    {
+      "name": "Tiger Reeds",
+      "rows": 36,
+      "difficulty": [
+        0.25,
+        0.6
+      ]
+    },
+    {
+      "name": "Mangrove Maze",
+      "rows": 48,
+      "difficulty": [
+        0.5,
+        0.85
+      ]
+    }
+  ],
+  "endless": {
+    "creep": [
+      0.24,
+      0.85
+    ]
+  },
+  "native_animals": [
+    "bengal_tiger"
+  ],
+  "sprite": ""
+}

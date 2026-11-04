@@ -1,0 +1,35 @@
+{
+  "id": "elephant_herd",
+  "name": "Forest-elephant trail",
+  "kind": "mover",
+  "lane": "ground",
+  "cause": "crushed",
+  "cause_text": "Squashed by a forest elephant",
+  "group": [
+    1,
+    2
+  ],
+  "length": [
+    2.0,
+    2.0
+  ],
+  "spacing": 0.4,
+  "speed": [
+    0.7,
+    1.1
+  ],
+  "gap": [
+    3.0,
+    5.0
+  ],
+  "art": {
+    "painter": "elephant",
+    "colors": {
+      "body": "#7d8790",
+      "ear": "#6a737b"
+    }
+  },
+  "desc": "Slow giants that take up the whole trail.",
+  "predator": false,
+  "sprite": ""
+}

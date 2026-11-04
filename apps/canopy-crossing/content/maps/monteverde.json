@@ -1,0 +1,187 @@
+{
+  "id": "monteverde",
+  "order": 6,
+  "name": "Monteverde",
+  "location": "Costa Rica",
+  "lat": 10.3,
+  "lon": -84.8,
+  "status": "available",
+  "access": {
+    "type": "pack",
+    "product": "map_monteverde"
+  },
+  "flag": {
+    "colors": [
+      "#1a3a8a",
+      "#f2f0ea",
+      "#c8242a"
+    ],
+    "code": "MTV"
+  },
+  "palette": {
+    "safe": "#5a9a6a",
+    "safe_alt": "#64a474",
+    "ground": "#7a7a62",
+    "ground_alt": "#70705a",
+    "water": "#4a8aa0",
+    "water_deep": "#3a7088",
+    "foam": "#e0f0f4",
+    "canopy": "#3a6a4a",
+    "canopy_dark": "#244a32",
+    "accent": "#f2d0f0",
+    "goal": "#e0f8f0",
+    "sky": "#9ab8b0",
+    "ui": "#3a7a6a"
+  },
+  "atmosphere": {
+    "mist": 0.6,
+    "light_shafts": 0.0,
+    "rain": 0.0,
+    "fog_color": "#dfe9e6"
+  },
+  "music": {
+    "file": "res://assets/audio/music/monteverde.ogg",
+    "tempo": 84,
+    "root": "F",
+    "scale": "major",
+    "lead": "flute",
+    "drums": "soft"
+  },
+  "facts": [
+    "Monteverde is a cloud forest: much of its water is caught straight from passing clouds.",
+    "Hundreds of bird species live here, including the resplendent quetzal."
+  ],
+  "generator": "highlands",
+  "hazards": {
+    "ground_movers": [
+      {
+        "id": "tourist_4wd",
+        "weight": 2
+      },
+      {
+        "id": "peccary_herd",
+        "weight": 2
+      }
+    ],
+    "platforms": [
+      {
+        "id": "rapids_log",
+        "weight": 1
+      },
+      {
+        "id": "stepping_stones",
+        "weight": 2
+      },
+      {
+        "id": "drifting_branch",
+        "weight": 2
+      }
+    ],
+    "bridges": [
+      {
+        "id": "hanging_bridge",
+        "weight": 1
+      }
+    ],
+    "ridges": [
+      {
+        "id": "ridge_drop",
+        "weight": 1
+      }
+    ],
+    "safe_specials": [
+      {
+        "id": "eyelash_viper",
+        "weight": 2
+      }
+    ],
+    "tiles": [
+      {
+        "id": "thick_brush",
+        "weight": 1
+      }
+    ],
+    "swoopers": [
+      {
+        "id": "hawk_eagle_swoop",
+        "weight": 1
+      }
+    ]
+  },
+  "intro_hazards": [
+    "hanging_bridge",
+    "stepping_stones",
+    "eyelash_viper",
+    "tourist_4wd"
+  ],
+  "difficulty": {
+    "speed": [
+      0.75,
+      1.4
+    ],
+    "density": [
+      0.3,
+      0.6
+    ],
+    "band": [
+      [
+        1,
+        2
+      ],
+      [
+        2,
+        3
+      ]
+    ],
+    "safe_chance": [
+      1.0,
+      0.55
+    ],
+    "special_chance": [
+      0.1,
+      0.45
+    ],
+    "rows_to_max": 130,
+    "move_timer": 0
+  },
+  "stages": [
+    {
+      "name": "Cloud Trail",
+      "rows": 26,
+      "difficulty": [
+        0.0,
+        0.3
+      ]
+    },
+    {
+      "name": "Hanging Bridges",
+      "rows": 36,
+      "difficulty": [
+        0.25,
+        0.6
+      ]
+    },
+    {
+      "name": "Misty Creeks",
+      "rows": 48,
+      "difficulty": [
+        0.5,
+        0.85
+      ]
+    }
+  ],
+  "endless": {
+    "creep": [
+      0.22,
+      0.8
+    ]
+  },
+  "native_animals": [
+    "resplendent_quetzal",
+    "spider_monkey",
+    "kinkajou",
+    "coatimundi",
+    "bairds_tapir"
+  ],
+  "sprite": ""
+}

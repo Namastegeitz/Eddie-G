@@ -1,0 +1,26 @@
+{
+  "id": "monsoon_flood",
+  "name": "Monsoon flood",
+  "kind": "tide",
+  "lane": "safe",
+  "cause": "drowned",
+  "cause_text": "Swept up by a monsoon flood",
+  "period": [
+    7.5,
+    9.5
+  ],
+  "flood": [
+    2.6,
+    3.4
+  ],
+  "warn": 1.4,
+  "art": {
+    "painter": "tide",
+    "colors": {
+      "body": "#6a7a5a"
+    }
+  },
+  "desc": "Rainwater surges across the path.",
+  "predator": false,
+  "sprite": ""
+}

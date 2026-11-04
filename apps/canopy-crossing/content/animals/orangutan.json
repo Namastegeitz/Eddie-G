@@ -1,0 +1,54 @@
+{
+  "id": "orangutan",
+  "number": 22,
+  "name": "Orangutan",
+  "region": "borneo",
+  "home": "Borneo",
+  "pack": "borneo",
+  "rarity": "epic",
+  "unlock": {
+    "type": "free"
+  },
+  "starter": true,
+  "ability": {
+    "name": "Long swing",
+    "summary": "Long vine swings over gaps",
+    "modules": [
+      {
+        "module": "vine_swing",
+        "max_rows": 4,
+        "target": "safe",
+        "cooldown": 9.0
+      }
+    ]
+  },
+  "stats": {
+    "hop_time": 0.15,
+    "hitbox": 0.66
+  },
+  "look": {
+    "base": "mammal",
+    "colors": {
+      "primary": "#d9621a",
+      "secondary": "#a8440c",
+      "belly": "#e8803a",
+      "accent": "#5e3a26",
+      "face": "#6b4430",
+      "eye": "#2a1608"
+    },
+    "head": "ape",
+    "ears": "none",
+    "snout": "ape",
+    "tail": "none",
+    "extras": [
+      "cheek_pads",
+      "long_arms",
+      "shaggy"
+    ],
+    "size": 0.9
+  },
+  "skins": [],
+  "conservation": "Critically Endangered",
+  "fact": "Orangutans spend most of their lives in the trees.",
+  "sprite": ""
+}

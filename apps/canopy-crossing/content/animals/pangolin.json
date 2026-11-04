@@ -1,0 +1,52 @@
+{
+  "id": "pangolin",
+  "number": 21,
+  "name": "Pangolin",
+  "region": "congo",
+  "home": "Congo Basin",
+  "pack": "congo",
+  "rarity": "legendary",
+  "unlock": {
+    "type": "amber",
+    "price": 400
+  },
+  "starter": false,
+  "ability": {
+    "name": "Armored roll",
+    "summary": "Rolls into an armored invincible dash",
+    "modules": [
+      {
+        "module": "dash",
+        "tiles": 3,
+        "cooldown": 8.0,
+        "invincible": 1.2,
+        "style": "roll"
+      }
+    ]
+  },
+  "stats": {
+    "hop_time": 0.14,
+    "hitbox": 0.6
+  },
+  "look": {
+    "base": "mammal",
+    "colors": {
+      "primary": "#9a7350",
+      "secondary": "#6e4f34",
+      "belly": "#e6cfae",
+      "accent": "#c9a27a",
+      "face": "#e6cfae",
+      "eye": "#140d08"
+    },
+    "head": "pointy",
+    "ears": "none",
+    "snout": "long",
+    "tail": "scaly",
+    "pattern": "scales",
+    "size": 0.74
+  },
+  "skins": [],
+  "conservation": "Endangered",
+  "fact": "Its scales are made of keratin, like your fingernails.",
+  "sprite": ""
+}

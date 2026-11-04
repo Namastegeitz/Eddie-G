@@ -1,0 +1,35 @@
+{
+  "id": "rope_bridge",
+  "name": "Rope bridge",
+  "kind": "platform",
+  "lane": "water",
+  "motion": "pendulum",
+  "length": [
+    4.0,
+    5.5
+  ],
+  "amplitude": [
+    1.0,
+    1.6
+  ],
+  "period": [
+    2.8,
+    4.0
+  ],
+  "count": [
+    1,
+    1
+  ],
+  "holes": 1,
+  "art": {
+    "painter": "bridge",
+    "colors": {
+      "body": "#7a6242",
+      "rope": "#c8b48a",
+      "plank": "#5a4430"
+    }
+  },
+  "desc": "Old rope over a deep gorge.",
+  "predator": false,
+  "sprite": ""
+}

@@ -1,0 +1,49 @@
+{
+  "id": "okapi",
+  "number": 14,
+  "name": "Okapi",
+  "region": "congo",
+  "home": "Congo Basin",
+  "pack": "congo",
+  "rarity": "rare",
+  "unlock": {
+    "type": "berries",
+    "price": 600
+  },
+  "starter": false,
+  "ability": {
+    "name": "Steady",
+    "summary": "Steady — resists water-current drift",
+    "modules": [
+      {
+        "module": "anchor",
+        "drift": 0.5
+      }
+    ]
+  },
+  "stats": {
+    "hop_time": 0.14,
+    "hitbox": 0.6
+  },
+  "look": {
+    "base": "mammal",
+    "colors": {
+      "primary": "#4a2318",
+      "secondary": "#f5efe6",
+      "belly": "#5c2e20",
+      "accent": "#e8dccb",
+      "face": "#e8dccb",
+      "eye": "#140d08"
+    },
+    "head": "long",
+    "ears": "tall",
+    "snout": "long",
+    "tail": "thin",
+    "pattern": "leg_stripes",
+    "size": 0.84
+  },
+  "skins": [],
+  "conservation": "Endangered",
+  "fact": "A forest relative of the giraffe, despite its zebra-striped legs.",
+  "sprite": ""
+}

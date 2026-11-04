@@ -1,0 +1,28 @@
+{
+  "id": "drifting_branch",
+  "name": "Drifting branch",
+  "kind": "platform",
+  "lane": "water",
+  "length": [
+    1.4,
+    2.2
+  ],
+  "speed": [
+    1.0,
+    1.8
+  ],
+  "gap": [
+    1.2,
+    2.6
+  ],
+  "art": {
+    "painter": "branch",
+    "colors": {
+      "body": "#6a4a2a",
+      "leaf": "#4a9a3a"
+    }
+  },
+  "desc": "Short and quick.",
+  "predator": false,
+  "sprite": ""
+}

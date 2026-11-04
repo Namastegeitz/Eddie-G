@@ -1,0 +1,19 @@
+{
+  "id": "quicksand",
+  "name": "Quicksand",
+  "kind": "quicksand",
+  "lane": "safe",
+  "cause": "drowned",
+  "cause_text": "Swallowed by quicksand",
+  "sink": 0.9,
+  "art": {
+    "painter": "quicksand",
+    "colors": {
+      "body": "#b8945a",
+      "swirl": "#8a6a3a"
+    }
+  },
+  "desc": "Don't stand still on the swirls.",
+  "predator": false,
+  "sprite": ""
+}

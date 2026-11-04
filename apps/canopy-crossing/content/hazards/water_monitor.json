@@ -1,0 +1,30 @@
+{
+  "id": "water_monitor",
+  "name": "Water monitor",
+  "kind": "mover",
+  "lane": "ground",
+  "cause": "eaten",
+  "predator": true,
+  "cause_text": "Snapped up by a water monitor",
+  "length": [
+    1.3,
+    1.3
+  ],
+  "speed": [
+    1.0,
+    1.6
+  ],
+  "gap": [
+    2.6,
+    4.4
+  ],
+  "art": {
+    "painter": "lizard",
+    "colors": {
+      "body": "#4a4a32",
+      "spots": "#d8c86a"
+    }
+  },
+  "desc": "A giant lizard prowling the mudflats.",
+  "sprite": ""
+}

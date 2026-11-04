@@ -1,0 +1,51 @@
+{
+  "id": "western_gorilla",
+  "number": 13,
+  "name": "Western Gorilla",
+  "region": "congo",
+  "home": "Congo Basin",
+  "pack": "congo",
+  "rarity": "epic",
+  "unlock": {
+    "type": "free"
+  },
+  "starter": true,
+  "ability": {
+    "name": "Smash",
+    "summary": "Smashes one obstacle clear",
+    "modules": [
+      {
+        "module": "smash",
+        "cooldown": 8.0
+      }
+    ]
+  },
+  "stats": {
+    "hop_time": 0.15,
+    "hitbox": 0.7
+  },
+  "look": {
+    "base": "mammal",
+    "colors": {
+      "primary": "#2d3236",
+      "secondary": "#1a1d20",
+      "belly": "#3c4246",
+      "accent": "#5a6066",
+      "face": "#202326",
+      "eye": "#3a2412"
+    },
+    "head": "ape",
+    "ears": "small",
+    "snout": "ape",
+    "tail": "none",
+    "extras": [
+      "brow",
+      "long_arms"
+    ],
+    "size": 0.94
+  },
+  "skins": [],
+  "conservation": "Critically Endangered",
+  "fact": "Gorillas build a fresh nest to sleep in almost every night.",
+  "sprite": ""
+}

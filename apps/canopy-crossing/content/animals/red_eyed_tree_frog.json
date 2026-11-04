@@ -1,0 +1,46 @@
+{
+  "id": "red_eyed_tree_frog",
+  "number": 2,
+  "name": "Red-Eyed Tree Frog",
+  "region": "amazon",
+  "home": "Amazon Basin",
+  "pack": "amazon",
+  "rarity": "common",
+  "unlock": {
+    "type": "berries",
+    "price": 250
+  },
+  "starter": false,
+  "ability": {
+    "name": "Double hop",
+    "summary": "Double-hop (clears 2 tiles)",
+    "modules": [
+      {
+        "module": "multi_hop",
+        "tiles": 2,
+        "cooldown": 5.0
+      }
+    ]
+  },
+  "stats": {
+    "hop_time": 0.14,
+    "hitbox": 0.6
+  },
+  "look": {
+    "base": "frog",
+    "colors": {
+      "primary": "#3fbf4a",
+      "secondary": "#1e5bd6",
+      "belly": "#f2f2e6",
+      "accent": "#ff8a1f",
+      "eye": "#e0202a"
+    },
+    "pattern": "side_bars",
+    "eyes": "big",
+    "size": 0.56
+  },
+  "skins": [],
+  "conservation": "Least Concern",
+  "fact": "It flashes its red eyes to startle predators.",
+  "sprite": ""
+}

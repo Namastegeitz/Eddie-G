@@ -1,0 +1,49 @@
+{
+  "id": "wallaces_flying_frog",
+  "number": 29,
+  "name": "Wallace's Flying Frog",
+  "region": "borneo",
+  "home": "Borneo",
+  "pack": "borneo",
+  "rarity": "rare",
+  "unlock": {
+    "type": "berries",
+    "price": 600
+  },
+  "starter": false,
+  "ability": {
+    "name": "Parachute glide",
+    "summary": "Glide-jump (floats on descent)",
+    "modules": [
+      {
+        "module": "glide",
+        "tiles": 2,
+        "cooldown": 6.0,
+        "soft_landing": 1.0
+      }
+    ]
+  },
+  "stats": {
+    "hop_time": 0.14,
+    "hitbox": 0.6
+  },
+  "look": {
+    "base": "frog",
+    "colors": {
+      "primary": "#2fae4a",
+      "secondary": "#f2d21e",
+      "belly": "#f6e9a0",
+      "accent": "#1a1a1a",
+      "eye": "#1a1a1a"
+    },
+    "pattern": "none",
+    "extras": [
+      "webbed_feet"
+    ],
+    "size": 0.6
+  },
+  "skins": [],
+  "conservation": "Least Concern",
+  "fact": "It glides using big webbed feet like parachutes.",
+  "sprite": ""
+}

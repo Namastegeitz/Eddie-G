@@ -1,0 +1,49 @@
+{
+  "id": "ring_tailed_lemur",
+  "number": 40,
+  "name": "Ring-Tailed Lemur",
+  "region": "masoala",
+  "home": "Madagascar",
+  "pack": "masoala",
+  "rarity": "common",
+  "unlock": {
+    "type": "free"
+  },
+  "starter": true,
+  "ability": {
+    "name": "Multi-hop",
+    "summary": "Nimble multi-hop",
+    "modules": [
+      {
+        "module": "multi_hop",
+        "tiles": 2,
+        "cooldown": 3.5
+      }
+    ]
+  },
+  "stats": {
+    "hop_time": 0.14,
+    "hitbox": 0.6
+  },
+  "look": {
+    "base": "mammal",
+    "colors": {
+      "primary": "#9b9ea4",
+      "secondary": "#1c1c20",
+      "belly": "#f2f0ec",
+      "accent": "#f2f0ec",
+      "face": "#f2f0ec",
+      "eye": "#f0a01a"
+    },
+    "head": "fox",
+    "ears": "pointed",
+    "snout": "fox",
+    "tail": "ringed",
+    "pattern": "eye_patches",
+    "size": 0.68
+  },
+  "skins": [],
+  "conservation": "Endangered",
+  "fact": "Troops sunbathe together in the morning.",
+  "sprite": ""
+}

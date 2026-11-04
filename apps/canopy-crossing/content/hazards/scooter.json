@@ -1,0 +1,30 @@
+{
+  "id": "scooter",
+  "name": "Scooter",
+  "kind": "mover",
+  "lane": "ground",
+  "cause": "crushed",
+  "cause_text": "Clipped by a scooter",
+  "length": [
+    0.9,
+    0.9
+  ],
+  "speed": [
+    2.6,
+    3.6
+  ],
+  "gap": [
+    2.6,
+    4.2
+  ],
+  "art": {
+    "painter": "scooter",
+    "colors": {
+      "body": "#2a6fe0",
+      "rider": "#f2c26a"
+    }
+  },
+  "desc": "Small, fast, and easy to miss.",
+  "predator": false,
+  "sprite": ""
+}

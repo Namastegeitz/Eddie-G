@@ -1,0 +1,35 @@
+{
+  "id": "peccary_herd",
+  "name": "Stampeding peccaries",
+  "kind": "mover",
+  "lane": "ground",
+  "cause": "crushed",
+  "cause_text": "Trampled by peccaries",
+  "group": [
+    2,
+    4
+  ],
+  "length": [
+    0.8,
+    0.8
+  ],
+  "spacing": 0.22,
+  "speed": [
+    1.6,
+    2.4
+  ],
+  "gap": [
+    2.6,
+    4.6
+  ],
+  "art": {
+    "painter": "herd",
+    "colors": {
+      "body": "#4a3e36",
+      "accent": "#d8d0c0"
+    }
+  },
+  "desc": "A noisy herd that never stops.",
+  "predator": false,
+  "sprite": ""
+}

@@ -1,0 +1,32 @@
+{
+  "id": "atlantic_forest",
+  "order": 11,
+  "name": "Atlantic Forest",
+  "location": "Brazil",
+  "lat": -23.5,
+  "lon": -46.0,
+  "status": "coming_soon",
+  "access": {
+    "type": "pack",
+    "product": ""
+  },
+  "flag": {
+    "colors": [
+      "#1f8a3a",
+      "#2a6fe0"
+    ],
+    "code": "ATL"
+  },
+  "palette": {
+    "ui": "#1f8a3a",
+    "safe": "#3c9a3a",
+    "canopy": "#14592a"
+  },
+  "facts": [
+    "Only a small fraction of Brazil's Atlantic Forest still stands."
+  ],
+  "hazards": {},
+  "stages": [],
+  "native_animals": [],
+  "sprite": ""
+}

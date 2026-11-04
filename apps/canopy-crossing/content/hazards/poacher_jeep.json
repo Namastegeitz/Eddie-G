@@ -1,0 +1,30 @@
+{
+  "id": "poacher_jeep",
+  "name": "Poacher jeep",
+  "kind": "mover",
+  "lane": "ground",
+  "cause": "crushed",
+  "cause_text": "Run down by a poacher jeep",
+  "length": [
+    1.6,
+    1.8
+  ],
+  "speed": [
+    2.4,
+    3.4
+  ],
+  "gap": [
+    3.2,
+    5.6
+  ],
+  "art": {
+    "painter": "jeep",
+    "colors": {
+      "body": "#5a6a3a",
+      "roof": "#3a4426"
+    }
+  },
+  "desc": "Fast and reckless.",
+  "predator": false,
+  "sprite": ""
+}

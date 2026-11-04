@@ -1,0 +1,28 @@
+{
+  "id": "slash_and_burn",
+  "name": "Slash-and-burn fire",
+  "kind": "fire",
+  "lane": "any",
+  "cause": "burned",
+  "cause_text": "Caught in a slash-and-burn fire",
+  "period": [
+    6.5,
+    9.0
+  ],
+  "burn": [
+    1.6,
+    2.2
+  ],
+  "warn": 1.3,
+  "art": {
+    "painter": "fire",
+    "colors": {
+      "body": "#f2641a",
+      "core": "#f6d43a",
+      "smoke": "#5a5a5a"
+    }
+  },
+  "desc": "Smoke first, then flames sweep the lane.",
+  "predator": false,
+  "sprite": ""
+}

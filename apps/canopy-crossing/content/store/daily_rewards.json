@@ -1,0 +1,48 @@
+{
+  "cycle": [
+    {
+      "day": 1,
+      "reward": {
+        "berries": 50
+      }
+    },
+    {
+      "day": 2,
+      "reward": {
+        "berries": 75
+      }
+    },
+    {
+      "day": 3,
+      "reward": {
+        "item": "extra_life",
+        "count": 1
+      }
+    },
+    {
+      "day": 4,
+      "reward": {
+        "berries": 100
+      }
+    },
+    {
+      "day": 5,
+      "reward": {
+        "item": "shield_totem",
+        "count": 1
+      }
+    },
+    {
+      "day": 6,
+      "reward": {
+        "berries": 150
+      }
+    },
+    {
+      "day": 7,
+      "reward": {
+        "amber": 5
+      }
+    }
+  ]
+}

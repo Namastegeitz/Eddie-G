@@ -1,0 +1,49 @@
+{
+  "id": "tree_kangaroo",
+  "number": 33,
+  "name": "Tree Kangaroo",
+  "region": "daintree",
+  "home": "Daintree",
+  "pack": "daintree",
+  "rarity": "rare",
+  "unlock": {
+    "type": "berries",
+    "price": 600
+  },
+  "starter": false,
+  "ability": {
+    "name": "Huge hop",
+    "summary": "Huge hop (2–3 tiles)",
+    "modules": [
+      {
+        "module": "multi_hop",
+        "tiles": 3,
+        "cooldown": 7.0
+      }
+    ]
+  },
+  "stats": {
+    "hop_time": 0.14,
+    "hitbox": 0.6
+  },
+  "look": {
+    "base": "mammal",
+    "colors": {
+      "primary": "#7a4a2c",
+      "secondary": "#4a2c1a",
+      "belly": "#e9d6b8",
+      "accent": "#d8b48a",
+      "face": "#d8b48a",
+      "eye": "#140d08"
+    },
+    "head": "round",
+    "ears": "round",
+    "snout": "short",
+    "tail": "long",
+    "size": 0.78
+  },
+  "skins": [],
+  "conservation": "Near Threatened",
+  "fact": "A kangaroo that lives up in the trees.",
+  "sprite": ""
+}

@@ -1,0 +1,49 @@
+{
+  "id": "fossa",
+  "number": 42,
+  "name": "Fossa",
+  "region": "masoala",
+  "home": "Madagascar",
+  "pack": "masoala",
+  "rarity": "epic",
+  "unlock": {
+    "type": "pack",
+    "pack": "masoala",
+    "amber": 150
+  },
+  "starter": false,
+  "ability": {
+    "name": "Predator sprint",
+    "summary": "Predator sprint",
+    "modules": [
+      {
+        "module": "dash",
+        "tiles": 3,
+        "cooldown": 6.0
+      }
+    ]
+  },
+  "stats": {
+    "hop_time": 0.14,
+    "hitbox": 0.6
+  },
+  "look": {
+    "base": "mammal",
+    "colors": {
+      "primary": "#9a5a32",
+      "secondary": "#6a3a1e",
+      "belly": "#c08a5e",
+      "accent": "#5a3420",
+      "eye": "#c4a43a"
+    },
+    "head": "cat",
+    "ears": "round_big",
+    "snout": "cat",
+    "tail": "long",
+    "size": 0.78
+  },
+  "skins": [],
+  "conservation": "Vulnerable",
+  "fact": "Madagascar's largest native predator.",
+  "sprite": ""
+}

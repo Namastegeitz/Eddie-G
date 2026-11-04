@@ -1,0 +1,48 @@
+{
+  "id": "colugo",
+  "number": 27,
+  "name": "Colugo (flying lemur)",
+  "region": "borneo",
+  "home": "Borneo",
+  "pack": "borneo",
+  "rarity": "epic",
+  "unlock": {
+    "type": "pack",
+    "pack": "borneo",
+    "amber": 150
+  },
+  "starter": false,
+  "ability": {
+    "name": "Long glide",
+    "summary": "Glides across 2 lanes",
+    "modules": [
+      {
+        "module": "glide",
+        "tiles": 3,
+        "cooldown": 8.0,
+        "style": "membrane"
+      }
+    ]
+  },
+  "stats": {
+    "hop_time": 0.14,
+    "hitbox": 0.6
+  },
+  "look": {
+    "base": "glider",
+    "colors": {
+      "primary": "#7f7a62",
+      "secondary": "#55513e",
+      "belly": "#a7a184",
+      "accent": "#d8d2b0",
+      "eye": "#1a160c"
+    },
+    "pattern": "mottled",
+    "eyes": "big",
+    "size": 0.74
+  },
+  "skins": [],
+  "conservation": "Least Concern",
+  "fact": "It glides from tree to tree on a furry skin membrane.",
+  "sprite": ""
+}

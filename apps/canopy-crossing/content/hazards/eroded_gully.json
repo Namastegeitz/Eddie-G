@@ -1,0 +1,18 @@
+{
+  "id": "eroded_gully",
+  "name": "Eroded gully",
+  "kind": "gap",
+  "lane": "safe",
+  "cause": "fell",
+  "cause_text": "Fell into an eroded gully",
+  "art": {
+    "painter": "gully",
+    "colors": {
+      "body": "#5a2412",
+      "edge": "#c8582a"
+    }
+  },
+  "desc": "Deep red-earth cracks. Go around.",
+  "predator": false,
+  "sprite": ""
+}

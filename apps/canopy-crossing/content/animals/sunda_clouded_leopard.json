@@ -1,0 +1,51 @@
+{
+  "id": "sunda_clouded_leopard",
+  "number": 30,
+  "name": "Sunda Clouded Leopard",
+  "region": "borneo",
+  "home": "Borneo",
+  "pack": "borneo",
+  "rarity": "legendary",
+  "unlock": {
+    "type": "amber",
+    "price": 400
+  },
+  "starter": false,
+  "ability": {
+    "name": "Stealth",
+    "summary": "Stealth — predators miss once",
+    "modules": [
+      {
+        "module": "predator_ward",
+        "mode": "passive",
+        "charges": 1,
+        "recharge": 15.0,
+        "style": "stealth"
+      }
+    ]
+  },
+  "stats": {
+    "hop_time": 0.14,
+    "hitbox": 0.6
+  },
+  "look": {
+    "base": "mammal",
+    "colors": {
+      "primary": "#a38e6e",
+      "secondary": "#3a3024",
+      "belly": "#e6dccb",
+      "accent": "#7a6650",
+      "eye": "#c4c45a"
+    },
+    "head": "cat",
+    "ears": "round",
+    "snout": "cat",
+    "tail": "long",
+    "pattern": "clouds",
+    "size": 0.8
+  },
+  "skins": [],
+  "conservation": "Vulnerable",
+  "fact": "It has the longest canine teeth for its size of any living cat.",
+  "sprite": ""
+}

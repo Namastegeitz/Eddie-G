@@ -1,0 +1,828 @@
+{
+  "currencies": {
+    "berries": {
+      "name": "Berries",
+      "color": "#e8343a"
+    },
+    "amber": {
+      "name": "Amber",
+      "color": "#f2a01a"
+    }
+  },
+  "exchange": [
+    {
+      "amber": 10,
+      "berries": 500
+    },
+    {
+      "amber": 50,
+      "berries": 2800
+    }
+  ],
+  "products": [
+    {
+      "id": "remove_ads",
+      "type": "non_consumable",
+      "section": "featured",
+      "title": "Remove Ads",
+      "desc": "No more between-run ads. Optional reward videos stay.",
+      "price_usd": 2.99,
+      "grants": [
+        {
+          "type": "flag",
+          "id": "remove_ads"
+        }
+      ],
+      "store_ids": {
+        "google": "remove_ads",
+        "apple": "com.aethertek.canopycrossing.remove_ads"
+      }
+    },
+    {
+      "id": "starter_bundle",
+      "type": "non_consumable",
+      "section": "featured",
+      "title": "Starter Bundle",
+      "badge": "Best start",
+      "desc": "300 Amber, 3 animals and the Congo Basin map.",
+      "price_usd": 4.99,
+      "value_usd": 11.97,
+      "grants": [
+        {
+          "type": "amber",
+          "amount": 300
+        },
+        {
+          "type": "animal",
+          "id": "capybara"
+        },
+        {
+          "type": "animal",
+          "id": "toco_toucan"
+        },
+        {
+          "type": "animal",
+          "id": "giant_otter"
+        },
+        {
+          "type": "map",
+          "id": "congo"
+        }
+      ],
+      "store_ids": {
+        "google": "starter_bundle",
+        "apple": "com.aethertek.canopycrossing.starter_bundle"
+      }
+    },
+    {
+      "id": "mega_bundle",
+      "type": "non_consumable",
+      "section": "featured",
+      "title": "Mega Bundle",
+      "badge": "Everything",
+      "desc": "Every current map and every animal.",
+      "price_usd": 24.99,
+      "grants": [
+        {
+          "type": "maps",
+          "where": {}
+        },
+        {
+          "type": "animals",
+          "where": {}
+        }
+      ],
+      "store_ids": {
+        "google": "mega_bundle",
+        "apple": "com.aethertek.canopycrossing.mega_bundle"
+      }
+    },
+    {
+      "id": "expedition_pass",
+      "type": "season",
+      "section": "pass",
+      "title": "Expedition Pass",
+      "desc": "Unlock the premium reward track for this season.",
+      "price_usd": 7.99,
+      "grants": [
+        {
+          "type": "pass_premium"
+        }
+      ],
+      "store_ids": {
+        "google": "expedition_pass",
+        "apple": "com.aethertek.canopycrossing.expedition_pass"
+      }
+    },
+    {
+      "id": "animals_amazon",
+      "type": "non_consumable",
+      "section": "animals",
+      "title": "Amazon Animal Pack",
+      "desc": "Every animal from the Amazon pack.",
+      "price_usd": 3.99,
+      "pack": "amazon",
+      "grants": [
+        {
+          "type": "animals",
+          "where": {
+            "pack": "amazon"
+          }
+        }
+      ],
+      "store_ids": {
+        "google": "animals_amazon",
+        "apple": "com.aethertek.canopycrossing.animals_amazon"
+      }
+    },
+    {
+      "id": "animals_congo",
+      "type": "non_consumable",
+      "section": "animals",
+      "title": "Congo Animal Pack",
+      "desc": "Every animal from the Congo pack.",
+      "price_usd": 3.99,
+      "pack": "congo",
+      "grants": [
+        {
+          "type": "animals",
+          "where": {
+            "pack": "congo"
+          }
+        }
+      ],
+      "store_ids": {
+        "google": "animals_congo",
+        "apple": "com.aethertek.canopycrossing.animals_congo"
+      }
+    },
+    {
+      "id": "animals_borneo",
+      "type": "non_consumable",
+      "section": "animals",
+      "title": "Borneo Animal Pack",
+      "desc": "Every animal from the Borneo pack.",
+      "price_usd": 3.99,
+      "pack": "borneo",
+      "grants": [
+        {
+          "type": "animals",
+          "where": {
+            "pack": "borneo"
+          }
+        }
+      ],
+      "store_ids": {
+        "google": "animals_borneo",
+        "apple": "com.aethertek.canopycrossing.animals_borneo"
+      }
+    },
+    {
+      "id": "animals_daintree",
+      "type": "non_consumable",
+      "section": "animals",
+      "title": "Daintree Animal Pack",
+      "desc": "Every animal from the Daintree pack.",
+      "price_usd": 3.99,
+      "pack": "daintree",
+      "grants": [
+        {
+          "type": "animals",
+          "where": {
+            "pack": "daintree"
+          }
+        }
+      ],
+      "store_ids": {
+        "google": "animals_daintree",
+        "apple": "com.aethertek.canopycrossing.animals_daintree"
+      }
+    },
+    {
+      "id": "animals_masoala",
+      "type": "non_consumable",
+      "section": "animals",
+      "title": "Madagascar Animal Pack",
+      "desc": "Every animal from the Madagascar pack.",
+      "price_usd": 3.99,
+      "pack": "masoala",
+      "grants": [
+        {
+          "type": "animals",
+          "where": {
+            "pack": "masoala"
+          }
+        }
+      ],
+      "store_ids": {
+        "google": "animals_masoala",
+        "apple": "com.aethertek.canopycrossing.animals_masoala"
+      }
+    },
+    {
+      "id": "animals_monteverde",
+      "type": "non_consumable",
+      "section": "animals",
+      "title": "Central America Animal Pack",
+      "desc": "Every animal from the Central America pack.",
+      "price_usd": 3.99,
+      "pack": "monteverde",
+      "grants": [
+        {
+          "type": "animals",
+          "where": {
+            "pack": "monteverde"
+          }
+        }
+      ],
+      "store_ids": {
+        "google": "animals_monteverde",
+        "apple": "com.aethertek.canopycrossing.animals_monteverde"
+      }
+    },
+    {
+      "id": "animals_sundarbans",
+      "type": "non_consumable",
+      "section": "animals",
+      "title": "Sundarbans Animal Pack",
+      "desc": "Every animal from the Sundarbans pack.",
+      "price_usd": 3.99,
+      "pack": "sundarbans",
+      "grants": [
+        {
+          "type": "animals",
+          "where": {
+            "pack": "sundarbans"
+          }
+        }
+      ],
+      "store_ids": {
+        "google": "animals_sundarbans",
+        "apple": "com.aethertek.canopycrossing.animals_sundarbans"
+      }
+    },
+    {
+      "id": "map_congo",
+      "type": "non_consumable",
+      "section": "maps",
+      "title": "Congo Basin Map Pack",
+      "desc": "The Congo Basin map, its hazards and its native pack animals.",
+      "price_usd": 2.99,
+      "map": "congo",
+      "grants": [
+        {
+          "type": "map",
+          "id": "congo"
+        },
+        {
+          "type": "animals",
+          "where": {
+            "pack": "congo",
+            "unlock": "pack"
+          }
+        }
+      ],
+      "store_ids": {
+        "google": "map_congo",
+        "apple": "com.aethertek.canopycrossing.map_congo"
+      }
+    },
+    {
+      "id": "map_borneo",
+      "type": "non_consumable",
+      "section": "maps",
+      "title": "Borneo Map Pack",
+      "desc": "The Borneo map, its hazards and its native pack animals.",
+      "price_usd": 2.99,
+      "map": "borneo",
+      "grants": [
+        {
+          "type": "map",
+          "id": "borneo"
+        },
+        {
+          "type": "animals",
+          "where": {
+            "pack": "borneo",
+            "unlock": "pack"
+          }
+        }
+      ],
+      "store_ids": {
+        "google": "map_borneo",
+        "apple": "com.aethertek.canopycrossing.map_borneo"
+      }
+    },
+    {
+      "id": "map_daintree",
+      "type": "non_consumable",
+      "section": "maps",
+      "title": "Daintree Map Pack",
+      "desc": "The Daintree map, its hazards and its native pack animals.",
+      "price_usd": 2.99,
+      "map": "daintree",
+      "grants": [
+        {
+          "type": "map",
+          "id": "daintree"
+        },
+        {
+          "type": "animals",
+          "where": {
+            "pack": "daintree",
+            "unlock": "pack"
+          }
+        }
+      ],
+      "store_ids": {
+        "google": "map_daintree",
+        "apple": "com.aethertek.canopycrossing.map_daintree"
+      }
+    },
+    {
+      "id": "map_masoala",
+      "type": "non_consumable",
+      "section": "maps",
+      "title": "Masoala Map Pack",
+      "desc": "The Masoala map, its hazards and its native pack animals.",
+      "price_usd": 2.99,
+      "map": "masoala",
+      "grants": [
+        {
+          "type": "map",
+          "id": "masoala"
+        },
+        {
+          "type": "animals",
+          "where": {
+            "pack": "masoala",
+            "unlock": "pack"
+          }
+        }
+      ],
+      "store_ids": {
+        "google": "map_masoala",
+        "apple": "com.aethertek.canopycrossing.map_masoala"
+      }
+    },
+    {
+      "id": "map_monteverde",
+      "type": "non_consumable",
+      "section": "maps",
+      "title": "Monteverde Map Pack",
+      "desc": "The Monteverde map, its hazards and its native pack animals.",
+      "price_usd": 2.99,
+      "map": "monteverde",
+      "grants": [
+        {
+          "type": "map",
+          "id": "monteverde"
+        },
+        {
+          "type": "animals",
+          "where": {
+            "pack": "monteverde",
+            "unlock": "pack"
+          }
+        }
+      ],
+      "store_ids": {
+        "google": "map_monteverde",
+        "apple": "com.aethertek.canopycrossing.map_monteverde"
+      }
+    },
+    {
+      "id": "map_sundarbans",
+      "type": "non_consumable",
+      "section": "maps",
+      "title": "Sundarbans Map Pack",
+      "desc": "The Sundarbans map, its hazards and its native pack animals.",
+      "price_usd": 2.99,
+      "map": "sundarbans",
+      "grants": [
+        {
+          "type": "map",
+          "id": "sundarbans"
+        },
+        {
+          "type": "animals",
+          "where": {
+            "pack": "sundarbans",
+            "unlock": "pack"
+          }
+        }
+      ],
+      "store_ids": {
+        "google": "map_sundarbans",
+        "apple": "com.aethertek.canopycrossing.map_sundarbans"
+      }
+    },
+    {
+      "id": "map_western_ghats",
+      "type": "non_consumable",
+      "section": "maps",
+      "title": "Western Ghats Map Pack",
+      "desc": "The Western Ghats map, its hazards and its native pack animals.",
+      "price_usd": 2.99,
+      "map": "western_ghats",
+      "grants": [
+        {
+          "type": "map",
+          "id": "western_ghats"
+        },
+        {
+          "type": "animals",
+          "where": {
+            "pack": "western_ghats",
+            "unlock": "pack"
+          }
+        }
+      ],
+      "store_ids": {
+        "google": "map_western_ghats",
+        "apple": "com.aethertek.canopycrossing.map_western_ghats"
+      }
+    },
+    {
+      "id": "map_bwindi",
+      "type": "non_consumable",
+      "section": "maps",
+      "title": "Bwindi Map Pack",
+      "desc": "The Bwindi map, its hazards and its native pack animals.",
+      "price_usd": 2.99,
+      "map": "bwindi",
+      "grants": [
+        {
+          "type": "map",
+          "id": "bwindi"
+        },
+        {
+          "type": "animals",
+          "where": {
+            "pack": "bwindi",
+            "unlock": "pack"
+          }
+        }
+      ],
+      "store_ids": {
+        "google": "map_bwindi",
+        "apple": "com.aethertek.canopycrossing.map_bwindi"
+      }
+    },
+    {
+      "id": "map_new_guinea",
+      "type": "non_consumable",
+      "section": "maps",
+      "title": "New Guinea Highlands Map Pack",
+      "desc": "The New Guinea Highlands map, its hazards and its native pack animals.",
+      "price_usd": 2.99,
+      "map": "new_guinea",
+      "grants": [
+        {
+          "type": "map",
+          "id": "new_guinea"
+        },
+        {
+          "type": "animals",
+          "where": {
+            "pack": "new_guinea",
+            "unlock": "pack"
+          }
+        }
+      ],
+      "store_ids": {
+        "google": "map_new_guinea",
+        "apple": "com.aethertek.canopycrossing.map_new_guinea"
+      }
+    },
+    {
+      "id": "amber_100",
+      "type": "consumable",
+      "section": "amber",
+      "title": "100 Amber",
+      "badge": "",
+      "desc": "Premium currency.",
+      "price_usd": 0.99,
+      "grants": [
+        {
+          "type": "amber",
+          "amount": 100
+        }
+      ],
+      "store_ids": {
+        "google": "amber_100",
+        "apple": "com.aethertek.canopycrossing.amber_100"
+      }
+    },
+    {
+      "id": "amber_550",
+      "type": "consumable",
+      "section": "amber",
+      "title": "550 Amber",
+      "badge": "+10%",
+      "desc": "Premium currency.",
+      "price_usd": 4.99,
+      "grants": [
+        {
+          "type": "amber",
+          "amount": 550
+        }
+      ],
+      "store_ids": {
+        "google": "amber_550",
+        "apple": "com.aethertek.canopycrossing.amber_550"
+      }
+    },
+    {
+      "id": "amber_1200",
+      "type": "consumable",
+      "section": "amber",
+      "title": "1200 Amber",
+      "badge": "+20%",
+      "desc": "Premium currency.",
+      "price_usd": 9.99,
+      "grants": [
+        {
+          "type": "amber",
+          "amount": 1200
+        }
+      ],
+      "store_ids": {
+        "google": "amber_1200",
+        "apple": "com.aethertek.canopycrossing.amber_1200"
+      }
+    },
+    {
+      "id": "amber_3000",
+      "type": "consumable",
+      "section": "amber",
+      "title": "3000 Amber",
+      "badge": "+50%",
+      "desc": "Premium currency.",
+      "price_usd": 19.99,
+      "grants": [
+        {
+          "type": "amber",
+          "amount": 3000
+        }
+      ],
+      "store_ids": {
+        "google": "amber_3000",
+        "apple": "com.aethertek.canopycrossing.amber_3000"
+      }
+    }
+  ],
+  "consumables": [
+    {
+      "id": "extra_life",
+      "name": "Extra Life",
+      "desc": "+1 life on your next run.",
+      "price": {
+        "berries": 120,
+        "amber": 5
+      },
+      "icon": "heart"
+    },
+    {
+      "id": "shield_totem",
+      "name": "Shield Totem",
+      "desc": "Blocks one hit on your next run.",
+      "price": {
+        "berries": 150,
+        "amber": 6
+      },
+      "icon": "shield"
+    },
+    {
+      "id": "vine_grapple",
+      "name": "Vine Grapple",
+      "desc": "Tap in a run to pull forward 2 lanes.",
+      "price": {
+        "berries": 100,
+        "amber": 4
+      },
+      "icon": "grapple"
+    },
+    {
+      "id": "time_slow",
+      "name": "Time-Slow",
+      "desc": "Tap in a run to slow every hazard for 4 seconds.",
+      "price": {
+        "berries": 100,
+        "amber": 4
+      },
+      "icon": "clock"
+    },
+    {
+      "id": "revive",
+      "name": "Revive",
+      "desc": "Continue after a fail.",
+      "price": {
+        "berries": 300,
+        "amber": 1
+      },
+      "icon": "revive"
+    },
+    {
+      "id": "berry_doubler",
+      "name": "Berry Doubler",
+      "desc": "Double Berries from runs for 24 hours.",
+      "price": {
+        "amber": 40
+      },
+      "icon": "doubler",
+      "duration_h": 24
+    }
+  ],
+  "cosmetics": [
+    {
+      "id": "skin_jaguar_golden",
+      "type": "skin",
+      "animal": "jaguar",
+      "skin": "golden",
+      "name": "Golden Jaguar",
+      "price": {
+        "amber": 120
+      }
+    },
+    {
+      "id": "skin_jaguar_melanistic",
+      "type": "skin",
+      "animal": "jaguar",
+      "skin": "melanistic",
+      "name": "Black Jaguar",
+      "price": {
+        "amber": 120
+      }
+    },
+    {
+      "id": "skin_python_albino",
+      "type": "skin",
+      "animal": "green_tree_python",
+      "skin": "albino",
+      "name": "Albino Python",
+      "price": {
+        "amber": 80
+      }
+    },
+    {
+      "id": "skin_anaconda_albino",
+      "type": "skin",
+      "animal": "green_anaconda",
+      "skin": "albino",
+      "name": "Albino Anaconda",
+      "price": {
+        "amber": 100
+      }
+    },
+    {
+      "id": "skin_dartfrog_golden",
+      "type": "skin",
+      "animal": "poison_dart_frog",
+      "skin": "golden",
+      "name": "Golden Dart Frog",
+      "price": {
+        "amber": 60
+      }
+    },
+    {
+      "id": "skin_tiger_white",
+      "type": "skin",
+      "animal": "bengal_tiger",
+      "skin": "white",
+      "name": "White Tiger",
+      "price": {
+        "amber": 150
+      }
+    },
+    {
+      "id": "trail_leaves",
+      "type": "trail",
+      "name": "Leaf trail",
+      "price": {
+        "amber": 30
+      },
+      "art": {
+        "shape": "leaf",
+        "colors": [
+          "#4ab83a",
+          "#8ad83a"
+        ]
+      }
+    },
+    {
+      "id": "trail_petals",
+      "type": "trail",
+      "name": "Orchid petals",
+      "price": {
+        "amber": 40
+      },
+      "art": {
+        "shape": "petal",
+        "colors": [
+          "#f2a0c8",
+          "#e870b0"
+        ]
+      }
+    },
+    {
+      "id": "trail_bubbles",
+      "type": "trail",
+      "name": "Bubbles",
+      "price": {
+        "amber": 30
+      },
+      "art": {
+        "shape": "bubble",
+        "colors": [
+          "#a8e0f8",
+          "#e0f4ff"
+        ]
+      }
+    },
+    {
+      "id": "trail_fireflies",
+      "type": "trail",
+      "name": "Fireflies",
+      "price": {
+        "amber": 50
+      },
+      "art": {
+        "shape": "spark",
+        "colors": [
+          "#f6f05a",
+          "#c8f05a"
+        ]
+      }
+    },
+    {
+      "id": "emote_wave",
+      "type": "emote",
+      "name": "Wave",
+      "price": {
+        "amber": 20
+      },
+      "anim": "wave"
+    },
+    {
+      "id": "emote_spin",
+      "type": "emote",
+      "name": "Happy spin",
+      "price": {
+        "amber": 25
+      },
+      "anim": "spin"
+    },
+    {
+      "id": "emote_hearts",
+      "type": "emote",
+      "name": "Hearts",
+      "price": {
+        "amber": 30
+      },
+      "anim": "hearts"
+    },
+    {
+      "id": "flag_toucan",
+      "type": "flag",
+      "name": "Toucan banner",
+      "price": {
+        "amber": 30
+      },
+      "art": {
+        "colors": [
+          "#1b1b1f",
+          "#ff8f1f"
+        ]
+      }
+    },
+    {
+      "id": "flag_orchid",
+      "type": "flag",
+      "name": "Orchid banner",
+      "price": {
+        "amber": 30
+      },
+      "art": {
+        "colors": [
+          "#e870b0",
+          "#f6e05a"
+        ]
+      }
+    },
+    {
+      "id": "flag_globe",
+      "type": "flag",
+      "name": "Explorer banner",
+      "price": {
+        "amber": 40
+      },
+      "art": {
+        "colors": [
+          "#2a6fe0",
+          "#4ab83a"
+        ]
+      }
+    }
+  ]
+}

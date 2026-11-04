@@ -1,0 +1,52 @@
+{
+  "id": "three_toed_sloth",
+  "number": 4,
+  "name": "Three-Toed Sloth",
+  "region": "amazon",
+  "home": "Amazon Basin",
+  "pack": "amazon",
+  "rarity": "rare",
+  "unlock": {
+    "type": "berries",
+    "price": 600
+  },
+  "starter": false,
+  "ability": {
+    "name": "Camouflage",
+    "summary": "Slow, but camouflage ignores one predator",
+    "modules": [
+      {
+        "module": "predator_ward",
+        "mode": "passive",
+        "charges": 1
+      }
+    ]
+  },
+  "stats": {
+    "hop_time": 0.21,
+    "hitbox": 0.62
+  },
+  "look": {
+    "base": "mammal",
+    "colors": {
+      "primary": "#a89276",
+      "secondary": "#6e5a44",
+      "belly": "#efe6d6",
+      "accent": "#3a2c20",
+      "eye": "#1d140e"
+    },
+    "head": "round",
+    "ears": "none",
+    "snout": "short",
+    "tail": "none",
+    "pattern": "eye_mask",
+    "extras": [
+      "long_arms"
+    ],
+    "size": 0.74
+  },
+  "skins": [],
+  "conservation": "Least Concern",
+  "fact": "Algae can grow in its fur, helping it blend into the trees.",
+  "sprite": ""
+}

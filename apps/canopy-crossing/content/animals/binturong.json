@@ -1,0 +1,52 @@
+{
+  "id": "binturong",
+  "number": 28,
+  "name": "Binturong",
+  "region": "borneo",
+  "home": "Borneo",
+  "pack": "borneo",
+  "rarity": "common",
+  "unlock": {
+    "type": "berries",
+    "price": 250
+  },
+  "starter": false,
+  "ability": {
+    "name": "All-rounder",
+    "summary": "Balanced all-rounder",
+    "modules": [
+      {
+        "module": "shield",
+        "mode": "passive",
+        "charges": 1
+      }
+    ]
+  },
+  "stats": {
+    "hop_time": 0.13,
+    "hitbox": 0.58
+  },
+  "look": {
+    "base": "mammal",
+    "colors": {
+      "primary": "#26221f",
+      "secondary": "#141210",
+      "belly": "#3a342e",
+      "accent": "#e6e0d6",
+      "eye": "#c48a2a"
+    },
+    "head": "civet",
+    "ears": "tufted",
+    "snout": "short",
+    "tail": "bushy",
+    "extras": [
+      "whiskers",
+      "shaggy"
+    ],
+    "size": 0.78
+  },
+  "skins": [],
+  "conservation": "Vulnerable",
+  "fact": "Its scent is often compared to buttered popcorn.",
+  "sprite": ""
+}

@@ -1,0 +1,26 @@
+{
+  "id": "tiger_ambush",
+  "name": "Bengal tiger ambush",
+  "kind": "striker",
+  "lane": "safe",
+  "predator": true,
+  "cause": "eaten",
+  "cause_text": "Ambushed by a Bengal tiger",
+  "period": [
+    4.5,
+    6.5
+  ],
+  "warn": 1.0,
+  "strike": 0.5,
+  "span": 3,
+  "hidden": true,
+  "art": {
+    "painter": "tiger",
+    "colors": {
+      "body": "#f07a1a",
+      "stripe": "#16100a"
+    }
+  },
+  "desc": "Hidden in the reeds. Watch the grass rustle.",
+  "sprite": ""
+}

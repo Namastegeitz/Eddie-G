@@ -1,0 +1,49 @@
+{
+  "id": "giant_otter",
+  "number": 10,
+  "name": "Giant Otter",
+  "region": "amazon",
+  "home": "Amazon Basin",
+  "pack": "amazon",
+  "rarity": "rare",
+  "unlock": {
+    "type": "berries",
+    "price": 600
+  },
+  "starter": false,
+  "ability": {
+    "name": "Swimmer",
+    "summary": "Fast and safe in water lanes",
+    "modules": [
+      {
+        "module": "swim",
+        "current": 0.35,
+        "water_hop_time": 0.09
+      }
+    ]
+  },
+  "stats": {
+    "hop_time": 0.14,
+    "hitbox": 0.6
+  },
+  "look": {
+    "base": "mammal",
+    "colors": {
+      "primary": "#5a3a26",
+      "secondary": "#3e2618",
+      "belly": "#efe2c8",
+      "accent": "#efe2c8",
+      "eye": "#140d08"
+    },
+    "head": "otter",
+    "ears": "small",
+    "snout": "broad",
+    "tail": "flat",
+    "pattern": "throat_patch",
+    "size": 0.78
+  },
+  "skins": [],
+  "conservation": "Endangered",
+  "fact": "It can grow to about 1.7 metres long.",
+  "sprite": ""
+}

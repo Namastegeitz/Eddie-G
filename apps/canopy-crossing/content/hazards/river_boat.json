@@ -1,0 +1,29 @@
+{
+  "id": "river_boat",
+  "name": "River boat",
+  "kind": "platform",
+  "lane": "water",
+  "length": [
+    2.4,
+    3.0
+  ],
+  "speed": [
+    0.9,
+    1.4
+  ],
+  "gap": [
+    1.4,
+    3.0
+  ],
+  "art": {
+    "painter": "boat",
+    "colors": {
+      "body": "#8a5a32",
+      "trim": "#2a6fe0",
+      "canopy": "#e8d8b0"
+    }
+  },
+  "desc": "Hitch a ride on the boat traffic.",
+  "predator": false,
+  "sprite": ""
+}

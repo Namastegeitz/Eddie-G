@@ -1,0 +1,191 @@
+{
+  "id": "congo",
+  "order": 2,
+  "name": "Congo Basin",
+  "location": "DR Congo",
+  "lat": -0.5,
+  "lon": 21.5,
+  "status": "available",
+  "access": {
+    "type": "pack",
+    "product": "map_congo"
+  },
+  "flag": {
+    "colors": [
+      "#1a5a8a",
+      "#f6d43a"
+    ],
+    "code": "CGO"
+  },
+  "palette": {
+    "safe": "#2a6a2e",
+    "safe_alt": "#327634",
+    "ground": "#6a5038",
+    "ground_alt": "#604832",
+    "water": "#3a6e6e",
+    "water_deep": "#2c5656",
+    "foam": "#a8ccc4",
+    "canopy": "#0e3a1a",
+    "canopy_dark": "#06200e",
+    "accent": "#e8c547",
+    "goal": "#a8e87a",
+    "sky": "#0a2612",
+    "ui": "#1a5a8a"
+  },
+  "atmosphere": {
+    "mist": 0.25,
+    "light_shafts": 0.2,
+    "rain": 0.0
+  },
+  "music": {
+    "file": "res://assets/audio/music/congo.ogg",
+    "tempo": 108,
+    "root": "G",
+    "scale": "mixolydian",
+    "lead": "kalimba",
+    "drums": "toms"
+  },
+  "facts": [
+    "The Congo Basin holds the second-largest tropical rainforest on Earth.",
+    "Forest elephants help plant the forest by spreading seeds in their dung."
+  ],
+  "generator": "classic",
+  "hazards": {
+    "ground_movers": [
+      {
+        "id": "elephant_herd",
+        "weight": 2
+      },
+      {
+        "id": "poacher_jeep",
+        "weight": 2
+      },
+      {
+        "id": "red_river_hogs",
+        "weight": 2
+      }
+    ],
+    "platforms": [
+      {
+        "id": "lily_pads",
+        "weight": 3
+      },
+      {
+        "id": "drifting_branch",
+        "weight": 2
+      },
+      {
+        "id": "rapids_log",
+        "weight": 1
+      }
+    ],
+    "water_predators": [
+      {
+        "id": "slender_snouted_croc",
+        "weight": 1
+      }
+    ],
+    "safe_specials": [
+      {
+        "id": "gaboon_viper",
+        "weight": 2
+      },
+      {
+        "id": "falling_branch",
+        "weight": 1
+      }
+    ],
+    "tiles": [
+      {
+        "id": "swamp_mud",
+        "weight": 2
+      }
+    ],
+    "swoopers": [
+      {
+        "id": "crowned_eagle_swoop",
+        "weight": 1
+      }
+    ]
+  },
+  "intro_hazards": [
+    "lily_pads",
+    "rapids_log",
+    "elephant_herd",
+    "poacher_jeep"
+  ],
+  "difficulty": {
+    "speed": [
+      0.8,
+      1.5
+    ],
+    "density": [
+      0.32,
+      0.64
+    ],
+    "band": [
+      [
+        1,
+        2
+      ],
+      [
+        2,
+        4
+      ]
+    ],
+    "safe_chance": [
+      1.0,
+      0.5
+    ],
+    "special_chance": [
+      0.15,
+      0.5
+    ],
+    "rows_to_max": 130,
+    "move_timer": 0
+  },
+  "stages": [
+    {
+      "name": "Swamp Channels",
+      "rows": 26,
+      "difficulty": [
+        0.0,
+        0.3
+      ]
+    },
+    {
+      "name": "Elephant Trail",
+      "rows": 36,
+      "difficulty": [
+        0.25,
+        0.6
+      ]
+    },
+    {
+      "name": "Rapids Run",
+      "rows": 48,
+      "difficulty": [
+        0.5,
+        0.85
+      ]
+    }
+  ],
+  "endless": {
+    "creep": [
+      0.24,
+      0.85
+    ]
+  },
+  "native_animals": [
+    "western_gorilla",
+    "okapi",
+    "chimpanzee",
+    "forest_elephant",
+    "mandrill",
+    "african_grey_parrot",
+    "bonobo",
+    "leopard",
+    "pangolin"
+  ],
+  "sprite": ""
+}

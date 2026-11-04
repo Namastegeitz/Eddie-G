@@ -1,0 +1,47 @@
+{
+  "id": "toco_toucan",
+  "number": 5,
+  "name": "Toco Toucan",
+  "region": "amazon",
+  "home": "Amazon Basin",
+  "pack": "amazon",
+  "rarity": "rare",
+  "unlock": {
+    "type": "berries",
+    "price": 600
+  },
+  "starter": false,
+  "ability": {
+    "name": "Glide",
+    "summary": "Glide hop (longer forward jump)",
+    "modules": [
+      {
+        "module": "glide",
+        "tiles": 2,
+        "cooldown": 6.0
+      }
+    ]
+  },
+  "stats": {
+    "hop_time": 0.14,
+    "hitbox": 0.6
+  },
+  "look": {
+    "base": "bird",
+    "colors": {
+      "primary": "#1b1b1f",
+      "secondary": "#2a2a30",
+      "belly": "#fafafa",
+      "accent": "#ff8f1f",
+      "beak_tip": "#111111",
+      "eye": "#2f7dff"
+    },
+    "beak": "huge",
+    "tail": "short",
+    "size": 0.7
+  },
+  "skins": [],
+  "conservation": "Least Concern",
+  "fact": "Its huge bill helps it shed body heat.",
+  "sprite": ""
+}

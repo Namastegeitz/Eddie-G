@@ -1,0 +1,57 @@
+{
+  "id": "sumatran_tiger",
+  "number": 31,
+  "name": "Sumatran Tiger",
+  "region": "borneo",
+  "home": "Sumatra",
+  "pack": "borneo",
+  "rarity": "epic",
+  "unlock": {
+    "type": "pack",
+    "pack": "borneo",
+    "amber": 150
+  },
+  "starter": false,
+  "ability": {
+    "name": "Dash and swim",
+    "summary": "Sprint dash and swims",
+    "modules": [
+      {
+        "module": "dash",
+        "tiles": 2,
+        "cooldown": 7.0
+      },
+      {
+        "module": "swim",
+        "current": 0.6
+      }
+    ]
+  },
+  "stats": {
+    "hop_time": 0.14,
+    "hitbox": 0.6
+  },
+  "look": {
+    "base": "mammal",
+    "colors": {
+      "primary": "#e86a12",
+      "secondary": "#16100a",
+      "belly": "#fbf2e2",
+      "accent": "#fbf2e2",
+      "eye": "#c9d24a"
+    },
+    "head": "cat",
+    "ears": "round",
+    "snout": "cat",
+    "tail": "long_banded",
+    "pattern": "stripes",
+    "extras": [
+      "cheek_ruff"
+    ],
+    "size": 0.88
+  },
+  "skins": [],
+  "conservation": "Critically Endangered",
+  "fact": "The smallest surviving tiger subspecies.",
+  "sprite": ""
+}

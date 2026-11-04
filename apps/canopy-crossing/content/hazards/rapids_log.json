@@ -1,0 +1,30 @@
+{
+  "id": "rapids_log",
+  "name": "Rapids log",
+  "kind": "platform",
+  "lane": "water",
+  "length": [
+    1.6,
+    2.2
+  ],
+  "speed": [
+    2.0,
+    2.8
+  ],
+  "gap": [
+    1.2,
+    2.4
+  ],
+  "fast_water": true,
+  "art": {
+    "painter": "log",
+    "colors": {
+      "body": "#5a3a22",
+      "ring": "#a07a52",
+      "moss": "#3a6a2a"
+    }
+  },
+  "desc": "White water. Everything moves fast.",
+  "predator": false,
+  "sprite": ""
+}

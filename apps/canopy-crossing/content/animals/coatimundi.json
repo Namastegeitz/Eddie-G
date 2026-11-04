@@ -1,0 +1,49 @@
+{
+  "id": "coatimundi",
+  "number": 48,
+  "name": "Coatimundi",
+  "region": "monteverde",
+  "home": "Costa Rica",
+  "pack": "monteverde",
+  "rarity": "common",
+  "unlock": {
+    "type": "berries",
+    "price": 250
+  },
+  "starter": false,
+  "ability": {
+    "name": "Sniff out",
+    "summary": "Sniffs out bonus collectibles",
+    "modules": [
+      {
+        "module": "forager",
+        "bonus": 1.0
+      }
+    ]
+  },
+  "stats": {
+    "hop_time": 0.14,
+    "hitbox": 0.6
+  },
+  "look": {
+    "base": "mammal",
+    "colors": {
+      "primary": "#8a6448",
+      "secondary": "#4a3424",
+      "belly": "#d8c0a0",
+      "accent": "#f4ece0",
+      "face": "#4a3424",
+      "eye": "#140d08"
+    },
+    "head": "long",
+    "ears": "small",
+    "snout": "coati",
+    "tail": "ringed_brown",
+    "pattern": "face_marks",
+    "size": 0.7
+  },
+  "skins": [],
+  "conservation": "Least Concern",
+  "fact": "Coatis use their long snouts to sniff out food in leaf litter.",
+  "sprite": ""
+}

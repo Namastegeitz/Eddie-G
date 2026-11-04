@@ -1,0 +1,30 @@
+{
+  "id": "zebu_cart",
+  "name": "Zebu cart",
+  "kind": "mover",
+  "lane": "ground",
+  "cause": "crushed",
+  "cause_text": "Rolled over by a zebu cart",
+  "length": [
+    1.9,
+    2.1
+  ],
+  "speed": [
+    0.9,
+    1.5
+  ],
+  "gap": [
+    2.8,
+    4.6
+  ],
+  "art": {
+    "painter": "cart",
+    "colors": {
+      "body": "#9a6a3a",
+      "animal": "#e8e0d0"
+    }
+  },
+  "desc": "Slow and steady down the red-earth road.",
+  "predator": false,
+  "sprite": ""
+}

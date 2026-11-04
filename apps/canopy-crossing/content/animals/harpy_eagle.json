@@ -1,0 +1,52 @@
+{
+  "id": "harpy_eagle",
+  "number": 11,
+  "name": "Harpy Eagle",
+  "region": "amazon",
+  "home": "Amazon Basin",
+  "pack": "amazon",
+  "rarity": "legendary",
+  "unlock": {
+    "type": "amber",
+    "price": 400
+  },
+  "starter": false,
+  "ability": {
+    "name": "Swoop",
+    "summary": "Swoop — skip a lane on cooldown",
+    "modules": [
+      {
+        "module": "glide",
+        "tiles": 2,
+        "cooldown": 3.0,
+        "style": "swoop"
+      }
+    ]
+  },
+  "stats": {
+    "hop_time": 0.14,
+    "hitbox": 0.6
+  },
+  "look": {
+    "base": "bird",
+    "colors": {
+      "primary": "#55565e",
+      "secondary": "#2a2a30",
+      "belly": "#f4f4f2",
+      "accent": "#9ea0a8",
+      "beak_tip": "#151515",
+      "eye": "#141414"
+    },
+    "beak": "hooked",
+    "tail": "short",
+    "extras": [
+      "crest",
+      "chest_band"
+    ],
+    "size": 0.84
+  },
+  "skins": [],
+  "conservation": "Vulnerable",
+  "fact": "Its rear talons can be as long as a grizzly bear's claws.",
+  "sprite": ""
+}

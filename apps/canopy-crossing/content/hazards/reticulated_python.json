@@ -1,0 +1,27 @@
+{
+  "id": "reticulated_python",
+  "name": "Reticulated python",
+  "kind": "striker",
+  "lane": "safe",
+  "predator": true,
+  "cause": "eaten",
+  "cause_text": "Bitten by a reticulated python",
+  "period": [
+    4.2,
+    6.0
+  ],
+  "warn": 0.8,
+  "strike": 0.45,
+  "span": 3,
+  "hidden": false,
+  "art": {
+    "painter": "snake",
+    "colors": {
+      "body": "#8a7a4a",
+      "pattern": "#2a2418",
+      "eye": "#e8a527"
+    }
+  },
+  "desc": "Lurks in the grass, then strikes along the lane.",
+  "sprite": ""
+}

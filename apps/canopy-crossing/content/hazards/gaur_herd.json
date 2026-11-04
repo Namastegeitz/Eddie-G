@@ -1,0 +1,35 @@
+{
+  "id": "gaur_herd",
+  "name": "Gaur herd",
+  "kind": "mover",
+  "lane": "ground",
+  "cause": "crushed",
+  "cause_text": "Trampled by gaur",
+  "group": [
+    1,
+    2
+  ],
+  "length": [
+    1.4,
+    1.4
+  ],
+  "spacing": 0.35,
+  "speed": [
+    1.0,
+    1.5
+  ],
+  "gap": [
+    2.8,
+    4.8
+  ],
+  "art": {
+    "painter": "herd",
+    "colors": {
+      "body": "#2a2420",
+      "accent": "#e8e0c8"
+    }
+  },
+  "desc": "Massive wild cattle on the move.",
+  "predator": false,
+  "sprite": ""
+}

@@ -1,0 +1,53 @@
+{
+  "id": "chimpanzee",
+  "number": 15,
+  "name": "Chimpanzee",
+  "region": "congo",
+  "home": "Congo Basin",
+  "pack": "congo",
+  "rarity": "epic",
+  "unlock": {
+    "type": "pack",
+    "pack": "congo",
+    "amber": 150
+  },
+  "starter": false,
+  "ability": {
+    "name": "Tool shield",
+    "summary": "Tool use — temporary one-hit shield",
+    "modules": [
+      {
+        "module": "shield",
+        "mode": "active",
+        "cooldown": 15.0
+      }
+    ]
+  },
+  "stats": {
+    "hop_time": 0.14,
+    "hitbox": 0.6
+  },
+  "look": {
+    "base": "mammal",
+    "colors": {
+      "primary": "#2b2018",
+      "secondary": "#18110c",
+      "belly": "#3a2c22",
+      "accent": "#d9a888",
+      "face": "#d9a888",
+      "eye": "#2a1a0e"
+    },
+    "head": "ape",
+    "ears": "big",
+    "snout": "ape",
+    "tail": "none",
+    "extras": [
+      "long_arms"
+    ],
+    "size": 0.82
+  },
+  "skins": [],
+  "conservation": "Endangered",
+  "fact": "Chimps make and use tools, like sticks for fishing termites.",
+  "sprite": ""
+}

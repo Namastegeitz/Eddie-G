@@ -1,0 +1,27 @@
+{
+  "id": "amethystine_python",
+  "name": "Scrub python",
+  "kind": "striker",
+  "lane": "safe",
+  "predator": true,
+  "cause": "eaten",
+  "cause_text": "Bitten by a scrub python",
+  "period": [
+    4.2,
+    6.0
+  ],
+  "warn": 0.8,
+  "strike": 0.45,
+  "span": 3,
+  "hidden": false,
+  "art": {
+    "painter": "snake",
+    "colors": {
+      "body": "#a88a6a",
+      "pattern": "#4a3a2a",
+      "eye": "#1a1a1a"
+    }
+  },
+  "desc": "Lurks in the grass, then strikes along the lane.",
+  "sprite": ""
+}

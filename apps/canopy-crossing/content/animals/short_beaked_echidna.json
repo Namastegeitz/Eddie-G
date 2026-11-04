@@ -1,0 +1,51 @@
+{
+  "id": "short_beaked_echidna",
+  "number": 39,
+  "name": "Short-beaked Echidna",
+  "region": "daintree",
+  "home": "Daintree",
+  "pack": "daintree",
+  "rarity": "rare",
+  "unlock": {
+    "type": "berries",
+    "price": 600
+  },
+  "starter": false,
+  "ability": {
+    "name": "Curl up",
+    "summary": "Curls — brief invincibility",
+    "modules": [
+      {
+        "module": "invincible",
+        "duration": 1.5,
+        "cooldown": 10.0,
+        "rooted": true,
+        "style": "curl"
+      }
+    ]
+  },
+  "stats": {
+    "hop_time": 0.14,
+    "hitbox": 0.6
+  },
+  "look": {
+    "base": "mammal",
+    "colors": {
+      "primary": "#3a2c22",
+      "secondary": "#e8dcc4",
+      "belly": "#4a3a2c",
+      "accent": "#2a2a2a",
+      "eye": "#140d08"
+    },
+    "head": "pointy",
+    "ears": "none",
+    "snout": "beak_long",
+    "tail": "none",
+    "pattern": "spines",
+    "size": 0.66
+  },
+  "skins": [],
+  "conservation": "Least Concern",
+  "fact": "One of only a few mammals that lay eggs.",
+  "sprite": ""
+}

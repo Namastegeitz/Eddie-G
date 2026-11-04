@@ -1,0 +1,107 @@
+{
+  "id": "highlands",
+  "description": "Steep country: narrow ridges, gorges spanned by bridges, and mud that slides you back.",
+  "start_rows": 3,
+  "bands": [
+    {
+      "id": "trail",
+      "lane": "ground",
+      "slot": "ground_movers",
+      "weight": [
+        2.5,
+        2.5
+      ],
+      "rows": "band",
+      "effects": {
+        "slot": "ground_effects",
+        "chance": [
+          0.05,
+          0.4
+        ]
+      }
+    },
+    {
+      "id": "river",
+      "lane": "water",
+      "slot": "platforms",
+      "weight": [
+        2.0,
+        2.0
+      ],
+      "rows": "band",
+      "predators": {
+        "slot": "water_predators",
+        "chance": [
+          0.0,
+          0.3
+        ]
+      }
+    },
+    {
+      "id": "gorge",
+      "lane": "water",
+      "slot": "bridges",
+      "weight": [
+        1.2,
+        2.0
+      ],
+      "rows": [
+        1,
+        2
+      ],
+      "repeat": false
+    },
+    {
+      "id": "ridge",
+      "lane": "safe",
+      "layout": "ridge",
+      "slot": "ridges",
+      "weight": [
+        1.0,
+        1.8
+      ],
+      "rows": [
+        2,
+        4
+      ]
+    }
+  ],
+  "between": {
+    "lane": "safe",
+    "chance": "safe_chance",
+    "specials": {
+      "slot": "safe_specials",
+      "chance": "special_chance"
+    },
+    "tiles": {
+      "slot": "tiles",
+      "chance": [
+        0.05,
+        0.3
+      ]
+    },
+    "effects": {
+      "slot": "safe_effects",
+      "chance": [
+        0.0,
+        0.3
+      ]
+    },
+    "swoopers": {
+      "slot": "swoopers",
+      "chance": [
+        0.0,
+        0.25
+      ]
+    }
+  },
+  "collectibles": {
+    "safe": [
+      0.4,
+      0.3
+    ],
+    "platform": 0.12,
+    "ground": 0.05,
+    "bonus": 0.25
+  }
+}

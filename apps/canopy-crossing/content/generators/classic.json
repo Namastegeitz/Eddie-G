@@ -1,0 +1,105 @@
+{
+  "id": "classic",
+  "description": "Trails and rivers separated by grassy banks. Bands grow and safe banks thin out as difficulty rises.",
+  "start_rows": 3,
+  "bands": [
+    {
+      "id": "trail",
+      "lane": "ground",
+      "slot": "ground_movers",
+      "weight": [
+        3.0,
+        3.0
+      ],
+      "rows": "band",
+      "effects": {
+        "slot": "ground_effects",
+        "chance": [
+          0.0,
+          0.3
+        ]
+      }
+    },
+    {
+      "id": "river",
+      "lane": "water",
+      "slot": "platforms",
+      "weight": [
+        3.0,
+        3.0
+      ],
+      "rows": "band",
+      "predators": {
+        "slot": "water_predators",
+        "chance": [
+          0.05,
+          0.4
+        ]
+      }
+    },
+    {
+      "id": "glade",
+      "lane": "safe",
+      "weight": [
+        0.5,
+        1.0
+      ],
+      "rows": [
+        1,
+        2
+      ],
+      "specials": {
+        "slot": "safe_specials",
+        "chance": [
+          0.6,
+          0.95
+        ]
+      },
+      "tiles": {
+        "slot": "tiles",
+        "chance": [
+          0.4,
+          0.8
+        ]
+      }
+    }
+  ],
+  "between": {
+    "lane": "safe",
+    "chance": "safe_chance",
+    "specials": {
+      "slot": "safe_specials",
+      "chance": "special_chance"
+    },
+    "tiles": {
+      "slot": "tiles",
+      "chance": [
+        0.1,
+        0.35
+      ]
+    },
+    "effects": {
+      "slot": "safe_effects",
+      "chance": [
+        0.0,
+        0.35
+      ]
+    },
+    "swoopers": {
+      "slot": "swoopers",
+      "chance": [
+        0.0,
+        0.25
+      ]
+    }
+  },
+  "collectibles": {
+    "safe": [
+      0.4,
+      0.3
+    ],
+    "platform": 0.12,
+    "ground": 0.05,
+    "bonus": 0.25
+  }
+}

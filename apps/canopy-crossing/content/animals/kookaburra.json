@@ -1,0 +1,48 @@
+{
+  "id": "kookaburra",
+  "number": 38,
+  "name": "Kookaburra",
+  "region": "daintree",
+  "home": "Daintree",
+  "pack": "daintree",
+  "rarity": "common",
+  "unlock": {
+    "type": "berries",
+    "price": 250
+  },
+  "starter": false,
+  "ability": {
+    "name": "Flight hop",
+    "summary": "Flight hop",
+    "modules": [
+      {
+        "module": "glide",
+        "tiles": 2,
+        "cooldown": 7.0
+      }
+    ]
+  },
+  "stats": {
+    "hop_time": 0.14,
+    "hitbox": 0.6
+  },
+  "look": {
+    "base": "bird",
+    "colors": {
+      "primary": "#6a4a32",
+      "secondary": "#3c8ad8",
+      "belly": "#f4eee0",
+      "accent": "#3a2a1c",
+      "beak_tip": "#2a2a2a",
+      "eye": "#2a1a10"
+    },
+    "beak": "dagger",
+    "tail": "banded",
+    "pattern": "eye_stripe",
+    "size": 0.66
+  },
+  "skins": [],
+  "conservation": "Least Concern",
+  "fact": "Its call sounds like loud laughter.",
+  "sprite": ""
+}

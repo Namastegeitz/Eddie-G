@@ -1,0 +1,49 @@
+{
+  "id": "capuchin_monkey",
+  "number": 12,
+  "name": "Capuchin Monkey",
+  "region": "amazon",
+  "home": "Amazon Basin",
+  "pack": "amazon",
+  "rarity": "rare",
+  "unlock": {
+    "type": "berries",
+    "price": 600
+  },
+  "starter": false,
+  "ability": {
+    "name": "Long reach",
+    "summary": "Grabs collectibles one lane away",
+    "modules": [
+      {
+        "module": "magnet",
+        "radius": 1
+      }
+    ]
+  },
+  "stats": {
+    "hop_time": 0.14,
+    "hitbox": 0.6
+  },
+  "look": {
+    "base": "mammal",
+    "colors": {
+      "primary": "#6b4426",
+      "secondary": "#2d1b10",
+      "belly": "#f3dcb5",
+      "accent": "#2d1b10",
+      "face": "#f3dcb5",
+      "eye": "#1a100a"
+    },
+    "head": "round",
+    "ears": "small",
+    "snout": "short",
+    "tail": "long_curl",
+    "pattern": "cap",
+    "size": 0.66
+  },
+  "skins": [],
+  "conservation": "Varies by species",
+  "fact": "Some capuchins use stones as tools to crack nuts.",
+  "sprite": ""
+}

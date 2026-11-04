@@ -1,0 +1,27 @@
+{
+  "id": "king_cobra",
+  "name": "King cobra",
+  "kind": "striker",
+  "lane": "safe",
+  "predator": true,
+  "cause": "eaten",
+  "cause_text": "Bitten by a king cobra",
+  "period": [
+    3.4,
+    4.8
+  ],
+  "warn": 0.8,
+  "strike": 0.45,
+  "span": 2,
+  "hidden": false,
+  "art": {
+    "painter": "snake",
+    "colors": {
+      "body": "#6a5a2a",
+      "pattern": "#e8d8a0",
+      "eye": "#1a1a1a"
+    }
+  },
+  "desc": "Lurks in the grass, then strikes along the lane.",
+  "sprite": ""
+}

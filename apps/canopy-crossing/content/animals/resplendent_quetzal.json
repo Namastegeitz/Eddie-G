@@ -1,0 +1,50 @@
+{
+  "id": "resplendent_quetzal",
+  "number": 45,
+  "name": "Resplendent Quetzal",
+  "region": "monteverde",
+  "home": "Costa Rica",
+  "pack": "monteverde",
+  "rarity": "legendary",
+  "unlock": {
+    "type": "amber",
+    "price": 400
+  },
+  "starter": false,
+  "ability": {
+    "name": "Long glide",
+    "summary": "Graceful long glide",
+    "modules": [
+      {
+        "module": "glide",
+        "tiles": 4,
+        "cooldown": 7.0
+      }
+    ]
+  },
+  "stats": {
+    "hop_time": 0.14,
+    "hitbox": 0.6
+  },
+  "look": {
+    "base": "bird",
+    "colors": {
+      "primary": "#1fa05a",
+      "secondary": "#14784a",
+      "belly": "#d4202e",
+      "accent": "#f6e05a",
+      "beak_tip": "#f6e05a",
+      "eye": "#141414"
+    },
+    "beak": "short",
+    "tail": "streamers",
+    "extras": [
+      "crest"
+    ],
+    "size": 0.74
+  },
+  "skins": [],
+  "conservation": "Near Threatened",
+  "fact": "A male's tail streamers can be longer than its body.",
+  "sprite": ""
+}

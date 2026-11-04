@@ -1,0 +1,48 @@
+{
+  "id": "african_grey_parrot",
+  "number": 18,
+  "name": "African Grey Parrot",
+  "region": "congo",
+  "home": "Congo Basin",
+  "pack": "congo",
+  "rarity": "rare",
+  "unlock": {
+    "type": "berries",
+    "price": 600
+  },
+  "starter": false,
+  "ability": {
+    "name": "Hover glide",
+    "summary": "Hover glide",
+    "modules": [
+      {
+        "module": "hover",
+        "duration": 1.4,
+        "cooldown": 8.0
+      }
+    ]
+  },
+  "stats": {
+    "hop_time": 0.14,
+    "hitbox": 0.6
+  },
+  "look": {
+    "base": "bird",
+    "colors": {
+      "primary": "#9a9ca2",
+      "secondary": "#6e7076",
+      "belly": "#b6b8bd",
+      "accent": "#d92b2b",
+      "beak_tip": "#1a1a1a",
+      "eye": "#f3f3f0"
+    },
+    "beak": "hooked",
+    "tail": "red",
+    "pattern": "scallops",
+    "size": 0.66
+  },
+  "skins": [],
+  "conservation": "Endangered",
+  "fact": "Famous for copying human speech.",
+  "sprite": ""
+}

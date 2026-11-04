@@ -1,0 +1,16 @@
+{
+  "id": "thick_brush",
+  "name": "Thick brush",
+  "kind": "brush",
+  "lane": "safe",
+  "art": {
+    "painter": "bush",
+    "colors": {
+      "body": "#2e6a2a",
+      "leaf": "#4a9a3a"
+    }
+  },
+  "desc": "Too dense to push through.",
+  "predator": false,
+  "sprite": ""
+}
