@@ -10,6 +10,7 @@ export const DEFAULT_SETTINGS = {
   music: 0.6,
   sfx: 0.9,
   voice: false, // speak each move during Watch
+  silentOk: true, // iPhone: play sound with the ring/silent switch on
   haptics: true,
   naming: 'screen', // 'screen' | 'monkey'
   timer: 'normal', // 'normal' | 'relaxed' | 'off'
@@ -33,8 +34,8 @@ function defaults() {
     spent: 0,
     levels: {}, // id -> { stars, best, clears }
     endless: { bestRounds: 0, bestScore: 0, plays: 0 },
-    owned: structuredClone(DEFAULT_OWNED),
-    equipped: structuredClone(DEFAULT_EQUIPPED),
+    owned: JSON.parse(JSON.stringify(DEFAULT_OWNED)),
+    equipped: JSON.parse(JSON.stringify(DEFAULT_EQUIPPED)),
     settings: { ...DEFAULT_SETTINGS },
     stats: {
       sessions: 0,

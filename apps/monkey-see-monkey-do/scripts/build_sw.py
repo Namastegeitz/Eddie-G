@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 """Regenerates the precache list + version in sw.js from the files in the app.
-   python3 scripts/build_sw.py
+   python3 scripts/build_sw.py            (the source folder)
+   python3 scripts/build_sw.py dist/www   (the built phone/web folder)
 """
-import hashlib, json, os, re
+import hashlib, json, os, re, sys
 
-ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-SKIP_DIRS = {'tests', 'scripts', 'docs', 'dist', 'node_modules', '.git'}
+ROOT = os.path.abspath(sys.argv[1]) if len(sys.argv) > 1 else os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+SKIP_DIRS = {'tests', 'scripts', 'docs', 'dist', 'node_modules', '.git', 'mobile'}
 SKIP_FILES = {'sw.js', 'README.md', 'RUN.md'}
 EXTS = {'.html', '.css', '.js', '.svg', '.png', '.woff2', '.webmanifest', '.txt'}
 
@@ -32,4 +33,4 @@ block = '// PRECACHE-START (generated, do not edit by hand)\nconst VERSION = %s;
     json.dumps(version), json.dumps(precache, indent=2))
 sw = re.sub(r'// PRECACHE-START.*?// PRECACHE-END', block, sw, flags=re.S)
 open(sw_path, 'w').write(sw)
-print('sw.js: %d files, version %s' % (len(precache), version))
+print('%s/sw.js: %d files, version %s' % (os.path.relpath(ROOT), len(precache), version))

@@ -23,16 +23,19 @@
   --shade: rgba(4, 18, 12, 0.55);
   --font-display: 'Lilita One', 'Arial Rounded MT Bold', 'Trebuchet MS', system-ui, sans-serif;
   --font-body: 'Baloo 2', 'Nunito', 'Segoe UI', system-ui, -apple-system, sans-serif;
-  --safe-t: env(safe-area-inset-top, 0px);
-  --safe-b: env(safe-area-inset-bottom, 0px);
-  --gut-l: max(16px, env(safe-area-inset-left, 0px));
-  --gut-r: max(16px, env(safe-area-inset-right, 0px));
+  /* env() works in browsers and new WebViews; the Android app also sets
+     --safe-area-inset-* itself for older WebViews (Capacitor SystemBars). */
+  --safe-t: max(env(safe-area-inset-top, 0px), var(--safe-area-inset-top, 0px));
+  --safe-b: max(env(safe-area-inset-bottom, 0px), var(--safe-area-inset-bottom, 0px));
+  --gut-l: max(16px, env(safe-area-inset-left, 0px), var(--safe-area-inset-left, 0px));
+  --gut-r: max(16px, env(safe-area-inset-right, 0px), var(--safe-area-inset-right, 0px));
   color-scheme: dark;
 }
 
 * { box-sizing: border-box; }
 html, body { height: 100%; margin: 0; overflow: hidden; background: var(--canopy); color: var(--cream); font-family: var(--font-body); font-size: 16px; -webkit-text-size-adjust: 100%; }
-body { overscroll-behavior: none; }
+body { overscroll-behavior: none; touch-action: manipulation; -webkit-touch-callout: none; -webkit-tap-highlight-color: transparent; }
+img, svg { -webkit-user-drag: none; }
 button { font: inherit; color: inherit; cursor: pointer; -webkit-tap-highlight-color: transparent; }
 button:focus-visible, [tabindex]:focus-visible, input:focus-visible, textarea:focus-visible { outline: 3px solid var(--sky); outline-offset: 3px; }
 [hidden] { display: none !important; }
@@ -251,13 +254,13 @@ kbd { display: inline-block; min-width: 22px; padding: 1px 6px; border-radius: 6
 
 .pad-wrap { position: relative; }
 .pad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-.pad-btn { --c: #888; --fg: #fff; position: relative; height: clamp(70px, 12.5vh, 108px); border: 0; border-radius: 22px; background: linear-gradient(180deg, color-mix(in srgb, var(--c) 88%, #fff), var(--c) 55%, color-mix(in srgb, var(--c) 82%, #000)); color: var(--fg); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; box-shadow: inset 0 -5px 0 rgba(0, 0, 0, 0.2), 0 5px 0 color-mix(in srgb, var(--c) 55%, #000), 0 8px 14px rgba(0, 0, 0, 0.3); touch-action: none; transition: transform 0.06s, box-shadow 0.06s, opacity 0.2s, filter 0.2s; }
+.pad-btn { --c: #888; --c2: #444; --fg: #fff; position: relative; height: clamp(70px, 12.5vh, 108px); border: 0; border-radius: 22px; background: linear-gradient(180deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0) 45%, rgba(0, 0, 0, 0) 55%, rgba(0, 0, 0, 0.16)), var(--c); color: var(--fg); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; box-shadow: inset 0 -5px 0 rgba(0, 0, 0, 0.2), 0 5px 0 var(--c2), 0 8px 14px rgba(0, 0, 0, 0.3); touch-action: none; transition: transform 0.06s, box-shadow 0.06s, opacity 0.2s, filter 0.2s; }
 .pad-btn .mv-icon { width: clamp(34px, 6.2vh, 50px); height: auto; filter: drop-shadow(0 2px 0 rgba(0, 0, 0, 0.2)); }
 .pad-btn .pad-label { font-family: var(--font-display); font-size: clamp(14px, 2.1vh, 17px); letter-spacing: 0.02em; line-height: 1; text-shadow: 0 2px 0 rgba(0, 0, 0, 0.25); }
 .pad-btn.ink .pad-label { text-shadow: none; }
 .pad-btn kbd { position: absolute; top: 7px; right: 8px; min-width: 18px; padding: 0 4px; border-radius: 6px; background: rgba(0, 0, 0, 0.22); color: var(--fg); font-size: 11px; }
 .pad.nokeys kbd { display: none; }
-.pad-btn.down { transform: translateY(4px) scale(0.98); box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.2), 0 1px 0 color-mix(in srgb, var(--c) 55%, #000); }
+.pad-btn.down { transform: translateY(4px) scale(0.98); box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.2), 0 1px 0 var(--c2); }
 .pad-btn.lit { filter: brightness(1.2) saturate(1.15); transform: scale(1.05); box-shadow: 0 0 0 4px #fff, 0 0 26px 6px var(--c); z-index: 1; }
 .pad-btn.hint::after { content: ''; position: absolute; inset: -7px; border-radius: 27px; border: 4px solid #fff; animation: hintRing 0.9s ease-in-out infinite; pointer-events: none; }
 @keyframes hintRing { 50% { transform: scale(1.06); opacity: 0.4; } }
@@ -350,3 +353,11 @@ kbd { display: inline-block; min-width: 22px; padding: 1px 6px; border-radius: 6
   *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
 }
 body.reduce-motion *, body.reduce-motion *::before, body.reduce-motion *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; }
+
+/* phone held sideways in a browser (the apps lock portrait on phones) */
+.rotate { position: absolute; inset: 0; z-index: 80; display: none; flex-direction: column; align-items: center; justify-content: center; gap: 14px; background: var(--canopy); color: var(--cream); font-family: var(--font-display); font-size: 22px; text-align: center; pointer-events: auto; }
+.rotate-phone { width: 44px; height: 76px; border: 5px solid var(--banana); border-radius: 10px; animation: turn 1.8s ease-in-out infinite; }
+@keyframes turn { 0%, 30% { transform: rotate(-90deg); } 60%, 100% { transform: rotate(0deg); } }
+@media (orientation: landscape) and (max-height: 500px) and (pointer: coarse) {
+  .rotate { display: flex; }
+}

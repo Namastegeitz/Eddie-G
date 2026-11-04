@@ -62,12 +62,13 @@ export class Game {
     this.stage.setEnvironment(env);
     const style = menu && env === 'jungle' ? 'menu' : this.stage.musicFor(env);
     this.audio.startMusic(style, bpm);
+    // keep the screen on while playing, let it sleep on menus
+    if (this.onAwake) this.onAwake(!menu);
   }
 
-  haptic(pattern) {
-    if (this.s.haptics && navigator.vibrate) {
-      try { navigator.vibrate(pattern); } catch { /* not supported */ }
-    }
+  /** kind: 'tap' | 'error' | 'success' (set up per platform in native.js) */
+  haptic(kind) {
+    if (this.onHaptic) this.onHaptic(kind);
   }
 
   // ------------------------------------------------------------ modes
@@ -303,7 +304,7 @@ export class Game {
     const r = this.run;
     if (t < r.respondAt - 0.15) return;
     const step = r.expected[r.idx];
-    this.haptic(8);
+    this.haptic('tap');
     if (step.length === 1) {
       if (id === step[0]) {
         this.echo(id);
@@ -348,6 +349,7 @@ export class Game {
   freeMove(id, t) {
     const r = this.run;
     this.echo(id);
+    this.haptic('tap');
     r.moves++;
     // two different moves almost together = a combo
     if (r.last && r.last.id !== id && t - r.last.t < 0.15) {
@@ -403,7 +405,7 @@ export class Game {
     if (tapped) this.monkey.flash(tapped);
     this.monkey.play('OOPS', 1.9);
     this.audio.sfx('wrong');
-    this.haptic([60, 40, 60]);
+    this.haptic('error');
     this.stage.shake(0.07);
     this.ui.timer(null);
     this.ui.replayButton(false);
@@ -433,6 +435,7 @@ export class Game {
     r.score += RULES.roundBonus;
     Save.stat('roundsCleared');
     this.audio.sfx('round');
+    this.haptic('success');
     this.audio.sfx('cheer', this.now() + 0.1);
     this.monkey.play('CHEER', 1.5, this.now() + 0.1);
     this.stage.confetti(0.35);

@@ -77,6 +77,19 @@
 - Tests: `node tests/unit.mjs` (443 checks) and `node tests/acceptance.js` (25-step Playwright play-through,
   incl. offline reload) pass.
 - Playable as a private Claude artifact: https://claude.ai/artifact/6ARndyKdPDcqbRxZ7ohyMY
+- Phones (second pass): runs on iPhone/iPad/Android in the browser (installable, offline) and as native apps.
+  - Compatibility: three.js r162 (falls back to WebGL 1; every toon material has a gradient map so WebGL 1
+    compiles), bundle targets Chrome 87 / Safari 14, no color-mix/structuredClone, iOS audio unlock + "Play
+    sound on silent", touch/zoom fixes, portrait prompt when a phone is sideways, wake lock, haptics.
+  - `mobile/`: Capacitor 8.5.3 iOS (SPM, iOS 15+) and Android (API 24+, WebView 87+ with an update page)
+    projects, app id com.namastegeitz.monkeydo, "Monkey Do" on the home screen, icons/splash from icon.svg,
+    portrait on phones, status bar hidden, back button, no INTERNET permission, release signing via
+    keystore.properties. `dist/www` is what both apps load and what to host.
+  - Not built yet: the APK (dl.google.com, where the Android SDK comes from, is blocked by this environment's
+    network policy) and the iOS app (needs a Mac, or Codemagic: `mobile/ci/codemagic.yaml`). GitHub Actions
+    workflow `.github/workflows/monkey-see-monkey-do-mobile.yml` (manual/tag only) is ready, but Actions jobs are
+    refused at the account level (runs stop in ~3 s with no log).
+  - Tests: `tests/devices.js` (12 checks: simulated app bridge, WebGL 1, 320 px to iPad, sideways) pass on dist/www.
 - Not verified on real hardware yet: touch feel and audio latency on an actual phone, install to home screen.
 - Next: pick add-ons from `prompts/claude/monkey-see-monkey-do-next.md` (14 prompts: replay review, Daily
   Dance, choreographer + share codes, accessibility pack, grown-up panel, stickers, World 4, pass-and-play,

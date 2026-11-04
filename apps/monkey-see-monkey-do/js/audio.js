@@ -87,7 +87,20 @@ export class AudioEngine {
         for (let i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
         this.setVolumes(this.musicVol, this.sfxVol);
       }
-      if (this.ctx.state !== 'running') this.ctx.resume();
+      if (this.ctx.state !== 'running') {
+        // 'suspended' before the first tap, 'interrupted' after a call or Siri on iPhone
+        const p = this.ctx.resume();
+        if (p && p.catch) p.catch(() => {});
+      }
+      if (!this.primed) {
+        // Older iPhones only start Web Audio once a sound plays inside the tap itself
+        const b = this.ctx.createBuffer(1, 1, 22050);
+        const src = this.ctx.createBufferSource();
+        src.buffer = b;
+        src.connect(this.ctx.destination);
+        src.start(0);
+        this.primed = true;
+      }
       return true;
     } catch {
       return false;

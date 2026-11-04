@@ -8,6 +8,7 @@ import { Stage } from './stage.js';
 import { UI } from './ui.js';
 import { Game } from './game.js';
 import { Input } from './input.js';
+import { setupPlatform } from './native.js';
 
 const VERSION = '1.0.0';
 
@@ -33,7 +34,8 @@ async function boot() {
   const canvas = document.getElementById('scene');
   let stage;
   try {
-    stage = new Stage(canvas, { quality: s.quality });
+    const forceWebGL1 = /[?&]gl=1\b/.test(location.search);
+    stage = new Stage(canvas, { quality: s.quality, forceWebGL1 });
   } catch (e) {
     fail("This browser can't show 3D graphics (WebGL is off or not supported). Try Chrome, Safari or Firefox, or turn on hardware acceleration.");
     return;
@@ -47,12 +49,17 @@ async function boot() {
   app.ui = ui;
   const game = new Game({ audio, monkey, stage, ui });
   app.game = game;
+  app.settings = () => Save.settings;
+  setupPlatform(app);
+  game.onHaptic = app.haptic;
+  game.onAwake = app.keepAwake;
 
   let lastQuality = null;
   app.applySettings = () => {
     const st = Save.settings;
     audio.setVolumes(st.music, st.sfx);
     audio.voiceOn = st.voice;
+    app.applySilentMode(st.silentOk !== false);
     document.body.classList.toggle('reduce-motion', !!st.reduceMotion);
     stage.reduceMotion = !!st.reduceMotion || matchMedia('(prefers-reduced-motion: reduce)').matches;
     monkey.danceAmp = st.reduceMotion ? 0.5 : 1;
@@ -95,13 +102,26 @@ async function boot() {
       monkey.setLook((x - hx) / (stage.width * 0.4), -(y - hy) / (stage.height * 0.4));
     },
   });
-  // First tap anywhere unlocks sound (browsers need a gesture).
+  // First tap anywhere unlocks sound (browsers need a gesture). Kept on for
+  // later taps too: iPhones pause audio after calls and Siri ("interrupted").
+  let unlocked = false;
   const unlock = () => {
+    if (!unlocked) app.applySilentMode(Save.settings.silentOk !== false);
     audio.unlock();
-    app.applySettings();
+    if (!unlocked && audio.ctx) {
+      unlocked = true;
+      app.applySettings();
+    }
   };
-  window.addEventListener('pointerdown', unlock, { capture: true });
-  window.addEventListener('keydown', unlock, { capture: true });
+  for (const ev of ['pointerdown', 'touchend', 'click', 'keydown']) window.addEventListener(ev, unlock, { capture: true, passive: true });
+  // iOS Safari: stop pinch-zoom and double-tap zoom from moving the game around
+  document.addEventListener('gesturestart', (e) => e.preventDefault());
+  document.addEventListener('dblclick', (e) => e.preventDefault());
+  // Phone turned sideways in a browser: pause and show "turn upright" (the apps lock portrait)
+  const sideways = matchMedia('(orientation: landscape) and (max-height: 500px) and (pointer: coarse)');
+  const onSideways = () => { if (sideways.matches) game.pause(); };
+  if (sideways.addEventListener) sideways.addEventListener('change', onSideways);
+  else if (sideways.addListener) sideways.addListener(onSideways);
 
   app.applySettings();
   app.applyLook(Save.data.equipped);
@@ -165,12 +185,12 @@ async function boot() {
   window.addEventListener('pagehide', () => Save.persist());
 
   // Offline support when served from a web host (not inside a sandboxed preview).
-  if (!window.MSMD_NO_SW && 'serviceWorker' in navigator && /^https?:$/.test(location.protocol)) {
+  if (!window.MSMD_NO_SW && !app.native && 'serviceWorker' in navigator && /^https?:$/.test(location.protocol)) {
     navigator.serviceWorker.register('sw.js').catch(() => { /* offline install not available here */ });
   }
 
   // Handy for tests and for curious players poking around in the console.
-  window.MSMD = { version: VERSION, app, game, Save, audio, monkey, stage, ui };
+  window.MSMD = { version: VERSION, app, game, Save, audio, monkey, stage, ui, webgl: stage.webgl, platform: app.platform };
   document.documentElement.dataset.ready = '1';
 }
 

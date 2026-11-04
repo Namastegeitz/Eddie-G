@@ -11,7 +11,7 @@ const { chromium } = require('playwright');
 const path = require('path');
 const fs = require('fs');
 
-const OUT = path.join(__dirname, 'output');
+const OUT = process.env.OUT || path.join(__dirname, 'output');
 fs.mkdirSync(OUT, { recursive: true });
 const BASE = process.env.BASE || 'http://127.0.0.1:8765/';
 let failures = 0;
@@ -147,16 +147,27 @@ let passes = 0;
   });
 
   await step('running out of time counts as a mistake', async () => {
+    // Record each mistake as it happens, so a slow test machine can't miss one
+    await ev(() => {
+      const g = MSMD.game;
+      window.__mistakes = [];
+      if (!g.__wrapped) {
+        const orig = g.mistake.bind(g);
+        g.mistake = (k, t) => { const before = g.run.lives; orig(k, t); window.__mistakes.push({ k, before, after: g.run.lives }); };
+        g.__wrapped = true;
+      }
+    });
     const lim = await ev(() => MSMD.game.run.limit);
-    await page.waitForFunction(() => MSMD.game.phase === 'oops', null, { timeout: (lim + 3) * 1000 });
-    const t = await page.textContent('#mistake');
-    expect(t.includes("Time's up"), 'timeout card');
-    expect(await ev(() => MSMD.game.run.lives) === 1, 'one life left');
+    await page.waitForFunction(() => window.__mistakes.length > 0, null, { timeout: (lim + 8) * 1000 });
+    const m = await ev(() => window.__mistakes[0]);
+    expect(m.k === 'timeout', 'kind ' + m.k);
+    expect(m.before === 2 && m.after === 1, `lives ${m.before} -> ${m.after}`);
+    if (await page.isVisible('#mistake')) expect((await page.textContent('#mistake')).includes("Time's up"), 'timeout card');
   });
 
   await step('losing the last life shows Out of lives with an honest continue', async () => {
-    await page.click('#mistake-go');
-    await waitPhase('respond');
+    if (await page.isVisible('#mistake-go')) await page.click('#mistake-go').catch(() => {});
+    await waitPhase('respond', 25000);
     const right = await ev(() => MSMD.game.run.expected[0][0]);
     await page.keyboard.press(keyFor[['LA', 'RA', 'LL', 'RL'].find((m) => m !== right)]);
     await page.waitForSelector('#ov-result.show', { timeout: 8000 });

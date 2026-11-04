@@ -3,6 +3,7 @@
 // (rings, confetti, dust, dizzy stars, camera shake).
 import * as THREE from './vendor/three.module.min.js';
 import { MOVES } from './moves.js';
+import { makeGradient } from './monkey.js';
 
 const TAU = Math.PI * 2;
 const PAD_ANGLES = { RA: 30, HD: 90, LA: 150, LL: 210, FL: 270, RL: 330 }; // degrees, see pad layout
@@ -33,7 +34,12 @@ export class Stage {
     this.canvas = canvas;
     this.quality = opts.quality || 'auto';
     this.reduceMotion = false;
-    this.renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' });
+    const params = { canvas, antialias: true, powerPreference: 'high-performance' };
+    // ?gl=1 forces WebGL 1 to test older phones; three.js falls back to it by itself when WebGL 2 is missing
+    if (opts.forceWebGL1) params.context = canvas.getContext('webgl', { antialias: true, alpha: false }) || undefined;
+    this.renderer = new THREE.WebGLRenderer(params);
+    this.toonSteps = makeGradient([178, 178, 178, 178, 178, 178, 178, 255, 255, 255]);
+    this.webgl = this.renderer.capabilities.isWebGL2 ? 2 : 1;
     this.maxDpr = this.quality === 'low' ? 1 : 2;
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, this.maxDpr));
     this.scene = new THREE.Scene();
@@ -65,7 +71,7 @@ export class Stage {
 
   buildPad() {
     const g = new THREE.Group();
-    const base = new THREE.Mesh(new THREE.CylinderGeometry(2.25, 2.4, 0.26, 48), new THREE.MeshToonMaterial({ color: 0x3a2a24 }));
+    const base = new THREE.Mesh(new THREE.CylinderGeometry(2.25, 2.4, 0.26, 48), this.toon(0x3a2a24));
     base.position.y = -0.13;
     g.add(base);
     this.padBase = base;
@@ -148,7 +154,7 @@ export class Stage {
   }
 
   toon(c) {
-    return new THREE.MeshToonMaterial({ color: c });
+    return new THREE.MeshToonMaterial({ color: c, gradientMap: this.toonSteps });
   }
 
   ground(color, r = 40) {
@@ -352,7 +358,7 @@ export class Stage {
       g.add(c);
     }
     const earth = new THREE.Group();
-    earth.add(new THREE.Mesh(new THREE.SphereGeometry(2.4, 32, 24), new THREE.MeshToonMaterial({ color: 0x2e7bff })));
+    earth.add(new THREE.Mesh(new THREE.SphereGeometry(2.4, 32, 24), this.toon(0x2e7bff)));
     const land = this.toon(0x3fbf5a);
     for (const [x, y, z, s] of [[0.9, 0.8, 1.9, 0.9], [-1.1, -0.3, 1.9, 1.0], [0.2, -1.4, 1.7, 0.7], [1.6, -0.6, 1.4, 0.6]]) {
       const l = new THREE.Mesh(new THREE.SphereGeometry(s, 14, 10), land);

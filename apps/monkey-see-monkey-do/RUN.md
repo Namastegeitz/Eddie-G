@@ -16,12 +16,30 @@ Open http://localhost:8765. On a phone on the same Wi-Fi, open
 Or just open `dist/monkey-see-monkey-do.html`: it's the whole game in one
 file and works straight from disk, a USB stick, email or any web host.
 
+## Phones
+
+See [mobile/README.md](mobile/README.md): install from the browser, build the
+Android APK / Play bundle, build the iPhone app (Xcode or Codemagic).
+
+```
+node scripts/build_web.mjs          # dist/www: bundled for older phone browsers, offline-ready
+scripts/build_mobile.sh             # tests + dist/www + copy into mobile/ios and mobile/android (+ APK if the Android SDK is installed)
+node scripts/make_app_icons.js      # app icons + splash screens from assets/icons/icon.svg
+```
+
 ## Tests
 
 ```
 node tests/unit.mjs                      # rules, levels, generator, prices (443 checks)
 python3 -m http.server 8765 --bind 127.0.0.1 &
 node tests/acceptance.js                 # 25-step play-through in Chromium
+```
+
+Phone checks (on the built `dist/www`):
+
+```
+(cd dist/www && python3 -m http.server 8766 --bind 127.0.0.1) &
+node tests/devices.js                    # app-shell bridge, WebGL 1, 6 screen sizes, sideways
 ```
 
 The acceptance test plays the tutorial and Level 1 by tapping the pad,
@@ -36,14 +54,16 @@ and `npx playwright install chromium` if you don't have them).
 
 ```
 python3 scripts/build_sw.py        # refresh the offline cache list + version
+node scripts/build_web.mjs         # rebuild dist/www (phones and hosting)
 node scripts/build_single.mjs      # rebuild dist/ single-file versions (uses esbuild via npx)
 node scripts/make_icons.js         # only if assets/icons/icon.svg changed
 ```
 
 ## Install on a phone (offline, full screen)
 
-Host the folder on any HTTPS static host (GitHub Pages, Netlify, Cloudflare
-Pages, surge). Open it once on the phone, then:
+Build `dist/www` (`node scripts/build_web.mjs`) and host that folder on any
+HTTPS static host (GitHub Pages, Netlify, Cloudflare Pages, surge). Open it
+once on the phone, then:
 
 - **Android (Chrome):** menu > Add to Home screen / Install app.
 - **iPhone (Safari):** Share > Add to Home Screen.
@@ -51,12 +71,14 @@ Pages, surge). Open it once on the phone, then:
 After the first visit it plays with no connection. Progress is saved on that
 phone only; use Settings > Your data > Copy save code to move it.
 
-GitHub Pages example (publishes this folder to a `gh-pages` branch; only do
+GitHub Pages example (publishes `dist/www` to a `gh-pages` branch; only do
 this when you want the game public):
 
 ```
-git subtree push --prefix apps/monkey-see-monkey-do origin gh-pages
+git subtree push --prefix apps/monkey-see-monkey-do/dist/www origin gh-pages
 ```
+
+For the iPhone and Android apps, see [mobile/README.md](mobile/README.md).
 
 ## Tuning
 

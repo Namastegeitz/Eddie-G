@@ -5,7 +5,7 @@
 'use strict';
 
 // PRECACHE-START (generated, do not edit by hand)
-const VERSION = "19473adae63f";
+const VERSION = "fb2a33f8f20f";
 const PRECACHE = [
   "./",
   "manifest.webmanifest",
@@ -28,12 +28,12 @@ const PRECACHE = [
   "js/main.js",
   "js/monkey.js",
   "js/moves.js",
+  "js/native.js",
   "js/rules.js",
   "js/save.js",
   "js/shop.js",
   "js/stage.js",
   "js/ui.js",
-  "js/vendor/three.core.min.js",
   "js/vendor/three.module.min.js",
   "index.html"
 ];

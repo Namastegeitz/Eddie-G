@@ -1,0 +1,80 @@
+# Build Monkey See, Monkey Do for iPhone (TestFlight) and Android (Play) on
+# Codemagic's cloud Macs, so no Mac of your own is needed.
+# Codemagic reads codemagic.yaml from the repository ROOT: copy this file there
+# (or merge these workflows into an existing one).
+#
+# One-time setup in Codemagic (codemagic.io, free tier: 500 Mac minutes/month):
+#   - Add this GitHub repository.
+#   - Teams > Integrations > App Store Connect: add an API key, name it "Codemagic API Key"
+#     (needs an Apple Developer Program membership, $99/year).
+#   - In App Store Connect create the app with bundle id com.namastegeitz.monkeydo.
+#   - For Android release: Code signing identities > Android keystores: upload your
+#     upload key and name it "monkey_upload_key".
+workflows:
+  ios-testflight:
+    name: Monkey Do iOS -> TestFlight
+    instance_type: mac_mini_m2
+    max_build_duration: 45
+    integrations:
+      app_store_connect: Codemagic API Key
+    environment:
+      node: 22
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: com.namastegeitz.monkeydo
+      vars:
+        APP_DIR: apps/monkey-see-monkey-do
+    scripts:
+      - name: Tests and web bundle
+        script: |
+          cd $APP_DIR
+          node tests/unit.mjs
+          node scripts/build_web.mjs
+      - name: Capacitor sync
+        script: |
+          cd $APP_DIR/mobile
+          npm ci --no-audit --no-fund
+          npx cap sync ios
+      - name: Signing
+        script: xcode-project use-profiles
+      - name: Build number
+        script: |
+          cd $APP_DIR/mobile/ios/App
+          agvtool new-version -all $(($(app-store-connect get-latest-testflight-build-number "$APP_STORE_APPLE_ID" 2>/dev/null || echo 0) + 1))
+      - name: Build .ipa
+        script: |
+          cd $APP_DIR/mobile/ios/App
+          xcode-project build-ipa --project App.xcodeproj --scheme App
+    artifacts:
+      - $APP_DIR/mobile/ios/App/build/ios/ipa/*.ipa
+    publishing:
+      app_store_connect:
+        auth: integration
+        submit_to_testflight: true
+
+  android-release:
+    name: Monkey Do Android -> APK + Play bundle
+    instance_type: linux_x2
+    max_build_duration: 30
+    environment:
+      node: 22
+      java: 21
+      android_signing:
+        - monkey_upload_key
+      vars:
+        APP_DIR: apps/monkey-see-monkey-do
+    scripts:
+      - name: Tests, web bundle, Capacitor sync
+        script: |
+          cd $APP_DIR
+          node tests/unit.mjs
+          node scripts/build_web.mjs
+          cd mobile && npm ci --no-audit --no-fund && npx cap sync android
+      - name: Build
+        script: |
+          cd $APP_DIR/mobile/android
+          export MONKEY_KEYSTORE=$CM_KEYSTORE_PATH MONKEY_KEYSTORE_PASSWORD=$CM_KEYSTORE_PASSWORD MONKEY_KEY_ALIAS=$CM_KEY_ALIAS MONKEY_KEY_PASSWORD=$CM_KEY_PASSWORD
+          ./gradlew --no-daemon assembleDebug bundleRelease
+    artifacts:
+      - $APP_DIR/mobile/android/app/build/outputs/**/*.apk
+      - $APP_DIR/mobile/android/app/build/outputs/**/*.aab

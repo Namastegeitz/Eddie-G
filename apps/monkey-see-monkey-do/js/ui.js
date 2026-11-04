@@ -27,6 +27,8 @@ const $ = (sel, root = document) => root.querySelector(sel);
 const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
 const starsHtml = (n, max = 3) => Array.from({ length: max }, (_, i) => (i < n ? ICON.star : ICON.starOff)).join('');
 const inkMove = (id) => id === 'HD';
+// Darken a #rrggbb colour (works on every browser, unlike CSS color-mix)
+const shade = (hex, f) => '#' + [1, 3, 5].map((i) => Math.round(parseInt(hex.slice(i, i + 2), 16) * f).toString(16).padStart(2, '0')).join('');
 
 function swatch(step, size = '') {
   const ids = Array.isArray(step) ? step : [step];
@@ -79,6 +81,7 @@ const SETTINGS = [
     { key: 'music', type: 'range', label: 'Music' },
     { key: 'sfx', type: 'range', label: 'Moves and effects' },
     { key: 'voice', type: 'toggle', label: 'Call out moves', help: 'A voice says each move while the monkey dances (uses your device\'s built-in voice).' },
+    { key: 'silentOk', type: 'toggle', label: 'Play sound on silent', help: 'iPhone and iPad: the game\'s music and notes still play when the ring/silent switch is on silent. Turn off to follow the switch.' },
   ] },
   { group: 'Gameplay', items: [
     { key: 'timer', type: 'seg', label: 'Timer', options: [['normal', 'Normal'], ['relaxed', 'Relaxed'], ['off', 'Off']], help: `Relaxed gives you ${RULES.relaxedTimerMult}x the time. Off removes the timer.` },
@@ -162,12 +165,35 @@ export class UI {
     this.audio.sfx('pop');
   }
 
+  /**
+   * Android back button: go back one step (close a card, pause, leave a
+   * screen). Returns false on the title screen so the app can be minimised.
+   */
+  handleBack() {
+    const open = (id) => document.getElementById(id).classList.contains('show');
+    if (open('ov-confirm')) { this.closeConfirm(false); return true; }
+    if (open('ov-calibrate')) { this.calRunning = false; this.closeOverlay('ov-calibrate'); return true; }
+    if (open('ov-howto')) { this.closeOverlay('ov-howto'); return true; }
+    if (this.game.paused) { this.game.resume(); return true; }
+    if (open('ov-intro')) { this.closeOverlay('ov-intro'); this.show('map'); return true; }
+    if (open('ov-result')) { this.closeOverlay('ov-result'); this.show(this.game.mode === 'adventure' ? 'map' : 'title'); return true; }
+    if (this.current === 'hud') {
+      if (this.game.pause()) return true;
+      this.game.quit();
+      this.show('title');
+      return true;
+    }
+    if (this.current === 'settings' || this.current === 'help') { this.show(this.prev || 'title'); return true; }
+    if (this.current !== 'title') { this.show('title'); return true; }
+    return false;
+  }
+
   buildPad() {
     const pad = $('#pad');
     pad.innerHTML = PAD_ORDER.map((id) => {
       const m = MOVES[id];
       const ink = inkMove(id);
-      return `<button class="pad-btn${ink ? ' ink' : ''}" data-move="${id}" style="--c:${m.color};--fg:${ink ? '#23160c' : '#fff'}" aria-label="${esc(moveName(id, this.s.naming))} (${m.key.toUpperCase()})">${moveIcon(id, { dim: 0.42 })}<span class="pad-label">${esc(moveName(id, this.s.naming))}</span><kbd>${m.key.toUpperCase()}</kbd></button>`;
+      return `<button class="pad-btn${ink ? ' ink' : ''}" data-move="${id}" style="--c:${m.color};--c2:${shade(m.color, 0.55)};--fg:${ink ? '#23160c' : '#fff'}" aria-label="${esc(moveName(id, this.s.naming))} (${m.key.toUpperCase()})">${moveIcon(id, { dim: 0.42 })}<span class="pad-label">${esc(moveName(id, this.s.naming))}</span><kbd>${m.key.toUpperCase()}</kbd></button>`;
     }).join('');
     this.applyPadPrefs();
   }
@@ -891,7 +917,8 @@ export class UI {
   renderSettings() {
     const s = this.s;
     const rowHtml = (it) => {
-      const help = typeof it.help === 'function' ? it.help() : it.help;
+      let help = typeof it.help === 'function' ? it.help() : it.help;
+      if (it.key === 'voice' && !('speechSynthesis' in window)) help += ' Not available on this device.';
       const label = `<div class="label"><b id="lbl-${it.key || it.action}">${esc(it.label)}</b>${help ? `<small>${esc(help)}</small>` : ''}</div>`;
       if (it.type === 'toggle') return `<div class="row">${label}<button class="toggle" role="switch" id="set-${it.key}" data-key="${it.key}" aria-checked="${!!s[it.key]}" aria-labelledby="lbl-${it.key}"></button></div>`;
       if (it.type === 'range') return `<div class="row">${label}<input type="range" id="set-${it.key}" data-key="${it.key}" min="0" max="1" step="0.05" value="${s[it.key]}" aria-labelledby="lbl-${it.key}"></div>`;

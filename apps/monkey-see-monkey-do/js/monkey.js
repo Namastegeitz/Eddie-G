@@ -17,9 +17,14 @@ const OUTLINE = 0.028;
 const JOINTS = ['hips', 'torso', 'head', 'shL', 'shR', 'elL', 'elR', 'haL', 'haR', 'hipL', 'hipR', 'knL', 'knR', 'ftL', 'ftR', 'earL', 'earR'];
 const SIDE = { L: -1, R: 1 }; // L = left of the screen (x < 0)
 
-function makeGradient() {
-  const data = new Uint8Array([90, 90, 90, 255, 170, 170, 170, 255, 235, 235, 235, 255, 255, 255, 255, 255]);
-  const tex = new THREE.DataTexture(data, 4, 1, THREE.RGBAFormat);
+/**
+ * Cel-shading steps as a tiny texture. Every toon material gets one: without it
+ * three.js uses fwidth(), which older phones on WebGL 1 can't compile.
+ */
+export function makeGradient(levels = [90, 170, 235, 255]) {
+  const data = new Uint8Array(levels.length * 4);
+  levels.forEach((v, i) => data.set([v, v, v, 255], i * 4));
+  const tex = new THREE.DataTexture(data, levels.length, 1, THREE.RGBAFormat);
   tex.minFilter = THREE.NearestFilter;
   tex.magFilter = THREE.NearestFilter;
   tex.needsUpdate = true;

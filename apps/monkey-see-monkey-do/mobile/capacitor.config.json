@@ -1,0 +1,40 @@
+{
+  "appId": "com.namastegeitz.monkeydo",
+  "appName": "Monkey Do",
+  "webDir": "../dist/www",
+  "backgroundColor": "#0e3527",
+  "loggingBehavior": "debug",
+  "server": {
+    "androidScheme": "https",
+    "errorPath": "update-webview.html"
+  },
+  "android": {
+    "minWebViewVersion": 87,
+    "allowMixedContent": false,
+    "captureInput": false,
+    "webContentsDebuggingEnabled": false
+  },
+  "ios": {
+    "contentInset": "never",
+    "scrollEnabled": false,
+    "allowsLinkPreview": false,
+    "limitsNavigationsToAppBoundDomains": false
+  },
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 4000,
+      "launchAutoHide": true,
+      "launchFadeOutDuration": 250,
+      "backgroundColor": "#0e3527",
+      "showSpinner": false,
+      "androidScaleType": "CENTER_CROP",
+      "splashFullScreen": true,
+      "splashImmersive": false
+    },
+    "SystemBars": {
+      "insetsHandling": "css",
+      "style": "DARK",
+      "initialViewportFitValueHint": "cover"
+    }
+  }
+}

@@ -13,7 +13,7 @@ const dist = join(root, 'dist');
 mkdirSync(join(dist, 'artifact'), { recursive: true });
 
 const tmp = join(dist, '.bundle.js');
-execFileSync('npx', ['--yes', 'esbuild@0.24.2', join(root, 'js/main.js'), '--bundle', '--format=iife', '--minify', '--target=es2020', '--legal-comments=none', `--outfile=${tmp}`], { stdio: 'inherit' });
+execFileSync('npx', ['--yes', 'esbuild@0.24.2', join(root, 'js/main.js'), '--bundle', '--format=iife', '--minify', '--target=es2020,chrome87,safari14,firefox78', '--legal-comments=none', `--outfile=${tmp}`], { stdio: 'inherit' });
 let js = readFileSync(tmp, 'utf8').replace(/<\/script/gi, '<\\/script');
 rmSync(tmp);
 
