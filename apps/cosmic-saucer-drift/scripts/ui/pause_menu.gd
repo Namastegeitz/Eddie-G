@@ -43,7 +43,7 @@ static func make(race: Node) -> Control:
 	v.add_child(help)
 	var quit_text := "Quit cup" if race.req.mode == "cup" else "Quit to menu"
 	v.add_child(UiKit.button(quit_text, func() -> void: Game.go_menu(), 24, 360))
-	resume.call_deferred("grab_focus")
+	UiKit.focus_later(resume)
 	return root
 
 

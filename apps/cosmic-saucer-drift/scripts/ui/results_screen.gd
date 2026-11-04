@@ -136,5 +136,5 @@ static func make(race: Node, results: Array, summary: Dictionary) -> Control:
 	btns.add_child(UiKit.button("Garage", func() -> void: Game.go_menu("garage"), 24))
 	btns.add_child(UiKit.button("Menu", func() -> void: Game.go_menu(), 24))
 	if first:
-		first.call_deferred("grab_focus")
+		UiKit.focus_later(first)
 	return root

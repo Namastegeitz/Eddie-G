@@ -16,6 +16,10 @@ func _ready() -> void:
 	for t in tracks:
 		var req := Game.quick_request(t, variant, 2)
 		req.autopilot = true
+		if args.get("mode", "") == "versus":
+			req = Game.versus_request(t, variant, 2)
+			req.bot_humans = true
+			InputRouter.two_player = true
 		req.laps = 3
 		Game.request = req
 		var race: Race = load("res://scenes/race.tscn").instantiate()

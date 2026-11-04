@@ -95,6 +95,16 @@ func _run(track: String, variant: int, laps: int, cls: int) -> void:
 	print("%s %-16s v%d len=%5.0fm laps=%d finished=%d/%d best=%6.1fs (%.1f m/s) worst=%6.1fs rescues=%d stuck=%d tick=%.2fms\n      %s" % [
 		"OK  " if ok else "FAIL", track, variant, race.td.main.length, laps, fin, race.racers.size(), best,
 		race.td.main.length * laps / maxf(best, 0.01), worst, total_rescue, stuck_n, ms, str(cnt)])
+	if OS.get_cmdline_user_args().has("--prof"):
+		var pr: Dictionary = race.prof
+		var tk := maxf(float(pr.ticks), 1.0)
+		print("      prof us/tick: racers=%.0f pairs=%.0f pickups=%.0f items=%.0f hazards=%.0f rest=%.0f" % [pr.racers / tk, pr.pairs / tk, pr.pickups / tk, pr.items / tk, pr.hazards / tk, pr.rest / tk])
+		var rp: Dictionary = Racer.prof
+		var line := "      racer us/tick:"
+		for k in rp:
+			line += " %s=%.0f" % [k, rp[k] / tk]
+			rp[k] = 0
+		print(line)
 	if not ok:
 		for r in race.racers:
 			if not r.finished:

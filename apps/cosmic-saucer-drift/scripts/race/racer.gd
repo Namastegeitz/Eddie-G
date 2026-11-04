@@ -174,9 +174,14 @@ func place_at(tf: Transform3D) -> void:
 
 
 # ---------------------------------------------------------------- per tick
+static var prof := {"drive": 0, "ground": 0, "steer": 0, "integrate": 0, "progress": 0, "visuals": 0}
+
+
 func tick(dt: float) -> void:
+	var t0 := Time.get_ticks_usec()
 	if controller and not is_ghost:
 		controller.call("drive", self, dt)
+	prof.drive += Time.get_ticks_usec() - t0
 	if frozen:
 		_countdown_input()
 		_visuals(dt)
@@ -187,14 +192,25 @@ func tick(dt: float) -> void:
 		velocity = Vector3.ZERO
 		_visuals(dt)
 		return
+	var t1 := Time.get_ticks_usec()
 	_probe_ground(dt)
+	var t2 := Time.get_ticks_usec()
 	_steer_and_drift(dt)
 	_tricks(dt)
+	var t3 := Time.get_ticks_usec()
 	_integrate(dt)
 	_energy(dt)
+	var t4 := Time.get_ticks_usec()
 	_progress(dt)
 	_items_input()
+	var t5 := Time.get_ticks_usec()
 	_visuals(dt)
+	var t6 := Time.get_ticks_usec()
+	prof.ground += t2 - t1
+	prof.steer += t3 - t2
+	prof.integrate += t4 - t3
+	prof.progress += t5 - t4
+	prof.visuals += t6 - t5
 
 
 func _timers(dt: float) -> void:
@@ -500,7 +516,7 @@ func _progress(dt: float) -> void:
 		wrong_way = false
 		return
 	_short_i = 0
-	var i := path.nearest(global_position, track_idx, 24)
+	var i := path.nearest(global_position, track_idx, 7)
 	if path.pts[i].distance_to(global_position) > td.width * 1.5 + 12.0:
 		# Lost the local match (shortcut, big jump). Only re-sync to another
 		# part of the loop once we're actually driving on the road there, so

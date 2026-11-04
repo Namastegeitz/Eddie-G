@@ -1,0 +1,236 @@
+#!/usr/bin/env python3
+"""Minimal stand-in for Android's `apksigner` (sign + verify) for machines
+that can't download the Android build-tools.
+
+It implements APK Signature Scheme v2 (what Android 7+ and every targetSdk 30+
+app needs) and adds a v1 JAR signature with the JDK's jarsigner for older
+devices. Godot calls it exactly like the real tool:
+
+    apksigner sign --verbose --ks KEYSTORE --ks-pass pass:PW --ks-key-alias ALIAS APK
+    apksigner verify --verbose APK
+
+Keys are read from a PKCS#12 keystore (what keytool makes by default) using the
+`cryptography` package. Only RSA keys are supported (Godot's debug keystore and
+the usual upload keys are RSA).
+"""
+import hashlib
+import os
+import shutil
+import struct
+import subprocess
+import sys
+import tempfile
+
+from cryptography.hazmat.primitives import hashes, serialization
+from cryptography.hazmat.primitives.asymmetric import padding
+from cryptography.hazmat.primitives.serialization import pkcs12
+from cryptography import x509
+
+V2_BLOCK_ID = 0x7109871A
+ALGO_RSA_PKCS1_SHA256 = 0x0103
+MAGIC = b"APK Sig Block 42"
+CHUNK = 1024 * 1024
+
+
+def lp(b):
+    return struct.pack("<I", len(b)) + b
+
+
+def find_eocd(data):
+    # End of central directory: signature 0x06054b50, search from the end.
+    for i in range(len(data) - 22, max(-1, len(data) - 22 - 65536), -1):
+        if data[i:i + 4] == b"PK\x05\x06":
+            return i
+    raise SystemExit("apksigner: not a zip (no EOCD)")
+
+
+def zip_sections(data):
+    eocd = find_eocd(data)
+    cd_size, cd_off = struct.unpack("<II", data[eocd + 12:eocd + 20])
+    return cd_off, cd_size, eocd
+
+
+def existing_sig_block(data, cd_off):
+    """Return (start, end) of an existing APK Signing Block, or None."""
+    if cd_off < 32 or data[cd_off - 16:cd_off] != MAGIC:
+        return None
+    size = struct.unpack("<Q", data[cd_off - 24:cd_off - 16])[0]
+    start = cd_off - size - 8
+    return start, cd_off
+
+
+def chunk_digest(sections):
+    digests = []
+    for sec in sections:
+        for i in range(0, len(sec), CHUNK):
+            c = sec[i:i + CHUNK]
+            digests.append(hashlib.sha256(b"\xa5" + struct.pack("<I", len(c)) + c).digest())
+    return hashlib.sha256(b"\x5a" + struct.pack("<I", len(digests)) + b"".join(digests)).digest()
+
+
+def load_key(ks, password, alias):
+    with open(ks, "rb") as f:
+        blob = f.read()
+    try:
+        key, cert, _extra = pkcs12.load_key_and_certificates(blob, password.encode())
+    except Exception:
+        # JKS keystore: convert to PKCS#12 with keytool first.
+        tmp = tempfile.mkdtemp()
+        p12 = os.path.join(tmp, "ks.p12")
+        subprocess.run(["keytool", "-importkeystore", "-noprompt", "-srckeystore", ks, "-srcstorepass", password,
+                        "-destkeystore", p12, "-deststoretype", "PKCS12", "-deststorepass", password,
+                        "-srcalias", alias], check=True, capture_output=True)
+        with open(p12, "rb") as f:
+            key, cert, _extra = pkcs12.load_key_and_certificates(f.read(), password.encode())
+        shutil.rmtree(tmp, ignore_errors=True)
+    return key, cert
+
+
+def v1_sign(apk, ks, password, alias):
+    if not shutil.which("jarsigner"):
+        return
+    subprocess.run(["jarsigner", "-keystore", ks, "-storepass", password, "-sigalg", "SHA256withRSA",
+                    "-digestalg", "SHA-256", apk, alias], check=True, capture_output=True)
+
+
+def v2_sign(apk, key, cert):
+    with open(apk, "rb") as f:
+        data = f.read()
+    cd_off, cd_size, eocd = zip_sections(data)
+    old = existing_sig_block(data, cd_off)
+    entries_end = old[0] if old else cd_off
+    entries = data[:entries_end]
+    cd = data[cd_off:cd_off + cd_size]
+    eocd_bytes = bytearray(data[eocd:])
+    # For the digest, the EOCD's central-directory offset points at where the
+    # signing block will start (= end of the entries).
+    struct.pack_into("<I", eocd_bytes, 16, entries_end)
+    digest = chunk_digest([entries, cd, bytes(eocd_bytes)])
+    cert_der = cert.public_bytes(serialization.Encoding.DER)
+    pub_der = key.public_key().public_bytes(serialization.Encoding.DER, serialization.PublicFormat.SubjectPublicKeyInfo)
+    digests = lp(lp(struct.pack("<I", ALGO_RSA_PKCS1_SHA256) + lp(digest)))
+    certs = lp(lp(cert_der))
+    attrs = lp(b"")
+    signed_data = digests + certs + attrs
+    sig = key.sign(signed_data, padding.PKCS1v15(), hashes.SHA256())
+    signatures = lp(lp(struct.pack("<I", ALGO_RSA_PKCS1_SHA256) + lp(sig)))
+    signer = lp(signed_data) + signatures + lp(pub_der)
+    v2_value = lp(lp(signer))
+    pair = struct.pack("<Q", 4 + len(v2_value)) + struct.pack("<I", V2_BLOCK_ID) + v2_value
+    block_size = len(pair) + 8 + 16
+    block = struct.pack("<Q", block_size) + pair + struct.pack("<Q", block_size) + MAGIC
+    new_cd_off = entries_end + len(block)
+    eocd_final = bytearray(data[eocd:])
+    struct.pack_into("<I", eocd_final, 16, new_cd_off)
+    out = entries + block + cd + bytes(eocd_final)
+    tmp = apk + ".tmp"
+    with open(tmp, "wb") as f:
+        f.write(out)
+    os.replace(tmp, apk)
+
+
+def v2_verify(apk, verbose):
+    with open(apk, "rb") as f:
+        data = f.read()
+    cd_off, cd_size, eocd = zip_sections(data)
+    blk = existing_sig_block(data, cd_off)
+    if not blk:
+        print("DOES NOT VERIFY: no APK Signing Block")
+        return 1
+    start, end = blk
+    pos = start + 8
+    pairs_end = end - 24
+    v2 = None
+    while pos < pairs_end:
+        ln = struct.unpack("<Q", data[pos:pos + 8])[0]
+        bid = struct.unpack("<I", data[pos + 8:pos + 12])[0]
+        if bid == V2_BLOCK_ID:
+            v2 = data[pos + 12:pos + 8 + ln]
+        pos += 8 + ln
+    if v2 is None:
+        print("DOES NOT VERIFY: no v2 signature")
+        return 1
+
+    def rd(buf, off):
+        n = struct.unpack("<I", buf[off:off + 4])[0]
+        return buf[off + 4:off + 4 + n], off + 4 + n
+
+    signers, _ = rd(v2, 0)
+    signer, _ = rd(signers, 0)
+    signed_data, o = rd(signer, 0)
+    sigs, o = rd(signer, o)
+    pub, o = rd(signer, o)
+    digests, o2 = rd(signed_data, 0)
+    d0, _ = rd(digests, 0)
+    want, _ = rd(d0, 4)
+    certs, _ = rd(signed_data, o2)
+    c0, _ = rd(certs, 0)
+    s0, _ = rd(sigs, 0)
+    sig, _ = rd(s0, 4)
+    cert = x509.load_der_x509_certificate(c0)
+    cert.public_key().verify(sig, signed_data, padding.PKCS1v15(), hashes.SHA256())
+    eocd_bytes = bytearray(data[eocd:])
+    struct.pack_into("<I", eocd_bytes, 16, start)
+    got = chunk_digest([data[:start], data[cd_off:cd_off + cd_size], bytes(eocd_bytes)])
+    if got != want:
+        print("DOES NOT VERIFY: v2 digest mismatch")
+        return 1
+    if verbose:
+        print("Verifies")
+        print("Verified using v1 scheme (JAR signing): %s" % ("true" if b"META-INF/" in data[:start] else "false"))
+        print("Verified using v2 scheme (APK Signature Scheme v2): true")
+        print("Number of signers: 1")
+    return 0
+
+
+def main(argv):
+    if not argv or argv[0] in ("-h", "--help", "help"):
+        print(__doc__)
+        return 0
+    if argv[0] == "version" or argv[0] == "--version":
+        print("0.9-csd")
+        return 0
+    cmd, rest = argv[0], argv[1:]
+    opts = {}
+    files = []
+    i = 0
+    flags_without_value = {"--verbose", "-v"}
+    while i < len(rest):
+        a = rest[i]
+        if a.startswith("--") and a not in flags_without_value:
+            opts[a] = rest[i + 1] if i + 1 < len(rest) else ""
+            i += 2
+        elif a in flags_without_value:
+            opts[a] = True
+            i += 1
+        else:
+            files.append(a)
+            i += 1
+    if not files:
+        print("apksigner: no APK given", file=sys.stderr)
+        return 2
+    apk = files[-1]
+    if cmd == "verify":
+        return v2_verify(apk, "--verbose" in opts or "-v" in opts)
+    if cmd != "sign":
+        print("apksigner: unsupported command %s" % cmd, file=sys.stderr)
+        return 2
+    pw = opts.get("--ks-pass", "pass:android")
+    pw = pw[5:] if pw.startswith("pass:") else pw
+    alias = opts.get("--ks-key-alias", "androiddebugkey")
+    ks = opts["--ks"]
+    out = opts.get("--out")
+    if out:
+        shutil.copyfile(apk, out)
+        apk = out
+    key, cert = load_key(ks, pw, alias)
+    if opts.get("--v1-signing-enabled", "false") == "true":
+        v1_sign(apk, ks, pw, alias)
+    v2_sign(apk, key, cert)
+    if "--verbose" in opts:
+        print("Signed")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv[1:]))

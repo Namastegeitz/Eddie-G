@@ -160,7 +160,7 @@ func build(look: Dictionary) -> void:
 	_build_pilot(pilot, Vector3(0, dome_y, -0.05), dome_r)
 	_part(pivot, _sphere(dome_r, dome_r * 2.0, 18, 8, true), glass, Vector3(0, dome_y, 0))
 	# Thruster glow at the back.
-	thruster = _part(pivot, _cyl(0.0, 0.42, 1.0, 10), _mat(trail_color, 0.0, 1.0, 3.0), Vector3(0, -0.05, rim_r * (1.55 if shape == "rocket" else 1.0) + 0.3), Vector3(-90, 0, 0))
+	thruster = _part(pivot, _cyl(0.0, 0.32, 1.0, 10), _mat(trail_color, 0.0, 1.0, 1.3), Vector3(0, -0.05, rim_r * (1.55 if shape == "rocket" else 1.0) + 0.3), Vector3(-90, 0, 0))
 	# Shield bubble (hidden until used).
 	var sm := StandardMaterial3D.new()
 	sm.albedo_color = Color(0.4, 0.85, 1.0, 0.28)
@@ -310,8 +310,8 @@ func _checker_mat(paint: Color) -> StandardMaterial3D:
 func animate(dt: float, throttle: float, boosting: bool, drift_tier: int, drifting: bool, speed_ratio: float) -> void:
 	if spin_ring:
 		spin_ring.rotate_y(dt * (3.0 + speed_ratio * 12.0))
-	var flame := 0.35 + throttle * 0.6 + (0.9 if boosting else 0.0)
-	thruster.scale = Vector3(1.0 + (0.4 if boosting else 0.0), 0.6 + flame * 1.2, 1.0 + (0.4 if boosting else 0.0))
+	var flame := 0.3 + throttle * 0.5 + (0.8 if boosting else 0.0)
+	thruster.scale = Vector3(1.0 + (0.35 if boosting else 0.0), 0.4 + flame * 0.9, 1.0 + (0.35 if boosting else 0.0))
 	underglow.scale = Vector3.ONE * (0.9 + 0.1 * sin(Time.get_ticks_msec() * 0.01))
 	trail.emitting = speed_ratio > 0.15
 	var on := drifting and drift_tier > 0

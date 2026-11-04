@@ -131,6 +131,14 @@ static func panel(child: Control, c := PANEL) -> PanelContainer:
 	return p
 
 
+## Focus a control next frame, if it's still on screen by then.
+static func focus_later(c: Control) -> void:
+	var f := func() -> void:
+		if is_instance_valid(c) and c.is_inside_tree() and c.is_visible_in_tree():
+			c.grab_focus()
+	f.call_deferred()
+
+
 static func ordinal(n: int) -> String:
 	if n % 100 >= 11 and n % 100 <= 13:
 		return "%dth" % n

@@ -192,6 +192,7 @@ func daily_request() -> Dictionary:
 # ---------------------------------------------------------------- flow
 func start(req: Dictionary) -> void:
 	request = req
+	InputRouter.two_player = req.get("mode", "") == "versus"
 	get_tree().paused = false
 	get_tree().change_scene_to_file("res://scenes/race.tscn")
 

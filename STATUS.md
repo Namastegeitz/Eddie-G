@@ -57,6 +57,35 @@
 - Next: playtest difficulty with people, real art pass (sprites drop in via `"sprite"` in files),
   Android AAB + Play internal track with GodotGooglePlayBilling, iOS via a Mac or Codemagic.
 
+## Cosmic Saucer Drift (`apps/cosmic-saucer-drift`)
+- Built from `prompts/claude/cosmic-saucer-drift.md` (the concept plus every add-on picked: extra
+  weapons, pro driving moves, living tracks + secrets, rival personalities + boss races, cups, time
+  trial + ghost, daily challenge, 2P split-screen, cosmetic garage, 6 tracks, reverse/mirror,
+  achievements + stats; free/no ads with an ads-ready layer switched off).
+- Godot 4.7.2, Compatibility renderer, everything generated from code: spline tracks (TrackDefs ->
+  TrackData -> TrackBuilder), procedural saucers/pilots, space skies, planets, decor per world,
+  synthesised sounds and two music loops (`tools/gen_audio.py`).
+- Driving: hover physics, drift with blue/orange/purple Plasma Boost, surfaces (metal, dust, ice,
+  magnetic rail, bouncy moss, lava rock), rocket start/stall, slipstream, tricks, near misses, Dark
+  Matter energy with Emergency Hover, rescue beam that respawns past gaps.
+- 8 items, 7 hazard types, 6 tracks x 3 variants with a hidden shortcut each (jungle: geyser to a
+  sky bridge) and 3 Star Shards; 8 pilots (passives + AI styles), 6 saucers, upgrades, cosmetics.
+- Modes: Galactic Cups (4 x 4, points, 3 stars a race), Quick Race (4 rival classes), Time Trial
+  (ghost, medals), Boss Races, Daily Challenge (date-seeded, streaks, offline), 2P split-screen.
+- Ads-ready: `Ads` autoload (providers none/debug/AdMob template), 3 placements hidden while off,
+  caps, consent hook, remove-ads flag; `Events` log for future campaign conversions. See
+  `apps/cosmic-saucer-drift/docs/ADS_PLAN.md`.
+- Tests: `tools/run_tests.sh` - parse check, smoke test (291 checks: data, saves, every mode incl. a
+  full cup, ghosts, split-screen, ads flow, menus) and the AI race sim on all 18 layouts: all pass.
+  Game logic ~0.9 ms per physics tick for 8 racers on this machine.
+- Builds: debug APK in `dist/android/` (signed with `tools/android/apksigner`, a small APK Signature
+  Scheme v2 signer, because Google's build-tools download is blocked here); web build published as
+  a private artifact: https://claude.ai/artifact/Wjris6Pjst5K54bF6z8MUY
+- Store kit: `docs/STORE_LISTING.md` (listing text, content rating, Data safety), feature graphic,
+  icon and screenshots in `docs/store/`, `docs/privacy-policy.html`, `docs/STORE_EXPORT_CHECKLIST.md`.
+- Not done here: Play Store AAB (needs the real Android SDK + Gradle on the PC), testing on a real
+  phone, real 3D models/music. Next prompts: `prompts/claude/cosmic-saucer-drift-next.md`.
+
 ## Bug's-Eye View (`apps/bugs-eye-view`)
 - Built end to end from `prompts/claude/bugs-eye-view.md` (all 6 phases, all 16 add-ons).
 - Godot 4.7.2 project: 8 bugs, 3 rooms with boss chases, perception-based stealth,
@@ -145,6 +174,10 @@
 - Next: push the source to a private GitHub repo so cloud/phone sessions can read it.
 
 ## Prompts
+- `prompts/claude/cosmic-saucer-drift.md` - the concept + all chosen add-ons + ads-ready layer;
+  `cosmic-saucer-drift-next.md` - 10 next-build prompts (phone playtest, tutorial race, 3D models,
+  music, online leaderboards, new tracks, rewarded ads, remove-ads purchase, online multiplayer,
+  accessibility).
 - `prompts/claude/monkey-see-monkey-do.md` - the brief + what was filled in; `monkey-see-monkey-do-next.md` -
   14 add-on/next-build prompts; `prompts/codex/monkey-see-monkey-do-tasks.md` - 10 small tasks.
 - `prompts/claude/bugs-eye-view.md` - v2 with the stealth/interactivity add-ons.

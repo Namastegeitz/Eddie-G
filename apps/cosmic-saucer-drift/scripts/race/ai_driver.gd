@@ -23,6 +23,9 @@ var _trick_pressed := false
 var _item_wait := 0.0
 var _wobble := 0.0
 var _rng := RandomNumberGenerator.new()
+var _tick := 0
+var _lane_cache := 0.0
+var _need_cache := 0.0
 
 
 func _init(p_style: String, p_skill: float, seed_v: int) -> void:
@@ -80,8 +83,12 @@ func drive(r: Racer, dt: float) -> void:
 		if td.short and _want_short and to_entry > 0.0 and to_entry < 70.0:
 			lat_target = float(td.short_side) * (hw - 4.0) if not td.short_lift_start else float(td.short_side) * (hw - 5.0)
 		else:
-			lat_target = _pickup_goal(r, s_here, lat_target)
-			lat_target = _avoid(r, s_here, lat_target, hw)
+			# Lane decisions (pods, crates, rivals, mines, hazards) are re-planned
+			# about seven times a second, staggered across the field.
+			if (_tick + r.idx) % 8 == 0:
+				var lt := _pickup_goal(r, s_here, lat_target)
+				_lane_cache = _avoid(r, s_here, lt, hw) - lat_target
+			lat_target += _lane_cache
 		lat_target = clampf(lat_target, -(hw - 2.2), hw - 2.2)
 		target = path.pts[ahead_i] + path.rgt[ahead_i] * lat_target
 	# ------------------------------------------------ steering
@@ -93,14 +100,14 @@ func drive(r: Racer, dt: float) -> void:
 		_wobble += dt * 5.0
 		steer += sin(_wobble) * 0.4
 	# ------------------------------------------------ speed planning
-	var need := 0.0
-	var sign_k := 0.0
-	var horizon := int((look + speed * speed / (2.0 * T.brake_decel)) / path.step)
-	for k in range(2, maxi(horizon, 6), 2):
-		var c := path.curv[path.wi(r.track_idx + k)]
-		if absf(c) > need:
-			need = absf(c)
-			sign_k = signf(c)
+	_tick += 1
+	var need := _need_cache
+	if _tick % 3 == 0:
+		need = 0.0
+		var horizon := int((look + speed * speed / (2.0 * T.brake_decel)) / path.step)
+		for k in range(2, maxi(horizon, 6), 3):
+			need = maxf(need, absf(path.curv[path.wi(r.track_idx + k)]))
+		_need_cache = need
 	var avail := r.steer_rate * (1.0 - T.high_speed_steer_loss * minf(speed / r.max_speed, 1.0))
 	var drift_avail := r.steer_rate * 1.05
 	var can_drift := skill > 0.35

@@ -43,7 +43,12 @@ var _ghost_play := PackedFloat32Array()
 var _ghost_rec := PackedFloat32Array()
 var _ghost_t := 0.0
 var _audio: RaceAudio
+var _env: Environment
+var _decor: Node3D
+var _slow_t := 0.0
+var _fps_lbl: Label
 
+var prof := {"racers": 0, "pairs": 0, "pickups": 0, "items": 0, "hazards": 0, "rest": 0, "ticks": 0}
 const GHOST_HZ := 15.0
 const GHOST_STRIDE := 8
 
@@ -72,6 +77,10 @@ func _ready() -> void:
 	add_child(items)
 	items.setup(self)
 	items.only_item = mods.get("only_item", "")
+	if req.get("free_item", false):
+		for h in humans:
+			if h.item == "":
+				h.item = items.roll(h)
 	hazards = Hazards.new()
 	hazards.name = "Hazards"
 	add_child(hazards)
@@ -125,6 +134,7 @@ func _build_world() -> void:
 	var we := WorldEnvironment.new()
 	we.environment = env
 	add_child(we)
+	_env = env
 	var sun := DirectionalLight3D.new()
 	sun.light_color = theme.sun
 	sun.light_energy = 1.25
@@ -136,6 +146,9 @@ func _build_world() -> void:
 	add_child(track)
 	TrackBuilder.build(td, track)
 	TrackDecor.build(td, track)
+	_decor = track.get_node_or_null("Decor")
+	if q == "low" and _decor:
+		_thin_decor()
 
 
 func _spawn() -> void:
@@ -153,6 +166,8 @@ func _spawn() -> void:
 		r.slot = e.get("slot", -1) if r.is_human else -1
 		if r.is_human:
 			r.controller = PlayerDriver.new(r.slot)
+			if req.get("bot_humans", false):
+				r.controller = AIDriver.new(r.pilot.style, 0.85, k * 31)
 			humans.append(r)
 		else:
 			var ai := AIDriver.new(e.get("style", r.pilot.style), e.get("skill", 0.7), hash(r.name) + k * 977)
@@ -188,6 +203,10 @@ func _setup_views() -> void:
 		ui_layer.add_child(hud)
 		hud.setup(self, view_racers[0], false)
 		huds.append(hud)
+		if Save.setting("show_fps"):
+			_fps_lbl = UiKit.label("", 18, UiKit.DIM)
+			hud.add_child(_fps_lbl)
+			UiKit.place(_fps_lbl, Vector2(0, 1), Vector2(10, -30), Vector2(120, 24))
 		if InputRouter.touch_seen and not autopilot:
 			touch = TouchControls.new()
 			touch.racer = view_racers[0]
@@ -221,6 +240,42 @@ func _setup_views() -> void:
 		get_viewport().disable_3d = true
 		for c in cams:
 			c.snap()
+
+
+## Auto quality: if the game runs below ~28 fps for 3 seconds, step the
+## graphics down (glow off, then fog and half the scenery) and say so.
+func _process(dt: float) -> void:
+	if _fps_lbl:
+		_fps_lbl.text = "%d fps" % Engine.get_frames_per_second()
+	if Save.setting("quality") != "auto" or not racing or get_tree().paused:
+		return
+	if dt > 1.0 / 28.0:
+		_slow_t += dt
+	else:
+		_slow_t = maxf(0.0, _slow_t - dt * 0.5)
+	if _slow_t > 3.0:
+		_slow_t = 0.0
+		if Game.detected_quality == "high":
+			Game.detected_quality = "medium"
+			_env.glow_bloom = 0.0
+			_env.fog_enabled = false
+		elif Game.detected_quality == "medium":
+			Game.detected_quality = "low"
+			_env.glow_enabled = false
+			_thin_decor()
+		else:
+			return
+		for h in huds:
+			h.toast("Graphics lowered for smoother play", UiKit.DIM)
+
+
+func _thin_decor() -> void:
+	if _decor == null:
+		return
+	for c in _decor.get_children():
+		if c is MultiMeshInstance3D:
+			var mm: MultiMesh = c.multimesh
+			mm.visible_instance_count = mm.instance_count / 2
 
 
 func _pause_button() -> Control:
@@ -270,18 +325,32 @@ func _physics_process(dt: float) -> void:
 				_lap_start[r.idx] = 0.0
 	else:
 		time += dt
+	var t0 := Time.get_ticks_usec()
 	for r in racers:
 		r.tick(dt)
+	var t1 := Time.get_ticks_usec()
 	if racing:
 		_bumps()
 		_slipstream(dt)
 		_rubber_band()
+	var t2 := Time.get_ticks_usec()
 	pickups.tick(dt)
+	var t3 := Time.get_ticks_usec()
 	items.tick(dt)
+	var t4 := Time.get_ticks_usec()
 	hazards.tick(dt)
+	var t5 := Time.get_ticks_usec()
 	_rank()
 	_laps()
 	_ghost_tick(dt)
+	var t6 := Time.get_ticks_usec()
+	prof.racers += t1 - t0
+	prof.pairs += t2 - t1
+	prof.pickups += t3 - t2
+	prof.items += t4 - t3
+	prof.hazards += t5 - t4
+	prof.rest += t6 - t5
+	prof.ticks += 1
 	if _all_done_t >= 0.0:
 		_all_done_t -= dt
 		if _all_done_t <= 0.0:
@@ -422,7 +491,7 @@ func _finish(r: Racer) -> void:
 	r.finished = true
 	r.finish_time = time
 	finish_order.append(r)
-	if r.controller is PlayerDriver or autopilot and r == racers[0]:
+	if r.is_human or (autopilot and r == racers[0]):
 		var ai := AIDriver.new(r.pilot.style, 0.8, r.idx)
 		ai.cruise = true
 		r.controller = ai
@@ -447,7 +516,7 @@ func _finish(r: Racer) -> void:
 		if everyone:
 			_all_done_t = 0.01
 	elif (all_humans_done and _all_done_t < 0.0) or everyone:
-		_all_done_t = 2.5
+		_all_done_t = 0.05 if req.get("fast", false) else 2.5
 
 
 func _finish_race() -> void:

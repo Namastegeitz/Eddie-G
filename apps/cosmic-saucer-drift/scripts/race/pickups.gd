@@ -40,7 +40,38 @@ func setup(p_race: Node) -> void:
 	if race.req.get("mode", "") != "boss":
 		for sh in td.shards:
 			shards.append({"pos": sh.pos, "slot": sh.slot, "active": true})
+	_build_buckets()
 	_build_visuals()
+
+
+## Pickups indexed by track sample so each racer only checks nearby ones.
+var _pod_bucket := []
+var _crate_bucket := []
+const BUCKET := 8   # samples per bucket (16 m)
+
+
+func _build_buckets() -> void:
+	var nb := td.main.n / BUCKET + 1
+	_pod_bucket.resize(nb)
+	_crate_bucket.resize(nb)
+	for b in nb:
+		_pod_bucket[b] = PackedInt32Array()
+		_crate_bucket[b] = PackedInt32Array()
+	for k in pods.size():
+		var b: int = td.main.index_at(pods[k].s) / BUCKET
+		_pod_bucket[b].append(k)
+	for k in crates.size():
+		var b: int = td.main.index_at(crates[k].s) / BUCKET
+		_crate_bucket[b].append(k)
+
+
+func _near(buckets: Array, idx: int) -> PackedInt32Array:
+	var nb := buckets.size()
+	var b := idx / BUCKET
+	var out := PackedInt32Array()
+	for d in [-1, 0, 1]:
+		out.append_array(buckets[posmod(b + d, nb)])
+	return out
 
 
 func _build_visuals() -> void:
@@ -50,18 +81,19 @@ func _build_visuals() -> void:
 	pod_mesh.height = 1.5
 	pod_mesh.radial_segments = 6
 	pod_mesh.rings = 3
-	_pod_mm = _mm(pod_mesh, pods.size(), TrackBuilder.glow(Color(0.25, 1.0, 0.95), 2.2), "Pods")
+	var pod_mat := ShaderMaterial.new()
+	pod_mat.shader = preload("res://shaders/spin.gdshader")
+	_pod_mm = _mm(pod_mesh, pods.size(), pod_mat, "Pods")
 	# Crates: glowing cubes.
 	var crate_mesh := BoxMesh.new()
 	crate_mesh.size = Vector3(1.7, 1.7, 1.7)
-	var cm := StandardMaterial3D.new()
-	cm.albedo_color = Color(0.9, 0.5, 1.0, 0.75)
-	cm.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-	cm.emission_enabled = true
-	cm.emission = Color(0.9, 0.4, 1.0)
-	cm.emission_energy_multiplier = 1.6
-	cm.metallic = 0.4
-	cm.roughness = 0.2
+	var cm := ShaderMaterial.new()
+	cm.shader = preload("res://shaders/spin.gdshader")
+	cm.set_shader_parameter("color", Color(0.85, 0.45, 1.0, 0.8))
+	cm.set_shader_parameter("energy", 1.3)
+	cm.set_shader_parameter("spin", 1.3)
+	cm.set_shader_parameter("tumble", 0.7)
+	cm.set_shader_parameter("bob", 0.0)
 	_crate_mm = _mm(crate_mesh, crates.size(), cm, "Crates")
 	# Inner "?" cores so crates read at a distance.
 	var core := SphereMesh.new()
@@ -160,7 +192,9 @@ func tick(dt: float) -> void:
 			continue
 		var rp := r.global_position
 		var pod_r := POD_R * (3.0 if r.pilot.passive == "magnet" else 1.0)
-		for p in pods:
+		var near_crates := _near(_crate_bucket, r.track_idx)
+		for pk in _near(_pod_bucket, r.track_idx):
+			var p: Dictionary = pods[pk]
 			if p.active and rp.distance_squared_to(p.pos) < pod_r * pod_r:
 				p.active = false
 				p.t = POD_RESPAWN
@@ -168,7 +202,8 @@ func tick(dt: float) -> void:
 				r.stats.pods += 1
 				r.emit_signal("event", "pod", {})
 		if r.item == "" and r.item_roll <= 0.0:
-			for c in crates:
+			for ck in near_crates:
+				var c: Dictionary = crates[ck]
 				if c.active and rp.distance_squared_to(c.pos) < CRATE_R * CRATE_R:
 					c.active = false
 					c.t = CRATE_RESPAWN
@@ -177,7 +212,8 @@ func tick(dt: float) -> void:
 					r.emit_signal("event", "item_roll", {})
 					break
 		else:
-			for c in crates:
+			for ck in near_crates:
+				var c: Dictionary = crates[ck]
 				if c.active and rp.distance_squared_to(c.pos) < CRATE_R * CRATE_R:
 					c.active = false
 					c.t = CRATE_RESPAWN
@@ -200,21 +236,22 @@ func tick(dt: float) -> void:
 
 
 func _update_visuals() -> void:
-	var bob := sin(_t * 3.0) * 0.25
+	# Spin and bob happen in the shader; only collected/respawned state changes here.
 	for k in pods.size():
 		var p: Dictionary = pods[k]
-		var b := Basis.from_euler(Vector3(0, _t * 2.0 + k, 0))
-		if not p.active:
-			b = b.scaled(Vector3.ONE * 0.001)
-		_pod_mm.set_instance_transform(k, Transform3D(b, p.pos + Vector3.UP * bob))
+		var shown: bool = p.active
+		if p.get("shown", null) != shown:
+			p["shown"] = shown
+			_pod_mm.set_instance_transform(k, Transform3D(Basis().scaled(Vector3.ONE * (1.0 if shown else 0.001)), p.pos))
 	for k in crates.size():
 		var c: Dictionary = crates[k]
-		var b := Basis.from_euler(Vector3(_t * 0.7, _t * 1.3 + k, 0.4))
 		var s := 1.0
 		if not c.active:
 			s = clampf(1.0 - c.t / 0.4, 0.001, 1.0) if c.t < 0.4 else 0.001
-		_crate_mm.set_instance_transform(k, Transform3D(b.scaled(Vector3.ONE * s), c.pos))
-		c.core.visible = c.active
+		if c.get("shown", -1.0) != s:
+			c["shown"] = s
+			_crate_mm.set_instance_transform(k, Transform3D(Basis().scaled(Vector3.ONE * s), c.pos))
+			c.core.visible = c.active
 	for sh in shards:
 		if sh.active:
 			sh.node.rotation.y = _t * 2.0
