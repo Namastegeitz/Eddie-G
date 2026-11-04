@@ -86,6 +86,9 @@ var _point_bark := 0.0
 var sniffing := false
 var _sniff_sound := 0.0
 ## The other pet in a game of chase, and who's "it".
+## Bolting from a stink cloud: runs away and ignores everything else.
+var scared := 0.0
+var _scare_from := Vector3.ZERO
 var buddy: Pet = null
 var buddy_role: StringName = &""
 var _flee := Vector3.INF
@@ -166,12 +169,6 @@ func is_distracted() -> bool:
 	return play != &"" and play != &"snap"
 
 
-func can_see(p: BugBase) -> bool:
-	if sleeping:
-		return false
-	return super.can_see(p)
-
-
 func _think(delta: float) -> void:
 	_attack_cd -= delta
 	_bark_cd -= delta
@@ -195,6 +192,15 @@ func _think(delta: float) -> void:
 		stop_playing()
 	else:
 		mood = Mood.PLAY if play != &"" else Mood.CALM
+	if scared > 0.0:
+		scared -= delta
+		mood = Mood.ALERT
+		var away := global_position - _scare_from
+		away.y = 0.0
+		if away.length() < 0.1:
+			away = -global_basis.z
+		_move_to(global_position + away.normalized() * 10.0, config.chase_speed, delta)
+		return
 	if pointing > 0.0:
 		mood = Mood.ALERT
 		_point_tick(delta)
@@ -830,6 +836,36 @@ func _buddy_tick(delta: float) -> void:
 				away = -global_basis.z
 			_flee = global_position + away.normalized().rotated(Vector3.UP, randf_range(-0.9, 0.9)) * 14.0
 		_move_to(_flee, config.search_speed * 0.75, delta)
+
+
+# --- Reactions to the newer bugs --------------------------------------------------
+
+func _on_dazzled() -> void:
+	AudioManager.play_at(&"yelp" if barks else &"hiss", eye_position(), 0.0, 1.2)
+
+
+## A stink cloud: it bolts the other way, nose and eyes stinging.
+func stink(from: Vector3, seconds: float) -> bool:
+	if not present or sleeping:
+		return false
+	stop_playing()
+	pointing = 0.0
+	_pounce = Pounce.NONE
+	_ring.visible = false
+	scared = seconds
+	_scare_from = from
+	blind_time = maxf(blind_time, seconds)
+	alert.lose_track()
+	AudioManager.play_at(&"yelp" if barks else &"hiss", eye_position(), 2.0, 1.3)
+	return true
+
+
+func can_see(p: BugBase) -> bool:
+	if scared > 0.0:
+		return false
+	if sleeping:
+		return false
+	return super.can_see(p)
 
 
 # --- Dogs sniff out hiding bugs --------------------------------------------------

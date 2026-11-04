@@ -31,8 +31,9 @@ func clear() -> void:
 	_last_drop = Vector3.INF
 
 
-func update(pos: Vector3, delta: float, active: bool) -> void:
-	var decay := cfg.scent_decay * delta
+## `strength` > 1 makes the trail fade more slowly (a stink bug).
+func update(pos: Vector3, delta: float, active: bool, strength: float = 1.0) -> void:
+	var decay := cfg.scent_decay * delta / maxf(strength, 0.1)
 	for i in strengths.size():
 		if strengths[i] > 0.0:
 			strengths[i] = maxf(strengths[i] - decay, 0.0)

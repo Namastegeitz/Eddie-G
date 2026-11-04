@@ -24,9 +24,9 @@
 
 ## Bug's-Eye View (`apps/bugs-eye-view`)
 - Built end to end from `prompts/claude/bugs-eye-view.md` (all 6 phases, all 16 add-ons).
-- Godot 4.7.2 project: 3 bugs, 3 rooms with boss chases, perception-based stealth,
+- Godot 4.7.2 project: 8 bugs, 3 rooms with boss chases, perception-based stealth,
   escalation chain, daily routines, colony upgrades, menus, touch/keyboard/gamepad.
-- Tests: `tools/run_tests.sh` - 120-check smoke test + 296-check phase audit + offline
+- Tests: `tools/run_tests.sh` - 165-check smoke test + 340-check phase audit + offline
   Meshy client test pass in the project and in an exported build; zero GDScript warnings
   and engine errors.
 - Updates after the build: alarm gauge (threats only investigate until it's full), slower
@@ -34,11 +34,17 @@
   20 new places to hide (11 shelters, 7 sight blockers, 2 tall-grass patches), then bigger
   rooms (kitchen 170x125, living room 180x100, backyard 194x164) with 7 more hiding spots,
   full human bodies (faces, hands, outfits, knee-bending legs), detailed jointed bugs with a
-  walk cycle, 6 bug foods and 6 crumb gems with effects. 84 model slots.
+  walk cycle, 6 bug foods and 6 crumb gems with effects. 90 model slots.
 - Then: fly flight fixed (level flight, hover, look-to-climb) plus updrafts and pestering;
   animals playful/alert with moods and body language, a puppy in the kitchen, sharper each
   room; people do activities (cooking, dishes, snacking, reading, napping, watering, kneeling,
   fetch).
+- Then: touch look stick with a speed button; beagle dog upgrade, cat and dog playing chase in
+  the living room and backyard.
+- Latest: 5 new bugs (ant, cricket, ladybug, firefly, stink bug), each in the shade (a dark
+  silhouette on bug select) until you escape a room as the bug before it; a how-to-play card
+  the first time you play each bug (also under Pause > Controls); a gold exit marker; auto
+  quality that steps graphics down on slow phones; far-away small things stop drawing.
 - Phase-by-phase audit (all 6 phases) done; fixes it found: human feet were never solid,
   props didn't stun via feet, cereal-box domino layout, spider facing/normal errors, fog strength.
 - Android debug APK committed at `apps/bugs-eye-view/dist/android/bugseyeview-debug.apk`.
@@ -46,7 +52,7 @@
   iOS Xcode project (not committed; rebuild with the commands in RUN.md).
 - Playable web build published as a private Claude artifact:
   https://claude.ai/artifact/Gmpx6M1Qb9WmCn1BY1Qbh4
-- Meshy: `apps/bugs-eye-view/tools/meshy/generate.py` + `assets.json` (84 prompts) are ready
+- Meshy: `apps/bugs-eye-view/tools/meshy/generate.py` + `assets.json` (90 prompts) are ready
   but not run yet. The cloud session couldn't reach api.meshy.ai; to run it here, allow
   api.meshy.ai and assets.meshy.ai in the environment's network settings and add
   MESHY_API_KEY as an environment variable, or run it on the PC.

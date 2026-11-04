@@ -130,7 +130,7 @@ func _physics_process(delta: float) -> void:
 		return
 	light_level = get_light_level()
 	visibility = player.compute_visibility(light_level, config)
-	scent.update(player.global_position, delta, player.is_scent_active())
+	scent.update(player.global_position, delta, player.is_scent_active(), player.scent_strength())
 	_loud_decay -= delta
 	if _loud_decay <= 0.0:
 		player_loudness = 0.0

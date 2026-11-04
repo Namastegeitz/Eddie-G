@@ -1,0 +1,30 @@
+[gd_resource type="Resource" script_class="BugStats" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/bug_stats.gd" id="1_mn1g5"]
+
+[resource]
+script = ExtResource("1_mn1g5")
+id = &"ant"
+display_name = "Ant"
+description = "So small it hides in any gap without squeezing and is hard to spot. Sends a column of decoy ants marching off to lead threats away."
+scene_path = "res://scenes/bugs/ant.tscn"
+color = Color(0.3, 0.09, 0.05, 1)
+unlock_hint = "escape a room as the Spider"
+unlock_after_bug = &"spider"
+tagline = "Tiny, sneaky, and never really alone."
+guide = PackedStringArray("primary|Sprint", "secondary|Decoys: a column of ants marches off - threats follow them", "jump|Hop", "dodge|Dash", "sense|Scout: your antennae point to the nearest crumb", "tip|You\'re tiny: any gap hides you without squeezing, and you\'re hard to see.")
+rating_speed = 0.7
+rating_stealth = 0.9
+rating_toughness = 0.2
+move_speed = 5.5
+sprint_speed = 9.0
+jump_velocity = 6.0
+push_force = 0.2
+visibility_mult = 0.6
+noise_mult = 0.5
+camo_tags = PackedStringArray("soil", "dark_wood", "leaves")
+sense_max = 5.0
+gap_crawler = true
+tiny = true
+ability_cooldown = 9.0
+ability_duration = 7.0

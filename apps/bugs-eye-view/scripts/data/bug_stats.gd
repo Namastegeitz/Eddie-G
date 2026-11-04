@@ -8,6 +8,13 @@ extends Resource
 @export var scene_path: String = ""
 @export var color: Color = Color(0.45, 0.27, 0.12)
 @export var unlock_hint: String = ""
+## Escape any room as this bug to bring this one out of the shade.
+@export var unlock_after_bug: StringName = &""
+## One line for the bug select card.
+@export var tagline: String = ""
+## How to play it, one line per button: "action|what it does"
+## (action = primary, secondary, jump, dodge, sense, interact or move).
+@export var guide: PackedStringArray = []
 ## 0-1 ratings shown on the bug select cards.
 @export var rating_speed: float = 0.5
 @export var rating_stealth: float = 0.5
@@ -69,8 +76,35 @@ extends Resource
 @export var web_trap_duration: float = 6.0
 @export var bridge_duration: float = 8.0
 
+@export_group("Small bugs")
+## Fits the gaps cockroaches use (under appliances, cracks).
+@export var gap_crawler: bool = false
+## So small it's hidden in a gap without squeezing.
+@export var tiny: bool = false
+## Takes the routes and perches made for the fly (open vents, window gaps).
+@export var fly_routes: bool = false
+
+@export_group("Special ability")
+## Generic tuning for the newer bugs' special moves (decoys, chirps, shell,
+## stink, flash, flutter): see each bug's script for what they mean.
+@export var ability_cooldown: float = 8.0
+@export var ability_duration: float = 6.0
+@export var ability_radius: float = 8.0
+@export var ability_meter_max: float = 4.0
+
 @export_group("Squeeze")
 @export var squeeze_speed_mult: float = 0.4
 @export var dark_speed_bonus: float = 0.25
 @export var scatter_boost: float = 0.6
 @export var scatter_duration: float = 1.2
+
+
+## Whether this bug fits a passage or shelter meant for the listed bugs
+## (empty = everyone). Small ground bugs use the cockroach's gaps; the
+## firefly uses the fly's routes.
+func fits(bug_ids: PackedStringArray) -> bool:
+	if bug_ids.is_empty() or bug_ids.has(String(id)):
+		return true
+	if gap_crawler and bug_ids.has("cockroach"):
+		return true
+	return fly_routes and bug_ids.has("fly")

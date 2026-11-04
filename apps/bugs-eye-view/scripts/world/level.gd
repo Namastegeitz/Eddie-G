@@ -120,6 +120,7 @@ func _ready() -> void:
 	_update_ambient()
 	crumbs_changed.emit(crumbs_got, crumbs_needed)
 	objective_changed.emit("Collect %d crumbs" % crumbs_needed)
+	_maybe_show_guide()
 
 
 func _exit_tree() -> void:
@@ -153,6 +154,34 @@ func _spawn_camera() -> void:
 	camera = (load(CAMERA_SCENE) as PackedScene).instantiate() as FollowCamera
 	add_child(camera)
 	camera.set_target(player)
+
+
+## After a quality change (Settings or auto quality).
+func refresh_quality() -> void:
+	if _sun:
+		_sun.shadow_enabled = GameManager.shadows_enabled()
+
+
+## First time with this bug: show how to play it (the game waits).
+func _maybe_show_guide() -> void:
+	if GameManager.guides_enabled and player and not SaveSystem.has_seen_guide(player.stats.id):
+		show_bug_guide()
+
+
+func show_bug_guide() -> BugGuide:
+	var g := BugGuide.new()
+	g.name = "BugGuide"
+	g.stats = player.stats
+	g.labels = player.get_action_labels()
+	add_child(g)
+	get_tree().paused = true
+	var id := player.stats.id
+	g.closed.connect(func() -> void:
+		SaveSystem.mark_guide_seen(id)
+		SaveSystem.save_game()
+		if GameManager.state == GameManager.State.PLAYING:
+			get_tree().paused = false)
+	return g
 
 
 func _spawn_ui() -> void:

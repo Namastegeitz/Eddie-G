@@ -89,6 +89,21 @@ static func merge_meshes(parent: Node, skip: Array = []) -> void:
 		merged.name = keep_name
 
 
+## Small things stop drawing far away (they'd be a pixel or two anyway):
+## fewer draw calls, smoother on phones. Lights fade out too.
+static func _cull_far(root: Node, dist: float) -> void:
+	for n in root.find_children("*", "GeometryInstance3D", true, false):
+		var g := n as GeometryInstance3D
+		g.visibility_range_end = dist
+		g.visibility_range_end_margin = dist * 0.15
+		g.visibility_range_fade_mode = GeometryInstance3D.VISIBILITY_RANGE_FADE_SELF
+	for n in root.find_children("*", "Light3D", true, false):
+		var l := n as Light3D
+		l.distance_fade_enabled = true
+		l.distance_fade_begin = dist * 0.8
+		l.distance_fade_length = dist * 0.2
+
+
 static func box(size: Vector3) -> BoxMesh:
 	var b := BoxMesh.new()
 	b.size = size
@@ -233,6 +248,142 @@ static func _pivots(root: Node) -> Array:
 	return out
 
 
+## A bug body: script, stats, collision; the caller fills "Visual".
+static func _bug_root(script: String, node_name: String, stats_id: String) -> CharacterBody3D:
+	var b := scripted(CharacterBody3D.new(), script, node_name) as CharacterBody3D
+	b.set("stats", load("res://resources/bugs/%s.tres" % stats_id))
+	shape(b, sphere_shape(0.35))
+	return b
+
+
+## The crumb-finding arrow the ground bugs' antennae sense shows.
+static func _sense_arrow(b: Node) -> void:
+	var arrow := node3d(b, "SenseArrow", Vector3(0, 1.4, 0))
+	var am := mesh(arrow, "Arrow", PrismMesh.new(), "arrow", Vector3(0, 0, -0.6), Vector3(-PI * 0.5, 0, 0), Vector3(0.6, 0.8, 0.15))
+	am.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+
+
+static func _six_legs(v: Node3D, mat_f: String, mat_t: String, femur: float, tibia: float, up: float, down: float,
+		thick: float, hip_x: float, hip_y: float, z0: float, dz: float, spines: bool = false) -> void:
+	var fwd := [0.6, 0.0, -0.6]
+	for i in 3:
+		for x in [-1.0, 1.0]:
+			_leg(v, "Leg%s%d" % ["L" if x < 0.0 else "R", i + 1], x, fwd[i], Vector3(x * hip_x, hip_y, z0 + i * dz),
+				femur, tibia, up, down, mat_f, mat_t, thick, (i + (1 if x > 0.0 else 0)) % 2, spines)
+
+
+## The five newer bugs: ant, cricket, ladybug, firefly, stink bug.
+static func new_bugs(force: bool) -> void:
+	# Ant: three-part body, pinched waist, elbowed antennae, mandibles.
+	var a := _bug_root("res://scripts/bugs/ant.gd", "Ant", "ant")
+	var av := node3d(a, "Visual")
+	mesh(av, "Abdomen", sphere(0.3), "ant", Vector3(0, 0.02, 0.42), Vector3.ZERO, Vector3(0.85, 0.75, 1.2))
+	mesh(av, "Waist", sphere(0.09), "ant", Vector3(0, -0.02, 0.1))
+	mesh(av, "Thorax", sphere(0.17), "ant", Vector3(0, 0.0, -0.14), Vector3.ZERO, Vector3(0.8, 0.75, 1.5))
+	mesh(av, "Head", sphere(0.19), "ant", Vector3(0, 0.03, -0.46), Vector3.ZERO, Vector3(1.0, 0.9, 1.0))
+	for x in [-1.0, 1.0]:
+		mesh(av, "Mandible", box(Vector3(0.04, 0.03, 0.15)), "ant", Vector3(x * 0.06, -0.05, -0.64), Vector3(0, x * 0.45, 0))
+		mesh(av, "Eye", sphere(0.05), "spider_eye", Vector3(x * 0.14, 0.07, -0.52))
+		_antenna(av, "AntennaL" if x < 0.0 else "AntennaR", x, Vector3(x * 0.07, 0.12, -0.58), 0.3, 0.025, "ant")
+	_six_legs(av, "ant", "ant", 0.3, 0.36, 0.55, 1.15, 0.035, 0.08, -0.04, -0.24, 0.08)
+	_merge_bug(av)
+	add_skin(av, "bug_ant", Vector3(0.9, 0.5, 1.5), Vector3(0, 0.0, -0.05))
+	_rig(a, "tripod")
+	_sense_arrow(a)
+	pack(a, "res://scenes/bugs/ant.tscn", force)
+
+	# Cricket: long body, folded wings, huge jumping hind legs, long antennae.
+	var c := _bug_root("res://scripts/bugs/cricket.gd", "Cricket", "cricket")
+	var cv := node3d(c, "Visual")
+	mesh(cv, "Abdomen", sphere(0.3), "cricket", Vector3(0, 0.05, 0.35), Vector3.ZERO, Vector3(0.85, 0.8, 1.6))
+	mesh(cv, "Thorax", box(Vector3(0.5, 0.38, 0.5)), "cricket_dark", Vector3(0, 0.12, -0.25))
+	mesh(cv, "Head", sphere(0.24), "cricket_dark", Vector3(0, 0.12, -0.6))
+	for x in [-1.0, 1.0]:
+		mesh(cv, "Eye", sphere(0.07), "spider_eye", Vector3(x * 0.17, 0.22, -0.66))
+		mesh(cv, "Wing", box(Vector3(0.22, 0.04, 0.95)), "cricket_dark", Vector3(x * 0.11, 0.33, 0.25), Vector3(0, -x * 0.05, 0))
+		mesh(cv, "Cercus", cyl(0.03, 0.4, 0.005), "cricket", Vector3(x * 0.09, 0.05, 0.95), Vector3(PI * 0.5, 0, -x * 0.3))
+		_antenna(cv, "AntennaL" if x < 0.0 else "AntennaR", x, Vector3(x * 0.08, 0.2, -0.78), 0.75, 0.02, "cricket")
+	for i in 2:
+		for x in [-1.0, 1.0]:
+			_leg(cv, "Leg%s%d" % ["L" if x < 0.0 else "R", i + 1], x, [0.55, 0.05][i], Vector3(x * 0.2, -0.05, -0.35 + i * 0.2),
+				0.3, 0.38, 0.4, 1.1, "cricket", "cricket_dark", 0.05, (i + (1 if x > 0.0 else 0)) % 2)
+	for x in [-1.0, 1.0]:
+		# The big jumping legs, folded high along the body.
+		_leg(cv, "Leg%s3" % ("L" if x < 0.0 else "R"), x, -0.95, Vector3(x * 0.22, 0.0, 0.1),
+			0.62, 0.66, 1.0, 1.75, "cricket", "cricket_dark", 0.1, 0 if x < 0.0 else 1, true)
+	_merge_bug(cv)
+	add_skin(cv, "bug_cricket", Vector3(1.0, 0.8, 2.2), Vector3(0, 0.1, 0.0))
+	_rig(c, "tripod")
+	_sense_arrow(c)
+	pack(c, "res://scenes/bugs/cricket.tscn", force)
+
+	# Ladybug: red spotted dome (two wing cases that lift to flutter).
+	var l := _bug_root("res://scripts/bugs/ladybug.gd", "Ladybug", "ladybug")
+	var lv := node3d(l, "Visual")
+	mesh(lv, "Underside", sphere(0.42), "ladybug_black", Vector3(0, -0.02, 0.05), Vector3.ZERO, Vector3(1.0, 0.45, 1.15))
+	mesh(lv, "Pronotum", sphere(0.26), "ladybug_black", Vector3(0, 0.1, -0.38), Vector3.ZERO, Vector3(1.25, 0.6, 0.7))
+	mesh(lv, "Head", sphere(0.15), "ladybug_black", Vector3(0, 0.02, -0.54))
+	for x in [-1.0, 1.0]:
+		mesh(lv, "Cheek", sphere(0.07), "plastic_white", Vector3(x * 0.22, 0.14, -0.44), Vector3.ZERO, Vector3(1.0, 0.6, 1.0))
+		_antenna(lv, "AntennaL" if x < 0.0 else "AntennaR", x, Vector3(x * 0.06, 0.08, -0.64), 0.17, 0.02, "ladybug_black")
+		var half := node3d(lv, "ShellL" if x < 0.0 else "ShellR", Vector3(x * 0.02, 0.12, 0.0))
+		mesh(half, "Case", sphere(0.45), "ladybug_red", Vector3(x * 0.2, 0.0, 0.08), Vector3.ZERO, Vector3(0.52, 0.62, 1.08))
+		for spot in [Vector3(0.2, 0.25, -0.12), Vector3(0.26, 0.2, 0.18), Vector3(0.12, 0.27, 0.36)]:
+			mesh(half, "Spot", sphere(0.07), "ladybug_black", Vector3(x * spot.x, spot.y, spot.z), Vector3.ZERO, Vector3(1.0, 0.45, 1.0))
+	_six_legs(lv, "ladybug_black", "ladybug_black", 0.2, 0.25, 0.2, 1.1, 0.04, 0.2, -0.08, -0.2, 0.2)
+	_merge_bug(lv)
+	add_skin(lv, "bug_ladybug", Vector3(1.0, 0.6, 1.2), Vector3(0, 0.0, 0.0))
+	_rig(l, "tripod")
+	_sense_arrow(l)
+	pack(l, "res://scenes/bugs/ladybug.tscn", force)
+
+	# Firefly: dark body, orange shield, glowing lantern tail, wings.
+	var f := _bug_root("res://scripts/bugs/firefly.gd", "Firefly", "firefly")
+	var fv := node3d(f, "Visual")
+	mesh(fv, "Thorax", sphere(0.22), "firefly_body", Vector3(0, 0.05, -0.1), Vector3.ZERO, Vector3(1, 0.8, 1.3))
+	mesh(fv, "Abdomen", sphere(0.24), "firefly_body", Vector3(0, 0.0, 0.4), Vector3.ZERO, Vector3(0.9, 0.75, 1.6))
+	mesh(fv, "Lantern", sphere(0.2), "firefly_glow", Vector3(0, -0.03, 0.78), Vector3.ZERO, Vector3(0.85, 0.7, 1.0))
+	mesh(fv, "Shield", sphere(0.22), "firefly_orange", Vector3(0, 0.15, -0.38), Vector3.ZERO, Vector3(1.25, 0.5, 0.9))
+	mesh(fv, "Head", sphere(0.12), "firefly_body", Vector3(0, 0.05, -0.53))
+	for x in [-1.0, 1.0]:
+		mesh(fv, "Eye", sphere(0.06), "spider_eye", Vector3(x * 0.09, 0.07, -0.58))
+		_antenna(fv, "AntennaL" if x < 0.0 else "AntennaR", x, Vector3(x * 0.05, 0.1, -0.62), 0.3, 0.02, "firefly_body")
+		var wing := node3d(fv, "WingL" if x < 0.0 else "WingR", Vector3(x * 0.15, 0.24, 0.0))
+		mesh(wing, "Wing", sphere(0.5), "wing", Vector3(x * 0.42, 0, 0.15), Vector3(0, x * 0.2, 0), Vector3(0.85, 0.04, 0.38))
+		mesh(wing, "Case", sphere(0.3), "firefly_body", Vector3(x * 0.12, 0.02, 0.3), Vector3.ZERO, Vector3(0.45, 0.2, 1.4))
+	_six_legs(fv, "firefly_body", "firefly_body", 0.25, 0.3, 0.2, 1.1, 0.04, 0.13, -0.18, -0.22, 0.16)
+	var glow := OmniLight3D.new()
+	glow.name = "Glow"
+	glow.light_color = Color(0.8, 1.0, 0.35)
+	glow.omni_range = 6.0
+	glow.light_energy = 1.4
+	glow.position = Vector3(0, -0.05, 0.85)
+	fv.add_child(glow)
+	_merge_bug(fv)
+	add_skin(fv, "bug_firefly", Vector3(0.9, 0.6, 1.5), Vector3(0, 0.0, 0.1), ["WingL", "WingR", "Glow"])
+	_rig(f, "tripod")
+	pack(f, "res://scenes/bugs/firefly.tscn", force)
+
+	# Stink bug: broad shield shape, mottled, banded edges and legs.
+	var k := _bug_root("res://scripts/bugs/stink_bug.gd", "StinkBug", "stink_bug")
+	var kv := node3d(k, "Visual")
+	mesh(kv, "Rim", sphere(0.56), "stink_edge", Vector3(0, -0.02, 0.15), Vector3.ZERO, Vector3(1.08, 0.24, 1.08))
+	mesh(kv, "Shield", sphere(0.55), "stink", Vector3(0, 0.04, 0.15), Vector3.ZERO, Vector3(1.0, 0.35, 1.0))
+	mesh(kv, "Shoulders", sphere(0.3), "stink", Vector3(0, 0.1, -0.36), Vector3.ZERO, Vector3(1.65, 0.45, 0.8))
+	mesh(kv, "Head", sphere(0.15), "stink", Vector3(0, 0.07, -0.6), Vector3.ZERO, Vector3(1.0, 0.7, 1.1))
+	for spot in [Vector3(-0.18, 0.22, 0.0), Vector3(0.2, 0.21, 0.1), Vector3(0.0, 0.23, 0.3), Vector3(-0.25, 0.18, 0.35), Vector3(0.28, 0.17, -0.2)]:
+		mesh(kv, "Mottle", sphere(0.07), "stink_edge", spot, Vector3.ZERO, Vector3(1.0, 0.35, 1.0))
+	for x in [-1.0, 1.0]:
+		mesh(kv, "Eye", sphere(0.04), "spider_eye", Vector3(x * 0.1, 0.1, -0.68))
+		_antenna(kv, "AntennaL" if x < 0.0 else "AntennaR", x, Vector3(x * 0.06, 0.08, -0.72), 0.3, 0.025, "stink_edge")
+	_six_legs(kv, "stink", "stink_edge", 0.28, 0.32, 0.3, 1.1, 0.05, 0.25, -0.06, -0.25, 0.22)
+	_merge_bug(kv)
+	add_skin(kv, "bug_stink_bug", Vector3(1.4, 0.5, 1.4), Vector3(0, 0.0, 0.1))
+	_rig(k, "tripod")
+	_sense_arrow(k)
+	pack(k, "res://scenes/bugs/stink_bug.tscn", force)
+
+
 static func _rig(bug: Node, gait: String) -> void:
 	var rig := scripted(Node.new(), "res://scripts/bugs/bug_rig.gd", "Rig")
 	rig.set("gait", gait)
@@ -353,6 +504,8 @@ static func bugs(force: bool) -> void:
 	zl.top_level = true
 	zl.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	pack(s, "res://scenes/bugs/spider.tscn", force)
+
+	new_bugs(force)
 
 	var w := scripted(StaticBody3D.new(), "res://scripts/bugs/web_strand.gd", "WebStrand")
 	shape(w, box_shape(Vector3(0.6, 0.15, 1.0)))
@@ -702,6 +855,7 @@ static func pickups(force: bool) -> void:
 			glow.omni_range = 6.0
 			glow.light_energy = 1.5
 			v.add_child(glow)
+		_cull_far(c, 90.0)
 		pack(c, "res://scenes/world/%s.tscn" % ("golden_crumb" if golden else "crumb"), force)
 
 	var g := scripted(Area3D.new(), "res://scripts/world/goal.gd", "Goal")
@@ -747,6 +901,7 @@ static func items(force: bool) -> void:
 			merge_meshes(sp)
 			var halo := mesh(it, "Halo", cyl(1.2, 0.04), "light_tint", Vector3(0, 0.05, 0))
 			halo.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		_cull_far(it, 110.0)
 		pack(it, "res://scenes/items/%s.tscn" % id, force)
 
 
@@ -835,6 +990,7 @@ static func _prop(force: bool, name: String, m: Mesh, s: Shape3D, material: Stri
 	var v := node3d(p, "Visual")
 	mesh(v, "Mesh", m, material, offset)
 	add_skin(v, "prop_" + name, m.get_aabb().size, offset + m.get_aabb().get_center())
+	_cull_far(p, 100.0)
 	pack(p, "res://scenes/props/%s.tscn" % name, force)
 
 

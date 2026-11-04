@@ -9,7 +9,6 @@ description = "Breakfast rush, a swatter by the sink, a playful puppy and a robo
 scene_path = "res://scenes/levels/kitchen.tscn"
 crumbs_required = 10
 par_time = 240.0
-unlocks_bug = &"fly"
 boss_name = "Cleaning Day"
 routine = ExtResource("1_1kmgl")
 time_slots = PackedStringArray("morning", "afternoon", "night")

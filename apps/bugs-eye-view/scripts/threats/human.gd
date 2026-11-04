@@ -224,7 +224,8 @@ func _search(delta: float) -> void:
 	var flat := Vector2(target.x - _body_pos.x, target.z - _body_pos.z).length()
 	if flat > 10.0:
 		_walk_towards(target, delta, step_time * 0.8)
-	elif _attack_cd <= 0.0:
+	elif _attack_cd <= 0.0 and not (PerceptionSystem.player and PerceptionSystem.player.is_spared_by_people() \
+			and not PerceptionSystem.alarm_active):
 		# Stomp around the spot where the noise came from.
 		_attack_cd = config.attack_cooldown * 1.1
 		var off := Vector3(randf_range(-4.0, 4.0), 0.0, randf_range(-4.0, 4.0))
@@ -236,6 +237,10 @@ func _attack(delta: float) -> void:
 	if p == null:
 		return
 	var target := p.global_position
+	if p.is_spared_by_people() and not PerceptionSystem.alarm_active:
+		# A ladybug: they watch it, but nobody swats a ladybug... yet.
+		face_towards(target, delta)
+		return
 	face_towards(target, delta, config.turn_speed * 2.0)
 	var flat := Vector2(target.x - _body_pos.x, target.z - _body_pos.z).length()
 	if flat > config.attack_range:
@@ -559,6 +564,23 @@ func can_see(p: BugBase) -> bool:
 
 func _hearing_mult() -> float:
 	return 0.4 if activity == &"nap" else 1.0
+
+
+func _on_dazzled() -> void:
+	end_activity()
+	AudioManager.play_at(&"voice_huh", eye_position(), 2.0, 1.25, &"Muffled")
+
+
+## A stink cloud: they cough and splutter, eyes watering - can't see, and
+## stop what they're doing.
+func stink(_from: Vector3, seconds: float) -> bool:
+	if not present or stun_time > 0.0:
+		return false
+	end_activity()
+	stun(seconds, true)
+	blind_time = maxf(blind_time, seconds + 1.0)
+	AudioManager.play_at(&"voice_huh", eye_position(), 3.0, 1.45, &"Muffled")
+	return true
 
 
 ## A fly buzzing at their face: they flail and swat at the air, and can't see

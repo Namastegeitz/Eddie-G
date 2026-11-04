@@ -4,7 +4,7 @@ extends CanvasLayer
 const SETTINGS_SCENE := "res://scenes/ui/settings_menu.tscn"
 
 var _root: Control
-var _help: Label
+var _help: VBoxContainer
 
 
 func _ready() -> void:
@@ -22,8 +22,9 @@ func _ready() -> void:
 	col.add_child(UIKit.button("Resume", GameManager.toggle_pause))
 	col.add_child(UIKit.button("Restart", GameManager.restart_level))
 	col.add_child(UIKit.button("Settings", _open_settings))
-	col.add_child(UIKit.button("Controls", func() -> void: _help.visible = not _help.visible))
-	_help = UIKit.label(_controls_text(), 18, UIKit.DIM)
+	col.add_child(UIKit.button("Controls", _toggle_help))
+	_help = UIKit.vbox(10)
+	_help.name = "Help"
 	_help.visible = false
 	col.add_child(_help)
 	col.add_child(UIKit.button("Quit to menu", func() -> void: GameManager.goto("main_menu")))
@@ -37,6 +38,20 @@ func _on_state(s: int) -> void:
 
 func bind(_lvl: Level) -> void:
 	pass
+
+
+## How to play the bug you're playing, plus the general controls.
+func _toggle_help() -> void:
+	if _help.visible:
+		_help.visible = false
+		return
+	for c in _help.get_children():
+		c.queue_free()
+	var lvl := Level.current
+	if lvl and lvl.player:
+		_help.add_child(BugGuide.build_panel(lvl.player.stats, lvl.player.get_action_labels(), false))
+	_help.add_child(UIKit.label(_controls_text(), 16, UIKit.DIM))
+	_help.visible = true
 
 
 func _controls_text() -> String:

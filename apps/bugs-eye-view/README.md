@@ -12,20 +12,38 @@ and escape. One codebase for Android, iOS, Windows, macOS, Linux and the web.
 
 ## What's in the game
 
-**Three bugs**
+**Eight bugs.** You start as the cockroach; the rest wait in the shade (a dark
+silhouette on the bug select screen) and come out one at a time when you
+escape a room as the bug before them.
 - **Cockroach** (unlocked from the start): fast, squeezes flat into gaps to
   hide, survives one extra hit with a knockdown, plays dead near a suspicious
   threat, smells crumbs with its antennae, runs faster in the dark and bolts
   when a light flicks on.
-- **Fly** (escape the Kitchen): buzzy, level 3D flight that hovers in place
+- **Fly** (escape a room as the cockroach): buzzy, level 3D flight that hovers in place
   when you let go, climbs where you look, rides warm updrafts over the stove,
   lamps and grill, and pesters people and pets. Compound-eye slow motion when
   a strike is about to land, and escape moves: burst, evasive loop, silent
   dive, clinging to walls and ceilings, jinking, and a silent glide when
   stamina runs out.
-- **Spider** (escape the Living Room): walks on walls and ceilings, zips on
+- **Spider** (escape as the fly): walks on walls and ceilings, zips on
   web lines that stay behind as bridges, spins web traps, feels footsteps as
   ripples through walls.
+- **Ant** (escape as the spider): tiny, so any gap hides it without
+  squeezing; sends off a column of decoy ants that threats follow.
+- **Cricket** (escape as the ant): hold Jump to charge a huge leap; chirps to
+  throw its voice so threats go and look somewhere else.
+- **Ladybug** (escape as the cricket): shells up so nothing can hurt it,
+  flutters down from heights, and people won't swat it until the alarm is
+  full.
+- **Firefly** (escape as the ladybug): flies like the fly but glows while
+  flying; its Flash dazzles every person and pet nearby.
+- **Stink bug** (escape as the firefly): slow, takes three hits, and its
+  stink cloud makes pets bolt and people cough; its smell lingers, so dogs
+  track it easily.
+
+A how-to-play card shows each bug's buttons the first time you play it (and
+under Pause > Controls). A gold marker points to the exit once it opens, and
+the game turns its graphics down by itself if a phone can't keep up.
 
 **Three big rooms, each with a boss chase when the exit opens**
 - **Kitchen**: the human's feet and swatter, a sink drain, a glue trap, the
@@ -61,7 +79,8 @@ and barks at your hiding spot when it finds you.
 
 **Bugs**: jointed
 legs that scuttle in a real gait, twitching antennae, wing veins, eight
-spider eyes and fangs; they clean their antennae when left idle.
+spider eyes and fangs, a ladybug's opening shell and a glowing firefly
+lantern; they clean their antennae when left idle.
 
 **Stealth systems**
 - Light and shadow zones, noisy and quiet surfaces, ambient noise that masks
@@ -99,7 +118,7 @@ for a generated 3D model (84 in all); `tools/meshy/generate.py` makes them with 
 (needs your Meshy API key; see [tools/meshy/README.md](tools/meshy/README.md)).
 
 - Two headless test suites pass in the project and in an exported build
-  (`tools/run_tests.sh`): a 120-check smoke test and a 296-check phase audit
+  (`tools/run_tests.sh`): a 165-check smoke test and a 340-check phase audit
   that walks the spec phase by phase, plus every update since (alarm gauge,
   fly moves, hiding spots, model slots, bigger rooms, people, bug detail, food
   and gems, flying, animals and people's activities). Zero GDScript warnings, zero engine errors.

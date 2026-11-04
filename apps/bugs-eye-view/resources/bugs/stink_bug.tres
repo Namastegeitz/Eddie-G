@@ -1,0 +1,29 @@
+[gd_resource type="Resource" script_class="BugStats" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/bug_stats.gd" id="1_ejckr"]
+
+[resource]
+script = ExtResource("1_ejckr")
+id = &"stink_bug"
+display_name = "Stink Bug"
+description = "Takes three hits. Release a stink cloud: pets bolt from it, people cough and can't see. Your smell lingers, though - dogs track you easily."
+scene_path = "res://scenes/bugs/stink_bug.tscn"
+color = Color(0.42, 0.38, 0.3, 1)
+unlock_hint = "escape a room as the Firefly"
+unlock_after_bug = &"firefly"
+tagline = "Slow, tough, and impossible to ignore."
+guide = PackedStringArray("primary|Stink cloud: pets bolt, people cough and can\'t see", "secondary|Squeeze into gaps", "jump|Hop", "dodge|Dash", "sense|Antennae: point to the nearest crumb", "tip|Slow but takes three hits. Your smell lingers - dogs track you easily.")
+rating_speed = 0.35
+rating_stealth = 0.45
+rating_toughness = 1.0
+max_hits = 3
+knockdown_time = 0.8
+move_speed = 4.5
+sprint_speed = 4.5
+jump_velocity = 6.0
+visibility_mult = 0.95
+noise_mult = 0.9
+camo_tags = PackedStringArray("leaves", "soil", "dark_wood")
+gap_crawler = true
+ability_cooldown = 10.0
+ability_radius = 9.0

@@ -5,6 +5,8 @@ extends TestBase
 
 
 func _ready() -> void:
+	GameManager.guides_enabled = false
+	GameManager.auto_quality_enabled = false
 	SaveSystem.save_path = "user://phase_audit_save.json"
 	SaveSystem.data = SaveSystem.default_data()
 	await get_tree().process_frame
@@ -39,6 +41,8 @@ func _ready() -> void:
 		await _phase12()
 	if only in [0, 13]:
 		await _phase13()
+	if only in [0, 14]:
+		await _phase14()
 	finish("phase audit")
 
 
@@ -323,10 +327,12 @@ func _phase2() -> void:
 	texts = await _button_texts("res://scenes/ui/bug_select.tscn")
 	check(texts.has("Play as Fly"), "bug select offers the fly once unlocked")
 	GameManager.current_level = &"living_room"
+	GameManager.current_bug = &"fly"
 	GameManager.begin_run(RunStats.new())
 	GameManager.run.crumbs = 9
 	GameManager.finish_run(true)
-	check(SaveSystem.is_bug_unlocked(&"spider"), "escaping the living room unlocks the spider")
+	check(SaveSystem.is_bug_unlocked(&"spider"), "escaping a room as the fly brings the spider out of the shade")
+	GameManager.current_bug = &"cockroach"
 
 	# Time slots unlock after a room is escaped, and each slot plays.
 	SaveSystem.data = SaveSystem.default_data()
@@ -521,7 +527,7 @@ func _phase3() -> void:
 		await frames(5)
 		check(GameManager.state == GameManager.State.WIN, "%s: reaching the exit wins" % level)
 		await unload(lvl)
-	check(SaveSystem.is_bug_unlocked(&"spider") and SaveSystem.is_level_completed(&"backyard"), "winning both rooms unlocks the spider and records the backyard")
+	check(SaveSystem.is_bug_unlocked(&"fly") and SaveSystem.is_level_completed(&"backyard"), "winning both rooms records the backyard (as the cockroach, that unlocks the fly)")
 
 
 # --- Phase 4: the living house -------------------------------------------------------
@@ -861,7 +867,8 @@ func _phase5() -> void:
 	for b in lvl.find_children("*", "Button", true, false):
 		if (b as Button).is_visible_in_tree():
 			buttons.append((b as Button).text)
-	check(labels.has("ESCAPED!") and labels.has("Fly unlocked!"), "winning shows ESCAPED! and the unlock")
+	check(labels.has("ESCAPED!") and Array(labels).any(func(t: String) -> bool: return t.begins_with("Fly is out of the shade")),
+		"winning shows ESCAPED! and the bug it brings out of the shade")
 	check(buttons.has("Next level") and buttons.has("Colony"), "the win screen offers the next level and the colony")
 	await unload(lvl)
 
@@ -2208,4 +2215,312 @@ func _phase13() -> void:
 		if top > 20.0:
 			break
 	check(perches >= 3 and top > 20.0, "the backyard cat leaps up onto the picnic table (%d perches, up %.1f)" % [perches, top])
+	await unload(lvl)
+
+
+
+# --- Update: five new bugs in the shade, a smoother and friendlier game ----------
+
+const NEW_BUGS: Array[StringName] = [&"ant", &"cricket", &"ladybug", &"firefly", &"stink_bug"]
+
+
+func _quiet_human(lvl: Level, pos: Vector3, yaw: float) -> Human:
+	var h := first_in_group(Phys.GROUP_HUMAN, lvl) as Human
+	h.force_present(true)
+	h.end_activity()
+	h.activities = {}
+	_place_human(h, pos, yaw)
+	h.alert.reset()
+	return h
+
+
+func _phase14() -> void:
+	print("-- Update: five new bugs in the shade; smoother and friendlier")
+	SaveSystem.data = SaveSystem.default_data()
+
+	# The roster and the chain.
+	var chain_ok := GameManager.BUG_IDS.size() == 8
+	for i in range(1, GameManager.BUG_IDS.size()):
+		var s := GameManager.get_bug_stats(GameManager.BUG_IDS[i])
+		chain_ok = chain_ok and s != null and s.unlock_after_bug == GameManager.BUG_IDS[i - 1] \
+			and ResourceLoader.exists(s.scene_path) and BugGuide.portrait(s.id) != null and s.guide.size() >= 4
+	check(chain_ok, "eight bugs, each with a picture and a guide, each unlocked by the one before it")
+	var order: Array[StringName] = []
+	for id in GameManager.BUG_IDS:
+		order.append_array(GameManager.unlock_after_escape(id))
+	check(order == [&"fly", &"spider", &"ant", &"cricket", &"ladybug", &"firefly", &"stink_bug"] and GameManager.next_locked_bug() == &"",
+		"escaping a room as each bug brings the next one out of the shade, in order %s" % str(order))
+	check(SaveSystem.is_bug_new(&"ant") and SaveSystem.is_bug_completed(&"stink_bug"), "new arrivals are marked NEW; escapes are remembered")
+
+	# Bug select: silhouettes in the shade.
+	SaveSystem.data = SaveSystem.default_data()
+	GameManager.unlock_after_escape(&"cockroach")
+	GameManager.unlock_after_escape(&"fly")
+	GameManager.unlock_after_escape(&"spider")
+	var ant_card := BugSelect.card_for(GameManager.get_bug_stats(&"ant"))
+	var cricket_card := BugSelect.card_for(GameManager.get_bug_stats(&"cricket"))
+	var cricket_img := cricket_card.find_child("Portrait", true, false) as TextureRect
+	var cricket_hint := cricket_card.find_child("Hint", true, false) as Label
+	var later_card := BugSelect.card_for(GameManager.get_bug_stats(&"ladybug"))
+	var later_hint := (later_card.find_child("Hint", true, false) as Label).text
+	later_card.free()
+	check(ant_card.find_child("Play", true, false) != null and ant_card.find_child("New", true, false) != null,
+		"an unlocked bug's card has its picture, a NEW badge and a Play button")
+	check(cricket_img and cricket_img.texture and cricket_img.self_modulate.r == 0.0 and cricket_img.self_modulate.a > 0.8
+		and cricket_card.find_child("Play", true, false) == null and cricket_hint.text.contains("Ant"),
+		"a locked bug stands in the shade - a dark silhouette - with what brings it out (%s)" % cricket_hint.text)
+	check(later_hint.contains("Cricket") and later_hint.contains("first"), "bugs further down say which one to unlock first (%s)" % later_hint)
+	SaveSystem.mark_bug_played(&"ant")
+	var played_card := BugSelect.card_for(GameManager.get_bug_stats(&"ant"))
+	check(played_card.find_child("New", true, false) == null, "playing a new bug clears its NEW badge")
+	played_card.free()
+	for c in [ant_card, cricket_card]:
+		c.free()
+	var texts := await _button_texts("res://scenes/ui/bug_select.tscn")
+	check(texts.has("Play as Ant") and not texts.has("Play as Cricket"), "the bug select screen offers exactly the unlocked bugs")
+
+	# Each new bug plays: it spawns and walks (the firefly flies).
+	var moved: PackedStringArray = []
+	for id in NEW_BUGS:
+		var bl := await load_level(&"kitchen", id)
+		var bp := bl.player
+		bp.invuln = 1000.0
+		bp.teleport_to(Transform3D(Basis.IDENTITY, Vector3(40, 0.8, 66)))
+		face(bl, PI * 0.5)
+		if bp is Fly:
+			(bp as Fly).take_off()
+		await frames(10)
+		var start := bp.global_position
+		InputRouter.set_touch_move(Vector2(0, 1))
+		await frames(40)
+		InputRouter.set_touch_move(Vector2.ZERO)
+		if bp.global_position.distance_to(start) > 2.5 and bp.get_class() == "CharacterBody3D" and bp.get_script():
+			moved.append(String(id))
+		await unload(bl)
+	check(moved.size() == 5, "all five new bugs spawn and move %s" % str(moved))
+
+	# Ant: tiny (hidden in a gap without squeezing), decoys draw threats away.
+	var lvl := await load_level(&"kitchen", &"ant")
+	HouseClock.set_hour(13.5)
+	var ant := lvl.player as Ant
+	ant.invuln = 1000.0
+	var cook := _quiet_human(lvl, Vector3(-30, 0, 2), PI)
+	ant.teleport_to(Transform3D(Basis.IDENTITY, Vector3(-30, 0.6, -22.5)))
+	await frames(5)
+	check(ant.is_hidden_safe() and not ant.is_squeezing, "the ant hides in the toe-kick gap without squeezing")
+	ant.facing = Vector3(0, 0, 1)
+	var decoy := ant.send_decoys()
+	check(decoy != null and ant.send_decoys() == null, "Secondary sends a column of decoy ants (then it recharges)")
+	var lured := false
+	for i in 180:
+		await get_tree().physics_frame
+		if cook.alert.state >= AlertState.SUSPICIOUS and cook.alert.target_is_lure and is_instance_valid(decoy) \
+				and cook.alert.last_known.distance_to(decoy.global_position) < 4.0:
+			lured = true
+			break
+	check(lured, "the cook hears the decoys and goes after them, not the hidden ant")
+	await unload(lvl)
+
+	# Cricket: charged leap; chirp throws its voice.
+	lvl = await load_level(&"kitchen", &"cricket")
+	HouseClock.set_hour(13.5)
+	var cr := lvl.player as Cricket
+	cr.invuln = 1000.0
+	cr.teleport_to(Transform3D(Basis.IDENTITY, Vector3(40, 0.8, 70)))
+	face(lvl, PI * 0.5)
+	await frames(10)
+	var y0 := cr.global_position.y
+	InputRouter.set_touch_action(&"jump", true)
+	await frames(2)
+	InputRouter.set_touch_action(&"jump", false)
+	var low := cr.global_position.y
+	for i in 120:
+		await get_tree().physics_frame
+		low = maxf(low, cr.global_position.y)
+		if not cr.leaping and i > 5:
+			break
+	check(low - y0 > 1.0 and low - y0 < 4.0, "a quick tap of Jump is just a little hop (up %.1f)" % (low - y0))
+	cr.teleport_to(Transform3D(Basis.IDENTITY, Vector3(40, 0.8, 70)))
+	await frames(10)
+	var p0 := cr.global_position
+	cr.facing = Vector3(-1, 0, 0)
+	InputRouter.set_touch_action(&"jump", true)
+	await frames(70)
+	InputRouter.set_touch_action(&"jump", false)
+	var peak := y0
+	for i in 240:
+		await get_tree().physics_frame
+		peak = maxf(peak, cr.global_position.y)
+		if not cr.leaping and i > 5:
+			break
+	var across := Vector2(cr.global_position.x - p0.x, cr.global_position.z - p0.z).length()
+	check(peak > y0 + 15.0 and across > 20.0,
+		"held, it charges a leap high enough to reach a chair seat, and far (up %.1f, across %.1f)" % [peak - y0, across])
+	# The cook stands with her back to the room; the cricket chirps past her.
+	cook = _quiet_human(lvl, Vector3(20, 0, 34), 0.0)
+	cr.teleport_to(Transform3D(Basis.IDENTITY, Vector3(20, 0.6, 70)))
+	face(lvl, 0.0)
+	await frames(10)
+	cook.alert.reset()
+	cr.ability_cd = 0.0
+	var spot := cr.chirp_spot()
+	cr.chirp()
+	await frames(5)
+	check(cook.alert.state >= AlertState.SUSPICIOUS and cook.alert.last_known.distance_to(spot) < 3.0
+		and spot.distance_to(cr.global_position) > 12.0 and not cr.chirp(),
+		"a chirp makes the cook look where the voice came from, %.0f units from the cricket (then it recharges)" % spot.distance_to(cr.global_position))
+	await unload(lvl)
+
+	# Ladybug: shell up, flutter, and the people's soft spot.
+	lvl = await load_level(&"kitchen", &"ladybug")
+	HouseClock.set_hour(13.5)
+	var lb := lvl.player as Ladybug
+	lb.teleport_to(Transform3D(Basis.IDENTITY, Vector3(40, 0.8, 66)))
+	await frames(10)
+	lb.invuln = 0.0
+	InputRouter.set_touch_action(&"primary", true)
+	InputRouter.set_touch_move(Vector2(0, 1))
+	await frames(5)
+	var at := lb.global_position
+	var hits := lb.hits_left
+	var blocked := not lb.take_hit(&"test", lb.global_position)
+	await frames(30)
+	check(lb.shelled and blocked and lb.hits_left == hits and lb.global_position.distance_to(at) < 0.5,
+		"Shell Up: nothing can hurt the ladybug, but it can't move")
+	InputRouter.set_touch_action(&"primary", false)
+	InputRouter.set_touch_move(Vector2.ZERO)
+	lb.teleport_to(Transform3D(Basis.IDENTITY, Vector3(40, 30, 66)))
+	InputRouter.set_touch_action(&"jump", true)
+	var top := lb.global_position.y
+	await frames(60)
+	InputRouter.set_touch_action(&"jump", false)
+	check(top - lb.global_position.y < 5.0, "holding Jump in the air flutters down gently (fell %.1f in 1 s)" % (top - lb.global_position.y))
+	lb.teleport_to(Transform3D(Basis.IDENTITY, Vector3(30, 0.6, 60)))
+	await frames(30)
+	cook = _quiet_human(lvl, Vector3(30, 0, 66), 0.0)
+	lb.invuln = 0.0
+	cook._attack_cd = 0.0
+	cook.alert.force(AlertState.ALERT, lb.global_position)
+	var spared := true
+	for i in 90:
+		await get_tree().physics_frame
+		cook.alert.force(AlertState.ALERT, lb.global_position)
+		spared = spared and cook._attack_cd <= 0.0
+	PerceptionSystem.raise_alarm()
+	lb.invuln = 1000.0
+	var swung := false
+	for i in 120:
+		await get_tree().physics_frame
+		swung = swung or cook._attack_cd > 0.0
+	check(spared and swung, "people won't swat a ladybug - until the alarm is full")
+	await unload(lvl)
+
+	# Firefly: glows in flight, dark when it lands; Flash dazzles.
+	lvl = await load_level(&"kitchen", &"firefly")
+	HouseClock.set_hour(13.5)
+	var ff := lvl.player as Firefly
+	ff.invuln = 1000.0
+	cook = _quiet_human(lvl, Vector3(20, 0, 50), 0.0)
+	ff.teleport_to(Transform3D(Basis.IDENTITY, cook.eye_position() + Vector3(6, -4, 0)))
+	ff.take_off()
+	await frames(10)
+	var glow := ff.get_node("Visual/Glow") as Light3D
+	var lit := glow.visible and ff.compute_visibility(0.0, PerceptionSystem.config) > 0.0
+	ff.sense_meter = ff.stats.sense_max
+	ff.toggle_sense()
+	check(lit and cook.blind_time > 0.0 and not cook.can_see(ff), "the firefly glows in flight, and its Flash dazzles the cook")
+	ff.teleport_to(Transform3D(Basis.IDENTITY, Vector3(40, 0.8, 66)))
+	ff.land()
+	await frames(10)
+	check(not glow.visible and ff.compute_visibility(0.0, PerceptionSystem.config) == 0.0, "landed, it goes dark")
+	await unload(lvl)
+
+	# Stink bug: three hits, a stink cloud that scatters pets and chokes people.
+	lvl = await load_level(&"kitchen", &"stink_bug")
+	HouseClock.set_hour(13.5)
+	var sb := lvl.player as StinkBug
+	sb.invuln = 1000.0
+	sb.teleport_to(Transform3D(Basis.IDENTITY, Vector3(20, 0.6, 56)))
+	cook = _quiet_human(lvl, Vector3(24, 0, 58), 0.0)
+	var pup := first_in_group(Phys.GROUP_PET, lvl) as Pet
+	pup.force_present(true)
+	pup.stop_playing()
+	pup.global_position = Vector3(16, 0.5, 60)
+	await frames(5)
+	var pup0 := pup.global_position.distance_to(sb.global_position)
+	var cloud := sb.release_stink()
+	await frames(15)
+	var pup_scared := pup.scared > 0.0
+	check(sb.stats.max_hits == 3 and cloud != null and pup_scared and cook.stun_time > 0.0 and cook.blind_time > 0.0,
+		"the stink bug takes three hits; its cloud makes the puppy bolt and the cook cough")
+	await frames(60)
+	check(pup.global_position.distance_to(sb.global_position) > pup0 + 5.0 and sb.release_stink() == null and sb.scent_strength() > 1.0,
+		"the puppy runs off; the cloud recharges; and your smell lingers")
+	await unload(lvl)
+
+	# Friendlier: the how-to-play card the first time you play a bug.
+	SaveSystem.data = SaveSystem.default_data()
+	SaveSystem.unlock_bug(&"ant")
+	SaveSystem.set_setting("touch_controls", "on")
+	GameManager.guides_enabled = true
+	lvl = await load_level(&"kitchen", &"ant")
+	await frames(2)
+	var guide := lvl.find_child("BugGuide", true, false) as BugGuide
+	var guide_text: PackedStringArray = []
+	if guide:
+		for l in guide.find_children("*", "Label", true, false):
+			guide_text.append((l as Label).text)
+	check(guide != null and get_tree().paused and guide_text.has("DECOYS") and guide_text.has("ANT"),
+		"the first time you play the ant, a how-to-play card (with its button names) waits for you")
+	if guide:
+		(guide.find_child("GotIt", true, false) as Button).pressed.emit()
+	await frames(2)
+	check(not get_tree().paused and SaveSystem.has_seen_guide(&"ant"), "\"Got it\" starts the game")
+	await unload(lvl)
+	lvl = await load_level(&"kitchen", &"ant")
+	await frames(2)
+	check(lvl.find_child("BugGuide", true, false) == null, "it doesn't show again")
+	GameManager.guides_enabled = false
+	GameManager.toggle_pause()
+	await frames(2)
+	var pm: Node = null
+	for n in lvl.find_children("*", "CanvasLayer", true, false):
+		if n.has_method("_toggle_help"):
+			pm = n
+	pm.call("_toggle_help")
+	await get_tree().process_frame
+	var help_labels: PackedStringArray = []
+	for l in (pm.get("_help") as Node).find_children("*", "Label", true, false):
+		help_labels.append((l as Label).text)
+	check(help_labels.has("ANT") and help_labels.has("DECOYS"), "Pause > Controls shows how to play the bug you're playing")
+	GameManager.toggle_pause()
+	SaveSystem.set_setting("touch_controls", "auto")
+	await unload(lvl)
+
+	# Smoother: auto quality steps down when it runs slowly; far small things cull.
+	lvl = await load_level(&"kitchen", &"cockroach")
+	GameManager.auto_quality_enabled = true
+	SaveSystem.set_setting("quality", "high")
+	GameManager._quality_cd = 0.0
+	var steps: Array[String] = []
+	steps.append("%s" % GameManager.check_frame_rate(60.0))
+	steps.append("%s" % GameManager.check_frame_rate(15.0))
+	var q1 := String(SaveSystem.get_setting("quality", ""))
+	steps.append("%s" % GameManager.check_frame_rate(15.0))
+	GameManager._quality_cd = 0.0
+	GameManager.check_frame_rate(15.0)
+	var q2 := String(SaveSystem.get_setting("quality", ""))
+	var sun := lvl.find_child("Sun", true, false) as DirectionalLight3D
+	check(steps == ["false", "true", "false"] and q1 == "medium" and q2 == "low" and not sun.shadow_enabled,
+		"running slowly steps quality down (high -> medium -> low, shadows off), not more than once every 20 s")
+	SaveSystem.set_setting("quality", "medium")
+	SaveSystem.set_setting("auto_quality", false)
+	GameManager._quality_cd = 0.0
+	check(not GameManager.check_frame_rate(10.0), "with Auto quality off in Settings it leaves your choice alone")
+	GameManager.auto_quality_enabled = false
+	SaveSystem.set_setting("auto_quality", true)
+	var crumb_mesh := (load("res://scenes/world/crumb.tscn") as PackedScene).instantiate()
+	var culls := (crumb_mesh.find_children("*", "GeometryInstance3D", true, false)[0] as GeometryInstance3D).visibility_range_end
+	crumb_mesh.free()
+	check(culls > 50.0, "small far-away things (crumbs, pickups, props) stop drawing at a distance")
 	await unload(lvl)

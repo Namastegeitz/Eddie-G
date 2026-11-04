@@ -211,6 +211,15 @@ def build_pet_sfx():
     write("sniff", np.concatenate([puff, gap, puff * 0.8, gap, puff * 0.9]), peak=0.7)
 
 
+def build_bug_sfx():
+    """A cricket's chirp: three quick trills."""
+    os.makedirs(SFX, exist_ok=True)
+    n = lambda d: int(RATE * d)
+    trill = tone(4400, 0.07) * (0.6 + 0.4 * np.sign(np.sin(2 * math.pi * 60 * t_axis(0.07)))) * env(n(0.07), 0.004, 0.02)
+    gap = np.zeros(n(0.045))
+    write("chirp", np.concatenate([trill, gap, trill, gap, trill]), peak=0.7)
+
+
 def build_people_sfx():
     """Snoring for a napping person."""
     os.makedirs(SFX, exist_ok=True)
@@ -277,5 +286,6 @@ if __name__ == "__main__":
     build_item_sfx()
     build_people_sfx()
     build_pet_sfx()
+    build_bug_sfx()
     build_icons()
     print("assets generated")

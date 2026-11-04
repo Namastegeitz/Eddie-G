@@ -13,23 +13,26 @@ height = 1.8
 radial_segments = 16
 rings = 8
 
-[node name="Grape" type="RigidBody3D" unique_id=1410268011]
+[node name="Grape" type="RigidBody3D" unique_id=1001891050]
 mass = 0.5
 script = ExtResource("1_41lio")
 noise_on_impact = 0.8
 trip_hazard = true
 impact_sound = &"squish"
 
-[node name="Shape" type="CollisionShape3D" parent="." unique_id=818828525]
+[node name="Shape" type="CollisionShape3D" parent="." unique_id=1224669774]
 shape = SubResource("SphereShape3D_nnbto")
 
-[node name="Visual" type="Node3D" parent="." unique_id=162057961]
+[node name="Visual" type="Node3D" parent="." unique_id=1941937449]
 
-[node name="Mesh" type="MeshInstance3D" parent="Visual" unique_id=70095625]
+[node name="Mesh" type="MeshInstance3D" parent="Visual" unique_id=1924040120]
 material_override = ExtResource("2_xpddu")
+visibility_range_end = 100.0
+visibility_range_end_margin = 15.0
+visibility_range_fade_mode = 1
 mesh = SubResource("SphereMesh_uakmw")
 
-[node name="Skin" type="Node3D" parent="Visual" unique_id=1817104010]
+[node name="Skin" type="Node3D" parent="Visual" unique_id=1679359263]
 script = ExtResource("3_vo54p")
 model_id = "prop_grape"
 fit_size = Vector3(1.7726538, 1.8, 1.7726538)

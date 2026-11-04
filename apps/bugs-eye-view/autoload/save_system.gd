@@ -21,6 +21,12 @@ func default_data() -> Dictionary:
 	return {
 		"version": SAVE_VERSION,
 		"unlocked_bugs": ["cockroach"],
+		## Bugs that have escaped a room (each one unlocks the next).
+		"bugs_completed": [],
+		## Bugs unlocked but not played yet (shown as NEW).
+		"new_bugs": [],
+		## Bugs whose how-to-play card has been shown.
+		"guides_seen": [],
 		"levels": {},
 		"colony": {"banked": 0, "lifetime": 0, "upgrades": []},
 		"gems": {},
@@ -35,6 +41,7 @@ func default_data() -> Dictionary:
 			"touch_look_sensitivity": 1.0,
 			"invert_y": false,
 			"fly_follow_look": true,
+			"auto_quality": true,
 		},
 		"bindings": {},
 	}
@@ -102,8 +109,41 @@ func unlock_bug(id: StringName) -> bool:
 	if is_bug_unlocked(id):
 		return false
 	(data["unlocked_bugs"] as Array).append(String(id))
+	_list("new_bugs").append(String(id))
 	progress_changed.emit()
 	return true
+
+
+func _list(key: String) -> Array:
+	if not data.has(key) or not data[key] is Array:
+		data[key] = []
+	return data[key]
+
+
+func mark_bug_completed(id: StringName) -> void:
+	if not _list("bugs_completed").has(String(id)):
+		_list("bugs_completed").append(String(id))
+
+
+func is_bug_completed(id: StringName) -> bool:
+	return _list("bugs_completed").has(String(id))
+
+
+func is_bug_new(id: StringName) -> bool:
+	return _list("new_bugs").has(String(id))
+
+
+func mark_bug_played(id: StringName) -> void:
+	_list("new_bugs").erase(String(id))
+
+
+func has_seen_guide(id: StringName) -> bool:
+	return _list("guides_seen").has(String(id))
+
+
+func mark_guide_seen(id: StringName) -> void:
+	if not has_seen_guide(id):
+		_list("guides_seen").append(String(id))
 
 
 # --- Levels -------------------------------------------------------------

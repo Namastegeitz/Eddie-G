@@ -23,7 +23,7 @@ func _ready() -> void:
 
 
 func can_interact(bug: BugBase) -> bool:
-	return allowed_bugs.is_empty() or allowed_bugs.has(String(bug.stats.id))
+	return bug.stats.fits(allowed_bugs)
 
 
 func hint_text(bug: BugBase) -> String:

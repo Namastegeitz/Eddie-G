@@ -27,7 +27,9 @@ The first import takes a minute while Godot processes the sounds and icons.
 | Sense | R | Left shoulder | Button |
 | Pause | Esc / P | Start | II button (top right) |
 
-What each button does depends on the bug (the touch buttons relabel themselves):
+What each button does depends on the bug (the touch buttons relabel
+themselves). The first time you play a bug, a how-to-play card shows its
+buttons and its trick; **Pause > Controls** shows it again.
 
 | | Cockroach | Fly | Spider |
 |---|---|---|---|
@@ -35,6 +37,32 @@ What each button does depends on the bug (the touch buttons relabel themselves):
 | Secondary | Squeeze flat (hold) - hides you in gaps | Fly down / land on a surface | Web trap |
 | Jump | Hop | Take off / fly up | Leap off the surface |
 | Sense | Smell: antennae point at the nearest crumb | Slow-mo (also triggers by itself when a strike is about to land) | Feel footsteps as ripples through walls |
+
+| | Ant | Cricket | Ladybug | Firefly | Stink bug |
+|---|---|---|---|---|---|
+| Primary | Sprint | Chirp: throws your voice ahead, threats go to look there | Shell up (hold): can't be hurt, can't move | Boost | Stink cloud: pets bolt, people cough and can't see |
+| Secondary | Decoys: a column of ants marches off, threats follow them | Squeeze | Squeeze | Fly down / land | Squeeze |
+| Jump | Hop | Hold to charge, let go to leap | Hop; hold in the air to flutter down | Take off / fly up | Hop |
+| Sense | Antennae point at the nearest crumb | Antennae | Antennae | Flash: dazzles every person and pet nearby | Antennae |
+| Its trick | Tiny: any gap hides it without squeezing | A full charge clears a chair | People won't swat it until the alarm is full (pets will) | Glows while flying - land or cling to go dark | Slow, takes three hits, and its smell lingers (dogs track it) |
+
+**The bugs in the shade.** You start as the cockroach. The others stand in
+the shade on the bug select screen - a dark silhouette with what brings them
+out - and come out one at a time: escape any room as the bug before them.
+Cockroach → Fly → Spider → Ant → Cricket → Ladybug → Firefly → Stink bug. A
+new arrival is marked **NEW** until you play it; bugs you've escaped with are
+marked **ESCAPED**.
+
+**Finding the way out.** Once you've collected enough crumbs to open the exit,
+a gold marker points to it (at the screen edge when it's behind you) with the
+distance.
+
+**Smoother on slow phones.** If the game runs slower than about 24 frames a
+second for a few seconds, it steps the graphics quality down by itself
+(high → medium → low, at most once every 20 s) and says so. Turn **Auto
+quality** off in Settings to keep your own choice. On a phone browser the
+game starts on low quality. Small far-away things (crumbs, pickups, props)
+stop drawing at a distance.
 
 **Flying.** The stick flies level; Jump climbs and Secondary dives. With
 **Fly where you look** on (Settings, on by default) tilting the camera well
@@ -135,7 +163,7 @@ three times faster.
 ## 3. Test it
 
 All checks: import, boot, warnings-as-errors, an offline test of the Meshy
-client, then the 120-check smoke test and the 296-check phase audit
+client, then the 165-check smoke test and the 340-check phase audit
 (`tests/phase_audit.tscn`, one section per build phase plus one per update),
 each run in the project **and** against an exported pack. Any script or
 engine error fails the run:
@@ -156,7 +184,8 @@ Run one section of the audit with
 (1-6 are the build phases, 7 the alarm gauge and fly moves, 8 cover and model
 slots, 9 bigger rooms, people, bug detail, food and gems, 10 pickup messages
 and touch look, 11 flying, playful/alert animals and people's activities, 12 the
-touch look stick, 13 the upgraded dog and cat-and-dog rooms).
+touch look stick, 13 the upgraded dog and cat-and-dog rooms, 14 the five new
+bugs, the unlock chain, the how-to-play cards and auto quality).
 
 `godot` means the Godot executable, e.g.
 `C:\Godot\Godot_v4.7.2-stable_win64_console.exe`. The smoke test prints

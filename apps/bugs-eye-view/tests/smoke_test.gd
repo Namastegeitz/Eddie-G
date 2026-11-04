@@ -8,6 +8,8 @@ var _passes := 0
 
 
 func _ready() -> void:
+	GameManager.guides_enabled = false
+	GameManager.auto_quality_enabled = false
 	SaveSystem.save_path = "user://smoke_test_save.json"
 	SaveSystem.data = SaveSystem.default_data()
 	await get_tree().process_frame

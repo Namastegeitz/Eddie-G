@@ -1,7 +1,8 @@
 class_name ThreatMarkers
 extends Control
 ## Edge-of-screen arrows for threats that are off screen but relevant
-## (nearby, or suspicious and above).
+## (nearby, or suspicious and above), and - once it's open - a gold marker
+## showing the way to the exit, with the distance.
 
 const NEAR := 35.0
 
@@ -25,6 +26,7 @@ func _draw() -> void:
 	var cam := camera_rig.camera
 	var rect := Rect2(Vector2.ZERO, size).grow(-28.0)
 	var center := size * 0.5
+	_draw_exit(cam, rect, center)
 	for t in PerceptionSystem.threats:
 		if not t.present:
 			continue
@@ -47,3 +49,36 @@ func _draw() -> void:
 		var tip := edge + dir * 14.0
 		var side := Vector2(-dir.y, dir.x) * 11.0
 		draw_colored_polygon(PackedVector2Array([tip, edge - dir * 6.0 + side, edge - dir * 6.0 - side]), col)
+
+
+## The exit: an arrow at the screen edge when it's off screen, a bobbing
+## chevron over it when it's on screen; both with the distance.
+func _draw_exit(cam: Camera3D, rect: Rect2, center: Vector2) -> void:
+	var lvl := Level.current
+	if lvl == null or lvl.goal == null or not lvl.goal.active:
+		return
+	var world := lvl.goal.global_position + Vector3.UP * 6.0
+	var dist := world.distance_to(PerceptionSystem.player.global_position)
+	var behind := cam.is_position_behind(world)
+	var sp := cam.unproject_position(world)
+	var font := get_theme_default_font()
+	# One game unit is 2.5 cm.
+	var label := "EXIT %.1f m" % (dist * 0.025)
+	var col := UIKit.GOLD
+	if not behind and rect.has_point(sp):
+		var bob := sin(Time.get_ticks_msec() * 0.006) * 5.0
+		var p := sp + Vector2(0, -18.0 + bob)
+		draw_colored_polygon(PackedVector2Array([p + Vector2(0, 14), p + Vector2(-12, -2), p + Vector2(12, -2)]), col)
+		draw_string(font, p + Vector2(-30, -10), label, HORIZONTAL_ALIGNMENT_CENTER, 60, 15, col)
+		return
+	var dir := sp - center
+	if behind:
+		dir = -dir
+	if dir.length_squared() < 0.01:
+		dir = Vector2.DOWN
+	dir = dir.normalized()
+	var edge := center + dir * minf(rect.size.x * 0.5 / maxf(absf(dir.x), 0.001), rect.size.y * 0.5 / maxf(absf(dir.y), 0.001))
+	var tip := edge + dir * 16.0
+	var side := Vector2(-dir.y, dir.x) * 14.0
+	draw_colored_polygon(PackedVector2Array([tip, edge - dir * 8.0 + side, edge - dir * 8.0 - side]), col)
+	draw_string(font, edge - dir * 34.0 + Vector2(-30, 5), label, HORIZONTAL_ALIGNMENT_CENTER, 60, 15, col)

@@ -346,6 +346,26 @@ func _leaves_scent() -> bool:
 	return true
 
 
+## How strong your scent trail is (1 = normal; it fades more slowly when higher).
+func scent_strength() -> float:
+	return 1.0
+
+
+## Name of the bug's special move for the HUD meter ("" if none).
+func ability_name() -> String:
+	return ""
+
+
+## Label of the HUD's stamina bar.
+func stamina_name() -> String:
+	return "WINGS"
+
+
+## The ladybug: people don't swat it unless the alarm is full.
+func is_spared_by_people() -> bool:
+	return false
+
+
 # --- Senses ---------------------------------------------------------------
 
 func toggle_sense() -> void:

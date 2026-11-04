@@ -130,11 +130,22 @@ static func materials(force: bool) -> void:
 		"sparkle": _mat(Color(1.0, 1.0, 0.9), 1.0, 0.0, false, true),
 		"heat": _mat(Color(1.0, 0.6, 0.3, 0.22), 1.0, 0.0, true, true),
 		"dog_white": _mat(Color(0.95, 0.92, 0.85), 0.9),
+		"ant": _mat(Color(0.3, 0.09, 0.05), 0.25, 0.1),
+		"cricket": _mat(Color(0.38, 0.26, 0.13), 0.5),
+		"cricket_dark": _mat(Color(0.17, 0.11, 0.06), 0.4),
+		"ladybug_red": _mat(Color(0.86, 0.1, 0.07), 0.15, 0.1),
+		"ladybug_black": _mat(Color(0.05, 0.05, 0.05), 0.3),
+		"firefly_body": _mat(Color(0.14, 0.12, 0.11), 0.4),
+		"firefly_orange": _mat(Color(0.92, 0.45, 0.15), 0.5),
+		"firefly_glow": _mat(Color(0.85, 1.0, 0.35), 0.3, 0.0, false, false, Color(0.75, 1.0, 0.25, 3.0)),
+		"stink": _mat(Color(0.42, 0.38, 0.3), 0.8),
+		"stink_edge": _mat(Color(0.68, 0.63, 0.52), 0.8),
+		"stink_cloud": _mat(Color(0.55, 0.78, 0.25, 0.2), 1.0, 0.0, true, true),
 		"dog_black": _mat(Color(0.1, 0.09, 0.08), 0.6),
 	}
 	for k: String in defs.keys():
 		var mat: StandardMaterial3D = defs[k]
-		if k in ["web", "beacon", "shadow_tint", "light_tint", "gust", "spray", "fog", "heat"]:
+		if k in ["web", "beacon", "shadow_tint", "light_tint", "gust", "spray", "fog", "heat", "stink_cloud"]:
 			mat.cull_mode = BaseMaterial3D.CULL_DISABLED
 		if k in ["shadow_tint", "light_tint", "gust", "beacon", "heat"]:
 			mat.disable_receive_shadows = true
@@ -211,6 +222,15 @@ static func bugs(force: bool) -> void:
 	r.sense_range = 60.0
 	r.dodge_speed = 20.0
 	r.push_force = 0.6
+	r.tagline = "Fast, tough, and gone the moment the lights come on."
+	r.guide = PackedStringArray([
+		"primary|Sprint: run faster - louder and easier to spot",
+		"secondary|Squeeze: flatten into gaps to hide completely",
+		"jump|Hop over small things",
+		"dodge|Dash out from under a stomp",
+		"sense|Smell: your antennae point to the nearest crumb",
+		"tip|Stand still to blend in. Near a suspicious threat you play dead.",
+	])
 	save(r, "res://resources/bugs/cockroach.tres", force)
 
 	var f := BugStats.new()
@@ -219,7 +239,7 @@ static func bugs(force: bool) -> void:
 	f.description = "Erratic, buzzy flight in full 3D. Burst-dodge swats and see strikes in slow motion - but it can't stay airborne forever, and buzzing is loud."
 	f.scene_path = "res://scenes/bugs/fly.tscn"
 	f.color = Color(0.15, 0.15, 0.17)
-	f.unlock_hint = "escape the Kitchen"
+	f.unlock_hint = "escape a room as the Cockroach"
 	f.rating_speed = 1.0
 	f.rating_stealth = 0.35
 	f.rating_toughness = 0.2
@@ -239,6 +259,17 @@ static func bugs(force: bool) -> void:
 	f.dodge_speed = 22.0
 	f.dodge_duration = 0.15
 	f.dodge_cooldown = 0.7
+	f.unlock_after_bug = &"cockroach"
+	f.tagline = "Buzzing, darting, hovering - the whole room is yours."
+	f.guide = PackedStringArray([
+		"jump|Take off, and fly up",
+		"secondary|Fly down, land, or cling to a wall or ceiling",
+		"primary|Boost: faster, but tiring",
+		"dodge|Burst sideways - twice quickly to loop, with Down to dive",
+		"interact|Pester a person or pet by their head",
+		"sense|Slow motion (kicks in by itself when a swat is coming)",
+		"tip|Let go to hover. Warm air over the stove and lamps refills your wings.",
+	])
 	save(f, "res://resources/bugs/fly.tres", force)
 
 	var s := BugStats.new()
@@ -247,7 +278,18 @@ static func bugs(force: bool) -> void:
 	s.description = "Master of stealth and height. Crawls on walls and ceilings, zips on web lines that become bridges, spins traps and feels footsteps through the floor. Slow in the open."
 	s.scene_path = "res://scenes/bugs/spider.tscn"
 	s.color = Color(0.08, 0.07, 0.07)
-	s.unlock_hint = "escape the Living Room"
+	s.unlock_hint = "escape a room as the Fly"
+	s.unlock_after_bug = &"fly"
+	s.tagline = "Walls, ceilings and webs: the master of stealth."
+	s.guide = PackedStringArray([
+		"move|Walk on floors, up walls and across ceilings",
+		"primary|Web zip to where you aim (tap the spot on a touch screen)",
+		"secondary|Web trap: slows anything that walks into it",
+		"jump|Leap off a wall or ceiling",
+		"dodge|Dash",
+		"sense|Feel footsteps through the floor as ripples",
+		"tip|Your web lines stay behind as bridges.",
+	])
 	s.rating_speed = 0.55
 	s.rating_stealth = 0.95
 	s.rating_toughness = 0.3
@@ -269,6 +311,186 @@ static func bugs(force: bool) -> void:
 	s.dodge_duration = 0.15
 	s.dodge_cooldown = 0.8
 	save(s, "res://resources/bugs/spider.tres", force)
+	_new_bugs(force)
+
+
+## The five bugs added after the first three, each out of the shade once you
+## escape a room as the one before it.
+static func _new_bugs(force: bool) -> void:
+	var a := BugStats.new()
+	a.id = &"ant"
+	a.display_name = "Ant"
+	a.tagline = "Tiny, sneaky, and never really alone."
+	a.description = "So small it hides in any gap without squeezing and is hard to spot. Sends a column of decoy ants marching off to lead threats away."
+	a.scene_path = "res://scenes/bugs/ant.tscn"
+	a.color = Color(0.3, 0.09, 0.05)
+	a.unlock_hint = "escape a room as the Spider"
+	a.unlock_after_bug = &"spider"
+	a.rating_speed = 0.7
+	a.rating_stealth = 0.9
+	a.rating_toughness = 0.2
+	a.max_hits = 1
+	a.move_speed = 5.5
+	a.sprint_speed = 9.0
+	a.jump_velocity = 6.0
+	a.push_force = 0.2
+	a.visibility_mult = 0.6
+	a.noise_mult = 0.5
+	a.camo_tags = PackedStringArray(["soil", "dark_wood", "leaves"])
+	a.gap_crawler = true
+	a.tiny = true
+	a.ability_cooldown = 9.0
+	a.ability_duration = 7.0
+	a.sense_max = 5.0
+	a.guide = PackedStringArray([
+		"primary|Sprint",
+		"secondary|Decoys: a column of ants marches off - threats follow them",
+		"jump|Hop",
+		"dodge|Dash",
+		"sense|Scout: your antennae point to the nearest crumb",
+		"tip|You're tiny: any gap hides you without squeezing, and you're hard to see.",
+	])
+	save(a, "res://resources/bugs/ant.tres", force)
+
+	var c := BugStats.new()
+	c.id = &"cricket"
+	c.display_name = "Cricket"
+	c.tagline = "Leaps across the room and throws its voice."
+	c.description = "Charge up a huge leap onto chairs and boxes. Chirp to throw your voice: threats go to look where the sound came from, not where you are."
+	c.scene_path = "res://scenes/bugs/cricket.tscn"
+	c.color = Color(0.35, 0.24, 0.12)
+	c.unlock_hint = "escape a room as the Ant"
+	c.unlock_after_bug = &"ant"
+	c.rating_speed = 0.75
+	c.rating_stealth = 0.6
+	c.rating_toughness = 0.35
+	c.max_hits = 1
+	c.move_speed = 6.0
+	c.sprint_speed = 6.0
+	c.visibility_mult = 0.9
+	c.noise_mult = 0.8
+	c.camo_tags = PackedStringArray(["grass", "leaves", "soil", "dark_wood"])
+	c.gap_crawler = true
+	c.ability_cooldown = 5.0
+	c.ability_radius = 24.0
+	c.guide = PackedStringArray([
+		"jump|Hold to crouch and charge, let go to leap (aim with the stick)",
+		"primary|Chirp: throw your voice ahead - threats go to look there",
+		"secondary|Squeeze into gaps",
+		"dodge|Dash",
+		"sense|Antennae: point to the nearest crumb",
+		"tip|A full charge lands you on a chair seat. Steer a little in the air.",
+	])
+	save(c, "res://resources/bugs/cricket.tres", force)
+
+	var l := BugStats.new()
+	l.id = &"ladybug"
+	l.display_name = "Ladybug"
+	l.tagline = "Lucky, armoured, and too cute to swat."
+	l.description = "Tuck into your shell and nothing can hurt you. Flutter down from counters and tables. People won't swat a ladybug - unless the alarm is full."
+	l.scene_path = "res://scenes/bugs/ladybug.tscn"
+	l.color = Color(0.85, 0.1, 0.08)
+	l.unlock_hint = "escape a room as the Cricket"
+	l.unlock_after_bug = &"cricket"
+	l.rating_speed = 0.5
+	l.rating_stealth = 0.4
+	l.rating_toughness = 0.85
+	l.max_hits = 2
+	l.knockdown_time = 0.6
+	l.move_speed = 5.5
+	l.sprint_speed = 5.5
+	l.jump_velocity = 7.0
+	l.visibility_mult = 1.15
+	l.noise_mult = 0.7
+	l.camo_tags = PackedStringArray(["leaves"])
+	l.gap_crawler = true
+	l.ability_meter_max = 4.0
+	l.ability_duration = 3.0
+	l.guide = PackedStringArray([
+		"primary|Shell up (hold): nothing can hurt you, but you can't move",
+		"jump|Hop - hold it in the air to flutter down gently",
+		"secondary|Squeeze into gaps",
+		"dodge|Dash",
+		"sense|Antennae: point to the nearest crumb",
+		"tip|Lucky: people won't swat a ladybug until the alarm is full. Pets don't care.",
+	])
+	save(l, "res://resources/bugs/ladybug.tres", force)
+
+	var f := BugStats.new()
+	f.id = &"firefly"
+	f.display_name = "Firefly"
+	f.fly_routes = true
+	f.tagline = "Lights up the night - and dazzles anyone close."
+	f.description = "Flies like the fly, but glows while it flies (easy to see in the dark). Flash to dazzle every person and pet nearby: they can't see you for a few seconds."
+	f.scene_path = "res://scenes/bugs/firefly.tscn"
+	f.color = Color(0.85, 1.0, 0.3)
+	f.unlock_hint = "escape a room as the Ladybug"
+	f.unlock_after_bug = &"ladybug"
+	f.rating_speed = 0.9
+	f.rating_stealth = 0.4
+	f.rating_toughness = 0.2
+	f.max_hits = 1
+	f.move_speed = 4.0
+	f.acceleration = 50.0
+	f.flight_speed = 12.5
+	f.boost_speed = 20.0
+	f.flight_accel = 5.0
+	f.drift = 1.0
+	f.stamina_max = 9.0
+	f.stamina_regen = 2.5
+	f.visibility_mult = 1.0
+	f.camo_tags = PackedStringArray(["dark_wood", "wall"])
+	f.sense_max = 6.0
+	f.sense_regen = 0.6
+	f.bullet_time_cost = 3.0
+	f.ability_radius = 18.0
+	f.ability_duration = 3.5
+	f.dodge_speed = 22.0
+	f.dodge_duration = 0.15
+	f.dodge_cooldown = 0.7
+	f.guide = PackedStringArray([
+		"jump|Take off, and fly up",
+		"secondary|Fly down, land, or cling to a wall or ceiling",
+		"primary|Boost",
+		"sense|Flash: dazzle every person and pet nearby - they can't see for a few seconds",
+		"interact|Pester a person or pet by their head",
+		"tip|You glow while flying (easy to spot in the dark). Land or cling to go dark.",
+	])
+	save(f, "res://resources/bugs/firefly.tres", force)
+
+	var k := BugStats.new()
+	k.id = &"stink_bug"
+	k.display_name = "Stink Bug"
+	k.tagline = "Slow, tough, and impossible to ignore."
+	k.description = "Takes three hits. Release a stink cloud: pets bolt from it, people cough and can't see. Your smell lingers, though - dogs track you easily."
+	k.scene_path = "res://scenes/bugs/stink_bug.tscn"
+	k.color = Color(0.42, 0.38, 0.3)
+	k.unlock_hint = "escape a room as the Firefly"
+	k.unlock_after_bug = &"firefly"
+	k.rating_speed = 0.35
+	k.rating_stealth = 0.45
+	k.rating_toughness = 1.0
+	k.max_hits = 3
+	k.knockdown_time = 0.8
+	k.move_speed = 4.5
+	k.sprint_speed = 4.5
+	k.jump_velocity = 6.0
+	k.visibility_mult = 0.95
+	k.noise_mult = 0.9
+	k.camo_tags = PackedStringArray(["leaves", "soil", "dark_wood"])
+	k.gap_crawler = true
+	k.ability_cooldown = 10.0
+	k.ability_duration = 6.0
+	k.ability_radius = 9.0
+	k.guide = PackedStringArray([
+		"primary|Stink cloud: pets bolt, people cough and can't see",
+		"secondary|Squeeze into gaps",
+		"jump|Hop",
+		"dodge|Dash",
+		"sense|Antennae: point to the nearest crumb",
+		"tip|Slow but takes three hits. Your smell lingers - dogs track you easily.",
+	])
+	save(k, "res://resources/bugs/stink_bug.tres", force)
 
 
 static func threats(force: bool) -> void:
@@ -487,7 +709,7 @@ static func levels(force: bool, routines_by_id: Dictionary) -> void:
 	k.crumbs_required = 10
 	k.par_time = 240.0
 	k.animal_awareness = 1.0
-	k.unlocks_bug = &"fly"
+	k.unlocks_bug = &""
 	k.boss_name = "Cleaning Day"
 	k.routine = routines_by_id["kitchen"]
 	k.ambient_noise = 0.1
@@ -503,7 +725,7 @@ static func levels(force: bool, routines_by_id: Dictionary) -> void:
 	l.par_time = 290.0
 	l.animal_awareness = 1.3
 	l.unlock_after = &"kitchen"
-	l.unlocks_bug = &"spider"
+	l.unlocks_bug = &""
 	l.boss_name = "The Cat"
 	l.routine = routines_by_id["living_room"]
 	l.ambient_light_by_period = {&"morning": 0.6, &"afternoon": 0.65, &"evening": 0.45, &"night": 0.25}

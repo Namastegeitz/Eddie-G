@@ -18,6 +18,8 @@ var stun_time := 0.0
 ## (LevelConfig.animal_awareness): it speeds up suspicion, stretches sight and
 ## hearing a little, and makes them turn faster.
 var awareness := 1.0
+## Dazzled (a firefly's flash) or coughing (a stink cloud): can't see.
+var blind_time := 0.0
 var web_time := 0.0
 var present := true
 var player_visible := false
@@ -57,6 +59,7 @@ func _physics_process(delta: float) -> void:
 	if not present:
 		return
 	web_time = maxf(web_time - delta, 0.0)
+	blind_time = maxf(blind_time - delta, 0.0)
 	if stun_time > 0.0:
 		stun_time -= delta
 		_stunned_tick(delta)
@@ -115,7 +118,7 @@ func _sense(dt: float) -> void:
 
 
 func can_see(p: BugBase) -> bool:
-	if config.sight_range <= 0.0 or p.is_hidden_safe():
+	if config.sight_range <= 0.0 or p.is_hidden_safe() or blind_time > 0.0:
 		return false
 	if PerceptionSystem.visibility < config.min_visibility:
 		return false
@@ -137,6 +140,23 @@ func can_see(p: BugBase) -> bool:
 	_ray.from = eye
 	_ray.to = target
 	return get_world_3d().direct_space_state.intersect_ray(_ray).is_empty()
+
+
+## A firefly's flash: can't see for a few seconds.
+func dazzle(seconds: float) -> void:
+	if not present:
+		return
+	blind_time = maxf(blind_time, seconds)
+	_on_dazzled()
+
+
+func _on_dazzled() -> void:
+	pass
+
+
+## A stink bug's cloud: humans cough, pets bolt. Returns true if it worked.
+func stink(_from: Vector3, _seconds: float) -> bool:
+	return false
 
 
 func has_line_of_sight(p: BugBase) -> bool:

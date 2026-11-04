@@ -28,6 +28,7 @@ func _ready() -> void:
 	col.add_child(_slider("Touch look speed", "touch_look_sensitivity", 0.2, 2.0))
 	col.add_child(_section("Display"))
 	col.add_child(_options("Quality", "quality", ["low", "medium", "high"]))
+	col.add_child(_toggle("Auto quality (drops it if the game runs slowly)", "auto_quality"))
 	col.add_child(_options("Touch controls", "touch_controls", ["auto", "on", "off"]))
 	col.add_child(_section("Keyboard & mouse"))
 	for a in InputRouter.REBINDABLE:

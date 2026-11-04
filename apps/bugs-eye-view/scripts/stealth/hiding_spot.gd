@@ -23,8 +23,8 @@ func _ready() -> void:
 
 
 func fits(bug: BugBase) -> bool:
-	return allowed_bugs.is_empty() or allowed_bugs.has(String(bug.stats.id))
+	return bug.stats.fits(allowed_bugs)
 
 
 func is_safe_for(bug: BugBase) -> bool:
-	return fits(bug) and (not requires_squeeze or bug.is_squeezing)
+	return fits(bug) and (not requires_squeeze or bug.is_squeezing or bug.stats.tiny)

@@ -520,6 +520,36 @@
       "tier": 3,
       "target_polycount": 3000,
       "prompt": "A white cast-iron column radiator with vertical fins and a small valve, front facing forward."
+    },
+    {
+      "id": "bug_ant",
+      "tier": 1,
+      "target_polycount": 8000,
+      "prompt": "A single black garden ant: three-part body with a round gaster, narrow waist and thorax, elbowed antennae, small mandibles, six thin legs, facing forward."
+    },
+    {
+      "id": "bug_cricket",
+      "tier": 1,
+      "target_polycount": 9000,
+      "prompt": "A brown house cricket with very long antennae, folded wings on its back, two tail cerci and big muscular jumping hind legs folded up, facing forward."
+    },
+    {
+      "id": "bug_ladybug",
+      "tier": 1,
+      "target_polycount": 7000,
+      "prompt": "A ladybug: glossy red dome-shaped wing cases with black spots and a center seam, black head with two white cheek spots, short black legs, facing forward."
+    },
+    {
+      "id": "bug_firefly",
+      "tier": 1,
+      "target_polycount": 8000,
+      "prompt": "A firefly beetle WITHOUT open wings: dark brown body, orange shield behind the head, pale yellow-green glowing lantern at the tail tip, thin antennae, facing forward."
+    },
+    {
+      "id": "bug_stink_bug",
+      "tier": 1,
+      "target_polycount": 7000,
+      "prompt": "A brown marmorated stink bug: broad flat shield-shaped body, mottled grey-brown with pale banded edges, banded antennae, six legs, facing forward."
     }
   ]
 }

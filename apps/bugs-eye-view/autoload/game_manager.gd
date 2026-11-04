@@ -7,7 +7,10 @@ signal run_finished(result: Dictionary)
 
 enum State { MENU, PLAYING, PAUSED, CAUGHT, WIN, HUB }
 
-const BUG_IDS: Array[StringName] = [&"cockroach", &"fly", &"spider"]
+## In unlock order: each comes out of the shade when you escape a room as the
+## one before it (BugStats.unlock_after_bug).
+const BUG_IDS: Array[StringName] = [&"cockroach", &"fly", &"spider", &"ant", &"cricket", &"ladybug",
+	&"firefly", &"stink_bug"]
 const LEVEL_IDS: Array[StringName] = [&"kitchen", &"living_room", &"backyard"]
 const SCENES := {
 	&"main_menu": "res://scenes/ui/main_menu.tscn",
@@ -35,6 +38,16 @@ var run: RunStats
 var last_result: Dictionary = {}
 var scoring: ScoringConfig
 var level_node: Node = null
+## Show each bug's how-to-play card the first time it's played (tests turn it off).
+var guides_enabled := true
+## Step quality down when the frame rate stays low (the "Auto quality" setting;
+## tests turn it off).
+var auto_quality_enabled := true
+const FPS_FLOOR := 24.0
+const FPS_WINDOW := 6
+var _fps_samples: Array[float] = []
+var _fps_timer := 0.0
+var _quality_cd := 0.0
 var _bugs: Dictionary = {}
 var _levels: Dictionary = {}
 var _upgrades: Array[UpgradeDef] = []
@@ -92,6 +105,26 @@ func build_bug_stats(id: StringName) -> BugStats:
 	return s
 
 
+## Marks `bug` as having escaped a room and unlocks every bug waiting on it.
+## Returns the ids that were newly unlocked.
+func unlock_after_escape(bug: StringName) -> Array[StringName]:
+	SaveSystem.mark_bug_completed(bug)
+	var out: Array[StringName] = []
+	for id in BUG_IDS:
+		var s := get_bug_stats(id)
+		if s and s.unlock_after_bug == bug and SaveSystem.unlock_bug(id):
+			out.append(id)
+	return out
+
+
+## The next bug still in the shade, or &"" when all are out.
+func next_locked_bug() -> StringName:
+	for id in BUG_IDS:
+		if not SaveSystem.is_bug_unlocked(id):
+			return id
+	return &""
+
+
 func get_level(id: StringName) -> LevelConfig:
 	return _levels.get(id) as LevelConfig
 
@@ -112,6 +145,47 @@ func is_slot_unlocked(level_id: StringName, slot: StringName) -> bool:
 
 
 # --- Flow -----------------------------------------------------------------
+
+func _process(delta: float) -> void:
+	if state != State.PLAYING:
+		_fps_samples.clear()
+		_fps_timer = 0.0
+		return
+	_quality_cd -= delta
+	_fps_timer += delta
+	if _fps_timer < 1.0:
+		return
+	_fps_timer = 0.0
+	_fps_samples.append(Engine.get_frames_per_second())
+	if _fps_samples.size() > FPS_WINDOW:
+		_fps_samples.pop_front()
+	if _fps_samples.size() == FPS_WINDOW:
+		var total := 0.0
+		for f in _fps_samples:
+			total += f
+		check_frame_rate(total / FPS_WINDOW)
+
+
+## Running slowly for a while: step quality down one notch (high -> medium ->
+## low) and say so. Returns true if it changed.
+func check_frame_rate(avg_fps: float) -> bool:
+	if not auto_quality_enabled or not bool(SaveSystem.get_setting("auto_quality", true)):
+		return false
+	if _quality_cd > 0.0 or avg_fps >= FPS_FLOOR:
+		return false
+	var next: String = {"high": "medium", "medium": "low"}.get(String(SaveSystem.get_setting("quality", "medium")), "")
+	if next == "":
+		return false
+	SaveSystem.set_setting("quality", next)
+	SaveSystem.save_game()
+	apply_quality()
+	if level_node is Level:
+		(level_node as Level).refresh_quality()
+		(level_node as Level).set_hint("Switched to %s quality for smoother play" % next.capitalize())
+	_quality_cd = 20.0
+	_fps_samples.clear()
+	return true
+
 
 func set_state(s: int) -> void:
 	if s == state:
@@ -205,6 +279,9 @@ func finish_run(won: bool, cause: StringName = &"") -> Dictionary:
 		if SaveSystem.unlock_bug(cfg.unlocks_bug):
 			var bs := get_bug_stats(cfg.unlocks_bug)
 			unlocks.append("%s unlocked!" % (bs.display_name if bs else String(cfg.unlocks_bug)))
+	if won:
+		for b in unlock_after_escape(current_bug):
+			unlocks.append("%s is out of the shade - new bug unlocked!" % get_bug_stats(b).display_name)
 	if won and not was_completed:
 		var nxt := next_level_id()
 		if nxt != &"":

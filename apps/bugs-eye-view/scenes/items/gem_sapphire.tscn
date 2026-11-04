@@ -36,41 +36,53 @@ height = 0.04
 radial_segments = 16
 rings = 1
 
-[node name="GemSapphire" type="Area3D" unique_id=1628437567]
+[node name="GemSapphire" type="Area3D" unique_id=1123459930]
 script = ExtResource("1_wu1mi")
 def = ExtResource("2_5u44w")
 
-[node name="Shape" type="CollisionShape3D" parent="." unique_id=301307325]
+[node name="Shape" type="CollisionShape3D" parent="." unique_id=1976850326]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.7, 0)
 shape = SubResource("SphereShape3D_uebev")
 
-[node name="Visual" type="Node3D" parent="." unique_id=1860555597]
+[node name="Visual" type="Node3D" parent="." unique_id=607850444]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.7, 0)
 
-[node name="Oval" type="MeshInstance3D" parent="Visual" unique_id=462514880]
+[node name="Oval" type="MeshInstance3D" parent="Visual" unique_id=267912408]
 transform = Transform3D(0.8, 0, 0, 0, 1.15, 0, 0, 0, 0.55, 0, 0, 0)
 material_override = ExtResource("3_t73fk")
+visibility_range_end = 110.0
+visibility_range_end_margin = 16.5
+visibility_range_fade_mode = 1
 mesh = SubResource("SphereMesh_rrf43")
 
-[node name="Skin" type="Node3D" parent="Visual" unique_id=1324858213]
+[node name="Skin" type="Node3D" parent="Visual" unique_id=249132784]
 script = ExtResource("4_evgbv")
 model_id = "gem_sapphire"
 fit_size = Vector3(1.1, 1.5, 0.8)
 hide_paths = Array[NodePath]([NodePath("../Oval")])
 
-[node name="Glow" type="OmniLight3D" parent="Visual" unique_id=1440893437]
+[node name="Glow" type="OmniLight3D" parent="Visual" unique_id=747256874]
 light_color = Color(0.15, 0.35, 1, 1)
 light_energy = 1.2
+distance_fade_enabled = true
+distance_fade_begin = 88.0
+distance_fade_length = 22.0
 
-[node name="Sparkles" type="Node3D" parent="Visual" unique_id=814557939]
+[node name="Sparkles" type="Node3D" parent="Visual" unique_id=594172237]
 
-[node name="Sparkle" type="MeshInstance3D" parent="Visual/Sparkles" unique_id=137411525]
+[node name="Sparkle" type="MeshInstance3D" parent="Visual/Sparkles" unique_id=1854383658]
 material_override = ExtResource("5_8qutk")
 cast_shadow = 0
+visibility_range_end = 110.0
+visibility_range_end_margin = 16.5
+visibility_range_fade_mode = 1
 mesh = SubResource("ArrayMesh_7auwj")
 
-[node name="Halo" type="MeshInstance3D" parent="." unique_id=1470003434]
+[node name="Halo" type="MeshInstance3D" parent="." unique_id=160083734]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, 0)
 material_override = ExtResource("6_16sma")
 cast_shadow = 0
+visibility_range_end = 110.0
+visibility_range_end_margin = 16.5
+visibility_range_fade_mode = 1
 mesh = SubResource("CylinderMesh_7wkiv")

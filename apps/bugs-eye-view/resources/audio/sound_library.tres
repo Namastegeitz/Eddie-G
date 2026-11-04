@@ -4,6 +4,7 @@
 [ext_resource type="AudioStream" path="res://assets/sfx/bark.wav" id="2_oalxw"]
 [ext_resource type="AudioStream" path="res://assets/sfx/boss_sting.wav" id="3_kmrw0"]
 [ext_resource type="AudioStream" path="res://assets/sfx/buzz.wav" id="4_hkoqi"]
+[ext_resource type="AudioStream" path="res://assets/sfx/chirp.wav" id="5_7eseq"]
 [ext_resource type="AudioStream" path="res://assets/sfx/clang.wav" id="5_p2v6k"]
 [ext_resource type="AudioStream" path="res://assets/sfx/clatter.wav" id="6_xh3s1"]
 [ext_resource type="AudioStream" path="res://assets/sfx/clink.wav" id="7_18mw2"]
@@ -63,6 +64,7 @@ sounds = {
 &"bark": ExtResource("2_oalxw"),
 &"boss_sting": ExtResource("3_kmrw0"),
 &"buzz": ExtResource("4_hkoqi"),
+&"chirp": ExtResource("5_7eseq"),
 &"clang": ExtResource("5_p2v6k"),
 &"clatter": ExtResource("6_xh3s1"),
 &"clink": ExtResource("7_18mw2"),

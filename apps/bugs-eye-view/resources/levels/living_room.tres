@@ -14,7 +14,6 @@ crumbs_required = 11
 par_time = 290.0
 animal_awareness = 1.3
 unlock_after = &"kitchen"
-unlocks_bug = &"spider"
 boss_name = "The Cat"
 routine = ExtResource("1_1sf63")
 ambient_light_by_period = {

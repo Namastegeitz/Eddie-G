@@ -8,11 +8,12 @@ var _vis := 0.0
 var _noise := 0.0
 var _sense := 1.0
 var _stamina := -1.0
+var _ability := -1.0
 var _font: Font
 
 
 func _ready() -> void:
-	custom_minimum_size = Vector2(150, 190)
+	custom_minimum_size = Vector2(150, 216)
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_font = get_theme_default_font()
 
@@ -23,7 +24,9 @@ func bind_player(p: BugBase) -> void:
 		if meter == &"sense":
 			_sense = v / maxf(mx, 0.001)
 		elif meter == &"stamina":
-			_stamina = v / maxf(mx, 0.001))
+			_stamina = v / maxf(mx, 0.001)
+		elif meter == &"ability":
+			_ability = v / maxf(mx, 0.001))
 
 
 func _process(delta: float) -> void:
@@ -53,8 +56,14 @@ func _draw() -> void:
 	draw_string(_font, Vector2(4, 132), "NOISE", HORIZONTAL_ALIGNMENT_LEFT, -1, 16, Color(1, 1, 1, 0.5 + n * 0.5))
 	# Bars.
 	_bar(Vector2(4, 142), _sense, Color(0.55, 0.75, 1.0), "SENSE")
+	var y := 168.0
 	if _stamina >= 0.0:
-		_bar(Vector2(4, 168), _stamina, UIKit.GOLD, "WINGS")
+		_bar(Vector2(4, y), _stamina, UIKit.GOLD, player.stamina_name() if player else "WINGS")
+		y += 26.0
+	if _ability >= 0.0 and player:
+		var is_ready := _ability >= 0.999
+		_bar(Vector2(4, y), _ability, Color(0.55, 0.95, 0.5) if is_ready else Color(0.5, 0.6, 0.45),
+			player.ability_name() + (" READY" if is_ready else ""))
 
 
 func _bar(pos: Vector2, k: float, col: Color, text: String) -> void:
