@@ -53,7 +53,7 @@ tools/run_tests.sh          # compile check + phase audit (project and exported 
 FAST=1 tools/run_tests.sh   # one Journey stage per region instead of all 30
 ```
 
-The phase audit (`tests/phase_audit.gd`, 250 checks) turns each phase's
+The phase audit (`tests/phase_audit.gd`, 309 checks) turns each phase's
 checkpoint from the brief into checks: grid hops, every hazard kind, every
 ability, all 50 animals, every region generating 200 rows, a path-finding bot
 beating **all 30 Journey stages with the free Poison Dart Frog**, adding a map
