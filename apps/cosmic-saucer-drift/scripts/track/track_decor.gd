@@ -1,0 +1,326 @@
+class_name TrackDecor
+extends RefCounted
+## Backdrop per theme: planets, asteroid fields, alien plants, ice crystals,
+## station structures, lava ground. All batched in MultiMeshes.
+
+static var _rock_mesh: ArrayMesh = null
+
+
+static func build(td: TrackData, root: Node3D) -> void:
+	var theme := Themes.get_theme(td.theme)
+	var rng := RandomNumberGenerator.new()
+	rng.seed = hash(td.id)
+	var holder := Node3D.new()
+	holder.name = "Decor"
+	root.add_child(holder)
+	for p in theme.planets:
+		_planet(holder, p, theme)
+	var low := _lowest(td)
+	match td.theme:
+		"asteroid":
+			_rocks(td, holder, rng, 320, Color(0.34, 0.29, 0.30), Vector2(2.0, 16.0), Vector2(-90.0, 110.0), 260.0)
+			_rocks(td, holder, rng, 14, Color(0.28, 0.24, 0.26), Vector2(40.0, 90.0), Vector2(-250.0, 200.0), 700.0, 160.0)
+		"saturn":
+			_rocks(td, holder, rng, 260, Color(0.75, 0.72, 0.68), Vector2(1.0, 6.0), Vector2(-60.0, 40.0), 320.0)
+			_buoys(td, holder, rng, Themes.get_theme(td.theme).neon)
+		"jungle":
+			_ground(holder, low - 45.0, Color(0.10, 0.22, 0.12), Color(0.25, 1.0, 0.6), 0)
+			_plants(td, holder, rng, low - 45.0)
+		"ice":
+			_ground(holder, low - 55.0, Color(0.55, 0.65, 0.8), Color(0.6, 0.85, 1.0), 2)
+			_crystals(td, holder, rng, low - 55.0)
+			_rocks(td, holder, rng, 90, Color(0.7, 0.85, 1.0), Vector2(2.0, 10.0), Vector2(-30.0, 60.0), 240.0)
+		"station":
+			_station(td, holder, rng)
+		"lava":
+			_ground(holder, low - 50.0, Color(0.16, 0.07, 0.05), Color(1.0, 0.35, 0.05), 1)
+			_spires(td, holder, rng, low - 50.0)
+
+
+static func _lowest(td: TrackData) -> float:
+	var y := INF
+	for p in td.main.pts:
+		y = minf(y, p.y)
+	return y
+
+
+static func _planet(parent: Node3D, p: Dictionary, theme: Dictionary) -> void:
+	var mi := MeshInstance3D.new()
+	var sm := SphereMesh.new()
+	sm.radius = p.r
+	sm.height = p.r * 2.0
+	sm.radial_segments = 48
+	sm.rings = 24
+	mi.mesh = sm
+	var mat := ShaderMaterial.new()
+	mat.shader = preload("res://shaders/planet.gdshader")
+	mat.set_shader_parameter("color_a", p.a)
+	mat.set_shader_parameter("color_b", p.b)
+	mat.set_shader_parameter("rim_color", p.rim)
+	mat.set_shader_parameter("sun_dir", -Vector3(theme.sun_dir))
+	mi.material_override = mat
+	mi.position = p.pos
+	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	parent.add_child(mi)
+	if p.get("ring", false):
+		var ring := MeshInstance3D.new()
+		var pm := PlaneMesh.new()
+		pm.size = Vector2(p.r * 4.6, p.r * 4.6)
+		ring.mesh = pm
+		var rm := ShaderMaterial.new()
+		rm.shader = preload("res://shaders/ring.gdshader")
+		ring.material_override = rm
+		ring.position = p.pos
+		ring.rotation_degrees = Vector3(16, 0, -12)
+		ring.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		parent.add_child(ring)
+
+
+static func rock_mesh() -> ArrayMesh:
+	if _rock_mesh:
+		return _rock_mesh
+	var sm := SphereMesh.new()
+	sm.radial_segments = 9
+	sm.rings = 6
+	var arr := sm.get_mesh_arrays()
+	var verts: PackedVector3Array = arr[Mesh.ARRAY_VERTEX]
+	var noise := FastNoiseLite.new()
+	noise.seed = 7
+	noise.frequency = 1.6
+	for i in verts.size():
+		var v := verts[i]
+		verts[i] = v * (1.0 + 0.32 * noise.get_noise_3dv(v * 2.0))
+	arr[Mesh.ARRAY_VERTEX] = verts
+	var tmp := ArrayMesh.new()
+	tmp.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arr)
+	var st := SurfaceTool.new()
+	st.create_from(tmp, 0)
+	st.deindex()
+	st.generate_normals()
+	_rock_mesh = st.commit()
+	return _rock_mesh
+
+
+## True when p is clear of the main track by `clear` metres.
+static func _clear(td: TrackData, p: Vector3, clear: float) -> bool:
+	var path := td.main
+	for i in range(0, path.n, 4):
+		if path.pts[i].distance_squared_to(p) < clear * clear:
+			return false
+	return true
+
+
+static func _multimesh(parent: Node3D, mesh: Mesh, tfs: Array[Transform3D], mat: Material, node_name: String, colors: Array[Color] = []) -> void:
+	if tfs.is_empty():
+		return
+	var mm := MultiMesh.new()
+	mm.transform_format = MultiMesh.TRANSFORM_3D
+	mm.use_colors = not colors.is_empty()
+	mm.mesh = mesh
+	mm.instance_count = tfs.size()
+	for k in tfs.size():
+		mm.set_instance_transform(k, tfs[k])
+		if mm.use_colors:
+			mm.set_instance_color(k, colors[k])
+	var mmi := MultiMeshInstance3D.new()
+	mmi.name = node_name
+	mmi.multimesh = mm
+	mmi.material_override = mat
+	mmi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	parent.add_child(mmi)
+
+
+static func _rocks(td: TrackData, parent: Node3D, rng: RandomNumberGenerator, count: int, color: Color,
+		size: Vector2, yrange: Vector2, reach: float, min_clear := 0.0) -> void:
+	var tfs: Array[Transform3D] = []
+	var path := td.main
+	var tries := 0
+	while tfs.size() < count and tries < count * 6:
+		tries += 1
+		var i := rng.randi_range(0, path.n - 1)
+		var side := -1.0 if rng.randf() < 0.5 else 1.0
+		var lat := side * (td.width * 0.5 + rng.randf_range(14.0, reach))
+		var p := path.pts[i] + path.rgt[i] * lat + Vector3.UP * rng.randf_range(yrange.x, yrange.y)
+		var r := rng.randf_range(size.x, size.y)
+		if not _clear(td, p, td.width * 0.5 + r + 8.0 + min_clear):
+			continue
+		var b := Basis.from_euler(Vector3(rng.randf() * TAU, rng.randf() * TAU, rng.randf() * TAU))
+		b = b.scaled(Vector3(r, r * rng.randf_range(0.6, 1.0), r * rng.randf_range(0.7, 1.2)))
+		tfs.append(Transform3D(b, p))
+	var mat := StandardMaterial3D.new()
+	mat.albedo_color = color
+	mat.roughness = 0.9
+	_multimesh(parent, rock_mesh(), tfs, mat, "Rocks%d" % count)
+
+
+static func _ground(parent: Node3D, y: float, base: Color, glow_c: Color, mode: int) -> void:
+	var mi := MeshInstance3D.new()
+	var pm := PlaneMesh.new()
+	pm.size = Vector2(5000, 5000)
+	mi.mesh = pm
+	var mat := ShaderMaterial.new()
+	mat.shader = preload("res://shaders/ground.gdshader")
+	mat.set_shader_parameter("base", base)
+	mat.set_shader_parameter("glow_color", glow_c)
+	mat.set_shader_parameter("mode", mode)
+	mi.material_override = mat
+	mi.position = Vector3(150, y, 0)
+	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	parent.add_child(mi)
+
+
+static func _plants(td: TrackData, parent: Node3D, rng: RandomNumberGenerator, ground_y: float) -> void:
+	var trunks: Array[Transform3D] = []
+	var caps: Array[Transform3D] = []
+	var cap_cols: Array[Color] = []
+	var path := td.main
+	var palette := [Color(1.0, 0.35, 0.8), Color(0.3, 1.0, 0.8), Color(1.0, 0.85, 0.2), Color(0.6, 0.4, 1.0)]
+	for k in 170:
+		var i := rng.randi_range(0, path.n - 1)
+		var side := -1.0 if rng.randf() < 0.5 else 1.0
+		var lat := side * (td.width * 0.5 + rng.randf_range(6.0, 90.0))
+		var top := path.pts[i] + path.rgt[i] * lat + Vector3.UP * rng.randf_range(4.0, 26.0)
+		if not _clear(td, Vector3(top.x, path.pts[i].y, top.z), td.width * 0.5 + 5.0):
+			continue
+		var h := top.y - ground_y
+		var w := rng.randf_range(0.8, 2.2)
+		trunks.append(Transform3D(Basis().scaled(Vector3(w, h, w)), Vector3(top.x, ground_y + h * 0.5, top.z)))
+		var cr := rng.randf_range(3.0, 8.0)
+		caps.append(Transform3D(Basis().scaled(Vector3(cr, cr * 0.55, cr)), top))
+		cap_cols.append(palette[k % palette.size()])
+	var cyl := CylinderMesh.new()
+	cyl.top_radius = 0.5
+	cyl.bottom_radius = 0.9
+	cyl.height = 1.0
+	cyl.radial_segments = 6
+	cyl.rings = 1
+	var tm := StandardMaterial3D.new()
+	tm.albedo_color = Color(0.15, 0.32, 0.2)
+	_multimesh(parent, cyl, trunks, tm, "Trunks")
+	var sph := SphereMesh.new()
+	sph.radial_segments = 10
+	sph.rings = 5
+	var cm := StandardMaterial3D.new()
+	cm.vertex_color_use_as_albedo = true
+	cm.emission_enabled = true
+	cm.emission = Color(0.3, 0.3, 0.3)
+	cm.emission_energy_multiplier = 0.6
+	_multimesh(parent, sph, caps, cm, "Caps", cap_cols)
+
+
+static func _crystals(td: TrackData, parent: Node3D, rng: RandomNumberGenerator, ground_y: float) -> void:
+	var tfs: Array[Transform3D] = []
+	var path := td.main
+	for k in 150:
+		var i := rng.randi_range(0, path.n - 1)
+		var side := -1.0 if rng.randf() < 0.5 else 1.0
+		var lat := side * (td.width * 0.5 + rng.randf_range(10.0, 160.0))
+		var base := path.pts[i] + path.rgt[i] * lat
+		base.y = ground_y
+		var h := rng.randf_range(20.0, 75.0)
+		var w := rng.randf_range(3.0, 9.0)
+		var b := Basis.from_euler(Vector3(rng.randf_range(-0.35, 0.35), rng.randf() * TAU, rng.randf_range(-0.35, 0.35))).scaled(Vector3(w, h, w))
+		var tip := base + b.y * 0.5
+		if not _clear(td, tip, td.width * 0.5 + 8.0):
+			continue
+		tfs.append(Transform3D(b, base + b.y * 0.5))
+	var cyl := CylinderMesh.new()
+	cyl.top_radius = 0.0
+	cyl.bottom_radius = 0.6
+	cyl.height = 1.0
+	cyl.radial_segments = 6
+	cyl.rings = 1
+	var mat := StandardMaterial3D.new()
+	mat.albedo_color = Color(0.6, 0.85, 1.0, 0.85)
+	mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	mat.metallic = 0.3
+	mat.roughness = 0.05
+	mat.emission_enabled = true
+	mat.emission = Color(0.3, 0.6, 1.0)
+	mat.emission_energy_multiplier = 0.5
+	_multimesh(parent, cyl, tfs, mat, "Crystals")
+
+
+static func _spires(td: TrackData, parent: Node3D, rng: RandomNumberGenerator, ground_y: float) -> void:
+	var tfs: Array[Transform3D] = []
+	var path := td.main
+	for k in 120:
+		var i := rng.randi_range(0, path.n - 1)
+		var side := -1.0 if rng.randf() < 0.5 else 1.0
+		var lat := side * (td.width * 0.5 + rng.randf_range(12.0, 200.0))
+		var base := path.pts[i] + path.rgt[i] * lat
+		base.y = ground_y
+		var h := rng.randf_range(25.0, 70.0)
+		var w := rng.randf_range(6.0, 16.0)
+		var tip := base + Vector3.UP * h
+		if not _clear(td, tip, td.width * 0.5 + 10.0):
+			continue
+		tfs.append(Transform3D(Basis().scaled(Vector3(w, h, w)), base + Vector3.UP * h * 0.5))
+	var cyl := CylinderMesh.new()
+	cyl.top_radius = 0.15
+	cyl.bottom_radius = 0.6
+	cyl.height = 1.0
+	cyl.radial_segments = 7
+	cyl.rings = 2
+	var mat := StandardMaterial3D.new()
+	mat.albedo_color = Color(0.2, 0.1, 0.08)
+	mat.roughness = 0.95
+	_multimesh(parent, cyl, tfs, mat, "Spires")
+
+
+static func _buoys(td: TrackData, parent: Node3D, rng: RandomNumberGenerator, neon: Color) -> void:
+	var tfs: Array[Transform3D] = []
+	var path := td.main
+	for i in range(0, path.n, 14):
+		for side: float in [-1.0, 1.0]:
+			if rng.randf() < 0.4:
+				continue
+			var p := path.pts[i] + path.rgt[i] * side * (td.width * 0.5 + 8.0) + path.upv[i] * 3.0
+			tfs.append(Transform3D(Basis.from_euler(Vector3(0.5, float(i), 0.3)), p))
+	var bm := BoxMesh.new()
+	bm.size = Vector3(1.2, 1.2, 1.2)
+	_multimesh(parent, bm, tfs, TrackBuilder.glow(neon, 1.8), "Buoys")
+
+
+static func _station(td: TrackData, parent: Node3D, rng: RandomNumberGenerator) -> void:
+	var center := Vector3.ZERO
+	for p in td.main.pts:
+		center += p
+	center /= float(td.main.n)
+	# Big slowly turning habitat ring behind the track.
+	var ring := MeshInstance3D.new()
+	var tm := TorusMesh.new()
+	tm.inner_radius = 520.0
+	tm.outer_radius = 560.0
+	tm.rings = 64
+	tm.ring_segments = 8
+	ring.mesh = tm
+	ring.material_override = TrackBuilder.flat(Color(0.5, 0.52, 0.6), 0.0, 0.7, 0.4)
+	ring.position = center + Vector3(0, -120, -900)
+	ring.rotation_degrees = Vector3(70, 0, 10)
+	ring.set_script(preload("res://scripts/track/spinner.gd"))
+	ring.set("speed", 0.03)
+	parent.add_child(ring)
+	# Modules and solar panels scattered around and below the course.
+	var mods: Array[Transform3D] = []
+	var panels: Array[Transform3D] = []
+	var path := td.main
+	for k in 60:
+		var i := rng.randi_range(0, path.n - 1)
+		var side := -1.0 if rng.randf() < 0.5 else 1.0
+		var p := path.pts[i] + path.rgt[i] * side * (td.width * 0.5 + rng.randf_range(25.0, 140.0)) + Vector3.UP * rng.randf_range(-60.0, 30.0)
+		if not _clear(td, p, td.width * 0.5 + 22.0):
+			continue
+		var b := Basis.from_euler(Vector3(0, rng.randf() * TAU, PI * 0.5))
+		mods.append(Transform3D(b.scaled(Vector3(rng.randf_range(6, 12), rng.randf_range(20, 50), rng.randf_range(6, 12))), p))
+		panels.append(Transform3D(Basis.from_euler(Vector3(0.2, rng.randf() * TAU, 0)).scaled(Vector3(40, 0.6, 12)), p + Vector3.UP * 14.0))
+	var cyl := CylinderMesh.new()
+	cyl.radial_segments = 10
+	cyl.rings = 1
+	cyl.top_radius = 0.5
+	cyl.bottom_radius = 0.5
+	cyl.height = 1.0
+	_multimesh(parent, cyl, mods, TrackBuilder.flat(Color(0.62, 0.62, 0.68), 0.0, 0.8, 0.35), "Modules")
+	var bm := BoxMesh.new()
+	var pmat := TrackBuilder.flat(Color(0.12, 0.2, 0.55), 0.6, 0.9, 0.2)
+	_multimesh(parent, bm, panels, pmat, "Panels")

@@ -1,0 +1,265 @@
+class_name Hud
+extends Control
+## In-race HUD for one local player: place, lap, time, item slot, energy
+## cells, Plasma Boost meter, minimap, countdown, toasts and overlays
+## (nebula splats, emergency warning, boost streaks).
+
+var race: Node
+var racer: Racer
+var compact := false     # split-screen: smaller text
+
+var _place: Label
+var _place_of: Label
+var _lap: Label
+var _time: Label
+var _speed: Label
+var _center: Label
+var _sub: Label
+var _toasts: VBoxContainer
+var _item_box: PanelContainer
+var _item_icon: ItemIcon
+var _item_name: Label
+var _energy_lbl: Label
+var _minimap: Minimap
+var _overlay: Control
+var _center_t := 0.0
+var _roll_t := 0.0
+var _splats: Array[Vector3] = []
+var _rng := RandomNumberGenerator.new()
+
+
+func setup(p_race: Node, p_racer: Racer, is_compact: bool) -> void:
+	race = p_race
+	racer = p_racer
+	compact = is_compact
+	theme = UiKit.theme()
+	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var k := 0.72 if compact else 1.0
+	_overlay = Control.new()
+	_overlay.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	_overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_overlay.draw.connect(_draw_overlay)
+	add_child(_overlay)
+	# Place (top left).
+	var pl := UiKit.hbox(2)
+	add_child(pl)
+	UiKit.place(pl, Vector2(0, 0), Vector2(24, 4), Vector2(220, 90) * k)
+	_place = UiKit.label("1st", int(70 * k), Color.WHITE)
+	pl.add_child(_place)
+	_place_of = UiKit.label("/8", int(30 * k), UiKit.DIM)
+	_place_of.size_flags_vertical = Control.SIZE_SHRINK_END
+	pl.add_child(_place_of)
+	# Item slot under the place.
+	_item_box = PanelContainer.new()
+	_item_box.add_theme_stylebox_override("panel", UiKit.box(Color(0.05, 0.03, 0.12, 0.7), 16, UiKit.CYAN.darkened(0.3), 3))
+	add_child(_item_box)
+	UiKit.place(_item_box, Vector2(0, 0), Vector2(26, 100 * k), Vector2(96, 96) * k)
+	_item_icon = ItemIcon.new()
+	_item_icon.custom_minimum_size = Vector2(84, 84) * k
+	_item_box.add_child(_item_icon)
+	_item_name = UiKit.label("", int(18 * k), UiKit.DIM)
+	add_child(_item_name)
+	UiKit.place(_item_name, Vector2(0, 0), Vector2(26, 200 * k), Vector2(260, 30))
+	# Lap + time (top centre).
+	var top := UiKit.vbox(0)
+	add_child(top)
+	UiKit.place(top, Vector2(0.5, 0), Vector2(-160, 6), Vector2(320, 80))
+	_lap = UiKit.label("LAP 1/3", int(34 * k), Color.WHITE, HORIZONTAL_ALIGNMENT_CENTER)
+	top.add_child(_lap)
+	_time = UiKit.label("0:00.00", int(24 * k), UiKit.DIM, HORIZONTAL_ALIGNMENT_CENTER)
+	top.add_child(_time)
+	# Minimap (top right).
+	_minimap = Minimap.new()
+	var ms := 190.0 * k
+	_minimap.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(_minimap)
+	UiKit.place(_minimap, Vector2(1, 0), Vector2(-ms - 16, 12), Vector2(ms, ms))
+	_minimap.setup(race, racer)
+	# Speed (bottom right above touch buttons on phones, bottom right otherwise).
+	_speed = UiKit.label("0", int(30 * k), Color.WHITE, HORIZONTAL_ALIGNMENT_RIGHT)
+	add_child(_speed)
+	UiKit.place(_speed, Vector2(1, 0), Vector2(-220, 210 * k), Vector2(200, 40))
+	# Energy label (bars are drawn in the overlay).
+	_energy_lbl = UiKit.label("DARK MATTER", int(16 * k), UiKit.CYAN, HORIZONTAL_ALIGNMENT_CENTER)
+	add_child(_energy_lbl)
+	UiKit.place(_energy_lbl, Vector2(0.5, 1), Vector2(-250, -128 * k), Vector2(500, 30))
+	# Centre messages + toasts.
+	_center = UiKit.label("", int(110 * k), Color.WHITE, HORIZONTAL_ALIGNMENT_CENTER)
+	add_child(_center)
+	UiKit.place(_center, Vector2(0.5, 0.5), Vector2(-500, -190 * k), Vector2(1000, 130 * k))
+	_sub = UiKit.label("", int(30 * k), UiKit.GOLD, HORIZONTAL_ALIGNMENT_CENTER)
+	add_child(_sub)
+	UiKit.place(_sub, Vector2(0.5, 0.5), Vector2(-500, -60 * k), Vector2(1000, 40))
+	_toasts = UiKit.vbox(2)
+	_toasts.alignment = BoxContainer.ALIGNMENT_BEGIN
+	add_child(_toasts)
+	UiKit.place(_toasts, Vector2(0.5, 0.5), Vector2(-350, -10 * k), Vector2(700, 140))
+	racer.event.connect(_on_event)
+
+
+func big(text: String, sub := "", secs := 1.2, color := Color.WHITE) -> void:
+	_center.text = text
+	_center.add_theme_color_override("font_color", color)
+	_sub.text = sub
+	_center_t = secs
+
+
+func toast(text: String, color := Color.WHITE) -> void:
+	var l := UiKit.label(text, 30 if not compact else 22, color, HORIZONTAL_ALIGNMENT_CENTER)
+	_toasts.add_child(l)
+	if _toasts.get_child_count() > 3:
+		_toasts.get_child(0).queue_free()
+	var tw := create_tween()
+	tw.tween_interval(1.1)
+	tw.tween_property(l, "modulate:a", 0.0, 0.4)
+	tw.tween_callback(l.queue_free)
+
+
+func _on_event(kind: String, d: Dictionary) -> void:
+	match kind:
+		"trick":
+			toast("TRICK x%d!  +BOOST" % d.count if d.count > 1 else "TRICK!  +BOOST", UiKit.GOLD)
+		"sloppy":
+			toast("Sloppy landing", UiKit.DIM)
+		"near_miss":
+			toast("NEAR MISS  +ENERGY", UiKit.CYAN)
+		"slipstream":
+			toast("SLIPSTREAM!", UiKit.CYAN)
+		"drift_boost":
+			var names := ["", "BLUE BOOST", "ORANGE BOOST", "PURPLE BOOST!"]
+			toast(names[d.tier], SaucerModel.SPARK_COLORS[d.tier - 1])
+		"start_boost":
+			toast("ROCKET START!", UiKit.GOLD)
+		"stall":
+			toast("Engine stalled - too early!", UiKit.RED)
+		"emergency":
+			toast("CORE EMPTY - GRAB AN ENERGY POD!", UiKit.RED)
+		"recharged":
+			toast("Core recharged", UiKit.GREEN)
+		"hit":
+			toast("HIT!", UiKit.RED)
+		"blocked":
+			toast("Shield blocked it", UiKit.CYAN)
+		"hit_landed":
+			toast("Got %s!" % (d.target as Racer).display_name, UiKit.PINK)
+		"inked":
+			_splats.clear()
+			for k in 7:
+				_splats.append(Vector3(_rng.randf_range(0.1, 0.9), _rng.randf_range(0.15, 0.85), _rng.randf_range(60, 150)))
+		"meteor_warning":
+			toast("METEOR INCOMING!", UiKit.RED)
+		"tractored":
+			toast("Caught in a tractor beam!", UiKit.GREEN)
+		"shard":
+			toast("STAR SHARD!" if d.new else "Star Shard (already found)", UiKit.GOLD)
+		"respawn":
+			toast("Rescue beam", UiKit.DIM)
+		"geyser":
+			toast("WHOOSH!", UiKit.CYAN)
+		"item_roll":
+			_roll_t = 0.9
+
+
+func _process(dt: float) -> void:
+	if racer == null:
+		return
+	var n: int = race.racers.size()
+	_place.text = UiKit.ordinal(racer.place)
+	_place.add_theme_color_override("font_color", UiKit.GOLD if racer.place == 1 else Color.WHITE)
+	_place_of.text = "/%d" % n
+	var laps: int = race.td.laps
+	_lap.text = "LAP %d/%d" % [clampi(racer.lap, 1, laps), laps] if not racer.finished else "FINISHED"
+	_time.text = UiKit.time_str(race.time if not racer.finished else racer.finish_time)
+	_speed.text = "%d km/h" % int(maxf(racer.fwd_speed, 0.0) * 3.6)
+	# Item slot with roulette.
+	if racer.item_roll > 0.0:
+		_roll_t -= dt
+		var keys := Catalog.ITEMS.keys()
+		_item_icon.item = keys[int(Time.get_ticks_msec() / 70.0) % keys.size()]
+		_item_name.text = "..."
+	else:
+		_item_icon.item = racer.item
+		_item_name.text = Catalog.ITEMS[racer.item].name if racer.item != "" else ""
+	_energy_lbl.text = "EMERGENCY HOVER - GRAB A POD!" if racer.emergency else "DARK MATTER CORE"
+	_energy_lbl.add_theme_color_override("font_color", UiKit.RED if racer.emergency else UiKit.CYAN)
+	if _center_t > 0.0:
+		_center_t -= dt
+		if _center_t <= 0.0:
+			_center.text = ""
+			_sub.text = ""
+	if racer.wrong_way and _center_t <= 0.0:
+		_center.text = "WRONG WAY"
+		_center.add_theme_color_override("font_color", UiKit.RED)
+	elif not racer.wrong_way and _center.text == "WRONG WAY":
+		_center.text = ""
+	_overlay.queue_redraw()
+
+
+func _draw_overlay() -> void:
+	var s := _overlay.size
+	if s.x < 2.0 or s.y < 2.0:
+		return
+	var k := 0.72 if compact else 1.0
+	# Energy cells.
+	var cells := 10
+	var cw := 34.0 * k
+	var ch := 18.0 * k
+	var gap := 5.0 * k
+	var total := cells * cw + (cells - 1) * gap
+	var x0 := s.x * 0.5 - total * 0.5
+	var y0 := s.y - 52.0 * k
+	var frac: float = racer.energy / float(race.tuning.energy_max)
+	for i in cells:
+		var r := Rect2(x0 + i * (cw + gap), y0, cw, ch)
+		_overlay.draw_rect(r.grow(2), Color(0, 0, 0, 0.55))
+		var fill := clampf(frac * cells - i, 0.0, 1.0)
+		var col := UiKit.CYAN
+		if frac < 0.3:
+			col = Color(1.0, 0.6, 0.15)
+		if frac < 0.12:
+			col = UiKit.RED
+		if fill > 0.0:
+			_overlay.draw_rect(Rect2(r.position, Vector2(r.size.x * fill, r.size.y)), col)
+	# Plasma Boost meter (fills while drifting).
+	var mw := total
+	var my := y0 - 40.0 * k
+	_overlay.draw_rect(Rect2(x0 - 2, my - 2, mw + 4, 14 * k + 4), Color(0, 0, 0, 0.55))
+	var tiers: PackedFloat32Array = race.tuning.drift_tiers
+	var charge := racer.drift_charge / tiers[2]
+	if racer.drift_dir != 0:
+		var tc: Color = SaucerModel.SPARK_COLORS[clampi(racer.drift_tier - 1, 0, 2)] if racer.drift_tier > 0 else Color(0.6, 0.6, 0.7)
+		_overlay.draw_rect(Rect2(x0, my, mw * charge, 14 * k), tc)
+	for t in 3:
+		var tx := x0 + mw * tiers[t] / tiers[2]
+		_overlay.draw_line(Vector2(tx, my - 3), Vector2(tx, my + 14 * k + 3), Color(1, 1, 1, 0.7), 2.0)
+	if racer.boost_time > 0.0:
+		_overlay.draw_rect(Rect2(x0, my, mw, 14 * k), Color(1, 1, 1, 0.25))
+		# Speed streaks at the screen edges.
+		var t := Time.get_ticks_msec() * 0.001
+		for i in 14:
+			var y := fposmod(i * 97.0 + t * 900.0, s.y)
+			var side := 0.0 if i % 2 == 0 else s.x
+			var dir := 1.0 if side == 0.0 else -1.0
+			_overlay.draw_line(Vector2(side, y), Vector2(side + dir * 120.0, y + 6.0), Color(1, 1, 1, 0.22), 3.0)
+	# Emergency vignette.
+	if racer.emergency:
+		var a := 0.18 + 0.12 * sin(Time.get_ticks_msec() * 0.008)
+		for i in 6:
+			var w := 18.0 * (i + 1)
+			_overlay.draw_rect(Rect2(0, 0, s.x, s.y), Color(1, 0.1, 0.05, a / 6.0), false, w)
+	# Nebula ink splats.
+	if racer.ink_time > 0.0:
+		var fade := clampf(racer.ink_time / 1.0, 0.0, 1.0)
+		for sp in _splats:
+			var c := Vector2(sp.x * s.x, sp.y * s.y)
+			var r := sp.z * k
+			_overlay.draw_circle(c, r, Color(0.35, 0.1, 0.5, 0.85 * fade))
+			for j in 5:
+				var a := TAU * j / 5.0 + sp.x * 10.0
+				_overlay.draw_circle(c + Vector2(cos(a), sin(a)) * r * 0.9, r * 0.4, Color(0.45, 0.15, 0.6, 0.8 * fade))
+	# Meteor warning when targeted.
+	for m in race.items.meteors:
+		if m.target == racer:
+			var a := 0.25 + 0.25 * sin(Time.get_ticks_msec() * 0.02)
+			_overlay.draw_rect(Rect2(0, 0, s.x, 10), Color(1, 0.3, 0.1, a))
