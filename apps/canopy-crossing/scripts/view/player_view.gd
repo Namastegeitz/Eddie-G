@@ -41,7 +41,7 @@ func update_view(dt: float) -> void:
 		emote_t -= dt
 	elif idle > 4.0 and emote == "" and String(Save.data.get("equipped_emote", "")) != "":
 		play_emote(String(Content.cosmetic(String(Save.data.equipped_emote)).get("anim", "")))
-	if s.state in ["respawn", "dead", "over"]:
+	if s.state in ["respawn", "dead", "restart", "over"]:
 		death_t += dt
 	else:
 		death_t = 0.0
@@ -89,7 +89,7 @@ func _draw() -> void:
 		squash = sin(t * 14.0) * 0.12
 	anim.squash = squash
 	anim.lift = lift + extra_lift
-	var dead := s.state in ["respawn", "dead", "over"] and s.cause != ""
+	var dead := s.state in ["respawn", "dead", "restart", "over"] and s.cause != ""
 	if s.invuln > 0.0 and not dead and int(t * 14.0) % 2 == 0 and s.invuln < 1.9:
 		alpha *= 0.45
 	if dead:

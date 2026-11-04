@@ -123,6 +123,7 @@ func _build_run() -> void:
 	var mt := float(map.get("difficulty", {}).get("move_timer", 0))
 	opts.move_timer = mt if bool(Save.setting("move_timer", true)) and cfg.mode != "tutorial" else 0.0
 	opts.creep = map.get("endless", {}).get("creep", [0.2, 0.8])
+	opts.water_restart = bool(Content.rules.get("water_restarts_run", true))
 	sim = RunSim.new()
 	sim.setup(world, animal, opts)
 
@@ -373,6 +374,8 @@ func _on_state(st: String) -> void:
 		"dead":
 			_refresh_lives()
 			_revive_offer()
+		"restart":
+			_water_restart()
 		"won", "over":
 			_finish()
 
@@ -709,6 +712,37 @@ func _finish() -> void:
 	finished = true
 	Ads.run_stopped = true
 	var won := sim.state == "won"
+	var settled := _settle(won)
+	tut_bubble.visible = false
+	for c in hud.get_children():
+		c.visible = false
+	var card := ResultsCard.make(self, won, sim.max_row, int(settled.earned), sim.amber, settled.rec, settled.extra)
+	overlay.add_child(card)
+
+
+## Fell into the water: keep what was earned, splash, and start the run over.
+func _water_restart() -> void:
+	if finished:
+		return
+	finished = true
+	blocking = true
+	Ads.run_stopped = true
+	var earned := 0
+	if cfg.mode != "tutorial":
+		earned = int(_settle(false).earned)
+	Analytics.event("water_restart", {"mode": cfg.mode, "map": map.id, "stage": cfg.get("stage", 0), "row": sim.row})
+	tut_bubble.visible = false
+	_toast("Splash! Back to the start" + ("  +%d Berries" % earned if earned > 0 else ""), Color("bfe8ff"))
+	get_tree().create_timer(float(Content.rules.get("restart_delay", 1.2))).timeout.connect(_restart_now)
+
+
+func _restart_now() -> void:
+	if is_inside_tree():
+		Game.restart_run()
+
+
+## Pay out and record a finished run: {"earned", "rec", "extra"}.
+func _settle(won: bool) -> Dictionary:
 	sim.finish()
 	var rows := sim.max_row
 	var collected := sim.taken.size()
@@ -740,11 +774,7 @@ func _finish() -> void:
 			Save.data.tutorial_done = true
 			Save.mark()
 			Analytics.funnel("tutorial_complete")
-	tut_bubble.visible = false
-	for c in hud.get_children():
-		c.visible = false
-	var card := ResultsCard.make(self, won, rows, earned, sim.amber, rec, extra)
-	overlay.add_child(card)
+	return {"earned": earned, "rec": rec, "extra": extra}
 
 
 ## Called by the results card when the player picks where to go.

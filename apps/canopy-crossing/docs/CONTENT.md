@@ -121,6 +121,16 @@ branch_fall, fruit_fall, quicksand, gully, roots, bush, fire, tide, mud) and
 camouflage, stealth, toxins and intimidation apply. `cause_text` is what the
 results card says.
 
+## Game rules: `content/rules.json`
+
+- `water_restarts_run` (default `true`): falling into the water (open water,
+  a platform that dives, slipping off, a flooding tide) starts the run over
+  from the beginning of the same stage. No life is used and there's no
+  revive offer; Berries collected so far are kept and the run is recorded.
+  Other hazards (traffic, predators, quicksand, gullies, being carried
+  off-screen) still cost a life. Set it to `false` for the old behaviour.
+- `restart_delay`: seconds of splash before the restart (default 1.2).
+
 ## Store, live ops, seasons, onboarding
 
 - `content/store/catalog.json`: real-money `products` (type, price_usd,

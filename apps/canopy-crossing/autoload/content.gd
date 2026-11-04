@@ -25,6 +25,7 @@ var daily_rewards := {}
 var seasons := {}
 var onboarding := {}
 var settings_defaults := {}
+var rules := {}                 # game rules (content/rules.json)
 var globe_dots := PackedVector2Array()
 var errors: PackedStringArray = []
 var loaded_files := 0
@@ -56,6 +57,7 @@ func reload() -> void:
 	daily_rewards = _load_one("store/daily_rewards.json")
 	onboarding = _load_one("onboarding.json")
 	settings_defaults = _load_one("settings_defaults.json")
+	rules = _load_one("rules.json")
 	_items.clear()
 	for it in collectibles.get("items", []):
 		_items[String(it.id)] = it

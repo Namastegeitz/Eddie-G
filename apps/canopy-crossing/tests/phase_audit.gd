@@ -334,6 +334,36 @@ func _phase1() -> void:
 	_hop(s, Vector2i(0, 1))
 	_steps(s, 2.5)
 	check("per-move timer runs out", s.state == "dead" and s.cause == "timeout")
+	# rule: falling into the water restarts the run (content/rules.json)
+	check("water-restart rule is on", bool(Content.rules.get("water_restarts_run", false)))
+	var wr := {"water_restart": true, "lives": 3}
+	s = _run(World.from_lanes([_lane(0, "safe"), wl, _lane(2, "safe")]), "poison_dart_frog", wr)
+	_hop(s, Vector2i(0, 1))
+	check("falling into the water restarts (no life used)", s.state == "restart" and s.lives == 3 and s.cause == "drowned", s.state)
+	_steps(s, 2.0)
+	check("...and the run waits for the restart", s.state == "restart" and s.row == 1)
+	s = _run(World.from_lanes([_lane(0, "safe"), wl3, _lane(2, "safe")]), "poison_dart_frog", wr)
+	_steps(s, 2.0)
+	_hop(s, Vector2i(0, 1))
+	_steps(s, 2.2)
+	check("riding a caiman that dives restarts", s.state == "restart", s.state)
+	s = _run(World.from_lanes([_lane(0, "safe"), tide, _lane(2, "safe")]), "poison_dart_frog", wr)
+	_hop(s, Vector2i(0, 1))
+	_steps(s, 1.0)
+	check("a flooding tide restarts", s.state == "restart", s.state)
+	s = _run(World.from_lanes([_lane(0, "safe"), qs, _lane(2, "safe")]), "poison_dart_frog", wr)
+	_hop(s, Vector2i(0, 1))
+	_steps(s, 1.2)
+	check("quicksand is not water: costs a life as before", s.state == "respawn" and s.lives == 2, s.state)
+	s = _run(World.from_lanes([_lane(0, "safe"), wl2, _lane(2, "safe")]), "poison_dart_frog", wr)
+	_hop(s, Vector2i(0, 1))
+	_steps(s, 7.0)
+	check("swept off-screen on a log is not falling in: costs a life", s.state != "restart" and s.lives == 2 and s.cause == "swept", s.state + s.cause)
+	var wcap := World.from_lanes([_lane(0, "safe"), wl, _lane(2, "safe")])
+	s = _run(wcap, "capybara", wr)
+	_hop(s, Vector2i(0, 1))
+	_steps(s, 0.5)
+	check("swimmers don't fall in", s.state == "play" and s.swimming)
 	# performance budget for the simulation
 	var wp := World.new()
 	wp.setup(Content.map("borneo"), "endless", 0, 3)
@@ -811,6 +841,41 @@ func _phase6() -> void:
 	gs._on_revive_choice("ad", 1)
 	check("rewarded video revives", gs.sim.state == "play")
 	gs.queue_free()
+	await get_tree().process_frame
+	# water restart through the real run screen
+	var main: Control = load("res://scenes/main.tscn").instantiate()
+	add_child(main)
+	await get_tree().process_frame
+	Game.start_run({"mode": "journey", "map": "amazon", "stage": 1, "seed": 7, "animal": "poison_dart_frog"})
+	await get_tree().process_frame
+	var first = Game.current
+	for i in 20:
+		first.sim.hop(Vector2i(0, 1))
+		for k in 12:
+			first._process(1.0 / 60.0)
+		if first.sim.state != "play":
+			break
+	first.sim.state = "play"
+	first.sim.row = 2
+	first.sim.taken["test"] = true
+	first.sim.berries = 6
+	var runs0 := int(Save.data.stats.runs)
+	var berries0 := Economy.berries()
+	first.sim._lethal("drowned", "water", "floating_log", "Splash!")
+	first._process(1.0 / 60.0)
+	check("water restart: no revive card", first.overlay.get_child_count() == 0 and first.blocking)
+	check("water restart: run recorded and Berries kept", int(Save.data.stats.runs) == runs0 + 1 and Economy.berries() > berries0)
+	await get_tree().create_timer(float(Content.rules.get("restart_delay", 1.2)) + 0.4).timeout
+	await get_tree().process_frame
+	var again = Game.current
+	check("water restart: the same stage starts over", again != first and again.sim.row == 0 and again.sim.state == "play"
+		and again.cfg.stage == 1 and again.cfg.map == "amazon")
+	var found := false
+	for e in Analytics.buffer:
+		if e.name == "water_restart":
+			found = true
+	check("water restart is logged", found)
+	main.queue_free()
 	await get_tree().process_frame
 	# daily reward
 	Progress.day_override = 20000

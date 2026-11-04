@@ -28,7 +28,7 @@ godot --path . -- --day=20500                 # pretend it's another day (deals,
 ## 3. Tests
 
 ```bash
-tools/run_tests.sh          # ~10 min: compile check + 238-check phase audit, project and exported pack
+tools/run_tests.sh          # ~10 min: compile check + 250-check phase audit, project and exported pack
 FAST=1 tools/run_tests.sh   # ~3 min
 ```
 

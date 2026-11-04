@@ -42,7 +42,7 @@ var hitbox := HB
 var base_hop := 0.14
 
 # run state
-var state := "play"              # play | respawn | dead | won | over
+var state := "play"              # play | respawn | dead | restart | won | over
 var respawn_left := 0.0
 var lives := 1
 var shields := 0
@@ -66,6 +66,7 @@ var revives := 0
 var buffer := Vector2i.ZERO
 var fx: Array[Dictionary] = []
 var record_fx := true
+var water_restart := false        # falling into water restarts the run (content/rules.json)
 
 
 func setup(w: World, animal_def: Dictionary, opts: Dictionary = {}) -> void:
@@ -78,6 +79,7 @@ func setup(w: World, animal_def: Dictionary, opts: Dictionary = {}) -> void:
 	lives = int(opts.get("lives", 3 if mode in ["journey", "tutorial"] else 1))
 	shields = int(opts.get("shields", 0))
 	move_limit = float(opts.get("move_timer", 0.0))
+	water_restart = bool(opts.get("water_restart", false))
 	creep = opts.get("creep", [0.0, 0.0])
 	row = 0
 	x = 4.5
@@ -97,7 +99,7 @@ func clone() -> RunSim:
 			"from_row", "from_x", "to_row", "to_x", "hop_air", "hop_kind", "face", "plat", "swimming", "swim_streak",
 			"swim_idle", "float_grace", "sink", "invuln", "hitbox", "base_hop", "state", "respawn_left", "lives",
 			"shields", "max_row", "score", "combo", "combo_timer", "berries", "amber", "checkpoint", "no_progress",
-			"move_limit", "cam_floor", "creep", "cause", "cause_text", "cause_hazard", "deaths", "revives", "buffer"]:
+			"move_limit", "water_restart", "cam_floor", "creep", "cause", "cause_text", "cause_hazard", "deaths", "revives", "buffer"]:
 		c.set(prop, get(prop))
 	c.taken = taken.duplicate()
 	c.record_fx = false
@@ -353,7 +355,7 @@ func _start_hop(target_row: int, tx: float, dur: float, air: bool, kind: String)
 # ------------------------------------------------------------------ step
 
 func step(dt: float) -> void:
-	if state in ["won", "over", "dead"]:
+	if state in ["won", "over", "dead", "restart"]:
 		for a in all_abilities():
 			a.tick(dt)
 		return
@@ -674,16 +676,20 @@ func _lethal(c: String, source: String, hazard_id: String, text: String) -> void
 	_die(c, source, hazard_id, text)
 
 
-func _die(c: String, _source: String, hazard_id: String, text: String) -> void:
+func _die(c: String, source: String, hazard_id: String, text: String) -> void:
 	cause = c
 	cause_text = text
 	cause_hazard = hazard_id
 	deaths += 1
-	lives -= 1
 	hopping = false
 	plat = -1
 	swimming = false
 	_fx("die", {"cause": c, "hazard": hazard_id})
+	if water_restart and source == "water":
+		# Into the water: the whole run starts over. No life is used, no revive.
+		state = "restart"
+		return
+	lives -= 1
 	if lives > 0:
 		state = "respawn"
 		respawn_left = 1.1
@@ -727,7 +733,7 @@ func revive() -> void:
 
 
 func finish() -> void:
-	if state in ["dead", "play", "respawn"]:
+	if state in ["dead", "play", "respawn", "restart"]:
 		state = "over"
 
 

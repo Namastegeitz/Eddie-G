@@ -38,13 +38,15 @@
   weekend 2x, animal of the week, restore purchases, downloadable content-pack zips.
   Billing: sandbox mock by default; Google Play / App Store adapters behind
   `canopy/billing/backend` (not exercised: need plugins + store accounts, see `docs/STORE.md`).
+- Water rule: falling into the water restarts the run from the start of the stage (no life used,
+  no revive; Berries kept). Other hazards still cost a life. Switch: `content/rules.json`.
 - Onboarding: coached tutorial, region intro cards (globe + facts + hazards), revive / milestone /
   last-life / locked-animal prompts, daily reward, first-unlock guide.
 - Art/audio: procedural chibi animals and hazards, per-region palettes and canopy framing, dot
   globe from Natural Earth, synthesised per-region music + ambience + 26 SFX (`tools/gen_audio.py`).
 - Ads: opt-in rewarded + between-run interstitial (mock; AdMob adapter scaffold). Analytics: events
   + onboarding funnel to `user://analytics.jsonl`, optional HTTP endpoint.
-- Tests: `tools/run_tests.sh` - compile check + 238-check phase audit (one section per phase's
+- Tests: `tools/run_tests.sh` - compile check + 250-check phase audit (one section per phase's
   checkpoint) in the project and an exported pack, all passing. A path-finding bot beats all 30
   Journey stages and the first 50 Endless rows on every map with the free Poison Dart Frog.
   Frame cost 0.9 ms (sim + view + draw recording) on the cloud CPU.
