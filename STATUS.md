@@ -50,8 +50,8 @@
 - Ads: opt-in rewarded + between-run interstitial (mock; AdMob adapter scaffold). Analytics: events
   + onboarding funnel to `user://analytics.jsonl`, optional HTTP endpoint.
 - Tests: `tools/run_tests.sh` - compile check + 309-check phase audit (one section per phase's
-  checkpoint) in the project and an exported pack, all passing. A path-finding bot beats all 30
-  Journey stages and the first 50 Endless rows on every map with the free Poison Dart Frog.
+  checkpoint) in the project and an exported pack, all passing. A path-finding bot beats all 200
+  levels (tools/level_sweep.tscn, ~2 min) and the first 50 Endless rows on every scene with the free Poison Dart Frog.
   Frame cost 0.9 ms (sim + view + draw recording) on the cloud CPU.
 - Playable web build (private artifact): https://claude.ai/artifact/NHzAQ2w4jCjWjLkoxLSdB3
   Gameplay clip: `apps/canopy-crossing/docs/gameplay.mp4`.
