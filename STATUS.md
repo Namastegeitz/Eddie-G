@@ -123,6 +123,13 @@
     workflow `.github/workflows/monkey-see-monkey-do-mobile.yml` (manual/tag only) is ready, but Actions jobs are
     refused at the account level (runs stop in ~3 s with no log).
   - Tests: `tests/devices.js` (12 checks: simulated app bridge, WebGL 1, 320 px to iPad, sideways) pass on dist/www.
+- Skins (third pass): 100 skins in 13 sets (js/skins.js). 50 standard (bananas) and 50 premium (Epic/Legendary):
+  pattern textures (js/patterns.js), metal/glow/ghost finishes, glowing eyes, wings, capes, halos, horns, jetpack,
+  masks, tail tips and particle auras (js/skinlook.js). Each premium skin unlocks free at its play goal (50 goals)
+  or early with golden bananas (earned by playing: first 3 stars +2, world clear +10, Endless +1/10 rounds, set
+  complete +5, or swap 100 bananas for 1). No real money. Old fur saves migrate to skins. Wardrobe Skins tab with
+  rarity frames, set progress, filters, goal progress bars, lazy-painted portraits, unlock card; How it works lists
+  every premium skin with goal and price. Tests: 464 unit checks, 29-step play-through.
 - Not verified on real hardware yet: touch feel and audio latency on an actual phone, install to home screen.
 - Next: pick add-ons from `prompts/claude/monkey-see-monkey-do-next.md` (14 prompts: replay review, Daily
   Dance, choreographer + share codes, accessibility pack, grown-up panel, stickers, World 4, pass-and-play,

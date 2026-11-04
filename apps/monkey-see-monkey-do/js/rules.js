@@ -33,6 +33,13 @@ export const RULES = {
   // Spending inside a level
   replayCost: 5,
   continueCost: 15,
+  // Golden Bananas (the premium-skin currency). Earned only by playing, or
+  // swapped from bananas. Never sold for money.
+  goldFirstThreeStar: 2, // first time a level gets 3 stars
+  goldWorldClear: 10, // first clear of level 10, 20 and 30
+  goldEndlessEvery: 10, // 1 golden banana per this many rounds in an Endless run
+  goldSetComplete: 5, // own every skin in a set
+  exchangeRate: 100, // bananas for 1 golden banana
   // Timer: seconds = base + steps * perStep * (100 / tempo)
   timerBase: 3,
   timerPerStep: 1.4,
@@ -97,4 +104,9 @@ export function endlessBananas({ rounds, newBest }) {
   if (milestones > 0) items.push({ label: `Every ${RULES.endlessMilestoneEvery} rounds (${milestones} x ${RULES.endlessMilestoneBananas})`, amount: milestones * RULES.endlessMilestoneBananas });
   if (newBest && rounds > 0) items.push({ label: 'New best', amount: RULES.endlessBestBonus });
   return { items, total: items.reduce((s, i) => s + i.amount, 0) };
+}
+
+/** Golden bananas for an Endless run of `rounds` cleared rounds. */
+export function endlessGolden(rounds) {
+  return Math.floor(rounds / RULES.goldEndlessEvery);
 }

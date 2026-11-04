@@ -2,7 +2,7 @@
 // -> cheer or oops. Runs Adventure levels, Endless and Free Dance.
 // Timing runs on the beat clock in audio.js so moves land on the music.
 import { MOVES, chordFor, stepName, moveName } from './moves.js';
-import { RULES, gradeTiming, stepPoints, streakMult, starsFor, levelBananas, endlessBananas, timeLimit } from './rules.js';
+import { RULES, gradeTiming, stepPoints, streakMult, starsFor, levelBananas, endlessBananas, endlessGolden, timeLimit } from './rules.js';
 import { LEVELS, WORLDS, getLevel, generateRound, extendEndless, expectedSteps, watchSchedule, makeRng, newSeed, endlessBpm, levelNews } from './levels.js';
 import { Save } from './save.js';
 
@@ -81,6 +81,9 @@ export class Game {
     this.paused = false;
     this.monkey.anims = [];
     this.setScene(null, 96, true);
+    // Goals reached outside a level (Free Dance moves, days played, skins owned)
+    const res = Save.checkSkinGoals();
+    if (res.skins.length || res.golden) this.ui.pendingUnlocks = res;
   }
 
   /** Show the level card; the level starts when the player taps Start. */
@@ -330,6 +333,7 @@ export class Game {
       r.partial = null;
       const legs = step.includes('LL') && step.includes('RL');
       this.monkey.play(legs ? 'JUMP' : 'HOP', Math.max(0.35, this.audio.beatDur * 0.9));
+      Save.stat('combos');
       this.stepDone(step, t0);
     }
   }
@@ -351,6 +355,8 @@ export class Game {
     this.echo(id);
     this.haptic('tap');
     r.moves++;
+    Save.stat('freeMoves');
+    if (r.moves % 25 === 0) Save.persist();
     // two different moves almost together = a combo
     if (r.last && r.last.id !== id && t - r.last.t < 0.15) {
       const c = chordFor([r.last.id, id]);
@@ -434,6 +440,7 @@ export class Game {
     const n = r.expected.length;
     r.score += RULES.roundBonus;
     Save.stat('roundsCleared');
+    if (r.twist) Save.stat(r.twist + 'Rounds');
     this.audio.sfx('round');
     this.haptic('success');
     this.audio.sfx('cheer', this.now() + 0.1);
@@ -475,6 +482,19 @@ export class Game {
     const extra = bn.total - r.bananas;
     Save.addBananas(extra, `Level ${level.id} cleared (${stars} star${stars > 1 ? 's' : ''})`);
     if (level.id === 1) Save.data.tutorialDone = true;
+    if (r.livesLost === 0) Save.stat('flawless');
+    // Golden bananas (one-time rewards, see RULES)
+    const golden = [];
+    if (stars === 3) {
+      const g = Save.goldOnce('threeStar', level.id, RULES.goldFirstThreeStar, `Level ${level.id}: first 3 stars`);
+      if (g) golden.push({ label: 'First 3 stars on this level', amount: g });
+    }
+    if (level.boss) {
+      const g = Save.goldOnce('world', level.id, RULES.goldWorldClear, `Cleared World ${level.world}`);
+      if (g) golden.push({ label: `World ${level.world} cleared`, amount: g });
+    }
+    const unlocked = Save.checkSkinGoals();
+    for (const set of unlocked.sets) golden.push({ label: `${set.name} set complete`, amount: RULES.goldSetComplete });
     Save.persist();
     const next = getLevel(level.id + 1);
     const newWorld = Save.worldReached() > wasReached ? WORLDS[Save.worldReached() - 1] : null;
@@ -485,7 +505,7 @@ export class Game {
       level, stars, prevStars: rec.prevStars, score: r.score, prevBest: rec.prevBest,
       items: bn.items, total: bn.total, alreadyAdded: r.bananas,
       onBeat: r.onBeat, steps: r.stepsDone, livesLost: r.livesLost, bestStreak: r.bestStreak,
-      seeds: r.seeds, next, newWorld,
+      seeds: r.seeds, next, newWorld, golden, unlocks: unlocked.skins,
     });
   }
 
@@ -546,12 +566,20 @@ export class Game {
     e.bestScore = Math.max(e.bestScore, r.score);
     const bn = endlessBananas({ rounds, newBest });
     Save.addBananas(bn.total, `Endless: ${rounds} round${rounds === 1 ? '' : 's'}`);
+    const golden = [];
+    const g = endlessGolden(rounds);
+    if (g) {
+      Save.addGolden(g, `Endless: ${rounds} rounds`);
+      golden.push({ label: `${rounds} rounds (1 per ${RULES.goldEndlessEvery})`, amount: g });
+    }
+    const unlocked = Save.checkSkinGoals();
+    for (const set of unlocked.sets) golden.push({ label: `${set.name} set complete`, amount: RULES.goldSetComplete });
     Save.persist();
     if (newBest) {
       this.stage.confetti(0.8);
       this.audio.sfx('level');
     }
-    this.ui.showEndless({ rounds, score: r.score, bestRounds: e.bestRounds, bestScore: e.bestScore, newBest, items: bn.items, total: bn.total, longest: r.steps.length, bestStreak: r.bestStreak, seed: r.seed });
+    this.ui.showEndless({ rounds, score: r.score, bestRounds: e.bestRounds, bestScore: e.bestScore, newBest, items: bn.items, total: bn.total, longest: r.steps.length, bestStreak: r.bestStreak, seed: r.seed, golden, unlocks: unlocked.skins });
   }
 
   replay() {

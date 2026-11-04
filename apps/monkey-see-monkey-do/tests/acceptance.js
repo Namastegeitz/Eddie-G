@@ -118,9 +118,17 @@ let passes = 0;
 
   await step('result total matches the banana ledger', async () => {
     const total = Number((await page.textContent('#result-card tr.total td:last-child')).replace(/\D/g, ''));
-    const ledger = await ev(() => MSMD.Save.data.ledger.filter((e) => e.reason.startsWith('Level 1')).reduce((s, e) => s + e.amount, 0));
+    const ledger = await ev(() => MSMD.Save.data.ledger.filter((e) => e.reason.startsWith('Level 1') && e.cur !== 'golden').reduce((s, e) => s + e.amount, 0));
     expect(total === ledger, `card says ${total}, ledger ${ledger}`);
     expect(await ev(() => MSMD.Save.data.tutorialDone), 'tutorial marked done');
+  });
+
+  await step('first 3 stars on a level pays golden bananas, shown on the results', async () => {
+    const st = await ev(() => MSMD.Save.levelInfo(1).stars);
+    const g = await ev(() => MSMD.Save.data.golden);
+    const card = await page.textContent('#result-card');
+    if (st === 3) expect(g === 2 && card.includes('Golden bananas earned'), `3 stars: golden ${g}`);
+    else expect(g === 0 && !card.includes('Golden bananas earned'), `${st} stars: golden ${g}`);
   });
 
   await step('Level 2: a wrong move costs a life and replays the SAME routine', async () => {
@@ -275,14 +283,65 @@ let passes = 0;
     await page.click('#shop-tabs [data-cat="eyes"]');
     await page.click('#shop-grid [data-id="shades"]');
     await page.click('#shop-buy');
-    await page.click('#shop-tabs [data-cat="fur"]');
-    await page.click('#shop-grid [data-id="golden"]');
-    await page.click('#shop-buy');
+    await page.click('#shop-tabs [data-cat="skin"]');
+    await page.click('#shop-grid [data-skin="golden"]');
+    await page.click('#skin-buy');
+    expect(await ev(() => MSMD.Save.data.equipped.skin) === 'golden', 'wearing Honey skin');
     await page.waitForTimeout(900);
     await shot('11-wardrobe');
   });
 
+  await step('Skins: 100 skins in sets, 50 premium, filters work', async () => {
+    const n = await page.$$eval('#shop-grid .skin-card', (b) => b.length);
+    expect(n === 100, 'cards ' + n);
+    await page.click('.filter[data-filter="premium"]');
+    expect(await page.$$eval('#shop-grid .skin-card', (b) => b.length) === 50, 'premium 50');
+    await page.click('.filter[data-filter="owned"]');
+    const owned = await page.$$eval('#shop-grid .skin-card', (b) => b.map((x) => x.dataset.skin));
+    expect(owned.includes('cocoa') && owned.includes('golden'), 'owned filter ' + owned);
+    await page.click('.filter[data-filter="all"]');
+  });
+
+  await step('Skins: a premium skin shows its goal and can be unlocked early with golden bananas', async () => {
+    await ev(() => MSMD.Save.addBananas(3000, 'test top-up'));
+    await page.click('#shop-grid [data-skin="dragon"]');
+    const bar = await page.textContent('#shop-action');
+    expect(bar.includes('100-move streak') && bar.includes('wings'), 'goal + perks text: ' + bar.slice(0, 160));
+    expect(await page.isDisabled('#skin-buy'), 'locked without golden bananas');
+    const g0 = await ev(() => MSMD.Save.data.golden);
+    const b0 = await ev(() => MSMD.Save.data.bananas);
+    await page.click('#btn-exchange');
+    await page.click('[data-swap="10"]');
+    await page.click('[data-swap="10"]');
+    await page.click('[data-swap="10"]');
+    await page.click('#exchange-close');
+    expect(await ev(() => MSMD.Save.data.golden) === g0 + 30, 'swapped for 30 golden');
+    expect(await ev(() => MSMD.Save.data.bananas) === b0 - 3000, '3000 bananas spent');
+    await page.click('#shop-grid [data-skin="pixel"]');
+    await page.click('#skin-buy');
+    expect(await ev(() => MSMD.Save.owns('skin', 'pixel')), 'pixel unlocked');
+    expect(await ev(() => MSMD.Save.data.golden) === g0, 'pixel cost 30 golden');
+    expect(await ev(() => MSMD.monkey.skin.id) === 'pixel', 'monkey wears it');
+    const led = await ev(() => MSMD.Save.data.ledger.filter((e) => e.cur === 'golden').length);
+    expect(led >= 2, 'golden ledger entries');
+    await page.waitForTimeout(600);
+    await shot('11b-premium-skin');
+  });
+
+  await step('Skins: reaching a play goal unlocks a premium skin for free', async () => {
+    await ev(() => { MSMD.Save.data.stats.combos = 60; MSMD.Save.persist(); });
+    await page.click('#scr-shop .back');
+    await page.waitForSelector('#ov-unlock.show', { timeout: 5000 });
+    expect((await page.textContent('#unlock-card')).includes('Little Imp'), 'imp unlocked');
+    expect(await ev(() => MSMD.Save.owns('skin', 'imp') && MSMD.Save.data.skinEarned.imp > 0), 'owned via goal');
+    await page.waitForTimeout(500);
+    await shot('11c-unlocked');
+    await page.click('#unlock-wear');
+    expect(await ev(() => MSMD.Save.data.equipped.skin) === 'imp', 'wearing imp');
+  });
+
   await step('Wardrobe: leaving undoes a try-on you did not buy', async () => {
+    await page.click('#scr-title .mini[data-go="shop"]');
     await page.click('#shop-tabs [data-cat="neck"]');
     await page.click('#shop-grid [data-id="chain"]');
     await page.click('#scr-shop .back');
@@ -334,6 +393,7 @@ let passes = 0;
     await page.waitForSelector('html[data-ready="1"]');
     const after = await ev(() => ({ b: MSMD.Save.data.bananas, hat: MSMD.Save.data.equipped.hat, l1: MSMD.Save.levelInfo(1).clears }));
     expect(after.b === before.b && after.hat === 'party' && after.l1 >= 1, JSON.stringify(after));
+    expect(await ev(() => MSMD.Save.data.equipped.skin === 'imp' && MSMD.monkey.skin.id === 'imp'), 'skin kept after reload');
   });
 
   await step('works offline after the first visit', async () => {

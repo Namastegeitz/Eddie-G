@@ -119,6 +119,30 @@ load, keep the beat clock exact (tempo metadata per track), and add a recorded
 "ooh-ooh!" set for cheer/oops. List the sources and licences in README.md and How it works.
 ```
 
+### 15. Optional: real-money golden banana packs (only if you want them)
+
+```
+Add optional in-app purchases of golden bananas to the iOS and Android apps only
+(never the web build), using the store's own billing (StoreKit / Google Play
+Billing via a Capacitor plugin such as RevenueCat or cordova-plugin-purchase).
+Rules: prices shown in local currency before any tap, a confirm step, "Restore
+purchases", a parental gate, no timers or pop-up offers, nothing that only money
+can unlock (every premium skin keeps its free play goal), and a Purchases line in
+Stats > Banana history. Update How it works, PRIVACY.md and the store privacy
+labels (purchases are processed by Apple/Google). I'll create the products in App
+Store Connect and Play Console; leave the product ids in js/rules.js.
+```
+
+### 16. More skins: seasonal sets
+
+```
+Add three 8-skin sets (Winter, Spring Garden, Ocean Deep) to js/skins.js using the
+existing pattern, finish, extras and aura options (add new pattern types to
+js/patterns.js if needed). Seasonal skins stay available all year (no limited-time
+pressure); give each premium one a play goal. Update unit tests (catalogue counts,
+goals unique) and render a contact sheet of the new skins to check them.
+```
+
 ## Other builds
 
 ### 10. Put it online (GitHub Pages) with an install QR

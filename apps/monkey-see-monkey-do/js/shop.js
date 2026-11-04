@@ -1,8 +1,9 @@
-// The Wardrobe: everything bananas can buy. No real money anywhere in the game.
+// The Wardrobe: hats, glasses, neckwear, Flair moves and stages.
+// Skins (fur looks) live in js/skins.js. No real money anywhere in the game.
 // `unlock` items can also be earned for free by reaching a world.
 
 export const CATEGORIES = [
-  { id: 'fur', name: 'Fur' },
+  { id: 'skin', name: 'Skins' },
   { id: 'hat', name: 'Hats' },
   { id: 'eyes', name: 'Glasses' },
   { id: 'neck', name: 'Neck' },
@@ -11,15 +12,6 @@ export const CATEGORIES = [
 ];
 
 export const ITEMS = [
-  // Fur colours: fur, skin (face, hands, feet, belly), and the darker detail colour
-  { id: 'cocoa', cat: 'fur', name: 'Cocoa', price: 0, fur: '#8a5230', skin: '#f3c9a0', dark: '#4a2a17', desc: 'The classic.' },
-  { id: 'golden', cat: 'fur', name: 'Golden', price: 60, fur: '#d99a2b', skin: '#ffe2b5', dark: '#7a4e0c', desc: 'Shines under the lights.' },
-  { id: 'snowy', cat: 'fur', name: 'Snowy', price: 80, fur: '#e8eef3', skin: '#ffd2cf', dark: '#8796a3', desc: 'A mountain monkey on holiday.' },
-  { id: 'midnight', cat: 'fur', name: 'Midnight', price: 100, fur: '#2e3047', skin: '#d6c2ae', dark: '#14152a', desc: 'Cool and mysterious.' },
-  { id: 'bubblegum', cat: 'fur', name: 'Bubblegum', price: 120, fur: '#ff8fc6', skin: '#ffe3f0', dark: '#b8467f', desc: 'Pop!' },
-  { id: 'mossy', cat: 'fur', name: 'Mossy', price: 120, fur: '#5f9140', skin: '#efe6b8', dark: '#2f4e1d', desc: 'Blends in with the trees.' },
-  { id: 'rainbow', cat: 'fur', name: 'Rainbow', price: 300, fur: '#ff5a5a', skin: '#fff1d6', dark: '#552222', rainbow: true, desc: 'Fur that slowly cycles through every colour.' },
-
   { id: 'none', cat: 'hat', name: 'No hat', price: 0, desc: 'Just fur.' },
   { id: 'party', cat: 'hat', name: 'Party Hat', price: 40, desc: 'Every day is a party.' },
   { id: 'flower', cat: 'hat', name: 'Flower Crown', price: 60, desc: 'Fresh from the jungle.' },
@@ -59,5 +51,5 @@ export function getItem(cat, id) {
 }
 
 /** Changing flair changes what the Flair move looks like everywhere. */
-export const DEFAULT_OWNED = { fur: ['cocoa'], hat: ['none'], eyes: ['none'], neck: ['none'], flair: ['wiggle'], stage: ['jungle'] };
-export const DEFAULT_EQUIPPED = { fur: 'cocoa', hat: 'none', eyes: 'none', neck: 'none', flair: 'wiggle', stage: 'auto' };
+export const DEFAULT_OWNED = { skin: ['cocoa'], hat: ['none'], eyes: ['none'], neck: ['none'], flair: ['wiggle'], stage: ['jungle'] };
+export const DEFAULT_EQUIPPED = { skin: 'cocoa', hat: 'none', eyes: 'none', neck: 'none', flair: 'wiggle', stage: 'auto' };

@@ -4,7 +4,8 @@
 // follows the beat, plus any number of moves/reactions added on top.
 import * as THREE from './vendor/three.module.min.js';
 import { MOVES } from './moves.js';
-import { getItem } from './shop.js';
+import { getSkin } from './skins.js';
+import { applySkin, flashMaterial, updateSkinFx } from './skinlook.js';
 
 const TAU = Math.PI * 2;
 const clamp01 = (x) => (x < 0 ? 0 : x > 1 ? 1 : x);
@@ -317,8 +318,11 @@ export class Monkey {
     this.gradient = makeGradient();
     this.geoCache = new Map();
     this.outlineMat = new THREE.MeshBasicMaterial({ color: 0x24140b, side: THREE.BackSide });
+    this.extraGroups = [];
+    this.skinFx = [];
+    this.aura = null;
     this.build();
-    this.setFur('cocoa');
+    this.setSkin('cocoa');
   }
 
   on(name, fn) { (this.listeners[name] = this.listeners[name] || []).push(fn); }
@@ -384,6 +388,8 @@ export class Monkey {
     this.darkMat = dark;
     const white = new THREE.MeshBasicMaterial({ color: 0xffffff });
     const ink = new THREE.MeshBasicMaterial({ color: 0x1b0f08 });
+    this.eyeWhiteMat = new THREE.MeshBasicMaterial({ color: 0xffffff }); // skins recolour these
+    this.pupilMat = new THREE.MeshBasicMaterial({ color: 0x1b0f08 });
     const mouthMat = new THREE.MeshBasicMaterial({ color: 0x5a1a1a });
     const tongueMat = this.toon(0xff6f8a);
     const blush = new THREE.MeshBasicMaterial({ color: 0xff7a8a, transparent: true, opacity: 0.45, depthWrite: false });
@@ -429,7 +435,7 @@ export class Monkey {
       const eye = new THREE.Group();
       eye.position.set(s * 0.165, 0.6, 0.44);
       head.add(eye);
-      const w = this.part(eye, 'sph', 0.135, 0, white, [0, 0, 0], [1, 1.18, 0.62], null, false);
+      const w = this.part(eye, 'sph', 0.135, 0, this.eyeWhiteMat, [0, 0, 0], [1, 1.18, 0.62], null, false);
       const ring = new THREE.Mesh(this.geo('sph', 0.135, 0, 0.02), ink);
       ring.scale.set(w.scale.x, w.scale.y, w.scale.z * 0.55);
       ring.position.z = -0.02;
@@ -437,7 +443,7 @@ export class Monkey {
       const pupil = new THREE.Group();
       pupil.position.z = 0.058;
       eye.add(pupil);
-      const pm = new THREE.Mesh(this.geo('sph', 0.07), ink);
+      const pm = new THREE.Mesh(this.geo('sph', 0.07), this.pupilMat);
       pm.scale.set(1, 1.14, 0.5);
       pupil.add(pm);
       const hl = new THREE.Mesh(this.geo('sph', 0.026), white);
@@ -571,18 +577,24 @@ export class Monkey {
     this.anchors = { LA: this.j.haL, RA: this.j.haR, LL: this.j.ftL, RL: this.j.ftR, HD: head, FL: hips };
 
     R.traverse((o) => { if (o.isMesh) o.frustumCulled = false; });
+    // Remember which meshes wear fur or skin, so skins can swap their materials
+    this.skinnables = [];
+    R.traverse((o) => {
+      if (!o.isMesh) return;
+      for (const [region, r] of Object.entries(this.mats)) {
+        if (o.material === r.fur) this.skinnables.push({ mesh: o, region, role: 'fur' });
+        else if (o.material === r.skin) this.skinnables.push({ mesh: o, region, role: 'skin' });
+      }
+    });
   }
 
   // ------------------------------------------------------------ looks
 
-  setFur(id) {
-    const item = getItem('fur', id) || getItem('fur', 'cocoa');
-    this.rainbow = !!item.rainbow;
-    for (const r of Object.values(this.mats)) {
-      r.fur.color.set(item.fur);
-      r.skin.color.set(item.skin);
-    }
-    this.darkMat.color.set(item.dark);
+  /** Wear a skin from js/skins.js (by id or definition). */
+  setSkin(idOrSkin) {
+    const skin = typeof idOrSkin === 'string' ? getSkin(idOrSkin) : idOrSkin;
+    if (this.skin && this.skin.id === skin.id) return;
+    applySkin(this, skin);
   }
 
   setFlair(id) {
@@ -732,7 +744,7 @@ export class Monkey {
   }
 
   applyLook(equipped) {
-    this.setFur(equipped.fur);
+    this.setSkin(equipped.skin || equipped.fur || 'cocoa');
     this.setFlair(equipped.flair);
     this.setAccessory('hat', equipped.hat);
     this.setAccessory('eyes', equipped.eyes);
@@ -830,8 +842,12 @@ export class Monkey {
     this.updateHighlights(time);
     if (this.rainbow) {
       const c = new THREE.Color().setHSL((time * 0.05) % 1, 0.65, 0.55);
-      for (const r of Object.values(this.mats)) r.fur.color.copy(c);
+      for (const [region, r] of Object.entries(this.mats)) {
+        r.fur.userData.baseColor.copy(c);
+        if (!this.highlight[region]) r.fur.color.copy(c);
+      }
     }
+    updateSkinFx(this, time, dt, Math.min(1, this.anims.length * 0.5));
     const hat = this.accessories.hat;
     if (hat && hat.userData.spin) hat.userData.spin.rotation.y += dt * (4 + 14 * Math.min(1, this.anims.length));
     const neck = this.accessories.neck;
@@ -904,13 +920,10 @@ export class Monkey {
       if (el < 0) continue;
       const k = Math.max(0, 1 - el / 0.55);
       if (r) {
-        r.fur.emissive.copy(h.color).multiplyScalar(0.75 * k);
-        r.skin.emissive.copy(h.color).multiplyScalar(0.55 * k);
+        flashMaterial(r.fur, h.color, k);
+        flashMaterial(r.skin, h.color, k * 0.7);
       }
-      if (k <= 0) {
-        if (r) { r.fur.emissive.setRGB(0, 0, 0); r.skin.emissive.setRGB(0, 0, 0); }
-        delete this.highlight[id];
-      }
+      if (k <= 0) delete this.highlight[id];
     }
   }
 

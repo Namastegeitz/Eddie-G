@@ -4,6 +4,10 @@ import { LEVELS, WORLDS, ENDLESS, TWISTS, generateRound, generateSteps, extendEn
 import { RULES, timeLimit, starsFor, levelBananas, endlessBananas, gradeTiming, streakMult, stepPoints } from '../js/rules.js';
 import { MOVES, CHORDS, sameStep, moveName, chordFor, normStep } from '../js/moves.js';
 import { ITEMS, CATEGORIES, DEFAULT_OWNED, DEFAULT_EQUIPPED, getItem } from '../js/shop.js';
+import { SKINS, SETS, GOALS, RARITY, getSkin, goalContext, goalProgress, newlyEarned, setProgress } from '../js/skins.js';
+import { PATTERN_TYPES } from '../js/patterns.js';
+import { migrateRaw } from '../js/save.js';
+import { endlessGolden } from '../js/rules.js';
 
 let pass = 0;
 let fail = 0;
@@ -130,13 +134,53 @@ check('endless bananas', eb.total === 12 + 20 + 10, eb.total);
 check('screen naming', moveName('LA') === 'Left Arm');
 check('monkey naming swaps sides', moveName('LA', 'monkey') === 'Right Arm' && moveName('HD', 'monkey') === 'Head Bob');
 check('chord lookup ignores order', chordFor(['RA', 'LA']).id === 'BA');
-for (const cat of CATEGORIES) {
+for (const cat of CATEGORIES.filter((c) => c.id !== 'skin')) {
   const ids = ITEMS.filter((i) => i.cat === cat.id).map((i) => i.id);
   check(`${cat.id}: unique ids`, new Set(ids).size === ids.length);
   check(`${cat.id}: default owned exists`, DEFAULT_OWNED[cat.id].every((id) => getItem(cat.id, id)));
 }
 check('prices are whole, non-negative numbers', ITEMS.every((i) => Number.isInteger(i.price) && i.price >= 0));
-check('default look is free', Object.entries(DEFAULT_EQUIPPED).every(([cat, id]) => id === 'auto' || getItem(cat, id).price === 0));
+check('default look is free', Object.entries(DEFAULT_EQUIPPED).every(([cat, id]) => id === 'auto' || (cat === 'skin' ? getSkin(id).price === 0 : getItem(cat, id).price === 0)));
+
+// ---- skins
+check('100 skins', SKINS.length === 100, SKINS.length);
+const premium = SKINS.filter((x) => x.tier === 'premium');
+const standard = SKINS.filter((x) => x.tier === 'standard');
+check('50 premium skins', premium.length === 50, premium.length);
+check('50 standard skins', standard.length === 50, standard.length);
+check('skin ids unique', new Set(SKINS.map((x) => x.id)).size === 100);
+check('every skin in a known set', SKINS.every((x) => SETS.some((st) => st.id === x.set)));
+check('every set has skins of one tier', SETS.every((st) => SKINS.filter((x) => x.set === st.id).every((x) => x.tier === st.tier)));
+check('rarities known', SKINS.every((x) => RARITY[x.rarity]));
+check('standard skins are common/rare, cost bananas', standard.every((x) => ['common', 'rare'].includes(x.rarity) && x.currency === 'banana' && Number.isInteger(x.price)));
+check('premium skins are epic/legendary, cost golden bananas', premium.every((x) => ['epic', 'legendary'].includes(x.rarity) && x.currency === 'golden' && x.price > 0));
+check('every premium skin has a goal', premium.every((x) => GOALS[x.goal]));
+check('each goal used by exactly one skin', new Set(premium.map((x) => x.goal)).size === 50);
+check('legendary costs more than epic', Math.min(...premium.filter((x) => x.rarity === 'legendary').map((x) => x.price)) >= Math.max(...premium.filter((x) => x.rarity === 'epic').map((x) => x.price)) - 0);
+check('patterns are known types', SKINS.every((x) => !x.pattern || PATTERN_TYPES.includes(x.pattern.type)));
+check('colours are #rrggbb', SKINS.every((x) => [x.fur, x.skin, x.dark].every((c) => /^#[0-9a-f]{3,6}$/i.test(c))));
+const EXTRAS = ['cape', 'wings', 'halo', 'horns', 'unihorn', 'mane', 'antenna', 'jetpack', 'mask', 'eyepatch', 'bolts', 'fin', 'tailtip'];
+check('extras are known', SKINS.every((x) => (x.extras || []).every((e) => EXTRAS.includes(e.split(':')[0]))));
+check('old fur ids are still skins', ['cocoa', 'golden', 'snowy', 'midnight', 'bubblegum', 'mossy', 'rainbow'].every((id) => getSkin(id).id === id));
+
+// goals
+const fresh = { levels: {}, endless: { bestRounds: 0 }, stats: { days: [] }, owned: { skin: ['cocoa'] } };
+check('nothing earned on a fresh save', newlyEarned(fresh).length === 0);
+const ctx0 = goalContext(fresh);
+check('every goal starts at 0 progress (owning Cocoa counts 1 skin)', premium.every((x) => goalProgress(x, ctx0).have === (x.goal === 'skins25' ? 1 : 0)));
+const lv = {};
+for (let i = 1; i <= 10; i++) lv[i] = { stars: 3, best: 1, clears: 1 };
+const w1 = { levels: lv, endless: { bestRounds: 12 }, stats: { days: ['a', 'b', 'c'], perfects: 60, bestStreak: 16, roundsCleared: 55, flawless: 6, combos: 10 }, owned: { skin: ['cocoa'] } };
+const earned = newlyEarned(w1).map((x) => x.goal).sort();
+const expectGoals = ['allstars1', 'boss10', 'days3', 'endless10', 'endless5', 'flawless5', 'perfect50', 'rounds50', 'stars15', 'stars30', 'streak15', 'world1'].sort();
+check('goals reached after a perfect World 1', JSON.stringify(earned) === JSON.stringify(expectGoals), earned.join(','));
+check('progress is capped at the goal', goalProgress(getSkin('galaxy'), goalContext({ ...w1, endless: { bestRounds: 99 } })).have === 30);
+check('set progress', JSON.stringify(setProgress('metals', ['bronze', 'gold'])) === JSON.stringify({ have: 2, total: 5 }));
+
+// golden + save migration
+check('endless golden: 1 per 10 rounds', endlessGolden(9) === 0 && endlessGolden(10) === 1 && endlessGolden(35) === 3);
+const mig = migrateRaw({ owned: { fur: ['cocoa', 'rainbow'], hat: ['none'] }, equipped: { fur: 'rainbow', hat: 'none' } });
+check('old fur saves move to skins', JSON.stringify(mig.owned.skin) === JSON.stringify(['cocoa', 'rainbow']) && mig.equipped.skin === 'rainbow' && !('fur' in mig.owned));
 
 console.log(`${pass} passed, ${fail} failed`);
 process.exit(fail ? 1 : 0);

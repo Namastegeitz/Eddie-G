@@ -2,6 +2,8 @@
 // Settings > Your data shows the whole thing, and can copy, load or reset it.
 import { DEFAULT_OWNED, DEFAULT_EQUIPPED, getItem } from './shop.js';
 import { WORLDS } from './levels.js';
+import { SKINS, SETS, getSkin, newlyEarned, setProgress } from './skins.js';
+import { RULES } from './rules.js';
 
 const KEY = 'msmd.save.v1';
 const LEDGER_MAX = 60;
@@ -32,6 +34,12 @@ function defaults() {
     bananas: 0,
     earned: 0,
     spent: 0,
+    golden: 0, // Golden Bananas (premium-skin currency)
+    goldenEarned: 0,
+    goldenSpent: 0,
+    goldOnce: { threeStar: {}, world: {}, sets: {} }, // one-time golden rewards already paid
+    skinEarned: {}, // premium skin id -> time it was unlocked by its play goal
+    newSkins: [], // unlocked but not looked at yet (NEW badge)
     levels: {}, // id -> { stars, best, clears }
     endless: { bestRounds: 0, bestScore: 0, plays: 0 },
     owned: JSON.parse(JSON.stringify(DEFAULT_OWNED)),
@@ -50,10 +58,17 @@ function defaults() {
       playSeconds: 0,
       perMove: {}, // id -> { ok, miss }
       mixups: {}, // "expected>tapped" -> count
+      flawless: 0, // levels cleared without losing a life
+      combos: 0,
+      reverseRounds: 0,
+      speedupRounds: 0,
+      buildupRounds: 0,
+      freeMoves: 0,
+      days: [], // different days played, as YYYY-MM-DD
     },
     tutorialDone: false,
     seenIntro: {},
-    ledger: [], // [{ t, amount, reason }]
+    ledger: [], // [{ t, amount, reason, cur: 'golden' for golden bananas }]
   };
 }
 
@@ -73,6 +88,20 @@ function merge(base, extra) {
   return base;
 }
 
+/** Older saves kept fur colours under owned.fur; they are skins now. */
+export function migrateRaw(json) {
+  if (!json || typeof json !== 'object') return json;
+  if (json.owned && Array.isArray(json.owned.fur)) {
+    json.owned.skin = [...new Set([...(json.owned.skin || []), ...json.owned.fur])];
+    delete json.owned.fur;
+  }
+  if (json.equipped && json.equipped.fur) {
+    if (!json.equipped.skin) json.equipped.skin = json.equipped.fur;
+    delete json.equipped.fur;
+  }
+  return json;
+}
+
 let memoryCopy = null; // used when storage is blocked (private mode, sandboxed previews)
 
 export const Save = {
@@ -90,13 +119,14 @@ export const Save = {
     this.data = defaults();
     if (raw) {
       try {
-        merge(this.data, JSON.parse(raw));
+        merge(this.data, migrateRaw(JSON.parse(raw)));
       } catch {
         /* corrupt save: start fresh, keep the bad copy for support */
         try { localStorage.setItem(KEY + '.broken', raw); } catch { /* ignore */ }
       }
     }
     this.data.stats.sessions++;
+    this.markDay();
     this.syncUnlocks();
     this.persist();
     return this.data;
@@ -130,6 +160,88 @@ export const Save = {
     this.data.ledger.unshift({ t: Date.now(), amount, reason });
     if (this.data.ledger.length > LEDGER_MAX) this.data.ledger.length = LEDGER_MAX;
     this.persist();
+  },
+
+  addGolden(amount, reason) {
+    if (!amount) return;
+    this.data.golden += amount;
+    if (amount > 0) this.data.goldenEarned += amount;
+    else this.data.goldenSpent += -amount;
+    this.data.ledger.unshift({ t: Date.now(), amount, reason, cur: 'golden' });
+    if (this.data.ledger.length > LEDGER_MAX) this.data.ledger.length = LEDGER_MAX;
+    this.persist();
+  },
+
+  /** Pay a one-time golden reward (kind: threeStar | world | sets). Returns the amount paid. */
+  goldOnce(kind, key, amount, reason) {
+    const done = this.data.goldOnce[kind];
+    if (done[key]) return 0;
+    done[key] = Date.now();
+    this.addGolden(amount, reason);
+    return amount;
+  },
+
+  /** Swap bananas for golden bananas at RULES.exchangeRate. */
+  exchange(count) {
+    const cost = count * RULES.exchangeRate;
+    if (count < 1 || this.data.bananas < cost) return false;
+    this.addBananas(-cost, `Swapped for ${count} golden banana${count === 1 ? '' : 's'}`);
+    this.addGolden(count, `Swapped ${cost} bananas`);
+    return true;
+  },
+
+  markDay() {
+    const d = new Date();
+    const day = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    const days = this.data.stats.days;
+    if (!days.includes(day)) {
+      days.push(day);
+      if (days.length > 400) days.splice(0, days.length - 400);
+    }
+  },
+
+  /** Buy a skin with its currency (bananas for standard, golden for premium). */
+  buySkin(id) {
+    const skin = getSkin(id);
+    if (!skin || skin.id !== id || this.owns('skin', id)) return false;
+    if (skin.currency === 'golden') {
+      if (this.data.golden < skin.price) return false;
+      this.addGolden(-skin.price, `Unlocked ${skin.name} skin`);
+    } else if (!this.spend(skin.price, `Bought ${skin.name} skin`)) return false;
+    this.data.owned.skin.push(id);
+    this.persist();
+    return true;
+  },
+
+  /**
+   * Give premium skins whose play goal is now reached, and pay set bonuses.
+   * Returns { skins: [...newly earned], golden: amount from set bonuses }.
+   */
+  checkSkinGoals() {
+    const earned = newlyEarned(this.data);
+    for (const s of earned) {
+      this.data.owned.skin.push(s.id);
+      this.data.skinEarned[s.id] = Date.now();
+      if (!this.data.newSkins.includes(s.id)) this.data.newSkins.push(s.id);
+    }
+    let golden = 0;
+    const sets = [];
+    for (const set of SETS) {
+      const p = setProgress(set.id, this.data.owned.skin);
+      if (p.have === p.total) {
+        const paid = this.goldOnce('sets', set.id, RULES.goldSetComplete, `Completed the ${set.name} set`);
+        if (paid) { golden += paid; sets.push(set); }
+      }
+    }
+    // a set bonus can't unlock a goal, but owning more skins can (Own 25 skins)
+    if (earned.length) {
+      const more = this.checkSkinGoals();
+      earned.push(...more.skins);
+      golden += more.golden;
+      sets.push(...more.sets);
+    }
+    this.persist();
+    return { skins: earned, golden, sets };
   },
 
   spend(amount, reason) {
@@ -219,7 +331,7 @@ export const Save = {
   },
 
   importCode(code) {
-    const json = JSON.parse(decodeURIComponent(escape(atob(code.trim()))));
+    const json = migrateRaw(JSON.parse(decodeURIComponent(escape(atob(code.trim())))));
     if (!json || json.v !== 1) throw new Error('This is not a Monkey See, Monkey Do save code.');
     this.data = merge(defaults(), json);
     this.syncUnlocks();

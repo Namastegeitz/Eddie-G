@@ -31,7 +31,10 @@
   <section id="scr-title" class="screen" aria-label="Title">
     <div class="topbar">
       <span></span>
-      <button class="chip bananas" data-go="shop" aria-label="Bananas. Open the wardrobe"><span class="i-banana"></span><span class="banana-count">0</span></button>
+      <div class="chips">
+        <button class="chip golden" data-go="shop" aria-label="Golden bananas. Open the wardrobe"><span class="i-golden"></span><span class="golden-count">0</span></button>
+        <button class="chip bananas" data-go="shop" aria-label="Bananas. Open the wardrobe"><span class="i-banana"></span><span class="banana-count">0</span></button>
+      </div>
     </div>
     <h1 class="logo"><span class="l1">Monkey See,</span><span class="l2">Monkey Do</span></h1>
     <p class="tagline">Watch the dance. Copy the moves.</p>
@@ -43,7 +46,7 @@
         <button id="btn-free" class="btn">Free Dance</button>
       </div>
       <nav class="mini-row" aria-label="More">
-        <button class="mini" data-go="shop"><span class="i-hanger"></span>Wardrobe</button>
+        <button class="mini" data-go="shop" id="mini-wardrobe"><span class="i-hanger"></span>Wardrobe<span class="new-dot" hidden></span></button>
         <button class="mini" data-go="help"><span class="i-info"></span>How it works</button>
         <button class="mini" data-go="stats"><span class="i-chart"></span>Stats</button>
         <button class="mini" data-go="settings"><span class="i-gear"></span>Settings</button>
@@ -70,13 +73,16 @@
     <div class="topbar">
       <button class="icon-btn back" data-go="title" aria-label="Back"></button>
       <h2 class="topbar-title">Wardrobe</h2>
-      <span class="chip bananas"><span class="i-banana"></span><span class="banana-count">0</span></span>
+      <div class="chips">
+        <button class="chip golden" id="btn-exchange" aria-label="Golden bananas. Swap bananas for golden bananas"><span class="i-golden"></span><span class="golden-count">0</span><span class="plus">+</span></button>
+        <span class="chip bananas"><span class="i-banana"></span><span class="banana-count">0</span></span>
+      </div>
     </div>
     <div class="spacer"></div>
     <div class="sheet">
       <div id="shop-tabs" class="tabs scroll" role="tablist"></div>
       <div id="shop-grid" class="shop-grid"></div>
-      <p class="fineprint">Bananas are earned by playing. There is no way to buy them with money.</p>
+      <p class="fineprint">Bananas and golden bananas are earned by playing. Neither can be bought with money.</p>
     </div>
   </section>
 
@@ -155,6 +161,8 @@
   <div id="ov-howto" class="overlay" role="dialog" aria-modal="true"><div class="card" id="howto-card"></div></div>
   <div id="ov-confirm" class="overlay" role="dialog" aria-modal="true"><div class="card" id="confirm-card"></div></div>
   <div id="ov-calibrate" class="overlay" role="dialog" aria-modal="true"><div class="card" id="calibrate-card"></div></div>
+  <div id="ov-exchange" class="overlay" role="dialog" aria-modal="true" aria-labelledby="exchange-title"><div class="card" id="exchange-card"></div></div>
+  <div id="ov-unlock" class="overlay" role="dialog" aria-modal="true" aria-labelledby="unlock-title"><div class="card unlock-card" id="unlock-card"></div></div>
   <div id="rotate" class="rotate" aria-live="polite"><div class="rotate-phone"></div><p>Turn your phone upright to play</p></div>
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
   <div id="sr-live" class="sr-only" aria-live="assertive"></div>

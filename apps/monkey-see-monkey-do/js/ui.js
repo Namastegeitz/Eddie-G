@@ -5,6 +5,8 @@ import { RULES, timeLimit } from './rules.js';
 import { WORLDS, LEVELS, TWISTS, ENDLESS, getLevel } from './levels.js';
 import { CATEGORIES, ITEMS, itemsIn, getItem } from './shop.js';
 import { Save } from './save.js';
+import { renderSkins, renderSkinAction, showExchange, showUnlocks, updateGolden, skinsHelp, portrait, lazyPortraits, GOLDEN_ICON } from './wardrobe.js';
+import { SKINS } from './skins.js';
 
 export const ICON = {
   banana: '<svg viewBox="0 0 32 32" aria-hidden="true"><path d="M6 9c1 9 7 16 18 15 2 0 3-1 3-2-9 0-14-6-16-14-.4-2-5.4-1-5 1z" fill="#ffd23f" stroke="#23160c" stroke-width="2" stroke-linejoin="round"/><path d="M8.5 11c2 6 6 10 13 11" fill="none" stroke="#d29a00" stroke-width="1.6" stroke-linecap="round"/><path d="M5 9l1-3 3 1" fill="#6b4423" stroke="#23160c" stroke-width="1.6" stroke-linejoin="round"/></svg>',
@@ -103,13 +105,24 @@ const SETTINGS = [
   ] },
 ];
 
+function goldRows(items) {
+  if (!items || !items.length) return '';
+  const total = items.reduce((t, i) => t + i.amount, 0);
+  return items.map((it) => `<tr class="gold"><td>${esc(it.label)}</td><td>+${it.amount}</td></tr>`).join('') + `<tr class="total gold"><td>Golden bananas earned</td><td>+${total}</td></tr>`;
+}
+
+function unlockBox(skins) {
+  if (!skins || !skins.length) return '';
+  return `<div class="result-unlocks"><b>New skin${skins.length > 1 ? 's' : ''} unlocked: ${skins.map((x) => esc(x.name)).join(', ')}</b><div class="row-imgs">${skins.map((x) => `<img src="${portrait(x)}" alt="${esc(x.name)}">`).join('')}</div></div>`;
+}
+
 export class UI {
   constructor(app) {
     this.app = app;
     this.current = null;
     this.prev = 'title';
     this.world = 1;
-    this.shopCat = 'fur';
+    this.shopCat = 'skin';
     this.preview = null;
     this.howtoPage = 0;
   }
@@ -123,6 +136,9 @@ export class UI {
   init() {
     const fill = (cls, svg) => $$(cls).forEach((el) => { el.innerHTML = svg; });
     fill('.i-banana', ICON.banana);
+    fill('.i-golden', GOLDEN_ICON);
+    this.icons = ICON;
+    $('#btn-exchange').addEventListener('click', () => { this.audio.unlock(); this.click(); showExchange(this); });
     fill('.i-gear', ICON.gear);
     fill('.i-info', ICON.info);
     fill('.i-chart', ICON.chart);
@@ -174,6 +190,8 @@ export class UI {
     if (open('ov-confirm')) { this.closeConfirm(false); return true; }
     if (open('ov-calibrate')) { this.calRunning = false; this.closeOverlay('ov-calibrate'); return true; }
     if (open('ov-howto')) { this.closeOverlay('ov-howto'); return true; }
+    if (open('ov-exchange')) { this.closeOverlay('ov-exchange'); return true; }
+    if (open('ov-unlock')) { this.closeOverlay('ov-unlock'); return true; }
     if (this.game.paused) { this.game.resume(); return true; }
     if (open('ov-intro')) { this.closeOverlay('ov-intro'); this.show('map'); return true; }
     if (open('ov-result')) { this.closeOverlay('ov-result'); this.show(this.game.mode === 'adventure' ? 'map' : 'title'); return true; }
@@ -229,6 +247,18 @@ export class UI {
     if (name === 'help') this.renderHelp();
     if (name === 'stats') this.renderStats();
     if (name === 'title') this.updateBananas();
+    if (['title', 'map', 'shop'].includes(name)) {
+      const res = Save.checkSkinGoals();
+      if (res.skins.length || res.golden) {
+        const p = this.pendingUnlocks || { skins: [], golden: 0, sets: [] };
+        this.pendingUnlocks = { skins: [...p.skins, ...res.skins], golden: p.golden + res.golden, sets: [...p.sets, ...res.sets] };
+      }
+    }
+    if (this.pendingUnlocks && ['title', 'map', 'shop'].includes(name)) {
+      const res = this.pendingUnlocks;
+      this.pendingUnlocks = null;
+      setTimeout(() => showUnlocks(this, res), 350);
+    }
     this.reframe();
     const focus = $(`#${name === 'hud' ? 'hud' : 'scr-' + name} .panel-head .back, #${name === 'hud' ? 'hud' : 'scr-' + name} .btn.primary`);
     if (focus && name !== 'hud' && matchMedia('(pointer: fine)').matches) focus.focus({ preventScroll: true });
@@ -264,6 +294,7 @@ export class UI {
   }
 
   updateBananas(bump = false) {
+    updateGolden();
     for (const el of $$('.banana-count')) el.textContent = Save.data.bananas;
     if (bump) for (const el of $$('.chip.bananas')) { el.classList.remove('bump'); void el.offsetWidth; el.classList.add('bump'); }
   }
@@ -686,7 +717,8 @@ export class UI {
         <div><b>${onBeatPct}%</b><span>On the beat</span></div>
         <div><b>${r.livesLost}</b><span>Lives lost</span></div>
       </div>
-      <table class="breakdown"><tbody>${rows}<tr class="total"><td>Bananas earned</td><td>+${r.total}</td></tr></tbody></table>
+      <table class="breakdown"><tbody>${rows}<tr class="total"><td>Bananas earned</td><td>+${r.total}</td></tr>${goldRows(r.golden)}</tbody></table>
+      ${unlockBox(r.unlocks)}
       ${r.newWorld ? `<div class="new-world">World ${r.newWorld.id} is open: ${esc(r.newWorld.name)}! Its stage is now in your wardrobe for free.</div>` : ''}
       <div class="seedline">Routine codes: ${seeds}. Each round's routine comes from its code, so the same code always makes the same dance.</div>
       <div class="actions">
@@ -735,7 +767,8 @@ export class UI {
         <div><b>${e.bestRounds}</b><span>Best rounds</span></div>
       </div>
       <p class="note">The last routine was ${e.longest} moves long. Longest streak: ${e.bestStreak}.</p>
-      <table class="breakdown"><tbody>${rows}<tr class="total"><td>Bananas earned</td><td>+${e.total}</td></tr></tbody></table>
+      <table class="breakdown"><tbody>${rows}<tr class="total"><td>Bananas earned</td><td>+${e.total}</td></tr>${goldRows(e.golden)}</tbody></table>
+      ${unlockBox(e.unlocks)}
       <div class="seedline">Run code: ${e.seed.toString(16).padStart(8, '0').slice(0, 6)}</div>
       <div class="actions">
         <button class="btn primary big" id="end-again">Play again</button>
@@ -794,7 +827,7 @@ export class UI {
   }
 
   hideOverlays(only) {
-    const ids = only || ['ov-intro', 'ov-result', 'ov-pause', 'ov-howto', 'ov-calibrate'];
+    const ids = only || ['ov-intro', 'ov-result', 'ov-pause', 'ov-howto', 'ov-calibrate', 'ov-exchange'];
     for (const id of ids) $('#' + id).classList.remove('show');
     $('#mistake').hidden = true;
     this.reframe();
@@ -826,6 +859,13 @@ export class UI {
       this.endPreview();
       this.renderShop();
     }));
+    if (this.shopCat === 'skin') {
+      renderSkins(this);
+      this.renderShopAction();
+      this.updateBananas();
+      return;
+    }
+    $('#shop-grid').classList.remove('skins');
     const eq = Save.data.equipped;
     const reached = Save.worldReached();
     const items = itemsIn(this.shopCat);
@@ -853,6 +893,10 @@ export class UI {
     const look = { ...Save.data.equipped, [cat]: id };
     this.app.applyLook(look, true);
     if (cat === 'flair') this.app.monkey.play('FL', 1.0);
+    else if (cat === 'skin') {
+      this.app.monkey.play('CHEER', 1.2);
+      document.querySelectorAll('#shop-grid .skin-card').forEach((b) => b.classList.toggle('previewing', b.dataset.skin === id));
+    }
     else if (cat === 'stage') { /* environment changes in applyLook */ }
     else this.app.monkey.play('HOP', 0.5);
     $$('#shop-grid .item').forEach((b) => b.classList.toggle('previewing', b.dataset.id === id));
@@ -874,6 +918,10 @@ export class UI {
       $('#scr-shop .sheet').insertBefore(bar, $('#shop-tabs'));
     }
     const pv = this.preview;
+    if (pv && pv.cat === 'skin') {
+      renderSkinAction(this, bar, pv.id);
+      return;
+    }
     if (!pv) {
       bar.innerHTML = '<p>Tap anything to try it on. Nothing is bought until you press Buy.</p>';
       return;
@@ -1088,7 +1136,7 @@ export class UI {
       return `<tr><td>${l.id}${l.boss ? ' (boss)' : ''}</td><td>${esc(l.name)}</td><td>${l.rounds.join(', ')}</td><td>${bpm}</td><td>${tt}</td><td class="wrap">${esc([news && 'New: ' + news, tw && 'Twist: ' + tw].filter(Boolean).join('. '))}</td></tr>`;
     }).join('');
     const tiers = RULES.streakTiers.map((t) => `${t.at}+ in a row: x${t.mult}`).join(', ');
-    const shopRows = CATEGORIES.map((c) => `<tr><td>${esc(c.name)}</td><td class="wrap">${itemsIn(c.id).map((i) => `${esc(i.name)} (${i.price ? i.price : 'free'}${i.unlockWorld ? `, or free at World ${i.unlockWorld}` : ''})`).join(', ')}</td></tr>`).join('');
+    const shopRows = CATEGORIES.filter((c) => c.id !== 'skin').map((c) => `<tr><td>${esc(c.name)}</td><td class="wrap">${itemsIn(c.id).map((i) => `${esc(i.name)} (${i.price ? i.price : 'free'}${i.unlockWorld ? `, or free at World ${i.unlockWorld}` : ''})`).join(', ')}</td></tr>`).join('');
     $('#help-body').innerHTML = `
       <h3>The game in one minute</h3>
       <ol>
@@ -1159,8 +1207,11 @@ export class UI {
       <div class="table-wrap"><table><thead><tr><th>Type</th><th>Items (bananas)</th></tr></thead><tbody>${shopRows}</tbody></table></div>
       <p class="note">Looks are just for fun: nothing in the wardrobe changes scores, timers or difficulty.</p>
 
+      ${skinsHelp(this)}
+
       <h3>Your privacy</h3>
       <p>The game runs entirely on your device. Progress is saved in this browser's storage. No account, no ads, no analytics, no data sent anywhere. Settings > Your data shows exactly what is saved, and lets you copy it or delete it.</p>`;
+    lazyPortraits($('#help-body'));
   }
 
   // ------------------------------------------------------------ stats
@@ -1174,6 +1225,8 @@ export class UI {
     const tiles = [
       [d.bananas, 'Bananas now'],
       [d.earned, 'Bananas earned'],
+      [`${d.owned.skin.length}/${SKINS.length}`, 'Skins collected'],
+      [d.goldenEarned, 'Golden bananas earned'],
       [`${totalStars}/90`, 'Stars'],
       [Object.values(d.levels).filter((l) => l.clears).length + '/30', 'Levels cleared'],
       [d.endless.bestRounds, 'Endless best (rounds)'],
@@ -1190,7 +1243,7 @@ export class UI {
     }).join('');
     const mix = Object.entries(st.mixups).sort((a, b) => b[1] - a[1]).slice(0, 3);
     const mixHtml = mix.length ? `<ul class="ledger">${mix.map(([k, v]) => { const [a, b] = k.split('>'); return `<li><span>Expected ${esc(moveName(a, this.s.naming))}, tapped ${esc(moveName(b, this.s.naming))}</span><span>${v}x</span></li>`; }).join('')}</ul>` : '<p class="note" style="color:var(--cream-dim)">No mix-ups yet.</p>';
-    const ledger = d.ledger.length ? `<ul class="ledger">${d.ledger.map((e) => `<li><span>${esc(e.reason)}<br><small style="color:var(--cream-dim)">${new Date(e.t).toLocaleString()}</small></span><span class="${e.amount >= 0 ? 'plus' : 'minus'}">${e.amount >= 0 ? '+' : ''}${e.amount}</span></li>`).join('')}</ul>` : '<p class="note" style="color:var(--cream-dim)">Nothing yet. Play a level to earn bananas.</p>';
+    const ledger = d.ledger.length ? `<ul class="ledger">${d.ledger.map((e) => `<li><span>${esc(e.reason)}<br><small style="color:var(--cream-dim)">${new Date(e.t).toLocaleString()}</small></span><span class="${e.amount >= 0 ? 'plus' : 'minus'}" style="display:inline-flex;align-items:center;gap:3px">${e.amount >= 0 ? '+' : ''}${e.amount}${e.cur === 'golden' ? GOLDEN_ICON.replace('<svg ', '<svg style="width:18px;height:18px" ') : ''}</span></li>`).join('')}</ul>` : '<p class="note" style="color:var(--cream-dim)">Nothing yet. Play a level to earn bananas.</p>';
     $('#stats-body').innerHTML = `
       <div class="tiles">${tiles.map(([v, l]) => `<div class="tile"><b>${v}</b><span>${esc(l)}</span></div>`).join('')}</div>
       <div class="group"><h3>Moves you get right</h3>${moveBars}</div>
