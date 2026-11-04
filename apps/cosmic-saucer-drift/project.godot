@@ -19,6 +19,7 @@ Save="*res://autoload/save.gd"
 InputRouter="*res://autoload/input_router.gd"
 Events="*res://autoload/events.gd"
 Ads="*res://autoload/ads.gd"
+Store="*res://autoload/store.gd"
 Audio="*res://autoload/audio.gd"
 Game="*res://autoload/game.gd"
 

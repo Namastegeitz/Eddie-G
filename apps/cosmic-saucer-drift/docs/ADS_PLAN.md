@@ -18,8 +18,8 @@ in the code, so a future update only has to add the network and flip a switch.
 
 ### Placements wired into the UI (hidden while ads are off)
 
-1. **`double_stardust` (rewarded)** - results screen: "Watch ad: +N Stardust"
-   doubles that race's Stardust. Player's choice, never forced.
+1. **`double_credits` (rewarded)** - results screen: "Watch ad: +N credits"
+   doubles that race's Race Credits. Player's choice, never forced.
 2. **`free_item` (rewarded)** - Quick Race screen: "Watch an ad: start
    holding a free item".
 3. **`cup_interstitial` (interstitial)** - only between cup races, after the
@@ -68,9 +68,9 @@ test does exactly this (`_ads()` in `tests/smoke.gd`). Set it back to
    - Target audience: if you include under-13s, you must use
      Families-certified ad SDKs, set `child_directed = true`, and keep
      `max_ad_content_rating = "G"`.
-7. **Optional "Remove ads" purchase:** add Google Play Billing (a Godot
-   billing plugin), sell a non-consumable, and call `Ads.set_removed(true)`
-   when it's owned (and on restore).
+7. **"Remove ads" purchase:** already a product in the store layer
+   (`remove_ads` in `autoload/store.gd`); it calls `Ads.set_removed(true)`.
+   See `STORE_PLAN.md`.
 
 ## Ad campaigns to grow installs
 

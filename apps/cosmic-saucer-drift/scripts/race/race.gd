@@ -64,6 +64,7 @@ func _ready() -> void:
 	mod_pod = mods.get("pod", 1.0)
 	mod_grip = mods.get("grip", 1.0)
 	td = TrackData.make(req.track, req.variant)
+	mod_gravity *= float(td.def.get("gravity", 1.0))
 	if req.has("laps"):
 		td.laps = req.laps
 	_build_world()
@@ -108,11 +109,7 @@ func _build_world() -> void:
 	var sky := Sky.new()
 	var sm := ShaderMaterial.new()
 	sm.shader = preload("res://shaders/space_sky.gdshader")
-	sm.set_shader_parameter("top_color", theme.sky_top)
-	sm.set_shader_parameter("bottom_color", theme.sky_bottom)
-	sm.set_shader_parameter("nebula_a", theme.neb_a)
-	sm.set_shader_parameter("nebula_b", theme.neb_b)
-	sm.set_shader_parameter("nebula_strength", theme.neb)
+	Themes.apply_sky(sm, theme)
 	sky.sky_material = sm
 	sky.radiance_size = Sky.RADIANCE_SIZE_32
 	env.sky = sky
@@ -140,7 +137,8 @@ func _build_world() -> void:
 	sun.light_energy = 1.25
 	sun.shadow_enabled = false
 	add_child(sun)
-	sun.look_at_from_position(Vector3.ZERO, Vector3(theme.sun_dir), Vector3.UP if absf(Vector3(theme.sun_dir).normalized().y) < 0.95 else Vector3.FORWARD)
+	var ld := Themes.light_dir(theme)
+	sun.look_at_from_position(Vector3.ZERO, ld, Vector3.UP if absf(ld.y) < 0.95 else Vector3.FORWARD)
 	var track := Node3D.new()
 	track.name = "Track"
 	add_child(track)
@@ -313,7 +311,15 @@ func _physics_process(dt: float) -> void:
 		if n != _last_count and n <= 3 and n >= 1:
 			_last_count = n
 			for h in huds:
-				h.big(str(n), "Hold GAS right on GO for a rocket start" if n == 3 and req.mode != "tt" else "", 0.9, UiKit.CYAN)
+				var sub := ""
+				if n == 3:
+					sub = td.name
+				elif n == 2:
+					var facts: Array = td.def.get("facts", [])
+					sub = str(facts[0]) if not facts.is_empty() else ""
+				elif req.mode != "tt":
+					sub = "Hold GAS right on GO for a rocket start"
+				h.big(str(n), sub, 0.9, UiKit.CYAN)
 			Audio.play("count")
 		if countdown_left <= 0.0:
 			racing = true
@@ -605,7 +611,7 @@ func _on_racer_event(kind: String, d: Dictionary, r: Racer) -> void:
 func on_shard(r: Racer, slot: int) -> bool:
 	var new_one := Save.take_shard(td.id, slot)
 	if new_one:
-		Save.add_stardust(50)
+		Save.add_credits(50)
 	Audio.play("shard")
 	return new_one
 

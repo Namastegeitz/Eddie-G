@@ -17,10 +17,8 @@ func _ready() -> void:
 	var sky := Sky.new()
 	var sm := ShaderMaterial.new()
 	sm.shader = preload("res://shaders/space_sky.gdshader")
-	sm.set_shader_parameter("top_color", Color(0.03, 0.02, 0.09))
-	sm.set_shader_parameter("bottom_color", Color(0.12, 0.04, 0.18))
-	sm.set_shader_parameter("nebula_a", Color(0.6, 0.2, 0.85))
-	sm.set_shader_parameter("nebula_b", Color(0.15, 0.4, 0.95))
+	Themes.apply_sky(sm, theme)
+	sm.set_shader_parameter("sun1_size", 0.0)
 	sky.sky_material = sm
 	sky.radiance_size = Sky.RADIANCE_SIZE_32
 	env.sky = sky

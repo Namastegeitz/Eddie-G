@@ -6,7 +6,7 @@ extends Control
 var stage: MenuStage
 var content: Control
 var header_title: Label
-var stardust_lbl: Label
+var credits_lbl: Label
 var stars_lbl: Label
 var back_btn: Button
 var _screen := ""
@@ -51,8 +51,8 @@ func _ready() -> void:
 	header.add_child(header_title)
 	stars_lbl = UiKit.label("", 24, UiKit.GOLD)
 	header.add_child(stars_lbl)
-	stardust_lbl = UiKit.label("", 24, UiKit.PINK)
-	header.add_child(stardust_lbl)
+	credits_lbl = UiKit.label("", 24, UiKit.PINK)
+	header.add_child(credits_lbl)
 	content = Control.new()
 	content.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	col.add_child(content)
@@ -102,7 +102,7 @@ func go_back() -> void:
 
 
 func refresh_header() -> void:
-	stardust_lbl.text = "✦ %d" % Save.stardust()
+	credits_lbl.text = "%s CR" % UiKit.num(Save.credits())
 	stars_lbl.text = "★ %d" % Save.total_stars()
 
 
@@ -146,7 +146,7 @@ func show_screen(sname: String, push := true) -> void:
 			title = "Daily Challenge"
 			root = _daily()
 		"garage":
-			title = "Garage"
+			title = "Hangar"
 			root = _garage()
 		"pilots":
 			title = "Pilots"
@@ -163,6 +163,9 @@ func show_screen(sname: String, push := true) -> void:
 		"howto":
 			title = "How to Play"
 			root = _howto()
+		"store":
+			title = "Store"
+			root = _store()
 		_:
 			root = _home()
 	header_title.text = title
@@ -276,13 +279,16 @@ func _home() -> Control:
 	g.add_theme_constant_override("h_separation", 10)
 	g.add_theme_constant_override("v_separation", 10)
 	v.add_child(g)
-	for pair in [["Garage", "garage"], ["Pilots", "pilots"], ["Achievements", "achievements"], ["Stats", "stats"], ["Settings", "settings"], ["How to Play", "howto"]]:
+	var entries: Array = [["Hangar", "garage"], ["Pilots", "pilots"], ["Achievements", "achievements"], ["Stats", "stats"], ["Settings", "settings"], ["How to Play", "howto"]]
+	if Store.enabled() and Store.config.show_store_button:
+		entries.insert(0, ["Store", "store"])
+	for pair in entries:
 		var target: String = pair[1]
 		var b := UiKit.button(pair[0], func() -> void: show_screen(target), 24)
 		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		g.add_child(b)
 	var look := Save.player_look()
-	v.add_child(_wrap("Flying %s with %s  ·  %d / 18 Star Shards" % [Catalog.saucer(look.saucer).name, Catalog.pilot(look.pilot).name, Save.shard_total()], 18))
+	v.add_child(_wrap("Flying %s with %s  ·  %d / 42 Star Shards" % [Catalog.saucer(look.saucer).name, Catalog.pilot(look.pilot).name, Save.shard_total()], 18))
 	return lp[0]
 
 
@@ -315,16 +321,22 @@ func _cups() -> Control:
 		var p := UiKit.panel(box, Color(cup.color.r * 0.25, cup.color.g * 0.2, cup.color.b * 0.3, 0.9))
 		v.add_child(p)
 		var have := 0
-		for i in 4:
+		var n_races: int = cup.races.size()
+		for i in n_races:
 			var m := Save.race_stars(cup.id, i)
 			have += (m & 1) + ((m >> 1) & 1) + ((m >> 2) & 1)
 		var best := int(Save.data.cup_best.get(cup.id, 0))
 		var trophy := ""
 		if best >= 1 and best <= 3:
 			trophy = "   %s trophy" % ["Gold", "Silver", "Bronze"][best - 1]
-		_row(box, [UiKit.label(cup.name, 28, cup.color), UiKit.label("  ★ %d/12%s" % [have, trophy], 22, UiKit.GOLD)])
+		_row(box, [UiKit.label(cup.name, 28, cup.color), UiKit.label("  ★ %d/%d%s" % [have, n_races * 3, trophy], 22, UiKit.GOLD)])
+		var sysd: Dictionary = Catalog.SYSTEMS.get(cup.system, {})
+		if not sysd.is_empty():
+			box.add_child(_wrap("%s - %s" % [sysd.distance.capitalize() if sysd.distance == "home" else sysd.distance, sysd.text], 16, UiKit.DIM))
+		else:
+			box.add_child(_wrap("The finale: reverse and mirror tracks from every system against Legend-class rivals.", 16, UiKit.DIM))
 		var cls: Dictionary = Catalog.AI_CLASSES[int(cup["class"])]
-		for i in 4:
+		for i in n_races:
 			var r: Array = cup.races[i]
 			var td_name: String = TrackDefs.get_def(r[0]).name
 			var var_name: String = Catalog.VARIANT_NAMES[int(r[1])]
@@ -343,20 +355,26 @@ func _track_picker(mode: String) -> Control:
 	var lp := _left_panel(780)
 	var v: VBoxContainer = lp[1]
 	if not _sel.has(mode + "_track"):
-		_sel[mode + "_track"] = "asteroid_belt"
+		_sel[mode + "_track"] = "mars"
 		_sel[mode + "_variant"] = 0
 	if not _sel.has("class"):
 		_sel["class"] = clampi(int(Save.setting("difficulty")), 0, 3)
-	var grid := GridContainer.new()
-	grid.columns = 2
-	grid.add_theme_constant_override("h_separation", 10)
-	grid.add_theme_constant_override("v_separation", 10)
-	v.add_child(grid)
+	var grid: GridContainer = null
+	var last_sys := ""
 	for id in Catalog.TRACK_IDS:
 		var tid: String = id
 		var def := TrackDefs.get_def(tid)
+		if def.system != last_sys:
+			last_sys = def.system
+			var sysd: Dictionary = Catalog.SYSTEMS[last_sys]
+			v.add_child(UiKit.label("%s  ·  %s" % [sysd.name, sysd.distance], 20, UiKit.GOLD))
+			grid = GridContainer.new()
+			grid.columns = 2
+			grid.add_theme_constant_override("h_separation", 10)
+			grid.add_theme_constant_override("v_separation", 8)
+			v.add_child(grid)
 		var open := Save.track_unlocked(tid)
-		var b := UiKit.button(def.name if open else "Locked", func() -> void:
+		var b := UiKit.button(def.name if open else def.name + " (locked)", func() -> void:
 			_sel[mode + "_track"] = tid
 			if not Save.variant_unlocked(tid, int(_sel[mode + "_variant"])):
 				_sel[mode + "_variant"] = 0
@@ -370,6 +388,7 @@ func _track_picker(mode: String) -> Control:
 	var cdef := TrackDefs.get_def(cur)
 	v.add_child(UiKit.label(cdef.name, 30, UiKit.CYAN))
 	v.add_child(_wrap(cdef.blurb, 20))
+	v.add_child(_fact_card(cur))
 	var vrow := UiKit.hbox(10)
 	v.add_child(vrow)
 	for vi in 3:
@@ -420,6 +439,57 @@ func _track_picker(mode: String) -> Control:
 	return lp[0]
 
 
+# ---------------------------------------------------------------- store (real money, off in v1)
+func _store() -> Control:
+	var lp := _left_panel(760)
+	var v: VBoxContainer = lp[1]
+	if not Store.enabled():
+		v.add_child(_wrap("The store isn't open in this version. Every craft can be unlocked with Race Credits in the Hangar.", 20))
+		return lp[0]
+	for p in Store.PRODUCTS:
+		var pid: String = p.id
+		var row := UiKit.hbox(10)
+		v.add_child(row)
+		var title := pid
+		match String(p.type):
+			"craft":
+				title = Catalog.saucer(p.grant).name
+			"bundle":
+				title = "Premium Fleet (all 4 premium craft)"
+			"credits":
+				title = "%s Race Credits" % UiKit.num(int(p.grant))
+			"entitlement":
+				title = "Remove ads"
+		var l := UiKit.label(title, 20)
+		l.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		row.add_child(l)
+		if Store.owned(pid):
+			row.add_child(UiKit.label("Owned", 18, UiKit.GREEN))
+		else:
+			var b := UiKit.button(Store.price_text(pid), func() -> void: pass, 20, 140)
+			b.pressed.connect(func() -> void:
+				b.disabled = true
+				Store.buy(pid, func(_ok: bool) -> void: show_screen("store", false)))
+			row.add_child(b)
+	v.add_child(UiKit.button("Restore purchases", func() -> void:
+		Store.restore(func(n: int) -> void:
+			toast("Restored %d item(s)" % n)
+			show_screen("store", false)), 20))
+	return lp[0]
+
+
+## Real-world facts about a track's planet or moon.
+func _fact_card(track_id: String) -> Control:
+	var def := TrackDefs.get_def(track_id)
+	var box := UiKit.vbox(2)
+	var sysd: Dictionary = Catalog.SYSTEMS.get(def.get("system", ""), {})
+	if not sysd.is_empty():
+		box.add_child(UiKit.label("Real world · %s · %s" % [sysd.name, sysd.star], 16, UiKit.GOLD))
+	for f in def.get("facts", []):
+		box.add_child(_wrap("• " + str(f), 17, Color(0.85, 0.88, 1.0)))
+	return UiKit.panel(box, Color(0.08, 0.1, 0.22, 0.9))
+
+
 ## Rewarded-ad placement "free_item": only appears when ads are switched on.
 func _free_item_offer(parent: Control, make_req: Callable) -> void:
 	if not Ads.can_offer("free_item"):
@@ -439,7 +509,7 @@ func _versus() -> Control:
 	var lp := _left_panel(780)
 	var v: VBoxContainer = lp[1]
 	var p2: Dictionary = Save.data.garage.get("p2", {"pilot": "nova", "saucer": "bubble"})
-	v.add_child(_wrap("Player 1 uses your garage saucer and pilot. Player 2 picks below. Keyboard: P1 = WASD, Space drift, E item. P2 = arrows, / drift, . item. Or plug in two gamepads.", 18))
+	v.add_child(_wrap("Player 1 uses your Hangar craft and pilot. Player 2 picks below. Keyboard: P1 = WASD, Space drift, E item. P2 = arrows, / drift, . item. Or plug in two gamepads.", 18))
 	var pilots: Array = []
 	for p in Catalog.PILOTS:
 		if Save.has_pilot(p.id):
@@ -458,7 +528,7 @@ func _versus() -> Control:
 		stage.show_look(Save.look_for(g2.get("saucer", "bubble"), g2.get("pilot", "nova")))
 		show_screen("versus", false)
 	v.add_child(UiKit.button("P2 pilot: %s ▸" % Catalog.pilot(p2.get("pilot", "nova")).name, func() -> void: cycle.call(pilots, p2.get("pilot", "nova"), "pilot"), 22))
-	v.add_child(UiKit.button("P2 saucer: %s ▸" % Catalog.saucer(p2.get("saucer", "bubble")).name, func() -> void: cycle.call(saucers, p2.get("saucer", "bubble"), "saucer"), 22))
+	v.add_child(UiKit.button("P2 craft: %s ▸" % Catalog.saucer(p2.get("saucer", "bubble")).name, func() -> void: cycle.call(saucers, p2.get("saucer", "bubble"), "saucer"), 22))
 	if not _sel.has("versus_track"):
 		_sel["versus_track"] = "asteroid_belt"
 	var tracks: Array = []
@@ -509,8 +579,8 @@ func _daily() -> Control:
 	v.add_child(_wrap(info.mod.text, 20, Color.WHITE))
 	v.add_child(UiKit.label("Goal: %s" % info.goal.text, 24, UiKit.GOLD))
 	var streak := int(Save.data.daily.streak)
-	v.add_child(UiKit.label("Reward: %d Stardust   Streak: %d (best %d)" % [info.reward, streak, int(Save.data.daily.best_streak)], 20))
-	v.add_child(_wrap("Finish on consecutive days to grow your streak: +60 Stardust a day, up to a week. Works offline.", 18))
+	v.add_child(UiKit.label("Reward: %d Race Credits   Streak: %d (best %d)" % [info.reward, streak, int(Save.data.daily.best_streak)], 20))
+	v.add_child(_wrap("Finish on consecutive days to grow your streak: +60 credits a day, up to a week. Works offline.", 18))
 	if info.done:
 		v.add_child(UiKit.label("Done for today. New challenge tomorrow!", 24, UiKit.GREEN))
 		v.add_child(UiKit.button("Race it again (no reward)", func() -> void: Game.start(Game.daily_request()), 22))
@@ -532,40 +602,62 @@ func _garage() -> Control:
 	var sid: String = _sel["garage_saucer"]
 	var sdef := Catalog.saucer(sid)
 	stage.show_look(Save.look_for(sid, g.pilot))
-	# Saucer picker.
-	var srow := HFlowContainer.new()
-	srow.add_theme_constant_override("h_separation", 8)
-	srow.add_theme_constant_override("v_separation", 8)
-	v.add_child(srow)
-	for s in Catalog.SAUCERS:
-		var id: String = s.id
-		var b := UiKit.button(s.name, func() -> void:
-			_sel["garage_saucer"] = id
-			show_screen("garage", false), 18)
-		if id == sid:
-			b.add_theme_stylebox_override("normal", UiKit.box(Color(0.25, 0.15, 0.5), 16, UiKit.GOLD, 3))
-		if not Save.has_saucer(id):
-			b.modulate = Color(1, 1, 1, 0.6)
-		srow.add_child(b)
-	v.add_child(UiKit.label(sdef.name, 30, UiKit.CYAN))
+	# Craft picker: standard fleet, then premium.
+	for group in [["Alien fleet", false], ["Premium craft", true]]:
+		v.add_child(UiKit.label(group[0], 18, UiKit.GOLD if group[1] else UiKit.DIM))
+		var srow := HFlowContainer.new()
+		srow.add_theme_constant_override("h_separation", 8)
+		srow.add_theme_constant_override("v_separation", 8)
+		v.add_child(srow)
+		for s in Catalog.SAUCERS:
+			if bool(s.get("premium", false)) != group[1]:
+				continue
+			var id: String = s.id
+			var b := UiKit.button(("★ " if s.get("premium", false) else "") + s.name, func() -> void:
+				_sel["garage_saucer"] = id
+				show_screen("garage", false), 18)
+			if id == sid:
+				b.add_theme_stylebox_override("normal", UiKit.box(Color(0.25, 0.15, 0.5), 16, UiKit.GOLD, 3))
+			elif s.get("premium", false):
+				b.add_theme_stylebox_override("normal", UiKit.box(Color(0.22, 0.14, 0.08), 16, UiKit.GOLD.darkened(0.2), 2))
+			if not Save.has_saucer(id):
+				b.modulate = Color(1, 1, 1, 0.6)
+			srow.add_child(b)
+	v.add_child(UiKit.label(("★ PREMIUM  " if sdef.get("premium", false) else "") + sdef.name, 30, UiKit.GOLD if sdef.get("premium", false) else UiKit.CYAN))
 	v.add_child(_wrap(sdef.blurb, 18))
+	if sdef.has("perk_text"):
+		v.add_child(UiKit.label("Perk: " + str(sdef.perk_text), 18, UiKit.GREEN))
 	var owned := Save.has_saucer(sid)
 	if not owned:
 		var can := Save.total_stars() >= int(sdef.stars)
 		if not can:
 			v.add_child(UiKit.label("Needs %d stars (you have %d)" % [sdef.stars, Save.total_stars()], 22, UiKit.RED))
-		var buy := UiKit.button("Buy for ✦ %d" % sdef.price, func() -> void:
+		var buy := UiKit.button("Unlock for %s CR" % UiKit.num(int(sdef.price)), func() -> void:
 			if Save.spend(int(sdef.price)):
 				Save.unlock_saucer(sid)
 				Events.log_event("purchase", {"type": "saucer", "id": sid, "price": sdef.price})
 				toast("%s is yours!" % sdef.name)
 				show_screen("garage", false)
 			else:
-				toast("Not enough Stardust", UiKit.RED), 24)
+				toast("Not enough Race Credits", UiKit.RED), 24)
 		buy.disabled = not can
 		v.add_child(buy)
+		# Real-money option (store layer: hidden while switched off).
+		var pid: String = sdef.get("product", "")
+		if pid != "" and Store.can_buy(pid):
+			var rb := UiKit.button("Buy now  %s" % Store.price_text(pid), func() -> void: pass, 22)
+			rb.pressed.connect(func() -> void:
+				rb.disabled = true
+				Store.buy(pid, func(ok: bool) -> void:
+					toast("%s is yours!" % sdef.name if ok else "Purchase cancelled", UiKit.GOLD if ok else UiKit.DIM)
+					show_screen("garage", false)))
+			v.add_child(rb)
+		if sdef.get("premium", false):
+			var races_needed := ceili(maxf(float(int(sdef.price) - Save.credits()), 0.0) / 450.0)
+			if races_needed > 0:
+				v.add_child(UiKit.label("About %d more race wins' worth of credits to go" % races_needed, 16, UiKit.DIM))
 	elif g.saucer != sid:
-		v.add_child(UiKit.button("Fly this saucer", func() -> void:
+		v.add_child(UiKit.button("Fly this craft", func() -> void:
 			Save.data.garage.saucer = sid
 			Save.mark()
 			toast("Now flying the %s" % sdef.name)
@@ -599,7 +691,7 @@ func _garage() -> Control:
 			row.add_child(UiKit.label("%d/5" % lvl, 18, UiKit.DIM))
 			if lvl < 5:
 				var cost: int = Catalog.UPGRADE_COSTS[lvl]
-				var ub := UiKit.button("+ ✦ %d" % cost, func() -> void:
+				var ub := UiKit.button("+ %s CR" % UiKit.num(cost), func() -> void:
 					if Save.spend(cost):
 						Save.set_upgrade(sid, stat, lvl + 1)
 						Events.log_event("purchase", {"type": "upgrade", "id": sid + ":" + stat, "price": cost})
@@ -607,7 +699,7 @@ func _garage() -> Control:
 							toast("Achievement: " + str(a), UiKit.PINK)
 						show_screen("garage", false)
 					else:
-						toast("Not enough Stardust", UiKit.RED), 18)
+						toast("Not enough Race Credits", UiKit.RED), 18)
 				ub.disabled = not owned
 				row.add_child(ub)
 	else:
@@ -622,11 +714,11 @@ func _garage() -> Control:
 			var iid: String = item.id
 			var have := Save.owns(tab, iid)
 			var price: int = item.price
-			var text: String = item.name if have else "%s ✦%d" % [item.name, price]
+			var text: String = item.name if have else "%s  %s CR" % [item.name, UiKit.num(price)]
 			var b := UiKit.button(text, func() -> void:
 				if not Save.owns(tab, iid):
 					if not Save.spend(price):
-						toast("Not enough Stardust", UiKit.RED)
+						toast("Not enough Race Credits", UiKit.RED)
 						return
 					Save.buy(tab, iid)
 					Events.log_event("purchase", {"type": tab, "id": iid, "price": price})
@@ -702,8 +794,8 @@ func _stats() -> Control:
 		["Purple boosts", "%d" % Save.stat("purple")], ["Tricks landed", "%d" % Save.stat("tricks")], ["Energy Pods", "%d" % Save.stat("pods")],
 		["Item hits", "%d" % Save.stat("hits")], ["Near misses", "%d" % Save.stat("near")], ["Slipstreams", "%d" % Save.stat("slips")],
 		["Shortcuts taken", "%d" % Save.stat("shortcuts")], ["Top speed", "%d km/h" % Save.stat("top_speed")],
-		["Star Shards", "%d / 18" % Save.shard_total()], ["Daily challenges", "%d (best streak %d)" % [Save.stat("dailies"), int(Save.data.daily.best_streak)]],
-		["Stardust earned", "%d" % Save.stat("stardust_earned")],
+		["Star Shards", "%d / 42" % Save.shard_total()], ["Daily challenges", "%d (best streak %d)" % [Save.stat("dailies"), int(Save.data.daily.best_streak)]],
+		["Race Credits earned", "%d" % Save.stat("credits_earned")],
 	]
 	var g := GridContainer.new()
 	g.columns = 2
@@ -811,6 +903,22 @@ func _howto() -> Control:
 	for l in lines:
 		v.add_child(UiKit.label(l[0], 24, UiKit.CYAN))
 		v.add_child(_wrap(l[1], 19, Color.WHITE))
+	v.add_child(UiKit.label("Power-ups", 26, UiKit.GOLD))
+	for id in Catalog.ITEMS:
+		var it: Dictionary = Catalog.ITEMS[id]
+		var row := UiKit.hbox(10)
+		var icon := ItemIcon.new()
+		icon.custom_minimum_size = Vector2(44, 44)
+		icon.item = id
+		row.add_child(icon)
+		row.add_child(_wrap("%s (%s): %s" % [it.name, it.kind, it.text], 17, Color.WHITE))
+		v.add_child(row)
+	v.add_child(UiKit.label("Lineups: what each place can pull from a crate", 22, UiKit.CYAN))
+	for lu in Catalog.LINEUPS:
+		var names: Array = []
+		for k in lu.odds:
+			names.append(Catalog.ITEMS[k].name + ("" if k != "nitro" else " x%d" % lu.nitro))
+		v.add_child(_wrap("%s (%s): %s" % [lu.name, lu.places, ", ".join(names)], 17, Color(0.85, 0.88, 1.0)))
 	v.add_child(UiKit.button("Got it! Let's race ▶", func() -> void:
 		if not Save.data.tutorial_done:
 			Save.data.tutorial_done = true

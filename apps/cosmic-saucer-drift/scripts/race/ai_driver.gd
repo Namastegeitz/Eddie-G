@@ -49,6 +49,9 @@ func drive(r: Racer, dt: float) -> void:
 		return
 	var speed := maxf(r.fwd_speed, 0.0)
 	var hw := td.width * 0.5
+	if r.rescue_time > 0.0:
+		# Fell off: don't try the shortcut again this lap.
+		_want_short = false
 	var s_here := float(r.track_idx) * path.step
 	# ------------------------------------------------ shortcut decision (once per lap)
 	if td.short and r.lap != _short_lap:

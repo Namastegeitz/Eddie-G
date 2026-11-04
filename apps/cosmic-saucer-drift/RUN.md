@@ -44,12 +44,18 @@ back. With two gamepads each player gets one; with one gamepad it goes to P2.
   a finished trick gives a 0.9 s boost and energy; landing mid-spin wobbles.
 - **Falling off** a gap or edge brings a rescue beam that puts you back
   (past any gap ahead) after about a second.
-- **Shortcuts:** each track has one. The Alien Jungle Moon's is a sky bridge:
-  line up with the geyser on the straight before the big right-hander.
+- **Shortcuts:** each track has one. TRAPPIST-1e's is a sky bridge: line up
+  with the geyser on the straight before the big right-hander.
 
-Unlocks: tracks open with their cup; cups need stars (8, 20, 34); Reverse and
-Mirror open when you win the Normal track; saucers need stars + Stardust; boss
-pilots need stars, then a 1-on-1 win.
+Unlocks: tracks open with their cup (star systems: Solar System from the
+start, then TRAPPIST-1 at 8 stars, Alpha Centauri at 16, Exoplanet Extremes
+at 24, the Galactic Grand Prix at 36); Reverse and Mirror open when you win
+the Normal track; craft need stars + Race Credits (premium craft 12,000-22,000
+credits); boss pilots need stars, then a 1-on-1 win.
+
+Power-ups depend on your place (five lineups: Leader, Front pack, Midfield,
+Chasers, Last place). Nitro Rocket comes with 1-3 uses; a held Ion Shield
+blocks one hit; the Pulse Laser fires straight ahead, so aim it.
 
 ## 4. Tests
 
@@ -58,12 +64,15 @@ tools/run_tests.sh
 ```
 
 runs: parse check of every script, the **smoke test** (`tests/smoke.tscn`:
-data integrity for all 18 track layouts, save round trip, unlock rules, every
+data integrity for all 42 track layouts, facts, lineups, craft and store
+products, the power-ups in a live race (laser, EMP, held shield, nitro uses,
+homing rocket), premium perks, the store layer with the debug provider, the
+Stardust-to-Race-Credits save migration, save round trip, unlock rules, every
 challenge and daily goal, the ads layer with the debug provider, achievements,
 full races in every mode including a 4-race cup, time trial ghost, boss,
 daily, 2-player split-screen, mirror, pause, and every menu screen), and the
 **race simulator** (`tests/sim.tscn`: 8 AI saucers race every track in all
-three variants; fails if anyone doesn't finish or gets stuck).
+three variants (42 layouts); fails if anyone doesn't finish or gets stuck).
 
 Other tools:
 
@@ -109,12 +118,14 @@ godot --headless --path . --export-release "iOS"             build/ios/CosmicSau
 ## 6. Change the game
 
 - Driving numbers: `resources/tuning.tres` (open in the editor's inspector).
-- Saucers, pilots, items, odds, cups, challenges, cosmetics, rewards:
-  `scripts/data/catalog.gd`.
+- Craft, pilots, power-ups, lineups, star systems, cups, challenges,
+  cosmetics, rewards: `scripts/data/catalog.gd`.
 - Tracks: `scripts/data/track_defs.gd`. Points are a closed loop; features
   are placed by control-point index (`"at": 10.5` = halfway between points 10
   and 11) so they stay put when you move points, and flip automatically for
   Reverse and Mirror. Plot the result with `tools/plot_tracks.py`, then run
   the simulator to check the AI can race it.
-- Looks per world: `scripts/track/themes.gd`.
+- Looks per world (sky, suns, planets, scenery): `scripts/track/themes.gd`.
+  Real facts per track: `facts` in `track_defs.gd`.
+- Real-money store: `resources/store_config.tres` and [docs/STORE_PLAN.md](docs/STORE_PLAN.md).
 - Ads: `resources/ads_config.tres` and [docs/ADS_PLAN.md](docs/ADS_PLAN.md).

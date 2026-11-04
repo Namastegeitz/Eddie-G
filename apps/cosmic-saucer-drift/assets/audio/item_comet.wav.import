@@ -2,13 +2,13 @@
 
 importer="wav"
 type="AudioStreamWAV"
-uid="uid://23posy5mkfbr"
-path="res://.godot/imported/item_warp.wav-a7fb56d9dadd4d39881252c2d1dd8fc5.sample"
+uid="uid://oemhvvi3fg0v"
+path="res://.godot/imported/item_comet.wav-13720ad5626b54f38fe8c24495ffc479.sample"
 
 [deps]
 
-source_file="res://assets/audio/item_warp.wav"
-dest_files=["res://.godot/imported/item_warp.wav-a7fb56d9dadd4d39881252c2d1dd8fc5.sample"]
+source_file="res://assets/audio/item_comet.wav"
+dest_files=["res://.godot/imported/item_comet.wav-13720ad5626b54f38fe8c24495ffc479.sample"]
 
 [params]
 

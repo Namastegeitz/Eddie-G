@@ -198,7 +198,7 @@ func tick(dt: float) -> void:
 			if p.active and rp.distance_squared_to(p.pos) < pod_r * pod_r:
 				p.active = false
 				p.t = POD_RESPAWN
-				r.add_energy(race.tuning.pod_energy * race.mod_pod)
+				r.add_energy(race.tuning.pod_energy * race.mod_pod * r.pod_mult)
 				r.stats.pods += 1
 				r.emit_signal("event", "pod", {})
 		if r.item == "" and r.item_roll <= 0.0:

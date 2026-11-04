@@ -20,6 +20,12 @@ static func make(race: Node) -> Control:
 	v.add_child(UiKit.label("PAUSED", 56, UiKit.CYAN, HORIZONTAL_ALIGNMENT_CENTER))
 	var td: TrackData = race.td
 	v.add_child(UiKit.label("%s %s" % [td.name, Catalog.VARIANT_NAMES[td.variant]], 22, UiKit.DIM, HORIZONTAL_ALIGNMENT_CENTER))
+	var facts: Array = td.def.get("facts", [])
+	if not facts.is_empty():
+		var fl := UiKit.label(str(facts[randi() % facts.size()]), 17, UiKit.GOLD, HORIZONTAL_ALIGNMENT_CENTER)
+		fl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		fl.custom_minimum_size = Vector2(560, 0)
+		v.add_child(fl)
 	var resume := UiKit.button("Resume", func() -> void: race.toggle_pause(), 28, 360)
 	v.add_child(resume)
 	if race.req.mode != "cup" or race.req.cup_race > 0 or true:

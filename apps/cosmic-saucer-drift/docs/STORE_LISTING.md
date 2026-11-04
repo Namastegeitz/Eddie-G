@@ -14,45 +14,42 @@ collected). Graphics are in `docs/store/`.
 
 ## Short description (80 max)
 
-> Drift UFOs around space tracks, charge Plasma Boost and blast rivals!
+> Race alien spacecraft across real planets: drift, boost and blast rivals!
 
-(69 characters)
+(73 characters)
 
 ## Full description (4000 max)
 
-> Strap into a flying saucer and race the galaxy's wildest tracks!
+> Strap into an alien spacecraft and race real worlds astronomers have found!
+>
+> **Race the real galaxy.** Speed down Mars' Valles Marineris, past Io's
+> volcanoes and across Saturn's rings, then leave the Solar System for
+> TRAPPIST-1's seven worlds, the nearest stars at Alpha Centauri, and the
+> strangest exoplanets known: a cobalt-blue giant with supersonic winds, a
+> lava planet, a world with two suns and one where iron may fall as rain.
+> Every track comes with real facts about the place you're racing.
 >
 > **Drift to boost.** Hold DRIFT through a corner and watch your sparks turn
 > blue, orange, then purple. Let go for a Plasma Boost: the longer the drift,
 > the bigger the blast.
 >
-> **Keep your core charged.** Your saucer runs on Dark Matter. Grab glowing
-> Energy Pods, land mid-air tricks, slipstream rivals and dodge hazards by a
-> whisker to refill it. Run dry and you'll limp along in Emergency Hover while
-> everyone zips past.
+> **Keep your core charged.** Your craft runs on Dark Matter. Grab Energy
+> Pods, land mid-air tricks, slipstream rivals and dodge hazards by a whisker
+> to refill it. Run dry and you'll limp along in Emergency Hover.
 >
-> **Power-up chaos.** Smash glowing space crates for eight power-ups: drag
-> rivals back with a Tractor Beam, drop a Meteor Strike on the leader, warp
-> through hyperspace, fire homing Plasma Bolts, leave Gravity Mines, smear a
-> Nebula Cloud over everyone ahead or open a Black Hole in their path. Hide
-> behind an Ion Shield when it all comes back at you.
+> **Power-up chaos.** Homing Rockets, Pulse Lasers, Comet Strikes, EMP
+> Shockwaves, Nitro Rockets, Ion Shields, Gravity Mines and Tractor Beams.
+> The further back you are, the better your comeback tools.
 >
-> **Six worlds, eighteen tracks.** Tumbling rocks in the Asteroid Belt,
-> magnetic rails around a ringed giant, geysers and snapping plants on an
-> alien jungle moon, a slippery comet tail, sweeping lasers on an orbital
-> station and erupting lava. Every track hides a secret shortcut and three
-> Star Shards, and unlocks Reverse and Mirror versions when you win it.
+> **Fly alien spacecraft.** 14 craft, from classic saucers to a living
+> Bio-Ship, a Crystal Shard and premium showpieces like the Solar Sail Yacht
+> and the Quasar Dragon, each with its own perk. Earn Race Credits to unlock
+> and upgrade them, and customise paint, decals, domes and trails.
 >
-> **Build your crew.** Race eight alien pilots with their own abilities, from
-> a drift-crazy rookie to a four-armed space captain who loves to bump. Beat
-> them in Boss Races to add them to your crew.
->
-> **Tune your saucer.** Six saucers, four upgradeable stats, and a garage of
-> paints, decals, glass domes and engine trails.
->
-> **Plenty to do.** Galactic Cups with stars to earn, Quick Races, Time Trials
-> against your own ghost, a new Daily Challenge every day, achievements, and
-> 2-player split-screen.
+> **Plenty to do.** Galactic Cups across four star systems and a Grand Prix
+> finale, Quick Races, Time Trials against your own ghost, boss races to
+> recruit eight alien pilots, a new Daily Challenge every day,
+> achievements, and 2-player split-screen.
 >
 > - Plays offline
 > - No ads, no in-app purchases
@@ -65,10 +62,10 @@ collected). Graphics are in `docs/store/`.
 |---|---|---|
 | App icon | 512 x 512 PNG | `docs/store/play_icon_512.png` |
 | Feature graphic | 1024 x 500 | `docs/store/feature_graphic_1024x500.png` |
-| Phone screenshots (2-8) | 1280 x 720 (16:9) | `docs/store/*_f1100.png`, `docs/store/menu_*.png` |
+| Phone screenshots (2-8) | 1280 x 720 (16:9) | `docs/store/<world>.png` (mars, trappist1b, alpha_cen, hd189733b, kepler16b, wasp76b), `docs/store/menu_*.png` |
 
-Suggested screenshot order: a race on Neon Ring of Saturn, the Alien Jungle
-Moon, the Galactic Cups screen, the Garage, Comet Ice Run, Lava Moon.
+Suggested screenshot order: Saturn's Rings, HD 189733 b, TRAPPIST-1b, the
+Galactic Cups screen, the Hangar with a premium craft, Mars.
 
 ## App content answers
 

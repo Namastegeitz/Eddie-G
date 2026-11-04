@@ -11,6 +11,8 @@ var shield: MeshInstance3D
 var trail: CPUParticles3D
 var sparks: Array[CPUParticles3D] = []
 var spin_ring: Node3D = null
+var spin_ring2: Node3D = null
+var wobble: Array[Node3D] = []       # parts that sway (tendrils, dragon body)
 var trail_color := Color(0.3, 0.9, 1.0)
 var _spark_mats: Array[StandardMaterial3D] = []
 var _mat_cache := {}
@@ -88,6 +90,9 @@ func build(look: Dictionary) -> void:
 		c.queue_free()
 	sparks.clear()
 	_spark_mats.clear()
+	wobble.clear()
+	spin_ring = null
+	spin_ring2 = null
 	var chassis := Catalog.saucer(look.get("saucer", "classic"))
 	var pilot := Catalog.pilot(look.get("pilot", "zib"))
 	var paint_def := Catalog.find(Catalog.PAINTS, look.get("paint", "stock"))
@@ -146,6 +151,115 @@ func build(look: Dictionary) -> void:
 			dome_r = 0.8
 			dome_y = 0.52
 			rim_r = 2.1
+		"orb":
+			_part(pivot, _sphere(1.3, 2.4, 20, 10), hull_mat, Vector3(0, -0.1, 0))
+			spin_ring = Node3D.new()
+			pivot.add_child(spin_ring)
+			_part(spin_ring, _torus(1.75, 1.95, 32), dark, Vector3.ZERO, Vector3(0, 0, 70))
+			spin_ring2 = Node3D.new()
+			pivot.add_child(spin_ring2)
+			_part(spin_ring2, _torus(2.0, 2.15, 32), dark, Vector3.ZERO, Vector3(70, 0, 0))
+			dome_r = 0.65
+			dome_y = 0.7
+			rim_r = 1.35
+		"crystal":
+			var cm := StandardMaterial3D.new()
+			cm.albedo_color = Color(paint.r, paint.g, paint.b, 0.8)
+			cm.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+			cm.metallic = 0.4
+			cm.roughness = 0.05
+			cm.emission_enabled = true
+			cm.emission = paint
+			cm.emission_energy_multiplier = 0.6
+			_part(pivot, _sphere(1.0, 2.0, 4, 2), cm, Vector3.ZERO, Vector3(0, 45, 0), Vector3(1.3, 0.55, 2.4))
+			for sx: float in [-1.0, 1.0]:
+				_part(pivot, _sphere(0.5, 1.0, 4, 2), cm, Vector3(sx * 1.35, 0.0, 0.6), Vector3(0, 45, 0), Vector3(0.6, 0.4, 1.6))
+			dome_r = 0.6
+			dome_y = 0.3
+			rim_r = 1.6
+		"bioship":
+			_part(pivot, _sphere(1.5, 1.4, 16, 8), hull_mat, Vector3.ZERO, Vector3.ZERO, Vector3(1.0, 1.0, 1.3))
+			for k in 5:
+				var a := deg_to_rad(-60.0 + 30.0 * k)
+				_part(pivot, _sphere(0.35, 0.5, 8, 4), dark, Vector3(sin(a) * 1.1, 0.45, cos(a) * 1.1 - 0.3))
+			for k in 4:
+				var tnode := Node3D.new()
+				tnode.position = Vector3(-0.9 + 0.6 * k, -0.1, 1.5)
+				pivot.add_child(tnode)
+				_part(tnode, _cyl(0.06, 0.16, 2.2, 6), dark, Vector3(0, 0, 1.0), Vector3(90, 0, 0))
+				_part(tnode, _sphere(0.14, 0.28, 6, 3), _mat(trail_color, 0.0, 0.5, 2.0), Vector3(0, 0, 2.1))
+				wobble.append(tnode)
+			dome_r = 0.7
+			dome_y = 0.35
+			rim_r = 1.5
+		"arrow":
+			var pm := PrismMesh.new()
+			pm.size = Vector3(3.2, 4.6, 0.45)
+			_part(pivot, pm, hull_mat, Vector3(0, 0, -0.2), Vector3(-90, 0, 0))
+			for sx: float in [-1.0, 1.0]:
+				_part(pivot, _box(Vector3(0.12, 0.8, 1.0)), dark, Vector3(sx * 1.2, 0.35, 1.3), Vector3(-15, 0, sx * -20.0))
+			_part(pivot, _cyl(0.25, 0.35, 0.7), _mat(Color(0.25, 0.25, 0.3)), Vector3(0, 0, 2.1), Vector3(90, 0, 0))
+			dome_r = 0.6
+			dome_y = 0.2
+			rim_r = 1.4
+		"sail":
+			_part(pivot, _sphere(1.0, 0.9, 16, 8), hull_mat, Vector3.ZERO, Vector3.ZERO, Vector3(1.0, 1.0, 2.0))
+			var sm := StandardMaterial3D.new()
+			sm.albedo_color = Color(1.0, 0.85, 0.45, 0.55)
+			sm.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+			sm.cull_mode = BaseMaterial3D.CULL_DISABLED
+			sm.emission_enabled = true
+			sm.emission = Color(1.0, 0.8, 0.4)
+			sm.emission_energy_multiplier = 0.9
+			for sx: float in [-1.0, 1.0]:
+				_part(pivot, _box(Vector3(0.04, 2.4, 3.0)), sm, Vector3(sx * 1.7, 1.0, 0.2), Vector3(0, 0, sx * -35.0))
+				_part(pivot, _cyl(0.04, 0.04, 2.6, 4), _mat(Color(0.9, 0.8, 0.6), 0.9, 0.2), Vector3(sx * 0.9, 0.6, 0.2), Vector3(0, 0, sx * -35.0))
+			dome_r = 0.65
+			dome_y = 0.25
+			rim_r = 1.2
+		"phantom":
+			var gm := StandardMaterial3D.new()
+			gm.albedo_color = Color(paint.r, paint.g, paint.b, 0.55)
+			gm.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+			gm.emission_enabled = true
+			gm.emission = paint
+			gm.emission_energy_multiplier = 0.8
+			_part(pivot, _sphere(1.9, 0.7, 24, 10), gm)
+			spin_ring = Node3D.new()
+			pivot.add_child(spin_ring)
+			var beam := _mat(Color(0.8, 0.7, 1.0), 0.0, 0.5, 3.0)
+			_part(spin_ring, _cyl(0.0, 0.3, 2.6, 8), beam, Vector3(1.3, 0.2, 0), Vector3(0, 0, -80))
+			_part(spin_ring, _cyl(0.0, 0.3, 2.6, 8), beam, Vector3(-1.3, 0.2, 0), Vector3(0, 0, 80))
+			dome_r = 0.8
+			dome_y = 0.2
+			rim_r = 1.9
+		"dragon":
+			_part(pivot, _sphere(1.1, 1.3, 16, 8), hull_mat, Vector3(0, 0, -0.6), Vector3.ZERO, Vector3(1.0, 0.9, 1.4))
+			for sx: float in [-1.0, 1.0]:
+				_part(pivot, _cyl(0.0, 0.18, 0.9, 6), _mat(Color(1.0, 0.85, 0.4), 0.5, 0.3), Vector3(sx * 0.5, 0.7, -0.9), Vector3(-30, 0, sx * -20.0))
+				_part(pivot, _box(Vector3(1.6, 0.06, 1.0)), dark, Vector3(sx * 1.3, 0.2, 0.0), Vector3(0, sx * 20.0, sx * 15.0))
+			var r := 0.85
+			for k in 4:
+				var seg := Node3D.new()
+				seg.position = Vector3(0, 0, 0.6 + k * 0.85)
+				pivot.add_child(seg)
+				_part(seg, _sphere(r, r * 1.6, 12, 6), hull_mat if k % 2 == 0 else dark)
+				wobble.append(seg)
+				r *= 0.78
+			dome_r = 0.55
+			dome_y = 0.35
+			rim_r = 1.2
+		"dyson":
+			_part(pivot, _sphere(0.9, 1.8, 16, 8), _mat(Color(1.0, 0.75, 0.3), 0.0, 0.5, 3.0))
+			spin_ring = Node3D.new()
+			pivot.add_child(spin_ring)
+			_part(spin_ring, _torus(1.6, 1.8, 32), dark)
+			for k in 8:
+				var a := TAU * k / 8.0
+				_part(spin_ring, _box(Vector3(0.7, 0.9, 0.08)), hull_mat, Vector3(cos(a) * 1.7, 0, sin(a) * 1.7), Vector3(0, -rad_to_deg(a) + 90.0, 0))
+			dome_r = 0.5
+			dome_y = 0.85
+			rim_r = 1.8
 	# Rim light band and underglow.
 	_part(pivot, _torus(rim_r - 0.06, rim_r + 0.06, 32), accent, Vector3(0, 0.05, 0), Vector3.ZERO, Vector3(1, 0.6, 1) if shape != "manta" else Vector3(1, 0.6, 0.72))
 	underglow = _part(pivot, _cyl(rim_r * 0.75, rim_r * 0.75, 0.04, 20), _mat(trail_color, 0.0, 1.0, 2.2), Vector3(0, -0.36, 0))
@@ -160,7 +274,10 @@ func build(look: Dictionary) -> void:
 	_build_pilot(pilot, Vector3(0, dome_y, -0.05), dome_r)
 	_part(pivot, _sphere(dome_r, dome_r * 2.0, 18, 8, true), glass, Vector3(0, dome_y, 0))
 	# Thruster glow at the back.
-	thruster = _part(pivot, _cyl(0.0, 0.32, 1.0, 10), _mat(trail_color, 0.0, 1.0, 1.3), Vector3(0, -0.05, rim_r * (1.55 if shape == "rocket" else 1.0) + 0.3), Vector3(-90, 0, 0))
+	var tail_z := rim_r * (1.55 if shape == "rocket" else 1.0) + 0.3
+	if shape in ["dragon", "sail"]:
+		tail_z = 2.4
+	thruster = _part(pivot, _cyl(0.0, 0.32, 1.0, 10), _mat(trail_color, 0.0, 1.0, 1.3), Vector3(0, -0.05, tail_z), Vector3(-90, 0, 0))
 	# Shield bubble (hidden until used).
 	var sm := StandardMaterial3D.new()
 	sm.albedo_color = Color(0.4, 0.85, 1.0, 0.28)
@@ -310,6 +427,12 @@ func _checker_mat(paint: Color) -> StandardMaterial3D:
 func animate(dt: float, throttle: float, boosting: bool, drift_tier: int, drifting: bool, speed_ratio: float) -> void:
 	if spin_ring:
 		spin_ring.rotate_y(dt * (3.0 + speed_ratio * 12.0))
+	if spin_ring2:
+		spin_ring2.rotate_y(-dt * (2.0 + speed_ratio * 8.0))
+	if not wobble.is_empty():
+		var t := Time.get_ticks_msec() * 0.001
+		for k in wobble.size():
+			wobble[k].rotation.y = sin(t * 5.0 + k * 0.8) * (0.18 + 0.05 * k)
 	var flame := 0.3 + throttle * 0.5 + (0.8 if boosting else 0.0)
 	thruster.scale = Vector3(1.0 + (0.35 if boosting else 0.0), 0.4 + flame * 0.9, 1.0 + (0.35 if boosting else 0.0))
 	underglow.scale = Vector3.ONE * (0.9 + 0.1 * sin(Time.get_ticks_msec() * 0.01))

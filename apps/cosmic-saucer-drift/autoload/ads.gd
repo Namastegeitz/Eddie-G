@@ -5,7 +5,7 @@ extends Node
 ## no ad buttons appear, interstitials are skipped, nothing touches the network.
 ##
 ## Placements wired into the game:
-##   double_stardust  rewarded, results screen: double this race's Stardust
+##   double_credits  rewarded, results screen: double this race's Race Credits
 ##   free_item        rewarded, before a race: start holding a random item
 ##   cup_interstitial interstitial between cup races (capped, never mid-race)
 

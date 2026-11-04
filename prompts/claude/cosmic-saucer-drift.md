@@ -144,3 +144,37 @@ finishing every track and variant, items, energy, save round trip, ads flow).
 5. Meta & shell: save, garage, upgrades, cosmetics, achievements, stats,
    menus, settings, audio, haptics, ads-ready layer, events.
 6. Ship: icons, store kit, exports, performance pass, tests, APK + web build.
+
+---
+
+## v2: real planets, alien spacecraft, premium craft, power-up lineups
+
+The owner's follow-up: "Create this around different planets and solar
+systems that we found in real life. Use different alien spacecraft and add
+premium vehicles for purchase and to gain enough race credits to unlock.
+Add power-ups like rockets, lasers etc. 5-7 line-ups of power-ups to help
+you become first." Choices made:
+
+- **Systems = cups, planets = tracks**, each with real fact cards, the real
+  star(s) in the sky and gravity tuned per world:
+  - Our Solar System: Mars (Valles Marineris), Ceres & the Asteroid Belt,
+    Io, Saturn's Rings.
+  - TRAPPIST-1: 1b (scorched inner world), 1e (habitable-zone world with
+    imagined alien life), 1h (frozen outer world).
+  - Alpha Centauri: Proxima b (flare star), Proxima Station, Twin Suns
+    circuit (Alpha Centauri A & B).
+  - Exoplanet extremes: HD 189733 b (blue, supersonic winds, possible glass
+    rain), 55 Cancri e (lava world), Kepler-16b (two suns), WASP-76 b
+    (possible iron rain).
+  - Galactic Grand Prix finale cup (reverse/mirror mix).
+- **Spacecraft:** 14 craft = the 6 saucers + 4 new alien designs (Orb Drone,
+  Crystal Shard, Bio-Ship, Arrowhead Interceptor) + 4 premium craft (Solar
+  Sail Yacht, Pulsar Phantom, Quasar Dragon, Dyson Racer) with unique perks.
+- **Race Credits** replace Stardust. Premium craft: earnable with credits now;
+  a real-money store layer (Google Play Billing) is built in and switched
+  off, like the ads layer.
+- **Power-ups (8):** Homing Rocket, Pulse Laser, Comet Strike, EMP
+  Shockwave, Nitro Rocket (1-3 uses), Ion Shield (also blocks one hit while
+  held), Gravity Mine, Tractor Beam. Arranged into **5 lineups by race
+  position** (Leader, Front pack, Midfield, Chasers, Last place): the
+  further back you are, the stronger the comeback items.

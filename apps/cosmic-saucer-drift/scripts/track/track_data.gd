@@ -57,7 +57,7 @@ func _build(track_id: String, var_id: int) -> void:
 	_m = src.size()
 	var ctrl: Array = []
 	for i in _m:
-		ctrl.append(_pos(src[i]))
+		ctrl.append(_pos(_scaled(src[i])))
 	if variant == Catalog.V_REVERSE:
 		var rev: Array = [ctrl[0]]
 		for i in range(_m - 1, 0, -1):
@@ -91,6 +91,11 @@ func _build(track_id: String, var_id: int) -> void:
 
 
 # ---------------------------------------------------------------- variant maps
+func _scaled(p: Vector3) -> Vector3:
+	var k: float = def.get("scale", 1.0)
+	return Vector3(p.x * k, p.y, p.z * k)
+
+
 func _pos(p: Vector3) -> Vector3:
 	if variant == Catalog.V_MIRROR:
 		return Vector3(-p.x, p.y, p.z)
@@ -170,7 +175,10 @@ func _add_feature(f: Dictionary) -> void:
 			feats.append({"t": "geyser", "s": _s(f.at), "lane": _lane(f.get("lane", 0.0)), "launch": 17.0})
 		"dropper":
 			var r := _range(f.a, f.b)
-			feats.append({"t": "dropper", "s": r.x, "s1": r.y})
+			feats.append({"t": "dropper", "s": r.x, "s1": r.y, "style": f.get("style", "ice")})
+		"wind":
+			var r := _range(f.a, f.b)
+			feats.append({"t": "wind", "s": r.x, "s1": r.y, "period": f.get("period", 6.0), "strength": f.get("strength", 10.0)})
 		_:
 			# roller, flare, laser, eruption: point hazards
 			var d := f.duplicate()
@@ -200,7 +208,7 @@ func _build_shortcut(sc: Dictionary) -> void:
 	short_b = r.y
 	var via: Array = []
 	for v in sc.via:
-		via.append(_pos(v))
+		via.append(_pos(_scaled(v)))
 	if variant == Catalog.V_REVERSE:
 		via.reverse()
 	var lift: float = sc.get("lift", 0.0)

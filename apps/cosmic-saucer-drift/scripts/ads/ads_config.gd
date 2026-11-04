@@ -13,7 +13,7 @@ extends Resource
 @export var interstitial_unit_android := "ca-app-pub-3940256099942544/1033173712"
 @export_group("Placements")
 ## Rewarded: player chooses to watch for a bonus.
-@export var rewarded_placements := PackedStringArray(["double_stardust", "free_item"])
+@export var rewarded_placements := PackedStringArray(["double_credits", "free_item"])
 ## Interstitial only between cup races, never mid-race.
 @export var interstitial_between_cup_races := true
 @export_group("Frequency caps")

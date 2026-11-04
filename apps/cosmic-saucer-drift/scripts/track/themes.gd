@@ -1,57 +1,169 @@
 class_name Themes
 extends RefCounted
-## Look of each track: sky, light, neon colour, fog, backdrop planets.
+## Look of each world: sky, sun(s) drawn in the sky, light, neon colour, fog,
+## backdrop planets and which scenery set to build. Suns are given as the
+## direction you look to see them; the first one also lights the scene.
 
 const DATA := {
-	"asteroid": {
+	"mars": {
+		"sky_top": Color(0.32, 0.2, 0.14), "sky_bottom": Color(0.78, 0.52, 0.34),
+		"neb_a": Color(0.9, 0.6, 0.4), "neb_b": Color(0.6, 0.35, 0.25), "neb": 0.15, "stars": 0.997,
+		"neon": Color(1.0, 0.55, 0.2), "barrier": Color(0.3, 0.18, 0.13),
+		"sun": Color(1.0, 0.9, 0.8), "ambient": Color(0.6, 0.42, 0.32), "fog": Color(0.7, 0.45, 0.3),
+		"suns": [{"dir": Vector3(0.4, 0.55, -0.7), "color": Color(1.0, 0.95, 0.85), "size": 0.9}],
+		"ground": "red", "decor": "canyon",
+		"planets": [{"pos": Vector3(-900, 700, -1400), "r": 60.0, "a": Color(0.5, 0.45, 0.4), "b": Color(0.35, 0.3, 0.28), "rim": Color(0.9, 0.7, 0.5)},
+			{"pos": Vector3(1200, 500, -1900), "r": 30.0, "a": Color(0.6, 0.55, 0.5), "b": Color(0.45, 0.4, 0.38), "rim": Color(0.9, 0.7, 0.5)}],
+	},
+	"ceres": {
 		"sky_top": Color(0.03, 0.02, 0.09), "sky_bottom": Color(0.10, 0.04, 0.16),
-		"neb_a": Color(0.55, 0.18, 0.75), "neb_b": Color(0.15, 0.35, 0.9), "neb": 0.7,
+		"neb_a": Color(0.55, 0.18, 0.75), "neb_b": Color(0.15, 0.35, 0.9), "neb": 0.6, "stars": 0.985,
 		"neon": Color(0.3, 0.9, 1.0), "barrier": Color(0.16, 0.17, 0.25),
-		"sun": Color(1.0, 0.92, 0.85), "sun_dir": Vector3(-0.4, -0.75, -0.5), "ambient": Color(0.35, 0.32, 0.5),
-		"fog": Color(0.08, 0.04, 0.15), "ground": "",
-		"planets": [{"pos": Vector3(-2200, 500, -2600), "r": 650.0, "a": Color(0.85, 0.55, 0.4), "b": Color(0.55, 0.3, 0.3), "rim": Color(1, 0.6, 0.5)}],
+		"sun": Color(1.0, 0.95, 0.88), "ambient": Color(0.35, 0.32, 0.5), "fog": Color(0.08, 0.04, 0.15),
+		"suns": [{"dir": Vector3(0.4, 0.75, 0.5), "color": Color(1.0, 0.97, 0.88), "size": 0.6}],
+		"ground": "", "decor": "asteroids",
+		"planets": [{"pos": Vector3(-1900, -300, -2200), "r": 700.0, "a": Color(0.5, 0.5, 0.52), "b": Color(0.32, 0.32, 0.36), "rim": Color(0.8, 0.85, 1.0)}],
+	},
+	"io": {
+		"sky_top": Color(0.03, 0.02, 0.05), "sky_bottom": Color(0.2, 0.12, 0.05),
+		"neb_a": Color(1.0, 0.6, 0.2), "neb_b": Color(0.6, 0.3, 0.1), "neb": 0.2, "stars": 0.99,
+		"neon": Color(1.0, 0.75, 0.15), "barrier": Color(0.22, 0.17, 0.08),
+		"sun": Color(1.0, 0.92, 0.8), "ambient": Color(0.55, 0.45, 0.3), "fog": Color(0.18, 0.1, 0.03),
+		"suns": [{"dir": Vector3(-0.4, 0.6, 0.5), "color": Color(1.0, 0.96, 0.85), "size": 0.5}],
+		"ground": "sulphur", "decor": "lava",
+		"planets": [{"pos": Vector3(-1200, 900, -2600), "r": 1500.0, "a": Color(0.92, 0.8, 0.62), "b": Color(0.72, 0.45, 0.3), "rim": Color(1, 0.85, 0.6), "bands": 14.0}],
 	},
 	"saturn": {
 		"sky_top": Color(0.02, 0.02, 0.07), "sky_bottom": Color(0.09, 0.04, 0.13),
-		"neb_a": Color(0.85, 0.45, 0.2), "neb_b": Color(0.5, 0.2, 0.6), "neb": 0.55,
+		"neb_a": Color(0.85, 0.45, 0.2), "neb_b": Color(0.5, 0.2, 0.6), "neb": 0.45, "stars": 0.985,
 		"neon": Color(1.0, 0.3, 0.9), "barrier": Color(0.14, 0.12, 0.22),
-		"sun": Color(1.0, 0.9, 0.75), "sun_dir": Vector3(0.5, -0.6, -0.6), "ambient": Color(0.38, 0.3, 0.45),
-		"fog": Color(0.07, 0.03, 0.1), "ground": "",
+		"sun": Color(1.0, 0.9, 0.75), "ambient": Color(0.38, 0.3, 0.45), "fog": Color(0.07, 0.03, 0.1),
+		"suns": [{"dir": Vector3(-0.5, 0.6, 0.6), "color": Color(1.0, 0.95, 0.85), "size": 0.35}],
+		"ground": "", "decor": "rings",
 		"planets": [{"pos": Vector3(1400, 350, -2300), "r": 900.0, "a": Color(0.95, 0.82, 0.55), "b": Color(0.75, 0.55, 0.35), "rim": Color(1, 0.85, 0.6), "ring": true}],
 	},
-	"jungle": {
-		"sky_top": Color(0.04, 0.10, 0.10), "sky_bottom": Color(0.14, 0.28, 0.18),
-		"neb_a": Color(0.2, 0.8, 0.5), "neb_b": Color(0.6, 0.9, 0.3), "neb": 0.35,
-		"neon": Color(0.55, 1.0, 0.3), "barrier": Color(0.12, 0.2, 0.14),
-		"sun": Color(0.95, 1.0, 0.85), "sun_dir": Vector3(-0.3, -0.8, 0.4), "ambient": Color(0.4, 0.55, 0.42),
-		"fog": Color(0.1, 0.22, 0.15), "ground": "jungle",
-		"planets": [{"pos": Vector3(-1800, 900, 2200), "r": 1100.0, "a": Color(0.4, 0.6, 0.95), "b": Color(0.25, 0.35, 0.7), "rim": Color(0.7, 0.9, 1)}],
+	"trappist_hot": {
+		"sky_top": Color(0.08, 0.01, 0.02), "sky_bottom": Color(0.35, 0.06, 0.03),
+		"neb_a": Color(1.0, 0.3, 0.1), "neb_b": Color(0.5, 0.1, 0.15), "neb": 0.35, "stars": 0.993,
+		"neon": Color(1.0, 0.35, 0.15), "barrier": Color(0.2, 0.1, 0.08),
+		"sun": Color(1.0, 0.55, 0.4), "ambient": Color(0.6, 0.3, 0.25), "fog": Color(0.3, 0.06, 0.03),
+		"suns": [{"dir": Vector3(0.3, 0.35, -0.9), "color": Color(1.0, 0.3, 0.15), "size": 7.0}],
+		"ground": "lava", "decor": "hot",
+		"planets": [{"pos": Vector3(1500, 500, 1400), "r": 90.0, "a": Color(0.8, 0.5, 0.4), "b": Color(0.5, 0.3, 0.25), "rim": Color(1, 0.5, 0.3)},
+			{"pos": Vector3(-1700, 700, 900), "r": 70.0, "a": Color(0.7, 0.55, 0.5), "b": Color(0.45, 0.35, 0.3), "rim": Color(1, 0.5, 0.3)}],
 	},
-	"ice": {
-		"sky_top": Color(0.02, 0.04, 0.12), "sky_bottom": Color(0.14, 0.22, 0.36),
-		"neb_a": Color(0.3, 0.7, 1.0), "neb_b": Color(0.8, 0.9, 1.0), "neb": 0.6,
+	"trappist_ocean": {
+		"sky_top": Color(0.05, 0.06, 0.14), "sky_bottom": Color(0.35, 0.18, 0.2),
+		"neb_a": Color(0.9, 0.4, 0.3), "neb_b": Color(0.3, 0.4, 0.7), "neb": 0.3, "stars": 0.99,
+		"neon": Color(0.55, 1.0, 0.4), "barrier": Color(0.12, 0.2, 0.14),
+		"sun": Color(1.0, 0.65, 0.5), "ambient": Color(0.5, 0.42, 0.45), "fog": Color(0.25, 0.14, 0.15),
+		"suns": [{"dir": Vector3(-0.5, 0.25, -0.8), "color": Color(1.0, 0.4, 0.2), "size": 3.0}],
+		"ground": "jungle", "decor": "jungle",
+		"planets": [{"pos": Vector3(-1800, 900, 2200), "r": 260.0, "a": Color(0.6, 0.65, 0.8), "b": Color(0.35, 0.4, 0.55), "rim": Color(1, 0.6, 0.5)},
+			{"pos": Vector3(1600, 600, 1800), "r": 200.0, "a": Color(0.8, 0.7, 0.6), "b": Color(0.5, 0.45, 0.4), "rim": Color(1, 0.6, 0.5)}],
+	},
+	"trappist_frozen": {
+		"sky_top": Color(0.02, 0.03, 0.08), "sky_bottom": Color(0.14, 0.1, 0.18),
+		"neb_a": Color(0.4, 0.5, 0.9), "neb_b": Color(0.7, 0.4, 0.5), "neb": 0.45, "stars": 0.985,
 		"neon": Color(0.55, 0.85, 1.0), "barrier": Color(0.2, 0.26, 0.36),
-		"sun": Color(0.85, 0.92, 1.0), "sun_dir": Vector3(0.3, -0.7, 0.6), "ambient": Color(0.45, 0.5, 0.65),
-		"fog": Color(0.12, 0.18, 0.3), "ground": "ice",
-		"planets": [{"pos": Vector3(2000, 700, 1500), "r": 500.0, "a": Color(0.95, 0.95, 1.0), "b": Color(0.6, 0.75, 0.95), "rim": Color(0.7, 0.9, 1)}],
+		"sun": Color(1.0, 0.7, 0.6), "ambient": Color(0.42, 0.45, 0.6), "fog": Color(0.1, 0.12, 0.22),
+		"suns": [{"dir": Vector3(0.3, 0.3, 0.9), "color": Color(1.0, 0.35, 0.2), "size": 1.6}],
+		"ground": "ice", "decor": "ice",
+		"planets": [{"pos": Vector3(2000, 700, 1500), "r": 120.0, "a": Color(0.85, 0.85, 0.9), "b": Color(0.6, 0.65, 0.8), "rim": Color(1, 0.6, 0.5)},
+			{"pos": Vector3(-1500, 500, -2000), "r": 90.0, "a": Color(0.75, 0.7, 0.7), "b": Color(0.5, 0.5, 0.55), "rim": Color(1, 0.6, 0.5)}],
+	},
+	"proxima": {
+		"sky_top": Color(0.04, 0.01, 0.04), "sky_bottom": Color(0.28, 0.07, 0.07),
+		"neb_a": Color(0.9, 0.2, 0.2), "neb_b": Color(0.4, 0.1, 0.4), "neb": 0.3, "stars": 0.99,
+		"neon": Color(1.0, 0.3, 0.3), "barrier": Color(0.18, 0.12, 0.14),
+		"sun": Color(1.0, 0.5, 0.4), "ambient": Color(0.45, 0.3, 0.32), "fog": Color(0.2, 0.05, 0.05),
+		"suns": [{"dir": Vector3(-0.6, 0.18, -0.78), "color": Color(1.0, 0.25, 0.12), "size": 3.2},
+			{"dir": Vector3(0.7, 0.5, 0.5), "color": Color(1.0, 0.95, 0.8), "size": 0.15}],
+		"ground": "frost", "decor": "twilight",
+		"planets": [],
 	},
 	"station": {
-		"sky_top": Color(0.01, 0.01, 0.03), "sky_bottom": Color(0.04, 0.04, 0.09),
-		"neb_a": Color(0.2, 0.3, 0.7), "neb_b": Color(0.6, 0.3, 0.2), "neb": 0.3,
+		"sky_top": Color(0.01, 0.01, 0.03), "sky_bottom": Color(0.06, 0.03, 0.06),
+		"neb_a": Color(0.6, 0.2, 0.3), "neb_b": Color(0.2, 0.3, 0.7), "neb": 0.3, "stars": 0.985,
 		"neon": Color(1.0, 0.6, 0.15), "barrier": Color(0.22, 0.22, 0.26),
-		"sun": Color(1.0, 0.97, 0.9), "sun_dir": Vector3(-0.6, -0.5, -0.4), "ambient": Color(0.38, 0.38, 0.45),
-		"fog": Color(0.02, 0.02, 0.05), "ground": "",
-		"planets": [{"pos": Vector3(400, -1600, -2400), "r": 1500.0, "a": Color(0.25, 0.5, 0.95), "b": Color(0.3, 0.7, 0.35), "rim": Color(0.5, 0.8, 1)}],
+		"sun": Color(1.0, 0.6, 0.5), "ambient": Color(0.38, 0.36, 0.42), "fog": Color(0.02, 0.02, 0.05),
+		"suns": [{"dir": Vector3(0.6, 0.45, 0.65), "color": Color(1.0, 0.3, 0.15), "size": 2.5}],
+		"ground": "", "decor": "station",
+		"planets": [{"pos": Vector3(400, -1600, -2400), "r": 1500.0, "a": Color(0.55, 0.38, 0.32), "b": Color(0.75, 0.75, 0.82), "rim": Color(1, 0.5, 0.4)}],
 	},
-	"lava": {
-		"sky_top": Color(0.08, 0.02, 0.02), "sky_bottom": Color(0.28, 0.07, 0.03),
-		"neb_a": Color(1.0, 0.3, 0.1), "neb_b": Color(0.6, 0.1, 0.25), "neb": 0.45,
-		"neon": Color(1.0, 0.45, 0.1), "barrier": Color(0.18, 0.12, 0.11),
-		"sun": Color(1.0, 0.75, 0.55), "sun_dir": Vector3(0.4, -0.6, 0.5), "ambient": Color(0.55, 0.35, 0.3),
-		"fog": Color(0.22, 0.06, 0.03), "ground": "lava",
-		"planets": [{"pos": Vector3(-1500, 600, -2500), "r": 700.0, "a": Color(0.9, 0.4, 0.2), "b": Color(0.5, 0.15, 0.1), "rim": Color(1, 0.5, 0.3)}],
+	"alphacen": {
+		"sky_top": Color(0.03, 0.03, 0.1), "sky_bottom": Color(0.16, 0.1, 0.2),
+		"neb_a": Color(0.95, 0.7, 0.3), "neb_b": Color(0.4, 0.3, 0.8), "neb": 0.4, "stars": 0.985,
+		"neon": Color(1.0, 0.85, 0.35), "barrier": Color(0.2, 0.18, 0.22),
+		"sun": Color(1.0, 0.95, 0.82), "ambient": Color(0.48, 0.42, 0.48), "fog": Color(0.08, 0.05, 0.12),
+		"suns": [{"dir": Vector3(-0.5, 0.45, -0.75), "color": Color(1.0, 0.95, 0.75), "size": 1.4},
+			{"dir": Vector3(-0.2, 0.4, -0.9), "color": Color(1.0, 0.7, 0.4), "size": 1.0}],
+		"ground": "", "decor": "twinsuns",
+		"planets": [],
+	},
+	"hd189733": {
+		"sky_top": Color(0.01, 0.03, 0.12), "sky_bottom": Color(0.05, 0.16, 0.42),
+		"neb_a": Color(0.2, 0.4, 1.0), "neb_b": Color(0.5, 0.7, 1.0), "neb": 0.5, "stars": 0.995,
+		"neon": Color(0.4, 0.8, 1.0), "barrier": Color(0.12, 0.16, 0.3),
+		"sun": Color(1.0, 0.85, 0.65), "ambient": Color(0.35, 0.45, 0.7), "fog": Color(0.05, 0.12, 0.35),
+		"suns": [{"dir": Vector3(0.6, 0.35, -0.72), "color": Color(1.0, 0.75, 0.45), "size": 4.5}],
+		"ground": "", "decor": "storm",
+		"planets": [{"pos": Vector3(0, -2600, -600), "r": 2200.0, "a": Color(0.1, 0.25, 0.8), "b": Color(0.05, 0.12, 0.5), "rim": Color(0.5, 0.75, 1.0), "bands": 6.0}],
+	},
+	"cancri": {
+		"sky_top": Color(0.02, 0.01, 0.02), "sky_bottom": Color(0.22, 0.08, 0.04),
+		"neb_a": Color(1.0, 0.45, 0.15), "neb_b": Color(0.6, 0.2, 0.3), "neb": 0.25, "stars": 0.99,
+		"neon": Color(1.0, 0.5, 0.15), "barrier": Color(0.12, 0.1, 0.12),
+		"sun": Color(1.0, 0.85, 0.6), "ambient": Color(0.5, 0.35, 0.3), "fog": Color(0.2, 0.07, 0.03),
+		"suns": [{"dir": Vector3(0.45, 0.4, -0.8), "color": Color(1.0, 0.75, 0.4), "size": 9.0}],
+		"ground": "lava", "decor": "diamond",
+		"planets": [],
+	},
+	"kepler16": {
+		"sky_top": Color(0.08, 0.04, 0.14), "sky_bottom": Color(0.6, 0.32, 0.25),
+		"neb_a": Color(1.0, 0.6, 0.4), "neb_b": Color(0.6, 0.3, 0.6), "neb": 0.3, "stars": 0.993,
+		"neon": Color(1.0, 0.6, 0.35), "barrier": Color(0.22, 0.16, 0.2),
+		"sun": Color(1.0, 0.75, 0.55), "ambient": Color(0.55, 0.42, 0.45), "fog": Color(0.5, 0.3, 0.25),
+		"suns": [{"dir": Vector3(-0.7, 0.18, -0.68), "color": Color(1.0, 0.7, 0.35), "size": 1.6},
+			{"dir": Vector3(-0.55, 0.12, -0.83), "color": Color(1.0, 0.35, 0.2), "size": 0.9}],
+		"ground": "clouds", "decor": "gas",
+		"planets": [],
+	},
+	"wasp76": {
+		"sky_top": Color(0.15, 0.04, 0.02), "sky_bottom": Color(0.85, 0.35, 0.1),
+		"neb_a": Color(1.0, 0.6, 0.2), "neb_b": Color(0.6, 0.15, 0.1), "neb": 0.2, "stars": 0.998,
+		"neon": Color(1.0, 0.85, 0.5), "barrier": Color(0.25, 0.12, 0.08),
+		"sun": Color(1.0, 0.95, 0.85), "ambient": Color(0.65, 0.4, 0.3), "fog": Color(0.55, 0.2, 0.07),
+		"suns": [{"dir": Vector3(0.5, 0.3, 0.8), "color": Color(1.0, 0.97, 0.9), "size": 11.0}],
+		"ground": "iron", "decor": "iron",
+		"planets": [],
 	},
 }
 
 static func get_theme(id: String) -> Dictionary:
-	return DATA.get(id, DATA["asteroid"])
+	return DATA.get(id, DATA["ceres"])
+
+
+## Direction the main light shines (from the first sun toward the track).
+static func light_dir(theme: Dictionary) -> Vector3:
+	var suns: Array = theme.get("suns", [])
+	if suns.is_empty():
+		return Vector3(-0.4, -0.75, -0.5).normalized()
+	return -Vector3(suns[0].dir).normalized()
+
+
+## Point the sky shader's sun uniforms at a theme's suns.
+static func apply_sky(mat: ShaderMaterial, theme: Dictionary) -> void:
+	mat.set_shader_parameter("top_color", theme.sky_top)
+	mat.set_shader_parameter("bottom_color", theme.sky_bottom)
+	mat.set_shader_parameter("nebula_a", theme.neb_a)
+	mat.set_shader_parameter("nebula_b", theme.neb_b)
+	mat.set_shader_parameter("nebula_strength", theme.neb)
+	mat.set_shader_parameter("star_amount", theme.get("stars", 0.985))
+	var suns: Array = theme.get("suns", [])
+	for k in 2:
+		var on := k < suns.size()
+		var sun: Dictionary = suns[k] if on else {}
+		mat.set_shader_parameter("sun%d_dir" % (k + 1), Vector3(sun.get("dir", Vector3.UP)).normalized())
+		mat.set_shader_parameter("sun%d_color" % (k + 1), sun.get("color", Color.BLACK))
+		mat.set_shader_parameter("sun%d_size" % (k + 1), deg_to_rad(float(sun.get("size", 0.0))) if on else 0.0)

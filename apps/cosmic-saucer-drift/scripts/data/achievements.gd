@@ -1,7 +1,7 @@
 class_name Achievements
 extends RefCounted
 ## In-game achievements. Most track career stats; a few check the race that
-## just ended. Each pays Stardust once.
+## just ended. Each pays Race Credits once.
 
 # id -> [name, description, kind, key, target, reward]
 #   kind "stat": career stat >= target; "race": checked on the race just run
@@ -19,13 +19,13 @@ const LIST := {
 	"shortcuts_10": ["Off the Map", "Take secret shortcuts 10 times.", "stat", "shortcuts", 10, 400],
 	"dist_500k": ["Light Year Club", "Fly 500 km in races.", "stat", "distance", 500000, 1000],
 	"cup_gold": ["Cup Winner", "Win a Galactic Cup.", "stat", "cups_won", 1, 500],
-	"cups_all": ["Master of the Cups", "Win 4 Galactic Cups.", "stat", "cups_won", 4, 2000],
+	"cups_all": ["Master of the Cups", "Win all 5 Galactic Cups.", "stat", "cups_won", 5, 2500],
 	"boss_3": ["Crew Builder", "Beat 3 boss pilots.", "stat", "bosses", 3, 600],
 	"boss_all": ["Full Crew", "Beat all 6 boss pilots.", "stat", "bosses", 6, 2000],
 	"mirror_win": ["Through the Looking Glass", "Win a Mirror race.", "stat", "mirror_wins", 1, 400],
 	"daily_7": ["Weekly Regular", "Finish 7 daily challenges.", "stat", "dailies", 7, 700],
-	"shards_9": ["Shard Seeker", "Find 9 Star Shards.", "shards", "", 9, 500],
-	"shards_all": ["Constellation", "Find all 18 Star Shards.", "shards", "", 18, 1500],
+	"shards_9": ["Shard Seeker", "Find 15 Star Shards.", "shards", "", 15, 500],
+	"shards_all": ["Constellation", "Find all 42 Star Shards.", "shards", "", 42, 3000],
 	"gold_medal": ["Golden Lap", "Earn a gold medal in Time Trial.", "medals", "", 1, 400],
 	"running_on_empty": ["Running on Fumes", "Win a race after hitting Emergency Hover.", "race", "fumes", 1, 400],
 	"clean_sweep": ["Untouchable", "Win a race without being hit.", "race", "untouched", 1, 400],
@@ -96,7 +96,7 @@ static func check(race_stats: Dictionary, place: int, req: Dictionary) -> Array:
 			ok = p.x >= p.y
 		if ok:
 			Save.data.achievements[id] = true
-			Save.add_stardust(int(a[5]))
+			Save.add_credits(int(a[5]))
 			got.append("%s  (+%d)" % [a[0], a[5]])
 			Events.log_event("achievement", {"id": id})
 	if not got.is_empty():

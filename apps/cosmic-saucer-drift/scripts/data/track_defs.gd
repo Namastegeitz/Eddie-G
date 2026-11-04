@@ -13,21 +13,27 @@ extends RefCounted
 ##   rail    {a, b}                magnetic rail surface range
 ##   surface {a, b, s}             surface range (Catalog.S_*)
 ##   tube    {a, b}                enclosed tunnel visual (station/crystal)
-##   roller  {at, period, size}    tumbling asteroid rolling across
+##   roller  {at, period, size, style}  tumbling rock (style "devil" = dust devil)
 ##   flare   {at, period}          solar flare beam sweeping across
 ##   laser   {at, period}          station laser sweeping across
 ##   snapper {at, side}            alien plant lunging in from an edge
 ##   geyser  {at, lane}            launches you into the air while erupting
-##   dropper {a, b}                falling ice shards with warning shadows
+##   dropper {a, b, style}         falling shards with shadows (ice / glass / iron / plasma)
 ##   eruption{at, len}             lava erupts on one half of the road, alternating
 ## Shortcut: {side (+1 right / -1 left of the road, normal direction), a, b,
 ##            via: [Vector3], width, lift (bridge height, launched by a geyser)}
+##   wind    {a, b, period, strength} sideways gusts (streaks warn first)
 ## Shards:   3 per track: {at, lane, h} or {shortcut: 0..1, h}
+## Also per track: system (cup), facts (3 real facts), gravity (multiplier),
+## scale (optional XZ scale for points and shortcut via points).
 
 const DEFS := {
-	"asteroid_belt": {
-		"name": "The Asteroid Belt", "theme": "asteroid", "width": 18.0, "laps": 3,
-		"blurb": "Tight turns, tumbling space rocks and low-gravity jumps.",
+	"ceres": {
+		"name": "Ceres & the Asteroid Belt", "system": "sol", "theme": "ceres", "width": 18.0, "laps": 3, "gravity": 0.85,
+		"blurb": "Tight turns, tumbling space rocks and low-gravity jumps past the belt's biggest world.",
+		"facts": ["Ceres is the largest object in the asteroid belt and counts as a dwarf planet.",
+			"Bright spots in Ceres' Occator crater are salts left behind by briny water from below.",
+			"Real asteroids in the belt are usually hundreds of thousands of km apart - this track bunches them up."],
 		"points": [
 			Vector3(0, 0, 0), Vector3(0, 0, -110), Vector3(0, 3, -190), Vector3(12, 6, -262),
 			Vector3(55, 6, -318), Vector3(122, 4, -338), Vector3(182, 2, -308), Vector3(204, 0, -248),
@@ -57,9 +63,12 @@ const DEFS := {
 		"shortcut": {"side": 1, "a": 10.0, "b": 15.0, "via": [Vector3(258, 3, -45), Vector3(252, 3, -2)], "width": 10.0},
 		"shards": [{"at": 1.66, "lane": 0.0, "h": 6.5}, {"shortcut": 0.5, "h": 1.5}, {"at": 17.1, "lane": 7.0, "h": 1.5}],
 	},
-	"neon_ring": {
-		"name": "Neon Ring of Saturn", "theme": "saturn", "width": 20.0, "laps": 3, "auto_bank": 650.0,
-		"blurb": "Blistering magnetic rails around a ringed giant.",
+	"saturn_rings": {
+		"name": "Saturn's Rings", "system": "sol", "theme": "saturn", "width": 20.0, "laps": 3, "auto_bank": 650.0,
+		"blurb": "Blistering magnetic rails skimming the rings of the ringed giant.",
+		"facts": ["Saturn's rings are mostly water ice, from dust grains to chunks the size of houses.",
+			"The main rings span about 280,000 km but are often only around 10 m thick.",
+			"Saturn is so light for its size that it would float in a big enough bathtub."],
 		"points": [
 			Vector3(0, 0, 0), Vector3(0, 0, -200), Vector3(0, 0, -400), Vector3(40, 5, -520),
 			Vector3(140, 10, -580), Vector3(260, 12, -560), Vector3(340, 10, -480), Vector3(360, 6, -360),
@@ -89,9 +98,12 @@ const DEFS := {
 		"shortcut": {"side": 1, "a": 14.0, "b": 19.0, "via": [Vector3(90, 8, 215), Vector3(20, 4, 175)], "width": 10.0},
 		"shards": [{"at": 2.2, "lane": 8.5, "h": 1.5}, {"shortcut": 0.6, "h": 1.5}, {"at": 8.08, "lane": 0.0, "h": 7.5}],
 	},
-	"jungle_moon": {
-		"name": "Alien Jungle Moon", "theme": "jungle", "width": 17.0, "laps": 3,
-		"blurb": "Bouncy moss, snapping plants and geysers that launch you skyward.",
+	"trappist1e": {
+		"name": "TRAPPIST-1e: Twilight Garden", "system": "trappist1", "theme": "trappist_ocean", "width": 17.0, "laps": 3, "gravity": 0.95,
+		"blurb": "Imagined alien life on a habitable-zone world: bouncy moss, snapping plants, sky geysers.",
+		"facts": ["TRAPPIST-1e sits in its star's habitable zone, where liquid water could exist on the surface.",
+			"It's close to Earth's size, and neighbouring planets can look about as big as our Moon in its sky.",
+			"The plants here are imagined: no life has been found beyond Earth (yet)."],
 		"points": [
 			Vector3(0, 0, 0), Vector3(0, 2, -100), Vector3(-30, 6, -180), Vector3(-100, 10, -222),
 			Vector3(-172, 8, -192), Vector3(-212, 4, -120), Vector3(-202, 0, -40), Vector3(-242, -2, 40),
@@ -118,9 +130,12 @@ const DEFS := {
 		"shortcut": {"side": -1, "a": 11.6, "b": 16.6, "via": [Vector3(-95, 17, 218), Vector3(-45, 13, 216), Vector3(-5, 8, 218)], "width": 10.0, "lift": 7.5},
 		"shards": [{"shortcut": 0.45, "h": 1.5}, {"at": 10.56, "lane": 3.0, "h": 10.0}, {"at": 14.8, "lane": -6.5, "h": 1.5}],
 	},
-	"comet_ice": {
-		"name": "Comet Ice Run", "theme": "ice", "width": 18.0, "laps": 3,
-		"blurb": "A slippery comet tail with falling ice shards.",
+	"trappist1h": {
+		"name": "TRAPPIST-1h: Frozen Edge", "system": "trappist1", "theme": "trappist_frozen", "width": 18.0, "laps": 3, "gravity": 0.9,
+		"blurb": "The outermost TRAPPIST-1 world: sheet ice, crystal caves and falling ice shards.",
+		"facts": ["TRAPPIST-1h is the outermost of the seven known TRAPPIST-1 planets.",
+			"It gets only around a sixth of the starlight Earth gets from the Sun, so it's likely icy.",
+			"Its year lasts about 19 Earth days."],
 		"points": [
 			Vector3(0, 0, 0), Vector3(0, 0, -120), Vector3(-20, -4, -230), Vector3(-80, -8, -300),
 			Vector3(-160, -10, -310), Vector3(-230, -8, -260), Vector3(-250, -4, -180), Vector3(-300, 0, -120),
@@ -149,9 +164,12 @@ const DEFS := {
 		"shortcut": {"side": -1, "a": 7.0, "b": 13.0, "via": [Vector3(-322, 2, -60), Vector3(-336, 2, 10)], "width": 10.0, "surface": 2},
 		"shards": [{"shortcut": 0.5, "h": 1.5}, {"at": 3.7, "lane": -7.0, "h": 1.5}, {"at": 18.75, "lane": 0.0, "h": 6.5}],
 	},
-	"orbital_station": {
-		"name": "Orbital Station", "theme": "station", "width": 16.0, "laps": 3, "auto_bank": 300.0,
-		"blurb": "Metal decks, sweeping lasers and low-gravity tubes.",
+	"proxima_station": {
+		"name": "Proxima Station", "system": "alphacen", "theme": "station", "width": 16.0, "laps": 3, "auto_bank": 300.0,
+		"blurb": "An imagined station circling Proxima b: metal decks, sweeping lasers, low-gravity tubes.",
+		"facts": ["The station is imagined, but Breakthrough Starshot has proposed sending tiny light-sail probes to Proxima.",
+			"Light from Proxima Centauri takes about 4.2 years to reach us.",
+			"Proxima Centauri is a red dwarf with only about an eighth of the Sun's mass."],
 		"points": [
 			Vector3(0, 0, 0), Vector3(0, 0, -150), Vector3(0, 0, -240), Vector3(20, 0, -270),
 			Vector3(60, 0, -280), Vector3(200, 0, -280), Vector3(240, 2, -260), Vector3(260, 6, -220),
@@ -187,9 +205,12 @@ const DEFS := {
 		"shortcut": {"side": 1, "a": 13.0, "b": 18.0, "via": [Vector3(410, 2, 50), Vector3(340, 0, 120)], "width": 9.0, "tube": true},
 		"shards": [{"shortcut": 0.5, "h": 1.5}, {"at": 21.45, "lane": 0.0, "h": 8.0}, {"at": 13.5, "lane": 6.0, "h": 1.5}],
 	},
-	"lava_moon": {
-		"name": "Lava Moon", "theme": "lava", "width": 19.0, "laps": 3,
-		"blurb": "Dust dunes, a lava jump and eruptions that close lanes.",
+	"io": {
+		"name": "Io: Volcano Moon", "system": "sol", "theme": "io", "width": 19.0, "laps": 3, "gravity": 0.8,
+		"blurb": "Sulphur dunes, a lava jump and eruptions that close lanes, with Jupiter filling the sky.",
+		"facts": ["Io is the most volcanically active world we know, with around 400 active volcanoes.",
+			"Jupiter's gravity flexes Io as it orbits, heating it from the inside.",
+			"From Io, Jupiter looks almost 40 times wider than our full Moon."],
 		"points": [
 			Vector3(0, 0, 0), Vector3(0, 4, -90), Vector3(10, 0, -170), Vector3(40, 6, -240),
 			Vector3(100, 2, -290), Vector3(180, 8, -300), Vector3(250, 4, -260), Vector3(290, 0, -190),
@@ -224,4 +245,286 @@ const DEFS := {
 }
 
 static func get_def(id: String) -> Dictionary:
-	return DEFS.get(id, DEFS["asteroid_belt"])
+	if DEFS.has(id):
+		return DEFS[id]
+	return NEW_DEFS.get(id, DEFS["ceres"])
+
+
+static func has(id: String) -> bool:
+	return DEFS.has(id) or NEW_DEFS.has(id)
+
+
+## The eight tracks added for the real-systems update.
+const NEW_DEFS := {
+	"mars": {
+		"name": "Mars: Valles Marineris", "system": "sol", "theme": "mars", "width": 18.0, "laps": 3, "gravity": 0.75,
+		"blurb": "Down the solar system's grandest canyon: dust devils, a chasm jump and a dust storm.",
+		"facts": ["Valles Marineris is about 4,000 km long and up to 7 km deep - long enough to cross the USA.",
+			"Mars' gravity is only 38% of Earth's, so you fly further off every jump.",
+			"Martian dust storms can grow until they wrap the whole planet."],
+		"points": [
+			Vector3(0, 0, 0), Vector3(0, -2, -120), Vector3(10, -6, -220), Vector3(50, -10, -290),
+			Vector3(110, -12, -320), Vector3(170, -10, -300), Vector3(200, -6, -240), Vector3(250, -4, -200),
+			Vector3(320, -6, -210), Vector3(380, -10, -260), Vector3(450, -12, -250), Vector3(490, -8, -180),
+			Vector3(480, -4, -100), Vector3(430, 0, -40), Vector3(440, 2, 40), Vector3(480, 4, 110),
+			Vector3(450, 2, 190), Vector3(380, 0, 220), Vector3(300, -4, 200), Vector3(230, -8, 240),
+			Vector3(150, -6, 250), Vector3(80, -2, 200), Vector3(30, 0, 120), Vector3(0, 0, 60)],
+		"features": [
+			{"t": "boost", "at": 0.4, "lane": 0.0},
+			{"t": "surface", "a": 0.6, "b": 6.5, "s": 1},
+			{"t": "crates", "at": 1.2},
+			{"t": "pods", "at": 2.0, "lane": -4.0, "n": 5, "form": "line"},
+			{"t": "jump", "at": 3.4, "gap": 16.0, "h": 2.6, "len": 14.0},
+			{"t": "roller", "at": 5.5, "period": 5.0, "size": 3.5, "style": "devil"},
+			{"t": "crates", "at": 6.6},
+			{"t": "pods", "at": 7.5, "lane": 0.0, "n": 5, "form": "row"},
+			{"t": "wind", "a": 9.0, "b": 11.0, "period": 6.0, "strength": 10.0},
+			{"t": "pods", "at": 10.5, "lane": 3.0, "n": 5, "form": "line"},
+			{"t": "crates", "at": 13.5},
+			{"t": "surface", "a": 14.0, "b": 19.0, "s": 1},
+			{"t": "roller", "at": 15.5, "period": 5.5, "size": 3.8, "style": "devil"},
+			{"t": "pods", "at": 16.5, "lane": 0.0, "n": 5, "form": "row"},
+			{"t": "boost", "at": 18.5, "lane": 0.0},
+			{"t": "crates", "at": 19.5},
+			{"t": "pods", "at": 21.5, "lane": -3.0, "n": 5, "form": "line"},
+		],
+		"shortcut": {"side": 1, "a": 8.0, "b": 13.0, "via": [Vector3(350, -6, -160), Vector3(395, -2, -95)], "width": 10.0, "surface": 1},
+		"shards": [{"at": 3.62, "lane": 0.0, "h": 7.0}, {"shortcut": 0.5, "h": 1.5}, {"at": 15.7, "lane": 7.0, "h": 1.5}],
+	},
+	"trappist1b": {
+		"name": "TRAPPIST-1b: Scorched World", "system": "trappist1", "theme": "trappist_hot", "width": 18.0, "laps": 3, "gravity": 1.0,
+		"blurb": "A blistering inner world: lava cracks, eruptions and a giant red sun overhead.",
+		"facts": ["TRAPPIST-1b goes round its star in only about 1.5 Earth days.",
+			"The James Webb Space Telescope measured its dayside at roughly 230 C.",
+			"It's probably tidally locked: one side always faces its red star."],
+		"points": [
+			Vector3(0, 0, 0), Vector3(0, 0, -130), Vector3(20, 4, -210), Vector3(80, 6, -240),
+			Vector3(140, 4, -210), Vector3(160, 2, -150), Vector3(210, 4, -110), Vector3(280, 6, -130),
+			Vector3(330, 8, -190), Vector3(400, 6, -210), Vector3(450, 4, -160), Vector3(450, 2, -80),
+			Vector3(400, 0, -30), Vector3(330, 2, -10), Vector3(300, 4, 50), Vector3(330, 6, 120),
+			Vector3(290, 4, 190), Vector3(210, 2, 200), Vector3(140, 0, 160), Vector3(80, 2, 190),
+			Vector3(30, 0, 150), Vector3(0, 0, 70)],
+		"features": [
+			{"t": "boost", "at": 0.4, "lane": 0.0},
+			{"t": "surface", "a": 0.6, "b": 20.5, "s": 5},
+			{"t": "crates", "at": 1.0},
+			{"t": "pods", "at": 1.6, "lane": 0.0, "n": 5, "form": "row"},
+			{"t": "eruption", "at": 3.0, "len": 30.0},
+			{"t": "crates", "at": 5.5},
+			{"t": "pods", "at": 6.0, "lane": 3.0, "n": 5, "form": "line"},
+			{"t": "eruption", "at": 9.5, "len": 30.0},
+			{"t": "pods", "at": 10.5, "lane": 0.0, "n": 5, "form": "row"},
+			{"t": "crates", "at": 13.5},
+			{"t": "eruption", "at": 15.5, "len": 28.0},
+			{"t": "pods", "at": 16.0, "lane": -3.0, "n": 5, "form": "line"},
+			{"t": "jump", "at": 18.6, "gap": 0.0, "h": 2.4, "len": 14.0},
+			{"t": "crates", "at": 19.6},
+			{"t": "pods", "at": 20.5, "lane": 0.0, "n": 5, "form": "row"},
+		],
+		"shortcut": {"side": 1, "a": 7.5, "b": 12.8, "via": [Vector3(335, 4, -125), Vector3(368, 2, -62)], "width": 10.0, "surface": 5},
+		"shards": [{"shortcut": 0.5, "h": 1.5}, {"at": 18.75, "lane": 0.0, "h": 6.5}, {"at": 9.6, "lane": -7.0, "h": 1.5}],
+	},
+	"proxima_b": {
+		"name": "Proxima b: Flare Run", "system": "alphacen", "theme": "proxima", "width": 18.0, "laps": 3, "gravity": 1.05,
+		"blurb": "Along the twilight line of the nearest exoplanet while its red star throws out flares.",
+		"facts": ["Proxima b orbits the closest star to the Sun, about 4.2 light-years away.",
+			"Its star, Proxima Centauri, is a flare star that can brighten sharply in minutes.",
+			"A year on Proxima b lasts about 11 Earth days."],
+		"points": [
+			Vector3(0, 0, 0), Vector3(0, 0, -160), Vector3(-10, 4, -260), Vector3(30, 8, -330),
+			Vector3(100, 10, -350), Vector3(170, 8, -320), Vector3(200, 4, -260), Vector3(260, 2, -230),
+			Vector3(330, 4, -250), Vector3(380, 8, -310), Vector3(450, 10, -320), Vector3(500, 8, -260),
+			Vector3(490, 4, -180), Vector3(440, 0, -130), Vector3(450, -2, -50), Vector3(500, 0, 10),
+			Vector3(490, 4, 90), Vector3(420, 6, 130), Vector3(340, 4, 110), Vector3(270, 0, 150),
+			Vector3(200, -2, 200), Vector3(120, 0, 190), Vector3(60, 2, 130), Vector3(20, 0, 70)],
+		"features": [
+			{"t": "boost", "at": 0.3, "lane": 0.0},
+			{"t": "crates", "at": 1.0},
+			{"t": "pods", "at": 1.6, "lane": 0.0, "n": 5, "form": "line"},
+			{"t": "flare", "at": 2.5, "period": 4.5},
+			{"t": "surface", "a": 3.0, "b": 6.0, "s": 2},
+			{"t": "crates", "at": 6.6},
+			{"t": "pods", "at": 7.2, "lane": 0.0, "n": 5, "form": "row"},
+			{"t": "flare", "at": 10.5, "period": 4.0},
+			{"t": "pods", "at": 11.5, "lane": 4.0, "n": 5, "form": "line"},
+			{"t": "dropper", "a": 14.0, "b": 15.5, "style": "plasma"},
+			{"t": "crates", "at": 15.8},
+			{"t": "pods", "at": 17.0, "lane": 0.0, "n": 5, "form": "row"},
+			{"t": "flare", "at": 19.0, "period": 5.0},
+			{"t": "boost", "at": 20.5, "lane": 0.0},
+			{"t": "crates", "at": 21.0},
+			{"t": "pods", "at": 22.0, "lane": -4.0, "n": 5, "form": "line"},
+		],
+		"shortcut": {"side": 1, "a": 8.0, "b": 13.0, "via": [Vector3(380, 6, -215), Vector3(420, 2, -165)], "width": 10.0},
+		"shards": [{"shortcut": 0.5, "h": 1.5}, {"at": 2.6, "lane": 7.5, "h": 1.5}, {"at": 14.8, "lane": -7.0, "h": 1.5}],
+	},
+	"alpha_cen": {
+		"name": "Alpha Centauri: Twin Suns", "system": "alphacen", "theme": "alphacen", "width": 20.0, "laps": 3, "auto_bank": 600.0, "gravity": 1.0,
+		"blurb": "A blazing-fast orbital circuit under two golden suns.",
+		"facts": ["Alpha Centauri A and B are two Sun-like stars that orbit each other about every 80 years.",
+			"Together they make the third-brightest point of light in Earth's night sky.",
+			"From a planet here you'd often see two suns in the sky at once."],
+		"points": [
+			Vector3(0, 0, 0), Vector3(0, 0, -220), Vector3(20, 4, -400), Vector3(90, 8, -500),
+			Vector3(200, 10, -530), Vector3(320, 8, -500), Vector3(400, 4, -420), Vector3(430, 0, -300),
+			Vector3(480, 0, -200), Vector3(560, 4, -160), Vector3(630, 8, -200), Vector3(680, 10, -280),
+			Vector3(740, 8, -320), Vector3(800, 4, -280), Vector3(810, 0, -180), Vector3(760, -2, -60),
+			Vector3(680, 0, 20), Vector3(560, 2, 60), Vector3(420, 4, 80), Vector3(280, 2, 120),
+			Vector3(150, 0, 110), Vector3(60, 0, 70)],
+		"features": [
+			{"t": "rail", "a": 0.3, "b": 1.8},
+			{"t": "crates", "at": 2.0},
+			{"t": "boost", "at": 2.5, "lane": -5.0},
+			{"t": "boost", "at": 2.5, "lane": 5.0},
+			{"t": "pods", "at": 3.5, "lane": 0.0, "n": 5, "form": "row"},
+			{"t": "laser", "at": 5.5, "period": 4.0},
+			{"t": "crates", "at": 6.5},
+			{"t": "pods", "at": 7.5, "lane": 0.0, "n": 5, "form": "line"},
+			{"t": "jump", "at": 9.6, "gap": 0.0, "h": 2.6, "len": 16.0},
+			{"t": "pods", "at": 11.5, "lane": 0.0, "n": 5, "form": "row"},
+			{"t": "crates", "at": 12.5},
+			{"t": "rail", "a": 14.8, "b": 16.5},
+			{"t": "laser", "at": 16.8, "period": 3.8},
+			{"t": "pods", "at": 17.5, "lane": 5.0, "n": 5, "form": "line"},
+			{"t": "crates", "at": 18.5},
+			{"t": "boost", "at": 19.5, "lane": 0.0},
+			{"t": "pods", "at": 20.5, "lane": 0.0, "n": 5, "form": "row"},
+		],
+		"shortcut": {"side": 1, "a": 9.0, "b": 14.6, "via": [Vector3(615, 2, -118), Vector3(725, 0, -102)], "width": 10.0},
+		"shards": [{"shortcut": 0.5, "h": 1.5}, {"at": 9.75, "lane": 0.0, "h": 7.5}, {"at": 3.0, "lane": -8.5, "h": 1.5}],
+	},
+	"hd189733b": {
+		"name": "HD 189733 b: Blue Storm", "system": "extremes", "theme": "hd189733", "width": 18.0, "laps": 3, "gravity": 1.0,
+		"blurb": "High above a cobalt-blue giant: supersonic gusts and rain that may be glass.",
+		"facts": ["Hubble measured this giant planet's true colour: a deep cobalt blue. It's about 64 light-years away.",
+			"Its winds may reach around 8,700 km/h - about seven times the speed of sound.",
+			"The blue may come from glass-like silicate particles, so it might even rain glass, sideways."],
+		"points": [
+			Vector3(0, 0, 0), Vector3(0, 0, -140), Vector3(30, 6, -240), Vector3(100, 10, -290),
+			Vector3(180, 8, -280), Vector3(230, 4, -220), Vector3(220, 0, -150), Vector3(260, -2, -80),
+			Vector3(330, 0, -60), Vector3(400, 4, -100), Vector3(450, 8, -170), Vector3(530, 6, -190),
+			Vector3(580, 2, -130), Vector3(570, 0, -40), Vector3(510, -2, 30), Vector3(500, 0, 110),
+			Vector3(440, 4, 170), Vector3(350, 2, 180), Vector3(270, 0, 150), Vector3(190, -2, 180),
+			Vector3(110, 0, 170), Vector3(50, 0, 110)],
+		"features": [
+			{"t": "boost", "at": 0.3, "lane": 0.0},
+			{"t": "crates", "at": 0.9},
+			{"t": "wind", "a": 1.2, "b": 3.0, "period": 5.5, "strength": 12.0},
+			{"t": "pods", "at": 2.0, "lane": 0.0, "n": 5, "form": "line"},
+			{"t": "surface", "a": 3.5, "b": 7.0, "s": 2},
+			{"t": "dropper", "a": 4.0, "b": 5.5, "style": "glass"},
+			{"t": "crates", "at": 6.5},
+			{"t": "pods", "at": 7.5, "lane": 0.0, "n": 5, "form": "row"},
+			{"t": "wind", "a": 9.5, "b": 11.5, "period": 5.0, "strength": 12.0},
+			{"t": "pods", "at": 10.5, "lane": 4.0, "n": 5, "form": "line"},
+			{"t": "crates", "at": 13.5},
+			{"t": "surface", "a": 15.0, "b": 18.0, "s": 2},
+			{"t": "dropper", "a": 16.0, "b": 17.0, "style": "glass"},
+			{"t": "pods", "at": 16.5, "lane": 0.0, "n": 5, "form": "row"},
+			{"t": "wind", "a": 18.5, "b": 20.5, "period": 6.0, "strength": 11.0},
+			{"t": "crates", "at": 19.5},
+			{"t": "pods", "at": 21.0, "lane": -3.0, "n": 5, "form": "line"},
+		],
+		"shortcut": {"side": 1, "a": 9.0, "b": 14.0, "via": [Vector3(450, 4, -60), Vector3(480, 2, -10)], "width": 10.0},
+		"shards": [{"shortcut": 0.5, "h": 1.5}, {"at": 4.8, "lane": 7.0, "h": 1.5}, {"at": 19.8, "lane": -7.0, "h": 1.5}],
+	},
+	"cancri_e": {
+		"name": "55 Cancri e: Lava Planet", "system": "extremes", "theme": "cancri", "width": 19.0, "laps": 3, "gravity": 1.1,
+		"blurb": "A molten super-Earth: lava oceans, glittering dark rock and a jump over a lava river.",
+		"facts": ["55 Cancri e is a super-Earth so close to its star that its year lasts under 18 hours.",
+			"Its dayside is hot enough to melt rock, so it's probably covered by a lava ocean.",
+			"In 2024 the James Webb Space Telescope found signs that it has an atmosphere."],
+		"points": [
+			Vector3(0, 0, 0), Vector3(0, 4, -110), Vector3(-20, 8, -200), Vector3(20, 4, -270),
+			Vector3(90, 0, -300), Vector3(160, 4, -280), Vector3(200, 8, -220), Vector3(270, 4, -190),
+			Vector3(340, 0, -220), Vector3(400, 4, -270), Vector3(470, 8, -250), Vector3(500, 4, -180),
+			Vector3(470, 0, -110), Vector3(500, 4, -40), Vector3(470, 8, 30), Vector3(400, 4, 60),
+			Vector3(340, 0, 110), Vector3(300, 4, 180), Vector3(220, 8, 200), Vector3(140, 4, 170),
+			Vector3(80, 0, 190), Vector3(30, 4, 140), Vector3(0, 0, 70)],
+		"features": [
+			{"t": "boost", "at": 0.4, "lane": 0.0},
+			{"t": "surface", "a": 0.5, "b": 22.5, "s": 5},
+			{"t": "crates", "at": 1.2},
+			{"t": "pods", "at": 2.2, "lane": 0.0, "n": 5, "form": "row"},
+			{"t": "boost", "at": 3.1, "lane": 0.0},
+			{"t": "jump", "at": 3.5, "gap": 12.0, "h": 2.8, "len": 14.0},
+			{"t": "eruption", "at": 5.5, "len": 30.0},
+			{"t": "crates", "at": 6.5},
+			{"t": "pods", "at": 7.0, "lane": 0.0, "n": 5, "form": "line"},
+			{"t": "eruption", "at": 10.5, "len": 30.0},
+			{"t": "pods", "at": 11.5, "lane": 0.0, "n": 5, "form": "row"},
+			{"t": "crates", "at": 13.5},
+			{"t": "eruption", "at": 16.5, "len": 28.0},
+			{"t": "pods", "at": 17.5, "lane": 4.0, "n": 5, "form": "line"},
+			{"t": "crates", "at": 19.5},
+			{"t": "pods", "at": 21.5, "lane": 0.0, "n": 5, "form": "row"},
+		],
+		"shortcut": {"side": 1, "a": 8.0, "b": 12.0, "via": [Vector3(390, 2, -190), Vector3(430, 0, -150)], "width": 9.0, "surface": 5},
+		"shards": [{"shortcut": 0.5, "h": 1.5}, {"at": 3.66, "lane": 0.0, "h": 7.0}, {"at": 16.6, "lane": -8.0, "h": 1.5}],
+	},
+	"kepler16b": {
+		"name": "Kepler-16b: Two Sunsets", "system": "extremes", "theme": "kepler16", "width": 18.0, "laps": 3, "gravity": 0.9,
+		"blurb": "A sky-track above a cold giant planet, updrafts and bouncy cloud-pads under two suns.",
+		"facts": ["Kepler-16b was the first planet confirmed to orbit two stars at once (2011).",
+			"It's a cold gas giant about the mass of Saturn - this track floats far above its clouds.",
+			"Its two suns orbit each other every 41 days, so they rise and set one after the other."],
+		"points": [
+			Vector3(0, 0, 0), Vector3(0, 2, -150), Vector3(10, 6, -260), Vector3(60, 10, -330),
+			Vector3(140, 12, -350), Vector3(220, 10, -320), Vector3(260, 6, -260), Vector3(250, 2, -190),
+			Vector3(290, 0, -120), Vector3(360, 2, -100), Vector3(430, 6, -130), Vector3(490, 10, -190),
+			Vector3(560, 8, -210), Vector3(610, 4, -160), Vector3(600, 0, -80), Vector3(550, -2, -20),
+			Vector3(560, 0, 60), Vector3(510, 4, 130), Vector3(430, 6, 150), Vector3(350, 4, 120),
+			Vector3(280, 2, 160), Vector3(200, 0, 200), Vector3(120, 2, 180), Vector3(50, 0, 120)],
+		"features": [
+			{"t": "boost", "at": 0.3, "lane": 0.0},
+			{"t": "crates", "at": 1.0},
+			{"t": "surface", "a": 1.5, "b": 3.5, "s": 4},
+			{"t": "pods", "at": 2.5, "lane": 0.0, "n": 5, "form": "row"},
+			{"t": "geyser", "at": 5.0, "lane": 3.0},
+			{"t": "crates", "at": 6.5},
+			{"t": "pods", "at": 7.5, "lane": 0.0, "n": 5, "form": "line"},
+			{"t": "rail", "a": 8.5, "b": 9.8},
+			{"t": "pods", "at": 11.0, "lane": 0.0, "n": 5, "form": "row"},
+			{"t": "geyser", "at": 12.5, "lane": -3.0},
+			{"t": "crates", "at": 14.5},
+			{"t": "surface", "a": 16.0, "b": 18.0, "s": 4},
+			{"t": "pods", "at": 17.0, "lane": 3.0, "n": 5, "form": "line"},
+			{"t": "geyser", "at": 19.5, "lane": 0.0},
+			{"t": "crates", "at": 20.5},
+			{"t": "pods", "at": 22.0, "lane": 0.0, "n": 5, "form": "row"},
+		],
+		"shortcut": {"side": 1, "a": 10.0, "b": 15.0, "via": [Vector3(480, 4, -100), Vector3(520, 2, -55)], "width": 10.0},
+		"shards": [{"shortcut": 0.5, "h": 1.5}, {"at": 5.06, "lane": 3.0, "h": 10.0}, {"at": 12.56, "lane": -3.0, "h": 10.0}],
+	},
+	"wasp76b": {
+		"name": "WASP-76 b: Iron Rain", "system": "extremes", "theme": "wasp76", "width": 18.0, "laps": 3, "gravity": 1.0, "scale": 1.2,
+		"blurb": "Racing the line between a white-hot dayside and a night where molten iron may fall.",
+		"facts": ["WASP-76 b's dayside is hotter than 2,000 C - hot enough to turn iron into vapour.",
+			"Astronomers think the iron may condense on the cooler night side and fall as rain.",
+			"It's about 640 light-years away and always shows the same face to its star."],
+		"points": [
+			Vector3(0, 0, 0), Vector3(0, 0, -120), Vector3(-30, 4, -210), Vector3(-100, 8, -250),
+			Vector3(-170, 6, -220), Vector3(-200, 2, -150), Vector3(-170, 0, -80), Vector3(-200, 2, -10),
+			Vector3(-260, 6, 20), Vector3(-320, 8, -10), Vector3(-370, 6, 60), Vector3(-360, 2, 140),
+			Vector3(-300, 0, 190), Vector3(-220, 2, 200), Vector3(-150, 4, 240), Vector3(-80, 6, 250),
+			Vector3(-20, 4, 210), Vector3(10, 2, 140), Vector3(10, 0, 70)],
+		"features": [
+			{"t": "boost", "at": 0.3, "lane": 0.0},
+			{"t": "crates", "at": 1.0},
+			{"t": "pods", "at": 1.6, "lane": 0.0, "n": 5, "form": "line"},
+			{"t": "surface", "a": 2.0, "b": 6.0, "s": 5},
+			{"t": "dropper", "a": 2.5, "b": 4.0, "style": "iron"},
+			{"t": "crates", "at": 5.0},
+			{"t": "pods", "at": 6.0, "lane": 0.0, "n": 5, "form": "row"},
+			{"t": "eruption", "at": 8.0, "len": 28.0},
+			{"t": "pods", "at": 9.5, "lane": 3.0, "n": 5, "form": "line"},
+			{"t": "crates", "at": 11.0},
+			{"t": "dropper", "a": 12.5, "b": 14.0, "style": "iron"},
+			{"t": "pods", "at": 14.5, "lane": 0.0, "n": 5, "form": "row"},
+			{"t": "crates", "at": 16.0},
+			{"t": "pods", "at": 17.5, "lane": -3.0, "n": 5, "form": "line"},
+		],
+		"shortcut": {"side": -1, "a": 7.0, "b": 12.0, "via": [Vector3(-240, 2, 60), Vector3(-270, 0, 130)], "width": 10.0},
+		"shards": [{"shortcut": 0.5, "h": 1.5}, {"at": 3.2, "lane": -7.0, "h": 1.5}, {"at": 13.2, "lane": 7.0, "h": 1.5}],
+	},
+}

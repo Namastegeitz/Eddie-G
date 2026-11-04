@@ -39,6 +39,9 @@ var drain_mult := 1.0
 var weight := 5.0
 var drift_mult := 1.0
 var speed_mult := 1.0          # AI class / rubber band
+var perk := ""                 # premium craft perk
+var regen := 0.0               # Bio-Ship: energy per second
+var pod_mult := 1.0
 
 # Motion state
 var heading := Vector3.FORWARD
@@ -84,6 +87,7 @@ var frozen := true
 
 # Items
 var item := ""
+var item_uses := 0             # Nitro Rocket can have several uses
 var item_roll := 0.0           # > 0 while the roulette spins
 
 # Progress
@@ -135,6 +139,7 @@ func setup(p_race: Node, p_idx: int, p_look: Dictionary, upgrades: Dictionary) -
 		"shards": 0, "lead_laps": 0, "boosts": 0}
 	if pilot.passive == "shield_start":
 		item = "shield"
+		item_uses = 1
 
 
 func _apply_stats(upgrades: Dictionary) -> void:
@@ -148,6 +153,9 @@ func _apply_stats(upgrades: Dictionary) -> void:
 	drain_mult = 1.25 - 0.05 * st.efficiency
 	weight = float(saucer.weight)
 	drift_mult = 1.0 + saucer.get("drift_bonus", 0.0)
+	perk = saucer.get("perk", "")
+	regen = saucer.get("regen", 0.0)
+	pod_mult = 1.5 if perk == "starcore" else 1.0
 	match pilot.passive:
 		"drift":
 			drift_mult *= 1.25
@@ -336,7 +344,7 @@ func _steer_and_drift(dt: float) -> void:
 
 func _end_drift(award: bool) -> void:
 	if award and drift_tier > 0:
-		give_boost(T.drift_boost_time[drift_tier - 1], "drift%d" % drift_tier)
+		give_boost(T.drift_boost_time[drift_tier - 1] * (1.25 if perk == "dragonfire" else 1.0), "drift%d" % drift_tier)
 		if drift_tier == 3:
 			stats.purple += 1
 		emit_signal("event", "drift_boost", {"tier": drift_tier})
@@ -364,7 +372,7 @@ func _integrate(dt: float) -> void:
 	if emergency:
 		top *= T.emergency_speed
 	if boost_time > 0.0:
-		top *= T.boost_speed_mult
+		top *= T.boost_speed_mult * (1.06 if boost_kind == "nitro" else 1.0)
 	if tractor_time > 0.0:
 		top *= 0.6
 	if slow_time > 0.0:
@@ -470,6 +478,10 @@ func _energy(dt: float) -> void:
 		return
 	var drain: float = T.energy_drain * drain_mult * float(race.mod_drain) * (T.energy_idle_share + (1.0 - T.energy_idle_share) * in_throttle)
 	energy -= drain * dt
+	if regen > 0.0:
+		add_energy(regen * dt)
+	if perk == "solar" and boost_time > 0.0:
+		add_energy(2.5 * dt)
 	if energy <= 0.0:
 		energy = 0.0
 		if not emergency:
@@ -611,8 +623,16 @@ func hit(by: Racer, kind: String) -> bool:
 		if shield_time > 0.0:
 			emit_signal("event", "blocked", {"kind": kind})
 		return false
-	spin_time = T.spin_time
-	invuln_time = T.spin_time + T.invuln_after_hit
+	# A held (unused) Ion Shield soaks up one power-up hit.
+	if by != null and by != self and item == "shield" and item_roll <= 0.0:
+		item = ""
+		item_uses = 0
+		invuln_time = 0.6
+		emit_signal("event", "blocked", {"kind": kind, "held": true})
+		return false
+	var spin := T.spin_time * (0.7 if perk == "phase" else 1.0)
+	spin_time = spin
+	invuln_time = spin + T.invuln_after_hit
 	velocity *= T.spin_speed_keep
 	trick_time = 0.0
 	tricks_in_air = 0

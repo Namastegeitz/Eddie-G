@@ -1,6 +1,6 @@
 extends Node
 ## Scene flow, race requests for every mode, and what happens after a race:
-## Stardust, stars, unlocks, cup standings, boss unlocks, time trial medals,
+## Race Credits, stars, unlocks, cup standings, boss unlocks, time trial medals,
 ## daily challenge streaks and achievements.
 
 var tuning: Tuning
@@ -15,10 +15,12 @@ var _rng := RandomNumberGenerator.new()
 const DAILY_MODS := [
 	{"id": "ice_age", "name": "Ice Age", "text": "Every surface is slippery.", "mods": {"grip": 0.55}},
 	{"id": "power_hungry", "name": "Power Hungry", "text": "Cores drain twice as fast; pods give 50% more.", "mods": {"drain": 2.0, "pod": 1.5}},
-	{"id": "meteor_shower", "name": "Meteor Shower", "text": "Every crate holds a Meteor Strike.", "mods": {"only_item": "meteor"}},
+	{"id": "comet_shower", "name": "Comet Shower", "text": "Every crate holds a Comet Strike.", "mods": {"only_item": "comet"}},
 	{"id": "moon_bounce", "name": "Moon Bounce", "text": "Low gravity everywhere: big air, big tricks.", "mods": {"gravity": 0.5}},
 	{"id": "warp_speed", "name": "Warp Speed", "text": "Everyone flies 12% faster.", "mods": {"speed": 1.12}},
-	{"id": "bolt_storm", "name": "Bolt Storm", "text": "Crates only give Plasma Bolts.", "mods": {"only_item": "bolt"}},
+	{"id": "rocket_storm", "name": "Rocket Storm", "text": "Crates only give Homing Rockets.", "mods": {"only_item": "rocket"}},
+	{"id": "laser_tag", "name": "Laser Tag", "text": "Crates only give Pulse Lasers. Line up your shots!", "mods": {"only_item": "laser"}},
+	{"id": "nitro_rush", "name": "Nitro Rush", "text": "Crates only give Nitro Rockets.", "mods": {"only_item": "nitro"}},
 	{"id": "shield_wall", "name": "Clean Race", "text": "Crates only give Ion Shields: pure racing.", "mods": {"only_item": "shield"}},
 ]
 const DAILY_GOALS := [
@@ -223,7 +225,7 @@ func on_race_finished(race: Node, results: Array) -> void:
 	for r in results:
 		if r.human and r.slot == 0:
 			me = r
-	var summary := {"mode": req.mode, "lines": [], "stardust": 0, "stars": 0, "unlocks": [], "achievements": [], "place": 0}
+	var summary := {"mode": req.mode, "lines": [], "credits": 0, "stars": 0, "unlocks": [], "achievements": [], "place": 0}
 	if me.is_empty():
 		last_summary = summary
 		race.show_panel(ResultsScreen.make(race, results, summary))
@@ -256,7 +258,7 @@ func on_race_finished(race: Node, results: Array) -> void:
 	var key := "%s:%d" % [td.id, td.variant]
 	if bl < float(Save.data.best_lap.get(key, INF)):
 		Save.data.best_lap[key] = bl
-	# Stardust.
+	# Race Credits.
 	var mult := 1.0
 	match req.mode:
 		"tt", "versus":
@@ -284,7 +286,7 @@ func on_race_finished(race: Node, results: Array) -> void:
 		if td.variant == 0 and not Save.data.get("_told_" + won_key, false):
 			Save.data["_told_" + won_key] = true
 			summary.unlocks.append("Reverse + Mirror %s unlocked" % td.name)
-	Save.add_stardust(summary.stardust)
+	Save.add_credits(summary.credits)
 	Save.data.ads.races = int(Save.data.ads.races) + 1
 	summary.achievements = Achievements.check(st, place, req)
 	Save.flush()
@@ -297,7 +299,7 @@ func _line(summary: Dictionary, text: String, amount: int) -> void:
 	if amount <= 0:
 		return
 	summary.lines.append([text, amount])
-	summary.stardust += amount
+	summary.credits += amount
 
 
 func challenge_met(ch_id: String, me: Dictionary, results: Array) -> bool:

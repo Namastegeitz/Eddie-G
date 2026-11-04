@@ -139,6 +139,16 @@ static func focus_later(c: Control) -> void:
 	f.call_deferred()
 
 
+## 12345 -> "12,345"
+static func num(n: int) -> String:
+	var s := str(absi(n))
+	var out := ""
+	while s.length() > 3:
+		out = "," + s.substr(s.length() - 3) + out
+		s = s.substr(0, s.length() - 3)
+	return ("-" if n < 0 else "") + s + out
+
+
 static func ordinal(n: int) -> String:
 	if n % 100 >= 11 and n % 100 <= 13:
 		return "%dth" % n

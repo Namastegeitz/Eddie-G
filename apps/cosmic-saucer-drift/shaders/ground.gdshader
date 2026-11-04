@@ -5,7 +5,7 @@ uniform vec3 base : source_color = vec3(0.1, 0.2, 0.12);
 uniform vec3 glow_color : source_color = vec3(0.2, 1.0, 0.6);
 uniform float glow_amount = 0.6;
 uniform float scale = 0.02;
-uniform int mode = 0; // 0 spots, 1 cracks (lava), 2 frost
+uniform int mode = 0; // 0 spots, 1 cracks (lava), 2 frost, 3 cloud tops
 float hash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
 float vnoise(vec2 p) {
 	vec2 i = floor(p); vec2 f = fract(p); f = f * f * (3.0 - 2.0 * f);
@@ -23,6 +23,10 @@ void fragment() {
 		em = glow_color * crack * (0.8 + 0.4 * sin(TIME + p.x * 3.0)) * glow_amount * 2.0;
 	} else if (mode == 2) {
 		em = glow_color * smoothstep(0.75, 0.9, n) * glow_amount;
+	} else if (mode == 3) {
+		float band = sin(wpos.z * 0.004 + vnoise(p * 1.5 + vec2(TIME * 0.02, 0.0)) * 3.0) * 0.5 + 0.5;
+		col = mix(base, glow_color, band * 0.6) * (0.75 + 0.35 * n);
+		em = glow_color * band * 0.15;
 	} else {
 		em = glow_color * smoothstep(0.78, 0.84, vnoise(p * 6.0)) * glow_amount;
 	}

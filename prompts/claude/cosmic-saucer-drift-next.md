@@ -9,15 +9,18 @@ them in a `CLAUDE.md`):
 
 ```
 You're working on Cosmic Saucer Drift in apps/cosmic-saucer-drift (Godot 4.7, GDScript).
-- Content is data: saucers/pilots/items/cups in scripts/data/catalog.gd, tracks in
-  scripts/data/track_defs.gd (features placed by control-point index), driving
-  numbers in resources/tuning.tres. Art is generated from code.
+- Content is data: craft/pilots/power-ups/lineups/systems/cups in
+  scripts/data/catalog.gd, tracks in scripts/data/track_defs.gd (features placed
+  by control-point index, 3 real facts each), driving numbers in
+  resources/tuning.tres. Art is generated from code.
 - Every new feature gets checks in tests/smoke.gd; tools/run_tests.sh must stay
-  green (parse check, smoke test, AI race sim on all 18 track layouts).
+  green (parse check, smoke test, AI race sim on all 42 track layouts).
+- Real-world facts must be accurate; say "may" where science is unsure.
 - Phones first: keep game logic under ~1.5 ms per physics tick on this machine
   (sim --prof), pooled effects, no per-frame allocations in hot paths.
 - Keep the game original: no names, characters, tracks or art from other racing games.
-- Ads stay behind the Ads autoload; v1 promises "no ads, no data collected".
+- Ads stay behind the Ads autoload, purchases behind the Store autoload; v1
+  promises "no ads, no purchases, no data collected".
 - Update RUN.md / README.md / docs for anything players or I need to know.
 ```
 
@@ -74,14 +77,17 @@ Data safety answers in docs/STORE_LISTING.md, and keep the server key out of
 the repo.
 ```
 
-## 6. Season pass of new tracks
+## 6. More real worlds (a new cup)
 
 ```
-Add three tracks built with the track_defs format: a "Black Hole Rim" with
-gravity that pulls you toward the inside lane, a "Space Carnival" with spinning
-loop-the-loops and bumpers, and a "Meteor Highway" with a moving convoy of
-asteroids. Each needs its hazards, shortcut, 3 Star Shards and a new fifth
-cup. Plot each with tools/plot_tracks.py and make the AI finish all variants.
+Add a fifth system cup of real places in the track_defs format: Venus (a
+floating cloud-city course at 50 km altitude, sulphuric-acid haze hazard),
+Titan (methane lakes and thick-air low-gravity jumps), Europa (cracked ice
+over a hidden ocean, water plumes), and Pluto (Sputnik Planitia's nitrogen
+ice heart). Three accurate facts each, the right sky (Saturn over Titan,
+Jupiter over Europa, a tiny Sun over Pluto), hazards, a shortcut and 3 Star
+Shards. Plot each with tools/plot_tracks.py and make the AI finish all
+variants.
 ```
 
 ## 7. Turn on rewarded ads (when you're ready)
@@ -94,13 +100,15 @@ on, and update the privacy policy and Data safety answers. Rewarded only at
 first (double Stardust, free item); keep the cup interstitial off.
 ```
 
-## 8. "Remove ads" and a Stardust starter pack
+## 8. Switch on real-money purchases
 
 ```
-Add Google Play Billing with a Godot billing plugin: a non-consumable
-"Remove ads" (calls Ads.set_removed(true), restores on reinstall) and an
-optional one-time "Starter pack" (Stardust + a cosmetic). Purchases go through
-a Store autoload that stays a no-op on web/desktop. Log Events "purchase".
+Follow docs/STORE_PLAN.md: add the Godot Google Play Billing plugin, wire
+scripts/store/play_billing_store_provider.gd (connect, product details with
+real prices, purchase, acknowledge/consume, restore), create the products in
+the Play Console, switch resources/store_config.tres on, and test with
+license testers on an internal track. Update the privacy policy, Data safety
+and the listing ("Contains in-app purchases").
 ```
 
 ## 9. Online multiplayer (big)

@@ -140,15 +140,17 @@ func _on_event(kind: String, d: Dictionary) -> void:
 		"hit":
 			toast("HIT!", UiKit.RED)
 		"blocked":
-			toast("Shield blocked it", UiKit.CYAN)
+			toast("Held shield took the hit!" if d.get("held", false) else "Shield blocked it", UiKit.CYAN)
 		"hit_landed":
 			toast("Got %s!" % (d.target as Racer).display_name, UiKit.PINK)
 		"inked":
 			_splats.clear()
 			for k in 7:
 				_splats.append(Vector3(_rng.randf_range(0.1, 0.9), _rng.randf_range(0.15, 0.85), _rng.randf_range(60, 150)))
-		"meteor_warning":
-			toast("METEOR INCOMING!", UiKit.RED)
+		"comet_warning":
+			toast("COMET INCOMING!", UiKit.RED)
+		"item_lost":
+			toast("EMP! Item knocked loose", UiKit.RED)
 		"tractored":
 			toast("Caught in a tractor beam!", UiKit.GREEN)
 		"shard":
@@ -181,6 +183,8 @@ func _process(dt: float) -> void:
 	else:
 		_item_icon.item = racer.item
 		_item_name.text = Catalog.ITEMS[racer.item].name if racer.item != "" else ""
+		if racer.item_uses > 1:
+			_item_name.text += "  x%d" % racer.item_uses
 	_energy_lbl.text = "EMERGENCY HOVER - GRAB A POD!" if racer.emergency else "DARK MATTER CORE"
 	_energy_lbl.add_theme_color_override("font_color", UiKit.RED if racer.emergency else UiKit.CYAN)
 	if _center_t > 0.0:
@@ -259,7 +263,7 @@ func _draw_overlay() -> void:
 				var a := TAU * j / 5.0 + sp.x * 10.0
 				_overlay.draw_circle(c + Vector2(cos(a), sin(a)) * r * 0.9, r * 0.4, Color(0.45, 0.15, 0.6, 0.8 * fade))
 	# Meteor warning when targeted.
-	for m in race.items.meteors:
+	for m in race.items.comets:
 		if m.target == racer:
 			var a := 0.25 + 0.25 * sin(Time.get_ticks_msec() * 0.02)
 			_overlay.draw_rect(Rect2(0, 0, s.x, 10), Color(1, 0.3, 0.1, a))

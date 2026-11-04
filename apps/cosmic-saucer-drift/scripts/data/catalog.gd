@@ -19,8 +19,11 @@ const SURFACES := {
 static func surface(id: int) -> Dictionary:
 	return SURFACES.get(id, SURFACES[S_METAL])
 
-# ---------------------------------------------------------------- saucers
+# ---------------------------------------------------------------- spacecraft
 # Stats are 1-10. Upgrades add 0.5 per level (5 levels) on top.
+# price is in Race Credits; stars is the star count needed to buy.
+# Premium craft also carry a store product id (real-money layer, off in v1)
+# and a perk the code applies.
 const SAUCERS := [
 	{"id": "classic", "name": "Classic Saucer", "blurb": "The all-rounder. Easy to fly, hard to beat.",
 	 "speed": 5, "accel": 5, "handling": 5, "efficiency": 5, "weight": 5,
@@ -30,16 +33,44 @@ const SAUCERS := [
 	 "price": 0, "stars": 0, "shape": "bubble", "paint": Color(1.0, 0.55, 0.75)},
 	{"id": "rocket", "name": "Rocket Fin", "blurb": "Twin fins, huge top speed, wide turns.",
 	 "speed": 8, "accel": 4, "handling": 3, "efficiency": 4, "weight": 5,
-	 "price": 2000, "stars": 8, "shape": "rocket", "paint": Color(0.95, 0.30, 0.25)},
+	 "price": 2000, "stars": 6, "shape": "rocket", "paint": Color(0.95, 0.30, 0.25)},
 	{"id": "ring", "name": "Ring Racer", "blurb": "Spinning outer ring for instant acceleration.",
 	 "speed": 5, "accel": 8, "handling": 5, "efficiency": 4, "weight": 4,
-	 "price": 2500, "stars": 14, "shape": "ring", "paint": Color(0.30, 0.85, 0.55)},
+	 "price": 2500, "stars": 10, "shape": "ring", "paint": Color(0.30, 0.85, 0.55)},
+	{"id": "orb", "name": "Orb Drone", "blurb": "A probe-like sphere ringed by gyroscopes. Turns on a dime.",
+	 "speed": 5, "accel": 6, "handling": 8, "efficiency": 5, "weight": 3,
+	 "price": 3000, "stars": 14, "shape": "orb", "paint": Color(0.75, 0.78, 0.85)},
 	{"id": "manta", "name": "Manta", "blurb": "Flat wing that loves to drift. Drift charge +15%.",
 	 "speed": 6, "accel": 5, "handling": 8, "efficiency": 4, "weight": 4,
-	 "price": 3500, "stars": 22, "shape": "manta", "paint": Color(0.25, 0.45, 0.95), "drift_bonus": 0.15},
+	 "price": 3500, "stars": 18, "shape": "manta", "paint": Color(0.25, 0.45, 0.95), "drift_bonus": 0.15},
+	{"id": "crystal", "name": "Crystal Shard", "blurb": "Grown, not built: a faceted crystal ship that cuts through the air.",
+	 "speed": 7, "accel": 5, "handling": 5, "efficiency": 6, "weight": 4,
+	 "price": 4000, "stars": 22, "shape": "crystal", "paint": Color(0.55, 0.9, 1.0)},
+	{"id": "bioship", "name": "Bio-Ship", "blurb": "A living craft with trailing tendrils. Heals its core slowly.",
+	 "speed": 6, "accel": 6, "handling": 6, "efficiency": 7, "weight": 5,
+	 "price": 4500, "stars": 26, "shape": "bioship", "paint": Color(0.55, 0.85, 0.35), "regen": 0.4},
 	{"id": "mothership", "name": "Mothership Jr", "blurb": "Heavy, sips energy, shoves rivals aside.",
 	 "speed": 6, "accel": 4, "handling": 4, "efficiency": 9, "weight": 9,
 	 "price": 5000, "stars": 30, "shape": "mothership", "paint": Color(0.55, 0.50, 0.70)},
+	{"id": "arrow", "name": "Arrowhead Interceptor", "blurb": "A sharp alien interceptor. Fast, light, twitchy.",
+	 "speed": 8, "accel": 6, "handling": 6, "efficiency": 4, "weight": 3,
+	 "price": 6000, "stars": 34, "shape": "arrow", "paint": Color(0.95, 0.75, 0.2)},
+	{"id": "sail", "name": "Solar Sail Yacht", "blurb": "PREMIUM. Shimmering sails drink starlight: boosting recharges your core.",
+	 "speed": 7, "accel": 7, "handling": 7, "efficiency": 7, "weight": 4,
+	 "price": 12000, "stars": 12, "shape": "sail", "paint": Color(0.95, 0.85, 0.55), "premium": true,
+	 "perk": "solar", "perk_text": "Boosting recharges your Dark Matter core.", "product": "craft_sail"},
+	{"id": "phantom", "name": "Pulsar Phantom", "blurb": "PREMIUM. Half here, half elsewhere: spin-outs end 30% sooner.",
+	 "speed": 8, "accel": 7, "handling": 6, "efficiency": 6, "weight": 5,
+	 "price": 15000, "stars": 20, "shape": "phantom", "paint": Color(0.6, 0.4, 1.0), "premium": true,
+	 "perk": "phase", "perk_text": "Spin-outs from hits end 30% sooner.", "product": "craft_phantom"},
+	{"id": "dragon", "name": "Quasar Dragon", "blurb": "PREMIUM. A serpent of light. Drift boosts last 25% longer.",
+	 "speed": 8, "accel": 6, "handling": 8, "efficiency": 5, "weight": 6,
+	 "price": 18000, "stars": 28, "shape": "dragon", "paint": Color(1.0, 0.35, 0.3), "premium": true,
+	 "perk": "dragonfire", "perk_text": "Drift boosts last 25% longer.", "product": "craft_dragon"},
+	{"id": "dyson", "name": "Dyson Racer", "blurb": "PREMIUM. A captured star in a ring of panels. Pods refill 50% more.",
+	 "speed": 7, "accel": 8, "handling": 7, "efficiency": 8, "weight": 7,
+	 "price": 22000, "stars": 36, "shape": "dyson", "paint": Color(1.0, 0.7, 0.2), "premium": true,
+	 "perk": "starcore", "perk_text": "Energy Pods refill 50% more.", "product": "craft_dyson"},
 ]
 
 const STAT_KEYS := ["speed", "accel", "handling", "efficiency"]
@@ -58,28 +89,28 @@ static func saucer(id: String) -> Dictionary:
 const PILOTS := [
 	{"id": "zib", "name": "Zib", "color": Color(0.45, 0.95, 0.35), "eyes": 2,
 	 "passive": "drift", "passive_name": "Drift Ace", "passive_text": "Drifts charge Plasma Boost 25% faster.",
-	 "style": "clean", "unlock": "start", "home": "asteroid_belt"},
+	 "style": "clean", "unlock": "start", "home": "ceres"},
 	{"id": "nova", "name": "Nova Quark", "color": Color(0.35, 0.85, 1.0), "eyes": 2,
 	 "passive": "shield_start", "passive_name": "Shield Start", "passive_text": "Starts every race holding an Ion Shield.",
-	 "style": "clean", "unlock": "start", "home": "neon_ring"},
+	 "style": "clean", "unlock": "start", "home": "saturn_rings"},
 	{"id": "gloop", "name": "Gloop", "color": Color(0.75, 0.40, 1.0), "eyes": 1,
 	 "passive": "efficient", "passive_name": "Slow Burner", "passive_text": "Dark Matter core drains 25% slower.",
-	 "style": "hoarder", "unlock": "boss", "stars": 3, "home": "jungle_moon"},
+	 "style": "hoarder", "unlock": "boss", "stars": 3, "home": "trappist1e"},
 	{"id": "krell", "name": "Captain Krell", "color": Color(0.95, 0.45, 0.20), "eyes": 4,
 	 "passive": "bumper", "passive_name": "Bumper", "passive_text": "Bumps shove rivals 60% harder; you barely budge.",
-	 "style": "aggressive", "unlock": "boss", "stars": 7, "home": "lava_moon"},
+	 "style": "aggressive", "unlock": "boss", "stars": 7, "home": "io"},
 	{"id": "vexa", "name": "Vexa Starling", "color": Color(1.0, 0.35, 0.65), "eyes": 2,
 	 "passive": "lucky", "passive_name": "Lucky Crates", "passive_text": "Crates roll as if you were two places further back.",
-	 "style": "hoarder", "unlock": "boss", "stars": 12, "home": "orbital_station"},
+	 "style": "hoarder", "unlock": "boss", "stars": 12, "home": "proxima_station"},
 	{"id": "bleep", "name": "Bleep-0", "color": Color(0.80, 0.82, 0.88), "eyes": 1,
 	 "passive": "magnet", "passive_name": "Pod Magnet", "passive_text": "Energy Pods fly to you from three times farther.",
-	 "style": "clean", "unlock": "boss", "stars": 18, "home": "comet_ice"},
+	 "style": "clean", "unlock": "boss", "stars": 18, "home": "trappist1h"},
 	{"id": "zorba", "name": "Mama Zorba", "color": Color(1.0, 0.82, 0.25), "eyes": 3,
 	 "passive": "tricks", "passive_name": "Trick Queen", "passive_text": "Landed tricks give double boost and energy.",
-	 "style": "aggressive", "unlock": "boss", "stars": 25, "home": "jungle_moon"},
+	 "style": "aggressive", "unlock": "boss", "stars": 25, "home": "kepler16b"},
 	{"id": "comet", "name": "Comet the Space Pup", "color": Color(0.85, 0.65, 0.45), "eyes": 2,
 	 "passive": "draft", "passive_name": "Draft Hound", "passive_text": "Slipstream charges twice as fast.",
-	 "style": "aggressive", "unlock": "boss", "stars": 33, "home": "neon_ring"},
+	 "style": "aggressive", "unlock": "boss", "stars": 33, "home": "alpha_cen"},
 ]
 
 static func pilot(id: String) -> Dictionary:
@@ -90,38 +121,68 @@ static func pilot(id: String) -> Dictionary:
 
 # ---------------------------------------------------------------- items
 const ITEMS := {
-	"tractor": {"name": "Tractor Beam", "color": Color(0.4, 1.0, 0.5), "text": "Drags the racer ahead back toward you."},
-	"meteor": {"name": "Meteor Strike", "color": Color(1.0, 0.55, 0.2), "text": "A meteor falls on the leader."},
-	"shield": {"name": "Ion Shield", "color": Color(0.35, 0.8, 1.0), "text": "Blocks every hit for a few seconds."},
-	"warp": {"name": "Hyperspace Warp", "color": Color(0.85, 0.5, 1.0), "text": "Teleport-dash forward along the track."},
-	"bolt": {"name": "Plasma Bolt", "color": Color(1.0, 0.3, 0.45), "text": "A homing shot at the racer ahead."},
-	"mine": {"name": "Gravity Mine", "color": Color(1.0, 0.9, 0.3), "text": "Drop it behind you."},
-	"nebula": {"name": "Nebula Cloud", "color": Color(0.75, 0.35, 0.95), "text": "Smears the screens of everyone ahead."},
-	"blackhole": {"name": "Black Hole", "color": Color(0.30, 0.20, 0.45), "text": "A vortex ahead that drags racers in."},
+	"rocket": {"name": "Homing Rocket", "color": Color(1.0, 0.45, 0.25), "kind": "Attack", "text": "Locks onto the racer just ahead and chases them down."},
+	"laser": {"name": "Pulse Laser", "color": Color(0.3, 1.0, 0.95), "kind": "Attack", "text": "An instant beam that hits everything in a line ahead of you. Clears mines too."},
+	"comet": {"name": "Comet Strike", "color": Color(0.6, 0.85, 1.0), "kind": "Attack", "text": "A comet falls on the leader. Only for racers well behind."},
+	"emp": {"name": "EMP Shockwave", "color": Color(1.0, 0.95, 0.35), "kind": "Attack", "text": "Spins out everyone close around you and knocks their items loose."},
+	"nitro": {"name": "Nitro Rocket", "color": Color(1.0, 0.3, 0.75), "kind": "Speed", "text": "Strap-on rocket boost, 1-3 uses: more the further back you are."},
+	"shield": {"name": "Ion Shield", "color": Color(0.35, 0.7, 1.0), "kind": "Defence", "text": "Use it to block every hit for 6 s, or just hold it to stop one hit."},
+	"mine": {"name": "Gravity Mine", "color": Color(1.0, 0.8, 0.2), "kind": "Trap", "text": "Drop it behind you. Whoever flies into it spins out."},
+	"tractor": {"name": "Tractor Beam", "color": Color(0.45, 1.0, 0.45), "kind": "Attack", "text": "Drags the racer ahead back toward you and gives you a small boost."},
 }
 
-# Item odds by how far back you are: 0 = leader, 1 = middle, 2 = back.
-const ITEM_ODDS := [
-	{"shield": 28, "mine": 30, "bolt": 18, "tractor": 10, "blackhole": 8, "nebula": 6},
-	{"bolt": 20, "tractor": 16, "mine": 14, "shield": 10, "nebula": 14, "blackhole": 14, "warp": 6, "meteor": 6},
-	{"warp": 24, "meteor": 18, "tractor": 16, "bolt": 14, "nebula": 10, "blackhole": 10, "shield": 8},
+# Five power-up lineups by race position: what each place can roll from a
+# crate. The further back you are, the stronger the comeback items.
+const LINEUPS := [
+	{"name": "Leader", "places": "1st", "odds": {"shield": 30, "mine": 30, "laser": 20, "rocket": 12, "tractor": 8}, "nitro": 1},
+	{"name": "Front pack", "places": "2nd-3rd", "odds": {"rocket": 25, "laser": 20, "mine": 15, "shield": 15, "tractor": 15, "nitro": 10}, "nitro": 1},
+	{"name": "Midfield", "places": "4th-5th", "odds": {"rocket": 22, "tractor": 18, "nitro": 18, "laser": 14, "emp": 14, "mine": 8, "shield": 6}, "nitro": 2},
+	{"name": "Chasers", "places": "6th-7th", "odds": {"nitro": 26, "rocket": 18, "emp": 18, "tractor": 16, "comet": 12, "laser": 10}, "nitro": 2},
+	{"name": "Last place", "places": "last", "odds": {"nitro": 30, "comet": 25, "emp": 20, "rocket": 15, "tractor": 10}, "nitro": 3},
 ]
 
-# ---------------------------------------------------------------- tracks & cups
-const TRACK_IDS := ["asteroid_belt", "neon_ring", "jungle_moon", "comet_ice", "orbital_station", "lava_moon"]
+## Which lineup a place uses in a field of n racers.
+static func lineup_for(place: int, n: int) -> int:
+	if place <= 1:
+		return 0
+	if place >= n:
+		return 4
+	var f := float(place) / float(n)
+	if f <= 0.375:
+		return 1
+	if f <= 0.625:
+		return 2
+	return 3
+
+# ---------------------------------------------------------------- systems, tracks & cups
+const TRACK_IDS := ["mars", "ceres", "io", "saturn_rings", "trappist1b", "trappist1e", "trappist1h",
+	"proxima_b", "proxima_station", "alpha_cen", "hd189733b", "cancri_e", "kepler16b", "wasp76b"]
 enum { V_NORMAL, V_REVERSE, V_MIRROR }
 const VARIANT_NAMES := ["", "Reverse", "Mirror"]
 
+const SYSTEMS := {
+	"sol": {"name": "Our Solar System", "star": "The Sun (yellow dwarf)", "distance": "home",
+		"text": "Eight planets around an ordinary yellow star. We've sent probes to every one of them."},
+	"trappist1": {"name": "TRAPPIST-1", "star": "TRAPPIST-1 (ultracool red dwarf)", "distance": "about 40 light-years",
+		"text": "Seven Earth-sized planets packed closer to their star than Mercury is to the Sun."},
+	"alphacen": {"name": "Alpha Centauri", "star": "Alpha Centauri A & B + Proxima Centauri", "distance": "about 4.2-4.4 light-years",
+		"text": "The nearest stars to the Sun: a pair of Sun-like stars and a small, flaring red dwarf."},
+	"extremes": {"name": "Exoplanet Extremes", "star": "four different stars", "distance": "60 to 640 light-years",
+		"text": "Some of the strangest worlds astronomers have measured: glass storms, lava oceans, two suns, iron rain."},
+}
+
 # Each race: [track id, variant, challenge id]
 const CUPS := [
-	{"id": "nebula", "name": "Nebula Cup", "stars": 0, "color": Color(0.55, 0.4, 1.0), "class": 0,
-	 "races": [["asteroid_belt", 0, "pods10"], ["jungle_moon", 0, "tricks3"], ["comet_ice", 0, "no_hover"], ["neon_ring", 0, "purple2"]]},
-	{"id": "supernova", "name": "Supernova Cup", "stars": 8, "color": Color(1.0, 0.6, 0.2), "class": 1,
-	 "races": [["orbital_station", 0, "hits2"], ["lava_moon", 0, "no_hover"], ["asteroid_belt", 1, "shard1"], ["neon_ring", 1, "slip3"]]},
-	{"id": "quasar", "name": "Quasar Cup", "stars": 20, "color": Color(0.3, 0.9, 1.0), "class": 2,
-	 "races": [["jungle_moon", 1, "shortcut"], ["comet_ice", 1, "purple3"], ["orbital_station", 1, "tricks4"], ["lava_moon", 1, "lead_lap"]]},
-	{"id": "horizon", "name": "Event Horizon Cup", "stars": 34, "color": Color(1.0, 0.3, 0.6), "class": 3,
-	 "races": [["asteroid_belt", 2, "no_hover"], ["neon_ring", 2, "hits3"], ["jungle_moon", 2, "pods15"], ["lava_moon", 2, "margin2"]]},
+	{"id": "sol", "name": "Solar System Cup", "system": "sol", "stars": 0, "color": Color(1.0, 0.8, 0.35), "class": 0,
+	 "races": [["mars", 0, "pods10"], ["ceres", 0, "tricks3"], ["io", 0, "no_hover"], ["saturn_rings", 0, "purple2"]]},
+	{"id": "trappist1", "name": "TRAPPIST-1 Cup", "system": "trappist1", "stars": 8, "color": Color(1.0, 0.45, 0.3), "class": 1,
+	 "races": [["trappist1b", 0, "hits2"], ["trappist1e", 0, "shortcut"], ["trappist1h", 0, "no_hover"]]},
+	{"id": "alphacen", "name": "Alpha Centauri Cup", "system": "alphacen", "stars": 16, "color": Color(1.0, 0.9, 0.6), "class": 1,
+	 "races": [["proxima_b", 0, "slip3"], ["proxima_station", 0, "tricks4"], ["alpha_cen", 0, "purple3"]]},
+	{"id": "extremes", "name": "Exoplanet Extremes Cup", "system": "extremes", "stars": 24, "color": Color(0.35, 0.6, 1.0), "class": 2,
+	 "races": [["hd189733b", 0, "no_hover"], ["cancri_e", 0, "hits3"], ["kepler16b", 0, "shortcut"], ["wasp76b", 0, "pods15"]]},
+	{"id": "grand", "name": "Galactic Grand Prix", "system": "", "stars": 36, "color": Color(1.0, 0.35, 0.8), "class": 3,
+	 "races": [["mars", 2, "lead_lap"], ["trappist1e", 1, "shard1"], ["alpha_cen", 2, "margin2"], ["hd189733b", 1, "purple3"]]},
 ]
 
 const CUP_POINTS := [10, 8, 6, 5, 4, 3, 2, 1]
@@ -152,8 +213,8 @@ const AI_CLASSES := [
 	{"name": "Legend", "speed": 1.02, "skill": 0.95},
 ]
 
-# Stardust payout by finishing place.
-const PLACE_REWARD := [300, 220, 170, 130, 100, 80, 65, 50]
+# Race Credits payout by finishing place.
+const PLACE_REWARD := [400, 300, 230, 180, 140, 110, 90, 70]
 
 # ---------------------------------------------------------------- cosmetics
 const PAINTS := [

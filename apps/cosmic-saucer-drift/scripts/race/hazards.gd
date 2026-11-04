@@ -28,7 +28,7 @@ func setup(p_race: Node) -> void:
 	for f in td.feats:
 		var h := {}
 		match f.t:
-			"roller", "flare", "laser", "snapper", "geyser", "dropper", "eruption":
+			"roller", "flare", "laser", "snapper", "geyser", "dropper", "eruption", "wind":
 				h = f.duplicate()
 			_:
 				continue
@@ -60,9 +60,48 @@ func _build(h: Dictionary, i: int) -> void:
 	var hw := td.width * 0.5
 	match h.t:
 		"roller":
-			var n := _mesh_node(TrackDecor.rock_mesh(), TrackBuilder.flat(Color(0.45, 0.36, 0.33), 0.0, 0.1, 0.9))
-			n.scale = Vector3.ONE * float(h.get("size", 4.0))
-			h["node"] = n
+			if h.get("style", "") == "devil":
+				var cone := CylinderMesh.new()
+				cone.top_radius = 1.0
+				cone.bottom_radius = 0.15
+				cone.height = 4.0
+				cone.radial_segments = 10
+				var n := _mesh_node(cone, TrackBuilder.ghost(Color(0.85, 0.6, 0.4), 0.45))
+				n.scale = Vector3.ONE * float(h.get("size", 4.0))
+				h["node"] = n
+			else:
+				var n := _mesh_node(TrackDecor.rock_mesh(), TrackBuilder.flat(Color(0.45, 0.36, 0.33), 0.0, 0.1, 0.9))
+				n.scale = Vector3.ONE * float(h.get("size", 4.0))
+				h["node"] = n
+		"wind":
+			var a := path.index_at(float(h.s))
+			var span := path.delta(float(h.s), float(h.s1))
+			var mid := path.index_at(float(h.s) + span * 0.5)
+			var pc := CPUParticles3D.new()
+			pc.amount = 70
+			pc.lifetime = 0.7
+			pc.local_coords = false
+			pc.emission_shape = CPUParticles3D.EMISSION_SHAPE_BOX
+			pc.emission_box_extents = Vector3(hw + 6.0, 2.5, span * 0.5)
+			pc.direction = Vector3(1, 0, 0)
+			pc.spread = 4.0
+			pc.gravity = Vector3.ZERO
+			pc.initial_velocity_min = 40.0
+			pc.initial_velocity_max = 55.0
+			var qm := QuadMesh.new()
+			qm.size = Vector2(3.5, 0.12)
+			var qmat := StandardMaterial3D.new()
+			qmat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+			qmat.billboard_mode = BaseMaterial3D.BILLBOARD_ENABLED
+			qmat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+			qmat.albedo_color = Color(1, 1, 1, 0.45)
+			qm.material = qmat
+			pc.mesh = qm
+			pc.emitting = false
+			add_child(pc)
+			pc.global_transform = Transform3D(_frame(mid), path.pts[mid] + path.upv[mid] * 2.0)
+			h["fx"] = pc
+			h["i"] = a
 		"flare":
 			var c := CylinderMesh.new()
 			c.top_radius = 1.6
@@ -161,8 +200,12 @@ func tick(dt: float) -> void:
 				var size: float = h.get("size", 4.0)
 				var lat := sin((_t + float(h.phase)) * TAU / period) * (hw + size + 3.0)
 				var pos := path.pts[i] + path.rgt[i] * lat + path.upv[i] * size * 0.8
-				h.node.global_position = pos
-				h.node.rotate(path.tan[i].normalized(), -cos((_t + float(h.phase)) * TAU / period) * dt * 3.0)
+				if h.get("style", "") == "devil":
+					h.node.global_position = path.pts[i] + path.rgt[i] * lat + path.upv[i] * size * 1.8
+					h.node.global_basis = TrackBuilder.sb(_frame(i), Vector3.ONE * size).rotated(path.upv[i].normalized(), _t * 6.0)
+				else:
+					h.node.global_position = pos
+					h.node.rotate(path.tan[i].normalized(), -cos((_t + float(h.phase)) * TAU / period) * dt * 3.0)
 				_check(h, i, lat, size + 0.8, size * 0.8 + 1.0, true, "roller")
 			"flare":
 				var period: float = h.get("period", 4.5)
@@ -225,6 +268,8 @@ func tick(dt: float) -> void:
 					_geyser_launch(h, i, lane)
 			"dropper":
 				_tick_dropper(h, dt)
+			"wind":
+				_tick_wind(h, dt)
 
 
 ## Hit any racer inside the hazard box (lateral half-width lw, length ls).
@@ -288,12 +333,26 @@ func _tick_dropper(h: Dictionary, dt: float) -> void:
 		var sn := _mesh_node(shadow, TrackBuilder.ghost(Color(0.6, 0.85, 1.0), 0.6))
 		sn.global_position = path.pts[i] + path.rgt[i] * lane + path.upv[i] * 0.15
 		sn.global_basis = _frame(i)
-		var cone := CylinderMesh.new()
-		cone.top_radius = 1.2
-		cone.bottom_radius = 0.0
-		cone.height = 4.5
-		cone.radial_segments = 6
-		var ice := _mesh_node(cone, TrackBuilder.flat(Color(0.75, 0.9, 1.0), 0.6, 0.2, 0.1))
+		var style: String = h.get("style", "ice")
+		var ice: MeshInstance3D
+		if style == "iron" or style == "plasma":
+			var blob := SphereMesh.new()
+			blob.radius = 1.3
+			blob.height = 3.4
+			blob.radial_segments = 10
+			blob.rings = 5
+			var c := Color(1.0, 0.55, 0.15) if style == "iron" else Color(1.0, 0.3, 0.45)
+			ice = _mesh_node(blob, TrackBuilder.glow(c, 2.4))
+		else:
+			var cone := CylinderMesh.new()
+			cone.top_radius = 1.2
+			cone.bottom_radius = 0.0
+			cone.height = 4.5
+			cone.radial_segments = 6
+			var mat: Material = TrackBuilder.flat(Color(0.75, 0.9, 1.0), 0.6, 0.2, 0.1)
+			if style == "glass":
+				mat = TrackBuilder.ghost(Color(0.6, 0.9, 1.0), 0.55)
+			ice = _mesh_node(cone, mat)
 		shards.append({"s": s, "lane": lane, "i": i, "t": 1.3, "shadow": sn, "ice": ice, "near": {}})
 	for k in range(shards.size() - 1, -1, -1):
 		var d: Dictionary = shards[k]
@@ -309,12 +368,37 @@ func _tick_dropper(h: Dictionary, dt: float) -> void:
 					continue
 				var ds := path.delta(float(d.s), float(r.track_idx) * path.step)
 				if absf(ds) < 3.0 and absf(r.lateral - float(d.lane)) < 3.0:
-					r.hit(null, "ice")
+					r.hit(null, String(h.get("style", "ice")))
 				elif absf(ds) < 8.0 and absf(r.lateral - float(d.lane)) < 7.0:
 					r.near_miss()
 			d.shadow.queue_free()
 			d.ice.queue_free()
 			shards.remove_at(k)
+
+
+## Sideways gusts: a streaky warning, then a push to one side (alternating).
+func _tick_wind(h: Dictionary, dt: float) -> void:
+	var path := td.main
+	var period: float = h.get("period", 6.0)
+	var st := _cycle(h, period, 1.0, 1.8)
+	var cyc := int((_t + float(h.phase)) / period)
+	var side := 1.0 if cyc % 2 == 0 else -1.0
+	var fx: CPUParticles3D = h.fx
+	fx.emitting = st[0] != 0
+	fx.direction = Vector3(side, 0, 0)
+	if st[0] != 2:
+		return
+	var push := float(h.get("strength", 10.0)) * 0.32
+	var span := path.delta(float(h.s), float(h.s1))
+	for r: Racer in race.racers:
+		if r.is_ghost or r.rescue_time > 0.0 or r.on_shortcut:
+			continue
+		var ds := path.delta(float(h.s), float(r.track_idx) * path.step)
+		if ds < 0.0 or ds > span:
+			continue
+		var rg := path.rgt[r.track_idx]
+		r.global_position += rg * side * push * dt
+		r.velocity += rg * side * push * 0.5 * dt
 
 
 ## AI helper: move a lane choice out of hazards between s0 and s1.

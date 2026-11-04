@@ -8,16 +8,20 @@ from PIL import Image, ImageDraw
 data = json.load(open(sys.argv[1]))
 out = sys.argv[2]
 var = sys.argv[3] if len(sys.argv) > 3 else "0"
-ids = ["asteroid_belt", "neon_ring", "jungle_moon", "comet_ice", "orbital_station", "lava_moon"]
-W, H = 700, 700
-img = Image.new("RGB", (W * 3, H * 2), (12, 10, 24))
+ids = sorted({k.rsplit("_", 1)[0] for k in data})
+if len(sys.argv) > 4:
+    ids = sys.argv[4].split(",")
+W, H = 560, 560
+cols = 4
+rows = (len(ids) + cols - 1) // cols
+img = Image.new("RGB", (W * cols, H * rows), (12, 10, 24))
 SURF = {0: (90, 100, 140), 1: (150, 130, 100), 2: (150, 220, 255), 3: (180, 60, 255), 4: (60, 180, 80), 5: (120, 50, 40)}
 FEAT = {"pod": (80, 255, 255), "crate": (255, 220, 60), "boost": (255, 80, 220), "roller": (200, 120, 80),
         "flare": (255, 160, 0), "laser": (255, 40, 40), "snapper": (100, 255, 100), "geyser": (120, 200, 255),
         "dropper": (200, 240, 255), "eruption": (255, 90, 0)}
 for k, tid in enumerate(ids):
     d = data["%s_%s" % (tid, var)]
-    ox, oy = (k % 3) * W, (k // 3) * H
+    ox, oy = (k % cols) * W, (k // cols) * H
     pts = d["main"]
     xs = [p[0] for p in pts] + [p[0] for p in d["short"]]
     zs = [p[2] for p in pts] + [p[2] for p in d["short"]]

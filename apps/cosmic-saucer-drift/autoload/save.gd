@@ -29,7 +29,7 @@ func _ready() -> void:
 func defaults() -> Dictionary:
 	return {
 		"version": VERSION,
-		"stardust": 300,
+		"credits": 300,
 		"cup_stars": {},          # "cup:race" -> bitmask of the 3 stars
 		"cup_best": {},           # cup id -> best finishing place (1..8)
 		"pilots": ["zib", "nova"],
@@ -62,6 +62,10 @@ func load_game() -> void:
 		return
 	var parsed: Variant = JSON.parse_string(f.get_as_text())
 	if parsed is Dictionary:
+		# v1 saves called the currency Stardust.
+		if parsed.has("stardust") and not parsed.has("credits"):
+			parsed["credits"] = parsed["stardust"]
+		parsed.erase("stardust")
 		_merge(data, parsed)
 	data.ads.sessions = int(data.ads.sessions) + 1
 	mark()
@@ -119,20 +123,20 @@ func set_setting(k: String, v: Variant) -> void:
 
 
 # ---------------------------------------------------------------- currency
-func stardust() -> int:
-	return int(data.stardust)
+func credits() -> int:
+	return int(data.credits)
 
 
-func add_stardust(n: int) -> void:
-	data.stardust = stardust() + n
-	stat_add("stardust_earned", n)
+func add_credits(n: int) -> void:
+	data.credits = credits() + n
+	stat_add("credits_earned", n)
 	mark()
 
 
 func spend(n: int) -> bool:
-	if stardust() < n:
+	if credits() < n:
 		return false
-	data.stardust = stardust() - n
+	data.credits = credits() - n
 	mark()
 	return true
 

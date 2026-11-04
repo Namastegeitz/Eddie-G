@@ -1,6 +1,6 @@
 class_name ResultsScreen
 extends RefCounted
-## Post-race screen: standings, Stardust breakdown, stars, unlocks,
+## Post-race screen: standings, Race Credits breakdown, stars, unlocks,
 ## achievements, cup standings, and what to do next.
 
 
@@ -71,8 +71,8 @@ static func make(race: Node, results: Array, summary: Dictionary) -> Control:
 		row.add_child(l)
 		row.add_child(UiKit.label("+%d" % int(line[1]), 20, UiKit.GOLD))
 		right.add_child(row)
-	var total: int = summary.get("stardust", 0)
-	var total_lbl := UiKit.label("Stardust  +%d   (bank %d)" % [total, Save.stardust()], 24, UiKit.GOLD)
+	var total: int = summary.get("credits", 0)
+	var total_lbl := UiKit.label("Race Credits  +%d   (bank %s)" % [total, UiKit.num(Save.credits())], 24, UiKit.GOLD)
 	right.add_child(total_lbl)
 	if req.mode == "cup":
 		var mask: int = summary.get("star_mask", 0)
@@ -83,6 +83,11 @@ static func make(race: Node, results: Array, summary: Dictionary) -> Control:
 	if req.mode == "daily":
 		var ok: bool = summary.get("daily_ok", false)
 		right.add_child(UiKit.label("Daily: %s %s" % [summary.get("daily_goal", ""), "✔" if ok else "✘"], 20, UiKit.GREEN if ok else UiKit.RED))
+	var facts: Array = race.td.def.get("facts", [])
+	if not facts.is_empty():
+		var fl := UiKit.label("Did you know? " + str(facts[randi() % facts.size()]), 18, Color(0.8, 0.85, 1.0))
+		fl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		right.add_child(fl)
 	for u in summary.get("unlocks", []):
 		var l := UiKit.label("» " + str(u), 20, UiKit.GREEN)
 		l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -106,14 +111,14 @@ static func make(race: Node, results: Array, summary: Dictionary) -> Control:
 	btns.alignment = BoxContainer.ALIGNMENT_CENTER
 	outer.add_child(btns)
 	var first: Button = null
-	if Ads.can_offer("double_stardust") and total > 0:
-		var ad := UiKit.button("▶ Watch ad: +%d Stardust" % total, func() -> void: pass, 22)
+	if Ads.can_offer("double_credits") and total > 0:
+		var ad := UiKit.button("▶ Watch ad: +%d credits" % total, func() -> void: pass, 22)
 		ad.pressed.connect(func() -> void:
 			ad.disabled = true
-			Ads.show_rewarded("double_stardust", func(granted: bool) -> void:
+			Ads.show_rewarded("double_credits", func(granted: bool) -> void:
 				if granted:
-					Save.add_stardust(total)
-					total_lbl.text = "Stardust  +%d   (bank %d)" % [total * 2, Save.stardust()]))
+					Save.add_credits(total)
+					total_lbl.text = "Race Credits  +%d   (bank %s)" % [total * 2, UiKit.num(Save.credits())]))
 		btns.add_child(ad)
 	if req.mode == "cup":
 		var cup := Game.cup_def(req.cup)
