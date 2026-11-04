@@ -1,0 +1,27 @@
+{
+  "id": "jararaca",
+  "predator": true,
+  "sprite": "",
+  "name": "Jararaca",
+  "kind": "striker",
+  "lane": "safe",
+  "cause": "eaten",
+  "cause_text": "Bitten by a jararaca",
+  "period": [
+    3.6,
+    5.2
+  ],
+  "warn": 0.8,
+  "strike": 0.45,
+  "span": 2,
+  "hidden": false,
+  "art": {
+    "painter": "snake",
+    "colors": {
+      "body": "#9a7a52",
+      "pattern": "#3a2a1a",
+      "eye": "#1a1a1a"
+    }
+  },
+  "desc": "Lurks in the leaf litter, then strikes along the lane."
+}

@@ -147,27 +147,153 @@
   "stages": [
     {
       "name": "Cloud Trail",
-      "rows": 26,
+      "rows": 40,
       "difficulty": [
         0.0,
-        0.3
-      ]
+        0.22
+      ],
+      "canopy": {
+        "zones": 1,
+        "rows": [
+          4,
+          6
+        ]
+      }
     },
     {
       "name": "Hanging Bridges",
-      "rows": 36,
+      "rows": 50,
       "difficulty": [
-        0.25,
-        0.6
-      ]
+        0.06,
+        0.3
+      ],
+      "canopy": {
+        "zones": 1,
+        "rows": [
+          4,
+          6
+        ]
+      }
     },
     {
       "name": "Misty Creeks",
-      "rows": 48,
+      "rows": 60,
       "difficulty": [
-        0.5,
-        0.85
-      ]
+        0.12,
+        0.38
+      ],
+      "canopy": {
+        "zones": 1,
+        "rows": [
+          4,
+          7
+        ]
+      }
+    },
+    {
+      "name": "Quetzal Valley",
+      "rows": 70,
+      "difficulty": [
+        0.18,
+        0.46
+      ],
+      "canopy": {
+        "zones": 2,
+        "rows": [
+          5,
+          7
+        ]
+      }
+    },
+    {
+      "name": "Moss Garden",
+      "rows": 80,
+      "difficulty": [
+        0.24,
+        0.54
+      ],
+      "canopy": {
+        "zones": 2,
+        "rows": [
+          5,
+          8
+        ]
+      }
+    },
+    {
+      "name": "Ridge Walk",
+      "rows": 90,
+      "difficulty": [
+        0.3,
+        0.62
+      ],
+      "canopy": {
+        "zones": 2,
+        "rows": [
+          5,
+          8
+        ]
+      }
+    },
+    {
+      "name": "Wind Gap",
+      "rows": 100,
+      "difficulty": [
+        0.36,
+        0.7
+      ],
+      "canopy": {
+        "zones": 3,
+        "rows": [
+          6,
+          9
+        ]
+      }
+    },
+    {
+      "name": "Elfin Forest",
+      "rows": 110,
+      "difficulty": [
+        0.42,
+        0.78
+      ],
+      "canopy": {
+        "zones": 3,
+        "rows": [
+          6,
+          9
+        ]
+      }
+    },
+    {
+      "name": "Coffee Road",
+      "rows": 120,
+      "difficulty": [
+        0.48,
+        0.86
+      ],
+      "canopy": {
+        "zones": 3,
+        "rows": [
+          6,
+          10
+        ]
+      }
+    },
+    {
+      "name": "Continental Divide",
+      "rows": 130,
+      "difficulty": [
+        0.54,
+        0.94
+      ],
+      "canopy": {
+        "zones": 4,
+        "rows": [
+          7,
+          10
+        ]
+      }
     }
   ],
   "endless": {

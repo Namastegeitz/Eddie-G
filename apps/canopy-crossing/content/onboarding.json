@@ -42,7 +42,8 @@
           [
             9.0
           ]
-        ]
+        ],
+        "covered": true
       },
       {
         "lane": "safe",
@@ -55,7 +56,8 @@
             6,
             "beetle"
           ]
-        ]
+        ],
+        "covered": true
       },
       {
         "lane": "water",
@@ -126,11 +128,18 @@
         "until": "row>=4"
       },
       {
-        "id": "swipe",
-        "text": "Swipe to hop sideways or back",
-        "hint": "swipe",
-        "trigger": "row>=5",
-        "until": "row>=7",
+        "id": "first_person",
+        "text": "Thick canopy hides the trail. Tap the eye to see through your animal's eyes",
+        "hint": "eye",
+        "trigger": "next_covered",
+        "until": "fpv|row>=6"
+      },
+      {
+        "id": "birds_eye",
+        "text": "Tap the eye again to fly back up to the bird's-eye view",
+        "hint": "eye",
+        "trigger": "fpv&row>=6",
+        "until": "birdseye|row>=8",
         "optional": true
       },
       {
@@ -175,6 +184,9 @@
     },
     "double_rewards": {
       "text": "Watch a video to double this run's Berries?"
+    },
+    "canopy_tip": {
+      "text": "Dense canopy ahead: tap the eye to see under the leaves"
     }
   },
   "nudges": {

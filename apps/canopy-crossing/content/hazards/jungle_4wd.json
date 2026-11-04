@@ -1,0 +1,30 @@
+{
+  "id": "jungle_4wd",
+  "predator": false,
+  "sprite": "",
+  "name": "Jungle 4WD",
+  "kind": "mover",
+  "lane": "ground",
+  "cause": "crushed",
+  "cause_text": "Run down by a jungle 4WD",
+  "length": [
+    1.7,
+    1.8
+  ],
+  "speed": [
+    2.0,
+    3.0
+  ],
+  "gap": [
+    3.0,
+    5.2
+  ],
+  "art": {
+    "painter": "jeep",
+    "colors": {
+      "body": "#3a5a2a",
+      "roof": "#e8e0c8"
+    }
+  },
+  "desc": "Mud-spattered and in a hurry."
+}

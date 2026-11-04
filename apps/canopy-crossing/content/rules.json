@@ -1,4 +1,16 @@
 {
   "water_restarts_run": true,
-  "restart_delay": 1.2
+  "restart_delay": 1.2,
+  "endless_canopy": {
+    "first": 18,
+    "every": [
+      26,
+      40
+    ],
+    "rows": [
+      5,
+      9
+    ]
+  },
+  "levels_per_scene": 10
 }

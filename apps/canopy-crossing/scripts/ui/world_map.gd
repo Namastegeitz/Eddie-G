@@ -11,6 +11,7 @@ var globe: Widgets.Globe
 var detail: VBoxContainer
 var region_row: HBoxContainer
 var mode_btns := {}
+var level_sel := -1
 
 
 func setup(a: Dictionary) -> void:
@@ -69,6 +70,7 @@ func _set_mode(md: String) -> void:
 
 func _select(id: String) -> void:
 	selected = id
+	level_sel = -1
 	globe.focus(id)
 	Sfx.play("swipe")
 	if Content.map(id).get("status", "available") == "available":
@@ -105,7 +107,7 @@ func _regions() -> void:
 		elif not Save.owns_map(id):
 			status = "Locked · Map pack"
 		elif mode == "journey":
-			status = "%d/%d stages" % [Progress.stages_cleared(id), mp.get("stages", []).size()]
+			status = "%d/%d levels" % [Progress.stages_cleared(id), mp.get("stages", []).size()]
 		else:
 			status = "Best %d rows" % Progress.best_rows(id)
 		v.add_child(UI.label(status, 20, UI.ACCENT if Save.owns_map(id) else UI.MUTED))
@@ -145,17 +147,7 @@ func _detail() -> void:
 	detail.add_child(_animal_row())
 	detail.add_child(_loadout())
 	if mode == "journey":
-		var stages: Array = mp.get("stages", [])
-		for i in stages.size():
-			var st: Dictionary = stages[i]
-			var unlocked := Progress.stage_unlocked(selected, i)
-			var cleared := i < Progress.stages_cleared(selected)
-			var best := int(Save.map_progress(selected).get("stage_best", {}).get(str(i), 0))
-			var label := "%d. %s · %d rows%s" % [i + 1, String(st.name), int(st.rows), ("  · cleared · best %d" % best) if cleared else ""]
-			var b := UI.button(label if unlocked else "%d. %s · locked" % [i + 1, String(st.name)], func(): Game.start_journey(selected, i),
-				UI.ACCENT if unlocked and not cleared else (UI.PANEL_3 if cleared else UI.LOCK), 28, 92)
-			b.disabled = not unlocked
-			detail.add_child(b)
+		_levels(mp)
 	else:
 		detail.add_child(UI.label("Best: %d rows · %d pts" % [Progress.best_rows(selected), int(Save.map_progress(selected).get("best_score", 0))], 28, UI.TEXT, true))
 		detail.add_child(UI.wrap_label("Endless lanes, rising difficulty. The jungle creeps up behind you — keep moving.", 24, UI.MUTED))
@@ -209,3 +201,42 @@ func _loadout() -> Control:
 	sc.add_child(row)
 	box.add_child(sc)
 	return box
+
+
+## The scene's 10 levels as a grid; the chosen one is described below it.
+func _levels(mp: Dictionary) -> void:
+	var stages: Array = mp.get("stages", [])
+	var cleared_n := Progress.stages_cleared(selected)
+	if level_sel < 0 or level_sel >= stages.size() or not Progress.stage_unlocked(selected, level_sel):
+		level_sel = mini(cleared_n, stages.size() - 1)
+	detail.add_child(UI.label("Levels  ·  %d of %d cleared" % [cleared_n, stages.size()], 26, UI.MUTED, true))
+	var grid := GridContainer.new()
+	grid.columns = 5
+	grid.add_theme_constant_override("h_separation", 10)
+	grid.add_theme_constant_override("v_separation", 10)
+	for i in stages.size():
+		var unlocked := Progress.stage_unlocked(selected, i)
+		var cleared := i < cleared_n
+		var c := UI.LOCK
+		if cleared:
+			c = UI.PANEL_3
+		elif unlocked:
+			c = UI.ACCENT
+		var b := UI.button(str(i + 1) if unlocked else "%d" % (i + 1), func():
+			level_sel = i
+			_detail(), c, 30, 84)
+		b.custom_minimum_size.x = 112
+		b.disabled = not unlocked
+		if i == level_sel:
+			b.add_theme_stylebox_override("normal", UI.box(c.lightened(0.15), 26, 4, Color.WHITE, 22))
+		grid.add_child(b)
+	detail.add_child(grid)
+	var st: Dictionary = stages[level_sel]
+	var zones := int(st.get("canopy", {}).get("zones", 0))
+	var best := int(Save.map_progress(selected).get("stage_best", {}).get(str(level_sel), 0))
+	detail.add_child(UI.label("Level %d: %s" % [level_sel + 1, String(st.name)], 32, UI.ACCENT, true))
+	var info := "%d rows · %d dense-canopy zone%s (switch to first person to see under the leaves)" % [int(st.rows), zones, "" if zones == 1 else "s"]
+	if best > 0:
+		info += " · best %d pts" % best
+	detail.add_child(UI.wrap_label(info, 23, UI.MUTED))
+	detail.add_child(UI.button("Play level %d" % (level_sel + 1), func(): Game.start_journey(selected, level_sel), UI.ACCENT, 32, 100))

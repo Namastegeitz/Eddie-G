@@ -30,6 +30,7 @@ var _preds := {}        # "row:i" -> PredView
 var _items := {}        # key -> ItemView
 var _swoops := []
 var _swoop_view: SwoopView
+var roof: CanopyRoof
 
 
 func setup(run: RunSim, animal_def: Dictionary, look: Dictionary, trail_def: Dictionary) -> void:
@@ -54,6 +55,10 @@ func setup(run: RunSim, animal_def: Dictionary, look: Dictionary, trail_def: Dic
 	_swoop_view = SwoopView.new()
 	_swoop_view.wv = self
 	overlay.add_child(_swoop_view)
+	roof = CanopyRoof.new()
+	roof.wv = self
+	roof.z_index = 5
+	add_child(roof)
 	fx = FxLayer.new()
 	overlay.add_child(fx)
 	player = PlayerView.new()
@@ -89,6 +94,7 @@ func update_view(dt: float) -> void:
 	position = Vector2(field_x, vp.y - T * 0.5 + cam_row * T) + off
 	_sync_lanes()
 	_sync_things(dt)
+	player.z_index = 6 if sim.world.lane(int(roundf(sim.display_pos().y))).covered else 0
 	player.update_view(dt)
 
 

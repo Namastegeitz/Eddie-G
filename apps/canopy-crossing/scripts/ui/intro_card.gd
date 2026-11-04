@@ -76,6 +76,15 @@ func _build(map_id: String) -> void:
 			cell.add_child(hv)
 			grid.add_child(cell)
 		box.add_child(grid)
+	var tip := UI.hbox(12)
+	var eye := Widgets.EyeButton.new(84)
+	eye.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	tip.add_child(eye)
+	var tl := UI.wrap_label("Dense canopy hides parts of every level from above. Tap the eye to switch to first person and see under the leaves.", 24, UI.TEXT)
+	tl.custom_minimum_size.x = 470
+	tl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	tip.add_child(tl)
+	box.add_child(tip)
 	var natives: Array = m.get("native_animals", [])
 	if not natives.is_empty():
 		box.add_child(UI.label("Native animals", 30, UI.ACCENT, true))

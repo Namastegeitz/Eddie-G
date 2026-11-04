@@ -1,0 +1,27 @@
+{
+  "id": "fer_de_lance",
+  "predator": true,
+  "sprite": "",
+  "name": "Fer-de-lance",
+  "kind": "striker",
+  "lane": "safe",
+  "cause": "eaten",
+  "cause_text": "Bitten by a fer-de-lance",
+  "period": [
+    3.6,
+    5.2
+  ],
+  "warn": 0.8,
+  "strike": 0.45,
+  "span": 2,
+  "hidden": false,
+  "art": {
+    "painter": "snake",
+    "colors": {
+      "body": "#a88a62",
+      "pattern": "#3a2a1a",
+      "eye": "#e8c547"
+    }
+  },
+  "desc": "Lurks in the leaf litter, then strikes along the lane."
+}

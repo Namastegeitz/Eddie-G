@@ -21,6 +21,7 @@ var effect := {}            # {kind, hazard, period, phase, warn, dur}
 var items: Array[Dictionary] = []   # collectibles
 var goal := false
 var start := false
+var covered := false          # under dense canopy: hidden from the bird's-eye view
 var deco := 0               # seed for decoration
 
 

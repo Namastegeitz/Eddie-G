@@ -1,0 +1,32 @@
+{
+  "id": "cardamom",
+  "order": 21,
+  "name": "Cardamom Mountains",
+  "location": "Cambodia",
+  "lat": 11.8,
+  "lon": 103.3,
+  "status": "coming_soon",
+  "access": {
+    "type": "pack",
+    "product": ""
+  },
+  "flag": {
+    "colors": [
+      "#1a3a8a",
+      "#d8242a"
+    ],
+    "code": "CDM"
+  },
+  "palette": {
+    "ui": "#1a3a8a",
+    "safe": "#3c9a3a",
+    "canopy": "#14592a"
+  },
+  "facts": [
+    "One of the largest remaining rainforests in mainland Southeast Asia."
+  ],
+  "hazards": {},
+  "stages": [],
+  "native_animals": [],
+  "sprite": ""
+}

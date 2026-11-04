@@ -1,0 +1,35 @@
+{
+  "id": "forest_buffalo",
+  "predator": false,
+  "sprite": "",
+  "name": "forest buffalo",
+  "kind": "mover",
+  "lane": "ground",
+  "cause": "crushed",
+  "cause_text": "Trampled by forest buffalo",
+  "group": [
+    1,
+    2
+  ],
+  "length": [
+    1.3,
+    1.3
+  ],
+  "spacing": 0.25,
+  "speed": [
+    1.0,
+    1.6
+  ],
+  "gap": [
+    2.6,
+    4.6
+  ],
+  "art": {
+    "painter": "herd",
+    "colors": {
+      "body": "#8a3a1a",
+      "accent": "#2a1a10"
+    }
+  },
+  "desc": "They don't stop for anyone."
+}

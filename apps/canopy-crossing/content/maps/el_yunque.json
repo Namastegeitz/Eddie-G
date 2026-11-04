@@ -1,0 +1,32 @@
+{
+  "id": "el_yunque",
+  "order": 22,
+  "name": "El Yunque",
+  "location": "Puerto Rico",
+  "lat": 18.3,
+  "lon": -65.8,
+  "status": "coming_soon",
+  "access": {
+    "type": "pack",
+    "product": ""
+  },
+  "flag": {
+    "colors": [
+      "#d8242a",
+      "#2a6fe0"
+    ],
+    "code": "ELY"
+  },
+  "palette": {
+    "ui": "#d8242a",
+    "safe": "#3c9a3a",
+    "canopy": "#14592a"
+  },
+  "facts": [
+    "The only tropical rainforest in the US National Forest System."
+  ],
+  "hazards": {},
+  "stages": [],
+  "native_animals": [],
+  "sprite": ""
+}

@@ -1,0 +1,26 @@
+{
+  "id": "american_crocodile",
+  "predator": true,
+  "sprite": "",
+  "name": "American crocodile",
+  "kind": "surfacer",
+  "lane": "water",
+  "cause": "eaten",
+  "cause_text": "Snapped up by a american crocodile",
+  "period": [
+    5.0,
+    8.0
+  ],
+  "warn": 1.1,
+  "up": 1.0,
+  "span": 1.5,
+  "art": {
+    "painter": "croc",
+    "colors": {
+      "body": "#6a6a42",
+      "belly": "#e0d8a8",
+      "eye": "#e8c547"
+    }
+  },
+  "desc": "Watch for ripples: it surfaces right there."
+}

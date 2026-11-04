@@ -22,6 +22,7 @@ godot --path . -- --skip-tutorial --give=500  # skip the tutorial, +500 Berries
 godot --path . -- --screen=store              # open a screen: home animals world store pass settings
 godot --path . -- --play=journey,borneo,2,orangutan   # straight into a run
 godot --path . -- --play=endless,amazon,0 --autoplay  # the bot plays (demo / capture)
+godot --path . -- --play=journey,yasuni,4 --fpv       # start in first-person view
 godot --path . -- --day=20500                 # pretend it's another day (deals, daily reward)
 ```
 
@@ -30,6 +31,13 @@ godot --path . -- --day=20500                 # pretend it's another day (deals,
 ```bash
 tools/run_tests.sh          # ~10 min: compile check + 250-check phase audit, project and exported pack
 FAST=1 tools/run_tests.sh   # ~3 min
+```
+
+To check that every level can be beaten with the free Poison Dart Frog
+(about 2 minutes for all 200):
+
+```bash
+godot --headless --path . res://tools/level_sweep.tscn -- --no-boot [--map=amazon]
 ```
 
 ## 4. Screenshots and clips

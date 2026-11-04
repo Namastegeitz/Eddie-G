@@ -1,0 +1,30 @@
+{
+  "id": "tricycle",
+  "predator": false,
+  "sprite": "",
+  "name": "Tricycle taxi",
+  "kind": "mover",
+  "lane": "ground",
+  "cause": "crushed",
+  "cause_text": "Clipped by a tricycle taxi",
+  "length": [
+    1.2,
+    1.2
+  ],
+  "speed": [
+    2.2,
+    3.2
+  ],
+  "gap": [
+    2.6,
+    4.2
+  ],
+  "art": {
+    "painter": "scooter",
+    "colors": {
+      "body": "#d8242a",
+      "rider": "#f6d43a"
+    }
+  },
+  "desc": "Buzzing taxis on the island roads."
+}

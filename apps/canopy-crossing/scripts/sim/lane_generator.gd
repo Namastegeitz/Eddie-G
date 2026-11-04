@@ -20,6 +20,7 @@ var _tail_bank := true
 var _stone_cols: Array = []
 var _ridge: Array = []
 var _layout: Array = []
+var cover: Array[Vector2i] = []   # canopy zones (first row, last row) that need first-person view
 
 
 func setup(map_def: Dictionary, run_mode: String, stage_index: int, seed_value: int) -> void:
@@ -37,6 +38,49 @@ func setup(map_def: Dictionary, run_mode: String, stage_index: int, seed_value: 
 		stage = stages[clampi(stage_index, 0, stages.size() - 1)] if not stages.is_empty() else {"rows": 30, "difficulty": [0.0, 0.5]}
 		goal_row = int(stage.get("rows", 30))
 		end_row = goal_row + 8
+	_plan_canopy(seed_value)
+
+
+## Dense-canopy zones come from data: a Journey level's "canopy" block
+## ({"zones": n, "rows": [min, max]}) or the endless rule in content/rules.json.
+## The lanes underneath are generated as usual; only the view changes.
+func _plan_canopy(seed_value: int) -> void:
+	cover.clear()
+	var zr := RandomNumberGenerator.new()
+	zr.seed = seed_value * 31 + 7
+	var start := int(gen.get("start_rows", 3))
+	if mode == "journey":
+		var c: Dictionary = stage.get("canopy", {})
+		var zones := int(c.get("zones", 0))
+		var rr: Array = c.get("rows", [4, 6])
+		if zones <= 0:
+			return
+		var lo := start + 3
+		var hi := goal_row - 3
+		var span := float(hi - lo) / zones
+		for z in zones:
+			var length := zr.randi_range(int(rr[0]), int(rr[1]))
+			var center := lo + int((z + 0.5) * span) + zr.randi_range(-2, 2)
+			var a := clampi(center - length / 2, lo, maxi(lo, hi - length))
+			cover.append(Vector2i(a, a + length - 1))
+	elif mode in ["endless", "daily"]:
+		var ec: Dictionary = Content.rules.get("endless_canopy", {})
+		if ec.is_empty():
+			return
+		var row := int(ec.get("first", 18))
+		var every: Array = ec.get("every", [26, 40])
+		var rr2: Array = ec.get("rows", [5, 9])
+		while row < 3000:
+			var length2 := zr.randi_range(int(rr2[0]), int(rr2[1]))
+			cover.append(Vector2i(row, row + length2 - 1))
+			row += length2 + zr.randi_range(int(every[0]), int(every[1]))
+
+
+func is_covered(row: int) -> bool:
+	for z in cover:
+		if row >= z.x and row <= z.y:
+			return true
+	return false
 
 
 func difficulty(row: int) -> float:
@@ -54,6 +98,8 @@ func build(world: World, upto: int) -> void:
 		if end_row >= 0 and next_row > end_row:
 			return
 		var lane := _next_lane()
+		if mode != "tutorial":
+			lane.covered = is_covered(lane.row) and not lane.goal and not lane.start
 		world.add_lane(lane)
 		next_row += 1
 
@@ -112,13 +158,13 @@ func _plan_band(r: int, d: float) -> void:
 	if goal_row >= 0:
 		n = clampi(n, 1, maxi(1, goal_row - r))
 	_band_dir = 1 if rng.randf() < 0.5 else -1
-	_stone_cols = []
 	_ridge = []
 	var between: Dictionary = gen.get("between", {})
 	var ridge := String(pick.get("layout", "")) == "ridge"
 	var plain_bank := {"band": {"id": "bank", "lane": "safe"}, "index": 0, "count": 1, "between": true}
-	# Ridges only connect to open banks: any column can reach their narrow path.
-	if ridge and not _tail_bank:
+	# Ridges only connect to open, empty banks: any column can reach their
+	# narrow path (a snake on the bank could otherwise block the only way on).
+	if ridge:
 		_queue.append(plain_bank)
 	_tail_bank = false
 	for i in n:
@@ -149,6 +195,13 @@ func _make_lane(r: int, d: float, spec: Dictionary) -> Lane:
 			_fill_water(lane, b, d, spec)
 		_:
 			_fill_safe(lane, b, d, spec)
+	# stepping stones carry their reachable columns only into the very next lane
+	var stones := false
+	for e in lane.ents:
+		if e.motion == "static" and e.platform:
+			stones = true
+	if not stones:
+		_stone_cols = []
 	_add_items(lane, d)
 	return lane
 
@@ -316,6 +369,7 @@ func _fill_water(lane: Lane, b: Dictionary, d: float, spec: Dictionary) -> void:
 				if not c in cols:
 					cols.append(c)
 			var dive: Dictionary = h.get("dive", {})
+			var steady := []
 			for i in cols.size():
 				var e := Ent.new()
 				e.hazard = hid
@@ -325,8 +379,23 @@ func _fill_water(lane: Lane, b: Dictionary, d: float, spec: Dictionary) -> void:
 				e.offset = float(cols[i])
 				if i >= 2 and not dive.is_empty() and rng.randf() < float(dive.chance):
 					_set_dive(e, dive)
+				else:
+					steady.append(cols[i])
 				lane.ents.append(e)
-			_stone_cols = cols
+			# Only stones you can actually stand on: reached from below (or from
+			# the bank) and then by hopping sideways between neighbouring stones.
+			var reach := []
+			for c in steady:
+				if _stone_cols.is_empty() or c in _stone_cols:
+					reach.append(c)
+			var grew := true
+			while grew:
+				grew = false
+				for c in steady:
+					if not c in reach and (c - 1 in reach or c + 1 in reach):
+						reach.append(c)
+						grew = true
+			_stone_cols = reach
 		_:
 			lane.speed = dir * _rr(h.speed) * smul
 			_place_linear(lane, h, hid, d, true)
@@ -516,6 +585,7 @@ func _tutorial_lane(r: int) -> Lane:
 	lane.deco = rng.randi()
 	lane.start = r < 3
 	lane.goal = r == goal_row
+	lane.covered = bool(spec.get("covered", false))
 	if spec.has("hazard"):
 		var hid := String(spec.hazard)
 		var h: Dictionary = Content.hazards[hid]

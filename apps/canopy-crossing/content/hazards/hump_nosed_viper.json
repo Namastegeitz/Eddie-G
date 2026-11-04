@@ -1,0 +1,27 @@
+{
+  "id": "hump_nosed_viper",
+  "predator": true,
+  "sprite": "",
+  "name": "Hump-nosed viper",
+  "kind": "striker",
+  "lane": "safe",
+  "cause": "eaten",
+  "cause_text": "Bitten by a hump-nosed viper",
+  "period": [
+    3.6,
+    5.2
+  ],
+  "warn": 0.8,
+  "strike": 0.45,
+  "span": 2,
+  "hidden": false,
+  "art": {
+    "painter": "snake",
+    "colors": {
+      "body": "#8a6a4a",
+      "pattern": "#4a3020",
+      "eye": "#1a1a1a"
+    }
+  },
+  "desc": "Lurks in the leaf litter, then strikes along the lane."
+}

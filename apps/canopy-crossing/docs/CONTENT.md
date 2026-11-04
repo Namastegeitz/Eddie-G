@@ -92,7 +92,11 @@ Copy an existing map and change:
   `safe_effects`, `swoopers`, `events`
 - `difficulty`: `speed`, `density`, `band` (lanes per band, easy → hard),
   `safe_chance`, `special_chance`, `rows_to_max`, `move_timer` (seconds, 0 = off)
-- `stages`: Journey stages `{name, rows, difficulty: [from, to]}`
+- `stages`: the scene's 10 levels, `{name, rows, difficulty: [from, to],
+  canopy: {zones, rows: [min, max]}}`. `canopy` places that many
+  dense-canopy zones (each `rows` long) through the level: the lanes under
+  them play as usual, but the bird's-eye view sees only leaves, so the
+  player switches to first person to cross them.
 - `endless.creep`: how fast the jungle closes in (rows/s, easy → hard)
 - optional `dlc`: `{"url": "https://…/pack.zip"}` to download the pack's
   files on unlock (zip paths like `content/maps/x.json`, unpacked into `user://`)
@@ -130,6 +134,9 @@ results card says.
   Other hazards (traffic, predators, quicksand, gullies, being carried
   off-screen) still cost a life. Set it to `false` for the old behaviour.
 - `restart_delay`: seconds of splash before the restart (default 1.2).
+- `endless_canopy`: canopy zones in Endless and the Daily Challenge:
+  `{"first": 18, "every": [26, 40], "rows": [5, 9]}`.
+- `levels_per_scene`: 10 (documentation; each map's `stages` list is what counts).
 
 ## Store, live ops, seasons, onboarding
 

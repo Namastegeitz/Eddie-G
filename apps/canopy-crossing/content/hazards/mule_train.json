@@ -1,0 +1,35 @@
+{
+  "id": "mule_train",
+  "predator": false,
+  "sprite": "",
+  "name": "a mule train",
+  "kind": "mover",
+  "lane": "ground",
+  "cause": "crushed",
+  "cause_text": "Trampled by a mule train",
+  "group": [
+    2,
+    4
+  ],
+  "length": [
+    1.0,
+    1.0
+  ],
+  "spacing": 0.25,
+  "speed": [
+    0.9,
+    1.4
+  ],
+  "gap": [
+    2.6,
+    4.6
+  ],
+  "art": {
+    "painter": "herd",
+    "colors": {
+      "body": "#6a5040",
+      "accent": "#e8d8b0"
+    }
+  },
+  "desc": "They don't stop for anyone."
+}

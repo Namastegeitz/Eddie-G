@@ -1,0 +1,27 @@
+{
+  "id": "many_banded_krait",
+  "predator": true,
+  "sprite": "",
+  "name": "Many-banded krait",
+  "kind": "striker",
+  "lane": "safe",
+  "cause": "eaten",
+  "cause_text": "Bitten by a many-banded krait",
+  "period": [
+    3.6,
+    5.2
+  ],
+  "warn": 0.8,
+  "strike": 0.45,
+  "span": 2,
+  "hidden": false,
+  "art": {
+    "painter": "snake",
+    "colors": {
+      "body": "#1a1a1a",
+      "pattern": "#f2f0ea",
+      "eye": "#1a1a1a"
+    }
+  },
+  "desc": "Lurks in the leaf litter, then strikes along the lane."
+}

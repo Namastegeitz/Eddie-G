@@ -1,0 +1,35 @@
+{
+  "id": "asian_elephant_herd",
+  "predator": false,
+  "sprite": "",
+  "name": "Asian elephants",
+  "kind": "mover",
+  "lane": "ground",
+  "cause": "crushed",
+  "cause_text": "Squashed by an Asian elephant",
+  "group": [
+    1,
+    2
+  ],
+  "length": [
+    1.9,
+    1.9
+  ],
+  "spacing": 0.4,
+  "speed": [
+    0.7,
+    1.1
+  ],
+  "gap": [
+    3.0,
+    5.0
+  ],
+  "art": {
+    "painter": "elephant",
+    "colors": {
+      "body": "#8a8478",
+      "ear": "#7a7468"
+    }
+  },
+  "desc": "Wild elephants on the move. Give them room."
+}

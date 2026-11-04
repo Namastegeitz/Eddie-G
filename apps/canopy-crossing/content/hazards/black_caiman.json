@@ -1,0 +1,26 @@
+{
+  "id": "black_caiman",
+  "predator": true,
+  "sprite": "",
+  "name": "Black caiman",
+  "kind": "surfacer",
+  "lane": "water",
+  "cause": "eaten",
+  "cause_text": "Snapped up by a black caiman",
+  "period": [
+    5.0,
+    8.0
+  ],
+  "warn": 1.1,
+  "up": 1.0,
+  "span": 1.6,
+  "art": {
+    "painter": "croc",
+    "colors": {
+      "body": "#2a2a26",
+      "belly": "#b8b49a",
+      "eye": "#e8c547"
+    }
+  },
+  "desc": "Watch for ripples: it surfaces right there."
+}

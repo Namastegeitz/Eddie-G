@@ -1,0 +1,29 @@
+{
+  "id": "bangka",
+  "predator": false,
+  "sprite": "",
+  "name": "Bangka outrigger",
+  "kind": "platform",
+  "lane": "water",
+  "length": [
+    2.6,
+    3.2
+  ],
+  "speed": [
+    0.9,
+    1.5
+  ],
+  "gap": [
+    1.4,
+    3.0
+  ],
+  "art": {
+    "painter": "boat",
+    "colors": {
+      "body": "#f2f0ea",
+      "trim": "#2a6fe0",
+      "canopy": "#d8242a"
+    }
+  },
+  "desc": "Hitch a ride across the water."
+}

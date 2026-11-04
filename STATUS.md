@@ -25,7 +25,10 @@
 ## Canopy Crossing (`apps/canopy-crossing`)
 - Built from `prompts/claude/canopy-crossing.md` (copied from the Claude doc brief): all 8 phases,
   Godot 4.7.2, portrait 720x1280, GL Compatibility.
-- Data-driven: 50 animals, 63 hazards, 12 maps (10 playable + 2 coming soon), 3 lane generators,
+- 200 maps: 20 real rainforest scenes x 10 levels (40 to 130 rows each), plus 2 coming soon.
+  Two views: bird's-eye (2D) and first person (3D, eye button / V). Every level has dense-canopy
+  zones that hide the ground from above, so first person is needed to cross them.
+- Data-driven: 50 animals, 87 hazards, 22 maps (20 playable + 2 coming soon), 3 lane generators,
   store catalog, live ops, 2 seasons, onboarding text are JSON under `content/`. Adding an animal
   or region is a file (the audit proves it by adding both at runtime). Guide: `docs/CONTENT.md`.
 - Gameplay: grid hops (tap / swipe / keys / gamepad), movers, platforms (logs, lily pads, diving

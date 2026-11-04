@@ -7,6 +7,7 @@ extends Control
 
 var wv: WorldView
 var atm: Dictionary = {}
+var fpv := false                 # first-person: no 2D frame or mist
 var t := 0.0
 var _gust := []
 
@@ -39,7 +40,7 @@ func _draw() -> void:
 			draw_colored_polygon(PackedVector2Array([Vector2(x, 0), Vector2(x + 90, 0), Vector2(x + 260, vp.y), Vector2(x + 120, vp.y)]),
 				Color(1.0, 0.97, 0.75, 0.05 * shafts * (0.7 + 0.3 * sin(t * 0.7 + i))))
 	# mist far ahead (top of the screen)
-	var mist := maxf(0.0, float(atm.get("mist", 0.0)) - wv.reveal * 0.35)
+	var mist := maxf(0.0, float(atm.get("mist", 0.0)) - wv.reveal * 0.35) if not fpv else 0.0
 	if mist > 0.0:
 		var fog := Color(String(atm.get("fog_color", "#e6ece6")))
 		var bands := 16
@@ -75,6 +76,8 @@ func _draw() -> void:
 		var ay := vp.y * 0.36
 		draw_colored_polygon(PackedVector2Array([Vector2(cx + dir * 70, ay), Vector2(cx - dir * 30, ay - 40), Vector2(cx - dir * 30, ay + 40)]), Color(1, 1, 1, 0.45 * k2))
 		draw_rect(Rect2(cx - 110 if dir > 0 else cx - 10, ay - 14, 120, 28), Color(1, 1, 1, 0.45 * k2))
+	if fpv:
+		return
 	# canopy frame: solid foliage beyond the play field, leaves reaching in
 	for side: int in [-1, 1]:
 		var edge := fx if side < 0 else fx + fw

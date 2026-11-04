@@ -341,3 +341,58 @@ class Globe extends Control:
 		if best != "":
 			accept_event()
 			pin_pressed.emit(best)
+
+
+class EyeButton extends Control:
+	## Switches between bird's-eye and first-person view. Shows what you
+	## switch TO: an eye for first person, a bird for bird's-eye. Pulses when
+	## dense canopy is ahead.
+	signal pressed
+
+	var fpv := false
+	var pulse := false
+	var t := 0.0
+
+	func _init(s := 124.0) -> void:
+		custom_minimum_size = Vector2(s, s)
+		mouse_filter = Control.MOUSE_FILTER_STOP
+
+	func _process(dt: float) -> void:
+		t += dt
+		queue_redraw()
+
+	func _gui_input(event: InputEvent) -> void:
+		if (event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT) or (event is InputEventScreenTouch and event.pressed):
+			accept_event()
+			pressed.emit()
+
+	func _draw() -> void:
+		var c := Vector2(size.x * 0.5, size.y * 0.42)
+		var r := minf(size.x, size.y) * 0.36
+		if pulse and not fpv:
+			var k := fposmod(t * 1.4, 1.0)
+			Draw.ellipse_line(self, c, r * (1.0 + k * 0.5), r * (1.0 + k * 0.5), Color(1, 0.85, 0.3, 1.0 - k), 5)
+		Draw.ellipse(self, c + Vector2(0, 4), r, r, Color(0, 0, 0, 0.3))
+		Draw.ellipse(self, c, r, r, Color("2a6fe0") if not fpv else Color("2a8a5a"))
+		if not fpv:
+			var pts := PackedVector2Array()
+			for i in 13:
+				var a := PI * i / 12.0
+				pts.append(c + Vector2(-cos(a) * r * 0.7, -sin(a) * r * 0.42))
+			for i in range(1, 12):
+				var a2 := PI * i / 12.0
+				pts.append(c + Vector2(cos(a2) * r * 0.7, sin(a2) * r * 0.42))
+			draw_colored_polygon(pts, Color.WHITE)
+			Draw.ellipse(self, c, r * 0.26, r * 0.26, Color("1a3a6a"))
+			Draw.ellipse(self, c + Vector2(-r * 0.08, -r * 0.08), r * 0.08, r * 0.08, Color.WHITE)
+		else:
+			var wing := Color.WHITE
+			draw_colored_polygon(PackedVector2Array([c + Vector2(-r * 0.75, -r * 0.05), c + Vector2(-r * 0.2, -r * 0.3), c + Vector2(0, -r * 0.08),
+				c + Vector2(r * 0.2, -r * 0.3), c + Vector2(r * 0.75, -r * 0.05), c + Vector2(0, r * 0.22)]), wing)
+		var font := UI.font(true)
+		var label := "First person" if not fpv else "Bird's-eye"
+		var fs := int(size.y * 0.15)
+		var w := font.get_string_size(label, HORIZONTAL_ALIGNMENT_LEFT, -1, fs).x
+		var p := Vector2(size.x * 0.5 - w * 0.5, size.y - 6)
+		draw_string_outline(font, p, label, HORIZONTAL_ALIGNMENT_LEFT, -1, fs, 6, Color(0, 0, 0, 0.6))
+		draw_string(font, p, label, HORIZONTAL_ALIGNMENT_LEFT, -1, fs, Color.WHITE)

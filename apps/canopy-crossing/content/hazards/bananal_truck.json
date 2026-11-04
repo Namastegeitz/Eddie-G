@@ -1,0 +1,31 @@
+{
+  "id": "bananal_truck",
+  "predator": false,
+  "sprite": "",
+  "name": "Banana truck",
+  "kind": "mover",
+  "lane": "ground",
+  "cause": "crushed",
+  "cause_text": "Flattened by a banana truck",
+  "length": [
+    2.4,
+    2.8
+  ],
+  "speed": [
+    1.8,
+    2.7
+  ],
+  "gap": [
+    3.0,
+    5.2
+  ],
+  "art": {
+    "painter": "truck",
+    "colors": {
+      "body": "#f2c82a",
+      "cab": "#2a6fe0",
+      "cargo": "#7ab83a"
+    }
+  },
+  "desc": "Big and fast. Wait for the gap."
+}

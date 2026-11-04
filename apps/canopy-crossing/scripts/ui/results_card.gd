@@ -32,7 +32,7 @@ func _build(screen, won: bool, rows: int, berries: int, amber: int, rec: Diction
 		"tutorial":
 			title = "You made it!"
 		"journey":
-			title = "Stage cleared!" if won else "So close!"
+			title = "Level cleared!" if won else "So close!"
 		"daily":
 			title = "Daily challenge"
 	box.add_child(UI.label(title, 48, UI.ACCENT, true, HORIZONTAL_ALIGNMENT_CENTER))
@@ -80,7 +80,7 @@ func _build(screen, won: bool, rows: int, berries: int, amber: int, rec: Diction
 		"journey":
 			var stages: Array = map.get("stages", [])
 			if won and int(cfg.get("stage", 0)) + 1 < stages.size():
-				box.add_child(UI.button("Next stage: %s" % String(stages[int(cfg.stage) + 1].name), func(): screen.leave("next"), UI.ACCENT, 30, 92))
+				box.add_child(UI.button("Next level: %s" % String(stages[int(cfg.stage) + 1].name), func(): screen.leave("next"), UI.ACCENT, 30, 92))
 			box.add_child(UI.button("Retry" if not won else "Play again", func(): screen.leave("retry"), UI.PANEL_3 if won else UI.ACCENT, 30, 88))
 		_:
 			box.add_child(UI.button("Run again", func(): screen.leave("retry"), UI.ACCENT, 30, 92))

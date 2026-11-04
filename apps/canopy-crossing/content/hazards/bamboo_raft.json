@@ -1,0 +1,29 @@
+{
+  "id": "bamboo_raft",
+  "predator": false,
+  "sprite": "",
+  "name": "Bamboo raft",
+  "kind": "platform",
+  "lane": "water",
+  "length": [
+    2.2,
+    3.0
+  ],
+  "speed": [
+    0.8,
+    1.4
+  ],
+  "gap": [
+    1.2,
+    2.6
+  ],
+  "art": {
+    "painter": "log",
+    "colors": {
+      "body": "#c8b05a",
+      "ring": "#e8d890",
+      "moss": "#7a9a3a"
+    }
+  },
+  "desc": "Lashed bamboo, steady and slow."
+}

@@ -7,5 +7,6 @@
   "reduce_motion": false,
   "move_timer": true,
   "ads_personalised": false,
-  "show_fps": false
+  "show_fps": false,
+  "first_person": false
 }

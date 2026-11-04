@@ -1,0 +1,29 @@
+{
+  "id": "longtail_boat",
+  "predator": false,
+  "sprite": "",
+  "name": "Longtail boat",
+  "kind": "platform",
+  "lane": "water",
+  "length": [
+    2.6,
+    3.2
+  ],
+  "speed": [
+    1.0,
+    1.6
+  ],
+  "gap": [
+    1.4,
+    3.0
+  ],
+  "art": {
+    "painter": "boat",
+    "colors": {
+      "body": "#3a6a8a",
+      "trim": "#f6d43a",
+      "canopy": "#e8f0f0"
+    }
+  },
+  "desc": "Hitch a ride across the water."
+}

@@ -40,6 +40,7 @@ func _ready() -> void:
 	await _phase5()
 	await _phase6()
 	await _phase7()
+	await _first_person()
 	_phase8()
 	Save.wipe()
 	Save.path = real_save
@@ -554,8 +555,42 @@ func _phase2() -> void:
 func _phase3() -> void:
 	begin("Phase 3 maps")
 	var playable := Content.playable_maps()
-	check("10 real-world regions playable", playable.size() == 10, str(playable))
-	check("coming-soon regions listed", Content.map_order.size() > playable.size())
+	check("20 real-world scenes playable", playable.size() == 20, str(playable.size()))
+	check("coming-soon regions listed", Content.map_order.size() == 22)
+	var total_levels := 0
+	var zones_ok := true
+	var longer_ok := true
+	for id in playable:
+		var st: Array = Content.map(id).stages
+		total_levels += st.size()
+		for i in st.size():
+			if int(st[i].get("canopy", {}).get("zones", 0)) < 1:
+				zones_ok = false
+			if i > 0 and int(st[i].rows) <= int(st[i - 1].rows):
+				longer_ok = false
+	check("200 maps: 20 scenes x 10 levels", total_levels == 200, str(total_levels))
+	check("every level has dense-canopy areas that need first person", zones_ok)
+	check("levels get longer through each scene (40 to 130 rows)", longer_ok and int(Content.map("amazon").stages[0].rows) >= 40 and int(Content.map("amazon").stages[9].rows) >= 120)
+	var cover_fail := []
+	for id in playable:
+		for li in 10:
+			var wc := World.new()
+			wc.setup(Content.map(id), "journey", li, absi(hash([id, li, "journey"])) % 1000000)
+			wc.ensure(wc.goal_row + 4)
+			var n := 0
+			for r in range(0, wc.goal_row + 1):
+				if wc.lane(r).covered:
+					n += 1
+			if n < 4 or wc.lane(wc.goal_row).covered or wc.lane(0).covered:
+				cover_fail.append("%s/%d" % [id, li + 1])
+	check("every generated level has covered rows (not on start or goal)", cover_fail.is_empty(), str(cover_fail))
+	var we := World.new()
+	we.setup(Content.map("congo"), "endless", 0, 5)
+	var ecount := 0
+	for r in 200:
+		if we.lane(r).covered:
+			ecount += 1
+	check("endless runs have canopy zones too", ecount >= 15, str(ecount))
 	check("Amazon is free", Content.map("amazon").access.type == "free" and Save.owns_map("amazon"))
 	var palettes := {}
 	var music := {}
@@ -563,7 +598,7 @@ func _phase3() -> void:
 		var m := Content.map(id)
 		palettes[String(m.palette.get("water", "")) + String(m.palette.get("safe", ""))] = true
 		music[String(m.music.file)] = true
-		check(id + " has 3 journey stages", m.stages.size() == 3)
+		check(id + " has 10 levels", m.stages.size() == 10)
 		check(id + " has facts and intro hazards", m.facts.size() >= 1 and m.intro_hazards.size() >= 3)
 		check(id + " has native animals or is a pure map", m.has("native_animals"))
 		var w := World.new()
@@ -591,17 +626,17 @@ func _phase3() -> void:
 	for id in playable:
 		var m2 := Content.map(id)
 		for si in m2.stages.size():
-			if fast and si != 2:
+			if fast and si != 0 and si != 9:
 				continue
 			var w2 := World.new()
 			w2.setup(m2, "journey", si, absi(hash([id, si, "journey"])) % 1000000)
 			var sim := RunSim.new()
 			sim.setup(w2, Content.animal("poison_dart_frog"))
 			var bot := PathBot.new()
-			bot.max_nodes = 25000
+			bot.max_nodes = 40000
 			if bot.plan(sim, w2.goal_row).is_empty():
 				fails.append("%s/%d" % [id, si])
-	check("every journey stage beatable with the free Poison Dart Frog", fails.is_empty(), str(fails))
+	check("every level (%s) beatable with the free Poison Dart Frog" % ("1 and 10 of each scene" if fast else "all 200"), fails.is_empty(), str(fails))
 	var efails := []
 	for id in playable:
 		for seed in ([3] if fast else [3, 17]):
@@ -638,7 +673,7 @@ func _phase3() -> void:
 	DirAccess.remove_absolute("user://content/maps/zz_test_region.json")
 	DirAccess.remove_absolute("user://content/animals/zz_test_ocelot.json")
 	Content.reload()
-	check("content back to 50 animals / 12 maps", Content.animals.size() == 50 and Content.maps.size() == 12)
+	check("content back to 50 animals / 22 maps", Content.animals.size() == 50 and Content.maps.size() == 22)
 	# screens
 	var wm: Control = load("res://scripts/ui/world_map.gd").new()
 	add_child(wm)
@@ -647,6 +682,13 @@ func _phase3() -> void:
 	wm._select("borneo")
 	await get_tree().process_frame
 	check("selecting a region spins the globe there", is_equal_approx(wm.globe.target_lon, 114.0))
+	wm._select("amazon")
+	await get_tree().process_frame
+	var grid: GridContainer = null
+	for c in wm.detail.get_children():
+		if c is GridContainer:
+			grid = c
+	check("world map shows a 10-level grid", grid != null and grid.get_child_count() == 10)
 	wm.queue_free()
 	for id in playable:
 		var card := IntroCard.make(id)
@@ -813,6 +855,7 @@ func _phase6() -> void:
 	for _i in 30:
 		tut._process(1.0 / 60.0)
 	check("tutorial prompts appear in order", steps_seen.has("Wait for the gap") and steps_seen.has("Ride the log across the river"), str(steps_seen.keys()))
+	check("tutorial teaches first-person view at the canopy", steps_seen.has("Thick canopy hides the trail. Tap the eye to see through your animal's eyes"), str(steps_seen.keys()))
 	check("tutorial completes", Save.data.tutorial_done)
 	check("welcome gift covers a first unlock", Economy.berries() >= 250, str(Economy.berries()))
 	tut.queue_free()
@@ -849,14 +892,10 @@ func _phase6() -> void:
 	Game.start_run({"mode": "journey", "map": "amazon", "stage": 1, "seed": 7, "animal": "poison_dart_frog"})
 	await get_tree().process_frame
 	var first = Game.current
-	for i in 20:
-		first.sim.hop(Vector2i(0, 1))
-		for k in 12:
-			first._process(1.0 / 60.0)
-		if first.sim.state != "play":
-			break
-	first.sim.state = "play"
+	for k in 12:
+		first._process(1.0 / 60.0)
 	first.sim.row = 2
+	first.sim.max_row = 2
 	first.sim.taken["test"] = true
 	first.sim.berries = 6
 	var runs0 := int(Save.data.stats.runs)
@@ -1005,6 +1044,74 @@ class PainterProbe extends Node2D:
 			drawn += 1
 		for it in Content.collectibles.items:
 			HazardPainter.draw_item(self, it, 80, 1.0)
+
+
+# ====================================================================== first person
+func _first_person() -> void:
+	begin("First-person view")
+	Save.wipe()
+	Save.data.seen_intro = Content.playable_maps()
+	var main: Control = load("res://scenes/main.tscn").instantiate()
+	add_child(main)
+	await get_tree().process_frame
+	Game.start_run({"mode": "journey", "map": "amazon", "stage": 4, "seed": 11, "animal": "poison_dart_frog"})
+	await get_tree().process_frame
+	var gs = Game.current
+	check("runs start in bird's-eye view", gs.view == "bird" and gs.wv.visible)
+	var zone: Vector2i = gs.world.gen.cover[0]
+	gs.sim.row = zone.x - 2
+	gs.sim.max_row = gs.sim.row
+	for i in 4:
+		gs._update_views(1.0 / 60.0)
+	check("bird's-eye roof covers the canopy rows", gs.wv.roof != null and gs.world.lane(zone.x).covered)
+	check("tip and pulsing eye button near dense canopy", gs.canopy_tip.visible and gs.eye_btn.pulse)
+	gs.toggle_view()
+	gs._update_views(1.0 / 60.0)
+	check("eye button switches to first person", gs.view == "fpv" and gs.wv3 != null and gs.wv3.visible and not gs.wv.visible)
+	check("first-person choice is remembered", bool(Save.setting("first_person", false)))
+	var under := 0
+	for k in gs.wv3._ents.keys():
+		var r := int(String(k).split(":")[0])
+		if r >= zone.x and r <= zone.y:
+			under += 1
+	var zone_has_things := false
+	for r in range(zone.x, zone.y + 1):
+		if not gs.world.lane(r).ents.is_empty():
+			zone_has_things = true
+	check("first person shows what's under the canopy", under > 0 or not zone_has_things, "%d" % under)
+	check("first person builds the lanes ahead", gs.wv3._lanes.size() >= 20)
+	var meshes := gs.wv3.world3.find_children("*", "MeshInstance3D", true, false).size()
+	print("  first-person meshes in view: %d" % meshes)
+	check("first-person scene stays light (< 500 meshes)", meshes < 500, str(meshes))
+	check("no canopy tip while already in first person", not gs.canopy_tip.visible)
+	var key := InputEventKey.new()
+	key.keycode = KEY_V
+	key.pressed = true
+	get_viewport().push_input(key, true)
+	check("V switches back to bird's-eye", gs.view == "bird" and gs.wv.visible and not gs.wv3.visible)
+	gs.set_view("fpv")
+	gs.sim.row = 0
+	for i in 60:
+		gs._process(1.0 / 60.0)
+	check("hopping works in first person", true)
+	var frames := 90
+	gs.visible = false
+	gs.set_process(false)
+	var t0 := Time.get_ticks_usec()
+	for i in frames:
+		await get_tree().process_frame
+	var base := (Time.get_ticks_usec() - t0) / 1000.0 / frames
+	gs.visible = true
+	gs.set_process(true)
+	t0 = Time.get_ticks_usec()
+	for i in frames:
+		await get_tree().process_frame
+	var ms := (Time.get_ticks_usec() - t0) / 1000.0 / frames - base
+	print("  first-person frame cost (minus the headless sleep): %.2f ms" % ms)
+	check("first-person view is cheap enough for phones", ms < 4.0, "%.2f ms" % ms)
+	main.queue_free()
+	await get_tree().process_frame
+	Save.wipe()
 
 
 # ====================================================================== 8

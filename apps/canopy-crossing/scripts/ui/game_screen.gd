@@ -14,6 +14,11 @@ var world: World
 var sim: RunSim
 var wv: WorldView
 var atm: Atmosphere
+var wv3: WorldView3D
+var fp_overlay: FirstPersonOverlay
+var view := "bird"               # bird | fpv
+var eye_btn: Widgets.EyeButton
+var canopy_tip: Label
 var hud: Control
 var overlay: Control
 var paused := false
@@ -144,6 +149,8 @@ func _build_view() -> void:
 	atm.setup(wv)
 	add_child(atm)
 	wv.update_view(1.0)
+	if String(cfg.get("view", "")) == "fpv" or (bool(Save.setting("first_person", false)) and not autoplay):
+		set_view("fpv", false)
 
 
 # ------------------------------------------------------------------ HUD
@@ -219,6 +226,30 @@ func _build_hud() -> void:
 	hud.add_child(toast)
 	# ability + power-ups, on the thumb's side
 	var left_handed := bool(Save.setting("left_handed", false))
+	# view switch on the other side from the ability button
+	var eyebox := UI.vbox(6)
+	eyebox.set_anchors_preset(Control.PRESET_BOTTOM_RIGHT if left_handed else Control.PRESET_BOTTOM_LEFT)
+	eyebox.grow_horizontal = Control.GROW_DIRECTION_BEGIN if left_handed else Control.GROW_DIRECTION_END
+	eyebox.grow_vertical = Control.GROW_DIRECTION_BEGIN
+	eyebox.offset_bottom = -40
+	if left_handed:
+		eyebox.offset_right = -28
+	else:
+		eyebox.offset_left = 28
+	hud.add_child(eyebox)
+	canopy_tip = UI.wrap_label(String(Content.onboarding.get("store_prompts", {}).get("canopy_tip", {}).get("text", "Dense canopy ahead: tap the eye")), 24, Color.WHITE)
+	canopy_tip.custom_minimum_size.x = 300
+	canopy_tip.add_theme_font_override("font", UI.font(true))
+	canopy_tip.add_theme_constant_override("outline_size", 8)
+	canopy_tip.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.7))
+	canopy_tip.visible = false
+	eyebox.add_child(canopy_tip)
+	eye_btn = Widgets.EyeButton.new(124)
+	eye_btn.fpv = view == "fpv"
+	eye_btn.pressed.connect(toggle_view)
+	eye_btn.size_flags_horizontal = Control.SIZE_SHRINK_END if left_handed else Control.SIZE_SHRINK_BEGIN
+	eyebox.add_child(eye_btn)
+	hud_buttons.append(eye_btn)
 	var col := UI.vbox(14)
 	col.set_anchors_preset(Control.PRESET_BOTTOM_LEFT if left_handed else Control.PRESET_BOTTOM_RIGHT)
 	col.grow_horizontal = Control.GROW_DIRECTION_END if left_handed else Control.GROW_DIRECTION_BEGIN
@@ -298,7 +329,7 @@ func _update_hud() -> void:
 	lbl_rows.text = str(sim.max_row)
 	match String(cfg.mode):
 		"journey":
-			lbl_best.text = "%s · stage %d" % [String(map.name).to_upper(), int(cfg.get("stage", 0)) + 1]
+			lbl_best.text = "%s · level %d" % [String(map.name).to_upper(), int(cfg.get("stage", 0)) + 1]
 			progress_bar.value = 100.0 * sim.max_row / maxf(1.0, float(world.goal_row))
 		"endless":
 			lbl_best.text = "BEST %d" % Progress.best_rows(String(map.id))
@@ -343,7 +374,7 @@ func _start() -> void:
 
 func _process(dt: float) -> void:
 	if not started or paused or blocking or finished:
-		wv.update_view(dt)
+		_update_views(dt)
 		return
 	acc += minf(dt, 0.1)
 	while acc >= STEP:
@@ -357,10 +388,65 @@ func _process(dt: float) -> void:
 			last_state = sim.state
 			if blocking or finished:
 				break
-	wv.update_view(dt)
+	_update_views(dt)
 	_update_hud()
 	if cfg.mode == "tutorial":
 		_tutorial_update()
+
+
+# ------------------------------------------------------------------ views
+
+func _update_views(dt: float) -> void:
+	if view == "fpv":
+		wv3.update_view(dt)
+	else:
+		wv.update_view(dt)
+	if canopy_tip:
+		var ahead := false
+		for k in 4:
+			if world.lane(sim.row + k).covered:
+				ahead = true
+		canopy_tip.visible = ahead and view == "bird" and not finished and not tut_bubble.visible
+		eye_btn.pulse = ahead and view == "bird" and not finished
+
+
+func toggle_view() -> void:
+	set_view("bird" if view == "fpv" else "fpv")
+
+
+## Bird's-eye (2D, top-down) or first person (3D, through the animal's eyes).
+func set_view(v: String, remember := true) -> void:
+	if v == view:
+		return
+	view = v
+	if v == "fpv":
+		if wv3 == null:
+			wv3 = WorldView3D.new()
+			wv3.setup(sim, animal)
+			add_child(wv3)
+			move_child(wv3, atm.get_index())
+			fp_overlay = FirstPersonOverlay.new()
+			fp_overlay.setup(sim, animal)
+			add_child(fp_overlay)
+			move_child(fp_overlay, atm.get_index() + 1)
+		wv3.visible = true
+		fp_overlay.visible = true
+		wv.visible = false
+		atm.fpv = true
+		wv3.update_view(0.016)
+	else:
+		if wv3:
+			wv3.visible = false
+			fp_overlay.visible = false
+		wv.visible = true
+		atm.fpv = false
+		wv.update_view(1.0)
+	if eye_btn:
+		eye_btn.fpv = v == "fpv"
+	Sfx.play("whoosh", 1.2, -6.0)
+	if remember:
+		Save.set_setting("first_person", v == "fpv")
+		Analytics.event("view", {"view": v, "map": map.id, "row": sim.row, "covered": world.lane(sim.row + 1).covered})
 
 
 func _on_state(st: String) -> void:
@@ -507,6 +593,8 @@ func _unhandled_input(event: InputEvent) -> void:
 				sim.hop(Vector2i(-1, 0))
 			KEY_RIGHT, KEY_D:
 				sim.hop(Vector2i(1, 0))
+			KEY_V:
+				toggle_view()
 			KEY_SPACE, KEY_SHIFT:
 				sim.use_ability()
 			KEY_Q:
@@ -529,6 +617,8 @@ func _unhandled_input(event: InputEvent) -> void:
 				sim.hop(Vector2i(0, 1))
 			JOY_BUTTON_X, JOY_BUTTON_B:
 				sim.use_ability()
+			JOY_BUTTON_Y:
+				toggle_view()
 			JOY_BUTTON_START:
 				_pause()
 		return
@@ -871,6 +961,22 @@ func _tutorial_update() -> void:
 
 
 func _cond(c: String) -> bool:
+	if c.contains("|"):
+		for part in c.split("|"):
+			if _cond(part):
+				return true
+		return false
+	if c.contains("&"):
+		for part in c.split("&"):
+			if not _cond(part):
+				return false
+		return true
+	if c == "fpv":
+		return view == "fpv"
+	if c == "birdseye":
+		return view == "bird"
+	if c == "next_covered":
+		return world.lane(sim.row + 1).covered
 	if c == "" or c == "start":
 		return c == "start"
 	if c == "goal":
@@ -912,6 +1018,18 @@ class TutHint extends Control:
 				draw_colored_polygon(PackedVector2Array([c + Vector2(40, -24), c + Vector2(26, -34), c + Vector2(26, -14)]), Color(1, 1, 1, 0.7))
 			"goal":
 				Draw.star(self, c, 34 + sin(t * 4.0) * 4.0, Color("9cf06a"), 5, 0.45)
+			"eye":
+				var r := 30.0 + sin(t * 4.0) * 3.0
+				var pts := PackedVector2Array()
+				for i in 13:
+					var a := PI * i / 12.0
+					pts.append(c + Vector2(-cos(a) * r, -sin(a) * r * 0.6))
+				for i in range(1, 12):
+					var a2 := PI * i / 12.0
+					pts.append(c + Vector2(cos(a2) * r, sin(a2) * r * 0.6))
+				draw_colored_polygon(pts, Color.WHITE)
+				Draw.ellipse(self, c, r * 0.36, r * 0.36, Color("2a6fe0"))
+				Draw.ellipse(self, c, r * 0.16, r * 0.16, Color.BLACK)
 
 	func _finger(p: Vector2) -> void:
 		Draw.ellipse(self, p + Vector2(0, 18), 16, 22, Color("f2d0b0"))

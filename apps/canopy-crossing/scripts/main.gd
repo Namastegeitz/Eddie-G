@@ -52,7 +52,7 @@ func _ready() -> void:
 		if a.begins_with("--play="):
 			var p := a.substr(7).split(",")
 			var cfg := {"mode": p[0], "map": p[1] if p.size() > 1 else "amazon", "stage": int(p[2]) if p.size() > 2 else 0,
-				"autoplay": args.has("--autoplay")}
+				"autoplay": args.has("--autoplay"), "view": "fpv" if args.has("--fpv") else ""}
 			if p.size() > 3:
 				cfg.animal = p[3]
 			cfg.seed = absi(hash([cfg.map, cfg.stage, "journey"])) % 1000000 if cfg.mode == "journey" else 4242

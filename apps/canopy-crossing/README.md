@@ -8,10 +8,17 @@ time, in ten real rainforests. Built from
 - **50 animals**, each with a signature ability (18 reusable ability modules).
   5 free starters: Poison Dart Frog, Western Gorilla, Orangutan, Southern
   Cassowary, Ring-Tailed Lemur.
-- **10 real regions** (Amazon free; Congo, Borneo, Daintree, Masoala,
-  Monteverde, Sundarbans, Western Ghats, Bwindi, New Guinea as map packs)
-  plus 2 "coming soon". Each has its own palette, hazards, music, facts and
-  3 Journey stages. A spinning globe picks the region.
+- **200 maps: 20 real rainforest scenes x 10 levels.** Amazon is free;
+  Congo, Borneo, Daintree, Masoala, Monteverde, Sundarbans, Western Ghats,
+  Bwindi, New Guinea, Atlantic Forest, Xishuangbanna, Taman Negara,
+  Sinharaja, Yasuní, Chocó, Taï Forest, Palawan, Maya Forest and Khao Sok
+  are map packs, plus 2 "coming soon". Each scene has its own palette,
+  hazards, music and facts. Levels grow from 40 to 130 rows. A spinning
+  globe picks the scene.
+- **Two views:** bird's-eye (top-down) and first person (3D, through your
+  animal's eyes). Switch any time with the eye button (or V). Every level
+  has dense-canopy stretches that hide the ground from above, so you need
+  first person to see the traffic, logs and predators under the leaves.
 - **Water rule:** fall into the water and the run starts over from the
   beginning (no lives, no revive). Other hazards cost a life. Switch it in
   `content/rules.json`.
@@ -35,8 +42,9 @@ A new animal or region is a new JSON file. See [docs/CONTENT.md](docs/CONTENT.md
 ## Run it
 
 See [RUN.md](RUN.md): open in Godot 4.7.2, press F5. Controls: tap to hop
-forward, swipe to hop any direction, the round button uses the ability.
-Keyboard: arrows/WASD, Space (ability), Q/E (power-ups), R (restart), Esc.
+forward, swipe to hop any direction, the round button uses the ability, the
+eye button switches view. Keyboard: arrows/WASD, Space (ability), V (view),
+Q/E (power-ups), R (restart), Esc.
 
 ## Tests
 

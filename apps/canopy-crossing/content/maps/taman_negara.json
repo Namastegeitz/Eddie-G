@@ -1,0 +1,306 @@
+{
+  "id": "taman_negara",
+  "order": 13,
+  "name": "Taman Negara",
+  "location": "Pahang, Malaysia",
+  "lat": 4.6,
+  "lon": 102.4,
+  "status": "available",
+  "access": {
+    "type": "pack",
+    "product": "map_taman_negara"
+  },
+  "flag": {
+    "colors": [
+      "#1a3a8a",
+      "#f6d43a"
+    ],
+    "code": "TMN"
+  },
+  "palette": {
+    "safe": "#3a8a3e",
+    "safe_alt": "#459149",
+    "ground": "#8a6040",
+    "ground_alt": "#815a3c",
+    "water": "#3e5a4a",
+    "water_deep": "#31483b",
+    "foam": "#d8ece8",
+    "canopy": "#16502a",
+    "canopy_dark": "#0d3019",
+    "accent": "#f2c02a",
+    "goal": "#c0f0a0",
+    "sky": "#123a22",
+    "ui": "#1a3a8a"
+  },
+  "atmosphere": {
+    "mist": 0.2,
+    "light_shafts": 0.35,
+    "rain": 0.0,
+    "steam": 0.3
+  },
+  "music": {
+    "file": "res://assets/audio/music/taman_negara.ogg",
+    "tempo": 96,
+    "root": "D",
+    "scale": "pentatonic_minor",
+    "lead": "gamelan",
+    "drums": "toms"
+  },
+  "facts": [
+    "Taman Negara's forest is often said to be around 130 million years old.",
+    "Its canopy walkway is one of the longest in the world."
+  ],
+  "generator": "highlands",
+  "hazards": {
+    "ground_movers": [
+      {
+        "id": "wild_boar",
+        "weight": 2
+      },
+      {
+        "id": "jungle_4wd",
+        "weight": 1
+      }
+    ],
+    "platforms": [
+      {
+        "id": "longboat",
+        "weight": 2
+      },
+      {
+        "id": "blackwater_log",
+        "weight": 2
+      }
+    ],
+    "bridges": [
+      {
+        "id": "hanging_bridge",
+        "weight": 2
+      }
+    ],
+    "ridges": [
+      {
+        "id": "ridge_drop",
+        "weight": 1
+      }
+    ],
+    "safe_specials": [
+      {
+        "id": "reticulated_python",
+        "weight": 2
+      },
+      {
+        "id": "falling_coconut",
+        "weight": 1
+      }
+    ],
+    "tiles": [
+      {
+        "id": "thick_brush",
+        "weight": 1
+      }
+    ],
+    "swoopers": [
+      {
+        "id": "serpent_eagle_swoop",
+        "weight": 1
+      }
+    ]
+  },
+  "intro_hazards": [
+    "hanging_bridge",
+    "longboat",
+    "reticulated_python",
+    "wild_boar"
+  ],
+  "difficulty": {
+    "speed": [
+      0.8,
+      1.5
+    ],
+    "density": [
+      0.32,
+      0.64
+    ],
+    "band": [
+      [
+        1,
+        2
+      ],
+      [
+        2,
+        4
+      ]
+    ],
+    "safe_chance": [
+      1.0,
+      0.5
+    ],
+    "special_chance": [
+      0.15,
+      0.5
+    ],
+    "rows_to_max": 130,
+    "move_timer": 0
+  },
+  "stages": [
+    {
+      "name": "Tembeling River",
+      "rows": 40,
+      "difficulty": [
+        0.0,
+        0.22
+      ],
+      "canopy": {
+        "zones": 1,
+        "rows": [
+          4,
+          6
+        ]
+      }
+    },
+    {
+      "name": "Canopy Walkway",
+      "rows": 50,
+      "difficulty": [
+        0.06,
+        0.3
+      ],
+      "canopy": {
+        "zones": 1,
+        "rows": [
+          4,
+          6
+        ]
+      }
+    },
+    {
+      "name": "Bukit Teresek",
+      "rows": 60,
+      "difficulty": [
+        0.12,
+        0.38
+      ],
+      "canopy": {
+        "zones": 1,
+        "rows": [
+          4,
+          7
+        ]
+      }
+    },
+    {
+      "name": "Tapir Salt Lick",
+      "rows": 70,
+      "difficulty": [
+        0.18,
+        0.46
+      ],
+      "canopy": {
+        "zones": 2,
+        "rows": [
+          5,
+          7
+        ]
+      }
+    },
+    {
+      "name": "Longboat Rapids",
+      "rows": 80,
+      "difficulty": [
+        0.24,
+        0.54
+      ],
+      "canopy": {
+        "zones": 2,
+        "rows": [
+          5,
+          8
+        ]
+      }
+    },
+    {
+      "name": "Cave Path",
+      "rows": 90,
+      "difficulty": [
+        0.3,
+        0.62
+      ],
+      "canopy": {
+        "zones": 2,
+        "rows": [
+          5,
+          8
+        ]
+      }
+    },
+    {
+      "name": "Gibbon Ridge",
+      "rows": 100,
+      "difficulty": [
+        0.36,
+        0.7
+      ],
+      "canopy": {
+        "zones": 3,
+        "rows": [
+          6,
+          9
+        ]
+      }
+    },
+    {
+      "name": "Python Hollow",
+      "rows": 110,
+      "difficulty": [
+        0.42,
+        0.78
+      ],
+      "canopy": {
+        "zones": 3,
+        "rows": [
+          6,
+          9
+        ]
+      }
+    },
+    {
+      "name": "Gunung Tahan Trail",
+      "rows": 120,
+      "difficulty": [
+        0.48,
+        0.86
+      ],
+      "canopy": {
+        "zones": 3,
+        "rows": [
+          6,
+          10
+        ]
+      }
+    },
+    {
+      "name": "Ancient Heart",
+      "rows": 130,
+      "difficulty": [
+        0.54,
+        0.94
+      ],
+      "canopy": {
+        "zones": 4,
+        "rows": [
+          7,
+          10
+        ]
+      }
+    }
+  ],
+  "endless": {
+    "creep": [
+      0.24,
+      0.85
+    ]
+  },
+  "native_animals": [],
+  "sprite": ""
+}

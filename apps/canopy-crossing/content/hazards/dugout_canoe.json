@@ -1,0 +1,29 @@
+{
+  "id": "dugout_canoe",
+  "predator": false,
+  "sprite": "",
+  "name": "Dugout canoe",
+  "kind": "platform",
+  "lane": "water",
+  "length": [
+    2.0,
+    2.6
+  ],
+  "speed": [
+    0.8,
+    1.3
+  ],
+  "gap": [
+    1.4,
+    3.0
+  ],
+  "art": {
+    "painter": "boat",
+    "colors": {
+      "body": "#7a5232",
+      "trim": "#5a3a22",
+      "canopy": "#c8a070"
+    }
+  },
+  "desc": "Hitch a ride across the water."
+}

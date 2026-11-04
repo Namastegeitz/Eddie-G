@@ -266,7 +266,7 @@
       "type": "non_consumable",
       "section": "maps",
       "title": "Congo Basin Map Pack",
-      "desc": "The Congo Basin map, its hazards and its native pack animals.",
+      "desc": "The Congo Basin scene: 10 levels, its hazards and its native pack animals.",
       "price_usd": 2.99,
       "map": "congo",
       "grants": [
@@ -292,7 +292,7 @@
       "type": "non_consumable",
       "section": "maps",
       "title": "Borneo Map Pack",
-      "desc": "The Borneo map, its hazards and its native pack animals.",
+      "desc": "The Borneo scene: 10 levels, its hazards and its native pack animals.",
       "price_usd": 2.99,
       "map": "borneo",
       "grants": [
@@ -318,7 +318,7 @@
       "type": "non_consumable",
       "section": "maps",
       "title": "Daintree Map Pack",
-      "desc": "The Daintree map, its hazards and its native pack animals.",
+      "desc": "The Daintree scene: 10 levels, its hazards and its native pack animals.",
       "price_usd": 2.99,
       "map": "daintree",
       "grants": [
@@ -344,7 +344,7 @@
       "type": "non_consumable",
       "section": "maps",
       "title": "Masoala Map Pack",
-      "desc": "The Masoala map, its hazards and its native pack animals.",
+      "desc": "The Masoala scene: 10 levels, its hazards and its native pack animals.",
       "price_usd": 2.99,
       "map": "masoala",
       "grants": [
@@ -370,7 +370,7 @@
       "type": "non_consumable",
       "section": "maps",
       "title": "Monteverde Map Pack",
-      "desc": "The Monteverde map, its hazards and its native pack animals.",
+      "desc": "The Monteverde scene: 10 levels, its hazards and its native pack animals.",
       "price_usd": 2.99,
       "map": "monteverde",
       "grants": [
@@ -396,7 +396,7 @@
       "type": "non_consumable",
       "section": "maps",
       "title": "Sundarbans Map Pack",
-      "desc": "The Sundarbans map, its hazards and its native pack animals.",
+      "desc": "The Sundarbans scene: 10 levels, its hazards and its native pack animals.",
       "price_usd": 2.99,
       "map": "sundarbans",
       "grants": [
@@ -422,7 +422,7 @@
       "type": "non_consumable",
       "section": "maps",
       "title": "Western Ghats Map Pack",
-      "desc": "The Western Ghats map, its hazards and its native pack animals.",
+      "desc": "The Western Ghats scene: 10 levels, its hazards and its native pack animals.",
       "price_usd": 2.99,
       "map": "western_ghats",
       "grants": [
@@ -448,7 +448,7 @@
       "type": "non_consumable",
       "section": "maps",
       "title": "Bwindi Map Pack",
-      "desc": "The Bwindi map, its hazards and its native pack animals.",
+      "desc": "The Bwindi scene: 10 levels, its hazards and its native pack animals.",
       "price_usd": 2.99,
       "map": "bwindi",
       "grants": [
@@ -474,7 +474,7 @@
       "type": "non_consumable",
       "section": "maps",
       "title": "New Guinea Highlands Map Pack",
-      "desc": "The New Guinea Highlands map, its hazards and its native pack animals.",
+      "desc": "The New Guinea Highlands scene: 10 levels, its hazards and its native pack animals.",
       "price_usd": 2.99,
       "map": "new_guinea",
       "grants": [
@@ -493,6 +493,196 @@
       "store_ids": {
         "google": "map_new_guinea",
         "apple": "com.aethertek.canopycrossing.map_new_guinea"
+      }
+    },
+    {
+      "id": "map_atlantic_forest",
+      "type": "non_consumable",
+      "section": "maps",
+      "title": "Atlantic Forest Map Pack",
+      "desc": "The Atlantic Forest scene: 10 levels and its hazards.",
+      "price_usd": 2.99,
+      "map": "atlantic_forest",
+      "grants": [
+        {
+          "type": "map",
+          "id": "atlantic_forest"
+        }
+      ],
+      "store_ids": {
+        "google": "map_atlantic_forest",
+        "apple": "com.aethertek.canopycrossing.map_atlantic_forest"
+      }
+    },
+    {
+      "id": "map_xishuangbanna",
+      "type": "non_consumable",
+      "section": "maps",
+      "title": "Xishuangbanna Map Pack",
+      "desc": "The Xishuangbanna scene: 10 levels and its hazards.",
+      "price_usd": 2.99,
+      "map": "xishuangbanna",
+      "grants": [
+        {
+          "type": "map",
+          "id": "xishuangbanna"
+        }
+      ],
+      "store_ids": {
+        "google": "map_xishuangbanna",
+        "apple": "com.aethertek.canopycrossing.map_xishuangbanna"
+      }
+    },
+    {
+      "id": "map_taman_negara",
+      "type": "non_consumable",
+      "section": "maps",
+      "title": "Taman Negara Map Pack",
+      "desc": "The Taman Negara scene: 10 levels and its hazards.",
+      "price_usd": 2.99,
+      "map": "taman_negara",
+      "grants": [
+        {
+          "type": "map",
+          "id": "taman_negara"
+        }
+      ],
+      "store_ids": {
+        "google": "map_taman_negara",
+        "apple": "com.aethertek.canopycrossing.map_taman_negara"
+      }
+    },
+    {
+      "id": "map_sinharaja",
+      "type": "non_consumable",
+      "section": "maps",
+      "title": "Sinharaja Map Pack",
+      "desc": "The Sinharaja scene: 10 levels and its hazards.",
+      "price_usd": 2.99,
+      "map": "sinharaja",
+      "grants": [
+        {
+          "type": "map",
+          "id": "sinharaja"
+        }
+      ],
+      "store_ids": {
+        "google": "map_sinharaja",
+        "apple": "com.aethertek.canopycrossing.map_sinharaja"
+      }
+    },
+    {
+      "id": "map_yasuni",
+      "type": "non_consumable",
+      "section": "maps",
+      "title": "Yasuní Map Pack",
+      "desc": "The Yasuní scene: 10 levels and its hazards.",
+      "price_usd": 2.99,
+      "map": "yasuni",
+      "grants": [
+        {
+          "type": "map",
+          "id": "yasuni"
+        }
+      ],
+      "store_ids": {
+        "google": "map_yasuni",
+        "apple": "com.aethertek.canopycrossing.map_yasuni"
+      }
+    },
+    {
+      "id": "map_choco",
+      "type": "non_consumable",
+      "section": "maps",
+      "title": "Chocó Map Pack",
+      "desc": "The Chocó scene: 10 levels and its hazards.",
+      "price_usd": 2.99,
+      "map": "choco",
+      "grants": [
+        {
+          "type": "map",
+          "id": "choco"
+        }
+      ],
+      "store_ids": {
+        "google": "map_choco",
+        "apple": "com.aethertek.canopycrossing.map_choco"
+      }
+    },
+    {
+      "id": "map_tai",
+      "type": "non_consumable",
+      "section": "maps",
+      "title": "Taï Forest Map Pack",
+      "desc": "The Taï Forest scene: 10 levels and its hazards.",
+      "price_usd": 2.99,
+      "map": "tai",
+      "grants": [
+        {
+          "type": "map",
+          "id": "tai"
+        }
+      ],
+      "store_ids": {
+        "google": "map_tai",
+        "apple": "com.aethertek.canopycrossing.map_tai"
+      }
+    },
+    {
+      "id": "map_palawan",
+      "type": "non_consumable",
+      "section": "maps",
+      "title": "Palawan Map Pack",
+      "desc": "The Palawan scene: 10 levels and its hazards.",
+      "price_usd": 2.99,
+      "map": "palawan",
+      "grants": [
+        {
+          "type": "map",
+          "id": "palawan"
+        }
+      ],
+      "store_ids": {
+        "google": "map_palawan",
+        "apple": "com.aethertek.canopycrossing.map_palawan"
+      }
+    },
+    {
+      "id": "map_maya_forest",
+      "type": "non_consumable",
+      "section": "maps",
+      "title": "Maya Forest Map Pack",
+      "desc": "The Maya Forest scene: 10 levels and its hazards.",
+      "price_usd": 2.99,
+      "map": "maya_forest",
+      "grants": [
+        {
+          "type": "map",
+          "id": "maya_forest"
+        }
+      ],
+      "store_ids": {
+        "google": "map_maya_forest",
+        "apple": "com.aethertek.canopycrossing.map_maya_forest"
+      }
+    },
+    {
+      "id": "map_khao_sok",
+      "type": "non_consumable",
+      "section": "maps",
+      "title": "Khao Sok Map Pack",
+      "desc": "The Khao Sok scene: 10 levels and its hazards.",
+      "price_usd": 2.99,
+      "map": "khao_sok",
+      "grants": [
+        {
+          "type": "map",
+          "id": "khao_sok"
+        }
+      ],
+      "store_ids": {
+        "google": "map_khao_sok",
+        "apple": "com.aethertek.canopycrossing.map_khao_sok"
       }
     },
     {

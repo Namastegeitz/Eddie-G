@@ -1,0 +1,26 @@
+{
+  "id": "siamese_crocodile",
+  "predator": true,
+  "sprite": "",
+  "name": "Siamese crocodile",
+  "kind": "surfacer",
+  "lane": "water",
+  "cause": "eaten",
+  "cause_text": "Snapped up by a siamese crocodile",
+  "period": [
+    5.0,
+    8.0
+  ],
+  "warn": 1.1,
+  "up": 1.0,
+  "span": 1.3,
+  "art": {
+    "painter": "croc",
+    "colors": {
+      "body": "#55543a",
+      "belly": "#d4c890",
+      "eye": "#e8c547"
+    }
+  },
+  "desc": "Watch for ripples: it surfaces right there."
+}

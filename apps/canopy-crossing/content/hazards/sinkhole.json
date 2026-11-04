@@ -1,0 +1,18 @@
+{
+  "id": "sinkhole",
+  "predator": false,
+  "sprite": "",
+  "name": "Cenote sinkhole",
+  "kind": "gap",
+  "lane": "safe",
+  "cause": "fell",
+  "cause_text": "Fell into a cenote",
+  "art": {
+    "painter": "gully",
+    "colors": {
+      "body": "#1a3a4a",
+      "edge": "#c8c0a0"
+    }
+  },
+  "desc": "Limestone gives way to deep water holes. Go around."
+}
