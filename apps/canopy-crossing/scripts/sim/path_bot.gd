@@ -10,6 +10,7 @@ const DT := 1.0 / 60.0
 const DECIDE := 0.1
 const MOVES := [Vector2i(0, 1), Vector2i.ZERO, Vector2i(-1, 0), Vector2i(1, 0), Vector2i(0, -1)]
 
+var decide := DECIDE          # seconds between decisions (demo mode plays slower)
 var nodes_expanded := 0
 var best_row := 0
 var max_nodes := 60000
@@ -42,7 +43,7 @@ func plan(sim: RunSim, goal_row: int) -> Array:
 				steps += 1
 				if c.state != "play":
 					break
-				if not c.hopping and steps * DT >= DECIDE - 0.0001:
+				if not c.hopping and steps * DT >= decide - 0.0001:
 					break
 			if c.state == "won" or (c.state == "play" and c.row >= goal_row and not c.hopping):
 				var done := path.duplicate()
@@ -50,7 +51,7 @@ func plan(sim: RunSim, goal_row: int) -> Array:
 				return done
 			if c.state != "play":
 				continue
-			var key := "%d:%d:%d" % [c.row, int(roundf(c.x * 4.0)), int(roundf(c.t / DECIDE))]
+			var key := "%d:%d:%d" % [c.row, int(roundf(c.x * 4.0)), int(roundf(c.t / decide))]
 			if seen.has(key):
 				continue
 			seen[key] = true

@@ -209,7 +209,7 @@ body {
     if (window.__canopy.done) return crashed(err);
     notice.textContent = "The game couldn't start here (" +
       (err && err.message ? err.message : String(err)) +
-      "). Try Reload. If it keeps happening, open the link in Chrome or Safari, or install the Android app.";
+      "). Try Reload. If it keeps happening, open the link in Chrome or Safari on a phone or computer.";
     notice.style.display = "block";
     reload.hidden = false;
     label.textContent = "Stopped";

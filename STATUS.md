@@ -22,6 +22,39 @@
 - Zip: `apps/off-grid-survival-kit/dist/off-grid-survival-kit.zip`.
 - Next: host it on HTTPS (e.g. GitHub Pages), install on a phone, save NJ/Algarve areas, field test.
 
+## Canopy Crossing (`apps/canopy-crossing`)
+- Built from `prompts/claude/canopy-crossing.md` (copied from the Claude doc brief): all 8 phases,
+  Godot 4.7.2, portrait 720x1280, GL Compatibility.
+- Data-driven: 50 animals, 63 hazards, 12 maps (10 playable + 2 coming soon), 3 lane generators,
+  store catalog, live ops, 2 seasons, onboarding text are JSON under `content/`. Adding an animal
+  or region is a file (the audit proves it by adding both at runtime). Guide: `docs/CONTENT.md`.
+- Gameplay: grid hops (tap / swipe / keys / gamepad), movers, platforms (logs, lily pads, diving
+  caimans, swaying bridges, tidal driftwood, stepping stones), crocs, snakes, tiger ambushes,
+  raptor swoops, falling branches, quicksand, gullies, ridges, brush, fire lanes, tides, mudslides,
+  gusts, downpours. 18 ability modules + 2 power-ups. Journey (3 stages per region), Endless
+  (jungle creeps up), Daily Challenge (same seed for all, rotates regions incl. locked ones).
+- Economy/store: Berries + Amber, unlocks, consumables, cosmetics (skins, trails, emotes, goal
+  flags), map packs, animal packs, bundles, Remove Ads, Expedition Pass (30 tiers), daily deals,
+  weekend 2x, animal of the week, restore purchases, downloadable content-pack zips.
+  Billing: sandbox mock by default; Google Play / App Store adapters behind
+  `canopy/billing/backend` (not exercised: need plugins + store accounts, see `docs/STORE.md`).
+- Onboarding: coached tutorial, region intro cards (globe + facts + hazards), revive / milestone /
+  last-life / locked-animal prompts, daily reward, first-unlock guide.
+- Art/audio: procedural chibi animals and hazards, per-region palettes and canopy framing, dot
+  globe from Natural Earth, synthesised per-region music + ambience + 26 SFX (`tools/gen_audio.py`).
+- Ads: opt-in rewarded + between-run interstitial (mock; AdMob adapter scaffold). Analytics: events
+  + onboarding funnel to `user://analytics.jsonl`, optional HTTP endpoint.
+- Tests: `tools/run_tests.sh` - compile check + 238-check phase audit (one section per phase's
+  checkpoint) in the project and an exported pack, all passing. A path-finding bot beats all 30
+  Journey stages and the first 50 Endless rows on every map with the free Poison Dart Frog.
+  Frame cost 0.9 ms (sim + view + draw recording) on the cloud CPU.
+- Playable web build (private artifact): https://claude.ai/artifact/NHzAQ2w4jCjWjLkoxLSdB3
+  Gameplay clip: `apps/canopy-crossing/docs/gameplay.mp4`.
+- Not done here: signed Android/iOS builds (need Android SDK + keystore, Mac/Xcode), real store
+  sandbox purchases, real ads, on-device 60 fps check (Settings > Show FPS counter), playtesting.
+- Next: playtest difficulty with people, real art pass (sprites drop in via `"sprite"` in files),
+  Android AAB + Play internal track with GodotGooglePlayBilling, iOS via a Mac or Codemagic.
+
 ## Bug's-Eye View (`apps/bugs-eye-view`)
 - Built end to end from `prompts/claude/bugs-eye-view.md` (all 6 phases, all 16 add-ons).
 - Godot 4.7.2 project: 8 bugs, 3 rooms with boss chases, perception-based stealth,

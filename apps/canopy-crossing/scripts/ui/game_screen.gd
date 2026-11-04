@@ -5,6 +5,7 @@ extends Control
 ## revive offers, results, and the between-run prompts.
 
 const STEP := 1.0 / 60.0
+const DEMO_DECIDE := 0.3       # autoplay demo: one move at most every 0.3 s
 
 var cfg: Dictionary = {}
 var map: Dictionary = {}
@@ -46,6 +47,7 @@ var toast: Label
 var tut_bubble: PanelContainer
 var tut_label: Label
 var tut_hint: Control
+var fps_label: Label
 var hud_buttons: Array[Control] = []
 var run_items := {}
 
@@ -260,6 +262,10 @@ func _build_hud() -> void:
 	tut_bubble.add_child(tv)
 	tut_bubble.visible = false
 	hud.add_child(tut_bubble)
+	if bool(Save.setting("show_fps", false)):
+		fps_label = UI.label("", 22, Color(1, 1, 1, 0.8), true)
+		fps_label.position = Vector2(24, top + 96)
+		hud.add_child(fps_label)
 	_refresh_lives()
 
 
@@ -302,6 +308,8 @@ func _update_hud() -> void:
 	lbl_berries.text = str(sim.berries)
 	lbl_score.text = "%d pts" % sim.score
 	lbl_combo.text = ("COMBO x%s" % str(sim.multiplier())) if sim.multiplier() > 1.0 else ""
+	if fps_label:
+		fps_label.text = "%d fps" % Engine.get_frames_per_second()
 	if timer_bar.visible:
 		timer_bar.value = 100.0 * (1.0 - sim.no_progress / maxf(0.1, sim.move_limit))
 	if ability_btn:
@@ -446,11 +454,12 @@ func _autoplay_tick() -> void:
 		return
 	if sim.hopping and bot_steps < 40:
 		return
-	if bot_steps * STEP < PathBot.DECIDE - 0.0001 and bot_steps < 40:
+	if bot_steps * STEP < DEMO_DECIDE - 0.0001 and bot_steps < 40:
 		return
 	if bot_plan.is_empty():
 		var bot := PathBot.new()
-		bot.max_nodes = 2500
+		bot.decide = DEMO_DECIDE
+		bot.max_nodes = 4000
 		var goal := sim.row + 8
 		if world.goal_row >= 0:
 			goal = mini(goal, world.goal_row)
@@ -705,8 +714,8 @@ func _finish() -> void:
 	var collected := sim.taken.size()
 	var earned := 0
 	var extra := []
+	earned = Economy.run_berries(sim.berries, rows, won)
 	if not autoplay:
-		earned = Economy.run_berries(sim.berries, rows, won)
 		if cfg.mode == "tutorial":
 			earned += 250
 			extra.append("Welcome gift: 250 Berries")

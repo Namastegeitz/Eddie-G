@@ -895,6 +895,21 @@ func _phase7() -> void:
 	for i in 120:
 		gs._process(1.0 / 60.0)
 	check("view runs a region with atmosphere and fx", gs.sim.t > 1.5 and gs.atm != null)
+	var frames := 120
+	gs.visible = false
+	gs.set_process(false)
+	var t0 := Time.get_ticks_usec()
+	for i in frames:
+		await get_tree().process_frame
+	var base := (Time.get_ticks_usec() - t0) / 1000.0 / frames
+	gs.visible = true
+	gs.set_process(true)
+	t0 = Time.get_ticks_usec()
+	for i in frames:
+		await get_tree().process_frame
+	var ms := (Time.get_ticks_usec() - t0) / 1000.0 / frames - base
+	print("  frame cost (sim + view + draw recording, minus the headless loop's %.1f ms sleep): %.2f ms" % [base, ms])
+	check("frame cost leaves headroom for 60 fps on phones (< 3 ms here)", ms < 3.0, "%.2f ms" % ms)
 	gs.queue_free()
 	await get_tree().process_frame
 

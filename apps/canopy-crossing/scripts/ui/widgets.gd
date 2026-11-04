@@ -40,7 +40,7 @@ class Portrait extends Control:
 			l.colors = cols
 			AnimalPainter.draw(self, animal, s, {"t": t, "shadow": 0.0}, l, pre)
 		else:
-			AnimalPainter.draw(self, animal, s, {"t": t, "blink": fposmod(t, 3.7) < 0.12}, look, pre)
+			AnimalPainter.draw(self, animal, s, {"t": t, "blink": animate and fposmod(t + 1.5, 3.7) < 0.12}, look, pre)
 		draw_set_transform(Vector2.ZERO)
 
 

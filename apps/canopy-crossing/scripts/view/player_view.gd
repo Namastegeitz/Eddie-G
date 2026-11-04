@@ -96,6 +96,9 @@ func _draw() -> void:
 		_draw_dead(anim)
 		return
 	modulate.a = alpha
+	var halo := Color(1.0, 0.95, 0.7, 0.22 + 0.06 * sin(t * 3.0))
+	Draw.ellipse(self, Vector2(0, 2), SIZE * 0.5, SIZE * 0.17, halo)
+	Draw.ellipse_line(self, Vector2(0, 2), SIZE * 0.5, SIZE * 0.17, Color(1, 1, 1, 0.35), 2)
 	AnimalPainter.draw(self, wv.animal, SIZE, anim, wv.look_override)
 	if s.swimming:
 		var wc := wv.color("water")

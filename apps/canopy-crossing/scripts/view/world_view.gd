@@ -286,6 +286,13 @@ class LaneView extends Node2D:
 			dyn.draw_rect(Rect2(0, -T * 0.5, Lane.COLS * T, T), Color(wv.color("goal"), 0.18 + 0.15 * pulse))
 			for i in 9:
 				Draw.star(dyn, Vector2(i * T + T * 0.5, sin(t * 2.0 + i) * 10.0), 7 + pulse * 3.0, Color(1, 1, 0.8, 0.7), 4, 0.35)
+			var flag := Content.cosmetic(String(Save.data.get("equipped_flag", "")))
+			if not flag.is_empty() and String(flag.id) in Save.data.owned_cosmetics:
+				var cols: Array = flag.get("art", {}).get("colors", ["#ffffff", "#cccccc"])
+				var fx := Lane.COLS * T * 0.5 + T * 2.0
+				dyn.draw_line(Vector2(fx, T * 0.3), Vector2(fx, -T * 0.9), Color("e8e0c8"), 5)
+				dyn.draw_colored_polygon(PackedVector2Array([Vector2(fx, -T * 0.9), Vector2(fx + T * 0.7, -T * 0.72 + sin(t * 4.0) * 5.0), Vector2(fx, -T * 0.5)]), Color(String(cols[0])))
+				Draw.ellipse(dyn, Vector2(fx + T * 0.22, -T * 0.71), T * 0.08, T * 0.08, Color(String(cols[1])))
 
 
 class EntView extends Node2D:

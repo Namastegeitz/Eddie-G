@@ -247,9 +247,7 @@ func _show() -> void:
 
 func _has_button(a: Dictionary) -> bool:
 	for m in a.ability.modules:
-		if String(m.module) in ["multi_hop", "glide", "hover", "dash", "vine_swing", "invincible", "smash", "scare", "climb"]:
-			return true
-		if String(m.module) == "shield" and String(m.get("mode", "active")) == "active":
+		if Ability.exists(String(m.module)) and Ability.create(String(m.module), m, null).has_button():
 			return true
 	return false
 

@@ -6,5 +6,6 @@
   "colorblind": false,
   "reduce_motion": false,
   "move_timer": true,
-  "ads_personalised": false
+  "ads_personalised": false,
+  "show_fps": false
 }
