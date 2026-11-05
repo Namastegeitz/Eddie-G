@@ -77,7 +77,9 @@ node tools/package-artifact.mjs /tmp/alien-sudoku-artifact
 ```
 
 That command builds one bundle and inlines the code, styles, fonts and space
-images into `alien-sudoku.html` (about 1.2 MB). The artifact viewer's sandbox
+images (about 1.4 MB). It writes two files: `alien-sudoku.html`, a page fragment
+for hosts that add their own `<html>` wrapper, and `AlienSudoku.html`, a complete
+page for double-click play and the artifacts connector. The artifact viewer's sandbox
 doesn't reliably load scripts from separate files, so the page has to be one
 file. Copy the result to `play/AlienSudoku.html` and publish it to the same
 artifact.

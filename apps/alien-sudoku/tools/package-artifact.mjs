@@ -88,7 +88,22 @@ ${body.replace(/<script[\s\S]*?<\/script>/g, '').trim()}
 <script>${js}</script>
 `;
 
+// Complete document: for double-click offline play and for publishers that
+// want a whole page (the fragment above is for hosts that add the skeleton).
+const full = `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+${page}
+</body>
+</html>
+`;
+const splitAt = full.indexOf('<div class="starfield"');
+const fullDoc = full.slice(0, splitAt) + '</head>\n<body>\n' + full.slice(splitAt);
+
 mkdirSync(out, { recursive: true });
 writeFileSync(join(out, 'alien-sudoku.html'), page);
+writeFileSync(join(out, 'AlienSudoku.html'), fullDoc);
 rmSync(build, { recursive: true, force: true });
-console.log(`wrote ${join(out, 'alien-sudoku.html')} (${(page.length / 1024 / 1024).toFixed(2)} MB)`);
+console.log(`wrote ${join(out, 'alien-sudoku.html')} (fragment) and AlienSudoku.html (full page), ${(page.length / 1024 / 1024).toFixed(2)} MB`);
