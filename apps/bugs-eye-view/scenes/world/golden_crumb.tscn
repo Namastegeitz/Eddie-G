@@ -10,41 +10,41 @@ radius = 1.2
 [sub_resource type="ArrayMesh" id="ArrayMesh_ww3s7"]
 _surfaces = [{
 "aabb": AABB(-0.65991604, -0.46972835, -0.58651704, 1.453891, 1.0771341, 1.1730341),
-"attribute_data": PackedByteArray("AAAAAAAAAACrqio/AAAAAKuqqj4AAAAAAACAPwAAAAAAAAAAAAAAP6uqKj8AAAA/q6qqPgAAAD8AAIA/AAAAP6uqqj4AAAAAAAAAAAAAAD+rqio/AAAAAKuqqj4AAAA/q6qqPgAAAD8AAAAAAACAP6uqKj8AAAA/q6qqPgAAgD+rqqo+AAAAP6uqKj8AAAA/q6oqPwAAAD8AAIA/AAAAP6uqqj4AAIA/q6oqPwAAgD+rqio/AACAPwAAgD8AAIA/AAAAAAAAAACrqio/AAAAAKuqqj4AAAAAAACAPwAAAAAAAAAAAAAAP6uqKj8AAAA/q6qqPgAAAD8AAIA/AAAAP6uqqj4AAAAAAAAAAAAAAD+rqio/AAAAAKuqqj4AAAA/q6qqPgAAAD8AAAAAAACAP6uqKj8AAAA/q6qqPgAAgD+rqqo+AAAAP6uqKj8AAAA/q6oqPwAAAD8AAIA/AAAAP6uqqj4AAIA/q6oqPwAAgD+rqio/AACAPwAAgD8AAIA/AAAAAAAAAACrqio/AAAAAKuqqj4AAAAAAACAPwAAAAAAAAAAAAAAP6uqKj8AAAA/q6qqPgAAAD8AAIA/AAAAP6uqqj4AAAAAAAAAAAAAAD+rqio/AAAAAKuqqj4AAAA/q6qqPgAAAD8AAAAAAACAP6uqKj8AAAA/q6qqPgAAgD+rqqo+AAAAP6uqKj8AAAA/q6oqPwAAAD8AAIA/AAAAP6uqqj4AAIA/q6oqPwAAgD+rqio/AACAPwAAgD8AAIA/"),
-"format": 34359742487,
+"attribute_data": PackedByteArray("AAAAAKqqAABVVQAA//8AAAAA/3+qqv9/VVX/f////39VVQAAAAD/f6qqAABVVf9/VVX/fwAA//+qqv9/VVX//1VV/3+qqv9/qqr/f////39VVf//qqr//6qq////////AAAAAKqqAABVVQAA//8AAAAA/3+qqv9/VVX/f////39VVQAAAAD/f6qqAABVVf9/VVX/fwAA//+qqv9/VVX//1VV/3+qqv9/qqr/f////39VVf//qqr//6qq////////AAAAAKqqAABVVQAA//8AAAAA/3+qqv9/VVX/f////39VVQAAAAD/f6qqAABVVf9/VVX/fwAA//+qqv9/VVX//1VV/3+qqv9/qqr/f////39VVf//qqr//6qq////////"),
+"format": 34896613399,
 "index_count": 108,
 "index_data": PackedByteArray("AAACAAQAAgAGAAQAAQADAAUAAwAHAAUACAAKAAwACgAOAAwACQALAA0ACwAPAA0AEAASABQAEgAWABQAEQATABUAEwAXABUAGAAaABwAGgAeABwAGQAbAB0AGwAfAB0AIAAiACQAIgAmACQAIQAjACUAIwAnACUAKAAqACwAKgAuACwAKQArAC0AKwAvAC0AMAAyADQAMgA2ADQAMQAzADUAMwA3ADUAOAA6ADwAOgA+ADwAOQA7AD0AOwA/AD0AQABCAEQAQgBGAEQAQQBDAEUAQwBHAEUA"),
 "primitive": 3,
 "uv_scale": Vector4(0, 0, 0, 0),
 "vertex_count": 72,
-"vertex_data": PackedByteArray("jgaAvoiDvD37JRY/jD5qPjyA8D5h9MC+EKMMPySWhj7eC1c+tBYSv/sKmT4AaLm5jD5qvjyA8L5h9MA+jgaAPoiDvL37JRa/tBYSP/sKmb4AaLk5EKMMvySWhr7eC1e+EKMMPySWhj7eC1c+tBYSv/sKmT4AaLm5jD5qPjyA8D5h9MC+jgaAvoiDvD37JRY/tBYSP/sKmb4AaLk5EKMMvySWhr7eC1e+jgaAPoiDvL37JRa/jD5qvjyA8L5h9MA+EKMMPySWhj7eC1c+jD5qvjyA8L5h9MA+jgaAvoiDvD37JRY/tBYSP/sKmb4AaLk5jD5qPjyA8D5h9MC+EKMMvySWhr7eC1e+tBYSv/sKmT4AaLm5jgaAPoiDvL37JRa/I7W5PtRf4z6I1Q8/dJrDvWp8lz6dC6G+NKkPP/J+Gz/0TKE85IOWvra8Bz5GFWk+TnMYP+BLhzsCuQM/upUMPnSME76pRLm+8kFLP352Kz7MQ+K8SJN6vUlknb4uozg+NKkPP/J+Gz/0TKE85IOWvra8Bz5GFWk+dJrDvWp8lz6dC6G+I7W5PtRf4z6I1Q8/8kFLP352Kz7MQ+K8SJN6vUlknb4uozg+upUMPnSME76pRLm+TnMYP+BLhzsCuQM/NKkPP/J+Gz/0TKE8TnMYP+BLhzsCuQM/I7W5PtRf4z6I1Q8/8kFLP352Kz7MQ+K8dJrDvWp8lz6dC6G+SJN6vUlknb4uozg+5IOWvra8Bz5GFWk+upUMPnSME76pRLm+9mAZv1Yi1L0QfHC8n5PAvjKayT4nEiq+CHWhvkZVCz639gg+QvAov/PNHT5QCKG+x9Klvv5mlr5zh2++7JHOvZF3UD7sSMW+GC8kvTGeXb32Ea+9XvHEvn+7E70UpAi/CHWhvkZVCz639gg+QvAov/PNHT5QCKG+n5PAvjKayT4nEiq+9mAZv1Yi1L0QfHC8GC8kvTGeXb32Ea+9XvHEvn+7E70UpAi/7JHOvZF3UD7sSMW+x9Klvv5mlr5zh2++CHWhvkZVCz639gg+x9Klvv5mlr5zh2++9mAZv1Yi1L0QfHC8GC8kvTGeXb32Ea+9n5PAvjKayT4nEiq+XvHEvn+7E70UpAi/QvAov/PNHT5QCKG+7JHOvZF3UD7sSMW+0qQ8aMLvAdrCFyvbBDTht9KkPGjC7wHawhcr2wQ04bfSpDxowu8B2sIXK9sENOG30qQ8aMLvAdrCFyvbBDTht8LvBLTCF5XtBDTDb9KkHbTC7wS0wheV7QQ0w2/SpB20wu8EtMIXle0ENMNv0qQdtMLvBLTCF5XtBDTDb9KkHbSPfLTaBDTht0mlcAPC7wHaj3y02gQ04bdJpXADwu8B2o98tNoENOG3SaVwA8LvAdqPfLTaBDTht0mlcAPC7wHaiMCcnt7o8fGdHolA5WNvtIjAnJ7e6PHxnR6JQOVjb7SIwJye3ujx8Z0eiUDlY2+0iMCcnt7o8fGdHolA5WNvtN7o5OOdHkSg5WPfaIjATc/e6OTjnR5EoOVj32iIwE3P3ujk450eRKDlY99oiMBNz97o5OOdHkSg5WPfaIjATc+dVjTO5WNvtMqxYSne6PHxnVY0zuVjb7TKsWEp3ujx8Z1WNM7lY2+0yrFhKd7o8fGdVjTO5WNvtMqxYSne6PHxlIymShC209ZYNWnzpy0Hm5SMpkoQttPWWDVp86ctB5uUjKZKELbT1lg1afOnLQeblIymShC209ZYNWnzpy0HmxC2p61YNbT5py0QNpSMUqUQtqetWDW0+actEDaUjFKlELanrVg1tPmnLRA2lIxSpRC2p61YNbT5py0QNpSMUqWJTI2jpy0Hm3HcdTMQttPWiUyNo6ctB5tx3HUzELbT1olMjaOnLQebcdx1MxC209aJTI2jpy0Hm3HcdTMQttPW")
+"vertex_data": PackedByteArray("KkiDhf///5d5nEbfwC0s7ezUHK7Urf+Xtw+ttut/LO3qSwAAPtL/lzmgwlkAACztrNiYKBOA/5d3EyoxKlIs7ezUHK7Ure/Ttw+ttut/8655nEbfwC3v0ypIg4X///OurNiYKBOA79N3EyoxKlLzrjmgwlkAAO/T6ksAAD7S867s1Byu1K1L7+pLAAA+0s7PKkiDhf//S++s2JgoE4DOz3mcRt/ALUvvdxMqMSpSzs+3D622639L7zmgwlkAAM7PD7Qu2Z36+bJgY/S1WjtN0gHX//9LhPmyb0Akj6yxTdIN3Z5wSfD5sl6MZE0HMU3S//9ul/h5+bJsaZQmWadN0gHX//9LhNPvb0Akj6yxEZpgY/S1WjvT7w+0Ltmd+hGa//9ul/h50+9saZQmWacRml6MZE0HMdPvDd2ecEnwEZoB1///S4TO0Q3dnnBJ8KvHD7Qu2Z36ztH//26X+Hmrx2Bj9LVaO87RbGmUJlmnq8dvQCSPrLHO0V6MZE0HMavHswoFV8t8MKz3MTjNwFvH+qs8+Y8wnTCsAABDlFw7x/orO9Ip80wwrG9iBaDoK8f6I23HYldtMKx3MBBngwvH+qs8+Y8wnT7GAABDlFw7hc/3MTjNwFs+xrMKBVfLfIXPI23HYldtPsZ3MBBngwuFz29iBaDoKz7GKzvSKfNMhc+rPPmPMJ3i7Ss70inzTAbiswoFV8t84u0jbcdiV20G4vcxOM3AW+LtdzAQZ4MLBuIAAEOUXDvi7W9iBaDoKwbiOEBEL6J5bOc4QEQvonls5zhARC+ieWznOEBEL6J5bOesYzYJrGR+16xjNgmsZH7XrGM2CaxkftesYzYJrGR+13GKbLAEJbtocYpssAQlu2hximywBCW7aHGKbLAEJbto76+vDeVbM+bvr68N5Vsz5u+vrw3lWzPm76+vDeVbM+ZnoK0WoDAq6GegrRagMCroZ6CtFqAwKuhnoK0WoDAq6DmU7btXTH9JOZTtu1dMf0k5lO27V0x/STmU7btXTH9JZApxx566bh5kCnHHnrpuHmQKcceeum4eZApxx566bh5LvkwCeEaWyEu+TAJ4RpbIS75MAnhGlshLvkwCeEaWyNplO55nFNJO2mU7nmcU0k7aZTueZxTSTtplO55nFNJO")
 }]
 
-[node name="GoldenCrumb" type="Area3D" unique_id=17433490]
+[node name="GoldenCrumb" type="Area3D" unique_id=25491250]
 script = ExtResource("1_7jsvh")
 golden = true
 
-[node name="Shape" type="CollisionShape3D" parent="." unique_id=1141103864]
+[node name="Shape" type="CollisionShape3D" parent="." unique_id=1546394101]
 shape = SubResource("SphereShape3D_pj7ic")
 
-[node name="Visual" type="Node3D" parent="." unique_id=1926954397]
+[node name="Visual" type="Node3D" parent="." unique_id=423008874]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.15, 0)
 
-[node name="A" type="MeshInstance3D" parent="Visual" unique_id=33979715]
+[node name="A" type="MeshInstance3D" parent="Visual" unique_id=42203138]
 material_override = ExtResource("2_4lc62")
 visibility_range_end = 90.0
 visibility_range_end_margin = 13.5
 visibility_range_fade_mode = 1
 mesh = SubResource("ArrayMesh_ww3s7")
 
-[node name="Skin" type="Node3D" parent="Visual" unique_id=2131712268]
+[node name="Skin" type="Node3D" parent="Visual" unique_id=2100434018]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, 0)
 script = ExtResource("3_d2h8b")
 model_id = "golden_crumb"
 fit_size = Vector3(1.3, 0.9, 1.3)
 hide_paths = Array[NodePath]([NodePath("../A")])
 
-[node name="Glow" type="OmniLight3D" parent="Visual" unique_id=1519973414]
+[node name="Glow" type="OmniLight3D" parent="Visual" unique_id=1765046302]
 light_color = Color(1, 0.8, 0.3, 1)
 light_energy = 1.5
 distance_fade_enabled = true

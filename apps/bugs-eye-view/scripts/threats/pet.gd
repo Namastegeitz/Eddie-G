@@ -113,6 +113,9 @@ var _twitch_cd := 3.0
 var _twitch_t := 0.0
 var _twitch_ear := 0
 var _pant := 0.0
+# Fetch: give up on a ball it can't get any closer to.
+var _fetch_best := INF
+var _fetch_stuck := 0.0
 
 
 func _setup() -> void:
@@ -561,6 +564,8 @@ func fetch(ball: PhysicsProp, thrower: Node3D) -> void:
 	_toy = ball
 	_fetch_by = thrower
 	_carrying = false
+	_fetch_best = INF
+	_fetch_stuck = 0.0
 	_play_t = 14.0
 
 
@@ -641,8 +646,17 @@ func _fetch_tick(delta: float) -> void:
 		stop_playing()
 		return
 	if not _carrying:
-		if _flat_dist(_toy.global_position, global_position) > 3.0 * scale.x + 2.0:
+		var d := _flat_dist(_toy.global_position, global_position)
+		if d > 3.0 * scale.x + 2.0:
 			_move_to(_toy.global_position, config.chase_speed, delta)
+			if d < _fetch_best - 0.5:
+				_fetch_best = d
+				_fetch_stuck = 0.0
+			else:
+				_fetch_stuck += delta
+				if _fetch_stuck > 3.0:
+					stop_playing()
+					return
 		else:
 			_carrying = true
 			_toy.freeze = true

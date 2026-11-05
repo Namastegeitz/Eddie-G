@@ -655,13 +655,33 @@ func _throw_ball() -> void:
 	# A gentle lob that rolls to a stop, so the dog can catch up with it.
 	_ball.linear_damp = 1.2
 	_ball.angular_damp = 2.0
+	# Aim for open lawn: a ball behind a hedge or under the shed is no game.
 	var dir := (-global_basis.z).rotated(Vector3.UP, randf_range(-0.6, 0.6))
+	for attempt in 8:
+		var tryd := (-global_basis.z).rotated(Vector3.UP, randf_range(-0.6, 0.6) if attempt < 6 else (attempt - 6.5) * 0.4)
+		tryd.y = 0.0
+		tryd = tryd.normalized()
+		if _clear_throw(tryd):
+			dir = tryd
+			break
 	dir.y = 0.0
 	_ball.apply_central_impulse((dir.normalized() * 13.0 + Vector3.UP * 4.0) * _ball.mass)
 	_ball.mark_played(4.0)
 	AudioManager.play_at(&"voice_call", eye_position(), 0.0, 1.2, &"Muffled")
 	if dog:
 		dog.fetch(_ball, self)
+
+
+## Open floor all along where a thrown ball would roll.
+func _clear_throw(dir: Vector3) -> bool:
+	var lvl := Level.current
+	if lvl == null or not is_instance_valid(lvl):
+		return true
+	var ground := Vector3(global_position.x, global_position.y, global_position.z)
+	for d in [8.0, 12.0, 16.0, 20.0]:
+		if not lvl.is_open_floor(ground + dir * d + Vector3.UP * 0.3):
+			return false
+	return true
 
 
 ## The head is lower when sitting or kneeling.

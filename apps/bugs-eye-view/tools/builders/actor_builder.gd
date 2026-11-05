@@ -76,7 +76,9 @@ static func merge_meshes(parent: Node, skip: Array = []) -> void:
 			st.append_from(mi.mesh, 0, mi.transform)
 		var first := list[0] as MeshInstance3D
 		var merged := MeshInstance3D.new()
-		merged.mesh = st.commit()
+		# Compressed vertices (16-bit positions, packed normals): about half the
+		# download for the same shape.
+		merged.mesh = st.commit(null, Mesh.ARRAY_FLAG_COMPRESS_ATTRIBUTES)
 		merged.material_override = key
 		merged.cast_shadow = first.cast_shadow
 		var keep_name := first.name
@@ -114,8 +116,8 @@ static func sphere(r: float, h: float = -1.0) -> SphereMesh:
 	var s := SphereMesh.new()
 	s.radius = r
 	s.height = r * 2.0 if h < 0.0 else h
-	s.radial_segments = 24
-	s.rings = 12
+	s.radial_segments = 20
+	s.rings = 10
 	return s
 
 
@@ -124,7 +126,7 @@ static func cyl(r: float, h: float, r2: float = -1.0) -> CylinderMesh:
 	c.top_radius = r if r2 < 0.0 else r2
 	c.bottom_radius = r
 	c.height = h
-	c.radial_segments = 24
+	c.radial_segments = 20
 	c.rings = 1
 	return c
 
@@ -133,7 +135,7 @@ static func capsule(r: float, h: float) -> CapsuleMesh:
 	var c := CapsuleMesh.new()
 	c.radius = r
 	c.height = h
-	c.radial_segments = 20
+	c.radial_segments = 16
 	c.rings = 6
 	return c
 

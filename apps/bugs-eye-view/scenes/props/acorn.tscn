@@ -9,28 +9,28 @@ radius = 0.6
 
 [sub_resource type="SphereMesh" id="SphereMesh_lux3n"]
 radius = 0.7
-radial_segments = 24
-rings = 12
+radial_segments = 20
+rings = 10
 
-[node name="Acorn" type="RigidBody3D" unique_id=507226969]
+[node name="Acorn" type="RigidBody3D" unique_id=1386731254]
 mass = 0.2
 script = ExtResource("1_pjoc1")
 noise_on_impact = 1.2
 
-[node name="Shape" type="CollisionShape3D" parent="." unique_id=1599355172]
+[node name="Shape" type="CollisionShape3D" parent="." unique_id=1432406466]
 shape = SubResource("SphereShape3D_ocmwu")
 
-[node name="Visual" type="Node3D" parent="." unique_id=258289746]
+[node name="Visual" type="Node3D" parent="." unique_id=271491728]
 
-[node name="Mesh" type="MeshInstance3D" parent="Visual" unique_id=759366762]
+[node name="Mesh" type="MeshInstance3D" parent="Visual" unique_id=1347005328]
 material_override = ExtResource("2_ps0ws")
 visibility_range_end = 100.0
 visibility_range_end_margin = 15.0
 visibility_range_fade_mode = 1
 mesh = SubResource("SphereMesh_lux3n")
 
-[node name="Skin" type="Node3D" parent="Visual" unique_id=1626466650]
+[node name="Skin" type="Node3D" parent="Visual" unique_id=869503985]
 script = ExtResource("3_c0q10")
 model_id = "prop_acorn"
-fit_size = Vector3(1.3897924, 1, 1.3897924)
+fit_size = Vector3(1.3857499, 1, 1.3857499)
 hide_paths = Array[NodePath]([NodePath("../Mesh")])
