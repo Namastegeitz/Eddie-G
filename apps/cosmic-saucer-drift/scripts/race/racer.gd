@@ -104,6 +104,10 @@ var _wrong_t := 0.0
 var last_safe_idx := 0
 var last_safe_lat := 0.0
 var _start_press := -1.0
+var _stuck_t := 0.0
+var _stuck_ref := 0.0
+var _last_respawn_t := -99.0
+var _respawn_streak := 0
 var _short_i := 0
 
 var stats := {}
@@ -217,6 +221,7 @@ func tick(dt: float) -> void:
 	_energy(dt)
 	var t4 := Time.get_ticks_usec()
 	_progress(dt)
+	_unstick(dt)
 	_items_input()
 	var t5 := Time.get_ticks_usec()
 	_visuals(dt)
@@ -558,10 +563,36 @@ func _progress(dt: float) -> void:
 	wrong_way = _wrong_t > 1.2
 
 
+## Safety net: a racer making almost no progress for a while (pinned on a
+## wall or hazard, or going round in circles) gets the rescue beam. Players
+## only if they're holding the throttle, after a longer wait.
+func _unstick(dt: float) -> void:
+	if not race.racing or finished or rescue_time > 0.0 or spin_time > 0.0:
+		_stuck_t = 0.0
+		_stuck_ref = race_dist
+		return
+	_stuck_t += dt
+	var window := 4.0 if not is_human else 6.0
+	if _stuck_t < window:
+		return
+	var moved := race_dist - _stuck_ref
+	_stuck_t = 0.0
+	_stuck_ref = race_dist
+	if moved < 10.0 and (not is_human or in_throttle > 0.5):
+		respawn("stuck", global_position)
+
+
 func respawn(reason := "", from := Vector3.ZERO) -> void:
 	var td: TrackData = race.td
 	var path := td.main
 	var i := path.wi(last_safe_idx - 4)
+	# Rescued again soon after the last one: put it further along each time
+	# so no spot can trap a racer in a loop.
+	var now: float = race.time
+	_respawn_streak = _respawn_streak + 1 if now - _last_respawn_t < 8.0 else 0
+	_last_respawn_t = now
+	if _respawn_streak > 0:
+		i = path.wi(last_safe_idx + 12 * _respawn_streak)
 	while td.gap[i] == 1:
 		i = path.wi(i - 3)
 	# Never drop a saucer just before a gap with no run-up: put it past it.

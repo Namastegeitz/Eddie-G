@@ -72,6 +72,10 @@ func _run(track: String, variant: int, laps: int, cls: int) -> void:
 				var d: float = last_dist.get(r.idx, -99999.0)
 				if race.racing and not r.finished and r.race_dist - d < 20.0:
 					stuck[r.idx] = int(stuck.get(r.idx, 0)) + 1
+					if OS.get_cmdline_user_args().has("--verbose"):
+						print("    slow %s idx=%d pos=%s v=%.1f fwd=%.1f grounded=%s lat=%.1f wrong=%s short=%s spin=%.1f rescue=%.1f" % [
+							r.display_name, r.track_idx, r.global_position, r.velocity.length(), r.fwd_speed, r.grounded, r.lateral,
+							r.wrong_way, r.on_shortcut, r.spin_time, r.rescue_time])
 				last_dist[r.idx] = r.race_dist
 	var ms := float(Time.get_ticks_usec() - t0) / 1000.0 / maxf(frames, 1)
 	var fin := 0
