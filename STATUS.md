@@ -182,7 +182,8 @@
   moon craters/Earth/ringed planet/shooting stars; real soft shadows; play feedback (limb sparkles by grade, Perfect
   camera kick, move trails, streak-warm pad lights). Graphics levels Low / Medium (Auto only) / High / Ultra (up to 3x);
   Auto is time-based (3 s windows). Static scenery merged per material (js/gfx.js). Sharper Wardrobe portraits and gear
-  thumbnails, 512 px fur patterns.
+  thumbnails, 512 px fur patterns. Tests: 507 unit checks, 34-step play-through (new graphics-levels step) on source
+  and dist/www, 12 phone checks; all four stages render on WebGL 1 with no shader errors.
 - Not verified on real hardware yet: touch feel and audio latency on an actual phone, install to home screen, and frame
   rate of the new graphics on older phones (Auto steps down if needed).
 - Next: pick add-ons from `prompts/claude/monkey-see-monkey-do-next.md` (prompt 15 is done; replay review, Daily
