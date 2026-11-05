@@ -28,14 +28,15 @@ export default {
     + `<radialGradient id="sft-heart" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#FFE3EF"/><stop offset=".5" stop-color="#FF8DBA"/><stop offset="1" stop-color="#EE5C98"/></radialGradient>`
     + `<linearGradient id="sft-rim" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F2FFFF"/><stop offset=".45" stop-color="#A6EEF1"/><stop offset="1" stop-color="#55C6CE"/></linearGradient>`
     + `<linearGradient id="sft-beam" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7FE3E8" stop-opacity=".55"/><stop offset="1" stop-color="#7FE3E8" stop-opacity="0"/></linearGradient>`
-    + `<radialGradient id="sft-bub" cx=".42" cy=".4" r=".62"><stop offset="0" stop-color="#FFFFFF" stop-opacity="0"/><stop offset=".72" stop-color="#F4E2FF" stop-opacity=".45"/><stop offset="1" stop-color="#E2A2FA" stop-opacity=".8"/></radialGradient>`
+    + `<radialGradient id="sft-bub" cx=".44" cy=".42" r=".6"><stop offset="0" stop-color="#FFFFFF" stop-opacity=".1"/><stop offset=".55" stop-color="#F3D8FF" stop-opacity=".55"/><stop offset="1" stop-color="#DE92F5" stop-opacity=".9"/></radialGradient>`
+    + `<linearGradient id="sft-wing" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#F0D2FF"/></linearGradient>`
     + `<linearGradient id="sft-iri" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#B06FDB"/><stop offset=".5" stop-color="#D774B6"/><stop offset="1" stop-color="#8A86E0"/></linearGradient>`,
   symbols: [
     // 1. Baby Blip: chubby baby head, heart-tipped antennae, a little curl
-    `<path d="M25 21Q22.5 14 18 10.5M39 21Q41.5 14 46 10.5" fill="none" stroke="#3A9476" stroke-width="4.6" stroke-linecap="round"/>`
-    + `<path d="M25 21Q22.5 14 18 10.5M39 21Q41.5 14 46 10.5" fill="none" stroke="#9DEFC9" stroke-width="2.2" stroke-linecap="round"/>`
-    + `<path d="${HEART}" transform="translate(17 9.5) rotate(-18) scale(1.15)" fill="url(#sft-heart)" stroke="#C4507F" stroke-width="1.5" stroke-linejoin="round"/>`
-    + `<path d="${HEART}" transform="translate(47 9.5) rotate(18) scale(1.15)" fill="url(#sft-heart)" stroke="#C4507F" stroke-width="1.5" stroke-linejoin="round"/>`
+    `<path d="M25 21Q22.5 15.5 18.5 12.5M39 21Q41.5 15.5 45.5 12.5" fill="none" stroke="#3A9476" stroke-width="4.6" stroke-linecap="round"/>`
+    + `<path d="M25 21Q22.5 15.5 18.5 12.5M39 21Q41.5 15.5 45.5 12.5" fill="none" stroke="#9DEFC9" stroke-width="2.2" stroke-linecap="round"/>`
+    + `<path d="${HEART}" transform="translate(17.5 11.5) rotate(-18) scale(1.08)" fill="url(#sft-heart)" stroke="#C4507F" stroke-width="1.5" stroke-linejoin="round"/>`
+    + `<path d="${HEART}" transform="translate(46.5 11.5) rotate(18) scale(1.08)" fill="url(#sft-heart)" stroke="#C4507F" stroke-width="1.5" stroke-linejoin="round"/>`
     + `<path d="M32 18.5C46.5 18.5 56 27.5 56 39.5C56 51 45.5 57.5 32 57.5C18.5 57.5 8 51 8 39.5C8 27.5 17.5 18.5 32 18.5Z" fill="url(#sft-mint)" stroke="#3A9476" stroke-width="2.2"/>`
     + `<path d="M30.5 19C29.5 14.5 33.5 12.5 35.5 15C36.8 16.8 35 18.6 33.6 17.6" fill="none" stroke="#3A9476" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>`
     + `<ellipse cx="20.5" cy="26.5" rx="6.5" ry="3" transform="rotate(-24 20.5 26.5)" fill="#fff" opacity=".75"/><circle cx="13.6" cy="32.5" r="1.5" fill="#fff" opacity=".7"/>`
@@ -67,12 +68,12 @@ export default {
     + `<path d="M38.5 24.5h5l-5 5h5M46.5 29.5h3.4l-3.4 3.4h3.4" fill="none" stroke="#8A7CC8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>`,
 
     // 4. Marshmallow Bot: squishy robot, heart on the chest
-    `<ellipse cx="25" cy="57" rx="5" ry="2.7" fill="#6AA8EE" stroke="#4677B8" stroke-width="2"/><ellipse cx="39" cy="57" rx="5" ry="2.7" fill="#6AA8EE" stroke="#4677B8" stroke-width="2"/>`
+    `<ellipse cx="25" cy="56.3" rx="5" ry="2.7" fill="#6AA8EE" stroke="#4677B8" stroke-width="2"/><ellipse cx="39" cy="56.3" rx="5" ry="2.7" fill="#6AA8EE" stroke="#4677B8" stroke-width="2"/>`
     + `<ellipse cx="15.5" cy="46" rx="4" ry="5.5" transform="rotate(25 15.5 46)" fill="url(#sft-blue)" stroke="#4677B8" stroke-width="2"/><ellipse cx="48.5" cy="46" rx="4" ry="5.5" transform="rotate(-25 48.5 46)" fill="url(#sft-blue)" stroke="#4677B8" stroke-width="2"/>`
     + `<rect x="18" y="36" width="28" height="20.5" rx="9.5" fill="url(#sft-blue)" stroke="#4677B8" stroke-width="2.2"/>`
     + `<ellipse cx="24" cy="40.5" rx="3.5" ry="1.5" fill="#fff" opacity=".75"/>`
     + `<path d="${HEART}" transform="translate(32 46.8) scale(1.2)" fill="url(#sft-heart)" stroke="#C4507F" stroke-width="1.3" stroke-linejoin="round"/>`
-    + `<path d="M32 13V9.5" stroke="#4677B8" stroke-width="2.2" stroke-linecap="round"/><circle cx="32" cy="7.6" r="3" fill="url(#sft-heart)" stroke="#C4507F" stroke-width="1.5"/>`
+    + `<path d="M32 13V10" stroke="#4677B8" stroke-width="2.2" stroke-linecap="round"/><circle cx="32" cy="8" r="3" fill="url(#sft-heart)" stroke="#C4507F" stroke-width="1.5"/>`
     + `<rect x="8.5" y="20" width="6" height="11" rx="3" fill="#6AA8EE" stroke="#4677B8" stroke-width="2"/><rect x="49.5" y="20" width="6" height="11" rx="3" fill="#6AA8EE" stroke="#4677B8" stroke-width="2"/>`
     + `<rect x="12" y="12" width="40" height="27" rx="12" fill="url(#sft-blue)" stroke="#4677B8" stroke-width="2.2"/>`
     + `<rect x="17" y="17" width="30" height="17" rx="8" fill="#F8FBFF" stroke="#6E9BD6" stroke-width="1.4"/>`
@@ -92,16 +93,16 @@ export default {
     + `<path d="M9.5 41.5L16 42.8M10 46.5L16 45.2M54.5 41.5L48 42.8M54 46.5L48 45.2" stroke="#7058C0" stroke-width="1.4" stroke-linecap="round"/>`
     + blush(18.5, 47.5, 3.4, 2) + blush(45.5, 47.5, 3.4, 2),
 
-    // 6. Plush Octo: round plush head, stubby curled tentacles, tiny pout
-    `<path d="M17 40C13 43.5 9.5 46 9.5 50.5C9.5 54 13.5 55.5 15.5 53M25.5 43C24.5 47.5 21.5 50 22 53C22.5 55.5 26.5 56 28 53.5M38.5 43C39.5 47.5 42.5 50 42 53C41.5 55.5 37.5 56 36 53.5M47 40C51 43.5 54.5 46 54.5 50.5C54.5 54 50.5 55.5 48.5 53" fill="none" stroke="#C0623B" stroke-width="8.4" stroke-linecap="round" stroke-linejoin="round"/>`
-    + `<path d="M17 40C13 43.5 9.5 46 9.5 50.5C9.5 54 13.5 55.5 15.5 53M25.5 43C24.5 47.5 21.5 50 22 53C22.5 55.5 26.5 56 28 53.5M38.5 43C39.5 47.5 42.5 50 42 53C41.5 55.5 37.5 56 36 53.5M47 40C51 43.5 54.5 46 54.5 50.5C54.5 54 50.5 55.5 48.5 53" fill="none" stroke="#FFB892" stroke-width="4.4" stroke-linecap="round" stroke-linejoin="round"/>`
-    + `<circle cx="10.5" cy="50" r="1.1" fill="#FFE6D8"/><circle cx="53.5" cy="50" r="1.1" fill="#FFE6D8"/><circle cx="23" cy="52.5" r="1.1" fill="#FFE6D8"/><circle cx="41" cy="52.5" r="1.1" fill="#FFE6D8"/>`
+    // 6. Plush Octo: round plush head, stubby tentacles curling outward
+    `<path d="M18 41C16 46 13.5 49 11 50C8.5 51 7.5 48.5 9.5 47M46 41C48 46 50.5 49 53 50C55.5 51 56.5 48.5 54.5 47M25.5 44C24.5 48 23 51 22 54.5M38.5 44C39.5 48 41 51 42 54.5M32 45V54.5" fill="none" stroke="#C0623B" stroke-width="8.4" stroke-linecap="round" stroke-linejoin="round"/>`
+    + `<path d="M18 41C16 46 13.5 49 11 50C8.5 51 7.5 48.5 9.5 47M46 41C48 46 50.5 49 53 50C55.5 51 56.5 48.5 54.5 47M25.5 44C24.5 48 23 51 22 54.5M38.5 44C39.5 48 41 51 42 54.5M32 45V54.5" fill="none" stroke="#FFB892" stroke-width="4.4" stroke-linecap="round" stroke-linejoin="round"/>`
+    + `<circle cx="12.5" cy="49.2" r="1.1" fill="#FFE6D8"/><circle cx="51.5" cy="49.2" r="1.1" fill="#FFE6D8"/><circle cx="22.8" cy="51.5" r="1.1" fill="#FFE6D8"/><circle cx="41.2" cy="51.5" r="1.1" fill="#FFE6D8"/><circle cx="32" cy="52" r="1.1" fill="#FFE6D8"/>`
     + `<path d="M32 9C44.5 9 53 18 53 29.5C53 39.5 45 46 32 46C19 46 11 39.5 11 29.5C11 18 19.5 9 32 9Z" fill="url(#sft-peach)" stroke="#C0623B" stroke-width="2.2"/>`
     + `<ellipse cx="21.5" cy="16.5" rx="6" ry="2.8" transform="rotate(-27 21.5 16.5)" fill="#fff" opacity=".75"/>`
     + `<circle cx="44" cy="16.5" r="2.1" fill="#F28A5A" opacity=".45"/><circle cx="49" cy="23" r="1.4" fill="#F28A5A" opacity=".45"/><circle cx="39.5" cy="13" r="1.2" fill="#F28A5A" opacity=".45"/>`
     + eye(24, 29.5, 4.4, 5.2) + eye(40, 29.5, 4.4, 5.2)
     + blush(17, 36.5, 3.6, 2.2) + blush(47, 36.5, 3.6, 2.2)
-    + `<ellipse cx="32" cy="37.5" rx="1.9" ry="2.2" fill="#8A3F45" stroke="${INK}" stroke-width="1.2"/>`,
+    + `<path d="M29.2 36.2Q32 39.8 34.8 36.2" fill="none" stroke="${INK}" stroke-width="1.6" stroke-linecap="round"/>`,
 
     // 7. Pocket Saucer: tiny UFO, the dome is its happy face
     `<path d="M22.5 48.5H41.5L49 59H15Z" fill="url(#sft-beam)"/>`
@@ -118,25 +119,26 @@ export default {
 
     // 8. Bubble Sprite: little winged sprite floating in a soap bubble
     `<circle cx="32" cy="32" r="26.5" fill="url(#sft-bub)" stroke="url(#sft-iri)" stroke-width="2.4"/>`
-    + `<ellipse cx="21" cy="30" rx="6.2" ry="4" transform="rotate(-30 21 30)" fill="#FFFFFF" fill-opacity=".85" stroke="#B07AD6" stroke-width="1.4"/><ellipse cx="43" cy="30" rx="6.2" ry="4" transform="rotate(30 43 30)" fill="#FFFFFF" fill-opacity=".85" stroke="#B07AD6" stroke-width="1.4"/>`
-    + `<path d="M32 23.5Q31 19 34 16.8" fill="none" stroke="#9A50BC" stroke-width="1.8" stroke-linecap="round"/><circle cx="34.8" cy="16" r="2.3" fill="url(#sft-heart)" stroke="#9A50BC" stroke-width="1.4"/>`
-    + `<circle cx="32" cy="35.5" r="12" fill="url(#sft-lilac)" stroke="#9A50BC" stroke-width="2"/>`
-    + `<ellipse cx="27" cy="29" rx="3.6" ry="1.8" transform="rotate(-25 27 29)" fill="#fff" opacity=".8"/>`
-    + eye(27.5, 36, 2.6, 3.2) + eye(36.5, 36, 2.6, 3.2)
-    + blush(23.5, 40.2, 2.1, 1.3) + blush(40.5, 40.2, 2.1, 1.3)
-    + `<path d="M30.5 40Q32 41.8 33.5 40" fill="none" stroke="${INK}" stroke-width="1.4" stroke-linecap="round"/>`
-    + `<path d="M13.5 27C15 18.5 20.5 12.5 28 10.5" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".95"/><circle cx="12.6" cy="33" r="1.6" fill="#fff"/>`
-    + `<path d="M48.5 46C46 49.5 42 52.3 37.5 53.2" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" opacity=".85"/>`,
+    + `<path d="M9.6 27C11 20.5 15 15 20.5 11.8" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".95"/><circle cx="9.4" cy="32.5" r="1.4" fill="#fff"/>`
+    + `<path d="M49.5 46.5C47 50 43 52.6 38.5 53.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" opacity=".85"/>`
+    + `<path d="M25.5 30C21 31 14.5 28.5 13.8 23.5C13.2 19.5 17 17.5 20.5 19.5C23.5 21.5 25.5 26 25.5 30ZM38.5 30C43 31 49.5 28.5 50.2 23.5C50.8 19.5 47 17.5 43.5 19.5C40.5 21.5 38.5 26 38.5 30ZM22.5 37.5C19 40 14.5 39.5 13.8 36.5C13.2 34 16 32.2 19 33C20.8 33.5 22.2 35.3 22.5 37.5ZM41.5 37.5C45 40 49.5 39.5 50.2 36.5C50.8 34 48 32.2 45 33C43.2 33.5 41.8 35.3 41.5 37.5Z" fill="url(#sft-wing)" stroke="#A86ACF" stroke-width="1.5" stroke-linejoin="round"/>`
+    + `<path d="M23 27.5Q19.5 24.5 17.5 21.8M41 27.5Q44.5 24.5 46.5 21.8" fill="none" stroke="#D8B2EE" stroke-width="1.2" stroke-linecap="round"/>`
+    + `<path d="M32 22Q31 17 34.5 14.5" fill="none" stroke="#9A50BC" stroke-width="1.8" stroke-linecap="round"/><circle cx="35.2" cy="13.8" r="2.5" fill="url(#sft-heart)" stroke="#9A50BC" stroke-width="1.4"/>`
+    + `<circle cx="32" cy="35.5" r="13.5" fill="url(#sft-lilac)" stroke="#9A50BC" stroke-width="2"/>`
+    + `<ellipse cx="26.5" cy="28" rx="4" ry="2" transform="rotate(-25 26.5 28)" fill="#fff" opacity=".8"/>`
+    + eye(27, 36, 3, 3.7) + eye(37, 36, 3, 3.7)
+    + blush(22.5, 41, 2.4, 1.4) + blush(41.5, 41, 2.4, 1.4)
+    + `<path d="M30.2 41Q32 43 33.8 41" fill="none" stroke="${INK}" stroke-width="1.5" stroke-linecap="round"/>`,
 
     // 9. Star Pup: chubby star-shaped puppy with floppy ears and a tongue
     `<path d="M28.53 12.89Q32 8 35.47 12.89L39.38 18.39Q41.7 21.65 45.52 22.85L51.95 24.86Q57.68 26.66 54.1 31.47L50.08 36.89Q47.69 40.1 47.73 44.1L47.81 50.84Q47.87 56.84 42.18 54.93L35.79 52.78Q32 51.5 28.21 52.78L21.82 54.93Q16.13 56.84 16.19 50.84L16.27 44.1Q16.31 40.1 13.92 36.89L9.9 31.47Q6.32 26.66 12.05 24.86L18.48 22.85Q22.3 21.65 24.62 18.39Z" fill="url(#sft-coral)" stroke="#C1474F" stroke-width="2.2" stroke-linejoin="round"/>`
     + `<ellipse cx="30.5" cy="15.5" rx="1.5" ry="3.2" transform="rotate(25 30.5 15.5)" fill="#fff" opacity=".75"/><ellipse cx="13" cy="27.5" rx="3" ry="1.3" transform="rotate(-15 13 27.5)" fill="#fff" opacity=".7"/>`
     + `<path d="M23.5 21.5C17.5 20.5 13.8 26.5 14.8 33.5C15.3 38 19.3 39.5 21 36.5C22.7 33.5 23.2 28.5 27 25.5C28.5 24 26.5 21.8 23.5 21.5ZM40.5 21.5C46.5 20.5 50.2 26.5 49.2 33.5C48.7 38 44.7 39.5 43 36.5C41.3 33.5 40.8 28.5 37 25.5C35.5 24 37.5 21.8 40.5 21.5Z" fill="#E8707A" stroke="#C1474F" stroke-width="1.6" stroke-linejoin="round"/>`
     + `<ellipse cx="32" cy="43.5" rx="6.8" ry="4.6" fill="#FFF1EE" opacity=".95"/>`
-    + eye(26, 35, 3.6, 4.4) + eye(38, 35, 3.6, 4.4)
+    + eye(25.8, 34.6, 3.9, 4.7) + eye(38.2, 34.6, 3.9, 4.7)
     + blush(20.5, 42.5, 2.8, 1.7, '#FF6F8A', '.5') + blush(43.5, 42.5, 2.8, 1.7, '#FF6F8A', '.5')
     + `<path d="M30.4 44.6C30.4 48.6 33.6 48.6 33.6 44.6Z" fill="#FF7FA0" stroke="#C1474F" stroke-width="1.2" stroke-linejoin="round"/>`
     + `<path d="M29 43.6Q30.5 45.6 32 43.6Q33.5 45.6 35 43.6" fill="none" stroke="${INK}" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>`
-    + `<ellipse cx="32" cy="41" rx="2.6" ry="1.8" fill="${INK}"/><ellipse cx="31.2" cy="40.4" rx=".9" ry=".55" fill="#fff" opacity=".8"/>`,
+    + `<ellipse cx="32" cy="41" rx="2.6" ry="1.8" fill="${INK}"/><ellipse cx="31.2" cy="40.4" rx="1" ry=".7" fill="#fff" opacity=".8"/>`,
   ],
 };
