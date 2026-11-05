@@ -299,10 +299,10 @@
         0.94
       ],
       "canopy": {
-        "zones": 4,
+        "zones": 3,
         "rows": [
           7,
-          10
+          11
         ]
       }
     }
@@ -316,5 +316,88 @@
   "native_animals": [
     "bird_of_paradise"
   ],
-  "sprite": ""
+  "sprite": "",
+  "fpv_scenes": [
+    {
+      "id": "pandanus_stilts",
+      "name": "Pandanus Stilts",
+      "line": "Pandanus trees stand on tripods of stilt roots.",
+      "props": {
+        "walking_palm": 1.3,
+        "fern": 0.6,
+        "palm": 0.4,
+        "liana": 0.4
+      },
+      "fauna": [
+        "parrot"
+      ],
+      "particles": [
+        "motes"
+      ],
+      "shafts": 0.5
+    },
+    {
+      "id": "tree_fern_highlands",
+      "name": "Tree Fern Highlands",
+      "line": "High in the mountains, tree ferns tower over the mist.",
+      "props": {
+        "tree_fern": 1.5,
+        "fern": 0.6,
+        "moss_rock": 0.4,
+        "liana": 0.3
+      },
+      "fauna": [
+        "birdwing"
+      ],
+      "particles": [
+        "mist"
+      ],
+      "shafts": 0.2,
+      "colors": {
+        "fog": "#c8d8d0"
+      }
+    },
+    {
+      "id": "paradise_court",
+      "name": "Display Court",
+      "line": "Male birds of paradise clear a stage on the forest floor to dance.",
+      "props": {
+        "giant_tree": 0.9,
+        "fern": 0.8,
+        "orchid": 0.4,
+        "liana": 0.6
+      },
+      "fauna": [
+        "bird_of_paradise"
+      ],
+      "particles": [
+        "motes"
+      ],
+      "shafts": 0.8,
+      "colors": {
+        "light": "#ffe8a0"
+      }
+    },
+    {
+      "id": "moss_forest",
+      "name": "Moss Forest",
+      "line": "In the upper montane forest every branch wears a coat of moss.",
+      "props": {
+        "elfin_tree": 1.3,
+        "moss_rock": 0.7,
+        "orchid": 0.5,
+        "liana": 0.3
+      },
+      "fauna": [
+        "birdwing"
+      ],
+      "particles": [
+        "mist"
+      ],
+      "shafts": 0.1,
+      "colors": {
+        "fog": "#d0dcd4"
+      }
+    }
+  ]
 }

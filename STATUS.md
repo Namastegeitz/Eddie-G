@@ -50,13 +50,23 @@
   texture; water canvas shader (`assets/shaders/water.gdshader`) driven by each lane's clock; 3D
   view renders at screen resolution on High with MSAA, shadows, textured ground and glossy moving
   water. Settings > Graphics (Auto/High/Medium/Low, `scripts/view/gfx.gd`).
+- First person fixed: on phones (and with a mouse) a tap reached the eye button twice (touch +
+  emulated click), switching to first person and straight back; only V worked. Fixed in
+  `Widgets.tap`; guarded by an audit check that taps like a real finger, a GL render check of
+  every scene (`tools/fpv_check.tscn`, in run_tests.sh) and a phone-browser tap test run by
+  `tools/build_web.sh` on every web build.
+- 80 themed first-person scenes (4 per region, `fpv_scenes` in each map file, built by
+  `scripts/view/scenery_3d.gd`): real plants, overhead dressing, landmarks, fauna, particles,
+  light and fog per scene; title card on entry; levels have 1-3 canopy zones (1/2/3 by level
+  band). Each dressed row is one merged mesh; moving things are baked to one mesh each, so the
+  first-person scene draws ~255 meshes (was ~450). 3D renders at up to 1.5x on Medium, 2x on High.
 - Feel: log carry during sideways hops, magnetic landing onto log ends (0.2 tile), vehicle hit
   edges 0.1 tile forgiving, Close call! +2 for movers brushing past, swipe threshold 36 px.
 - Art/audio: procedural chibi animals and hazards, per-region palettes and canopy framing, dot
   globe from Natural Earth, synthesised per-region music + ambience + 26 SFX (`tools/gen_audio.py`).
 - Ads: opt-in rewarded + between-run interstitial (mock; AdMob adapter scaffold). Analytics: events
   + onboarding funnel to `user://analytics.jsonl`, optional HTTP endpoint.
-- Tests: `tools/run_tests.sh` - compile check + 315-check phase audit (one section per phase's
+- Tests: `tools/run_tests.sh` - compile check + first-person GL render check + 328-check phase audit (one section per phase's
   checkpoint) in the project and an exported pack, all passing. A path-finding bot beats all 200
   levels (tools/level_sweep.tscn, ~2 min) and the first 50 Endless rows on every scene with the free Poison Dart Frog.
   Frame cost 0.9 ms (sim + view + draw recording) on the cloud CPU.

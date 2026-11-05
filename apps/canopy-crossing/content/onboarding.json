@@ -186,7 +186,8 @@
       "text": "Watch a video to double this run's Berries?"
     },
     "canopy_tip": {
-      "text": "Dense canopy ahead: tap the eye to see under the leaves"
+      "text": "Dense canopy ahead: tap the eye to see under the leaves",
+      "scene_text": "{scene} ahead: tap the eye to see under the leaves"
     }
   },
   "nudges": {

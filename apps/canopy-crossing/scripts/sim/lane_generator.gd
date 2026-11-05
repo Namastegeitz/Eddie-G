@@ -21,6 +21,8 @@ var _stone_cols: Array = []
 var _ridge: Array = []
 var _layout: Array = []
 var cover: Array[Vector2i] = []   # canopy zones (first row, last row) that need first-person view
+var cover_scenes: Array[String] = []   # each zone's first-person scene (map "fpv_scenes" id)
+var stage_no := 0
 
 
 func setup(map_def: Dictionary, run_mode: String, stage_index: int, seed_value: int) -> void:
@@ -28,6 +30,7 @@ func setup(map_def: Dictionary, run_mode: String, stage_index: int, seed_value: 
 	mode = run_mode
 	gen = Content.generators.get(String(map.get("generator", "classic")), Content.generators.get("classic", {}))
 	rng.seed = seed_value
+	stage_no = stage_index
 	next_row = 0
 	if mode == "tutorial":
 		_layout = Content.onboarding.get("tutorial", {}).get("layout", [])
@@ -39,6 +42,28 @@ func setup(map_def: Dictionary, run_mode: String, stage_index: int, seed_value: 
 		goal_row = int(stage.get("rows", 30))
 		end_row = goal_row + 8
 	_plan_canopy(seed_value)
+	_pick_scenes(seed_value)
+
+
+## Every zone gets a scene from the map's list. Within a level the zones get
+## different scenes, and the next level starts further along the list, so a
+## region's scenes all come round as you play through it.
+func _pick_scenes(seed_value: int) -> void:
+	cover_scenes.clear()
+	var list: Array = map.get("fpv_scenes", [])
+	for z in cover.size():
+		if list.is_empty():
+			cover_scenes.append("")
+			continue
+		var i := (stage_no * 3 + z) if mode == "journey" else (absi(seed_value) + z)
+		cover_scenes.append(String(list[i % list.size()].get("id", "")))
+
+
+func zone_at(row: int) -> int:
+	for i in cover.size():
+		if row >= cover[i].x and row <= cover[i].y:
+			return i
+	return -1
 
 
 ## Dense-canopy zones come from data: a Journey level's "canopy" block
@@ -100,6 +125,13 @@ func build(world: World, upto: int) -> void:
 		var lane := _next_lane()
 		if mode != "tutorial":
 			lane.covered = is_covered(lane.row) and not lane.goal and not lane.start
+			if lane.covered:
+				lane.zone = zone_at(lane.row)
+				lane.scene = cover_scenes[lane.zone] if lane.zone < cover_scenes.size() else ""
+		elif lane.covered:
+			lane.zone = 0
+			var list: Array = map.get("fpv_scenes", [])
+			lane.scene = String(list[0].get("id", "")) if not list.is_empty() else ""
 		world.add_lane(lane)
 		next_row += 1
 

@@ -284,10 +284,10 @@
         0.94
       ],
       "canopy": {
-        "zones": 4,
+        "zones": 3,
         "rows": [
           7,
-          10
+          11
         ]
       }
     }
@@ -299,5 +299,79 @@
     ]
   },
   "native_animals": [],
-  "sprite": ""
+  "sprite": "",
+  "fpv_scenes": [
+    {
+      "id": "one_tree_forest",
+      "name": "One-Tree Forest",
+      "line": "A single banyan here has grown into a whole grove.",
+      "props": {
+        "banyan": 1.4,
+        "fern": 0.6,
+        "liana": 0.5
+      },
+      "fauna": [
+        "hornbill"
+      ],
+      "particles": [
+        "leaves"
+      ],
+      "shafts": 0.5
+    },
+    {
+      "id": "bamboo_cathedral",
+      "name": "Bamboo Cathedral",
+      "line": "Giant bamboos arch over the trail like a vaulted roof.",
+      "props": {
+        "bamboo": 1.6,
+        "fern": 0.4,
+        "liana": 0.2
+      },
+      "fauna": [
+        "swallowtail"
+      ],
+      "particles": [
+        "motes"
+      ],
+      "shafts": 0.4
+    },
+    {
+      "id": "fig_ravine",
+      "name": "Fig Ravine",
+      "line": "China's last wild Asian elephants roam these valleys.",
+      "props": {
+        "strangler_fig": 1.2,
+        "fern": 0.7,
+        "liana": 0.8
+      },
+      "fauna": [
+        "parrot"
+      ],
+      "particles": [
+        "mist"
+      ],
+      "shafts": 0.3
+    },
+    {
+      "id": "orchid_valley",
+      "name": "Orchid Valley",
+      "line": "Wild orchids cling to every mossy trunk.",
+      "props": {
+        "orchid": 1.2,
+        "moss_rock": 0.6,
+        "fern": 0.7,
+        "liana": 0.4
+      },
+      "fauna": [
+        "birdwing"
+      ],
+      "particles": [
+        "motes"
+      ],
+      "shafts": 0.5,
+      "colors": {
+        "flower": "#e87ad8"
+      }
+    }
+  ]
 }

@@ -22,6 +22,8 @@ var items: Array[Dictionary] = []   # collectibles
 var goal := false
 var start := false
 var covered := false          # under dense canopy: hidden from the bird's-eye view
+var zone := -1                # which canopy zone (index into the generator's cover list)
+var scene := ""               # that zone's first-person scene id (map "fpv_scenes")
 var deco := 0               # seed for decoration
 
 

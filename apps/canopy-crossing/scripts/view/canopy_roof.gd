@@ -26,6 +26,9 @@ func _draw() -> void:
 		var l := wv.sim.world.lane(r)
 		if not l.covered:
 			continue
+		# each scene tints its own roof
+		var sc := Scenery3D.scene_def(wv.sim.world.map, l.scene)
+		var canopy_l := canopy.lerp(Scenery3D.col(sc, {}, "leaf", canopy.to_html()), 0.6) if sc.has("colors") else canopy
 		var y := -r * T
 		var below := wv.sim.world.lane(r - 1).covered
 		var above := wv.sim.world.lane(r + 1).covered
@@ -37,20 +40,24 @@ func _draw() -> void:
 			var cx := x0 + i * 46.0 + rng.randf_range(-10, 10)
 			var cy := y + rng.randf_range(-T * 0.35, T * 0.35)
 			var sway := sin(t * 1.3 + i * 0.7 + r) * 3.0
-			Draw.ellipse(self, Vector2(cx + sway, cy), rng.randf_range(26, 38), rng.randf_range(20, 30), canopy.darkened(rng.randf_range(0.0, 0.3)))
-			Draw.leaf(self, Vector2(cx + sway, cy), Vector2(rng.randf_range(-1, 1), rng.randf_range(-1, 1)), 34, 12, canopy.lightened(rng.randf_range(0.0, 0.18)))
+			Draw.ellipse(self, Vector2(cx + sway, cy), rng.randf_range(26, 38), rng.randf_range(20, 30), canopy_l.darkened(rng.randf_range(0.0, 0.3)))
+			Draw.leaf(self, Vector2(cx + sway, cy), Vector2(rng.randf_range(-1, 1), rng.randf_range(-1, 1)), 34, 12, canopy_l.lightened(rng.randf_range(0.0, 0.18)))
 		if not below:
 			# scalloped edge and a sign pointing to first-person view
 			for i in n:
-				Draw.ellipse(self, Vector2(x0 + i * 46.0 + 23.0, y + T * 0.5 + 6.0), 26, 16, canopy.darkened(0.15))
+				Draw.ellipse(self, Vector2(x0 + i * 46.0 + 23.0, y + T * 0.5 + 6.0), 26, 16, canopy_l.darkened(0.15))
 			var text := "Too thick to see from above"
 			var fs := 22
-			var tw := font.get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, fs).x
+			var name := String(Scenery3D.scene_def(wv.sim.world.map, l.scene).get("name", ""))
+			var tw := maxf(font.get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, fs).x, font.get_string_size(name, HORIZONTAL_ALIGNMENT_LEFT, -1, fs).x)
 			var cxm := Lane.COLS * T * 0.5
-			var pill := Rect2(cxm - tw * 0.5 - 52, y + T * 0.5 - 30, tw + 72, 40)
+			var h := 40.0 if name == "" else 66.0
+			var pill := Rect2(cxm - tw * 0.5 - 52, y + T * 0.5 - h + 10.0, tw + 72, h)
 			Draw.rrect(self, pill, 20, Color(0.02, 0.08, 0.05, 0.85))
 			_eye(Vector2(pill.position.x + 26, pill.get_center().y), 13)
-			draw_string(font, Vector2(pill.position.x + 46, pill.get_center().y + 8), text, HORIZONTAL_ALIGNMENT_LEFT, -1, fs, Color(1, 1, 1, 0.92))
+			if name != "":
+				draw_string(font, Vector2(pill.position.x + 46, pill.position.y + 28), name, HORIZONTAL_ALIGNMENT_LEFT, -1, fs, UI.ACCENT)
+			draw_string(font, Vector2(pill.position.x + 46, pill.end.y - 12), text, HORIZONTAL_ALIGNMENT_LEFT, -1, fs, Color(1, 1, 1, 0.92))
 
 
 func _eye(c: Vector2, r: float) -> void:

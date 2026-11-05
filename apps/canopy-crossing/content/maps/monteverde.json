@@ -288,10 +288,10 @@
         0.94
       ],
       "canopy": {
-        "zones": 4,
+        "zones": 3,
         "rows": [
           7,
-          10
+          11
         ]
       }
     }
@@ -309,5 +309,90 @@
     "coatimundi",
     "bairds_tapir"
   ],
-  "sprite": ""
+  "sprite": "",
+  "fpv_scenes": [
+    {
+      "id": "cloud_bridges",
+      "name": "Cloud Bridges",
+      "line": "Hanging bridges cross the canopy through the clouds.",
+      "props": {
+        "elfin_tree": 0.8,
+        "bromeliad": 0.8,
+        "fern": 0.8,
+        "liana": 0.5
+      },
+      "landmark": "hanging_bridge",
+      "fauna": [
+        "hummingbird"
+      ],
+      "particles": [
+        "mist"
+      ],
+      "shafts": 0.1,
+      "colors": {
+        "fog": "#dfe9e6"
+      }
+    },
+    {
+      "id": "elfin_wood",
+      "name": "Elfin Wood",
+      "line": "On windy ridges the trees grow stunted and wrapped in moss.",
+      "props": {
+        "elfin_tree": 1.4,
+        "moss_rock": 0.6,
+        "orchid": 0.5,
+        "liana": 0.3
+      },
+      "fauna": [
+        "glasswing"
+      ],
+      "particles": [
+        "mist"
+      ],
+      "shafts": 0.1,
+      "colors": {
+        "fog": "#e2ece8"
+      }
+    },
+    {
+      "id": "hummingbird_glade",
+      "name": "Hummingbird Glade",
+      "line": "Dozens of hummingbird species live in these cloud forests.",
+      "props": {
+        "heliconia": 1.2,
+        "bromeliad": 0.6,
+        "fern": 0.6,
+        "liana": 0.3
+      },
+      "fauna": [
+        "hummingbird"
+      ],
+      "particles": [
+        "mist",
+        "motes"
+      ],
+      "shafts": 0.3
+    },
+    {
+      "id": "tree_fern_mist",
+      "name": "Tree Fern Mist",
+      "line": "Cloud forest combs water straight out of the passing mist.",
+      "props": {
+        "tree_fern": 1.4,
+        "fern": 0.6,
+        "moss_rock": 0.4,
+        "liana": 0.3
+      },
+      "fauna": [
+        "glasswing"
+      ],
+      "particles": [
+        "mist"
+      ],
+      "shafts": 0.0,
+      "colors": {
+        "fog": "#d8e4e0"
+      }
+    }
+  ]
 }

@@ -4,6 +4,7 @@
 # exported pack. Any script or engine error fails the run.
 #   tools/run_tests.sh          # everything (all 30 stages solved by the bot)
 #   FAST=1 tools/run_tests.sh   # one stage per region
+#   WEB=1 tools/run_tests.sh    # also build the web version and tap-test it in a phone browser
 set -u
 cd "$(dirname "$0")/.."
 GODOT="${GODOT:-godot}"
@@ -15,6 +16,19 @@ echo "== import"; timeout 300 "$GODOT" --headless --path . --import > /tmp/cc_im
 if grep -E "SCRIPT ERROR|Parse Error" /tmp/cc_import.log; then fail=1; fi
 echo "== compile"; tools/parse_check.sh | tee /tmp/cc_parse.log
 if ! grep -q "bad=0" /tmp/cc_parse.log; then echo "compile errors: stopping"; exit 1; fi
+echo "== first-person render (real GL renderer: every scene must draw a real picture)"
+if command -v xvfb-run > /dev/null; then
+  timeout 1200 xvfb-run -a -s "-screen 0 800x1400x24" "$GODOT" --path . --rendering-driver opengl3 --audio-driver Dummy \
+    --resolution 720x1280 res://tools/fpv_check.tscn -- --no-boot $EXTRA --out=/tmp/cc_fpv_scenes.png > /tmp/cc_fpv.log 2>&1 || fail=1
+  grep -E "BAD|fpv check" /tmp/cc_fpv.log
+  if bad_lines /tmp/cc_fpv.log; then fail=1; fi
+else
+  echo "(skipped: needs xvfb-run)"
+fi
+if [ "${WEB:-0}" = "1" ]; then
+  echo "== web build + phone-browser smoke test"
+  tools/build_web.sh || fail=1
+fi
 echo "== phase audit (project)"
 timeout 1500 "$GODOT" --headless --path . res://tests/phase_audit.tscn -- --no-boot $EXTRA > /tmp/cc_audit.log 2>&1 || fail=1
 grep -E "FAIL|phase audit" /tmp/cc_audit.log

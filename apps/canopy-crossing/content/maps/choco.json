@@ -295,10 +295,10 @@
         0.94
       ],
       "canopy": {
-        "zones": 4,
+        "zones": 3,
         "rows": [
           7,
-          10
+          11
         ]
       }
     }
@@ -310,5 +310,88 @@
     ]
   },
   "native_animals": [],
-  "sprite": ""
+  "sprite": "",
+  "fpv_scenes": [
+    {
+      "id": "rain_curtain",
+      "name": "Rain Curtain",
+      "line": "The Chocó is one of the rainiest places on the planet.",
+      "props": {
+        "palm": 0.8,
+        "fern": 1.0,
+        "heliconia": 0.4,
+        "liana": 0.5
+      },
+      "fauna": [
+        "glasswing"
+      ],
+      "particles": [
+        "rain",
+        "mist"
+      ],
+      "shafts": 0.0,
+      "colors": {
+        "fog": "#a8bcb4"
+      }
+    },
+    {
+      "id": "waterfall_wall",
+      "name": "Waterfall Wall",
+      "line": "Countless waterfalls pour off the western Andes.",
+      "props": {
+        "fern": 1.0,
+        "moss_rock": 0.8,
+        "tree_fern": 0.4,
+        "liana": 0.4
+      },
+      "landmark": "waterfall",
+      "fauna": [
+        "hummingbird"
+      ],
+      "particles": [
+        "spray",
+        "rain"
+      ],
+      "shafts": 0.1
+    },
+    {
+      "id": "poison_frog_tanks",
+      "name": "Poison Frog Bromeliads",
+      "line": "The golden poison frog lives only in Colombia's Chocó.",
+      "props": {
+        "bromeliad": 1.4,
+        "fern": 0.7,
+        "heliconia": 0.4,
+        "liana": 0.4
+      },
+      "fauna": [
+        "glasswing"
+      ],
+      "particles": [
+        "rain"
+      ],
+      "shafts": 0.2,
+      "colors": {
+        "flower": "#f6c83a"
+      }
+    },
+    {
+      "id": "mangrove_estuary",
+      "name": "Mangrove Estuary",
+      "line": "Mangroves line the rivers where they meet the Pacific.",
+      "props": {
+        "mangrove": 1.3,
+        "pneumatophores": 0.6,
+        "nipa": 0.4,
+        "liana": 0.2
+      },
+      "fauna": [
+        "egret"
+      ],
+      "particles": [
+        "mist"
+      ],
+      "shafts": 0.3
+    }
+  ]
 }

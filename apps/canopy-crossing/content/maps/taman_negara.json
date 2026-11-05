@@ -287,10 +287,10 @@
         0.94
       ],
       "canopy": {
-        "zones": 4,
+        "zones": 3,
         "rows": [
           7,
-          10
+          11
         ]
       }
     }
@@ -302,5 +302,85 @@
     ]
   },
   "native_animals": [],
-  "sprite": ""
+  "sprite": "",
+  "fpv_scenes": [
+    {
+      "id": "canopy_walkway",
+      "name": "Canopy Walkway",
+      "line": "One of the world's longest canopy walkways sways overhead.",
+      "props": {
+        "giant_tree": 1.2,
+        "fern": 0.6,
+        "liana": 0.6
+      },
+      "landmark": "canopy_walkway",
+      "fauna": [
+        "hornbill"
+      ],
+      "particles": [
+        "motes"
+      ],
+      "shafts": 0.6
+    },
+    {
+      "id": "tualang_titans",
+      "name": "Tualang Titans",
+      "line": "Tualang trees reach over 80 m, too smooth for bears to climb.",
+      "props": {
+        "giant_tree": 1.5,
+        "fern": 0.5,
+        "liana": 0.8
+      },
+      "landmark": "giant_ceiba",
+      "fauna": [
+        "hornbill"
+      ],
+      "particles": [
+        "leaves"
+      ],
+      "shafts": 0.6
+    },
+    {
+      "id": "limestone_caves",
+      "name": "Limestone Caves",
+      "line": "Caves riddle the limestone hills, home to thousands of bats.",
+      "props": {
+        "karst": 1.0,
+        "moss_rock": 0.8,
+        "fern": 0.6,
+        "liana": 0.4
+      },
+      "landmark": "cave_arch",
+      "fauna": [
+        "bats"
+      ],
+      "particles": [
+        "fireflies"
+      ],
+      "shafts": 0.1,
+      "colors": {
+        "fog": "#3a4a3a",
+        "light": "#c8e8ff"
+      }
+    },
+    {
+      "id": "rapids_edge",
+      "name": "Rapids Edge",
+      "line": "The forest is over 130 million years old, one of the oldest on Earth.",
+      "props": {
+        "palm": 0.8,
+        "fern": 1.0,
+        "moss_rock": 0.6,
+        "liana": 0.4
+      },
+      "fauna": [
+        "egret"
+      ],
+      "particles": [
+        "spray",
+        "mist"
+      ],
+      "shafts": 0.5
+    }
+  ]
 }

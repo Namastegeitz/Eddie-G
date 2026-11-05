@@ -291,10 +291,10 @@
         0.94
       ],
       "canopy": {
-        "zones": 4,
+        "zones": 3,
         "rows": [
           7,
-          10
+          11
         ]
       }
     }
@@ -317,5 +317,82 @@
     "sunda_clouded_leopard",
     "sumatran_tiger"
   ],
-  "sprite": ""
+  "sprite": "",
+  "fpv_scenes": [
+    {
+      "id": "dipterocarp_spires",
+      "name": "Dipterocarp Spires",
+      "line": "Borneo's dipterocarps are the tallest tropical trees, one measured 100 m.",
+      "props": {
+        "giant_tree": 1.5,
+        "fern": 0.7,
+        "liana": 0.9
+      },
+      "landmark": "giant_ceiba",
+      "fauna": [
+        "hornbill"
+      ],
+      "particles": [
+        "motes"
+      ],
+      "shafts": 0.7
+    },
+    {
+      "id": "pitcher_bog",
+      "name": "Pitcher Plant Bog",
+      "line": "Nepenthes rajah, the largest pitcher plant, grows only on Borneo.",
+      "props": {
+        "pitcher_plant": 1.4,
+        "moss_rock": 0.6,
+        "fern": 0.6,
+        "liana": 0.3
+      },
+      "fauna": [
+        "birdwing"
+      ],
+      "particles": [
+        "mist"
+      ],
+      "shafts": 0.4,
+      "colors": {
+        "fog": "#a8c8b8"
+      }
+    },
+    {
+      "id": "rafflesia_glade",
+      "name": "Rafflesia Glade",
+      "line": "Rafflesia blooms up to a metre across and smells of rotting meat.",
+      "props": {
+        "rafflesia": 1.0,
+        "fern": 1.0,
+        "mushroom": 0.4,
+        "liana": 0.6
+      },
+      "fauna": [
+        "birdwing"
+      ],
+      "particles": [
+        "fireflies"
+      ],
+      "shafts": 0.3
+    },
+    {
+      "id": "fig_feast",
+      "name": "Fig Tree Feast",
+      "line": "Hornbills fly kilometres to a fruiting fig tree.",
+      "props": {
+        "strangler_fig": 1.2,
+        "fern": 0.6,
+        "bromeliad": 0.3,
+        "liana": 0.8
+      },
+      "fauna": [
+        "hornbill"
+      ],
+      "particles": [
+        "leaves"
+      ],
+      "shafts": 0.5
+    }
+  ]
 }

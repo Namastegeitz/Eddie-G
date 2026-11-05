@@ -287,10 +287,10 @@
         0.94
       ],
       "canopy": {
-        "zones": 4,
+        "zones": 3,
         "rows": [
           7,
-          10
+          11
         ]
       }
     }
@@ -315,5 +315,100 @@
     "harpy_eagle",
     "capuchin_monkey"
   ],
-  "sprite": ""
+  "sprite": "",
+  "fpv_scenes": [
+    {
+      "id": "kapok_cathedral",
+      "name": "Kapok Cathedral",
+      "line": "Kapok trees rise 60 m above the forest floor on great buttress roots.",
+      "props": {
+        "giant_tree": 1.2,
+        "fern": 1,
+        "bromeliad": 0.8,
+        "heliconia": 0.4,
+        "liana": 0.7
+      },
+      "landmark": "giant_ceiba",
+      "fauna": [
+        "scarlet_macaw",
+        "morpho"
+      ],
+      "particles": [
+        "motes"
+      ],
+      "shafts": 0.8,
+      "colors": {
+        "light": "#ffe9a8"
+      }
+    },
+    {
+      "id": "flooded_varzea",
+      "name": "Flooded Várzea",
+      "line": "Every rainy season the river rises into the trees for months.",
+      "props": {
+        "palm": 0.8,
+        "giant_lily": 1.2,
+        "fern": 0.6,
+        "walking_palm": 0.5,
+        "liana": 0.4
+      },
+      "fauna": [
+        "egret",
+        "morpho"
+      ],
+      "particles": [
+        "mist"
+      ],
+      "shafts": 0.5,
+      "colors": {
+        "fog": "#bcd8cc"
+      }
+    },
+    {
+      "id": "heliconia_hollow",
+      "name": "Heliconia Hollow",
+      "line": "Hummingbirds sip from the red heliconia bracts.",
+      "props": {
+        "heliconia": 1.4,
+        "fern": 0.8,
+        "palm": 0.4,
+        "bromeliad": 0.5,
+        "liana": 0.5
+      },
+      "fauna": [
+        "hummingbird",
+        "morpho"
+      ],
+      "particles": [
+        "motes"
+      ],
+      "shafts": 0.6,
+      "colors": {
+        "flower": "#e8242a"
+      }
+    },
+    {
+      "id": "strangler_gate",
+      "name": "Strangler Fig Gate",
+      "line": "Strangler figs sprout high up and grow roots down around their host.",
+      "props": {
+        "strangler_fig": 1.2,
+        "fern": 0.8,
+        "mushroom": 0.4,
+        "liana": 0.9
+      },
+      "fauna": [
+        "toucan"
+      ],
+      "particles": [
+        "fireflies",
+        "leaves"
+      ],
+      "shafts": 0.2,
+      "colors": {
+        "light": "#d8f0a8",
+        "fog": "#3a5a3a"
+      }
+    }
+  ]
 }

@@ -299,10 +299,10 @@
         0.94
       ],
       "canopy": {
-        "zones": 4,
+        "zones": 3,
         "rows": [
           7,
-          10
+          11
         ]
       }
     }
@@ -322,5 +322,85 @@
     "kookaburra",
     "short_beaked_echidna"
   ],
-  "sprite": ""
+  "sprite": "",
+  "fpv_scenes": [
+    {
+      "id": "fan_palm_grove",
+      "name": "Fan Palm Grove",
+      "line": "Licuala fan palms spread pleated leaves like green umbrellas.",
+      "props": {
+        "fan_palm": 1.5,
+        "fern": 0.6,
+        "liana": 0.4
+      },
+      "fauna": [
+        "birdwing"
+      ],
+      "particles": [
+        "motes"
+      ],
+      "shafts": 0.8
+    },
+    {
+      "id": "tree_fern_gully",
+      "name": "Tree Fern Gully",
+      "line": "Tree ferns here belong to a family older than the dinosaurs.",
+      "props": {
+        "tree_fern": 1.4,
+        "moss_rock": 0.6,
+        "fern": 0.6,
+        "liana": 0.4
+      },
+      "landmark": "waterfall",
+      "fauna": [
+        "glasswing"
+      ],
+      "particles": [
+        "mist",
+        "spray"
+      ],
+      "shafts": 0.4,
+      "colors": {
+        "fog": "#b8d0c8"
+      }
+    },
+    {
+      "id": "strangler_cathedral",
+      "name": "Strangler Fig Cathedral",
+      "line": "A strangler fig can outlive the tree it once climbed.",
+      "props": {
+        "strangler_fig": 1.3,
+        "fern": 0.8,
+        "liana": 0.9
+      },
+      "fauna": [
+        "parrot"
+      ],
+      "particles": [
+        "leaves"
+      ],
+      "shafts": 0.5
+    },
+    {
+      "id": "mangrove_margin",
+      "name": "Mangrove Margin",
+      "line": "At Cape Tribulation the rainforest runs down to the reef.",
+      "props": {
+        "mangrove": 1.3,
+        "pneumatophores": 0.8,
+        "palm": 0.4,
+        "liana": 0.2
+      },
+      "fauna": [
+        "egret"
+      ],
+      "particles": [
+        "motes"
+      ],
+      "shafts": 0.7,
+      "colors": {
+        "light": "#fff6c8"
+      }
+    }
+  ]
 }

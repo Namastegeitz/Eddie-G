@@ -288,10 +288,10 @@
         0.94
       ],
       "canopy": {
-        "zones": 4,
+        "zones": 3,
         "rows": [
           7,
-          10
+          11
         ]
       }
     }
@@ -313,5 +313,92 @@
     "leopard",
     "pangolin"
   ],
-  "sprite": ""
+  "sprite": "",
+  "fpv_scenes": [
+    {
+      "id": "mbau_giants",
+      "name": "Mbau Giants",
+      "line": "Mbau trees grow in stands so dense they shade out almost everything else.",
+      "props": {
+        "giant_tree": 1.4,
+        "fern": 0.6,
+        "moss_rock": 0.3,
+        "liana": 0.8
+      },
+      "landmark": "giant_ceiba",
+      "fauna": [
+        "parrot"
+      ],
+      "particles": [
+        "motes"
+      ],
+      "shafts": 0.5
+    },
+    {
+      "id": "bai_edge",
+      "name": "Bai Clearing Edge",
+      "line": "Elephants and gorillas gather in open marshy clearings called bais.",
+      "props": {
+        "fern": 1.0,
+        "palm": 0.6,
+        "heliconia": 0.3,
+        "liana": 0.3
+      },
+      "fauna": [
+        "egret",
+        "swallowtail"
+      ],
+      "particles": [
+        "motes"
+      ],
+      "shafts": 0.9,
+      "colors": {
+        "light": "#fff0b8"
+      }
+    },
+    {
+      "id": "marantaceae_thicket",
+      "name": "Marantaceae Thicket",
+      "line": "Gorillas munch the big arrowroot leaves of this thick understorey.",
+      "props": {
+        "fern": 1.4,
+        "heliconia": 0.6,
+        "bamboo": 0.3,
+        "liana": 1.0
+      },
+      "fauna": [
+        "owl_butterfly"
+      ],
+      "particles": [
+        "leaves"
+      ],
+      "shafts": 0.2,
+      "colors": {
+        "fog": "#2a4a2a"
+      }
+    },
+    {
+      "id": "raphia_swamp",
+      "name": "Raphia Swamp",
+      "line": "Raphia palms have the longest leaves of any plant, up to 25 m.",
+      "props": {
+        "nipa": 0.8,
+        "palm": 0.8,
+        "giant_lily": 0.5,
+        "pneumatophores": 0.4,
+        "liana": 0.4
+      },
+      "fauna": [
+        "egret"
+      ],
+      "particles": [
+        "mist",
+        "fireflies"
+      ],
+      "shafts": 0.3,
+      "colors": {
+        "fog": "#9ab8a8"
+      }
+    }
+  ]
 }

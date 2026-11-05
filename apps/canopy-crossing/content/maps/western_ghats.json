@@ -291,10 +291,10 @@
         0.94
       ],
       "canopy": {
-        "zones": 4,
+        "zones": 3,
         "rows": [
           7,
-          10
+          11
         ]
       }
     }
@@ -306,5 +306,82 @@
     ]
   },
   "native_animals": [],
-  "sprite": ""
+  "sprite": "",
+  "fpv_scenes": [
+    {
+      "id": "shola_grove",
+      "name": "Shola Grove",
+      "line": "Sholas are pockets of forest tucked into the high grassland valleys.",
+      "props": {
+        "giant_tree": 1.0,
+        "moss_rock": 0.6,
+        "fern": 0.8,
+        "liana": 0.5
+      },
+      "fauna": [
+        "parrot"
+      ],
+      "particles": [
+        "mist"
+      ],
+      "shafts": 0.3
+    },
+    {
+      "id": "monsoon_falls",
+      "name": "Monsoon Falls",
+      "line": "The monsoon turns every cliff into a waterfall.",
+      "props": {
+        "fern": 1.0,
+        "moss_rock": 0.8,
+        "tree_fern": 0.4,
+        "liana": 0.4
+      },
+      "landmark": "waterfall",
+      "fauna": [
+        "swallowtail"
+      ],
+      "particles": [
+        "rain",
+        "spray"
+      ],
+      "shafts": 0.1,
+      "colors": {
+        "fog": "#a8b8b0"
+      }
+    },
+    {
+      "id": "banyan_curtain",
+      "name": "Banyan Curtain",
+      "line": "The banyan is India's national tree, held up by its own roots.",
+      "props": {
+        "banyan": 1.4,
+        "fern": 0.6,
+        "liana": 0.4
+      },
+      "fauna": [
+        "hornbill"
+      ],
+      "particles": [
+        "leaves"
+      ],
+      "shafts": 0.5
+    },
+    {
+      "id": "bamboo_brake",
+      "name": "Bamboo Brake",
+      "line": "Some bamboos grow almost a metre in a single day.",
+      "props": {
+        "bamboo": 1.6,
+        "fern": 0.4,
+        "liana": 0.2
+      },
+      "fauna": [
+        "swallowtail"
+      ],
+      "particles": [
+        "rain"
+      ],
+      "shafts": 0.3
+    }
+  ]
 }

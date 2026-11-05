@@ -300,10 +300,10 @@
         0.94
       ],
       "canopy": {
-        "zones": 4,
+        "zones": 3,
         "rows": [
           7,
-          10
+          11
         ]
       }
     }
@@ -315,5 +315,84 @@
     ]
   },
   "native_animals": [],
-  "sprite": ""
+  "sprite": "",
+  "fpv_scenes": [
+    {
+      "id": "impenetrable_thicket",
+      "name": "Impenetrable Thicket",
+      "line": "Bwindi means impenetrable, and these tangled slopes earn it.",
+      "props": {
+        "fern": 1.4,
+        "liana": 1.2,
+        "tree_fern": 0.4,
+        "moss_rock": 0.3
+      },
+      "fauna": [
+        "owl_butterfly"
+      ],
+      "particles": [
+        "mist"
+      ],
+      "shafts": 0.1,
+      "colors": {
+        "fog": "#c8d4cc"
+      }
+    },
+    {
+      "id": "bamboo_saddle",
+      "name": "Bamboo Saddle",
+      "line": "Mountain gorillas feast on bamboo shoots after the rains.",
+      "props": {
+        "bamboo": 1.5,
+        "fern": 0.5,
+        "liana": 0.3
+      },
+      "fauna": [
+        "parrot"
+      ],
+      "particles": [
+        "mist"
+      ],
+      "shafts": 0.2,
+      "colors": {
+        "fog": "#c8d4cc"
+      }
+    },
+    {
+      "id": "giant_fern_valley",
+      "name": "Giant Fern Valley",
+      "line": "Tree ferns crowd the steep, misty valleys.",
+      "props": {
+        "tree_fern": 1.4,
+        "fern": 0.8,
+        "liana": 0.4
+      },
+      "fauna": [
+        "glasswing"
+      ],
+      "particles": [
+        "mist"
+      ],
+      "shafts": 0.1
+    },
+    {
+      "id": "gorilla_glade",
+      "name": "Gorilla Glade",
+      "line": "About half of the world's mountain gorillas live in Bwindi.",
+      "props": {
+        "fern": 1.0,
+        "giant_tree": 0.6,
+        "heliconia": 0.3,
+        "liana": 0.6
+      },
+      "fauna": [
+        "swallowtail"
+      ],
+      "particles": [
+        "motes",
+        "mist"
+      ],
+      "shafts": 0.5
+    }
+  ]
 }

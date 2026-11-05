@@ -289,10 +289,10 @@
         0.94
       ],
       "canopy": {
-        "zones": 4,
+        "zones": 3,
         "rows": [
           7,
-          10
+          11
         ]
       }
     }
@@ -304,5 +304,83 @@
     ]
   },
   "native_animals": [],
-  "sprite": ""
+  "sprite": "",
+  "fpv_scenes": [
+    {
+      "id": "oxbow_shore",
+      "name": "Oxbow Shore",
+      "line": "Old river bends cut off into still oxbow lakes.",
+      "props": {
+        "palm": 0.8,
+        "giant_lily": 1.0,
+        "walking_palm": 0.5,
+        "fern": 0.5,
+        "liana": 0.4
+      },
+      "fauna": [
+        "egret",
+        "morpho"
+      ],
+      "particles": [
+        "mist"
+      ],
+      "shafts": 0.6
+    },
+    {
+      "id": "walking_palms",
+      "name": "Walking Palm Stand",
+      "line": "The walking palm stands on stilt roots like a tripod.",
+      "props": {
+        "walking_palm": 1.5,
+        "fern": 0.6,
+        "liana": 0.4
+      },
+      "fauna": [
+        "morpho"
+      ],
+      "particles": [
+        "motes"
+      ],
+      "shafts": 0.5
+    },
+    {
+      "id": "kapok_crown",
+      "name": "Kapok Crown",
+      "line": "One hectare of Yasuní holds more tree species than all of North America.",
+      "props": {
+        "giant_tree": 1.3,
+        "bromeliad": 0.6,
+        "fern": 0.6,
+        "liana": 0.8
+      },
+      "landmark": "giant_ceiba",
+      "fauna": [
+        "scarlet_macaw"
+      ],
+      "particles": [
+        "motes"
+      ],
+      "shafts": 0.7
+    },
+    {
+      "id": "clay_lick",
+      "name": "Parrot Clay Lick",
+      "line": "Parrots crowd onto clay banks to eat the minerals.",
+      "props": {
+        "fern": 1.0,
+        "palm": 0.5,
+        "heliconia": 0.4,
+        "liana": 0.3
+      },
+      "landmark": "clay_cliff",
+      "fauna": [
+        "parrot",
+        "scarlet_macaw"
+      ],
+      "particles": [
+        "motes"
+      ],
+      "shafts": 0.8
+    }
+  ]
 }

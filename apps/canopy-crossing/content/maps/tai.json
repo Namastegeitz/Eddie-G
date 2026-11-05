@@ -285,10 +285,10 @@
         0.94
       ],
       "canopy": {
-        "zones": 4,
+        "zones": 3,
         "rows": [
           7,
-          10
+          11
         ]
       }
     }
@@ -300,5 +300,79 @@
     ]
   },
   "native_animals": [],
-  "sprite": ""
+  "sprite": "",
+  "fpv_scenes": [
+    {
+      "id": "west_african_giants",
+      "name": "West African Giants",
+      "line": "Taï is the largest stretch of old-growth forest left in West Africa.",
+      "props": {
+        "giant_tree": 1.5,
+        "fern": 0.6,
+        "liana": 0.8
+      },
+      "landmark": "giant_ceiba",
+      "fauna": [
+        "hornbill"
+      ],
+      "particles": [
+        "motes"
+      ],
+      "shafts": 0.5
+    },
+    {
+      "id": "nut_cracking_grove",
+      "name": "Nut-Cracking Grove",
+      "line": "Taï chimps crack nuts open with stone hammers.",
+      "props": {
+        "palm": 0.8,
+        "fern": 0.8,
+        "moss_rock": 0.8,
+        "liana": 0.4
+      },
+      "fauna": [
+        "parrot"
+      ],
+      "particles": [
+        "leaves"
+      ],
+      "shafts": 0.5
+    },
+    {
+      "id": "liana_tangle",
+      "name": "Liana Tangle",
+      "line": "Woody vines climb toward the light and lace the trees together.",
+      "props": {
+        "fern": 0.8,
+        "giant_tree": 0.5,
+        "liana": 1.5
+      },
+      "fauna": [
+        "owl_butterfly"
+      ],
+      "particles": [
+        "leaves"
+      ],
+      "shafts": 0.2
+    },
+    {
+      "id": "granite_inselberg",
+      "name": "Granite Inselberg",
+      "line": "Bare granite domes rise out of the forest like islands.",
+      "props": {
+        "karst": 1.0,
+        "moss_rock": 0.8,
+        "fern": 0.6,
+        "liana": 0.2
+      },
+      "landmark": "karst_tower",
+      "fauna": [
+        "swallowtail"
+      ],
+      "particles": [
+        "motes"
+      ],
+      "shafts": 0.8
+    }
+  ]
 }

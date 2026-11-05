@@ -31,10 +31,13 @@ var _mats := {}
 var _meshes := {}
 var _sky := Color("9ad0e8")
 var _walls: Array[Node3D] = []
-var _grain: NoiseTexture2D	   # shared surface grain for ground, water, walls
+var _grain: NoiseTexture2D       # shared surface grain for ground, water, walls
 var _water_mats: Array[StandardMaterial3D] = []
 var _fit_key := Vector2.ZERO
-var _seg := 10				   # sphere / cylinder smoothness (quality)
+var _seg := 10                   # sphere / cylinder smoothness (quality)
+var scene := {}                  # the canopy scene we're in or about to enter
+var _fog0 := Color.WHITE
+var _fog_d0 := 0.05
 
 
 func setup(run: RunSim, animal_def: Dictionary) -> void:
@@ -78,6 +81,8 @@ func setup(run: RunSim, animal_def: Dictionary) -> void:
 	env.fog_enabled = true
 	env.fog_light_color = Color(String(atm.get("fog_color", _sky.to_html(false))))
 	env.fog_density = 0.045 + float(atm.get("mist", 0.0)) * 0.07
+	_fog0 = env.fog_light_color
+	_fog_d0 = env.fog_density
 	var we := WorldEnvironment.new()
 	we.environment = env
 	world3.add_child(we)
@@ -115,6 +120,8 @@ func color(key: String, fallback := "#3c9a3a") -> Color:
 ## draw it scaled to fill the playfield.
 func _fit() -> void:
 	var par := get_parent_area_size()
+	if par.x < 2.0 or par.y < 2.0:
+		par = get_viewport_rect().size
 	var screen := float(get_tree().root.size.x) / maxf(1.0, get_viewport_rect().size.x)
 	var key := Vector2(par.x * 1000.0 + par.y, screen)
 	if key == _fit_key or par.x < 2.0:
@@ -140,18 +147,37 @@ func update_view(dt: float) -> void:
 	if sim.state in ["respawn", "dead", "restart", "over"] and sim.cause != "":
 		y = lerpf(cam.position.y, 0.05 if sim.cause in ["drowned", "fell"] else 0.18, minf(1.0, dt * 3.0))
 	cam.position = Vector3(dp.x, y, -dp.y + 0.8)
-	cam.rotation_degrees = Vector3(-27.0 + lift * 6.0, 0.0, 0.0)
-	var covered := sim.world.lane(sim.row).covered or sim.world.lane(sim.row + 1).covered
+	# under the canopy the gaze lifts a little to take in the scene ahead
+	cam.rotation_degrees = Vector3(lerpf(-27.0, -19.0, shade) + lift * 6.0, 0.0, 0.0)
+	cam.fov = lerpf(86.0, 97.0, shade)
+	var here := sim.world.lane(sim.row)
+	var next := sim.world.lane(sim.row + 1)
+	var covered := here.covered or next.covered
+	if covered:
+		scene = Scenery3D.scene_def(map, here.scene if here.covered else next.scene)
 	shade = move_toward(shade, 1.0 if covered else 0.0, dt * 1.5)
-	env.ambient_light_energy = lerpf(0.75, 0.42, shade)
-	sun.light_energy = lerpf(1.0, 0.3, shade)
-	env.background_color = _sky.lerp(color("canopy_dark", "#0b3a1a"), shade * 0.85)
+	# each scene has its own light: warm shafts, cool cave light, white mist
+	var light := Scenery3D.col(scene, pal, "light", "#fff2c8")
+	var fog := Scenery3D.col(scene, pal, "fog", _fog0.to_html(false))
+	var dim := 0.3 + float(scene.get("shafts", 0.4)) * 0.16
+	env.ambient_light_energy = lerpf(0.5, dim, shade)
+	env.ambient_light_color = Color(0.85, 0.92, 0.82).lerp(light, shade * 0.35)
+	sun.light_energy = lerpf(0.8, 0.25 + float(scene.get("shafts", 0.4)) * 0.25, shade)
+	sun.light_color = Color.WHITE.lerp(light, shade * 0.6)
+	env.fog_light_color = _fog0.lerp(fog, shade)
+	var mist := 1.0 if "mist" in Array(scene.get("particles", [])) else 0.0
+	# thicker air under the leaves, but capped so hazards a few rows ahead stay readable
+	env.fog_density = lerpf(_fog_d0, minf(0.075, _fog_d0 + 0.015 * mist + 0.008), shade)
+	env.background_color = _sky.lerp(color("canopy_dark", "#0b3a1a"), shade * 0.85).lerp(fog.darkened(0.3), shade * 0.3)
 	var lo := sim.row - BEHIND
 	var hi := sim.row + AHEAD
 	for wall in _walls:
 		wall.position = Vector3(MID + float(wall.get_meta("side")) * 8.4, 1.5, -(dp.y + (AHEAD - BEHIND) * 0.5))
 	sim.world.ensure(hi + 2)
 	for r in _lanes.keys():
+		var sn: Node3D = _lanes[r].get_node_or_null("Scenery")
+		if sn and r >= lo and r <= hi:
+			Scenery3D.animate(sn, t)
 		if r < lo or r > hi:
 			_lanes[r].queue_free()
 			_lanes.erase(r)
@@ -168,6 +194,7 @@ func update_view(dt: float) -> void:
 			var n: Node3D = _ents.get(key)
 			if n == null:
 				n = _build_ent(l, l.ents[i])
+				_bake(n, "%s:%.2f" % [l.ents[i].hazard, l.ents[i].length])
 				world3.add_child(n)
 				_ents[key] = n
 			_place_ent(n, l, l.ents[i])
@@ -333,13 +360,12 @@ func _build_lane(l: Lane, r: int) -> Node3D:
 			var g := color("safe_alt" if alt else "safe")
 			if l.goal:
 				box(Vector3(26, 0.3, 1.0), color("goal", "#9cf06a"), Vector3(MID, -0.15, 0), n, Vector3.ZERO, true)
+			elif l.covered:
+				# forest floor under the canopy: darker, browner, leaf litter
+				var floor_c := g.darkened(0.3).lerp(Color("2e4a22"), 0.35)
+				box(Vector3(26, 0.3, 1.0), floor_c, Vector3(MID, -0.15, 0), n).material_override = surface(floor_c, 0.8)
 			else:
-				box(Vector3(26, 0.3, 1.0), g, Vector3(MID, -0.15, 0), n).material_override = surface(g, 0.5)
-			for k in 2:
-				var gx := rng.randf_range(-0.5, 9.5)
-				if l.tiles.has(int(floorf(gx))):
-					continue
-				cyl(0.05, 0.16, g.lightened(0.25), Vector3(gx, 0.08, rng.randf_range(-0.4, 0.4)), n, Vector3.ZERO, 0.0)
+				box(Vector3(26, 0.3, 1.0), g, Vector3(MID, -0.15, 0), n).material_override = surface(g.lerp(Color("5a7a3a"), 0.3).darkened(0.16), 0.5)
 	for col in l.tiles:
 		var tile: Dictionary = l.tiles[col]
 		var hz := Content.hazard(String(tile.hazard))
@@ -355,17 +381,16 @@ func _build_lane(l: Lane, r: int) -> Node3D:
 			"quicksand":
 				cyl(0.44, 0.02, hc(tc, "body"), Vector3(x, 0.01, 0), n)
 				torus(0.15, 0.22, hc(tc, "swirl"), Vector3(x, 0.025, 0), n)
-	if r % 3 == 0:
-		cyl(0.18, 3.0, Color("5a3e26"), Vector3(-1.2, 1.4, 0), n)
-		cyl(0.18, 3.0, Color("5a3e26"), Vector3(10.2, 1.4, 0), n)
-		sph(0.7, color("canopy"), Vector3(-1.2, 2.9, 0), n, Vector3(1.2, 0.7, 1.0))
-		sph(0.7, color("canopy"), Vector3(10.2, 2.9, 0), n, Vector3(1.2, 0.7, 1.0))
 	if l.covered:
-		var cnp := color("canopy")
-		box(Vector3(14.0, 0.5, 1.02), cnp.darkened(0.35), Vector3(MID, 2.4, 0), n)
-		for k in 2:
-			sph(0.55, cnp.lightened(0.08 * (k % 2)), Vector3(rng.randf_range(-0.5, 9.5), 2.05, rng.randf_range(-0.4, 0.4)), n, Vector3(1.6, 0.6, 1.3))
-		cyl(0.02, 1.4, Color("3a6a2a"), Vector3(rng.randf_range(0.0, 9.0), 1.6, 0), n)
+		var zr := Vector2i(r, r)
+		if l.zone >= 0 and l.zone < sim.world.gen.cover.size():
+			zr = sim.world.gen.cover[l.zone]
+		n.add_child(Scenery3D.build_lane(l, Scenery3D.scene_def(map, l.scene), pal, Draw.detail, zr))
+	else:
+		# grass tufts, flowers and the trees along the sides: one mesh a row
+		var open := Scenery3D.open_lane(l, pal, Draw.detail)
+		if open:
+			n.add_child(open)
 	if not l.effect.is_empty():
 		_build_lane_fx(l, n)
 	return n
@@ -529,6 +554,60 @@ func _place_ent(n: Node3D, l: Lane, e: Ent) -> void:
 				n.position.y = -0.45
 	elif e.platform:
 		n.position.y = sin(t * 2.0 + x) * 0.015
+
+
+## Merges a moving thing's opaque parts into one vertex-coloured mesh (one
+## draw call instead of several), cached so identical ones share it. Glowing
+## or see-through parts stay separate.
+var _baked := {}
+static var _ent_mat: StandardMaterial3D
+
+
+func _bake(n: Node3D, key: String) -> void:
+	var parts: Array[MeshInstance3D] = []
+	for ch in n.get_children():
+		var mi := ch as MeshInstance3D
+		if mi == null or mi.get_child_count() > 0:
+			continue
+		var m := mi.material_override as StandardMaterial3D
+		if m == null or m.transparency != BaseMaterial3D.TRANSPARENCY_DISABLED or m.emission_enabled:
+			continue
+		parts.append(mi)
+	if parts.size() < 2:
+		return
+	if not _baked.has(key):
+		var k := Scenery3D.Kit.new()
+		for mi in parts:
+			var arr := mi.mesh.surface_get_arrays(0)
+			var verts: PackedVector3Array = arr[Mesh.ARRAY_VERTEX]
+			var norms: PackedVector3Array = arr[Mesh.ARRAY_NORMAL]
+			var ids: PackedInt32Array = arr[Mesh.ARRAY_INDEX] if arr[Mesh.ARRAY_INDEX] != null else PackedInt32Array()
+			var c := (mi.material_override as StandardMaterial3D).albedo_color
+			var base := k.v.size()
+			var xf3 := mi.transform
+			for vi in verts.size():
+				k.v.append(xf3 * verts[vi])
+				k.n.append((xf3.basis * norms[vi]).normalized())
+				k.c.append(c)
+			if ids.is_empty():
+				for vi in verts.size():
+					k.idx.append(base + vi)
+			else:
+				for id in ids:
+					k.idx.append(base + id)
+		_baked[key] = k.mesh()
+	if _ent_mat == null:
+		_ent_mat = StandardMaterial3D.new()
+		_ent_mat.vertex_color_use_as_albedo = true
+		_ent_mat.vertex_color_is_srgb = true
+		_ent_mat.roughness = 0.9
+	for mi in parts:
+		n.remove_child(mi)
+		mi.free()
+	var one := MeshInstance3D.new()
+	one.mesh = _baked[key]
+	one.material_override = _ent_mat
+	n.add_child(one)
 
 
 func _lights(n: Node3D, x: float, y: float, z: float) -> void:

@@ -299,10 +299,10 @@
         0.94
       ],
       "canopy": {
-        "zones": 4,
+        "zones": 3,
         "rows": [
           7,
-          10
+          11
         ]
       }
     }
@@ -314,5 +314,83 @@
     ]
   },
   "native_animals": [],
-  "sprite": ""
+  "sprite": "",
+  "fpv_scenes": [
+    {
+      "id": "karst_lake",
+      "name": "Karst Lake",
+      "line": "Limestone peaks rise out of Cheow Lan lake.",
+      "props": {
+        "karst": 1.2,
+        "palm": 0.5,
+        "fern": 0.6,
+        "liana": 0.3
+      },
+      "landmark": "karst_tower",
+      "fauna": [
+        "hornbill"
+      ],
+      "particles": [
+        "mist"
+      ],
+      "shafts": 0.6
+    },
+    {
+      "id": "rafflesia_trail",
+      "name": "Rafflesia Trail",
+      "line": "Rafflesia kerrii, one of the biggest flowers, blooms here.",
+      "props": {
+        "rafflesia": 1.0,
+        "fern": 1.0,
+        "liana": 0.6
+      },
+      "fauna": [
+        "birdwing"
+      ],
+      "particles": [
+        "motes"
+      ],
+      "shafts": 0.4
+    },
+    {
+      "id": "bamboo_valley",
+      "name": "Bamboo Valley",
+      "line": "Bamboo thickets fill the valleys between the cliffs.",
+      "props": {
+        "bamboo": 1.5,
+        "fern": 0.5,
+        "liana": 0.3
+      },
+      "fauna": [
+        "swallowtail"
+      ],
+      "particles": [
+        "rain"
+      ],
+      "shafts": 0.4
+    },
+    {
+      "id": "limestone_cave",
+      "name": "Limestone Cave",
+      "line": "Caves under the karst shelter bats and blind cave fish.",
+      "props": {
+        "karst": 0.9,
+        "moss_rock": 0.8,
+        "mushroom": 0.5,
+        "liana": 0.4
+      },
+      "landmark": "cave_arch",
+      "fauna": [
+        "bats"
+      ],
+      "particles": [
+        "fireflies"
+      ],
+      "shafts": 0.1,
+      "colors": {
+        "fog": "#2a3430",
+        "light": "#c8e8ff"
+      }
+    }
+  ]
 }

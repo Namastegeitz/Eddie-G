@@ -96,7 +96,39 @@ Copy an existing map and change:
   canopy: {zones, rows: [min, max]}}`. `canopy` places that many
   dense-canopy zones (each `rows` long) through the level: the lanes under
   them play as usual, but the bird's-eye view sees only leaves, so the
-  player switches to first person to cross them.
+  player switches to first person to cross them. The shipped levels use 1
+  zone (levels 1-3), 2 (4-6) and 3 (7-10).
+- `fpv_scenes`: what each canopy zone looks like in first person (3 or
+  more; the shipped regions have 4). Zones in one level get different
+  scenes, and each level starts further along the list, so all of a region's
+  scenes come round. Each scene:
+  ```json
+  {"id": "kapok_cathedral", "name": "Kapok Cathedral",
+   "line": "Kapok trees rise 60 m above the forest floor on great buttress roots.",
+   "props": {"giant_tree": 1.2, "fern": 1, "bromeliad": 0.8, "liana": 0.7},
+   "landmark": "giant_ceiba", "fauna": ["scarlet_macaw", "morpho"],
+   "particles": ["motes"], "shafts": 0.8, "colors": {"light": "#ffe9a8"}}
+  ```
+  `name` and `line` show on the title card as you enter ("Canopy 1 of 3")
+  and on the bird's-eye sign. `props` weights the plants along both sides
+  (`liana` is the chance of a vine over the path per row): `giant_tree`,
+  `strangler_fig`, `banyan`, `palm`, `walking_palm`, `fan_palm`, `ravenala`,
+  `tree_fern`, `bamboo`, `mangrove`, `pneumatophores`, `araucaria`,
+  `elfin_tree`, `nipa`, `bromeliad`, `heliconia`, `pitcher_plant`,
+  `rafflesia`, `orchid`, `fern`, `moss_rock`, `mushroom`, `giant_lily`,
+  `karst`. The main prop also picks what hangs over the path (bamboo arches,
+  fig roots, mossy limbs, fronds, mangrove roots, cave rock); set
+  `"overhead"` to choose (`bamboo_arch`, `aerial_roots`, `branches`,
+  `moss_branches`, `fronds`, `palm_fronds`, `mangrove`, `rock`).
+  `landmark` (on the zone's middle row): `ruin_temple`, `stela`, `waterfall`,
+  `canopy_walkway`, `hanging_bridge`, `cave_arch`, `clay_cliff`, `cenote`,
+  `giant_ceiba`, `karst_tower`. `fauna`: `scarlet_macaw`, `macaw`, `parrot`,
+  `hornbill`, `egret`, `bird_of_paradise`, `hummingbird`, `toucan`, `morpho`,
+  `swallowtail`, `birdwing`, `glasswing`, `owl_butterfly`, `bats`.
+  `particles`: `fireflies`, `rain`, `leaves`, `motes`, `mist`, `spray`.
+  `shafts` (0-1): light beams and how bright it is under the leaves.
+  `colors` may set `leaf`, `bark`, `flower`, `light`, `fog`.
+  Check a new scene's look with `tools/fpv_check.tscn` (see RUN.md).
 - `endless.creep`: how fast the jungle closes in (rows/s, easy → hard)
 - optional `dlc`: `{"url": "https://…/pack.zip"}` to download the pack's
   files on unlock (zip paths like `content/maps/x.json`, unpacked into `user://`)

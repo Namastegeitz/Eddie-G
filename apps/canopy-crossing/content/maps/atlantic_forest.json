@@ -296,10 +296,10 @@
         0.94
       ],
       "canopy": {
-        "zones": 4,
+        "zones": 3,
         "rows": [
           7,
-          10
+          11
         ]
       }
     }
@@ -311,5 +311,87 @@
     ]
   },
   "native_animals": [],
-  "sprite": ""
+  "sprite": "",
+  "fpv_scenes": [
+    {
+      "id": "bromeliad_tanks",
+      "name": "Bromeliad Tank Garden",
+      "line": "Frogs raise tadpoles in the tiny pools inside bromeliads.",
+      "props": {
+        "bromeliad": 1.5,
+        "fern": 0.6,
+        "giant_tree": 0.4,
+        "liana": 0.4
+      },
+      "fauna": [
+        "toucan"
+      ],
+      "particles": [
+        "motes"
+      ],
+      "shafts": 0.6,
+      "colors": {
+        "flower": "#e8443a"
+      }
+    },
+    {
+      "id": "araucaria_ridge",
+      "name": "Araucaria Ridge",
+      "line": "Paraná pines hold up their branches like candelabras.",
+      "props": {
+        "araucaria": 1.4,
+        "fern": 0.6,
+        "tree_fern": 0.3,
+        "liana": 0.2
+      },
+      "fauna": [
+        "parrot"
+      ],
+      "particles": [
+        "mist"
+      ],
+      "shafts": 0.4
+    },
+    {
+      "id": "cascade_gorge",
+      "name": "Cascade Gorge",
+      "line": "Iguazu's 275 waterfalls tumble through the Atlantic Forest.",
+      "props": {
+        "fern": 1.0,
+        "moss_rock": 0.8,
+        "palm": 0.3,
+        "liana": 0.4
+      },
+      "landmark": "waterfall",
+      "fauna": [
+        "swallowtail"
+      ],
+      "particles": [
+        "spray",
+        "mist"
+      ],
+      "shafts": 0.4,
+      "colors": {
+        "fog": "#c0d4d0"
+      }
+    },
+    {
+      "id": "palmito_grove",
+      "name": "Palmito Grove",
+      "line": "Toucans spread the seeds of the slender juçara palm.",
+      "props": {
+        "palm": 1.4,
+        "fern": 0.6,
+        "bromeliad": 0.4,
+        "liana": 0.4
+      },
+      "fauna": [
+        "toucan"
+      ],
+      "particles": [
+        "motes"
+      ],
+      "shafts": 0.6
+    }
+  ]
 }

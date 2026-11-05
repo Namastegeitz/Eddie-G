@@ -45,6 +45,8 @@ func _ready() -> void:
 				_phase1()
 			"fpv":
 				await _first_person()
+			"scenes":
+				_scenes()
 			"art":
 				await _phase7()
 		print("phase audit (%s): %d passed, %d failed" % [only, passed, failed])
@@ -1133,6 +1135,8 @@ func _first_person() -> void:
 		gs._update_views(1.0 / 60.0)
 	check("bird's-eye roof covers the canopy rows", gs.wv.roof != null and gs.world.lane(zone.x).covered)
 	check("tip and pulsing eye button near dense canopy", gs.canopy_tip.visible and gs.eye_btn.pulse)
+	var zone_scene := Scenery3D.scene_def(gs.map, gs.world.lane(zone.x).scene)
+	check("the tip names the scene ahead", String(zone_scene.get("name", "?")) in gs.canopy_tip.text, gs.canopy_tip.text)
 	gs.toggle_view()
 	gs._update_views(1.0 / 60.0)
 	check("eye button switches to first person", gs.view == "fpv" and gs.wv3 != null and gs.wv3.visible and not gs.wv.visible)
@@ -1148,9 +1152,18 @@ func _first_person() -> void:
 			zone_has_things = true
 	check("first person shows what's under the canopy", under > 0 or not zone_has_things, "%d" % under)
 	check("first person builds the lanes ahead", gs.wv3._lanes.size() >= 20)
+	gs.sim.row = zone.x
+	gs._update_views(1.0 / 60.0)
+	check("entering a canopy zone shows its title card", gs._shown_zones.has(gs.world.lane(zone.x).zone) and gs.scene_card.get_node("Box/name").text == String(zone_scene.get("name", "")), gs.scene_card.get_node("Box/name").text)
+	var dressed := 0
+	for r in range(zone.x, zone.y + 1):
+		if gs.wv3._lanes.has(r) and gs.wv3._lanes[r].get_node_or_null("Scenery") != null:
+			dressed += 1
+	check("every canopy row is dressed with its scene in 3D", dressed == zone.y - zone.x + 1, "%d of %d" % [dressed, zone.y - zone.x + 1])
+	gs.sim.row = zone.x - 2
 	var meshes: int = gs.wv3.world3.find_children("*", "MeshInstance3D", true, false).size()
 	print("  first-person meshes in view: %d" % meshes)
-	check("first-person scene stays light (< 500 meshes)", meshes < 500, str(meshes))
+	check("first-person scene stays light (< 350 meshes)", meshes < 350, str(meshes))
 	check("no canopy tip while already in first person", not gs.canopy_tip.visible)
 	var key := InputEventKey.new()
 	key.keycode = KEY_V
@@ -1195,6 +1208,82 @@ func _first_person() -> void:
 	main.queue_free()
 	await get_tree().process_frame
 	Save.wipe()
+	_scenes()
+
+
+## Themed first-person scenes: content is valid, every level has 1-3
+## canopy zones with different scenes, every scene is used, and every scene
+## builds in 3D within a small draw-call budget.
+func _scenes() -> void:
+	begin("First-person scenes")
+	var problems := []
+	var total := 0
+	for id in Content.playable_maps():
+		var m := Content.map(id)
+		var scs: Array = m.get("fpv_scenes", [])
+		total += scs.size()
+		if scs.size() < 3:
+			problems.append("%s has %d scenes" % [id, scs.size()])
+		for sc in scs:
+			if String(sc.get("name", "")) == "" or String(sc.get("line", "")) == "":
+				problems.append("%s/%s: name or line missing" % [id, sc.get("id", "?")])
+			for kind in sc.get("props", {}):
+				if not String(kind) in Scenery3D.PROPS:
+					problems.append("%s/%s: prop %s" % [id, sc.id, kind])
+			if not String(sc.get("landmark", "")) in Scenery3D.LANDMARKS:
+				problems.append("%s/%s: landmark %s" % [id, sc.id, sc.landmark])
+			for f in sc.get("fauna", []):
+				if not Scenery3D.FAUNA.has(String(f)):
+					problems.append("%s/%s: fauna %s" % [id, sc.id, f])
+			for pt in sc.get("particles", []):
+				if not String(pt) in Scenery3D.PARTICLES:
+					problems.append("%s/%s: particles %s" % [id, sc.id, pt])
+	check("every region has 3+ first-person scenes with known props, landmarks, fauna", problems.is_empty(), str(problems.slice(0, 4)))
+	var lv := []
+	var used := {}
+	for id in Content.playable_maps():
+		var m2 := Content.map(id)
+		for st in m2.get("stages", []).size():
+			var w := World.new()
+			w.setup(m2, "journey", st, 7 + st)
+			var n := w.gen.cover.size()
+			if n < 1 or n > 3:
+				lv.append("%s %d: %d zones" % [id, st + 1, n])
+			var seen := {}
+			for z in n:
+				var sid := w.gen.cover_scenes[z]
+				if sid == "" or seen.has(sid):
+					lv.append("%s %d zone %d: scene '%s'" % [id, st + 1, z, sid])
+				seen[sid] = true
+				used["%s/%s" % [id, sid]] = true
+				w.ensure(w.gen.cover[z].y + 1)
+				var l := w.lane(w.gen.cover[z].x)
+				if not l.covered or l.scene != sid or l.zone != z:
+					lv.append("%s %d zone %d: lane not tagged" % [id, st + 1, z])
+	check("every level has 1-3 canopy zones, each a different scene, lanes tagged", lv.is_empty(), str(lv.slice(0, 4)))
+	check("every scene appears in some level", used.size() == total, "%d of %d" % [used.size(), total])
+	var worst := 0
+	var empty := []
+	for id in Content.playable_maps():
+		var m3 := Content.map(id)
+		for sc in m3.get("fpv_scenes", []):
+			for t in ["safe", "ground", "water"]:
+				var l2 := Lane.new()
+				l2.row = 10
+				l2.type = t
+				l2.covered = true
+				l2.zone = 0
+				l2.scene = String(sc.id)
+				var node := Scenery3D.build_lane(l2, sc, m3.get("palette", {}), 2, Vector2i(9, 11))
+				var calls := node.find_children("*", "GeometryInstance3D", true, false).size()
+				worst = maxi(worst, calls)
+				var mi := node.get_child(0) as MeshInstance3D
+				if mi == null or mi.mesh == null or mi.mesh.get_surface_count() == 0:
+					empty.append("%s/%s/%s" % [id, sc.id, t])
+				node.free()
+	print("  most draw calls for one dressed canopy row: %d" % worst)
+	check("all scenes build in 3D (landmark rows too)", empty.is_empty(), str(empty.slice(0, 4)))
+	check("a dressed canopy row stays a few draw calls (<= 6)", worst <= 6, str(worst))
 
 
 # ====================================================================== 8

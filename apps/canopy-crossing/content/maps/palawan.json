@@ -289,10 +289,10 @@
         0.94
       ],
       "canopy": {
-        "zones": 4,
+        "zones": 3,
         "rows": [
           7,
-          10
+          11
         ]
       }
     }
@@ -304,5 +304,86 @@
     ]
   },
   "native_animals": [],
-  "sprite": ""
+  "sprite": "",
+  "fpv_scenes": [
+    {
+      "id": "karst_towers",
+      "name": "Karst Towers",
+      "line": "Jagged limestone towers rise straight out of the forest.",
+      "props": {
+        "karst": 1.2,
+        "fern": 0.6,
+        "palm": 0.4,
+        "liana": 0.3
+      },
+      "landmark": "karst_tower",
+      "fauna": [
+        "hornbill"
+      ],
+      "particles": [
+        "motes"
+      ],
+      "shafts": 0.7
+    },
+    {
+      "id": "underground_river",
+      "name": "Underground River",
+      "line": "An 8 km river runs through a cave beneath the mountains.",
+      "props": {
+        "karst": 0.8,
+        "moss_rock": 0.8,
+        "fern": 0.6,
+        "liana": 0.5
+      },
+      "landmark": "cave_arch",
+      "fauna": [
+        "bats"
+      ],
+      "particles": [
+        "fireflies",
+        "mist"
+      ],
+      "shafts": 0.1,
+      "colors": {
+        "fog": "#2a3a34",
+        "light": "#c8e8ff"
+      }
+    },
+    {
+      "id": "mangrove_channel",
+      "name": "Mangrove Channel",
+      "line": "Paddle boats glide through the mangrove channels.",
+      "props": {
+        "mangrove": 1.3,
+        "pneumatophores": 0.8,
+        "nipa": 0.4,
+        "liana": 0.2
+      },
+      "fauna": [
+        "egret"
+      ],
+      "particles": [
+        "motes"
+      ],
+      "shafts": 0.5
+    },
+    {
+      "id": "almaciga_grove",
+      "name": "Almaciga Grove",
+      "line": "Almaciga trees bleed a clear resin used to make varnish.",
+      "props": {
+        "giant_tree": 1.2,
+        "fern": 0.7,
+        "orchid": 0.3,
+        "liana": 0.6
+      },
+      "fauna": [
+        "parrot"
+      ],
+      "particles": [
+        "leaves"
+      ],
+      "shafts": 0.6
+    }
+  ]
 }

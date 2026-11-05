@@ -29,9 +29,27 @@ godot --path . -- --day=20500                 # pretend it's another day (deals,
 ## 3. Tests
 
 ```bash
-tools/run_tests.sh          # ~10 min: compile check + 315-check phase audit, project and exported pack
-FAST=1 tools/run_tests.sh   # ~3 min
+tools/run_tests.sh          # compile check, first-person render check, phase audit (project + exported pack)
+FAST=1 tools/run_tests.sh   # quicker: fewer levels and 2 scenes a region
+WEB=1 tools/run_tests.sh    # also build the web version and tap-test it in a phone browser
 ```
+
+**First person is checked on every run, three ways:**
+
+1. The phase audit taps the eye button the way the engine really delivers a
+   tap (a touch *and* the mouse click emulated from it). It must switch view
+   exactly once and must not hop the animal.
+2. `tools/fpv_check.tscn` drives the real game into every canopy scene of
+   every region with the real GL renderer and fails if any first-person
+   frame is blank or flat (needs `xvfb-run` on a server). See them all:
+
+   ```bash
+   xvfb-run godot --path . --rendering-driver opengl3 --resolution 720x1280 \
+     res://tools/fpv_check.tscn -- --no-boot --out=/tmp/fpv_scenes.png [--map=borneo] [--back=4]
+   ```
+
+3. `tools/build_web.sh` (below) opens each web build in a phone-sized touch
+   browser and checks first person by tapping.
 
 To check that every level can be beaten with the free Poison Dart Frog
 (about 2 minutes for all 200):
@@ -68,9 +86,13 @@ godot --headless --path . --export-release "Web"             build/web/index.htm
   Android). For the store, sign the AAB with your upload key.
 - **iOS** needs a Mac with Xcode (or a cloud Mac such as Codemagic) and an
   Apple Developer team id in the iOS preset.
-- **Web**: `build/web` works on any static host. To publish as a single
-  claude.ai artifact (15 MB per file), run
-  `python3 tools/web_artifact/package.py build/web build/web_artifact`.
+- **Web**: always build with `tools/build_web.sh`. It exports, packages
+  `build/web_artifact` for a claude.ai artifact (15 MB per file; `build/web`
+  works on any static host), then loads the build in a phone-sized touch
+  browser, taps the eye button and checks that first person shows a 3D
+  scene without hopping, and that a second tap goes back. If any of that
+  fails, the script fails and the build should not be published. Needs node
+  and Playwright (`npm i -g playwright && npx playwright install chromium`).
 
 Store billing and ads are sandboxed by default; see [docs/STORE.md](docs/STORE.md)
 for switching to Google Play Billing, StoreKit and AdMob.

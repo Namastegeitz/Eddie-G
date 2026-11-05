@@ -282,10 +282,10 @@
         0.94
       ],
       "canopy": {
-        "zones": 4,
+        "zones": 3,
         "rows": [
           7,
-          10
+          11
         ]
       }
     }
@@ -303,5 +303,84 @@
     "panther_chameleon",
     "tomato_frog"
   ],
-  "sprite": ""
+  "sprite": "",
+  "fpv_scenes": [
+    {
+      "id": "travellers_fans",
+      "name": "Traveller's Palm Fans",
+      "line": "The traveller's palm is Madagascar's own giant fan of leaves.",
+      "props": {
+        "ravenala": 1.4,
+        "fern": 0.6,
+        "liana": 0.3
+      },
+      "fauna": [
+        "swallowtail"
+      ],
+      "particles": [
+        "motes"
+      ],
+      "shafts": 0.9
+    },
+    {
+      "id": "lemur_canopy",
+      "name": "Ruffed Lemur Canopy",
+      "line": "Red ruffed lemurs live only on the Masoala peninsula.",
+      "props": {
+        "giant_tree": 1.2,
+        "liana": 0.9,
+        "fern": 0.6,
+        "orchid": 0.4
+      },
+      "fauna": [
+        "parrot"
+      ],
+      "particles": [
+        "leaves"
+      ],
+      "shafts": 0.6
+    },
+    {
+      "id": "orchid_rocks",
+      "name": "Orchid Rocks",
+      "line": "Madagascar has around a thousand kinds of orchid.",
+      "props": {
+        "orchid": 1.2,
+        "moss_rock": 0.9,
+        "fern": 0.6,
+        "liana": 0.3
+      },
+      "fauna": [
+        "glasswing"
+      ],
+      "particles": [
+        "motes"
+      ],
+      "shafts": 0.6,
+      "colors": {
+        "flower": "#f2f2e8"
+      }
+    },
+    {
+      "id": "littoral_forest",
+      "name": "Littoral Forest",
+      "line": "Here the forest grows right down onto the sandy shore.",
+      "props": {
+        "palm": 1.2,
+        "pneumatophores": 0.3,
+        "fern": 0.6,
+        "liana": 0.2
+      },
+      "fauna": [
+        "egret"
+      ],
+      "particles": [
+        "motes"
+      ],
+      "shafts": 0.9,
+      "colors": {
+        "light": "#fff6d0"
+      }
+    }
+  ]
 }

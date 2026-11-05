@@ -17,8 +17,19 @@ time, in ten real rainforests. Built from
   globe picks the scene.
 - **Two views:** bird's-eye (top-down) and first person (3D, through your
   animal's eyes). Switch any time with the eye button (or V). Every level
-  has dense-canopy stretches that hide the ground from above, so you need
-  first person to see the traffic, logs and predators under the leaves.
+  has 1 to 3 dense-canopy stretches (1 in levels 1-3, 2 in 4-6, 3 in 7-10)
+  that hide the ground from above, so you need first person to see the
+  traffic, logs and predators under the leaves.
+- **80 first-person scenes**, 4 per rainforest, each themed on the real
+  place: Kapok Cathedral and Flooded Várzea in the Amazon, Dipterocarp
+  Spires and Pitcher Plant Bog in Borneo, Temple in the Trees at the Maya
+  Forest, the Underground River cave in Palawan, Bamboo Brake in the Western
+  Ghats, Cloud Bridges in Monteverde, and so on. Each has its own trees and
+  plants, what hangs over the path (bamboo arches, fig roots, mossy limbs,
+  fronds, mangrove roots, cave rock), a landmark (temples, waterfalls,
+  canopy walkways, cave arches, karst towers), birds or butterflies,
+  fireflies, rain or mist, light and fog. A title card names each scene
+  with a real fact as you enter it ("Canopy 2 of 3").
 - **Graphics:** inked outlines, soft shading and glossy eyes on every
   animal (fur strokes, feathers, real rosettes up close), outlined hazards
   with headlights, eyes and wood grain, turf and soil grain on every lane,
@@ -63,7 +74,7 @@ tools/run_tests.sh          # compile check + phase audit (project and exported 
 FAST=1 tools/run_tests.sh   # levels 1 and 10 of each scene instead of all 200
 ```
 
-The phase audit (`tests/phase_audit.gd`, 315 checks) turns each phase's
+The phase audit (`tests/phase_audit.gd`, 328 checks) turns each phase's
 checkpoint from the brief into checks: grid hops, every hazard kind, every
 ability, all 50 animals, every region generating 200 rows, a path-finding bot
 beating **all 200 levels with the free Poison Dart Frog**, adding a map
@@ -71,6 +82,11 @@ and an animal by file, earning/unlocking/relaunching, sandbox purchases and
 restore, a downloadable content pack, the tutorial funnel, prompts, daily
 reward, deals, the pass, ads only between runs, analytics events, and the
 frame cost.
+
+First person is checked on every run: the audit taps the eye button the
+way a real finger does, `tools/fpv_check.tscn` renders every scene with
+the real renderer and fails on a blank frame, and `tools/build_web.sh`
+tap-tests each web build in a phone-sized browser.
 
 ## Layout
 

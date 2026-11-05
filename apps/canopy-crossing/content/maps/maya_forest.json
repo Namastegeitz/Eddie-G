@@ -281,10 +281,10 @@
         0.94
       ],
       "canopy": {
-        "zones": 4,
+        "zones": 3,
         "rows": [
           7,
-          10
+          11
         ]
       }
     }
@@ -296,5 +296,89 @@
     ]
   },
   "native_animals": [],
-  "sprite": ""
+  "sprite": "",
+  "fpv_scenes": [
+    {
+      "id": "temple_in_trees",
+      "name": "Temple in the Trees",
+      "line": "Maya temples still rise above the canopy at Tikal.",
+      "props": {
+        "giant_tree": 0.6,
+        "fern": 0.8,
+        "moss_rock": 0.5,
+        "liana": 0.7
+      },
+      "landmark": "ruin_temple",
+      "fauna": [
+        "toucan",
+        "parrot"
+      ],
+      "particles": [
+        "motes"
+      ],
+      "shafts": 0.7,
+      "colors": {
+        "light": "#ffe0a0"
+      }
+    },
+    {
+      "id": "sacred_ceiba",
+      "name": "Sacred Ceiba",
+      "line": "To the Maya, the ceiba tree held up the sky.",
+      "props": {
+        "giant_tree": 1.2,
+        "bromeliad": 0.6,
+        "fern": 0.6,
+        "liana": 0.6
+      },
+      "landmark": "giant_ceiba",
+      "fauna": [
+        "toucan"
+      ],
+      "particles": [
+        "motes"
+      ],
+      "shafts": 0.7
+    },
+    {
+      "id": "cenote_rim",
+      "name": "Cenote Rim",
+      "line": "Cenotes are sinkholes into clear underground water.",
+      "props": {
+        "moss_rock": 0.9,
+        "fern": 0.8,
+        "karst": 0.4,
+        "liana": 0.8
+      },
+      "landmark": "cenote",
+      "fauna": [
+        "swallowtail"
+      ],
+      "particles": [
+        "mist",
+        "motes"
+      ],
+      "shafts": 0.5
+    },
+    {
+      "id": "stela_plaza",
+      "name": "Stela Plaza",
+      "line": "Carved stone stelae record the reigns of Maya kings.",
+      "props": {
+        "fern": 0.8,
+        "moss_rock": 0.6,
+        "palm": 0.5,
+        "liana": 0.4
+      },
+      "landmark": "stela",
+      "fauna": [
+        "parrot"
+      ],
+      "particles": [
+        "leaves",
+        "motes"
+      ],
+      "shafts": 0.8
+    }
+  ]
 }

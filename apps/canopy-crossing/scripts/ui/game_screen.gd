@@ -54,6 +54,9 @@ var tut_label: Label
 var tut_hint: Control
 var fps_label: Label
 var hud_buttons: Array[Control] = []
+var scene_card: PanelContainer      # "Kapok Cathedral" title as you enter a canopy zone
+var _web_t := 0.0
+var _shown_zones := {}
 var run_items := {}
 
 
@@ -224,6 +227,22 @@ func _build_hud() -> void:
 	toast.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.6))
 	toast.modulate.a = 0.0
 	hud.add_child(toast)
+	scene_card = PanelContainer.new()
+	scene_card.add_theme_stylebox_override("panel", UI.box(Color(0.02, 0.1, 0.05, 0.78), 22, 2, Color(1, 0.85, 0.4, 0.5), 18))
+	scene_card.set_anchors_preset(Control.PRESET_CENTER_TOP)
+	scene_card.position = Vector2(-310, top + 330)
+	scene_card.custom_minimum_size = Vector2(620, 0)
+	scene_card.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	scene_card.modulate.a = 0.0
+	var sv := UI.vbox(4)
+	sv.name = "Box"
+	scene_card.add_child(sv)
+	for spec in [["count", 20, Color(1, 1, 1, 0.7)], ["name", 40, UI.ACCENT], ["line", 23, Color.WHITE]]:
+		var lb := UI.wrap_label("", int(spec[1]), spec[2]) if spec[0] == "line" else UI.label("", int(spec[1]), spec[2], true, HORIZONTAL_ALIGNMENT_CENTER)
+		lb.name = String(spec[0])
+		lb.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		sv.add_child(lb)
+	hud.add_child(scene_card)
 	# ability + power-ups, on the thumb's side
 	var left_handed := bool(Save.setting("left_handed", false))
 	# view switch on the other side from the ability button
@@ -401,13 +420,58 @@ func _update_views(dt: float) -> void:
 		wv3.update_view(dt)
 	else:
 		wv.update_view(dt)
+	_web_state(dt)
+	var here := world.lane(sim.row)
+	if here.covered and here.zone >= 0 and not _shown_zones.has(here.zone) and not finished:
+		_shown_zones[here.zone] = true
+		_show_scene(here)
 	if canopy_tip:
 		var ahead := false
+		var ahead_scene := ""
 		for k in 4:
 			if world.lane(sim.row + k).covered:
 				ahead = true
+				if ahead_scene == "":
+					ahead_scene = world.lane(sim.row + k).scene
+		var sc := Scenery3D.scene_def(map, ahead_scene)
+		var tips: Dictionary = Content.onboarding.get("store_prompts", {}).get("canopy_tip", {})
+		if not sc.is_empty() and tips.has("scene_text"):
+			canopy_tip.text = String(tips.scene_text).replace("{scene}", String(sc.get("name", "")))
 		canopy_tip.visible = ahead and view == "bird" and not finished and not tut_bubble.visible
 		eye_btn.pulse = ahead and view == "bird" and not finished
+
+
+## Title card for a canopy scene: its name, a real fact, and which canopy
+## of the level this is. Fades out by itself.
+func _show_scene(l: Lane) -> void:
+	var sc := Scenery3D.scene_def(map, l.scene)
+	if sc.is_empty() or scene_card == null:
+		return
+	var n := world.gen.cover.size()
+	scene_card.get_node("Box/count").text = ("CANOPY %d OF %d" % [l.zone + 1, n]) if cfg.mode == "journey" and n > 0 else "DENSE CANOPY"
+	scene_card.get_node("Box/name").text = String(sc.get("name", ""))
+	scene_card.get_node("Box/line").text = String(sc.get("line", ""))
+	var tw := create_tween()
+	tw.tween_property(scene_card, "modulate:a", 1.0, 0.35)
+	tw.tween_interval(3.2)
+	tw.tween_property(scene_card, "modulate:a", 0.0, 0.6)
+	Sfx.play("whoosh", 0.8, -10.0)
+	Analytics.event("canopy_scene", {"map": map.id, "scene": l.scene, "zone": l.zone, "view": view})
+
+
+## In the web build, tell the page which view is showing, the row, and where
+## the eye button is (as fractions of the screen). tools/web_artifact/smoke.js
+## uses this to tap the button like a finger and check first person appears.
+func _web_state(dt: float, now := false) -> void:
+	if not OS.has_feature("web"):
+		return
+	_web_t -= dt
+	if _web_t > 0.0 and not now:
+		return
+	_web_t = 0.25
+	var vs := get_viewport_rect().size
+	var eye := eye_btn.get_global_rect().get_center() / vs if eye_btn else Vector2(-1, -1)
+	JavaScriptBridge.eval("window.__canopy && (window.__canopy.game = {view: '%s', row: %d, eye: [%.4f, %.4f], scene: '%s', fpv3d: %s});" % [view, sim.row, eye.x, eye.y, world.lane(sim.row).scene, "true" if (wv3 != null and wv3.is_visible_in_tree()) else "false"], true)
 
 
 func toggle_view() -> void:
@@ -443,6 +507,7 @@ func set_view(v: String, remember := true) -> void:
 		wv.update_view(1.0)
 	if eye_btn:
 		eye_btn.fpv = v == "fpv"
+	_web_state(0.0, true)
 	Sfx.play("whoosh", 1.2, -6.0)
 	if remember:
 		Save.set_setting("first_person", v == "fpv")

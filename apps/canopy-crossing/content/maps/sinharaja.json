@@ -286,10 +286,10 @@
         0.94
       ],
       "canopy": {
-        "zones": 4,
+        "zones": 3,
         "rows": [
           7,
-          10
+          11
         ]
       }
     }
@@ -301,5 +301,84 @@
     ]
   },
   "native_animals": [],
-  "sprite": ""
+  "sprite": "",
+  "fpv_scenes": [
+    {
+      "id": "rain_cathedral",
+      "name": "Rainforest Cathedral",
+      "line": "This is Sri Lanka's last large stretch of lowland rainforest.",
+      "props": {
+        "giant_tree": 1.3,
+        "fern": 0.7,
+        "liana": 0.7
+      },
+      "fauna": [
+        "parrot"
+      ],
+      "particles": [
+        "rain"
+      ],
+      "shafts": 0.3
+    },
+    {
+      "id": "fern_stream",
+      "name": "Tree Fern Stream",
+      "line": "Tree ferns lean over clear streams full of endemic fish.",
+      "props": {
+        "tree_fern": 1.3,
+        "moss_rock": 0.6,
+        "fern": 0.6,
+        "liana": 0.3
+      },
+      "landmark": "waterfall",
+      "fauna": [
+        "glasswing"
+      ],
+      "particles": [
+        "spray",
+        "mist"
+      ],
+      "shafts": 0.3
+    },
+    {
+      "id": "orchid_gully",
+      "name": "Orchid Gully",
+      "line": "Most of Sinharaja's trees grow nowhere else on Earth.",
+      "props": {
+        "orchid": 1.2,
+        "fern": 0.8,
+        "moss_rock": 0.4,
+        "liana": 0.4
+      },
+      "fauna": [
+        "birdwing"
+      ],
+      "particles": [
+        "motes"
+      ],
+      "shafts": 0.4
+    },
+    {
+      "id": "mist_ridge",
+      "name": "Mist Ridge",
+      "line": "Monsoon clouds pile up against the ridge almost all year.",
+      "props": {
+        "elfin_tree": 1.0,
+        "fern": 0.8,
+        "moss_rock": 0.5,
+        "liana": 0.3
+      },
+      "fauna": [
+        "parrot"
+      ],
+      "particles": [
+        "mist",
+        "rain"
+      ],
+      "shafts": 0.1,
+      "colors": {
+        "fog": "#c8d4cc"
+      }
+    }
+  ]
 }

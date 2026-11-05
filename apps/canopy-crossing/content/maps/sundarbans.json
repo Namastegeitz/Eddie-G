@@ -297,10 +297,10 @@
         0.94
       ],
       "canopy": {
-        "zones": 4,
+        "zones": 3,
         "rows": [
           7,
-          10
+          11
         ]
       }
     }
@@ -314,5 +314,84 @@
   "native_animals": [
     "bengal_tiger"
   ],
-  "sprite": ""
+  "sprite": "",
+  "fpv_scenes": [
+    {
+      "id": "mangrove_maze",
+      "name": "Mangrove Maze",
+      "line": "The Sundarbans is the largest mangrove forest on Earth.",
+      "props": {
+        "mangrove": 1.5,
+        "pneumatophores": 1.0,
+        "liana": 0.2
+      },
+      "fauna": [
+        "egret"
+      ],
+      "particles": [
+        "mist"
+      ],
+      "shafts": 0.3,
+      "colors": {
+        "fog": "#b8c4a8"
+      }
+    },
+    {
+      "id": "sundari_stilts",
+      "name": "Sundari Stilts",
+      "line": "The forest may take its name from the sundari tree.",
+      "props": {
+        "mangrove": 1.2,
+        "pneumatophores": 1.2,
+        "fern": 0.3,
+        "liana": 0.2
+      },
+      "fauna": [
+        "parrot"
+      ],
+      "particles": [
+        "motes"
+      ],
+      "shafts": 0.5
+    },
+    {
+      "id": "tidal_creek",
+      "name": "Tidal Creek",
+      "line": "Twice a day the tide floods in and drains away again.",
+      "props": {
+        "pneumatophores": 1.0,
+        "nipa": 0.8,
+        "mangrove": 0.6,
+        "liana": 0.1
+      },
+      "fauna": [
+        "egret"
+      ],
+      "particles": [
+        "fireflies",
+        "mist"
+      ],
+      "shafts": 0.2,
+      "colors": {
+        "fog": "#9aa890"
+      }
+    },
+    {
+      "id": "golpata_palms",
+      "name": "Golpata Palms",
+      "line": "Golpata (nipa) palms grow straight up out of the mud.",
+      "props": {
+        "nipa": 1.5,
+        "mangrove": 0.4,
+        "liana": 0.1
+      },
+      "fauna": [
+        "swallowtail"
+      ],
+      "particles": [
+        "motes"
+      ],
+      "shafts": 0.7
+    }
+  ]
 }

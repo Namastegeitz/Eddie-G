@@ -8,6 +8,7 @@ var sim: RunSim
 var animal: Dictionary = {}
 var t := 0.0
 var font: Font
+var frame := 0.0                 # 0 open sky .. 1 inside a canopy zone: leaves close in at the edges
 
 
 func setup(run: RunSim, animal_def: Dictionary) -> void:
@@ -21,7 +22,33 @@ func setup(run: RunSim, animal_def: Dictionary) -> void:
 func _process(dt: float) -> void:
 	if is_visible_in_tree():
 		t += dt
+		var inside := sim.world.lane(sim.row).covered or sim.world.lane(sim.row + 1).covered
+		frame = move_toward(frame, 1.0 if inside else 0.0, dt * 1.2)
 		queue_redraw()
+
+
+## Big leaves at the edges of the screen while you're under the canopy, in
+## the scene's own leaf colour, swaying a little.
+func _leaf_frame(s: Vector2) -> void:
+	if frame <= 0.01 or Draw.detail < 1:
+		return
+	var pal: Dictionary = sim.world.map.get("palette", {})
+	var lane := sim.world.lane(sim.row) if sim.world.lane(sim.row).covered else sim.world.lane(sim.row + 1)
+	var sc := Scenery3D.scene_def(sim.world.map, lane.scene)
+	var leaf := Scenery3D.col(sc, pal, "leaf", String(pal.get("canopy", "#1e5a2a")))
+	var a := frame * 0.82
+	var spots := [[0.0, 0.08, 0.6], [0.0, 0.3, 0.25], [0.0, 0.55, -0.1], [1.0, 0.12, 0.5], [1.0, 0.38, 0.15], [1.0, 0.62, -0.2], [0.18, 0.0, 1.2], [0.82, 0.0, 1.3]]
+	for i in spots.size():
+		var sp: Array = spots[i]
+		var side := -1.0 if float(sp[0]) < 0.5 else 1.0
+		var top := float(sp[1]) == 0.0
+		var base := Vector2(s.x * float(sp[0]) + (0.0 if top else side * 20.0), s.y * float(sp[1]) - (30.0 if top else 0.0))
+		var sway := sin(t * 0.9 + i * 1.7) * 0.06
+		var dir := Vector2(-side, float(sp[2])).normalized().rotated(sway) if not top else Vector2((0.5 - float(sp[0])) * 0.8, 1.0).normalized().rotated(sway)
+		var length := (150.0 + (i % 3) * 35.0) * frame
+		var c := leaf.darkened(0.35 + (i % 3) * 0.12)
+		Draw.leaf(self, base, dir, length, 58.0 + (i % 2) * 16.0, Color(c, a))
+		Draw.line(self, base, base + dir * length * 0.85, Color(c.darkened(0.3), a), 3.0, true)
 
 
 ## Movers in the next lanes that are outside the view and heading for you:
@@ -54,6 +81,7 @@ func _draw() -> void:
 	var cols: Dictionary = look.get("colors", {})
 	var prim := Color(String(cols.get("primary", "#888888")))
 	var dark := prim.darkened(0.35)
+	_leaf_frame(s)
 	var hop := sim.hop_t if sim.hopping else 0.0
 	var bob := sin(hop * PI) * 26.0 + sin(t * 2.2) * 3.0
 	match String(look.get("base", "mammal")):

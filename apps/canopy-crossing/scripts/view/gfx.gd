@@ -48,5 +48,5 @@ static func scale_3d(screen_scale: float) -> float:
 		"high":
 			return clampf(screen_scale, 1.0, 2.0)
 		"medium":
-			return 1.0
+			return clampf(screen_scale, 1.0, 1.5)
 	return 0.75
