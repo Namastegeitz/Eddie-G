@@ -282,7 +282,7 @@ export function skinsHelp(ui) {
     <h3>Golden bananas</h3>
     <ul>
       <li>+${RULES.goldFirstThreeStar} the first time each level gets 3 stars.</li>
-      <li>+${RULES.goldWorldClear} the first time you clear level 10, 20 and 30.</li>
+      <li>+${RULES.goldWorldClear} the first time you clear each world's showdown (level 10, 20, 30 and 40).</li>
       <li>+1 for every ${RULES.goldEndlessEvery} rounds you clear in one Endless run.</li>
       <li>+${RULES.goldSetComplete} for each completed skin set.</li>
       <li>Swap ${RULES.exchangeRate} bananas for 1 golden banana in the Wardrobe (tap the golden chip).</li>

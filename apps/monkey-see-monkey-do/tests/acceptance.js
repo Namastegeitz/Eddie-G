@@ -196,10 +196,31 @@ let passes = 0;
     expect(await ev(() => MSMD.Save.data.bananas) === b2 - 15, 'spent 15');
   });
 
-  await step('keyboard play clears Level 2', async () => {
-    for (let r = await ev(() => MSMD.game.run.round); r < 3; r++) await playRoutine('keys');
+  await step('Level 2 takes turns: copy, add your own move, the monkey copies you and adds one', async () => {
+    let added = 0;
+    let copiedYou = 0;
+    for (let k = 0; k < 30; k++) {
+      await page.waitForFunction(() => ['respond', 'add'].includes(MSMD.game.phase) || !!document.querySelector('#ov-result.show'), null, { timeout: 25000 });
+      if (await page.isVisible('#ov-result.show')) break;
+      const ph = await ev(() => MSMD.game.phase);
+      if (ph === 'add') {
+        expect((await page.textContent('#phase')).includes('YOUR MOVE'), 'your move label');
+        const before = await ev(() => MSMD.game.run.steps.length);
+        await page.keyboard.press('a'); // add Left Leg
+        added++;
+        await waitPhase('respond', 20000);
+        const chain = await ev(() => ({ steps: MSMD.game.run.steps, owners: MSMD.game.run.trade.owners }));
+        // your move is in the dance, then the monkey's new one on the end
+        if (chain.steps.length === before + 2 && chain.steps[before][0] === 'LL' && chain.owners[before] === 'you' && chain.owners[before + 1] === 'monkey') copiedYou++;
+        if (added === 1) await shot('05b-take-turns');
+      } else {
+        await playRoutine('keys');
+      }
+    }
     await page.waitForSelector('#ov-result.show', { timeout: 15000 });
     expect((await ev(() => MSMD.Save.levelInfo(2))).clears === 1, 'level 2 cleared');
+    expect(added >= 3 && copiedYou === added, `added ${added}, monkey copied ${copiedYou}`);
+    expect((await page.textContent('#result-card')).includes('take-turns'), 'results explain take-turns codes');
   });
 
   await step('combos: Level 4 needs both arms together', async () => {
@@ -362,7 +383,7 @@ let passes = 0;
   await step('How it works lists every level and the real numbers', async () => {
     await page.click('#scr-title .mini[data-go="help"]');
     const rows = await page.$$eval('#help-body table', (t) => t.map((x) => x.querySelectorAll('tbody tr').length));
-    expect(rows.includes(30), 'level table rows ' + rows);
+    expect(rows.includes(40), 'level table rows ' + rows);
     const text = await page.textContent('#help-body');
     expect(text.includes('90 ms') && text.includes('You never need to pay') && text.includes('grown-up check') && text.includes('Ultra: up to 3x'), 'rules text');
     await shot('13-how-it-works');
@@ -457,7 +478,8 @@ let passes = 0;
     const next = await page.$eval('#level-grid .level.next', (b) => b.dataset.level);
     expect(next === '5', 'next level ' + next);
     const locked = await page.$$eval('#world-tabs .tab[aria-disabled="true"]', (b) => b.length);
-    expect(locked === 2, 'locked worlds ' + locked);
+    expect(locked === 3, 'locked worlds ' + locked);
+    expect((await page.$$eval('#world-tabs .tab', (b) => b.length)) === 4, 'four worlds');
     await shot('15-map');
   });
 

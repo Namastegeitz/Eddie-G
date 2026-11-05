@@ -23,7 +23,7 @@ export const GOALS = {
   stars45: G('Earn 45 stars', 45, (c) => c.stars),
   stars60: G('Earn 60 stars', 60, (c) => c.stars),
   stars75: G('Earn 75 stars', 75, (c) => c.stars),
-  stars90: G('Earn all 90 stars', 90, (c) => c.stars),
+  stars90: G('Earn 90 stars', 90, (c) => c.stars),
   world1: G('Clear World 1 (level 10)', 1, (c) => (c.cleared(10) ? 1 : 0)),
   world2: G('Clear World 2 (level 20)', 1, (c) => (c.cleared(20) ? 1 : 0)),
   world3: G('Clear World 3 (level 30)', 1, (c) => (c.cleared(30) ? 1 : 0)),
@@ -175,7 +175,7 @@ export const SKINS = [
     ['silver', 'Silver', 'epic', 30, 'stars45', { fur: '#d0d6e0', skin: '#f4f0ee', finish: 'metal', desc: 'Shiny and sharp.' }],
     ['rosegold', 'Rose Gold', 'epic', 35, 'stars60', { fur: '#f0a8a0', skin: '#fff0ec', finish: 'metal', desc: 'Pink and precious.' }],
     ['chrome', 'Chrome', 'legendary', 50, 'stars75', { fur: '#e2ecff', skin: '#f8f8ff', finish: 'metal', aura: 'sparkle', auraColor: '#ffffff', desc: 'Mirror-polished. Sparkles as it moves.' }],
-    ['gold', 'Solid Gold', 'legendary', 60, 'stars90', { fur: '#ffc928', skin: '#fff4cc', finish: 'metal', aura: 'sparkle', auraColor: '#ffe680', desc: 'For the monkey with every star.' }],
+    ['gold', 'Solid Gold', 'legendary', 60, 'stars90', { fur: '#ffc928', skin: '#fff4cc', finish: 'metal', aura: 'sparkle', auraColor: '#ffe680', desc: 'For a monkey with 90 stars.' }],
   ]),
   ...prem('cosmic', [
     ['galaxy', 'Galaxy', 'legendary', 55, 'endless30', { fur: '#120a30', skin: '#d8c8ff', pattern: pat('galaxy', '#120a30', '#7a3fff', '#ff4fd8', '#ffe9a8', 110), eyes: { pupil: '#b07cff', glow: true }, aura: 'stars', auraColor: '#ffe9a8', desc: 'A universe of moves. Glows in the dark.' }],

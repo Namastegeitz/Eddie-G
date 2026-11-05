@@ -2,7 +2,7 @@
 // settings, How it works, stats, and the in-game HUD and cards.
 import { MOVES, PAD_ORDER, CHORDS, moveIcon, moveName, stepName } from './moves.js';
 import { RULES, timeLimit } from './rules.js';
-import { WORLDS, LEVELS, TWISTS, ENDLESS, getLevel } from './levels.js';
+import { WORLDS, LEVELS, TWISTS, ENDLESS, STAGE_NAMES, getLevel } from './levels.js';
 import { CATEGORIES, ITEMS, itemsIn, getItem } from './shop.js';
 import { Save } from './save.js';
 import { renderSkins, renderSkinAction, showExchange, showUnlocks, updateGolden, skinsHelp, portrait, lazyPortraits, lazyGearThumbs, renderOutfits, GOLDEN_ICON, hiDpi } from './wardrobe.js';
@@ -347,7 +347,7 @@ export class UI {
     if (!this.mapVisited) { this.world = reached; this.mapVisited = true; }
     $('#world-tabs').innerHTML = WORLDS.map((w) => {
       const locked = w.id > reached;
-      return `<button class="tab" role="tab" data-world="${w.id}" aria-selected="${w.id === this.world}" ${locked ? 'aria-disabled="true"' : ''}>${locked ? `<span class="lock">${ICON.lock}</span>` : ''}World ${w.id}</button>`;
+      return `<button class="tab" role="tab" data-world="${w.id}" aria-label="World ${w.id}${locked ? ', locked' : ''}" aria-selected="${w.id === this.world}" ${locked ? 'aria-disabled="true"' : ''}>${locked ? `<span class="lock">${ICON.lock}</span>` : ''}<span class="wl">World </span>${w.id}</button>`;
     }).join('');
     $$('#world-tabs .tab').forEach((b) => b.addEventListener('click', () => {
       const id = Number(b.dataset.world);
@@ -394,6 +394,7 @@ export class UI {
       minL === maxL ? `${minL} moves each` : `${minL}-${maxL} moves`,
       `${bpm} BPM`,
       timerText,
+      `Stage: ${STAGE_NAMES[level.stage] || level.stage}`,
       ...twistNames.map((n) => `Twist: ${n}`),
       ...(level.chords.length ? [`Combos: ${level.chords.map((c) => CHORDS[c].name).join(', ')}`] : []),
     ];
@@ -529,17 +530,17 @@ export class UI {
     $('#score').textContent = `${n} move${n === 1 ? '' : 's'}`;
   }
 
-  setPhase(kind, twist) {
+  setPhase(kind, twist, banner) {
     const el = $('#phase');
-    const text = { watch: 'WATCH!', respond: 'YOUR TURN!', free: 'FREE DANCE', oops: 'OOPS!', clear: 'NICE!', ready: 'GET READY' }[kind] || '';
+    const text = { watch: 'WATCH!', respond: 'YOUR TURN!', add: 'YOUR MOVE!', free: 'FREE DANCE', oops: 'OOPS!', clear: 'NICE!', ready: 'GET READY' }[kind] || '';
     el.className = 'phase ' + (kind === 'ready' ? 'watch' : kind);
     el.textContent = text;
     void el.offsetWidth;
     el.classList.add('enter');
     const tw = $('#twist');
-    if (twist && TWISTS[twist] && (kind === 'watch' || kind === 'respond')) {
+    if (twist && TWISTS[twist] && (kind === 'watch' || kind === 'respond' || kind === 'add')) {
       tw.hidden = false;
-      tw.textContent = kind === 'respond' && twist === 'reverse' ? 'BACKWARDS: LAST MOVE FIRST' : TWISTS[twist].short;
+      tw.textContent = banner || (kind === 'respond' && twist === 'reverse' ? 'BACKWARDS: LAST MOVE FIRST' : TWISTS[twist].short);
     } else tw.hidden = true;
     if (kind === 'watch') this.announce('Watch');
   }
@@ -561,14 +562,14 @@ export class UI {
     if (k === 1) dots.forEach((d) => d.classList.remove('count'));
   }
 
-  watchStep(i, step) {
+  watchStep(i, step, yours = false) {
     const dots = $$('#steps .dot');
     dots.forEach((d, k) => {
-      if (k < i) { d.className = 'dot seen'; d.innerHTML = ''; d.style.removeProperty('--c'); }
+      if (k < i) { d.className = 'dot seen' + (d.classList.contains('yours') ? ' yours' : ''); d.innerHTML = ''; d.style.removeProperty('--c'); }
     });
     const d = dots[i];
     if (!d) return;
-    d.className = 'dot now' + (step.length === 1 && inkMove(step[0]) ? ' ink' : '');
+    d.className = 'dot now' + (step.length === 1 && inkMove(step[0]) ? ' ink' : '') + (yours ? ' yours' : '');
     d.style.setProperty('--c', MOVES[step[0]].color);
     if (step.length > 1) d.style.background = `linear-gradient(135deg, ${MOVES[step[0]].color} 50%, ${MOVES[step[1]].color} 50%)`;
     else d.style.background = '';
@@ -582,10 +583,15 @@ export class UI {
     d.style.setProperty('--c', MOVES[ids[0]].color);
   }
 
-  fillStep(i, step) {
+  /** Take turns: an empty slot on the end for the move you add. */
+  addSlot(i) {
+    $('#steps').insertAdjacentHTML('beforeend', `<span class="dot add" data-i="${i}" aria-hidden="true">+</span>`);
+  }
+
+  fillStep(i, step, yours = false) {
     const d = $$('#steps .dot')[i];
     if (!d) return;
-    d.className = 'dot done' + (step.length === 1 && inkMove(step[0]) ? ' ink' : '');
+    d.className = 'dot done' + (step.length === 1 && inkMove(step[0]) ? ' ink' : '') + (yours ? ' yours' : '');
     d.style.setProperty('--c', MOVES[step[0]].color);
     d.style.background = step.length > 1 ? `linear-gradient(135deg, ${MOVES[step[0]].color} 50%, ${MOVES[step[1]].color} 50%)` : '';
     d.innerHTML = moveIcon(step);
@@ -746,7 +752,7 @@ export class UI {
       <table class="breakdown"><tbody>${rows}<tr class="total"><td>Bananas earned</td><td>+${r.total}</td></tr>${goldRows(r.golden)}</tbody></table>
       ${unlockBox(r.unlocks)}
       ${r.newWorld ? `<div class="new-world">World ${r.newWorld.id} is open: ${esc(r.newWorld.name)}! Its stage is now in your wardrobe for free.</div>` : ''}
-      <div class="seedline">Routine codes: ${seeds}. Each round's routine comes from its code, so the same code always makes the same dance.</div>
+      <div class="seedline">${r.traded ? `Round codes: ${seeds}. In take-turns rounds you added moves of your own, so a code only sets the monkey's moves.` : `Routine codes: ${seeds}. Each round's routine comes from its code, so the same code always makes the same dance.`}</div>
       <div class="actions">
         ${r.next ? '<button class="btn primary big" id="res-next">Next level</button>' : '<button class="btn primary big" id="res-endless">Try Endless</button>'}
         <div class="btn-row"><button class="btn" id="res-again">Play again</button><button class="btn" id="res-map">Levels</button></div>
@@ -1204,7 +1210,7 @@ export class UI {
       const tt = Number.isFinite(t[0]) ? `${Math.min(...t)}-${Math.max(...t)} s` : 'off';
       const tw = [...new Set((Array.isArray(l.twist) ? l.twist : [l.twist]).filter(Boolean))].map((x) => TWISTS[x].name).join(', ');
       const news = (l.intro || []).map((id) => (MOVES[id] ? moveName(id, n) : CHORDS[id] ? CHORDS[id].name : TWISTS[id] ? TWISTS[id].name : id)).join(', ');
-      return `<tr><td>${l.id}${l.boss ? ' (boss)' : ''}</td><td>${esc(l.name)}</td><td>${l.rounds.join(', ')}</td><td>${bpm}</td><td>${tt}</td><td class="wrap">${esc([news && 'New: ' + news, tw && 'Twist: ' + tw].filter(Boolean).join('. '))}</td></tr>`;
+      return `<tr><td>${l.id}${l.boss ? ' (boss)' : ''}</td><td>${esc(l.name)}</td><td>${esc(STAGE_NAMES[l.stage] || l.stage)}</td><td>${l.rounds.join(', ')}${l.twist === 'trade' ? ' (take turns)' : ''}</td><td>${bpm}</td><td>${tt}</td><td class="wrap">${esc([news && 'New: ' + news, tw && 'Twist: ' + tw].filter(Boolean).join('. '))}</td></tr>`;
     }).join('');
     const tiers = RULES.streakTiers.map((t) => `${t.at}+ in a row: x${t.mult}`).join(', ');
     const shopRows = CATEGORIES.filter((c) => c.id !== 'skin').map((c) => `<tr><td>${esc(c.name)}</td><td class="wrap">${itemsIn(c.id).map((i) => `${esc(i.name)} (${i.price ? i.price : 'free'}${i.unlockWorld ? `, or free at World ${i.unlockWorld}` : ''})`).join(', ')}</td></tr>`).join('');
@@ -1215,7 +1221,9 @@ export class UI {
         <li><b>Your turn.</b> Copy the routine in the same order before the timer runs out.</li>
         <li><b>Cheer or oops.</b> Get it right and the next round is longer. A wrong move or running out of time costs a life, and the same routine plays again so you can learn it.</li>
       </ol>
-      <p>Each level has ${RULES.startLives} lives and 3 or 4 rounds. Clear a level to open the next one. Clear level 10 to open World 2, and level 20 to open World 3.</p>
+      <p>Each level has ${RULES.startLives} lives and 3 or 4 rounds. Clear a level to open the next one. Clear level 10 to open World 2, level 20 to open World 3, and level 30 to open World 4 on the moon.</p>
+      <p><b>Maps:</b> levels 1-3 are in the jungle. After that, every level moves on to the next map (${['jungle', 'beach', 'disco', 'moon'].map((s) => STAGE_NAMES[s]).join(', ')}, then round again), starting from each world's home map, and each showdown (level 10, 20, 30, 40) is on its world's home map. The level card and the table below say which map each level uses. Every map is free to play in levels; a stage you own in the Wardrobe can be picked to always dance on that one instead.</p>
+      <p><b>Take turns</b> (levels ${LEVELS.filter((l) => l.twist === 'trade').map((l) => l.id).join(', ')}): the monkey does a move; copy it, then tap any move to add your own (+${RULES.tradeAddPoints} points; there is no wrong move to add). The monkey copies you and adds another. When the dance reaches the round's length and you copy all of it, the round is cleared. If the add timer runs out, the monkey picks a move for you and you lose no life. A mistake while copying costs a life as usual, and you try the same dance again.</p>
 
       <h3>The moves</h3>
       <p class="note">Left and right are ${n === 'monkey' ? "the monkey's own sides (Settings > Name sides by)" : 'the sides of your screen, like a mirror (change in Settings > Name sides by)'}. Buttons never move.</p>
@@ -1270,9 +1278,9 @@ export class UI {
         <li>The results screen shows each round's code. The same code always makes the same routine.</li>
       </ul>
 
-      <h3>All 30 levels</h3>
+      <h3>All ${LEVELS.length} levels</h3>
       <p class="note">Tempos and timers below use your current speed and timer settings.</p>
-      <div class="table-wrap"><table><thead><tr><th>#</th><th>Name</th><th>Moves per round</th><th>BPM</th><th>Timer</th><th>What's new</th></tr></thead><tbody>${levelRows}</tbody></table></div>
+      <div class="table-wrap"><table><thead><tr><th>#</th><th>Name</th><th>Map</th><th>Moves per round</th><th>BPM</th><th>Timer</th><th>What's new</th></tr></thead><tbody>${levelRows}</tbody></table></div>
 
       <h3>Wardrobe prices</h3>
       <div class="table-wrap"><table><thead><tr><th>Type</th><th>Items (bananas)</th></tr></thead><tbody>${shopRows}</tbody></table></div>
@@ -1284,7 +1292,7 @@ export class UI {
       <h3>Graphics</h3>
       <p class="note">Right now: ${esc({ low: 'Low', medium: 'Medium', high: 'High', ultra: 'Ultra' }[this.app.stage.level] || 'High')}${Save.settings.quality === 'auto' ? ' (picked by Auto)' : ''}.</p>
       <ul>
-        <li>Auto starts at High and watches your frame rate for a few seconds. If most frames are slow it steps down to Medium, then Low, and tells you when it switches to Low.</li>
+        <li>Auto starts at High and watches your frame rate for a few seconds. If it averages under 38 frames a second it steps down to Medium, then Low, and tells you when it switches to Low.</li>
         <li>Low: no outlines, shadows, grass or move trails; normal resolution. Easiest on older phones and batteries.</li>
         <li>Medium (Auto only): outlines, grass, flowers and move trails; no shadows; up to ${QUALITY.medium.dpr}x resolution.</li>
         <li>High: adds soft shadows, light rays and butterflies; up to ${QUALITY.high.dpr}x resolution.</li>

@@ -30,13 +30,15 @@ export const RULES = {
   endlessMilestoneEvery: 5,
   endlessMilestoneBananas: 10,
   endlessBestBonus: 10,
+  // Take turns: points for each move you add (any move counts; there is no wrong one)
+  tradeAddPoints: 50,
   // Spending inside a level
   replayCost: 5,
   continueCost: 15,
   // Golden Bananas (the premium currency). Earned by playing or swapped from
   // bananas. The phone apps also sell packs (js/store.js); nothing needs them.
   goldFirstThreeStar: 2, // first time a level gets 3 stars
-  goldWorldClear: 10, // first clear of level 10, 20 and 30
+  goldWorldClear: 10, // first clear of each world's showdown: level 10, 20, 30 and 40
   goldEndlessEvery: 10, // 1 golden banana per this many rounds in an Endless run
   goldSetComplete: 5, // own every skin in a set
   exchangeRate: 100, // bananas for 1 golden banana

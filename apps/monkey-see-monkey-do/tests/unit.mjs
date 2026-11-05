@@ -1,6 +1,6 @@
 // Unit checks for the pure game rules (no browser needed):
 //   node tests/unit.mjs
-import { LEVELS, WORLDS, ENDLESS, TWISTS, generateRound, generateSteps, extendEndless, expectedSteps, watchSchedule, makeRng, twistFor, endlessBpm } from '../js/levels.js';
+import { LEVELS, WORLDS, ENDLESS, TWISTS, STAGE_ORDER, generateRound, generateSteps, extendEndless, expectedSteps, watchSchedule, makeRng, twistFor, endlessBpm, tradeMove, tradeCopies, stageForLevel } from '../js/levels.js';
 import { RULES, timeLimit, starsFor, levelBananas, endlessBananas, gradeTiming, streakMult, stepPoints } from '../js/rules.js';
 import { MOVES, CHORDS, sameStep, moveName, chordFor, normStep } from '../js/moves.js';
 import { ITEMS, CATEGORIES, DEFAULT_OWNED, DEFAULT_EQUIPPED, getItem } from '../js/shop.js';
@@ -17,9 +17,10 @@ function check(name, cond, info = '') {
 }
 
 // ---- level table matches the design brief
-check('30 levels', LEVELS.length === 30);
+check('40 levels', LEVELS.length === 40);
 LEVELS.forEach((l, i) => check(`level ${i + 1} id`, l.id === i + 1));
-check('3 worlds', WORLDS.length === 3);
+check('4 worlds', WORLDS.length === 4);
+check('World 4 is on the moon', WORLDS[3].stage === 'moon');
 for (const l of LEVELS) {
   check(`L${l.id} world`, l.world === Math.ceil(l.id / 10));
   check(`L${l.id} moves known`, l.moves.every((m) => MOVES[m]));
@@ -40,12 +41,63 @@ for (const l of LEVELS.slice(3, 10)) {
   check(`L${l.id}: has combos (simultaneous moves)`, l.chords.length > 0);
 }
 for (let i = 1; i < 10; i++) check(`tempo rises in world 1 (${i + 1})`, LEVELS[i].bpm >= LEVELS[i - 1].bpm);
-check('boss levels', [10, 20, 30].every((id) => LEVELS[id - 1].boss));
+check('boss levels', [10, 20, 30, 40].every((id) => LEVELS[id - 1].boss));
+check('only the showdowns are bosses', LEVELS.filter((l) => l.boss).length === 4);
+// World 4 is the hardest
+const avgBpm = (w) => { const ls = LEVELS.filter((l) => l.world === w); return ls.reduce((s, l) => s + l.bpm, 0) / ls.length; };
+check('World 4 is faster than World 3', avgBpm(4) > avgBpm(3), [avgBpm(3), avgBpm(4)]);
+check('World 4 has the longest routine', Math.max(...LEVELS[39].rounds) >= Math.max(...LEVELS.slice(0, 30).flatMap((l) => l.rounds)));
+
+// ---- maps: 1-3 jungle, then a new map every level, showdowns at home
+check('levels 1-3 in the jungle', [1, 2, 3].every((id) => LEVELS[id - 1].stage === 'jungle'));
+for (const l of LEVELS) {
+  check(`L${l.id} has a known map`, STAGE_ORDER.includes(l.stage), l.stage);
+  check(`L${l.id} map matches stageForLevel`, l.stage === stageForLevel(l));
+  if (l.boss) check(`L${l.id} showdown on its home map`, l.stage === WORLDS[l.world - 1].stage);
+  if (l.id > 3 && !l.boss && l.id > 1) {
+    const prev = LEVELS[l.id - 2];
+    check(`L${l.id} map differs from L${prev.id}`, l.stage !== prev.stage || prev.boss, `${prev.stage} -> ${l.stage}`);
+  }
+}
+check('World 1 visits all four maps', new Set(LEVELS.slice(0, 10).map((l) => l.stage)).size === 4);
+check('level 4 is the first new map', LEVELS[3].stage !== 'jungle');
+for (const w of WORLDS) check(`World ${w.id} starts on its home map`, LEVELS[(w.id - 1) * 10 + (w.id === 1 ? 0 : 0)].stage === w.stage);
+
+// ---- take turns (levels 2 and 3, and two on the moon)
+check('levels 2 and 3 take turns', LEVELS[1].twist === 'trade' && LEVELS[2].twist === 'trade');
+for (const l of LEVELS.filter((x) => x.twist === 'trade')) {
+  const start = l.tradeStart || 1;
+  for (const [r, n] of l.rounds.entries()) {
+    const g = generateRound(l, r, 777 + r);
+    check(`L${l.id} r${r + 1}: monkey opens with ${start}`, g.steps.length === start && g.target === n, `${g.steps.length}/${g.target}`);
+    check(`L${l.id} r${r + 1}: target reachable by trading`, (n - start) % 2 === 0 && n > start, `${start}->${n}`);
+    const copies = tradeCopies(start, n);
+    check(`L${l.id} r${r + 1}: you copy ${copies.join(', ')}`, copies[0] === start && copies[copies.length - 1] === n);
+  }
+}
+check('level 3 opens with the new Head Bob', JSON.stringify(generateRound(LEVELS[2], 0, 4242).steps) === '[["HD"]]');
+{
+  // the monkey's added moves follow the routine rules, even after your moves
+  const l = LEVELS[36];
+  const rng = makeRng(99);
+  let chain = generateRound(l, 0, 5).steps;
+  let bad = 0;
+  for (let i = 0; i < 400; i++) {
+    chain = [...chain, ['LA'], tradeMove(rng, l, [...chain, ['LA']])];
+    const n = chain.length;
+    const s = chain[n - 1];
+    if (n >= 3 && JSON.stringify(s) === JSON.stringify(chain[n - 2]) && JSON.stringify(s) === JSON.stringify(chain[n - 3])) bad++;
+    if (s.length > 1 && !l.chords.some((c) => CHORDS[c].parts.slice().sort().join() === s.slice().sort().join())) bad++;
+    if (chain.length > 40) chain = chain.slice(-6);
+  }
+  check('monkey trade moves: never 3 in a row, only allowed combos', bad === 0, bad);
+}
+check('Take turns twist explained', !!TWISTS.trade && TWISTS.trade.text.length > 40);
 
 // ---- generator rules, over many seeds
 let triples = 0, doubleChords = 0, outside = 0;
 for (let seed = 1; seed < 4000; seed++) {
-  const l = LEVELS[seed % 30];
+  const l = LEVELS[seed % LEVELS.length];
   const rng = makeRng(seed * 2654435761);
   const steps = generateSteps(rng, 12, l.moves, l.chords, { chordChance: 0.4 });
   for (let i = 0; i < steps.length; i++) {
@@ -72,6 +124,7 @@ for (const l of LEVELS) {
   let prev = null;
   l.rounds.forEach((n, r) => {
     const g = generateRound(l, r, 1000 + r * 7, prev);
+    if (l.twist === 'trade') { prev = g.steps; return; } // checked above: the dance grows by trading
     check(`L${l.id} r${r + 1} length`, g.steps.length === n, `${g.steps.length} vs ${n}`);
     if (twistFor(l, r) === 'buildup' && prev) check(`L${l.id} r${r + 1} builds on the last round`, JSON.stringify(g.steps.slice(0, prev.length)) === JSON.stringify(prev));
     prev = g.steps;

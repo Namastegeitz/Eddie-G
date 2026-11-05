@@ -6,17 +6,24 @@ export const WORLDS = [
   { id: 1, name: 'Jungle Clearing', stage: 'jungle', blurb: 'Learn the moves. Slow and friendly.' },
   { id: 2, name: 'Beach Bash', stage: 'beach', blurb: 'Longer routines, new combos, routines that build up.' },
   { id: 3, name: 'Temple Disco', stage: 'disco', blurb: 'Fast tempos, and some rounds go backwards.' },
+  { id: 4, name: 'Moon Base', stage: 'moon', blurb: 'The longest, fastest routines, with every twist mixed in.' },
 ];
+
+/** The four maps, in the order levels visit them. */
+export const STAGE_ORDER = ['jungle', 'beach', 'disco', 'moon'];
+export const STAGE_NAMES = { jungle: 'Jungle Clearing', beach: 'Beach Bash', disco: 'Temple Disco', moon: 'Moon Base' };
 
 export const TWISTS = {
   buildup: { name: 'Build-up', short: 'BUILD-UP', text: 'Each round repeats the last routine and adds new moves on the end.' },
   speedup: { name: 'Speed-up', short: 'SPEED-UP', text: 'The monkey gets faster during the routine. Your timer is the same.' },
   reverse: { name: 'Backwards', short: 'BACKWARDS', text: 'Copy the routine in reverse order: last move first.' },
+  trade: { name: 'Take turns', short: 'TAKE TURNS', text: 'You and the monkey trade moves. The monkey does a move; copy it, then add any move of your own. The monkey copies you and adds another. Keep going until the dance is as long as the round says.' },
 };
 
 const W1 = ['LA', 'RA', 'LL', 'RL'];
 const W1H = [...W1, 'HD'];
 const ALL6 = ['LA', 'HD', 'RA', 'LL', 'FL', 'RL'];
+const CH4 = ['BA', 'BL', 'XL', 'XR'];
 
 // L(id, name, round lengths, tempo, move pool, combo pool, extras)
 function L(id, name, rounds, bpm, moves, chords = [], extra = {}) {
@@ -26,8 +33,9 @@ function L(id, name, rounds, bpm, moves, chords = [], extra = {}) {
 export const LEVELS = [
   // World 1: 2-3 steps slow (1-3), then 4-6 steps, faster, combos (4-10)
   L(1, 'First Steps', [2, 2, 3], 80, W1, [], { intro: ['LA', 'RA', 'LL', 'RL'], guided: true }),
-  L(2, 'Copy Cat', [2, 3, 3], 84, W1),
-  L(3, 'Head Banana', [3, 3, 3], 88, W1H, [], { intro: ['HD'] }),
+  // Levels 2-3: take turns. The dance grows to 3 moves: monkey 1, you copy + add, monkey copies + adds, you copy 3.
+  L(2, 'Copy Cat', [3, 3, 3], 84, W1, [], { twist: 'trade', tradeStart: 1, intro: ['trade'] }),
+  L(3, 'Head Banana', [3, 3, 3], 88, W1H, [], { twist: 'trade', tradeStart: 1, intro: ['HD'] }),
   L(4, 'Hooray!', [4, 4, 4], 95, W1H, ['BA'], { intro: ['BA'] }),
   L(5, 'Hip Wiggle', [4, 5, 5], 100, ALL6, ['BA'], { intro: ['FL'] }),
   L(6, 'Jump Up', [5, 5, 5], 104, ALL6, ['BA', 'BL'], { intro: ['BL'] }),
@@ -57,7 +65,32 @@ export const LEVELS = [
   L(28, 'Ancient Rhythm', [9, 9, 9], 138, ALL6, ['BA', 'BL', 'XL', 'XR'], { chordChance: 0.3 }),
   L(29, 'Last Rehearsal', [7, 8, 9], 136, ALL6, ['BA', 'BL', 'XL', 'XR'], { twist: [null, 'reverse', 'speedup'] }),
   L(30, 'Temple Showdown', [9, 10, 10, 10], 142, ALL6, ['BA', 'BL', 'XL', 'XR'], { boss: true, twist: [null, 'speedup', 'reverse', null] }),
+  // World 4: the moon. 7-12 steps, the fastest tempos, every twist (take turns comes back, starting longer)
+  L(31, 'Lift Off', [7, 8, 8], 130, ALL6, CH4),
+  L(32, 'Low Gravity', [5, 7, 9], 132, ALL6, CH4, { twist: 'buildup' }),
+  L(33, 'Moon Echo', [5, 7, 7], 128, ALL6, CH4, { twist: 'trade', tradeStart: 3 }),
+  L(34, 'Crater Hop', [8, 9, 9], 136, ALL6, CH4, { chordChance: 0.3 }),
+  L(35, 'Star Spin', [6, 7, 8], 134, ALL6, CH4, { twist: 'reverse' }),
+  L(36, 'Orbit', [8, 9, 10], 138, ALL6, CH4, { twist: 'speedup' }),
+  L(37, 'Space Duet', [7, 9, 9], 132, ALL6, CH4, { twist: 'trade', tradeStart: 5 }),
+  L(38, 'Meteor Shower', [9, 10, 10], 142, ALL6, CH4, { chordChance: 0.3 }),
+  L(39, 'Countdown', [8, 9, 10], 144, ALL6, CH4, { twist: [null, 'reverse', 'speedup'] }),
+  L(40, 'Moon Showdown', [10, 10, 11, 12], 148, ALL6, CH4, { boss: true, twist: [null, 'speedup', 'reverse', 'buildup'] }),
 ];
+
+/**
+ * Which map a level is on. Levels 1-3 stay in the jungle while you learn;
+ * after that every level moves on to the next map (beach, disco, moon,
+ * jungle...), starting from each world's home map. Showdowns go home.
+ */
+export function stageForLevel(level) {
+  const home = STAGE_ORDER.indexOf(WORLDS[level.world - 1].stage);
+  if (level.boss) return STAGE_ORDER[home];
+  const p = level.id - (level.world - 1) * 10 - 1; // 0..8 within the world
+  if (level.world === 1) return p < 3 ? 'jungle' : STAGE_ORDER[(p - 2) % STAGE_ORDER.length];
+  return STAGE_ORDER[(home + p) % STAGE_ORDER.length];
+}
+for (const l of LEVELS) l.stage = stageForLevel(l);
 
 export const ENDLESS = {
   startLength: 2,
@@ -167,6 +200,12 @@ export function generateRound(level, roundIndex, seed, prevSteps = null) {
   const twist = twistFor(level, roundIndex);
   const opts = { chordChance: level.chordChance };
   let steps;
+  if (twist === 'trade') {
+    // take turns: the monkey opens with a few moves; the dance then grows to `len` as you trade
+    steps = generateSteps(rng, level.tradeStart || 1, level.moves, level.chords, opts);
+    if (roundIndex === 0 && level.intro && level.intro.length) steps = forceIntro(rng, steps, level.intro);
+    return { steps, twist, seed, target: len };
+  }
   if (twist === 'buildup' && prevSteps && prevSteps.length < len) {
     steps = [...prevSteps.map((s) => [...s]), ...generateSteps(rng, len - prevSteps.length, level.moves, level.chords, { ...opts, prev: prevSteps })];
   } else {
@@ -174,6 +213,18 @@ export function generateRound(level, roundIndex, seed, prevSteps = null) {
   }
   if (roundIndex === 0 && level.intro && level.intro.length) steps = forceIntro(rng, steps, level.intro);
   return { steps, twist, seed };
+}
+
+/** Take turns: the monkey's next move after `chain` (same rules as any routine). */
+export function tradeMove(rng, level, chain) {
+  return generateSteps(rng, 1, level.moves, level.chords, { chordChance: level.chordChance, prev: chain })[0];
+}
+
+/** Take turns: the lengths you copy in a round, e.g. start 1, target 3 -> [1, 3]. */
+export function tradeCopies(start, target) {
+  const out = [];
+  for (let n = start; n <= target; n += 2) out.push(n);
+  return out;
 }
 
 /** Endless: one new step on the end of the routine each round. */

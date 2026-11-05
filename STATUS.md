@@ -241,6 +241,12 @@
   Auto is time-based (3 s windows). Static scenery merged per material (js/gfx.js). Sharper Wardrobe portraits and gear
   thumbnails, 512 px fur patterns. Tests: 507 unit checks, 34-step play-through (new graphics-levels step) on source
   and dist/www, 12 phone checks; all four stages render on WebGL 1 with no shader errors.
+- Levels and maps (sixth pass): levels 2 and 3 are "Take turns" rounds (monkey adds a move, you copy and add one, the
+  monkey copies you and adds another, until the dance is 3 long; adding can't be wrong; add-timer timeout = monkey
+  picks, no life lost; +50 points per added move). New World 4 Moon Base (levels 31-40, up to 12 moves at 148 BPM,
+  take turns returns at 33 and 37 starting from 3 and 5 moves). Every level after 3 moves to the next map (beach,
+  disco, moon, jungle...), showdowns on the world's home map; level card, How it works table and results explain it.
+  Moon stage free at World 4. Tests: 767 unit checks; play-through clears level 2 by taking turns.
 - Not verified on real hardware yet: touch feel and audio latency on an actual phone, install to home screen, and frame
   rate of the new graphics on older phones (Auto steps down if needed).
 - Next: pick add-ons from `prompts/claude/monkey-see-monkey-do-next.md` (prompt 15 is done; replay review, Daily

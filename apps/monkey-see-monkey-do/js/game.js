@@ -3,7 +3,7 @@
 // Timing runs on the beat clock in audio.js so moves land on the music.
 import { MOVES, chordFor, stepName, moveName } from './moves.js';
 import { RULES, gradeTiming, stepPoints, streakMult, starsFor, levelBananas, endlessBananas, endlessGolden, timeLimit } from './rules.js';
-import { LEVELS, WORLDS, getLevel, generateRound, extendEndless, expectedSteps, watchSchedule, makeRng, newSeed, endlessBpm, levelNews } from './levels.js';
+import { LEVELS, WORLDS, getLevel, generateRound, extendEndless, expectedSteps, watchSchedule, makeRng, newSeed, endlessBpm, levelNews, tradeMove } from './levels.js';
 import { Save } from './save.js';
 
 const FIDGETS = ['WAVE', 'SCRATCH', 'YAWN'];
@@ -53,7 +53,7 @@ export class Game {
   stageFor(level) {
     const eq = Save.data.equipped.stage;
     if (eq && eq !== 'auto') return eq;
-    if (level) return WORLDS[level.world - 1].stage;
+    if (level) return level.stage || WORLDS[level.world - 1].stage;
     return 'jungle';
   }
 
@@ -190,9 +190,12 @@ export class Game {
         r.steps = gen.steps;
         r.twist = gen.twist;
         r.seeds[r.round] = seed;
+        // take turns: the dance grows as you and the monkey trade moves
+        r.trade = gen.twist === 'trade' ? { target: gen.target, owners: gen.steps.map(() => 'monkey'), rng: makeRng((seed ^ 0x5bd1e995) >>> 0), added: 0 } : null;
       } else {
         r.steps = extendEndless(r.rng, r.steps || [], r.round);
         r.twist = null;
+        r.trade = null;
       }
       r.hintIndex = -1;
       r.replayUsed = false;
@@ -243,8 +246,10 @@ export class Game {
           this.stage.lightPad(id, t);
         }
         this.ui.padLightStep(step);
-        this.ui.watchStep(i, step);
-        if (this.s.captions) this.ui.caption(stepName(step, this.s.naming), step);
+        const yours = !!(r.trade && r.trade.owners[i] === 'you');
+        this.ui.watchStep(i, step, yours);
+        const note = !r.trade ? '' : yours ? 'Copying you!' : i === n - 1 ? (n > (r.level.tradeStart || 1) ? 'My new move!' : 'My move!') : '';
+        if (note || this.s.captions) this.ui.caption([note, this.s.captions ? stepName(step, this.s.naming) : ''].filter(Boolean).join(' '), step);
         if (this.s.voice) this.audio.speak(stepName(step, this.s.naming).replace('!', ''));
       });
     });
@@ -260,7 +265,7 @@ export class Game {
     r.partial = null;
     r.limit = timeLimit(r.expected.length, this.roundBpm(), this.s.timer);
     r.deadline = t + r.limit;
-    this.ui.setPhase('respond', r.twist);
+    this.ui.setPhase('respond', r.twist, r.trade ? (r.steps.length < r.trade.target ? 'COPY IT, THEN ADD ONE' : 'COPY ALL OF IT') : undefined);
     this.ui.setSteps(r.expected.length);
     this.ui.caption('');
     this.ui.padMode('respond', this.allowedMoves());
@@ -269,6 +274,64 @@ export class Game {
     this.monkey.play('POINT', 0.9);
     this.updateHint();
     this.ui.announce(r.twist === 'reverse' ? 'Your turn. Backwards!' : 'Your turn');
+  }
+
+  // ------------------------------------------------------------ take turns
+
+  /** After you copy the dance: add any move of your own. */
+  startAdd() {
+    const r = this.run;
+    this.phase = 'add';
+    r.limit = timeLimit(1, this.roundBpm(), this.s.timer);
+    r.deadline = this.now() + r.limit;
+    this.ui.setPhase('add', 'trade', 'ADD ANY MOVE');
+    this.ui.addSlot(r.steps.length);
+    this.ui.caption('Your move! Tap any move to add it.');
+    this.ui.padMode('respond', this.allowedMoves());
+    this.ui.hintPad(null);
+    this.ui.replayButton(false);
+    this.ui.timer(1, r.limit);
+    this.monkey.play('POINT', 0.9);
+    this.ui.announce('Your move. Add any move.');
+  }
+
+  /** You added a move (or ran out of time and the monkey picked one). Then the monkey copies and adds. */
+  tradeAdd(id) {
+    const r = this.run;
+    if (this.phase !== 'add') return;
+    this.phase = 'between';
+    const auto = !id;
+    if (auto) id = tradeMove(r.trade.rng, { ...r.level, chords: [] }, r.steps)[0];
+    const step = [id];
+    r.steps = [...r.steps, step];
+    r.trade.owners.push('you');
+    this.echo(id);
+    this.ui.fillStep(r.steps.length - 1, step, true);
+    this.ui.timer(null);
+    this.ui.padMode('off', this.allowedMoves());
+    if (auto) {
+      this.ui.caption('Out of time, so the monkey picked one for you. No life lost.');
+    } else {
+      r.trade.added++;
+      r.score += RULES.tradeAddPoints;
+      Save.stat('tradeMoves');
+      this.ui.grade('great', RULES.tradeAddPoints, 1, 'Your move!');
+      this.ui.score(r.score, r.streak);
+      this.ui.caption('Now the monkey copies you...');
+    }
+    this.at(this.now() + (auto ? 1.8 : 0.9), () => {
+      // the monkey adds its own move on the end, then dances the whole thing
+      const m = tradeMove(r.trade.rng, r.level, r.steps);
+      r.steps = [...r.steps, m];
+      r.trade.owners.push('monkey');
+      r.expected = expectedSteps(r.steps, null);
+      r.idx = 0;
+      r.partial = null;
+      r.hintIndex = -1;
+      r.replayUsed = false;
+      this.ui.hudRound(this.mode, r);
+      this.startWatch();
+    });
   }
 
   allowedMoves() {
@@ -295,6 +358,10 @@ export class Game {
     this.lastActivity = this.now();
     if (this.paused) return;
     if (this.mode === 'free') return this.freeMove(id, t);
+    if (this.phase === 'add') {
+      if (this.allowedMoves().includes(id)) { this.haptic('tap'); this.tradeAdd(id); }
+      return;
+    }
     if (this.mode === 'menu' || this.mode === 'shop') {
       // Tapping the monkey on menus makes it dance
       this.echo(id);
@@ -387,7 +454,7 @@ export class Game {
     if (grade === 'perfect') Save.stat('perfects');
     if (grade === 'great') Save.stat('greats');
     if (r.streak > Save.data.stats.bestStreak) Save.data.stats.bestStreak = r.streak;
-    this.ui.fillStep(r.idx, step);
+    this.ui.fillStep(r.idx, step, !!(r.trade && r.trade.owners[r.idx] === 'you'));
     this.ui.grade(grade, pts, streakMult(r.streak), null, off);
     // sparkles from the limb(s), bigger for better timing; a tiny zoom kick on Perfect
     const power = grade === 'perfect' ? 1 : grade === 'great' ? 0.7 : 0.4;
@@ -396,8 +463,10 @@ export class Game {
     this.stage.setStreak(r.streak);
     this.ui.score(r.score, r.streak);
     r.idx++;
-    if (r.idx >= r.expected.length) this.roundCleared();
-    else this.updateHint();
+    if (r.idx >= r.expected.length) {
+      if (r.trade && r.steps.length < r.trade.target) this.startAdd();
+      else this.roundCleared();
+    } else this.updateHint();
   }
 
   mistake(kind, tapped) {
@@ -505,6 +574,7 @@ export class Game {
     for (const set of unlocked.sets) golden.push({ label: `${set.name} set complete`, amount: RULES.goldSetComplete });
     Save.persist();
     const next = getLevel(level.id + 1);
+    const traded = r.rounds.some((g) => g && g.twist === 'trade');
     const newWorld = Save.worldReached() > wasReached ? WORLDS[Save.worldReached() - 1] : null;
     this.audio.sfx('level');
     this.stage.confetti(1);
@@ -513,7 +583,7 @@ export class Game {
       level, stars, prevStars: rec.prevStars, score: r.score, prevBest: rec.prevBest,
       items: bn.items, total: bn.total, alreadyAdded: r.bananas,
       onBeat: r.onBeat, steps: r.stepsDone, livesLost: r.livesLost, bestStreak: r.bestStreak,
-      seeds: r.seeds, next, newWorld, golden, unlocks: unlocked.skins,
+      seeds: r.seeds, traded, next, newWorld, golden, unlocks: unlocked.skins,
     });
   }
 
@@ -606,7 +676,7 @@ export class Game {
   // ------------------------------------------------------------ pause
 
   canPause() {
-    return (this.mode === 'adventure' || this.mode === 'endless' || this.mode === 'free') && ['countin', 'watch', 'respond', 'cheer', 'oops', 'free', 'starting'].includes(this.phase);
+    return (this.mode === 'adventure' || this.mode === 'endless' || this.mode === 'free') && ['countin', 'watch', 'respond', 'add', 'between', 'cheer', 'oops', 'free', 'starting'].includes(this.phase);
   }
 
   pause() {
@@ -627,6 +697,8 @@ export class Game {
     if (ph === 'countin' || ph === 'watch') {
       this.monkey.anims = [];
       this.startWatch();
+    } else if (ph === 'add') {
+      this.run.deadline += dur;
     } else if (ph === 'respond') {
       const r = this.run;
       r.deadline += dur;
@@ -657,6 +729,14 @@ export class Game {
       }
       if (now > r.deadline) {
         this.mistake('timeout', null);
+        return;
+      }
+      if (Number.isFinite(r.limit)) this.ui.timer((r.deadline - now) / r.limit, r.deadline - now);
+    }
+    if (this.phase === 'add') {
+      const r = this.run;
+      if (now > r.deadline) {
+        this.tradeAdd(null);
         return;
       }
       if (Number.isFinite(r.limit)) this.ui.timer((r.deadline - now) / r.limit, r.deadline - now);

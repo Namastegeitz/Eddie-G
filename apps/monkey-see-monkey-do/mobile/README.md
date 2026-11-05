@@ -226,7 +226,7 @@ Both stores:
   `tests/output/devices/`. The App Store wants 6.9" iPhone and 13" iPad sizes;
   Play wants at least 2 phone screenshots.
 - **Short description:** "Watch the monkey dance, then copy the moves. A
-  rhythm memory game with 30 levels, Endless mode and a banana wardrobe."
+  rhythm memory game with 40 levels on four maps, Endless mode and a banana wardrobe."
 
 Google Play: Data safety form "No data collected", target audience, content rating questionnaire,
 and an app category (Games > Music, or Puzzle).

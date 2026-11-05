@@ -147,7 +147,7 @@ export const ITEMS = [
   I('stage', 'jungle', 'Jungle Clearing', 0, 'Home sweet home.'),
   I('stage', 'beach', 'Beach Bash', 150, 'Free when you reach World 2.', { unlockWorld: 2 }),
   I('stage', 'disco', 'Temple Disco', 250, 'Free when you reach World 3.', { unlockWorld: 3 }),
-  I('stage', 'moon', 'Moon Party', 300, 'Low gravity, high energy.'),
+  I('stage', 'moon', 'Moon Party', 300, 'Free when you reach World 4.', { unlockWorld: 4 }),
 ];
 
 export function itemsIn(cat) {

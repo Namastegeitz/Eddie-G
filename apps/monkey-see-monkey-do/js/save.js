@@ -340,7 +340,7 @@ export const Save = {
   syncUnlocks() {
     const reached = this.worldReached();
     const stages = this.data.owned.stage;
-    for (const [id, world] of [['beach', 2], ['disco', 3]]) {
+    for (const [id, world] of [['beach', 2], ['disco', 3], ['moon', 4]]) {
       if (reached >= world && !stages.includes(id)) stages.push(id);
     }
   },

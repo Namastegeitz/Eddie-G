@@ -90,6 +90,9 @@ Stickers are only for fun (no bananas). Data-driven list in a new js/stickers.js
 
 ### 7. World 4: Snowy Peaks + new twists
 
+Note: World 4 is now Moon Base (levels 31-40). Use this prompt as World 5
+(levels 41-50) instead, and update the 40-level tests.
+
 ```
 Add World 4 "Snowy Peaks" (levels 31-40, a snowy stage with falling snow and an
 ice-blue pad) and two twists, each introduced on its own level with a card:

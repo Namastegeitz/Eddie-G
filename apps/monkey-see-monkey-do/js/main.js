@@ -158,6 +158,7 @@ async function boot() {
   let lastBeat = Math.floor(audio.beatAt(last));
   // Auto graphics probe: 3-second windows of real frame times
   const probe = { t: 0, n: 0, slow: 0, wall: performance.now(), done: false, skip: 1 };
+  app.gfxProbe = probe; // visible in the console for checking
   const loop = () => {
     const now = audio.now();
     const dt = Math.min(0.05, Math.max(0, now - last));
@@ -176,7 +177,7 @@ async function boot() {
     }
     monkey.update(now, dt, beat);
     stage.update(now, dt, beat, monkey);
-    // Auto graphics: if most frames in a 3-second window are slow, step down High -> Medium -> Low
+    // Auto graphics: if a 3-second window averages under 38 frames a second, step down High -> Medium -> Low
     const wall = performance.now();
     const raw = (wall - probe.wall) / 1000;
     probe.wall = wall;
@@ -187,7 +188,9 @@ async function boot() {
         probe.n++;
         if (raw > 1 / 38) probe.slow++;
         if (probe.t >= 3) {
-          if (probe.slow > probe.n * 0.5 && app.autoLevel !== 'low') {
+          // average frame rate over the window (frames can arrive in bursts, so count them, don't time each one)
+          probe.fps = probe.n / probe.t;
+          if (probe.fps < 38 && app.autoLevel !== 'low') {
             app.autoLevel = app.autoLevel === 'high' ? 'medium' : 'low';
             app.setLevel(app.autoLevel);
             if (app.autoLevel === 'low') ui.toast('Graphics set to Low for smoother play. Change it in Settings.');
