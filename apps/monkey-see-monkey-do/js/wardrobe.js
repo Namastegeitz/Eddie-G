@@ -50,9 +50,15 @@ export function lazyPortraits(root) {
   els.forEach((el) => observer.observe(el));
 }
 
-/** Markup for a lazily painted portrait. */
+/** Pixels per CSS pixel for small canvases: sharp on 3x phone screens. */
+export function hiDpi() {
+  return Math.min(3, Math.max(2, Math.ceil(window.devicePixelRatio || 1)));
+}
+
+/** Markup for a lazily painted portrait. size is for a 2x screen; sharper screens get more pixels. */
 export function portraitTag(skin, size = 144, cls = '') {
-  return `<canvas data-portrait="${skin.id}" width="${size}" height="${size}" class="${cls}" aria-hidden="true"></canvas>`;
+  const px = Math.round((size / 2) * hiDpi());
+  return `<canvas data-portrait="${skin.id}" width="${px}" height="${px}" class="${cls}" aria-hidden="true"></canvas>`;
 }
 /** A data-URL portrait of a skin (cached). */
 export function portrait(skin, size = 144) {

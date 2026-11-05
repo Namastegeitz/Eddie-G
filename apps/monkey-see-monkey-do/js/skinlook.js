@@ -100,8 +100,10 @@ function disposeMat(mat) {
 /** Put `skin` on `m` (a Monkey). */
 export function applySkin(m, skin) {
   const pat = skin.pattern;
-  const map = pat && pat.type !== 'solid' ? canvasTexture(patternCanvas(pat, 256)) : null;
-  const glowMap = pat && GLOW_PATTERNS.has(pat.type) ? canvasTexture(patternCanvas(pat, 256, true)) : null;
+  // fur patterns at 512 px so they stay crisp on sharp phone screens
+  const map = pat && pat.type !== 'solid' ? canvasTexture(patternCanvas(pat, 512)) : null;
+  const glowMap = pat && GLOW_PATTERNS.has(pat.type) ? canvasTexture(patternCanvas(pat, 512, true)) : null;
+  for (const t of [map, glowMap]) if (t) t.anisotropy = 4;
   const template = furMaterial(m, skin, map, glowMap);
   const skinTemplate = skinMaterial(m, skin);
   const old = [];
@@ -124,6 +126,7 @@ export function applySkin(m, skin) {
   const eyes = skin.eyes || {};
   m.eyeWhiteMat.color.set(eyes.white || '#ffffff');
   m.pupilMat.color.set(eyes.pupil || '#1b0f08');
+  if (m.setEyes) m.setEyes(eyes);
   m.outlineMat.transparent = skin.finish === 'ghost';
   m.outlineMat.opacity = skin.finish === 'ghost' ? 0.3 : 1;
   m.outlineMat.needsUpdate = true;

@@ -4,7 +4,7 @@ import * as THREE from './vendor/three.module.min.js';
 import { Save } from './save.js';
 import { AudioEngine } from './audio.js';
 import { Monkey } from './monkey.js';
-import { Stage } from './stage.js';
+import { Stage, QUALITY } from './stage.js';
 import { UI } from './ui.js';
 import { Game } from './game.js';
 import { Input } from './input.js';
@@ -68,15 +68,20 @@ async function boot() {
     monkey.danceAmp = st.reduceMotion ? 0.5 : 1;
     if (st.quality !== lastQuality) {
       lastQuality = st.quality;
-      stage.setQuality(st.quality === 'auto' ? (app.autoLow ? 'low' : 'auto') : st.quality);
-      monkey.setOutlines(st.quality === 'low' ? false : !(st.quality === 'auto' && app.autoLow));
+      app.setLevel(st.quality === 'auto' ? app.autoLevel : st.quality);
     }
     ui.relabelPad();
   };
 
+  // Graphics level actually in use (Auto starts at High and steps down if frames are slow)
+  app.autoLevel = 'high';
+  app.setLevel = (level) => {
+    stage.setQuality(level);
+    monkey.setQuality(stage.level, QUALITY[stage.level]);
+  };
   app.applyLook = (look) => {
     monkey.applyLook(look);
-    monkey.setOutlines(stage.quality !== 'low');
+    monkey.setQuality(stage.level, QUALITY[stage.level]);
     if (game.mode === 'menu') {
       const env = look.stage && look.stage !== 'auto' ? look.stage : 'jungle';
       stage.setEnvironment(env);
@@ -151,8 +156,8 @@ async function boot() {
   // ------------------------------------------------------------ main loop
   let last = audio.now();
   let lastBeat = Math.floor(audio.beatAt(last));
-  let slowFrames = 0;
-  let sampled = 0;
+  // Auto graphics probe: 3-second windows of real frame times
+  const probe = { t: 0, n: 0, slow: 0, wall: performance.now(), done: false, skip: 1 };
   const loop = () => {
     const now = audio.now();
     const dt = Math.min(0.05, Math.max(0, now - last));
@@ -171,15 +176,25 @@ async function boot() {
     }
     monkey.update(now, dt, beat);
     stage.update(now, dt, beat, monkey);
-    // Auto graphics: if the first few seconds are slow, drop to low quality
-    if (Save.settings.quality === 'auto' && !app.autoLow && !document.hidden && sampled < 240) {
-      sampled++;
-      if (dt > 1 / 38) slowFrames++;
-      if (sampled === 240 && slowFrames > 120) {
-        app.autoLow = true;
-        stage.setQuality('low');
-        monkey.setOutlines(false);
-        ui.toast('Graphics set to Low for smoother play. Change it in Settings.');
+    // Auto graphics: if most frames in a 3-second window are slow, step down High -> Medium -> Low
+    const wall = performance.now();
+    const raw = (wall - probe.wall) / 1000;
+    probe.wall = wall;
+    if (Save.settings.quality === 'auto' && !probe.done && !document.hidden && raw < 1) {
+      if (probe.skip > 0) probe.skip -= raw; // let shaders compile first
+      else {
+        probe.t += raw;
+        probe.n++;
+        if (raw > 1 / 38) probe.slow++;
+        if (probe.t >= 3) {
+          if (probe.slow > probe.n * 0.5 && app.autoLevel !== 'low') {
+            app.autoLevel = app.autoLevel === 'high' ? 'medium' : 'low';
+            app.setLevel(app.autoLevel);
+            if (app.autoLevel === 'low') ui.toast('Graphics set to Low for smoother play. Change it in Settings.');
+            probe.skip = 0.5;
+          } else probe.done = true;
+          probe.t = 0; probe.n = 0; probe.slow = 0;
+        }
       }
     }
     requestAnimationFrame(loop);

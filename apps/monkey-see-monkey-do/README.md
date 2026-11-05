@@ -74,6 +74,29 @@ names to the monkey's own sides; the buttons never move.
   premium, owned, not yet), NEW badges, and an "unlocked!" card when a goal is reached.
 - All the numbers live in `js/skins.js` and `js/rules.js`; How it works lists
   every premium skin with its goal and price.
+## Graphics
+
+- **Detailed cartoon monkey:** smooth shapes with ink outlines and a bright
+  rim light, hands with fingers in four poses (relaxed, open wave, fist,
+  pointing), feet with an inner big toe, fluffy cheek and head tufts, eyes
+  with painted irises, highlights and eyelids that blink, a curling tail, and
+  springy ears, tuft and tail that bounce with the dance.
+- **Four detailed stages:** jungle (leafy trees, grass that sways, flowers,
+  mushrooms, vines, light rays, butterflies, fireflies), beach (animated
+  waves and foam, sunset, palms, umbrella, sandcastle, gulls), temple disco
+  (light-up floor, fluted pillars with fire bowls, speakers that thump, a
+  mirror ball throwing light specks, coloured beams) and moon (craters,
+  rocks, Earth with clouds, a ringed planet, twinkling stars, shooting stars).
+- **Play feedback:** sparkles burst from the limb on every correct move
+  (bigger for Perfect, with a tiny camera kick), a coloured trail follows
+  the limb that moves, and the pad lights glow warmer as your streak grows.
+- **Graphics levels** (Settings > Graphics): Auto, Low, High, Ultra. Auto
+  starts at High and steps down to Medium, then Low, if frames are slow.
+  Real soft shadows on High and Ultra; Ultra renders at up to 3x for the
+  sharpest phone screens. How it works lists what each level includes.
+- Scenery is merged into a few meshes per stage (`js/gfx.js`), so phones
+  draw all this in about 100-140 draw calls.
+
 ## Gear and outfits
 
 - **8 gear slots, all worn at once:** hats (22: crowns, a tiara, pirate hat,
@@ -183,8 +206,9 @@ js/game.js            Watch -> Your turn -> cheer/oops, modes, scoring, lives
 js/levels.js          30 levels, Endless, twists, seeded routine generator (pure)
 js/rules.js           every number for points, stars, bananas, timers (pure)
 js/moves.js           the 6 moves, 4 combos, names, icons
-js/monkey.js          the 3D monkey: parts, joints, faces, moves, reactions, outfits
-js/stage.js           renderer, camera framing, 4 stages, dance pad, effects
+js/monkey.js          the 3D monkey: parts, hands, eyes and lids, tail, faces, moves, springs
+js/stage.js           renderer, graphics levels, shadows, camera, 4 stages, dance pad, effects
+js/gfx.js             mesh merging, painted textures, rim light and wind shaders
 js/audio.js           beat clock, synth music per stage, move notes, effects
 js/input.js           pad, keyboard, swipe, tap-the-monkey
 js/ui.js              menus, map, wardrobe, settings, How it works, stats, HUD

@@ -74,6 +74,7 @@ export class Game {
   // ------------------------------------------------------------ modes
 
   toMenu() {
+    this.stage.setStreak(0);
     this.clearEvents();
     this.mode = 'menu';
     this.phase = 'idle';
@@ -388,6 +389,11 @@ export class Game {
     if (r.streak > Save.data.stats.bestStreak) Save.data.stats.bestStreak = r.streak;
     this.ui.fillStep(r.idx, step);
     this.ui.grade(grade, pts, streakMult(r.streak), null, off);
+    // sparkles from the limb(s), bigger for better timing; a tiny zoom kick on Perfect
+    const power = grade === 'perfect' ? 1 : grade === 'great' ? 0.7 : 0.4;
+    for (const id of step) this.stage.sparks(this.monkey.anchorWorld(id), MOVES[id].color, power);
+    if (grade === 'perfect') this.stage.punch(0.6);
+    this.stage.setStreak(r.streak);
     this.ui.score(r.score, r.streak);
     r.idx++;
     if (r.idx >= r.expected.length) this.roundCleared();
@@ -401,6 +407,7 @@ export class Game {
     this.clearEvents();
     const expected = r.expected[r.idx];
     r.streak = 0;
+    this.stage.setStreak(0);
     r.lives--;
     r.livesLost++;
     r.hintIndex = r.idx;
@@ -446,6 +453,7 @@ export class Game {
     this.audio.sfx('cheer', this.now() + 0.1);
     this.monkey.play('CHEER', 1.5, this.now() + 0.1);
     this.stage.confetti(0.35);
+    this.stage.punch(1);
     this.ui.timer(null);
     this.ui.replayButton(false);
     this.ui.hintPad(null);

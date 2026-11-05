@@ -1,13 +1,17 @@
-// The monkey: a cel-shaded cartoon built from simple shapes, with jointed
-// arms and legs, a curly tail, a face that changes expression, and slots
-// for hats, glasses and neckwear. Animation is layered: an idle groove that
-// follows the beat, plus any number of moves/reactions added on top.
+// The monkey: a cel-shaded cartoon built in code. Jointed arms with real
+// hands (relaxed, open, fist and pointing poses), feet with an inner big toe,
+// fluffy cheek and head tufts, eyes with coloured irises and lids that blink,
+// a face that changes expression, a smooth curling tail, and slots for gear.
+// Animation is layered: an idle groove that follows the beat, plus any
+// number of moves/reactions added on top, plus springy ears, tuft and tail.
+// Static parts are merged per joint (js/gfx.js) so the detail stays cheap.
 import * as THREE from './vendor/three.module.min.js';
 import { MOVES } from './moves.js';
 import { getSkin } from './skins.js';
 import { applySkin, flashMaterial, updateSkinFx, setAura, refreshSkinExtras } from './skinlook.js';
 import { buildGear, updateGearFx } from './gear.js';
 import { getItem, GEAR_SLOTS } from './shop.js';
+import { addRim, rimAll, bakeStatic, tuftGeometry, canvas as makeCanvas } from './gfx.js';
 
 const TAU = Math.PI * 2;
 const clamp01 = (x) => (x < 0 ? 0 : x > 1 ? 1 : x);
@@ -19,6 +23,8 @@ const OUTLINE = 0.028;
 
 const JOINTS = ['hips', 'torso', 'head', 'shL', 'shR', 'elL', 'elR', 'haL', 'haR', 'hipL', 'hipR', 'knL', 'knR', 'ftL', 'ftR', 'earL', 'earR'];
 const SIDE = { L: -1, R: 1 }; // L = left of the screen (x < 0)
+const HAND_POSES = ['relax', 'open', 'fist', 'point'];
+const TAIL_SEGS = 12;
 
 /**
  * Cel-shading steps as a tiny texture. Every toon material gets one: without it
@@ -40,6 +46,7 @@ function newPose() {
   return {
     j, y: 0, ry: 0, hipsY: 0, squash: 0, tail: 0,
     face: { mouth: null, eyes: null, brow: 0, tilt: 0, pri: -1 },
+    hand: { L: 'relax', R: 'relax', priL: -1, priR: -1 },
   };
 }
 
@@ -47,6 +54,7 @@ function resetPose(p) {
   for (const n of JOINTS) { const v = p.j[n]; v[0] = 0; v[1] = 0; v[2] = 0; }
   p.y = 0; p.ry = 0; p.hipsY = 0; p.squash = 0; p.tail = 0;
   p.face.mouth = null; p.face.eyes = null; p.face.brow = 0; p.face.tilt = 0; p.face.pri = -1;
+  p.hand.L = 'relax'; p.hand.R = 'relax'; p.hand.priL = -1; p.hand.priR = -1;
 }
 
 function setFace(p, pri, mouth, eyes, brow = 0, tilt = 0) {
@@ -58,6 +66,15 @@ function setFace(p, pri, mouth, eyes, brow = 0, tilt = 0) {
   p.face.tilt = tilt;
 }
 
+/** Hand shape for side 'L', 'R' or 'B' (both). */
+function setHand(p, side, pose, pri = 1) {
+  for (const s of side === 'B' ? ['L', 'R'] : [side]) {
+    if (pri < p.hand['pri' + s]) continue;
+    p.hand['pri' + s] = pri;
+    p.hand[s] = pose;
+  }
+}
+
 // ---------------------------------------------------------------- move animations
 // Each gets (pose, t 0..1, seconds elapsed, extra). s = -1 for screen-left limbs.
 
@@ -67,7 +84,9 @@ function armUp(p, side, t) {
   const sh = side === 'L' ? 'shL' : 'shR';
   const el = side === 'L' ? 'elL' : 'elR';
   const ha = side === 'L' ? 'haL' : 'haR';
-  p.j[sh][2] += s * 2.25 * k;
+  // a little wind-up down and in before the arm swings up
+  const wind = t < 0.12 ? Math.sin((t / 0.12) * Math.PI) * 0.18 : 0;
+  p.j[sh][2] += s * (2.25 * k - wind);
   p.j[sh][0] += -0.25 * k;
   p.j[el][2] += s * (0.25 + 0.3 * Math.sin(t * TAU * 2.2)) * k; // wave
   p.j[el][0] += 0.2 * k;
@@ -76,6 +95,7 @@ function armUp(p, side, t) {
   p.j.head[2] += s * 0.12 * k;
   p.j.head[1] += s * 0.18 * k;
   p.hipsY += 0.03 * k;
+  if (k > 0.25) setHand(p, side, 'open', 2);
   setFace(p, 1, 'grin', null, 0.5);
 }
 
@@ -96,6 +116,7 @@ function legStomp(p, side, t, el, ctx) {
   const me = side === 'L' ? 'shL' : 'shR';
   p.j[op][2] += -s * 0.85 * lift;
   p.j[me][2] += s * 0.35 * lift;
+  setHand(p, 'B', 'fist', 1);
   // stomp: body dips after the foot lands
   if (t > 0.62) {
     const d = (t - 0.62) / 0.38;
@@ -119,6 +140,7 @@ function headBob(p, t) {
   p.j.earR[2] += -0.45 * n * env;
   p.j.shL[2] += -0.25 * n * env;
   p.j.shR[2] += 0.25 * n * env;
+  setHand(p, 'B', 'fist', 1);
   setFace(p, 1, 'grin', 'happy', 0.6);
 }
 
@@ -135,6 +157,7 @@ const FLAIRS = {
     p.j.elL[0] += -0.4 * env; p.j.elR[0] += -0.4 * env;
     p.j.head[2] += 0.12 * w * env;
     p.tail += 1.2 * env;
+    setHand(p, 'B', 'fist', 1);
     setFace(p, 1, 'tongue', 'happy', 0.4);
   },
   spin(p, t) {
@@ -143,6 +166,7 @@ const FLAIRS = {
     p.j.shL[2] += -1.3 * env; p.j.shR[2] += 1.3 * env;
     p.j.hipL[0] += -0.5 * env; p.j.knL[0] += 0.9 * env;
     p.hipsY += 0.08 * env;
+    setHand(p, 'B', 'open', 1);
     setFace(p, 1, 'grin', 'happy', 0.5);
   },
   shimmy(p, t) {
@@ -154,6 +178,7 @@ const FLAIRS = {
     p.j.elL[0] += -0.9 * env; p.j.elR[0] += -0.9 * env;
     p.hipsY += -0.05 * Math.abs(w) * env;
     p.j.knL[0] += 0.25 * env; p.j.knR[0] += 0.25 * env; p.j.hipL[0] += -0.15 * env; p.j.hipR[0] += -0.15 * env;
+    setHand(p, 'B', 'open', 1);
     setFace(p, 1, 'grin', 'happy', 0.7);
   },
   robot(p, t) {
@@ -178,6 +203,7 @@ const FLAIRS = {
     p.j.shR[0] += -1.2 * (1 - ru) * env; p.j.elR[0] += -0.6 * (1 - ru) * env;
     p.j.head[1] += hy;
     p.hipsY += -0.04 * env;
+    setHand(p, 'B', 'open', 1);
     setFace(p, 1, 'flat', 'wide', 0.3);
   },
 };
@@ -193,6 +219,7 @@ function cheer(p, t, el) {
   p.j.hipL[0] += -0.3 * env * Math.abs(Math.sin(t * TAU * 1.5)); p.j.hipR[0] += -0.3 * env * Math.abs(Math.sin(t * TAU * 1.5));
   p.j.head[0] += -0.2 * env;
   p.tail += 1.5 * env;
+  setHand(p, 'B', 'open', 3);
   setFace(p, 3, 'grin', 'happy', 0.9);
 }
 
@@ -215,8 +242,8 @@ function oops(p, t, el, ctx) {
   p.j.haR[0] += 0.4 * Math.sin(el * 30) * c;
   p.j.head[2] += -0.22 * c;
   if (ctx && !ctx.dizzy && t > 0.2) { ctx.dizzy = true; ctx.monkey.emit('dizzy'); }
-  if (t < 0.55) setFace(p, 3, 'o', 'wide', 1, 0);
-  else setFace(p, 3, 'flat', 'open', 0.2, 1);
+  if (t < 0.55) { setHand(p, 'B', 'open', 3); setFace(p, 3, 'o', 'wide', 1, 0); }
+  else { setHand(p, 'R', 'relax', 3); setFace(p, 3, 'flat', 'open', 0.2, 1); }
 }
 
 function pointAtYou(p, t) {
@@ -226,12 +253,17 @@ function pointAtYou(p, t) {
   p.j.elR[0] += 0.2 * k;
   p.j.head[2] += -0.12 * k;
   p.j.torso[1] += -0.12 * k;
+  if (k > 0.2) setHand(p, 'R', 'point', 2);
   setFace(p, 2, 'grin', 'wink', 0.6);
 }
 
 function jumpLift(p, t) {
-  p.hipsY += 0.42 * Math.sin(clamp01(t / 0.8) * Math.PI);
+  // crouch, spring up stretched, land squashed
+  const crouch = t < 0.15 ? Math.sin((t / 0.15) * Math.PI) : 0;
+  p.hipsY += 0.42 * Math.sin(clamp01((t - 0.08) / 0.75) * Math.PI) - 0.08 * crouch;
+  p.squash += 0.05 * crouch - 0.04 * Math.sin(clamp01((t - 0.1) / 0.3) * Math.PI);
   p.j.shL[2] += -0.6 * Math.sin(t * Math.PI); p.j.shR[2] += 0.6 * Math.sin(t * Math.PI);
+  setHand(p, 'B', 'open', 1);
   setFace(p, 1, 'grin', 'happy', 0.8);
 }
 
@@ -250,7 +282,7 @@ function sad(p, t, el) {
   p.hipsY += -0.08 * k;
   p.j.knL[0] += 0.2 * k; p.j.knR[0] += 0.2 * k; p.j.hipL[0] += -0.1 * k; p.j.hipR[0] += -0.1 * k;
   p.tail += -0.8 * k;
-  setFace(p, 3, 'frown', 'open', -1, 1);
+  setFace(p, 3, 'frown', 'sad', -1, 1);
 }
 
 function scratch(p, t, el) {
@@ -266,6 +298,7 @@ function waveHello(p, t, el) {
   p.j.shR[2] += 2.3 * k;
   p.j.elR[2] += (0.5 + 0.45 * Math.sin(el * 12)) * k;
   p.j.head[2] += -0.1 * k;
+  if (k > 0.2) setHand(p, 'R', 'open', 2);
   setFace(p, 1, 'grin', 'happy', 0.6);
 }
 
@@ -275,6 +308,7 @@ function stretchYawn(p, t) {
   p.j.elL[2] += 0.6 * k; p.j.elR[2] += -0.6 * k;
   p.j.torso[0] += -0.12 * k;
   p.j.head[0] += -0.25 * k;
+  setHand(p, 'B', 'open', 1);
   setFace(p, 1, 'o', 'closed', 0.5);
 }
 
@@ -302,6 +336,79 @@ const ACTIONS = {
   YAWN: stretchYawn,
 };
 
+// ---------------------------------------------------------------- eyes
+
+const irisCache = new Map();
+/** A painted iris: coloured ring, darker rim, black pupil (or a glowing core). */
+function irisTexture(color, glow) {
+  const key = color + (glow ? 'g' : '');
+  if (irisCache.has(key)) return irisCache.get(key);
+  const S = 128;
+  const cv = makeCanvas(S, S);
+  const g = cv.getContext('2d');
+  const c = new THREE.Color(color);
+  const css = (k) => {
+    const d = c.clone();
+    if (k >= 0) d.lerp(new THREE.Color(1, 1, 1), k);
+    else d.multiplyScalar(1 + k);
+    return '#' + d.getHexString();
+  };
+  g.translate(S / 2, S / 2);
+  if (glow) {
+    const grd = g.createRadialGradient(0, 0, 0, 0, 0, S / 2);
+    grd.addColorStop(0, '#ffffff');
+    grd.addColorStop(0.28, css(0.6));
+    grd.addColorStop(0.7, css(0));
+    grd.addColorStop(0.92, css(-0.3));
+    grd.addColorStop(1, css(-0.5));
+    g.fillStyle = grd;
+    g.fillRect(-S / 2, -S / 2, S, S);
+  } else {
+    g.fillStyle = css(-0.55);
+    g.fillRect(-S / 2, -S / 2, S, S);
+    const grd = g.createRadialGradient(0, 0, S * 0.12, 0, 0, S * 0.47);
+    grd.addColorStop(0, css(0.35));
+    grd.addColorStop(0.55, css(0.05));
+    grd.addColorStop(1, css(-0.25));
+    g.fillStyle = grd;
+    g.beginPath(); g.arc(0, 0, S * 0.46, 0, TAU); g.fill();
+    // fibres
+    for (let i = 0; i < 48; i++) {
+      const a = (i / 48) * TAU;
+      g.strokeStyle = i % 2 ? css(0.3) : css(-0.2);
+      g.globalAlpha = 0.45;
+      g.lineWidth = 1.6;
+      g.beginPath();
+      g.moveTo(Math.cos(a) * S * 0.2, Math.sin(a) * S * 0.2);
+      g.lineTo(Math.cos(a) * S * 0.43, Math.sin(a) * S * 0.43);
+      g.stroke();
+    }
+    g.globalAlpha = 1;
+    // pupil
+    g.fillStyle = '#0a0604';
+    g.beginPath(); g.arc(0, 0, S * 0.22, 0, TAU); g.fill();
+    // shade from the lid at the top
+    const sh = g.createLinearGradient(0, -S / 2, 0, 0);
+    sh.addColorStop(0, 'rgba(0,0,0,0.45)');
+    sh.addColorStop(1, 'rgba(0,0,0,0)');
+    g.fillStyle = sh;
+    g.fillRect(-S / 2, -S / 2, S, S / 2);
+  }
+  const t = new THREE.CanvasTexture(cv);
+  t.colorSpace = THREE.SRGBColorSpace;
+  irisCache.set(key, t);
+  return t;
+}
+
+/** A sphere with flat, front-facing UVs so a painted disc sits on its face. */
+function discSphere(r) {
+  const g = new THREE.SphereGeometry(r, 32, 16);
+  const p = g.attributes.position;
+  const uv = g.attributes.uv;
+  for (let i = 0; i < p.count; i++) uv.setXY(i, p.getX(i) / (2 * r) + 0.5, p.getY(i) / (2 * r) + 0.5);
+  return g;
+}
+
 // ---------------------------------------------------------------- the monkey
 
 export class Monkey {
@@ -318,8 +425,11 @@ export class Monkey {
     this.listeners = {};
     this.look = new THREE.Vector2();
     this.lookTarget = new THREE.Vector2();
+    this.saccade = new THREE.Vector2();
+    this.saccadeAt = 1;
     this.blinkAt = 2;
     this.blinkT = 0;
+    this.lidAmt = 0;
     this.highlight = {};
     this.time = 0;
     this.danceAmp = 1;
@@ -330,6 +440,7 @@ export class Monkey {
     this.extraGroups = [];
     this.skinFx = [];
     this.aura = null;
+    this.spring = { ear: 0, earV: 0, tuft: 0, tuftV: 0, tail: 0, tailV: 0, lastY: 0, lastVy: 0 };
     this.build();
     this.setSkin('cocoa');
   }
@@ -340,15 +451,20 @@ export class Monkey {
   // ------------------------------------------------------------ building
 
   toon(color) {
-    return new THREE.MeshToonMaterial({ color, gradientMap: this.gradient });
+    return addRim(new THREE.MeshToonMaterial({ color, gradientMap: this.gradient }));
   }
 
+  /** Cached geometry: sphere, capsule or tuft, smoother the bigger it is. */
   geo(kind, a, b = 0, extra = 0) {
     const key = `${kind}:${a}:${b}:${extra}`;
     let g = this.geoCache.get(key);
     if (!g) {
-      if (kind === 'sph') g = new THREE.SphereGeometry(a + extra, 28, 20);
-      else if (kind === 'cap') g = new THREE.CapsuleGeometry(a + extra, b, 8, 16);
+      if (kind === 'sph') {
+        const r = a;
+        const [w, h] = r >= 0.4 ? [48, 32] : r >= 0.2 ? [32, 22] : r >= 0.1 ? [24, 16] : [16, 10];
+        g = new THREE.SphereGeometry(a + extra, w, h);
+      } else if (kind === 'cap') g = new THREE.CapsuleGeometry(a + extra, b, 6, a >= 0.1 ? 24 : 14);
+      else if (kind === 'tuft') g = tuftGeometry(a + extra, b + extra * 1.6, 12);
       this.geoCache.set(key, g);
     }
     return g;
@@ -360,6 +476,7 @@ export class Monkey {
     if (pos) m.position.set(...pos);
     if (scale) m.scale.set(...scale);
     if (rot) m.rotation.set(...rot);
+    m.userData.static = true;
     parent.add(m);
     if (outline && this.outlines) {
       const o = new THREE.Mesh(this.geo(kind, a, b, OUTLINE), this.outlineMat);
@@ -367,6 +484,7 @@ export class Monkey {
       o.scale.copy(m.scale);
       o.rotation.copy(m.rotation);
       o.userData.outline = true;
+      o.userData.static = true;
       parent.add(o);
     }
     return m;
@@ -397,9 +515,12 @@ export class Monkey {
     this.darkMat = dark;
     const white = new THREE.MeshBasicMaterial({ color: 0xffffff });
     const ink = new THREE.MeshBasicMaterial({ color: 0x1b0f08 });
+    this.inkMat = ink;
     this.eyeWhiteMat = new THREE.MeshBasicMaterial({ color: 0xffffff }); // skins recolour these
     this.pupilMat = new THREE.MeshBasicMaterial({ color: 0x1b0f08 });
-    const mouthMat = new THREE.MeshBasicMaterial({ color: 0x5a1a1a });
+    this.irisMat = new THREE.MeshBasicMaterial({ color: 0xffffff, map: irisTexture('#6e3f1e', false) });
+    const mouthMat = new THREE.MeshBasicMaterial({ color: 0x4a1216 });
+    const lipMat = new THREE.MeshBasicMaterial({ color: 0x5a1a1a });
     const tongueMat = this.toon(0xff6f8a);
     const blush = new THREE.MeshBasicMaterial({ color: 0xff7a8a, transparent: true, opacity: 0.45, depthWrite: false });
     this.blushMat = blush;
@@ -416,67 +537,106 @@ export class Monkey {
     // head
     const head = this.joint('head', torso, [0, 0.92, 0.02]);
     this.part(head, 'sph', 0.56, 0, headM.fur, [0, 0.46, -0.04], [1, 0.97, 0.95]);
-    // tuft
-    this.part(head, 'sph', 0.11, 0, headM.fur, [0.0, 1.0, 0.0], [0.8, 1.4, 0.8], [0, 0, 0.3]);
-    this.part(head, 'sph', 0.09, 0, headM.fur, [-0.1, 0.97, 0.02], [0.8, 1.3, 0.8], [0, 0, 0.7]);
-    this.part(head, 'sph', 0.09, 0, headM.fur, [0.11, 0.96, 0.03], [0.8, 1.2, 0.8], [0, 0, -0.5]);
+    // fluffy cheek tufts framing the face
+    for (const s of [-1, 1]) {
+      for (const [x, y, z, rz, sz] of [[0.5, 0.36, 0.06, 1.7, 1], [0.5, 0.23, 0.13, 2.1, 1.05], [0.43, 0.11, 0.2, 2.55, 0.9]]) {
+        this.part(head, 'tuft', 0.085, 0.17, headM.fur, [s * x, y, z], [sz, sz, sz * 0.8], [0, s * -0.2, -s * rz]);
+      }
+    }
+    // a springy tuft on top (its own joint so it can bounce)
+    const tuftJ = new THREE.Group();
+    tuftJ.position.set(0, 0.95, -0.02);
+    head.add(tuftJ);
+    this.tuftJ = tuftJ;
+    this.part(tuftJ, 'tuft', 0.075, 0.22, headM.fur, [0, 0.0, 0], null, [0.15, 0, 0.25]);
+    this.part(tuftJ, 'tuft', 0.06, 0.17, headM.fur, [-0.1, -0.02, 0.03], null, [0.1, 0, 0.8]);
+    this.part(tuftJ, 'tuft', 0.06, 0.16, headM.fur, [0.1, -0.03, 0.04], null, [0.1, 0, -0.6]);
+    this.part(tuftJ, 'tuft', 0.055, 0.14, headM.fur, [0.0, -0.03, -0.1], null, [-0.5, 0, 0.1]);
     // face plate: two eye lobes + muzzle
     this.part(head, 'sph', 0.25, 0, headM.skin, [-0.16, 0.56, 0.27], [1, 1.08, 0.85], null, false);
     this.part(head, 'sph', 0.25, 0, headM.skin, [0.16, 0.56, 0.27], [1, 1.08, 0.85], null, false);
     this.part(head, 'sph', 0.3, 0, headM.skin, [0, 0.3, 0.33], [1.25, 0.86, 0.85]);
+    // little brow ridge and nose bump give the face some shape
+    this.part(head, 'sph', 0.08, 0, headM.skin, [0, 0.45, 0.55], [1.3, 0.75, 0.7], null, false);
     // nostrils
-    this.part(head, 'sph', 0.028, 0, ink, [-0.06, 0.37, 0.6], [1, 0.7, 0.6], null, false);
-    this.part(head, 'sph', 0.028, 0, ink, [0.06, 0.37, 0.6], [1, 0.7, 0.6], null, false);
+    this.part(head, 'sph', 0.03, 0, ink, [-0.065, 0.385, 0.61], [1.1, 0.7, 0.6], [0, 0, 0.4], false);
+    this.part(head, 'sph', 0.03, 0, ink, [0.065, 0.385, 0.61], [1.1, 0.7, 0.6], [0, 0, -0.4], false);
     // cheeks
-    this.part(head, 'sph', 0.08, 0, blush, [-0.31, 0.36, 0.42], [1, 0.7, 0.4], null, false);
-    this.part(head, 'sph', 0.08, 0, blush, [0.31, 0.36, 0.42], [1, 0.7, 0.4], null, false);
-    // ears
+    this.part(head, 'sph', 0.085, 0, blush, [-0.31, 0.36, 0.42], [1, 0.7, 0.4], null, false);
+    this.part(head, 'sph', 0.085, 0, blush, [0.31, 0.36, 0.42], [1, 0.7, 0.4], null, false);
+    // ears with an inner fold
     for (const side of ['L', 'R']) {
       const s = SIDE[side];
       const ear = this.joint(side === 'L' ? 'earL' : 'earR', head, [s * 0.55, 0.5, -0.04], [0, s * 0.35, 0]);
       this.part(ear, 'sph', 0.21, 0, headM.fur, [s * 0.04, 0, 0], [0.45, 1, 1]);
-      this.part(ear, 'sph', 0.14, 0, headM.skin, [s * 0.09, 0, 0.02], [0.3, 1, 1], null, false);
+      this.part(ear, 'sph', 0.15, 0, headM.skin, [s * 0.09, 0, 0.02], [0.3, 1, 1], null, false);
+      this.part(ear, 'sph', 0.08, 0, dark, [s * 0.115, -0.01, 0.035], [0.3, 1.0, 0.85], null, false);
     }
-    // eyes
+    // eyes: white, coloured iris, highlights, and an upper lid that blinks
     this.eyes = [];
+    const lidGeo = new THREE.SphereGeometry(0.15, 36, 18, 0, TAU, 0, Math.PI / 2);
+    const lashGeo = new THREE.TorusGeometry(0.15, 0.009, 6, 40, Math.PI);
+    lashGeo.rotateX(Math.PI / 2);
+    const irisGeo = discSphere(0.078);
     for (const side of ['L', 'R']) {
       const s = SIDE[side];
       const eye = new THREE.Group();
       eye.position.set(s * 0.165, 0.6, 0.44);
       head.add(eye);
       const w = this.part(eye, 'sph', 0.135, 0, this.eyeWhiteMat, [0, 0, 0], [1, 1.18, 0.62], null, false);
+      w.userData.static = false;
       const ring = new THREE.Mesh(this.geo('sph', 0.135, 0, 0.02), ink);
       ring.scale.set(w.scale.x, w.scale.y, w.scale.z * 0.55);
       ring.position.z = -0.02;
       eye.add(ring);
       const pupil = new THREE.Group();
-      pupil.position.z = 0.058;
+      pupil.position.z = 0.061;
       eye.add(pupil);
-      const pm = new THREE.Mesh(this.geo('sph', 0.07), this.pupilMat);
-      pm.scale.set(1, 1.14, 0.5);
-      pupil.add(pm);
-      const hl = new THREE.Mesh(this.geo('sph', 0.026), white);
-      hl.position.set(0.028, 0.04, 0.04);
+      const iris = new THREE.Mesh(irisGeo, this.irisMat);
+      iris.scale.set(1, 1.14, 0.36);
+      pupil.add(iris);
+      const hl = new THREE.Mesh(new THREE.CircleGeometry(0.026, 20), white);
+      hl.position.set(0.03, 0.045, 0.031);
       pupil.add(hl);
-      const hl2 = new THREE.Mesh(this.geo('sph', 0.012), white);
-      hl2.position.set(-0.022, -0.03, 0.04);
+      const hl2 = new THREE.Mesh(new THREE.CircleGeometry(0.012, 14), white);
+      hl2.position.set(-0.025, -0.032, 0.03);
       pupil.add(hl2);
       // happy closed eye (^): an arc
-      const arc = new THREE.Mesh(new THREE.TorusGeometry(0.085, 0.022, 8, 18, Math.PI), ink);
+      const arc = new THREE.Mesh(new THREE.TorusGeometry(0.085, 0.022, 8, 24, Math.PI), ink);
       arc.position.set(0, -0.02, 0.08);
       arc.visible = false;
       eye.add(arc);
+      // the lid lives in the eye's squashed space so it hugs the eyeball
+      const lidSpace = new THREE.Group();
+      lidSpace.scale.set(1, 1.18, 0.62);
+      eye.add(lidSpace);
+      const lid = new THREE.Group();
+      lidSpace.add(lid);
+      const lidMesh = new THREE.Mesh(lidGeo, headM.skin);
+      lid.add(lidMesh);
+      const lash = new THREE.Mesh(lashGeo, ink);
+      lid.add(lash);
       // brow
-      const brow = new THREE.Mesh(this.geo('cap', 0.028, 0.13), dark);
+      const brow = new THREE.Mesh(this.geo('cap', 0.034, 0.13), dark);
       brow.rotation.z = Math.PI / 2;
-      brow.position.set(s * 0.165, 0.8, 0.47);
+      brow.position.set(s * 0.165, 0.81, 0.47);
+      brow.scale.set(1, 1, 0.8);
       head.add(brow);
-      this.eyes.push({ side, s, eye, white: w, ring, pupil, arc, brow, browBase: brow.position.y });
+      this.eyes.push({ side, s, eye, white: w, ring, pupil, arc, brow, browBase: brow.position.y, lid, lidSpace, highlights: [hl, hl2] });
     }
     // mouths
     this.mouths = {};
-    const smile = new THREE.Mesh(new THREE.TorusGeometry(0.12, 0.024, 8, 22, Math.PI), mouthMat);
-    smile.rotation.z = Math.PI;
+    const dimple = (parent, x, y, z) => {
+      const d = new THREE.Mesh(this.geo('sph', 0.022), lipMat);
+      d.position.set(x, y, z);
+      parent.add(d);
+    };
+    const smile = new THREE.Group();
+    const sm = new THREE.Mesh(new THREE.TorusGeometry(0.12, 0.026, 10, 28, Math.PI), lipMat);
+    sm.rotation.z = Math.PI;
+    smile.add(sm);
+    dimple(smile, -0.122, 0.006, 0);
+    dimple(smile, 0.122, 0.006, 0);
     smile.position.set(0, 0.27, 0.6);
     head.add(smile);
     this.mouths.smile = smile;
@@ -485,36 +645,53 @@ export class Monkey {
     const gm = new THREE.Mesh(this.geo('sph', 0.13), mouthMat);
     gm.scale.set(1.2, 0.78, 0.45);
     grin.add(gm);
-    const teeth = new THREE.Mesh(new THREE.BoxGeometry(0.17, 0.05, 0.05), white);
-    teeth.position.set(0, 0.06, 0.04);
+    const lip = new THREE.Mesh(new THREE.TorusGeometry(0.13, 0.016, 8, 40), lipMat);
+    lip.scale.set(1.2, 0.78, 1);
+    lip.position.z = 0.02;
+    grin.add(lip);
+    const teeth = new THREE.Mesh(new THREE.CapsuleGeometry(0.028, 0.13, 4, 12), white);
+    teeth.rotation.z = Math.PI / 2;
+    teeth.scale.set(1, 1, 0.7);
+    teeth.position.set(0, 0.055, 0.035);
     grin.add(teeth);
     const tongue = new THREE.Mesh(this.geo('sph', 0.075), tongueMat);
-    tongue.scale.set(1.2, 0.6, 0.6);
+    tongue.scale.set(1.25, 0.6, 0.6);
     tongue.position.set(0, -0.045, 0.035);
     grin.add(tongue);
     head.add(grin);
     this.mouths.grin = grin;
     const tongueOut = new THREE.Group();
     tongueOut.position.set(0, 0.27, 0.6);
-    const s2 = new THREE.Mesh(new THREE.TorusGeometry(0.12, 0.024, 8, 22, Math.PI), mouthMat);
+    const s2 = new THREE.Mesh(new THREE.TorusGeometry(0.12, 0.026, 10, 28, Math.PI), lipMat);
     s2.rotation.z = Math.PI;
     tongueOut.add(s2);
-    const t2 = new THREE.Mesh(this.geo('sph', 0.07), tongueMat);
+    dimple(tongueOut, -0.122, 0.006, 0);
+    dimple(tongueOut, 0.122, 0.006, 0);
+    const t2 = new THREE.Mesh(this.geo('sph', 0.075), tongueMat);
     t2.scale.set(0.9, 1.2, 0.5);
     t2.position.set(0.04, -0.13, 0.0);
     tongueOut.add(t2);
+    const tline = new THREE.Mesh(new THREE.CapsuleGeometry(0.006, 0.07, 2, 6), new THREE.MeshBasicMaterial({ color: 0xd04a68 }));
+    tline.position.set(0.04, -0.14, 0.04);
+    tongueOut.add(tline);
     head.add(tongueOut);
     this.mouths.tongue = tongueOut;
-    const o = new THREE.Mesh(this.geo('sph', 0.075), mouthMat);
-    o.scale.set(0.85, 1.15, 0.5);
+    const o = new THREE.Group();
+    const om = new THREE.Mesh(this.geo('sph', 0.075), mouthMat);
+    om.scale.set(0.85, 1.15, 0.5);
+    o.add(om);
+    const ol = new THREE.Mesh(new THREE.TorusGeometry(0.075, 0.014, 8, 32), lipMat);
+    ol.scale.set(0.85, 1.15, 1);
+    ol.position.z = 0.028;
+    o.add(ol);
     o.position.set(0, 0.22, 0.6);
     head.add(o);
     this.mouths.o = o;
-    const frown = new THREE.Mesh(new THREE.TorusGeometry(0.1, 0.022, 8, 22, Math.PI), mouthMat);
+    const frown = new THREE.Mesh(new THREE.TorusGeometry(0.1, 0.024, 10, 28, Math.PI), lipMat);
     frown.position.set(0, 0.17, 0.6);
     head.add(frown);
     this.mouths.frown = frown;
-    const flat = new THREE.Mesh(this.geo('cap', 0.022, 0.14), mouthMat);
+    const flat = new THREE.Mesh(this.geo('cap', 0.022, 0.14), lipMat);
     flat.rotation.z = Math.PI / 2 + 0.12;
     flat.position.set(0.01, 0.23, 0.62);
     head.add(flat);
@@ -538,7 +715,8 @@ export class Monkey {
     this.shoulderAnchor.position.set(0.44, 0.88, -0.04);
     torso.add(this.shoulderAnchor);
 
-    // arms
+    // arms and hands
+    this.hands = {};
     for (const side of ['L', 'R']) {
       const s = SIDE[side];
       const m = this.regionMats(side === 'L' ? 'LA' : 'RA');
@@ -546,38 +724,46 @@ export class Monkey {
       this.part(sh, 'sph', 0.15, 0, m.fur, [0, -0.02, 0]);
       this.part(sh, 'cap', 0.115, 0.3, m.fur, [0, -0.24, 0]);
       const el = this.joint('el' + side, sh, [0, -0.46, 0], [-0.22, 0, 0]);
+      this.part(el, 'sph', 0.112, 0, m.fur, [0, 0, 0]);
       this.part(el, 'cap', 0.105, 0.28, m.fur, [0, -0.2, 0]);
+      // a fur cuff at the wrist
+      this.part(el, 'sph', 0.118, 0, m.fur, [0, -0.36, 0], [1, 0.55, 1]);
       const ha = this.joint('ha' + side, el, [0, -0.42, 0]);
-      this.part(ha, 'sph', 0.15, 0, m.skin, [0, -0.05, 0.02], [1, 0.95, 0.72]);
-      this.part(ha, 'sph', 0.06, 0, m.skin, [-s * 0.12, -0.0, 0.06], [1, 1.3, 1]);
+      this.hands[side] = this.buildHands(ha, s, m.skin);
     }
-    // legs
+    // legs and feet
     for (const side of ['L', 'R']) {
       const s = SIDE[side];
       const m = this.regionMats(side === 'L' ? 'LL' : 'RL');
       const hip = this.joint('hip' + side, hips, [s * 0.22, -0.08, 0], [0, 0, s * 0.05]);
       this.part(hip, 'cap', 0.135, 0.22, m.fur, [0, -0.2, 0]);
       const kn = this.joint('kn' + side, hip, [0, -0.4, 0]);
+      this.part(kn, 'sph', 0.128, 0, m.fur, [0, 0, 0]);
       this.part(kn, 'cap', 0.12, 0.2, m.fur, [0, -0.17, 0]);
       const ft = this.joint('ft' + side, kn, [0, -0.38, 0]);
       this.part(ft, 'sph', 0.17, 0, m.skin, [s * 0.02, -0.06, 0.1], [1, 0.52, 1.45]);
-      // toes
-      for (let k = -1; k <= 1; k++) this.part(ft, 'sph', 0.05, 0, m.skin, [s * 0.02 + k * 0.08, -0.06, 0.32], [1, 0.8, 1], null, false);
+      this.part(ft, 'sph', 0.12, 0, m.skin, [s * 0.02, -0.045, -0.06], [1, 0.7, 1]);
+      // three toes and an inner big toe that sticks out like a thumb
+      for (let k = -1; k <= 1; k++) this.part(ft, 'sph', 0.052, 0, m.skin, [s * 0.04 + k * 0.075, -0.07, 0.32], [1, 0.75, 1.1]);
+      this.part(ft, 'cap', 0.05, 0.07, m.skin, [-s * 0.13, -0.07, 0.2], [1, 0.8, 1], [Math.PI / 2, 0, s * 0.55]);
     }
-    // tail: a chain of segments curling up behind
+    // tail: invisible chain of joints, drawn as one smooth tube
     this.tail = [];
     let parent = hips;
-    const tailMat = body.fur;
-    for (let i = 0; i < 9; i++) {
+    for (let i = 0; i < TAIL_SEGS; i++) {
       const g = new THREE.Group();
-      g.position.set(0, i === 0 ? -0.05 : 0.13, i === 0 ? -0.36 : 0);
-      g.rotation.x = i === 0 ? -1.2 : 0.18;
+      g.position.set(0, i === 0 ? -0.08 : 0.1, i === 0 ? -0.35 : 0);
+      // out behind, then curling up into a question mark
+      g.rotation.x = i === 0 ? -1.85 : i < 5 ? 0.05 : 0.23;
       g.userData.baseX = g.rotation.x;
       parent.add(g);
-      this.part(g, 'sph', 0.075 - i * 0.003, 0, tailMat, [0, 0.065, 0], [1, 1.25, 1]);
       this.tail.push(g);
       parent = g;
     }
+    this.buildTail(hips, body.fur);
+
+    // merge each joint's static shapes into a few meshes
+    for (const g of [...Object.values(this.j), tuftJ]) bakeStatic(g, { shallow: true });
 
     this.accessories = {};
     this.gearFx = {};
@@ -593,7 +779,11 @@ export class Monkey {
     };
     this.anchors = { LA: this.j.haL, RA: this.j.haR, LL: this.j.ftL, RL: this.j.ftR, HD: head, FL: hips };
 
-    R.traverse((o) => { if (o.isMesh) o.frustumCulled = false; });
+    R.traverse((o) => {
+      if (!o.isMesh) return;
+      o.frustumCulled = false;
+      o.castShadow = o.material !== this.outlineMat && !o.material.transparent;
+    });
     // Remember which meshes wear fur or skin, so skins can swap their materials
     this.skinnables = [];
     R.traverse((o) => {
@@ -605,6 +795,147 @@ export class Monkey {
     });
   }
 
+  /** Four merged hand shapes per hand; one is shown at a time. */
+  buildHands(ha, s, skin) {
+    const poses = {};
+    for (const pose of HAND_POSES) {
+      const g = new THREE.Group();
+      ha.add(g);
+      // palm
+      this.part(g, 'sph', 0.12, 0, skin, [0, -0.06, 0.01], [1.06, 1, 0.72]);
+      const curl = { relax: -0.55, open: 0, fist: -2.1, point: -2.1 }[pose];
+      const spread = pose === 'open' ? 0.28 : pose === 'relax' ? 0.12 : 0.04;
+      // three fingers
+      for (let i = 0; i < 3; i++) {
+        const piv = new THREE.Group();
+        piv.position.set((i - 1) * 0.068, -0.135, 0.015);
+        const fingerCurl = pose === 'point' && i === 1 - s ? 0 : curl;
+        piv.rotation.set(fingerCurl, 0, (i - 1) * spread);
+        g.add(piv);
+        const len = pose === 'fist' || (pose === 'point' && fingerCurl !== 0) ? 0.05 : 0.075;
+        this.part(piv, 'cap', 0.042, len, skin, [0, -(0.04 + len / 2), 0]);
+      }
+      // thumb on the inner side
+      const tp = new THREE.Group();
+      tp.position.set(-s * 0.1, -0.06, 0.05);
+      const thumbIn = pose === 'fist' || pose === 'point' ? 0.9 : pose === 'open' ? 0.2 : 0.45;
+      tp.rotation.set(-0.4 - thumbIn * 0.7, 0, -s * (0.6 - thumbIn * 0.75));
+      g.add(tp);
+      this.part(tp, 'cap', 0.044, 0.06, skin, [0, -0.07, 0]);
+      bakeStatic(g);
+      g.visible = pose === 'relax';
+      g.userData.pose = pose;
+      poses[pose] = g;
+    }
+    return { poses, current: 'relax' };
+  }
+
+  /** The tail tube (and its outline tube), rebuilt from the joint chain each frame. */
+  buildTail(hips, mat) {
+    const rings = TAIL_SEGS * 2 + 4; // two rings per segment + a rounded tip
+    const sides = 12;
+    const make = (m, outline) => {
+      const n = (rings + 1) * (sides + 1);
+      const geo = new THREE.BufferGeometry();
+      geo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(n * 3), 3));
+      geo.setAttribute('normal', new THREE.BufferAttribute(new Float32Array(n * 3), 3));
+      const uv = new Float32Array(n * 2);
+      for (let i = 0; i <= rings; i++) for (let k = 0; k <= sides; k++) uv.set([k / sides, i / rings * 3], (i * (sides + 1) + k) * 2);
+      geo.setAttribute('uv', new THREE.BufferAttribute(uv, 2));
+      const idx = [];
+      for (let i = 0; i < rings; i++) {
+        for (let k = 0; k < sides; k++) {
+          const a = i * (sides + 1) + k, b = a + sides + 1;
+          idx.push(a, b, a + 1, a + 1, b, b + 1);
+        }
+      }
+      geo.setIndex(idx);
+      const mesh = new THREE.Mesh(geo, m);
+      mesh.frustumCulled = false;
+      if (outline) mesh.userData.outline = true;
+      hips.add(mesh);
+      return mesh;
+    };
+    this.tailMesh = make(mat, false);
+    this.tailOutline = make(this.outlineMat, true);
+    this.tailShape = { rings, sides };
+    this._tm = { inv: new THREE.Matrix4(), m: new THREE.Matrix4(), pts: [], axes: [] };
+  }
+
+  updateTail() {
+    const { rings, sides } = this.tailShape;
+    const hips = this.j.hips;
+    hips.updateMatrixWorld(true);
+    const tm = this._tm;
+    tm.inv.copy(hips.matrixWorld).invert();
+    // centre points and frames along the chain (in hips space)
+    const pts = [];
+    const ups = [];
+    const xs = [];
+    for (let i = 0; i < this.tail.length; i++) {
+      tm.m.multiplyMatrices(tm.inv, this.tail[i].matrixWorld);
+      const e = tm.m.elements;
+      pts.push(new THREE.Vector3(e[12], e[13], e[14]));
+      ups.push(new THREE.Vector3(e[4], e[5], e[6]).normalize());
+      xs.push(new THREE.Vector3(e[0], e[1], e[2]).normalize());
+    }
+    const last = pts[pts.length - 1];
+    const lastUp = ups[ups.length - 1];
+    pts.push(last.clone().addScaledVector(lastUp, 0.1));
+    ups.push(lastUp.clone());
+    xs.push(xs[xs.length - 1].clone());
+    const P = this.tailMesh.geometry.attributes.position;
+    const N = this.tailMesh.geometry.attributes.normal;
+    const PO = this.tailOutline.geometry.attributes.position;
+    const NO = this.tailOutline.geometry.attributes.normal;
+    const c = new THREE.Vector3();
+    const up = new THREE.Vector3();
+    const x = new THREE.Vector3();
+    const z = new THREE.Vector3();
+    const n = new THREE.Vector3();
+    const body = TAIL_SEGS * 2;
+    const r0 = 0.085, r1 = 0.052;
+    for (let i = 0; i <= rings; i++) {
+      let rad;
+      if (i <= body) {
+        const f = i / 2;
+        const k = Math.min(TAIL_SEGS - 1, Math.floor(f));
+        const t = f - k;
+        c.copy(pts[k]).lerp(pts[k + 1], t);
+        up.copy(ups[k]).lerp(ups[k + 1], t).normalize();
+        x.copy(xs[k]).lerp(xs[k + 1], t).normalize();
+        rad = r0 + (r1 - r0) * (i / body);
+      } else {
+        // rounded tip: quarter circle
+        const q = (i - body) / (rings - body);
+        const a = q * Math.PI / 2;
+        up.copy(ups[TAIL_SEGS]);
+        x.copy(xs[TAIL_SEGS]);
+        c.copy(pts[TAIL_SEGS]).addScaledVector(up, Math.sin(a) * r1);
+        rad = Math.max(0.002, Math.cos(a) * r1);
+      }
+      z.crossVectors(x, up).normalize();
+      for (let k = 0; k <= sides; k++) {
+        const a = (k / sides) * TAU;
+        n.copy(x).multiplyScalar(Math.cos(a)).addScaledVector(z, Math.sin(a));
+        if (i > body) {
+          const q = (i - body) / (rings - body);
+          n.multiplyScalar(Math.cos(q * Math.PI / 2)).addScaledVector(up, Math.sin(q * Math.PI / 2)).normalize();
+        }
+        const idx = i * (sides + 1) + k;
+        P.setXYZ(idx, c.x + n.x * rad, c.y + n.y * rad, c.z + n.z * rad);
+        N.setXYZ(idx, n.x, n.y, n.z);
+        const ro = rad + OUTLINE;
+        PO.setXYZ(idx, c.x + n.x * ro, c.y + n.y * ro, c.z + n.z * ro);
+        NO.setXYZ(idx, n.x, n.y, n.z);
+      }
+    }
+    P.needsUpdate = true;
+    N.needsUpdate = true;
+    PO.needsUpdate = true;
+    NO.needsUpdate = true;
+  }
+
   // ------------------------------------------------------------ looks
 
   /** Wear a skin from js/skins.js (by id or definition). */
@@ -612,6 +943,19 @@ export class Monkey {
     const skin = typeof idOrSkin === 'string' ? getSkin(idOrSkin) : idOrSkin;
     if (this.skin && this.skin.id === skin.id) return;
     applySkin(this, skin);
+    rimAll(this.root);
+    for (const g of this.extraGroups || []) g.traverse((o) => { if (o.isMesh && o.material !== this.outlineMat) o.castShadow = !o.material.transparent; });
+  }
+
+  /** Iris colour from the skin's eyes ({ white, pupil, glow }). */
+  setEyes(eyes = {}) {
+    let col = eyes.pupil || '#6e3f1e';
+    const c = new THREE.Color(col);
+    if (!eyes.glow && c.r + c.g + c.b < 0.25) col = '#6e3f1e'; // very dark pupils read as warm brown eyes
+    this.irisMat.map = irisTexture(col, !!eyes.glow);
+    this.irisMat.needsUpdate = true;
+    this.glowEyes = !!eyes.glow;
+    for (const e of this.eyes) for (const h of e.highlights) h.visible = true;
   }
 
   setFlair(id) {
@@ -652,17 +996,24 @@ export class Monkey {
       this.accessories[slot] = built.parts.map((p) => {
         const a = this.anchorFor(p.anchor);
         a.add(p.group);
-        p.group.traverse((o) => { if (o.isMesh) o.frustumCulled = false; });
+        rimAll(p.group);
+        p.group.traverse((o) => {
+          if (!o.isMesh) return;
+          o.frustumCulled = false;
+          o.castShadow = o.material !== this.outlineMat && !o.material.transparent;
+        });
         return p.group;
       });
       this.gearFx[slot] = built.fx;
     }
+    if (slot === 'hands') this.holding = !!built;
     if (slot === 'back') {
       // a back item replaces the skin's own wings / cape / jetpack / fin
       const hide = !!built;
       if (hide !== !!this.hideBackExtras) {
         this.hideBackExtras = hide;
         refreshSkinExtras(this);
+        rimAll(this.root);
       }
     }
     this.setOutlines(this.outlinesOn);
@@ -680,6 +1031,12 @@ export class Monkey {
     this.root.traverse((o) => {
       if (o.isMesh && o.material === this.outlineMat) o.visible = on;
     });
+  }
+
+  /** Match the stage's graphics level (js/stage.js QUALITY). */
+  setQuality(level, Q) {
+    this.level = level;
+    if (Q) this.setOutlines(Q.outlines);
   }
 
   applyLook(equipped) {
@@ -757,12 +1114,18 @@ export class Monkey {
     p.j.head[2] += -0.05 * sway * amp;
     p.j.shL[2] += -0.06 * (sway * 0.5 + 0.5) * amp;
     p.j.shR[2] += 0.06 * (0.5 - sway * 0.5) * amp;
+    // fingers sway a touch with the arms
+    p.j.haL[0] += 0.06 * sway * amp; p.j.haR[0] += -0.06 * sway * amp;
     // breathing
     this.chest.scale.y = 1 + 0.012 * Math.sin(time * 2.1);
 
-    // look at the player's taps
+    // look at the player's taps, with small eye darts when idle
     this.look.lerp(this.lookTarget, Math.min(1, dt * 6));
     this.lookTarget.multiplyScalar(Math.max(0, 1 - dt * 0.6));
+    if (time > this.saccadeAt) {
+      this.saccadeAt = time + 0.8 + Math.random() * 2.2;
+      this.saccade.set((Math.random() - 0.5) * 0.5, (Math.random() - 0.5) * 0.3);
+    }
     p.j.head[1] += 0.28 * this.look.x;
     p.j.head[0] += -0.1 * this.look.y;
 
@@ -780,7 +1143,10 @@ export class Monkey {
       a.fn(p, t, el, a.ctx);
     }
 
+    this.applySprings(p, dt);
     this.applyPose(p, time, dt);
+    this.updateHands(p);
+    this.updateTail();
     this.updateFace(p, time, dt);
     this.updateHighlights(time);
     if (this.rainbow) {
@@ -795,6 +1161,31 @@ export class Monkey {
     for (const list of Object.values(this.gearFx)) if (list && list.length) updateGearFx(list, time, dt, energy, beat);
   }
 
+  /** Ears, the head tuft and the tail lag behind bounces like soft springs. */
+  applySprings(p, dt) {
+    const sp = this.spring;
+    if (dt <= 0) return;
+    const y = p.hipsY;
+    const vy = (y - sp.lastY) / dt;
+    const acc = Math.max(-40, Math.min(40, (vy - sp.lastVy) / dt));
+    sp.lastY = y;
+    sp.lastVy = vy;
+    const step = (x, v, k, c, drive) => {
+      const a = -k * x - c * v + drive;
+      v += a * dt;
+      x += v * dt;
+      return [Math.max(-0.6, Math.min(0.6, x)), v];
+    };
+    [sp.ear, sp.earV] = step(sp.ear, sp.earV, 160, 10, -acc * 0.9);
+    [sp.tuft, sp.tuftV] = step(sp.tuft, sp.tuftV, 120, 7, -acc * 0.7 + p.j.head[1] * 0);
+    [sp.tail, sp.tailV] = step(sp.tail, sp.tailV, 60, 6, -acc * 0.5);
+    const amp = this.danceAmp;
+    p.j.earL[2] += sp.ear * 0.5 * amp;
+    p.j.earR[2] += -sp.ear * 0.5 * amp;
+    this.tuftJ.rotation.x = sp.tuft * 0.6 * amp;
+    this.tuftJ.rotation.z = -p.j.head[2] * 0.4;
+  }
+
   applyPose(p, time) {
     for (const n of JOINTS) {
       const g = this.j[n];
@@ -806,13 +1197,25 @@ export class Monkey {
     this.root.rotation.y = p.ry;
     const sq = p.squash;
     this.root.scale.set(1 + sq * 0.5, 1 - sq, 1 + sq * 0.5);
-    // tail sway
+    // tail sway (plus the springy lag)
     const amp = 0.12 + 0.12 * Math.max(-0.8, p.tail);
+    const lag = this.spring.tail;
     for (let i = 0; i < this.tail.length; i++) {
       const g = this.tail[i];
-      const droop = p.tail < 0 ? p.tail * 0.15 : 0;
-      g.rotation.x = g.userData.baseX + (i > 0 ? Math.sin(time * 1.6 + i * 0.5) * 0.05 + droop : 0);
-      g.rotation.z = Math.sin(time * 2.2 + i * 0.55) * amp * (i === 0 ? 0.6 : 1);
+      const droop = p.tail < 0 ? p.tail * 0.1 : 0;
+      g.rotation.x = g.userData.baseX + (i > 0 ? Math.sin(time * 1.6 + i * 0.5) * 0.04 + droop + lag * 0.08 : 0);
+      g.rotation.z = Math.sin(time * 2.2 + i * 0.45) * amp * (i === 0 ? 0.5 : 0.75);
+    }
+  }
+
+  updateHands(p) {
+    for (const side of ['L', 'R']) {
+      const h = this.hands[side];
+      const want = this.holding ? 'fist' : p.hand[side];
+      if (want === h.current) continue;
+      h.poses[h.current].visible = false;
+      h.poses[want].visible = true;
+      h.current = want;
     }
   }
 
@@ -820,16 +1223,22 @@ export class Monkey {
     const f = p.face;
     this.showMouth(f.mouth || 'smile');
     // blinking
-    let eyesMode = f.eyes || 'open';
+    const eyesMode = f.eyes || 'open';
     if (time > this.blinkAt) {
-      this.blinkT = 0.13;
+      this.blinkT = 0.15;
       this.blinkAt = time + 2 + Math.random() * 3.5;
+      if (Math.random() < 0.15) this.blinkAt = time + 0.3; // a double blink now and then
     }
     let blink = 0;
     if (this.blinkT > 0) {
       this.blinkT -= dt;
-      blink = Math.sin((1 - this.blinkT / 0.13) * Math.PI);
+      blink = Math.sin(clamp01(1 - this.blinkT / 0.15) * Math.PI);
     }
+    // lid rest angle per mood: negative = open wider
+    const lidRest = { wide: -1.25, sad: -0.35, open: -0.85 }[eyesMode] ?? -0.85;
+    this.lidAmt += (lidRest - this.lidAmt) * Math.min(1, dt * 14);
+    const lookX = this.look.x + this.saccade.x * 0.5;
+    const lookY = this.look.y + this.saccade.y * 0.5;
     for (const e of this.eyes) {
       let mode = eyesMode;
       if (mode === 'wink') mode = e.side === 'R' ? 'happy' : 'open';
@@ -837,18 +1246,22 @@ export class Monkey {
       e.arc.visible = happy;
       e.white.visible = !happy;
       e.ring.visible = !happy;
-      e.pupil.visible = !happy;
+      e.lidSpace.visible = !happy;
       e.arc.rotation.z = mode === 'closed' ? Math.PI : 0;
       e.arc.position.y = mode === 'closed' ? 0.02 : -0.02;
-      const wide = mode === 'wide' ? 1.15 : 1;
-      e.eye.scale.set(wide, happy ? 1 : wide * Math.max(0.08, 1 - blink), 1);
-      e.pupil.position.x = this.look.x * 0.045;
-      e.pupil.position.y = this.look.y * 0.045;
-      const pupilScale = mode === 'wide' ? 0.8 : 1;
-      e.pupil.scale.setScalar(pupilScale);
+      const wide = mode === 'wide' ? 1.12 : 1;
+      e.eye.scale.set(wide, wide, 1);
+      // lid: rest angle, then down over the eye for a blink (+1.45 = shut)
+      const shut = happy ? 0 : blink;
+      const ang = this.lidAmt + (1.5 - this.lidAmt) * shut;
+      e.lid.rotation.x = ang;
+      e.pupil.visible = !happy && ang < 0.55;
+      e.pupil.position.x = lookX * 0.045;
+      e.pupil.position.y = lookY * 0.04 - (mode === 'sad' ? 0.015 : 0);
+      e.pupil.scale.setScalar(mode === 'wide' ? 0.82 : 1);
+      for (const h of e.highlights) h.visible = ang < 0.1;
       // brows: raise, and tilt for worried (inner ends up)
       e.brow.position.y = e.browBase + f.brow * 0.05;
-      // tilt > 0 lifts the inner ends (worried / sheepish)
       e.brow.rotation.z = Math.PI / 2 - e.s * (f.tilt * 0.38) + e.s * 0.05;
     }
     this.blushMat.opacity = f.eyes === 'happy' ? 0.65 : 0.4;

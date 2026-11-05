@@ -538,6 +538,7 @@ export function patternCanvas(p, S = 256, glow = false) {
   const cv = document.createElement('canvas');
   cv.width = cv.height = S;
   drawPattern(cv.getContext('2d'), S, p, glow);
+  if (S > 256) return cv; // big ones (the 3D monkey's fur) aren't kept: 1 MB each
   if (cache.size > 60) cache.delete(cache.keys().next().value);
   cache.set(key, cv);
   return cv;

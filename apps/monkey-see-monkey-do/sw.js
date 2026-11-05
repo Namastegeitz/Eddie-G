@@ -5,7 +5,7 @@
 'use strict';
 
 // PRECACHE-START (generated, do not edit by hand)
-const VERSION = "c2b7a795777e";
+const VERSION = "ef32312cf20f";
 const PRECACHE = [
   "./",
   "manifest.webmanifest",
@@ -25,6 +25,7 @@ const PRECACHE = [
   "js/billing.js",
   "js/game.js",
   "js/gear.js",
+  "js/gfx.js",
   "js/input.js",
   "js/levels.js",
   "js/main.js",

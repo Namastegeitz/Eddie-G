@@ -24,7 +24,7 @@ export const DEFAULT_SETTINGS = {
   keyHints: true,
   captions: true, // show move names during Watch
   reduceMotion: false,
-  quality: 'auto', // 'auto' | 'high' | 'low'
+  quality: 'auto', // 'auto' | 'low' | 'high' | 'ultra' (auto may use 'medium')
   latencyMs: 0, // rhythm calibration
   parentGate: true, // ask a grown-up question before any real-money purchase
   spendLimit: 0, // monthly real-money limit in the store's currency (0 = no limit)

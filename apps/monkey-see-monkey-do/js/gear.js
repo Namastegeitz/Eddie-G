@@ -61,9 +61,9 @@ export function buildGear(slot, id, kit) {
     return { group, add };
   };
   const both = (anchorL, anchorR, fn) => { fn(part(anchorL), -1); fn(part(anchorR), 1); };
-  const sph = (r, ws = 18, hs = 12) => new THREE.SphereGeometry(r, ws, hs);
-  const dome = (r) => new THREE.SphereGeometry(r, 24, 12, 0, TAU, 0, Math.PI / 2);
-  const cyl = (rt, rb, h, seg = 18, open = false) => new THREE.CylinderGeometry(rt, rb, h, seg, 1, open);
+  const sph = (r, ws = 28, hs = 18) => new THREE.SphereGeometry(r, ws, hs);
+  const dome = (r) => new THREE.SphereGeometry(r, 36, 16, 0, TAU, 0, Math.PI / 2);
+  const cyl = (rt, rb, h, seg = 28, open = false) => new THREE.CylinderGeometry(rt, rb, h, seg, 1, open);
 
   // ------------------------------------------------------------ hats
   if (slot === 'hat') {
@@ -733,10 +733,10 @@ export function gearThumb(canvasEl, slot, id, kit) {
   try {
     if (!thumb) {
       const cv = document.createElement('canvas');
-      cv.width = cv.height = 128;
+      cv.width = cv.height = 192;
       const renderer = new THREE.WebGLRenderer({ canvas: cv, alpha: true, antialias: true, preserveDrawingBuffer: true });
       renderer.setPixelRatio(1);
-      renderer.setSize(128, 128, false);
+      renderer.setSize(192, 192, false);
       const scene = new THREE.Scene();
       scene.add(new THREE.HemisphereLight(0xffffff, 0x445544, 1.8));
       const dl = new THREE.DirectionalLight(0xffffff, 2.2);

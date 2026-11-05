@@ -5,8 +5,9 @@ import { RULES, timeLimit } from './rules.js';
 import { WORLDS, LEVELS, TWISTS, ENDLESS, getLevel } from './levels.js';
 import { CATEGORIES, ITEMS, itemsIn, getItem } from './shop.js';
 import { Save } from './save.js';
-import { renderSkins, renderSkinAction, showExchange, showUnlocks, updateGolden, skinsHelp, portrait, lazyPortraits, lazyGearThumbs, renderOutfits, GOLDEN_ICON } from './wardrobe.js';
+import { renderSkins, renderSkinAction, showExchange, showUnlocks, updateGolden, skinsHelp, portrait, lazyPortraits, lazyGearThumbs, renderOutfits, GOLDEN_ICON, hiDpi } from './wardrobe.js';
 import { GEAR_SLOTS } from './shop.js';
+import { QUALITY } from './stage.js';
 import { renderStore, storeHelp } from './storeui.js';
 import { spentThisMonth, SPEND_LIMITS } from './store.js';
 import { SKINS } from './skins.js';
@@ -116,7 +117,7 @@ const SETTINGS = [
   { group: 'Display', items: [
     { key: 'captions', type: 'toggle', label: 'Move names during Watch', help: 'Shows the name of each move as the monkey does it.' },
     { key: 'reduceMotion', type: 'toggle', label: 'Reduce motion', help: 'No camera shake, less confetti, calmer menus.' },
-    { key: 'quality', type: 'seg', label: 'Graphics', options: [['auto', 'Auto'], ['high', 'High'], ['low', 'Low']], help: 'Low drops outlines and resolution. Easier on older phones and batteries.' },
+    { key: 'quality', type: 'seg', label: 'Graphics', options: [['auto', 'Auto'], ['low', 'Low'], ['high', 'High'], ['ultra', 'Ultra']], help: 'Auto starts at High and steps down (Medium, then Low) if your phone struggles. Low: no outlines or shadows, plain scenery. High: sharp, soft shadows, full scenery. Ultra: full phone resolution and finer shadows (uses the most battery).' },
   ] },
 ];
 
@@ -931,7 +932,7 @@ export class UI {
       else if (it.unlockWorld && reached < it.unlockWorld) state = `<span class="state price">${ICON.banana}${it.price} <span style="color:var(--cream-dim);font-weight:600">or reach World ${it.unlockWorld}</span></span>`;
       else state = `<span class="state price">${it.currency === 'golden' ? GOLDEN_ICON : ICON.banana}${it.price}</span>`;
       const isGear = GEAR_SLOTS.includes(it.cat) && it.id !== 'none' && it.cat !== 'aura';
-      const g = it.id === 'auto' ? glyph({ cat: 'stage', id: 'jungle' }) : isGear ? `<canvas data-gear="${it.cat}:${it.id}" width="104" height="104" aria-hidden="true"></canvas>` : glyph(it);
+      const g = it.id === 'auto' ? glyph({ cat: 'stage', id: 'jungle' }) : isGear ? `<canvas data-gear="${it.cat}:${it.id}" width="${52 * hiDpi()}" height="${52 * hiDpi()}" aria-hidden="true"></canvas>` : glyph(it);
       return `<button class="item${equipped ? ' equipped' : ''}${pv === it.id ? ' previewing' : ''}${it.premium ? ' premium' : ''}" data-id="${it.id}" aria-label="${esc(it.name)}"><span class="glyph">${g}</span><span class="name">${esc(it.name)}</span>${state}</button>`;
     }).join('');
     lazyGearThumbs($('#shop-grid'), { gradient: this.app.monkey.gradient, outlineMat: this.app.monkey.outlineMat });
@@ -1279,6 +1280,17 @@ export class UI {
 
       ${skinsHelp(this)}
       ${storeHelp()}
+
+      <h3>Graphics</h3>
+      <p class="note">Right now: ${esc({ low: 'Low', medium: 'Medium', high: 'High', ultra: 'Ultra' }[this.app.stage.level] || 'High')}${Save.settings.quality === 'auto' ? ' (picked by Auto)' : ''}.</p>
+      <ul>
+        <li>Auto starts at High and watches your frame rate for a few seconds. If most frames are slow it steps down to Medium, then Low, and tells you when it switches to Low.</li>
+        <li>Low: no outlines, shadows, grass or move trails; normal resolution. Easiest on older phones and batteries.</li>
+        <li>Medium (Auto only): outlines, grass, flowers and move trails; no shadows; up to ${QUALITY.medium.dpr}x resolution.</li>
+        <li>High: adds soft shadows, light rays and butterflies; up to ${QUALITY.high.dpr}x resolution.</li>
+        <li>Ultra: up to ${QUALITY.ultra.dpr}x (a phone's full sharpness) and finer shadows. Uses the most battery.</li>
+        <li>Graphics never change timing, scoring or difficulty.</li>
+      </ul>
 
       <h3>Your privacy</h3>
       <p>The game runs entirely on your device. Progress is saved in this browser's storage. No account, no ads, no analytics, no data sent anywhere. Settings > Your data shows exactly what is saved, and lets you copy it or delete it.</p>

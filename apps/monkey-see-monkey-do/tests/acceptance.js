@@ -364,7 +364,7 @@ let passes = 0;
     const rows = await page.$$eval('#help-body table', (t) => t.map((x) => x.querySelectorAll('tbody tr').length));
     expect(rows.includes(30), 'level table rows ' + rows);
     const text = await page.textContent('#help-body');
-    expect(text.includes('90 ms') && text.includes('You never need to pay') && text.includes('grown-up check'), 'rules text');
+    expect(text.includes('90 ms') && text.includes('You never need to pay') && text.includes('grown-up check') && text.includes('Ultra: up to 3x'), 'rules text');
     await shot('13-how-it-works');
     await page.click('#scr-help .back');
   });
@@ -491,6 +491,28 @@ let passes = 0;
     await page.waitForFunction(() => MSMD.game.phase === 'watch');
     await page.waitForTimeout(300);
     await shot('17-desktop-watch');
+  });
+
+  await step('Graphics: Low drops outlines and shadows, High and Ultra add them; sparkles fire', async () => {
+    const r = await ev(() => {
+      const s = MSMD.stage, out = {};
+      for (const q of ['low', 'high', 'ultra']) {
+        MSMD.Save.setSetting('quality', q);
+        MSMD.app.applySettings();
+        out[q] = { level: s.level, shadows: s.renderer.shadowMap.enabled, dpr: s.maxDpr, outlines: MSMD.monkey.outlinesOn };
+      }
+      MSMD.Save.setSetting('quality', 'auto');
+      MSMD.app.applySettings();
+      s.sparks(new MSMD.app.THREE.Vector3(0, 2, 0), '#ff8a1f', 1);
+      out.sparks = s.sparkData.filter((d) => d.life > 0).length;
+      out.hands = Object.keys(MSMD.monkey.hands.L.poses).join(',');
+      return out;
+    });
+    expect(!r.low.shadows && !r.low.outlines && r.low.dpr === 1, 'low ' + JSON.stringify(r.low));
+    expect(r.high.shadows && r.high.outlines && r.high.dpr === 2, 'high ' + JSON.stringify(r.high));
+    expect(r.ultra.shadows && r.ultra.dpr === 3, 'ultra ' + JSON.stringify(r.ultra));
+    expect(r.sparks >= 20, 'sparks ' + r.sparks);
+    expect(r.hands === 'relax,open,fist,point', 'hand poses ' + r.hands);
   });
 
   await step('no errors in the console', async () => {

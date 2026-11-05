@@ -176,7 +176,15 @@
   `?billing=test` / `#store-test` = pretend purchases. Store setup: mobile/README.md, docs/STORE_PRODUCTS.md,
   mobile/ios/App/MonkeyDo.storekit. Tests: 507 unit checks, 33-step play-through (incl. test-mode purchases).
   Not verified: real App Store / Google Play purchases (need developer accounts, products created, a device).
-- Not verified on real hardware yet: touch feel and audio latency on an actual phone, install to home screen.
+- Graphics upgrade (fifth pass): detailed monkey (fingers with 4 hand poses, big toe, cheek/head tufts, painted irises,
+  blinking eyelids, smooth tube tail, springy ears/tuft/tail, rim light), four rebuilt stages (js/stage.js) with painted
+  skies and ground textures, swaying grass, flowers, light rays, butterflies, animated sea, disco mirror-ball specks,
+  moon craters/Earth/ringed planet/shooting stars; real soft shadows; play feedback (limb sparkles by grade, Perfect
+  camera kick, move trails, streak-warm pad lights). Graphics levels Low / Medium (Auto only) / High / Ultra (up to 3x);
+  Auto is time-based (3 s windows). Static scenery merged per material (js/gfx.js). Sharper Wardrobe portraits and gear
+  thumbnails, 512 px fur patterns.
+- Not verified on real hardware yet: touch feel and audio latency on an actual phone, install to home screen, and frame
+  rate of the new graphics on older phones (Auto steps down if needed).
 - Next: pick add-ons from `prompts/claude/monkey-see-monkey-do-next.md` (prompt 15 is done; replay review, Daily
   Dance, choreographer + share codes, accessibility pack, grown-up panel, stickers, World 4, pass-and-play,
   real music, GitHub Pages, Android/iOS builds, opt-in leaderboard, Spanish/Portuguese) and

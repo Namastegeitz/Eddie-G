@@ -5,7 +5,7 @@
 'use strict';
 
 // PRECACHE-START (generated, do not edit by hand)
-const VERSION = "56b2e55e3a9a";
+const VERSION = "714654a39d95";
 const PRECACHE = [
   "./",
   "app.js",
