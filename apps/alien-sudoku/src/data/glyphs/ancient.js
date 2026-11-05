@@ -106,12 +106,12 @@ export default {
     `<g fill="none" stroke="#3a2088" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="30.2" cy="21.6" r="2.3"/><path d="M27.4 27.6H33M26.8 33.2L28.4 31.4 30 33.2 31.6 31.4 33.2 33.2M26.8 38.6Q30 36 33.2 38.6 30 41.2 26.8 38.6M30 42.6V47.6M27.8 44.4H32.2"/></g>` +
     `<path d="M38.2 50L35.4 15" stroke="#2e1a70" stroke-width="1.3"/>` +
     `<path d="M20.5 50L25.2 15 32.4 4 39.6 15 44 50Z" fill="none" stroke="#221250" stroke-width="2.2" stroke-linejoin="round"/>` +
-    `<path d="M24.4 19L21.8 46M30.4 7.4L27.4 12.6" stroke="#fff" stroke-width="1.6" stroke-linecap="round" opacity=".6"/>` +
+    `<path d="M25.9 19L22.9 46M31.4 7.6L28.6 12.8" stroke="#fff" stroke-width="1.6" stroke-linecap="round" opacity=".6"/>` +
     `<path d="M13.5 55.6H24" stroke="#d6c8ff" stroke-width="1.3" stroke-linecap="round" opacity=".7"/>`,
 
     // 6 Moai
     `<path d="M25 5H45C47.8 5 49.2 6.6 49.2 9.4L49.6 38C49.8 45 51 52 52.5 59H24L25 53.5C21 53.5 17.5 52.5 16.2 50 15.2 48 15.8 46.2 17 45.2 15.4 44.6 14.6 43.2 15 41.8 15.4 40.8 16.2 40.4 17 40.2L13.5 39.8C11.5 39.6 10.4 38.2 11 36.6L19.6 22C17.5 21.6 15.6 20.6 15.2 19 15 17.6 16.8 16.4 20 15.6L22.5 6.5C22.9 5.6 23.8 5 25 5Z" fill="url(#anc-moai)" stroke="#232a33" stroke-width="2.4" stroke-linejoin="round"/>` +
-    `<path d="M19.6 22 13.5 39.8 17 40.2 22 39 26 30Z" fill="#7d8792" opacity=".45"/><path d="M17.4 21C21.5 22.2 26.5 22.4 31.5 20.4 30 25.6 24.5 27.4 20 25.2Z" fill="#323a44"/><path d="M15.4 43.4H22.6L25 53.4C21 53.5 17.5 52.5 16.2 50Z" fill="#7d8792" opacity=".4"/><path d="M27 5.6C30 4.6 33 6.6 36 5.6 38 7.6 34 9 31 8.6 29 8.4 27.5 7.6 27 5.6ZM46.5 30C48.6 31 49 34 48.8 37 47 36 45.6 33 46.5 30Z" fill="#7f9a52" opacity=".85"/>` +
+    `<path d="M19.6 22 13.5 39.8 17 40.2 22 39 26 30Z" fill="#7d8792" opacity=".45"/><path d="M17.4 21C21.5 22.2 26.5 22.4 31.5 20.4 30 25.6 24.5 27.4 20 25.2Z" fill="#323a44"/><path d="M15.4 43.4H22.6L25 53.4C21 53.5 17.5 52.5 16.2 50Z" fill="#7d8792" opacity=".4"/>` +
     `<path d="M37 15.5C39.5 14.8 41.5 16.3 41.5 19.5V36C41.5 39.5 39.5 41 37.5 40.3 36 39.8 35.6 38.5 35.8 36.5L36.3 19C36.3 17 36.3 15.8 37 15.5Z" fill="#8c96a2" stroke="#232a33" stroke-width="1.5"/>` +
     `<g fill="none" stroke-linecap="round"><path d="M38.8 19.5V35.5M16.4 17.2C21 15.6 27 15.4 32 16.5M20.5 26.5L16.2 35.4C17.6 37.5 19.6 38.3 21.6 38M24 52.8C30 52.8 37 50.5 42 46" stroke="#5d6773" stroke-width="1.4"/>` +
     `<path d="M13.8 38.2C15.5 38.3 16.8 37.4 17.2 36M14.8 43.4H22.5" stroke="#232a33" stroke-width="1.5"/>` +

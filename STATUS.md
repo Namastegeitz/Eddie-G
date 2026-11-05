@@ -22,9 +22,13 @@
 - Full game: campaign (6 sectors x 9), daily transmission + streak calendar, quick play, zen,
   24 achievements, stats, settings, how-to, autosave/resume, notes/undo/explained hints.
 - Puzzle engine: 1,000 graded unique-solution puzzles + transforms; logical hint engine.
+- Nov 5: graphics + gameplay upgrade: 7 themed glyph lineups of detailed full-color art
+  (Close Encounters, Space Fleet, Planets, Deep Cosmos, Alien Creatures, Ancient Mysteries,
+  Cosmic Mix), each with its own colors/font/board style; score + x10 combos; particles,
+  animated starfield; new app icon. Contact sheets: `node tools/glyph-sheet.mjs <lineup>`.
 - Platforms: Vite web/PWA, Capacitor 8 Android + iOS (SPM), Electron desktop. App id
   `com.eddieg.aliensudoku`. Free with AdMob on phones (Google TEST ids until real ones are set).
-- Tests: 86 unit (`npm test`) + 13 Playwright end-to-end on phone and desktop (`npm run test:e2e`).
+- Tests: 93 unit (`npm test`) + 15 Playwright end-to-end on phone and desktop (`npm run test:e2e`).
 - Playable private web build: https://claude.ai/artifact/NdYUzQJYiAGjCra9nF7MHn
 - CI (`.github/workflows/alien-sudoku.yml`) builds APK, iOS simulator app, Windows/macOS/Linux
   installers and publishes the `alien-sudoku-latest` release. BLOCKED: GitHub would not start

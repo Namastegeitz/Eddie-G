@@ -178,6 +178,9 @@ h1:focus, h2:focus, [tabindex="-1"]:focus, [tabindex="-1"]:focus-visible { outli
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
 }
+/* Never let a centered child shrink: overflowing centered content would be
+   pushed above the scroll origin and become unreachable. */
+.screen > * { flex-shrink: 0; }
 .screen.enter { animation: screenIn 0.28s ease-out; }
 .screen.enter-back { animation: screenBack 0.28s ease-out; }
 @keyframes screenIn { from { opacity: 0; transform: translateX(18px); } to { opacity: 1; transform: none; } }

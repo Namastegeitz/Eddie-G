@@ -11,9 +11,12 @@
   padding: 18px 16px 18px;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   gap: 18px;
 }
+/* Safe vertical centering: auto margins center when there is room and
+   collapse to 0 when the menu is taller than the screen (so it scrolls). */
+.menu-layout > :first-child { margin-top: auto; }
+.menu-layout > :last-child { margin-bottom: auto; }
 .menu-hero { text-align: center; }
 .hero-stage { display: flex; align-items: flex-end; justify-content: center; gap: 4px; height: 120px; margin-bottom: 6px; }
 .hero-glyph { display: flex; }

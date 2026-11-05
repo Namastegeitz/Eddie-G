@@ -12,7 +12,6 @@ export default {
     `<linearGradient id="enc-disc" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#effcff"/><stop offset=".45" stop-color="#5fd8ff"/><stop offset="1" stop-color="#1773a6"/></linearGradient>` +
     `<radialGradient id="enc-dome" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#ffffff"/><stop offset=".4" stop-color="#b6f1ff"/><stop offset="1" stop-color="#3aa6d6"/></radialGradient>` +
     `<linearGradient id="enc-sbeam" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9ff0ff" stop-opacity=".7"/><stop offset="1" stop-color="#5fd8ff" stop-opacity="0"/></linearGradient>` +
-    `<radialGradient id="enc-halo"><stop offset="0" stop-color="#fff"/><stop offset=".35" stop-color="#fff" stop-opacity=".7"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>` +
     // 3 tic-tac
     `<linearGradient id="enc-tic" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset=".55" stop-color="#eaf2ff"/><stop offset="1" stop-color="#a3b6dc"/></linearGradient>` +
     `<linearGradient id="enc-trail" gradientUnits="userSpaceOnUse" x1="4" y1="0" x2="24" y2="0"><stop offset="0" stop-color="#cfe0ff" stop-opacity="0"/><stop offset="1" stop-color="#eaf2ff"/></linearGradient>` +
@@ -25,18 +24,18 @@ export default {
     `<linearGradient id="enc-pbeam" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff6c8" stop-opacity="0"/><stop offset="1" stop-color="#fff6c8"/></linearGradient>` +
     `<radialGradient id="enc-gold"><stop offset="0" stop-color="#fff"/><stop offset=".35" stop-color="#fff3b0"/><stop offset="1" stop-color="#ffc24a" stop-opacity="0"/></radialGradient>` +
     // 6 crop circle
-    `<linearGradient id="enc-field" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f6ffb0"/><stop offset=".45" stop-color="#d7f25a"/><stop offset="1" stop-color="#93b021"/></linearGradient>` +
+    `<linearGradient id="enc-field" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f6ffb0"/><stop offset=".45" stop-color="#d7f25a"/><stop offset="1" stop-color="#83a018"/></linearGradient>` +
     `<clipPath id="enc-fclip"><rect x="6" y="6" width="52" height="52" rx="10"/></clipPath>` +
     // 7 ray gun
     `<radialGradient id="enc-gun" cx=".3" cy=".25" r=".85"><stop offset="0" stop-color="#ffc4bb"/><stop offset=".4" stop-color="#ff5a5a"/><stop offset="1" stop-color="#a8142a"/></radialGradient>` +
     `<linearGradient id="enc-chrome" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff"/><stop offset=".5" stop-color="#d3d9e6"/><stop offset="1" stop-color="#6b7591"/></linearGradient>` +
     // 8 cow abduction
-    `<linearGradient id="enc-cbeam" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffd6f0"/><stop offset="1" stop-color="#ff8fd1" stop-opacity=".55"/></linearGradient>` +
+    `<linearGradient id="enc-cbeam" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffd2ef"/><stop offset=".5" stop-color="#ff9ad6" stop-opacity=".9"/><stop offset="1" stop-color="#ff6ec4" stop-opacity=".75"/></linearGradient>` +
     `<linearGradient id="enc-cow" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#d9d2e6"/></linearGradient>` +
     `<clipPath id="enc-cowclip"><rect x="17" y="26" width="28" height="16" rx="8"/></clipPath>` +
     // 9 radio dish
     `<linearGradient id="enc-dishin" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#f3f8ff"/><stop offset=".5" stop-color="#a9c6ff"/><stop offset="1" stop-color="#4d8dff"/></linearGradient>` +
-    `<linearGradient id="enc-dishback" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#6d9dff"/><stop offset="1" stop-color="#1d3478"/></linearGradient>` +
+    `<linearGradient id="enc-dishback" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7aa8ff"/><stop offset="1" stop-color="#2848a6"/></linearGradient>` +
     `<linearGradient id="enc-ped" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#dfe8ff"/><stop offset="1" stop-color="#5a74b8"/></linearGradient>`,
   symbols: [
     // 1 Alien Head
@@ -99,13 +98,13 @@ export default {
     `<circle cx="32" cy="17.5" r="8" fill="url(#enc-gold)"/><path d="M32 13.6L36 20.4H28Z" fill="#fff8d8" stroke="#c98a1a" stroke-width="1.2" stroke-linejoin="round"/>`,
 
     // 6 Crop Circle
-    `<rect x="6" y="6" width="52" height="52" rx="10" fill="url(#enc-field)"/>` +
-    `<g clip-path="url(#enc-fclip)" stroke="#a7c236" stroke-width="1.3" opacity=".8"><path d="M0 12L64 2M0 18L64 8M0 24L64 14M0 30L64 20M0 36L64 26M0 42L64 32M0 48L64 38M0 54L64 44M0 60L64 50M0 66L64 56M0 72L64 62"/></g>` +
+    `<g transform="matrix(.94 0 0 .94 1.92 1.92)"><rect x="6" y="6" width="52" height="52" rx="10" fill="url(#enc-field)"/>` +
+    `<g clip-path="url(#enc-fclip)" stroke="#9cb82a" stroke-width="1.3" opacity=".9"><path d="M0 12L64 2M0 18L64 8M0 24L64 14M0 30L64 20M0 36L64 26M0 42L64 32M0 48L64 38M0 54L64 44M0 60L64 50M0 66L64 56M0 72L64 62"/></g>` +
     `<circle cx="32" cy="32" r="17" fill="none" stroke="#6f8a14" stroke-width="5.6"/><circle cx="32" cy="32" r="17" fill="none" stroke="#fbffd8" stroke-width="3.2"/>` +
     `<circle cx="32" cy="32" r="9" fill="#fbffd8" stroke="#6f8a14" stroke-width="1.4"/><circle cx="32" cy="32" r="3.4" fill="#c5e046" stroke="#6f8a14" stroke-width="1.2"/>` +
     `<g fill="#fbffd8" stroke="#6f8a14" stroke-width="1.4"><circle cx="32" cy="15" r="4.6"/><circle cx="46.7" cy="40.5" r="4.6"/><circle cx="17.3" cy="40.5" r="4.6"/></g>` +
     `<rect x="6" y="6" width="52" height="52" rx="10" fill="none" stroke="#4d6409" stroke-width="2.3"/>` +
-    `<path d="M9.4 24C9.4 14.5 14 9.4 23.5 9.4" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" opacity=".75"/>`,
+    `<path d="M9.4 24C9.4 14.5 14 9.4 23.5 9.4" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" opacity=".75"/></g>`,
 
     // 7 Ray Gun
     `<g transform="translate(0 -3) rotate(-16 32 32)">` +
@@ -123,8 +122,8 @@ export default {
     `</g>`,
 
     // 8 Cow Abduction
-    `<path d="M23 7H41L58 60H6Z" fill="url(#enc-cbeam)" opacity=".9"/>` +
-    `<path d="M23 7L6 60M41 7L58 60" stroke="#ff4fb8" stroke-width="1.4" opacity=".8"/>` +
+    `<path d="M23 7H41L58 60H6Z" fill="url(#enc-cbeam)"/>` +
+    `<path d="M23 7L6 60M41 7L58 60" stroke="#ff4fb8" stroke-width="1.8"/>` +
     `<path d="M17.5 17Q32 21 46.5 17M10.5 52Q32 58 53.5 52" fill="none" stroke="#fff" stroke-width="1.4" opacity=".65"/>` +
     `<ellipse cx="32" cy="6.8" rx="15" ry="3.6" fill="#3a1650" stroke="#ff8fd1" stroke-width="1.4"/><g fill="#fff"><circle cx="24" cy="7.4" r="1.1"/><circle cx="32" cy="8" r="1.1"/><circle cx="40" cy="7.4" r="1.1"/></g>` +
     `<g transform="rotate(-12 32 34)">` +
@@ -149,7 +148,7 @@ export default {
     `<path d="M17.5 57L21.5 41H28.5L32.5 57Z" fill="url(#enc-ped)" stroke="#0e1c46" stroke-width="2" stroke-linejoin="round"/>` +
     `<path d="M21 51H29" stroke="#3d5aa0" stroke-width="1.3"/>` +
     `<circle cx="25" cy="41.5" r="3.6" fill="#b8ccff" stroke="#0e1c46" stroke-width="1.6"/>` +
-    `<g transform="translate(25 36.5) rotate(40)">` +
+    `<g transform="translate(25 36.5) rotate(40) scale(1.1)">` +
     `<path d="M-20 0A20 13 0 0 0 20 0Z" fill="url(#enc-dishback)" stroke="#0e1c46" stroke-width="2.3" stroke-linejoin="round"/>` +
     `<ellipse rx="20" ry="6" fill="url(#enc-dishin)" stroke="#0e1c46" stroke-width="2.1"/>` +
     `<ellipse rx="12.5" ry="3.7" fill="none" stroke="#5f8fe8" stroke-width="1.3"/><ellipse rx="5.5" ry="1.7" fill="none" stroke="#5f8fe8" stroke-width="1.3"/>` +
@@ -157,6 +156,6 @@ export default {
     `<ellipse cx="-10" cy="-1.6" rx="5" ry="1.4" fill="#fff" opacity=".8"/>` +
     `<circle cy="-15" r="2.8" fill="#eaf2ff" stroke="#0e1c46" stroke-width="1.4"/>` +
     `</g>` +
-    `<g fill="none" stroke-linecap="round"><path d="M35.1 18.0A7 7 0 0 1 41.4 23.3M35.5 12.5A12.5 12.5 0 0 1 46.8 22.0M35.9 7.1A18 18 0 0 1 52.1 20.7" stroke="#0e1c46" stroke-width="4.8"/><path d="M35.1 18.0A7 7 0 0 1 41.4 23.3" stroke="#d6e6ff" stroke-width="2.6"/><path d="M35.5 12.5A12.5 12.5 0 0 1 46.8 22.0" stroke="#8fb6ff" stroke-width="2.6"/><path d="M35.9 7.1A18 18 0 0 1 52.1 20.7" stroke="#4d8dff" stroke-width="2.6"/></g>`,
+    `<g fill="none" stroke-linecap="round"><path d="M36.1 17.4A6.5 6.5 0 0 1 41.9 22.3M36.4 11.9A12 12 0 0 1 47.2 21.0M36.8 6.4A17.5 17.5 0 0 1 52.6 19.6" stroke="#0e1c46" stroke-width="4.8"/><path d="M36.1 17.4A6.5 6.5 0 0 1 41.9 22.3" stroke="#d6e6ff" stroke-width="2.6"/><path d="M36.4 11.9A12 12 0 0 1 47.2 21.0" stroke="#8fb6ff" stroke-width="2.6"/><path d="M36.8 6.4A17.5 17.5 0 0 1 52.6 19.6" stroke="#4d8dff" stroke-width="2.6"/></g>`,
   ],
 };
