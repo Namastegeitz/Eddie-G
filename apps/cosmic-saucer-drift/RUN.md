@@ -25,6 +25,7 @@ folder (`apps/cosmic-saucer-drift`).
 | Drift (in the air: trick) | Space or Shift | RB | DRIFT (shows TRICK in the air) |
 | Use item | E, Ctrl or F | X or LB | ITEM |
 | Look back | Q or C | Y | - |
+| Cockpit view on/off (first person) | V (P2: M) | Back / Select | COCKPIT tab on the left edge |
 | Pause | Esc or P | Start | II (top right), Android back |
 
 Rocket start: hold GAS right as the countdown hits GO (too early stalls on

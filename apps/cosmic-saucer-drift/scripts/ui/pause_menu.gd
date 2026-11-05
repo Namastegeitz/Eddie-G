@@ -44,6 +44,13 @@ static func make(race: Node) -> Control:
 		Save.set_setting("camera", "near" if Save.setting("camera") == "far" else "far")
 		cam.text = "Camera: %s" % Save.setting("camera"))
 	opts.add_child(cam)
+	if not race.humans.is_empty():
+		var me: Racer = race.humans[0]
+		var view := UiKit.button("Cockpit: %s" % ("on" if race.cockpit_on(me) else "off"), func() -> void: pass, 20, 175)
+		view.pressed.connect(func() -> void:
+			race.toggle_cockpit(me)
+			view.text = "Cockpit: %s" % ("on" if race.cockpit_on(me) else "off"))
+		opts.add_child(view)
 	var help := UiKit.label(_help_text(), 18, UiKit.DIM, HORIZONTAL_ALIGNMENT_CENTER)
 	help.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	help.custom_minimum_size = Vector2(560, 0)

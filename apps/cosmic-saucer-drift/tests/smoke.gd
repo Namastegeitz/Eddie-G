@@ -439,6 +439,15 @@ func _touch_tests() -> void:
 	tc._input(_touch(3, tc._buttons.item.get_center(), true))
 	check("item press", InputRouter.touch.item and tc._stick_id < 0)
 	tc._input(_touch(3, tc._buttons.item.get_center(), false))
+	# A touch on the COCKPIT tab must not grab the joystick.
+	var tab := Control.new()
+	host.add_child(tab)
+	tab.position = Vector2(0, 280)
+	tab.size = Vector2(48, 168)
+	tc.blockers.append(tab)
+	tc._input(_touch(5, Vector2(20, 360), true))
+	check("tab touch doesn't start the joystick", tc._stick_id < 0)
+	tc._input(_touch(5, Vector2(20, 360), false))
 	Save.data.settings.steering = "buttons"
 	tc._layout()
 	check("buttons mode has arrows, no stick", tc._buttons.has("left") and tc._buttons.has("right"))
@@ -460,6 +469,16 @@ func _touch_tests() -> void:
 	await get_tree().process_frame
 	check("touch input cleared when controls go", not InputRouter.touch.active and is_zero_approx(InputRouter.touch.throttle))
 	InputRouter.touch_seen = false
+
+
+func _first_layers(n: Node) -> int:
+	if n is VisualInstance3D:
+		return (n as VisualInstance3D).layers
+	for c in n.get_children():
+		var l := _first_layers(c)
+		if l >= 0:
+			return l
+	return -1
 
 
 func _touch(i: int, p: Vector2, down: bool) -> InputEventScreenTouch:
@@ -715,6 +734,32 @@ func _items_tests() -> void:
 	check("laser jolt settles", is_zero_approx(a.model.pivot.position.x))
 	a.model.react("mystery")
 	check("unknown hit kinds still react", a.model._react == "hazard")
+	# Cockpit (first-person) view: COCKPIT tab, toggling both ways, V key.
+	if not race.cams.is_empty():
+		var cam: RaceCamera = race.cams[0]
+		var me: Racer = cam.target
+		var hud := race.hud_for(me)
+		check("HUD has a COCKPIT tab", hud != null and hud.cockpit_tab != null and hud.cockpit_tab.text == "COCKPIT")
+		check("pilot drawn on its own layer", cam.pilot_mask != 0 and _first_layers(me.model.pilot_model) == cam.pilot_mask)
+		hud.cockpit_tab.pressed.emit()
+		check("tab switches to cockpit", cam.cockpit and hud.is_cockpit() and hud.cockpit_tab.on)
+		check("cockpit choice is remembered", Save.setting("cockpit") == true)
+		cam.intro = 0.0
+		for f in 12:
+			await get_tree().process_frame
+		check("cockpit camera at the pilot's eyes", cam.global_position.distance_to(cam.eye_position()) < 0.6, str(cam.global_position.distance_to(cam.eye_position())))
+		check("own pilot hidden in cockpit", (cam.cull_mask & cam.pilot_mask) == 0)
+		check("cockpit looks ahead", (-cam.global_basis.z).dot(me.heading) > 0.6)
+		var ev := InputEventKey.new()
+		ev.physical_keycode = KEY_V
+		ev.pressed = true
+		race._unhandled_input(ev)
+		check("V switches back to chase", not cam.cockpit and not hud.is_cockpit() and Save.setting("cockpit") == false)
+		for f in 40:
+			await get_tree().process_frame
+		check("chase camera back behind", cam.global_position.distance_to(me.global_position) > 3.0)
+		check("own pilot visible again", (cam.cull_mask & cam.pilot_mask) != 0)
+		Save.data.settings.cockpit = false
 	# Premium perks.
 	var sail := Racer.new()
 	race.add_child(sail)

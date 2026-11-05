@@ -23,6 +23,7 @@ var trail_color := Color(0.3, 0.9, 1.0)
 var breath: Node3D = null            # Quasar Dragon fire while boosting
 var rim_r := 1.9                     # hull radius (for strap-on parts)
 var top_y := 0.4                     # height of the hull top
+var eye := Vector3(0, 1.0, 0)        # pilot's eye in pivot space (cockpit camera)
 
 # Set by the racer every frame.
 var mood := 0
@@ -238,6 +239,7 @@ func build(look: Dictionary) -> void:
 	pivot.add_child(pilot_model)
 	_pilot_lod = float(_qs.lod) * 0.45
 	pilot_model.build(pilot, h, bool(_qs.face), _pilot_lod)
+	eye = pilot_model.position + Vector3(0, h * 0.2, -h * 0.75)
 	var glass := MeshInstance3D.new()
 	var dome_pts := []
 	for k in 9:
@@ -823,6 +825,20 @@ func _particles(pos: Vector3, c: Color, amount: int, life: float, size: float) -
 	p.mesh = qm
 	pivot.add_child(p)
 	return p
+
+
+## Put the pilot on its own render layer so a cockpit camera can leave its
+## own pilot out (other cameras still see them).
+func set_pilot_layer(mask: int) -> void:
+	if pilot_model:
+		_set_layers(pilot_model, mask)
+
+
+static func _set_layers(n: Node, mask: int) -> void:
+	if n is VisualInstance3D:
+		(n as VisualInstance3D).layers = mask
+	for c in n.get_children():
+		_set_layers(c, mask)
 
 
 ## Show a hit: rockets and mines throw the craft up, a comet squashes it,

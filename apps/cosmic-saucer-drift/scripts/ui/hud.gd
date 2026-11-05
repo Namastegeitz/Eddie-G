@@ -29,6 +29,8 @@ var _rng := RandomNumberGenerator.new()
 var _lines: ColorRect
 var _lines_mat: ShaderMaterial
 var _lines_amt := 0.0
+var cockpit_tab: SideTab
+var _cockpit := false
 
 
 func setup(p_race: Node, p_racer: Racer, is_compact: bool) -> void:
@@ -107,7 +109,23 @@ func setup(p_race: Node, p_racer: Racer, is_compact: bool) -> void:
 	_toasts.alignment = BoxContainer.ALIGNMENT_BEGIN
 	add_child(_toasts)
 	UiKit.place(_toasts, Vector2(0.5, 0.5), Vector2(-350, -10 * k), Vector2(700, 140))
+	# COCKPIT tab on the left edge: first-person on/off at any time.
+	cockpit_tab = SideTab.new()
+	cockpit_tab.k = k
+	add_child(cockpit_tab)
+	UiKit.place(cockpit_tab, Vector2(0, 0.38), Vector2(0, 0), Vector2(48, 168) * k)
 	racer.event.connect(_on_event)
+
+
+func set_cockpit(on: bool) -> void:
+	_cockpit = on
+	if cockpit_tab:
+		cockpit_tab.set_on(on)
+	_overlay.queue_redraw()
+
+
+func is_cockpit() -> bool:
+	return _cockpit
 
 
 ## Speed lines on (medium and up) or the cheap edge streaks (low).
@@ -230,11 +248,72 @@ func _process(dt: float) -> void:
 	_overlay.queue_redraw()
 
 
+## First-person frame: canopy arch with glass glints across the top, a
+## dashboard with a speed dial and boost lamp at the bottom, and a blue edge
+## glow while the Ion Shield is up (the bubble can't be seen from inside).
+func _draw_cockpit(s: Vector2, k: float) -> void:
+	var o := _overlay
+	var cx := s.x * 0.5
+	var rx := s.x * 0.62
+	var ry := s.y * 0.95
+	var cy := s.y * 0.98
+	var arch := PackedVector2Array()
+	for i in 49:
+		var a := lerpf(PI, TAU, float(i) / 48.0)
+		var p := Vector2(cx + cos(a) * rx, cy + sin(a) * ry)
+		if p.x >= -2.0 and p.x <= s.x + 2.0:
+			arch.append(p)
+	if arch.size() >= 3:
+		var frame := PackedVector2Array([Vector2(0, 0), Vector2(0, arch[0].y)])
+		frame.append_array(arch)
+		frame.append_array([Vector2(s.x, arch[arch.size() - 1].y), Vector2(s.x, 0)])
+		o.draw_colored_polygon(frame, Color(0.03, 0.03, 0.08, 0.55))
+		o.draw_polyline(arch, Color(0.2, 0.21, 0.28, 0.95), 12.0 * k)
+		o.draw_polyline(arch, Color(0.3, 0.92, 1.0, 0.35), 2.0 * k)
+	for g in [[0.13, 0.17, 0.24, 0.07], [0.18, 0.23, 0.27, 0.11]]:
+		o.draw_line(Vector2(s.x * g[0], s.y * g[1]), Vector2(s.x * g[2], s.y * g[3]), Color(1, 1, 1, 0.09), 7.0 * k)
+	# Dashboard.
+	var dash := PackedVector2Array()
+	for i in 25:
+		var t := float(i) / 24.0
+		dash.append(Vector2(lerpf(s.x * 0.25, s.x * 0.75, t), s.y - sin(t * PI) * s.y * 0.13 - 2.0))
+	var fill := dash.duplicate()
+	fill.append_array([Vector2(s.x * 0.75, s.y), Vector2(s.x * 0.25, s.y)])
+	o.draw_colored_polygon(fill, Color(0.04, 0.04, 0.1, 0.72))
+	o.draw_polyline(dash, Color(0.3, 0.92, 1.0, 0.55), 3.0 * k)
+	# Speed dial on the left of the dash.
+	var dc := Vector2(s.x * 0.315, s.y - s.y * 0.05)
+	var dr := s.y * 0.04
+	var a0 := deg_to_rad(150.0)
+	var a1 := deg_to_rad(390.0)
+	var spd := clampf(racer.fwd_speed / maxf(racer.max_speed * 1.3, 1.0), 0.0, 1.0)
+	o.draw_arc(dc, dr, a0, a1, 24, Color(1, 1, 1, 0.25), 3.0 * k)
+	o.draw_arc(dc, dr, a0, lerpf(a0, a1, spd), 24, UiKit.CYAN if racer.boost_time <= 0.0 else UiKit.PINK, 4.0 * k)
+	var na := lerpf(a0, a1, spd)
+	o.draw_line(dc, dc + Vector2(cos(na), sin(na)) * dr * 0.9, Color(1, 0.4, 0.3), 2.5 * k)
+	# Boost / drift lamp on the right.
+	var lc := Vector2(s.x * 0.685, s.y - s.y * 0.05)
+	var lamp := Color(0.25, 0.25, 0.3)
+	if racer.boost_time > 0.0:
+		lamp = UiKit.PINK
+	elif racer.drift_tier > 0:
+		lamp = SaucerModel.SPARK_COLORS[racer.drift_tier - 1]
+	o.draw_circle(lc, dr * 0.55, lamp)
+	o.draw_arc(lc, dr * 0.75, 0, TAU, 20, Color(1, 1, 1, 0.3), 2.0 * k)
+	# Shield glow round the edges.
+	if racer.shield_time > 0.0:
+		var a := 0.12 + 0.06 * sin(Time.get_ticks_msec() * 0.01)
+		for i in 5:
+			o.draw_rect(Rect2(Vector2.ZERO, s), Color(0.35, 0.8, 1.0, a / 5.0), false, 14.0 * (i + 1))
+
+
 func _draw_overlay() -> void:
 	var s := _overlay.size
 	if s.x < 2.0 or s.y < 2.0:
 		return
 	var k := 0.72 if compact else 1.0
+	if _cockpit and not racer.finished:
+		_draw_cockpit(s, k)
 	# Energy cells.
 	var cells := 10
 	var cw := 34.0 * k

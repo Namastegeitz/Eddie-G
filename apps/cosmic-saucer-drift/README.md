@@ -77,6 +77,18 @@ falling ice/glass/iron, lava eruptions, supersonic gusts), one hidden
 shortcut, three Star Shards, and Reverse + Mirror versions that unlock when
 you win it: 14 tracks, 42 layouts.
 
+## Cockpit view
+
+A **COCKPIT** tab sits on the left edge of the race screen. Tap it (or press
+V, or Back on a gamepad) at any moment in any race to fly first-person from
+your pilot's seat, and again to go back to the chase camera. Inside you see
+your craft's deck ahead of you, a canopy frame and a dashboard with a speed
+dial and boost lamp; the view banks into turns, follows part of a drift, and
+stays level through hits and tricks. Your own pilot is hidden only from your
+view (in split-screen each player has their own tab). The choice is
+remembered (also in Settings and the pause menu). The race simulator switches
+the cockpit on and off on all 42 layouts and checks the camera every time.
+
 ## Power-ups and lineups
 
 Eight power-ups from glowing crates: **Homing Rocket**, **Pulse Laser**

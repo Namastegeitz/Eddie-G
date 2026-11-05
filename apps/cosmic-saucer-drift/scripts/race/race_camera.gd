@@ -22,6 +22,13 @@ var _rng := RandomNumberGenerator.new()
 var _hidden: Array[Racer] = []
 var _orbit := -1.0
 var _tp := Vector3.ZERO       # target position this frame (interpolated)
+var cockpit := false          # first-person view from the pilot's seat
+var pilot_mask := 0           # render layer of the target's own pilot (hidden in cockpit)
+var _ck_fwd := Vector3.FORWARD
+var _ck_up := Vector3.UP
+var _ck_roll := 0.0
+
+const ALL_LAYERS := 0xFFFFF
 
 const NEAR_HIDE := 3.2
 
@@ -33,6 +40,31 @@ func _ready() -> void:
 	far = 7000.0
 	near = 0.3
 	fov = 72.0
+
+
+## Switch between the chase camera and the cockpit (first person).
+func set_cockpit(on: bool) -> void:
+	cockpit = on
+	if target:
+		_ck_fwd = target.heading
+		_ck_up = target.up
+	if on:
+		_restore_hidden()
+
+
+## World position of the target pilot's eyes this frame.
+func eye_position() -> Vector3:
+	var xf := target.get_global_transform_interpolated()
+	var m := target.model
+	if m == null or m.pivot == null:
+		return xf.origin + xf.basis.y * 1.0
+	# Follow the pivot's bob and lean, but not spins or trick flips.
+	# Pivot angles aren't wrapped after spins and tricks (a full turn can be
+	# left as 2π), so wrap before taking a fraction of them.
+	var lean := Basis.from_euler(Vector3(0.0, wrapf(m.pivot.rotation.y, -PI, PI) * 0.5, wrapf(m.pivot.rotation.z, -PI, PI) * 0.4))
+	if target.spin_time > 0.0 or target.trick_time > 0.0:
+		lean = Basis.IDENTITY
+	return xf.origin + xf.basis * (Vector3(0, m.pivot.position.y, 0) + lean * m.eye)
 
 
 func snap() -> void:
@@ -90,6 +122,13 @@ func _process(dt: float) -> void:
 		_dip += _dip_v * h
 		rem -= h
 	var want := _desired()
+	# Own pilot hidden only while actually looking out of the cockpit (the
+	# countdown sweep and the finish swing show them).
+	var first_person := cockpit and intro <= 0.0 and not target.finished
+	var mask := (ALL_LAYERS & ~pilot_mask) if first_person else ALL_LAYERS
+	if cull_mask != mask:
+		cull_mask = mask
+		near = 0.05 if first_person else 0.3
 	if intro > 0.0:
 		intro = maxf(0.0, intro - dt)
 		var k := intro / 2.4
@@ -98,6 +137,9 @@ func _process(dt: float) -> void:
 		var orbit := _tp + (-target.heading * cos(a) + side * sin(a)) * lerpf(8.0, 14.0, k) + Vector3.UP * lerpf(3.0, 6.0, k)
 		global_position = orbit
 		look_at(_tp + Vector3.UP * 0.8, Vector3.UP)
+		return
+	if cockpit and not target.finished:
+		_cockpit_process(dt, ratio)
 		return
 	# After the finish: swing round to the front to see the pilot celebrate.
 	if target.finished:
@@ -137,6 +179,49 @@ func _process(dt: float) -> void:
 		h_offset = 0.0
 		v_offset = 0.0
 	_hide_close()
+
+
+func _cockpit_process(dt: float, ratio: float) -> void:
+	# Look where the craft is going, with part of the drift angle so a slide
+	# feels like a slide, and bank into turns; level and steady through hits
+	# and trick spins.
+	var steady := target.spin_time > 0.0 or target.trick_time > 0.0
+	var want_fwd := target.heading
+	if not steady and target.model and target.model.pivot:
+		want_fwd = want_fwd.rotated(target.up.normalized(), wrapf(target.model.pivot.rotation.y, -PI, PI) * 0.5)
+	if target.in_look_back:
+		want_fwd = -want_fwd
+	_ck_fwd = _ck_fwd.lerp(want_fwd, 1.0 - exp(-16.0 * dt)).normalized()
+	_ck_up = _ck_up.lerp(target.up, 1.0 - exp(-10.0 * dt)).normalized()
+	var roll := 0.0 if steady else (-target.in_steer * 0.07 - float(target.drift_dir) * 0.05)
+	_ck_roll = lerpf(_ck_roll, roll, 1.0 - exp(-6.0 * dt))
+	var side := _ck_fwd.cross(_ck_up).normalized()
+	var up := _ck_up.rotated(_ck_fwd, _ck_roll) if side.length() > 0.1 else _ck_up
+	var eye := eye_position()
+	if _ck_fwd.cross(up).length() > 0.05:
+		global_transform = Transform3D(Basis.looking_at(_ck_fwd, up), eye)
+	var boosting := target.boost_time > 0.0
+	if boosting and not _was_boost:
+		_kick = 9.0
+	_was_boost = boosting
+	_kick = maxf(0.0, _kick - dt * 18.0)
+	var want_fov := 76.0 + ratio * 12.0 + (8.0 if boosting else 0.0)
+	fov = clampf(lerpf(fov, want_fov, 1.0 - exp(-4.0 * dt)) + _kick * dt * 6.0, 60.0, 105.0)
+	if shake > 0.0:
+		shake = maxf(0.0, shake - dt * 1.8)
+		var s := shake * shake * 0.35
+		h_offset = _rng.randf_range(-s, s)
+		v_offset = _rng.randf_range(-s, s)
+	else:
+		h_offset = 0.0
+		v_offset = 0.0
+
+
+func _restore_hidden() -> void:
+	for r in _hidden:
+		if is_instance_valid(r) and r.model:
+			r.model.visible = true
+	_hidden.clear()
 
 
 ## Hide rivals pressed against the lens (single-screen only; in split-screen

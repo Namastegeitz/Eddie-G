@@ -30,6 +30,7 @@ var _stick_gas := false
 var _stick_brake := false
 var _was_pressed := {}     # button -> pressed last refresh (for haptic ticks)
 var _sig := ""             # what was drawn last frame; redraw only on change
+var blockers: Array[Control] = []   # e.g. the COCKPIT tab: touches there aren't the joystick
 
 
 func _ready() -> void:
@@ -95,7 +96,7 @@ func _input(e: InputEvent) -> void:
 	if e is InputEventScreenTouch:
 		if e.pressed:
 			_touches[e.index] = e.position
-			if _mode() == "joystick" and _stick_id < 0 and stick_zone().has_point(e.position) and not _on_button(e.position):
+			if _mode() == "joystick" and _stick_id < 0 and stick_zone().has_point(e.position) and not _on_button(e.position) and not _blocked(e.position):
 				_stick_id = e.index
 				var r := stick_radius()
 				_stick_base = Vector2(clampf(e.position.x, r, size.x - r), clampf(e.position.y, r, size.y - r))
@@ -116,6 +117,13 @@ func _input(e: InputEvent) -> void:
 			if d.length() > r:
 				_stick_base = _stick_knob - d.normalized() * r
 		_refresh()
+
+
+func _blocked(p: Vector2) -> bool:
+	for b in blockers:
+		if is_instance_valid(b) and b.is_visible_in_tree() and b.get_global_rect().grow(8.0).has_point(p):
+			return true
+	return false
 
 
 func _on_button(p: Vector2) -> bool:

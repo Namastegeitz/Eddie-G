@@ -101,6 +101,7 @@ func _ready() -> void:
 	hazards.setup(self)
 	hazards.reset_physics_interpolation()
 	_setup_views()
+	_setup_cockpits()
 	apply_quality()
 	_audio = RaceAudio.new()
 	_audio.name = "RaceAudio"
@@ -296,6 +297,51 @@ func _setup_views() -> void:
 		get_viewport().disable_3d = true
 		for c in cams:
 			c.snap()
+
+
+# ---------------------------------------------------------------- cockpit view
+const PILOT_LAYER_BIT := 10     # render layer 11/12 hold player 1/2's own pilot
+
+
+## Gives each viewed racer's pilot its own render layer (so their cockpit
+## camera can leave it out), and starts in cockpit if that was last used.
+func _setup_cockpits() -> void:
+	for k in cams.size():
+		var c := cams[k]
+		if c.target == null or c.target.model == null:
+			continue
+		var bit := 1 << (PILOT_LAYER_BIT + k)
+		c.target.model.set_pilot_layer(bit)
+		c.pilot_mask = bit
+		var h := hud_for(c.target)
+		if h and h.cockpit_tab:
+			h.cockpit_tab.pressed.connect(toggle_cockpit.bind(c.target))
+			if touch:
+				touch.blockers.append(h.cockpit_tab)
+		if k == 0 and bool(Save.setting("cockpit")) and not autopilot:
+			_set_cockpit(c.target, true)
+
+
+func cockpit_on(r: Racer) -> bool:
+	var c := cam_for(r)
+	return c != null and c.cockpit
+
+
+## Switch a player's view between chase camera and cockpit, any time.
+func toggle_cockpit(r: Racer) -> void:
+	_set_cockpit(r, not cockpit_on(r))
+	if cams.size() == 1 or (not cams.is_empty() and cams[0].target == r):
+		Save.set_setting("cockpit", cockpit_on(r))
+
+
+func _set_cockpit(r: Racer, on: bool) -> void:
+	var c := cam_for(r)
+	if c == null:
+		return
+	c.set_cockpit(on)
+	var h := hud_for(r)
+	if h:
+		h.set_cockpit(on)
 
 
 ## Auto quality: if the game runs below ~28 fps for 3 seconds, step the
@@ -845,8 +891,19 @@ func _unhandled_input(e: InputEvent) -> void:
 	var pause := false
 	if e is InputEventKey and e.pressed and not e.echo:
 		pause = e.physical_keycode == KEY_ESCAPE or e.physical_keycode == KEY_P
+		# Cockpit view: V for player one, M for player two.
+		if (e.physical_keycode == KEY_V or e.physical_keycode == KEY_M) and not cams.is_empty():
+			var ci := 0 if e.physical_keycode == KEY_V else 1
+			if ci < cams.size() and cams[ci].target:
+				toggle_cockpit(cams[ci].target)
+				get_viewport().set_input_as_handled()
 	elif e is InputEventJoypadButton and e.pressed:
 		pause = e.button_index == JOY_BUTTON_START
+		if e.button_index == JOY_BUTTON_BACK:
+			for c in cams:
+				if c.target and (cams.size() == 1 or e.device in InputRouter._pad_for(c.target.slot)):
+					toggle_cockpit(c.target)
+					break
 	if pause:
 		toggle_pause()
 		get_viewport().set_input_as_handled()

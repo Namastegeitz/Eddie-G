@@ -63,10 +63,12 @@ func _run(track: String, variant: int, laps: int, cls: int) -> void:
 	var frames := 0
 	var last_dist := {}
 	var stuck := {}
+	var ck := {"checks": 0, "bad": 0, "why": ""}
 	var t0 := Time.get_ticks_usec()
 	while not state.finished and frames < limit:
 		await get_tree().physics_frame
 		frames += 1
+		_cockpit_check(race, frames, ck)
 		if frames % 300 == 0:
 			for r in race.racers:
 				var d: float = last_dist.get(r.idx, -99999.0)
@@ -93,7 +95,9 @@ func _run(track: String, variant: int, laps: int, cls: int) -> void:
 	for k in stuck:
 		if stuck[k] >= 2:
 			stuck_n += 1
-	var ok := fin == race.racers.size() and stuck_n == 0
+	var ok: bool = fin == race.racers.size() and stuck_n == 0 and int(ck.bad) == 0 and int(ck.checks) > 0
+	if ck.bad > 0 or ck.checks == 0:
+		print("      cockpit view: %d checks, %d bad %s" % [ck.checks, ck.bad, ck.why])
 	if not ok:
 		failures += 1
 	print("%s %-16s v%d len=%5.0fm laps=%d finished=%d/%d best=%6.1fs (%.1f m/s) worst=%6.1fs rescues=%d stuck=%d tick=%.2fms\n      %s" % [
@@ -116,3 +120,45 @@ func _run(track: String, variant: int, laps: int, cls: int) -> void:
 	race.queue_free()
 	await get_tree().process_frame
 	await get_tree().process_frame
+
+
+## Cockpit (first-person) view on this layout: switched on and off during
+## the race; on, the camera must sit at the pilot's eyes and look where the
+## craft is going; off, it must be back behind the craft.
+func _cockpit_check(race: Race, frame: int, ck: Dictionary) -> void:
+	if race.cams.is_empty() or not race.racing:
+		return
+	var cam: RaceCamera = race.cams[0]
+	var r: Racer = cam.target
+	if r == null or r.finished:
+		return
+	var ph := frame % 600
+	if ph == 120:
+		race._set_cockpit(r, true)
+	elif ph == 420:
+		race._set_cockpit(r, false)
+	elif ph == 160 or ph == 300:
+		if r.rescue_time > 0.0 or r.spin_time > 0.0:
+			return
+		ck.checks += 1
+		var eye := cam.eye_position()
+		var d_eye := cam.global_position.distance_to(eye)
+		var d_craft := cam.global_position.distance_to(r.get_global_transform_interpolated().origin)
+		var look := -cam.global_basis.z
+		var along := look.dot(r.heading)
+		if OS.get_cmdline_user_args().has("--verbose"):
+			print("    ck ph=%d eye=%.2f craft=%.2f along=%.2f ckfwd.heading=%.2f lookback=%s cockpit=%s intro=%.2f spd=%.1f" % [ph, d_eye, d_craft, along, cam._ck_fwd.dot(r.heading), r.in_look_back, cam.cockpit, cam.intro, r.velocity.length()])
+		# The camera moved on the last rendered frame; the craft may have moved
+		# one physics step since, so allow for that.
+		var step: float = r.velocity.length() / 60.0 * 1.5
+		if d_eye > 0.6 + step or d_craft > 3.0 + step or along < 0.6 or (cam.cull_mask & cam.pilot_mask) != 0:
+			ck.bad += 1
+			ck.why = "(eye %.2f m, craft %.2f m, facing %.2f, mask %d)" % [d_eye, d_craft, along, cam.cull_mask & cam.pilot_mask]
+	elif ph == 500:
+		if r.rescue_time > 0.0:
+			return
+		ck.checks += 1
+		var d := cam.global_position.distance_to(r.global_position)
+		if d < 3.5 or cam.cockpit:
+			ck.bad += 1
+			ck.why = "(chase camera only %.2f m back)" % d
