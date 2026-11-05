@@ -32,10 +32,22 @@ func _ready() -> void:
 		Store.backend.clear_receipts()
 	Save.wipe()
 	Ads.auto_complete = true
-	if OS.get_cmdline_user_args().has("--core"):
-		# quick loop while tuning the sim: just the core crosser checks
-		_phase1()
-		print("phase audit (core): %d passed, %d failed" % [passed, failed])
+	var only := ""
+	for a in OS.get_cmdline_user_args():
+		if a == "--core":
+			only = "core"
+		elif a.begins_with("--only="):
+			only = a.substr(7)
+	if only != "":
+		# quick loops while tuning: just one section
+		match only:
+			"core":
+				_phase1()
+			"fpv":
+				await _first_person()
+			"art":
+				await _phase7()
+		print("phase audit (%s): %d passed, %d failed" % [only, passed, failed])
 		Save.wipe()
 		Save.path = real_save
 		Save.load_game()
@@ -1086,6 +1098,23 @@ class PainterProbe extends Node2D:
 
 
 # ====================================================================== first person
+## One physical tap as the engine delivers it: the touch and the mouse
+## click emulated from it (finger), or the click and its emulated touch.
+func _tap(pos: Vector2, finger: bool) -> void:
+	for down in [true, false]:
+		var t := InputEventScreenTouch.new()
+		t.position = pos
+		t.pressed = down
+		var m := InputEventMouseButton.new()
+		m.position = pos
+		m.global_position = pos
+		m.button_index = MOUSE_BUTTON_LEFT
+		m.pressed = down
+		var pair: Array = [t, m] if finger else [m, t]
+		for e in pair:
+			get_viewport().push_input(e, true)
+
+
 func _first_person() -> void:
 	begin("First-person view")
 	Save.wipe()
@@ -1128,6 +1157,21 @@ func _first_person() -> void:
 	key.pressed = true
 	get_viewport().push_input(key, true)
 	check("V switches back to bird's-eye", gs.view == "bird" and gs.wv.visible and not gs.wv3.visible)
+	# Real taps: a finger tap reaches the button as a touch AND an emulated
+	# mouse click (a mouse click likewise also arrives as a touch). It must
+	# switch exactly once and must not also hop the animal.
+	gs.started = true
+	var row_before: int = gs.sim.row
+	var eye_c: Vector2 = gs.eye_btn.get_global_rect().get_center()
+	_tap(eye_c, true)
+	for i in 3:
+		await get_tree().process_frame
+	check("a finger tap on the eye button switches to first person (once, no hop)", gs.view == "fpv" and gs.sim.row == row_before and not gs.sim.hopping, "%s row %d" % [gs.view, gs.sim.row])
+	await get_tree().create_timer(0.35).timeout
+	_tap(eye_c, false)
+	for i in 3:
+		await get_tree().process_frame
+	check("a mouse click on the eye button switches back (once, no hop)", gs.view == "bird" and gs.sim.row == row_before and not gs.sim.hopping, "%s row %d" % [gs.view, gs.sim.row])
 	gs.set_view("fpv")
 	gs.sim.row = 0
 	for i in 60:

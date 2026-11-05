@@ -3,6 +3,26 @@ extends RefCounted
 ## Small drawn controls shared by the screens.
 
 
+## One finger tap reaches a control twice: as a touch and as the mouse click
+## the engine emulates from it (a mouse click likewise also arrives as an
+## emulated touch). Toggles such as the eye button must react once, or they
+## switch on and straight back off. True for the first press of a tap.
+static func tap(ctrl: Control, event: InputEvent) -> bool:
+	var down: bool = (event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT) \
+		or (event is InputEventScreenTouch and event.pressed)
+	if not down:
+		return false
+	var now := Time.get_ticks_msec()
+	if now - int(ctrl.get_meta("last_tap_ms", -100000)) < 250:
+		return false
+	ctrl.set_meta("last_tap_ms", now)
+	return true
+
+
+## Any press or release from a finger or the mouse's left button.
+static func is_pointer(event: InputEvent) -> bool:
+	return event is InputEventScreenTouch or (event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT)
+
 class Portrait extends Control:
 	## An animal drawn by AnimalPainter, optionally as a dark silhouette.
 	var animal: Dictionary = {}
@@ -207,14 +227,10 @@ class AbilityButton extends Control:
 			queue_redraw()
 
 	func _gui_input(event: InputEvent) -> void:
-		var down := false
-		if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
-			down = true
-		elif event is InputEventScreenTouch and event.pressed:
-			down = true
-		if down:
+		if Widgets.is_pointer(event):
 			accept_event()
-			pressed.emit()
+			if Widgets.tap(self, event):
+				pressed.emit()
 
 	func _draw() -> void:
 		var c := size * 0.5
@@ -362,9 +378,10 @@ class EyeButton extends Control:
 		queue_redraw()
 
 	func _gui_input(event: InputEvent) -> void:
-		if (event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT) or (event is InputEventScreenTouch and event.pressed):
+		if Widgets.is_pointer(event):
 			accept_event()
-			pressed.emit()
+			if Widgets.tap(self, event):
+				pressed.emit()
 
 	func _draw() -> void:
 		var c := Vector2(size.x * 0.5, size.y * 0.42)

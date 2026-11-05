@@ -632,7 +632,7 @@ func _unhandled_input(event: InputEvent) -> void:
 				return
 			_touch = {"active": true, "start": event.position, "time": Time.get_ticks_msec(), "fired": false}
 		elif _touch.active:
-			if not _touch.fired:
+			if not _touch.fired and not _over_hud(event.position):
 				sim.hop(Vector2i(0, 1))
 			_touch.active = false
 	elif event is InputEventScreenDrag and _touch.active and not _touch.fired:
