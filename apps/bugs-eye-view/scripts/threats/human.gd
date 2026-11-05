@@ -70,12 +70,31 @@ const BODY_Z := 2.0
 const THIGH := 17.5
 const SHIN := 17.0
 const ANKLE := Vector3(0, 3.6, 2.2)
+const SHOULDER_Y := 59.5
 var _shoulders: Array[Node3D] = []
 var _elbows: Array[Node3D] = []
 var _head: Node3D
 var _legs: Node3D
 var _leg_parts: Array = []
 var _breath := 0.0
+# Lifelike touches: smooth travel, hip sway, blinking, eyes that lead the head.
+const BODY_SMOOTH_TIME := 0.16
+var _body_vel := Vector3.ZERO
+# Each walking step, the body travels at a steady pace from where it was to
+# the middle of the new stance (instead of chasing the feet in bursts).
+var _glide_from := Vector3.ZERO
+var _glide_to := Vector3.ZERO
+var _glide_t := 0.0
+var _glide_dur := 0.0
+var _sway := 0.0
+var _lids: Node3D
+var _gaze: Node3D
+var _blink_cd := 3.0
+var _blink_t := 0.0
+var _glance := Vector2.ZERO
+var _glance_cd := 2.0
+var _snap_look := 0.0
+var _last_state: int = AlertState.UNAWARE
 
 
 func _setup() -> void:
@@ -92,7 +111,15 @@ func _setup() -> void:
 				_shoulders.append(sh)
 				_elbows.append(sh.get_node_or_null("Elbow") as Node3D)
 		_head = _torso.get_node_or_null("Head") as Node3D
+		if _head:
+			_lids = _head.get_node_or_null("Lids") as Node3D
+			_gaze = _head.get_node_or_null("Gaze") as Node3D
 	_legs = get_node_or_null("Legs") as Node3D
+	# Posed every frame: ride on the smoothed body (and feet).
+	if _torso:
+		_torso.physics_interpolation_mode = Node.PHYSICS_INTERPOLATION_MODE_OFF
+	if _legs:
+		_legs.physics_interpolation_mode = Node.PHYSICS_INTERPOLATION_MODE_OFF
 	if _legs:
 		for side in ["L", "R"]:
 			_leg_parts.append([_legs.get_node_or_null("Thigh" + side), _legs.get_node_or_null("Knee" + side),
@@ -108,6 +135,9 @@ func _setup() -> void:
 
 
 func _plant_feet(center: Vector3, yaw: float) -> void:
+	# Standing somewhere new: no step glide carries over.
+	_glide_dur = 0.0
+	_body_vel = Vector3.ZERO
 	var side := Basis(Vector3.UP, yaw).x * foot_spacing * 0.5
 	if left_foot:
 		left_foot.plant_at(center - side, yaw)
@@ -128,6 +158,9 @@ func _on_presence_changed(now: bool) -> void:
 		_body_pos = route[0]
 		_route_i = 1 % route.size()
 		_plant_feet(route[0], rotation.y)
+		_body_vel = Vector3.ZERO
+		_glide_dur = 0.0
+		reset_physics_interpolation()
 
 
 func _think(delta: float) -> void:
@@ -163,10 +196,29 @@ func _think(delta: float) -> void:
 
 
 func _update_torso(delta: float) -> void:
-	if left_foot and right_foot:
+	if _glide_dur > 0.0:
+		_glide_t += delta * speed_mult()
+		var gk := clampf(_glide_t / _glide_dur, 0.0, 1.0)
+		var g := _glide_from.lerp(_glide_to, gk)
+		_body_pos = Vector3(g.x, global_position.y, g.z)
+		if gk >= 1.0:
+			_glide_dur = 0.0
+	elif left_foot and right_foot:
 		var mid := (left_foot.global_position + right_foot.global_position) * 0.5
 		_body_pos = Vector3(mid.x, global_position.y, mid.z)
-	global_position = global_position.lerp(_body_pos, clampf(6.0 * delta, 0.0, 1.0))
+	# A critically damped follow: the body glides at a steady pace instead of
+	# surging with each footfall.
+	global_position = smooth_damp(global_position, _body_pos, delta)
+
+
+func smooth_damp(from: Vector3, to: Vector3, delta: float) -> Vector3:
+	var omega := 2.0 / BODY_SMOOTH_TIME
+	var x := omega * delta
+	var e := 1.0 / (1.0 + x + 0.48 * x * x + 0.235 * x * x * x)
+	var change := from - to
+	var temp := (_body_vel + omega * change) * delta
+	_body_vel = (_body_vel - omega * temp) * e
+	return to + (change + temp) * e
 
 
 # --- Walking ----------------------------------------------------------------
@@ -212,7 +264,12 @@ func _walk_towards(target: Vector3, delta: float, cadence: float) -> void:
 	var step := minf(stride, dist + stride * 0.5)
 	var land := _body_pos + dir * step * 0.75 + side
 	land.y = target.y
-	foot.step_to(land, yaw, cadence * 0.85)
+	foot.step_to(land, yaw, cadence * 0.85, true)
+	var stance := right_foot if foot == left_foot else left_foot
+	_glide_from = _body_pos
+	_glide_to = (stance.global_position + land) * 0.5
+	_glide_t = 0.0
+	_glide_dur = cadence
 	_left_next = not _left_next
 
 
@@ -268,6 +325,7 @@ func _stomp(target: Vector3, windup: float) -> void:
 	var to := target - _body_pos
 	var yaw := atan2(-to.x, -to.z) if to.length() > 0.5 else foot.yaw
 	foot.step_to(Vector3(target.x, foot.global_position.y, target.z), yaw, windup)
+	_glide_dur = 0.0
 	_left_next = not _left_next
 
 
@@ -347,42 +405,105 @@ func pose_body(delta: float) -> void:
 		if _elbows[i]:
 			_elbows[i].rotation.x = lerp_angle(_elbows[i].rotation.x, elbow_x, k)
 	if _head:
-		var yaw_t := 0.0
-		var pitch_t := -0.12
-		if alert.state > AlertState.UNAWARE and alert.has_target:
-			var local := global_transform.affine_inverse() * alert.last_known
-			var from_head := local - Vector3(0, 70, BODY_Z) - _torso.position
-			yaw_t = clampf(atan2(-from_head.x, -from_head.z), -0.9, 0.9)
-			pitch_t = clampf(atan2(from_head.y, Vector2(from_head.x, from_head.z).length()), -0.8, 0.3)
-		elif activity == &"read":
-			pitch_t = -0.3 if _peek <= 0.0 else 0.0
-			yaw_t = sin(_breath * 2.5) * 0.8 if _peek > 0.0 else 0.0
-		elif activity == &"nap":
-			pitch_t = -0.65
-			yaw_t = 0.25
-		elif activity in [&"cook", &"dishes", &"kneel", &"water"]:
-			pitch_t = -0.5
-		elif flustered > 0.0:
-			yaw_t = sin(_breath * 9.0) * 0.7
-		_head.rotation.y = lerp_angle(_head.rotation.y, yaw_t, clampf(5.0 * delta, 0.0, 1.0))
-		_head.rotation.x = lerp_angle(_head.rotation.x, pitch_t, clampf(5.0 * delta, 0.0, 1.0))
+		_pose_head(delta)
 	var base: Vector3 = pose[0] if not pose.is_empty() else Vector3.ZERO
 	_torso_base = _torso_base.lerp(base, clampf(4.0 * delta, 0.0, 1.0))
-	_torso.position = _torso_base + Vector3(0, sin(_breath * 1.7) * 0.15 - absf(swing) * 1.2, 0)
+	# Weight goes onto the standing foot: the hips sway over it as the other
+	# swings; standing still, the weight drifts slowly from foot to foot.
+	var sway_t := 0.0
+	var lk := left_foot.swing_progress() if left_foot else -1.0
+	var rk := right_foot.swing_progress() if right_foot else -1.0
+	if lk >= 0.0:
+		sway_t = sin(PI * lk)
+	elif rk >= 0.0:
+		sway_t = -sin(PI * rk)
+	elif pose.is_empty() and alert.state == AlertState.UNAWARE:
+		sway_t = sin(_breath * 0.45) * 0.35
+	_sway = lerpf(_sway, sway_t, clampf(6.0 * delta, 0.0, 1.0))
+	_torso.position = _torso_base + Vector3(_sway * 0.8, sin(_breath * 1.7) * 0.15 - absf(swing) * 1.2, 0)
+	# The shoulders twist against the stride; a slight lean over the stance foot.
+	_torso.rotation.y = lerp_angle(_torso.rotation.y, swing * 0.18 if pose.is_empty() else 0.0, k)
+	if not is_stunned:
+		_torso.rotation.z = lerp_angle(_torso.rotation.z, -_sway * 0.035, k)
+	# Breathing lifts the shoulders a touch.
+	for sh in _shoulders:
+		sh.position.y = SHOULDER_Y + sin(_breath * 1.7) * 0.18
 	_pose_legs(fwd)
+
+
+## Head and eyes: the eyes jump to what they're after first, the head follows.
+## Calm people glance around now and then and blink; a sudden noise gets a
+## quick double take.
+func _pose_head(delta: float) -> void:
+	if alert.state != _last_state:
+		if _last_state == AlertState.UNAWARE and alert.state > AlertState.UNAWARE:
+			_snap_look = 0.5
+		_last_state = alert.state
+	_snap_look = maxf(_snap_look - delta, 0.0)
+	var yaw_t := 0.0
+	var pitch_t := -0.12
+	var calm := alert.state == AlertState.UNAWARE and activity == &"" and flustered <= 0.0 and stun_time <= 0.0
+	if alert.state > AlertState.UNAWARE and alert.has_target:
+		var local := global_transform.affine_inverse() * alert.last_known
+		var from_head := local - Vector3(0, 70, BODY_Z) - _torso.position
+		yaw_t = clampf(atan2(-from_head.x, -from_head.z), -0.9, 0.9)
+		pitch_t = clampf(atan2(from_head.y, Vector2(from_head.x, from_head.z).length()), -0.8, 0.3)
+	elif activity == &"read":
+		pitch_t = -0.3 if _peek <= 0.0 else 0.0
+		yaw_t = sin(_breath * 2.5) * 0.8 if _peek > 0.0 else 0.0
+	elif activity == &"nap":
+		pitch_t = -0.65
+		yaw_t = 0.25
+	elif activity in [&"cook", &"dishes", &"kneel", &"water"]:
+		pitch_t = -0.5 + _glance.y * 0.3
+		yaw_t = _glance.x * 0.3
+	elif flustered > 0.0:
+		yaw_t = sin(_breath * 9.0) * 0.7
+	elif calm:
+		yaw_t = _glance.x
+		pitch_t = -0.12 + _glance.y
+	# Glances: every few seconds look somewhere else, or back ahead.
+	_glance_cd -= delta
+	if _glance_cd <= 0.0:
+		_glance_cd = randf_range(1.6, 4.0)
+		# Look somewhere, then usually back ahead (sometimes straight on to
+		# another spot).
+		if _glance == Vector2.ZERO or randf() < 0.35:
+			var side := -signf(_glance.x) if _glance.x != 0.0 else (1.0 if randf() < 0.5 else -1.0)
+			_glance = Vector2(side * randf_range(0.3, 0.8), randf_range(-0.35, 0.08))
+		else:
+			_glance = Vector2.ZERO
+	var rate := 14.0 if _snap_look > 0.0 else 4.5
+	_head.rotation.y = lerp_angle(_head.rotation.y, yaw_t, clampf(rate * delta, 0.0, 1.0))
+	_head.rotation.x = lerp_angle(_head.rotation.x, pitch_t, clampf(rate * delta, 0.0, 1.0))
+	if _gaze:
+		# Eyes lead: they're already where the head is still turning to.
+		var lead := Vector2(wrapf(yaw_t - _head.rotation.y, -PI, PI), pitch_t - _head.rotation.x)
+		var eye := Vector3(clampf(-lead.x * 0.5, -0.22, 0.22), clampf(lead.y * 0.4, -0.16, 0.16), 0)
+		_gaze.position = _gaze.position.lerp(eye, clampf(24.0 * delta, 0.0, 1.0))
+	if _lids:
+		var closed := activity == &"nap" or stun_time > 0.0
+		_blink_cd -= delta
+		if _blink_cd <= 0.0:
+			_blink_t = 0.13
+			# Sometimes a double blink.
+			_blink_cd = 0.25 if randf() < 0.15 else randf_range(2.0, 5.5)
+		_blink_t = maxf(_blink_t - delta, 0.0)
+		_lids.visible = closed or _blink_t > 0.0
 
 
 func _pose_legs(fwd: Vector3) -> void:
 	if _legs == null or _leg_parts.size() < 2:
 		return
 	var feet := [left_foot, right_foot]
+	var body_xf := get_global_transform_interpolated()
 	for i in 2:
 		var f := feet[i] as FootHazard
 		var parts: Array = _leg_parts[i]
 		if f == null or parts[0] == null or parts[2] == null:
 			continue
-		var hip := global_transform * (Vector3((-1.0 if i == 0 else 1.0) * HIP_X, HIP_Y, BODY_Z) + _torso.position)
-		var ankle := f.global_transform * ANKLE
+		var hip := body_xf * (Vector3((-1.0 if i == 0 else 1.0) * HIP_X, HIP_Y, BODY_Z) + _torso.position)
+		var ankle := f.get_global_transform_interpolated() * ANKLE
 		var knee := knee_point(hip, ankle, fwd)
 		_place_bone(parts[0] as Node3D, hip, knee, 19.5)
 		if parts[1]:

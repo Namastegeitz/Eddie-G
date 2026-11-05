@@ -11,6 +11,8 @@ var taken := false
 
 
 func _ready() -> void:
+	# Animated every frame (not by physics): no physics smoothing needed.
+	physics_interpolation_mode = Node.PHYSICS_INTERPOLATION_MODE_OFF
 	add_to_group(Phys.GROUP_CRUMB)
 	collision_layer = Phys.PICKUP
 	collision_mask = Phys.PLAYER

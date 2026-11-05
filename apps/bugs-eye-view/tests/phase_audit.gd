@@ -43,6 +43,8 @@ func _ready() -> void:
 		await _phase13()
 	if only in [0, 14]:
 		await _phase14()
+	if only in [0, 15]:
+		await _phase15()
 	finish("phase audit")
 
 
@@ -786,7 +788,7 @@ func _phase5() -> void:
 	SaveSystem.set_setting("quality", "low")
 	check(Engine.max_fps == 30 and get_viewport().scaling_3d_scale < 0.8 and not GameManager.shadows_enabled(), "low quality caps fps, lowers resolution and drops shadows")
 	SaveSystem.set_setting("quality", "high")
-	check(get_viewport().msaa_3d == Viewport.MSAA_2X and GameManager.shadows_enabled(), "high quality turns on antialiasing and shadows")
+	check(get_viewport().msaa_3d == Viewport.MSAA_4X and GameManager.shadows_enabled(), "high quality turns on antialiasing and shadows")
 	SaveSystem.set_setting("quality", "medium")
 	SaveSystem.set_setting("touch_controls", "on")
 	check(InputRouter.is_touch_mode(), "touch controls can be forced on")
@@ -1449,7 +1451,7 @@ func _phase9() -> void:
 	var h := first_in_group(Phys.GROUP_HUMAN, klvl) as Human
 	h.force_present(true)
 	# Rigid parts are merged per material at build time, so look for materials.
-	var want_mats := {"Torso/Head": ["skin", "hair", "eye_white", "iris", "lips"], "Torso": ["shirt", "jeans", "belt"],
+	var want_mats := {"Torso/Head": ["skin", "hair", "eye_white", "lips"], "Torso/Head/Gaze": ["iris", "pupil"], "Torso": ["shirt", "jeans", "belt"],
 		"Torso/ShoulderL/Elbow/Hand": ["skin"], "Torso/ShoulderR/Elbow": ["skin"], "Legs": ["jeans"]}
 	var missing: PackedStringArray = []
 	for path: String in want_mats.keys():
@@ -1712,6 +1714,9 @@ func _place_human(h: Human, pos: Vector3, yaw: float) -> void:
 	h._body_pos = pos
 	h.rotation.y = yaw
 	h._plant_feet(pos, yaw)
+	h._body_vel = Vector3.ZERO
+	h._glide_dur = 0.0
+	h.reset_physics_interpolation()
 
 
 func _phase11() -> void:
@@ -2523,4 +2528,256 @@ func _phase14() -> void:
 	var culls := (crumb_mesh.find_children("*", "GeometryInstance3D", true, false)[0] as GeometryInstance3D).visibility_range_end
 	crumb_mesh.free()
 	check(culls > 50.0, "small far-away things (crumbs, pickups, props) stop drawing at a distance")
+	await unload(lvl)
+
+
+
+# --- Update: smoother play, lifelike people and pets, high-res graphics ----------
+
+func _phase15() -> void:
+	print("-- Update: smoother play, lifelike people and pets, high-res graphics")
+	SaveSystem.data = SaveSystem.default_data()
+
+	# Smooth at any frame rate: physics interpolation, with per-frame posing
+	# riding on the smoothed bodies.
+	var lvl := await load_level(&"kitchen", &"cockroach")
+	HouseClock.set_hour(13.5)
+	var p := lvl.player
+	p.invuln = 1000.0
+	var cook := first_in_group(Phys.GROUP_HUMAN, lvl) as Human
+	var pup := first_in_group(Phys.GROUP_PET, lvl) as Pet
+	var off := Node.PHYSICS_INTERPOLATION_MODE_OFF
+	check(get_tree().physics_interpolation and p.is_physics_interpolated() and p.visual.physics_interpolation_mode == off
+		and lvl.camera.physics_interpolation_mode == off and cook.get_node("Torso").physics_interpolation_mode == off
+		and cook.get_node("Legs").physics_interpolation_mode == off and pup.get_node("Visual").physics_interpolation_mode == off,
+		"motion is smoothed between physics steps (bugs, people, pets and the camera glide at any frame rate)")
+	p.teleport_to(Transform3D(Basis.IDENTITY, Vector3(40, 0.8, 66)))
+	await get_tree().process_frame
+	check(p.get_global_transform_interpolated().origin.distance_to(Vector3(40, 0.8, 66)) < 0.6,
+		"a teleport doesn't streak across the screen")
+
+	# Forgiving jumps: coyote time and a jump buffer.
+	await frames(15)
+	var y_floor := p.global_position.y
+	p.global_position.y = y_floor + 2.0
+	await frames(3)
+	InputRouter.set_touch_action(&"jump", true)
+	await frames(2)
+	InputRouter.set_touch_action(&"jump", false)
+	var coyote_ok := p.velocity.y > 2.0
+	await frames(60)
+	p.global_position.y = y_floor + 9.0
+	await frames(20)
+	InputRouter.set_touch_action(&"jump", true)
+	await frames(2)
+	InputRouter.set_touch_action(&"jump", false)
+	var late_ok := p.velocity.y <= 0.5
+	await frames(60)
+	check(coyote_ok and late_ok, "you can still jump a moment after running off an edge (but not once you're falling)")
+	p.global_position.y = y_floor + 3.0
+	p.velocity = Vector3.ZERO
+	var landed_at := -1
+	var jumped := false
+	for i in 60:
+		await get_tree().physics_frame
+		if landed_at < 0 and p.global_position.y < y_floor + 0.45 and p.velocity.y < -6.0:
+			InputRouter.set_touch_action(&"jump", true)
+			InputRouter.set_touch_action(&"jump", false)
+			landed_at = i
+		if landed_at >= 0 and i > landed_at + 1 and p.velocity.y > 2.0:
+			jumped = true
+			break
+	check(jumped, "a jump pressed just before landing still happens")
+
+	# The camera eases in when a wall gets in the way and back out after.
+	var cam := lvl.camera as FollowCamera
+	p.teleport_to(Transform3D(Basis.IDENTITY, Vector3(-30, 0.6, -19)))
+	face(lvl, PI)
+	cam.snap()
+	await frames(12)
+	var pulled := cam._len
+	# Turn round: the view behind is open again.
+	face(lvl, 0.0)
+	await frames(3)
+	var early := cam._len
+	await frames(90)
+	var allowed := cam.arm.get_hit_length()
+	check(pulled < cam.distance - 1.5 and early > pulled and early < allowed - 0.3 and absf(cam._len - allowed) < 0.3,
+		"the camera pulls in when a wall is behind it and eases back out (%.1f -> %.1f -> %.1f of %.1f)" % [pulled, early, cam._len, allowed])
+
+	# People walk, turn and look like people.
+	HouseClock.set_hour(13.5)
+	cook.force_present(true)
+	cook.end_activity()
+	cook.activities = {}
+	_place_human(cook, Vector3(-30, 0, 20), 0.0)
+	cook.alert.reset()
+	var foot := cook.left_foot
+	var start := foot.global_position
+	var goal := start + Vector3(0, 0, -9)
+	cook.set_physics_process(false)
+	foot.step_to(goal, 0.0, 0.7, true)
+	var early_h := 0.0
+	var early_d := 0.0
+	var mid_h := 0.0
+	for i in 42:
+		await get_tree().physics_frame
+		var k := foot.swing_progress()
+		if k >= 0.08 and k < 0.12:
+			early_h = foot.global_position.y - start.y
+			early_d = Vector2(foot.global_position.x - start.x, foot.global_position.z - start.z).length()
+		if k >= 0.45 and k <= 0.55:
+			mid_h = foot.global_position.y - start.y
+	check(early_d < 9.0 * 0.12 and early_h > 0.5 and mid_h > foot.lift_height * 0.5 and foot.is_planted()
+		and foot.global_position.distance_to(goal) < 0.1,
+		"a walking step peels up, swings in an arc and lands where its shadow said (lift %.1f, mid %.1f)" % [early_h, mid_h])
+	cook.set_physics_process(true)
+	_place_human(cook, Vector3(-40, 0, 20), 0.0)
+	cook.route = PackedVector3Array([Vector3(-40, 0, 20), Vector3(40, 0, 20)])
+	cook._route_i = 1
+	cook._pause = 0.0
+	var speeds: Array[float] = []
+	var last := cook.global_position
+	for i in 210:
+		await get_tree().physics_frame
+		if i > 30:
+			speeds.append(cook.global_position.distance_to(last) * 60.0)
+		last = cook.global_position
+	var mean := 0.0
+	var top := 0.0
+	for v in speeds:
+		mean += v / speeds.size()
+		top = maxf(top, v)
+	check(mean > 3.0 and top < mean * 2.0, "people glide along as they walk instead of surging with each step (avg %.1f, peak %.1f)" % [mean, top])
+	_place_human(cook, Vector3(-30, 0, 20), 0.0)
+	cook.route = PackedVector3Array()
+	cook.set_physics_process(false)
+	var behind := cook.global_position + Vector3(0, 0, 20)
+	var turned: Array[float] = []
+	for i in 150:
+		cook.face_towards(behind, 1.0 / 60.0)
+		turned.append(absf(cook.rotation.y))
+	check(turned[0] < 0.02 and absf(wrapf(cook.rotation.y - PI, -PI, PI)) < 0.1,
+		"people ease into a turn and finish it (first step %.3f rad)" % turned[0])
+	cook.rotation.y = 0.0
+	cook.set_physics_process(true)
+	# Nothing to look at: just a person standing in the kitchen.
+	cook.blind_time = 20.0
+	cook.alert.reset()
+	await frames(2)
+	var lids := cook.get_node("Torso/Head/Lids") as Node3D
+	var gaze := cook.get_node("Torso/Head/Gaze") as Node3D
+	var head := cook.get_node("Torso/Head") as Node3D
+	var shut := 0
+	var yaws: Array[float] = []
+	for i in 600:
+		await get_tree().process_frame
+		if lids.visible:
+			shut += 1
+		yaws.append(head.rotation.y)
+	yaws.sort()
+	check(shut > 0 and shut < 90, "people blink every few seconds (eyes shut %d of 600 frames)" % shut)
+	check(yaws[yaws.size() - 1] - yaws[0] > 0.3, "standing calm, they glance around")
+	head.rotation.y = 0.0
+	cook._glance = Vector2.ZERO
+	cook.alert.force(AlertState.SUSPICIOUS, cook.global_position + Basis(Vector3.UP, cook.rotation.y) * Vector3(-30, 0, -20))
+	var gaze_led := false
+	for i in 4:
+		await get_tree().process_frame
+		gaze_led = gaze_led or absf(gaze.position.x) > 0.05
+	var after6 := absf(head.rotation.y)
+	await frames(2)
+	check(gaze_led, "their eyes jump to a noise first, then the head follows")
+	check(after6 > 0.35, "a sudden noise gets a quick double take (head %.2f rad in 6 frames)" % after6)
+	cook.alert.reset()
+
+	# Pets: ease into a run, breathe (and pant), blink, flick an ear.
+	pup.force_present(true)
+	pup.stop_playing()
+	pup.alert.reset()
+	pup.global_position = Vector3(10, 0.5, 40)
+	pup.velocity = Vector3.ZERO
+	pup.reset_physics_interpolation()
+	pup.set_physics_process(false)
+	await get_tree().physics_frame
+	pup._move_to(Vector3(60, 0.5, 40), 10.0, 1.0 / 60.0)
+	var first := Vector2(pup.velocity.x, pup.velocity.z).length()
+	for i in 60:
+		await get_tree().physics_frame
+		pup._move_to(Vector3(80, 0.5, 40), 10.0, 1.0 / 60.0)
+	var full := Vector2(pup.velocity.x, pup.velocity.z).length()
+	check(first < 3.0 and full > 8.5, "pets build up to a run instead of jumping to full speed (%.1f -> %.1f)" % [first, full])
+	await get_tree().process_frame
+	check(pup._pant > 0.4, "after a run the puppy pants (%.2f)" % pup._pant)
+	pup.velocity = Vector3.ZERO
+	pup.set_physics_process(true)
+	pup.alert.reset()
+	var vis := pup.get_node("Visual") as Node3D
+	var pl := pup.get_node("Visual/Head/Lids") as Node3D
+	var sx: Array[float] = []
+	var blinks := 0
+	var twitched := false
+	for i in 720:
+		await get_tree().process_frame
+		sx.append(vis.scale.x)
+		blinks += 1 if pl.visible else 0
+		twitched = twitched or pup._twitch_t > 0.0
+	sx.sort()
+	check(sx[sx.size() - 1] - sx[0] > 0.015 and blinks > 0, "pets breathe and blink")
+	check(twitched or pup.mood != Pet.Mood.CALM, "a calm pet flicks an ear now and then")
+	await unload(lvl)
+
+	# Detail: eyes that move and blink, rounder bodies, pet anatomy.
+	var human_scene := (load("res://scenes/threats/human.tscn") as PackedScene).instantiate()
+	var verts := 0
+	for mi in human_scene.find_children("*", "MeshInstance3D", true, false):
+		var m := (mi as MeshInstance3D).mesh
+		if m and m.get_surface_count() > 0:
+			verts += (m.surface_get_arrays(0)[Mesh.ARRAY_VERTEX] as PackedVector3Array).size()
+	var cat := (load("res://scenes/threats/cat.tscn") as PackedScene).instantiate()
+	var dog := (load("res://scenes/threats/dog.tscn") as PackedScene).instantiate()
+	check(human_scene.get_node_or_null("Torso/Head/Gaze") != null and human_scene.get_node_or_null("Torso/Head/Lids") != null
+		and cat.get_node_or_null("Visual/Head/Lids") != null and cat.get_node_or_null("Visual/Head/EarL/Inner") != null
+		and dog.get_node_or_null("Visual/Head/Lids") != null and verts > 20000,
+		"people have moving eyes and eyelids, pets have eyelids and cats inner ears; rounder models (%d vertices a person)" % verts)
+	for n in [human_scene, cat, dog]:
+		n.free()
+
+	# High-resolution surfaces.
+	var tex_ok := true
+	var tex_names: PackedStringArray = []
+	for mname in ["tile", "wood", "patio", "grass", "carpet", "skin", "hair", "jeans", "cat_orange", "dog_brown", "roach", "ladybug_red"]:
+		var m := load("res://assets/materials/%s.tres" % mname) as StandardMaterial3D
+		var ok := m.albedo_texture != null and m.normal_texture != null and m.uv1_triplanar and not m.uv1_world_triplanar
+		tex_ok = tex_ok and ok
+		if not ok:
+			tex_names.append(mname)
+	var floor_mat := load("res://assets/materials/tile.tres") as StandardMaterial3D
+	var wood_tex := load("res://assets/textures/wood.png") as Texture2D
+	# Source import settings exist in the project (not in an exported pack).
+	var vram_ok := true
+	var cfg := ConfigFile.new()
+	if cfg.load("res://assets/textures/wood.png.import") == OK and cfg.has_section("params"):
+		vram_ok = int(cfg.get_value("params", "compress/mode", 0)) == 2 and bool(cfg.get_value("params", "mipmaps/generate", false))
+	check(tex_ok and floor_mat.texture_filter == BaseMaterial3D.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS_ANISOTROPIC
+		and vram_ok and wood_tex != null and wood_tex.get_width() >= 512,
+		"floors, walls, clothes, fur and shells have high-res texture and bump detail, sharp at low angles %s" % str(tex_names))
+
+	# Quality tiers.
+	lvl = await load_level(&"kitchen", &"cockroach")
+	var vp := get_viewport()
+	SaveSystem.set_setting("quality", "high")
+	GameManager.apply_quality()
+	var env := (lvl.find_child("Environment", true, false) as WorldEnvironment).environment
+	var sun := lvl.find_child("Sun", true, false) as DirectionalLight3D
+	var high_ok := vp.msaa_3d == Viewport.MSAA_4X and env.glow_enabled and env.fog_enabled \
+		and sun.directional_shadow_mode == DirectionalLight3D.SHADOW_PARALLEL_2_SPLITS and floor_mat.normal_enabled
+	SaveSystem.set_setting("quality", "low")
+	GameManager.apply_quality()
+	var low_ok := not floor_mat.normal_enabled and not sun.shadow_enabled and not env.glow_enabled and vp.scaling_3d_scale < 1.0
+	SaveSystem.set_setting("quality", "medium")
+	GameManager.apply_quality()
+	var mid_ok := floor_mat.normal_enabled and vp.msaa_3d == Viewport.MSAA_2X and vp.scaling_3d_scale == 1.0
+	check(high_ok and low_ok and mid_ok,
+		"High: 4x anti-aliasing, glow, two shadow cascades; Medium: full resolution, 2x anti-aliasing; Low: no bump maps or shadows")
 	await unload(lvl)

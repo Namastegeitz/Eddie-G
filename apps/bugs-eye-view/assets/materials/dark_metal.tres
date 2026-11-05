@@ -1,6 +1,16 @@
 [gd_resource type="StandardMaterial3D" format=3]
 
+[ext_resource type="Texture2D" path="res://assets/textures/metal.png" id="1_sqvbj"]
+[ext_resource type="Texture2D" path="res://assets/textures/metal_n.png" id="2_3var5"]
+
 [resource]
-albedo_color = Color(0.18, 0.18, 0.2, 1)
+albedo_color = Color(0.19260001, 0.19260001, 0.214, 1)
+albedo_texture = ExtResource("1_sqvbj")
 metallic = 0.6
 roughness = 0.4
+normal_enabled = true
+normal_scale = 0.4
+normal_texture = ExtResource("2_3var5")
+uv1_scale = Vector3(0.083333336, 0.083333336, 0.083333336)
+uv1_triplanar = true
+uv1_triplanar_sharpness = 4.0

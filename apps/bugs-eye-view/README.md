@@ -77,6 +77,14 @@ alert when something's up, leap at a low-flying fly, and get sharper room by
 room. The dog is a tri-colour beagle that sniffs with its nose to the ground
 and barks at your hiding spot when it finds you.
 
+**Look and feel**: high-resolution textures on every surface (tiles, wood
+grain, flagstones, grass, carpet, fabric, denim, fur, bug shells) with bump
+detail; rounder models; motion smoothed between physics steps so everything
+glides at any frame rate; people who walk heel-to-toe, sway, breathe, blink,
+glance around and do a double take; pets that ease into a run, pant, blink
+and flick their ears. Quality tiers (High adds 4x anti-aliasing, glow and
+crisper shadows).
+
 **Bugs**: jointed
 legs that scuttle in a real gait, twitching antennae, wing veins, eight
 spider eyes and fangs, a ladybug's opening shell and a glowing firefly
@@ -118,7 +126,7 @@ for a generated 3D model (84 in all); `tools/meshy/generate.py` makes them with 
 (needs your Meshy API key; see [tools/meshy/README.md](tools/meshy/README.md)).
 
 - Two headless test suites pass in the project and in an exported build
-  (`tools/run_tests.sh`): a 165-check smoke test and a 340-check phase audit
+  (`tools/run_tests.sh`): a 165-check smoke test and a 359-check phase audit
   that walks the spec phase by phase, plus every update since (alarm gauge,
   fly moves, hiding spots, model slots, bigger rooms, people, bug detail, food
   and gems, flying, animals and people's activities). Zero GDScript warnings, zero engine errors.

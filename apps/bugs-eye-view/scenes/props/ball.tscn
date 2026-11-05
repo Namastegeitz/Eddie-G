@@ -10,30 +10,31 @@ radius = 1.6
 [sub_resource type="SphereMesh" id="SphereMesh_pu6a8"]
 radius = 1.6
 height = 3.2
-radial_segments = 16
-rings = 8
+radial_segments = 24
+rings = 12
 
-[node name="Ball" type="RigidBody3D" unique_id=665716975]
+[node name="Ball" type="RigidBody3D" unique_id=707413937]
 mass = 0.6
 script = ExtResource("1_3mkuf")
 noise_on_impact = 1.0
 trip_hazard = true
 impact_sound = &"thud"
 
-[node name="Shape" type="CollisionShape3D" parent="." unique_id=1917034114]
+[node name="Shape" type="CollisionShape3D" parent="." unique_id=648301660]
 shape = SubResource("SphereShape3D_pk8oo")
 
-[node name="Visual" type="Node3D" parent="." unique_id=1195792829]
+[node name="Visual" type="Node3D" parent="." unique_id=1477514641]
 
-[node name="Mesh" type="MeshInstance3D" parent="Visual" unique_id=1663516401]
+[node name="Mesh" type="MeshInstance3D" parent="Visual" unique_id=1102379703]
 material_override = ExtResource("2_i372f")
 visibility_range_end = 100.0
 visibility_range_end_margin = 15.0
 visibility_range_fade_mode = 1
 mesh = SubResource("SphereMesh_pu6a8")
 
-[node name="Skin" type="Node3D" parent="Visual" unique_id=479033218]
+[node name="Skin" type="Node3D" parent="Visual" unique_id=869891944]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.1920929e-07, 0)
 script = ExtResource("3_nlcrk")
 model_id = "prop_ball"
-fit_size = Vector3(3.1513848, 3.2, 3.1513848)
+fit_size = Vector3(3.1766684, 3.1999998, 3.1766684)
 hide_paths = Array[NodePath]([NodePath("../Mesh")])

@@ -30,6 +30,8 @@ const SNAP_REACH := 12.0
 const SNIFF_OUT_RADIUS := 7.0
 const POINT_TIME := 6.0
 const BUDDY_RANGE := 45.0
+## How fast a pet reaches its running speed (per second, x speed).
+const ACCEL_RATE := 7.0
 
 @export var waypoints: PackedVector3Array = []
 ## Routine events during which the pet naps (blind, nearly deaf).
@@ -102,6 +104,15 @@ var _legs: Array[Node3D] = []
 var _tongue: Node3D
 var _pose_t := 0.0
 var _gait := 0.0
+# Lifelike touches: breathing (panting after a run), blinks, ear twitches.
+var _lids: Node3D
+var _head_base := Vector3.ZERO
+var _blink_cd := 2.5
+var _blink_t := 0.0
+var _twitch_cd := 3.0
+var _twitch_t := 0.0
+var _twitch_ear := 0
+var _pant := 0.0
 
 
 func _setup() -> void:
@@ -114,6 +125,8 @@ func _setup() -> void:
 	add_child(_ring)
 	_play_cd = randf_range(PLAY_GAP.x * 0.5, PLAY_GAP.y)
 	if _visual:
+		# Posed every frame: rides on the smoothed body.
+		_visual.physics_interpolation_mode = Node.PHYSICS_INTERPOLATION_MODE_OFF
 		_head = _visual.get_node_or_null("Head") as Node3D
 		_tail = _visual.get_node_or_null("Tail") as Node3D
 		if _tail:
@@ -124,6 +137,8 @@ func _setup() -> void:
 				if ear:
 					_ears.append(ear)
 			_tongue = _head.get_node_or_null("Tongue") as Node3D
+			_lids = _head.get_node_or_null("Lids") as Node3D
+			_head_base = _head.position
 		for l in ["LegFL", "LegFR", "LegBL", "LegBR"]:
 			var leg := _visual.get_node_or_null(l) as Node3D
 			if leg:
@@ -252,8 +267,11 @@ func _move_to(target: Vector3, speed: float, delta: float) -> void:
 	if to.length() > 0.3:
 		v = to.normalized() * speed * speed_mult() * boss_speed_mult
 		face_towards(global_position + to, delta, config.turn_speed * 2.0)
-	velocity.x = v.x
-	velocity.z = v.z
+	# Paws need a moment to get going (and to pull up).
+	var accel := maxf(v.length(), 6.0) * ACCEL_RATE
+	var flat := Vector2(velocity.x, velocity.z).move_toward(Vector2(v.x, v.z), accel * delta)
+	velocity.x = flat.x
+	velocity.z = flat.y
 	velocity.y = 0.0 if is_on_floor() else velocity.y - 30.0 * delta
 	move_and_slide()
 
@@ -725,7 +743,8 @@ func pose_body(delta: float) -> void:
 		_tail.rotation = _tail.rotation.lerp(Vector3(tx, ty, 0), k)
 		if _tail_tip:
 			_tail_tip.rotation.x = lerp_angle(_tail_tip.rotation.x, (-0.6 if not barks else 0.0) + tip, k)
-	for ear in _ears:
+	for ear_i in _ears.size():
+		var ear := _ears[ear_i]
 		var side := float(ear.get_meta(&"side"))
 		var ex := 0.0
 		var ez := 0.0
@@ -737,7 +756,11 @@ func pose_body(delta: float) -> void:
 			ez = side * (0.5 if barks else -0.05)
 		elif barks:
 			ez = side * (0.2 + sin(_gait * 2.0) * 0.25 * moving)
-		ear.rotation = ear.rotation.lerp(Vector3(ex, 0, ez), k)
+		if _twitch_t > 0.0 and ear_i == _twitch_ear:
+			var f := sin(clampf(_twitch_t / 0.3, 0.0, 1.0) * PI)
+			ex += 0.25 * f
+			ez += side * 0.6 * f
+		ear.rotation = ear.rotation.lerp(Vector3(ex, 0, ez), clampf(k * (2.5 if _twitch_t > 0.0 else 1.0), 0.0, 1.0))
 	if _head:
 		var hy := 0.0
 		var hx := 0.0
@@ -766,8 +789,41 @@ func pose_body(delta: float) -> void:
 			hy = sin(_pose_t * 0.7) * 0.4
 			hx = -0.2 if barks and fmod(_pose_t, 5.0) < 2.0 else 0.0
 		_head.rotation = _head.rotation.lerp(Vector3(hx, hy, 0), k)
+	_pose_life(delta, speed, moving, lying)
 	if _tongue:
-		_tongue.visible = barks and (mood == Mood.PLAY or speed > config.patrol_speed * 1.2)
+		_tongue.visible = barks and (mood == Mood.PLAY or speed > config.patrol_speed * 1.2 or _pant > 0.5)
+
+
+## Breathing (panting after running or playing), blinking, an ear flick now
+## and then, the head bobbing with each stride and a little body roll.
+func _pose_life(delta: float, speed: float, moving: float, lying: bool) -> void:
+	var exertion := clampf(speed / maxf(config.chase_speed, 1.0), 0.0, 1.0)
+	if mood == Mood.PLAY:
+		exertion = maxf(exertion, 0.6)
+	_pant = move_toward(_pant, maxf(_pant, exertion), delta * 0.8) if exertion > _pant else move_toward(_pant, exertion, delta * 0.12)
+	var rate := (1.1 if lying else 1.8) + _pant * 7.0
+	var swell := 1.0 + sin(_pose_t * rate) * (0.015 + _pant * 0.025)
+	_visual.scale.x = swell
+	_visual.scale.z = 1.0 + (swell - 1.0) * 0.4
+	var k := clampf(10.0 * delta, 0.0, 1.0)
+	_visual.rotation.z = lerp_angle(_visual.rotation.z, sin(_gait) * 0.04 * moving, k)
+	if _head:
+		_head.position = _head_base + Vector3(0, sin(_gait * 2.0) * 0.14 * scale.x * moving, 0)
+	if _lids:
+		_blink_cd -= delta
+		if _blink_cd <= 0.0:
+			_blink_t = 0.12
+			_blink_cd = randf_range(2.5, 6.0) if mood != Mood.ALERT else randf_range(5.0, 9.0)
+		_blink_t = maxf(_blink_t - delta, 0.0)
+		_lids.visible = lying or _blink_t > 0.0
+	# A calm pet flicks an ear now and then.
+	_twitch_cd -= delta
+	if _twitch_cd <= 0.0 and _ears.size() > 0:
+		_twitch_cd = randf_range(2.0, 6.0)
+		if mood in [Mood.CALM, Mood.SLEEP]:
+			_twitch_t = 0.3
+			_twitch_ear = randi() % _ears.size()
+	_twitch_t = maxf(_twitch_t - delta, 0.0)
 
 
 # --- Playing together (cat and dog) ---------------------------------------------

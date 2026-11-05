@@ -56,6 +56,12 @@ var _dodge_time := 0.0
 var _dodge_cd := 0.0
 var _dodge_dir := Vector3.ZERO
 var _jump_queued := false
+## Forgiving jumps: a jump still works just after running off an edge
+## (coyote time) and a press just before landing is remembered (buffer).
+const COYOTE_TIME := 0.12
+const JUMP_BUFFER := 0.15
+var _coyote := 0.0
+var _jump_buffer := 0.0
 var _slow_timer := 0.0
 var _hint := ""
 var _cfg: StealthConfig
@@ -78,6 +84,9 @@ func _ready() -> void:
 	_probe.exclude = [get_rid()]
 	InputRouter.action_pressed.connect(_on_action_pressed)
 	InputRouter.action_released.connect(_on_action_released)
+	if visual:
+		# The rig animates every frame; it rides on the smoothed body.
+		visual.physics_interpolation_mode = Node.PHYSICS_INTERPOLATION_MODE_OFF
 	_setup()
 
 
@@ -200,11 +209,20 @@ func ground_move(delta: float, speed: float) -> void:
 	if _dodge_time > 0.0:
 		velocity.x = _dodge_dir.x * stats.dodge_speed
 		velocity.z = _dodge_dir.z * stats.dodge_speed
-	if is_on_floor():
-		if _jump_queued:
-			velocity.y = stats.jump_velocity
+	var grounded := is_on_floor()
+	if grounded:
+		_coyote = COYOTE_TIME
 	else:
+		_coyote = maxf(_coyote - delta, 0.0)
+	if _jump_queued:
+		_jump_buffer = JUMP_BUFFER
+	if _jump_buffer > 0.0 and _coyote > 0.0 and velocity.y <= 0.5:
+		velocity.y = stats.jump_velocity
+		_coyote = 0.0
+		_jump_buffer = 0.0
+	elif not grounded:
 		velocity.y -= stats.gravity * delta
+	_jump_buffer = maxf(_jump_buffer - delta, 0.0)
 	_jump_queued = false
 	var ext := external_velocity
 	velocity += ext
@@ -625,6 +643,8 @@ func show_hint(text: String) -> void:
 func teleport_to(xform: Transform3D) -> void:
 	global_position = xform.origin
 	velocity = Vector3.ZERO
+	_jump_buffer = 0.0
+	reset_physics_interpolation()
 	_interactables.clear()
 	if cam:
 		cam.snap()

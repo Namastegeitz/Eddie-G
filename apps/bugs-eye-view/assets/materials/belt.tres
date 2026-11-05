@@ -1,5 +1,15 @@
 [gd_resource type="StandardMaterial3D" format=3]
 
+[ext_resource type="Texture2D" path="res://assets/textures/stone.png" id="1_0k2ve"]
+[ext_resource type="Texture2D" path="res://assets/textures/stone_n.png" id="2_pl2c5"]
+
 [resource]
-albedo_color = Color(0.25, 0.16, 0.1, 1)
+albedo_color = Color(0.2675, 0.17119999, 0.107, 1)
+albedo_texture = ExtResource("1_0k2ve")
 roughness = 0.5
+normal_enabled = true
+normal_scale = 0.5
+normal_texture = ExtResource("2_pl2c5")
+uv1_scale = Vector3(0.33333334, 0.33333334, 0.33333334)
+uv1_triplanar = true
+uv1_triplanar_sharpness = 4.0

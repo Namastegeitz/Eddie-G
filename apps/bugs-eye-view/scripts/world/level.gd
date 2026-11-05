@@ -97,10 +97,9 @@ func _ready() -> void:
 		add_child(escalation)
 	_sun = find_child("Sun", true, false) as DirectionalLight3D
 	_env = find_child("Environment", true, false) as WorldEnvironment
-	if _sun:
-		_sun.shadow_enabled = GameManager.shadows_enabled()
 	if _env and _env.environment:
 		_bg_base = _env.environment.background_color
+	refresh_quality()
 	for p in get_tree().get_nodes_in_group(Phys.GROUP_PROP):
 		if p is PhysicsProp:
 			_props.append(p)
@@ -158,8 +157,27 @@ func _spawn_camera() -> void:
 
 ## After a quality change (Settings or auto quality).
 func refresh_quality() -> void:
+	var q := GameManager.quality()
 	if _sun:
 		_sun.shadow_enabled = GameManager.shadows_enabled()
+		# High: two shadow cascades (crisp up close) and softer edges.
+		_sun.directional_shadow_mode = DirectionalLight3D.SHADOW_PARALLEL_2_SPLITS if q == "high" else DirectionalLight3D.SHADOW_ORTHOGONAL
+		_sun.shadow_blur = 1.5 if q == "high" else 1.0
+	if _env and _env.environment:
+		var e := _env.environment
+		# A soft glow around bright things (gems, lamps, the firefly) on high.
+		e.glow_enabled = q == "high"
+		e.glow_intensity = 0.55
+		e.glow_strength = 0.9
+		e.glow_bloom = 0.04
+		e.glow_hdr_threshold = 0.95
+		e.glow_blend_mode = Environment.GLOW_BLEND_MODE_SOFTLIGHT
+		# A faint haze gives the giant rooms depth (cheap on every setting).
+		e.fog_enabled = true
+		e.fog_light_color = Color(_bg_base.r, _bg_base.g, _bg_base.b).lerp(Color(0.8, 0.78, 0.74), 0.5)
+		e.fog_light_energy = 0.6
+		e.fog_density = 0.0016
+		e.fog_sky_affect = 0.0
 
 
 ## First time with this bug: show how to play it (the game waits).

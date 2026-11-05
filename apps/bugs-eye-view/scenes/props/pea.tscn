@@ -7,29 +7,28 @@
 [sub_resource type="SphereShape3D" id="SphereShape3D_g8vb2"]
 
 [sub_resource type="SphereMesh" id="SphereMesh_sjqsd"]
-radial_segments = 16
-rings = 8
+radial_segments = 24
+rings = 12
 
-[node name="Pea" type="RigidBody3D" unique_id=1110888083]
+[node name="Pea" type="RigidBody3D" unique_id=968907909]
 mass = 0.1
 script = ExtResource("1_8wmp6")
 noise_on_impact = 1.4
 
-[node name="Shape" type="CollisionShape3D" parent="." unique_id=1555943898]
+[node name="Shape" type="CollisionShape3D" parent="." unique_id=124338420]
 shape = SubResource("SphereShape3D_g8vb2")
 
-[node name="Visual" type="Node3D" parent="." unique_id=673592684]
+[node name="Visual" type="Node3D" parent="." unique_id=1720622473]
 
-[node name="Mesh" type="MeshInstance3D" parent="Visual" unique_id=863112698]
+[node name="Mesh" type="MeshInstance3D" parent="Visual" unique_id=723565138]
 material_override = ExtResource("2_g6ix3")
 visibility_range_end = 100.0
 visibility_range_end_margin = 15.0
 visibility_range_fade_mode = 1
 mesh = SubResource("SphereMesh_sjqsd")
 
-[node name="Skin" type="Node3D" parent="Visual" unique_id=1473115796]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -2.9802322e-08, 0)
+[node name="Skin" type="Node3D" parent="Visual" unique_id=79693749]
 script = ExtResource("3_gqsvp")
 model_id = "prop_pea"
-fit_size = Vector3(0.9848077, 0.99999994, 0.9848077)
+fit_size = Vector3(0.99270886, 1, 0.99270886)
 hide_paths = Array[NodePath]([NodePath("../Mesh")])

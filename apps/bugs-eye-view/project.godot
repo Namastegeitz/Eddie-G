@@ -60,6 +60,7 @@ pointing/emulate_mouse_from_touch=true
 3d/physics_engine="Jolt Physics"
 3d/default_gravity=30.0
 common/physics_ticks_per_second=60
+common/physics_interpolation=true
 
 [rendering]
 

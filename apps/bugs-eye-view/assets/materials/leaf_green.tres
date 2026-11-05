@@ -1,5 +1,15 @@
 [gd_resource type="StandardMaterial3D" format=3]
 
+[ext_resource type="Texture2D" path="res://assets/textures/leaf.png" id="1_o65k8"]
+[ext_resource type="Texture2D" path="res://assets/textures/leaf_n.png" id="2_lhx0e"]
+
 [resource]
-albedo_color = Color(0.25, 0.6, 0.2, 1)
+albedo_color = Color(0.2675, 0.642, 0.214, 1)
+albedo_texture = ExtResource("1_o65k8")
 roughness = 0.8
+normal_enabled = true
+normal_scale = 0.6
+normal_texture = ExtResource("2_lhx0e")
+uv1_scale = Vector3(0.1, 0.1, 0.1)
+uv1_triplanar = true
+uv1_triplanar_sharpness = 4.0

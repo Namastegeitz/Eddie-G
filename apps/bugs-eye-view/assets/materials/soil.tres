@@ -1,4 +1,15 @@
 [gd_resource type="StandardMaterial3D" format=3]
 
+[ext_resource type="Texture2D" path="res://assets/textures/soil.png" id="1_dcuui"]
+[ext_resource type="Texture2D" path="res://assets/textures/soil_n.png" id="2_qfalp"]
+
 [resource]
-albedo_color = Color(0.3, 0.2, 0.12, 1)
+albedo_color = Color(0.321, 0.214, 0.1284, 1)
+albedo_texture = ExtResource("1_dcuui")
+normal_enabled = true
+normal_scale = 0.9
+normal_texture = ExtResource("2_qfalp")
+uv1_scale = Vector3(0.041666668, 0.041666668, 0.041666668)
+uv1_triplanar = true
+uv1_triplanar_sharpness = 4.0
+texture_filter = 5

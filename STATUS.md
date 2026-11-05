@@ -91,7 +91,7 @@
 - Built end to end from `prompts/claude/bugs-eye-view.md` (all 6 phases, all 16 add-ons).
 - Godot 4.7.2 project: 8 bugs, 3 rooms with boss chases, perception-based stealth,
   escalation chain, daily routines, colony upgrades, menus, touch/keyboard/gamepad.
-- Tests: `tools/run_tests.sh` - 165-check smoke test + 340-check phase audit + offline
+- Tests: `tools/run_tests.sh` - 165-check smoke test + 359-check phase audit + offline
   Meshy client test pass in the project and in an exported build; zero GDScript warnings
   and engine errors.
 - Updates after the build: alarm gauge (threats only investigate until it's full), slower
@@ -110,6 +110,11 @@
   silhouette on bug select) until you escape a room as the bug before it; a how-to-play card
   the first time you play each bug (also under Pause > Controls); a gold exit marker; auto
   quality that steps graphics down on slow phones; far-away small things stop drawing.
+- Graphics and motion upgrade: generated high-res surface textures with bump maps (tiles,
+  wood, flagstones, grass, carpet, fabric, denim, fur, bug shells; `tools/generate_textures.py`),
+  rounder models, eyes that move and blink; motion smoothed between physics steps; people walk
+  heel-to-toe and glide, sway, breathe, glance, double-take; pets ease into runs, pant, blink;
+  forgiving jumps; camera eases around walls; High/Medium/Low rendering tiers.
 - Phase-by-phase audit (all 6 phases) done; fixes it found: human feet were never solid,
   props didn't stun via feet, cereal-box domino layout, spider facing/normal errors, fog strength.
 - Android debug APK committed at `apps/bugs-eye-view/dist/android/bugseyeview-debug.apk`.

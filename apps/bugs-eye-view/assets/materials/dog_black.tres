@@ -1,5 +1,15 @@
 [gd_resource type="StandardMaterial3D" format=3]
 
+[ext_resource type="Texture2D" path="res://assets/textures/fur.png" id="1_ru1dk"]
+[ext_resource type="Texture2D" path="res://assets/textures/fur_n.png" id="2_r7ssb"]
+
 [resource]
-albedo_color = Color(0.1, 0.09, 0.08, 1)
+albedo_color = Color(0.107, 0.096300006, 0.085599996, 1)
+albedo_texture = ExtResource("1_ru1dk")
 roughness = 0.6
+normal_enabled = true
+normal_scale = 0.9
+normal_texture = ExtResource("2_r7ssb")
+uv1_scale = Vector3(0.25, 0.25, 0.25)
+uv1_triplanar = true
+uv1_triplanar_sharpness = 4.0

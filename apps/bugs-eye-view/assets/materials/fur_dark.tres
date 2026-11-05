@@ -1,0 +1,15 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/textures/fur.png" id="1_55r5m"]
+[ext_resource type="Texture2D" path="res://assets/textures/fur_n.png" id="2_i5vs3"]
+
+[resource]
+albedo_color = Color(0.38520002, 0.23539999, 0.1284, 1)
+albedo_texture = ExtResource("1_55r5m")
+roughness = 0.9
+normal_enabled = true
+normal_scale = 0.9
+normal_texture = ExtResource("2_i5vs3")
+uv1_scale = Vector3(0.25, 0.25, 0.25)
+uv1_triplanar = true
+uv1_triplanar_sharpness = 4.0

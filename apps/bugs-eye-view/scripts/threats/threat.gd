@@ -27,6 +27,10 @@ var _forced_present := false
 var _sense_timer := 0.0
 var _ray := PhysicsRayQueryParameters3D.new()
 var _icon: Label3D
+## Turning has momentum: it eases into a turn and out of it.
+const TURN_ACCEL := 9.0
+var _turn_rate := 0.0
+var _turn_frame := -10
 
 
 func _ready() -> void:
@@ -241,6 +245,7 @@ func _on_routine_changed() -> void:
 		return
 	present = now
 	visible = now
+	reset_physics_interpolation()
 	process_mode = Node.PROCESS_MODE_INHERIT
 	collision_layer = Phys.THREAT if now else 0
 	if not now:
@@ -260,7 +265,18 @@ func face_towards(target: Vector3, delta: float, turn_speed: float = -1.0) -> vo
 		return
 	var yaw := atan2(-to.x, -to.z)
 	var ts := (config.turn_speed if turn_speed < 0.0 else turn_speed) * clampf(effective_awareness(), 0.5, 2.0)
-	rotation.y = lerp_angle(rotation.y, yaw, clampf(ts * delta, 0.0, 1.0))
+	var frame := Engine.get_physics_frames()
+	if frame - _turn_frame > 2:
+		_turn_rate = 0.0
+	_turn_frame = frame
+	var diff := wrapf(yaw - rotation.y, -PI, PI)
+	# Same pace as before once under way, but it builds up instead of jerking.
+	_turn_rate = move_toward(_turn_rate, diff * ts, ts * TURN_ACCEL * delta)
+	var step := _turn_rate * delta
+	if absf(step) > absf(diff) and signf(step) == signf(diff):
+		step = diff
+		_turn_rate = 0.0
+	rotation.y = wrapf(rotation.y + step, -PI, PI)
 
 
 func _update_icon() -> void:

@@ -3,6 +3,10 @@ extends Node3D
 ## Third-person orbit camera on a spring arm (never clips through walls).
 ## Look input comes only from InputRouter. Adapts FOV to portrait/landscape
 ## and plays screen shake from Feedback.
+##
+## Smooth at any frame rate: it follows the bug's interpolated (displayed)
+## position, not its last physics step, and when a wall gets in the way it
+## pulls in quickly and eases back out instead of snapping.
 
 @export var distance: float = 8.0
 @export var height: float = 1.6
@@ -23,6 +27,10 @@ var camera: Camera3D
 var arm: SpringArm3D
 var _shake := 0.0
 var _shake_time := 0.0
+## Current camera distance (eases toward what the spring arm allows).
+var _len := 8.0
+const PULL_IN_RATE := 30.0
+const EASE_OUT_RATE := 5.0
 
 
 func _ready() -> void:
@@ -39,9 +47,18 @@ func _ready() -> void:
 	arm.shape = sphere
 	camera = arm.get_node_or_null("Camera") as Camera3D
 	if camera == null:
+		camera = get_node_or_null("Camera") as Camera3D
+	if camera == null:
 		camera = Camera3D.new()
 		camera.name = "Camera"
-		arm.add_child(camera)
+		add_child(camera)
+	elif camera.get_parent() == arm:
+		# The arm only measures; the camera eases to that distance itself.
+		arm.remove_child(camera)
+		add_child(camera)
+	physics_interpolation_mode = Node.PHYSICS_INTERPOLATION_MODE_OFF
+	_len = distance
+	camera.position = Vector3(0, 0, _len)
 	camera.near = 0.05
 	camera.far = 800.0
 	camera.current = true
@@ -64,6 +81,9 @@ func set_target(t: BugBase) -> void:
 
 func snap() -> void:
 	_touch_pending = Vector2.ZERO
+	_len = distance
+	if camera:
+		camera.position = Vector3(0, 0, _len)
 	if target:
 		global_position = target.global_position + Vector3.UP * height
 		rotation = Vector3(pitch, yaw, 0.0)
@@ -83,8 +103,9 @@ func _process(delta: float) -> void:
 	pitch = clampf(pitch - look.y * look_scale, min_pitch, max_pitch)
 	rotation = Vector3(pitch, yaw, 0.0)
 	target.camera_yaw_basis = Basis(Vector3.UP, yaw)
-	var goal := target.global_position + Vector3.UP * height
+	var goal := target.get_global_transform_interpolated().origin + Vector3.UP * height
 	global_position = global_position.lerp(goal, 1.0 - exp(-follow_speed * delta))
+	_update_distance(delta)
 	if _shake_time > 0.0:
 		_shake_time -= delta
 		var s := _shake * clampf(_shake_time * 4.0, 0.0, 1.0)
@@ -93,6 +114,17 @@ func _process(delta: float) -> void:
 	else:
 		camera.h_offset = 0.0
 		camera.v_offset = 0.0
+
+
+## Pull in fast when something blocks the view, drift back out gently.
+func _update_distance(delta: float) -> void:
+	arm.spring_length = distance
+	var allowed := arm.get_hit_length()
+	if allowed <= 0.0:
+		allowed = distance
+	var rate := PULL_IN_RATE if allowed < _len else EASE_OUT_RATE
+	_len = lerpf(_len, allowed, 1.0 - exp(-rate * delta))
+	camera.position = Vector3(0, 0, _len)
 
 
 func get_forward() -> Vector3:

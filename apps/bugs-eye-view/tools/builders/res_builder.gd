@@ -33,6 +33,55 @@ static func _mat(color: Color, rough: float = 0.8, metal: float = 0.0, alpha: bo
 	return m
 
 
+## Surface detail: material -> [texture, world units per repeat, bump strength].
+## Textures come from tools/generate_textures.py (near-white detail tinted by
+## the material colour), mapped triplanar in the object's own space so they
+## stick to moving people, pets and props.
+const TEXTURED := {
+	# Rooms
+	"tile": ["tile", 48.0, 1.0], "wood": ["wood", 40.0, 0.8], "dark_wood": ["wood", 40.0, 0.8],
+	"fence": ["wood", 60.0, 1.0], "counter_stone": ["stone", 30.0, 0.6],
+	"wall_paint": ["plaster", 50.0, 0.5], "wall_blue": ["plaster", 50.0, 0.5], "ceiling": ["plaster", 50.0, 0.4],
+	"carpet": ["carpet", 16.0, 0.8], "rug": ["carpet", 14.0, 0.8], "grass": ["grass", 22.0, 0.8],
+	"soil": ["soil", 24.0, 0.9], "patio": ["patio", 70.0, 1.0], "paper": ["plaster", 20.0, 0.3],
+	"cloth_red": ["fabric", 6.0, 0.7], "cloth_blue": ["fabric", 8.0, 0.7],
+	"leaf_green": ["leaf", 10.0, 0.6], "leaves": ["leaf", 8.0, 0.6],
+	"metal": ["metal", 20.0, 0.4], "dark_metal": ["metal", 12.0, 0.4], "fridge_white": ["plaster", 40.0, 0.2],
+	# People
+	"skin": ["skin", 6.0, 0.5], "hair": ["hair", 4.0, 0.8], "jeans": ["denim", 4.0, 0.8],
+	"shirt": ["fabric", 3.0, 0.7], "hazmat": ["fabric", 6.0, 0.5], "shoe": ["stone", 5.0, 0.5],
+	"belt": ["stone", 3.0, 0.5],
+	# Pets
+	"cat_orange": ["fur", 3.0, 0.9], "dog_brown": ["fur", 4.0, 0.9], "dog_white": ["fur", 4.0, 0.9],
+	"dog_black": ["fur", 4.0, 0.9], "fur_dark": ["fur", 4.0, 0.9], "cat_stripe": ["fur", 3.0, 0.9],
+	# Bugs
+	"roach": ["chitin", 1.2, 0.6], "roach_light": ["chitin", 1.2, 0.6], "roach_dark": ["chitin", 1.2, 0.6],
+	"ant": ["chitin", 1.0, 0.5], "cricket": ["chitin", 1.4, 0.6], "cricket_dark": ["chitin", 1.4, 0.6],
+	"stink": ["chitin", 1.2, 0.8], "stink_edge": ["chitin", 1.2, 0.8], "spider": ["chitin", 1.2, 0.5],
+	"spider_band": ["chitin", 1.0, 0.5], "fly": ["chitin", 1.0, 0.5], "fly_belly": ["chitin", 1.0, 0.5],
+	"fly_stripe": ["chitin", 1.0, 0.5], "ladybug_red": ["chitin", 1.0, 0.25], "firefly_body": ["chitin", 1.0, 0.5],
+	"firefly_orange": ["chitin", 1.0, 0.5],
+}
+## Floors and walls are seen at a low angle from bug height: keep them sharp.
+const ANISOTROPIC := ["tile", "wood", "dark_wood", "carpet", "rug", "grass", "soil", "patio", "wall_paint", "wall_blue", "fence"]
+
+
+static func _texture(m: StandardMaterial3D, spec: Array) -> void:
+	var tex := String(spec[0])
+	var units := float(spec[1])
+	m.albedo_texture = load("res://assets/textures/%s.png" % tex)
+	m.normal_enabled = true
+	m.normal_texture = load("res://assets/textures/%s_n.png" % tex)
+	m.normal_scale = float(spec[2])
+	m.uv1_triplanar = true
+	m.uv1_world_triplanar = false
+	m.uv1_triplanar_sharpness = 4.0
+	m.uv1_scale = Vector3.ONE / units
+	# The detail maps average a little under white: keep the colour as it was.
+	var c := m.albedo_color
+	m.albedo_color = Color(minf(c.r * 1.07, 1.0), minf(c.g * 1.07, 1.0), minf(c.b * 1.07, 1.0), c.a)
+
+
 static func materials(force: bool) -> void:
 	var defs := {
 		"tile": _mat(Color(0.58, 0.55, 0.49), 0.6),
@@ -56,7 +105,7 @@ static func materials(force: bool) -> void:
 		"paper": _mat(Color(0.92, 0.9, 0.84)),
 		"grass": _mat(Color(0.32, 0.55, 0.22), 1.0),
 		"soil": _mat(Color(0.3, 0.2, 0.12), 1.0),
-		"patio": _mat(Color(0.62, 0.58, 0.52), 0.9),
+		"patio": _mat(Color(0.5, 0.47, 0.42), 0.9),
 		"fence": _mat(Color(0.55, 0.42, 0.3)),
 		"leaf_green": _mat(Color(0.25, 0.6, 0.2)),
 		"flower": _mat(Color(0.95, 0.4, 0.55)),
@@ -98,6 +147,7 @@ static func materials(force: bool) -> void:
 		"hair": _mat(Color(0.23, 0.15, 0.09), 0.9),
 		"eye_white": _mat(Color(0.96, 0.95, 0.92), 0.3),
 		"iris": _mat(Color(0.2, 0.32, 0.45), 0.2),
+		"pupil": _mat(Color(0.02, 0.02, 0.03), 0.05),
 		"lips": _mat(Color(0.72, 0.38, 0.36), 0.6),
 		"belt": _mat(Color(0.25, 0.16, 0.1), 0.5),
 		"goggles": _mat(Color(0.15, 0.25, 0.3, 0.75), 0.1, 0.3),
@@ -142,9 +192,18 @@ static func materials(force: bool) -> void:
 		"stink_edge": _mat(Color(0.68, 0.63, 0.52), 0.8),
 		"stink_cloud": _mat(Color(0.55, 0.78, 0.25, 0.2), 1.0, 0.0, true, true),
 		"dog_black": _mat(Color(0.1, 0.09, 0.08), 0.6),
+		"fur_dark": _mat(Color(0.36, 0.22, 0.12), 0.9),
+		# Wet, glossy eyes: the light makes the sparkle.
+		"pet_eye_dog": _mat(Color(0.3, 0.17, 0.08), 0.04),
+		"pet_eye_cat": _mat(Color(0.45, 0.75, 0.25), 0.04),
+		"cat_stripe": _mat(Color(0.62, 0.32, 0.1), 0.9),
 	}
 	for k: String in defs.keys():
 		var mat: StandardMaterial3D = defs[k]
+		if TEXTURED.has(k):
+			_texture(mat, TEXTURED[k])
+			if k in ANISOTROPIC:
+				mat.texture_filter = BaseMaterial3D.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS_ANISOTROPIC
 		if k in ["web", "beacon", "shadow_tint", "light_tint", "gust", "spray", "fog", "heat", "stink_cloud"]:
 			mat.cull_mode = BaseMaterial3D.CULL_DISABLED
 		if k in ["shadow_tint", "light_tint", "gust", "beacon", "heat"]:

@@ -1,5 +1,15 @@
 [gd_resource type="StandardMaterial3D" format=3]
 
+[ext_resource type="Texture2D" path="res://assets/textures/denim.png" id="1_vdi4k"]
+[ext_resource type="Texture2D" path="res://assets/textures/denim_n.png" id="2_3cp6g"]
+
 [resource]
-albedo_color = Color(0.22, 0.3, 0.5, 1)
+albedo_color = Color(0.23539999, 0.321, 0.535, 1)
+albedo_texture = ExtResource("1_vdi4k")
 roughness = 0.8
+normal_enabled = true
+normal_scale = 0.8
+normal_texture = ExtResource("2_3cp6g")
+uv1_scale = Vector3(0.25, 0.25, 0.25)
+uv1_triplanar = true
+uv1_triplanar_sharpness = 4.0

@@ -1,5 +1,15 @@
 [gd_resource type="StandardMaterial3D" format=3]
 
+[ext_resource type="Texture2D" path="res://assets/textures/plaster.png" id="1_mratd"]
+[ext_resource type="Texture2D" path="res://assets/textures/plaster_n.png" id="2_f4dek"]
+
 [resource]
-albedo_color = Color(0.92, 0.9, 0.86, 1)
+albedo_color = Color(0.98440003, 0.963, 0.9202, 1)
+albedo_texture = ExtResource("1_mratd")
 roughness = 0.8
+normal_enabled = true
+normal_scale = 0.4
+normal_texture = ExtResource("2_f4dek")
+uv1_scale = Vector3(0.02, 0.02, 0.02)
+uv1_triplanar = true
+uv1_triplanar_sharpness = 4.0

@@ -11,6 +11,8 @@ var active := false
 
 
 func _ready() -> void:
+	# Animated every frame (not by physics): no physics smoothing needed.
+	physics_interpolation_mode = Node.PHYSICS_INTERPOLATION_MODE_OFF
 	collision_layer = Phys.PICKUP
 	collision_mask = Phys.PLAYER
 	monitorable = false

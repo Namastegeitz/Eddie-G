@@ -10,30 +10,30 @@ radius = 0.9
 [sub_resource type="SphereMesh" id="SphereMesh_uakmw"]
 radius = 0.9
 height = 1.8
-radial_segments = 16
-rings = 8
+radial_segments = 24
+rings = 12
 
-[node name="Grape" type="RigidBody3D" unique_id=1001891050]
+[node name="Grape" type="RigidBody3D" unique_id=2027279502]
 mass = 0.5
 script = ExtResource("1_41lio")
 noise_on_impact = 0.8
 trip_hazard = true
 impact_sound = &"squish"
 
-[node name="Shape" type="CollisionShape3D" parent="." unique_id=1224669774]
+[node name="Shape" type="CollisionShape3D" parent="." unique_id=1274853801]
 shape = SubResource("SphereShape3D_nnbto")
 
-[node name="Visual" type="Node3D" parent="." unique_id=1941937449]
+[node name="Visual" type="Node3D" parent="." unique_id=772614773]
 
-[node name="Mesh" type="MeshInstance3D" parent="Visual" unique_id=1924040120]
+[node name="Mesh" type="MeshInstance3D" parent="Visual" unique_id=1300201947]
 material_override = ExtResource("2_xpddu")
 visibility_range_end = 100.0
 visibility_range_end_margin = 15.0
 visibility_range_fade_mode = 1
 mesh = SubResource("SphereMesh_uakmw")
 
-[node name="Skin" type="Node3D" parent="Visual" unique_id=1679359263]
+[node name="Skin" type="Node3D" parent="Visual" unique_id=818223536]
 script = ExtResource("3_vo54p")
 model_id = "prop_grape"
-fit_size = Vector3(1.7726538, 1.8, 1.7726538)
+fit_size = Vector3(1.786876, 1.8, 1.786876)
 hide_paths = Array[NodePath]([NodePath("../Mesh")])

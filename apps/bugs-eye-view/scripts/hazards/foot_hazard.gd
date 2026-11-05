@@ -3,6 +3,10 @@ extends Hazard
 ## A giant human foot. Lifts, hovers over its landing spot with a shadow ring,
 ## stomps (rumble + screen shake + thud), then stays planted as an obstacle.
 ## Stepping on a trip-hazard prop (a grape) trips the human.
+##
+## Ordinary walking steps swing instead: the heel peels up, the foot travels
+## in a smooth arc (eased start and finish), the toes lift before the heel
+## strikes. It still lands where its shadow warned and still hurts.
 
 enum { PLANTED, LIFT, HOVER, STOMP }
 
@@ -19,6 +23,11 @@ var _to_yaw := 0.0
 var _from_yaw := 0.0
 var _telegraph := 0.5
 var _body: AnimatableBody3D
+## This step is a walking swing, not a stomp.
+var _natural := false
+## Heel-to-toe roll of the sole (radians, + = heel up).
+var pitch := 0.0
+const SWING_LIFT := 0.6
 
 
 func _setup() -> void:
@@ -46,13 +55,16 @@ func set_owner_threat(t: Threat) -> void:
 func plant_at(pos: Vector3, new_yaw: float) -> void:
 	_phase = PLANTED
 	yaw = new_yaw
+	pitch = 0.0
 	global_transform = Transform3D(Basis(Vector3.UP, yaw), pos)
+	reset_physics_interpolation()
 	busy = false
 	hide_telegraph()
 
 
 ## Lift and stomp onto `pos`. `telegraph` = seconds the shadow warns first.
-func step_to(pos: Vector3, new_yaw: float, telegraph: float) -> void:
+## `natural`: a walking swing (smooth arc) instead of a lift-hover-stomp.
+func step_to(pos: Vector3, new_yaw: float, telegraph: float, natural: bool = false) -> void:
 	_from = global_position
 	_from_yaw = yaw
 	_to = pos
@@ -60,7 +72,34 @@ func step_to(pos: Vector3, new_yaw: float, telegraph: float) -> void:
 	_telegraph = maxf(telegraph, 0.2)
 	_phase = LIFT
 	_t = 0.0
+	_natural = natural
 	busy = true
+
+
+## Where a walking swing is at progress k (0..1): eased travel, a smooth arc.
+func swing_point(k: float) -> Vector3:
+	var e := k * k * (3.0 - 2.0 * k)
+	var flat := _from.lerp(_to, e)
+	var h := sin(PI * k) * lift_height * SWING_LIFT
+	return Vector3(flat.x, lerpf(_from.y, _to.y, e) + h, flat.z)
+
+
+## Sole roll during a swing: heel peels up, then the toes lift before the strike.
+static func swing_pitch(k: float) -> float:
+	if k < 0.35:
+		return sin(PI * k / 0.35) * 0.45
+	return -sin(PI * (k - 0.35) / 0.65) * 0.3
+
+
+func _xform(pos: Vector3) -> Transform3D:
+	return Transform3D(Basis(Vector3.UP, yaw) * Basis(Vector3.RIGHT, pitch), pos)
+
+
+## Progress (0..1) of a walking swing, or -1 when not swinging.
+func swing_progress() -> float:
+	if _natural and _phase in [LIFT, HOVER]:
+		return clampf(_t / _telegraph, 0.0, 1.0)
+	return -1.0
 
 
 func is_planted() -> bool:
@@ -68,6 +107,20 @@ func is_planted() -> bool:
 
 
 func _physics_process(delta: float) -> void:
+	if _natural and _phase in [LIFT, HOVER]:
+		_t += delta
+		var kn := clampf(_t / _telegraph, 0.0, 1.0)
+		yaw = lerp_angle(_from_yaw, _to_yaw, kn * kn * (3.0 - 2.0 * kn))
+		pitch = swing_pitch(kn)
+		global_transform = _xform(swing_point(kn))
+		show_telegraph(_to, impact_radius, kn)
+		if kn >= 1.0:
+			pitch = 0.0
+			global_transform = _xform(_to)
+			_phase = PLANTED
+			busy = false
+			_land()
+		return
 	match _phase:
 		LIFT, HOVER:
 			_t += delta

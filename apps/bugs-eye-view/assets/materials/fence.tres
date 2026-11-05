@@ -1,5 +1,15 @@
 [gd_resource type="StandardMaterial3D" format=3]
 
+[ext_resource type="Texture2D" path="res://assets/textures/wood.png" id="1_0e4ox"]
+[ext_resource type="Texture2D" path="res://assets/textures/wood_n.png" id="2_e0qfr"]
+
 [resource]
-albedo_color = Color(0.55, 0.42, 0.3, 1)
+albedo_color = Color(0.5885, 0.44939998, 0.321, 1)
+albedo_texture = ExtResource("1_0e4ox")
 roughness = 0.8
+normal_enabled = true
+normal_texture = ExtResource("2_e0qfr")
+uv1_scale = Vector3(0.016666668, 0.016666668, 0.016666668)
+uv1_triplanar = true
+uv1_triplanar_sharpness = 4.0
+texture_filter = 5

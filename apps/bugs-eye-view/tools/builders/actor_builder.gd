@@ -114,8 +114,8 @@ static func sphere(r: float, h: float = -1.0) -> SphereMesh:
 	var s := SphereMesh.new()
 	s.radius = r
 	s.height = r * 2.0 if h < 0.0 else h
-	s.radial_segments = 16
-	s.rings = 8
+	s.radial_segments = 24
+	s.rings = 12
 	return s
 
 
@@ -124,7 +124,7 @@ static func cyl(r: float, h: float, r2: float = -1.0) -> CylinderMesh:
 	c.top_radius = r if r2 < 0.0 else r2
 	c.bottom_radius = r
 	c.height = h
-	c.radial_segments = 16
+	c.radial_segments = 24
 	c.rings = 1
 	return c
 
@@ -133,8 +133,8 @@ static func capsule(r: float, h: float) -> CapsuleMesh:
 	var c := CapsuleMesh.new()
 	c.radius = r
 	c.height = h
-	c.radial_segments = 12
-	c.rings = 4
+	c.radial_segments = 20
+	c.rings = 6
 	return c
 
 
@@ -568,6 +568,11 @@ static func human(force: bool, path: String, config: String, outfit: String, has
 	mesh(torso, "Buckle", box(Vector3(2.0, 1.4, 0.4)), "metal", Vector3(0, 42.5, -2.75))
 	mesh(torso, "Waist", cyl(6.2, 7.0, 7.0), top, Vector3(0, 46.6, 2), Vector3.ZERO, Vector3(1, 1, 0.66))
 	mesh(torso, "Chest", sphere(1.0), top, Vector3(0, 54.5, 2), Vector3.ZERO, Vector3(8.0, 9.0, 5.0))
+	# Shoulder line and upper back: a smooth slope from neck to shoulders.
+	mesh(torso, "ShoulderLine", capsule(2.6, 19.5), top, Vector3(0, 59.6, 2.2), Vector3(0, 0, PI * 0.5), Vector3(1.0, 1.0, 0.95))
+	mesh(torso, "UpperBack", sphere(1.0), top, Vector3(0, 57.5, 3.6), Vector3.ZERO, Vector3(7.4, 5.2, 3.0))
+	for x in [-1.0, 1.0]:
+		mesh(torso, "Trapezius", sphere(1.0), top, Vector3(x * 3.6, 61.4, 2.4), Vector3(0, 0, -x * 0.35), Vector3(3.4, 1.6, 2.4))
 	mesh(torso, "Collar", cyl(2.7, 1.4), top, Vector3(0, 62.6, 2))
 	mesh(torso, "Neck", cyl(2.0, 4.0), "skin" if outfit != "hazmat" else "hazmat", Vector3(0, 64.2, 2))
 	if outfit == "reader":
@@ -583,14 +588,27 @@ static func human(force: bool, path: String, config: String, outfit: String, has
 	var head := node3d(torso, "Head", Vector3(0, 65.5, 2))
 	mesh(head, "Skull", sphere(4.4), "skin", Vector3(0, 4.8, 0), Vector3.ZERO, Vector3(1, 1.18, 1.08))
 	mesh(head, "Jaw", sphere(3.4), "skin", Vector3(0, 2.6, -0.8), Vector3.ZERO, Vector3(1, 0.72, 1))
+	# Eyes that move (Gaze: irises and pupils) and blink (Lids, shown briefly).
+	var gaze := node3d(head, "Gaze")
+	var lids := node3d(head, "Lids")
+	lids.visible = false
 	for x in [-1.0, 1.0]:
 		var side := "L" if x < 0.0 else "R"
 		mesh(head, "Eye" + side, sphere(0.7), "eye_white", Vector3(x * 1.6, 5.3, -4.05))
-		mesh(head, "Iris" + side, sphere(0.36), "iris", Vector3(x * 1.6, 5.3, -4.65))
+		mesh(gaze, "Iris" + side, sphere(0.36), "iris", Vector3(x * 1.6, 5.3, -4.65), Vector3.ZERO, Vector3(1, 1, 0.6))
+		mesh(gaze, "Pupil" + side, sphere(0.17), "pupil", Vector3(x * 1.6, 5.3, -4.86), Vector3.ZERO, Vector3(1, 1, 0.5))
+		mesh(lids, "Lid" + side, sphere(0.86), "skin", Vector3(x * 1.6, 5.35, -4.3), Vector3.ZERO, Vector3(1.05, 0.95, 1.0))
 		mesh(head, "Brow" + side, box(Vector3(1.9, 0.35, 0.45)), "hair", Vector3(x * 1.6, 6.55, -4.25), Vector3(0, 0, -x * 0.08))
+		mesh(head, "Crease" + side, sphere(0.75), "skin", Vector3(x * 1.6, 5.95, -4.05), Vector3.ZERO, Vector3(1.05, 0.35, 0.9))
 		mesh(head, "Ear" + side, sphere(0.9), "skin", Vector3(x * 4.35, 4.8, 0.4), Vector3.ZERO, Vector3(0.5, 1.3, 1))
+		mesh(head, "EarLobe" + side, sphere(0.35), "skin", Vector3(x * 4.4, 3.75, 0.2))
+		mesh(head, "Cheek" + side, sphere(1.15), "skin", Vector3(x * 2.25, 3.7, -3.35), Vector3.ZERO, Vector3(1.0, 0.8, 0.75))
+		mesh(head, "Nostril" + side, sphere(0.28), "skin", Vector3(x * 0.42, 3.75, -4.95))
 	mesh(head, "Nose", sphere(0.6), "skin", Vector3(0, 4.2, -4.85), Vector3.ZERO, Vector3(0.8, 1.25, 1.3))
-	mesh(head, "Mouth", box(Vector3(2.0, 0.35, 0.3)), "lips", Vector3(0, 2.55, -4.1))
+	mesh(head, "NoseBridge", capsule(0.32, 1.6), "skin", Vector3(0, 4.9, -4.55), Vector3(0.25, 0, 0))
+	mesh(head, "Chin", sphere(1.05), "skin", Vector3(0, 1.45, -3.2), Vector3.ZERO, Vector3(1.15, 0.8, 0.9))
+	mesh(head, "UpperLip", capsule(0.24, 2.1), "lips", Vector3(0, 2.72, -4.12), Vector3(0, 0, PI * 0.5))
+	mesh(head, "LowerLip", capsule(0.28, 1.9), "lips", Vector3(0, 2.36, -4.0), Vector3(0, 0, PI * 0.5))
 	if outfit == "hazmat":
 		mesh(head, "Hood", sphere(4.9), "hazmat", Vector3(0, 5.6, 0.6), Vector3.ZERO, Vector3(1.05, 1.15, 1.12))
 		mesh(head, "Goggles", box(Vector3(6.4, 1.8, 1.2)), "goggles", Vector3(0, 5.4, -4.3))
@@ -600,6 +618,9 @@ static func human(force: bool, path: String, config: String, outfit: String, has
 	else:
 		mesh(head, "Hair", sphere(4.6), "hair", Vector3(0, 7.2, 0.7), Vector3.ZERO, Vector3(1.04, 0.8, 1.1))
 		mesh(head, "HairBack", sphere(4.3), "hair", Vector3(0, 5.0, 2.6), Vector3.ZERO, Vector3(1.0, 1.0, 0.62))
+		mesh(head, "Fringe", sphere(2.2), "hair", Vector3(-0.9, 8.6, -3.2), Vector3(0.2, 0, 0.25), Vector3(1.5, 0.55, 0.7))
+		for x in [-1.0, 1.0]:
+			mesh(head, "Temple", sphere(1.4), "hair", Vector3(x * 3.95, 6.4, 0.2), Vector3.ZERO, Vector3(0.45, 1.1, 1.3))
 	if outfit == "reader":
 		for x in [-1.0, 1.0]:
 			var ring := TorusMesh.new()
@@ -612,7 +633,7 @@ static func human(force: bool, path: String, config: String, outfit: String, has
 		var side := "L" if x < 0.0 else "R"
 		var sh := node3d(torso, "Shoulder" + side, Vector3(x * 8.4, 59.5, 2))
 		sh.rotation = Vector3(0, 0, -x * 0.07)
-		mesh(sh, "Deltoid", sphere(2.6), top)
+		mesh(sh, "Deltoid", sphere(2.3), top, Vector3(0, -0.6, 0), Vector3.ZERO, Vector3(1.0, 1.2, 1.0))
 		if sleeve_long:
 			mesh(sh, "UpperArm", capsule(1.95, 13.0), top, Vector3(0, -6.0, 0))
 		else:
@@ -687,8 +708,8 @@ static func pet(force: bool, path: String, config: String, color: String, size: 
 	var v := node3d(p, "Visual")
 	# Dogs: a beagle-style tri-colour coat (tan body, white chest, muzzle, legs
 	# and tail tip, a black saddle). Cats: an orange tabby.
-	var dark := "dark_wood" if is_dog else "leaves"
-	var white := "dog_white" if is_dog else "plastic_white"
+	var dark := "fur_dark" if is_dog else "cat_stripe"
+	var white := "dog_white"
 	var black := "dog_black"
 	mesh(v, "Body", capsule(2.35 * k, 11.5 * k), color, Vector3(0, 5.0 * k, 0.8 * k), Vector3(PI * 0.5, 0, 0))
 	mesh(v, "Chest", sphere(2.6 * k), white if is_dog else color, Vector3(0, 5.3 * k, -3.4 * k), Vector3.ZERO, Vector3(1, 1.05, 1.1))
@@ -700,15 +721,21 @@ static func pet(force: bool, path: String, config: String, color: String, size: 
 		mesh(v, "Collar", collar, "cloth_red", Vector3(0, 6.3 * k, -4.9 * k), Vector3(PI * 0.5 - 0.5, 0, 0))
 		mesh(v, "Tag", cyl(0.45 * k, 0.15 * k), "golden", Vector3(0, 4.75 * k, -5.95 * k), Vector3(PI * 0.5, 0, 0))
 	else:
-		for i in 3:
-			mesh(v, "Stripe", box(Vector3(4.6, 0.25, 0.7) * k), dark, Vector3(0, 7.3 * k - i * 0.1, -1.0 * k + i * 2.2 * k), Vector3(0, 0, 0))
+		# Tabby bands that wrap the body.
+		for i in 4:
+			mesh(v, "Stripe", cyl(2.4 * k, 0.55 * k), dark, Vector3(0, 5.0 * k, -2.2 * k + i * 2.0 * k), Vector3(PI * 0.5, 0, 0), Vector3(1.0, 1.0, 1.0))
+	# Neck, shoulders and haunches: one smooth animal, not a tube.
+	mesh(v, "Neck", capsule(1.4 * k, 4.2 * k), color, Vector3(0, 6.4 * k, -4.9 * k), Vector3(-0.85, 0, 0))
+	for x in [-1.0, 1.0]:
+		mesh(v, "Shoulder", sphere(1.55 * k), color, Vector3(x * 1.15 * k, 5.4 * k, -3.3 * k), Vector3.ZERO, Vector3(0.8, 1.15, 1.1))
+		mesh(v, "Haunch", sphere(1.9 * k), color, Vector3(x * 1.05 * k, 5.6 * k, 3.7 * k), Vector3.ZERO, Vector3(0.85, 1.15, 1.2))
 
 	var head := node3d(v, "Head", Vector3(0, 7.0 * k, -6.2 * k))
 	if is_dog:
 		mesh(head, "Skull", sphere(2.2 * k), color, Vector3(0, 0.35 * k, -0.4 * k), Vector3.ZERO, Vector3(1.0, 0.95, 1.05))
 		for x in [-1.0, 1.0]:
 			mesh(head, "Brow", sphere(0.55 * k), color, Vector3(x * 0.9 * k, 1.35 * k, -1.85 * k), Vector3.ZERO, Vector3(1.2, 0.6, 0.8))
-		mesh(head, "Snout", box(Vector3(1.9, 1.5, 3.1) * k), color, Vector3(0, -0.5 * k, -2.75 * k))
+		mesh(head, "Snout", capsule(0.95 * k, 3.6 * k), color, Vector3(0, -0.45 * k, -2.7 * k), Vector3(PI * 0.5, 0, 0), Vector3(1.0, 1.0, 0.82))
 		mesh(head, "Muzzle", sphere(1.1 * k), white, Vector3(0, -0.75 * k, -3.6 * k), Vector3.ZERO, Vector3(1.0, 0.75, 1.15))
 		mesh(head, "Blaze", box(Vector3(0.55, 0.2, 3.2) * k), white, Vector3(0, 0.3 * k, -2.4 * k), Vector3(-0.25, 0, 0))
 		for x in [-1.0, 1.0]:
@@ -724,9 +751,12 @@ static func pet(force: bool, path: String, config: String, color: String, size: 
 			for i in 3:
 				mesh(head, "Whisker", box(Vector3(2.6, 0.05, 0.05) * k), white,
 					Vector3(x * 1.7 * k, -0.6 * k + (i - 1) * 0.25 * k, -2.5 * k), Vector3(0, x * 0.15, x * (i - 1) * 0.15))
+	var lids := node3d(head, "Lids")
+	lids.visible = false
 	for x in [-1.0, 1.0]:
 		var side := "L" if x < 0.0 else "R"
-		mesh(head, "Eye" + side, sphere(0.46 * k), "coffee" if is_dog else "pea", Vector3(x * 0.95 * k, 0.75 * k, -2.05 * k))
+		mesh(head, "Eye" + side, sphere(0.46 * k), "pet_eye_dog" if is_dog else "pet_eye_cat", Vector3(x * 0.95 * k, 0.75 * k, -2.05 * k))
+		mesh(lids, "Lid" + side, sphere(0.56 * k), color, Vector3(x * 0.95 * k, 0.78 * k, -2.18 * k))
 		var pupil: Mesh = box(Vector3(0.12, 0.6, 0.1) * k)
 		if is_dog:
 			pupil = sphere(0.22 * k)
@@ -738,6 +768,7 @@ static func pet(force: bool, path: String, config: String, color: String, size: 
 			mesh(ear, "Flap", capsule(0.95 * k, 4.4 * k), dark, Vector3(x * 0.3 * k, -1.9 * k, 0.1 * k), Vector3(0, 0, 0), Vector3(0.45, 1.0, 1.0))
 		else:
 			mesh(ear, "Point", PrismMesh.new(), color, Vector3(0, 0.8 * k, 0), Vector3.ZERO, Vector3(1.5, 1.9, 0.6) * k)
+			mesh(ear, "Inner", PrismMesh.new(), "lips", Vector3(0, 0.72 * k, -0.2 * k), Vector3.ZERO, Vector3(0.95, 1.3, 0.3) * k)
 
 	var tail := node3d(v, "Tail", Vector3(0, 6.6 * k, 6.2 * k))
 	var tail_len := 4.2 if is_dog else 5.0
@@ -752,11 +783,14 @@ static func pet(force: bool, path: String, config: String, color: String, size: 
 		var z := -3.6 if leg_name.contains("F") else 3.6
 		var leg := node3d(v, leg_name, Vector3(x * 1.45 * k, 4.3 * k, z * k))
 		leg.set_meta(&"front", z < 0.0)
-		mesh(leg, "Upper", cyl(0.8 * k, 2.6 * k, 0.65 * k), color, Vector3(0, -1.3 * k, 0))
+		mesh(leg, "Upper", capsule(0.78 * k, 3.4 * k), color, Vector3(0, -1.2 * k, 0), Vector3.ZERO, Vector3(1.0, 1.0, 1.1))
 		var knee := node3d(leg, "Knee", Vector3(0, -2.5 * k, 0))
 		var lower := white if is_dog else color
-		mesh(knee, "Lower", cyl(0.6 * k, 1.9 * k), lower, Vector3(0, -0.95 * k, 0))
+		mesh(knee, "Joint", sphere(0.62 * k), lower)
+		mesh(knee, "Lower", capsule(0.55 * k, 2.4 * k), lower, Vector3(0, -0.95 * k, 0))
 		mesh(knee, "Paw", sphere(0.75 * k), lower, Vector3(0, -1.75 * k, -0.25 * k), Vector3.ZERO, Vector3(1, 0.6, 1.3))
+		for t in 3:
+			mesh(knee, "Toe", sphere(0.28 * k), lower, Vector3((t - 1) * 0.36 * k, -1.85 * k, -0.95 * k), Vector3.ZERO, Vector3(1, 0.8, 1.1))
 	for n: Node in _pivots(v):
 		merge_meshes(n)
 	add_skin(v, "pet_dog" if is_dog else "pet_cat", Vector3(5.5, 10.0, 18.0) * k, Vector3(0, 5.0 * k, 0.5))

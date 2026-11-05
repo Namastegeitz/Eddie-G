@@ -302,22 +302,54 @@ func finish_run(won: bool, cause: StringName = &"") -> Dictionary:
 # --- Settings ---------------------------------------------------------------
 
 func apply_quality() -> void:
-	var q := String(SaveSystem.get_setting("quality", "medium"))
+	var q := quality()
 	var vp := get_viewport()
 	match q:
 		"low":
 			vp.scaling_3d_scale = 0.75
 			vp.msaa_3d = Viewport.MSAA_DISABLED
+			vp.anisotropic_filtering_level = Viewport.ANISOTROPY_2X
 			Engine.max_fps = 30
 		"high":
 			vp.scaling_3d_scale = 1.0
-			vp.msaa_3d = Viewport.MSAA_2X
+			vp.msaa_3d = Viewport.MSAA_4X
+			vp.anisotropic_filtering_level = Viewport.ANISOTROPY_8X
 			Engine.max_fps = 0
 		_:
-			vp.scaling_3d_scale = 0.9
-			vp.msaa_3d = Viewport.MSAA_DISABLED
+			vp.scaling_3d_scale = 1.0
+			# (Screen-space AA isn't available in the Compatibility renderer.)
+			vp.msaa_3d = Viewport.MSAA_2X
+			vp.anisotropic_filtering_level = Viewport.ANISOTROPY_4X
 			Engine.max_fps = 60
+	RenderingServer.directional_shadow_atlas_set_size(4096 if q == "high" else 2048, true)
+	# Bump detail on every textured surface; off on low for speed.
+	for m in _textured_materials():
+		m.normal_enabled = q != "low"
+	if Level.current and is_instance_valid(Level.current):
+		Level.current.refresh_quality()
+
+
+func quality() -> String:
+	return String(SaveSystem.get_setting("quality", "medium"))
+
+
+## The textured materials, kept loaded so a quality change reaches every user.
+var _textured: Array[BaseMaterial3D] = []
+
+
+func _textured_materials() -> Array[BaseMaterial3D]:
+	if _textured.is_empty():
+		var dir := DirAccess.open("res://assets/materials")
+		if dir:
+			for f in dir.get_files():
+				var file := f.trim_suffix(".remap")
+				if not file.ends_with(".tres"):
+					continue
+				var m := load("res://assets/materials/" + file) as BaseMaterial3D
+				if m and m.normal_texture:
+					_textured.append(m)
+	return _textured
 
 
 func shadows_enabled() -> bool:
-	return String(SaveSystem.get_setting("quality", "medium")) != "low"
+	return quality() != "low"

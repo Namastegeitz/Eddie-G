@@ -12,28 +12,28 @@ radius = 2.0
 top_radius = 2.0
 bottom_radius = 2.0
 height = 4.0
-radial_segments = 16
+radial_segments = 24
 rings = 1
 
-[node name="Mug" type="RigidBody3D" unique_id=1190241450]
+[node name="Mug" type="RigidBody3D" unique_id=1800499354]
 mass = 3.0
 script = ExtResource("1_46y2e")
 noise_on_impact = 2.5
 impact_sound = &"clang"
 
-[node name="Shape" type="CollisionShape3D" parent="." unique_id=2056101757]
+[node name="Shape" type="CollisionShape3D" parent="." unique_id=1596012997]
 shape = SubResource("CylinderShape3D_h6084")
 
-[node name="Visual" type="Node3D" parent="." unique_id=946329719]
+[node name="Visual" type="Node3D" parent="." unique_id=328051878]
 
-[node name="Mesh" type="MeshInstance3D" parent="Visual" unique_id=22190977]
+[node name="Mesh" type="MeshInstance3D" parent="Visual" unique_id=957112604]
 material_override = ExtResource("2_0ftr0")
 visibility_range_end = 100.0
 visibility_range_end_margin = 15.0
 visibility_range_fade_mode = 1
 mesh = SubResource("CylinderMesh_xr3m5")
 
-[node name="Skin" type="Node3D" parent="Visual" unique_id=1920452102]
+[node name="Skin" type="Node3D" parent="Visual" unique_id=662757033]
 script = ExtResource("3_rufnk")
 model_id = "prop_mug"
 fit_size = Vector3(4, 4, 4)

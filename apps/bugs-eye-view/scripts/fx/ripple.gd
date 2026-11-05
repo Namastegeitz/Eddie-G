@@ -12,6 +12,8 @@ var _mesh: MeshInstance3D
 
 
 func _ready() -> void:
+	# Animated every frame (not by physics): no physics smoothing needed.
+	physics_interpolation_mode = Node.PHYSICS_INTERPOLATION_MODE_OFF
 	_mesh = get_node_or_null("Mesh") as MeshInstance3D
 	if _mesh == null:
 		_mesh = Fx.make_ring(Color(1, 1, 1, 0.9), true)

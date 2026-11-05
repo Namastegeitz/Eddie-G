@@ -14,6 +14,8 @@ var _h := 10.0
 
 
 func _ready() -> void:
+	# Animated every frame (not by physics): no physics smoothing needed.
+	physics_interpolation_mode = Node.PHYSICS_INTERPOLATION_MODE_OFF
 	collision_layer = Phys.ZONE
 	collision_mask = Phys.PLAYER
 	monitorable = false

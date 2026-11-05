@@ -1,5 +1,14 @@
 [gd_resource type="StandardMaterial3D" format=3]
 
+[ext_resource type="Texture2D" path="res://assets/textures/chitin.png" id="1_kmsqf"]
+[ext_resource type="Texture2D" path="res://assets/textures/chitin_n.png" id="2_33rnq"]
+
 [resource]
-albedo_color = Color(0.42, 0.38, 0.3, 1)
+albedo_color = Color(0.44939998, 0.4066, 0.321, 1)
+albedo_texture = ExtResource("1_kmsqf")
 roughness = 0.6
+normal_enabled = true
+normal_scale = 0.5
+normal_texture = ExtResource("2_33rnq")
+uv1_triplanar = true
+uv1_triplanar_sharpness = 4.0
