@@ -61,3 +61,8 @@ func _physics_process(delta: float) -> void:
 		away.y = 0.0
 		_player.apply_force(away.normalized() * push, delta)
 		_player.set_slowed(0.7, 0.4)
+
+
+## The splash where the water lands.
+func covers(pos: Vector3) -> bool:
+	return Vector2(pos.x - to_point.x, pos.z - to_point.z).length() < 6.0 and absf(pos.y - to_point.y) < 4.0

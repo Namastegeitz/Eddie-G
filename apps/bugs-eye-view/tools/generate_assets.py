@@ -229,6 +229,38 @@ def build_people_sfx():
     write("snore", breath * env(n(1.3), 0.35, 0.5), peak=0.6)
 
 
+def build_npc_sfx():
+    """Chores and pet habits: broom sweep, digging, lapping water, a light
+    switch, a fridge door, a wet dog shaking off."""
+    os.makedirs(SFX, exist_ok=True)
+    n = lambda d: int(RATE * d)
+    # Broom: a soft bristly swish.
+    sw = lowpass(highpass(noise(n(0.42)), 1800), 6000)
+    sw = sw * env(n(0.42), 0.12, 0.25)
+    write("sweep", sw, peak=0.5)
+    # Digging: gritty scrapes with a soft thump.
+    parts = []
+    for i in range(3):
+        grit = lowpass(highpass(noise(n(0.11)), 400), 2500) * env(n(0.11), 0.005, 0.08)
+        parts += [grit, np.zeros(n(0.05))]
+    write("dig", np.concatenate(parts), peak=0.6)
+    # Lapping water: quick wet clicks.
+    parts = []
+    for i in range(4):
+        click = (tone(700 + i * 40, 0.035) * 0.5 + lowpass(noise(n(0.035)), 3000) * 0.5) * env(n(0.035), 0.002, 0.025)
+        parts += [click, np.zeros(n(0.11))]
+    write("lap", np.concatenate(parts), peak=0.55)
+    # Light switch.
+    write("switch", lowpass(noise(n(0.03)), 6000) * env(n(0.03), 0.001, 0.02) + tone(2200, 0.03) * 0.3 * env(n(0.03), 0.001, 0.02), peak=0.6)
+    # Fridge door: a rubber-seal pop and a soft thump.
+    pop = lowpass(noise(n(0.08)), 900) * env(n(0.08), 0.003, 0.06)
+    thump = tone(90, 0.12) * env(n(0.12), 0.004, 0.1)
+    write("door", np.concatenate([pop, np.zeros(n(0.04)), thump]), peak=0.6)
+    # A dog shaking off: a burst of spray.
+    spray = highpass(noise(n(0.6)), 2500) * env(n(0.6), 0.05, 0.3) * (0.6 + 0.4 * np.sin(2 * math.pi * 9 * t_axis(0.6)))
+    write("shake", spray, peak=0.5)
+
+
 def build_icons():
     from PIL import Image, ImageDraw
     os.makedirs(ICONS, exist_ok=True)
@@ -287,5 +319,6 @@ if __name__ == "__main__":
     build_people_sfx()
     build_pet_sfx()
     build_bug_sfx()
+    build_npc_sfx()
     build_icons()
     print("assets generated")

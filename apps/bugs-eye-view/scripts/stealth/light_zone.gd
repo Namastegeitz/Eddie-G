@@ -15,6 +15,9 @@ extends Area3D
 
 var _active := true
 var _forced := 0.0
+## Set by people (curtains drawn): -1 none, 0 off, 1 on.
+var _override := -1
+var _override_time := 0.0
 
 
 func _ready() -> void:
@@ -28,7 +31,17 @@ func _ready() -> void:
 
 
 func is_active() -> bool:
+	if _override_time > 0.0:
+		return _override == 1
 	return _active or _forced > 0.0
+
+
+## Someone switched it (curtains drawn, a lamp clicked off) for `seconds`.
+func override(on: bool, seconds: float) -> void:
+	_override = 1 if on else 0
+	_override_time = seconds
+	_apply_links(on)
+	set_process(true)
 
 
 ## Temporarily turns the zone on (phone screen lighting up).
@@ -39,16 +52,26 @@ func flash(seconds: float) -> void:
 
 
 func _process(delta: float) -> void:
+	if _override_time > 0.0:
+		_override_time -= delta
+		if _override_time <= 0.0:
+			_override = -1
+			_apply_links(_active or _forced > 0.0)
+		return
 	if _forced > 0.0:
 		_forced -= delta
 		if _forced <= 0.0:
 			_apply_links(_active)
 			set_process(false)
+	elif _override_time <= 0.0:
+		set_process(false)
 
 
 func _refresh() -> void:
 	_active = (active_events.is_empty() or HouseClock.any_active(active_events)) \
 		and not HouseClock.any_active(inactive_events)
+	if _override_time > 0.0:
+		return
 	_apply_links(_active or _forced > 0.0)
 
 

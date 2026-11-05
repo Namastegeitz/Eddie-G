@@ -304,13 +304,24 @@ func _test_perception() -> void:
 	check(human.alert.state >= AlertState.SUSPICIOUS, "a loud noise makes the human suspicious")
 	check(human.alert.target_is_lure, "world noise is treated as a lure")
 	human.alert.reset()
-	var target := human.global_position + Vector3(0, 0.8, 25)
-	human.rotation.y = PI
+	# A known, well-lit spot: the person at the front of the kitchen looking
+	# down its long side, the bug 25 units ahead.
+	human.global_position = Vector3(45, 0, 43)
+	human._body_pos = human.global_position
+	human._plant_feet(human.global_position, PI * 0.5)
+	human.rotation.y = PI * 0.5
+	human.reset_physics_interpolation()
+	var target := Vector3(20, 0.8, 43)
 	p.global_position = target
 	p.invuln = 1000.0
 	# Hold the human in place: walking right up to a bug puts it under the
 	# human's downward gaze, where it loses sight (fine in play, slow in a test).
 	human._step_timer = 1e9
+	# ...and with nothing else on their mind (no chore, no phone).
+	human.end_activity()
+	human.activities = {}
+	human.route = PackedVector3Array()
+	human.set_gesture(&"")
 	var early_alarm := -1.0
 	var saw_alert := false
 	for i in 1200:

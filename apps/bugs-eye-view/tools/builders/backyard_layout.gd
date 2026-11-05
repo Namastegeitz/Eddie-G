@@ -67,6 +67,7 @@ static func build(tree: SceneTree) -> void:
 	g.deco("Roof", PrismMesh.new(), "cloth_red", Vector3(-55, 24, 40), Vector3.ZERO, Vector3(22, 8, 18))
 	g.deco_box("DogDoor", Vector3(-55, 9, 31.9), Vector3(7, 9, 0.2), "hole", Vector3.ZERO, false)
 	g.hiding_spot("UnderDoghouse", Vector3(-55, 1, 40), Vector3(18, 2, 14))
+	g.water_bowl(Vector3(-40, 1.5, 46), Vector3(1, 0, 0))
 	g.light_zone("UnderDoghouseShadow", Vector3(-55, 1, 40), Vector3(20, 2, 16), 0, 3)
 
 	# --- Water: hose puddles and the sprinkler wash your scent away ---
@@ -182,12 +183,13 @@ static func build(tree: SceneTree) -> void:
 
 	# --- Threats ---
 	g.human("res://scenes/threats/human.tscn",
-		[Vector3(-45, 0, -14), Vector3(30, 0, -28), Vector3(80, 0, 22), Vector3(82, 0, 55), Vector3(35, 0, 40),
-			Vector3(25, 0, 88), Vector3(-25, 0, 62), Vector3(-50, 0, 20)],
+		[Vector3(-45, 0, -14), Vector3(30, 0, -28), Vector3(80, 0, 22), Vector3(82, 0, 55), Vector3(32, 0, 52),
+			Vector3(35, 0, 40), Vector3(25, 0, 88), Vector3(-25, 0, 62), Vector3(-50, 0, 20)],
 		["gardening", "bbq"], {"name": "Gardener", "activities": {
 			0: {"kind": &"water", "time": 8.0, "face": Vector3(-58, 0, -22)},
 			2: {"kind": &"kneel", "time": 10.0, "face": Vector3(95, 0, 22)},
-			4: {"kind": &"fetch", "time": 9.0},
+			4: {"kind": &"rake", "time": 9.0, "face": Vector3(20, 0, 44)},
+			5: {"kind": &"fetch", "time": 9.0},
 		}})
 	g.pet("res://scenes/threats/dog.tscn", Vector3(-48, 0.5, 25),
 		[Vector3(-40, 0, 0), Vector3(20, 0, 0), Vector3(40, 0, 30), Vector3(80, 0, 60), Vector3(20, 0, 60),

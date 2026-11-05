@@ -76,6 +76,12 @@ are playful when calm (balls, zoomies, play-pounces, cat-and-dog chase),
 alert when something's up, leap at a low-flying fly, and get sharper room by
 room. The dog is a tri-colour beagle that sniffs with its nose to the ground
 and barks at your hiding spot when it finds you.
+People also check their phones, stretch, pet the animals, sweep and rake
+(the broom shoves you along), open the fridge (the door swings out as a new
+obstacle and the light spills out), switch on the lamp and draw the
+curtains; pets sit, groom, scratch, drink at their bowls, shake off water,
+run from the robot vacuum (which eats crumbs) and, in the backyard, the dog
+digs holes you can hide in.
 
 **Look and feel**: high-resolution textures on every surface (tiles, wood
 grain, flagstones, grass, carpet, fabric, denim, fur, bug shells) with bump
@@ -126,7 +132,7 @@ for a generated 3D model (84 in all); `tools/meshy/generate.py` makes them with 
 (needs your Meshy API key; see [tools/meshy/README.md](tools/meshy/README.md)).
 
 - Two headless test suites pass in the project and in an exported build
-  (`tools/run_tests.sh`): a 165-check smoke test and a 359-check phase audit
+  (`tools/run_tests.sh`): a 165-check smoke test and a 378-check phase audit
   that walks the spec phase by phase, plus every update since (alarm gauge,
   fly moves, hiding spots, model slots, bigger rooms, people, bug detail, food
   and gems, flying, animals and people's activities). Zero GDScript warnings, zero engine errors.

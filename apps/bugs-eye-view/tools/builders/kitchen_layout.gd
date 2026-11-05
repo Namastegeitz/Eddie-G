@@ -50,10 +50,12 @@ static func build(tree: SceneTree) -> void:
 	for fx in [31.0, 55.0]:
 		for fz in [-41.0, -19.0]:
 			g.box("FridgeFoot", Vector3(fx, 1, fz), Vector3(2, 2, 2), "dark_metal", &"metal")
-	g.deco_box("FridgeHandle", Vector3(32, 45, -16.6), Vector3(1.5, 30, 1.2), "metal")
 	g.hiding_spot("UnderFridge", Vector3(43, 1, -30), Vector3(24, 2, 22))
 	g.light_zone("UnderFridgeShadow", Vector3(43, 1, -30), Vector3(26, 2, 24), 0, 3)
-	g.light_zone("FridgeLight", Vector3(43, 6, -9), Vector3(30, 12, 16), 3, 4, ["fridge_open"], [], true, 3.0)
+	var fridge_light := g.light_zone("FridgeLight", Vector3(43, 6, -9), Vector3(30, 12, 16), 3, 4, ["fridge_open"], [], true, 3.0)
+	# The door: the cook opens it and it swings out into the room (an obstacle;
+	# the fridge light spills out while it's open).
+	g.swing_door("FridgeDoor", Vector3(57, 37, -17), Vector3(28, 68, 1.5), "fridge_white", 1.9, fridge_light)
 	g.ambient("FridgeHum", Vector3(43, 10, -30), 30.0, 0.35, "fridge_hum", [], [], -14.0)
 
 	# --- Table, chairs and the roach's climbing route ---
@@ -104,6 +106,7 @@ static func build(tree: SceneTree) -> void:
 		g.cylinder("StoolSeat", Vector3(x, 25, 52), 5.5, 2, "dark_wood", &"wood", &"dark_wood")
 	g.cylinder("FoodBowl", Vector3(92, 1.5, 64), 5.0, 3, "metal", &"metal")
 	g.cylinder("WaterBowl", Vector3(102, 1.5, 64), 5.0, 3, "metal", &"metal")
+	g.water_bowl(Vector3(102, 1.5, 64), Vector3(0, 0, -1), false)
 	g.deco("BowlWater", _cyl(4.4, 0.2), "water", Vector3(102, 3.05, 64))
 	g.scent_wiper("BowlSplash", Vector3(100, 0.6, 56), Vector3(7, 1.2, 5))
 	g.cylinder("MopBucket", Vector3(98, 6, 8), 6.0, 12, "cloth_blue", &"metal")
@@ -184,14 +187,16 @@ static func build(tree: SceneTree) -> void:
 	# The cook: cooks at the stove and does the dishes with their back to the
 	# room, snacks at the table; cooking and snacking drop crumbs.
 	var human := g.human("res://scenes/threats/human.tscn",
-		[Vector3(40, 0, 8), Vector3(30, 0, -18), Vector3(5, 0, -17.5), Vector3(-38, 0, -16), Vector3(-56, 0, -16),
+		[Vector3(40, 0, 8), Vector3(43, 0, -4), Vector3(5, 0, -17.5), Vector3(-38, 0, -16), Vector3(-56, 0, -16),
 			Vector3(-56, 0, 5), Vector3(-20, 0, 34), Vector3(32, 0, 58), Vector3(82, 0, 62), Vector3(90, 0, 18),
 			Vector3(65, 0, 8)],
 		["breakfast", "dishes", "cleaning", "lunch", "late_snack", "midnight_snack"],
 		{"activities": {
+			1: {"kind": &"fridge", "time": 6.0, "face": Vector3(43, 40, -30)},
 			2: {"kind": &"cook", "time": 10.0, "face": Vector3(7, 36, -33)},
 			3: {"kind": &"dishes", "time": 8.0, "face": Vector3(-35, 38, -33)},
 			6: {"kind": &"snack", "time": 7.0, "face": Vector3(-20, 30, 14)},
+			7: {"kind": &"sweep", "time": 9.0, "face": Vector3(32, 0, 40)},
 		}})
 	# A playful puppy: plays with its ball, zooms around, naps after lunch.
 	g.pet("res://scenes/threats/puppy.tscn", Vector3(-30, 0.5, 50),

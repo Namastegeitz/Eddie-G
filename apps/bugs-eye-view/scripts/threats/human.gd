@@ -12,6 +12,15 @@ extends Threat
 ## vegetables (low and close: sharp-eyed nearby), and throw the ball for the
 ## dog. Anything suspicious interrupts them. A fly pestering them makes them
 ## flail and swat at the air: for a few seconds they can't see you.
+##
+## More of daily life: the cook sweeps the floor (the broom shoves you and the
+## crumbs along) and opens the fridge (the door swings out into the room, the
+## fridge light comes on and their head is in the fridge: they can't see);
+## the reader switches the lamp on to read and draws the curtains (the
+## sunbeam goes); the gardener rakes. Pausing on their rounds people check
+## their phone (eyes down: they only notice what's close), stretch, scratch
+## their head or glance at their watch, and stop to pet a calm pet. Their
+## feet knock small things out of the way.
 
 @export var route: PackedVector3Array = []
 @export var stride: float = 9.0
@@ -95,6 +104,17 @@ var _glance := Vector2.ZERO
 var _glance_cd := 2.0
 var _snap_look := 0.0
 var _last_state: int = AlertState.UNAWARE
+# Daily life: a gesture while pausing, tools and the things they use.
+const GESTURES: Array[StringName] = [&"phone", &"stretch", &"scratch", &"watch"]
+const CROUCH_OFFSET := Vector3(0, -11.0, -2.0)
+const PHONE_SIGHT := 18.0
+var gesture: StringName = &""
+var _sweeper: Sweeper
+var _door: SwingDoor
+var _lamp: LightZone
+var _curtains_done := false
+var _petting: Node3D
+var _phone: Node3D
 
 
 func _setup() -> void:
@@ -114,6 +134,7 @@ func _setup() -> void:
 		if _head:
 			_lids = _head.get_node_or_null("Lids") as Node3D
 			_gaze = _head.get_node_or_null("Gaze") as Node3D
+		_phone = _torso.get_node_or_null("ShoulderR/Elbow/Hand/PhoneHold") as Node3D
 	_legs = get_node_or_null("Legs") as Node3D
 	# Posed every frame: ride on the smoothed body (and feet).
 	if _torso:
@@ -173,6 +194,8 @@ func _think(delta: float) -> void:
 		if activity == &"nap":
 			AudioManager.play_at(&"voice_huh", eye_position(), 0.0, 0.8, &"Muffled")
 		end_activity()
+	if gesture != &"" and (alert.state > AlertState.UNAWARE or flustered > 0.0):
+		set_gesture(&"")
 	match alert.state:
 		AlertState.UNAWARE:
 			if activity != &"":
@@ -228,6 +251,8 @@ func _patrol(delta: float) -> void:
 		return
 	if _pause > 0.0:
 		_pause -= delta
+		if _pause <= 0.0:
+			set_gesture(&"")
 		return
 	var target := route[_route_i]
 	face_towards(target, delta)
@@ -239,8 +264,10 @@ func _patrol(delta: float) -> void:
 			_route_i = (_route_i + 1) % route.size()
 			return
 		_route_i = (_route_i + 1) % route.size()
-		if randf() < 0.3:
+		if randf() < 0.45:
 			_pause = randf_range(0.8, 2.0)
+			if not try_pet_nearby() and randf() < 0.75:
+				set_gesture(GESTURES[randi() % GESTURES.size()])
 		return
 	_walk_towards(target, delta, step_time)
 
@@ -454,9 +481,22 @@ func _pose_head(delta: float) -> void:
 	elif activity == &"nap":
 		pitch_t = -0.65
 		yaw_t = 0.25
-	elif activity in [&"cook", &"dishes", &"kneel", &"water"]:
+	elif activity in [&"cook", &"dishes", &"kneel", &"water", &"sweep", &"rake"]:
 		pitch_t = -0.5 + _glance.y * 0.3
 		yaw_t = _glance.x * 0.3
+	elif activity == &"pet":
+		pitch_t = -0.8
+	elif activity == &"fridge":
+		pitch_t = -0.15
+	elif activity == &"curtains":
+		pitch_t = 0.25
+	elif gesture == &"phone":
+		pitch_t = -0.65
+	elif gesture == &"watch":
+		pitch_t = -0.55
+		yaw_t = 0.35
+	elif gesture == &"stretch":
+		pitch_t = 0.4
 	elif flustered > 0.0:
 		yaw_t = sin(_breath * 9.0) * 0.7
 	elif calm:
@@ -540,6 +580,8 @@ static func _place_bone(mi: Node3D, a: Vector3, b: Vector3, mesh_len: float) -> 
 # --- Activities -------------------------------------------------------------------
 
 func start_activity(act: Dictionary) -> void:
+	if activity != &"":
+		end_activity()
 	_act = act
 	activity = StringName(act.get("kind", ""))
 	_act_t = float(act.get("time", 8.0))
@@ -566,6 +608,56 @@ func start_activity(act: Dictionary) -> void:
 			AudioManager.play_at(&"sprinkler", to, -6.0)
 		&"fetch":
 			_ball = _nearest_ball(60.0)
+		&"sweep", &"rake":
+			_sweeper = Sweeper.make(&"rake" if activity == &"rake" else &"broom", self)
+			get_parent().add_child(_sweeper)
+		&"fridge":
+			_door = _find_in_level("FridgeDoor") as SwingDoor
+			if _door:
+				_door.open_for(maxf(_act_t - 0.6, 1.0))
+		&"read":
+			# Click: the reading lamp on.
+			_lamp = _find_in_level("ReadingLamp") as LightZone
+			if _lamp:
+				_lamp.flash(_act_t + 0.5)
+				AudioManager.play_at(&"switch", _lamp.global_position + Vector3.UP * 40.0, -4.0)
+		&"curtains":
+			_curtains_done = false
+		&"pet":
+			_petting = _act.get("pet", null)
+	set_gesture(&"")
+
+
+func _find_in_level(node_name: String) -> Node:
+	var root: Node = Level.current if Level.current and is_instance_valid(Level.current) else get_parent()
+	return root.find_child(node_name, true, false) if root else null
+
+
+## A little something while pausing on the rounds.
+func set_gesture(g: StringName) -> void:
+	gesture = g
+	if g != &"":
+		_pause = maxf(_pause, {&"phone": 5.0, &"stretch": 2.6, &"scratch": 2.0, &"watch": 1.8}.get(g, 2.0))
+		if g == &"phone":
+			AudioManager.play_at(&"phone_buzz", eye_position(), -16.0)
+	if _phone:
+		_phone.visible = g == &"phone"
+
+
+## Stop and give a calm pet nearby a pat (it sits and wags).
+func try_pet_nearby() -> bool:
+	for n in get_tree().get_nodes_in_group(Phys.GROUP_PET):
+		var pet := n as Pet
+		if pet == null or not pet.present or not get_parent().is_ancestor_of(pet):
+			continue
+		if not pet.wants_petting():
+			continue
+		var d := Vector2(pet.global_position.x - _body_pos.x, pet.global_position.z - _body_pos.z).length()
+		if d < 20.0:
+			start_activity({"kind": &"pet", "time": 4.0, "face": pet.global_position, "pet": pet})
+			pet.get_petted(self, 4.0)
+			return true
+	return false
 
 
 func end_activity() -> void:
@@ -579,6 +671,17 @@ func end_activity() -> void:
 		_stream.queue_free()
 	_stream = null
 	_ball = null
+	if _sweeper and is_instance_valid(_sweeper):
+		_sweeper.queue_free()
+	_sweeper = null
+	if _door and is_instance_valid(_door):
+		_door.close()
+	_door = null
+	if _lamp and is_instance_valid(_lamp) and _lamp.is_inside_tree():
+		_lamp.flash(0.05)
+		AudioManager.play_at(&"switch", _lamp.global_position + Vector3.UP * 40.0, -6.0, 0.9)
+	_lamp = null
+	_petting = null
 
 
 func is_sitting() -> bool:
@@ -622,6 +725,15 @@ func _activity_tick(delta: float) -> void:
 			if not _thrown and _act_clock > 1.0:
 				_thrown = true
 				_throw_ball()
+		&"curtains":
+			if not _curtains_done and _act_clock > 1.0:
+				_curtains_done = true
+				var c := _find_in_level("Curtains") as Curtains
+				if c:
+					c.toggle()
+		&"pet":
+			if _petting and is_instance_valid(_petting):
+				face_towards(_petting.global_position, delta)
 	if _act_t <= 0.0:
 		end_activity()
 
@@ -692,6 +804,11 @@ func eye_position() -> Vector3:
 
 func can_see(p: BugBase) -> bool:
 	if flustered > 0.0 or activity == &"nap":
+		return false
+	if activity == &"fridge" and _act_clock > 0.6:
+		# Head in the fridge.
+		return false
+	if gesture == &"phone" and Vector2(p.global_position.x - global_position.x, p.global_position.z - global_position.z).length() > PHONE_SIGHT:
 		return false
 	if is_reading_blind():
 		return global_position.distance_to(p.global_position) < 10.0 and super.can_see(p)
@@ -771,4 +888,26 @@ func _activity_pose() -> Array:
 		&"fetch":
 			var arm := -0.9 if t < 1.0 else 2.4
 			return [Vector3.ZERO, Vector2(0.2, 0.3), Vector2(arm, 0.4)]
+		&"sweep", &"rake":
+			var sw := sin(t * (2.2 if activity == &"sweep" else 1.6))
+			return [Vector3(sw * 1.2, -1.0, -1.0), Vector2(0.9 + sw * 0.2, 0.9), Vector2(1.0 - sw * 0.2, 0.7)]
+		&"fridge":
+			# Leaning in, one hand on the door, the other reaching for a shelf.
+			var reach := 1.5 + sin(t * 2.0) * 0.15
+			return [Vector3(0, -1.5, -2.5), Vector2(1.2, 0.4), Vector2(reach, 0.5)]
+		&"curtains":
+			var pull := 2.5 if t < 1.0 else 2.1
+			return [Vector3(0, 0.6, 0), Vector2(pull, 0.3), Vector2(pull, 0.3)]
+		&"pet":
+			var stroke := sin(t * 4.0) * 0.25
+			return [CROUCH_OFFSET, Vector2(0.4, 0.6), Vector2(0.55 + stroke, 0.25)]
+	match gesture:
+		&"phone":
+			return [Vector3.ZERO, Vector2(0.15, 0.4), Vector2(1.15, 2.15)]
+		&"stretch":
+			return [Vector3(0, 1.0, 0), Vector2(3.0, 0.15), Vector2(3.0, 0.15)]
+		&"scratch":
+			return [Vector3.ZERO, Vector2(0.1, 0.3), Vector2(2.75, 2.3 + sin(_breath * 12.0) * 0.15)]
+		&"watch":
+			return [Vector3.ZERO, Vector2(1.3, 2.0), Vector2(0.4, 0.8)]
 	return []

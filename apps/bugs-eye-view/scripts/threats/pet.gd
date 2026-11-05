@@ -113,9 +113,29 @@ var _twitch_cd := 3.0
 var _twitch_t := 0.0
 var _twitch_ear := 0
 var _pant := 0.0
+# Daily habits: sit, lie down, groom, scratch, stretch, drink, dig, shake.
+var idle_act: StringName = &""
+var _act_left := 0.0
+var petted := 0.0
+var _petted_by: Node3D = null
+var wet := 0.0
+var _in_water := false
+var _water_check := 0.0
+var _bowl_cd := 20.0
+var _drink_at := Vector3.INF
+var _bowl_pos := Vector3.ZERO
+var _lap_cd := 0.0
+var _dig_cd := 15.0
+var _dig_sound := 0.0
+var _vac_check := 0.0
+var _vac_voice := 0.0
+var _prop_check := 0.0
+const MAX_HOLES := 3
 # Fetch: give up on a ball it can't get any closer to.
-var _fetch_best := INF
+var _fetch_last_x := 0.0
+var _fetch_last_z := 0.0
 var _fetch_stuck := 0.0
+var _fetch_stuck_s := 0.0
 
 
 func _setup() -> void:
@@ -184,7 +204,40 @@ func perception_mult() -> float:
 
 ## Busy playing (not snapping at a fly, which is very much paying attention).
 func is_distracted() -> bool:
-	return play != &"" and play != &"snap"
+	return (play != &"" and play != &"snap") or petted > 0.0
+
+
+## Calm, awake and not busy: happy to be petted.
+func wants_petting() -> bool:
+	return present and not sleeping and mood == Mood.CALM and play == &"" and petted <= 0.0 \
+		and scared <= 0.0 and pointing <= 0.0 and _pounce == Pounce.NONE and _perch_state == 0 \
+		and alert.state == AlertState.UNAWARE
+
+
+## A person crouches to pet it: it sits, faces them and wags.
+func get_petted(by: Node3D, seconds: float) -> void:
+	petted = seconds
+	_petted_by = by
+	idle_act = &"sit"
+	_drink_at = Vector3.INF
+	if barks:
+		AudioManager.play_at(&"sniff", eye_position(), -10.0, 1.2)
+	else:
+		AudioManager.play_at(&"meow", eye_position(), -10.0, 1.15)
+
+
+## Sets a habit going for a few seconds.
+func start_idle_act(act: StringName) -> void:
+	idle_act = act
+	_act_left = {&"sit": randf_range(4.0, 7.0), &"lie": randf_range(6.0, 10.0), &"groom": 4.0,
+		&"scratch": 2.5, &"stretch": 2.0, &"shake": 1.2, &"drink": 4.0, &"dig": 3.5}.get(act, 3.0)
+	_idle = maxf(_idle, _act_left)
+	match act:
+		&"shake":
+			AudioManager.play_at(&"shake", global_position + Vector3.UP * 4.0, -2.0)
+			_burst(Color(0.6, 0.8, 1.0, 0.9), 26, global_position + Vector3.UP * 5.0 * scale.x)
+		&"scratch":
+			AudioManager.play_at(&"dig", global_position, -14.0, 1.6)
 
 
 func _think(delta: float) -> void:
@@ -210,6 +263,22 @@ func _think(delta: float) -> void:
 		stop_playing()
 	else:
 		mood = Mood.PLAY if play != &"" else Mood.CALM
+	_habits_tick(delta)
+	if petted > 0.0:
+		petted -= delta
+		if alert.state > AlertState.UNAWARE or mood != Mood.CALM:
+			petted = 0.0
+		else:
+			_stop(delta)
+			if _petted_by and is_instance_valid(_petted_by):
+				face_towards(_petted_by.global_position, delta)
+			idle_act = &"sit"
+			if petted <= 0.0:
+				idle_act = &""
+			return
+	if mood != Mood.CALM and idle_act != &"shake":
+		idle_act = &""
+		_drink_at = Vector3.INF
 	if scared > 0.0:
 		scared -= delta
 		mood = Mood.ALERT
@@ -297,13 +366,240 @@ func _patrol(delta: float) -> void:
 	if _idle > 0.0:
 		_idle -= delta
 		_stop(delta)
+		_act_tick(delta)
+		if _idle <= 0.0:
+			_finish_act()
+		return
+	# Thirsty: off to the water bowl.
+	if _drink_at != Vector3.INF:
+		if _flat_dist(_drink_at, global_position) < 3.0:
+			_drink_at = Vector3.INF
+			face_towards(_bowl_pos, 1.0)
+			start_idle_act(&"drink")
+		else:
+			_move_to(_drink_at, config.patrol_speed, delta)
 		return
 	var target := waypoints[_wp_i]
 	if _flat_dist(target, global_position) < 2.0:
 		_wp_i = (_wp_i + 1) % waypoints.size()
 		_idle = randf_range(0.5, 2.5)
+		_pick_habit()
 		return
 	_move_to(target, config.patrol_speed, delta)
+
+
+## At a stop on its rounds: maybe sit down, groom, scratch, stretch, lie
+## down for a bit, dig (a dog on grass) or go for a drink.
+func _pick_habit() -> void:
+	if _bowl_cd <= 0.0 and _go_drink():
+		return
+	if barks and _dig_cd <= 0.0 and _can_dig_here():
+		_dig_cd = randf_range(30.0, 60.0)
+		start_idle_act(&"dig")
+		return
+	if randf() < 0.6:
+		var acts: Array[StringName] = [&"sit", &"lie", &"stretch"]
+		acts.append(&"scratch" if barks else &"groom")
+		acts.append(&"scratch" if barks else &"groom")
+		start_idle_act(acts[randi() % acts.size()])
+
+
+func _act_tick(delta: float) -> void:
+	_act_left -= delta
+	match idle_act:
+		&"drink":
+			_lap_cd -= delta
+			if _lap_cd <= 0.0:
+				_lap_cd = 0.7
+				AudioManager.play_at(&"lap", eye_position(), -8.0, randf_range(0.9, 1.1))
+		&"dig":
+			_dig_sound -= delta
+			if _dig_sound <= 0.0:
+				_dig_sound = 0.45
+				AudioManager.play_at(&"dig", global_position, -4.0, randf_range(0.9, 1.1))
+				_burst(Color(0.36, 0.25, 0.14), 10, global_position - global_basis.z * 2.5 * scale.x + Vector3.UP)
+	if _act_left <= 0.0 and idle_act != &"":
+		_finish_act()
+		_idle = minf(_idle, 0.3)
+
+
+func _finish_act() -> void:
+	match idle_act:
+		&"dig":
+			_make_hole()
+		&"drink":
+			# Sloppy drinker: sometimes a puddle next to the bowl.
+			if randf() < 0.4:
+				_spill_puddle()
+	idle_act = &""
+
+
+## Wet from a puddle, the sprinkler or the hose; cats avoid water, dogs
+## shake it off afterwards. Running pets bump toys out of the way. Everyone
+## keeps clear of the robot vacuum.
+func _habits_tick(delta: float) -> void:
+	_bowl_cd -= delta
+	_dig_cd -= delta
+	_vac_voice -= delta
+	_water_check -= delta
+	if _water_check <= 0.0:
+		_water_check = 0.25
+		_in_water = _water_near()
+		if _in_water:
+			wet = 4.0
+			if not barks and scared <= 0.0:
+				scared = 1.0
+				_scare_from = global_position - global_basis.z * 2.0
+				AudioManager.play_at(&"hiss", eye_position(), -8.0, 1.2)
+	if wet > 0.0 and not _in_water:
+		wet -= delta
+		if barks and wet <= 3.2 and idle_act != &"shake" and mood != Mood.ALERT:
+			wet = 0.0
+			_stop(delta)
+			start_idle_act(&"shake")
+	_vac_check -= delta
+	if _vac_check <= 0.0:
+		_vac_check = 0.3
+		var vac := _running_vacuum()
+		if vac and alert.state < AlertState.ALERT:
+			if scared <= 0.0 and _vac_voice <= 0.0:
+				_vac_voice = 4.0
+				AudioManager.play_at(&"bark" if barks else &"hiss", eye_position(), -4.0, 1.1)
+			scared = maxf(scared, 1.0)
+			_scare_from = vac.global_position
+			stop_playing()
+			petted = 0.0
+	_prop_check -= delta
+	if _prop_check <= 0.0:
+		_prop_check = 0.15
+		var spd := Vector2(velocity.x, velocity.z).length()
+		if spd > 2.0:
+			var reach := 2.6 * scale.x + 1.5
+			for n in get_tree().get_nodes_in_group(Phys.GROUP_PROP):
+				var prop := n as PhysicsProp
+				if prop and prop != _toy and absf(prop.global_position.y - global_position.y) < 4.0 * scale.x \
+						and _flat_dist(prop.global_position, global_position) < reach:
+					prop.push_by_npc(global_position - Vector3(velocity.x, 0.0, velocity.z).normalized(), 0.6 + spd * 0.04)
+
+
+func _running_vacuum() -> Node3D:
+	for t in PerceptionSystem.threats:
+		if t is RobotVacuum and t.present and t.stun_time <= 0.0 and _flat_dist(t.global_position, global_position) < 22.0 \
+				and absf(t.global_position.y - global_position.y) < 6.0:
+			return t
+	return null
+
+
+func _water_near() -> bool:
+	for n in get_tree().get_nodes_in_group(&"water"):
+		var w := n as ScentWiper
+		if w == null or not w.is_wet():
+			continue
+		if w.covers(global_position):
+			return true
+	return false
+
+
+func _go_drink() -> bool:
+	var best: Node3D = null
+	var best_d := 140.0
+	var room: Node = Level.current if Level.current and is_instance_valid(Level.current) else get_parent().get_parent()
+	for n in get_tree().get_nodes_in_group(&"water_bowl"):
+		var b := n as Node3D
+		if b and room and room.is_ancestor_of(b):
+			var d := _flat_dist(b.global_position, global_position)
+			if d < best_d:
+				best_d = d
+				best = b
+	_bowl_cd = randf_range(40.0, 80.0)
+	if best == null:
+		return false
+	_bowl_pos = best.global_position
+	var side: Vector3 = best.get_meta(&"approach", Vector3.FORWARD)
+	# Stand just clear of the bowl (radius 5) with the nose over it.
+	_drink_at = _bowl_pos + side * (5.0 + 2.4 * scale.x)
+	_drink_at.y = global_position.y
+	return true
+
+
+func _spill_puddle() -> void:
+	var at := (global_position + _bowl_pos) * 0.5
+	at.y = global_position.y
+	var w := ScentWiper.new()
+	w.name = "Spill"
+	w.wipe_radius = 3.0
+	var cs := CollisionShape3D.new()
+	var bs := BoxShape3D.new()
+	bs.size = Vector3(5, 1.2, 5)
+	cs.shape = bs
+	w.add_child(cs)
+	var mi := MeshInstance3D.new()
+	var bm := BoxMesh.new()
+	bm.size = Vector3(5, 0.06, 5)
+	mi.mesh = bm
+	mi.material_override = load("res://assets/materials/water.tres")
+	mi.position = Vector3(0, -0.55, 0)
+	w.add_child(mi)
+	get_parent().add_child(w)
+	w.global_position = at + Vector3.UP * 0.6
+	get_tree().create_timer(30.0).timeout.connect(func() -> void:
+		if is_instance_valid(w):
+			w.queue_free())
+
+
+func _can_dig_here() -> bool:
+	if get_tree().get_nodes_in_group(&"dug_hole").size() >= MAX_HOLES:
+		return false
+	var q := PhysicsRayQueryParameters3D.create(global_position + Vector3.UP, global_position + Vector3.DOWN * 3.0, Phys.WORLD)
+	var hit := get_world_3d().direct_space_state.intersect_ray(q)
+	if hit.is_empty():
+		return false
+	var body := hit["collider"] as Node
+	var surf: StringName = body.get_meta(&"surface", &"") if body else &""
+	return surf in [&"grass", &"soil"]
+
+
+func _make_hole() -> void:
+	var fwd := -global_basis.z
+	fwd.y = 0.0
+	fwd = fwd.normalized()
+	var at := global_position + fwd * (3.2 * scale.x)
+	at.y = global_position.y
+	if Level.current and not Level.current.is_open_floor(at + Vector3.UP * 0.6):
+		return
+	var hole := DugHole.make(at, -fwd)
+	get_parent().add_child(hole)
+	hole.global_position = at
+
+
+## A quick spray of dirt or water droplets.
+func _burst(color: Color, amount: int, at: Vector3) -> void:
+	var ps := CPUParticles3D.new()
+	ps.one_shot = true
+	ps.amount = amount
+	ps.lifetime = 0.8
+	ps.explosiveness = 0.9
+	var sm := SphereMesh.new()
+	sm.radius = 0.25 * scale.x
+	sm.height = 0.5 * scale.x
+	sm.radial_segments = 6
+	sm.rings = 3
+	ps.mesh = sm
+	var m := StandardMaterial3D.new()
+	m.albedo_color = color
+	m.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	if color.a < 1.0:
+		m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	ps.material_override = m
+	ps.direction = Vector3.UP
+	ps.spread = 70.0
+	ps.initial_velocity_min = 6.0
+	ps.initial_velocity_max = 13.0
+	ps.gravity = Vector3(0, -30, 0)
+	get_parent().add_child(ps)
+	ps.global_position = at
+	ps.emitting = true
+	get_tree().create_timer(2.0).timeout.connect(ps.queue_free)
 
 
 func _search(delta: float) -> void:
@@ -564,8 +860,10 @@ func fetch(ball: PhysicsProp, thrower: Node3D) -> void:
 	_toy = ball
 	_fetch_by = thrower
 	_carrying = false
-	_fetch_best = INF
+	_fetch_last_x = global_position.x
+	_fetch_last_z = global_position.z
 	_fetch_stuck = 0.0
+	_fetch_stuck_s = 0.0
 	_play_t = 14.0
 
 
@@ -649,12 +947,17 @@ func _fetch_tick(delta: float) -> void:
 		var d := _flat_dist(_toy.global_position, global_position)
 		if d > 3.0 * scale.x + 2.0:
 			_move_to(_toy.global_position, config.chase_speed, delta)
-			if d < _fetch_best - 0.5:
-				_fetch_best = d
+			# Stuck: the ball has stopped rolling and the dog isn't getting
+			# anywhere (it's behind something) for a few seconds.
+			_fetch_stuck += delta
+			if _fetch_stuck >= 1.0:
+				var moved := _flat_dist(global_position, Vector3(_fetch_last_x, 0.0, _fetch_last_z))
+				var ball_still := _toy.linear_velocity.length() < 1.5
+				_fetch_stuck_s = _fetch_stuck_s + 1.0 if (ball_still and moved < 1.5) else 0.0
+				_fetch_last_x = global_position.x
+				_fetch_last_z = global_position.z
 				_fetch_stuck = 0.0
-			else:
-				_fetch_stuck += delta
-				if _fetch_stuck > 3.0:
+				if _fetch_stuck_s >= 3.0:
 					stop_playing()
 					return
 		else:
@@ -714,7 +1017,8 @@ func pose_body(delta: float) -> void:
 	var speed := Vector2(velocity.x, velocity.z).length()
 	var moving := clampf(speed / 4.0, 0.0, 1.0)
 	_gait += delta * (4.0 + speed * 0.7) * moving
-	var lying := mood == Mood.SLEEP
+	var lying := mood == Mood.SLEEP or idle_act == &"lie"
+	var sitting := idle_act in [&"sit", &"groom", &"scratch"]
 	var stalking := mood == Mood.ALERT and not barks and alert.state == AlertState.SEARCHING
 	var crouch := 0.0
 	if lying:
@@ -724,6 +1028,13 @@ func pose_body(delta: float) -> void:
 	_visual.position.y = lerpf(_visual.position.y, -crouch * 6.0 * scale.x, k)
 	# Play bow at the start of a play session.
 	var bow := 0.25 if play != &"" and play != &"snap" and fmod(_pose_t, 3.0) < 0.6 and speed < 1.0 else 0.0
+	match idle_act:
+		&"sit", &"groom", &"scratch":
+			bow = -0.38
+		&"stretch":
+			bow = 0.32
+		&"drink", &"dig":
+			bow = 0.22
 	_visual.rotation.x = lerp_angle(_visual.rotation.x, bow, k)
 	for i in _legs.size():
 		var leg := _legs[i]
@@ -731,11 +1042,33 @@ func pose_body(delta: float) -> void:
 		var phase := _gait + (PI if i in [1, 2] else 0.0)
 		var swing := sin(phase) * 0.6 * moving
 		var fold := 1.3 if lying else crouch * 2.0
-		leg.rotation.x = lerp_angle(leg.rotation.x, swing + (fold if front else -fold), k)
+		var leg_x := swing + (fold if front else -fold)
 		var knee := leg.get_node_or_null("Knee") as Node3D
+		var bend := maxf(0.0, -sin(phase)) * 0.9 * moving + (1.4 if lying else crouch * 2.4)
+		# Habits: sitting folds the back legs under; grooming lifts a front
+		# paw; a dog scratches with a back leg; stretching reaches forward;
+		# digging paddles the front paws.
+		if sitting:
+			leg_x = 0.38 if front else -1.15
+			bend = 0.0 if front else 1.7
+		if idle_act == &"groom" and i == 0:
+			leg_x = -1.3
+			bend = 1.3
+		elif idle_act == &"scratch" and i == 2:
+			leg_x = -1.6 + sin(_pose_t * 28.0) * 0.35
+			bend = 1.0
+		elif idle_act == &"stretch":
+			leg_x = -1.0 if front else 0.15
+			bend = 0.0
+		elif idle_act == &"dig" and front:
+			leg_x = -0.7 + sin(_pose_t * 22.0 + float(i) * PI) * 0.6
+			bend = 0.6
+		elif idle_act == &"drink" and front:
+			bend = 0.35
+		var lk := clampf(k * (2.5 if idle_act in [&"scratch", &"dig"] else 1.0), 0.0, 1.0)
+		leg.rotation.x = lerp_angle(leg.rotation.x, leg_x, lk)
 		if knee:
-			var bend := maxf(0.0, -sin(phase)) * 0.9 * moving + (1.4 if lying else crouch * 2.4)
-			knee.rotation.x = lerp_angle(knee.rotation.x, -bend if front else bend, k)
+			knee.rotation.x = lerp_angle(knee.rotation.x, -bend if front else bend, lk)
 	if _tail:
 		var tx := -0.7 if barks else -0.5
 		var ty := 0.0
@@ -754,6 +1087,11 @@ func pose_body(delta: float) -> void:
 			_:
 				ty = sin(_pose_t * (6.0 if barks else 1.6)) * (0.3 if barks else 0.25)
 				tip = sin(_pose_t * 1.6 + 1.0) * 0.4
+				if petted > 0.0:
+					# Happy: a dog wags hard, a cat holds its tail high.
+					tx = -0.9 if barks else -1.3
+					ty = sin(_pose_t * 16.0) * 0.6 if barks else sin(_pose_t * 2.0) * 0.15
+					tip = 0.0 if barks else 0.7
 		_tail.rotation = _tail.rotation.lerp(Vector3(tx, ty, 0), k)
 		if _tail_tip:
 			_tail_tip.rotation.x = lerp_angle(_tail_tip.rotation.x, (-0.6 if not barks else 0.0) + tip, k)
@@ -789,8 +1127,20 @@ func pose_body(delta: float) -> void:
 			var local := global_transform.affine_inverse() * look - _head.position
 			hy = clampf(atan2(-local.x, -local.z), -0.9, 0.9)
 			hx = clampf(atan2(local.y, Vector2(local.x, local.z).length()), -0.6, 0.8)
-		if lying:
+		if lying and mood == Mood.SLEEP:
 			hx = -0.5
+		elif idle_act == &"drink":
+			hx = -0.95 + sin(_pose_t * 10.0) * 0.06
+			hy = 0.0
+		elif idle_act == &"groom":
+			hx = -0.55 + sin(_pose_t * 8.0) * 0.08
+			hy = 0.45
+		elif idle_act == &"dig":
+			hx = -0.6
+			hy = 0.0
+		elif petted > 0.0 and _petted_by and is_instance_valid(_petted_by):
+			hx = 0.35
+			hy = 0.0
 		elif sniffing and barks:
 			# Nose to the ground, snuffling.
 			hx = -0.75 + sin(_pose_t * 14.0) * 0.08
@@ -820,7 +1170,13 @@ func _pose_life(delta: float, speed: float, moving: float, lying: bool) -> void:
 	_visual.scale.x = swell
 	_visual.scale.z = 1.0 + (swell - 1.0) * 0.4
 	var k := clampf(10.0 * delta, 0.0, 1.0)
-	_visual.rotation.z = lerp_angle(_visual.rotation.z, sin(_gait) * 0.04 * moving, k)
+	if idle_act == &"shake":
+		# Shaking off the water, nose to tail.
+		_visual.rotation.z = sin(_pose_t * 34.0) * 0.4 * clampf(_act_left / 1.2, 0.2, 1.0)
+	elif idle_act == &"scratch" and _head:
+		_visual.rotation.z = lerp_angle(_visual.rotation.z, 0.12, k)
+	else:
+		_visual.rotation.z = lerp_angle(_visual.rotation.z, sin(_gait) * 0.04 * moving, k)
 	if _head:
 		_head.position = _head_base + Vector3(0, sin(_gait * 2.0) * 0.14 * scale.x * moving, 0)
 	if _lids:

@@ -20,9 +20,36 @@ func _ready() -> void:
 	body_entered.connect(_on_body_entered)
 
 
+var _home := Vector3.INF
+var _back_in := 0.0
+
+
 func _process(delta: float) -> void:
 	if _visual and not taken:
 		_visual.rotate_y(delta * (2.5 if golden else 1.2))
+	if _back_in > 0.0:
+		_back_in -= delta
+		if _back_in <= 0.0:
+			# Shaken out of the vacuum's bin (or dropped again) back near home.
+			taken = false
+			visible = true
+			global_position = _home
+			set_deferred("monitoring", true)
+
+
+## Sucked up by the robot vacuum: gone for a while, then back.
+func suck_up(back_after: float = 25.0) -> void:
+	if taken or golden:
+		return
+	taken = true
+	_home = global_position
+	visible = false
+	set_deferred("monitoring", false)
+	_back_in = back_after
+
+
+func is_sucked_up() -> bool:
+	return _back_in > 0.0
 
 
 func _on_body_entered(b: Node3D) -> void:

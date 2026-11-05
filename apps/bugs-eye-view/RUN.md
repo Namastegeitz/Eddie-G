@@ -169,9 +169,24 @@ interrupts them:
 
 | Room | Who | Does | What it means for you |
 |---|---|---|---|
-| Kitchen | The cook | Cooks at the stove, does the dishes, snacks at the table | Back turned while cooking and washing up; cooking and snacking drop crumbs you can grab under their feet |
-| Living room | The reader | Reads in the armchair, naps on the couch | Behind the paper they only see what's right in front of them, glancing up now and then; asleep they can't see, barely hear and snore - a loud noise wakes them |
-| Backyard | The gardener | Waters the flowers, kneels at the vegetables, throws the ball for the dog | The spray washes your scent off but knocks you back; kneeling they spot anything close, even behind them; the dog chases the ball and forgets about you |
+| Kitchen | The cook | Cooks at the stove, does the dishes, snacks at the table, opens the fridge, sweeps the floor | Back turned while cooking and washing up; cooking and snacking drop crumbs you can grab under their feet. At the fridge the door swings out into the room (a wall you can't pass for a few seconds), the fridge light spills out and their head is in the fridge: they can't see. The broom sweeps crumbs along and shoves you out from under it - they notice a moment later |
+| Living room | The reader | Reads in the armchair (switching the lamp on), naps on the couch, draws or opens the curtains | Behind the paper they only see what's right in front of them, glancing up now and then; asleep they can't see, barely hear and snore - a loud noise wakes them. The reading lamp lights the reading corner; drawn curtains take the sunbeam away |
+| Backyard | The gardener | Waters the flowers, kneels at the vegetables, rakes the leaves, throws the ball for the dog | The spray washes your scent off but knocks you back; kneeling they spot anything close, even behind them; the rake sweeps like the broom; the dog chases the ball and forgets about you |
+
+On their rounds people also stop now and then to **check their phone**
+(eyes down: they only notice what's close), stretch, scratch their head or
+glance at their watch, and they **crouch to pet a calm pet** (it sits, wags
+and stops watching for a bit). Their feet knock small things out of the way.
+
+**Pets go about their day too.** At stops on their rounds they sit, lie down,
+stretch, groom a paw (cats) or scratch an ear (dogs), and wander over to the
+**water bowl** for a drink - a sloppy drinker leaves a puddle that washes
+your scent away. A wet dog shakes itself off; a cat runs out of any water.
+Running pets bump toys out of the way. Everyone keeps clear of the robot
+vacuum, which **hoovers up crumbs** in its path (they turn up again a little
+later) and shoves toys aside. In the backyard the dog **digs holes** in the
+lawn: a mound of dirt you have to go round, and a dark hollow any bug can
+hide in without squeezing.
 
 **Places to hide.** Every bug can crawl into the things lying around the
 house and be completely hidden (no squeezing needed): a paper cup on its side,
@@ -187,7 +202,7 @@ three times faster.
 ## 3. Test it
 
 All checks: import, boot, warnings-as-errors, an offline test of the Meshy
-client, then the 165-check smoke test and the 359-check phase audit
+client, then the 165-check smoke test and the 378-check phase audit
 (`tests/phase_audit.tscn`, one section per build phase plus one per update),
 each run in the project **and** against an exported pack. Any script or
 engine error fails the run:
@@ -210,7 +225,8 @@ slots, 9 bigger rooms, people, bug detail, food and gems, 10 pickup messages
 and touch look, 11 flying, playful/alert animals and people's activities, 12 the
 touch look stick, 13 the upgraded dog and cat-and-dog rooms, 14 the five new
 bugs, the unlock chain, the how-to-play cards and auto quality, 15 smooth
-motion, lifelike people and pets, textures and quality tiers).
+motion, lifelike people and pets, textures and quality tiers, 16 new NPC
+movements, chores, pet habits and the obstacles they create).
 
 `godot` means the Godot executable, e.g.
 `C:\Godot\Godot_v4.7.2-stable_win64_console.exe`. The smoke test prints

@@ -14,6 +14,7 @@ extends RigidBody3D
 var _last_speed := 0.0
 var _cd := 0.0
 var _touched_by_player := 0.0
+var _npc_cd := 0.0
 ## Being batted / thrown in play by a pet or a person: its bumps don't stun
 ## anyone and don't count as your trick.
 var _played := 0.0
@@ -37,6 +38,8 @@ func _physics_process(delta: float) -> void:
 		_touched_by_player -= delta
 	if _played > 0.0:
 		_played -= delta
+	if _npc_cd > 0.0:
+		_npc_cd -= delta
 
 
 ## Pushed by the player (USE or walking into it).
@@ -49,6 +52,22 @@ func nudge(from: Vector3, strength_mult: float = 1.0) -> void:
 		dir = Vector3.FORWARD
 	apply_central_impulse((dir.normalized() + Vector3.UP * 0.25) * nudge_strength * mass * strength_mult)
 	_touched_by_player = 6.0
+
+
+## Knocked aside by a person's foot, a broom, a running pet or the vacuum
+## (not the player: it doesn't count as your trick).
+func push_by_npc(from: Vector3, strength_mult: float = 1.0) -> void:
+	if _npc_cd > 0.0:
+		return
+	freeze = false
+	sleeping = false
+	var dir := global_position - from
+	dir.y = 0.0
+	if dir.length_squared() < 0.0001:
+		dir = Vector3.FORWARD
+	apply_central_impulse((dir.normalized() + Vector3.UP * 0.2) * nudge_strength * mass * strength_mult)
+	mark_played(2.0)
+	_npc_cd = 0.4
 
 
 func mark_touched() -> void:

@@ -62,7 +62,9 @@ static func build(tree: SceneTree) -> void:
 	g.wind("FanWind", Vector3(85, 15, 18), Vector3(40, 20, 12), Vector3(-1, 0, 0), 60.0, ["fan_on"])
 	g.ambient("FanHum", Vector3(107, 18, 18), 25.0, 0.4, "fan", ["fan_on"], [], -12.0)
 	g.deco_box("Window", Vector3(114.85, 45, 10), Vector3(0.2, 34, 30), "window", Vector3.ZERO, false)
-	g.light_zone("Sunbeam", Vector3(98, 2, 10), Vector3(26, 4, 26), 3, 2, ["curtains_open"], ["lights_out"])
+	var sunbeam := g.light_zone("Sunbeam", Vector3(98, 2, 10), Vector3(26, 4, 26), 3, 2, ["curtains_open"], ["lights_out"])
+	g.curtains(Vector3(113.4, 47, 10), 34.0, 40.0, sunbeam)
+	g.water_bowl(Vector3(-45, 1.5, 42), Vector3(1, 0, 0))
 	g.box("CatTreeBase", Vector3(105, 1, 40), Vector3(14, 2, 14), "carpet", &"carpet")
 	g.cylinder("CatTreePost", Vector3(105, 16, 40), 2.0, 30, "carpet", &"carpet")
 	g.box("CatTreeLow", Vector3(105, 15.5, 40), Vector3(12, 1, 12), "carpet", &"carpet")
@@ -177,6 +179,7 @@ static func build(tree: SceneTree) -> void:
 			Vector3(70, 0, 28), Vector3(95, 0, 20), Vector3(92, 0, -14), Vector3(62, 0, -23)],
 		["tv_on", "reading"], {"name": "Reader", "activities": {
 			1: {"kind": &"nap", "time": 14.0, "face": Vector3(-10, 0, 10)},
+			6: {"kind": &"curtains", "time": 3.0, "face": Vector3(114, 40, 10)},
 			8: {"kind": &"read", "time": 16.0, "face": Vector3(62, 0, 10)},
 		}})
 	var cat := g.pet("res://scenes/threats/cat.tscn", Vector3(90, 0.5, 40),

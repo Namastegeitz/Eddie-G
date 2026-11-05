@@ -45,6 +45,8 @@ func _ready() -> void:
 		await _phase14()
 	if only in [0, 15]:
 		await _phase15()
+	if only in [0, 16]:
+		await _phase16()
 	finish("phase audit")
 
 
@@ -119,6 +121,9 @@ func _phase1() -> void:
 
 	# The human actually walks its route during breakfast.
 	var human := first_in_group(Phys.GROUP_HUMAN, lvl) as Human
+	# Just walking (no chores) for this check.
+	human.end_activity()
+	human.activities = {}
 	p.global_position = Vector3(43, 0.6, -30)
 	InputRouter.set_touch_action(&"secondary", true)
 	var foot0 := human.left_foot.global_position
@@ -975,6 +980,11 @@ func _phase6() -> void:
 		var ms := (Time.get_ticks_usec() - t0) / 240.0 / 1000.0
 		var meshes := 0
 		for m in lvl.find_children("*", "GeometryInstance3D", true, false):
+			# Brief extras (a blink, a phone in hand) don't count toward the
+			# steady-state budget.
+			var path := String((m as Node).get_path())
+			if path.contains("/Lids/") or path.contains("/PhoneHold/"):
+				continue
 			if (m as GeometryInstance3D).is_visible_in_tree():
 				meshes += 1
 		print("     %s: %.2f ms per frame of logic + physics, %d visible meshes" % [level, ms, meshes])
@@ -1485,7 +1495,7 @@ func _phase9() -> void:
 		var side := "L" if i == 0 else "R"
 		var thigh := h.get_node("Legs/Thigh" + side) as Node3D
 		var shin := h.get_node("Legs/Shin" + side) as Node3D
-		var hip := h.global_transform * Vector3((-1.0 if i == 0 else 1.0) * Human.HIP_X, Human.HIP_Y + (h.get_node("Torso") as Node3D).position.y, Human.BODY_Z)
+		var hip := h.global_transform * (Vector3((-1.0 if i == 0 else 1.0) * Human.HIP_X, Human.HIP_Y, Human.BODY_Z) + (h.get_node("Torso") as Node3D).position)
 		var ankle := foot.global_transform * Human.ANKLE
 		# Bones run along +Y from the upper joint to the lower one.
 		gaps.append(snappedf((thigh.global_transform * Vector3(0, -9.75, 0)).distance_to(hip), 0.01))
@@ -1868,16 +1878,24 @@ func _phase11() -> void:
 	dog.stop_playing()
 	dog.alert.reset()
 	gardener.alert.reset()
+	# Same throw every run, and well clear of the dog's 8:36 nap.
+	HouseClock.set_hour(7.7)
+	seed(4242)
 	await frames(5)
 	gardener.start_activity({"kind": &"fetch", "time": 9.0})
 	var fetched := false
 	var carried := false
+	var why := ""
 	for i in 600:
 		await get_tree().physics_frame
+		if fetched and dog.play != &"fetch" and why == "":
+			why = "stopped at %d: scared %.1f wet %.1f act %s alert %d stuck %.1f toy %s dog %s mood %d" % [i, dog.scared, dog.wet, dog.idle_act, dog.alert.state, dog._fetch_stuck_s, str(dog._toy.global_position) if dog._toy else "none", str(dog.global_position), dog.mood]
 		fetched = fetched or dog.play == &"fetch"
 		carried = carried or dog._carrying
 		if carried:
 			break
+	if not carried:
+		print("     fetch stopped early: ", why)
 	check(fetched and carried, "the gardener throws the ball and the dog fetches it (%s %s, dog %s/%d, gardener %s/%d)" % [fetched, carried, dog.play, dog.alert.state, gardener.activity, gardener.alert.state])
 	dog.stop_playing()
 
@@ -1948,7 +1966,7 @@ func _phase11() -> void:
 	for k: int in cook.activities.keys():
 		kinds.append(String(cook.activities[k]["kind"]))
 	kinds.sort()
-	check(kinds == ["cook", "dishes", "snack"], "the cook cooks, does the dishes and snacks on their rounds %s" % str(kinds))
+	check(kinds == ["cook", "dishes", "fridge", "snack", "sweep"], "the cook cooks, does the dishes, snacks, opens the fridge and sweeps on their rounds %s" % str(kinds))
 	_place_human(cook, Vector3(5, 0, -17.5), PI)
 	cook.start_activity(cook.activities[2])
 	var got := lvl.crumbs_got
@@ -2086,9 +2104,9 @@ func _phase13() -> void:
 	var dog_scene := (load("res://scenes/threats/dog.tscn") as PackedScene).instantiate()
 	var mats := _mats_under(dog_scene.get_node("Visual"))
 	var head := dog_scene.get_node("Visual/Head")
-	check(mats.has("dog_brown") and mats.has("dog_white") and mats.has("dog_black") and mats.has("golden")
+	check(mats.has("dog_brown") and mats.has("dog_white") and mats.has("dog_black") and mats.has("cloth_red")
 		and head.get_node_or_null("Muzzle") and head.get_node_or_null("EarL/Flap") and _mats_under(head.get_node("EarL")).size() == 1,
-		"the dog has a tan, white and black coat, a white muzzle, floppy ears and a collar tag")
+		"the dog has a tan, white and black coat, a white muzzle, floppy ears and a collar")
 	dog_scene.free()
 
 	# Who lives where.
@@ -2781,3 +2799,316 @@ func _phase15() -> void:
 	check(high_ok and low_ok and mid_ok,
 		"High: 4x anti-aliasing, glow, two shadow cascades; Medium: full resolution, 2x anti-aliasing; Low: no bump maps or shadows")
 	await unload(lvl)
+
+
+
+# --- Update: new NPC movements, interactions, room changes and obstacles ----------
+
+func _vacuum(lvl: Node) -> RobotVacuum:
+	for t in PerceptionSystem.threats:
+		if t is RobotVacuum and lvl.is_ancestor_of(t):
+			return t
+	return null
+
+
+func _phase16() -> void:
+	print("-- Update: new NPC movements, interactions, room changes and obstacles")
+	SaveSystem.data = SaveSystem.default_data()
+	var lvl := await load_level(&"kitchen", &"cockroach")
+	HouseClock.set_hour(13.5)
+	var p := lvl.player
+	p.invuln = 1000.0
+	var pup := first_in_group(Phys.GROUP_PET, lvl) as Pet
+	pup.force_present(true)
+	pup.stop_playing()
+	pup._play_cd = 1000.0
+	pup.global_position = Vector3(-50, 0.5, -40)
+	pup.reset_physics_interpolation()
+	var cook := _quiet_human(lvl, Vector3(45, 0, 43), PI * 0.5)
+
+	# People: gestures. Eyes on the phone, they only notice what's close.
+	p.teleport_to(Transform3D(Basis.IDENTITY, Vector3(15, 0.8, 43)))
+	await frames(6)
+	var seen_plain := cook.can_see(p)
+	cook.set_gesture(&"phone")
+	await frames(3)
+	var phone := cook.get_node("Torso/ShoulderR/Elbow/Hand/PhoneHold") as Node3D
+	var phone_shown := phone.visible
+	var seen_phone := cook.can_see(p)
+	var poses_ok := true
+	for g in Human.GESTURES:
+		cook.set_gesture(g)
+		poses_ok = poses_ok and not cook._activity_pose().is_empty()
+	cook.set_gesture(&"phone")
+	cook.alert.force(AlertState.SUSPICIOUS, p.global_position)
+	await frames(2)
+	check(seen_plain and not seen_phone and poses_ok and cook.gesture == &"" and not phone.visible and phone_shown,
+		"(%s %s %s) pausing, people check their phone" % [seen_plain, seen_phone, poses_ok] + " (and miss what isn't close), stretch, scratch their head or check their watch - a noise ends it")
+	cook.alert.reset()
+
+	# Their feet knock small things out of the way.
+	_place_human(cook, Vector3(45, 0, 43), PI * 0.5)
+	var ball := (load("res://scenes/props/ball.tscn") as PackedScene).instantiate() as PhysicsProp
+	lvl.add_child(ball)
+	ball.global_position = Vector3(36, 1.6, 47)
+	await frames(20)
+	var ball0 := ball.global_position
+	cook.set_physics_process(false)
+	cook.right_foot.step_to(Vector3(36, 0, 43.5), PI * 0.5, 0.5, true)
+	await frames(60)
+	cook.set_physics_process(true)
+	check(ball.global_position.distance_to(ball0) > 1.0 and ball._touched_by_player <= 0.0,
+		"a person's foot knocks a toy out of the way (and it isn't your trick)")
+	ball.queue_free()
+
+	# They stop to pet a calm pet: it sits and wags.
+	_place_human(cook, Vector3(20, 0, 50), 0.0)
+	pup.global_position = Vector3(20, 0.5, 40)
+	pup.velocity = Vector3.ZERO
+	pup.reset_physics_interpolation()
+	pup.alert.reset()
+	await frames(10)
+	var petted := cook.try_pet_nearby()
+	await frames(30)
+	var tail_y: Array[float] = []
+	for i in 30:
+		await get_tree().process_frame
+		tail_y.append((pup.get_node("Visual/Tail") as Node3D).rotation.y)
+	tail_y.sort()
+	check(petted and cook.activity == &"pet" and pup.petted > 0.0 and pup.idle_act == &"sit" and pup.is_distracted()
+		and pup._legs[2].rotation.x < -0.7 and tail_y[tail_y.size() - 1] - tail_y[0] > 0.4,
+		"people crouch to pet a calm pet; it sits down, wags and isn't watching")
+	await frames(200)
+	check(cook.activity == &"" and pup.petted <= 0.0, "after a few seconds they carry on")
+
+	# The fridge: the door swings out into the room, the light comes on, and
+	# their head is in the fridge.
+	var door := lvl.find_child("FridgeDoor", true, false) as SwingDoor
+	var fridge_light := lvl.find_child("FridgeLight", true, false) as LightZone
+	_place_human(cook, Vector3(43, 0, -4), PI)
+	p.teleport_to(Transform3D(Basis.IDENTITY, Vector3(43, 0.8, 2)))
+	cook.start_activity({"kind": &"fridge", "time": 6.0, "face": Vector3(43, 40, -30)})
+	await frames(90)
+	var q := PhysicsRayQueryParameters3D.create(Vector3(52, 20, -2.4), Vector3(72, 20, -2.4), Phys.WORLD)
+	var hit := lvl.get_world_3d().direct_space_state.intersect_ray(q)
+	check(door.angle > 1.5 and fridge_light.is_active() and not hit.is_empty() and hit["collider"] == door and not cook.can_see(p)
+		and (door.get_node("Panel") as Node3D).is_visible_in_tree(),
+		"the cook opens the fridge: the door swings out as a solid obstacle, the light spills out, and they can't see past it")
+	cook.end_activity()
+	await frames(100)
+	hit = lvl.get_world_3d().direct_space_state.intersect_ray(q)
+	check(door.angle < 0.1 and hit.is_empty() and not fridge_light.is_active(), "then it swings shut and the light goes off")
+
+	# The broom: it pushes crumbs along, shoves you and gives you away.
+	_place_human(cook, Vector3(40, 0, 58), PI)
+	cook.alert.reset()
+	p.teleport_to(Transform3D(Basis.IDENTITY, Vector3(-40, 0.8, 60)))
+	cook.start_activity({"kind": &"sweep", "time": 9.0, "face": Vector3(40, 0, 80)})
+	await frames(4)
+	var broom := cook._sweeper
+	var crumb := lvl.spawn_crumb(broom.head_position() + Vector3.UP * 0.6)
+	var c0 := crumb.global_position if crumb else Vector3.ZERO
+	await frames(20)
+	var swept_crumb := crumb != null and crumb.global_position.distance_to(c0) > 0.5
+	p.teleport_to(Transform3D(Basis.IDENTITY, broom.head_position() + Vector3.UP * 0.8))
+	var b0 := p.global_position
+	await frames(30)
+	var shoved := p.global_position.distance_to(b0)
+	var noticed := cook.alert.state >= AlertState.SUSPICIOUS
+	check(swept_crumb and shoved > 1.5 and noticed,
+		"the cook sweeps: crumbs get swept along (%s, %s); the broom shoves you (%.1f) and they notice (%s)" % [swept_crumb, crumb, shoved, noticed])
+	await frames(2)
+	check(cook.activity == &"" and not is_instance_valid(broom), "noticing you, they stop sweeping and put the broom down")
+	cook.alert.reset()
+	p.teleport_to(Transform3D(Basis.IDENTITY, Vector3(-40, 0.8, 60)))
+
+	# The puppy: habits (kept awake: after lunch is nap time).
+	cook.force_present(false)
+	pup._woken = 1000.0
+	pup.global_position = Vector3(20, 0.5, 40)
+	pup.reset_physics_interpolation()
+	pup.alert.reset()
+	var vis := pup.get_node("Visual") as Node3D
+	var habit_ok := {}
+	for act in [&"sit", &"stretch", &"lie", &"scratch"]:
+		pup.start_idle_act(act)
+		await frames(40)
+		match act:
+			&"sit":
+				habit_ok[act] = pup._legs[2].rotation.x < -0.8 and vis.rotation.x < -0.2
+			&"stretch":
+				habit_ok[act] = vis.rotation.x > 0.15 and pup._legs[0].rotation.x < -0.6
+			&"lie":
+				habit_ok[act] = vis.position.y < -1.0
+			&"scratch":
+				var a := pup._legs[2].rotation.x
+				await frames(3)
+				habit_ok[act] = absf(pup._legs[2].rotation.x - a) > 0.02 and pup._legs[2].rotation.x < -1.0
+		pup.idle_act = &""
+		pup._idle = 0.0
+	check(habit_ok.values().all(func(v: bool) -> bool: return v), "pets sit, stretch, lie down and scratch an ear %s" % str(habit_ok))
+
+	# A drink at the water bowl.
+	pup.global_position = Vector3(95, 0.5, 48)
+	pup.reset_physics_interpolation()
+	pup._bowl_cd = 0.0
+	pup._idle = 0.0
+	pup._pick_habit()
+	var drank := false
+	var head_down := false
+	for i in 600:
+		await get_tree().physics_frame
+		if pup.idle_act == &"drink":
+			drank = true
+			head_down = head_down or (pup.get_node("Visual/Head") as Node3D).rotation.x < -0.6
+			if head_down:
+				break
+	check(drank and head_down and _flat(pup.global_position, Vector3(102, 0, 64)) < 12.0,
+		"thirsty pets trot over to the water bowl and lap from it (%s %s %.1f, %s %s)" % [drank, head_down, _flat(pup.global_position, Vector3(102, 0, 64)), pup._drink_at, pup.idle_act])
+	pup._spill_puddle()
+	await frames(2)
+	var spills := 0
+	for n in get_tree().get_nodes_in_group(&"water"):
+		if String((n as Node).name).begins_with("Spill"):
+			spills += 1
+	check(spills > 0, "a sloppy drinker leaves a puddle by the bowl (it washes your scent away)")
+	pup.idle_act = &""
+	pup._idle = 0.0
+
+	# Everyone keeps clear of the robot vacuum.
+	var vac := _vacuum(lvl)
+	vac.force_present(true)
+	pup.global_position = Vector3(20, 0.5, 40)
+	pup.reset_physics_interpolation()
+	pup.alert.reset()
+	vac.global_position = Vector3(28, 0.5, 40)
+	vac.reset_physics_interpolation()
+	await frames(30)
+	var scared := pup.scared > 0.0
+	await frames(40)
+	check(scared and _flat(pup.global_position, vac.global_position) > 10.0, "pets run from the robot vacuum")
+
+	# The vacuum eats crumbs (they turn up again later) and shoves toys.
+	vac.global_position = Vector3(40, 0.5, 66)
+	vac._heading = PI * 0.5
+	vac.reset_physics_interpolation()
+	var crumb2 := lvl.spawn_crumb(Vector3(46, 0.6, 66))
+	var toy := (load("res://scenes/props/ball.tscn") as PackedScene).instantiate() as PhysicsProp
+	lvl.add_child(toy)
+	toy.global_position = Vector3(48, 1.6, 66.5)
+	await frames(10)
+	var t0 := toy.global_position
+	await frames(60)
+	var eaten := crumb2 != null and crumb2.taken and crumb2.is_sucked_up() and not crumb2.visible
+	check(eaten and toy.global_position.distance_to(t0) > 1.0 and vac.crumbs_eaten > 0,
+		"the robot vacuum hoovers up crumbs in its path and bumps toys aside")
+	if crumb2:
+		crumb2._back_in = 0.05
+		await frames(5)
+		check(not crumb2.taken and crumb2.visible, "eaten crumbs turn up again a little later")
+	toy.queue_free()
+	vac.force_present(false)
+	await unload(lvl)
+
+	# Living room: the reading lamp and the curtains.
+	lvl = await load_level(&"living_room", &"cockroach")
+	HouseClock.set_hour(9.0)
+	var reader := first_in_group(Phys.GROUP_HUMAN, lvl) as Human
+	reader.force_present(true)
+	reader.end_activity()
+	reader.activities = {}
+	var lamp := lvl.find_child("ReadingLamp", true, false) as LightZone
+	var lamp_before := lamp.is_active()
+	_place_human(reader, Vector3(62, 0, -23), 0.0)
+	reader.start_activity({"kind": &"read", "time": 6.0, "face": Vector3(62, 0, 10)})
+	await frames(5)
+	var lamp_on := lamp.is_active()
+	reader.end_activity()
+	await frames(5)
+	check(not lamp_before and lamp_on and not lamp.is_active(), "the reader switches the lamp on to read and off again")
+	var curtains := lvl.find_child("Curtains", true, false) as Curtains
+	var beam := lvl.find_child("Sunbeam", true, false) as LightZone
+	var was_closed := curtains.closed
+	_place_human(reader, Vector3(95, 0, 20), PI * 0.5)
+	reader.start_activity({"kind": &"curtains", "time": 3.0, "face": Vector3(114, 40, 10)})
+	await frames(90)
+	var panel_vis := (curtains.get_node("Panel").get_child(0) as Node3D).is_visible_in_tree()
+	check(curtains.closed != was_closed and beam.is_active() == (not curtains.closed) and panel_vis,
+		"the reader draws the curtains (the sunbeam goes) or opens them (it's back)")
+	reader.end_activity()
+	await unload(lvl)
+
+	# Backyard: the rake, shaking off water, cats hating water, digging.
+	lvl = await load_level(&"backyard", &"cockroach")
+	HouseClock.set_hour(13.5)
+	p = lvl.player
+	p.invuln = 1000.0
+	p.teleport_to(Transform3D(Basis.IDENTITY, Vector3(-60, 0.8, -60)))
+	var gardener: Human = null
+	var dog: Pet = null
+	var cat: Pet = null
+	for n in lvl.find_children("*", "", true, false):
+		if n is Human and String(n.name).begins_with("Gardener"):
+			gardener = n
+		elif n is Pet and (n as Pet).barks and dog == null:
+			dog = n
+		elif n is Pet and not (n as Pet).barks and cat == null:
+			cat = n
+	gardener.force_present(true)
+	gardener.end_activity()
+	gardener.activities = {}
+	_place_human(gardener, Vector3(32, 0, 52), 0.0)
+	gardener.start_activity({"kind": &"rake", "time": 9.0, "face": Vector3(20, 0, 44)})
+	await frames(5)
+	check(gardener._sweeper != null and gardener._sweeper.kind == &"rake", "the gardener rakes the leaves (the rake sweeps like the broom)")
+	gardener.end_activity()
+	gardener.force_present(false)
+	for pet in [dog, cat]:
+		pet.force_present(true)
+		pet.stop_playing()
+		pet._play_cd = 1000.0
+		pet.alert.reset()
+	cat.global_position = Vector3(-30, 0.5, -5)
+	cat.reset_physics_interpolation()
+	dog.global_position = Vector3(10, 0.5, 5)
+	dog.reset_physics_interpolation()
+	await frames(30)
+	var cat_hates := cat.scared > 0.0
+	var dog_wet := dog.wet > 0.0
+	dog.global_position = Vector3(10, 0.5, 30)
+	dog.reset_physics_interpolation()
+	var shook := false
+	for i in 120:
+		await get_tree().physics_frame
+		shook = shook or dog.idle_act == &"shake"
+	check(dog_wet and shook and cat_hates, "a wet dog shakes itself off; a cat runs out of the water")
+	cat.force_present(false)
+	dog._woken = 1000.0
+	dog.global_position = Vector3(0, 0.5, 45)
+	dog.reset_physics_interpolation()
+	dog.idle_act = &""
+	dog._idle = 0.0
+	dog.velocity = Vector3.ZERO
+	await frames(10)
+	var can_dig := dog._can_dig_here()
+	dog.start_idle_act(&"dig")
+	var holes: Array[Node] = []
+	for i in 300:
+		await get_tree().physics_frame
+		holes = get_tree().get_nodes_in_group(&"dug_hole")
+		if not holes.is_empty():
+			break
+	var hole_ok := false
+	if not holes.is_empty():
+		var hole := holes[0] as DugHole
+		dog.global_position = Vector3(-40, 0.5, -10)
+		dog.reset_physics_interpolation()
+		p.teleport_to(Transform3D(Basis.IDENTITY, hole.global_position + Vector3.UP * 0.6))
+		await frames(10)
+		hole_ok = p.is_hidden_safe() and hole.get_node_or_null("Mound") is StaticBody3D
+	check(can_dig and hole_ok, "the dog digs a hole in the lawn: a dirt mound in the way, and a dark hollow any bug can hide in (%s %d %s)" % [can_dig, holes.size(), hole_ok])
+	await unload(lvl)
+
+
+func _flat(a: Vector3, b: Vector3) -> float:
+	return Vector2(a.x - b.x, a.z - b.z).length()

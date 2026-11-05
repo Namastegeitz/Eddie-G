@@ -150,8 +150,14 @@ func _land() -> void:
 	# Trip on a grape or ball under the sole.
 	for n in get_tree().get_nodes_in_group(Phys.GROUP_PROP):
 		var prop := n as PhysicsProp
-		if prop and prop.trip_hazard and _point_under_foot(prop.global_position, _to):
+		if prop == null:
+			continue
+		if prop.trip_hazard and _point_under_foot(prop.global_position, _to):
 			prop.on_stepped_on(owner_threat)
+		elif prop.mass < 3.0 and absf(prop.global_position.y - _to.y) < 4.0 \
+				and Vector2(prop.global_position.x - _to.x, prop.global_position.z - _to.z).length() < foot_size.z * 0.6 + 2.5:
+			# Small things beside the foot get knocked out of the way.
+			prop.push_by_npc(_to, 0.8)
 
 
 func _point_under_foot(p: Vector3, pos: Vector3) -> bool:

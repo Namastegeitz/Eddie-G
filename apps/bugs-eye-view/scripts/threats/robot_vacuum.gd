@@ -2,6 +2,8 @@ class_name RobotVacuum
 extends Threat
 ## Robot vacuum: bumps around the floor and sucks in anything nearby. In the
 ## Cleaning Day boss it "learns" to home in on your noise. Web traps jam it.
+## It also hoovers up crumbs in its path (they turn up again a little later)
+## and shoves small things aside; pets keep well clear of it.
 
 @export var speed: float = 5.5
 @export var suction_radius: float = 7.0
@@ -15,6 +17,9 @@ var _heading := 0.0
 var _turn_cd := 0.0
 var _hum: AudioStreamPlayer3D
 var _wall_ray := PhysicsRayQueryParameters3D.new()
+var _tidy_cd := 0.0
+## Crumbs it has eaten this run.
+var crumbs_eaten := 0
 
 
 func _setup() -> void:
@@ -63,6 +68,29 @@ func _think(delta: float) -> void:
 	move_and_slide()
 	rotation.y = _heading
 	_suck(delta)
+	_tidy(delta)
+
+
+## Crumbs under it disappear into the bin; toys get bumped out of the way.
+func _tidy(delta: float) -> void:
+	_tidy_cd -= delta
+	if _tidy_cd > 0.0:
+		return
+	_tidy_cd = 0.1
+	for c in get_tree().get_nodes_in_group(Phys.GROUP_CRUMB):
+		var crumb := c as Crumb
+		if crumb == null or crumb.taken or crumb.golden:
+			continue
+		var d := crumb.global_position - global_position
+		if absf(d.y) < 3.0 and Vector2(d.x, d.z).length() < contact_radius + 1.2:
+			crumb.suck_up(25.0)
+			crumbs_eaten += 1
+			AudioManager.play_at(&"crunch", global_position, -6.0, 1.4)
+	for n in get_tree().get_nodes_in_group(Phys.GROUP_PROP):
+		var prop := n as PhysicsProp
+		if prop and prop.mass < 3.0 and absf(prop.global_position.y - global_position.y) < 3.0 \
+				and Vector2(prop.global_position.x - global_position.x, prop.global_position.z - global_position.z).length() < contact_radius + 2.0:
+			prop.push_by_npc(global_position, 1.0)
 
 
 func _suck(delta: float) -> void:

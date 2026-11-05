@@ -13,9 +13,11 @@
 [ext_resource type="AudioStream" path="res://assets/sfx/dishwasher.wav" id="9_ewecc"]
 [ext_resource type="AudioStream" path="res://assets/sfx/fan.wav" id="10_7eseq"]
 [ext_resource type="AudioStream" path="res://assets/sfx/fridge_hum.wav" id="11_g8ctr"]
+[ext_resource type="AudioStream" path="res://assets/sfx/dig.wav" id="11_q25ob"]
 [ext_resource type="AudioStream" path="res://assets/sfx/goal_open.wav" id="12_emf2l"]
 [ext_resource type="AudioStream" path="res://assets/sfx/freeze.wav" id="12_ewecc"]
 [ext_resource type="AudioStream" path="res://assets/sfx/golden.wav" id="13_52wrj"]
+[ext_resource type="AudioStream" path="res://assets/sfx/door.wav" id="13_vyxqs"]
 [ext_resource type="AudioStream" path="res://assets/sfx/gem.wav" id="14_7eseq"]
 [ext_resource type="AudioStream" path="res://assets/sfx/growl.wav" id="14_do3ae"]
 [ext_resource type="AudioStream" path="res://assets/sfx/gurgle.wav" id="15_j8yba"]
@@ -30,6 +32,7 @@
 [ext_resource type="AudioStream" path="res://assets/sfx/munch.wav" id="24_g8ctr"]
 [ext_resource type="AudioStream" path="res://assets/sfx/sense_on.wav" id="24_xrcpg"]
 [ext_resource type="AudioStream" path="res://assets/sfx/skitter.wav" id="25_0adl8"]
+[ext_resource type="AudioStream" path="res://assets/sfx/lap.wav" id="25_6jhq5"]
 [ext_resource type="AudioStream" path="res://assets/sfx/slowmo.wav" id="26_yvme6"]
 [ext_resource type="AudioStream" path="res://assets/sfx/powerup.wav" id="27_emf2l"]
 [ext_resource type="AudioStream" path="res://assets/sfx/smack.wav" id="27_xfmrt"]
@@ -40,6 +43,7 @@
 [ext_resource type="AudioStream" path="res://assets/sfx/squish.wav" id="31_dkav3"]
 [ext_resource type="AudioStream" path="res://assets/sfx/stun.wav" id="32_uowyk"]
 [ext_resource type="AudioStream" path="res://assets/sfx/swoosh.wav" id="33_5fyfp"]
+[ext_resource type="AudioStream" path="res://assets/sfx/shake.wav" id="34_0h7ie"]
 [ext_resource type="AudioStream" path="res://assets/sfx/snore.wav" id="34_18mw2"]
 [ext_resource type="AudioStream" path="res://assets/sfx/sniff.wav" id="34_ewecc"]
 [ext_resource type="AudioStream" path="res://assets/sfx/thud.wav" id="34_kq1by"]
@@ -54,7 +58,9 @@
 [ext_resource type="AudioStream" path="res://assets/sfx/voice_spray.wav" id="43_spmsd"]
 [ext_resource type="AudioStream" path="res://assets/sfx/web_miss.wav" id="44_ye2fn"]
 [ext_resource type="AudioStream" path="res://assets/sfx/web_shoot.wav" id="45_o32l7"]
+[ext_resource type="AudioStream" path="res://assets/sfx/sweep.wav" id="46_4p8jt"]
 [ext_resource type="AudioStream" path="res://assets/sfx/whoosh.wav" id="46_nmrsd"]
+[ext_resource type="AudioStream" path="res://assets/sfx/switch.wav" id="47_2bok5"]
 [ext_resource type="AudioStream" path="res://assets/sfx/win.wav" id="47_o1k2y"]
 [ext_resource type="AudioStream" path="res://assets/sfx/yelp.wav" id="48_54ysb"]
 
@@ -70,7 +76,9 @@ sounds = {
 &"clink": ExtResource("7_18mw2"),
 &"crunch": ExtResource("7_fev2v"),
 &"dash": ExtResource("8_18mw2"),
+&"dig": ExtResource("11_q25ob"),
 &"dishwasher": ExtResource("9_ewecc"),
+&"door": ExtResource("13_vyxqs"),
 &"fan": ExtResource("10_7eseq"),
 &"freeze": ExtResource("12_ewecc"),
 &"fridge_hum": ExtResource("11_g8ctr"),
@@ -82,6 +90,7 @@ sounds = {
 &"heartbeat": ExtResource("16_q25ob"),
 &"hiss": ExtResource("17_vyxqs"),
 &"hit": ExtResource("18_6jhq5"),
+&"lap": ExtResource("25_6jhq5"),
 &"lose": ExtResource("19_0h7ie"),
 &"meow": ExtResource("20_4p8jt"),
 &"munch": ExtResource("24_g8ctr"),
@@ -90,6 +99,7 @@ sounds = {
 &"powerup": ExtResource("27_emf2l"),
 &"push": ExtResource("23_o6h5b"),
 &"sense_on": ExtResource("24_xrcpg"),
+&"shake": ExtResource("34_0h7ie"),
 &"shield": ExtResource("30_52wrj"),
 &"skitter": ExtResource("25_0adl8"),
 &"slowmo": ExtResource("26_yvme6"),
@@ -101,6 +111,8 @@ sounds = {
 &"squelch": ExtResource("30_b08cr"),
 &"squish": ExtResource("31_dkav3"),
 &"stun": ExtResource("32_uowyk"),
+&"sweep": ExtResource("46_4p8jt"),
+&"switch": ExtResource("47_2bok5"),
 &"swoosh": ExtResource("33_5fyfp"),
 &"thud": ExtResource("34_kq1by"),
 &"tv_blare": ExtResource("35_n6xs0"),

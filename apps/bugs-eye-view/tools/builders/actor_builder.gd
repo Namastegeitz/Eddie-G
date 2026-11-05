@@ -654,6 +654,12 @@ static func human(force: bool, path: String, config: String, outfit: String, has
 		for i in 4:
 			mesh(hd, "Finger", capsule(0.36, 2.5 if i in [1, 2] else 2.1), hand,
 				Vector3(lerpf(-1.05, 1.05, i / 3.0), -3.5, 0), Vector3(0.12, 0, 0))
+		if x > 0.0 and outfit != "hazmat":
+			# A phone they check on their rounds (shown only then).
+			var ph := node3d(hd, "PhoneHold", Vector3(0, -2.6, -1.1))
+			ph.visible = false
+			mesh(ph, "Phone", box(Vector3(1.7, 3.2, 0.3)), "dark_metal", Vector3.ZERO, Vector3(-0.5, 0, 0))
+			mesh(ph, "Screen", box(Vector3(1.4, 2.7, 0.05)), "tv_screen", Vector3(0, 0.07, -0.17), Vector3(-0.5, 0, 0))
 
 	for n: Node in _pivots(torso):
 		merge_meshes(n)
@@ -721,7 +727,7 @@ static func pet(force: bool, path: String, config: String, color: String, size: 
 		collar.inner_radius = 1.55 * k
 		collar.outer_radius = 2.0 * k
 		mesh(v, "Collar", collar, "cloth_red", Vector3(0, 6.3 * k, -4.9 * k), Vector3(PI * 0.5 - 0.5, 0, 0))
-		mesh(v, "Tag", cyl(0.45 * k, 0.15 * k), "golden", Vector3(0, 4.75 * k, -5.95 * k), Vector3(PI * 0.5, 0, 0))
+		mesh(v, "Tag", cyl(0.45 * k, 0.15 * k), white, Vector3(0, 4.75 * k, -5.95 * k), Vector3(PI * 0.5, 0, 0))
 	else:
 		# Tabby bands that wrap the body.
 		for i in 4:

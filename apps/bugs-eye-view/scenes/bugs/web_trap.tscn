@@ -25,32 +25,32 @@ size = Vector3(6, 0.06, 0.06)
 [sub_resource type="BoxMesh" id="BoxMesh_xyrw4"]
 size = Vector3(6, 0.06, 0.06)
 
-[node name="WebTrap" type="Area3D" unique_id=123890105]
+[node name="WebTrap" type="Area3D" unique_id=516661927]
 script = ExtResource("1_lpo85")
 
-[node name="Shape" type="CollisionShape3D" parent="." unique_id=2014115828]
+[node name="Shape" type="CollisionShape3D" parent="." unique_id=607020717]
 shape = SubResource("CylinderShape3D_lca3p")
 
-[node name="Web" type="MeshInstance3D" parent="." unique_id=1926645032]
+[node name="Web" type="MeshInstance3D" parent="." unique_id=1031785824]
 material_override = ExtResource("2_gduks")
 mesh = SubResource("CylinderMesh_ak7g1")
 
-[node name="Strand" type="MeshInstance3D" parent="." unique_id=1781872881]
+[node name="Strand" type="MeshInstance3D" parent="." unique_id=1989761179]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.04, 0)
 material_override = ExtResource("2_gduks")
 mesh = SubResource("BoxMesh_hbb4j")
 
-[node name="Strand2" type="MeshInstance3D" parent="." unique_id=1404274722]
+[node name="Strand2" type="MeshInstance3D" parent="." unique_id=495717822]
 transform = Transform3D(0.70710677, 0, 0.70710677, 0, 1, 0, -0.70710677, 0, 0.70710677, 0, 0.04, 0)
 material_override = ExtResource("2_gduks")
 mesh = SubResource("BoxMesh_kumgs")
 
-[node name="Strand3" type="MeshInstance3D" parent="." unique_id=494202027]
+[node name="Strand3" type="MeshInstance3D" parent="." unique_id=1535415009]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0, 0.04, 0)
 material_override = ExtResource("2_gduks")
 mesh = SubResource("BoxMesh_gtqhe")
 
-[node name="Strand4" type="MeshInstance3D" parent="." unique_id=417516242]
+[node name="Strand4" type="MeshInstance3D" parent="." unique_id=1669047947]
 transform = Transform3D(-0.70710677, 0, 0.70710677, 0, 1, 0, -0.70710677, 0, -0.70710677, 0, 0.04, 0)
 material_override = ExtResource("2_gduks")
 mesh = SubResource("BoxMesh_xyrw4")

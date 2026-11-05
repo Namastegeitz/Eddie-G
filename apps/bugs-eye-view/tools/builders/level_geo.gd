@@ -160,6 +160,104 @@ func deco(n: String, m: Mesh, material: String, pos: Vector3, rot: Vector3 = Vec
 	return mi
 
 
+## A hinged door (the fridge): people open it and it swings out as a solid
+## obstacle; `light` is the zone that lights up while it's open. The door
+## runs from the hinge along -X (local), `size` = (width, height, thickness).
+func swing_door(n: String, hinge: Vector3, size: Vector3, material: String, open_angle: float,
+		light: LightZone = null, handle_material: String = "metal") -> SwingDoor:
+	var d := SwingDoor.new()
+	d.name = n
+	d.position = hinge
+	d.open_angle = open_angle
+	var cs := CollisionShape3D.new()
+	cs.name = "Shape"
+	var sh := BoxShape3D.new()
+	sh.size = size
+	cs.shape = sh
+	cs.position = Vector3(-size.x * 0.5, 0, size.z * 0.5)
+	d.add_child(cs)
+	var mi := MeshInstance3D.new()
+	mi.name = "Panel"
+	var bm := BoxMesh.new()
+	bm.size = size
+	mi.mesh = bm
+	mi.material_override = mat(material)
+	mi.position = cs.position
+	# It moves: keep it out of the static mesh batches.
+	mi.add_to_group(&"no_batch", true)
+	d.add_child(mi)
+	var hm := MeshInstance3D.new()
+	hm.name = "Handle"
+	var hb := BoxMesh.new()
+	hb.size = Vector3(1.5, size.y * 0.42, 1.2)
+	hm.mesh = hb
+	hm.material_override = mat(handle_material)
+	hm.position = Vector3(-size.x + 2.5, size.y * 0.1, size.z + 0.6)
+	hm.add_to_group(&"no_batch", true)
+	d.add_child(hm)
+	geo.add_child(d)
+	if light:
+		d.light_zone_path = d.get_path_to(light)
+	return d
+
+
+## Curtains over a window (people draw and open them; the sunbeam follows).
+## `center` is the window's centre, panels hang along Z, `width` wide.
+func curtains(center: Vector3, width: float, height: float, sunbeam: LightZone, material: String = "cloth_red") -> Curtains:
+	var c := Curtains.new()
+	c.name = "Curtains"
+	c.position = center
+	c.width = width
+	var panel := Node3D.new()
+	panel.name = "Panel"
+	var mi := MeshInstance3D.new()
+	var bm := BoxMesh.new()
+	bm.size = Vector3(0.8, height, width)
+	mi.mesh = bm
+	mi.material_override = mat(material)
+	mi.add_to_group(&"no_batch", true)
+	panel.add_child(mi)
+	c.add_child(panel)
+	var rod := MeshInstance3D.new()
+	var cm := CylinderMesh.new()
+	cm.top_radius = 0.5
+	cm.bottom_radius = 0.5
+	cm.height = width + 6.0
+	rod.mesh = cm
+	rod.material_override = mat("dark_metal")
+	rod.rotation = Vector3(PI * 0.5, 0, 0)
+	rod.position = Vector3(0, height * 0.5 + 1.0, 0)
+	c.add_child(rod)
+	decor.add_child(c)
+	if sunbeam:
+		c.sunbeam_path = c.get_path_to(sunbeam)
+	return c
+
+
+## A pet water bowl; pets come over for a drink, standing on the `approach`
+## side (a unit vector).
+func water_bowl(pos: Vector3, approach: Vector3, add_deco: bool = true) -> Marker3D:
+	if add_deco:
+		cylinder("WaterBowl", pos, 5.0, 3, "metal", &"metal")
+		deco("BowlWater", _cyl_mesh(4.2, 0.2), "water", pos + Vector3(0, 1.4, 0), Vector3.ZERO, Vector3.ONE, false)
+	var m := Marker3D.new()
+	m.name = uniq("BowlSpot")
+	m.position = pos
+	m.set_meta(&"approach", approach.normalized())
+	m.add_to_group(&"water_bowl", true)
+	zones.add_child(m)
+	return m
+
+
+func _cyl_mesh(r: float, h: float) -> CylinderMesh:
+	var c := CylinderMesh.new()
+	c.top_radius = r
+	c.bottom_radius = r
+	c.height = h
+	c.radial_segments = 20
+	return c
+
+
 func deco_box(n: String, pos: Vector3, size: Vector3, material: String, rot: Vector3 = Vector3.ZERO, shadow: bool = true) -> MeshInstance3D:
 	var bm := BoxMesh.new()
 	bm.size = size
