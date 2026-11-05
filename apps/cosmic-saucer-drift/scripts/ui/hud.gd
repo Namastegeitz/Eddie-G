@@ -168,6 +168,8 @@ func _on_event(kind: String, d: Dictionary) -> void:
 				_splats.append(Vector3(_rng.randf_range(0.1, 0.9), _rng.randf_range(0.15, 0.85), _rng.randf_range(60, 150)))
 		"comet_warning":
 			toast("COMET INCOMING!", UiKit.RED)
+		"rocket_lock":
+			toast("ROCKET LOCKED ON YOU!" if racer.item != "shield" else "ROCKET LOCKED ON - shield ready", UiKit.RED)
 		"item_lost":
 			toast("EMP! Item knocked loose", UiKit.RED)
 		"tractored":

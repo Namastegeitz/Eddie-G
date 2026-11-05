@@ -630,6 +630,7 @@ func _items_tests() -> void:
 	check("EMP spins out nearby racer", b.spin_time > 0.0)
 	check("EMP knocks item loose", b.item == "")
 	check("EMP misses far racer", c.spin_time <= 0.0)
+	check("EMP shows a dome and lightning", race.items.beams.any(func(x: Dictionary) -> bool: return x.kind == "emp") and race.items.beams.any(func(x: Dictionary) -> bool: return x.kind == "bolt"))
 	# Nitro uses by lineup.
 	race.items.only_item = "nitro"
 	a.place = 8
@@ -653,6 +654,67 @@ func _items_tests() -> void:
 		await get_tree().physics_frame
 		b.velocity = Vector3.ZERO
 	check("rocket hits the racer ahead", b.stats.hits_taken > taken0)
+	# EMP leaves a dome and lightning (checked above it hit b).
+	# v3 power-up models, effects and hit reactions.
+	for r: Racer in [a, b, c]:
+		r.invuln_time = 0.0
+		r.spin_time = 0.0
+		r.shield_time = 0.0
+		r.item = ""
+	_place_on_track(race, a, 1000.0, 0.0)
+	_place_on_track(race, b, 1030.0, 0.0)
+	a.item = "laser"
+	a.item_uses = 1
+	race.items.use_item(a)
+	var lb := race.items.beams.filter(func(x: Dictionary) -> bool: return x.kind == "laser")
+	check("laser draws a layered beam", lb.size() == 1 and (lb[0].node as Node3D).get_child_count() == 3)
+	b.invuln_time = 0.0
+	b.spin_time = 0.0
+	_place_on_track(race, a, 1100.0, 0.0)
+	_place_on_track(race, b, 1180.0, 0.0)
+	a.item = "rocket"
+	a.item_uses = 1
+	race.items.use_item(a)
+	var rk: Dictionary = race.items.rockets.back()
+	check("rocket model has a flame", (rk.node as Node3D).get_node_or_null("Flame") != null)
+	check("rocket locks on with a reticle", rk.reticle != null and rk.target == b)
+	a.item = "mine"
+	a.item_uses = 1
+	race.items.use_item(a)
+	var mn: Dictionary = race.items.mines.back()
+	check("mine has a gravity ring and a light", (mn.node as Node3D).has_node("Ring") and (mn.node as Node3D).has_node("Light"))
+	a.item = "nitro"
+	a.item_uses = 1
+	race.items.use_item(a)
+	check("nitro straps boosters on", race.items.nitros.size() >= 1 and (race.items.nitros[0].node as Node3D).get_child_count() == 2)
+	a.boost_time = 0.0
+	a.boost_kind = ""
+	for f in 3:
+		await get_tree().physics_frame
+	a.boost_time = 0.0
+	await get_tree().physics_frame
+	check("boosters come off when the nitro ends", race.items.nitros.is_empty())
+	c.item = "shield"
+	c.item_uses = 1
+	c.item_roll = 0.0
+	for f in 2:
+		await get_tree().physics_frame
+	check("held shield shows a badge", race.items._badges.has(c.idx) and (race.items._badges[c.idx] as Node3D).visible)
+	c.item = ""
+	await get_tree().physics_frame
+	check("badge hides when the shield is gone", not (race.items._badges[c.idx] as Node3D).visible)
+	a.model.react("comet")
+	a.model.animate(0.05, 1.0, false, 0, false, 0.5)
+	check("comet hit squashes the craft", a.model.pivot.scale.y < 0.99)
+	for f in 30:
+		a.model.animate(0.05, 1.0, false, 0, false, 0.5)
+	check("craft shape recovers", a.model.pivot.scale.is_equal_approx(Vector3.ONE))
+	a.model.react("laser")
+	for f in 30:
+		a.model.animate(0.05, 1.0, false, 0, false, 0.5)
+	check("laser jolt settles", is_zero_approx(a.model.pivot.position.x))
+	a.model.react("mystery")
+	check("unknown hit kinds still react", a.model._react == "hazard")
 	# Premium perks.
 	var sail := Racer.new()
 	race.add_child(sail)

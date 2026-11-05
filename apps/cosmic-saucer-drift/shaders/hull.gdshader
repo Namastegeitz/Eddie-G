@@ -21,6 +21,7 @@ uniform float light_v = 0.5;     // UV.y of the light row
 uniform float light_w = 0.04;
 uniform float chase = 0.0;       // light chase speed (boost)
 uniform float flash = 0.0;       // hit flash 0..1
+uniform vec3 flash_color : source_color = vec3(1.0, 0.95, 0.9);
 uniform float detail = 1.0;      // 0 on low quality
 
 float hash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
@@ -82,8 +83,8 @@ void fragment() {
 		em += accent * dotv * lights * run * 3.0;
 		col = mix(col, accent, dotv * 0.6);
 	}
-	col = mix(col, vec3(1.0), flash * 0.7);
-	em += vec3(1.0, 0.95, 0.9) * flash * 1.5;
+	col = mix(col, flash_color, flash * 0.7);
+	em += flash_color * flash * 1.5;
 	ALBEDO = col;
 	METALLIC = m;
 	ROUGHNESS = r;

@@ -45,6 +45,11 @@ Everything is still generated from code, now in much finer detail:
   Auto, which picks one from the device and steps down live if frames drop).
   Ultra/High add 4x/2x anti-aliasing, real-time shadows, reflections and full
   detail; Medium and Low keep phones smooth.
+- **Smooth motion:** racers, power-ups and hazards are interpolated between
+  physics steps (the camera follows the smoothed position), so motion stays
+  smooth when a phone can't hold a steady frame rate; phones and browsers
+  never pile up catch-up steps after a slow frame, and phone browsers start
+  on Low.
 
 ![Craft](docs/screenshots/craft.png)
 ![Pilots](docs/screenshots/pilots.png)
@@ -80,6 +85,17 @@ Strike** (falls on the leader), **EMP Shockwave** (spins out everyone near you
 and knocks their items loose), **Nitro Rocket** (1-3 boosts), **Ion Shield**
 (use it for 6 s of protection, or just hold it to block one hit), **Gravity
 Mine** and **Tractor Beam**.
+
+Each has its own detailed model and effects: the rocket (fins, flame, smoke
+trail) shows a red lock-on ring over its target and warns them; the laser
+fires a layered beam with pulses of light; the comet falls as a glowing ice
+rock with a flaming tail onto a target marker; the EMP throws an electric
+dome and lightning at everyone it hits; nitro straps two boosters onto your
+craft; a held shield circles your craft as a hex badge; mines are spiked,
+blink, and pulse a gravity ring; the tractor beam streams energy back to you.
+Hits look different too: rockets and mines throw a craft up, a comet
+squashes it, a laser jolts it, an EMP makes its lights flicker, a tractor
+beam pulses it green.
 
 What you can pull depends on your place, in five lineups: Leader (mostly
 defence and mines), Front pack, Midfield, Chasers, Last place (Nitro x3,

@@ -20,15 +20,16 @@ folder (`apps/cosmic-saucer-drift`).
 | Action | Keyboard | Gamepad | Touch |
 |---|---|---|---|
 | Steer | A / D or arrows | Left stick / d-pad | Joystick: thumb down anywhere in the lower left and slide (Settings: ◀ ▶ buttons or tilt) |
-| Gas | W / Up | RT or A | Drives itself at cruise speed; hold the GAS pedal for full power (Settings: Auto-drive off = hold GAS to go) |
-| Brake / reverse | S / Down | LT or B | BRAKE pedal |
+| Gas | W / Up | RT or A | Drives itself at cruise speed; push the stick up or hold the GAS pedal for full power (Settings: Auto-drive off = hold GAS to go) |
+| Brake / reverse | S / Down | LT or B | Pull the stick down or hold the BRAKE pedal. Braking while steering turns tighter; hold it at a stop to reverse |
 | Drift (in the air: trick) | Space or Shift | RB | DRIFT (shows TRICK in the air) |
 | Use item | E, Ctrl or F | X or LB | ITEM |
 | Look back | Q or C | Y | - |
 | Pause | Esc or P | Start | II (top right), Android back |
 
-Rocket start: hold GAS right as the countdown hits GO (too early stalls).
-Auto-drive never counts as holding GAS on the grid.
+Rocket start: hold GAS right as the countdown hits GO (too early stalls on
+keys or a pad; on touch it just misses the boost). Auto-drive never counts as
+holding GAS on the grid.
 
 **2 players** (split screen, top and bottom): P1 = WASD, Space drift, E item,
 Q look back. P2 = arrows, `/` or Right Ctrl drift, `.` or Enter item, `,` look
@@ -90,6 +91,8 @@ xvfb-run -a godot --path . res://tests/shots.tscn --rendering-driver opengl3 -- 
 xvfb-run -a godot --path . res://tests/menu_shots.tscn --rendering-driver opengl3 -- docs/screenshots [garage,pilots,settings]
 # Every craft (3/4 view) and every pilot's face in four moods; --quality=low|medium|high|ultra
 xvfb-run -a godot --path . res://tests/craft_shots.tscn --rendering-driver opengl3 -- --out=docs/screenshots/craft --mode=all
+# Every power-up fired in a live race (slows game time for the shot)
+xvfb-run -a godot --path . res://tests/item_shots.tscn --rendering-driver opengl3 -- --out=/tmp/items [--only=laser,rocket]
 # Race shots at a given graphics tier
 xvfb-run -a godot --path . res://tests/shots.tscn --rendering-driver opengl3 -- --tracks=mars --frames=300 --quality=ultra
 # Top-down maps of every track layout

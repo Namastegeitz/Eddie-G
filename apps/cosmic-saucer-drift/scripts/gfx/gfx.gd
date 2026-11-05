@@ -44,7 +44,8 @@ static func detect() -> String:
 			return "low"
 		return "medium"
 	if OS.has_feature("web"):
-		return "medium" if DisplayServer.is_touchscreen_available() else "high"
+		# A phone browser runs the game as WebAssembly on WebGL: start light.
+		return "low" if DisplayServer.is_touchscreen_available() else "high"
 	return "ultra"
 
 

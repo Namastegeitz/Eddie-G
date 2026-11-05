@@ -20,6 +20,7 @@ var _fab_text := ""
 
 func _ready() -> void:
 	theme = UiKit.theme()
+	physics_interpolation_mode = Node.PHYSICS_INTERPOLATION_MODE_OFF
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	# 3D backdrop.
 	var svc := SubViewportContainer.new()
@@ -928,7 +929,7 @@ func _howto() -> Control:
 	var v: VBoxContainer = lp[1]
 	var touch := InputRouter.touch_seen
 	var lines := [
-		["Steer & go", "Your saucer drives itself. Steer with the joystick: put your thumb down anywhere in the lower left and slide. Hold the GAS pedal for full power, BRAKE to slow down or reverse. (◀ ▶ buttons or tilt steering in Settings.)" if touch else "Steer with A/D or the arrows, W/Up for gas, S/Down to brake. Gamepad: stick, RT gas, LT brake."],
+		["Steer & go", "Your saucer drives itself. Steer with the joystick: put your thumb down anywhere in the lower left and slide. Push the stick up (or hold the GAS pedal) for full power; pull it down (or hold BRAKE) to slow down. Brake into a corner to turn tighter; keep holding when stopped to reverse. (◀ ▶ buttons or tilt steering in Settings.)" if touch else "Steer with A/D or the arrows, W/Up for gas, S/Down to brake. Gamepad: stick, RT gas, LT brake."],
 		["Drift = Plasma Boost", "Hold DRIFT while steering into a corner. Sparks turn blue, orange, then purple. Let go to boost: the longer the drift, the bigger the boost."],
 		["Keep your core charged", "Your Dark Matter core drains as you fly. Grab glowing Energy Pods, land tricks, slipstream and near-miss hazards to refill it. If it empties you drop into a slow Emergency Hover until you grab a pod."],
 		["Tricks", "Press DRIFT while in the air (off ramps, geysers, bouncy moss) to spin. Land it cleanly for a boost and energy. Land mid-spin and you wobble."],

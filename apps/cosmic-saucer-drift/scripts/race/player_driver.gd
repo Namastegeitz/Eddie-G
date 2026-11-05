@@ -20,7 +20,9 @@ func drive(r: Racer, dt: float) -> void:
 		var rate := 7.5 if (absf(want) > absf(_steer) and signf(want) == signf(_steer)) or _steer == 0.0 else 12.0
 		_steer = move_toward(_steer, want, rate * dt)
 	else:
-		_steer = want
+		# Analogue (joystick, pad, tilt): a light filter takes out thumb
+		# jitter without adding noticeable lag.
+		_steer = lerpf(_steer, want, 1.0 - exp(-22.0 * dt))
 	r.in_steer = _steer
 	# On the grid only a real press of GAS counts (auto-drive used to hold
 	# it from the first second of the countdown, which always stalled).

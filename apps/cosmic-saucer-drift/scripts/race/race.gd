@@ -67,6 +67,10 @@ func _ready() -> void:
 	mod_drain = mods.get("drain", 1.0)
 	mod_pod = mods.get("pod", 1.0)
 	mod_grip = mods.get("grip", 1.0)
+	# Physics interpolation (project setting) is only for things moved by
+	# the physics tick: racers, items and hazards turn it on for themselves.
+	# Everything else here (camera, effects, scenery, HUD) moves per frame.
+	physics_interpolation_mode = Node.PHYSICS_INTERPOLATION_MODE_OFF
 	td = TrackData.make(req.track, req.variant)
 	mod_gravity *= float(td.def.get("gravity", 1.0))
 	if req.has("laps"):
@@ -82,6 +86,7 @@ func _ready() -> void:
 	pickups.setup(self)
 	items = Items.new()
 	items.name = "Items"
+	items.physics_interpolation_mode = Node.PHYSICS_INTERPOLATION_MODE_ON
 	add_child(items)
 	items.setup(self)
 	items.only_item = mods.get("only_item", "")
@@ -91,8 +96,10 @@ func _ready() -> void:
 				h.item = items.roll(h)
 	hazards = Hazards.new()
 	hazards.name = "Hazards"
+	hazards.physics_interpolation_mode = Node.PHYSICS_INTERPOLATION_MODE_ON
 	add_child(hazards)
 	hazards.setup(self)
+	hazards.reset_physics_interpolation()
 	_setup_views()
 	apply_quality()
 	_audio = RaceAudio.new()
@@ -334,7 +341,7 @@ func _pause_button() -> Control:
 	b.text = "II"
 	b.add_theme_font_size_override("font_size", 30)
 	b.custom_minimum_size = Vector2(70, 64)
-	UiKit.place(b, Vector2(1, 0), Vector2(-90, 256), Vector2(70, 64))
+	UiKit.place(b, Vector2(1, 0), Vector2(-296, 14), Vector2(70, 64))
 	b.focus_mode = Control.FOCUS_NONE
 	b.pressed.connect(toggle_pause)
 	return b
@@ -682,13 +689,23 @@ func _fx_for(kind: String, d: Dictionary, r: Racer) -> void:
 	var pos := r.global_position
 	match kind:
 		"hit":
-			fx.flash(pos + r.up * 0.6, Color(1.0, 0.85, 0.6), 4.5, 0.25)
-			fx.sparks(pos + r.up * 0.4, r.up, Color(1.0, 0.6, 0.25), 30, 12.0)
-			fx.shockwave(pos, r.up, Color(1.0, 0.5, 0.3), 6.0, 0.35)
-			r.model.flash = 1.0
+			var hk: String = d.get("kind", "")
+			var hc: Color = (SaucerModel.REACT.get(hk, SaucerModel.REACT.hazard) as Array)[0]
+			fx.flash(pos + r.up * 0.6, hc.lerp(Color.WHITE, 0.3), 4.5, 0.25)
+			fx.sparks(pos + r.up * 0.4, r.up, hc, 30, 12.0)
+			fx.shockwave(pos, r.up, hc, 6.0, 0.35)
+			r.model.react(hk)
 		"blocked":
 			fx.flash(pos + r.up * 0.6, Color(0.4, 0.85, 1.0), 5.0, 0.25)
 			fx.shockwave(pos, r.up, Color(0.4, 0.85, 1.0), 7.0, 0.4)
+			fx.sparks(pos + r.up * 0.8, r.up, Color(0.5, 0.9, 1.0), 20, 10.0)
+			r.model.react("block")
+		"tractored":
+			r.model.react("tractor")
+		"item_roll", "crate_smash":
+			# The crate shatters into glowing shards.
+			fx.sparks(pos + r.up * 1.0 + r.heading * 1.5, r.up + r.heading * 0.5, Color(0.85, 0.45, 1.0), 26, 11.0, 14.0)
+			fx.flash(pos + r.up * 1.0 + r.heading * 1.5, Color(0.9, 0.6, 1.0), 3.2, 0.18)
 		"wall":
 			if d.get("impact", 0.0) > 6.0:
 				var side := r.heading.cross(r.up).normalized() * signf(r.lateral)

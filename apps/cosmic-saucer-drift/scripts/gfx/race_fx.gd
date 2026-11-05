@@ -5,7 +5,7 @@ extends Node3D
 ## Nothing is created during the race: every effect reuses a pooled node.
 
 const RINGS := 10
-const FLASHES := 10
+const FLASHES := 16
 const BURSTS := 10
 
 var particles := 1.0     # quality scale for burst particle counts

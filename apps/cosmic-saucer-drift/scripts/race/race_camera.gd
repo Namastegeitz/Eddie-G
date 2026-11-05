@@ -21,11 +21,15 @@ var _was_boost := false
 var _rng := RandomNumberGenerator.new()
 var _hidden: Array[Racer] = []
 var _orbit := -1.0
+var _tp := Vector3.ZERO       # target position this frame (interpolated)
 
 const NEAR_HIDE := 3.2
 
 
 func _ready() -> void:
+	# The camera moves every rendered frame, following the racer's smoothed
+	# (interpolated) position, so it isn't interpolated itself.
+	physics_interpolation_mode = Node.PHYSICS_INTERPOLATION_MODE_OFF
 	far = 7000.0
 	near = 0.3
 	fov = 72.0
@@ -36,6 +40,7 @@ func snap() -> void:
 		return
 	_vel_dir = target.heading
 	_up = target.up
+	_tp = target.global_position
 	global_position = _desired()
 	look_at(target.global_position + target.heading * 6.0, _up)
 
@@ -46,7 +51,7 @@ func _desired() -> Vector3:
 	var height := (3.1 if far_cam else 2.4) - _stretch * 0.35
 	var back := -_vel_dir if not target.in_look_back else _vel_dir
 	var side := _vel_dir.cross(_up).normalized()
-	return target.global_position + back * dist + _up * (height + _dip) + side * _swing
+	return _tp + back * dist + _up * (height + _dip) + side * _swing
 
 
 func add_shake(amount: float) -> void:
@@ -63,6 +68,7 @@ func land(impact: float) -> void:
 func _process(dt: float) -> void:
 	if target == null:
 		return
+	_tp = target.get_global_transform_interpolated().origin
 	# Smoothing below is frame-rate independent, so allow long frames: on a
 	# slow phone a tight cap made the camera fall far behind the craft.
 	dt = minf(dt, 0.25)
@@ -89,9 +95,9 @@ func _process(dt: float) -> void:
 		var k := intro / 2.4
 		var a := k * PI * 0.9
 		var side := target.heading.cross(Vector3.UP).normalized()
-		var orbit := target.global_position + (-target.heading * cos(a) + side * sin(a)) * lerpf(8.0, 14.0, k) + Vector3.UP * lerpf(3.0, 6.0, k)
+		var orbit := _tp + (-target.heading * cos(a) + side * sin(a)) * lerpf(8.0, 14.0, k) + Vector3.UP * lerpf(3.0, 6.0, k)
 		global_position = orbit
-		look_at(target.global_position + Vector3.UP * 0.8, Vector3.UP)
+		look_at(_tp + Vector3.UP * 0.8, Vector3.UP)
 		return
 	# After the finish: swing round to the front to see the pilot celebrate.
 	if target.finished:
@@ -100,9 +106,9 @@ func _process(dt: float) -> void:
 		_orbit = minf(_orbit + dt * 0.55, 2.4)
 		var a := _orbit * 1.1
 		var sd := target.heading.cross(target.up).normalized()
-		var at := target.global_position + (target.heading * cos(a) * -1.0 + sd * sin(a)) * 6.2 + target.up * 2.0
+		var at := _tp + (target.heading * cos(a) * -1.0 + sd * sin(a)) * 6.2 + target.up * 2.0
 		global_position = global_position.lerp(at, 1.0 - exp(-5.0 * dt))
-		look_at(target.global_position + target.up * 0.7, target.up)
+		look_at(_tp + target.up * 0.7, target.up)
 		fov = lerpf(fov, 62.0, 1.0 - exp(-3.0 * dt))
 		h_offset = 0.0
 		v_offset = 0.0
@@ -110,7 +116,7 @@ func _process(dt: float) -> void:
 	global_position = global_position.lerp(want, 1.0 - exp(-11.0 * dt))
 	var look_dir := target.heading if not target.in_look_back else -target.heading
 	var side_v := _vel_dir.cross(_up).normalized()
-	var look_pt := target.global_position + look_dir * (7.0 + ratio * 2.0) + _up * 1.0 + side_v * _look_side
+	var look_pt := _tp + look_dir * (7.0 + ratio * 2.0) + _up * 1.0 + side_v * _look_side
 	if global_position.distance_to(look_pt) > 0.5:
 		look_at(look_pt, _up)
 	# Field of view: speed widens it, a boost punches it out then settles.

@@ -38,6 +38,10 @@ func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	tuning = load("res://resources/tuning.tres")
 	detected_quality = Gfx.detect()
+	# On phones and in browsers, if a frame runs long don't pile up physics
+	# steps to catch up (that turns one slow frame into a stutter).
+	if OS.has_feature("web") or OS.has_feature("mobile"):
+		Engine.max_physics_steps_per_frame = 3
 
 
 func quality() -> String:

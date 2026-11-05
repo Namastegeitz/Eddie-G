@@ -21,6 +21,8 @@ var flaps: Array[Node3D] = []        # wings that flap
 var pilot_model: PilotModel
 var trail_color := Color(0.3, 0.9, 1.0)
 var breath: Node3D = null            # Quasar Dragon fire while boosting
+var rim_r := 1.9                     # hull radius (for strap-on parts)
+var top_y := 0.4                     # height of the hull top
 
 # Set by the racer every frame.
 var mood := 0
@@ -43,6 +45,17 @@ var _flame_r := PackedFloat32Array()
 var _flame_len := PackedFloat32Array()
 var _pilot_lod := 30.0
 var _last_flash := 0.0
+var _react := ""
+var _react_t := 0.0
+var _react_len := 1.0
+
+## How each power-up hit looks on the craft: colour and how long.
+const REACT := {
+	"rocket": [Color(1.0, 0.55, 0.2), 0.9], "mine": [Color(1.0, 0.8, 0.25), 0.9],
+	"comet": [Color(0.6, 0.9, 1.0), 0.85], "laser": [Color(0.35, 1.0, 0.95), 0.6],
+	"emp": [Color(1.0, 0.95, 0.4), 1.2], "tractor": [Color(0.45, 1.0, 0.5), 1.4],
+	"block": [Color(0.4, 0.85, 1.0), 0.45], "hazard": [Color(1.0, 1.0, 1.0), 0.6],
+}
 static var _mats := {}
 
 const SPARK_COLORS := [Color(0.3, 0.7, 1.0), Color(1.0, 0.55, 0.15), Color(0.85, 0.35, 1.0)]
@@ -208,7 +221,8 @@ func build(look: Dictionary) -> void:
 			_dyson(paint, under, hull_opts, chrome, dark, glow, d)
 		_:
 			_classic(paint, under, hull_opts, chrome, dark, glow, d)
-	var rim_r: float = d.rim_r
+	rim_r = d.rim_r
+	top_y = d.dome_y
 	var dome_r: float = d.dome_r
 	var dome_y: float = d.dome_y
 	var dome_at := Vector3(0, dome_y, d.dome_z)
@@ -811,6 +825,44 @@ func _particles(pos: Vector3, c: Color, amount: int, life: float, size: float) -
 	return p
 
 
+## Show a hit: rockets and mines throw the craft up, a comet squashes it,
+## a laser jolts it sideways, an EMP makes its lights flicker, a tractor beam
+## pulses it green, a blocked hit flashes the shield colour.
+func react(kind: String) -> void:
+	var d: Array = REACT.get(kind, REACT.hazard)
+	_react = kind if REACT.has(kind) else "hazard"
+	_react_len = float(d[1])
+	_react_t = _react_len
+	flash = 1.0
+	_last_flash = 1.0
+	for m in _hulls:
+		m.set_shader_parameter("flash_color", d[0])
+
+
+func _react_tick(dt: float) -> void:
+	if _react_t <= 0.0 or pivot == null:
+		return
+	_react_t = maxf(0.0, _react_t - dt)
+	var k := 1.0 - _react_t / _react_len
+	match _react:
+		"rocket", "mine":
+			pivot.position.y += sin(PI * clampf(k * 1.5, 0.0, 1.0)) * 1.5
+			pivot.rotation.x += sin(PI * clampf(k * 1.5, 0.0, 1.0)) * 0.5
+		"comet":
+			var s := (1.0 - k) * (1.0 - k)
+			pivot.scale = Vector3(1.0 + 0.4 * s, 1.0 - 0.5 * s, 1.0 + 0.4 * s)
+		"laser":
+			pivot.position.x = sin(k * 34.0) * 0.35 * (1.0 - k)
+		"emp":
+			flash = 0.7 if int(k * 24.0) % 2 == 0 else 0.0
+		"tractor":
+			flash = 0.3 + 0.25 * sin(k * 26.0)
+	if _react_t <= 0.0:
+		pivot.scale = Vector3.ONE
+		pivot.position.x = 0.0
+		flash = 0.0
+
+
 ## Per-frame visual state from the racer.
 func animate(dt: float, throttle: float, boosting: bool, drift_tier: int, drifting: bool, speed_ratio: float) -> void:
 	_t += dt
@@ -857,8 +909,10 @@ func animate(dt: float, throttle: float, boosting: bool, drift_tier: int, drifti
 			_spark_mats[k].albedo_color = sc * 1.8
 			(_spark_glow[k].material_override as StandardMaterial3D).albedo_color = Color(sc.r, sc.g, sc.b, 0.5 + 0.2 * sin(_t * 30.0 + float(k)))
 			_spark_glow[k].scale = Vector3.ONE * (0.6 + 0.25 * float(drift_tier))
+	_react_tick(dt)
 	if flash > 0.0 or _last_flash > 0.0:
-		flash = maxf(0.0, flash - dt * 3.0)
+		if _react_t <= 0.0 or not (_react in ["emp", "tractor"]):
+			flash = maxf(0.0, flash - dt * 3.0)
 		_last_flash = flash
 		for m in _hulls:
 			m.set_shader_parameter("flash", flash)

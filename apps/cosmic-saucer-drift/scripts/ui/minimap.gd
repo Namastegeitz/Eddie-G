@@ -8,6 +8,10 @@ var _pts := PackedVector2Array()
 var _short := PackedVector2Array()
 var _min := Vector2.ZERO
 var _scale := 1.0
+var _mapped := PackedVector2Array()     # track outline in screen space, rebuilt on resize
+var _mapped_short := PackedVector2Array()
+var _mapped_size := Vector2.ZERO
+var _tick := 0
 
 
 func setup(p_race: Node, p_focus: Racer) -> void:
@@ -38,22 +42,27 @@ func _map(p: Vector2) -> Vector2:
 
 
 func _process(_dt: float) -> void:
-	queue_redraw()
+	# Dots move smoothly enough at half the frame rate; saves work on phones.
+	_tick += 1
+	if _tick % 2 == 0:
+		queue_redraw()
 
 
 func _draw() -> void:
 	if race == null:
 		return
-	var pts := PackedVector2Array()
-	for p in _pts:
-		pts.append(_map(p))
-	draw_polyline(pts, Color(0, 0, 0, 0.5), 9.0)
-	draw_polyline(pts, Color(0.8, 0.85, 1.0, 0.85), 4.0)
-	if not _short.is_empty() and Save.data.get("found_short", {}).has(race.td.id):
-		var sp := PackedVector2Array()
+	if size != _mapped_size:
+		_mapped_size = size
+		_mapped.clear()
+		for p in _pts:
+			_mapped.append(_map(p))
+		_mapped_short.clear()
 		for p in _short:
-			sp.append(_map(p))
-		draw_polyline(sp, Color(1.0, 0.6, 0.2, 0.6), 2.0)
+			_mapped_short.append(_map(p))
+	draw_polyline(_mapped, Color(0, 0, 0, 0.5), 9.0)
+	draw_polyline(_mapped, Color(0.8, 0.85, 1.0, 0.85), 4.0)
+	if not _mapped_short.is_empty() and Save.data.get("found_short", {}).has(race.td.id):
+		draw_polyline(_mapped_short, Color(1.0, 0.6, 0.2, 0.6), 2.0)
 	var tdm: TrackData = race.td
 	var st := tdm.main.pts[0]
 	draw_circle(_map(Vector2(st.x, st.z)), 4.0, Color.WHITE)

@@ -8,11 +8,16 @@ extends Control
 ##     left of the screen and it appears under your thumb; slide left/right
 ##     to steer, as gently or as hard as you like.
 ##   buttons: ◀ ▶ buttons.   tilt: nothing (steer by tilting the phone).
+##     Push the stick up for GAS, pull it straight down to BRAKE.
+##   buttons: ◀ ▶ buttons.   tilt: nothing (steer by tilting the phone).
 ## Right side: DRIFT (becomes TRICK in the air), ITEM, and the GAS and BRAKE
 ## pedals. With auto-drive on the craft cruises by itself; hold GAS for full
 ## power (and on GO for a rocket start), BRAKE to slow down or reverse.
 
-const STICK_DEAD := 0.1
+const STICK_DEAD := 0.08
+const STICK_FULL := 0.85      # full lock before the edge, so it never feels short
+const STICK_GAS := 0.55       # push up this far for gas
+const STICK_BRAKE := 0.7      # pull down this far (and mostly straight) to brake
 
 var racer: Racer
 var _touches := {}   # index -> position
@@ -21,6 +26,10 @@ var _stick_id := -1
 var _stick_base := Vector2.ZERO
 var _stick_knob := Vector2.ZERO
 var _pedal_box: StyleBoxFlat
+var _stick_gas := false
+var _stick_brake := false
+var _was_pressed := {}     # button -> pressed last refresh (for haptic ticks)
+var _sig := ""             # what was drawn last frame; redraw only on change
 
 
 func _ready() -> void:
@@ -50,7 +59,7 @@ func _mode() -> String:
 
 
 func stick_radius() -> float:
-	return 92.0 * _unit()
+	return 72.0 * _unit()
 
 
 ## Where the stick rests when no thumb is on it.
@@ -117,14 +126,21 @@ func _on_button(p: Vector2) -> bool:
 	return false
 
 
-## Joystick steer: -1..1 with a small dead zone, analogue in between.
-func stick_steer() -> float:
+## Joystick deflection, -1..1 on each axis (y down is positive).
+func stick_vec() -> Vector2:
 	if _stick_id < 0:
-		return 0.0
-	var x := clampf((_stick_knob.x - _stick_base.x) / stick_radius(), -1.0, 1.0)
+		return Vector2.ZERO
+	return ((_stick_knob - _stick_base) / stick_radius()).limit_length(1.0)
+
+
+## Joystick steer: -1..1 with a small dead zone and full lock a little before
+## the edge; gentle near the centre for small corrections.
+func stick_steer() -> float:
+	var x := stick_vec().x
 	if absf(x) < STICK_DEAD:
 		return 0.0
-	return signf(x) * (absf(x) - STICK_DEAD) / (1.0 - STICK_DEAD)
+	var s := clampf((absf(x) - STICK_DEAD) / (STICK_FULL - STICK_DEAD), 0.0, 1.0)
+	return signf(x) * lerpf(s, s * s, 0.35)
 
 
 func _refresh() -> void:
@@ -149,16 +165,36 @@ func _refresh() -> void:
 					"brake": br = 1.0
 					"gas": gas = 1.0
 	st += stick_steer()
+	var sv := stick_vec()
+	_stick_gas = sv.y < -STICK_GAS and absf(sv.y) > absf(sv.x) * 0.9
+	_stick_brake = sv.y > STICK_BRAKE and sv.y > absf(sv.x) * 1.4
+	if _stick_gas:
+		gas = 1.0
+	if _stick_brake:
+		br = 1.0
 	InputRouter.touch.steer = clampf(st, -1.0, 1.0)
 	InputRouter.touch.drift = dr
 	InputRouter.touch.item = it
 	InputRouter.touch.brake = br
 	InputRouter.touch.throttle = gas
+	# A short buzz when a button goes down, so presses can be felt.
+	var now := {"drift": dr, "item": it, "brake": br > 0.0, "gas": gas > 0.0}
+	for k in now:
+		if now[k] and not _was_pressed.get(k, false):
+			InputRouter.rumble(0, 0.35, 0.018)
+	_was_pressed = now
 	queue_redraw()
 
 
 func _process(_dt: float) -> void:
-	queue_redraw()
+	# Redraw only when something on the controls changed (cheaper on phones).
+	var sig := "%d|%s|%s|%d|%d|%s" % [_stick_id, _stick_knob.round(), _touches.size(), racer.drift_tier if racer else 0,
+		1 if (racer and not racer.grounded and racer.air_time > 0.15) else 0, racer.item if racer else ""]
+	for k in _touches:
+		sig += str(_touches[k].round())
+	if sig != _sig:
+		_sig = sig
+		queue_redraw()
 
 
 func _held(r: Rect2) -> bool:
@@ -243,6 +279,14 @@ func _draw_stick(font: Font) -> void:
 		var t := "◀" if sx < 0.0 else "▶"
 		var tw := font.get_string_size(t, HORIZONTAL_ALIGNMENT_LEFT, -1, fs).x
 		draw_string(font, base + Vector2(sx * r * 0.7 - tw * 0.5, fs * 0.35), t, HORIZONTAL_ALIGNMENT_LEFT, -1, fs, Color(1, 1, 1, 0.35))
+	# Up = gas, down = brake markers on the ring.
+	var gs := int(r * 0.2)
+	for g in [["GAS", -1.0, _stick_gas, Color(0.35, 1.0, 0.5)], ["BRAKE", 1.0, _stick_brake, Color(1.0, 0.35, 0.3)]]:
+		var gt: String = g[0]
+		var gw := font.get_string_size(gt, HORIZONTAL_ALIGNMENT_LEFT, -1, gs).x
+		var gc: Color = g[3]
+		gc.a = 0.95 if g[2] else 0.35
+		draw_string(font, base + Vector2(-gw * 0.5, float(g[1]) * r * 0.72 + gs * 0.35), gt, HORIZONTAL_ALIGNMENT_LEFT, -1, gs, gc)
 	draw_circle(knob, r * 0.44, Color(0.3, 0.92, 1.0, 0.35 if active else 0.22))
 	draw_arc(knob, r * 0.44, 0, TAU, 32, Color(1, 1, 1, 0.7 if active else 0.4), 3.0)
 	if not active:

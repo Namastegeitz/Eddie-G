@@ -104,6 +104,7 @@ var _wrong_t := 0.0
 var last_safe_idx := 0
 var last_safe_lat := 0.0
 var _start_press := -1.0
+var _stop_t := 0.0            # time spent stopped with the brake held
 var _stuck_t := 0.0
 var _stuck_ref := 0.0
 var _last_respawn_t := -99.0
@@ -126,6 +127,7 @@ func setup(p_race: Node, p_idx: int, p_look: Dictionary, upgrades: Dictionary) -
 	display_name = pilot.name
 	collision_layer = 4
 	collision_mask = 2
+	physics_interpolation_mode = Node.PHYSICS_INTERPOLATION_MODE_ON
 	motion_mode = CharacterBody3D.MOTION_MODE_FLOATING
 	wall_min_slide_angle = 0.0
 	var cs := CollisionShape3D.new()
@@ -183,6 +185,7 @@ func place_at(tf: Transform3D) -> void:
 		race_dist -= td.main.length
 	last_safe_idx = track_idx
 	_orient(1.0)
+	reset_physics_interpolation()
 
 
 # ---------------------------------------------------------------- per tick
@@ -345,6 +348,9 @@ func _steer_and_drift(dt: float) -> void:
 			drift_tier = tier
 			emit_signal("event", "drift_tier", {"tier": tier})
 		stats.drift_dist += absf(fwd) * dt
+	# Brake into a corner to turn tighter.
+	if in_brake > 0.1 and fwd > 8.0 and drift_dir == 0:
+		turn *= 1.3
 	if fwd < -0.5:
 		turn = -turn
 	if not grounded:
@@ -407,10 +413,17 @@ func _integrate(dt: float) -> void:
 		if boost_time > 0.0:
 			fwd = move_toward(fwd, top, T.boost_accel * dt)
 		elif in_brake > 0.1 and spin_time <= 0.0:
+			# Brake hard while moving; only once you've come to a stop and
+			# kept holding it do you start to reverse.
 			if fwd > 0.5:
+				_stop_t = 0.0
 				fwd = move_toward(fwd, 0.0, T.brake_decel * in_brake * dt)
 			else:
-				fwd = move_toward(fwd, -T.reverse_speed, acc * 0.6 * dt)
+				_stop_t += dt
+				if _stop_t > 0.4:
+					fwd = move_toward(fwd, -T.reverse_speed, acc * 0.6 * dt)
+				else:
+					fwd = move_toward(fwd, 0.0, T.brake_decel * dt)
 		elif throttle > 0.05:
 			var target: float = top * throttle
 			if fwd < target:
@@ -620,6 +633,7 @@ func respawn(reason := "", from := Vector3.ZERO) -> void:
 	tricks_in_air = 0
 	_end_drift(false)
 	_orient(2.0)
+	reset_physics_interpolation()
 	emit_signal("event", "respawn", {"reason": reason, "from": from})
 
 
@@ -638,7 +652,10 @@ func on_go() -> void:
 	if _start_press >= 0.0 and _start_press <= T.start_boost_window:
 		give_boost(T.start_boost_time, "start")
 		emit_signal("event", "start_boost", {})
-	elif _start_press > 1.4:
+	elif _start_press > 1.4 and not (is_human and InputRouter.touch.active):
+		# Too early on keys or a pad stalls; on a touchscreen it just
+		# misses the rocket start (holding GAS through the countdown is an
+		# easy mistake on a phone).
 		stall_time = T.stall_time
 		emit_signal("event", "stall", {})
 
