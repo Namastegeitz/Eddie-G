@@ -17,6 +17,7 @@ import './styles/base.css';
 import './styles/play.css';
 import './styles/screens.css';
 import './styles/themes.css';
+import './styles/encounter.css';
 
 import { initStorage } from './core/storage.js';
 import { initProfile, settings } from './core/profile.js';

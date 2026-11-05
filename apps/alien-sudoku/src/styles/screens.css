@@ -51,6 +51,7 @@
   letter-spacing: 0.14em;
   line-height: 1.05;
 }
+.greeting { margin: 8px 0 0; font-size: 0.8rem; color: rgb(var(--c3-rgb)); text-shadow: 0 0 8px rgba(var(--c3-rgb), 0.5); }
 .subtitle { margin: 10px 0 0; color: var(--text-dim); letter-spacing: 0.14em; font-size: 0.72rem; text-transform: uppercase; }
 
 .menu-list { display: flex; flex-direction: column; gap: 10px; }

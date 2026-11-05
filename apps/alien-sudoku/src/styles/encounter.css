@@ -1,0 +1,272 @@
+/* ============================================================
+   The visitors: full-screen encounter when the tries run out.
+   ============================================================ */
+
+.encounter {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #eafcff;
+  font-family: var(--font-body);
+  opacity: 0;
+  transition: opacity 0.6s ease;
+  touch-action: manipulation;
+}
+.encounter.in { opacity: 1; }
+.encounter.closing { opacity: 0; transition: opacity 1s ease 0.35s; }
+.encounter.reduced.closing { transition-delay: 0s; transition-duration: 0.2s; }
+
+/* ---------- Sky and horizon ---------- */
+.enc-sky {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 80% 45% at 50% 100%, rgba(var(--c3-rgb), 0.28), transparent 70%),
+    radial-gradient(ellipse at 50% 20%, #140a36 0%, #070316 55%, #020108 100%);
+}
+.enc-stars { position: absolute; inset: 0; background-repeat: repeat; animation: twinkle 5s ease-in-out infinite alternate; }
+.enc-stars-a {
+  background-image:
+    radial-gradient(1.2px 1.2px at 12% 18%, #fff, transparent), radial-gradient(1px 1px at 32% 42%, #fff, transparent),
+    radial-gradient(1.4px 1.4px at 58% 12%, #fff, transparent), radial-gradient(1px 1px at 78% 34%, #fff, transparent),
+    radial-gradient(1.2px 1.2px at 88% 8%, #cfe8ff, transparent), radial-gradient(1px 1px at 44% 26%, #ffe8fb, transparent),
+    radial-gradient(1px 1px at 6% 52%, #fff, transparent), radial-gradient(1.3px 1.3px at 66% 54%, #d7fff1, transparent);
+  background-size: 420px 420px;
+}
+.enc-stars-b {
+  background-image:
+    radial-gradient(1.8px 1.8px at 20% 30%, #fff, transparent), radial-gradient(1.6px 1.6px at 70% 20%, #bff6ff, transparent),
+    radial-gradient(1.5px 1.5px at 50% 60%, #ffd8f6, transparent);
+  background-size: 700px 700px;
+  animation-duration: 7s;
+  opacity: 0.8;
+}
+.enc-horizon { position: absolute; left: 0; right: 0; bottom: 0; height: 26vh; }
+.enc-horizon svg { width: 100%; height: 100%; display: block; }
+.enc-horizon-glow {
+  position: absolute;
+  left: 10%;
+  right: 10%;
+  bottom: 17vh;
+  height: 10vh;
+  background: radial-gradient(ellipse at 50% 100%, rgba(var(--c3-rgb), 0.35), transparent 70%);
+  filter: blur(6px);
+  pointer-events: none;
+}
+
+/* ---------- The ship ---------- */
+/* Ship, voice and answers flow in one column, so long replies push the
+   answers down instead of overlapping them. */
+.enc-stage {
+  position: relative;
+  z-index: 1;
+  flex: none;
+  display: flex;
+  justify-content: center;
+  padding-top: calc(var(--sat) + 7vh);
+  pointer-events: none;
+}
+.enc-ship {
+  position: relative;
+  width: min(78vw, 440px);
+  aspect-ratio: 480 / 300;
+  /* waiting as a dot of light on the far horizon */
+  transform: translate(-26vw, 52vh) scale(0.02);
+  opacity: 0;
+}
+.enc-ship-body { position: relative; width: 100%; height: 100%; }
+.enc-ship-svg { width: 100%; height: 100%; overflow: visible; display: block; }
+/* It rises from the distance and curves up in front of you. */
+.enc-ship.arrive { animation: shipArrive 3.9s cubic-bezier(0.25, 0.1, 0.25, 1) forwards; }
+@keyframes shipArrive {
+  0% { transform: translate(-26vw, 52vh) scale(0.02); opacity: 0; filter: blur(1.5px) brightness(2.5); }
+  10% { opacity: 1; }
+  45% { transform: translate(14vw, 30vh) scale(0.18) rotate(-6deg); filter: blur(0.6px) brightness(1.6); }
+  75% { transform: translate(-4vw, 8vh) scale(0.62) rotate(4deg); filter: none; }
+  100% { transform: translate(0, 0) scale(1) rotate(0); opacity: 1; filter: none; }
+}
+.enc-ship.hover { animation: shipHover 3.2s ease-in-out infinite; opacity: 1; }
+@keyframes shipHover {
+  0%, 100% { transform: translateY(0) rotate(-1.2deg); }
+  50% { transform: translateY(-10px) rotate(1.2deg); }
+}
+.enc-ship.leave { animation: shipLeave 1.1s cubic-bezier(0.6, 0, 0.8, 0.4) forwards; }
+@keyframes shipLeave {
+  0% { transform: translateY(0) scale(1); opacity: 1; }
+  25% { transform: translateY(14px) scale(1.02); }
+  100% { transform: translate(8vw, -70vh) scale(0.15); opacity: 0; }
+}
+.enc-lights circle { animation: encBlink 1.2s steps(2) infinite; }
+.enc-lights circle:nth-child(3n + 2) { animation-delay: 0.4s; }
+.enc-lights circle:nth-child(3n) { animation-delay: 0.8s; }
+@keyframes encBlink { 50% { opacity: 0.25; } }
+.enc-core { animation: corePulse 1.6s ease-in-out infinite; transform-origin: 240px 200px; }
+@keyframes corePulse { 50% { opacity: 0.55; transform: scaleX(1.15); } }
+.enc-eye-shine { animation: eyeShine 4s ease-in-out infinite; }
+@keyframes eyeShine { 0%, 80%, 100% { opacity: 1; } 90% { opacity: 0.2; } }
+
+/* The beam reaches down toward you once it arrives. */
+.enc-beam {
+  position: absolute;
+  left: 50%;
+  top: 62%;
+  width: 46%;
+  height: 120vh;
+  transform: translateX(-50%) scaleY(0);
+  transform-origin: top center;
+  clip-path: polygon(38% 0, 62% 0, 100% 100%, 0 100%);
+  background: linear-gradient(rgba(170, 250, 255, 0.55), rgba(var(--c3-rgb), 0.12) 45%, transparent 85%);
+  opacity: 0;
+  transition: transform 1.2s ease-out, opacity 1.2s ease-out;
+}
+.encounter.beam-on .enc-beam { transform: translateX(-50%) scaleY(1); opacity: 1; animation: beamShimmer 2.4s ease-in-out 1.2s infinite; }
+@keyframes beamShimmer { 50% { opacity: 0.7; } }
+.encounter.gifted .enc-beam { background: linear-gradient(rgba(255, 255, 255, 0.9), rgba(var(--c1-rgb), 0.35) 45%, transparent 85%); }
+
+/* ---------- The voice in your head ---------- */
+.enc-voice {
+  position: relative;
+  z-index: 2;
+  flex: 1 1 auto;
+  min-height: 0;
+  width: 100%;
+  padding: 1vh max(18px, var(--sar)) 0 max(18px, var(--sal));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  text-align: center;
+  pointer-events: none;
+}
+.enc-line { margin: 0; max-width: 30ch; }
+.enc-question {
+  font-family: 'Audiowide', 'Orbitron', system-ui, sans-serif;
+  font-size: clamp(1.7rem, 8vw, 2.6rem);
+  letter-spacing: 0.06em;
+  color: #e9feff;
+  text-shadow: 0 0 10px rgba(var(--c3-rgb), 0.9), 0 0 28px rgba(var(--c3-rgb), 0.6), 0 0 60px rgba(var(--c2-rgb), 0.5);
+}
+.enc-reply, .enc-offer {
+  font-family: 'Audiowide', 'Orbitron', system-ui, sans-serif;
+  font-size: clamp(1rem, 4.6vw, 1.3rem);
+  line-height: 1.45;
+  letter-spacing: 0.03em;
+  color: #e9feff;
+  text-shadow: 0 0 8px rgba(var(--c3-rgb), 0.85), 0 0 22px rgba(var(--c2-rgb), 0.5);
+}
+.enc-offer { color: rgb(var(--c1-rgb)); text-shadow: 0 0 10px rgba(var(--c1-rgb), 0.7); }
+.enc-thought { font-style: italic; color: rgba(234, 252, 255, 0.72); font-size: 1rem; letter-spacing: 0.04em; transition: opacity 0.8s; }
+.enc-thought.fade { opacity: 0.35; }
+/* Each letter arrives out of a blur, then drifts like a thought. */
+.tw { display: inline-block; white-space: nowrap; }
+.tl {
+  display: inline-block;
+  animation: telepathIn 0.7s ease-out both, letterDrift 3.6s ease-in-out infinite;
+}
+@keyframes telepathIn {
+  from { opacity: 0; filter: blur(8px); transform: translateY(8px) scale(1.4); }
+  to { opacity: 1; filter: blur(0); transform: none; }
+}
+@keyframes letterDrift { 50% { translate: 0 -3px; } }
+
+/* ---------- Answers ---------- */
+.enc-panel {
+  position: relative;
+  z-index: 3;
+  flex: none;
+  width: 100%;
+  padding: 18px max(16px, var(--sar)) calc(var(--sab) + 22px) max(16px, var(--sal));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  background: linear-gradient(transparent, rgba(2, 1, 8, 0.85) 30%);
+  animation: panelIn 0.6s ease-out;
+}
+.enc-panel[hidden] { display: none; }
+@keyframes panelIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+.enc-name-row { display: flex; gap: 8px; width: 100%; max-width: 420px; }
+.enc-input {
+  flex: 1;
+  min-width: 0;
+  min-height: 48px;
+  padding: 10px 14px;
+  border-radius: 999px;
+  border: 1.5px solid rgba(var(--c3-rgb), 0.7);
+  background: rgba(8, 4, 24, 0.85);
+  color: #fff;
+  font: inherit;
+  font-size: 1rem;
+  box-shadow: 0 0 16px rgba(var(--c3-rgb), 0.3);
+  -webkit-user-select: text;
+  user-select: text;
+}
+.enc-input::placeholder { color: rgba(234, 252, 255, 0.5); }
+.enc-input:focus { outline: none; border-color: rgb(var(--c3-rgb)); box-shadow: 0 0 22px rgba(var(--c3-rgb), 0.6); }
+.enc-input.nudge { animation: shake 0.35s; }
+.enc-quick { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; max-width: 460px; }
+.enc-chip {
+  padding: 9px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(234, 252, 255, 0.35);
+  background: rgba(8, 4, 24, 0.7);
+  color: #eafcff;
+  font: inherit;
+  font-size: 0.88rem;
+  cursor: pointer;
+}
+@media (hover: hover) { .enc-chip:hover { border-color: rgb(var(--c3-rgb)); box-shadow: 0 0 12px rgba(var(--c3-rgb), 0.5); } }
+.enc-actions { display: flex; flex-direction: column; gap: 8px; width: 100%; max-width: 420px; }
+.enc-actions .btn { width: 100%; }
+.enc-skip {
+  position: absolute;
+  top: calc(var(--sat) + 12px);
+  right: calc(var(--sar) + 14px);
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(234, 252, 255, 0.3);
+  background: rgba(8, 4, 24, 0.5);
+  color: rgba(234, 252, 255, 0.75);
+  font: inherit;
+  font-size: 0.78rem;
+  cursor: pointer;
+}
+.enc-skip[hidden] { display: none; }
+
+/* Short screens (phones held sideways): ship and voice on the left, answers on the right. */
+@media (max-height: 520px) and (min-width: 560px) {
+  .encounter {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(260px, 42%);
+    grid-template-rows: auto minmax(0, 1fr);
+    grid-template-areas: 'stage panel' 'voice panel';
+  }
+  .enc-stage { grid-area: stage; padding-top: calc(var(--sat) + 3vh); }
+  .enc-ship { width: min(34vw, 270px); }
+  .enc-voice { grid-area: voice; gap: 4px; overflow-y: auto; padding-bottom: 12px; }
+  .enc-question { font-size: 1.5rem; }
+  .enc-reply, .enc-offer { font-size: 0.95rem; }
+  .enc-panel {
+    grid-area: panel;
+    align-self: center;
+    background: none;
+    padding: calc(var(--sat) + 12px) max(16px, var(--sar)) calc(var(--sab) + 12px) 8px;
+    gap: 8px;
+  }
+  .enc-name-row, .enc-quick, .enc-actions { max-width: 100%; }
+  .enc-actions .btn { min-height: 42px; padding: 8px 14px; }
+  .enc-horizon { height: 30vh; }
+}
+@media (max-height: 520px) and (max-width: 559px) {
+  .enc-ship { width: min(60vw, 260px); }
+  .enc-stage { padding-top: calc(var(--sat) + 2vh); }
+}
+
+/* Reduced motion: no flight, the ship is simply there. */
+.encounter.reduced .enc-ship { transform: none; opacity: 1; animation: none !important; }
+.encounter.reduced .tl { animation: none; }
+.encounter.reduced .enc-beam { transition: none; }

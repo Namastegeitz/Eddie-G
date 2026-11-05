@@ -306,3 +306,74 @@ export const music = {
 
   stop() { this._stopActive(2.0); },
 };
+
+// ---------------------------------------------------------
+// The visitors: sounds for the alien encounter.
+// ---------------------------------------------------------
+
+/** Lower the music while the visitors are here (true), then restore it. */
+export function duckMusic(on) {
+  if (!audio.musicBus || !audio.ctx) return;
+  const target = on ? audio.musicVolume * 0.18 : audio.musicVolume;
+  audio.musicBus.gain.setTargetAtTime(target, audio.ctx.currentTime, on ? 0.4 : 1.2);
+}
+
+export const encounterSfx = {
+  /** A deep, slowly swelling hum as the ship approaches. Returns stop(). */
+  hum(riseSeconds = 3.5) {
+    if (!audio.sfxOn || !audio.unlocked) return () => {};
+    const ctx = ensureCtx();
+    if (!ctx || ctx.state !== 'running') return () => {};
+    const out = ctx.createGain();
+    out.gain.setValueAtTime(0.0001, ctx.currentTime);
+    out.gain.exponentialRampToValueAtTime(0.5, ctx.currentTime + riseSeconds);
+    const filter = ctx.createBiquadFilter();
+    filter.type = 'lowpass';
+    filter.frequency.setValueAtTime(180, ctx.currentTime);
+    filter.frequency.exponentialRampToValueAtTime(900, ctx.currentTime + riseSeconds);
+    filter.connect(out).connect(audio.sfxBus);
+    const oscs = [];
+    for (const [f, type, det] of [[55, 'sawtooth', -6], [55, 'sawtooth', 7], [110, 'sine', 0], [82.4, 'triangle', 3]]) {
+      const o = ctx.createOscillator();
+      o.type = type;
+      o.frequency.value = f;
+      o.detune.value = det;
+      o.connect(filter);
+      o.start();
+      oscs.push(o);
+    }
+    // slow wobble, like the ship breathing
+    const lfo = ctx.createOscillator();
+    const lfoGain = ctx.createGain();
+    lfo.frequency.value = 0.6;
+    lfoGain.gain.value = 140;
+    lfo.connect(lfoGain).connect(filter.frequency);
+    lfo.start();
+    oscs.push(lfo);
+    return (fade = 1.5) => {
+      const now = ctx.currentTime;
+      out.gain.cancelScheduledValues(now);
+      out.gain.setValueAtTime(Math.max(0.0001, out.gain.value), now);
+      out.gain.exponentialRampToValueAtTime(0.0001, now + fade);
+      setTimeout(() => { oscs.forEach((o) => { try { o.stop(); } catch { /* ignore */ } }); try { out.disconnect(); } catch { /* ignore */ } }, (fade + 0.2) * 1000);
+    };
+  },
+  /** The shimmer of a voice inside your head. */
+  telepathy() {
+    [1046.5, 1318.5, 1568, 2093].forEach((f, i) => {
+      tone({ freq: f, dur: 1.4, type: 'sine', vol: 0.22, delay: i * 0.09, slideTo: f * 1.01 });
+    });
+    tone({ freq: 523.25, dur: 1.8, type: 'triangle', vol: 0.25, slideTo: 530 });
+  },
+  /** One soft tick per telepathic letter. */
+  letter() { tone({ freq: 1760 + Math.random() * 600, dur: 0.05, type: 'sine', vol: 0.06 }); },
+  /** The ship leaves: a rising whoosh. */
+  depart() {
+    tone({ freq: 120, slideTo: 1400, dur: 1.2, type: 'sawtooth', vol: 0.25 });
+    tone({ freq: 240, slideTo: 2600, dur: 1.0, type: 'sine', vol: 0.2, delay: 0.1 });
+  },
+  /** The visitors' gift. */
+  gift() {
+    [659, 880, 1175, 1568, 2093].forEach((f, i) => tone({ freq: f, dur: 0.35, type: 'triangle', vol: 0.45, delay: i * 0.08 }));
+  },
+};

@@ -62,6 +62,12 @@
 }
 .life.lost { background: transparent; border: 1.5px solid var(--warn); box-shadow: 0 0 6px rgba(255, 77, 109, 0.6); }
 .lives-zen { color: var(--neon-pink); }
+.tries { display: inline-flex; align-items: center; gap: 6px; }
+.tries-bar { display: block; width: 46px; height: 7px; border-radius: 4px; background: rgba(255, 255, 255, 0.12); overflow: hidden; box-shadow: inset 0 0 0 1px rgba(var(--c1-rgb), 0.35); }
+.tries-bar b { display: block; height: 100%; border-radius: 4px; background: linear-gradient(90deg, rgb(var(--c3-rgb)), rgb(var(--c1-rgb))); box-shadow: 0 0 8px rgba(var(--c1-rgb), 0.7); transition: width 0.4s ease; }
+.tries-num { font-weight: 700; font-size: 0.9rem; color: rgb(var(--c1-rgb)); font-variant-numeric: tabular-nums; min-width: 1.4em; }
+.tries.low .tries-bar b { background: var(--warn); box-shadow: 0 0 8px rgba(255, 77, 109, 0.8); }
+.tries.low .tries-num { color: var(--warn); }
 .hud-score { display: inline-flex; align-items: baseline; gap: 5px; color: rgb(var(--c1-rgb)); font-variant-numeric: tabular-nums; }
 .hud-score b { font-size: 0.95rem; text-shadow: 0 0 8px rgba(var(--c1-rgb), 0.5); }
 .hud-score[hidden] { display: none; }

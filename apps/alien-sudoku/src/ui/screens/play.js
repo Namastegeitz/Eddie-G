@@ -4,11 +4,12 @@
    ============================================================ */
 
 import { h, icon, clear } from '../dom.js';
-import { GameSession, MAX_MISTAKES } from '../../game/session.js';
+import { GameSession, reviveTriesFor } from '../../game/session.js';
+import { playEncounter } from '../encounter.js';
 import { randomPuzzle, getCampaignPuzzle, getDailyPuzzle } from '../../engine/pool.js';
 import {
   settings, setSetting, recordResult, loadSavedGame, storeSavedGame, clearSavedGame,
-  countGameStarted, getProfile,
+  countGameStarted, getProfile, playerName, recordEncounter,
 } from '../../core/profile.js';
 import { SECTORS, LEVELS_PER_SECTOR, starsFor } from '../../data/sectors.js';
 import { SYMBOL_SETS } from '../../data/symbols.js';
@@ -52,6 +53,7 @@ export function createSession(params) {
     solution: p.solution,
     bg: extra.bg || randomBackground(),
     autoRemoveNotes: s.autoRemoveNotes,
+    maxMistakes: s.tries || 25,
     ...extra,
   });
 }
@@ -341,13 +343,24 @@ export const playScreen = {
         livesEl.innerHTML = '<span class="lives-zen">∞ Zen</span>';
         return;
       }
-      if (livesEl.dataset.m === String(session.mistakes)) return;
-      livesEl.dataset.m = String(session.mistakes);
+      const key = `${session.mistakes}/${session.maxMistakes}`;
+      if (livesEl.dataset.m === key) return;
+      livesEl.dataset.m = key;
       clear(livesEl);
-      for (let k = 0; k < MAX_MISTAKES; k++) {
-        livesEl.appendChild(h('span', { class: `life${k < MAX_MISTAKES - session.mistakes ? '' : ' lost'}` }));
+      const left = session.livesLeft;
+      const max = session.maxMistakes;
+      if (max <= 5) {
+        for (let k = 0; k < max; k++) livesEl.appendChild(h('span', { class: `life${k < left ? '' : ' lost'}` }));
+      } else {
+        // A tries meter instead of 25 dots.
+        const pct = Math.round((left / max) * 100);
+        livesEl.append(
+          h('span', { class: `tries${left / max <= 0.2 ? ' low' : ''}` },
+            h('i', { class: 'tries-bar' }, h('b', { style: { width: `${pct}%` } })),
+            h('span', { class: 'tries-num' }, String(left))));
       }
-      livesEl.setAttribute('aria-label', `${session.livesLeft} lives left`);
+      livesEl.setAttribute('aria-label', `${left} of ${max} tries left`);
+      livesEl.title = `${left} of ${max} tries left`;
     }
 
     function renderTimer() {
@@ -441,7 +454,7 @@ export const playScreen = {
           setStatus(`${glyphName(setKey, v)} doesn't belong there.`, 'error');
         } else {
           const left = session.livesLeft;
-          setStatus(`Glyph rejected — ${left} ${left === 1 ? 'life' : 'lives'} left.`, 'error');
+          setStatus(`Glyph rejected — ${left} ${left === 1 ? 'try' : 'tries'} left.`, 'error');
         }
         scheduleSave();
         return;
@@ -737,43 +750,48 @@ export const playScreen = {
       });
     }
 
-    function onLose() {
+    // Out of tries: the visitors arrive and ask who you are.
+    let encounterRunning = false;
+    async function onLose() {
+      if (encounterRunning) return;
+      encounterRunning = true;
       stopTimer();
       sfx.gameOver();
       haptic('error');
       boardWrap.classList.add('lost');
-      const canRevive = !session.revived;
-      const actions = [];
-      if (canRevive) {
-        actions.push({
-          label: adsSupported ? 'Second chance (video)' : 'Second chance', kind: 'primary', icon: adsSupported ? 'ad' : 'restart', autofocus: true,
-          onClick: async () => {
-            const res = await showRewarded();
-            if (res === 'cancelled') { toast('Video closed early.'); onLose(); return; }
-            session.revive();
-            boardWrap.classList.remove('lost');
-            setStatus('Second chance — one life restored.', 'success');
-            startTimer();
-            render();
-            scheduleSave(true);
-          },
-        });
-      }
-      actions.push(
-        { label: 'Retry puzzle', kind: canRevive ? 'ghost' : 'primary', onClick: () => { recordLoss(); afterResult(() => nav.replace('play', retryParams())); } },
-        session.mode === 'quick' ? { label: 'New puzzle', kind: 'ghost', onClick: () => { recordLoss(); afterResult(() => nav.replace('play', { mode: 'quick', difficulty: session.difficulty })); } } : null,
-        { label: 'Menu', kind: 'ghost', onClick: () => { recordLoss(); afterResult(() => nav.reset('menu')); } },
-      );
-      openModal({
-        eyebrow: sessionTitle(session).eyebrow,
-        title: 'Signal lost',
-        className: 'lose-modal',
-        body: h('p', { class: 'modal-text' }, canRevive
-          ? `Three glyphs were rejected. Take a second chance with one life restored, or try again.`
-          : 'The transmission is lost. Try again, Decoder.'),
-        actions: actions.filter(Boolean),
-        dismissible: false,
+      const giftTries = reviveTriesFor(session.maxMistakes);
+      const result = await playEncounter({
+        knownName: playerName(),
+        canGift: !session.revived,
+        giftTries,
+        giftNeedsAd: adsSupported,
+        allowNew: session.mode === 'quick',
+        beforeChoice: async (choice) => {
+          if (choice !== 'gift') return true;
+          const res = await showRewarded();
+          if (res === 'cancelled') { toast('The gift needs the whole transmission. Try again or choose another path.'); return false; }
+          if (res === 'unavailable') toast('No transmission available right now. The gift is yours anyway.');
+          return true;
+        },
       });
+      encounterRunning = false;
+      recordEncounter({ name: result.answer === 'name' ? result.name : '', answer: result.answer });
+      if (result.choice === 'gift') {
+        session.revive();
+        boardWrap.classList.remove('lost');
+        setStatus(`The visitors gave you ${giftTries} more ${giftTries === 1 ? 'try' : 'tries'}.`, 'success');
+        const wr = boardWrap.getBoundingClientRect();
+        fx.fireworks(SYMBOL_SETS[setKeyFor(session)].colors.slice(0, 3), wr.width, wr.height);
+        startTimer();
+        livesEl.dataset.m = '';
+        render();
+        scheduleSave(true);
+        return;
+      }
+      recordLoss();
+      if (result.choice === 'retry') afterResult(() => nav.replace('play', retryParams()));
+      else if (result.choice === 'new') afterResult(() => nav.replace('play', { mode: 'quick', difficulty: session.difficulty }));
+      else afterResult(() => nav.reset('menu'));
     }
 
     function recordLoss() {

@@ -45,7 +45,34 @@ test('quick play: solve a puzzle, see the win card, stats update', async ({ page
   expect(errors).toEqual([]);
 });
 
-test('three mistakes lose; second chance restores a life', async ({ page }) => {
+test('out of tries: the visitors ask who you are, remember the name, and give more tries', async ({ page }) => {
+  const errors = errorsOf(page);
+  await openMenu(page);
+  await startQuick(page, 'medium');
+  const [i, wrong, max] = await page.evaluate(() => {
+    const s = window.__alienSession;
+    const idx = s.board.findIndex((v) => v === 0);
+    return [idx, (s.solution[idx] % 9) + 1, s.maxMistakes];
+  });
+  expect(max).toBe(25);
+  await expect(page.locator('.tries-num')).toHaveText('25');
+  await page.locator(`.cell[data-i="${i}"]`).dispatchEvent('pointerdown');
+  for (let k = 0; k < 25; k++) await page.locator(`.glyph-btn[data-v="${wrong}"]`).click();
+  await expect(page.locator('.encounter')).toBeVisible({ timeout: 5000 });
+  await expect(page.locator('.enc-question')).toHaveAttribute('aria-label', 'Who are you?', { timeout: 15000 });
+  await page.locator('.enc-input').fill('Eddie');
+  await page.getByRole('button', { name: 'Answer', exact: true }).click();
+  await expect(page.locator('.enc-reply')).toHaveAttribute('aria-label', /Eddie/, { timeout: 10000 });
+  await page.getByRole('button', { name: /Accept the gift/ }).click({ timeout: 15000 });
+  await expect(page.locator('.encounter')).toHaveCount(0, { timeout: 5000 });
+  await expect(page.locator('.tries-num')).toHaveText('5');
+  await page.locator('.topbar .icon-btn[aria-label="Back to menu"]').click();
+  await expect(page.locator('.greeting')).toContainText('Eddie');
+  expect(errors).toEqual([]);
+});
+
+test('classic 3 tries still works, and Skip jumps to the question', async ({ page }) => {
+  await page.addInitScript(() => localStorage.setItem('alien-sudoku:profile', JSON.stringify({ settings: { tries: 3, seenTutorial: true } })));
   await openMenu(page);
   await startQuick(page, 'medium');
   const [i, wrong] = await page.evaluate(() => {
@@ -53,11 +80,12 @@ test('three mistakes lose; second chance restores a life', async ({ page }) => {
     const idx = s.board.findIndex((v) => v === 0);
     return [idx, (s.solution[idx] % 9) + 1];
   });
+  await expect(page.locator('.life:not(.lost)')).toHaveCount(3);
   await page.locator(`.cell[data-i="${i}"]`).dispatchEvent('pointerdown');
   for (let k = 0; k < 3; k++) await page.locator(`.glyph-btn[data-v="${wrong}"]`).click();
-  await expect(page.locator('.lose-modal')).toBeVisible({ timeout: 5000 });
-  await page.getByRole('button', { name: /second chance/i }).click();
-  await expect(page.locator('.lose-modal')).toHaveCount(0);
+  await page.locator('.enc-skip').click({ timeout: 5000 });
+  await page.locator('.enc-chip', { hasText: 'A friend from Earth' }).click({ timeout: 8000 });
+  await page.getByRole('button', { name: /Accept the gift/ }).click({ timeout: 15000 });
   await expect(page.locator('.life:not(.lost)')).toHaveCount(1);
 });
 

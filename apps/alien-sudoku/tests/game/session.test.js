@@ -215,3 +215,26 @@ describe('scoring', () => {
     expect(s.score).toBe(0);
   });
 });
+
+describe('tries', () => {
+  it('a 25-try puzzle survives 24 mistakes, ends on the 25th, and the gift returns 5', () => {
+    const p = getPuzzle({ difficulty: 'easy', seed: 'tries' });
+    const s = new GameSession({ mode: 'quick', difficulty: 'easy', puzzle: p.puzzle, solution: p.solution, maxMistakes: 25 });
+    const i = s.board.findIndex((v) => v === 0);
+    const wrong = (s.solution[i] % 9) + 1;
+    for (let k = 0; k < 24; k++) expect(s.place(i, wrong).lost).toBe(false);
+    expect(s.livesLeft).toBe(1);
+    expect(s.place(i, wrong).lost).toBe(true);
+    expect(s.revive()).toBe(true);
+    expect(s.livesLeft).toBe(5);
+    const t = GameSession.fromSnapshot(JSON.parse(JSON.stringify(s.snapshot())));
+    expect(t.maxMistakes).toBe(25);
+    expect(t.livesLeft).toBe(5);
+  });
+
+  it('old saves without a tries limit keep the classic 3', () => {
+    const p = getPuzzle({ difficulty: 'easy', seed: 'old' });
+    const s = new GameSession({ mode: 'quick', difficulty: 'easy', puzzle: p.puzzle, solution: p.solution });
+    expect(s.maxMistakes).toBe(3);
+  });
+});

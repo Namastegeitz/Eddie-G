@@ -26,9 +26,12 @@
   (Close Encounters, Space Fleet, Planets, Deep Cosmos, Alien Creatures, Ancient Mysteries,
   Cosmic Mix), each with its own colors/font/board style; score + x10 combos; particles,
   animated starfield; new app icon. Contact sheets: `node tools/glyph-sheet.mjs <lineup>`.
+- Nov 5 (later): 25 tries per puzzle by default (3/5/10/25 in Settings) with a tries meter; when they
+  run out, "the visitors" encounter: a ship rises from the horizon, asks "Who are you?"
+  telepathically, remembers the player's name and can gift more tries.
 - Platforms: Vite web/PWA, Capacitor 8 Android + iOS (SPM), Electron desktop. App id
   `com.eddieg.aliensudoku`. Free with AdMob on phones (Google TEST ids until real ones are set).
-- Tests: 93 unit (`npm test`) + 15 Playwright end-to-end on phone and desktop (`npm run test:e2e`).
+- Tests: 96 unit (`npm test`) + 17 Playwright end-to-end on phone and desktop (`npm run test:e2e`).
 - Playable private web build: https://claude.ai/artifact/NdYUzQJYiAGjCra9nF7MHn
 - CI (`.github/workflows/alien-sudoku.yml`) builds APK, iOS simulator app, Windows/macOS/Linux
   installers and publishes the `alien-sudoku-latest` release. BLOCKED: GitHub would not start

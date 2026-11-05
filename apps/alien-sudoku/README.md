@@ -26,8 +26,14 @@ have no ads. Until real AdMob ids are set, Google's **test** ads are shown.
 - **Quick Play**: Easy / Medium / Hard / Alien.
 - **Zen**: no lives, no timer, unlimited hints.
 - **Play features**:
-  - Wrong glyphs are rejected and cost a life (3 per puzzle).
-  - A second chance after losing (a rewarded video on phones).
+  - Wrong glyphs are rejected and cost a try. You get 25 tries per puzzle by
+    default; Settings offers 10, 5 or the classic 3.
+  - **The visitors**: when your tries run out, an alien ship rises from the far
+    horizon, flies up in front of you and asks telepathically, *"Who are you?"*,
+    while you ponder in wonder. Answer with your name or one of three replies.
+    They remember you (the menu greets you by name). They then offer a gift of
+    more tries, once per puzzle (a rewarded video on phones), or a fresh start.
+    The scene has its own hum, telepathic chimes and departure.
   - Notes, auto-notes, undo.
   - Hints that explain *why* (for example, "fits in only one place in this box").
   - Pause that hides the board, and autosave so you can resume.
@@ -50,7 +56,7 @@ have no ads. Until real AdMob ids are set, Google's **test** ads are shown.
 - **Effects**: particle bursts in the glyph's color, a shower when a row, column or
   box is finished, and win fireworks. The animated starfield has shooting stars
   and a rare UFO flyby. All of it is off when "Reduce motion" is on.
-- **Progress**: 26 achievements, per-difficulty stats (best and average time, high
+- **Progress**: 27 achievements, per-difficulty stats (best and average time, high
   score, win rate, streaks), and 7 lineups.
 - **Puzzles**: 1,000 pre-graded puzzles, each with exactly one solution. Each is graded by the
   human techniques it needs, from singles up to X-Wing, Swordfish and XY-Wing.

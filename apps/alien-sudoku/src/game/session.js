@@ -14,7 +14,12 @@
 import { PEERS, ROWS, COLS, BOXES, computeCandidates } from '../engine/sudoku.js';
 import { findSingle } from '../engine/logic.js';
 
+/** Classic rule: 3 tries. Players can choose up to 25 (Settings → Tries per puzzle). */
 export const MAX_MISTAKES = 3;
+export const TRIES_CHOICES = [3, 5, 10, 25];
+export const DEFAULT_TRIES = 25;
+/** Tries the visitors give back with their gift (second chance). */
+export const reviveTriesFor = (maxTries) => Math.max(1, Math.round(maxTries / 5));
 export const FREE_HINTS = 3;
 const UNDO_LIMIT = 200;
 
@@ -50,6 +55,7 @@ export class GameSession {
     this.level = o.level ?? null;
     this.date = o.date ?? null;
     this.zen = this.mode === 'zen';
+    this.maxMistakes = Math.min(25, Math.max(1, o.maxMistakes || MAX_MISTAKES));
     this.symbolSet = o.symbolSet || null;
     this.bg = o.bg || null;
 
@@ -94,7 +100,7 @@ export class GameSession {
       puzzle: this.puzzle, solution: this.solution, board: this.board,
       fixed: this.fixed, hinted: this.hinted, notes: this.notes,
       mistakes: this.mistakes, hints: this.hints, notesPlaced: this.notesPlaced,
-      revived: this.revived, elapsedMs: Math.round(this.elapsedMs), status: this.status,
+      revived: this.revived, elapsedMs: Math.round(this.elapsedMs), status: this.status, maxMistakes: this.maxMistakes,
       completedUnits: [...this.completedUnits],
       score: this.score, combo: this.combo, bestCombo: this.bestCombo, lastCorrectAt: this.lastCorrectAt,
       scoredCells: [...this.scoredCells], scoredUnits: [...this.scoredUnits], winBonus: this.winBonus,
@@ -103,7 +109,7 @@ export class GameSession {
 
   // ---------------- Queries ----------------
   get playing() { return this.status === 'playing'; }
-  get livesLeft() { return this.zen ? Infinity : Math.max(0, MAX_MISTAKES - this.mistakes); }
+  get livesLeft() { return this.zen ? Infinity : Math.max(0, this.maxMistakes - this.mistakes); }
   get freeHintsLeft() { return this.zen ? Infinity : Math.max(0, FREE_HINTS - this.hints); }
   get filledCount() { return this.board.reduce((n, v) => n + (v ? 1 : 0), 0); }
   get hasProgress() { return this.board.some((v, i) => v && !this.puzzle[i]) || this.notes.some((m) => m) || this.mistakes > 0; }
@@ -131,7 +137,7 @@ export class GameSession {
       this.mistakes++;
       this.combo = 0;
       this.lastCorrectAt = null;
-      const lost = !this.zen && this.mistakes >= MAX_MISTAKES;
+      const lost = !this.zen && this.mistakes >= this.maxMistakes;
       if (lost) this.status = 'lost';
       return { result: 'rejected', lost, wrongValue: v };
     }
@@ -281,10 +287,10 @@ export class GameSession {
     return { i, value, technique, unit, units, won, points: 0 };
   }
 
-  /** Second chance after losing: one life back. */
+  /** Second chance after losing: the visitors' gift of a few tries (a fifth of the limit, at least 1). */
   revive() {
     if (this.status !== 'lost') return false;
-    this.mistakes = MAX_MISTAKES - 1;
+    this.mistakes = this.maxMistakes - reviveTriesFor(this.maxMistakes);
     this.status = 'playing';
     this.revived = true;
     return true;

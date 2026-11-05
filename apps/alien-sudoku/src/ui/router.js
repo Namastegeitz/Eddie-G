@@ -11,6 +11,7 @@ import { setBannerVisible } from '../platform/ads.js';
 import { setBackground } from './background.js';
 import { closeTopModal, hasOpenModal, closeAllModals } from './modal.js';
 import { applyTheme } from './theme.js';
+import { isEncounterOpen } from './encounter.js';
 import { settings } from '../core/profile.js';
 
 const registry = new Map();
@@ -103,6 +104,7 @@ export function back() {
 
 /** Hardware back / Escape: modal first, then the screen's own handler, then pop. */
 export function handleBack() {
+  if (isEncounterOpen()) return true; // the visitors wait for an answer
   if (hasOpenModal()) { closeTopModal(); return true; }
   const top = current();
   if (top?.inst?.onBack && top.inst.onBack() === true) return true;

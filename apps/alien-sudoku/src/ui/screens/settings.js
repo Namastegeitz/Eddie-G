@@ -63,6 +63,10 @@ export const settingsScreen = {
     }
     renderSets();
 
+    const triesSel = h('select', { class: 'select', 'aria-label': 'Tries per puzzle', onchange: (e) => setSetting('tries', Number(e.target.value)) },
+      [[25, '25 · Explorer'], [10, '10 · Relaxed'], [5, '5 · Focused'], [3, '3 · Classic']].map(([v, label]) =>
+        h('option', { value: String(v), selected: (s.tries || 25) === v }, label)));
+
     const inputSel = h('select', { class: 'select', onchange: (e) => setSetting('inputMode', e.target.value) },
       h('option', { value: 'cell', selected: s.inputMode === 'cell' }, 'Cell first (tap cell, then glyph)'),
       h('option', { value: 'glyph', selected: s.inputMode === 'glyph' }, 'Glyph first (pick glyph, then tap cells)'));
@@ -82,6 +86,9 @@ export const settingsScreen = {
           isNative ? toggle('haptics', 'Vibration', 'Haptic feedback on taps and mistakes') : null,
         ]),
         group('Board', [
+          h('label', { class: 'set-row' },
+            h('span', { class: 'set-text' }, h('span', {}, 'Tries per puzzle'), h('small', {}, 'Wrong glyphs you can make before the visitors arrive. Applies to new puzzles.')),
+            triesSel),
           h('label', { class: 'set-row' }, h('span', { class: 'set-text' }, h('span', {}, 'Input style')), inputSel),
           toggle('highlightPeers', 'Highlight row, column and box'),
           toggle('highlightSame', 'Highlight matching glyphs'),

@@ -31,6 +31,7 @@ export const DEFAULT_SETTINGS = {
   inputMode: 'cell',       // 'cell' = tap cell then glyph; 'glyph' = arm a glyph then tap cells
   reduceMotion: false,
   quickDifficulty: 'medium',
+  tries: 25,               // mistakes allowed per puzzle: 3, 5, 10 or 25
   seenTutorial: false,
 };
 
@@ -45,9 +46,11 @@ function defaultProfile() {
     daily: { completed: {}, streak: 0, bestStreak: 0, lastStreakDate: null },
     stats: {
       byDiff: Object.fromEntries(DIFFS.map((d) => [d, emptyDiffStats()])),
-      totals: { notes: 0, hints: 0, mistakes: 0, playMs: 0, zenWins: 0, zenPlayed: 0, gamesStarted: 0, bestCombo: 0 },
+      totals: { notes: 0, hints: 0, mistakes: 0, playMs: 0, zenWins: 0, zenPlayed: 0, gamesStarted: 0, bestCombo: 0, encounters: 0 },
     },
     achievements: {},                        // id -> unlocked timestamp
+    playerName: '',                          // the answer to the visitors' "Who are you?"
+    lastAnswer: '',
     unlockedSets: [...STARTER_SETS],
   };
 }
@@ -257,6 +260,19 @@ export function evaluateAchievements(result = null) {
     if (!result?.won) emit('achievements', fresh);
   }
   return fresh;
+}
+
+// ---------------- The visitors ----------------
+export function playerName() { return profile.playerName || ''; }
+
+/** Remember how the player answered "Who are you?". */
+export function recordEncounter({ name, answer }) {
+  const clean = String(name || '').replace(/\s+/g, ' ').trim().slice(0, 24);
+  if (clean) profile.playerName = clean;
+  profile.lastAnswer = answer || (clean ? 'name' : '');
+  profile.stats.totals.encounters = (profile.stats.totals.encounters || 0) + 1;
+  persist();
+  return evaluateAchievements(null);
 }
 
 export function countGameStarted() {

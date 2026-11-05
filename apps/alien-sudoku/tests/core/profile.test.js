@@ -159,3 +159,16 @@ describe('profile migration', () => {
     expect(r.achievements.map((a) => a.id)).toContain('score-5k');
   });
 });
+
+describe('the visitors', () => {
+  it('remember the player name and unlock the contact achievement', async () => {
+    const P = await loadProfile();
+    expect(P.settings().tries).toBe(25);
+    const fresh = P.recordEncounter({ name: '  Eddie   G ', answer: 'name' });
+    expect(P.playerName()).toBe('Eddie G');
+    expect(fresh.map((a) => a.id)).toContain('contact');
+    P.recordEncounter({ name: '', answer: 'friend' });
+    expect(P.playerName()).toBe('Eddie G');
+    expect(P.getProfile().stats.totals.encounters).toBe(2);
+  });
+});

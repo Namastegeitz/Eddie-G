@@ -1,7 +1,7 @@
 /* Main menu. */
 import { h, icon } from '../dom.js';
 import {
-  loadSavedGame, clearSavedGame, totalStars, currentStreak, dailyRecord, settings, setSetting, getProfile,
+  loadSavedGame, clearSavedGame, totalStars, currentStreak, dailyRecord, settings, setSetting, getProfile, playerName,
 } from '../../core/profile.js';
 import { MAX_STARS } from '../../data/sectors.js';
 import { ACHIEVEMENTS } from '../../data/achievements.js';
@@ -99,6 +99,7 @@ export const menuScreen = {
           h('div', { class: 'hero-glyph hero-side hero-right', html: lineup.svgs[(heroIdx + 6) % 9] })),
         h('h1', { class: 'game-title' }, h('span', { class: 'title-glow' }, 'ALIEN'), ' ', h('span', { class: 'title-accent' }, 'SUDOKU')),
         h('p', { class: 'subtitle' }, 'Decode the hieroglyphs of the lost UFO archive'),
+        playerName() ? h('p', { class: 'greeting' }, `The visitors remember you, ${playerName()}.`) : null,
         h('button', { class: 'lineup-chip', type: 'button', onclick: () => { sfx.tap(); nav.go('settings'); } },
           h('span', { class: 'lineup-dots' }, lineup.colors.map((c) => h('i', { style: { background: c } }))),
           h('span', {}, `Lineup: ${theme.name}`), icon('back', 'chev'))),
