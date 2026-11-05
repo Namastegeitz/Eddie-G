@@ -496,11 +496,17 @@ func _build_ent(l: Lane, e: Ent) -> Node3D:
 		"ants":
 			sph(0.08, body, Vector3(0, 0.08, 0), n, Vector3(2.0, 1.0, 1.0))
 			box(Vector3(0.18, 0.02, 0.12), hc(cl, "leaf"), Vector3(0.05, 0.22, 0), n, Vector3(0, 0, 25))
+		"soldier_ant":
+			Models3D.soldier_ant(n, L, cl)
 		"roll_log", "log":
-			cyl(0.3, L, body, Vector3(0, 0.12 if hz.kind == "platform" else 0.3, 0), n, Vector3(0, 0, 90))
-			cyl(0.31, 0.04, hc(cl, "ring"), Vector3(L * 0.5, 0.12 if hz.kind == "platform" else 0.3, 0), n, Vector3(0, 0, 90))
-			if cl.has("moss"):
-				sph(0.12, hc(cl, "moss"), Vector3(-L * 0.2, 0.4, 0), n, Vector3(2.0, 0.5, 1.2))
+			# bark, knots, branch stubs, moss, ringed ends; rolling logs turn
+			var spin := Node3D.new()
+			spin.name = "Spin"
+			spin.position.y = 0.12 if hz.kind == "platform" else 0.3
+			n.add_child(spin)
+			Models3D._mi(Models3D.log_mesh(e.hazard, L, cl, hz.kind == "platform"), Models3D.matte(), spin)
+			if hz.kind != "platform":
+				n.set_meta("roll", true)
 		"boulder":
 			sph(minf(L, 1.0) * 0.45, body, Vector3(0, 0.42, 0), n)
 		"vine":
@@ -509,9 +515,7 @@ func _build_ent(l: Lane, e: Ent) -> Node3D:
 		"lilypad":
 			cyl(0.46, 0.04, body, Vector3(0, 0.0, 0), n)
 		"caiman_back":
-			box(Vector3(L, 0.16, 0.48), body, Vector3(0, 0.0, 0), n)
-			for ez2 in [-0.12, 0.12]:
-				sph(0.06, hc(cl, "eye"), Vector3(L * 0.42, 0.1, ez2), n)
+			Models3D._mi(Models3D.caiman_back(e.hazard, L, cl), Models3D.gloss(), n)
 		"branch":
 			cyl(0.1, L, body, Vector3(0, 0.05, 0), n, Vector3(0, 0, 90))
 			for k3 in 3:
@@ -545,6 +549,14 @@ func _place_ent(n: Node3D, l: Lane, e: Ent) -> void:
 		dir = 1.0 if e.velocity(0.0, sim.wt) >= 0.0 else -1.0
 	n.position = Vector3(x + e.length * 0.5, 0.0, -l.row)
 	n.rotation_degrees.y = 0.0 if dir > 0 else 180.0
+	if n.has_meta("walk"):
+		# tripod gait: one set of three legs swings forward while the other pushes
+		var ph := t * 11.0 + x * 3.0
+		(n.get_node("LegsA") as Node3D).rotation.y = sin(ph) * 0.32
+		(n.get_node("LegsB") as Node3D).rotation.y = -sin(ph) * 0.32
+		(n.get_node("Body") as Node3D).position.y = absf(sin(ph)) * 0.018
+	elif n.has_meta("roll"):
+		(n.get_node("Spin") as Node3D).rotation.x = -x / 0.3 * dir
 	n.visible = e.active(sim.wt) and x > -4.0 and x < 13.0
 	if e.platform and e.dive_period > 0.0:
 		match sim.world.ent_dive(l, e, sim.wt):
@@ -570,7 +582,7 @@ func _bake(n: Node3D, key: String) -> void:
 		if mi == null or mi.get_child_count() > 0:
 			continue
 		var m := mi.material_override as StandardMaterial3D
-		if m == null or m.transparency != BaseMaterial3D.TRANSPARENCY_DISABLED or m.emission_enabled:
+		if m == null or m.transparency != BaseMaterial3D.TRANSPARENCY_DISABLED or m.emission_enabled or m.vertex_color_use_as_albedo:
 			continue
 		parts.append(mi)
 	if parts.size() < 2:
@@ -627,14 +639,11 @@ func _build_pred(_l: Lane, p: Dictionary) -> Node3D:
 			head.name = "Head"
 			n.add_child(head)
 			var span := float(p.get("span", 1.2))
-			box(Vector3(span, 0.14, 0.5), hc(cl, "body"), Vector3(0, 0.0, 0), head)
 			var upper := Node3D.new()
 			upper.name = "Upper"
 			upper.position = Vector3(-span * 0.5, 0.08, 0)
 			head.add_child(upper)
-			box(Vector3(span, 0.12, 0.5), hc(cl, "body").lightened(0.05), Vector3(span * 0.5, 0.06, 0), upper)
-			for ez in [-0.15, 0.15]:
-				sph(0.07, hc(cl, "eye"), Vector3(-span * 0.35, 0.2, ez), upper)
+			Models3D.croc_head(head, span, cl)
 			var ring := torus(0.3, 0.38, Color(1, 1, 1, 0.6), Vector3.ZERO, n)
 			ring.name = "Ring"
 		"striker":

@@ -62,13 +62,26 @@
   light and fog per scene; title card on entry; levels have 1-3 canopy zones (1/2/3 by level
   band). Each dressed row is one merged mesh; moving things are baked to one mesh each, so the
   first-person scene draws ~255 meshes (was ~450). 3D renders at up to 1.5x on Medium, 2x on High.
+- World map globe is a shader (`assets/shaders/globe.gdshader`) over a 2048x1024 map built from
+  Natural Earth 1:50m (`tools/gen_globe_map.py`): LED land dots, glowing coasts, borders, grid,
+  scan sweep, rim/halo; beacon pins (flag / padlock / soon), flight-path arc, coordinates tag,
+  orbit ring, drag-to-spin (vertical drags still scroll).
+- First-person models (`scripts/view/models_3d.gd`, cached meshes): logs (bark, knots, stubs,
+  moss, ringed ends; rolling logs turn), caiman backs (scutes, eyes, nostrils, legs), crocodile
+  jaws (teeth, mouth, eyes). The ant highway (Amazon, Yasuní, tutorial) is now giant red soldier
+  ants carrying cheese (`red_soldier_ants`, 2-3 ants of 0.9 tiles: same convoy span as before),
+  in 3D (walking tripod gait) and bird's-eye. Preview: `tools/model_sheet.tscn`.
+- Bird's-eye canopy roof rows are drawn once and swayed (were redrawn leaf by leaf every frame:
+  ~3 ms/frame of script in canopy zones); the first-person warm-up no longer waits on
+  frame_post_draw (which never fires headless and left the 3D view up). Frame-cost check now
+  takes the median of 5 alternating rounds.
 - Feel: log carry during sideways hops, magnetic landing onto log ends (0.2 tile), vehicle hit
   edges 0.1 tile forgiving, Close call! +2 for movers brushing past, swipe threshold 36 px.
 - Art/audio: procedural chibi animals and hazards, per-region palettes and canopy framing, dot
   globe from Natural Earth, synthesised per-region music + ambience + 26 SFX (`tools/gen_audio.py`).
 - Ads: opt-in rewarded + between-run interstitial (mock; AdMob adapter scaffold). Analytics: events
   + onboarding funnel to `user://analytics.jsonl`, optional HTTP endpoint.
-- Tests: `tools/run_tests.sh` - compile check + first-person GL render check + 325-check phase audit (one section per phase's
+- Tests: `tools/run_tests.sh` - compile check + first-person GL render check + 329-check phase audit (one section per phase's
   checkpoint) in the project and an exported pack, all passing. A path-finding bot beats all 200
   levels (tools/level_sweep.tscn, ~2 min) and the first 50 Endless rows on every scene with the free Poison Dart Frog.
   Frame cost 0.9 ms (sim + view + draw recording) on the cloud CPU.

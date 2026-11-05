@@ -150,10 +150,14 @@ Copy an existing map and change:
 | gust / downpour | map event | period, warn, duration, boost |
 
 `art.painter` picks a drawing (truck, jeep, tractor, cart, scooter, herd,
-ants, roll_log, elephant, runner, vine, boulder, lizard, log, lilypad,
+ants, soldier_ant, roll_log, elephant, runner, vine, boulder, lizard, log, lilypad,
 caiman_back, branch, boat, bridge, stones, croc, snake, tiger, raptor,
 branch_fall, fruit_fall, quicksand, gully, roots, bush, fire, tide, mud) and
-`art.colors` recolours it; or set `"sprite"`. `predator: true` makes
+`art.colors` recolours it (`soldier_ant` also takes `cheese` and `rind`);
+or set `"sprite"`. In first person, logs, rolling logs, caimans, crocodile
+jaws and soldier ants use detailed models (`scripts/view/models_3d.gd`)
+coloured from the same `art.colors`; check them with
+`tools/model_sheet.tscn` (see RUN.md). `predator: true` makes
 camouflage, stealth, toxins and intimidation apply. `cause_text` is what the
 results card says.
 

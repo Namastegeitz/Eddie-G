@@ -37,6 +37,16 @@ time, in ten real rainforests. Built from
   anti-aliased 3D first-person view with shadows. Settings > Graphics:
   Auto / High / Medium / Low (Auto: High on desktop, Medium on phones and
   the web player).
+- **World map:** a digital globe built from Natural Earth coastlines: LED
+  dots light up the land, coasts glow, country borders and a lat/long grid
+  show faintly, a scan sweeps round, and region beacons pulse (gold with
+  the region's flag when owned, a padlock when locked). Picking a region
+  flies an arc to it and shows a tag with its coordinates; drag to spin.
+- **Detailed creatures and logs in first person:** logs with bark grooves,
+  knots, broken branch stubs, moss and ringed ends (rolling logs turn);
+  caimans with armour scutes, raised eyes and nostrils; crocodile jaws full
+  of teeth; and **giant red soldier ants hauling wedges of cheese** on the
+  Amazon and Yasuní ant highways, legs walking in a tripod gait.
 - **Feel:** hops along a moving log keep pace with it, landing just short
   of a log's end still lands on it, vehicles' hit edges are a touch
   forgiving, and a mover brushing past is a **Close call!** (+2).
@@ -74,7 +84,7 @@ tools/run_tests.sh          # compile check + phase audit (project and exported 
 FAST=1 tools/run_tests.sh   # levels 1 and 10 of each scene instead of all 200
 ```
 
-The phase audit (`tests/phase_audit.gd`, 325 checks) turns each phase's
+The phase audit (`tests/phase_audit.gd`, 329 checks) turns each phase's
 checkpoint from the brief into checks: grid hops, every hazard kind, every
 ability, all 50 animals, every region generating 200 rows, a path-finding bot
 beating **all 200 levels with the free Poison Dart Frog**, adding a map

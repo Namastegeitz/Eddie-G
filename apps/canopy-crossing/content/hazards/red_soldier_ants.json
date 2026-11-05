@@ -1,0 +1,36 @@
+{
+  "id": "red_soldier_ants",
+  "name": "Giant red soldier ants",
+  "kind": "mover",
+  "lane": "ground",
+  "cause": "crushed",
+  "cause_text": "Overrun by giant red soldier ants",
+  "group": [
+    2,
+    3
+  ],
+  "length": [
+    0.9,
+    0.9
+  ],
+  "spacing": 0.15,
+  "speed": [
+    0.8,
+    1.4
+  ],
+  "gap": [
+    2.2,
+    4.0
+  ],
+  "art": {
+    "painter": "soldier_ant",
+    "colors": {
+      "body": "#c8281e",
+      "cheese": "#f6c83a",
+      "rind": "#d88a2a"
+    }
+  },
+  "desc": "A column of giant red soldier ants hauling cheese. Slow, but long, and those jaws mean business.",
+  "predator": false,
+  "sprite": ""
+}

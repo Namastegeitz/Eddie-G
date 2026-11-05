@@ -48,6 +48,10 @@ WEB=1 tools/run_tests.sh    # also build the web version and tap-test it in a ph
      res://tools/fpv_check.tscn -- --no-boot --out=/tmp/fpv_scenes.png [--map=borneo] [--back=4]
    ```
 
+   The detailed first-person models (logs, caimans, croc jaws, soldier
+   ants) render to one picture with
+   `xvfb-run godot --path . --rendering-driver opengl3 res://tools/model_sheet.tscn -- --no-boot --out=/tmp/models.png`.
+
 3. `tools/build_web.sh` (below) opens each web build in a phone-sized touch
    browser and checks first person by tapping.
 

@@ -6,7 +6,7 @@ extends RefCounted
 ##
 ## Entities: origin at the entity's left edge, lane centre at y = 0.
 
-const ANIMATED := ["roll_log", "boulder", "ants", "herd", "runner", "vine", "caiman_back", "lilypad", "boat", "bridge", "lizard"]
+const ANIMATED := ["roll_log", "boulder", "ants", "soldier_ant", "herd", "runner", "vine", "caiman_back", "lilypad", "boat", "bridge", "lizard"]
 
 static var _sprites := {}
 
@@ -53,6 +53,8 @@ static func draw_entity(ci: CanvasItem, hz: Dictionary, len_px: float, T: float,
 			_beast(ci, cl, L, T, dir, t)
 		"ants":
 			_ant(ci, cl, L, T, dir, t)
+		"soldier_ant":
+			_soldier_ant(ci, cl, L, T, dir, t)
 		"roll_log":
 			_roll_log(ci, cl, L, T, t * float(o.get("speed", 1.0)))
 		"elephant":
@@ -255,6 +257,69 @@ static func _ant(ci: CanvasItem, cl: Dictionary, L: float, T: float, dir: int, t
 	Draw.leaf(ci, Vector2(cx + dir * L * 0.2, -T * 0.06), Vector2(dir * 0.3, -1), T * 0.24, T * 0.09, leaf)
 
 
+## A giant red soldier ant seen from above, hauling a wedge of cheese:
+## glossy segmented body, big head with curved mandibles, elbowed antennae,
+## six legs walking in a tripod gait.
+static func _soldier_ant(ci: CanvasItem, cl: Dictionary, L: float, T: float, dir: int, t: float) -> void:
+	var red := c(cl, "body", "#c8281e")
+	var dark := red.darkened(0.5)
+	var cheese := c(cl, "cheese", "#f6c83a")
+	var rind := c(cl, "rind", "#d88a2a")
+	var cx := L * 0.5
+	var d := float(dir)
+	var step := t * 14.0 + L
+	Draw.shadow(ci, Vector2(cx + 4, T * 0.12), L * 0.5, T * 0.2, 0.22)
+	# legs, from the thorax: middle pair swings opposite the front and back
+	for i in 3:
+		for sy in [-1.0, 1.0]:
+			var ph := step + (PI if (i + (1 if sy > 0.0 else 0)) % 2 == 1 else 0.0)
+			var sw := sin(ph) * T * 0.07
+			var hip := Vector2(cx + d * (0.02 + (i - 1) * 0.06) * L, sy * T * 0.05)
+			var knee := Vector2(hip.x + d * ((i - 1) * 0.13 * L + sw), sy * T * 0.25)
+			var foot := Vector2(knee.x + d * ((i - 1) * 0.1 * L + sw * 0.6), sy * T * 0.37)
+			Draw.polyline(ci, PackedVector2Array([hip, knee, foot]), dark, maxf(2.5, T * 0.035), true)
+			Draw.ellipse(ci, knee, T * 0.022, T * 0.022, dark)
+	# gaster with dark bands, two petiole nodes, thorax
+	var g := Vector2(cx - d * L * 0.27, 0)
+	Draw.shaded(ci, g, L * 0.21, T * 0.17, red)
+	if Draw.outline == 0.0:
+		for b in 3:
+			var bx := g.x + d * (L * 0.05 - b * L * 0.06)
+			var hh := T * 0.15 * sqrt(maxf(0.0, 1.0 - pow((bx - g.x) / (L * 0.21), 2.0)))
+			Draw.line(ci, Vector2(bx, -hh), Vector2(bx - d * T * 0.02, hh), Color(dark, 0.7), maxf(1.5, T * 0.025), true)
+	Draw.ellipse(ci, Vector2(cx - d * L * 0.08, 0), L * 0.045, T * 0.05, red.darkened(0.12))
+	Draw.ellipse(ci, Vector2(cx - d * L * 0.02, 0), L * 0.04, T * 0.045, red.darkened(0.12))
+	Draw.shaded(ci, Vector2(cx + d * L * 0.08, 0), L * 0.12, T * 0.085, red.darkened(0.05))
+	# head: big and square-ish, eyes, curved mandibles, antennae
+	var h := Vector2(cx + d * L * 0.27, 0)
+	var wave := sin(t * 5.0 + L) * T * 0.03
+	for sy2 in [-1.0, 1.0]:
+		var ab := h + Vector2(d * L * 0.06, sy2 * T * 0.06)
+		Draw.polyline(ci, PackedVector2Array([ab, ab + Vector2(d * L * 0.05, sy2 * T * 0.14), ab + Vector2(d * L * 0.18, sy2 * T * 0.2 + wave * sy2)]), dark, maxf(1.5, T * 0.022), true)
+		var mb := h + Vector2(d * L * 0.1, sy2 * T * 0.075)
+		Draw.polyline(ci, PackedVector2Array([mb, mb + Vector2(d * L * 0.08, sy2 * T * 0.02), mb + Vector2(d * L * 0.14, -sy2 * T * 0.05)]), dark.darkened(0.2), maxf(2.5, T * 0.045), true)
+	Draw.shaded(ci, h, L * 0.13, T * 0.15, red.darkened(0.08))
+	for sy3 in [-1.0, 1.0]:
+		Draw.ellipse(ci, h + Vector2(d * L * 0.03, sy3 * T * 0.115), T * 0.03, T * 0.025, Color("140a08"))
+		if Draw.outline == 0.0:
+			Draw.ellipse(ci, h + Vector2(d * L * 0.02, sy3 * T * 0.11), T * 0.01, T * 0.01, Color(1, 1, 1, 0.8))
+	# the cheese, held up over the thorax: rind along the back, holes on top
+	var bob := sin(step * 2.0) * T * 0.01
+	var tip := Vector2(cx + d * L * 0.17, bob)
+	var bl := Vector2(cx - d * L * 0.15, -T * 0.2 + bob)
+	var br := Vector2(cx - d * L * 0.15, T * 0.2 + bob)
+	if Draw.outline == 0.0:
+		Draw.poly(ci, PackedVector2Array([tip + Vector2(5, 7), bl + Vector2(5, 7), br + Vector2(5, 7)]), Color(0, 0, 0, 0.22))
+	Draw.poly(ci, PackedVector2Array([tip, bl, br]), cheese)
+	Draw.line(ci, bl, br, rind, maxf(4.0, T * 0.06), true)
+	if Draw.outline == 0.0:
+		Draw.poly(ci, PackedVector2Array([tip, bl.lerp(tip, 0.1) + Vector2(0, T * 0.02), bl.lerp(br, 0.35)]), Color(1, 1, 1, 0.16))
+		var holes := [Vector2(0.45, -0.25), Vector2(0.25, 0.3), Vector2(0.62, 0.12), Vector2(0.2, -0.05)]
+		for hp in holes:
+			var p := bl.lerp(br, 0.5).lerp(tip, hp.x) + Vector2(0, hp.y * T * 0.2 * (1.0 - hp.x))
+			Draw.ellipse(ci, p, T * 0.032, T * 0.026, cheese.darkened(0.3))
+
+
 static func _roll_log(ci: CanvasItem, cl: Dictionary, L: float, T: float, roll: float) -> void:
 	var b := c(cl, "body")
 	Draw.shadow(ci, Vector2(L * 0.5 + 4, T * 0.3), L * 0.5, T * 0.14, 0.25)
@@ -383,6 +448,15 @@ static func _log(ci: CanvasItem, cl: Dictionary, L: float, T: float) -> void:
 		var w := rng.randf_range(T * 0.25, T * 0.6)
 		Draw.line(ci, Vector2(x, rng.randf_range(-T * 0.2, T * 0.15)), Vector2(minf(L - T * 0.2, x + w), rng.randf_range(-T * 0.2, T * 0.15)), b.darkened(0.22), 3, true)
 		x += w + rng.randf_range(T * 0.1, T * 0.3)
+	# knots and a broken branch stub
+	for i in maxi(1, int(L / T)):
+		var kp := Vector2(rng.randf_range(T * 0.5, L - T * 0.5), rng.randf_range(-T * 0.15, T * 0.15))
+		Draw.ellipse(ci, kp, T * 0.07, T * 0.05, b.darkened(0.4))
+		if Draw.outline == 0.0:
+			Draw.ellipse(ci, kp, T * 0.035, T * 0.025, c(cl, "ring").darkened(0.15))
+	var sx := rng.randf_range(T * 0.6, L - T * 0.6)
+	Draw.line(ci, Vector2(sx, -T * 0.28), Vector2(sx + T * 0.08, -T * 0.44), b.darkened(0.1), T * 0.1, true)
+	Draw.ellipse(ci, Vector2(sx + T * 0.08, -T * 0.44), T * 0.05, T * 0.04, c(cl, "ring"))
 	for i in int(L / T):
 		Draw.ellipse(ci, Vector2(rng.randf_range(T * 0.4, L - T * 0.4), rng.randf_range(-T * 0.22, T * 0.1)), T * 0.12, T * 0.07, c(cl, "moss"))
 	Draw.ellipse(ci, Vector2(L - T * 0.12, 0), T * 0.12, T * 0.32, c(cl, "ring"))
@@ -410,22 +484,62 @@ static func _lilypad(ci: CanvasItem, cl: Dictionary, L: float, T: float, t: floa
 		Draw.ellipse(ci, Vector2(cx - r * 0.3, bob - r * 0.3), r * 0.1, r * 0.1, Color("f6e05a"))
 
 
+## A caiman floating low: tapering tail, armoured back (rows of keeled
+## scutes, a double crest down the tail), splayed legs, a long snout with
+## raised eyes (slit pupils) and nostrils at the tip.
 static func _caiman_back(ci: CanvasItem, cl: Dictionary, L: float, T: float, dir: int, t: float) -> void:
 	var b := c(cl, "body")
-	var hx := L - T * 0.25 if dir > 0 else T * 0.25
-	var tx := 0.0 if dir > 0 else L
-	var body := PackedVector2Array([Vector2(tx, 0), Vector2(L * 0.3 if dir > 0 else L * 0.7, -T * 0.26), Vector2(hx - dir * T * 0.3, -T * 0.24),
-		Vector2(hx + dir * T * 0.25, -T * 0.1), Vector2(hx + dir * T * 0.25, T * 0.1), Vector2(hx - dir * T * 0.3, T * 0.24), Vector2(L * 0.3 if dir > 0 else L * 0.7, T * 0.26)])
-	Draw.shadow(ci, Vector2(L * 0.5 + 4, T * 0.1), L * 0.5, T * 0.2, 0.2)
-	Draw.poly(ci, body, b)
-	var n := int(L / (T * 0.22))
-	for i in n:
-		var x := T * 0.4 + i * (L - T * 0.8) / maxf(1.0, n - 1)
-		Draw.ellipse(ci, Vector2(x, -T * 0.06), T * 0.06, T * 0.04, c(cl, "ridge"))
-		Draw.ellipse(ci, Vector2(x, T * 0.06), T * 0.06, T * 0.04, c(cl, "ridge"))
-	for sy in [-1.0, 1.0]:
-		Draw.ellipse(ci, Vector2(hx - dir * T * 0.12, sy * T * 0.12), T * 0.06, T * 0.06, c(cl, "eye"))
-		Draw.ellipse(ci, Vector2(hx - dir * T * 0.12, sy * T * 0.12), T * 0.02, T * 0.045, Color("111111"))
+	var ridge := c(cl, "ridge", "#3a4a26")
+	var eye := c(cl, "eye", "#e8c83a")
+	var d := float(dir)
+	var x0 := 0.0 if dir > 0 else L
+	var ax := func(f: float) -> float: return x0 + d * f * L
+	# outline from tail tip round the snout and back: half-widths along the length
+	var prof := [[0.0, 0.01], [0.12, 0.05], [0.3, 0.12], [0.45, 0.24], [0.6, 0.27], [0.7, 0.24], [0.76, 0.17], [0.82, 0.15], [0.92, 0.11], [0.99, 0.07], [1.0, 0.0]]
+	var top := PackedVector2Array()
+	var bot := PackedVector2Array()
+	for pr in prof:
+		var x: float = ax.call(float(pr[0]))
+		top.append(Vector2(x, -float(pr[1]) * T))
+		bot.append(Vector2(x, float(pr[1]) * T))
+	var outline := top.duplicate()
+	for i in range(bot.size() - 2, 0, -1):
+		outline.append(bot[i])
+	Draw.shadow(ci, Vector2(L * 0.5 + 4, T * 0.12), L * 0.5, T * 0.2, 0.2)
+	# legs, splayed just under the surface
+	for f in [0.42, 0.66]:
+		for sy in [-1.0, 1.0]:
+			var hip := Vector2(ax.call(f), sy * T * 0.2)
+			var sw := sin(t * 3.0 + f * 9.0) * T * 0.03
+			Draw.polyline(ci, PackedVector2Array([hip, hip + Vector2(-d * T * 0.05 + sw, sy * T * 0.14), hip + Vector2(d * T * 0.04 + sw, sy * T * 0.2)]), b.darkened(0.15), maxf(3.0, T * 0.05), true)
+	Draw.poly(ci, outline, b)
+	if Draw.outline > 0.0:
+		return
+	# lighter flanks, darker spine
+	Draw.polyline(ci, PackedVector2Array([Vector2(ax.call(0.05), 0), Vector2(ax.call(0.7), 0)]), b.darkened(0.15), T * 0.14, true)
+	# scutes: four rows on the body, a double crest down the tail
+	for row in [-0.15, -0.055, 0.055, 0.15]:
+		var n := 7
+		for i in n:
+			var f2 := lerpf(0.42, 0.7, float(i) / (n - 1))
+			var w := T * 0.036
+			var p := Vector2(ax.call(f2), float(row) * T * (0.85 if absf(row) > 0.1 else 1.0))
+			Draw.rrect(ci, Rect2(p.x - w, p.y - w * 0.7, w * 2.0, w * 1.4), w * 0.4, ridge.darkened(0.08 * (i % 2)))
+			Draw.line(ci, p - Vector2(w * 0.6, 0), p + Vector2(w * 0.6, 0), ridge.darkened(0.35), 1.5, true)
+	for i in 9:
+		var f3 := lerpf(0.06, 0.4, i / 8.0)
+		var off := lerpf(0.012, 0.05, i / 8.0) * T
+		for sy2 in [-1.0, 1.0]:
+			Draw.ellipse(ci, Vector2(ax.call(f3), sy2 * off), T * 0.03, T * 0.018, ridge.darkened(0.15))
+	# head: eye bumps, eyes with slit pupils, nostrils
+	for sy3 in [-1.0, 1.0]:
+		var ep := Vector2(ax.call(0.8), sy3 * T * 0.09)
+		Draw.ellipse(ci, ep, T * 0.06, T * 0.05, b.darkened(0.1))
+		Draw.ellipse(ci, ep + Vector2(d * T * 0.01, 0), T * 0.04, T * 0.034, eye)
+		Draw.ellipse(ci, ep + Vector2(d * T * 0.015, 0), T * 0.008, T * 0.028, Color("111111"))
+		Draw.ellipse(ci, ep + Vector2(0, -T * 0.012), T * 0.012, T * 0.01, Color(1, 1, 1, 0.7))
+		Draw.ellipse(ci, Vector2(ax.call(0.97), sy3 * T * 0.025), T * 0.016, T * 0.013, b.darkened(0.35))
+	Draw.ellipse(ci, Vector2(ax.call(0.97), 0), T * 0.05, T * 0.04, b.darkened(0.08))
 	var _tt := t
 
 
@@ -533,11 +647,25 @@ static func _croc(ci: CanvasItem, cl: Dictionary, span: float, T: float, state: 
 			Draw.poly(ci, PackedVector2Array([Vector2(-span * 0.5, -jaw), Vector2(span * 0.45, -T * 0.06), Vector2(span * 0.45, T * 0.06), Vector2(-span * 0.5, jaw)]), Color("8a2a2a"))
 			Draw.poly(ci, PackedVector2Array([Vector2(-span * 0.5, -jaw - T * 0.08), Vector2(span * 0.5, -T * 0.12), Vector2(span * 0.5, -T * 0.02), Vector2(-span * 0.5, -jaw)]), b)
 			Draw.poly(ci, PackedVector2Array([Vector2(-span * 0.5, jaw), Vector2(span * 0.5, T * 0.02), Vector2(span * 0.5, T * 0.12), Vector2(-span * 0.5, jaw + T * 0.08)]), b.darkened(0.1))
-			for i in 5:
-				var x := -span * 0.4 + i * span * 0.18
-				Draw.poly(ci, PackedVector2Array([Vector2(x, -jaw), Vector2(x + 5, -jaw), Vector2(x + 2.5, -jaw + 8)]), Color.WHITE)
-			Draw.ellipse(ci, Vector2(span * 0.42, -T * 0.13), 7, 7, c(cl, "eye"))
-			Draw.ellipse(ci, Vector2(span * 0.42, -T * 0.13), 2.5, 5, Color.BLACK)
+			# pink mouth, teeth on both jaws
+			Draw.poly(ci, PackedVector2Array([Vector2(-span * 0.42, -jaw * 0.7), Vector2(span * 0.38, -T * 0.04), Vector2(span * 0.38, T * 0.04), Vector2(-span * 0.42, jaw * 0.7)]), Color("c86a6a"))
+			for i in 7:
+				var x := -span * 0.42 + i * span * 0.13
+				var f := float(i) / 6.0
+				var ty := lerpf(jaw, T * 0.07, f)
+				Draw.poly(ci, PackedVector2Array([Vector2(x, -ty), Vector2(x + 6, -ty), Vector2(x + 3, -ty + 9)]), Color("f2ecd8"))
+				Draw.poly(ci, PackedVector2Array([Vector2(x + 4, ty), Vector2(x + 10, ty), Vector2(x + 7, ty - 9)]), Color("f2ecd8"))
+			# scutes on the head, raised eyes with slit pupils, nostrils at the tip
+			if Draw.outline == 0.0:
+				for i in 4:
+					Draw.rrect(ci, Rect2(-span * 0.45 + i * span * 0.07, -jaw - T * 0.075, span * 0.05, T * 0.035), 3, b.darkened(0.25))
+			for ey in [-1.0, 1.0]:
+				var ep := Vector2(-span * 0.25, -jaw - T * 0.06 + ey * T * 0.02)
+				Draw.ellipse(ci, ep, 9, 8, b.darkened(0.15))
+				Draw.ellipse(ci, ep, 6.5, 6, c(cl, "eye"))
+				Draw.ellipse(ci, ep, 1.8, 5, Color.BLACK)
+			Draw.ellipse(ci, Vector2(span * 0.47, -T * 0.09), 4, 3, b.darkened(0.35))
+			Draw.ellipse(ci, Vector2(span * 0.47, -T * 0.05), 4, 3, b.darkened(0.35))
 		_:
 			var b2 := sin(t * 3.0) * 0.5 + 0.5
 			Draw.ellipse(ci, Vector2(0, 0), 4 + b2 * 2, 3, Color(1, 1, 1, 0.18))

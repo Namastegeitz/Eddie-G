@@ -508,8 +508,10 @@ func _prewarm_fpv() -> void:
 	wv3.visible = true
 	wv3.vp3.render_target_update_mode = SubViewport.UPDATE_ALWAYS
 	wv3.update_view(0.016)
-	for i in 3:
-		await RenderingServer.frame_post_draw
+	# count ordinary frames (each is drawn after it's processed); waiting for
+	# frame_post_draw would hang where nothing is drawn, leaving the 3D view up
+	for i in 4:
+		await get_tree().process_frame
 		if not is_instance_valid(wv3):
 			return
 	wv3.vp3.render_target_update_mode = SubViewport.UPDATE_WHEN_VISIBLE

@@ -52,7 +52,7 @@
   "hazards": {
     "ground_movers": [
       {
-        "id": "leafcutter_ants",
+        "id": "red_soldier_ants",
         "weight": 3
       },
       {
@@ -110,7 +110,7 @@
   "intro_hazards": [
     "floating_log",
     "caiman",
-    "leafcutter_ants",
+    "red_soldier_ants",
     "falling_branch"
   ],
   "difficulty": {
@@ -160,7 +160,7 @@
       }
     },
     {
-      "name": "Leafcutter Highway",
+      "name": "Soldier Ant Highway",
       "rows": 50,
       "difficulty": [
         0.06,

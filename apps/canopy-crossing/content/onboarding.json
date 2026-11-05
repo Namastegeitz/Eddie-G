@@ -14,7 +14,7 @@
       },
       {
         "lane": "ground",
-        "hazard": "leafcutter_ants",
+        "hazard": "red_soldier_ants",
         "speed": 0.9,
         "dir": 1,
         "entities": [

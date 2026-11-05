@@ -1096,20 +1096,27 @@ func _phase7() -> void:
 	for i in 120:
 		gs._process(1.0 / 60.0)
 	check("view runs a region with atmosphere and fx", gs.sim.t > 1.5 and gs.atm != null)
-	var frames := 120
-	gs.visible = false
-	gs.set_process(false)
-	var t0 := Time.get_ticks_usec()
-	for i in frames:
-		await get_tree().process_frame
-	var base := (Time.get_ticks_usec() - t0) / 1000.0 / frames
-	gs.visible = true
-	gs.set_process(true)
-	t0 = Time.get_ticks_usec()
-	for i in frames:
-		await get_tree().process_frame
-	var ms := (Time.get_ticks_usec() - t0) / 1000.0 / frames - base
-	print("  frame cost (sim + view + draw recording, minus the headless loop's %.1f ms sleep): %.2f ms" % [base, ms])
+	# alternate hidden / running rounds and take the median difference, so one
+	# busy moment on the machine can't decide the result
+	var frames := 60
+	var diffs: Array[float] = []
+	var base := 0.0
+	for round_i in 5:
+		gs.visible = false
+		gs.set_process(false)
+		var t0 := Time.get_ticks_usec()
+		for i in frames:
+			await get_tree().process_frame
+		base = (Time.get_ticks_usec() - t0) / 1000.0 / frames
+		gs.visible = true
+		gs.set_process(true)
+		t0 = Time.get_ticks_usec()
+		for i in frames:
+			await get_tree().process_frame
+		diffs.append((Time.get_ticks_usec() - t0) / 1000.0 / frames - base)
+	diffs.sort()
+	var ms := diffs[diffs.size() / 2]
+	print("  frame cost (sim + view + draw recording, minus the headless loop's %.1f ms sleep): %.2f ms (median of %s)" % [base, ms, str(diffs.map(func(x): return snappedf(x, 0.01)))])
 	check("frame cost leaves headroom for 60 fps on phones (< 3 ms here)", ms < 3.0, "%.2f ms" % ms)
 	gs.queue_free()
 	await get_tree().process_frame
@@ -1328,6 +1335,46 @@ func _scenes() -> void:
 	print("  most draw calls for one dressed canopy row: %d" % worst)
 	check("all scenes build in 3D (landmark rows too)", empty.is_empty(), str(empty.slice(0, 4)))
 	check("a dressed canopy row stays a few draw calls (<= 6)", worst <= 6, str(worst))
+	# detailed models: every log, caiman, crocodile and soldier-ant hazard
+	var bad_models := []
+	var built := 0
+	var crocs := 0
+	for hid in Content.hazards:
+		var hz: Dictionary = Content.hazards[hid]
+		var art: Dictionary = hz.get("art", {})
+		var cl2: Dictionary = art.get("colors", {})
+		var painter := String(art.get("painter", ""))
+		var mesh: Mesh = null
+		match painter:
+			"log", "roll_log":
+				mesh = Models3D.log_mesh(hid, 1.6, cl2, hz.get("kind", "") == "platform")
+			"caiman_back":
+				mesh = Models3D.caiman_back(hid, 1.8, cl2)
+			"soldier_ant":
+				var ant := Node3D.new()
+				Models3D.soldier_ant(ant, 0.9, cl2)
+				if ant.get_node_or_null("LegsA") == null or ant.get_node_or_null("Body") == null:
+					bad_models.append(hid)
+				else:
+					mesh = (ant.get_node("Body") as MeshInstance3D).mesh
+				ant.free()
+		if String(hz.get("kind", "")) == "surfacer":
+			crocs += 1
+			var head := Node3D.new()
+			var up := Node3D.new()
+			up.name = "Upper"
+			head.add_child(up)
+			Models3D.croc_head(head, 1.2, cl2)
+			if up.get_child_count() == 0:
+				bad_models.append(hid + " jaws")
+			head.free()
+		if painter in ["log", "roll_log", "caiman_back", "soldier_ant"]:
+			built += 1
+			if mesh == null or mesh.get_surface_count() == 0 or mesh.surface_get_array_len(0) < 200:
+				bad_models.append(hid)
+	check("detailed models build for every log, caiman, croc and soldier-ant hazard", bad_models.is_empty() and built >= 8 and crocs >= 5, "%d built, %d crocs, bad %s" % [built, crocs, str(bad_models)])
+	var ants: Dictionary = Content.hazard("red_soldier_ants")
+	check("the ant highway is giant red soldier ants carrying cheese", String(ants.get("art", {}).get("painter", "")) == "soldier_ant" and float(ants.length[0]) >= 0.8 and ants.art.colors.has("cheese"))
 
 
 # ====================================================================== 8
