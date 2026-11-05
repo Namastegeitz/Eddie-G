@@ -52,10 +52,10 @@ export default {
     + `<circle cx="33.5" cy="31" r="7.5" fill="url(#cre-iris)"/><circle cx="33.8" cy="31.3" r="3.6" fill="#16041F"/>`
     + `<circle cx="30.5" cy="28" r="2.7" fill="#fff"/><circle cx="36.8" cy="34" r="1.2" fill="#fff" opacity=".85"/>`
     + `<path d="M20.5 23.5Q32 13.5 43.5 23.5" fill="none" stroke="#7E1048" stroke-width="1.6" stroke-linecap="round"/>`
-    + `<path d="M25 46Q32 51.5 39 46" fill="none" stroke="#7E1048" stroke-width="2" stroke-linecap="round"/><path d="M29.3 48L30.8 51.2L32.4 48.7Z" fill="#fff" stroke="#7E1048" stroke-width="1" stroke-linejoin="round"/>`,
+    + `<path d="M25 46Q32 51.5 39 46" fill="none" stroke="#7E1048" stroke-width="2" stroke-linecap="round"/><path d="M29.3 48L30.8 51.2L32.4 48.7Z" fill="#fff" stroke="#7E1048" stroke-width="1.2" stroke-linejoin="round"/>`,
 
     // 4. Tentacle Thinker
-    `<g fill="none" stroke-linecap="round"><path d="M18 34C14 41 8 41 7 47.5C6 53 11 55.5 13.5 52.5M25 37C22.5 45 17 49 18.5 54.5C20 58.5 25 57 24.5 53.5M32 38C32 46 29.5 51 32 55.5C34 58.5 38 57 37.5 53.5M39 37C41.5 45 47 49 45.5 54.5C44 58.5 39 57 39.5 53.5M46 34C50 41 56 41 57 47.5C58 53 53 55.5 50.5 52.5" stroke="#3D137F" stroke-width="7.4"/>`
+    `<g transform="translate(32 32) scale(.97) translate(-32 -32)"><g fill="none" stroke-linecap="round"><path d="M18 34C14 41 8 41 7 47.5C6 53 11 55.5 13.5 52.5M25 37C22.5 45 17 49 18.5 54.5C20 58.5 25 57 24.5 53.5M32 38C32 46 29.5 51 32 55.5C34 58.5 38 57 37.5 53.5M39 37C41.5 45 47 49 45.5 54.5C44 58.5 39 57 39.5 53.5M46 34C50 41 56 41 57 47.5C58 53 53 55.5 50.5 52.5" stroke="#3D137F" stroke-width="7.4"/>`
     + `<path d="M18 34C14 41 8 41 7 47.5C6 53 11 55.5 13.5 52.5M25 37C22.5 45 17 49 18.5 54.5C20 58.5 25 57 24.5 53.5M32 38C32 46 29.5 51 32 55.5C34 58.5 38 57 37.5 53.5M39 37C41.5 45 47 49 45.5 54.5C44 58.5 39 57 39.5 53.5M46 34C50 41 56 41 57 47.5C58 53 53 55.5 50.5 52.5" stroke="#9A52F2" stroke-width="3.8"/></g>`
     + `<circle cx="9.5" cy="47" r="1.1" fill="#E3CCFF"/><circle cx="54.5" cy="47" r="1.1" fill="#E3CCFF"/><circle cx="20" cy="51" r="1.1" fill="#E3CCFF"/><circle cx="44" cy="51" r="1.1" fill="#E3CCFF"/>`
     + `<path d="M32 4C45.5 4 53.5 13 53.5 24C53.5 33.5 46 40.5 32 40.5C18 40.5 10.5 33.5 10.5 24C10.5 13 18.5 4 32 4Z" fill="url(#cre-purple)" stroke="#3D137F" stroke-width="2.4"/>`
@@ -64,7 +64,7 @@ export default {
     + `<ellipse cx="24.5" cy="28.5" rx="5.6" ry="6" fill="#fff" stroke="#3D137F" stroke-width="1.7"/><ellipse cx="39.5" cy="28.5" rx="5.6" ry="6" fill="#fff" stroke="#3D137F" stroke-width="1.7"/>`
     + `<circle cx="26.2" cy="26.8" r="3.4" fill="#1A0838"/><circle cx="41.2" cy="26.8" r="3.4" fill="#1A0838"/><circle cx="25.2" cy="25.6" r="1.3" fill="#fff"/><circle cx="40.2" cy="25.6" r="1.3" fill="#fff"/>`
     + `<path d="M19.5 21Q24 18.5 28.5 20.5M35.5 19Q40 16 44.5 19" fill="none" stroke="#3D137F" stroke-width="1.7" stroke-linecap="round"/>`
-    + `<path d="M28.5 36Q30.5 34.5 32.5 36Q34.5 37.5 36.5 36" fill="none" stroke="#3D137F" stroke-width="1.6" stroke-linecap="round"/>`,
+    + `<path d="M28.5 36Q30.5 34.5 32.5 36Q34.5 37.5 36.5 36" fill="none" stroke="#3D137F" stroke-width="1.6" stroke-linecap="round"/></g>`,
 
     // 5. Robo Scout
     `<path d="M32 17V9" stroke="#6B4A06" stroke-width="4.6" stroke-linecap="round"/><path d="M32 17V9" stroke="#D9DCE6" stroke-width="2.2" stroke-linecap="round"/>`
@@ -102,7 +102,7 @@ export default {
     + `<path d="M28.5 42Q32 45 35.5 42" fill="none" stroke="#6B2A04" stroke-width="1.7" stroke-linecap="round"/>`,
 
     // 8. Crystal Sage
-    `<path d="M7 20L10 26L7 32L4 26Z" fill="#9FCBFF" stroke="#173B85" stroke-width="1.6" stroke-linejoin="round"/><path d="M57 38L60 43.5L57 49L54 43.5Z" fill="#9FCBFF" stroke="#173B85" stroke-width="1.6" stroke-linejoin="round"/>`
+    `<path d="M7.8 20L10.8 26L7.8 32L4.8 26Z" fill="#9FCBFF" stroke="#173B85" stroke-width="1.6" stroke-linejoin="round"/><path d="M56.2 38L59.2 43.5L56.2 49L53.2 43.5Z" fill="#9FCBFF" stroke="#173B85" stroke-width="1.6" stroke-linejoin="round"/>`
     + `<path d="M32 4L49 17L40 20H24L15 17Z" fill="#D2E9FF"/><path d="M15 17L24 20L20 38H12Z" fill="#92C4FF"/><path d="M49 17L52 38H44L40 20Z" fill="#2F6ED4"/>`
     + `<path d="M12 38H20L28 50L24 57Z" fill="#4A8BEB"/><path d="M52 38L40 57L36 50L44 38Z" fill="#1F4FAE"/><path d="M24 57L28 50H36L40 57Z" fill="#2D62C6"/>`
     + `<path d="M24 20H40L44 38L36 50H28L20 38Z" fill="url(#cre-cryst)"/>`
@@ -110,18 +110,18 @@ export default {
     + `<path d="M32 4L49 17L52 38L40 57H24L12 38L15 17Z" fill="none" stroke="#173B85" stroke-width="2.4" stroke-linejoin="round"/>`
     + `<path d="M30 8.5L20 16.5L25 17.5Z" fill="#fff" opacity=".7"/>`
     + `<path d="M32 22.5L34 25L32 27.5L30 25Z" fill="#fff"/>`
-    + `<path d="M24.5 31Q27.5 34.5 30.5 31M33.5 31Q36.5 34.5 39.5 31" fill="none" stroke="#10307A" stroke-width="1.9" stroke-linecap="round"/>`
-    + `<path d="M29 40Q32 42.5 35 40" fill="none" stroke="#10307A" stroke-width="1.7" stroke-linecap="round"/>`
+    + `<path d="M23.2 30.5Q27 35.5 30.8 30.5M33.2 30.5Q37 35.5 40.8 30.5" fill="none" stroke="#0A1F55" stroke-width="2.3" stroke-linecap="round"/>`
+    + `<path d="M28.3 40Q32 43.5 35.7 40" fill="none" stroke="#0A1F55" stroke-width="2" stroke-linecap="round"/><ellipse cx="23" cy="37.5" rx="2.4" ry="1.4" fill="#FF8FC8" opacity=".45"/><ellipse cx="41" cy="37.5" rx="2.4" ry="1.4" fill="#FF8FC8" opacity=".45"/>`
     + `<path d="M55 5.5Q55.8 10.2 60 11Q55.8 11.8 55 16.5Q54.2 11.8 50 11Q54.2 10.2 55 5.5Z" fill="#E2F1FF"/>`,
 
     // 9. Fuzzball
-    `<ellipse cx="23" cy="56" rx="5.5" ry="3.3" fill="#D8303A" stroke="#6E0A12" stroke-width="2"/><ellipse cx="41" cy="56" rx="5.5" ry="3.3" fill="#D8303A" stroke="#6E0A12" stroke-width="2"/>`
+    `<g transform="translate(0 -1)"><ellipse cx="23" cy="56" rx="5.5" ry="3.3" fill="#D8303A" stroke="#6E0A12" stroke-width="2"/><ellipse cx="41" cy="56" rx="5.5" ry="3.3" fill="#D8303A" stroke="#6E0A12" stroke-width="2"/>`
     + `<path d="M32 12.5Q30.7 7.5 41.1 7.6Q41.8 11.6 40.9 14.5Q41.9 9.5 51.2 14.1Q50.1 18 48 20.2Q51.1 16.1 57.6 24.3Q54.8 27.3 52 28.4Q56.5 26.1 58.8 36.2Q55 37.8 52 37.6Q57.1 37.4 54.7 47.5Q50.7 47.3 48 45.8Q52.7 47.9 46.2 56Q42.6 54 40.9 51.5Q44.2 55.4 34.8 59.9Q32.5 56.5 32 53.5Q33.3 58.5 22.9 58.4Q22.2 54.4 23.1 51.5Q22.1 56.5 12.8 51.9Q13.9 48 16 45.8Q12.9 49.9 6.4 41.7Q9.2 38.7 12 37.6Q7.5 39.9 5.2 29.8Q9 28.2 12 28.4Q6.9 28.6 9.3 18.5Q13.3 18.7 16 20.2Q11.3 18.1 17.8 10Q21.4 12 23.1 14.5Q19.8 10.6 29.2 6.1Q31.5 9.5 32 12.5Z" fill="url(#cre-red)" stroke="#6E0A12" stroke-width="2.4" stroke-linejoin="round"/>`
     + `<ellipse cx="21" cy="19" rx="5.5" ry="2.8" transform="rotate(-35 21 19)" fill="#fff" opacity=".55"/>`
     + `<ellipse cx="25" cy="31" rx="6.4" ry="7.4" fill="#fff" stroke="#6E0A12" stroke-width="1.8"/><ellipse cx="39.5" cy="31" rx="6.4" ry="7.4" fill="#fff" stroke="#6E0A12" stroke-width="1.8"/>`
     + `<circle cx="26.5" cy="32.5" r="3.9" fill="#1F0306"/><circle cx="38" cy="32.5" r="3.9" fill="#1F0306"/><circle cx="25" cy="30.8" r="1.6" fill="#fff"/><circle cx="36.5" cy="30.8" r="1.6" fill="#fff"/>`
     + `<path d="M19.5 21.5Q24 19 28.5 21M36 21Q40.5 19 45 21.5" fill="none" stroke="#6E0A12" stroke-width="1.8" stroke-linecap="round"/>`
     + `<path d="M24.5 41.5Q32 43.5 39.5 41.5Q38 49.5 32 49.5Q26 49.5 24.5 41.5Z" fill="#3A0408" stroke="#6E0A12" stroke-width="1.6" stroke-linejoin="round"/><ellipse cx="32" cy="47.3" rx="3.6" ry="1.6" fill="#FF8A8A"/>`
-    + `<path d="M27.2 42.4L28.6 45.6L30.1 42.9ZM33.9 42.9L35.4 45.6L36.8 42.4Z" fill="#fff"/>`,
+    + `<path d="M27.2 42.4L28.6 45.6L30.1 42.9ZM33.9 42.9L35.4 45.6L36.8 42.4Z" fill="#fff"/></g>`,
   ],
 };
