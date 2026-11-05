@@ -66,6 +66,15 @@ func setup(run: RunSim, animal_def: Dictionary, look: Dictionary, trail_def: Dic
 	objects.add_child(player)
 
 
+static var _water_shader: Shader
+
+
+static func water_shader() -> Shader:
+	if _water_shader == null:
+		_water_shader = load("res://assets/shaders/water.gdshader")
+	return _water_shader
+
+
 func color(key: String, fallback := "#3c9a3a") -> Color:
 	return Color(String(pal.get(key, fallback)))
 
@@ -193,13 +202,33 @@ class LaneView extends Node2D:
 	var row := 0
 	var dyn: Node2D
 
+	var surface: Node2D
+	var water_mat: ShaderMaterial
+
 	func _ready() -> void:
+		if lane.type == "water" and Draw.detail > 0:
+			# shader water under everything else in the lane
+			surface = Node2D.new()
+			water_mat = ShaderMaterial.new()
+			water_mat.shader = WorldView.water_shader()
+			water_mat.set_shader_parameter("base", wv.color("water"))
+			water_mat.set_shader_parameter("deep", wv.color("water_deep"))
+			water_mat.set_shader_parameter("foam", wv.color("foam"))
+			water_mat.set_shader_parameter("flow", (lane.speed if lane.speed != 0.0 else 0.4) * (1.6 if lane.fast else 1.0) * 0.5)
+			water_mat.set_shader_parameter("tile", WorldView.T)
+			water_mat.set_shader_parameter("glints", 1.0 if Draw.detail > 1 else 0.6)
+			surface.material = water_mat
+			surface.draw.connect(func():
+				surface.draw_rect(Rect2(-wv.field_x - 40.0, -WorldView.T * 0.5, wv.vp.x + 80.0, WorldView.T), Color.WHITE))
+			add_child(surface)
 		dyn = Node2D.new()
 		dyn.draw.connect(_draw_dyn)
 		add_child(dyn)
 		set_process(true)
 
 	func _process(_dt: float) -> void:
+		if water_mat:
+			water_mat.set_shader_parameter("lt", wv.sim.world.lane_time(lane, wv.sim.wt))
 		if lane.type == "water" or not lane.effect.is_empty() or not lane.tiles.is_empty() or lane.goal:
 			dyn.queue_redraw()
 
@@ -245,6 +274,17 @@ class LaneView extends Node2D:
 						Draw.ellipse(self, p, 6, 4, s.darkened(0.15))
 				if lane.goal:
 					draw_rect(Rect2(x0, -T * 0.5, w, T), Color(wv.color("goal"), 0.35))
+		if Draw.detail > 0 and lane.type != "water":
+			# soil / turf grain, then a soft lip so each row reads as raised
+			draw_set_transform(Vector2(0, 0), 0.0, Vector2(2, 2))
+			var ox := fposmod(float(row) * 37.0, 128.0)
+			draw_texture_rect(Draw.grain(), Rect2((x0 - ox) * 0.5, -T * 0.25, w * 0.5 + 128.0, T * 0.5), true)
+			draw_set_transform(Vector2.ZERO)
+			if lane.type != "ground":
+				draw_rect(Rect2(x0, T * 0.42, w, T * 0.08), Color(0, 0, 0, 0.1))
+				draw_rect(Rect2(x0, -T * 0.5, w, T * 0.05), Color(1, 1, 1, 0.07))
+			else:
+				draw_rect(Rect2(x0, -T * 0.5, w, T * 0.06), Color(0, 0, 0, 0.1))
 		for col in lane.tiles:
 			var tile: Dictionary = lane.tiles[col]
 			if tile.kind == "quicksand":
@@ -267,7 +307,7 @@ class LaneView extends Node2D:
 			var sp := lane.speed if lane.speed != 0.0 else 0.4
 			var foam := wv.color("foam")
 			var n := int(w / 90.0) + 2
-			for i in n:
+			for i in (n if water_mat == null else n / 2):
 				var y := -T * 0.32 + (i % 4) * T * 0.2
 				var x := fposmod(i * 97.0 + lt * sp * T * (1.6 if lane.fast else 1.0), w) + x0
 				var len := 26.0 if not lane.fast else 44.0

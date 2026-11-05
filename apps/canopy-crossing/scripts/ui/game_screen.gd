@@ -522,6 +522,10 @@ func _drain_fx() -> void:
 			"mudslide":
 				Sfx.play("mud")
 				wv.shake = 0.3
+			"near_miss":
+				Sfx.play("whoosh", 1.35, -8.0)
+				Sfx.haptic(12)
+				wv.fx.text(p + Vector2(0, -80), "Close call! +2", Color("ffe9a0"), 28)
 			"bump":
 				Sfx.play("bump", 1.0, -6.0)
 				wv.shake = 0.12
@@ -633,7 +637,7 @@ func _unhandled_input(event: InputEvent) -> void:
 			_touch.active = false
 	elif event is InputEventScreenDrag and _touch.active and not _touch.fired:
 		var d: Vector2 = event.position - _touch.start
-		if d.length() > 44.0:
+		if d.length() > 36.0:
 			_touch.fired = true
 			if absf(d.x) > absf(d.y):
 				sim.hop(Vector2i(1 if d.x > 0 else -1, 0))
@@ -855,7 +859,7 @@ func _settle(won: bool) -> Dictionary:
 		rec = Progress.record_run({"map": map.id, "mode": cfg.mode, "stage": int(cfg.get("stage", 0)), "rows": rows, "score": sim.score,
 			"won": won, "cause": sim.cause if not won else "", "collected": collected, "best_combo": sim.combo})
 		Analytics.event("run_end", {"mode": cfg.mode, "map": map.id, "stage": cfg.get("stage", 0), "animal": animal.id, "rows": rows,
-			"score": sim.score, "won": won, "berries": earned, "deaths": sim.deaths, "revives": sim.revives, "time": snappedf(sim.t, 0.1)})
+			"score": sim.score, "won": won, "berries": earned, "deaths": sim.deaths, "revives": sim.revives, "near_misses": sim.near_misses, "time": snappedf(sim.t, 0.1)})
 		if sim.cause != "" and not won:
 			Analytics.event("death", {"cause": sim.cause, "hazard": sim.cause_hazard, "map": map.id, "row": sim.row})
 		Analytics.funnel("first_run_end")

@@ -19,6 +19,7 @@ func _ready() -> void:
 	scroll.add_child(box)
 	box.add_child(_slider("Music", "music"))
 	box.add_child(_slider("Sound effects", "sfx"))
+	box.add_child(_quality())
 	box.add_child(_toggle("Haptics", "haptics", "Light vibration on hops and hits."))
 	box.add_child(_toggle("Left-handed controls", "left_handed", "Ability button on the left."))
 	box.add_child(_toggle("Colour-blind hazard markers", "colorblind", "Warning triangles on deadly things, outlines on safe rides."))
@@ -63,6 +64,40 @@ func _slider(label: String, key: String) -> Control:
 			Sfx.play("tap"))
 	row.add_child(s)
 	return row
+
+
+## Graphics: Auto / High / Medium / Low as four big tap targets.
+func _quality() -> Control:
+	var v := UI.vbox(6)
+	v.add_child(UI.label("Graphics", 28))
+	var row := UI.hbox(8)
+	var group := ButtonGroup.new()
+	var hint := UI.label("", 20, UI.MUTED)
+	var names := {"auto": "Auto", "high": "High", "medium": "Medium", "low": "Low"}
+	var hints := {"auto": "Picks for your device (now: %s).", "high": "Sharpest: anti-aliasing, fur and feather detail, full-resolution 3D with shadows.",
+		"medium": "Outlines and shading, lighter 3D. Best for most phones.", "low": "Flat shapes for older phones and the longest battery life."}
+	var show := func(q: String):
+		hint.text = String(hints[q]) % Gfx.level().capitalize() if q == "auto" else String(hints[q])
+	for q in Gfx.LEVELS:
+		var b := Button.new()
+		b.text = String(names[q])
+		b.toggle_mode = true
+		b.button_group = group
+		b.button_pressed = Gfx.choice() == q
+		b.custom_minimum_size = Vector2(0, 64)
+		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		b.add_theme_font_size_override("font_size", 24)
+		b.toggled.connect(func(on):
+			if on:
+				Save.set_setting("graphics", q)
+				Gfx.apply(get_tree())
+				Analytics.event("settings_graphics", {"quality": q, "resolved": Gfx.level()})
+				show.call(q))
+		row.add_child(b)
+	v.add_child(row)
+	v.add_child(hint)
+	show.call(Gfx.choice())
+	return v
 
 
 func _toggle(label: String, key: String, hint: String) -> Control:

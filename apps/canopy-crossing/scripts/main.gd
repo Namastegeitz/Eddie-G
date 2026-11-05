@@ -29,6 +29,7 @@ func _ready() -> void:
 	modals.theme = UI.theme()
 	layer.add_child(modals)
 	Game.register_host(screens, modals)
+	Gfx.apply(get_tree())
 	Store.confirm_requested.connect(func(p): Game.modal(SandboxSheet.make(p)))
 	var args := OS.get_cmdline_user_args()
 	if args.has("--no-boot"):

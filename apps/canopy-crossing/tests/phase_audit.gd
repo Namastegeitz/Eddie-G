@@ -32,6 +32,15 @@ func _ready() -> void:
 		Store.backend.clear_receipts()
 	Save.wipe()
 	Ads.auto_complete = true
+	if OS.get_cmdline_user_args().has("--core"):
+		# quick loop while tuning the sim: just the core crosser checks
+		_phase1()
+		print("phase audit (core): %d passed, %d failed" % [passed, failed])
+		Save.wipe()
+		Save.path = real_save
+		Save.load_game()
+		get_tree().quit(1 if failed > 0 else 0)
+		return
 	await _phase0()
 	_phase1()
 	await _phase2()
@@ -197,6 +206,14 @@ func _phase1() -> void:
 	s.x = 1.5
 	_hop(s, Vector2i(0, 1))
 	check("landing on a log is safe", s.state == "play" and s.plat >= 0)
+	s = _run(w)
+	s.x = 2.6
+	_hop(s, Vector2i(0, 1))
+	check("landing just past a log's end snaps onto it", s.state == "play" and s.plat >= 0 and s.x <= 2.3, "x %.2f %s" % [s.x, s.cause])
+	s = _run(w)
+	s.x = 2.9
+	_hop(s, Vector2i(0, 1))
+	check("a real miss still splashes", s.state == "dead" and s.cause == "drowned", s.cause)
 	# ride carries x
 	var wl2 := _lane(1, "water")
 	_mover(wl2, "floating_log", 3.0 + Lane.MARGIN, 3.0, 1.0)
@@ -208,6 +225,18 @@ func _phase1() -> void:
 	check("platform carries you sideways", s.state == "play" and s.x > x0 + 0.8, "x %.2f -> %.2f" % [x0, s.x])
 	_steps(s, 6.0)
 	check("carried off-screen = swept", s.state == "dead" and s.cause == "swept", s.cause)
+	s = _run(w)
+	_hop(s, Vector2i(0, 1))
+	var rel0 := s.x - s.world.ent_x(s.cur_lane(), s.cur_lane().ents[0], s.wt)
+	_hop(s, Vector2i(-1, 0))
+	var rel1 := s.x - s.world.ent_x(s.cur_lane(), s.cur_lane().ents[0], s.wt)
+	check("hopping along a moving log keeps pace with it", s.state == "play" and absf(rel1 - (rel0 - 1.0)) < 0.05, "%.2f -> %.2f" % [rel0, rel1])
+	var nm := _lane(1, "ground")
+	_mover(nm, "logging_truck", 4.62 + Lane.MARGIN, 2.0, 3.0)
+	s = _run(World.from_lanes([_lane(0, "safe"), nm, _lane(2, "safe")]))
+	_hop(s, Vector2i(0, 1))
+	_steps(s, 0.4)
+	check("a truck brushing past is a close call (+2)", s.state == "play" and s.near_misses == 1 and s.score >= 3, "%s near %d score %d" % [s.state, s.near_misses, s.score])
 	# diving platform
 	var wl3 := _lane(1, "water")
 	var cb := _mover(wl3, "caiman_back", 3.5 + Lane.MARGIN, 2.0, 0.0)
@@ -992,6 +1021,16 @@ func _phase7() -> void:
 	await get_tree().process_frame
 	check("every animal, skin and hazard draws", canvas.drawn >= 50 + Content.hazards.size(), str(canvas.drawn))
 	canvas.queue_free()
+	# graphics quality: each level sets the painters' detail, Auto resolves
+	var levels_ok := true
+	for q in [["high", 2], ["medium", 1], ["low", 0]]:
+		Save.set_setting("graphics", q[0])
+		Gfx.apply(get_tree())
+		levels_ok = levels_ok and Draw.detail == int(q[1])
+	Save.set_setting("graphics", "auto")
+	Gfx.apply(get_tree())
+	check("Graphics setting: High/Medium/Low set detail, Auto resolves", levels_ok and Gfx.level() in ["high", "medium"] and Draw.detail >= 1, Gfx.level())
+	check("water shader and lane grain texture load", WorldView.water_shader() != null and Draw.grain().get_width() == 128)
 	# a run with the view
 	var gs: Control = load("res://scripts/ui/game_screen.gd").new()
 	gs.setup({"mode": "endless", "map": "monteverde", "stage": 0, "seed": 3, "animal": "southern_cassowary", "autoplay": true})

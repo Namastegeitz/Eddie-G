@@ -19,6 +19,16 @@ time, in ten real rainforests. Built from
   animal's eyes). Switch any time with the eye button (or V). Every level
   has dense-canopy stretches that hide the ground from above, so you need
   first person to see the traffic, logs and predators under the leaves.
+- **Graphics:** inked outlines, soft shading and glossy eyes on every
+  animal (fur strokes, feathers, real rosettes up close), outlined hazards
+  with headlights, eyes and wood grain, turf and soil grain on every lane,
+  shader water that ripples and glints with the current, and a textured,
+  anti-aliased 3D first-person view with shadows. Settings > Graphics:
+  Auto / High / Medium / Low (Auto: High on desktop, Medium on phones and
+  the web player).
+- **Feel:** hops along a moving log keep pace with it, landing just short
+  of a log's end still lands on it, vehicles' hit edges are a touch
+  forgiving, and a mover brushing past is a **Close call!** (+2).
 - **Water rule:** fall into the water and the run starts over from the
   beginning (no lives, no revive). Other hazards cost a life. Switch it in
   `content/rules.json`.
@@ -53,7 +63,7 @@ tools/run_tests.sh          # compile check + phase audit (project and exported 
 FAST=1 tools/run_tests.sh   # levels 1 and 10 of each scene instead of all 200
 ```
 
-The phase audit (`tests/phase_audit.gd`, 309 checks) turns each phase's
+The phase audit (`tests/phase_audit.gd`, 315 checks) turns each phase's
 checkpoint from the brief into checks: grid hops, every hazard kind, every
 ability, all 50 animals, every region generating 200 rows, a path-finding bot
 beating **all 200 levels with the free Poison Dart Frog**, adding a map

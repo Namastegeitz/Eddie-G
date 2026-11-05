@@ -45,11 +45,18 @@
   no revive; Berries kept). Other hazards still cost a life. Switch: `content/rules.json`.
 - Onboarding: coached tutorial, region intro cards (globe + facts + hazards), revive / milestone /
   last-life / locked-animal prompts, daily reward, first-unlock guide.
+- Graphics upgrade: outline + shading pass for all animals, hazards, predators, tiles and pickups
+  (`scripts/view/draw.gd`), glossy two-catch-light eyes, fur/feather strokes, rosettes; lane grain
+  texture; water canvas shader (`assets/shaders/water.gdshader`) driven by each lane's clock; 3D
+  view renders at screen resolution on High with MSAA, shadows, textured ground and glossy moving
+  water. Settings > Graphics (Auto/High/Medium/Low, `scripts/view/gfx.gd`).
+- Feel: log carry during sideways hops, magnetic landing onto log ends (0.2 tile), vehicle hit
+  edges 0.1 tile forgiving, Close call! +2 for movers brushing past, swipe threshold 36 px.
 - Art/audio: procedural chibi animals and hazards, per-region palettes and canopy framing, dot
   globe from Natural Earth, synthesised per-region music + ambience + 26 SFX (`tools/gen_audio.py`).
 - Ads: opt-in rewarded + between-run interstitial (mock; AdMob adapter scaffold). Analytics: events
   + onboarding funnel to `user://analytics.jsonl`, optional HTTP endpoint.
-- Tests: `tools/run_tests.sh` - compile check + 309-check phase audit (one section per phase's
+- Tests: `tools/run_tests.sh` - compile check + 315-check phase audit (one section per phase's
   checkpoint) in the project and an exported pack, all passing. A path-finding bot beats all 200
   levels (tools/level_sweep.tscn, ~2 min) and the first 50 Endless rows on every scene with the free Poison Dart Frog.
   Frame cost 0.9 ms (sim + view + draw recording) on the cloud CPU.

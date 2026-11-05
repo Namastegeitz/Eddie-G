@@ -31,6 +31,10 @@ var _mats := {}
 var _meshes := {}
 var _sky := Color("9ad0e8")
 var _walls: Array[Node3D] = []
+var _grain: NoiseTexture2D	   # shared surface grain for ground, water, walls
+var _water_mats: Array[StandardMaterial3D] = []
+var _fit_key := Vector2.ZERO
+var _seg := 10				   # sphere / cylinder smoothness (quality)
 
 
 func setup(run: RunSim, animal_def: Dictionary) -> void:
@@ -38,12 +42,26 @@ func setup(run: RunSim, animal_def: Dictionary) -> void:
 	map = run.world.map
 	pal = map.get("palette", {})
 	animal = animal_def
-	stretch = true
-	set_anchors_preset(Control.PRESET_FULL_RECT)
+	stretch = false
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_seg = 18 if Gfx.level() == "high" else (12 if Gfx.level() == "medium" else 8)
+	if Gfx.level() != "low":
+		_grain = NoiseTexture2D.new()
+		_grain.width = 256
+		_grain.height = 256
+		_grain.seamless = true
+		_grain.generate_mipmaps = true
+		var fn := FastNoiseLite.new()
+		fn.frequency = 0.035
+		fn.fractal_octaves = 4
+		_grain.noise = fn
+		var ramp := Gradient.new()
+		ramp.set_color(0, Color(0.78, 0.78, 0.78))
+		ramp.set_color(1, Color(1.12, 1.12, 1.12))
+		_grain.color_ramp = ramp
 	vp3 = SubViewport.new()
 	vp3.own_world_3d = true
-	vp3.msaa_3d = Viewport.MSAA_DISABLED
+	vp3.msaa_3d = Gfx.msaa_3d()
 	vp3.handle_input_locally = false
 	vp3.gui_disable_input = true
 	add_child(vp3)
@@ -66,7 +84,10 @@ func setup(run: RunSim, animal_def: Dictionary) -> void:
 	sun = DirectionalLight3D.new()
 	sun.rotation_degrees = Vector3(-58, 28, 0)
 	sun.light_energy = 1.0
-	sun.shadow_enabled = false
+	sun.shadow_enabled = Gfx.shadows()
+	sun.shadow_opacity = 0.55
+	sun.directional_shadow_max_distance = float(AHEAD) * 0.8
+	sun.directional_shadow_mode = DirectionalLight3D.SHADOW_ORTHOGONAL
 	world3.add_child(sun)
 	cam = Camera3D.new()
 	cam.keep_aspect = Camera3D.KEEP_WIDTH
@@ -79,6 +100,7 @@ func setup(run: RunSim, animal_def: Dictionary) -> void:
 	# two long jungle walls follow the camera and hide where things loop around
 	for side in [-1.0, 1.0]:
 		var wall := box(Vector3(5.0, 3.2, float(AHEAD + BEHIND + 8)), color("canopy_dark", "#0b3a1a"), Vector3.ZERO, world3)
+		wall.material_override = surface(color("canopy_dark", "#0b3a1a"), 0.5)
 		wall.set_meta("side", side)
 		_walls.append(wall)
 
@@ -89,10 +111,29 @@ func color(key: String, fallback := "#3c9a3a") -> Color:
 
 # ------------------------------------------------------------------ frame
 
+## Render the 3D scene at screen resolution (High) or game resolution, and
+## draw it scaled to fill the playfield.
+func _fit() -> void:
+	var par := get_parent_area_size()
+	var screen := float(get_tree().root.size.x) / maxf(1.0, get_viewport_rect().size.x)
+	var key := Vector2(par.x * 1000.0 + par.y, screen)
+	if key == _fit_key or par.x < 2.0:
+		return
+	_fit_key = key
+	var k := Gfx.scale_3d(screen)
+	position = Vector2.ZERO
+	scale = Vector2.ONE / k
+	size = par * k
+	vp3.size = Vector2i(maxi(2, int(par.x * k)), maxi(2, int(par.y * k)))
+
+
 func update_view(dt: float) -> void:
 	if not is_visible_in_tree():
 		return
+	_fit()
 	t += dt
+	for wm in _water_mats:
+		wm.uv1_offset = Vector3(t * 0.04, t * 0.11, 0.0)
 	var dp := sim.display_pos()
 	var lift := sim.hop_height()
 	var y := eye_h + lift * 0.7 + sin(t * 2.2) * 0.008
@@ -189,6 +230,29 @@ func mat(c: Color, emissive := false) -> StandardMaterial3D:
 	return m
 
 
+## A textured surface: the shared grain multiplied into the colour, mapped
+## in world space so tiles line up. Water gets a glossy, drifting finish.
+func surface(c: Color, uv := 0.35, water := false) -> StandardMaterial3D:
+	var key := "surf%s:%.2f:%s" % [c.to_html(), uv, water]
+	if _mats.has(key):
+		return _mats[key]
+	var m := StandardMaterial3D.new()
+	m.albedo_color = c
+	m.roughness = 0.18 if water else 0.92
+	if water:
+		m.metallic_specular = 0.8
+	if _grain:
+		m.albedo_texture = _grain
+		m.uv1_triplanar = true
+		m.uv1_world_triplanar = true
+		m.uv1_scale = Vector3.ONE * uv
+		m.texture_filter = BaseMaterial3D.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
+		if water:
+			_water_mats.append(m)
+	_mats[key] = m
+	return m
+
+
 func _mi(mesh: Mesh, c: Color, pos: Vector3, parent: Node3D, rot := Vector3.ZERO, emissive := false) -> MeshInstance3D:
 	var mi := MeshInstance3D.new()
 	mi.mesh = mesh
@@ -214,8 +278,8 @@ func sph(r: float, c: Color, pos: Vector3, parent: Node3D, scale := Vector3.ONE)
 		var m := SphereMesh.new()
 		m.radius = r
 		m.height = r * 2.0
-		m.radial_segments = 10
-		m.rings = 6
+		m.radial_segments = _seg
+		m.rings = maxi(5, _seg / 2)
 		_meshes[key] = m
 	var mi := _mi(_meshes[key], c, pos, parent)
 	mi.scale = scale
@@ -229,7 +293,7 @@ func cyl(r: float, h: float, c: Color, pos: Vector3, parent: Node3D, rot := Vect
 		m.top_radius = r if top < 0.0 else top
 		m.bottom_radius = r
 		m.height = h
-		m.radial_segments = 10
+		m.radial_segments = _seg
 		_meshes[key] = m
 	return _mi(_meshes[key], c, pos, parent, rot)
 
@@ -240,8 +304,8 @@ func torus(inner: float, outer: float, c: Color, pos: Vector3, parent: Node3D) -
 		var m := TorusMesh.new()
 		m.inner_radius = inner
 		m.outer_radius = outer
-		m.rings = 16
-		m.ring_segments = 6
+		m.rings = maxi(12, _seg + 4)
+		m.ring_segments = maxi(6, _seg / 2)
 		_meshes[key] = m
 	return _mi(_meshes[key], c, pos, parent)
 
@@ -261,16 +325,16 @@ func _build_lane(l: Lane, r: int) -> Node3D:
 	rng.seed = l.deco + r * 13
 	match l.type:
 		"water":
-			box(Vector3(26, 0.3, 1.0), color("water"), Vector3(MID, -0.27, 0), n)
+			box(Vector3(26, 0.3, 1.0), color("water"), Vector3(MID, -0.27, 0), n).material_override = surface(color("water"), 0.22, true)
 		"ground":
-			box(Vector3(26, 0.3, 1.0), color("ground_alt" if alt else "ground"), Vector3(MID, -0.15, 0), n)
+			box(Vector3(26, 0.3, 1.0), color("ground_alt" if alt else "ground"), Vector3(MID, -0.15, 0), n).material_override = surface(color("ground_alt" if alt else "ground"))
 			box(Vector3(26, 0.02, 0.06), color("ground").darkened(0.2), Vector3(MID, 0.005, -0.25), n)
 		_:
 			var g := color("safe_alt" if alt else "safe")
 			if l.goal:
 				box(Vector3(26, 0.3, 1.0), color("goal", "#9cf06a"), Vector3(MID, -0.15, 0), n, Vector3.ZERO, true)
 			else:
-				box(Vector3(26, 0.3, 1.0), g, Vector3(MID, -0.15, 0), n)
+				box(Vector3(26, 0.3, 1.0), g, Vector3(MID, -0.15, 0), n).material_override = surface(g, 0.5)
 			for k in 2:
 				var gx := rng.randf_range(-0.5, 9.5)
 				if l.tiles.has(int(floorf(gx))):
@@ -363,12 +427,14 @@ func _build_ent(l: Lane, e: Ent) -> Node3D:
 			box(Vector3(L * 0.68, 0.5, 0.62), body, Vector3(-L * 0.15, 0.36, 0), n)
 			box(Vector3(L * 0.26, 0.68, 0.6), hc(cl, "cab"), Vector3(L * 0.36, 0.45, 0), n)
 			box(Vector3(0.04, 0.25, 0.46), Color("9fd0e8"), Vector3(L * 0.49, 0.6, 0), n)
+			_lights(n, L * 0.5, 0.3, 0.2)
 			for k in 2:
 				cyl(0.13, L * 0.62, hc(cl, "cargo").lightened(0.08 * k), Vector3(-L * 0.15, 0.7, -0.13 + k * 0.26), n, Vector3(0, 0, 90))
 		"jeep":
 			box(Vector3(L, 0.42, 0.62), body, Vector3(0, 0.3, 0), n)
 			box(Vector3(L * 0.5, 0.26, 0.56), hc(cl, "roof"), Vector3(-L * 0.08, 0.62, 0), n)
 			box(Vector3(0.04, 0.22, 0.5), Color("9fd0e8"), Vector3(L * 0.18, 0.6, 0), n)
+			_lights(n, L * 0.5, 0.3, 0.22)
 		"tractor":
 			box(Vector3(L * 0.55, 0.4, 0.62), hc(cl, "cargo").darkened(0.35), Vector3(-L * 0.2, 0.3, 0), n)
 			for k2 in 6:
@@ -382,6 +448,7 @@ func _build_ent(l: Lane, e: Ent) -> Node3D:
 			sph(0.12, hc(cl, "animal").darkened(0.1), Vector3(L * 0.48, 0.5, 0), n)
 		"scooter":
 			box(Vector3(L * 0.9, 0.25, 0.22), body, Vector3(0, 0.3, 0), n)
+			_lights(n, L * 0.45, 0.35, 0.0)
 			sph(0.15, hc(cl, "rider"), Vector3(0, 0.62, 0), n)
 		"herd", "runner", "lizard", "elephant":
 			var big := 1.0
@@ -392,7 +459,10 @@ func _build_ent(l: Lane, e: Ent) -> Node3D:
 			if hz.art.painter == "runner":
 				hcol = hc(cl, "neck")
 			sph(0.24 * big, bc, Vector3(0, 0.3 * big, 0), n, Vector3(L * 0.9 / (0.48 * big), 0.9, 1.0))
-			sph(0.13 * big, hcol, Vector3(L * 0.45, (0.4 if hz.art.painter != "runner" else 0.65) * big, 0), n)
+			var hy := (0.4 if hz.art.painter != "runner" else 0.65) * big
+			sph(0.13 * big, hcol, Vector3(L * 0.45, hy, 0), n)
+			for ez3 in [-1.0, 1.0]:
+				sph(0.028 * big, Color("140d08"), Vector3(L * 0.45 + 0.09 * big, hy + 0.04 * big, ez3 * 0.07 * big), n)
 			if hz.art.painter == "elephant":
 				for ez in [-0.3, 0.3]:
 					sph(0.2, hc(cl, "ear"), Vector3(L * 0.38, 0.6, ez), n, Vector3(0.3, 1.0, 1.0))
@@ -459,6 +529,11 @@ func _place_ent(n: Node3D, l: Lane, e: Ent) -> void:
 				n.position.y = -0.45
 	elif e.platform:
 		n.position.y = sin(t * 2.0 + x) * 0.015
+
+
+func _lights(n: Node3D, x: float, y: float, z: float) -> void:
+	for sz in ([-1.0, 1.0] if z > 0.0 else [0.0]):
+		box(Vector3(0.04, 0.08, 0.1), Color("fff3b0"), Vector3(x, y, sz * z), n, Vector3.ZERO, true)
 
 
 # ------------------------------------------------------------------ predators

@@ -8,5 +8,6 @@
   "move_timer": true,
   "ads_personalised": false,
   "show_fps": false,
-  "first_person": false
+  "first_person": false,
+  "graphics": "auto"
 }

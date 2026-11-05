@@ -67,6 +67,14 @@ var buffer := Vector2i.ZERO
 var fx: Array[Dictionary] = []
 var record_fx := true
 var water_restart := false        # falling into water restarts the run (content/rules.json)
+var hop_plat := -1                # platform we hopped from, while hopping along the same lane
+var hop_plat_ex := 0.0
+var near_ent: Ent = null          # a mover brushing past (for "Close call!")
+var near_cd := 0.0
+var near_misses := 0
+
+const NEAR := 0.32                # how close a mover must pass for a close call (tiles)
+const MAGNET := 0.2               # landing this far past a log's end still lands on it
 
 
 func setup(w: World, animal_def: Dictionary, opts: Dictionary = {}) -> void:
@@ -99,7 +107,7 @@ func clone() -> RunSim:
 			"from_row", "from_x", "to_row", "to_x", "hop_air", "hop_kind", "face", "plat", "swimming", "swim_streak",
 			"swim_idle", "float_grace", "sink", "invuln", "hitbox", "base_hop", "state", "respawn_left", "lives",
 			"shields", "max_row", "score", "combo", "combo_timer", "berries", "amber", "checkpoint", "no_progress",
-			"move_limit", "water_restart", "cam_floor", "creep", "cause", "cause_text", "cause_hazard", "deaths", "revives", "buffer"]:
+			"move_limit", "water_restart", "hop_plat", "hop_plat_ex", "near_cd", "near_misses", "cam_floor", "creep", "cause", "cause_text", "cause_hazard", "deaths", "revives", "buffer"]:
 		c.set(prop, get(prop))
 	c.taken = taken.duplicate()
 	c.record_fx = false
@@ -337,6 +345,11 @@ func use_powerup(module_id: String) -> bool:
 
 
 func _start_hop(target_row: int, tx: float, dur: float, air: bool, kind: String) -> void:
+	# sideways along a moving log: the log keeps carrying us through the hop
+	hop_plat = -1
+	if plat >= 0 and target_row == row and plat < cur_lane().ents.size():
+		hop_plat = plat
+		hop_plat_ex = world.ent_x(cur_lane(), cur_lane().ents[plat], wt)
 	hopping = true
 	hop_t = 0.0
 	hop_dur = maxf(0.05, dur)
@@ -376,6 +389,17 @@ func step(dt: float) -> void:
 			_respawn()
 		return
 	invuln = maxf(0.0, invuln - dt)
+	near_cd = maxf(0.0, near_cd - dt)
+	if hopping and hop_plat >= 0:
+		var hl := world.lane(from_row)
+		if hop_plat < hl.ents.size():
+			var ex := world.ent_x(hl, hl.ents[hop_plat], wt)
+			var dx := ex - hop_plat_ex
+			if absf(dx) > Lane.WRAP * 0.5:
+				dx -= signf(dx) * Lane.WRAP
+			hop_plat_ex = ex
+			from_x += dx
+			to_x = clampf(to_x + dx, 0.1, Lane.COLS - 0.1)
 	if hopping:
 		hop_t += dt / hop_dur
 		if hop_t >= 1.0:
@@ -498,8 +522,16 @@ func _land() -> void:
 	var l := cur_lane()
 	plat = -1
 	swimming = false
+	hop_plat = -1
 	if lane_is_water(l):
 		var pi := world.platform_at(l, x, wt)
+		if pi < 0:
+			# just short of a log: hop onto its end instead of the water
+			pi = world.platform_at(l, x, wt, -MAGNET)
+			if pi >= 0:
+				var me: Ent = l.ents[pi]
+				var mx := world.ent_x(l, me, wt)
+				x = clampf(x, mx + 0.22, mx + me.length - 0.22)
 		if pi >= 0:
 			plat = pi
 			swim_streak = 0
@@ -602,6 +634,8 @@ func _check(dt: float) -> void:
 				_cause_text(e.hazard, "Flattened"))
 			if state != "play":
 				return
+		else:
+			_near_miss(l, px)
 	var pr := world.pred_hit(l, px, col, wt)
 	if not pr.is_empty():
 		_lethal(String(Content.hazards.get(String(pr.hazard), {}).get("cause", "eaten")), "predator", String(pr.hazard),
@@ -649,6 +683,21 @@ func _check(dt: float) -> void:
 			sink = 0.0
 	if x < 0.08 or x > Lane.COLS - 0.08:
 		_lethal("swept", "swept", l.hazard_id, "Swept off the edge of the map")
+
+
+## A mover passed within a whisker and we're still here: a close call.
+func _near_miss(l: Lane, px: float) -> void:
+	var close := world.mover_hit(l, px - hitbox * 0.5 - NEAR, px + hitbox * 0.5 + NEAR, wt)
+	if close != null:
+		near_ent = close
+		return
+	if near_ent != null and near_ent in l.ents:
+		if near_cd <= 0.0:
+			near_misses += 1
+			score += 2
+			near_cd = 0.6
+			_fx("near_miss", {"hazard": near_ent.hazard})
+	near_ent = null
 
 
 func _cause_text(hid: String, fallback: String) -> String:
@@ -699,6 +748,8 @@ func _die(c: String, source: String, hazard_id: String, text: String) -> void:
 
 func _respawn() -> void:
 	state = "play"
+	near_ent = null
+	hop_plat = -1
 	row = checkpoint
 	if mode in ["endless", "daily"]:
 		row = maxi(row, int(ceilf(cam_floor)))

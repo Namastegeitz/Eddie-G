@@ -144,7 +144,7 @@ func mover_hit(l: Lane, x0: float, x1: float, t: float) -> Ent:
 		if e.platform or not e.active(t):
 			continue
 		var ex := ent_x(l, e, t)
-		if x1 > ex + 0.06 and x0 < ex + e.length - 0.06:
+		if x1 > ex + 0.1 and x0 < ex + e.length - 0.1:
 			return e
 	return null
 

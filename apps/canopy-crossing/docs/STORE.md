@@ -63,11 +63,12 @@ store account, so **Restore purchases** works after a reinstall or a reset.
 ## Analytics events
 
 `session_start`, `screen`, `run_start`, `run_end` (mode, map, stage,
-animal, rows, score, won, berries, deaths, revives, time), `death` (cause,
+animal, rows, score, won, berries, deaths, revives, near_misses, time), `death` (cause,
 hazard, map, row), `revive`, `purchase_start`, `purchase`, `purchase_failed`,
 `restore`, `unlock`, `currency`, `item`, `item_used`, `ad_shown`,
 `ad_reward`, `daily_reward`, `pass_claim`, `prompt`, `store_view`,
-`tutorial_step`, `dlc_download`, and the one-time funnel steps
+`tutorial_step`, `dlc_download`, `view` (bird / fpv switches),
+`settings_graphics` (quality picked and what Auto resolved to), and the one-time funnel steps
 `first_launch → tutorial_start → tutorial_complete → first_run_end →
 first_unlock → first_store_view → first_purchase`.
 

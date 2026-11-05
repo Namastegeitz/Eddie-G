@@ -1,6 +1,122 @@
 class_name Draw
 extends RefCounted
 ## Small vector-drawing helpers used by every painter.
+##
+## Outline pass: painters draw a figure twice. With `outline` > 0 every
+## solid shape is drawn grown by that many pixels in `outline_color` (thin
+## detail strokes, highlights and shadows are skipped), giving a clean
+## sticker-style silhouette; then the figure is drawn normally on top.
+## `detail` (0 low, 1 medium, 2 high) lets painters skip fine touches.
+
+static var outline := 0.0
+static var outline_color := Color(0.05, 0.08, 0.06, 0.92)
+static var detail := 2
+
+
+static var _grain: ImageTexture
+
+
+## A small seamless noise tile (dark and light flecks with alpha) laid over
+## ground and grass so flat colours read as soil and turf. Built once.
+static func grain() -> Texture2D:
+	if _grain:
+		return _grain
+	var n := FastNoiseLite.new()
+	n.seed = 7
+	n.frequency = 0.06
+	n.fractal_octaves = 3
+	var src := n.get_seamless_image(128, 128)
+	var img := Image.create(128, 128, false, Image.FORMAT_RGBA8)
+	for y in 128:
+		for x in 128:
+			var v := src.get_pixel(x, y).r
+			if v < 0.5:
+				img.set_pixel(x, y, Color(0, 0, 0, (0.5 - v) * 0.34))
+			else:
+				img.set_pixel(x, y, Color(1, 1, 0.9, (v - 0.5) * 0.2))
+	_grain = ImageTexture.create_from_image(img)
+	return _grain
+
+
+static func begin_outline(width: float) -> void:
+	outline = maxf(0.0, width)
+
+
+static func end_outline() -> void:
+	outline = 0.0
+
+
+static func _skip(color: Color) -> bool:
+	return outline > 0.0 and color.a < 0.6
+
+
+static func poly(ci: CanvasItem, pts: PackedVector2Array, color: Color) -> void:
+	if pts.size() < 3 or _skip(color):
+		return
+	if outline > 0.0:
+		ci.draw_colored_polygon(pts, outline_color)
+		var ring := pts.duplicate()
+		ring.append(pts[0])
+		ci.draw_polyline(ring, outline_color, outline * 2.0, true)
+		return
+	ci.draw_colored_polygon(pts, color)
+
+
+static func line(ci: CanvasItem, a: Vector2, b: Vector2, color: Color, width := 1.0, aa := true) -> void:
+	if outline > 0.0:
+		if width < 3.0 or _skip(color):
+			return
+		ci.draw_line(a, b, outline_color, width + outline * 2.0, true)
+		ci.draw_circle(a, width * 0.5 + outline, outline_color)
+		ci.draw_circle(b, width * 0.5 + outline, outline_color)
+		return
+	ci.draw_line(a, b, color, width, aa)
+
+
+static func polyline(ci: CanvasItem, pts: PackedVector2Array, color: Color, width := 1.0, aa := true) -> void:
+	if pts.size() < 2:
+		return
+	if outline > 0.0:
+		if width < 3.0 or _skip(color):
+			return
+		ci.draw_polyline(pts, outline_color, width + outline * 2.0, true)
+		ci.draw_circle(pts[0], width * 0.5 + outline, outline_color)
+		ci.draw_circle(pts[pts.size() - 1], width * 0.5 + outline, outline_color)
+		return
+	ci.draw_polyline(pts, color, width, aa)
+	if width >= 4.0 and detail > 0:
+		ci.draw_circle(pts[0], width * 0.5, color)
+		ci.draw_circle(pts[pts.size() - 1], width * 0.5, color)
+
+
+static func arc(ci: CanvasItem, c: Vector2, r: float, a0: float, a1: float, n: int, color: Color, width := 1.0, aa := true) -> void:
+	if outline > 0.0:
+		if width < 3.0 or _skip(color):
+			return
+		ci.draw_arc(c, r, a0, a1, n, outline_color, width + outline * 2.0, true)
+		return
+	ci.draw_arc(c, r, a0, a1, n, color, width, aa)
+
+
+static func rect(ci: CanvasItem, r: Rect2, color: Color, filled := true, width := -1.0) -> void:
+	if outline > 0.0:
+		if not filled or _skip(color):
+			return
+		ci.draw_rect(r.grow(outline), outline_color)
+		return
+	ci.draw_rect(r, color, filled, width)
+
+
+## A rounded body part with a darker rim (lower right) and a soft highlight
+## (upper left): reads as a lit, solid shape at any size.
+static func shaded(ci: CanvasItem, c: Vector2, rx: float, ry: float, color: Color, rot := 0.0) -> void:
+	if outline > 0.0 or detail == 0:
+		ellipse(ci, c, rx, ry, color, rot, 28)
+		return
+	ellipse(ci, c, rx, ry, color.darkened(0.22), rot, 28)
+	ellipse(ci, c + Vector2(-rx * 0.05, -ry * 0.07).rotated(rot), rx * 0.93, ry * 0.9, color, rot, 28)
+	if detail > 1 and rx > 4.0:
+		ellipse(ci, c + Vector2(-rx * 0.34, -ry * 0.4).rotated(rot), rx * 0.34, ry * 0.2, Color(color.lightened(0.35), 0.45), rot - 0.5, 16)
 
 
 static func ellipse_points(c: Vector2, rx: float, ry: float, rot := 0.0, n := 24) -> PackedVector2Array:
@@ -18,13 +134,20 @@ static func ellipse_points(c: Vector2, rx: float, ry: float, rot := 0.0, n := 24
 static func ellipse(ci: CanvasItem, c: Vector2, rx: float, ry: float, color: Color, rot := 0.0, n := 24) -> void:
 	if rx <= 0.0 or ry <= 0.0:
 		return
+	if outline > 0.0:
+		if _skip(color) or maxf(rx, ry) < 2.5:
+			return
+		ci.draw_colored_polygon(ellipse_points(c, rx + outline, ry + outline, rot, n), outline_color)
+		return
 	ci.draw_colored_polygon(ellipse_points(c, rx, ry, rot, n), color)
 
 
 static func ellipse_line(ci: CanvasItem, c: Vector2, rx: float, ry: float, color: Color, width := 2.0, rot := 0.0) -> void:
+	if outline > 0.0 and (width < 3.0 or _skip(color)):
+		return
 	var pts := ellipse_points(c, rx, ry, rot, 28)
 	pts.append(pts[0])
-	ci.draw_polyline(pts, color, width, true)
+	ci.draw_polyline(pts, outline_color if outline > 0.0 else color, width + outline * 2.0, true)
 
 
 static func rrect_points(r: Rect2, rad: float, seg := 5) -> PackedVector2Array:
@@ -46,6 +169,11 @@ static func rrect_points(r: Rect2, rad: float, seg := 5) -> PackedVector2Array:
 
 static func rrect(ci: CanvasItem, r: Rect2, rad: float, color: Color) -> void:
 	if r.size.x <= 0.5 or r.size.y <= 0.5:
+		return
+	if outline > 0.0:
+		if _skip(color):
+			return
+		ci.draw_colored_polygon(rrect_points(r.grow(outline), rad + outline), outline_color)
 		return
 	ci.draw_colored_polygon(rrect_points(r, rad), color)
 
@@ -70,8 +198,9 @@ static func leaf(ci: CanvasItem, base: Vector2, dir: Vector2, length: float, wid
 	var tip := base + n * length
 	var mid := base + n * length * 0.45
 	var pts := PackedVector2Array([base, mid + side * width, tip, mid - side * width])
-	ci.draw_colored_polygon(pts, color)
-	ci.draw_line(base, tip, color.darkened(0.25), maxf(1.0, width * 0.12), true)
+	poly(ci, pts, color)
+	if outline <= 0.0:
+		ci.draw_line(base, tip, color.darkened(0.25), maxf(1.0, width * 0.12), true)
 
 
 static func star(ci: CanvasItem, c: Vector2, r: float, color: Color, points := 5, inner := 0.45, rot := -PI / 2) -> void:
@@ -80,7 +209,7 @@ static func star(ci: CanvasItem, c: Vector2, r: float, color: Color, points := 5
 		var rr := r if i % 2 == 0 else r * inner
 		var a := rot + PI * i / points
 		pts.append(c + Vector2(cos(a), sin(a)) * rr)
-	ci.draw_colored_polygon(pts, color)
+	poly(ci, pts, color)
 
 
 static func gem(ci: CanvasItem, c: Vector2, r: float, color: Color) -> void:

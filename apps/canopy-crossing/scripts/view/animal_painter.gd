@@ -45,20 +45,49 @@ static func draw(ci: CanvasItem, animal: Dictionary, s: float, anim: Dictionary 
 		var w := h * tex.get_width() / maxf(1.0, tex.get_height())
 		ci.draw_texture_rect(tex, Rect2(-w * 0.5, -h, w, h), false)
 	else:
-		match String(look.get("base", "mammal")):
-			"frog":
-				_frog(ci, look, s, anim)
-			"bird":
-				_bird(ci, look, s, anim)
-			"snake":
-				_snake(ci, look, s, anim)
-			"lizard":
-				_lizard(ci, look, s, anim)
-			"glider":
-				_glider(ci, look, s, anim)
-			_:
-				_mammal(ci, look, s, anim)
+		if Draw.detail > 0 and not anim.get("no_outline", false):
+			Draw.begin_outline(maxf(1.3, s * 0.022))
+			_plan(ci, look, s, anim)
+			Draw.end_outline()
+		_plan(ci, look, s, anim)
 	ci.draw_set_transform_matrix(pre)
+
+
+static func _plan(ci: CanvasItem, look: Dictionary, s: float, anim: Dictionary) -> void:
+	match String(look.get("base", "mammal")):
+		"frog":
+			_frog(ci, look, s, anim)
+		"bird":
+			_bird(ci, look, s, anim)
+		"snake":
+			_snake(ci, look, s, anim)
+		"lizard":
+			_lizard(ci, look, s, anim)
+		"glider":
+			_glider(ci, look, s, anim)
+		_:
+			_mammal(ci, look, s, anim)
+
+
+## Fine touches drawn only in the colour pass and only at sizes where they
+## read: fur strokes, cheek blush.
+static func _fur(ci: CanvasItem, c: Vector2, rx: float, ry: float, color: Color, s: float, salt: int, n := 9) -> void:
+	if Draw.outline > 0.0 or Draw.detail < 2 or s < 90.0:
+		return
+	var rng := RandomNumberGenerator.new()
+	rng.seed = salt
+	for i in n:
+		var a := rng.randf_range(PI * 1.05, PI * 1.95)
+		var p := c + Vector2(cos(a) * rx * rng.randf_range(0.55, 0.9), sin(a) * ry * rng.randf_range(0.55, 0.9))
+		var d := Vector2(cos(a), sin(a)) * s * 0.035
+		Draw.line(ci, p, p + d + Vector2(s * 0.008, 0), color, maxf(1.0, s * 0.008), true)
+
+
+static func _blush(ci: CanvasItem, h: Vector2, gap: float, s: float) -> void:
+	if Draw.outline > 0.0 or Draw.detail < 1:
+		return
+	for sx in [-1.0, 1.0]:
+		Draw.ellipse(ci, h + Vector2(sx * gap, 0), s * 0.045, s * 0.026, Color(1.0, 0.45, 0.5, 0.32))
 
 
 # ------------------------------------------------------------------ parts
@@ -70,25 +99,43 @@ static func _eyes(ci: CanvasItem, look: Dictionary, c: Vector2, gap: float, s: f
 	for sx in [-1.0, 1.0]:
 		var p := c + Vector2(sx * gap, 0)
 		if blink:
-			ci.draw_line(p + Vector2(-s * 0.045, 0), p + Vector2(s * 0.045, 0), Color("1a120c"), maxf(2.0, s * 0.018), true)
+			Draw.line(ci, p + Vector2(-s * 0.045, 0), p + Vector2(s * 0.045, 0), Color("1a120c"), maxf(2.0, s * 0.018), true)
 			continue
 		match size_k:
 			"huge":
-				Draw.ellipse(ci, p, s * 0.1, s * 0.1, Color("fbf6ea"))
-				Draw.ellipse(ci, p, s * 0.085, s * 0.085, e)
-				Draw.ellipse(ci, p, s * 0.045, s * 0.05, Color("120c08"))
-				Draw.ellipse(ci, p + Vector2(-s * 0.03, -s * 0.035), s * 0.022, s * 0.022, Color(1, 1, 1, 0.9))
+				_eye(ci, p, s * 0.1, e, s, true)
 			"big":
-				Draw.ellipse(ci, p, s * 0.075, s * 0.078, Color("fbf6ea"))
-				Draw.ellipse(ci, p + Vector2(0, s * 0.005), s * 0.058, s * 0.062, e)
-				Draw.ellipse(ci, p + Vector2(0, s * 0.008), s * 0.03, s * 0.042, Color("120c08"))
-				Draw.ellipse(ci, p + Vector2(-s * 0.022, -s * 0.026), s * 0.018, s * 0.018, Color(1, 1, 1, 0.95))
+				_eye(ci, p, s * 0.076, e, s, true)
 			_:
-				Draw.ellipse(ci, p, s * 0.045, s * 0.055, e if e.get_luminance() < 0.35 else Color("1a120c"))
-				if e.get_luminance() >= 0.35:
-					Draw.ellipse(ci, p, s * 0.04, s * 0.05, e)
-					Draw.ellipse(ci, p, s * 0.02, s * 0.034, Color("120c08"))
-				Draw.ellipse(ci, p + Vector2(-s * 0.016, -s * 0.022), s * 0.016, s * 0.016, Color(1, 1, 1, 0.92))
+				_eye(ci, p, s * 0.05, e, s, false)
+
+
+## One eye: white with a shaded lid (big eyes), a two-tone iris, pupil and
+## two catch-lights. Small eyes are a glossy bead in the eye colour.
+static func _eye(ci: CanvasItem, p: Vector2, r: float, iris: Color, s: float, big: bool) -> void:
+	var dark := Color("140d08")
+	if big:
+		Draw.ellipse(ci, p, r, r * 1.03, Color("fbf6ea"), 0.0, 28)
+		if Draw.outline > 0.0:
+			return
+		if Draw.detail > 1:
+			Draw.ellipse(ci, p + Vector2(0, -r * 0.55), r * 0.92, r * 0.42, Color(0.55, 0.45, 0.4, 0.22))
+		Draw.ellipse(ci, p + Vector2(0, r * 0.06), r * 0.8, r * 0.82, iris.darkened(0.35), 0.0, 28)
+		Draw.ellipse(ci, p + Vector2(0, r * 0.1), r * 0.68, r * 0.7, iris, 0.0, 28)
+		if Draw.detail > 1:
+			Draw.ellipse(ci, p + Vector2(0, r * 0.32), r * 0.5, r * 0.3, Color(iris.lightened(0.35), 0.6))
+		Draw.ellipse(ci, p + Vector2(0, r * 0.1), r * 0.36, r * 0.48, dark, 0.0, 20)
+	else:
+		var bead := iris if iris.get_luminance() < 0.35 else dark
+		Draw.ellipse(ci, p, r * 0.9, r * 1.1, bead, 0.0, 20)
+		if Draw.outline > 0.0:
+			return
+		if iris.get_luminance() >= 0.35:
+			Draw.ellipse(ci, p, r * 0.8, r, iris, 0.0, 20)
+			Draw.ellipse(ci, p, r * 0.42, r * 0.68, dark, 0.0, 16)
+	Draw.ellipse(ci, p + Vector2(-r * 0.32, -r * 0.4), r * 0.3, r * 0.3, Color(1, 1, 1, 0.95), 0.0, 14)
+	if Draw.detail > 1:
+		Draw.ellipse(ci, p + Vector2(r * 0.28, r * 0.32), r * 0.13, r * 0.13, Color(1, 1, 1, 0.75), 0.0, 10)
 
 
 static func _spots(ci: CanvasItem, c: Vector2, rx: float, ry: float, color: Color, n: int, r: float, salt: int, ring := false) -> void:
@@ -100,7 +147,16 @@ static func _spots(ci: CanvasItem, c: Vector2, rx: float, ry: float, color: Colo
 		var p := c + Vector2(cos(a) * rx * d, sin(a) * ry * d)
 		var rr := r * rng.randf_range(0.7, 1.25)
 		if ring:
-			Draw.ellipse_line(ci, p, rr, rr * 0.85, color, maxf(1.5, rr * 0.4))
+			# A real rosette: a darker centre wrapped in a broken ring of blobs.
+			if Draw.detail > 1 and rr > 3.0:
+				Draw.ellipse(ci, p, rr * 0.75, rr * 0.65, Color(color, 0.28))
+				var k := 4 + (i % 2)
+				var a0 := rng.randf() * TAU
+				for j in k:
+					var aj := a0 + TAU * j / k
+					Draw.ellipse(ci, p + Vector2(cos(aj) * rr, sin(aj) * rr * 0.85), rr * 0.36, rr * 0.26, color, aj + PI * 0.5)
+			else:
+				Draw.ellipse_line(ci, p, rr, rr * 0.85, color, maxf(1.5, rr * 0.4))
 		else:
 			Draw.ellipse(ci, p, rr, rr * rng.randf_range(0.75, 1.0), color, rng.randf() * PI)
 
@@ -111,12 +167,12 @@ static func _stripes(ci: CanvasItem, c: Vector2, rx: float, ry: float, color: Co
 		if vertical:
 			var x := c.x + k * rx * 0.85
 			var h := ry * sqrt(maxf(0.0, 1.0 - k * k)) * 0.9
-			ci.draw_line(Vector2(x, c.y - h * 0.3), Vector2(x + k * width, c.y + h), color, width, true)
+			Draw.line(ci, Vector2(x, c.y - h * 0.3), Vector2(x + k * width, c.y + h), color, width, true)
 		else:
 			var y := c.y + k * ry * 0.85
 			var w := rx * sqrt(maxf(0.0, 1.0 - k * k))
-			ci.draw_line(Vector2(c.x - w, y), Vector2(c.x - w * 0.45, y + width * 0.6), color, width, true)
-			ci.draw_line(Vector2(c.x + w, y), Vector2(c.x + w * 0.45, y + width * 0.6), color, width, true)
+			Draw.line(ci, Vector2(c.x - w, y), Vector2(c.x - w * 0.45, y + width * 0.6), color, width, true)
+			Draw.line(ci, Vector2(c.x + w, y), Vector2(c.x + w * 0.45, y + width * 0.6), color, width, true)
 
 
 static func _tail(ci: CanvasItem, look: Dictionary, s: float, anim: Dictionary, base: Vector2) -> void:
@@ -130,7 +186,7 @@ static func _tail(ci: CanvasItem, look: Dictionary, s: float, anim: Dictionary, 
 			for i in 9:
 				var k := i / 8.0
 				pts.append(base + Vector2(s * (0.12 + 0.3 * k), -s * (0.05 + 0.35 * k * k)) .rotated(sway))
-			ci.draw_polyline(pts, p.darkened(0.08), s * (0.05 if look.get("tail") == "thin" else 0.075), true)
+			Draw.polyline(ci, pts, p.darkened(0.08), s * (0.05 if look.get("tail") == "thin" else 0.075), true)
 			if look.get("tail") == "long_banded":
 				for i in range(2, 9, 2):
 					Draw.ellipse(ci, pts[i], s * 0.04, s * 0.03, sec)
@@ -142,7 +198,7 @@ static func _tail(ci: CanvasItem, look: Dictionary, s: float, anim: Dictionary, 
 				var r := s * (0.36 - 0.2 * k2)
 				var a := -0.3 - k2 * 3.8 + sway
 				pts2.append(base + Vector2(s * 0.2, -s * 0.3) + Vector2(cos(a), sin(a)) * r * Vector2(1.0, 1.05) - Vector2(cos(-0.3), sin(-0.3)) * s * 0.36)
-			ci.draw_polyline(pts2, p.darkened(0.1), s * 0.06, true)
+			Draw.polyline(ci, pts2, p.darkened(0.1), s * 0.06, true)
 		"ringed", "ringed_brown":
 			var a2 := sec if look.get("tail") == "ringed" else col(look, "secondary")
 			var b2 := col(look, "accent") if look.get("tail") == "ringed" else col(look, "belly")
@@ -151,7 +207,7 @@ static func _tail(ci: CanvasItem, look: Dictionary, s: float, anim: Dictionary, 
 				var k3 := i / 11.0
 				pts3.append(base + Vector2(s * (0.14 + 0.2 * k3 + 0.08 * sin(k3 * 3.0)), -s * (0.05 + 0.75 * k3)).rotated(sway * 0.6))
 			for i in range(pts3.size() - 1):
-				ci.draw_line(pts3[i], pts3[i + 1], a2 if i % 2 == 0 else b2, s * 0.1, true)
+				Draw.line(ci, pts3[i], pts3[i + 1], a2 if i % 2 == 0 else b2, s * 0.1, true)
 			Draw.ellipse(ci, pts3[-1], s * 0.05, s * 0.05, a2)
 		"bushy":
 			Draw.ellipse(ci, base + Vector2(s * 0.3, -s * 0.28), s * 0.13, s * 0.28, p.darkened(0.1), 0.5 + sway)
@@ -189,9 +245,9 @@ static func _ears(ci: CanvasItem, look: Dictionary, h: Vector2, hr: float, s: fl
 			for sx in [-1.0, 1.0]:
 				var b := h + Vector2(sx * hr * 0.6, -hr * 0.7)
 				var pts := PackedVector2Array([b + Vector2(-s * 0.08, s * 0.04), b + Vector2(sx * s * 0.08, -s * 0.16), b + Vector2(s * 0.08, s * 0.02)])
-				ci.draw_colored_polygon(pts, p.darkened(0.05))
+				Draw.poly(ci, pts, p.darkened(0.05))
 				if look.get("ears") == "tufted":
-					ci.draw_line(b + Vector2(sx * s * 0.08, -s * 0.16), b + Vector2(sx * s * 0.12, -s * 0.24), p.darkened(0.2), s * 0.025, true)
+					Draw.line(ci, b + Vector2(sx * s * 0.08, -s * 0.16), b + Vector2(sx * s * 0.12, -s * 0.24), p.darkened(0.2), s * 0.025, true)
 		"huge":
 			for sx in [-1.0, 1.0]:
 				Draw.ellipse(ci, h + Vector2(sx * hr * 1.0, -hr * 0.6), s * 0.15, s * 0.19, p.darkened(0.1), sx * 0.5)
@@ -218,7 +274,7 @@ static func _snout(ci: CanvasItem, look: Dictionary, h: Vector2, hr: float, s: f
 		"cat":
 			Draw.ellipse(ci, h + Vector2(-hr * 0.17, hr * 0.48), hr * 0.25, hr * 0.2, b)
 			Draw.ellipse(ci, h + Vector2(hr * 0.17, hr * 0.48), hr * 0.25, hr * 0.2, b)
-			ci.draw_colored_polygon(PackedVector2Array([h + Vector2(-s * 0.035, hr * 0.28), h + Vector2(s * 0.035, hr * 0.28), h + Vector2(0, hr * 0.4)]), Color("d07a7a"))
+			Draw.poly(ci, PackedVector2Array([h + Vector2(-s * 0.035, hr * 0.28), h + Vector2(s * 0.035, hr * 0.28), h + Vector2(0, hr * 0.4)]), Color("d07a7a"))
 		"ape":
 			Draw.ellipse(ci, h + Vector2(0, hr * 0.28), hr * 0.62, hr * 0.62, face)
 			Draw.ellipse(ci, h + Vector2(0, hr * 0.55), hr * 0.38, hr * 0.26, face.lightened(0.08))
@@ -228,7 +284,7 @@ static func _snout(ci: CanvasItem, look: Dictionary, h: Vector2, hr: float, s: f
 			Draw.ellipse(ci, h + Vector2(0, hr * 0.62), hr * 0.38, hr * 0.42, face)
 			Draw.ellipse(ci, h + Vector2(0, hr * 0.9), s * 0.04, s * 0.028, nose)
 		"fox":
-			ci.draw_colored_polygon(PackedVector2Array([h + Vector2(-hr * 0.55, hr * 0.15), h + Vector2(hr * 0.55, hr * 0.15), h + Vector2(0, hr * 0.85)]), face)
+			Draw.poly(ci, PackedVector2Array([h + Vector2(-hr * 0.55, hr * 0.15), h + Vector2(hr * 0.55, hr * 0.15), h + Vector2(0, hr * 0.85)]), face)
 			Draw.ellipse(ci, h + Vector2(0, hr * 0.8), s * 0.03, s * 0.024, nose)
 		"bear":
 			Draw.ellipse(ci, h + Vector2(0, hr * 0.45), hr * 0.45, hr * 0.32, face)
@@ -244,11 +300,11 @@ static func _snout(ci: CanvasItem, look: Dictionary, h: Vector2, hr: float, s: f
 			for i in steps + 1:
 				var k := float(i) / steps
 				pts.append(h + Vector2(sin(k * 2.2) * s * 0.06, hr * 0.2 + k * s * (0.42 if long else 0.16)))
-			ci.draw_polyline(pts, p.darkened(0.06), s * (0.11 - 0.0), true)
+			Draw.polyline(ci, pts, p.darkened(0.06), s * (0.11 - 0.0), true)
 			Draw.ellipse(ci, pts[-1], s * 0.055, s * 0.035, p.darkened(0.15))
 			if long:
 				for sx in [-1.0, 1.0]:
-					ci.draw_line(h + Vector2(sx * hr * 0.35, hr * 0.55), h + Vector2(sx * hr * 0.42, hr * 0.95), col(look, "accent", "#f2ece0"), s * 0.035, true)
+					Draw.line(ci, h + Vector2(sx * hr * 0.35, hr * 0.55), h + Vector2(sx * hr * 0.42, hr * 0.95), col(look, "accent", "#f2ece0"), s * 0.035, true)
 		"proboscis":
 			Draw.ellipse(ci, h + Vector2(0, hr * 0.5), hr * 0.5, hr * 0.32, face)
 			Draw.ellipse(ci, h + Vector2(0, hr * 0.62), hr * 0.32, hr * 0.42, Color("e88a6a"))
@@ -257,17 +313,17 @@ static func _snout(ci: CanvasItem, look: Dictionary, h: Vector2, hr: float, s: f
 			Draw.ellipse(ci, h + Vector2(-hr * 0.15, hr * 0.38), s * 0.012, s * 0.01, Color("111111"))
 			Draw.ellipse(ci, h + Vector2(hr * 0.15, hr * 0.38), s * 0.012, s * 0.01, Color("111111"))
 		"beak_long":
-			ci.draw_line(h + Vector2(0, hr * 0.2), h + Vector2(0, hr * 1.25), col(look, "accent", "#2a2a2a"), s * 0.05, true)
+			Draw.line(ci, h + Vector2(0, hr * 0.2), h + Vector2(0, hr * 1.25), col(look, "accent", "#2a2a2a"), s * 0.05, true)
 		"mandrill":
 			Draw.ellipse(ci, h + Vector2(0, hr * 0.45), hr * 0.42, hr * 0.62, col(look, "ridge", "#3a7be0"))
 			Draw.ellipse(ci, h + Vector2(0, hr * 0.42), hr * 0.17, hr * 0.62, col(look, "face", "#e8392f"))
 			Draw.ellipse(ci, h + Vector2(0, hr * 0.98), hr * 0.25, hr * 0.12, Color("e8392f"))
 		"coati":
 			var tip := h + Vector2(0, hr * 1.05)
-			ci.draw_colored_polygon(PackedVector2Array([h + Vector2(-hr * 0.35, hr * 0.2), h + Vector2(hr * 0.35, hr * 0.2), tip + Vector2(s * 0.03, 0), tip - Vector2(s * 0.03, 0)]), p.darkened(0.2))
+			Draw.poly(ci, PackedVector2Array([h + Vector2(-hr * 0.35, hr * 0.2), h + Vector2(hr * 0.35, hr * 0.2), tip + Vector2(s * 0.03, 0), tip - Vector2(s * 0.03, 0)]), p.darkened(0.2))
 			Draw.ellipse(ci, tip, s * 0.035, s * 0.025, nose)
 	if look.get("snout", "short") not in ["beak_long", "trunk", "bill", "mandrill"]:
-		ci.draw_arc(h + Vector2(0, hr * 0.5), hr * 0.16, 0.3, PI - 0.3, 8, Color(0.1, 0.06, 0.04, 0.6), maxf(1.0, s * 0.012), true)
+		Draw.arc(ci, h + Vector2(0, hr * 0.5), hr * 0.16, 0.3, PI - 0.3, 8, Color(0.1, 0.06, 0.04, 0.6), maxf(1.0, s * 0.012), true)
 
 
 static func _pattern_body(ci: CanvasItem, look: Dictionary, c: Vector2, rx: float, ry: float, s: float) -> void:
@@ -293,31 +349,31 @@ static func _pattern_body(ci: CanvasItem, look: Dictionary, c: Vector2, rx: floa
 					if (p - c).length() > maxf(rx, ry) * 0.95:
 						continue
 					if look.get("pattern") == "scales":
-						ci.draw_arc(p, s * 0.06, 0.2, PI - 0.2, 8, col(look, "secondary"), s * 0.018, true)
+						Draw.arc(ci, p, s * 0.06, 0.2, PI - 0.2, 8, col(look, "secondary"), s * 0.018, true)
 					else:
-						ci.draw_colored_polygon(PackedVector2Array([p + Vector2(-s * 0.025, s * 0.03), p + Vector2(0, -s * 0.06), p + Vector2(s * 0.025, s * 0.03)]), sec)
+						Draw.poly(ci, PackedVector2Array([p + Vector2(-s * 0.025, s * 0.03), p + Vector2(0, -s * 0.06), p + Vector2(s * 0.025, s * 0.03)]), sec)
 		"chest_crescent":
-			ci.draw_arc(c + Vector2(0, -ry * 0.3), rx * 0.5, 0.2, PI - 0.2, 12, acc, s * 0.045, true)
+			Draw.arc(ci, c + Vector2(0, -ry * 0.3), rx * 0.5, 0.2, PI - 0.2, 12, acc, s * 0.045, true)
 		"throat_patch":
 			Draw.ellipse(ci, c + Vector2(0, -ry * 0.55), rx * 0.4, ry * 0.25, acc)
 		"leg_stripes":
 			for sx in [-1.0, 1.0]:
 				for i in 3:
-					ci.draw_line(c + Vector2(sx * rx * 0.55, ry * (0.3 + i * 0.2)), c + Vector2(sx * rx * 0.95, ry * (0.25 + i * 0.2)), sec, s * 0.022, true)
+					Draw.line(ci, c + Vector2(sx * rx * 0.55, ry * (0.3 + i * 0.2)), c + Vector2(sx * rx * 0.95, ry * (0.25 + i * 0.2)), sec, s * 0.022, true)
 		"side_bars":
 			for sx in [-1.0, 1.0]:
 				Draw.ellipse(ci, c + Vector2(sx * rx * 0.75, 0), rx * 0.25, ry * 0.7, sec)
 				for i in 3:
-					ci.draw_line(c + Vector2(sx * rx * 0.6, -ry * 0.4 + i * ry * 0.35), c + Vector2(sx * rx * 0.95, -ry * 0.35 + i * ry * 0.35), Color("f2f2e6"), s * 0.012, true)
+					Draw.line(ci, c + Vector2(sx * rx * 0.6, -ry * 0.4 + i * ry * 0.35), c + Vector2(sx * rx * 0.95, -ry * 0.35 + i * ry * 0.35), Color("f2f2e6"), s * 0.012, true)
 		"mottled":
 			_spots(ci, c, rx, ry, sec, 6, s * 0.04, 13)
 			_spots(ci, c, rx, ry, acc, 4, s * 0.025, 17)
 		"dorsal_stripe":
-			ci.draw_line(c + Vector2(0, -ry), c + Vector2(0, ry * 0.6), sec, s * 0.03, true)
+			Draw.line(ci, c + Vector2(0, -ry), c + Vector2(0, ry * 0.6), sec, s * 0.03, true)
 		"scallops":
 			for r2 in 3:
 				for k2 in range(-2, 3):
-					ci.draw_arc(c + Vector2(k2 * rx * 0.3, -ry * 0.4 + r2 * ry * 0.35), s * 0.04, 0.3, PI - 0.3, 6, col(look, "primary").darkened(0.18), s * 0.012, true)
+					Draw.arc(ci, c + Vector2(k2 * rx * 0.3, -ry * 0.4 + r2 * ry * 0.35), s * 0.04, 0.3, PI - 0.3, 6, col(look, "primary").darkened(0.18), s * 0.012, true)
 		"bands":
 			_stripes(ci, c, rx, ry, sec, 3, s * 0.04, true)
 		"dots":
@@ -334,16 +390,16 @@ static func _extras_head(ci: CanvasItem, look: Dictionary, h: Vector2, hr: float
 			Draw.ellipse(ci, h + Vector2(sx * hr * 0.98, hr * 0.15), hr * 0.32, hr * 0.48, col(look, "face").lightened(0.12))
 	if "beard" in extras:
 		var bc := p.lightened(0.15) if look.get("snout") != "mandrill" else Color("e8c84a")
-		ci.draw_colored_polygon(PackedVector2Array([h + Vector2(-hr * 0.55, hr * 0.62), h + Vector2(hr * 0.55, hr * 0.62), h + Vector2(hr * 0.2, hr * 1.15), h + Vector2(0, hr * 1.25), h + Vector2(-hr * 0.2, hr * 1.15)]), bc)
+		Draw.poly(ci, PackedVector2Array([h + Vector2(-hr * 0.55, hr * 0.62), h + Vector2(hr * 0.55, hr * 0.62), h + Vector2(hr * 0.2, hr * 1.15), h + Vector2(0, hr * 1.25), h + Vector2(-hr * 0.2, hr * 1.15)]), bc)
 	if "whiskers" in extras:
 		for sx in [-1.0, 1.0]:
 			for i in 3:
-				ci.draw_line(h + Vector2(sx * hr * 0.35, hr * 0.45), h + Vector2(sx * hr * 1.15, hr * (0.25 + 0.15 * i)), Color(1, 1, 1, 0.85), maxf(1.0, s * 0.008), true)
+				Draw.line(ci, h + Vector2(sx * hr * 0.35, hr * 0.45), h + Vector2(sx * hr * 1.15, hr * (0.25 + 0.15 * i)), Color(1, 1, 1, 0.85), maxf(1.0, s * 0.008), true)
 	if "cheek_ruff" in extras:
 		for sx in [-1.0, 1.0]:
-			ci.draw_colored_polygon(PackedVector2Array([h + Vector2(sx * hr * 0.7, -hr * 0.1), h + Vector2(sx * hr * 1.22, hr * 0.35), h + Vector2(sx * hr * 0.75, hr * 0.7)]), col(look, "accent", "#fbf2e2"))
+			Draw.poly(ci, PackedVector2Array([h + Vector2(sx * hr * 0.7, -hr * 0.1), h + Vector2(sx * hr * 1.22, hr * 0.35), h + Vector2(sx * hr * 0.75, hr * 0.7)]), col(look, "accent", "#fbf2e2"))
 	if "part" in extras:
-		ci.draw_line(h + Vector2(0, -hr * 0.95), h + Vector2(0, -hr * 0.5), p.lightened(0.25), s * 0.012, true)
+		Draw.line(ci, h + Vector2(0, -hr * 0.95), h + Vector2(0, -hr * 0.5), p.lightened(0.25), s * 0.012, true)
 	if "crest" in extras:
 		for i in 3:
 			Draw.leaf(ci, h + Vector2((i - 1) * hr * 0.25, -hr * 0.8), Vector2((i - 1) * 0.5, -1), hr * 0.65, hr * 0.12, col(look, "secondary"))
@@ -356,7 +412,7 @@ static func _shaggy(ci: CanvasItem, c: Vector2, rx: float, ry: float, color: Col
 		var a := TAU * i / n
 		var r := 1.0 + (0.12 if i % 2 == 0 else 0.0)
 		pts.append(c + Vector2(cos(a) * rx * r, sin(a) * ry * r))
-	ci.draw_colored_polygon(pts, color)
+	Draw.poly(ci, pts, color)
 
 
 # ------------------------------------------------------------------ body plans
@@ -373,17 +429,18 @@ static func _mammal(ci: CanvasItem, look: Dictionary, s: float, anim: Dictionary
 	_tail(ci, look, s, anim, Vector2(0, -s * 0.12))
 	# legs
 	for sx in [-1.0, 1.0]:
-		Draw.ellipse(ci, Vector2(sx * s * 0.15, -s * 0.05), s * 0.1, s * 0.07, p.darkened(0.2))
+		Draw.shaded(ci, Vector2(sx * s * 0.15, -s * 0.05), s * 0.1, s * 0.07, p.darkened(0.2))
 	if "shaggy" in extras:
 		_shaggy(ci, body, brx * 1.04, bry * 1.04, p.darkened(0.1), s)
-	Draw.ellipse(ci, body, brx, bry, p)
-	Draw.ellipse(ci, body + Vector2(0, s * 0.04), brx * 0.6, bry * 0.66, b)
+	Draw.shaded(ci, body, brx, bry, p)
+	Draw.shaded(ci, body + Vector2(0, s * 0.04), brx * 0.6, bry * 0.66, b)
+	_fur(ci, body, brx, bry, p.darkened(0.25), s, 11)
 	_pattern_body(ci, look, body, brx, bry, s)
 	# arms
 	var long_arms := "long_arms" in extras
 	for sx in [-1.0, 1.0]:
 		var ap := Vector2(sx * brx * 0.95, -s * (0.26 if long_arms else 0.32))
-		Draw.ellipse(ci, ap, s * 0.07, s * (0.17 if long_arms else 0.1), p.darkened(0.08), sx * 0.35)
+		Draw.shaded(ci, ap, s * 0.07, s * (0.17 if long_arms else 0.1), p.darkened(0.08), sx * 0.35)
 		var hand := ap + Vector2(sx * s * 0.04, s * (0.15 if long_arms else 0.08))
 		Draw.ellipse(ci, hand, s * 0.05, s * 0.04, col(look, "secondary") if "dark_hands" in extras else p.darkened(0.18))
 	# head
@@ -394,13 +451,13 @@ static func _mammal(ci: CanvasItem, look: Dictionary, s: float, anim: Dictionary
 		_shaggy(ci, h, hr * 1.06, hr * 1.0, p.darkened(0.1), s)
 	match head_k:
 		"long", "fox", "pointy":
-			Draw.ellipse(ci, h, hr * 0.9, hr * 0.96, p)
+			Draw.shaded(ci, h, hr * 0.9, hr * 0.96, p)
 		"blocky":
 			Draw.rrect(ci, Rect2(h - Vector2(hr * 1.0, hr * 0.85), Vector2(hr * 2.0, hr * 1.75)), hr * 0.6, p)
 		"otter", "civet":
-			Draw.ellipse(ci, h, hr * 1.0, hr * 0.88, p)
+			Draw.shaded(ci, h, hr * 1.0, hr * 0.88, p)
 		_:
-			Draw.ellipse(ci, h, hr * 1.0 * (1.05 if head_k == "elephant" else 1.0), hr * 0.95, p)
+			Draw.shaded(ci, h, hr * 1.0 * (1.05 if head_k == "elephant" else 1.0), hr * 0.95, p)
 	match String(look.get("pattern", "")):
 		"cap":
 			Draw.ellipse(ci, h + Vector2(0, -hr * 0.55), hr * 0.62, hr * 0.42, col(look, "secondary"))
@@ -410,7 +467,7 @@ static func _mammal(ci: CanvasItem, look: Dictionary, s: float, anim: Dictionary
 		"eye_rings":
 			for sx in [-1.0, 1.0]:
 				Draw.ellipse(ci, h + Vector2(sx * hr * 0.38, -hr * 0.05), hr * 0.36, hr * 0.38, col(look, "secondary"))
-			ci.draw_line(h + Vector2(0, -hr * 0.9), h + Vector2(0, -hr * 0.2), col(look, "secondary"), s * 0.02, true)
+			Draw.line(ci, h + Vector2(0, -hr * 0.9), h + Vector2(0, -hr * 0.2), col(look, "secondary"), s * 0.02, true)
 		"eye_patches":
 			Draw.ellipse(ci, h + Vector2(0, hr * 0.1), hr * 0.85, hr * 0.7, col(look, "face", "#f2f0ec"))
 			for sx in [-1.0, 1.0]:
@@ -426,12 +483,15 @@ static func _mammal(ci: CanvasItem, look: Dictionary, s: float, anim: Dictionary
 			_spots(ci, h + Vector2(0, -hr * 0.45), hr * 0.6, hr * 0.32, col(look, "secondary"), 3, s * 0.02, 37)
 		"scales":
 			for k in range(-1, 2):
-				ci.draw_arc(h + Vector2(k * hr * 0.4, -hr * 0.5), s * 0.05, 0.2, PI - 0.2, 8, col(look, "secondary"), s * 0.016, true)
+				Draw.arc(ci, h + Vector2(k * hr * 0.4, -hr * 0.5), s * 0.05, 0.2, PI - 0.2, 8, col(look, "secondary"), s * 0.016, true)
 		"spines":
 			for k2 in range(-3, 4):
 				var bp := h + Vector2(k2 * hr * 0.25, -hr * 0.75 + absf(k2) * hr * 0.1)
-				ci.draw_colored_polygon(PackedVector2Array([bp + Vector2(-s * 0.02, s * 0.03), bp + Vector2(k2 * s * 0.01, -s * 0.07), bp + Vector2(s * 0.02, s * 0.03)]), col(look, "secondary"))
+				Draw.poly(ci, PackedVector2Array([bp + Vector2(-s * 0.02, s * 0.03), bp + Vector2(k2 * s * 0.01, -s * 0.07), bp + Vector2(s * 0.02, s * 0.03)]), col(look, "secondary"))
 	_snout(ci, look, h, hr, s)
+	if not head_k in ["elephant", "pointy"] and not String(look.get("pattern", "")) in ["scales", "spines"]:
+		_fur(ci, h + Vector2(0, -hr * 0.2), hr * 0.9, hr * 0.7, p.darkened(0.2), s, 23, 7)
+	_blush(ci, h + Vector2(0, hr * 0.28), hr * 0.62, s)
 	_eyes(ci, look, h + Vector2(0, -hr * 0.05), hr * 0.4, s, anim)
 	_extras_head(ci, look, h, hr, s)
 
@@ -448,15 +508,15 @@ static func _bird(ci: CanvasItem, look: Dictionary, s: float, anim: Dictionary) 
 	# tail behind
 	match String(look.get("tail", "short")):
 		"long":
-			ci.draw_colored_polygon(PackedVector2Array([body + Vector2(-s * 0.08, s * 0.1), body + Vector2(s * 0.08, s * 0.1), body + Vector2(s * 0.03, s * 0.62), body + Vector2(-s * 0.03, s * 0.62)]), p.darkened(0.05))
-			ci.draw_line(body + Vector2(0, s * 0.2), body + Vector2(0, s * 0.6), col(look, "wing2", "#2a6fe0"), s * 0.03, true)
+			Draw.poly(ci, PackedVector2Array([body + Vector2(-s * 0.08, s * 0.1), body + Vector2(s * 0.08, s * 0.1), body + Vector2(s * 0.03, s * 0.62), body + Vector2(-s * 0.03, s * 0.62)]), p.darkened(0.05))
+			Draw.line(ci, body + Vector2(0, s * 0.2), body + Vector2(0, s * 0.6), col(look, "wing2", "#2a6fe0"), s * 0.03, true)
 		"streamers":
 			for sx in [-1.0, 1.0]:
 				var pts := PackedVector2Array()
 				for i in 10:
 					var k := i / 9.0
 					pts.append(body + Vector2(sx * (s * 0.04 + k * s * 0.32 + sin(t * 2.0 + k * 3.0) * s * 0.03), s * 0.1 + k * s * 0.36))
-				ci.draw_polyline(pts, sec, s * 0.045, true)
+				Draw.polyline(ci, pts, sec, s * 0.045, true)
 		"plumes":
 			for i in 7:
 				var a := -0.3 + i * 0.1
@@ -475,13 +535,14 @@ static func _bird(ci: CanvasItem, look: Dictionary, s: float, anim: Dictionary) 
 	# legs
 	if flightless:
 		for sx in [-1.0, 1.0]:
-			ci.draw_line(Vector2(sx * s * 0.1, -s * 0.2), Vector2(sx * s * 0.12, -s * 0.02), Color("6a6a5a"), s * 0.045, true)
+			Draw.line(ci, Vector2(sx * s * 0.1, -s * 0.2), Vector2(sx * s * 0.12, -s * 0.02), Color("6a6a5a"), s * 0.045, true)
 			Draw.ellipse(ci, Vector2(sx * s * 0.13, -s * 0.02), s * 0.07, s * 0.03, Color("5a5a4a"))
 	else:
 		for sx in [-1.0, 1.0]:
 			Draw.ellipse(ci, Vector2(sx * s * 0.09, -s * 0.05), s * 0.06, s * 0.035, Color("4a3a2a"))
-	Draw.ellipse(ci, body, s * (0.3 if flightless else 0.26), s * (0.3 if flightless else 0.31), p)
-	Draw.ellipse(ci, body + Vector2(0, s * 0.06), s * 0.17, s * 0.22, b)
+	Draw.shaded(ci, body, s * (0.3 if flightless else 0.26), s * (0.3 if flightless else 0.31), p)
+	Draw.shaded(ci, body + Vector2(0, s * 0.06), s * 0.17, s * 0.22, b)
+	_feathers(ci, body + Vector2(0, s * 0.08), s * 0.14, s * 0.16, b.darkened(0.15), s)
 	if "chest_band" in extras:
 		Draw.ellipse(ci, body + Vector2(0, -s * 0.12), s * 0.2, s * 0.06, sec)
 	_pattern_body(ci, look, body, s * 0.22, s * 0.26, s)
@@ -489,17 +550,18 @@ static func _bird(ci: CanvasItem, look: Dictionary, s: float, anim: Dictionary) 
 	var flap := sin(t * 3.0) * 0.08 if not flightless else 0.0
 	for sx in [-1.0, 1.0]:
 		var wc := body + Vector2(sx * s * 0.25, -s * 0.02)
-		Draw.ellipse(ci, wc, s * 0.09, s * 0.22, sec if not flightless else p.darkened(0.1), sx * (0.25 + flap))
+		Draw.shaded(ci, wc, s * 0.09, s * 0.22, sec if not flightless else p.darkened(0.1), sx * (0.25 + flap))
+		_wing_lines(ci, wc, s, sx * (0.25 + flap), (sec if not flightless else p).darkened(0.3))
 		if look.get("colors", {}).has("wing2"):
 			Draw.ellipse(ci, wc + Vector2(0, s * 0.1), s * 0.07, s * 0.1, col(look, "wing2"), sx * (0.25 + flap))
 	# head
 	var h := Vector2(0, -s * (0.84 if flightless else 0.72))
 	var hr := s * (0.17 if flightless else 0.2)
 	if flightless:
-		ci.draw_line(h + Vector2(0, hr * 0.5), body + Vector2(0, -s * 0.2), acc, s * 0.13, true)
+		Draw.line(ci, h + Vector2(0, hr * 0.5), body + Vector2(0, -s * 0.2), acc, s * 0.13, true)
 		for sx in [-1.0, 1.0]:
 			Draw.ellipse(ci, body + Vector2(sx * s * 0.05, -s * 0.24), s * 0.035, s * 0.08, col(look, "wattle", "#e0242c"))
-	Draw.ellipse(ci, h, hr, hr * 1.0, p if not look.get("colors", {}).has("throat") else acc)
+	Draw.shaded(ci, h, hr, hr * 1.0, p if not look.get("colors", {}).has("throat") else acc)
 	if look.get("colors", {}).has("throat"):
 		Draw.ellipse(ci, h + Vector2(0, hr * 0.6), hr * 0.8, hr * 0.45, col(look, "throat"))
 	if "blue_neck" in extras:
@@ -518,11 +580,11 @@ static func _bird(ci: CanvasItem, look: Dictionary, s: float, anim: Dictionary) 
 			Draw.ellipse(ci, h + Vector2(0, hr * 1.0), hr * 0.36, hr * 0.95, acc)
 			Draw.ellipse(ci, h + Vector2(0, hr * 0.2), hr * 0.42, hr * 0.5, col(look, "casque", "#f05a1e"))
 		"hooked":
-			ci.draw_colored_polygon(PackedVector2Array([h + Vector2(-hr * 0.3, hr * 0.2), h + Vector2(hr * 0.3, hr * 0.2), h + Vector2(hr * 0.1, hr * 0.85), h + Vector2(0, hr * 0.95), h + Vector2(-hr * 0.05, hr * 0.7)]), col(look, "beak_tip", "#1a1a1a"))
+			Draw.poly(ci, PackedVector2Array([h + Vector2(-hr * 0.3, hr * 0.2), h + Vector2(hr * 0.3, hr * 0.2), h + Vector2(hr * 0.1, hr * 0.85), h + Vector2(0, hr * 0.95), h + Vector2(-hr * 0.05, hr * 0.7)]), col(look, "beak_tip", "#1a1a1a"))
 		"dagger":
-			ci.draw_colored_polygon(PackedVector2Array([h + Vector2(-hr * 0.25, hr * 0.15), h + Vector2(hr * 0.25, hr * 0.15), h + Vector2(0, hr * 1.2)]), Color("3a3a32"))
+			Draw.poly(ci, PackedVector2Array([h + Vector2(-hr * 0.25, hr * 0.15), h + Vector2(hr * 0.25, hr * 0.15), h + Vector2(0, hr * 1.2)]), Color("3a3a32"))
 		_:
-			ci.draw_colored_polygon(PackedVector2Array([h + Vector2(-hr * 0.25, hr * 0.2), h + Vector2(hr * 0.25, hr * 0.2), h + Vector2(0, hr * 0.7)]), col(look, "beak_tip", "#d8c060"))
+			Draw.poly(ci, PackedVector2Array([h + Vector2(-hr * 0.25, hr * 0.2), h + Vector2(hr * 0.25, hr * 0.2), h + Vector2(0, hr * 0.7)]), col(look, "beak_tip", "#d8c060"))
 	if "casque" in extras and look.get("beak") != "huge_curved":
 		Draw.ellipse(ci, h + Vector2(0, -hr * 1.0), hr * 0.42, hr * 0.5, col(look, "casque", "#8a6a3a"))
 	if "crest" in extras:
@@ -546,8 +608,8 @@ static func _frog(ci: CanvasItem, look: Dictionary, s: float, anim: Dictionary) 
 		else:
 			Draw.ellipse(ci, foot, s * 0.07, s * 0.035, p.darkened(0.22))
 	var body := Vector2(0, -s * 0.28)
-	Draw.ellipse(ci, body, s * 0.34 * k, s * 0.27 * k, p)
-	Draw.ellipse(ci, body + Vector2(0, s * 0.07), s * 0.22 * k, s * 0.16 * k, b)
+	Draw.shaded(ci, body, s * 0.34 * k, s * 0.27 * k, p)
+	Draw.shaded(ci, body + Vector2(0, s * 0.07), s * 0.22 * k, s * 0.16 * k, b)
 	_pattern_body(ci, look, body + Vector2(0, -s * 0.03), s * 0.3 * k, s * 0.22 * k, s)
 	# front legs
 	for sx in [-1.0, 1.0]:
@@ -555,11 +617,12 @@ static func _frog(ci: CanvasItem, look: Dictionary, s: float, anim: Dictionary) 
 		Draw.ellipse(ci, Vector2(sx * s * 0.19, -s * 0.02), s * 0.05, s * 0.025, col(look, "accent") if look.get("pattern") == "side_bars" else p.darkened(0.25))
 	# head
 	var h := Vector2(0, -s * 0.5 * k)
-	Draw.ellipse(ci, h, s * 0.3 * k, s * 0.18, p)
+	Draw.shaded(ci, h, s * 0.3 * k, s * 0.18, p)
+	_blush(ci, h + Vector2(0, s * 0.05), s * 0.2, s)
 	for sx in [-1.0, 1.0]:
 		Draw.ellipse(ci, h + Vector2(sx * s * 0.18, -s * 0.12), s * 0.1, s * 0.1, p)
 	_eyes(ci, look, h + Vector2(0, -s * 0.12), s * 0.18, s * 1.05, anim, "big" if look.get("eyes", "") == "" and col(look, "eye").get_luminance() > 0.2 else "")
-	ci.draw_arc(h + Vector2(0, s * 0.0), s * 0.16, 0.35, PI - 0.35, 10, p.darkened(0.45), maxf(1.5, s * 0.016), true)
+	Draw.arc(ci, h + Vector2(0, s * 0.0), s * 0.16, 0.35, PI - 0.35, 10, p.darkened(0.45), maxf(1.5, s * 0.016), true)
 	if look.get("pattern") == "spots":
 		_spots(ci, h + Vector2(0, -s * 0.02), s * 0.22, s * 0.08, col(look, "secondary"), 3, s * 0.025, 41)
 
@@ -577,8 +640,8 @@ static func _snake(ci: CanvasItem, look: Dictionary, s: float, anim: Dictionary)
 		var ry := s * (0.12 - i * 0.015)
 		var pts := Draw.ellipse_points(c, rx, ry, 0.0, 28)
 		pts.append(pts[0])
-		ci.draw_polyline(pts, p.darkened(0.2), w * 1.15, true)
-		ci.draw_polyline(pts, p, w, true)
+		Draw.polyline(ci, pts, p.darkened(0.2), w * 1.15, true)
+		Draw.polyline(ci, pts, p, w, true)
 		if look.get("pattern") == "spots":
 			for k in 6:
 				var a := TAU * k / 6.0 + i
@@ -590,14 +653,14 @@ static func _snake(ci: CanvasItem, look: Dictionary, s: float, anim: Dictionary)
 	# neck + head
 	var sway := sin(t * 2.0) * s * 0.03
 	var neck := PackedVector2Array([Vector2(s * 0.12, -s * 0.36), Vector2(s * 0.06 + sway, -s * 0.5), Vector2(sway, -s * 0.62)])
-	ci.draw_polyline(neck, p, w, true)
-	ci.draw_line(neck[0], neck[2], b, w * 0.4, true)
+	Draw.polyline(ci, neck, p, w, true)
+	Draw.line(ci, neck[0], neck[2], b, w * 0.4, true)
 	var h := Vector2(sway, -s * 0.72)
-	Draw.ellipse(ci, h, s * 0.17, s * 0.13, p)
+	Draw.shaded(ci, h, s * 0.17, s * 0.13, p)
 	Draw.ellipse(ci, h + Vector2(0, s * 0.06), s * 0.12, s * 0.06, p.lightened(0.1))
 	_eyes(ci, look, h + Vector2(0, -s * 0.03), s * 0.1, s, anim)
 	if int(t * 1.3) % 3 == 0:
-		ci.draw_line(h + Vector2(0, s * 0.11), h + Vector2(0, s * 0.19), Color("d8242a"), s * 0.015, true)
+		Draw.line(ci, h + Vector2(0, s * 0.11), h + Vector2(0, s * 0.19), Color("d8242a"), s * 0.015, true)
 
 
 static func _lizard(ci: CanvasItem, look: Dictionary, s: float, anim: Dictionary) -> void:
@@ -611,22 +674,22 @@ static func _lizard(ci: CanvasItem, look: Dictionary, s: float, anim: Dictionary
 		var r := s * (0.2 - 0.15 * k)
 		var a := k * 4.5
 		pts.append(Vector2(s * 0.2, -s * 0.12) + Vector2(cos(a), sin(a)) * r)
-	ci.draw_polyline(pts, p.darkened(0.08), s * 0.07, true)
+	Draw.polyline(ci, pts, p.darkened(0.08), s * 0.07, true)
 	var body := Vector2(0, -s * 0.34)
-	Draw.ellipse(ci, body, s * 0.25, s * 0.26, p)
+	Draw.shaded(ci, body, s * 0.25, s * 0.26, p)
 	_stripes(ci, body, s * 0.25, s * 0.26, sec, 3, s * 0.05, true)
 	Draw.ellipse(ci, body + Vector2(0, s * 0.12), s * 0.14, s * 0.08, acc)
 	for sx in [-1.0, 1.0]:
-		ci.draw_line(Vector2(sx * s * 0.15, -s * 0.2), Vector2(sx * s * 0.22, -s * 0.03), p.darkened(0.15), s * 0.05, true)
+		Draw.line(ci, Vector2(sx * s * 0.15, -s * 0.2), Vector2(sx * s * 0.22, -s * 0.03), p.darkened(0.15), s * 0.05, true)
 	var h := Vector2(0, -s * 0.68)
-	ci.draw_colored_polygon(PackedVector2Array([h + Vector2(-s * 0.18, s * 0.06), h + Vector2(0, -s * 0.26), h + Vector2(s * 0.18, s * 0.06), h + Vector2(0, s * 0.16)]), p)
+	Draw.poly(ci, PackedVector2Array([h + Vector2(-s * 0.18, s * 0.06), h + Vector2(0, -s * 0.26), h + Vector2(s * 0.18, s * 0.06), h + Vector2(0, s * 0.16)]), p)
 	Draw.ellipse(ci, h + Vector2(0, s * 0.03), s * 0.18, s * 0.13, p)
 	for sx in [-1.0, 1.0]:
 		var e := h + Vector2(sx * s * 0.14, -s * 0.0)
 		Draw.ellipse(ci, e, s * 0.075, s * 0.075, acc)
 		var look_dir := sin(float(anim.get("t", 0.0)) * 1.3 + sx) * s * 0.02
 		Draw.ellipse(ci, e + Vector2(look_dir, 0), s * 0.03, s * 0.03, Color("111111"))
-	ci.draw_arc(h + Vector2(0, s * 0.06), s * 0.08, 0.3, PI - 0.3, 8, p.darkened(0.4), maxf(1.0, s * 0.012), true)
+	Draw.arc(ci, h + Vector2(0, s * 0.06), s * 0.08, 0.3, PI - 0.3, 8, p.darkened(0.4), maxf(1.0, s * 0.012), true)
 
 
 static func _glider(ci: CanvasItem, look: Dictionary, s: float, anim: Dictionary) -> void:
@@ -637,11 +700,11 @@ static func _glider(ci: CanvasItem, look: Dictionary, s: float, anim: Dictionary
 	var c := Vector2(0, -s * 0.36)
 	var pts := PackedVector2Array([c + Vector2(-s * 0.42 * spread, -s * 0.2), c + Vector2(s * 0.42 * spread, -s * 0.2),
 		c + Vector2(s * 0.38 * spread, s * 0.28), c + Vector2(0, s * 0.36), c + Vector2(-s * 0.38 * spread, s * 0.28)])
-	ci.draw_colored_polygon(pts, p.darkened(0.12))
+	Draw.poly(ci, pts, p.darkened(0.12))
 	var edge := pts.duplicate()
 	edge.append(pts[0])
-	ci.draw_polyline(edge, p.darkened(0.3), s * 0.02, true)
-	Draw.ellipse(ci, c, s * 0.18, s * 0.27, p)
+	Draw.polyline(ci, edge, p.darkened(0.3), s * 0.02, true)
+	Draw.shaded(ci, c, s * 0.18, s * 0.27, p)
 	Draw.ellipse(ci, c + Vector2(0, s * 0.05), s * 0.1, s * 0.17, b)
 	_pattern_body(ci, look, c, s * 0.18, s * 0.27, s)
 	for sx in [-1.0, 1.0]:
@@ -650,7 +713,26 @@ static func _glider(ci: CanvasItem, look: Dictionary, s: float, anim: Dictionary
 	var h := Vector2(0, -s * 0.72)
 	for sx in [-1.0, 1.0]:
 		Draw.ellipse(ci, h + Vector2(sx * s * 0.13, -s * 0.12), s * 0.06, s * 0.07, p.darkened(0.05))
-	Draw.ellipse(ci, h, s * 0.2, s * 0.18, p)
+	Draw.shaded(ci, h, s * 0.2, s * 0.18, p)
+	_blush(ci, h + Vector2(0, s * 0.06), s * 0.12, s)
 	Draw.ellipse(ci, h + Vector2(0, s * 0.08), s * 0.1, s * 0.07, b)
 	_eyes(ci, look, h + Vector2(0, -s * 0.02), s * 0.09, s, anim)
 	Draw.ellipse(ci, h + Vector2(0, s * 0.06), s * 0.022, s * 0.016, Color("2a1a14"))
+
+
+static func _feathers(ci: CanvasItem, c: Vector2, rx: float, ry: float, color: Color, s: float) -> void:
+	if Draw.outline > 0.0 or Draw.detail < 2 or s < 90.0:
+		return
+	for row in 3:
+		for k in range(-1, 2):
+			var p := c + Vector2(k * rx * 0.55 + (row % 2) * rx * 0.27, -ry * 0.5 + row * ry * 0.45)
+			Draw.arc(ci, p, s * 0.035, 0.3, PI - 0.3, 8, color, maxf(1.0, s * 0.008), true)
+
+
+static func _wing_lines(ci: CanvasItem, wc: Vector2, s: float, rot: float, color: Color) -> void:
+	if Draw.outline > 0.0 or Draw.detail < 2 or s < 90.0:
+		return
+	for k in 3:
+		var a := wc + Vector2(0, s * (0.02 + k * 0.06)).rotated(rot)
+		var b := a + Vector2(0, s * 0.1).rotated(rot)
+		Draw.line(ci, a, b, color, maxf(1.0, s * 0.008), true)
