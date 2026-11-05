@@ -232,7 +232,9 @@ If no rewarded video loads, the player gets the reward anyway.
 | Icons and splash | Edit `tools/gen-icons.mjs`, then run `npm run gen:icons` and `npx capacitor-assets generate --ios --android`. |
 | Campaign sectors | `src/data/sectors.js` |
 | Achievements | `src/data/achievements.js` |
-| Symbol sets | `src/data/symbols.js` (9 SVGs + names each) |
+| Glyph lineups | `src/data/glyphs/<lineup>.js`: 9 SVG symbols (viewBox 64×64), names, colors and gradient defs. Check the art with `node tools/glyph-sheet.mjs <lineup>`, which renders a contact sheet at game sizes. |
+| Lineup themes | `src/data/themes.js` for colors, fonts, radius, glow and backdrop; `src/styles/themes.css` for each style's extra touches |
+| Scoring | `src/game/session.js` (`DIFF_MULT`, `COMBO_WINDOW_MS`, points constants) |
 | Lives, free hints | `src/game/session.js` (`MAX_MISTAKES`, `FREE_HINTS`) |
 | Ad frequency | `src/platform/ads.js` |
 | Version | `package.json`, `desktop/package.json`, `APP_VERSION` in the workflow. Android and iOS build numbers come from the CI run number. |

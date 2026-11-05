@@ -53,13 +53,21 @@ describe('profile', () => {
     expect(P.levelRecord(0, 0).stars).toBe(3);
     for (let l = 1; l < 9; l++) P.recordResult(win({ mode: 'campaign', sector: 0, level: l }));
     expect(P.isSectorUnlocked(1)).toBe(true);
-    // Finishing sector 3 (index 2) unlocks sector 4's symbol set.
+    // Finishing sector 3 (index 2) unlocks sector 4's lineup (Alien Creatures).
     for (let s = 1; s <= 2; s++) for (let l = 0; l < 9; l++) {
       const res = P.recordResult(win({ mode: 'campaign', sector: s, level: l }));
-      if (s === 2 && l === 8) expect(res.unlockedSets).toEqual(['spaceships']);
+      if (s === 2 && l === 8) expect(res.unlockedSets).toEqual(['creatures']);
     }
-    expect(P.isSetUnlocked('spaceships')).toBe(true);
+    expect(P.isSetUnlocked('creatures')).toBe(true);
     expect(P.nextCampaignLevel()).toEqual({ sector: 3, level: 0 });
+    // Reaching the last sector unlocks Ancient Mysteries; finishing it awards the Cosmic Mix.
+    for (let s = 3; s <= 4; s++) for (let l = 0; l < 9; l++) P.recordResult(win({ mode: 'campaign', sector: s, level: l }));
+    expect(P.isSetUnlocked('ancient')).toBe(true);
+    expect(P.isSetUnlocked('mixed')).toBe(false);
+    let last;
+    for (let l = 0; l < 9; l++) last = P.recordResult(win({ mode: 'campaign', sector: 5, level: l }));
+    expect(last.unlockedSets).toEqual(['mixed']);
+    expect(last.achievements.map((a) => a.id)).toContain('collector');
   });
 
   it('daily: streak grows only on consecutive days, played on the day', () => {
@@ -103,7 +111,7 @@ describe('profile', () => {
     expect(P.settings().symbolSet).toBe('planets');
     await P.resetEverything();
     expect(P.settings().music).toBe(false);
-    expect(P.settings().symbolSet).toBe('alien');
+    expect(P.settings().symbolSet).toBe('encounters');
   });
 
   it('saved game store/clear', () => {
@@ -122,5 +130,32 @@ describe('time helpers', () => {
     expect(t.formatTime(3_725_000)).toBe('1:02:05');
     expect(t.addDays('2026-03-01', -1)).toBe('2026-02-28');
     expect(t.addDays('2024-12-31', 1)).toBe('2025-01-01');
+  });
+});
+
+describe('profile migration', () => {
+  it('maps old lineup keys and rebuilds unlocks from campaign progress', async () => {
+    vi.resetModules();
+    const storage = await import('../../src/core/storage.js');
+    await storage.initStorage();
+    const levels = {};
+    for (let s = 0; s <= 2; s++) for (let l = 0; l < 9; l++) levels[`${s}-${l}`] = { stars: 3, bestMs: 1000 };
+    storage.save('profile', { settings: { symbolSet: 'spaceships' }, unlockedSets: ['alien', 'moons', 'spaceships'], campaign: { levels } });
+    const P = await import('../../src/core/profile.js');
+    P.initProfile();
+    expect(P.settings().symbolSet).toBe('creatures');
+    expect(P.getProfile().unlockedSets).toEqual(expect.arrayContaining(['encounters', 'fleet', 'planets', 'cosmos', 'creatures']));
+    expect(P.isSetUnlocked('ancient')).toBe(false);
+    expect(P.getProfile().unlockedSets).not.toContain('alien');
+  });
+
+  it('records best score and best combo', async () => {
+    const P = await loadProfile();
+    P.recordResult(win({ difficulty: 'hard', score: 4200, bestCombo: 12 }));
+    const r = P.recordResult(win({ difficulty: 'hard', score: 5100, bestCombo: 3 }));
+    expect(r.newHighScore).toBe(true);
+    expect(P.getProfile().stats.byDiff.hard.bestScore).toBe(5100);
+    expect(P.getProfile().stats.totals.bestCombo).toBe(12);
+    expect(r.achievements.map((a) => a.id)).toContain('score-5k');
   });
 });

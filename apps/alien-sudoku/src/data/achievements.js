@@ -3,7 +3,7 @@
    evaluating after a non-game event such as unlocking a symbol set). */
 
 import { SECTORS, LEVELS_PER_SECTOR, MAX_STARS } from './sectors.js';
-import { SYMBOL_SET_ORDER } from './symbols.js';
+import { SYMBOL_SET_ORDER } from './glyphs/index.js';
 
 const MIN = 60_000;
 const won = (r) => r && r.won;
@@ -25,6 +25,8 @@ export const ACHIEVEMENTS = [
   { id: 'alien-ace', icon: '👑', name: 'Fluent in Alien', desc: 'Win an Alien puzzle with no mistakes or hints.', check: ({ result }) => clean(result) && result.difficulty === 'alien' },
   { id: 'no-help', icon: '🧠', name: 'No Help Needed', desc: 'Win a Hard or Alien puzzle without hints.', check: ({ result }) => won(result) && result.hints === 0 && (result.difficulty === 'hard' || result.difficulty === 'alien') },
   { id: 'comeback', icon: '❤️‍🔥', name: 'Second Wind', desc: 'Win after using a second chance.', check: ({ result }) => won(result) && result.revived },
+  { id: 'combo-10', icon: '🔗', name: 'Chain Reaction', desc: 'Reach a ×10 combo.', check: ({ result }) => (result?.bestCombo || 0) >= 10 },
+  { id: 'score-5k', icon: '💯', name: 'High Scorer', desc: 'Score 5,000 points in one puzzle.', check: ({ result }) => won(result) && !result.zen && (result.score || 0) >= 5000 },
   { id: 'night-owl', icon: '🦉', name: 'Night Owl', desc: 'Win a puzzle between midnight and 5 AM.', check: ({ result }) => won(result) && new Date().getHours() < 5 },
   { id: 'wins-10', icon: '🎖️', name: 'Decoder Cadet', desc: 'Win 10 puzzles.', check: ({ profile }) => totalWins(profile) >= 10 },
   { id: 'wins-50', icon: '🏅', name: 'Decoder Veteran', desc: 'Win 50 puzzles.', check: ({ profile }) => totalWins(profile) >= 50 },

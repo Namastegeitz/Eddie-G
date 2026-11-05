@@ -18,7 +18,9 @@ import { haptic } from '../../platform/native.js';
 import { adsSupported, showRewarded, noteGameFinished, maybeShowInterstitial } from '../../platform/ads.js';
 import { openModal, confirmModal, toast } from '../modal.js';
 import { randomBackground } from '../background.js';
-import { setKeyFor, glyphSvg, glyphName } from '../glyphs.js';
+import { setKeyFor, glyphSvg, glyphName, glyphColor } from '../glyphs.js';
+import { createParticles } from '../particles.js';
+import { THEMES } from '../../data/themes.js';
 import { on } from '../../core/events.js';
 
 const DIFF_LABEL = { easy: 'Easy', medium: 'Medium', hard: 'Hard', alien: 'Alien' };
@@ -76,6 +78,7 @@ export const playScreen = {
   keepAlive: true,
   banner: true,
   bg: (params, inst) => inst?.session?.bg || null,
+  theme: (params, inst) => (inst?.session ? setKeyFor(inst.session) : null),
 
   create(params, nav) {
     // ---------- Session ----------
@@ -110,6 +113,9 @@ export const playScreen = {
     // ---------- DOM ----------
     const t = sessionTitle(session);
     const timerEl = h('span', { class: 'hud-timer-value' }, '0:00');
+    const scoreVal = h('b', {}, '0');
+    const comboEl = h('span', { class: 'combo-badge', hidden: true });
+    const scoreEl = h('span', { class: 'hud-score', 'aria-label': 'Score' }, scoreVal, comboEl);
     const livesEl = h('div', { class: 'hud-lives', 'aria-label': 'Lives' });
     const statusEl = h('div', { class: 'status-line', role: 'status', 'aria-live': 'polite' });
     const boardEl = h('div', { class: 'board', role: 'grid', 'aria-label': 'Sudoku board' });
@@ -121,7 +127,10 @@ export const playScreen = {
     const pauseCover = h('div', { class: 'pause-cover', hidden: true },
       h('div', { class: 'pause-cover-text' }, 'Transmission paused'),
       h('button', { class: 'btn btn-primary', type: 'button', onclick: () => resume() }, icon('play'), h('span', {}, 'Resume')));
-    const boardWrap = h('div', { class: 'board-wrap' }, boardEl, constEl, pauseCover);
+    const fxLayer = h('div', { class: 'fx-layer', 'aria-hidden': 'true' });
+    const boardWrap = h('div', { class: 'board-wrap' }, boardEl, constEl, fxLayer, pauseCover);
+    const fx = createParticles(boardWrap);
+    fx.setEnabled(!settings().reduceMotion);
     const boardArea = h('div', { class: 'board-area' }, boardWrap);
 
     const cells = [];
@@ -173,6 +182,7 @@ export const playScreen = {
         h('div', { class: 'hud-row' },
           h('span', { class: `diff-chip diff-${session.difficulty}` }, DIFF_LABEL[session.difficulty]),
           livesEl,
+          scoreEl,
           h('span', { class: 'hud-timer' }, icon('bolt', 'hud-timer-ico'), timerEl)),
         boardArea,
         statusEl,
@@ -186,6 +196,23 @@ export const playScreen = {
       const r = boardArea.getBoundingClientRect();
       const size = Math.floor(Math.max(180, Math.min(r.width, r.height)));
       boardWrap.style.setProperty('--board', `${size}px`);
+      fx.resize();
+    }
+
+    /** Center of a cell in board-wrap pixels (for particles and score pops). */
+    function cellCenter(i) {
+      const wr = boardWrap.getBoundingClientRect();
+      const cr = cells[i].getBoundingClientRect();
+      return [cr.left - wr.left + cr.width / 2, cr.top - wr.top + cr.height / 2];
+    }
+
+    function scorePop(i, points, combo) {
+      if (!points || session.zen) return;
+      const [x, y] = cellCenter(i);
+      const pop = h('span', { class: 'score-pop', style: { left: `${x}px`, top: `${y}px` } }, `+${points}`, combo >= 2 ? h('small', {}, `×${combo}`) : null);
+      pop.style.setProperty('--gc', glyphColor(setKeyFor(session), session.board[i] || 1));
+      fxLayer.appendChild(pop);
+      setTimeout(() => pop.remove(), 1000);
     }
 
     // ---------- Rendering ----------
@@ -216,6 +243,7 @@ export const playScreen = {
         const cell = cells[i];
         cell.className = cell.className.split(' ').filter((c) => c === 'cell' || c === 'bt' || c === 'bl' || c === 'br' || c === 'bb').concat(cls).join(' ');
         if (v) {
+          cell.style.setProperty('--gc', glyphColor(setKey, v));
           cell.innerHTML = `<span class="cell-glyph">${glyphSvg(setKey, v)}</span>`;
           cell.setAttribute('aria-label', `Row ${rowOf(i) + 1}, column ${colOf(i) + 1}: ${glyphName(setKey, v)}`);
         } else if (notes) {
@@ -235,7 +263,19 @@ export const playScreen = {
       renderPalette(setKey);
       renderTools();
       renderLives();
+      renderScore();
       renderTimer();
+    }
+
+    let lastCombo = 0;
+    function renderScore() {
+      scoreEl.hidden = session.zen;
+      scoreVal.textContent = session.score.toLocaleString();
+      const combo = session.status === 'playing' ? session.combo : 0;
+      comboEl.hidden = combo < 2;
+      comboEl.textContent = `×${combo}`;
+      if (combo >= 2 && combo !== lastCombo) { comboEl.classList.remove('bump'); void comboEl.offsetWidth; comboEl.classList.add('bump'); }
+      lastCombo = combo;
     }
 
     function renderConstellation(v) {
@@ -266,6 +306,7 @@ export const playScreen = {
         const b = paletteBtns[v - 1];
         if (paletteSetKey !== setKey) {
           b.querySelector('.glyph-svg').innerHTML = set.svgs[v - 1];
+          b.style.setProperty('--gc', set.colors[v - 1]);
           b.setAttribute('aria-label', `${notesMode ? 'Note' : 'Place'} ${set.names[v - 1]}`);
           b.title = set.names[v - 1];
         }
@@ -340,6 +381,12 @@ export const playScreen = {
       selected = i;
       sfx.select();
       haptic('select');
+      const v = session.board[i];
+      if (v) {
+        const setKey = setKeyFor(session);
+        const left = session.remaining(v);
+        setStatus(`${glyphName(setKey, v)}${left ? ` · ${left} still hidden` : ' · all found'}`, 'name');
+      } else if (statusEl.classList.contains('name')) setStatus('');
       render();
     }
 
@@ -349,6 +396,8 @@ export const playScreen = {
         armed = armed === v ? null : v;
         sfx.select();
         haptic('select');
+        if (armed) setStatus(`${glyphName(setKeyFor(session), v)} ready: tap empty cells to place it`, 'name');
+        else setStatus('');
         if (armed && selected != null && !session.fixed[selected] && !session.board[selected]) {
           applyGlyph(selected, v);
           return;
@@ -402,16 +451,24 @@ export const playScreen = {
         haptic('light');
         setStatus('');
         if (session.remaining(v) === 0 && armed === v) armed = null;
-        afterPlacement(r);
+        afterPlacement(r, i);
       }
     }
 
-    function afterPlacement(r) {
+    function afterPlacement(r, i) {
+      const setKey = setKeyFor(session);
+      const color = glyphColor(setKey, session.board[i]);
+      flashing.set(i, 'pop');
+      setTimeout(() => { if (flashing.get(i) === 'pop') { flashing.delete(i); cellCache[i] = ''; render(); } }, 650);
+      const [x, y] = cellCenter(i);
+      fx.burst(x, y, color, r.combo >= 5 ? 22 : 14);
+      scorePop(i, r.points, r.combo);
       if (r.units?.length) {
         const unitCells = new Set();
         for (const k of r.units) for (const c of session.unitCells(k)) unitCells.add(c);
         if (!r.won) { sfx.complete(); haptic('medium'); }
-        flash([...unitCells], 'complete-flash', 1500);
+        fx.shower([...unitCells].map(cellCenter), `rgb(${THEMES[setKey]?.rgb.c1 || '57, 255, 156'})`);
+        flash([...unitCells].filter((c) => c !== i), 'complete-flash', 1500);
       } else {
         render();
       }
@@ -485,7 +542,7 @@ export const playScreen = {
         flash(session.unitCells(key).filter((c) => c !== r.i), 'hint-unit', 1600);
       }
       flash([r.i], 'hint-reveal', 1300);
-      afterPlacement(r);
+      afterPlacement(r, r.i);
     }
 
     // ---------- Keyboard ----------
@@ -600,6 +657,7 @@ export const playScreen = {
         mode: session.mode, difficulty: session.difficulty, won, ms: Math.round(session.elapsedMs),
         mistakes: session.mistakes, hints: session.hints, revived: session.revived, notes: session.notesPlaced,
         zen: session.zen, sector: session.sector, level: session.level, date: session.date,
+        score: session.score, bestCombo: session.bestCombo,
       };
     }
 
@@ -617,6 +675,8 @@ export const playScreen = {
       haptic('success');
       boardWrap.classList.add('won');
       render();
+      const wr = boardWrap.getBoundingClientRect();
+      fx.fireworks(SYMBOL_SETS[setKeyFor(session)].colors, wr.width, wr.height);
       setStatus('Transmission decoded!', 'success');
       setTimeout(() => showWinModal(res), 1100);
     }
@@ -627,6 +687,11 @@ export const playScreen = {
       const body = [
         !session.zen ? h('div', { class: 'stars-row', 'aria-label': `${stars} of 3 stars` },
           [1, 2, 3].map((n) => h('span', { class: `big-star${n <= stars ? ' on' : ''}`, style: { animationDelay: `${n * 0.18}s` } }, icon('star')))) : null,
+        !session.zen ? h('div', { class: 'result-score' },
+          h('small', {}, 'Score'),
+          h('b', {}, session.score.toLocaleString()),
+          h('span', {}, `includes +${session.winBonus.toLocaleString()} finish bonus · best combo ×${session.bestCombo}`),
+          res.newHighScore ? h('span', { class: 'badge-new' }, 'New high score!') : null) : null,
         h('div', { class: 'result-grid' },
           resultStat('Time', formatTime(session.elapsedMs), res.newBest ? 'New best!' : null),
           !session.zen ? resultStat('Best', formatTime(best)) : null,
@@ -743,6 +808,7 @@ export const playScreen = {
     // ---------- Lifecycle ----------
     unsubs.push(on('settings', ({ key }) => {
       if (key === 'autoRemoveNotes') session.autoRemoveNotes = settings().autoRemoveNotes;
+      if (key === 'reduceMotion') fx.setEnabled(!settings().reduceMotion);
       cellCache.fill('');
       paletteSetKey = null;
       render();
@@ -781,6 +847,7 @@ export const playScreen = {
         return true;
       },
       destroy() {
+        fx.destroy();
         ro.disconnect();
         unsubs.forEach((u) => u());
         clearTimeout(saveTimer);

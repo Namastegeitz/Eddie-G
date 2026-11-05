@@ -10,6 +10,8 @@ import { clear } from './dom.js';
 import { setBannerVisible } from '../platform/ads.js';
 import { setBackground } from './background.js';
 import { closeTopModal, hasOpenModal, closeAllModals } from './modal.js';
+import { applyTheme } from './theme.js';
+import { settings } from '../core/profile.js';
 
 const registry = new Map();
 const stack = []; // [{ def, params, inst }]
@@ -21,6 +23,13 @@ export function initRouter(el) { root = el; }
 export function current() { return stack[stack.length - 1] || null; }
 export function currentId() { return current()?.def.id || null; }
 
+/** Re-apply the current screen's theme (after a lineup setting changes). */
+export function refreshTheme() {
+  const top = current();
+  if (!top) return;
+  applyTheme((top.def.theme && top.def.theme(top.params || {}, top.inst)) || settings().symbolSet);
+}
+
 function show(entry, dir) {
   const { def, params } = entry;
   if (!entry.inst) entry.inst = def.create(params || {}, nav);
@@ -30,6 +39,7 @@ function show(entry, dir) {
   void el.offsetWidth;
   if (dir) el.classList.add(dir === 'back' ? 'enter-back' : 'enter');
   clear(root).appendChild(el);
+  applyTheme((def.theme && def.theme(params || {}, entry.inst)) || settings().symbolSet);
   setBannerVisible(def.banner !== false);
   const bg = typeof def.bg === 'function' ? def.bg(params || {}, entry.inst) : def.bg;
   if (bg !== undefined) setBackground(bg);

@@ -34,8 +34,24 @@ have no ads. Until real AdMob ids are set, Google's **test** ads are shown.
   - Constellation lines between matching glyphs, and a flash when a row, column or box is complete.
   - Haptics.
   - Keyboard controls on the computer.
-- **Progress**: 24 achievements, per-difficulty stats (best and average time, win
-  rate, streaks), and 7 symbol sets.
+- **Lineups and themes**: 7 glyph lineups of detailed, full-color pictures. Each
+  glyph has its own color and silhouette:
+  - Close Encounters: alien head, saucer, tic-tac UAP, black triangle, pyramid,
+    crop circle, ray gun, cow abduction, radio dish.
+  - Space Fleet, Planets, Deep Cosmos, and Alien Creatures (characters with faces).
+  - Ancient Mysteries: pyramid, sphinx, Eye of Horus, moai, Stonehenge and more.
+  - Cosmic Mix: the best of the other lineups.
+
+  Every lineup has its own theme: colors, display font, board frame, backdrop and
+  star colors. Each campaign sector is played in its own lineup.
+- **Score**: points for every correct glyph, with harder puzzles worth more. Quick
+  consecutive moves build a ×10 combo. Finishing a unit or the puzzle adds a bonus.
+  High scores are kept per difficulty.
+- **Effects**: particle bursts in the glyph's color, a shower when a row, column or
+  box is finished, and win fireworks. The animated starfield has shooting stars
+  and a rare UFO flyby. All of it is off when "Reduce motion" is on.
+- **Progress**: 26 achievements, per-difficulty stats (best and average time, high
+  score, win rate, streaks), and 7 lineups.
 - **Puzzles**: 1,000 pre-graded puzzles, each with exactly one solution. Each is graded by the
   human techniques it needs, from singles up to X-Wing, Swordfish and XY-Wing.
   Random relabelling, row/column swaps and transposition turn them into millions of variations.
@@ -50,13 +66,13 @@ src/
   audio/       Web Audio sound effects + 7 synthesized music tracks
   platform/    Capacitor glue (back button, lifecycle, haptics, system bars) and AdMob
   ui/          router, modals, screens (menu, play, campaign, daily, stats, achievements, settings, how-to)
-  data/        symbol sets, sectors, achievements, puzzle-pool.json
+  data/        glyphs/ (one SVG lineup module each), themes, sectors, achievements, puzzle-pool.json
   styles/      base, play, screens
 public/        space backgrounds (WebP), icons, favicon
 assets/        icon + splash sources for the native projects; the original export's README
 android/ ios/  Capacitor native projects
 desktop/       Electron wrapper + packaging config
-tools/         gen-puzzles.mjs, gen-icons.mjs, set-admob-ids.mjs
+tools/         gen-puzzles.mjs, gen-icons.mjs, glyph-sheet.mjs (lineup contact sheets), set-admob-ids.mjs, package-artifact.mjs
 tests/         unit tests (engine, game, profile) and Playwright end-to-end tests
 ```
 

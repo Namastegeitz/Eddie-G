@@ -18,6 +18,17 @@ export const MAX_MISTAKES = 3;
 export const FREE_HINTS = 3;
 const UNDO_LIMIT = 200;
 
+// Scoring: every correct glyph scores once per cell; quick consecutive correct
+// moves build a combo; finished rows/columns/boxes and the win add bonuses.
+export const DIFF_MULT = { easy: 1, medium: 1.5, hard: 2, alien: 3 };
+export const COMBO_WINDOW_MS = 8000;
+export const MAX_COMBO_STEP = 10;
+const BASE_POINTS = 10;
+const UNIT_POINTS = 50;
+const WIN_POINTS = 200;
+const PERFECT_POINTS = 300;
+const PAR_SECONDS = { easy: 300, medium: 600, hard: 900, alien: 1500 };
+
 const rowOf = (i) => Math.floor(i / 9);
 const colOf = (i) => i % 9;
 const boxOf = (i) => Math.floor(rowOf(i) / 3) * 3 + Math.floor(colOf(i) / 3);
@@ -59,7 +70,18 @@ export class GameSession {
     this.undoStack = [];
     this.completedUnits = new Set(o.completedUnits || []);
     if (!o.completedUnits) this._recomputeCompletedUnits();
+
+    this.score = o.score || 0;
+    this.combo = o.combo || 0;
+    this.bestCombo = o.bestCombo || 0;
+    this.lastCorrectAt = o.lastCorrectAt ?? null;
+    this.scoredCells = new Set(o.scoredCells || []);
+    this.scoredUnits = new Set(o.scoredUnits || [...this.completedUnits]);
+    this.winBonus = o.winBonus || 0;
   }
+
+  get diffMult() { return DIFF_MULT[this.difficulty] || 1; }
+  get comboMult() { return 1 + (Math.min(this.combo, MAX_COMBO_STEP) - 1) * 0.1; }
 
   static fromSnapshot(s) { return new GameSession(s); }
 
@@ -74,6 +96,8 @@ export class GameSession {
       mistakes: this.mistakes, hints: this.hints, notesPlaced: this.notesPlaced,
       revived: this.revived, elapsedMs: Math.round(this.elapsedMs), status: this.status,
       completedUnits: [...this.completedUnits],
+      score: this.score, combo: this.combo, bestCombo: this.bestCombo, lastCorrectAt: this.lastCorrectAt,
+      scoredCells: [...this.scoredCells], scoredUnits: [...this.scoredUnits], winBonus: this.winBonus,
     };
   }
 
@@ -105,6 +129,8 @@ export class GameSession {
 
     if (v !== this.solution[i]) {
       this.mistakes++;
+      this.combo = 0;
+      this.lastCorrectAt = null;
       const lost = !this.zen && this.mistakes >= MAX_MISTAKES;
       if (lost) this.status = 'lost';
       return { result: 'rejected', lost, wrongValue: v };
@@ -123,8 +149,29 @@ export class GameSession {
     }
     this._pushUndo(entry);
     const units = this._newlyCompletedUnits(i);
+    const points = this._scorePlacement(i, units);
     const won = this._checkWin();
-    return { result: 'placed', units, won };
+    return { result: 'placed', units, won, points, combo: this.combo };
+  }
+
+  /** Points for a correct placement (once per cell) plus any newly finished units. */
+  _scorePlacement(i, units) {
+    let points = 0;
+    if (!this.scoredCells.has(i)) {
+      this.scoredCells.add(i);
+      const quick = this.lastCorrectAt != null && this.elapsedMs - this.lastCorrectAt <= COMBO_WINDOW_MS;
+      this.combo = quick ? this.combo + 1 : 1;
+      this.bestCombo = Math.max(this.bestCombo, this.combo);
+      this.lastCorrectAt = this.elapsedMs;
+      points += Math.round(BASE_POINTS * this.diffMult * this.comboMult);
+    }
+    for (const u of units) {
+      if (this.scoredUnits.has(u)) continue;
+      this.scoredUnits.add(u);
+      points += Math.round(UNIT_POINTS * this.diffMult);
+    }
+    this.score += points;
+    return points;
   }
 
   /** Toggle pencil mark v in empty cell i. */
@@ -225,9 +272,13 @@ export class GameSession {
     if (this.autoRemoveNotes) for (const p of PEERS[i]) this.notes[p] &= ~bit(value);
     // Undo history can't step back over a locked hint cell.
     this.undoStack = this.undoStack.filter((e) => e.i !== i);
+    this.scoredCells.add(i);           // a hinted cell never scores
+    this.combo = 0;
+    this.lastCorrectAt = null;
     const units = this._newlyCompletedUnits(i);
+    for (const u of units) this.scoredUnits.add(u);
     const won = this._checkWin();
-    return { i, value, technique, unit, units, won };
+    return { i, value, technique, unit, units, won, points: 0 };
   }
 
   /** Second chance after losing: one life back. */
@@ -284,7 +335,16 @@ export class GameSession {
   _checkWin() {
     for (let i = 0; i < 81; i++) if (this.board[i] !== this.solution[i]) return false;
     this.status = 'won';
+    this.winBonus = this._winBonus();
+    this.score += this.winBonus;
     return true;
+  }
+
+  _winBonus() {
+    const perfect = this.mistakes === 0 && this.hints === 0 ? PERFECT_POINTS : 0;
+    const par = PAR_SECONDS[this.difficulty] || 600;
+    const timeBonus = Math.max(0, Math.round((par - this.elapsedMs / 1000) / 2));
+    return Math.round((WIN_POINTS + perfect + timeBonus) * this.diffMult);
   }
 
   unitCells(key) { return this._unitCells(key); }

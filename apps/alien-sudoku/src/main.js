@@ -8,9 +8,15 @@ import '@fontsource/orbitron/latin-900.css';
 import '@fontsource/space-grotesk/latin-400.css';
 import '@fontsource/space-grotesk/latin-500.css';
 import '@fontsource/space-grotesk/latin-700.css';
+// Lineup display faces
+import '@fontsource/exo-2/latin-700.css';
+import '@fontsource/audiowide/latin-400.css';
+import '@fontsource/fredoka/latin-600.css';
+import '@fontsource/cinzel/latin-700.css';
 import './styles/base.css';
 import './styles/play.css';
 import './styles/screens.css';
+import './styles/themes.css';
 
 import { initStorage } from './core/storage.js';
 import { initProfile, settings } from './core/profile.js';
@@ -20,7 +26,10 @@ import { initPlatform, hideSplash, isNative, isElectron, setHapticsEnabled } fro
 import { initAds } from './platform/ads.js';
 import { initBackground } from './ui/background.js';
 import { initModals, toast } from './ui/modal.js';
-import { initRouter, registerScreen, reset, handleBack } from './ui/router.js';
+import { initRouter, registerScreen, reset, handleBack, refreshTheme } from './ui/router.js';
+import { installGlyphSprite } from './data/symbols.js';
+import { applyTheme } from './ui/theme.js';
+import { initStarfield, setReducedMotion } from './ui/starfield.js';
 import { menuScreen } from './ui/screens/menu.js';
 import { playScreen } from './ui/screens/play.js';
 import { campaignScreen, sectorScreen } from './ui/screens/campaign.js';
@@ -34,13 +43,18 @@ function applySettings() {
   configureAudio({ sfx: s.sfx, sfxVolume: s.sfxVolume, music: s.music, musicVolume: s.musicVolume });
   setHapticsEnabled(s.haptics);
   document.documentElement.classList.toggle('reduce-motion', !!s.reduceMotion);
+  setReducedMotion(!!s.reduceMotion);
 }
 
 async function boot() {
   await initStorage({ native: isNative });
   initProfile();
   applySettings();
+  installGlyphSprite();
+  applyTheme(settings().symbolSet);
+  initStarfield(document.querySelector('.starfield'));
   on('settings', applySettings);
+  on('settings', ({ key }) => { if (key === 'symbolSet' || key === 'sectorSymbols') refreshTheme(); });
   on('profile-reset', applySettings);
 
   initBackground();

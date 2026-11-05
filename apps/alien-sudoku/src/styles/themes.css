@@ -1,0 +1,117 @@
+/* ============================================================
+   Lineup styles. Colors come from the theme variables; these rules
+   add each lineup's own character on top (data-theme on <html>).
+   ============================================================ */
+
+/* Shared: theme switches fade instead of snapping. */
+body, .board, .cell, .glyph-btn, .menu-btn, .tool-btn { transition-property: background, box-shadow, border-color, color, transform, opacity; }
+.game-title, .topbar-h1, .modal-title, .menu-btn-label, .sector-name { font-family: var(--font-display); }
+
+/* ---------- Close Encounters: neon (default look) ---------- */
+[data-theme='encounters'] .board { border-width: 2px; }
+
+/* ---------- Space Fleet: mission-control tech ---------- */
+[data-theme='fleet'] .board {
+  border-width: 2px;
+  background:
+    linear-gradient(rgba(var(--c2-rgb), 0.06) 1px, transparent 1px) 0 0 / 100% 8px,
+    rgba(var(--deep-rgb), 0.9);
+}
+[data-theme='fleet'] .board-wrap::before,
+[data-theme='fleet'] .board-wrap::after {
+  content: '';
+  position: absolute;
+  width: 22px;
+  height: 22px;
+  border: 3px solid rgb(var(--c1-rgb));
+  pointer-events: none;
+  z-index: 6;
+}
+[data-theme='fleet'] .board-wrap::before { top: -7px; left: -7px; border-right: 0; border-bottom: 0; }
+[data-theme='fleet'] .board-wrap::after { bottom: -7px; right: -7px; border-left: 0; border-top: 0; }
+[data-theme='fleet'] .menu-btn, [data-theme='fleet'] .icon-tile, [data-theme='fleet'] .sector-card,
+[data-theme='fleet'] .level-node, [data-theme='fleet'] .modal-card, [data-theme='fleet'] .set-rows,
+[data-theme='fleet'] .daily-card, [data-theme='fleet'] .calendar { border-radius: 8px; }
+[data-theme='fleet'] .btn { border-radius: 6px; letter-spacing: 0.16em; }
+[data-theme='fleet'] .hud-row, [data-theme='fleet'] .eyebrow { letter-spacing: 0.24em; }
+[data-theme='fleet'] .menu-btn { border-left: 4px solid rgb(var(--c1-rgb)); }
+
+/* ---------- Planets: soft orbits ---------- */
+[data-theme='planets'] .board-wrap::before {
+  content: '';
+  position: absolute;
+  inset: -9px;
+  border: 1px dashed rgba(var(--c1-rgb), 0.35);
+  border-radius: calc(var(--r-board) + 9px);
+  pointer-events: none;
+  animation: orbitSpin 60s linear infinite;
+}
+@keyframes orbitSpin { to { transform: rotate(360deg); } }
+[data-theme='planets'] .cell { border-color: rgba(var(--c2-rgb), 0.18); }
+[data-theme='planets'] .menu-btn, [data-theme='planets'] .icon-tile { border-radius: 24px; }
+
+/* ---------- Deep Cosmos: dreamy glow ---------- */
+[data-theme='cosmos'] .board {
+  border-color: transparent;
+  background:
+    linear-gradient(rgba(var(--deep-rgb), 0.92), rgba(var(--deep-rgb), 0.92)) padding-box,
+    linear-gradient(135deg, rgb(var(--c1-rgb)), rgb(var(--c2-rgb)), rgb(var(--c3-rgb))) border-box;
+}
+[data-theme='cosmos'] .cell { background-image: radial-gradient(circle at 50% 40%, rgba(var(--c2-rgb), 0.12), transparent 70%); }
+[data-theme='cosmos'] .game-title { letter-spacing: 0.08em; }
+
+/* ---------- Alien Creatures: bubbly and playful ---------- */
+[data-theme='creatures'] .board { border-width: 3px; }
+[data-theme='creatures'] .cell.pop .cell-glyph { animation: wobblePop 0.6s cubic-bezier(0.2, 1.6, 0.4, 1); }
+@keyframes wobblePop {
+  0% { transform: scale(0.2) rotate(-20deg); opacity: 0; }
+  50% { transform: scale(1.15) rotate(8deg); opacity: 1; }
+  75% { transform: scale(0.95) rotate(-4deg); }
+  100% { transform: none; }
+}
+[data-theme='creatures'] .cell.same .cell-glyph { animation: creatureBounce 1.2s ease-in-out infinite; }
+@keyframes creatureBounce { 50% { transform: translateY(-6%); } }
+[data-theme='creatures'] .menu-btn, [data-theme='creatures'] .icon-tile, [data-theme='creatures'] .modal-card { border-radius: 26px; }
+[data-theme='creatures'] .game-title { letter-spacing: 0.06em; font-weight: 700; }
+[data-theme='creatures'] .btn { letter-spacing: 0.06em; }
+
+/* ---------- Ancient Mysteries: carved stone and gold ---------- */
+[data-theme='ancient'] .board {
+  border: 5px double rgb(var(--c1-rgb));
+  background:
+    repeating-linear-gradient(135deg, rgba(255, 230, 180, 0.03) 0 6px, transparent 6px 12px),
+    rgba(var(--deep-rgb), 0.92);
+}
+[data-theme='ancient'] .cell { background-image: linear-gradient(150deg, rgba(255, 228, 170, 0.08), rgba(0, 0, 0, 0.22)); }
+[data-theme='ancient'] .cell.fixed { background-image: linear-gradient(150deg, rgba(255, 228, 170, 0.04), rgba(0, 0, 0, 0.35)); }
+[data-theme='ancient'] .menu-btn, [data-theme='ancient'] .icon-tile, [data-theme='ancient'] .sector-card,
+[data-theme='ancient'] .level-node, [data-theme='ancient'] .modal-card, [data-theme='ancient'] .set-rows,
+[data-theme='ancient'] .daily-card, [data-theme='ancient'] .calendar, [data-theme='ancient'] .tool-btn { border-radius: 4px; }
+[data-theme='ancient'] .menu-btn, [data-theme='ancient'] .modal-card { border-color: rgba(var(--c1-rgb), 0.55); box-shadow: inset 0 0 0 3px rgba(var(--deep-rgb), 0.8), inset 0 0 0 4px rgba(var(--c1-rgb), 0.25); }
+[data-theme='ancient'] .btn { border-radius: 3px; }
+[data-theme='ancient'] .game-title { letter-spacing: 0.1em; }
+[data-theme='ancient'] .title-glow, [data-theme='ancient'] .title-accent { text-shadow: 0 2px 0 rgba(0, 0, 0, 0.6), 0 0 18px rgba(var(--c1-rgb), 0.35); }
+
+/* ---------- Cosmic Mix: synthwave arcade ---------- */
+[data-theme='mixed'] .board {
+  border: 3px solid transparent;
+  background:
+    linear-gradient(rgba(var(--deep-rgb), 0.92), rgba(var(--deep-rgb), 0.92)) padding-box,
+    linear-gradient(135deg, rgb(var(--c1-rgb)), rgb(var(--c4-rgb)), rgb(var(--c3-rgb)), rgb(var(--c2-rgb))) border-box;
+}
+[data-theme='mixed'] .starfield::after {
+  content: '';
+  position: absolute;
+  left: -50%;
+  right: -50%;
+  bottom: 0;
+  height: 38%;
+  background:
+    linear-gradient(rgba(var(--c1-rgb), 0.35) 1px, transparent 1px) 0 0 / 100% 28px,
+    linear-gradient(90deg, rgba(var(--c3-rgb), 0.25) 1px, transparent 1px) 0 0 / 56px 100%;
+  transform: perspective(300px) rotateX(60deg);
+  transform-origin: bottom;
+  mask-image: linear-gradient(transparent, black 60%);
+  -webkit-mask-image: linear-gradient(transparent, black 60%);
+  opacity: 0.55;
+}

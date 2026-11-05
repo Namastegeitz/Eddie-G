@@ -7,7 +7,7 @@
 import { load, save, remove, clearAll } from './storage.js';
 import { emit } from './events.js';
 import { ACHIEVEMENTS } from '../data/achievements.js';
-import { SECTORS, STARTER_SETS, levelKey, starsFor, LEVELS_PER_SECTOR } from '../data/sectors.js';
+import { SECTORS, STARTER_SETS, OLD_SET_KEYS, levelKey, starsFor, LEVELS_PER_SECTOR } from '../data/sectors.js';
 import { SYMBOL_SETS } from '../data/symbols.js';
 import { todayStr, addDays } from './time.js';
 
@@ -21,7 +21,7 @@ export const DEFAULT_SETTINGS = {
   music: true,
   musicVolume: 0.6,
   haptics: true,
-  symbolSet: 'alien',
+  symbolSet: 'encounters',
   sectorSymbols: true,     // campaign uses each sector's own symbol set
   highlightPeers: true,
   highlightSame: true,
@@ -34,7 +34,7 @@ export const DEFAULT_SETTINGS = {
   seenTutorial: false,
 };
 
-const emptyDiffStats = () => ({ played: 0, won: 0, perfect: 0, bestMs: null, totalWinMs: 0, streak: 0, bestStreak: 0 });
+const emptyDiffStats = () => ({ played: 0, won: 0, perfect: 0, bestMs: null, totalWinMs: 0, streak: 0, bestStreak: 0, bestScore: 0 });
 
 function defaultProfile() {
   return {
@@ -45,7 +45,7 @@ function defaultProfile() {
     daily: { completed: {}, streak: 0, bestStreak: 0, lastStreakDate: null },
     stats: {
       byDiff: Object.fromEntries(DIFFS.map((d) => [d, emptyDiffStats()])),
-      totals: { notes: 0, hints: 0, mistakes: 0, playMs: 0, zenWins: 0, zenPlayed: 0, gamesStarted: 0 },
+      totals: { notes: 0, hints: 0, mistakes: 0, playMs: 0, zenWins: 0, zenPlayed: 0, gamesStarted: 0, bestCombo: 0 },
     },
     achievements: {},                        // id -> unlocked timestamp
     unlockedSets: [...STARTER_SETS],
@@ -67,9 +67,22 @@ function hydrate(stored) {
     totals: { ...base.stats.totals, ...(stored.stats?.totals || {}) },
   };
   p.achievements = { ...(stored.achievements || {}) };
-  p.unlockedSets = Array.from(new Set([...STARTER_SETS, ...(stored.unlockedSets || [])])).filter((k) => SYMBOL_SETS[k]);
-  if (!SYMBOL_SETS[p.settings.symbolSet] || !p.unlockedSets.includes(p.settings.symbolSet)) p.settings.symbolSet = 'alien';
+  const migrate = (k) => OLD_SET_KEYS[k] || k;
+  p.unlockedSets = Array.from(new Set([...STARTER_SETS, ...(stored.unlockedSets || []).map(migrate)])).filter((k) => SYMBOL_SETS[k]);
+  p.settings.symbolSet = migrate(p.settings.symbolSet);
+  syncUnlocks(p);
+  if (!SYMBOL_SETS[p.settings.symbolSet] || !p.unlockedSets.includes(p.settings.symbolSet)) p.settings.symbolSet = 'encounters';
   return p;
+}
+
+/** Lineups earned in the campaign, recomputed from progress (safe after any change to the rules). */
+function syncUnlocks(p) {
+  const done = (s, l) => !!p.campaign.levels[levelKey(s, l)];
+  for (const sec of SECTORS) {
+    const reached = sec.id === 0 || done(sec.id - 1, LEVELS_PER_SECTOR - 1);
+    if (reached && sec.unlocksSet && !p.unlockedSets.includes(sec.unlocksSet)) p.unlockedSets.push(sec.unlocksSet);
+    if (sec.rewardSet && done(sec.id, LEVELS_PER_SECTOR - 1) && !p.unlockedSets.includes(sec.rewardSet)) p.unlockedSets.push(sec.rewardSet);
+  }
 }
 
 export function initProfile() {
@@ -154,8 +167,9 @@ export function currentStreak() {
  * Returns { stars, newBest, prevBest, achievements: [def], unlockedSets: [key], streak }.
  */
 export function recordResult(result) {
-  const out = { stars: 0, newBest: false, prevBest: null, achievements: [], unlockedSets: [], streak: null };
+  const out = { stars: 0, newBest: false, prevBest: null, newHighScore: false, achievements: [], unlockedSets: [], streak: null };
   const t = profile.stats.totals;
+  t.bestCombo = Math.max(t.bestCombo || 0, result.bestCombo || 0);
   t.notes += result.notes || 0;
   t.hints += result.hints || 0;
   t.mistakes += result.mistakes || 0;
@@ -176,6 +190,7 @@ export function recordResult(result) {
         if (result.mistakes === 0 && result.hints === 0) s.perfect++;
         out.prevBest = s.bestMs;
         if (s.bestMs == null || result.ms < s.bestMs) { s.bestMs = result.ms; out.newBest = true; }
+        if ((result.score || 0) > (s.bestScore || 0)) { out.newHighScore = (s.bestScore || 0) > 0; s.bestScore = result.score; }
       } else {
         s.streak = 0;
       }
@@ -191,10 +206,12 @@ export function recordResult(result) {
         stars: Math.max(prev?.stars || 0, out.stars),
         bestMs: prev?.bestMs != null ? Math.min(prev.bestMs, result.ms) : result.ms,
       };
-      // Finishing the last level of a sector opens the next one and its symbol set.
+      // Finishing the last level of a sector opens the next one and its lineup;
+      // the final sector also awards the Cosmic Mix.
       if (result.level === LEVELS_PER_SECTOR - 1) {
         const next = SECTORS[result.sector + 1];
         if (next) unlockSet(next.unlocksSet, out.unlockedSets);
+        unlockSet(SECTORS[result.sector]?.rewardSet, out.unlockedSets);
       }
     }
     if (result.mode === 'daily' && result.date) {
@@ -257,7 +274,7 @@ export async function resetEverything() {
   const keepSettings = { ...profile.settings, seenTutorial: true };
   await clearAll();
   profile = defaultProfile();
-  profile.settings = { ...profile.settings, ...keepSettings, symbolSet: 'alien' };
+  profile.settings = { ...profile.settings, ...keepSettings, symbolSet: 'encounters' };
   persist();
   emit('profile-reset');
 }

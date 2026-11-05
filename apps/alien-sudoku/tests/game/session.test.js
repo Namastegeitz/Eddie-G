@@ -155,3 +155,63 @@ describe('GameSession', () => {
     expect(total).toBe(s.board.filter((v) => v === 0).length);
   });
 });
+
+describe('scoring', () => {
+  const fresh2 = (d = 'medium') => {
+    const p = getPuzzle({ difficulty: d, seed: 'score' });
+    return new GameSession({ mode: 'quick', difficulty: d, puzzle: p.puzzle, solution: p.solution });
+  };
+  const empties = (s) => s.board.map((v, i) => (v ? -1 : i)).filter((i) => i >= 0);
+
+  it('quick correct moves build a combo; slow ones reset it', () => {
+    const s = fresh2();
+    const [a, b, c] = empties(s);
+    const r1 = s.place(a, s.solution[a]);
+    expect(r1.combo).toBe(1);
+    expect(r1.points).toBe(15); // 10 x 1.5
+    s.tick(2000);
+    const r2 = s.place(b, s.solution[b]);
+    expect(r2.combo).toBe(2);
+    expect(r2.points).toBeGreaterThanOrEqual(Math.round(10 * 1.5 * 1.1));
+    s.tick(9000);
+    const r3 = s.place(c, s.solution[c]);
+    expect(r3.combo).toBe(1);
+  });
+
+  it('a mistake resets the combo', () => {
+    const s = fresh2();
+    const [a, b] = empties(s);
+    s.place(a, s.solution[a]);
+    s.place(b, (s.solution[b] % 9) + 1);
+    expect(s.combo).toBe(0);
+  });
+
+  it('undo and replace cannot farm points', () => {
+    const s = fresh2();
+    const [a] = empties(s);
+    s.place(a, s.solution[a]);
+    const after = s.score;
+    s.undo();
+    const r = s.place(a, s.solution[a]);
+    expect(r.points).toBe(0);
+    expect(s.score).toBe(after);
+  });
+
+  it('winning adds a bonus and the score survives a snapshot', () => {
+    const s = fresh2('easy');
+    for (const i of empties(s)) s.place(i, s.solution[i]);
+    expect(s.status).toBe('won');
+    expect(s.winBonus).toBeGreaterThan(0);
+    expect(s.bestCombo).toBeGreaterThan(5);
+    const t = GameSession.fromSnapshot(JSON.parse(JSON.stringify(s.snapshot())));
+    expect(t.score).toBe(s.score);
+    expect(t.bestCombo).toBe(s.bestCombo);
+  });
+
+  it('hints score nothing', () => {
+    const s = fresh2();
+    const r = s.hint();
+    expect(r.points).toBe(0);
+    expect(s.score).toBe(0);
+  });
+});

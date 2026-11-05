@@ -6,6 +6,7 @@ import {
   isSectorUnlocked, isLevelUnlocked, levelRecord, sectorStars, totalStars, nextCampaignLevel, loadSavedGame,
 } from '../../core/profile.js';
 import { formatTime } from '../../core/time.js';
+import { settings } from '../../core/profile.js';
 import { sfx } from '../../audio/audio.js';
 import { toast } from '../modal.js';
 import { confirmAbandon } from './menu.js';
@@ -73,6 +74,7 @@ export const sectorScreen = {
   id: 'sector',
   banner: true,
   bg: (p) => SECTORS[p.sector]?.bg,
+  theme: (p) => (settings().sectorSymbols ? SECTORS[p.sector]?.symbolSet : null),
   create(params, nav) {
     const s = SECTORS[params.sector];
     const set = SYMBOL_SETS[s.symbolSet];

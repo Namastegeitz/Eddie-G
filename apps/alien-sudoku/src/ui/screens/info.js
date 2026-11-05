@@ -48,6 +48,7 @@ export const statsScreen = {
           ['Dailies decoded', Object.keys(p.daily.completed).length],
           ['Achievements', `${Object.keys(p.achievements).length} / ${ACHIEVEMENTS.length}`],
           ['Zen puzzles', t.zenWins],
+          ['Best combo', t.bestCombo ? `×${t.bestCombo}` : '—'],
           ['Notes pencilled', t.notes],
           ['Hints used', t.hints],
           ['Glyphs rejected', t.mistakes],
@@ -64,6 +65,7 @@ export const statsScreen = {
             ['Won', s.won],
             ['Perfect wins', s.perfect],
             ['Best time', formatTime(s.bestMs)],
+            ['High score', s.bestScore ? s.bestScore.toLocaleString() : '—'],
             ['Average time', s.won ? formatTime(s.totalWinMs / s.won) : '—'],
             ['Win streak', `${s.streak} (best ${s.bestStreak})`],
           ]));
@@ -139,6 +141,17 @@ export const howtoScreen = {
           h('li', {}, h('b', {}, 'Hint: '), 'reveals a cell and tells you why it works. Select an empty cell first to reveal that one. Hints lower your star rating.'),
           h('li', {}, h('b', {}, 'Pause menu: '), 'fill in all notes automatically, clear notes or restart.'),
         ),
+      ]],
+      ['Score & combos', [
+        h('ul', {},
+          h('li', {}, 'Every correct glyph scores points. Harder puzzles are worth more (Medium ×1.5, Hard ×2, Alien ×3).'),
+          h('li', {}, 'Place glyphs within 8 seconds of each other to build a combo: each step adds +10%, up to +90%. A mistake or a hint resets it.'),
+          h('li', {}, 'Finishing a row, column or box adds a bonus, and solving the puzzle adds a finish bonus for speed and for a clean (no mistakes, no hints) solve.'),
+        ),
+      ]],
+      ['Lineups & themes', [
+        h('p', {}, 'Each lineup is a set of 9 glyphs with its own colors, font and board style: Close Encounters, Space Fleet, Planets, Deep Cosmos, Alien Creatures, Ancient Mysteries and the Cosmic Mix. Every glyph has its own color, so you can spot it at a glance. Tap a placed glyph to see its name.'),
+        h('p', {}, 'Change lineup in Settings. Each campaign sector is played with its own lineup; Alien Creatures, Ancient Mysteries and the Cosmic Mix are unlocked in the campaign.'),
       ]],
       ['Modes', [
         h('ul', {},

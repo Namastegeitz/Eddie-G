@@ -1,64 +1,68 @@
 /* Campaign: 6 sectors x 9 transmissions. Difficulty per level comes from
    engine/pool.js getCampaignPuzzle(); this file only holds presentation
-   and unlock rules. */
+   and unlock rules. Each sector is played with its own glyph lineup and theme. */
+
+import { THEMES } from './themes.js';
+
+const accent = (set) => `rgb(${THEMES[set].rgb.c1})`;
 
 export const SECTORS = [
   {
     id: 0,
     name: 'Lunar Outpost',
-    blurb: 'A quiet relay station on the edge of the moon. The first signals are faint but simple.',
+    blurb: 'Mission control has picked up a faint signal near the moon. Suit up and decode it with the Space Fleet.',
     bg: 'space/moon-planet.webp',
-    symbolSet: 'moons',
-    accent: '#5ff0ff',
+    symbolSet: 'fleet',
+    accent: accent('fleet'),
     range: 'Easy',
   },
   {
     id: 1,
     name: 'Ring Belt',
-    blurb: 'Ice and rock circle a giant world. The glyphs start to tangle.',
+    blurb: 'The signal bounces between the planets. Follow it across the solar system.',
     bg: 'space/ringed-planet.webp',
     symbolSet: 'planets',
-    accent: '#ffd36b',
+    accent: accent('planets'),
     range: 'Easy → Medium',
   },
   {
     id: 2,
     name: 'Pink Nebula',
-    blurb: 'The original alien script, glowing inside a cloud of newborn stars.',
+    blurb: 'Saucers, tic-tacs and black triangles. The visitors are close now.',
     bg: 'space/nebula-pink.webp',
-    symbolSet: 'alien',
-    accent: '#ff5cf6',
+    symbolSet: 'encounters',
+    accent: accent('encounters'),
     range: 'Medium',
   },
   {
     id: 3,
     name: 'Emerald Pillars',
-    blurb: 'Towering dust columns hide a fleet of silent ships.',
+    blurb: 'Behind the dust columns live the creatures who sent the message. They want to meet you.',
     bg: 'space/pillars-green.webp',
-    symbolSet: 'spaceships',
-    accent: '#39ff9c',
+    symbolSet: 'creatures',
+    accent: accent('creatures'),
     range: 'Medium → Hard',
-    unlocksSet: 'spaceships',
+    unlocksSet: 'creatures',
   },
   {
     id: 4,
     name: 'Spiral Arm',
-    blurb: 'Whole galaxies become letters. Only skilled decoders get this far.',
+    blurb: 'Galaxies, black holes and supernovas become letters. Only skilled decoders get this far.',
     bg: 'space/galaxy-spiral.webp',
-    symbolSet: 'galaxies',
-    accent: '#b46bff',
+    symbolSet: 'cosmos',
+    accent: accent('cosmos'),
     range: 'Hard',
-    unlocksSet: 'galaxies',
   },
   {
     id: 5,
     name: 'Cluster Core',
-    blurb: 'The source of the transmission. Every symbol in the archive, all at once.',
+    blurb: 'The source of the transmission: the builders of the pyramids. Their oldest secrets are written here.',
     bg: 'space/star-cluster.webp',
-    symbolSet: 'mixed',
-    accent: '#ffffff',
+    symbolSet: 'ancient',
+    accent: accent('ancient'),
     range: 'Hard → Alien',
-    unlocksSet: 'mixed',
+    unlocksSet: 'ancient',
+    rewardSet: 'mixed',
   },
 ];
 
@@ -67,7 +71,10 @@ export const TOTAL_LEVELS = SECTORS.length * LEVELS_PER_SECTOR;
 export const MAX_STARS = TOTAL_LEVELS * 3;
 
 /** Symbol sets available from the start. The rest unlock by reaching a sector. */
-export const STARTER_SETS = ['alien', 'planets', 'moons', 'aircraft'];
+export const STARTER_SETS = ['encounters', 'fleet', 'planets', 'cosmos'];
+
+/** Lineup keys from before the redesign, mapped to their replacements. */
+export const OLD_SET_KEYS = { alien: 'encounters', moons: 'fleet', aircraft: 'fleet', spaceships: 'creatures', galaxies: 'cosmos' };
 
 export const levelKey = (sector, level) => `${sector}-${level}`;
 

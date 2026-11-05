@@ -3,6 +3,7 @@ import { h, icon } from '../dom.js';
 import { settings, setSetting, isSetUnlocked, resetEverything } from '../../core/profile.js';
 import { SYMBOL_SETS, SYMBOL_SET_ORDER } from '../../data/symbols.js';
 import { SECTORS } from '../../data/sectors.js';
+import { THEMES } from '../../data/themes.js';
 import { topbar } from './campaign.js';
 import { confirmModal, toast } from '../modal.js';
 import { sfx } from '../../audio/audio.js';
@@ -10,8 +11,10 @@ import { appVersion, isNative, isElectron } from '../../platform/native.js';
 import { privacyOptionsAvailable, showPrivacyOptions, adsSupported } from '../../platform/ads.js';
 
 function unlockHint(key) {
-  const sector = SECTORS.find((s) => s.unlocksSet === key);
-  return sector ? `Reach ${sector.name}` : 'Locked';
+  const reach = SECTORS.find((s) => s.unlocksSet === key);
+  if (reach) return `Reach ${reach.name}`;
+  const finish = SECTORS.find((s) => s.rewardSet === key);
+  return finish ? `Finish ${finish.name}` : 'Locked';
 }
 
 export const settingsScreen = {
@@ -34,10 +37,16 @@ export const settingsScreen = {
     function renderSets() {
       setGrid.replaceChildren(...SYMBOL_SET_ORDER.map((k) => {
         const set = SYMBOL_SETS[k];
+        const t = THEMES[k];
         const unlocked = isSetUnlocked(k);
         const active = settings().symbolSet === k;
         return h('button', {
           class: `set-card${active ? ' active' : ''}${unlocked ? '' : ' locked'}`,
+          style: {
+            '--card-c1': `rgb(${t.rgb.c1})`,
+            background: `radial-gradient(circle at 30% 20%, rgba(${t.rgb.c2}, 0.28), transparent 60%), linear-gradient(160deg, ${t.cellUser}, ${t.bg})`,
+            fontFamily: t.font,
+          },
           type: 'button', role: 'radio', 'aria-checked': String(active),
           'aria-label': `${set.name}${unlocked ? '' : `, locked: ${unlockHint(k)}`}`,
           onclick: () => {
@@ -47,9 +56,9 @@ export const settingsScreen = {
             renderSets();
           },
         },
-        h('span', { class: 'set-preview', html: set.svgs.slice(0, 5).join('') }),
-        h('span', { class: 'set-name' }, unlocked ? set.name : h('span', {}, icon('lock'), ` ${set.name}`)),
-        unlocked ? null : h('small', {}, unlockHint(k)));
+        h('span', { class: 'set-preview', html: set.svgs.join('') }),
+        h('span', { class: 'set-name', style: { color: `rgb(${t.rgb.c1})` } }, unlocked ? set.name : h('span', {}, icon('lock'), ` ${set.name}`)),
+        h('small', {}, unlocked ? t.tagline : unlockHint(k)));
       }));
     }
     renderSets();
@@ -61,9 +70,9 @@ export const settingsScreen = {
     const el = h('div', { class: 'page' },
       topbar('Settings', null, nav),
       h('div', { class: 'page-body settings' },
-        group('Symbols', [
+        group('Glyph lineup & theme', [
           setGrid,
-          toggle('sectorSymbols', 'Campaign uses sector symbols', 'Each sector has its own glyphs. Off = always use your set.'),
+          toggle('sectorSymbols', 'Campaign uses each sector\'s lineup', 'Each sector has its own glyphs and theme. Off = always use your lineup.'),
         ]),
         group('Sound', [
           toggle('sfx', 'Sound effects'),

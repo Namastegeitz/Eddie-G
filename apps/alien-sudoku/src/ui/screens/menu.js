@@ -11,6 +11,8 @@ import { sfx } from '../../audio/audio.js';
 import { appVersion, isElectron, isNative } from '../../platform/native.js';
 import { sessionTitle } from './play.js';
 import { GameSession } from '../../game/session.js';
+import { SYMBOL_SETS } from '../../data/symbols.js';
+import { THEMES } from '../../data/themes.js';
 
 const DIFFS = [
   { key: 'easy', label: 'Easy', clues: '≈38 clues', blurb: 'Warm up. Every move can be found by looking.' },
@@ -63,7 +65,7 @@ export function pickDifficulty({ mode, nav }) {
 export const menuScreen = {
   id: 'menu',
   banner: true,
-  bg: 'random',
+  bg: () => (THEMES[settings().symbolSet] || THEMES.encounters).backdrop,
   create(params, nav) {
     const saved = loadSavedGame();
     const resumable = saved && saved.status !== 'won' ? GameSession.fromSnapshot(saved) : null;
@@ -85,11 +87,21 @@ export const menuScreen = {
       return big('menu-continue', 'play', 'Continue', `${t.eyebrow} · ${t.title} · ${formatTime(resumable.elapsedMs)}`, () => nav.go('play', { resume: true }), { 'data-autofocus': true });
     })() : null;
 
+    const lineupKey = settings().symbolSet;
+    const lineup = SYMBOL_SETS[lineupKey] || SYMBOL_SETS.encounters;
+    const theme = THEMES[lineupKey] || THEMES.encounters;
+    const heroIdx = theme.hero - 1;
     const el = h('div', { class: 'menu-layout' },
       h('header', { class: 'menu-hero' },
-        h('div', { class: 'hero-ufo', 'aria-hidden': 'true', html: UFO_SVG }),
-        h('h1', { class: 'game-title' }, h('span', { class: 'title-glow' }, '⟁ ALIEN'), ' ', h('span', { class: 'title-accent' }, 'SUDOKU')),
-        h('p', { class: 'subtitle' }, 'Decode the hieroglyphs of the lost UFO archive')),
+        h('div', { class: 'hero-stage', 'aria-hidden': 'true' },
+          h('div', { class: 'hero-glyph hero-side hero-left', html: lineup.svgs[(heroIdx + 3) % 9] }),
+          h('div', { class: 'hero-glyph hero-main', html: lineup.svgs[heroIdx] }),
+          h('div', { class: 'hero-glyph hero-side hero-right', html: lineup.svgs[(heroIdx + 6) % 9] })),
+        h('h1', { class: 'game-title' }, h('span', { class: 'title-glow' }, 'ALIEN'), ' ', h('span', { class: 'title-accent' }, 'SUDOKU')),
+        h('p', { class: 'subtitle' }, 'Decode the hieroglyphs of the lost UFO archive'),
+        h('button', { class: 'lineup-chip', type: 'button', onclick: () => { sfx.tap(); nav.go('settings'); } },
+          h('span', { class: 'lineup-dots' }, lineup.colors.map((c) => h('i', { style: { background: c } }))),
+          h('span', {}, `Lineup: ${theme.name}`), icon('back', 'chev'))),
       h('nav', { class: 'menu-list', 'aria-label': 'Main menu' },
         continueBtn,
         big('menu-campaign', 'map', 'Campaign', `${stars} / ${MAX_STARS} stars · 6 sectors`, () => nav.go('campaign'), resumable ? {} : { 'data-autofocus': true }),

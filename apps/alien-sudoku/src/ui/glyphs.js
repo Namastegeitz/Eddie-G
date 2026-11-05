@@ -12,5 +12,6 @@ export function setKeyFor(session) {
   return s.symbolSet;
 }
 
-export const glyphSvg = (setKey, v) => (SYMBOL_SETS[setKey] || SYMBOL_SETS.alien).svgs[v - 1];
-export const glyphName = (setKey, v) => (SYMBOL_SETS[setKey] || SYMBOL_SETS.alien).names[v - 1];
+export const glyphSvg = (setKey, v) => (SYMBOL_SETS[setKey] || SYMBOL_SETS.encounters).svgs[v - 1];
+export const glyphName = (setKey, v) => (SYMBOL_SETS[setKey] || SYMBOL_SETS.encounters).names[v - 1];
+export const glyphColor = (setKey, v) => (SYMBOL_SETS[setKey] || SYMBOL_SETS.encounters).colors[v - 1];

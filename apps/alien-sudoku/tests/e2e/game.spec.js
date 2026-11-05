@@ -135,3 +135,33 @@ test('settings persist and every screen opens cleanly', async ({ page }) => {
   }
   expect(errors).toEqual([]);
 });
+
+test('lineups: themes switch, every glyph exists, correct moves score points', async ({ page }) => {
+  const errors = errorsOf(page);
+  await openMenu(page);
+  const missing = await page.evaluate(() => {
+    const out = [];
+    for (const k of ['encounters', 'fleet', 'planets', 'cosmos', 'creatures', 'ancient']) {
+      for (let i = 1; i <= 9; i++) if (!document.getElementById(`gl-${k}-${i}`)) out.push(`${k}-${i}`);
+    }
+    return out;
+  });
+  expect(missing).toEqual([]);
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'encounters');
+  await page.locator('.icon-tile', { hasText: 'Settings' }).click();
+  await page.locator('.set-card', { hasText: 'Space Fleet' }).click();
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'fleet');
+  await page.locator('.topbar .icon-btn[aria-label="Back"]').click();
+  await expect(page.locator('.lineup-chip')).toContainText('Space Fleet');
+  await startQuick(page, 'easy');
+  const [i, v] = await page.evaluate(() => {
+    const s = window.__alienSession;
+    const idx = s.board.findIndex((x) => x === 0);
+    return [idx, s.solution[idx]];
+  });
+  await page.locator(`.cell[data-i="${i}"]`).dispatchEvent('pointerdown');
+  await page.locator(`.glyph-btn[data-v="${v}"]`).click();
+  await expect(page.locator('.hud-score b')).not.toHaveText('0');
+  await expect(page.locator(`.cell[data-i="${i}"] use`)).toHaveAttribute('href', `#gl-fleet-${v}`);
+  expect(errors).toEqual([]);
+});
