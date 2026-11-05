@@ -47,6 +47,8 @@ func _ready() -> void:
 				await _first_person()
 			"scenes":
 				_scenes()
+			"regions":
+				await _phase3()
 			"art":
 				await _phase7()
 		print("phase audit (%s): %d passed, %d failed" % [only, passed, failed])
@@ -653,7 +655,22 @@ func _phase3() -> void:
 		check(id + " endless generates 200 rows with ground+water+safe", kinds.size() == 3, str(kinds.keys()))
 	check("each region has its own palette", palettes.size() == playable.size())
 	check("each region has its own soundtrack", music.size() == playable.size())
-	check("globe has land dots", Content.globe_dots.size() > 1500)
+	# the digital globe's map: land and sea in the right places
+	var gimg: Image = (load("res://assets/world/globe_map.png") as Texture2D).get_image()
+	var land_at := func(la: float, lo: float) -> bool:
+		return gimg.get_pixel(int((lo + 180.0) / 360.0 * (gimg.get_width() - 1)), int((90.0 - la) / 180.0 * (gimg.get_height() - 1))).r > 0.5
+	var spots_ok: bool = land_at.call(-3.5, -62.0) and land_at.call(23.0, 10.0) and land_at.call(-25.0, 134.0) and land_at.call(0.5, 114.0) \
+		and not land_at.call(0.0, -150.0) and not land_at.call(30.0, -40.0) and not land_at.call(-20.0, 75.0)
+	check("globe map is high resolution with land and sea in the right places", gimg.get_width() >= 2048 and spots_ok, "%dx%d" % [gimg.get_width(), gimg.get_height()])
+	var every_region_on_land := true
+	for gid in Content.playable_maps():
+		var gm := Content.map(gid)
+		var near := false
+		for dla in [-1.5, 0.0, 1.5]:
+			for dlo in [-1.5, 0.0, 1.5]:
+				near = near or land_at.call(float(gm.lat) + dla, float(gm.lon) + dlo)
+		every_region_on_land = every_region_on_land and near
+	check("every region's beacon sits on land", every_region_on_land)
 	# different hazard sets
 	var sets := {}
 	for id in playable:
@@ -725,6 +742,33 @@ func _phase3() -> void:
 	wm._select("borneo")
 	await get_tree().process_frame
 	check("selecting a region spins the globe there", is_equal_approx(wm.globe.target_lon, 114.0))
+	# drag sideways to spin; an up/down drag is left for the page to scroll
+	var gl: Widgets.Globe = wm.globe
+	var lon_before := gl.lon
+	var tp := InputEventScreenTouch.new()
+	tp.position = gl.size * 0.5
+	tp.pressed = true
+	gl._gui_input(tp)
+	var dr := InputEventScreenDrag.new()
+	dr.position = gl.size * 0.5 + Vector2(80, 4)
+	dr.relative = Vector2(80, 4)
+	gl._gui_input(dr)
+	var spun := absf(wrapf(gl.lon - lon_before, -180.0, 180.0)) > 5.0
+	tp.pressed = false
+	tp.position = dr.position
+	gl._gui_input(tp)
+	var tp2 := InputEventScreenTouch.new()
+	tp2.position = gl.size * 0.5
+	tp2.pressed = true
+	gl._gui_input(tp2)
+	var dr2 := InputEventScreenDrag.new()
+	dr2.position = gl.size * 0.5 + Vector2(3, 90)
+	dr2.relative = Vector2(3, 90)
+	gl._gui_input(dr2)
+	var vertical_free: bool = not gl._drag.get("spinning", true)
+	tp2.pressed = false
+	gl._gui_input(tp2)
+	check("dragging sideways spins the globe; up/down drags still scroll the page", spun and vertical_free)
 	wm._select("amazon")
 	await get_tree().process_frame
 	var grid: GridContainer = null

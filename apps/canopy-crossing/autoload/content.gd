@@ -26,7 +26,6 @@ var seasons := {}
 var onboarding := {}
 var settings_defaults := {}
 var rules := {}                 # game rules (content/rules.json)
-var globe_dots := PackedVector2Array()
 var errors: PackedStringArray = []
 var loaded_files := 0
 var _items := {}
@@ -64,10 +63,6 @@ func reload() -> void:
 	var bonus: Dictionary = collectibles.get("bonus", {})
 	if not bonus.is_empty():
 		_items[String(bonus.id)] = bonus
-	var globe := _load_one("world/globe_dots.json")
-	globe_dots = PackedVector2Array()
-	for d in globe.get("dots", []):
-		globe_dots.append(Vector2(float(d[0]), float(d[1])))
 	_sort()
 	validate()
 	if not errors.is_empty():

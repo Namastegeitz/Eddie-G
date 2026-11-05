@@ -261,9 +261,18 @@ class AbilityButton extends Control:
 
 
 class Globe extends Control:
-	## Dot-matrix globe that spins to a region's pin. Pins: owned (gold),
-	## locked (grey with a lock), coming soon (dim).
+	## The world map's digital globe. The sphere is a shader
+	## (assets/shaders/globe.gdshader: LED dots for land, glowing coasts,
+	## borders, a grid and a scanning sweep); this widget draws the region
+	## beacons, a flight-path arc to the region you pick, and an orbit ring on
+	## top, and spins to the selected region. Drag sideways to spin it; tap a
+	## beacon to pick it. Beacons: owned (gold), locked (cyan, padlock),
+	## coming soon (dim).
 	signal pin_pressed(map_id: String)
+
+	const RADIUS := 0.46            # of the widget's shorter side (matches the shader's 0.92)
+	static var _shader: Shader
+	static var _map: Texture2D
 
 	var lon := -60.0
 	var lat := 0.0
@@ -272,30 +281,73 @@ class Globe extends Control:
 	var selected := ""
 	var t := 0.0
 	var _pins := {}
+	var _sphere: ColorRect
+	var _mat: ShaderMaterial
+	var _over: Control
+	var _arc_from := ""
+	var _arc_t := 9.0
+	var _drag := {}
+	var _spin := 0.0                # degrees / s of fling after a drag
+	var _idle := 9.0                # seconds since the last drag
 
 	func _init(min_size := Vector2(560, 560)) -> void:
 		custom_minimum_size = min_size
-		mouse_filter = Control.MOUSE_FILTER_STOP
+		mouse_filter = Control.MOUSE_FILTER_PASS
+		if _shader == null:
+			_shader = load("res://assets/shaders/globe.gdshader")
+			_map = load("res://assets/world/globe_map.png")
+		_sphere = ColorRect.new()
+		_sphere.set_anchors_preset(Control.PRESET_FULL_RECT)
+		_sphere.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		_mat = ShaderMaterial.new()
+		_mat.shader = _shader
+		_mat.set_shader_parameter("map_tex", _map)
+		_mat.set_shader_parameter("radius", RADIUS * 2.0)
+		_mat.set_shader_parameter("detail", 1.0 if Draw.detail > 0 else 0.0)
+		_sphere.material = _mat
+		add_child(_sphere)
+		_over = Control.new()
+		_over.set_anchors_preset(Control.PRESET_FULL_RECT)
+		_over.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		_over.draw.connect(_draw_over)
+		add_child(_over)
 
 	func focus(map_id: String) -> void:
+		if selected != "" and selected != map_id:
+			_arc_from = selected
+			_arc_t = 0.0
 		selected = map_id
 		var m := Content.map(map_id)
 		target_lon = float(m.get("lon", 0.0))
 		target_lat = clampf(float(m.get("lat", 0.0)), -35.0, 35.0)
+		_idle = 9.0
 
 	func _process(dt: float) -> void:
 		if not is_visible_in_tree():
 			return
 		t += dt
-		var d := wrapf(target_lon - lon, -180.0, 180.0)
-		lon += d * (1.0 - exp(-dt * 3.0))
-		lat = lerpf(lat, target_lat, 1.0 - exp(-dt * 3.0))
-		if absf(d) < 0.5:
-			target_lon += dt * 2.0
+		_arc_t += dt
+		_idle += dt
+		if not _drag.get("spinning", false):
+			if absf(_spin) > 0.5:
+				lon += _spin * dt
+				target_lon = lon
+				_spin *= exp(-dt * 2.5)
+			elif _idle > 2.5:
+				var d := wrapf(target_lon - lon, -180.0, 180.0)
+				lon += d * (1.0 - exp(-dt * 3.0))
+				lat = lerpf(lat, target_lat, 1.0 - exp(-dt * 3.0))
+				if absf(d) < 0.5:
+					target_lon += dt * 2.0
+		_mat.set_shader_parameter("lon0", deg_to_rad(lon))
+		_mat.set_shader_parameter("tilt", deg_to_rad(lat))
+		_mat.set_shader_parameter("time", t)
+		_mat.set_shader_parameter("rect_size", size)
 		queue_redraw()
+		_over.queue_redraw()
 
 	func _project(la: float, lo: float) -> Vector3:
-		var r := minf(size.x, size.y) * 0.46
+		var r := minf(size.x, size.y) * RADIUS
 		var phi := deg_to_rad(la)
 		var lam := deg_to_rad(lo - lon)
 		var x := cos(phi) * sin(lam)
@@ -306,51 +358,177 @@ class Globe extends Control:
 		var z2 := y * sin(tilt) + z * cos(tilt)
 		return Vector3(size.x * 0.5 + x * r, size.y * 0.5 - y2 * r, z2)
 
+	## Behind the sphere: soft shadow and the far half of the orbit ring.
 	func _draw() -> void:
 		var c := size * 0.5
-		var r := minf(size.x, size.y) * 0.46
-		Draw.ellipse(self, c + Vector2(0, 8), r * 1.02, r * 1.02, Color(0, 0, 0, 0.25), 0.0, 64)
-		Draw.ellipse(self, c, r, r, Color("12385a"), 0.0, 64)
-		Draw.ellipse(self, c + Vector2(-r * 0.25, -r * 0.3), r * 0.7, r * 0.6, Color(1, 1, 1, 0.04), 0.0, 48)
-		for d in Content.globe_dots:
-			var p := _project(d.x, d.y)
-			if p.z <= 0.0:
+		var r := minf(size.x, size.y) * RADIUS
+		Draw.ellipse(self, c + Vector2(0, r * 0.06), r * 1.04, r * 1.04, Color(0, 0, 0, 0.28), 0.0, 64)
+		_orbit(self, c, r, true)
+
+	func _orbit(ci: CanvasItem, c: Vector2, r: float, back: bool) -> void:
+		if Draw.detail <= 0:
+			return
+		var rx := r * 1.32
+		var ry := r * 0.3
+		var rot := -0.32
+		var pts := PackedVector2Array()
+		for i in 49:
+			var a := (PI if back else 0.0) + PI * i / 48.0
+			pts.append(c + Vector2(cos(a) * rx, sin(a) * ry).rotated(rot))
+		ci.draw_polyline(pts, Color(0.45, 0.9, 1.0, 0.22 if back else 0.4), 2.0, true)
+		for k in 3:
+			var a2 := fposmod(t * 0.35 + k * TAU / 3.0, TAU)
+			var behind := a2 > PI
+			if behind != back:
 				continue
-			var k := 0.35 + 0.65 * p.z
-			draw_rect(Rect2(p.x - 2.6 * k, p.y - 2.6 * k, 5.2 * k, 5.2 * k), Color(0.36, 0.72, 0.42, 0.45 + 0.55 * p.z))
-		draw_arc(c, r, 0, TAU, 64, Color(0.6, 0.85, 1.0, 0.35), 3, true)
+			var sp := c + Vector2(cos(a2) * rx, sin(a2) * ry).rotated(rot)
+			Draw.ellipse(ci, sp, 9.0, 9.0, Color(0.45, 0.9, 1.0, 0.18))
+			Draw.ellipse(ci, sp, 3.5, 3.5, Color(0.8, 1.0, 1.0, 0.9 if not back else 0.4))
+
+	## In front of the sphere: flight-path arc, beacons, the selected tag.
+	func _draw_over() -> void:
+		var c := size * 0.5
+		var r := minf(size.x, size.y) * RADIUS
+		var font := UI.font(true)
+		if _arc_from != "" and _arc_t < 2.2:
+			_flight_arc(Content.map(_arc_from), Content.map(selected), r)
 		_pins.clear()
-		for id in Content.map_order:
+		var order: Array = Content.map_order.duplicate()
+		order.erase(selected)
+		order.append(selected)
+		for id in order:
+			if id == "":
+				continue
 			var m := Content.map(id)
 			var p2 := _project(float(m.get("lat", 0)), float(m.get("lon", 0)))
 			if p2.z <= 0.05:
 				continue
 			var pos := Vector2(p2.x, p2.y)
 			_pins[id] = pos
-			var owned := Save.owns_map(id)
-			var soon: bool = m.get("status", "available") != "available"
-			var col := UI.ACCENT if owned else (Color(0.6, 0.6, 0.6) if not soon else Color(0.5, 0.5, 0.5, 0.5))
-			var sel := id == selected
-			var pr := (14.0 if sel else 9.0) + (sin(t * 4.0) * 2.0 if sel else 0.0)
-			draw_line(pos, pos - Vector2(0, pr * 2.2), col.darkened(0.3), 3)
-			Draw.ellipse(self, pos - Vector2(0, pr * 2.2), pr, pr, col)
-			if not owned and not soon:
-				draw_rect(Rect2(pos.x - pr * 0.4, pos.y - pr * 2.3, pr * 0.8, pr * 0.6), Color("2a2a2a"))
-			if sel:
-				Draw.ellipse_line(self, pos, pr * 1.6, pr * 0.6, Color(1, 1, 1, 0.7), 2)
+			_beacon(pos, p2.z, id, m, r)
+		_orbit(_over, c, r, false)
+		if selected != "" and _pins.has(selected):
+			var sm := Content.map(selected)
+			var la := float(sm.get("lat", 0.0))
+			var lo := float(sm.get("lon", 0.0))
+			var text := String(sm.get("name", "")).to_upper()
+			var coords := "%.1f°%s  %.1f°%s" % [absf(la), "S" if la < 0.0 else "N", absf(lo), "W" if lo < 0.0 else "E"]
+			var pos2: Vector2 = _pins[selected]
+			var tw := maxf(font.get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, 20).x, font.get_string_size(coords, HORIZONTAL_ALIGNMENT_LEFT, -1, 16).x)
+			var right := pos2.x < size.x * 0.62
+			var box := Rect2(pos2.x + (34.0 if right else -34.0 - tw - 24.0), pos2.y - 92.0, tw + 24.0, 52.0)
+			box.position.x = clampf(box.position.x, 4.0, size.x - box.size.x - 4.0)
+			var anchor := Vector2(box.position.x if right else box.end.x, box.end.y)
+			_over.draw_line(pos2 - Vector2(0, 52), anchor, Color(0.45, 0.9, 1.0, 0.7), 2.0, true)
+			Draw.rrect(_over, box, 8, Color(0.02, 0.1, 0.16, 0.85))
+			_over.draw_rect(box, Color(0.45, 0.9, 1.0, 0.6), false, 1.5)
+			_over.draw_string(font, box.position + Vector2(12, 22), text, HORIZONTAL_ALIGNMENT_LEFT, -1, 20, Color(0.85, 1.0, 1.0))
+			_over.draw_string(font, box.position + Vector2(12, 43), coords, HORIZONTAL_ALIGNMENT_LEFT, -1, 16, Color(0.45, 0.9, 1.0, 0.85))
 
+	func _beacon(pos: Vector2, z: float, id: String, m: Dictionary, r: float) -> void:
+		var owned := Save.owns_map(id)
+		var soon: bool = m.get("status", "available") != "available"
+		var sel := id == selected
+		var col := UI.ACCENT if owned else (Color(0.45, 0.9, 1.0) if not soon else Color(0.6, 0.7, 0.75, 0.5))
+		var k := 0.55 + 0.45 * z
+		# the ring on the ground, squashed by the curve of the globe
+		var sq := clampf(z, 0.2, 1.0)
+		var pulse := fposmod(t * 0.8 + float(hash(id) % 100) * 0.01, 1.0)
+		Draw.ellipse_line(_over, pos, (8.0 + pulse * (26.0 if sel else 14.0)) * k, (8.0 + pulse * (26.0 if sel else 14.0)) * k * sq, Color(col, (1.0 - pulse) * 0.7), 2.0)
+		Draw.ellipse(_over, pos, 4.0 * k, 4.0 * k * sq, Color(col, 0.9))
+		# a beam of light up from the surface
+		var h := (64.0 if sel else 36.0) * k
+		var top := pos - Vector2(0, h)
+		for i in 4:
+			var a0 := float(i) / 4.0
+			_over.draw_line(pos.lerp(top, a0), pos.lerp(top, a0 + 0.25), Color(col, (0.75 - a0 * 0.5) * (1.0 if not soon else 0.5)), (4.0 if sel else 2.5) * k, true)
+		var hr := (15.0 if sel else 10.0) * k + (sin(t * 4.0) * 1.5 if sel else 0.0)
+		Draw.ellipse(_over, top, hr * 1.7, hr * 1.7, Color(col, 0.16))
+		if owned:
+			var flag: Array = m.get("flag", {}).get("colors", ["#f6d43a", "#1f8a3a"])
+			Draw.ellipse(_over, top, hr, hr, col)
+			Draw.ellipse(_over, top, hr * 0.62, hr * 0.62, Color(String(flag[0])))
+			Draw.ellipse(_over, top, hr * 0.3, hr * 0.3, Color(String(flag[1] if flag.size() > 1 else flag[0])))
+		elif soon:
+			Draw.ellipse_line(_over, top, hr, hr, col, 2.0)
+			for j in 3:
+				Draw.ellipse(_over, top + Vector2((j - 1) * hr * 0.45, 0), hr * 0.12, hr * 0.12, col)
+		else:
+			Draw.ellipse(_over, top, hr, hr, Color(0.03, 0.12, 0.18, 0.92))
+			Draw.ellipse_line(_over, top, hr, hr, col, 2.0)
+			# padlock: shackle and body
+			_over.draw_arc(top + Vector2(0, -hr * 0.12), hr * 0.3, PI, TAU, 10, col, maxf(1.5, hr * 0.12), true)
+			Draw.rrect(_over, Rect2(top.x - hr * 0.42, top.y - hr * 0.12, hr * 0.84, hr * 0.6), hr * 0.12, col)
+			Draw.ellipse(_over, top + Vector2(0, hr * 0.16), hr * 0.09, hr * 0.09, Color(0.03, 0.12, 0.18))
+		if sel:
+			Draw.ellipse_line(_over, top, hr * 1.35, hr * 1.35, Color(1, 1, 1, 0.75), 2.0)
+
+	## A great-circle path from the last region to the new one, drawn on the
+	## near side of the globe and fading out.
+	func _flight_arc(a: Dictionary, b: Dictionary, r: float) -> void:
+		var pa := _vec(float(a.get("lat", 0)), float(a.get("lon", 0)))
+		var pb := _vec(float(b.get("lat", 0)), float(b.get("lon", 0)))
+		var fade := clampf(2.2 - _arc_t, 0.0, 1.0)
+		var grow := clampf(_arc_t / 0.7, 0.0, 1.0)
+		var prev := Vector2.INF
+		var n := 40
+		for i in n + 1:
+			var f := float(i) / n
+			if f > grow:
+				break
+			var v := pa.slerp(pb, f).normalized() * (1.0 + sin(f * PI) * 0.12)
+			var la := rad_to_deg(asin(clampf(v.normalized().y, -1.0, 1.0)))
+			var lo := rad_to_deg(atan2(v.x, v.z))
+			var s := _project(la, lo)
+			var lift := sin(f * PI) * 0.12 * r
+			var sp := Vector2(s.x, s.y) - Vector2(0, lift)
+			if s.z > -0.1 and prev != Vector2.INF and i % 2 == 0:
+				_over.draw_line(prev, sp, Color(1.0, 0.85, 0.35, 0.85 * fade), 3.0, true)
+			prev = sp
+		if grow < 1.0 and prev != Vector2.INF:
+			Draw.ellipse(_over, prev, 5.0, 5.0, Color(1, 0.95, 0.6, fade))
+
+	static func _vec(la: float, lo: float) -> Vector3:
+		var phi := deg_to_rad(la)
+		var lam := deg_to_rad(lo)
+		return Vector3(cos(phi) * sin(lam), sin(phi), cos(phi) * cos(lam))
+
+	## Sideways drags spin the globe (with a fling); taps pick a beacon.
+	## Up/down drags are left to the page so it still scrolls. Touch only:
+	## mouse clicks arrive as touches too (input_devices/pointing), so no
+	## event is handled twice.
 	func _gui_input(event: InputEvent) -> void:
-		var pos := Vector2.INF
-		if event is InputEventMouseButton and event.pressed:
-			pos = event.position
-		elif event is InputEventScreenTouch and event.pressed:
-			pos = event.position
-		if pos == Vector2.INF:
-			return
+		if event is InputEventScreenTouch:
+			if event.pressed:
+				_drag = {"start": event.position, "moved": false, "spinning": false, "t": Time.get_ticks_msec()}
+			elif not _drag.is_empty():
+				if not _drag.moved:
+					_pick(event.position)
+				elif _drag.spinning:
+					accept_event()
+				_drag = {}
+		elif event is InputEventScreenDrag and not _drag.is_empty():
+			var d: Vector2 = event.position - _drag.start
+			if not _drag.moved and d.length() > 12.0:
+				_drag.moved = true
+				_drag.spinning = absf(d.x) >= absf(d.y)
+			if _drag.spinning:
+				accept_event()
+				var r := minf(size.x, size.y) * RADIUS
+				var dlon := -rad_to_deg(event.relative.x / r)
+				lon += dlon
+				target_lon = lon
+				var dt := maxf(0.001, (Time.get_ticks_msec() - int(_drag.t)) / 1000.0)
+				_drag.t = Time.get_ticks_msec()
+				_spin = clampf(dlon / dt, -240.0, 240.0)
+				_idle = 0.0
+
+	func _pick(pos: Vector2) -> void:
 		var best := ""
 		var bd := 46.0
 		for id in _pins:
-			var d: float = (_pins[id] - Vector2(0, 20) - pos).length()
+			var p: Vector2 = _pins[id]
+			var d := minf((p - pos).length(), (p - Vector2(0, 40) - pos).length())
 			if d < bd:
 				bd = d
 				best = id

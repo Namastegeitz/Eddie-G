@@ -102,5 +102,5 @@ for switching to Google Play Billing, StoreKit and AdMob.
 ```bash
 python3 tools/gen_audio.py          # all music, ambience and SFX (needs numpy + ffmpeg)
 python3 tools/gen_audio.py --maps   # just region music, after adding a map
-python3 tools/gen_globe.py land-110m.json content/world/globe_dots.json
+python3 tools/gen_globe_map.py land-50m.json countries-50m.json assets/world/globe_map.png   # from npm pack world-atlas@2.0.2
 ```

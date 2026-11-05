@@ -98,6 +98,6 @@ scripts/abilities/  one file per ability module
 scripts/view/ painters (animals, hazards), world view, player, fx, atmosphere
 scripts/ui/   screens and widgets
 scripts/platform/  billing backends (sandbox, Google Play, App Store), AdMob adapter
-tools/        run_tests.sh, capture.sh, gen_audio.py, gen_globe.py, web_artifact/
+tools/        run_tests.sh, capture.sh, gen_audio.py, gen_globe_map.py, fpv_check, build_web.sh, web_artifact/
 docs/         CONTENT.md, STORE.md
 ```
