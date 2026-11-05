@@ -2,12 +2,17 @@
 import { SYMBOL_SETS } from '../data/symbols.js';
 import { SECTORS } from '../data/sectors.js';
 import { settings } from '../core/profile.js';
+import { DIFFICULTY_LINEUP } from '../data/themes.js';
 
 /** Which symbol set a session should draw with right now. */
 export function setKeyFor(session) {
   const s = settings();
   if (session?.mode === 'campaign' && s.sectorSymbols && session.sector != null) {
     return SECTORS[session.sector]?.symbolSet || s.symbolSet;
+  }
+  // Quick play, Zen and Daily: each difficulty brings its own aliens, soft to gnarly.
+  if (session && session.mode !== 'campaign' && s.difficultyAliens !== false && DIFFICULTY_LINEUP[session.difficulty]) {
+    return DIFFICULTY_LINEUP[session.difficulty];
   }
   return s.symbolSet;
 }

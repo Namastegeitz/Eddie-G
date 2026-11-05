@@ -15,6 +15,7 @@
   --bg-deep: #05010f;
   --text: #eafff4;
   --text-dim: #b9b3d4;
+  --on-accent: #05010f;            /* text on accent-colored buttons and badges */
   --cell-bg: #170a33;
   --cell-fixed: #0d0520;
   --cell-user: #24104a;
@@ -226,7 +227,7 @@ h1:focus, h2:focus, [tabindex="-1"]:focus, [tabindex="-1"]:focus-visible { outli
 }
 .btn:active { transform: scale(0.97); }
 .btn:disabled { opacity: 0.4; cursor: not-allowed; }
-.btn-primary { color: var(--bg-deep); background: var(--neon-green); border-color: var(--neon-green); box-shadow: var(--shadow-accent); }
+.btn-primary { color: var(--on-accent); background: var(--neon-green); border-color: var(--neon-green); box-shadow: var(--shadow-accent); }
 .btn-secondary { color: var(--neon-purple); border-color: var(--neon-purple); box-shadow: 0 0 12px rgba(var(--c2-rgb), 0.4); }
 .btn-ghost { color: var(--text-dim); border-color: rgba(185, 179, 212, 0.55); }
 .btn-danger { color: var(--warn); border-color: var(--warn); }

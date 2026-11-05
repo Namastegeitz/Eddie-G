@@ -193,3 +193,26 @@ test('lineups: themes switch, every glyph exists, correct moves score points', a
   await expect(page.locator(`.cell[data-i="${i}"] use`)).toHaveAttribute('href', `#gl-fleet-${v}`);
   expect(errors).toEqual([]);
 });
+
+test('each difficulty brings its own aliens and theme, soft to gnarly', async ({ page }) => {
+  const errors = errorsOf(page);
+  await openMenu(page);
+  const expected = { easy: 'softies', medium: 'creatures', hard: 'hostile', alien: 'gnarly' };
+  for (const [diff, lineup] of Object.entries(expected)) {
+    await startQuick(page, diff);
+    await expect(page.locator('html')).toHaveAttribute('data-theme', lineup);
+    const i = await page.evaluate(() => window.__alienSession.board.findIndex((v) => v !== 0));
+    await expect(page.locator(`.cell[data-i="${i}"] use`)).toHaveAttribute('href', new RegExp(`^#gl-${lineup}-`));
+    await page.locator('.topbar .icon-btn[aria-label="Back to menu"]').click();
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'encounters');
+    await page.evaluate(() => localStorage.removeItem('alien-sudoku:saved-game'));
+    await page.reload();
+  }
+  // Turning the setting off uses the player's own lineup again.
+  await page.locator('.icon-tile', { hasText: 'Settings' }).click();
+  await page.locator('.set-row', { hasText: 'Each difficulty brings its own aliens' }).locator('input').uncheck();
+  await page.locator('.topbar .icon-btn[aria-label="Back"]').click();
+  await startQuick(page, 'alien');
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'encounters');
+  expect(errors).toEqual([]);
+});

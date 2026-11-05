@@ -152,6 +152,7 @@ export const howtoScreen = {
       ]],
       ['Lineups & themes', [
         h('p', {}, 'Each lineup is a set of 9 glyphs with its own colors, font and board style: Close Encounters, Space Fleet, Planets, Deep Cosmos, Alien Creatures, Ancient Mysteries and the Cosmic Mix. Every glyph has its own color, so you can spot it at a glance. Tap a placed glyph to see its name.'),
+        h('p', {}, 'Each difficulty brings its own aliens: Easy has the super soft Soft Visitors, Medium the playful Alien Creatures, Hard the Hostile Visitors, and Alien the Gnarly Horde. You can turn this off in Settings.'),
         h('p', {}, 'Change lineup in Settings. Each campaign sector is played with its own lineup; Alien Creatures, Ancient Mysteries and the Cosmic Mix are unlocked in the campaign.'),
       ]],
       ['Modes', [

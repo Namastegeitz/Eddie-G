@@ -46,6 +46,8 @@ export const settingsScreen = {
             '--card-c1': `rgb(${t.rgb.c1})`,
             background: `radial-gradient(circle at 30% 20%, rgba(${t.rgb.c2}, 0.28), transparent 60%), linear-gradient(160deg, ${t.cellUser}, ${t.bg})`,
             fontFamily: t.font,
+            color: t.text,
+            '--card-dim': t.textDim,
           },
           type: 'button', role: 'radio', 'aria-checked': String(active),
           'aria-label': `${set.name}${unlocked ? '' : `, locked: ${unlockHint(k)}`}`,
@@ -76,6 +78,7 @@ export const settingsScreen = {
       h('div', { class: 'page-body settings' },
         group('Glyph lineup & theme', [
           setGrid,
+          toggle('difficultyAliens', 'Each difficulty brings its own aliens', 'Easy: Soft Visitors · Medium: Alien Creatures · Hard: Hostile Visitors · Alien: Gnarly Horde. Off = always use your lineup.'),
           toggle('sectorSymbols', 'Campaign uses each sector\'s lineup', 'Each sector has its own glyphs and theme. Off = always use your lineup.'),
         ]),
         group('Sound', [

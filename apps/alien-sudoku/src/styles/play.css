@@ -71,7 +71,7 @@
 .hud-score { display: inline-flex; align-items: baseline; gap: 5px; color: rgb(var(--c1-rgb)); font-variant-numeric: tabular-nums; }
 .hud-score b { font-size: 0.95rem; text-shadow: 0 0 8px rgba(var(--c1-rgb), 0.5); }
 .hud-score[hidden] { display: none; }
-.combo-badge { font-size: 0.68rem; padding: 1px 6px; border-radius: 999px; background: rgb(var(--c4-rgb)); color: var(--bg-deep); font-weight: 900; }
+.combo-badge { font-size: 0.68rem; padding: 1px 6px; border-radius: 999px; background: rgb(var(--c4-rgb)); color: var(--on-accent); font-weight: 900; }
 .combo-badge[hidden] { display: none; }
 .combo-badge.bump { animation: bump 0.3s ease-out; }
 @keyframes bump { 50% { transform: scale(1.35); } }
@@ -203,8 +203,8 @@
   font-family: var(--font-display);
   font-weight: 700;
   font-size: 0.85rem;
-  color: #fff;
-  text-shadow: 0 0 6px var(--gc, rgb(var(--c1-rgb))), 0 1px 2px rgba(0, 0, 0, 0.8);
+  color: var(--text);
+  text-shadow: 0 0 6px var(--gc, rgb(var(--c1-rgb))), 0 1px 2px rgba(var(--deep-rgb), 0.9);
   white-space: nowrap;
   animation: scorePop 0.95s ease-out forwards;
 }
@@ -314,7 +314,7 @@
   padding: 0 5px;
   border-radius: 999px;
   background: var(--neon-cyan);
-  color: var(--bg-deep);
+  color: var(--on-accent);
   font-family: var(--font-display);
   font-size: 0.56rem;
   font-weight: 900;
@@ -393,7 +393,7 @@
 .result-stat { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 10px 6px; border-radius: 12px; background: rgba(var(--panel-rgb), 0.7); border: 1px solid var(--line); }
 .result-stat small { color: var(--text-dim); font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.12em; }
 .result-stat b { font-family: var(--font-display); font-size: 1.05rem; color: var(--neon-cyan); }
-.badge-new { font-size: 0.6rem; font-weight: 700; color: var(--bg-deep); background: var(--gold); padding: 2px 6px; border-radius: 999px; text-transform: uppercase; letter-spacing: 0.08em; }
+.badge-new { font-size: 0.6rem; font-weight: 700; color: #241a00; background: var(--gold); padding: 2px 6px; border-radius: 999px; text-transform: uppercase; letter-spacing: 0.08em; }
 .result-streak { display: flex; align-items: center; justify-content: center; gap: 4px; color: var(--gold); font-family: var(--font-display); letter-spacing: 0.1em; font-size: 0.85rem; }
 .result-unlocks, .result-achievements { display: flex; flex-direction: column; gap: 6px; }
 .unlock-row, .ach-row { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-radius: 12px; background: rgba(255, 211, 107, 0.08); border: 1px solid rgba(255, 211, 107, 0.45); font-size: 0.85rem; }

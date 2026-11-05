@@ -71,7 +71,7 @@ export const TOTAL_LEVELS = SECTORS.length * LEVELS_PER_SECTOR;
 export const MAX_STARS = TOTAL_LEVELS * 3;
 
 /** Symbol sets available from the start. The rest unlock by reaching a sector. */
-export const STARTER_SETS = ['encounters', 'fleet', 'planets', 'cosmos'];
+export const STARTER_SETS = ['encounters', 'fleet', 'planets', 'cosmos', 'softies', 'hostile', 'gnarly'];
 
 /** Lineup keys from before the redesign, mapped to their replacements. */
 export const OLD_SET_KEYS = { alien: 'encounters', moons: 'fleet', aircraft: 'fleet', spaceships: 'creatures', galaxies: 'cosmos' };

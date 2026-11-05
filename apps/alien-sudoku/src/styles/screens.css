@@ -89,7 +89,7 @@
 .menu-btn-text small { color: var(--text-dim); font-size: 0.76rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .menu-btn .chev { transform: scaleX(-1); color: var(--text-dim); width: 18px; height: 18px; }
 .menu-continue { border-color: var(--neon-green); box-shadow: 0 0 18px rgba(var(--c1-rgb), 0.3); }
-.menu-continue .menu-btn-ico { background: var(--neon-green); color: var(--bg-deep); }
+.menu-continue .menu-btn-ico { background: var(--neon-green); color: var(--on-accent); }
 .menu-campaign .menu-btn-ico { background: rgba(255, 211, 107, 0.14); color: var(--gold); }
 .menu-daily .menu-btn-ico { background: rgba(var(--c3-rgb), 0.14); color: var(--neon-cyan); }
 .menu-quick .menu-btn-ico { background: rgba(var(--c2-rgb), 0.18); color: var(--neon-purple-soft); }
@@ -113,7 +113,7 @@
   letter-spacing: 0.04em;
 }
 .icon-tile .ico { width: 24px; height: 24px; color: var(--neon-cyan); }
-.tile-badge { position: absolute; top: 6px; right: 6px; font-size: 0.58rem; font-weight: 700; padding: 1px 6px; border-radius: 999px; background: var(--neon-pink); color: var(--bg-deep); }
+.tile-badge { position: absolute; top: 6px; right: 6px; font-size: 0.58rem; font-weight: 700; padding: 1px 6px; border-radius: 999px; background: var(--neon-pink); color: var(--on-accent); }
 @media (hover: hover) { .icon-tile:hover { border-color: var(--neon-cyan); color: var(--text); } }
 .menu-footer { display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 0.66rem; color: var(--text-dim); letter-spacing: 0.18em; text-transform: uppercase; opacity: 0.8; }
 .menu-footer .version { letter-spacing: 0.08em; opacity: 0.7; }
@@ -135,21 +135,25 @@
 .diff-option {
   display: grid;
   grid-template-columns: 1fr auto;
-  grid-template-areas: 'name best' 'blurb blurb';
-  gap: 4px 10px;
+  grid-template-areas: 'name glyphs' 'blurb glyphs' 'lineup best';
+  gap: 3px 10px;
   width: 100%;
   padding: 12px 14px;
   border-radius: 14px;
-  border: 1px solid currentColor;
-  background: rgba(var(--panel-rgb), 0.7);
+  border: 1.5px solid currentColor;
   text-align: left;
   cursor: pointer;
+  transition: transform 0.12s, box-shadow 0.15s;
 }
-.diff-option.current { box-shadow: 0 0 14px currentColor; }
-.diff-name { grid-area: name; font-family: var(--font-display); font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; font-size: 0.9rem; }
-.diff-name small { margin-left: 8px; font-family: var(--font-body); letter-spacing: 0; text-transform: none; color: var(--text-dim); font-weight: 400; font-size: 0.72rem; }
-.diff-blurb { grid-area: blurb; color: var(--text-dim); font-size: 0.78rem; }
-.diff-best { grid-area: best; font-size: 0.72rem; color: var(--gold); align-self: center; }
+.diff-option:active { transform: scale(0.98); }
+.diff-option.current { box-shadow: 0 0 16px var(--opt-c1, currentColor); }
+.diff-name { grid-area: name; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; font-size: 1rem; color: var(--opt-c1, currentColor); }
+.diff-name small { margin-left: 8px; font-family: var(--font-body); letter-spacing: 0; text-transform: none; color: var(--opt-dim, var(--text-dim)); font-weight: 400; font-size: 0.72rem; }
+.diff-blurb { grid-area: blurb; color: var(--opt-dim, var(--text-dim)); font-size: 0.78rem; }
+.diff-lineup { grid-area: lineup; font-size: 0.7rem; letter-spacing: 0.04em; color: var(--opt-c1, currentColor); opacity: 0.9; }
+.diff-glyphs { grid-area: glyphs; display: flex; align-items: center; gap: 2px; }
+.diff-glyphs .gsvg { width: 34px; height: 34px; }
+.diff-best { grid-area: best; font-size: 0.72rem; color: var(--gold); align-self: center; justify-self: end; }
 
 /* ---------- Campaign ---------- */
 .sector-list { display: flex; flex-direction: column; gap: 10px; }
@@ -317,7 +321,7 @@
 .set-preview { display: grid; grid-template-columns: repeat(5, 1fr); gap: 2px; width: 100%; }
 .set-preview .gsvg { width: 100%; height: auto; aspect-ratio: 1; }
 .set-name { font-size: 0.86rem; font-weight: 700; display: inline-flex; align-items: center; gap: 4px; letter-spacing: 0.03em; }
-.set-card small { font-family: var(--font-body); font-size: 0.68rem; color: #d8d2e8; line-height: 1.3; }
+.set-card small { font-family: var(--font-body); font-size: 0.68rem; color: var(--card-dim, #d8d2e8); line-height: 1.3; }
 .about { display: flex; flex-direction: column; align-items: center; gap: 4px; text-align: center; color: var(--text-dim); padding: 10px 8px 0; }
 .about b { font-family: var(--font-display); letter-spacing: 0.14em; color: var(--text); }
 .about small { font-size: 0.72rem; line-height: 1.45; }

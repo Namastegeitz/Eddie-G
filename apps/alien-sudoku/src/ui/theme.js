@@ -27,6 +27,7 @@ export function applyTheme(key) {
   set('--bg-deep', t.bg);
   set('--text', t.text);
   set('--text-dim', t.textDim);
+  set('--on-accent', t.onAccent || t.bg);
   set('--cell-bg', t.cellBg);
   set('--cell-fixed', t.cellFixed);
   set('--cell-user', t.cellUser);
@@ -43,6 +44,8 @@ export function applyTheme(key) {
   set('--text-glow-1', `0 0 ${Math.round(8 * g)}px rgba(${t.rgb.c1}, ${(0.8 * g).toFixed(2)}), 0 0 ${Math.round(24 * g)}px rgba(${t.rgb.c1}, ${(0.5 * g).toFixed(2)})`);
   set('--text-glow-2', `0 0 ${Math.round(8 * g)}px rgba(${t.rgb.c2}, ${(0.8 * g).toFixed(2)}), 0 0 ${Math.round(24 * g)}px rgba(${t.rgb.c2}, ${(0.5 * g).toFixed(2)})`);
   root.dataset.theme = key;
+  root.dataset.tone = t.light ? 'light' : 'dark';
+  root.style.colorScheme = t.light ? 'light' : 'dark';
 
   const meta = document.querySelector('meta[name="theme-color"]');
   if (meta) meta.setAttribute('content', t.bg);

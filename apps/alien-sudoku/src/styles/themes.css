@@ -115,3 +115,132 @@ body, .board, .cell, .glyph-btn, .menu-btn, .tool-btn { transition-property: bac
   -webkit-mask-image: linear-gradient(transparent, black 60%);
   opacity: 0.55;
 }
+
+/* ============================================================
+   Difficulty lineups: super soft (Easy) → gnarly (Alien)
+   ============================================================ */
+
+/* ---------- Soft Visitors (Easy): light pastel, squishy ---------- */
+[data-theme='softies'] .board {
+  border-width: 3px;
+  box-shadow: 0 10px 30px rgba(150, 120, 255, 0.25), 0 0 0 6px rgba(255, 255, 255, 0.55);
+}
+[data-theme='softies'] .cell { border-color: rgba(150, 120, 220, 0.14); }
+[data-theme='softies'] .cell.pop .cell-glyph { animation: squish 0.65s ease-out; }
+@keyframes squish {
+  0% { transform: scale(0.3); opacity: 0; }
+  40% { transform: scale(1.25, 0.82); opacity: 1; }
+  60% { transform: scale(0.9, 1.12); }
+  80% { transform: scale(1.05, 0.96); }
+  100% { transform: none; }
+}
+[data-theme='softies'] .cell.same .cell-glyph { animation: softBob 1.6s ease-in-out infinite; }
+@keyframes softBob { 50% { transform: translateY(-5%) rotate(-3deg); } }
+[data-theme='softies'] .menu-btn, [data-theme='softies'] .icon-tile, [data-theme='softies'] .modal-card,
+[data-theme='softies'] .set-rows, [data-theme='softies'] .daily-card, [data-theme='softies'] .calendar {
+  border-radius: 26px;
+  box-shadow: 0 6px 18px rgba(150, 120, 255, 0.16);
+}
+[data-theme='softies'] .menu-btn-ico { border-radius: 50%; }
+[data-theme='softies'] .title-glow, [data-theme='softies'] .title-accent { text-shadow: 0 3px 0 rgba(255, 255, 255, 0.9), 0 6px 18px rgba(var(--c1-rgb), 0.35); }
+[data-theme='softies'] .game-title { letter-spacing: 0.05em; font-weight: 700; }
+[data-theme='softies'] .btn { letter-spacing: 0.06em; }
+/* Slow floating bubbles instead of stars. */
+[data-theme='softies'] .starfield::after {
+  content: '';
+  position: absolute;
+  inset: -20% 0 0 0;
+  background:
+    radial-gradient(circle at 15% 80%, rgba(255, 255, 255, 0.7) 0 10px, transparent 11px),
+    radial-gradient(circle at 70% 60%, rgba(255, 190, 225, 0.6) 0 16px, transparent 17px),
+    radial-gradient(circle at 40% 30%, rgba(200, 185, 255, 0.55) 0 8px, transparent 9px),
+    radial-gradient(circle at 88% 20%, rgba(170, 235, 255, 0.6) 0 12px, transparent 13px);
+  background-size: 100% 60%;
+  animation: bubblesUp 26s linear infinite;
+  opacity: 0.8;
+}
+@keyframes bubblesUp { from { transform: translateY(0); } to { transform: translateY(-60%); } }
+
+/* ---------- Hostile Visitors (Hard): chiseled, armored, hazard stripes ---------- */
+[data-theme='hostile'] .board {
+  border: 3px solid rgb(var(--c1-rgb));
+  box-shadow: 0 0 22px rgba(255, 62, 62, 0.45), inset 0 0 26px rgba(255, 62, 62, 0.15);
+}
+[data-theme='hostile'] .board-wrap::before, [data-theme='hostile'] .board-wrap::after {
+  content: '';
+  position: absolute;
+  left: 10%;
+  right: 10%;
+  height: 6px;
+  background: repeating-linear-gradient(-45deg, rgb(var(--c3-rgb)) 0 8px, #140406 8px 16px);
+  z-index: 6;
+  pointer-events: none;
+}
+[data-theme='hostile'] .board-wrap::before { top: -9px; }
+[data-theme='hostile'] .board-wrap::after { bottom: -9px; }
+[data-theme='hostile'] .menu-btn, [data-theme='hostile'] .tool-btn, [data-theme='hostile'] .icon-tile,
+[data-theme='hostile'] .btn, [data-theme='hostile'] .sector-card, [data-theme='hostile'] .level-node,
+[data-theme='hostile'] .diff-option {
+  border-radius: 0;
+  clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+}
+[data-theme='hostile'] .glyph-btn {
+  border-radius: 0;
+  clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px);
+}
+[data-theme='hostile'] .cell.pop .cell-glyph { animation: slam 0.32s cubic-bezier(0.3, 0, 0.2, 1); }
+@keyframes slam { 0% { transform: scale(1.9); opacity: 0; } 60% { transform: scale(0.9); opacity: 1; } 100% { transform: none; } }
+[data-theme='hostile'] .game-title { letter-spacing: 0.08em; }
+[data-theme='hostile'] .title-glow, [data-theme='hostile'] .title-accent { text-shadow: 0 0 10px rgba(255, 62, 62, 0.7), 0 3px 0 #2a0508; }
+
+/* ---------- Gnarly Horde (Alien): heartbeat, veins, glitches ---------- */
+[data-theme='gnarly'] .board {
+  border: 3px solid rgb(var(--c1-rgb));
+  animation: heartbeat 1.5s ease-in-out infinite;
+}
+@keyframes heartbeat {
+  0%, 100% { box-shadow: 0 0 18px rgba(232, 22, 52, 0.45), inset 0 0 22px rgba(232, 22, 52, 0.15); }
+  12% { box-shadow: 0 0 36px rgba(232, 22, 52, 0.9), inset 0 0 32px rgba(232, 22, 52, 0.32); }
+  24% { box-shadow: 0 0 20px rgba(232, 22, 52, 0.5), inset 0 0 22px rgba(232, 22, 52, 0.18); }
+  36% { box-shadow: 0 0 30px rgba(232, 22, 52, 0.75), inset 0 0 28px rgba(232, 22, 52, 0.26); }
+}
+[data-theme='gnarly'] .cell { background-image: radial-gradient(circle at 50% 55%, rgba(140, 255, 40, 0.06), transparent 65%); }
+[data-theme='gnarly'] .cell.pop .cell-glyph { animation: chomp 0.42s cubic-bezier(0.3, 0, 0.2, 1); }
+@keyframes chomp {
+  0% { transform: scale(1.7) rotate(8deg); opacity: 0; }
+  45% { transform: scale(0.82) rotate(-4deg); opacity: 1; }
+  70% { transform: scale(1.1); }
+  100% { transform: none; }
+}
+[data-theme='gnarly'] .cell.same .cell-glyph { animation: twitch 0.9s steps(2) infinite; }
+@keyframes twitch { 50% { transform: translateX(3%) rotate(-3deg); } }
+[data-theme='gnarly'] .hero-main { animation: breathe 2.4s ease-in-out infinite; }
+@keyframes breathe { 50% { transform: scale(1.06) translateY(-3px); } }
+[data-theme='gnarly'] .game-title { letter-spacing: 0.06em; animation: glitch 5s steps(1) infinite; }
+@keyframes glitch {
+  0%, 92%, 100% { transform: none; text-shadow: none; }
+  93% { transform: translate(-2px, 1px); text-shadow: 3px 0 rgba(140, 255, 40, 0.8), -3px 0 rgba(232, 22, 52, 0.8); }
+  95% { transform: translate(2px, -1px); text-shadow: -3px 0 rgba(140, 255, 40, 0.8), 3px 0 rgba(232, 22, 52, 0.8); }
+  97% { transform: none; }
+}
+[data-theme='gnarly'] .title-glow, [data-theme='gnarly'] .title-accent { text-shadow: 0 0 14px rgba(232, 22, 52, 0.75); }
+[data-theme='gnarly'] .starfield::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center, transparent 45%, rgba(120, 0, 12, 0.45) 100%);
+  animation: vignettePulse 3s ease-in-out infinite;
+}
+@keyframes vignettePulse { 50% { opacity: 0.6; } }
+
+@media (prefers-reduced-motion: reduce) {
+  [data-theme='gnarly'] .board, [data-theme='gnarly'] .game-title, [data-theme='softies'] .starfield::after { animation: none; }
+}
+
+/* Gnarly: the drippy horror face is for big titles only; small text stays readable. */
+[data-theme='gnarly'] .btn, [data-theme='gnarly'] .tool-label, [data-theme='gnarly'] .menu-btn-label,
+[data-theme='gnarly'] .hud-row, [data-theme='gnarly'] .eyebrow, [data-theme='gnarly'] .diff-chip,
+[data-theme='gnarly'] .glyph-count, [data-theme='gnarly'] .tab, [data-theme='gnarly'] .status-line,
+[data-theme='gnarly'] .sector-name, [data-theme='gnarly'] .pause-cover {
+  font-family: 'Black Ops One', 'Orbitron', system-ui, sans-serif;
+}

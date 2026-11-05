@@ -6,7 +6,9 @@
   position: fixed;
   inset: 0;
   z-index: 80;
+  background: #020108;
   overflow: hidden;
+  overflow: clip;   /* never scrollable: the sky must always cover the game */
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -67,12 +69,12 @@
   flex: none;
   display: flex;
   justify-content: center;
-  padding-top: calc(var(--sat) + 7vh);
+  padding-top: calc(var(--sat) + 5vh);
   pointer-events: none;
 }
 .enc-ship {
   position: relative;
-  width: min(78vw, 440px);
+  width: min(72vw, 440px, 46vh);
   aspect-ratio: 480 / 300;
   /* waiting as a dot of light on the far horizon */
   transform: translate(-26vw, 52vh) scale(0.02);
@@ -221,7 +223,7 @@
 }
 @media (hover: hover) { .enc-chip:hover { border-color: rgb(var(--c3-rgb)); box-shadow: 0 0 12px rgba(var(--c3-rgb), 0.5); } }
 .enc-actions { display: flex; flex-direction: column; gap: 8px; width: 100%; max-width: 420px; }
-.enc-actions .btn { width: 100%; }
+.enc-actions .btn { width: 100%; min-height: 44px; padding-top: 10px; padding-bottom: 10px; }
 .enc-skip {
   position: absolute;
   top: calc(var(--sat) + 12px);
@@ -270,3 +272,51 @@
 .encounter.reduced .enc-ship { transform: none; opacity: 1; animation: none !important; }
 .encounter.reduced .tl { animation: none; }
 .encounter.reduced .enc-beam { transition: none; }
+
+/* ---------- Moods: soft (Easy) → hostile (Hard) → gnarly (Alien) ---------- */
+.encounter .v { display: none; }
+.encounter.tone-normal .v-normal, .encounter.tone-soft .v-soft,
+.encounter.tone-hostile .v-hostile, .encounter.tone-gnarly .v-gnarly { display: inline; }
+
+.encounter.tone-soft .enc-sky {
+  background:
+    radial-gradient(ellipse 80% 45% at 50% 100%, rgba(255, 170, 210, 0.45), transparent 70%),
+    radial-gradient(ellipse at 50% 20%, #3b2a66 0%, #24184a 55%, #140c2e 100%);
+}
+.encounter.tone-soft .hull { fill: url(#encs-hull-soft); }
+.encounter.tone-soft .enc-lights circle { fill: #ffd1ea; }
+.encounter.tone-soft .enc-question { font-family: 'Quicksand', 'Fredoka', sans-serif; font-weight: 700; color: #fff0fa; text-shadow: 0 0 12px rgba(255, 150, 210, 0.9), 0 0 30px rgba(190, 160, 255, 0.6); }
+.encounter.tone-soft .enc-reply { font-family: 'Quicksand', sans-serif; font-weight: 700; text-shadow: 0 0 10px rgba(255, 150, 210, 0.8); }
+.encounter.tone-soft .enc-offer { font-family: 'Quicksand', sans-serif; font-weight: 700; color: #ffb3dc; text-shadow: 0 0 10px rgba(255, 150, 210, 0.8); }
+.encounter.tone-soft .enc-beam { background: linear-gradient(rgba(255, 210, 235, 0.6), rgba(255, 170, 215, 0.15) 45%, transparent 85%); }
+
+.encounter.tone-hostile .enc-sky {
+  background:
+    radial-gradient(ellipse 80% 45% at 50% 100%, rgba(255, 60, 40, 0.35), transparent 70%),
+    radial-gradient(ellipse at 50% 20%, #2a0608 0%, #120203 55%, #050001 100%);
+}
+.encounter.tone-hostile .hull { fill: url(#encs-hull-hostile); }
+.encounter.tone-hostile .enc-lights circle { fill: #ff3030; }
+.encounter.tone-hostile .enc-question { font-family: 'Black Ops One', 'Orbitron', sans-serif; color: #ffe0e0; text-shadow: 0 0 12px rgba(255, 50, 50, 0.95), 0 0 34px rgba(255, 80, 0, 0.6); }
+.encounter.tone-hostile .enc-reply { text-shadow: 0 0 10px rgba(255, 60, 60, 0.85); }
+.encounter.tone-hostile .enc-offer { color: #ffb040; text-shadow: 0 0 10px rgba(255, 120, 40, 0.8); }
+.encounter.tone-hostile .enc-beam { background: linear-gradient(rgba(255, 120, 100, 0.55), rgba(255, 40, 40, 0.14) 45%, transparent 85%); }
+
+.encounter.tone-gnarly .enc-sky {
+  background:
+    radial-gradient(circle at 78% 18%, rgba(200, 20, 30, 0.55) 0 26px, rgba(200, 20, 30, 0.12) 27px, transparent 90px),
+    radial-gradient(ellipse 80% 45% at 50% 100%, rgba(140, 255, 40, 0.18), transparent 70%),
+    radial-gradient(ellipse at 50% 20%, #1c0306 0%, #0a0102 55%, #020001 100%);
+}
+.encounter.tone-gnarly .hull { fill: url(#encs-hull-gnarly); }
+.encounter.tone-gnarly .enc-lights circle:nth-child(odd) { fill: #9cff3b; }
+.encounter.tone-gnarly .enc-lights circle:nth-child(even) { fill: #ff2a2a; }
+.encounter.tone-gnarly .enc-question { font-family: 'Creepster', 'Black Ops One', sans-serif; letter-spacing: 0.08em; color: #ffd9d9; text-shadow: 0 0 14px rgba(232, 22, 52, 0.95), 0 0 36px rgba(140, 255, 40, 0.35); }
+.encounter.tone-gnarly .enc-question .tl { animation: telepathIn 0.7s ease-out both, letterShiver 0.18s steps(2) infinite; }
+@keyframes letterShiver { 50% { translate: 1px -1px; } }
+.encounter.tone-gnarly .enc-reply { text-shadow: 0 0 10px rgba(232, 22, 52, 0.85); }
+.encounter.tone-gnarly .enc-offer { color: #9cff3b; text-shadow: 0 0 10px rgba(140, 255, 40, 0.7); }
+.encounter.tone-gnarly .enc-beam { background: linear-gradient(rgba(170, 255, 90, 0.5), rgba(232, 22, 52, 0.14) 45%, transparent 85%); }
+.encounter.tone-gnarly .enc-ship.hover { animation: shipHover 3.2s ease-in-out infinite, shipMenace 0.25s steps(2) infinite; }
+@keyframes shipMenace { 50% { translate: 1.5px 0; } }
+.encounter.reduced.tone-gnarly .enc-question .tl, .encounter.reduced.tone-gnarly .enc-ship.hover { animation: none; }

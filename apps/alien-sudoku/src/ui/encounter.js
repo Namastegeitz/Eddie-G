@@ -26,17 +26,59 @@ const QUICK_ANSWERS = [
   { id: 'unknown', label: 'I… don’t know' },
 ];
 
-function replyFor({ answer, name, known }) {
-  if (answer === 'name') {
-    return known && known.toLowerCase() === name.toLowerCase()
-      ? `${name}. We remember you.`
-      : `${name}… we have heard your mind decoding our signal.`;
-  }
-  return {
+/** What the visitors say, by mood: soft (Easy) → normal → hostile → gnarly (Alien). */
+const VOICE = {
+  soft: {
+    question: 'Who are you?',
+    thought: 'You ponder in wonder…',
+    known: (n) => `${n}! You came back! We missed you.`,
+    named: (n) => `${n}! What a lovely name. We like you already.`,
+    friend: 'A friend! We hoped you would say that.',
+    decoder: 'Ooh, a decoder! Our glyphs like you.',
+    unknown: 'That’s okay. Nobody knows at first.',
+    gift: 'Here, a little gift. Keep going!',
+    noGift: 'We already gave you a gift. Try again!',
+  },
+  normal: {
+    question: 'Who are you?',
+    thought: 'You ponder in wonder…',
+    known: (n) => `${n}. We remember you.`,
+    named: (n) => `${n}… we have heard your mind decoding our signal.`,
     friend: 'A friend… we have waited a long time for one.',
     decoder: 'Then you are the one who reads our glyphs.',
     unknown: 'Neither do we. That is why we search the stars.',
-  }[answer] || 'We see you.';
+    gift: 'Take our gift, and keep decoding.',
+    noGift: 'We have helped you once. Begin again.',
+  },
+  hostile: {
+    question: 'WHO ARE YOU?',
+    thought: 'You ponder in wonder… and dread.',
+    known: (n) => `${n}. You again.`,
+    named: (n) => `${n}. We will remember that name.`,
+    friend: 'Friends do not fail our signal.',
+    decoder: 'Then decode faster, human.',
+    unknown: 'Then you are nothing to us. Yet.',
+    gift: 'Take these tries. Do not waste them.',
+    noGift: 'No more mercy. Begin again.',
+  },
+  gnarly: {
+    question: 'WHO… ARE… YOU?',
+    thought: 'You ponder in wonder… and terror.',
+    known: (n) => `${n}… you came back to us.`,
+    named: (n) => `${n}… we can taste your name.`,
+    friend: 'Friend? We have no friends. Only snacks.',
+    decoder: 'Decode us… before we decode you.',
+    unknown: 'Then we will find out for you.',
+    gift: 'More tries… so the hunt lasts longer.',
+    noGift: 'The feast is over. Begin again.',
+  },
+};
+
+function replyFor({ answer, name, known, voice }) {
+  if (answer === 'name') {
+    return known && known.toLowerCase() === name.toLowerCase() ? voice.known(name) : voice.named(name);
+  }
+  return voice[answer] || voice.unknown;
 }
 
 /** The ship: hull, rim lights, glass dome with a visitor looking out. */
@@ -63,10 +105,22 @@ const SHIP_SVG = `<svg class="enc-ship-svg" viewBox="0 0 480 300" aria-hidden="t
     <linearGradient id="encs-alien" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0%" stop-color="#9dffb8"/><stop offset="100%" stop-color="#3fb36f"/>
     </linearGradient>
+    <linearGradient id="encs-hull-soft" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#fff4fb"/><stop offset="45%" stop-color="#ffc6e4"/><stop offset="100%" stop-color="#b98ad9"/>
+    </linearGradient>
+    <linearGradient id="encs-hull-hostile" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#9aa0aa"/><stop offset="40%" stop-color="#4a4f5a"/><stop offset="100%" stop-color="#16181d"/>
+    </linearGradient>
+    <linearGradient id="encs-hull-gnarly" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#7a2a33"/><stop offset="45%" stop-color="#3d0f16"/><stop offset="100%" stop-color="#120305"/>
+    </linearGradient>
+    <radialGradient id="encs-skin-soft" cx="40%" cy="35%" r="70%"><stop offset="0%" stop-color="#ffe3f1"/><stop offset="100%" stop-color="#ff9cc9"/></radialGradient>
+    <linearGradient id="encs-skin-hostile" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#b8c0cc"/><stop offset="100%" stop-color="#5d6676"/></linearGradient>
+    <linearGradient id="encs-skin-gnarly" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#8fae5a"/><stop offset="100%" stop-color="#3c4f22"/></linearGradient>
   </defs>
   <ellipse cx="240" cy="168" rx="230" ry="110" fill="url(#encs-glow)"/>
   <path d="M152 132 Q156 46 240 40 Q324 46 328 132 Z" fill="url(#encs-dome)" stroke="#d9fbff" stroke-opacity="0.7" stroke-width="3"/>
-  <g class="enc-visitor" opacity="0.9">
+  <g class="enc-visitor v v-normal" opacity="0.9">
     <path d="M240 64 C214 64 200 84 202 104 C204 122 222 134 240 140 C258 134 276 122 278 104 C280 84 266 64 240 64 Z" fill="url(#encs-alien)" stroke="#1d5a3a" stroke-width="3"/>
     <path d="M214 98 C220 88 234 90 236 102 C232 112 218 112 214 98 Z" fill="#06140d"/>
     <path d="M266 98 C260 88 246 90 244 102 C248 112 262 112 266 98 Z" fill="#06140d"/>
@@ -74,8 +128,30 @@ const SHIP_SVG = `<svg class="enc-ship-svg" viewBox="0 0 480 300" aria-hidden="t
     <ellipse class="enc-eye-shine" cx="252" cy="97" rx="3.5" ry="2.5" fill="#ffffff"/>
     <path d="M232 126 Q240 129 248 126" fill="none" stroke="#1d5a3a" stroke-width="2.5" stroke-linecap="round"/>
   </g>
+  <g class="enc-visitor v v-soft">
+    <circle cx="240" cy="102" r="38" fill="url(#encs-skin-soft)" stroke="#c45a8f" stroke-width="3"/>
+    <circle cx="224" cy="98" r="9" fill="#3a2040"/><circle cx="256" cy="98" r="9" fill="#3a2040"/>
+    <circle cx="227" cy="94" r="3.5" fill="#fff"/><circle cx="259" cy="94" r="3.5" fill="#fff"/>
+    <ellipse cx="212" cy="114" rx="7" ry="4" fill="#ff7fb2" opacity="0.7"/><ellipse cx="268" cy="114" rx="7" ry="4" fill="#ff7fb2" opacity="0.7"/>
+    <path d="M232 116 Q240 124 248 116" fill="none" stroke="#7a2d55" stroke-width="3" stroke-linecap="round"/>
+    <path d="M226 66 Q220 52 212 50 M254 66 Q260 52 268 50" fill="none" stroke="#c45a8f" stroke-width="3" stroke-linecap="round"/>
+    <circle cx="211" cy="49" r="5" fill="#ff8fc8"/><circle cx="269" cy="49" r="5" fill="#ff8fc8"/>
+  </g>
+  <g class="enc-visitor v v-hostile">
+    <path d="M240 62 C212 62 198 84 200 106 C202 124 222 136 240 142 C258 136 278 124 280 106 C282 84 268 62 240 62 Z" fill="url(#encs-skin-hostile)" stroke="#20242c" stroke-width="3"/>
+    <path d="M208 90 L234 100 L232 108 Q218 108 210 98 Z" fill="#ff2a2a"/><path d="M272 90 L246 100 L248 108 Q262 108 270 98 Z" fill="#ff2a2a"/>
+    <path d="M204 84 L236 96 M276 84 L244 96" stroke="#20242c" stroke-width="5" stroke-linecap="round"/>
+    <path d="M226 128 Q240 120 254 128" fill="none" stroke="#20242c" stroke-width="3" stroke-linecap="round"/>
+  </g>
+  <g class="enc-visitor v v-gnarly">
+    <path d="M240 60 C206 60 194 86 198 110 C202 130 222 142 240 146 C258 142 278 130 282 110 C286 86 274 60 240 60 Z" fill="url(#encs-skin-gnarly)" stroke="#1a2208" stroke-width="3"/>
+    <circle cx="222" cy="86" r="6" fill="#ff2a2a"/><circle cx="258" cy="86" r="6" fill="#ff2a2a"/><circle cx="240" cy="78" r="5" fill="#ff2a2a"/>
+    <circle cx="212" cy="102" r="4" fill="#ffe23b"/><circle cx="268" cy="102" r="4" fill="#ffe23b"/><circle cx="240" cy="96" r="4.5" fill="#ff2a2a"/>
+    <path d="M214 116 Q240 142 266 116 Q240 126 214 116 Z" fill="#1a0306"/>
+    <path d="M220 118 l4 8 l4 -7 l4 9 l4 -9 l4 10 l4 -10 l4 9 l4 -9 l4 8 l4 -7" fill="#f2ead2" stroke="#1a0306" stroke-width="1.2"/>
+  </g>
   <path d="M178 70 Q196 52 222 48" fill="none" stroke="#ffffff" stroke-opacity="0.75" stroke-width="7" stroke-linecap="round"/>
-  <ellipse cx="240" cy="150" rx="224" ry="46" fill="url(#encs-hull)" stroke="#0d1024" stroke-width="4"/>
+  <ellipse class="hull" cx="240" cy="150" rx="224" ry="46" fill="url(#encs-hull)" stroke="#0d1024" stroke-width="4"/>
   <path d="M28 150 Q240 214 452 150 Q440 180 240 196 Q40 180 28 150 Z" fill="url(#encs-under)" stroke="#0d1024" stroke-width="3"/>
   <ellipse cx="240" cy="144" rx="196" ry="22" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="3"/>
   <path d="M60 136 Q240 104 420 136" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="5" stroke-linecap="round"/>
@@ -130,10 +206,13 @@ async function speak(el, text, { fast = false } = {}) {
  * @param {number} o.giftTries   how many tries the gift restores
  * @param {boolean} o.giftNeedsAd  gift is a rewarded video (mobile)
  * @param {boolean} o.allowNew   offer "New signal"
+ * @param {string} [o.tone]      'soft' | 'normal' | 'hostile' | 'gnarly' (follows the difficulty's lineup)
  * @param {(choice) => Promise<boolean>} [o.beforeChoice]  e.g. play the rewarded ad; false keeps the panel open
  */
 export function playEncounter(o) {
   const reduced = settings().reduceMotion || window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+  const tone = VOICE[o.tone] ? o.tone : 'normal';
+  const voice = VOICE[tone];
   open = true;
   setBannerVisible(false);
   duckMusic(true);
@@ -146,7 +225,7 @@ export function playEncounter(o) {
     const reply = h('p', { class: 'enc-line enc-reply' });
     const panel = h('div', { class: 'enc-panel', hidden: true });
     const skip = h('button', { class: 'enc-skip', type: 'button' }, 'Skip');
-    const root = h('div', { class: `encounter${reduced ? ' reduced' : ''}`, role: 'dialog', 'aria-modal': 'true', 'aria-label': 'The visitors' },
+    const root = h('div', { class: `encounter tone-${tone}${reduced ? ' reduced' : ''}`, role: 'dialog', 'aria-modal': 'true', 'aria-label': 'The visitors' },
       h('div', { class: 'enc-sky' }, h('div', { class: 'enc-stars enc-stars-a' }), h('div', { class: 'enc-stars enc-stars-b' })),
       h('div', { class: 'enc-horizon', html: HORIZON_SVG }),
       h('div', { class: 'enc-horizon-glow' }),
@@ -209,11 +288,11 @@ export function playEncounter(o) {
       encounterSfx.telepathy();
       haptic('medium');
       const known = o.knownName || '';
-      await speak(reply, replyFor({ answer, name, known }), { fast: reduced });
+      await speak(reply, replyFor({ answer, name, known, voice }), { fast: reduced });
       await wait(reduced ? 0 : 700);
       const offer = h('p', { class: 'enc-line enc-offer' });
       reply.after(offer);
-      await speak(offer, o.canGift ? 'Take our gift, and keep decoding.' : 'We have helped you once. Begin again.', { fast: reduced });
+      await speak(offer, o.canGift ? voice.gift : voice.noGift, { fast: reduced });
       await wait(reduced ? 0 : 400);
       showOffers({ name, answer });
     }
@@ -253,9 +332,9 @@ export function playEncounter(o) {
       haptic('heavy');
       await t(500);
       encounterSfx.telepathy();
-      await speak(question, 'Who are you?', { fast: skipped || reduced });
+      await speak(question, voice.question, { fast: skipped || reduced });
       await t(900);
-      await speak(thought, 'You ponder in wonder…', { fast: skipped || reduced });
+      await speak(thought, voice.thought, { fast: skipped || reduced });
       await t(700);
       if (skipped) { ship.classList.add('arrive', 'hover'); root.classList.add('beam-on', 'in'); }
       showQuestion();

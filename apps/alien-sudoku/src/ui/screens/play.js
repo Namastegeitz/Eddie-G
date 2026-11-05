@@ -766,6 +766,7 @@ export const playScreen = {
         giftTries,
         giftNeedsAd: adsSupported,
         allowNew: session.mode === 'quick',
+        tone: { softies: 'soft', hostile: 'hostile', gnarly: 'gnarly' }[setKeyFor(session)] || 'normal',
         beforeChoice: async (choice) => {
           if (choice !== 'gift') return true;
           const res = await showRewarded();

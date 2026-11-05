@@ -17,9 +17,12 @@ import planets from './planets.js';
 import cosmos from './cosmos.js';
 import creatures from './creatures.js';
 import ancient from './ancient.js';
+import softies from './softies.js';
+import hostile from './hostile.js';
+import gnarly from './gnarly.js';
 import { THEMES } from '../themes.js';
 
-export const LINEUPS = { encounters, fleet, planets, cosmos, creatures, ancient };
+export const LINEUPS = { encounters, fleet, planets, cosmos, creatures, ancient, softies, hostile, gnarly };
 
 /** Cosmic Mix borrows the most iconic glyph of each lineup: [lineup, 1-based index]. */
 export const MIXED_REFS = [
@@ -27,7 +30,7 @@ export const MIXED_REFS = [
   ['cosmos', 5], ['creatures', 3], ['encounters', 3], ['planets', 3],
 ];
 
-export const SYMBOL_SET_ORDER = ['encounters', 'fleet', 'planets', 'cosmos', 'creatures', 'ancient', 'mixed'];
+export const SYMBOL_SET_ORDER = ['encounters', 'softies', 'creatures', 'hostile', 'gnarly', 'fleet', 'planets', 'cosmos', 'ancient', 'mixed'];
 
 const useSvg = (id, label) =>
   `<svg class="gsvg" viewBox="0 0 64 64" role="img" aria-label="${label}"><use href="#${id}"/></svg>`;

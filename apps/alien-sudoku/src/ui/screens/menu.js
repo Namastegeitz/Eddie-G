@@ -12,7 +12,7 @@ import { appVersion, isElectron, isNative } from '../../platform/native.js';
 import { sessionTitle } from './play.js';
 import { GameSession } from '../../game/session.js';
 import { SYMBOL_SETS } from '../../data/symbols.js';
-import { THEMES } from '../../data/themes.js';
+import { THEMES, DIFFICULTY_LINEUP } from '../../data/themes.js';
 
 const DIFFS = [
   { key: 'easy', label: 'Easy', clues: '≈38 clues', blurb: 'Warm up. Every move can be found by looking.' },
@@ -20,6 +20,8 @@ const DIFFS = [
   { key: 'hard', label: 'Hard', clues: '≈26 clues', blurb: 'Pairs and pointing glyphs. Notes help.' },
   { key: 'alien', label: 'Alien', clues: '≈22 clues', blurb: 'Advanced patterns. For fluent decoders.' },
 ];
+/** Who you meet at each difficulty, from super soft to gnarly. */
+const DIFF_MOOD = { easy: 'Cuddly and harmless', medium: 'Playful troublemakers', hard: 'They mean business', alien: 'Fangs. Eyes. Slime.' };
 
 /** Ask before replacing an in-progress game. Resolves true to continue. */
 export async function confirmAbandon() {
@@ -44,10 +46,20 @@ export function pickDifficulty({ mode, nav }) {
     eyebrow: mode === 'zen' ? 'Zen mode · no lives, no clock' : 'Quick play',
     title: 'Signal strength',
     className: 'diff-modal',
-    body: h('div', { class: 'diff-list' }, DIFFS.map((d) =>
-      h('button', {
+    body: h('div', { class: 'diff-list' }, DIFFS.map((d) => {
+      const lineupKey = settings().difficultyAliens !== false ? DIFFICULTY_LINEUP[d.key] : settings().symbolSet;
+      const t = THEMES[lineupKey];
+      const set = SYMBOL_SETS[lineupKey];
+      return h('button', {
         class: `diff-option diff-${d.key}${settings().quickDifficulty === d.key ? ' current' : ''}`,
         type: 'button',
+        style: {
+          '--opt-c1': `rgb(${t.rgb.c1})`,
+          '--opt-dim': t.textDim,
+          color: t.text,
+          borderColor: `rgb(${t.rgb.c1})`,
+          background: `radial-gradient(circle at 85% 50%, rgba(${t.rgb.c1}, 0.22), transparent 55%), linear-gradient(135deg, ${t.cellUser}, ${t.bg})`,
+        },
         onclick: async () => {
           sfx.tap();
           close.close();
@@ -56,9 +68,12 @@ export function pickDifficulty({ mode, nav }) {
           nav.go('play', { mode, difficulty: d.key });
         },
       },
-      h('span', { class: 'diff-name' }, d.label, h('small', {}, d.clues)),
+      h('span', { class: 'diff-name', style: { fontFamily: t.font } }, d.label, h('small', {}, d.clues)),
       h('span', { class: 'diff-blurb' }, d.blurb),
-      mode !== 'zen' && best[d.key]?.bestMs != null ? h('span', { class: 'diff-best' }, `Best ${formatTime(best[d.key].bestMs)}`) : null))),
+      h('span', { class: 'diff-lineup' }, `${t.name} · ${settings().difficultyAliens !== false ? DIFF_MOOD[d.key] : 'your lineup'}`),
+      h('span', { class: 'diff-glyphs', html: [0, 1, 2].map((k) => set.svgs[(t.hero - 1 + k * 3) % 9]).join('') }),
+      mode !== 'zen' && best[d.key]?.bestMs != null ? h('span', { class: 'diff-best' }, `Best ${formatTime(best[d.key].bestMs)}`) : null);
+    })),
   });
 }
 

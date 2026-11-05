@@ -23,6 +23,7 @@ export const DEFAULT_SETTINGS = {
   haptics: true,
   symbolSet: 'encounters',
   sectorSymbols: true,     // campaign uses each sector's own symbol set
+  difficultyAliens: true,  // quick/zen/daily use each difficulty's lineup (soft -> gnarly)
   highlightPeers: true,
   highlightSame: true,
   constellation: true,

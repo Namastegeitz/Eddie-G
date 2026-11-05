@@ -40,7 +40,19 @@ have no ads. Until real AdMob ids are set, Google's **test** ads are shown.
   - Constellation lines between matching glyphs, and a flash when a row, column or box is complete.
   - Haptics.
   - Keyboard controls on the computer.
-- **Lineups and themes**: 7 glyph lineups of detailed, full-color pictures. Each
+- **Difficulty aliens**: each difficulty has its own lineup and theme, getting
+  rougher as it gets harder:
+  - Easy: *Soft Visitors*, super soft and cute, on a light pastel theme.
+  - Medium: *Alien Creatures*, playful troublemakers, on a neon green theme.
+  - Hard: *Hostile Visitors*, menacing, on dark crimson with chiseled corners and
+    hazard stripes.
+  - Alien: *Gnarly Horde*, fanged, many-eyed and slimy, on near-black with a
+    heartbeat-pulsing board.
+
+  The visitors who come when you run out of tries match the difficulty too:
+  sweet, neutral, hostile or gnarly. This applies to Quick Play, Zen and Daily
+  (the campaign keeps its sector lineups), and it can be switched off in Settings.
+- **Lineups and themes**: 10 glyph lineups of detailed, full-color pictures. Each
   glyph has its own color and silhouette:
   - Close Encounters: alien head, saucer, tic-tac UAP, black triangle, pyramid,
     crop circle, ray gun, cow abduction, radio dish.
