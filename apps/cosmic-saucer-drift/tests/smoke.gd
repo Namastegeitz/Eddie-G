@@ -29,6 +29,7 @@ func _ready() -> void:
 	await _ads()
 	await _achievements()
 	await _items_tests()
+	await _gfx_tests()
 	await _races()
 	await _menus()
 	print("SMOKE %d passed, %d failed" % [passed, failed])
@@ -274,6 +275,112 @@ func _achievements() -> void:
 	Save.data = Save.defaults()
 
 
+# ---------------------------------------------------------------- v3 graphics
+func _gfx_tests() -> void:
+	# Quality tiers.
+	for t in Gfx.TIERS:
+		check("tier %s defined" % t, Gfx.Q.has(t))
+		for k in ["msaa", "scale", "shadows", "glow", "fog", "decor", "seg", "detail", "face", "particles", "reflect", "speedlines", "road_detail", "sky_detail", "lod"]:
+			if not Gfx.Q[t].has(k):
+				check("tier %s has %s" % [t, k], false)
+	check("detect gives a tier", Gfx.detect() in Gfx.TIERS, Gfx.detect())
+	var old_q: String = Save.setting("quality")
+	Save.data.settings.quality = "ultra"
+	check("quality setting ultra", Game.quality() == "ultra")
+	Save.data.settings.quality = "bogus"
+	check("bad quality falls back to auto", Game.quality() == Game.detected_quality)
+	Save.data.settings.quality = old_q
+	check("tiers get cheaper", int(Gfx.Q.low.seg) < int(Gfx.Q.medium.seg) and int(Gfx.Q.medium.seg) < int(Gfx.Q.high.seg) and int(Gfx.Q.high.seg) < int(Gfx.Q.ultra.seg))
+	# Mesh toolkit.
+	var lm := MeshKit.lathe(PackedVector2Array([Vector2(0, 1), Vector2(1, 0), Vector2(0, -1)]), 12, PackedInt32Array([1]))
+	check("lathe builds", lm.get_surface_count() == 1 and lm.surface_get_array_len(0) > 0)
+	check("lathe cached", MeshKit.lathe(PackedVector2Array([Vector2(0, 1), Vector2(1, 0), Vector2(0, -1)]), 12, PackedInt32Array([1])) == lm)
+	var bm := MeshKit.blob(Vector3(1, 0.5, 0.8), 0.4, 0.4, 12, 8, Vector2(0.5, 0.5), 0.1)
+	check("blob builds", bm.surface_get_array_len(0) == 13 * 9)
+	var fm := MeshKit.faceted(lm)
+	check("faceted has flat normals", fm.surface_get_array_len(0) % 3 == 0)
+	check("arc + star build", MeshKit.arc(1.0, 0.1, 200.0, 340.0).get_surface_count() == 1 and MeshKit.star(1.0, 0.4, 0.2).get_surface_count() == 1)
+	var mg := MeshKit.Merger.new()
+	var ma := StandardMaterial3D.new()
+	var mb := StandardMaterial3D.new()
+	mg.add(lm, ma, Transform3D.IDENTITY)
+	mg.add(bm, ma, Transform3D(Basis.IDENTITY.scaled(Vector3(-1, 1, 1)), Vector3.ONE))
+	mg.add(bm, mb, Transform3D.IDENTITY)
+	var merged := mg.commit()
+	check("merger: one surface per material", merged.get_surface_count() == 2)
+	check("merger keeps materials", merged.surface_get_material(0) == ma and merged.surface_get_material(1) == mb)
+	# Every craft at every tier, with pilot faces.
+	var holder := Node3D.new()
+	add_child(holder)
+	var bad := 0
+	for t in Gfx.TIERS:
+		Save.data.settings.quality = t
+		for si in Catalog.SAUCERS.size():
+			var sd: Dictionary = Catalog.SAUCERS[si]
+			var m := SaucerModel.new()
+			holder.add_child(m)
+			m.build({"saucer": sd.id, "pilot": Catalog.PILOTS[si % Catalog.PILOTS.size()].id, "paint": "stock", "decal": "stripes", "dome": "clear", "trail": "cyan"})
+			if m.pivot == null or m.pilot_model == null or m.shield == null or m.trail == null:
+				check("craft %s builds at %s" % [sd.id, t], false)
+				bad += 1
+			if m.thrusters.is_empty():
+				check("craft %s has an engine flame" % sd.id, false)
+				bad += 1
+			for mood in 7:
+				m.mood = mood
+				m.flash = 1.0
+				m.animate(1.0 / 60.0, 1.0, mood % 2 == 0, mood % 4, mood % 3 == 0, 0.8)
+			if m.flash >= 1.0:
+				check("hit flash fades on %s" % sd.id, false)
+				bad += 1
+			if (m.shadow != null) == (int(Gfx.Q[t].shadows) > 0):
+				check("blob shadow only without real shadows (%s %s)" % [sd.id, t], false)
+				bad += 1
+			m.free()
+	check("all 14 craft build and animate at all 4 tiers", bad == 0)
+	Save.data.settings.quality = "high"
+	for p in Catalog.PILOTS:
+		var pm := PilotModel.new()
+		holder.add_child(pm)
+		pm.build(p, 0.35, true, 30.0)
+		check("pilot %s has eyes and lids" % p.id, pm._eyes.size() == int(p.eyes) and pm._lids.size() == int(p.eyes))
+		check("pilot %s has 4 mouths" % p.id, pm._mouths.size() == 4)
+		pm.animate(0.016, PilotModel.Mood.GRIN, 0.5, 1.0)
+		check("pilot %s grins" % p.id, pm._mouths[PilotModel.M.GRIN].visible and not pm._mouths[PilotModel.M.SMILE].visible)
+		pm.animate(0.016, PilotModel.Mood.DIZZY, 0.0, 0.0)
+		check("pilot %s dizzy stars" % p.id, pm._stars != null and pm._stars.visible)
+		var far := PilotModel.new()
+		holder.add_child(far)
+		far.build(p, 0.35, false, 30.0)
+		check("pilot %s low detail is cheap" % p.id, far._eyes.is_empty() and far._mouths.is_empty() and far._far != null)
+		pm.free()
+		far.free()
+	Save.data.settings.quality = old_q
+	# Pooled race effects.
+	var fx := RaceFx.new()
+	holder.add_child(fx)
+	await get_tree().process_frame
+	for k in RaceFx.RINGS + 3:
+		fx.shockwave(Vector3(k, 0, 0), Vector3.UP, Color.CYAN)
+		fx.flash(Vector3(k, 1, 0), Color.WHITE)
+		fx.sparks(Vector3(k, 0, 0), Vector3.UP, Color.ORANGE)
+		fx.dust(Vector3(k, 0, 0), Vector3.UP, Color.TAN)
+	check("fx pools stay fixed", fx.get_child_count() == RaceFx.RINGS + RaceFx.FLASHES + RaceFx.BURSTS)
+	for i in 40:
+		await get_tree().process_frame
+	var lit := 0
+	for r in fx._rings:
+		if r.visible:
+			lit += 1
+	check("shockwaves fade out", lit == 0)
+	holder.queue_free()
+	# AI catch-up bands per class.
+	for c in Catalog.AI_CLASSES:
+		check("ai class %s has band" % c.name, c.has("band") and c.band.size() == 2 and float(c.band[0]) > 0.0 and float(c.band[1]) > 0.0)
+	check("cadet eases off more than legend", float(Catalog.AI_CLASSES[0].band[0]) > float(Catalog.AI_CLASSES[3].band[0]))
+	check("cadet catches up less than legend", float(Catalog.AI_CLASSES[0].band[1]) < float(Catalog.AI_CLASSES[3].band[1]))
+
+
 # ---------------------------------------------------------------- races
 func _race(req: Dictionary, frames_limit := 9000) -> Race:
 	req.fast = true
@@ -298,6 +405,19 @@ func _races() -> void:
 	check("quick race results 8", Game.last_results.size() == 8)
 	check("quick race paid credits", Save.credits() > sd0, "%d -> %d" % [sd0, Save.credits()])
 	check("results panel shown", race != null and race._results_panel != null)
+	if race and is_instance_valid(race):
+		check("race has pooled fx", race.fx != null)
+		for t in Gfx.TIERS:
+			Save.data.settings.quality = t
+			race.apply_quality()
+			check("apply quality %s" % t, race._env.glow_enabled == bool(Gfx.Q[t].glow) and race._sun.shadow_enabled == (int(Gfx.Q[t].shadows) > 0))
+		Save.data.settings.quality = "auto"
+		check("time scale restored", is_equal_approx(Engine.time_scale, 1.0))
+		var cam: RaceCamera = race.cams[0] if not race.cams.is_empty() else null
+		if cam:
+			cam.land(20.0)
+			cam._process(0.016)
+			check("camera dips on landing", cam._dip_v != 0.0 or cam._dip != 0.0)
 	check("career races counted", Save.stat("races") >= 1)
 	# Cup: all four races.
 	Save.data = Save.defaults()

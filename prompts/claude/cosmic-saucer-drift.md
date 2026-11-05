@@ -178,3 +178,29 @@ you become first." Choices made:
   held), Gravity Mine, Tractor Beam. Arranged into **5 lineups by race
   position** (Leader, Front pack, Midfield, Chasers, Last place): the
   further back you are, the stronger the comeback items.
+
+---
+
+## v3: HD graphics, characters and gameplay fine-tune
+
+The owner's follow-up: "Upgrade all graphics, gameplay and detail in
+characters with high resolution and fine tuning the detail." Choices made:
+all four upgrade packs, automatic graphics tiers, polished cartoon style.
+
+- **Craft & pilots in HD:** rebuild all 14 craft with smooth bevelled hulls,
+  panel seams, lights, vents and engine glow. Every alien pilot gets its own
+  face (eyes that blink and look around), expressions (grin on boost, dizzy
+  when hit, cheer on a win) and a suit/helmet or accessories.
+- **Worlds & lighting:** real-time shadows, high-detail procedural surfaces
+  (plated road, rock, ice, lava), detailed scenery per planet, richer skies
+  (nebulae, glowing atmospheres), haze.
+- **Effects & camera feel:** engine flames, brighter drift sparks, boost
+  shockwave, speed lines, impact flashes, landing dust, a tuned chase camera
+  with speed-based field of view.
+- **Gameplay fine-tune:** handling and drift timing, AI difficulty per class
+  with fairer catch-up, power-up balance, smoother respawns, a better start
+  and finish.
+- **Phones:** Low/Medium/High/Ultra tiers; Auto picks from the device and
+  steps down live; Ultra/High add anti-aliasing, shadows and reflections.
+- **Style:** polished cartoon: bright and friendly, with more detail and
+  shine.

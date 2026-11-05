@@ -12,6 +12,8 @@ var _t := 0.0
 
 func _ready() -> void:
 	var theme := Themes.get_theme("saturn")
+	var qs := Gfx.q()
+	Gfx.apply_viewport(get_viewport(), qs)
 	var env := Environment.new()
 	env.background_mode = Environment.BG_SKY
 	var sky := Sky.new()
@@ -20,22 +22,38 @@ func _ready() -> void:
 	Themes.apply_sky(sm, theme)
 	sm.set_shader_parameter("sun1_size", 0.0)
 	sky.sky_material = sm
-	sky.radiance_size = Sky.RADIANCE_SIZE_32
+	sm.set_shader_parameter("detail", float(qs.sky_detail))
+	sky.radiance_size = Sky.RADIANCE_SIZE_64
 	env.sky = sky
 	env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
 	env.ambient_light_color = Color(0.45, 0.4, 0.6)
 	env.ambient_light_energy = 0.9
+	env.reflected_light_source = Environment.REFLECTION_SOURCE_SKY if bool(qs.reflect) else Environment.REFLECTION_SOURCE_DISABLED
 	env.tonemap_mode = Environment.TONE_MAPPER_FILMIC
-	env.glow_enabled = Game.quality() != "low"
+	env.tonemap_white = 6.0
+	env.glow_enabled = bool(qs.glow)
 	env.glow_intensity = 0.8
 	env.glow_hdr_threshold = 0.95
+	env.adjustment_enabled = true
+	env.adjustment_saturation = 1.08
 	var we := WorldEnvironment.new()
 	we.environment = env
 	add_child(we)
 	var sun := DirectionalLight3D.new()
 	sun.light_energy = 1.3
-	sun.rotation_degrees = Vector3(-40, 30, 0)
+	sun.rotation_degrees = Vector3(-50, 30, 0)
 	add_child(sun)
+	Gfx.apply_sun(sun, qs)
+	if sun.shadow_enabled:
+		sun.directional_shadow_max_distance = 30.0
+	# Studio rim lights: cyan from behind-left, magenta from behind-right.
+	for l in [[Vector3(-6, 3, -5), Color(0.3, 0.85, 1.0), 2.2], [Vector3(6, 2, -4), Color(1.0, 0.35, 0.85), 1.6]]:
+		var o := OmniLight3D.new()
+		o.position = l[0]
+		o.light_color = l[1]
+		o.light_energy = l[2]
+		o.omni_range = 14.0
+		add_child(o)
 	var planet := MeshInstance3D.new()
 	var ps := SphereMesh.new()
 	ps.radius = 60.0
@@ -48,6 +66,8 @@ func _ready() -> void:
 	pm.set_shader_parameter("color_a", theme.planets[0].a)
 	pm.set_shader_parameter("color_b", theme.planets[0].b)
 	pm.set_shader_parameter("rim_color", theme.planets[0].rim)
+	pm.set_shader_parameter("bands", 12.0)
+	pm.set_shader_parameter("sun_dir", Vector3(0.6, 0.5, 0.4))
 	planet.material_override = pm
 	planet.position = Vector3(-90, 18, -160)
 	add_child(planet)

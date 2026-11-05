@@ -155,11 +155,47 @@ static func mesh_node(parent: Node3D, mesh: Mesh, node_name: String) -> MeshInst
 
 
 # ---------------------------------------------------------------- materials
+static var _detail_mats: Array[ShaderMaterial] = []
+static var _detail := 1.0
+static var _metal_k := 1.0
+
+
+## Road/barrier shader detail for the graphics tier (0 low .. 1 high).
+## Without sky reflections metal reads as black, so it is toned down.
+static func set_quality(detail: float, reflect := true) -> void:
+	_detail = detail
+	_metal_k = 1.0 if reflect else 0.35
+	var keep: Array[ShaderMaterial] = []
+	for m in _detail_mats:
+		if is_instance_valid(m):
+			m.set_shader_parameter("detail", detail)
+			m.set_shader_parameter("metal_k", _metal_k)
+			keep.append(m)
+	_detail_mats = keep
+
+
+static func _track_detail(m: ShaderMaterial) -> ShaderMaterial:
+	m.set_shader_parameter("detail", _detail)
+	m.set_shader_parameter("metal_k", _metal_k)
+	_detail_mats.append(m)
+	if _detail_mats.size() > 24:
+		_detail_mats = _detail_mats.slice(_detail_mats.size() - 24)
+	return m
+
+
 static func road_material(neon: Color) -> ShaderMaterial:
 	var m := ShaderMaterial.new()
 	m.shader = preload("res://shaders/road.gdshader")
 	m.set_shader_parameter("neon", neon)
-	return m
+	return _track_detail(m)
+
+
+static func barrier_material(c: Color, neon: Color) -> ShaderMaterial:
+	var m := ShaderMaterial.new()
+	m.shader = preload("res://shaders/barrier.gdshader")
+	m.set_shader_parameter("color", c)
+	m.set_shader_parameter("neon", neon)
+	return _track_detail(m)
 
 
 static func flat(c: Color, emission := 0.0, metallic := 0.3, rough := 0.6) -> StandardMaterial3D:
@@ -196,7 +232,7 @@ static func build(td: TrackData, root: Node3D) -> void:
 	var theme := Themes.get_theme(td.theme)
 	var neon: Color = theme.neon
 	var road_mat := road_material(neon)
-	var barrier_mat := flat(theme.barrier, 0.0, 0.7, 0.35)
+	var barrier_mat := barrier_material(theme.barrier, neon)
 	var under_mat := flat(Color(theme.barrier) * 0.55, 0.0, 0.4, 0.8)
 	var neon_mat := glow(neon, 2.2)
 	_build_path(td, td.main, root, "Main", road_mat, barrier_mat, under_mat, neon_mat, true)

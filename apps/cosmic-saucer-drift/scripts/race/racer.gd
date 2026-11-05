@@ -198,6 +198,13 @@ func tick(dt: float) -> void:
 	if rescue_time > 0.0:
 		rescue_time -= dt
 		velocity = Vector3.ZERO
+		if rescue_time <= 0.0:
+			# Back on the track with a running start, not from a standstill
+			# (gentle enough to make the next corner).
+			var v0 := minf(max_speed * 0.4, 18.0)
+			velocity = heading * v0
+			fwd_speed = v0
+			emit_signal("event", "rescued", {})
 		_visuals(dt)
 		return
 	var t1 := Time.get_ticks_usec()
@@ -698,4 +705,25 @@ func _visuals(dt: float) -> void:
 	pv.position.y = sin(t * 3.0 + float(idx)) * 0.07
 	model.shield.visible = shield_time > 0.0
 	model.visible = rescue_time <= 0.0 and not (invuln_time > 0.0 and spin_time <= 0.0 and int(t * 12.0) % 2 == 0 and invuln_time < 2.0)
+	model.steer = in_steer
+	model.grounded = grounded or air_time < 0.25
+	model.mood = _mood()
 	model.animate(dt, in_throttle, boost_time > 0.0, drift_tier, drift_dir != 0, clampf(fwd_speed / max_speed, 0.0, 1.5))
+
+
+## The pilot's expression from what is happening to this racer.
+func _mood() -> int:
+	if finished:
+		var n: int = race.racers.size()
+		if place <= 3:
+			return PilotModel.Mood.CHEER
+		return PilotModel.Mood.SAD if place >= n - 1 else PilotModel.Mood.NEUTRAL
+	if spin_time > 0.0:
+		return PilotModel.Mood.DIZZY
+	if emergency or stall_time > 0.0 or rescue_time > 0.0:
+		return PilotModel.Mood.SHOCK
+	if boost_time > 0.0 or trick_time > 0.0:
+		return PilotModel.Mood.GRIN
+	if drift_dir != 0:
+		return PilotModel.Mood.FOCUS
+	return PilotModel.Mood.NEUTRAL

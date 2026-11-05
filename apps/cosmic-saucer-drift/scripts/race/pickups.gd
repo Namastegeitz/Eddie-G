@@ -76,11 +76,7 @@ func _near(buckets: Array, idx: int) -> PackedInt32Array:
 
 func _build_visuals() -> void:
 	# Pods: glowing cyan crystals.
-	var pod_mesh := SphereMesh.new()
-	pod_mesh.radius = 0.55
-	pod_mesh.height = 1.5
-	pod_mesh.radial_segments = 6
-	pod_mesh.rings = 3
+	var pod_mesh := MeshKit.faceted(MeshKit.lathe(PackedVector2Array([Vector2(0, 0.8), Vector2(0.38, 0.35), Vector2(0.5, 0.0), Vector2(0.38, -0.35), Vector2(0, -0.8)]), 6, PackedInt32Array([1, 2, 3])))
 	var pod_mat := ShaderMaterial.new()
 	pod_mat.shader = preload("res://shaders/spin.gdshader")
 	_pod_mm = _mm(pod_mesh, pods.size(), pod_mat, "Pods")
@@ -94,6 +90,7 @@ func _build_visuals() -> void:
 	cm.set_shader_parameter("spin", 1.3)
 	cm.set_shader_parameter("tumble", 0.7)
 	cm.set_shader_parameter("bob", 0.0)
+	cm.set_shader_parameter("frame", 1.0)
 	_crate_mm = _mm(crate_mesh, crates.size(), cm, "Crates")
 	# Inner "?" cores so crates read at a distance.
 	var core := SphereMesh.new()

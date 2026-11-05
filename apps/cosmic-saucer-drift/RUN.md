@@ -67,7 +67,10 @@ runs: parse check of every script, the **smoke test** (`tests/smoke.tscn`:
 data integrity for all 42 track layouts, facts, lineups, craft and store
 products, the power-ups in a live race (laser, EMP, held shield, nitro uses,
 homing rocket), premium perks, the store layer with the debug provider, the
-Stardust-to-Race-Credits save migration, save round trip, unlock rules, every
+Stardust-to-Race-Credits save migration, the v3 graphics (all four quality
+tiers, the mesh toolkit, all 14 craft built and animated at every tier, every
+pilot's eyes, lids, mouths and moods, pooled effects, per-race quality
+switching, camera landing dip, AI catch-up bands), save round trip, unlock rules, every
 challenge and daily goal, the ads layer with the debug provider, achievements,
 full races in every mode including a 4-race cup, time trial ghost, boss,
 daily, 2-player split-screen, mirror, pause, and every menu screen), and the
@@ -81,7 +84,11 @@ Other tools:
 godot --headless --path . res://tests/sim.tscn --fixed-fps 60 -- --laps=3 --variants=0,1,2 --prof
 # Screenshots (needs a display; on a server use xvfb-run)
 xvfb-run -a godot --path . res://tests/shots.tscn --rendering-driver opengl3 -- --frames=600 --out=docs/screenshots
-xvfb-run -a godot --path . res://tests/menu_shots.tscn --rendering-driver opengl3 -- docs/screenshots
+xvfb-run -a godot --path . res://tests/menu_shots.tscn --rendering-driver opengl3 -- docs/screenshots [garage,pilots,settings]
+# Every craft (3/4 view) and every pilot's face in four moods; --quality=low|medium|high|ultra
+xvfb-run -a godot --path . res://tests/craft_shots.tscn --rendering-driver opengl3 -- --out=docs/screenshots/craft --mode=all
+# Race shots at a given graphics tier
+xvfb-run -a godot --path . res://tests/shots.tscn --rendering-driver opengl3 -- --tracks=mars --frames=300 --quality=ultra
 # Top-down maps of every track layout
 godot --headless --path . --script res://tools/dump_tracks.gd
 python3 tools/plot_tracks.py "<user data dir>/tracks_dump.json" tracks.png 0
@@ -129,3 +136,11 @@ godot --headless --path . --export-release "iOS"             build/ios/CosmicSau
   Real facts per track: `facts` in `track_defs.gd`.
 - Real-money store: `resources/store_config.tres` and [docs/STORE_PLAN.md](docs/STORE_PLAN.md).
 - Ads: `resources/ads_config.tres` and [docs/ADS_PLAN.md](docs/ADS_PLAN.md).
+- Graphics tiers (what Low/Medium/High/Ultra turn on, how Auto picks):
+  `scripts/gfx/gfx.gd`. Craft designs: `scripts/race/saucer_model.gd` (one
+  function per craft, built from `MeshKit` lathe profiles and rounded
+  shapes). Pilot faces, outfits and moods: `scripts/gfx/pilot_model.gd`
+  (`LOOKS` per pilot). Check changes with `tests/craft_shots.tscn`.
+- AI difficulty and catch-up: `AI_CLASSES` in `scripts/data/catalog.gd`
+  (`band` = how much the AI eases off when ahead of you / speeds up when
+  behind).

@@ -8,10 +8,46 @@ charged.
 
 Built from [`prompts/claude/cosmic-saucer-drift.md`](../../prompts/claude/cosmic-saucer-drift.md)
 (v1 concept + every add-on chosen, then v2: real systems, alien spacecraft,
-premium craft, power-up lineups). Next steps:
+premium craft, power-up lineups; v3: HD graphics, characters and feel).
+Next steps:
 [`prompts/claude/cosmic-saucer-drift-next.md`](../../prompts/claude/cosmic-saucer-drift-next.md).
 
 ![Real worlds](docs/screenshots/worlds.png)
+
+## HD graphics (v3)
+
+Everything is still generated from code, now in much finer detail:
+
+- **Craft:** all 14 rebuilt with smooth bevelled hulls (turned profiles and
+  rounded shapes), panel seams and rivets, glossy paint, chrome trim, running
+  lights that chase when you boost, red/green nav lights, real engine nozzles
+  with live flickering flames, glass cockpits, a soft shadow or real
+  shadows, and a hex-pattern Ion Shield. Static parts are baked into one mesh
+  per material, so eight detailed craft stay cheap to draw.
+- **Pilots:** every alien has its own face and outfit (Zib's antennae, Nova's
+  goggles, Gloop's slime, Captain Krell's cap and tusks, Vexa's star crest,
+  Bleep-0's camera eye, Mama Zorba's headscarf, Comet's ears and snout).
+  Eyes blink and look where you steer; faces change with the race: a
+  determined squint when drifting, a toothy grin on boost, dizzy spinning
+  eyes and stars when hit, wide-eyed when the core runs dry, cheering after
+  a podium finish. Arms work the control yoke and go up to celebrate.
+- **Worlds:** plated, rippled, cracked or mossy road surfaces with bump
+  detail, ice glints and glowing lava cracks; striped kerbs; barrier panels
+  with light strips; eroded rock spires with layered strata; skies with
+  layered nebulae, dust lanes, a galaxy band and coloured stars; planets with
+  craters or storm bands and glowing atmospheres; sky reflections; shadows.
+- **Effects & camera:** boost shockwaves, impact flashes and sparks, wall
+  scrapes, landing dust, drift-spark glows by tier, speed lines; a chase
+  camera that stretches with speed, swings out in drifts, punches the field
+  of view on boosts and dips on hard landings; slow motion and a camera swing
+  to your cheering pilot at the finish.
+- **Graphics tiers:** Low, Medium, High and Ultra (Settings > Graphics, or
+  Auto, which picks one from the device and steps down live if frames drop).
+  Ultra/High add 4x/2x anti-aliasing, real-time shadows, reflections and full
+  detail; Medium and Low keep phones smooth.
+
+![Craft](docs/screenshots/craft.png)
+![Pilots](docs/screenshots/pilots.png)
 
 ## Real places
 
@@ -76,6 +112,11 @@ Time Trial with your ghost and medals, Daily Challenge with streaks (works
 offline), 2-player split-screen, 26 achievements, career stats, touch/tilt/
 gamepad/keyboard controls, automatic graphics step-down on slow phones.
 
+Fine-tuning in v3: keys and touch buttons ease the steering in (taps make
+small corrections), AI catch-up is fairer and depends on the difficulty
+(easier classes ease off more when leading; nobody gets a catch-up push in
+the last half lap), and rescues put you back with a running start.
+
 ## Folders
 
 ```
@@ -83,14 +124,15 @@ project.godot, export_presets.cfg
 autoload/        Save, InputRouter, Events, Ads, Store, Audio, Game
 scripts/data/    Catalog (craft, pilots, items, lineups, systems, cups, cosmetics), TrackDefs, Tuning, Achievements
 scripts/track/   TrackPath, TrackData (variants, features), TrackBuilder (meshes), TrackDecor, Themes (skies, suns)
-scripts/race/    Race, Racer (physics), AIDriver, PlayerDriver, Items, Pickups, Hazards, RaceCamera, SaucerModel, RaceAudio
+scripts/race/    Race, Racer (physics), AIDriver, PlayerDriver, Items, Pickups, Hazards, RaceCamera, SaucerModel (HD craft), RaceAudio
+scripts/gfx/     Gfx (quality tiers, shared materials), MeshKit (lathe/blob/merge), PilotModel (faces, moods), RaceFx (pooled effects)
 scripts/ui/      MainMenu, MenuStage, Hud, TouchControls, Minimap, ResultsScreen, PauseMenu, UiKit, ItemIcon
 scripts/ads/     AdProvider, DebugAdProvider, AdMobAdProvider (template), AdsConfig
 scripts/store/   StoreProvider, DebugStoreProvider, PlayBillingStoreProvider (template), StoreConfig
-shaders/         road, sky (with suns), planet, ring, ground, boost pad, spin
+shaders/         road (HD surfaces), barrier, rock, sky, planet, atmo, ring, ground, hull, glass, flame, shield, speedlines, boost pad, spin
 resources/       tuning.tres, ads_config.tres, store_config.tres
 assets/          audio (generated), icons
-tests/           sim (AI races on all 42 layouts), smoke (~600 checks), shots, menu_shots
+tests/           sim (AI races on all 42 layouts), smoke (~670 checks), shots, menu_shots, craft_shots
 tools/           run_tests.sh, gen_audio.py, dump/plot tracks, android/apksigner, web_artifact
 docs/            store kit, ads + store plans, privacy policy, checklist, screenshots
 dist/android/    debug APK to sideload

@@ -26,6 +26,9 @@ var _center_t := 0.0
 var _roll_t := 0.0
 var _splats: Array[Vector3] = []
 var _rng := RandomNumberGenerator.new()
+var _lines: ColorRect
+var _lines_mat: ShaderMaterial
+var _lines_amt := 0.0
 
 
 func setup(p_race: Node, p_racer: Racer, is_compact: bool) -> void:
@@ -40,6 +43,15 @@ func setup(p_race: Node, p_racer: Racer, is_compact: bool) -> void:
 	_overlay.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	_overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_overlay.draw.connect(_draw_overlay)
+	_lines = ColorRect.new()
+	_lines.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	_lines.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_lines_mat = ShaderMaterial.new()
+	_lines_mat.shader = preload("res://shaders/speedlines.gdshader")
+	_lines.material = _lines_mat
+	_lines.visible = false
+	add_child(_lines)
+	set_speedlines(bool(Gfx.q().speedlines))
 	add_child(_overlay)
 	# Place (top left).
 	var pl := UiKit.hbox(2)
@@ -96,6 +108,13 @@ func setup(p_race: Node, p_racer: Racer, is_compact: bool) -> void:
 	add_child(_toasts)
 	UiKit.place(_toasts, Vector2(0.5, 0.5), Vector2(-350, -10 * k), Vector2(700, 140))
 	racer.event.connect(_on_event)
+
+
+## Speed lines on (medium and up) or the cheap edge streaks (low).
+func set_speedlines(on: bool) -> void:
+	if _lines:
+		_lines.set_meta("on", on)
+		_lines.visible = on and _lines_amt > 0.01
 
 
 func big(text: String, sub := "", secs := 1.2, color := Color.WHITE) -> void:
@@ -197,6 +216,15 @@ func _process(dt: float) -> void:
 		_center.add_theme_color_override("font_color", UiKit.RED)
 	elif not racer.wrong_way and _center.text == "WRONG WAY":
 		_center.text = ""
+	if _lines and _lines.get_meta("on", false):
+		var ratio := clampf(racer.fwd_speed / maxf(racer.max_speed, 1.0), 0.0, 1.5)
+		var want := clampf((ratio - 0.82) / 0.35, 0.0, 1.0) * 0.55 + (0.55 if racer.boost_time > 0.0 else 0.0)
+		_lines_amt = move_toward(_lines_amt, want, dt * 3.0)
+		_lines.visible = _lines_amt > 0.01
+		if _lines.visible:
+			_lines_mat.set_shader_parameter("amount", _lines_amt)
+			_lines_mat.set_shader_parameter("aspect", size.x / maxf(size.y, 1.0))
+			_lines_mat.set_shader_parameter("tint", Color(1, 1, 1, 1) if not racer.boost_kind.begins_with("drift") else Color(0.85, 0.75, 1.0, 1.0))
 	_overlay.queue_redraw()
 
 
@@ -239,7 +267,8 @@ func _draw_overlay() -> void:
 		_overlay.draw_line(Vector2(tx, my - 3), Vector2(tx, my + 14 * k + 3), Color(1, 1, 1, 0.7), 2.0)
 	if racer.boost_time > 0.0:
 		_overlay.draw_rect(Rect2(x0, my, mw, 14 * k), Color(1, 1, 1, 0.25))
-		# Speed streaks at the screen edges.
+	if racer.boost_time > 0.0 and not (_lines and _lines.get_meta("on", false)):
+		# Speed streaks at the screen edges (low graphics).
 		var t := Time.get_ticks_msec() * 0.001
 		for i in 14:
 			var y := fposmod(i * 97.0 + t * 900.0, s.y)

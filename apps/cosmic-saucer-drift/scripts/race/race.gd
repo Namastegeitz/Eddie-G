@@ -44,6 +44,10 @@ var _ghost_rec := PackedFloat32Array()
 var _ghost_t := 0.0
 var _audio: RaceAudio
 var _env: Environment
+var _sun: DirectionalLight3D
+var _sky_mat: ShaderMaterial
+var fx: RaceFx
+var _slowmo_until := 0
 var _decor: Node3D
 var _slow_t := 0.0
 var _fps_lbl: Label
@@ -68,6 +72,9 @@ func _ready() -> void:
 	if req.has("laps"):
 		td.laps = req.laps
 	_build_world()
+	fx = RaceFx.new()
+	fx.name = "Fx"
+	add_child(fx)
 	_spawn()
 	pickups = Pickups.new()
 	pickups.name = "Pickups"
@@ -87,6 +94,7 @@ func _ready() -> void:
 	add_child(hazards)
 	hazards.setup(self)
 	_setup_views()
+	apply_quality()
 	_audio = RaceAudio.new()
 	_audio.name = "RaceAudio"
 	add_child(_audio)
@@ -111,23 +119,29 @@ func _build_world() -> void:
 	sm.shader = preload("res://shaders/space_sky.gdshader")
 	Themes.apply_sky(sm, theme)
 	sky.sky_material = sm
-	sky.radiance_size = Sky.RADIANCE_SIZE_32
+	sky.radiance_size = Sky.RADIANCE_SIZE_64
+	sky.process_mode = Sky.PROCESS_MODE_QUALITY
 	env.sky = sky
+	_sky_mat = sm
 	env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
 	env.ambient_light_color = theme.ambient
 	env.ambient_light_energy = 0.75
-	env.reflected_light_source = Environment.REFLECTION_SOURCE_DISABLED
 	env.tonemap_mode = Environment.TONE_MAPPER_FILMIC
 	env.tonemap_exposure = 1.05
-	var q := Game.quality()
-	env.glow_enabled = q != "low"
-	env.glow_intensity = 0.75
+	env.tonemap_white = 6.0
+	env.glow_intensity = 0.7
+	env.glow_strength = 1.0
 	env.glow_bloom = 0.05
 	env.glow_hdr_threshold = 0.95
-	env.fog_enabled = q != "low"
+	env.glow_blend_mode = Environment.GLOW_BLEND_MODE_SCREEN
 	env.fog_light_color = theme.fog
 	env.fog_density = 0.0011
 	env.fog_sky_affect = 0.0
+	env.fog_height = _lowest_y() + 6.0
+	env.fog_height_density = 0.0
+	env.adjustment_enabled = true
+	env.adjustment_saturation = 1.08
+	env.adjustment_contrast = 1.04
 	var we := WorldEnvironment.new()
 	we.environment = env
 	add_child(we)
@@ -135,8 +149,8 @@ func _build_world() -> void:
 	var sun := DirectionalLight3D.new()
 	sun.light_color = theme.sun
 	sun.light_energy = 1.25
-	sun.shadow_enabled = false
 	add_child(sun)
+	_sun = sun
 	var ld := Themes.light_dir(theme)
 	sun.look_at_from_position(Vector3.ZERO, ld, Vector3.UP if absf(ld.y) < 0.95 else Vector3.FORWARD)
 	var track := Node3D.new()
@@ -145,8 +159,45 @@ func _build_world() -> void:
 	TrackBuilder.build(td, track)
 	TrackDecor.build(td, track)
 	_decor = track.get_node_or_null("Decor")
-	if q == "low" and _decor:
-		_thin_decor()
+	apply_quality()
+
+
+func _exit_tree() -> void:
+	Engine.time_scale = 1.0
+
+
+func _lowest_y() -> float:
+	var y := INF
+	for p in td.main.pts:
+		y = minf(y, p.y)
+	return y
+
+
+## Applies the current graphics tier to lighting, effects and viewports.
+## Called at load and whenever auto quality steps down.
+func apply_quality() -> void:
+	var qs := Gfx.q()
+	_env.glow_enabled = bool(qs.glow)
+	_env.fog_enabled = bool(qs.fog)
+	_env.fog_height_density = 0.012 if int(qs.shadows) > 0 else 0.0
+	_env.reflected_light_source = Environment.REFLECTION_SOURCE_SKY if bool(qs.reflect) else Environment.REFLECTION_SOURCE_DISABLED
+	_env.adjustment_enabled = int(qs.detail) > 0
+	if _sky_mat:
+		_sky_mat.set_shader_parameter("detail", float(qs.sky_detail))
+	if _sun:
+		Gfx.apply_sun(_sun, qs)
+	var road_detail := float(qs.road_detail)
+	TrackBuilder.set_quality(road_detail, bool(qs.reflect))
+	Gfx.apply_viewport(get_viewport(), qs)
+	for c in cams:
+		if c.get_viewport() != get_viewport():
+			Gfx.apply_viewport(c.get_viewport(), qs)
+	if _decor:
+		_decor_density(float(qs.decor))
+	if fx:
+		fx.particles = float(qs.particles)
+	for h in huds:
+		h.set_speedlines(bool(qs.speedlines))
 
 
 func _spawn() -> void:
@@ -241,10 +292,13 @@ func _setup_views() -> void:
 
 
 ## Auto quality: if the game runs below ~28 fps for 3 seconds, step the
-## graphics down (glow off, then fog and half the scenery) and say so.
+## graphics down one tier (ultra -> high -> medium -> low) and say so.
 func _process(dt: float) -> void:
+	if _slowmo_until > 0 and Time.get_ticks_msec() >= _slowmo_until:
+		_slowmo_until = 0
+		Engine.time_scale = 1.0
 	if _fps_lbl:
-		_fps_lbl.text = "%d fps" % Engine.get_frames_per_second()
+		_fps_lbl.text = "%d fps  %s" % [Engine.get_frames_per_second(), Game.quality()]
 	if Save.setting("quality") != "auto" or not racing or get_tree().paused:
 		return
 	if dt > 1.0 / 28.0:
@@ -253,27 +307,26 @@ func _process(dt: float) -> void:
 		_slow_t = maxf(0.0, _slow_t - dt * 0.5)
 	if _slow_t > 3.0:
 		_slow_t = 0.0
-		if Game.detected_quality == "high":
-			Game.detected_quality = "medium"
-			_env.glow_bloom = 0.0
-			_env.fog_enabled = false
-		elif Game.detected_quality == "medium":
-			Game.detected_quality = "low"
-			_env.glow_enabled = false
-			_thin_decor()
-		else:
+		var i := Gfx.tier_index(Game.detected_quality)
+		if i <= 0:
 			return
+		Game.detected_quality = Gfx.TIERS[i - 1]
+		apply_quality()
 		for h in huds:
 			h.toast("Graphics lowered for smoother play", UiKit.DIM)
 
 
-func _thin_decor() -> void:
+func _decor_density(k: float) -> void:
 	if _decor == null:
 		return
 	for c in _decor.get_children():
 		if c is MultiMeshInstance3D:
 			var mm: MultiMesh = c.multimesh
-			mm.visible_instance_count = mm.instance_count / 2
+			mm.visible_instance_count = -1 if k >= 1.0 else int(mm.instance_count * k)
+
+
+func _thin_decor() -> void:
+	_decor_density(0.5)
 
 
 func _pause_button() -> Control:
@@ -422,11 +475,17 @@ func _rubber_band() -> void:
 	for h in humans:
 		lead = maxf(lead, h.race_dist)
 	var base_cls: Dictionary = Catalog.AI_CLASSES[clampi(req.get("ai_class", 1), 0, 3)]
+	var bmin: float = base_cls.band[0]
+	var bmax: float = base_cls.band[1]
+	# Fair finish: in the last half lap the AI stops catching up from behind
+	# (it still eases off when ahead, so you can still reel it in).
+	var total := td.main.length * td.laps
+	var late := lead > total - td.main.length * 0.5
 	for r in racers:
 		if r.is_human or r.is_ghost:
 			continue
 		var diff := r.race_dist - lead
-		var band := clampf(-diff / 500.0, -0.07, 0.08)
+		var band := clampf(-diff / 600.0, -bmin, bmax * (0.35 if late else 1.0))
 		if req.mode == "boss":
 			band = clampf(-diff / 700.0, -0.04, 0.05)
 		r.speed_mult = float(base_cls.speed) * (1.0 + band) * float(req.get("boss_edge", 1.0) if req.mode == "boss" else 1.0)
@@ -510,6 +569,11 @@ func _finish(r: Racer) -> void:
 					place = o.place
 			h.big("FINISHED!", UiKit.ordinal(place) + " place  " + UiKit.time_str(time), 3.0, UiKit.GOLD if place == 1 else Color.WHITE)
 		Audio.play("finish")
+		_fx_for("finish_fx", {}, r)
+		# A moment of slow motion as you cross the line (one player only).
+		if humans.size() == 1 and not req.get("fast", false):
+			_slowmo_until = Time.get_ticks_msec() + 900
+			Engine.time_scale = 0.35
 	var all_humans_done := true
 	for h in humans:
 		if not h.finished:
@@ -557,6 +621,7 @@ func _finish_race() -> void:
 # ---------------------------------------------------------------- events
 func _on_racer_event(kind: String, d: Dictionary, r: Racer) -> void:
 	var cam := cam_for(r)
+	_fx_for(kind, d, r)
 	match kind:
 		"hit":
 			if cam:
@@ -576,6 +641,8 @@ func _on_racer_event(kind: String, d: Dictionary, r: Racer) -> void:
 				InputRouter.rumble(r.slot, 0.5, 0.1)
 			Audio.play_at("bump", r.global_position)
 		"land":
+			if cam:
+				cam.land(d.impact)
 			if r.is_human and d.impact > 8.0:
 				InputRouter.rumble(r.slot, 0.35, 0.08)
 				if cam:
@@ -606,6 +673,59 @@ func _on_racer_event(kind: String, d: Dictionary, r: Racer) -> void:
 				Audio.play("whoosh")
 	if r.is_human:
 		Events.on_racer_event(kind, d)
+
+
+## Visual effects for racer events (all pooled in RaceFx).
+func _fx_for(kind: String, d: Dictionary, r: Racer) -> void:
+	if fx == null:
+		return
+	var pos := r.global_position
+	match kind:
+		"hit":
+			fx.flash(pos + r.up * 0.6, Color(1.0, 0.85, 0.6), 4.5, 0.25)
+			fx.sparks(pos + r.up * 0.4, r.up, Color(1.0, 0.6, 0.25), 30, 12.0)
+			fx.shockwave(pos, r.up, Color(1.0, 0.5, 0.3), 6.0, 0.35)
+			r.model.flash = 1.0
+		"blocked":
+			fx.flash(pos + r.up * 0.6, Color(0.4, 0.85, 1.0), 5.0, 0.25)
+			fx.shockwave(pos, r.up, Color(0.4, 0.85, 1.0), 7.0, 0.4)
+		"wall":
+			if d.get("impact", 0.0) > 6.0:
+				var side := r.heading.cross(r.up).normalized() * signf(r.lateral)
+				fx.sparks(pos + side * 1.6, -side + r.up * 0.5 - r.heading * 0.3, Color(1.0, 0.75, 0.35), 18, 9.0)
+		"bump":
+			fx.sparks(pos + r.up * 0.3, r.up, Color(1.0, 0.9, 0.6), 12, 7.0)
+		"land":
+			if d.get("impact", 0.0) > 5.0:
+				var sc: Color = Catalog.surface(r.surface).color
+				fx.dust(pos - r.up * 0.8, r.up, sc.lightened(0.25), 20)
+				fx.shockwave(pos - r.up * 0.6, r.up, Color(1, 1, 1, 1).lerp(sc, 0.5), 5.5, 0.35)
+		"boost":
+			var kind_b: String = d.get("kind", "")
+			var c: Color = r.model.trail_color
+			if kind_b in ["nitro", "pad", "trick", "slip"]:
+				fx.shockwave(pos, r.up, c, 6.5 if kind_b != "nitro" else 8.0, 0.4)
+		"drift_boost":
+			var tc: Color = SaucerModel.SPARK_COLORS[clampi(int(d.get("tier", 1)) - 1, 0, 2)]
+			fx.shockwave(pos, r.up, tc, 5.0 + 1.5 * float(d.get("tier", 1)), 0.4)
+			fx.sparks(pos + r.heading * -1.5, -r.heading + r.up * 0.4, tc, 16, 10.0)
+		"drift_tier":
+			if int(d.get("tier", 0)) > 0:
+				var tc2: Color = SaucerModel.SPARK_COLORS[clampi(int(d.tier) - 1, 0, 2)]
+				fx.flash(pos - r.heading * 1.6 - r.up * 0.2, tc2, 2.6, 0.18)
+		"start_boost":
+			fx.shockwave(pos, r.up, Color(0.5, 1.0, 0.6), 8.0, 0.5)
+		"pod":
+			fx.flash(pos + r.up * 0.8, Color(0.4, 1.0, 0.9), 2.2, 0.18)
+		"trick":
+			fx.sparks(pos + r.up * 0.5, r.up, Color(1.0, 0.9, 0.4), 20, 8.0, 6.0)
+		"respawn", "rescued":
+			fx.flash(pos + r.up * 0.6, Color(0.6, 0.9, 1.0), 5.0, 0.35)
+			fx.shockwave(pos, r.up, Color(0.6, 0.9, 1.0), 6.0, 0.5)
+		"finish_fx":
+			for c: Color in [Color(1.0, 0.85, 0.2), Color(0.3, 0.9, 1.0), Color(1.0, 0.35, 0.8)]:
+				fx.sparks(pos + r.up * 1.5, r.up + r.heading * 0.3, c, 26, 14.0, 9.0)
+			fx.shockwave(pos, r.up, Color(1.0, 0.85, 0.3), 10.0, 0.6)
 
 
 func on_shard(r: Racer, slot: int) -> bool:

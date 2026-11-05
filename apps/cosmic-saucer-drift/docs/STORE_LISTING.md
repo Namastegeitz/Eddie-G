@@ -41,10 +41,14 @@ collected). Graphics are in `docs/store/`.
 > Shockwaves, Nitro Rockets, Ion Shields, Gravity Mines and Tractor Beams.
 > The further back you are, the better your comeback tools.
 >
-> **Fly alien spacecraft.** 14 craft, from classic saucers to a living
-> Bio-Ship, a Crystal Shard and premium showpieces like the Solar Sail Yacht
-> and the Quasar Dragon, each with its own perk. Earn Race Credits to unlock
-> and upgrade them, and customise paint, decals, domes and trails.
+> **Fly alien spacecraft.** 14 detailed craft, from classic saucers to a
+> living Bio-Ship, a Crystal Shard and premium showpieces like the Solar Sail
+> Yacht and the Quasar Dragon, each with its own perk. Earn Race Credits to
+> unlock and upgrade them, and customise paint, decals, domes and trails.
+>
+> **Pilots with personality.** Eight alien pilots who blink, look where
+> you steer, grin when they boost, see stars when they're hit and cheer
+> when they win.
 >
 > **Plenty to do.** Galactic Cups across four star systems and a Grand Prix
 > finale, Quick Races, Time Trials against your own ghost, boss races to
@@ -55,6 +59,7 @@ collected). Graphics are in `docs/store/`.
 > - No ads, no in-app purchases
 > - No account, no data collected
 > - Touch buttons or tilt steering, gamepad and keyboard supported
+> - Graphics from Low to Ultra, picked automatically for your phone
 
 ## Graphics
 

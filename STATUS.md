@@ -84,15 +84,29 @@
 - Real-money store layer (`Store` autoload, debug + Play Billing template, products for premium craft,
   fleet bundle, credit packs, remove ads) built and switched off: `docs/STORE_PLAN.md`. Ads layer as
   before: `docs/ADS_PLAN.md`. v1 listing stays "no ads, no purchases, no data collected".
-- Tests: `tools/run_tests.sh` - parse check, smoke test (~600 checks incl. live power-up tests, perks,
-  store flow, save migration) and the AI race sim on all 42 layouts.
+- Tests: `tools/run_tests.sh` - parse check, smoke test (667 checks incl. live power-up tests, perks,
+  store flow, save migration, v3 graphics) and the AI race sim on all 42 layouts.
 - Builds: debug APK in `dist/android/` (signed with `tools/android/apksigner`, a small APK Signature
   Scheme v2 signer, because Google's build-tools download is blocked here); web build published as a
   private artifact: https://claude.ai/artifact/Wjris6Pjst5K54bF6z8MUY
 - Store kit: `docs/STORE_LISTING.md`, feature graphic, icon and screenshots in `docs/store/`,
   `docs/privacy-policy.html`, `docs/STORE_EXPORT_CHECKLIST.md`.
+- v3 (same prompt file, "v3" section): HD graphics, characters and feel. All 14 craft rebuilt from
+  code in high detail (bevelled turned hulls, panel seams, chrome, running/nav lights, nozzles with
+  live flames, glass cockpits, hex shield) and baked per material; 8 pilots with their own faces,
+  outfits and accessories, blinking eyes that follow the steering, and moods (focus, grin, dizzy,
+  shock, cheer, sad) plus arms on the yoke. Worlds: HD road surfaces with bump detail and kerbs,
+  lit barrier panels, eroded strata spires, layered skies with a galaxy band, planets with craters or
+  storms and atmospheres, sky reflections, real-time shadows. Effects: boost shockwaves, impact
+  flashes and sparks, landing dust, drift glows, speed lines; chase camera with drift swing, boost
+  FOV kick, landing dip and a slow-motion finish swing to your cheering pilot. Low/Medium/High/Ultra
+  graphics tiers (Auto picks from the device and steps down live). Tuning: eased digital steering,
+  fairer AI catch-up per difficulty (none in the last half lap), running start after rescues.
+- v3 tests: smoke test 667 checks (71 new for v3), AI race sim on all 42 layouts; game logic per
+  physics tick about 6% heavier than v2 on this machine (faces only animate when close).
 - Not done here: Play Store AAB (needs the real Android SDK + Gradle on the PC), testing on a real
-  phone, real 3D models/music. Next prompts: `prompts/claude/cosmic-saucer-drift-next.md`.
+  phone (especially the graphics tiers and frame rate), music. Next prompts:
+  `prompts/claude/cosmic-saucer-drift-next.md`.
 
 ## Bug's-Eye View (`apps/bugs-eye-view`)
 - Built end to end from `prompts/claude/bugs-eye-view.md` (all 6 phases, all 16 add-ons).

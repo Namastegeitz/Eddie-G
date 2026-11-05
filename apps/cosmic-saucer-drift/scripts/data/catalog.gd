@@ -206,11 +206,13 @@ const CHALLENGES := {
 }
 
 # AI speed class per cup / difficulty (multiplier on AI top speed and skill).
+# AI difficulty. band = [slow-down when ahead of you, catch-up when behind]:
+# easier classes ease off more when leading and catch up less.
 const AI_CLASSES := [
-	{"name": "Cadet", "speed": 0.90, "skill": 0.55},
-	{"name": "Pilot", "speed": 0.95, "skill": 0.70},
-	{"name": "Ace", "speed": 0.99, "skill": 0.85},
-	{"name": "Legend", "speed": 1.02, "skill": 0.95},
+	{"name": "Cadet", "speed": 0.90, "skill": 0.55, "band": [0.08, 0.03]},
+	{"name": "Pilot", "speed": 0.95, "skill": 0.70, "band": [0.06, 0.045]},
+	{"name": "Ace", "speed": 0.99, "skill": 0.85, "band": [0.045, 0.055]},
+	{"name": "Legend", "speed": 1.02, "skill": 0.95, "band": [0.03, 0.06]},
 ]
 
 # Race Credits payout by finishing place.

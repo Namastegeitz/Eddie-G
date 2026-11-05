@@ -29,11 +29,13 @@ You're working on Cosmic Saucer Drift in apps/cosmic-saucer-drift (Godot 4.7, GD
 ## 1. Playtest pass on a real phone (do this first)
 
 ```
-I installed dist/android/cosmicsaucerdrift-debug.apk on my phone. Here's what
-felt off: <list>. Tune the driving model (resources/tuning.tres), the touch
-button sizes and the camera from my notes, then add a "Handling" section to
-Settings with steering sensitivity and drift assist (auto-drift when you hold a
-corner) for younger players. Re-run the sim so the AI still finishes everywhere.
+I installed dist/android/cosmicsaucerdrift-debug.apk on my phone. Graphics showed
+"Auto (<tier>)" in Settings and ran at about <N> fps. Here's what felt off:
+<list>. Tune the driving model (resources/tuning.tres), the touch button sizes,
+the camera (scripts/race/race_camera.gd) and the graphics tiers
+(scripts/gfx/gfx.gd) from my notes, then add a "Handling" section to Settings
+with steering sensitivity and drift assist (auto-drift when you hold a corner)
+for younger players. Re-run the sim so the AI still finishes everywhere.
 ```
 
 ## 2. A proper first-race tutorial
@@ -46,15 +48,15 @@ to trick"), the AI is slowed, and the race can't be lost. Fire
 Events "tutorial_complete" at the end. Skippable, and replayable from Settings.
 ```
 
-## 3. Real 3D models
+## 3. Real 3D models (optional now)
 
 ```
-Swap the primitive saucers, pilots, crates, pods and hazards for real low-poly
-models. Add a model slot per piece (like SaucerModel parts) that falls back to
-the current primitives when no model file exists, so the game always runs.
-Write prompts for a text-to-3D tool for each slot in tools/models/assets.json,
-keep every model under 3k triangles, and add screenshots of each next to its
-placeholder.
+The craft and pilots are now detailed procedural models (scripts/race/saucer_model.gd,
+scripts/gfx/pilot_model.gd). Add an optional model slot per craft, pilot, crate,
+pod and hazard that loads a .glb from assets/models/ when it exists and falls
+back to the procedural model otherwise, so the game always runs. Keep each model
+under 5k triangles, keep the pilot's moods working (blend shapes or swapped
+mouth meshes), and compare both in tests/craft_shots.tscn.
 ```
 
 ## 4. Music and sound with more character

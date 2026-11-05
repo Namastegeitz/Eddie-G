@@ -12,6 +12,8 @@ func _ready() -> void:
 	var frames: PackedStringArray = args.get("frames", "420").split(",")
 	var out: String = args.get("out", "docs/screenshots")
 	var variant := int(args.get("variant", "0"))
+	if args.has("quality"):
+		Save.data.settings.quality = args.quality
 	DisplayServer.window_set_size(Vector2i(1280, 720))
 	for t in tracks:
 		var req := Game.quick_request(t, variant, 2)
@@ -31,7 +33,7 @@ func _ready() -> void:
 				f += 1
 			await RenderingServer.frame_post_draw
 			var img := get_viewport().get_texture().get_image()
-			var path := "%s/%s_v%d_f%s.png" % [out, t, variant, target]
+			var path := "%s/%s_v%d_f%s%s.png" % [out, t, variant, target, ("_" + str(args.quality)) if args.has("quality") else ""]
 			img.save_png(ProjectSettings.globalize_path("res://" + path) if not path.begins_with("/") else path)
 			print("saved ", path)
 		race.queue_free()

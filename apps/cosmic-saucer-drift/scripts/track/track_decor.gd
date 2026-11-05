@@ -85,8 +85,9 @@ static func _planet(parent: Node3D, p: Dictionary, theme: Dictionary) -> void:
 	var sm := SphereMesh.new()
 	sm.radius = p.r
 	sm.height = p.r * 2.0
-	sm.radial_segments = 48
-	sm.rings = 24
+	var hi := Gfx.tier_index(Game.quality()) >= 2
+	sm.radial_segments = 72 if hi else 40
+	sm.rings = 36 if hi else 20
 	mi.mesh = sm
 	var mat := ShaderMaterial.new()
 	mat.shader = preload("res://shaders/planet.gdshader")
@@ -94,11 +95,30 @@ static func _planet(parent: Node3D, p: Dictionary, theme: Dictionary) -> void:
 	mat.set_shader_parameter("color_b", p.b)
 	mat.set_shader_parameter("rim_color", p.rim)
 	mat.set_shader_parameter("sun_dir", -Themes.light_dir(theme))
-	mat.set_shader_parameter("bands", p.get("bands", 9.0))
+	# Big backdrop worlds are gas giants (bands + storms); small ones are rocky (craters).
+	mat.set_shader_parameter("bands", p.get("bands", 12.0 if float(p.r) >= 850.0 else 9.0))
+	mat.set_shader_parameter("detail", 1.0 if int(Gfx.q().detail) > 0 else 0.0)
 	mi.material_override = mat
 	mi.position = p.pos
 	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	parent.add_child(mi)
+	if int(Gfx.q().detail) > 0:
+		var atmo := MeshInstance3D.new()
+		var am := SphereMesh.new()
+		am.radius = p.r * 1.07
+		am.height = p.r * 2.14
+		am.radial_segments = 48
+		am.rings = 24
+		atmo.mesh = am
+		var amat := ShaderMaterial.new()
+		amat.shader = preload("res://shaders/atmo.gdshader")
+		amat.set_shader_parameter("color", Color(p.rim))
+		amat.set_shader_parameter("sun_dir", -Themes.light_dir(theme))
+		amat.set_shader_parameter("inner", 1.0 / 1.07)
+		atmo.material_override = amat
+		atmo.position = p.pos
+		atmo.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		parent.add_child(atmo)
 	if p.get("ring", false):
 		var ring := MeshInstance3D.new()
 		var pm := PlaneMesh.new()
@@ -111,6 +131,17 @@ static func _planet(parent: Node3D, p: Dictionary, theme: Dictionary) -> void:
 		ring.rotation_degrees = Vector3(16, 0, -12)
 		ring.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		parent.add_child(ring)
+
+
+## Strata/dust rock material for spires, boulders and asteroids.
+static func rock_mat(c: Color, strata := 1.0, top := Color(-1, 0, 0)) -> ShaderMaterial:
+	var m := ShaderMaterial.new()
+	m.shader = preload("res://shaders/rock.gdshader")
+	m.set_shader_parameter("color", c)
+	m.set_shader_parameter("top", c.lightened(0.35) if top.r < 0.0 else top)
+	m.set_shader_parameter("strata", strata)
+	m.set_shader_parameter("detail", 1.0 if int(Gfx.q().detail) > 0 else 0.0)
+	return m
 
 
 static func rock_mesh() -> ArrayMesh:
@@ -136,6 +167,37 @@ static func rock_mesh() -> ArrayMesh:
 	st.generate_normals()
 	_rock_mesh = st.commit()
 	return _rock_mesh
+
+
+## Eroded rock spire: a tapered column with noisy ledges (unit height,
+## centred at the origin like a CylinderMesh).
+static var _spire_mesh: ArrayMesh = null
+static func spire_mesh() -> ArrayMesh:
+	if _spire_mesh:
+		return _spire_mesh
+	var segs := 9 if int(Gfx.q().detail) > 0 else 7
+	var rings := 10 if int(Gfx.q().detail) > 0 else 3
+	var noise := FastNoiseLite.new()
+	noise.seed = 3
+	noise.frequency = 2.2
+	var pts := PackedVector2Array()
+	for k in rings + 1:
+		var t := float(k) / float(rings)
+		var r := lerpf(0.14, 0.62, pow(t, 1.3)) * (1.0 + 0.22 * noise.get_noise_1d(t * 4.0))
+		pts.append(Vector2(r, 0.5 - t))
+	pts.insert(0, Vector2(0.0, 0.5))
+	var lathe := MeshKit.lathe(pts, segs)
+	var arr := lathe.surface_get_arrays(0)
+	var verts: PackedVector3Array = arr[Mesh.ARRAY_VERTEX]
+	for i in verts.size():
+		var v := verts[i]
+		var wob := 1.0 + 0.18 * noise.get_noise_3dv(v * 3.0)
+		verts[i] = Vector3(v.x * wob, v.y, v.z * wob)
+	arr[Mesh.ARRAY_VERTEX] = verts
+	var tmp := ArrayMesh.new()
+	tmp.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arr)
+	_spire_mesh = MeshKit.faceted(tmp)
+	return _spire_mesh
 
 
 ## True when p is clear of the main track by `clear` metres.
@@ -184,10 +246,7 @@ static func _rocks(td: TrackData, parent: Node3D, rng: RandomNumberGenerator, co
 		var b := Basis.from_euler(Vector3(rng.randf() * TAU, rng.randf() * TAU, rng.randf() * TAU))
 		b = b.scaled(Vector3(r, r * rng.randf_range(0.6, 1.0), r * rng.randf_range(0.7, 1.2)))
 		tfs.append(Transform3D(b, p))
-	var mat := StandardMaterial3D.new()
-	mat.albedo_color = color
-	mat.roughness = 0.9
-	_multimesh(parent, rock_mesh(), tfs, mat, "Rocks%d" % count)
+	_multimesh(parent, rock_mesh(), tfs, rock_mat(color, 0.35), "Rocks%d" % count)
 
 
 static func _ground(parent: Node3D, y: float, base: Color, glow_c: Color, mode: int, amount := 0.6) -> void:
@@ -296,16 +355,7 @@ static func _spires(td: TrackData, parent: Node3D, rng: RandomNumberGenerator, g
 		if not _clear(td, tip, td.width * 0.5 + 10.0):
 			continue
 		tfs.append(Transform3D(Basis().scaled(Vector3(w, h, w)), base + Vector3.UP * h * 0.5))
-	var cyl := CylinderMesh.new()
-	cyl.top_radius = 0.15
-	cyl.bottom_radius = 0.6
-	cyl.height = 1.0
-	cyl.radial_segments = 7
-	cyl.rings = 2
-	var mat := StandardMaterial3D.new()
-	mat.albedo_color = color
-	mat.roughness = 0.95
-	_multimesh(parent, cyl, tfs, mat, "Spires")
+	_multimesh(parent, spire_mesh(), tfs, rock_mat(color, 1.0), "Spires")
 
 
 static func _clouds(td: TrackData, parent: Node3D, rng: RandomNumberGenerator, color: Color, count: int) -> void:

@@ -37,15 +37,14 @@ const TT_PACE := [40.0, 45.0, 49.0]   # average m/s for bronze / silver / gold
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	tuning = load("res://resources/tuning.tres")
-	if OS.has_feature("web") or OS.has_feature("mobile"):
-		detected_quality = "medium"
-	if OS.has_feature("web") and DisplayServer.is_touchscreen_available():
-		detected_quality = "low"
+	detected_quality = Gfx.detect()
 
 
 func quality() -> String:
 	var q: String = Save.setting("quality")
-	return detected_quality if q == "auto" else q
+	if q == "auto" or not (q in Gfx.TIERS):
+		return detected_quality
+	return q
 
 
 # ---------------------------------------------------------------- fields

@@ -11,7 +11,7 @@ const DEFAULT_SETTINGS := {
 	"tilt_sensitivity": 1.0, "tilt_invert": false,
 	"auto_accel": true, "haptics": true, "shake": true,
 	"camera": "far",                # far | near
-	"quality": "auto",              # auto | low | medium | high
+	"quality": "auto",              # auto | low | medium | high | ultra
 	"show_fps": false, "difficulty": 1,
 }
 

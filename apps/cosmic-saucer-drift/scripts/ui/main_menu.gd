@@ -841,7 +841,7 @@ func _settings() -> Control:
 		["Vibration", "haptics", [true, false], {true: "On", false: "Off"}],
 		["Screen shake", "shake", [true, false], {true: "On", false: "Off"}],
 		["Camera", "camera", ["far", "near"], {"far": "Far", "near": "Close"}],
-		["Graphics", "quality", ["auto", "low", "medium", "high"], {"auto": "Auto", "low": "Low", "medium": "Medium", "high": "High"}],
+		["Graphics", "quality", ["auto", "low", "medium", "high", "ultra"], {"auto": "Auto", "low": "Low", "medium": "Medium", "high": "High", "ultra": "Ultra"}],
 		["Show FPS", "show_fps", [false, true], {true: "On", false: "Off"}],
 	]
 	for t in toggles:
@@ -854,7 +854,10 @@ func _settings() -> Control:
 		l.custom_minimum_size = Vector2(320, 0)
 		row.add_child(l)
 		var cur: Variant = Save.setting(key)
-		var b := UiKit.button(str(names.get(cur, str(cur))) + " ▸", func() -> void:
+		var shown := str(names.get(cur, str(cur)))
+		if key == "quality" and cur == "auto":
+			shown = "Auto (%s)" % String(Game.detected_quality).capitalize()
+		var b := UiKit.button(shown + " ▸", func() -> void:
 			var i := opts.find(Save.setting(key))
 			Save.set_setting(key, opts[(i + 1) % opts.size()])
 			show_screen("settings", false), 20, 260)
