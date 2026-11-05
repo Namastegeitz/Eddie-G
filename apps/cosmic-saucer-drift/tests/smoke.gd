@@ -148,6 +148,17 @@ func _save_tests() -> void:
 	old_save.erase("stardust")
 	Save._merge(mig, old_save)
 	check("v1 Stardust migrates to Race Credits", int(mig.credits) == 1234 and not mig.has("stardust"))
+	var old2 := {"stardust": 50, "settings": {"steering": "buttons"}}
+	Save.migrate(old2)
+	check("migrate: stardust", int(old2.credits) == 50 and not old2.has("stardust"))
+	check("old saves move to the joystick", old2.settings.steering == "joystick" and old2.controls_v3)
+	var old3 := {"settings": {"steering": "tilt"}}
+	Save.migrate(old3)
+	check("tilt players keep tilt", old3.settings.steering == "tilt")
+	var new_save := {"controls_v3": true, "settings": {"steering": "buttons"}}
+	Save.migrate(new_save)
+	check("a later choice of buttons is kept", new_save.settings.steering == "buttons")
+	check("new players get the joystick", Save.defaults().settings.steering == "joystick")
 	Save.data = Save.defaults()
 
 
@@ -374,11 +385,96 @@ func _gfx_tests() -> void:
 			lit += 1
 	check("shockwaves fade out", lit == 0)
 	holder.queue_free()
+	await _touch_tests()
 	# AI catch-up bands per class.
 	for c in Catalog.AI_CLASSES:
 		check("ai class %s has band" % c.name, c.has("band") and c.band.size() == 2 and float(c.band[0]) > 0.0 and float(c.band[1]) > 0.0)
 	check("cadet eases off more than legend", float(Catalog.AI_CLASSES[0].band[0]) > float(Catalog.AI_CLASSES[3].band[0]))
 	check("cadet catches up less than legend", float(Catalog.AI_CLASSES[0].band[1]) < float(Catalog.AI_CLASSES[3].band[1]))
+
+
+# ---------------------------------------------------------------- touch controls
+func _touch_tests() -> void:
+	var host := Control.new()
+	host.size = Vector2(1280, 720)
+	add_child(host)
+	Save.data.settings.steering = "joystick"
+	Save.data.settings.auto_accel = true
+	var tc := TouchControls.new()
+	host.add_child(tc)
+	tc.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	tc.size = Vector2(1280, 720)
+	await get_tree().process_frame
+	var r := tc.stick_radius()
+	var p0 := tc.stick_home()
+	check("joystick zone covers its home", tc.stick_zone().has_point(p0))
+	tc._input(_touch(0, p0, true))
+	check("thumb down: no steer yet", is_zero_approx(InputRouter.touch.steer))
+	tc._input(_drag(0, p0 + Vector2(r * 0.05, 0)))
+	check("joystick dead zone", is_zero_approx(InputRouter.touch.steer))
+	tc._input(_drag(0, p0 + Vector2(r * 0.55, 0)))
+	var half: float = InputRouter.touch.steer
+	check("joystick steers gently", half > 0.35 and half < 0.65, str(half))
+	tc._input(_drag(0, p0 + Vector2(-r * 2.0, 0)))
+	check("joystick full left", is_equal_approx(InputRouter.touch.steer, -1.0))
+	tc._input(_touch(0, p0, false))
+	check("thumb up: straight", is_zero_approx(InputRouter.touch.steer))
+	tc._layout()
+	var gas: Rect2 = tc._buttons.gas
+	var brake: Rect2 = tc._buttons.brake
+	check("pedals don't overlap drift", not gas.intersects(tc._buttons.drift) and not brake.intersects(tc._buttons.drift) and not gas.intersects(brake))
+	check("pedals are below the minimap", gas.position.y > 220.0 and brake.position.y > 220.0)
+	tc._input(_touch(1, gas.get_center(), true))
+	check("GAS pedal", InputRouter.touch.throttle == 1.0)
+	var c: InputRouter.Controls = InputRouter.controls(0)
+	check("GAS gives full power", is_equal_approx(c.throttle, 1.0) and is_equal_approx(c.gas, 1.0))
+	tc._input(_touch(1, gas.get_center(), false))
+	c = InputRouter.controls(0)
+	check("auto-drive cruises below full", is_equal_approx(c.throttle, InputRouter.AUTO_CRUISE) and is_zero_approx(c.gas))
+	tc._input(_touch(2, brake.get_center(), true))
+	c = InputRouter.controls(0)
+	check("BRAKE stops auto-drive", c.brake == 1.0 and is_zero_approx(c.throttle))
+	tc._input(_touch(2, brake.get_center(), false))
+	# A stick touch never presses buttons, and a button touch never moves the stick.
+	tc._input(_touch(3, tc._buttons.item.get_center(), true))
+	check("item press", InputRouter.touch.item and tc._stick_id < 0)
+	tc._input(_touch(3, tc._buttons.item.get_center(), false))
+	Save.data.settings.steering = "buttons"
+	tc._layout()
+	check("buttons mode has arrows, no stick", tc._buttons.has("left") and tc._buttons.has("right"))
+	tc._input(_touch(4, p0, true))
+	check("no joystick in buttons mode", tc._stick_id < 0)
+	tc._input(_touch(4, p0, false))
+	Save.data.settings.steering = "joystick"
+	# On the grid only a real GAS press counts, so auto-drive can't stall the start.
+	var drv := PlayerDriver.new(0)
+	var fake := Racer.new()
+	fake.frozen = true
+	drv.drive(fake, 0.016)
+	check("auto-drive doesn't hold gas on the grid", is_zero_approx(fake.in_throttle))
+	fake.frozen = false
+	drv.drive(fake, 0.016)
+	check("auto-drive drives once racing", is_equal_approx(fake.in_throttle, InputRouter.AUTO_CRUISE))
+	fake.free()
+	host.queue_free()
+	await get_tree().process_frame
+	check("touch input cleared when controls go", not InputRouter.touch.active and is_zero_approx(InputRouter.touch.throttle))
+	InputRouter.touch_seen = false
+
+
+func _touch(i: int, p: Vector2, down: bool) -> InputEventScreenTouch:
+	var e := InputEventScreenTouch.new()
+	e.index = i
+	e.position = p
+	e.pressed = down
+	return e
+
+
+func _drag(i: int, p: Vector2) -> InputEventScreenDrag:
+	var e := InputEventScreenDrag.new()
+	e.index = i
+	e.position = p
+	return e
 
 
 # ---------------------------------------------------------------- races

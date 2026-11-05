@@ -109,7 +109,8 @@ Drifting with blue/orange/purple Plasma Boosts, rocket starts, slipstream,
 tricks off ramps/geysers/bouncy moss, near-miss energy, 8 alien pilots with
 passives and boss races, Galactic Cups with 3 stars per race, Quick Race,
 Time Trial with your ghost and medals, Daily Challenge with streaks (works
-offline), 2-player split-screen, 26 achievements, career stats, touch/tilt/
+offline), 2-player split-screen, 26 achievements, career stats, touch joystick
+with GAS and BRAKE pedals (auto-drive on by default), tilt, ◀ ▶ buttons,
 gamepad/keyboard controls, automatic graphics step-down on slow phones.
 
 Fine-tuning in v3: keys and touch buttons ease the steering in (taps make

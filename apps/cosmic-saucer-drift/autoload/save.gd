@@ -7,7 +7,7 @@ const VERSION := 1
 
 const DEFAULT_SETTINGS := {
 	"master": 1.0, "music": 0.7, "sfx": 0.9,
-	"steering": "buttons",          # buttons | tilt
+	"steering": "joystick",         # joystick | buttons | tilt
 	"tilt_sensitivity": 1.0, "tilt_invert": false,
 	"auto_accel": true, "haptics": true, "shake": true,
 	"camera": "far",                # far | near
@@ -29,6 +29,7 @@ func _ready() -> void:
 func defaults() -> Dictionary:
 	return {
 		"version": VERSION,
+		"controls_v3": true,
 		"credits": 300,
 		"cup_stars": {},          # "cup:race" -> bitmask of the 3 stars
 		"cup_best": {},           # cup id -> best finishing place (1..8)
@@ -62,13 +63,25 @@ func load_game() -> void:
 		return
 	var parsed: Variant = JSON.parse_string(f.get_as_text())
 	if parsed is Dictionary:
-		# v1 saves called the currency Stardust.
-		if parsed.has("stardust") and not parsed.has("credits"):
-			parsed["credits"] = parsed["stardust"]
-		parsed.erase("stardust")
+		migrate(parsed)
 		_merge(data, parsed)
 	data.ads.sessions = int(data.ads.sessions) + 1
 	mark()
+
+
+## Upgrades an older save in place before it is merged over the defaults.
+static func migrate(parsed: Dictionary) -> void:
+	# v1 saves called the currency Stardust.
+	if parsed.has("stardust") and not parsed.has("credits"):
+		parsed["credits"] = parsed["stardust"]
+	parsed.erase("stardust")
+	# Saves from before the joystick had "buttons" as the default steering:
+	# move them to the joystick once (a later choice of buttons is kept).
+	if not parsed.has("controls_v3"):
+		var st: Variant = parsed.get("settings", {})
+		if st is Dictionary and st.get("steering", "buttons") == "buttons":
+			st["steering"] = "joystick"
+		parsed["controls_v3"] = true
 
 
 ## Copy saved values over the defaults so new fields always exist.

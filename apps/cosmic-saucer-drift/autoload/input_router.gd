@@ -10,10 +10,14 @@ extends Node
 class Controls:
 	var steer := 0.0
 	var throttle := 0.0
+	var gas := 0.0           # gas actually pressed (pedal/key/trigger), without auto-drive
 	var brake := 0.0
 	var drift := false
 	var item := false
 	var look_back := false
+
+## Auto-drive (touch) cruises a little below full power; hold GAS for 100%.
+const AUTO_CRUISE := 0.92
 
 var two_player := false
 var touch_seen := false
@@ -107,8 +111,9 @@ func controls(slot: int) -> Controls:
 		look = look or touch.look_back
 		if Save.setting("steering") == "tilt":
 			steer += tilt_steer()
+	c.gas = clampf(thr, 0.0, 1.0)
 	if p1 and Save.setting("auto_accel") and (touch.active or touch_seen) and brk < 0.5:
-		thr = 1.0
+		thr = maxf(thr, AUTO_CRUISE)
 	c.steer = clampf(steer, -1.0, 1.0)
 	c.throttle = clampf(thr, 0.0, 1.0)
 	c.brake = clampf(brk, 0.0, 1.0)

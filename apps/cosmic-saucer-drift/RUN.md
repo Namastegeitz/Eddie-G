@@ -19,13 +19,16 @@ folder (`apps/cosmic-saucer-drift`).
 
 | Action | Keyboard | Gamepad | Touch |
 |---|---|---|---|
-| Steer | A / D or arrows | Left stick / d-pad | ◀ ▶ buttons, or tilt (Settings) |
-| Gas | W / Up | RT or A | Automatic (Settings: Auto-accelerate) |
-| Brake / reverse | S / Down | LT or B | BRAKE |
+| Steer | A / D or arrows | Left stick / d-pad | Joystick: thumb down anywhere in the lower left and slide (Settings: ◀ ▶ buttons or tilt) |
+| Gas | W / Up | RT or A | Drives itself at cruise speed; hold the GAS pedal for full power (Settings: Auto-drive off = hold GAS to go) |
+| Brake / reverse | S / Down | LT or B | BRAKE pedal |
 | Drift (in the air: trick) | Space or Shift | RB | DRIFT (shows TRICK in the air) |
 | Use item | E, Ctrl or F | X or LB | ITEM |
 | Look back | Q or C | Y | - |
 | Pause | Esc or P | Start | II (top right), Android back |
+
+Rocket start: hold GAS right as the countdown hits GO (too early stalls).
+Auto-drive never counts as holding GAS on the grid.
 
 **2 players** (split screen, top and bottom): P1 = WASD, Space drift, E item,
 Q look back. P2 = arrows, `/` or Right Ctrl drift, `.` or Enter item, `,` look

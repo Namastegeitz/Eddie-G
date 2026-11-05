@@ -868,8 +868,8 @@ func _settings() -> Control:
 			Audio.apply_volumes())
 		row.add_child(s)
 	var toggles := [
-		["Steering", "steering", ["buttons", "tilt"], {"buttons": "On-screen buttons", "tilt": "Tilt the phone"}],
-		["Auto-accelerate (touch)", "auto_accel", [true, false], {true: "On", false: "Off"}],
+		["Steering", "steering", ["joystick", "buttons", "tilt"], {"joystick": "Joystick", "buttons": "◀ ▶ buttons", "tilt": "Tilt the phone"}],
+		["Auto-drive (touch)", "auto_accel", [true, false], {true: "On: GAS for full power", false: "Off: hold GAS to go"}],
 		["Invert tilt", "tilt_invert", [false, true], {true: "On", false: "Off"}],
 		["Vibration", "haptics", [true, false], {true: "On", false: "Off"}],
 		["Screen shake", "shake", [true, false], {true: "On", false: "Off"}],
@@ -928,7 +928,7 @@ func _howto() -> Control:
 	var v: VBoxContainer = lp[1]
 	var touch := InputRouter.touch_seen
 	var lines := [
-		["Steer & go", "Your saucer accelerates by itself. Steer with ◀ ▶ (or tilt, in Settings)." if touch else "Steer with A/D or the arrows, W/Up for gas, S/Down to brake. Gamepad: stick, RT gas, LT brake."],
+		["Steer & go", "Your saucer drives itself. Steer with the joystick: put your thumb down anywhere in the lower left and slide. Hold the GAS pedal for full power, BRAKE to slow down or reverse. (◀ ▶ buttons or tilt steering in Settings.)" if touch else "Steer with A/D or the arrows, W/Up for gas, S/Down to brake. Gamepad: stick, RT gas, LT brake."],
 		["Drift = Plasma Boost", "Hold DRIFT while steering into a corner. Sparks turn blue, orange, then purple. Let go to boost: the longer the drift, the bigger the boost."],
 		["Keep your core charged", "Your Dark Matter core drains as you fly. Grab glowing Energy Pods, land tricks, slipstream and near-miss hazards to refill it. If it empties you drop into a slow Emergency Hover until you grab a pod."],
 		["Tricks", "Press DRIFT while in the air (off ramps, geysers, bouncy moss) to spin. Land it cleanly for a boost and energy. Land mid-spin and you wobble."],

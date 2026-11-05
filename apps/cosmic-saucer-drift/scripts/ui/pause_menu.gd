@@ -34,7 +34,8 @@ static func make(race: Node) -> Control:
 	v.add_child(opts)
 	var steer := UiKit.button("Steer: %s" % Save.setting("steering"), func() -> void: pass, 20, 175)
 	steer.pressed.connect(func() -> void:
-		Save.set_setting("steering", "tilt" if Save.setting("steering") == "buttons" else "buttons")
+		var modes := ["joystick", "buttons", "tilt"]
+		Save.set_setting("steering", modes[(modes.find(Save.setting("steering")) + 1) % modes.size()])
 		steer.text = "Steer: %s" % Save.setting("steering")
 		InputRouter.calibrate_tilt())
 	opts.add_child(steer)

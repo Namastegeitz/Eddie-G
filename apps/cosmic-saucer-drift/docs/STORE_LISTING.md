@@ -58,7 +58,8 @@ collected). Graphics are in `docs/store/`.
 > - Plays offline
 > - No ads, no in-app purchases
 > - No account, no data collected
-> - Touch buttons or tilt steering, gamepad and keyboard supported
+> - Touch joystick with gas and brake pedals (it drives itself if you
+>   like), tilt steering, gamepad and keyboard supported
 > - Graphics from Low to Ultra, picked automatically for your phone
 
 ## Graphics

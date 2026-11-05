@@ -22,7 +22,9 @@ func drive(r: Racer, dt: float) -> void:
 	else:
 		_steer = want
 	r.in_steer = _steer
-	r.in_throttle = c.throttle
+	# On the grid only a real press of GAS counts (auto-drive used to hold
+	# it from the first second of the countdown, which always stalled).
+	r.in_throttle = c.gas if r.frozen else c.throttle
 	r.in_brake = c.brake
 	r.in_drift = c.drift
 	r.in_item = c.item
