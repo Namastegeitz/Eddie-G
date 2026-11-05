@@ -2,9 +2,9 @@ class_name Gfx
 extends RefCounted
 ## Graphics quality. "auto" picks High on desktop and Medium on phones and in
 ## the web player. High: 4x anti-aliasing (2D and 3D), fine details (fur,
-## feathers, glints), 3D at full screen resolution with shadows. Medium:
-## outlines and shading, 3D at game resolution. Low: flat shapes, no
-## outlines, smaller 3D buffer.
+## feathers, glints), 3D at up to 2x resolution with shadows. Medium:
+## outlines and shading, 3D at up to 1.5x resolution (no MSAA, lighter on
+## phone GPUs). Low: flat shapes, no outlines, smaller 3D buffer.
 
 const LEVELS := ["auto", "high", "medium", "low"]
 
@@ -33,8 +33,6 @@ static func msaa_3d() -> Viewport.MSAA:
 	match level():
 		"high":
 			return Viewport.MSAA_4X
-		"medium":
-			return Viewport.MSAA_2X
 	return Viewport.MSAA_DISABLED
 
 

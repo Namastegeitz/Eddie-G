@@ -54,7 +54,9 @@
   emulated click), switching to first person and straight back; only V worked. Fixed in
   `Widgets.tap`; guarded by an audit check that taps like a real finger, a GL render check of
   every scene (`tools/fpv_check.tscn`, in run_tests.sh) and a phone-browser tap test run by
-  `tools/build_web.sh` on every web build.
+  `tools/build_web.sh` on every web build. The 3D view is also built and warmed up (shaders
+  compiled) just after a level starts, so the first tap doesn't stall; Medium quality (phones,
+  web) renders 3D without MSAA at up to 1.5x instead.
 - 80 themed first-person scenes (4 per region, `fpv_scenes` in each map file, built by
   `scripts/view/scenery_3d.gd`): real plants, overhead dressing, landmarks, fauna, particles,
   light and fog per scene; title card on entry; levels have 1-3 canopy zones (1/2/3 by level
@@ -66,7 +68,7 @@
   globe from Natural Earth, synthesised per-region music + ambience + 26 SFX (`tools/gen_audio.py`).
 - Ads: opt-in rewarded + between-run interstitial (mock; AdMob adapter scaffold). Analytics: events
   + onboarding funnel to `user://analytics.jsonl`, optional HTTP endpoint.
-- Tests: `tools/run_tests.sh` - compile check + first-person GL render check + 328-check phase audit (one section per phase's
+- Tests: `tools/run_tests.sh` - compile check + first-person GL render check + 325-check phase audit (one section per phase's
   checkpoint) in the project and an exported pack, all passing. A path-finding bot beats all 200
   levels (tools/level_sweep.tscn, ~2 min) and the first 50 Endless rows on every scene with the free Poison Dart Frog.
   Frame cost 0.9 ms (sim + view + draw recording) on the cloud CPU.

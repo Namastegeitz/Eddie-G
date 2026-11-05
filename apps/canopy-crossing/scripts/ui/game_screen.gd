@@ -56,6 +56,7 @@ var fps_label: Label
 var hud_buttons: Array[Control] = []
 var scene_card: PanelContainer      # "Kapok Cathedral" title as you enter a canopy zone
 var _web_t := 0.0
+var fpv_warm := false                # the 3D view is built and its shaders compiled
 var _shown_zones := {}
 var run_items := {}
 
@@ -83,6 +84,10 @@ func _ready() -> void:
 	Ads.in_run = true
 	Ads.run_stopped = false
 	Analytics.event("run_start", {"mode": cfg.mode, "map": map.id, "stage": cfg.get("stage", 0), "animal": animal.id})
+	# build and warm up the first-person view while the level settles in, so
+	# the first tap on the eye switches instantly instead of stalling while
+	# 3D shaders compile and the scenery is built
+	get_tree().create_timer(0.35).timeout.connect(_prewarm_fpv)
 	if cfg.mode == "tutorial":
 		Analytics.funnel("tutorial_start")
 		tutorial_steps = Content.onboarding.get("tutorial", {}).get("steps", [])
@@ -471,11 +476,48 @@ func _web_state(dt: float, now := false) -> void:
 	_web_t = 0.25
 	var vs := get_viewport_rect().size
 	var eye := eye_btn.get_global_rect().get_center() / vs if eye_btn else Vector2(-1, -1)
-	JavaScriptBridge.eval("window.__canopy && (window.__canopy.game = {view: '%s', row: %d, eye: [%.4f, %.4f], scene: '%s', fpv3d: %s});" % [view, sim.row, eye.x, eye.y, world.lane(sim.row).scene, "true" if (wv3 != null and wv3.is_visible_in_tree()) else "false"], true)
+	JavaScriptBridge.eval("window.__canopy && (window.__canopy.game = {view: '%s', row: %d, eye: [%.4f, %.4f], scene: '%s', fpv3d: %s, warm: %s});" % [view, sim.row, eye.x, eye.y, world.lane(sim.row).scene, "true" if (wv3 != null and wv3.is_visible_in_tree()) else "false", "true" if fpv_warm else "false"], true)
 
 
 func toggle_view() -> void:
 	set_view("bird" if view == "fpv" else "fpv")
+
+
+func _ensure_wv3() -> void:
+	if wv3 != null:
+		return
+	wv3 = WorldView3D.new()
+	wv3.setup(sim, animal)
+	add_child(wv3)
+	move_child(wv3, atm.get_index())
+	fp_overlay = FirstPersonOverlay.new()
+	fp_overlay.setup(sim, animal)
+	add_child(fp_overlay)
+	move_child(fp_overlay, atm.get_index() + 1)
+	fp_overlay.visible = false
+
+
+## Builds the 3D view and draws it twice, invisibly, then hides it again.
+func _prewarm_fpv() -> void:
+	if not is_inside_tree() or wv3 != null or view == "fpv":
+		return
+	_ensure_wv3()
+	# An invisible view is normally skipped, so force the 3D viewport to
+	# render for a few frames (nearly transparent) to compile its shaders.
+	wv3.modulate.a = 0.01
+	wv3.visible = true
+	wv3.vp3.render_target_update_mode = SubViewport.UPDATE_ALWAYS
+	wv3.update_view(0.016)
+	for i in 3:
+		await RenderingServer.frame_post_draw
+		if not is_instance_valid(wv3):
+			return
+	wv3.vp3.render_target_update_mode = SubViewport.UPDATE_WHEN_VISIBLE
+	if view != "fpv":
+		wv3.visible = false
+	wv3.modulate.a = 1.0
+	fpv_warm = true
+	_web_state(0.0, true)
 
 
 ## Bird's-eye (2D, top-down) or first person (3D, through the animal's eyes).
@@ -484,20 +526,14 @@ func set_view(v: String, remember := true) -> void:
 		return
 	view = v
 	if v == "fpv":
-		if wv3 == null:
-			wv3 = WorldView3D.new()
-			wv3.setup(sim, animal)
-			add_child(wv3)
-			move_child(wv3, atm.get_index())
-			fp_overlay = FirstPersonOverlay.new()
-			fp_overlay.setup(sim, animal)
-			add_child(fp_overlay)
-			move_child(fp_overlay, atm.get_index() + 1)
+		_ensure_wv3()
+		wv3.modulate.a = 1.0
 		wv3.visible = true
 		fp_overlay.visible = true
 		wv.visible = false
 		atm.fpv = true
 		wv3.update_view(0.016)
+		fpv_warm = true
 	else:
 		if wv3:
 			wv3.visible = false

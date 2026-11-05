@@ -42,16 +42,36 @@ function fail(msg) { console.error('WEB SMOKE FAILED: ' + msg); process.exitCode
     await page.goto(url);
     await page.waitForFunction(() => window.__canopy && window.__canopy.done, null, { timeout: 180000 });
     await page.waitForFunction(() => window.__canopy.game && window.__canopy.game.eye[0] > 0, null, { timeout: 30000 });
+    // the game builds and warms up first person just after a level starts;
+    // a real phone GPU does that in well under a second, software GL is slower
+    await page.waitForFunction(() => window.__canopy.game && window.__canopy.game.warm, null, { timeout: 60000 });
+    // the page's first user gesture unlocks audio, which takes a moment in
+    // some browsers; get that out of the way with a key the game ignores
+    await page.keyboard.press('F2');
     await page.waitForTimeout(1500);
     const box = await page.locator('#canvas').boundingBox();
     const g0 = await page.evaluate(() => window.__canopy.game);
     const shot0 = await page.screenshot();
     if (shots) fs.writeFileSync(path.join(shots, 'smoke_bird.png'), shot0);
+    // tap like a finger, then time how long until the game reports the new
+    // view: a slow first switch makes players tap again and flip it back
     const tap = async () => {
       const g = await page.evaluate(() => window.__canopy.game);
+      // tap() returns once the page has taken the touch; time from there
       await page.touchscreen.tap(box.x + g.eye[0] * box.width, box.y + g.eye[1] * box.height);
-      await page.waitForTimeout(1500);
-      return page.evaluate(() => window.__canopy.game);
+      const t0 = Date.now();
+      let now = g;
+      while (Date.now() - t0 < 6000) {
+        now = await page.evaluate(() => window.__canopy.game);
+        if (now.view !== g.view) break;
+        await page.waitForTimeout(40);
+      }
+      now.ms = Date.now() - t0;
+      await page.waitForTimeout(800);
+      const settled = await page.evaluate(() => window.__canopy.game);
+      settled.ms = now.ms;
+      console.log(`tap eye: ${g.view} -> ${settled.view}, ${now.ms} ms after the touch was delivered (this test browser renders in software at a few fps)`);
+      return settled;
     };
     if (g0.view !== 'bird') fail('expected to start in bird\'s-eye, got ' + g0.view);
     const g1 = await tap();
