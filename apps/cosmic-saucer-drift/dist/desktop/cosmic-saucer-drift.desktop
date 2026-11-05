@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Cosmic Saucer Drift
+Comment=Arcade UFO kart racing across real planets and star systems
+Exec=xdg-open https://claude.ai/artifact/Wjris6Pjst5K54bF6z8MUY
+Icon=cosmic-saucer-drift
+Terminal=false
+Categories=Game;

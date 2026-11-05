@@ -77,6 +77,18 @@ falling ice/glass/iron, lava eruptions, supersonic gusts), one hidden
 shortcut, three Star Shards, and Reverse + Mirror versions that unlock when
 you win it: 14 tracks, 42 layouts.
 
+## Icon and desktop shortcut
+
+![Icon](assets/icons/icon_512.png)
+
+The app icon is a rendered space scene (ringed gas giant, blue cloud world,
+moon, nebulas) made with the game's own shaders
+(`tools/make_space_icon.tscn`, sizes by `tools/make_icons.py`): Android
+launcher and adaptive icon, Windows, Mac, Linux, web and the Play Store icon.
+`dist/Cosmic-Saucer-Drift-desktop-shortcut.zip` puts a desktop icon that
+opens the game in the browser on Windows (one-click installer), Mac (small
+app) or Linux; see the README inside.
+
 ## Cockpit view
 
 A **COCKPIT** tab sits on the left edge of the race screen. Tap it (or press

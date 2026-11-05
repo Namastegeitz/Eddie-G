@@ -101,8 +101,12 @@ godot --headless --path . --script res://tools/dump_tracks.gd
 python3 tools/plot_tracks.py "<user data dir>/tracks_dump.json" tracks.png 0
 # Regenerate the sounds and music
 python3 tools/gen_audio.py
-# Regenerate icons from icon.svg
-godot --headless --path . --script res://tools/make_icons.gd
+# App icon (space, planets and nebulas): render the art, then make every size,
+# the Windows .ico, the Android adaptive layers, the Play icon and the
+# desktop-shortcut package (dist/desktop + dist/Cosmic-Saucer-Drift-desktop-shortcut.zip)
+xvfb-run -a godot --path . res://tools/make_space_icon.tscn --rendering-driver opengl3 -- --out=assets/icons/space_icon_1024.png
+python3 tools/make_icons.py
+python3 tools/make_desktop_shortcuts.py [game URL]
 ```
 
 Before publishing a web build, also run `tools/web_tap_test.sh` (after
