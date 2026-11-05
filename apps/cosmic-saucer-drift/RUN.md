@@ -98,6 +98,12 @@ python3 tools/gen_audio.py
 godot --headless --path . --script res://tools/make_icons.gd
 ```
 
+Before publishing a web build, also run `tools/web_tap_test.sh` (after
+packaging it, see Export): it opens the build in headless Chromium as a
+phone, taps the title screen and checks the menu opened. It caught a bug the
+engine-level tests can't see: real taps on the title were swallowed by the
+menu's controls, so the game never started on phones.
+
 ## 5. Export
 
 ```

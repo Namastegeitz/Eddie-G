@@ -63,7 +63,9 @@ func land(impact: float) -> void:
 func _process(dt: float) -> void:
 	if target == null:
 		return
-	dt = minf(dt, 0.05)
+	# Smoothing below is frame-rate independent, so allow long frames: on a
+	# slow phone a tight cap made the camera fall far behind the craft.
+	dt = minf(dt, 0.25)
 	var hv := target.heading
 	var ratio := clampf(target.fwd_speed / maxf(target.max_speed, 1.0), 0.0, 1.4)
 	# Faster cars feel faster: tighter follow, a bit more distance.
@@ -75,8 +77,12 @@ func _process(dt: float) -> void:
 	_swing = lerpf(_swing, -drift * 1.3 - target.in_steer * 0.35, 1.0 - exp(-3.0 * dt))
 	_look_side = lerpf(_look_side, drift * 1.6 + target.in_steer * 0.9, 1.0 - exp(-4.0 * dt))
 	# Landing dip spring.
-	_dip_v += (-_dip * 60.0 - _dip_v * 9.0) * dt
-	_dip += _dip_v * dt
+	var rem := dt
+	while rem > 0.0:
+		var h := minf(rem, 1.0 / 60.0)
+		_dip_v += (-_dip * 60.0 - _dip_v * 9.0) * h
+		_dip += _dip_v * h
+		rem -= h
 	var want := _desired()
 	if intro > 0.0:
 		intro = maxf(0.0, intro - dt)

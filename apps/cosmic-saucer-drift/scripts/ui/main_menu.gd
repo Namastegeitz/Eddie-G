@@ -13,6 +13,9 @@ var _screen := ""
 var _history: Array[String] = []
 var _sel := {}            # per-screen selections (track, variant, class, ...)
 var _toast: Label
+var _swallow_until := 0
+var _fab := Callable()     # start button pinned bottom-right on track pickers
+var _fab_text := ""
 
 
 func _ready() -> void:
@@ -71,12 +74,29 @@ func _ready() -> void:
 		show_screen("title")
 
 
+## The title screen takes any tap, click, key or button. This runs before
+## the menu's controls see the event: they cover the screen and would
+## otherwise swallow taps and clicks, so only keys and pads got through.
+func _input(e: InputEvent) -> void:
+	var pointer := e is InputEventScreenTouch or e is InputEventMouseButton or e is InputEventScreenDrag or e is InputEventMouseMotion
+	if pointer and Time.get_ticks_msec() < _swallow_until:
+		# The rest of the tap that left the title (its release, and the
+		# mouse events a phone makes from it) must not press a button on
+		# the next screen.
+		get_viewport().set_input_as_handled()
+		return
+	if _screen != "title":
+		return
+	var tap := e is InputEventScreenTouch or e is InputEventMouseButton or e is InputEventKey or e is InputEventJoypadButton
+	if tap and e.is_pressed():
+		get_viewport().set_input_as_handled()
+		_swallow_until = Time.get_ticks_msec() + 400
+		show_screen("howto" if not Save.data.tutorial_done else "home")
+
+
 func _unhandled_input(e: InputEvent) -> void:
 	if e.is_action_pressed("ui_cancel") and _screen != "title" and _screen != "home":
 		go_back()
-		get_viewport().set_input_as_handled()
-	if _screen == "title" and (e is InputEventKey or e is InputEventJoypadButton or e is InputEventScreenTouch or e is InputEventMouseButton) and e.is_pressed():
-		show_screen("howto" if not Save.data.tutorial_done else "home")
 		get_viewport().set_input_as_handled()
 
 
@@ -110,6 +130,7 @@ func show_screen(sname: String, push := true) -> void:
 	if push and _screen != "" and _screen != sname and _screen != "title":
 		_history.append(_screen)
 	_screen = sname
+	_fab = Callable()
 	for c in content.get_children():
 		c.queue_free()
 	refresh_header()
@@ -172,6 +193,14 @@ func show_screen(sname: String, push := true) -> void:
 	header_title.get_parent().visible = sname != "title"
 	content.add_child(root)
 	root.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	# On phones the start button at the end of a long track list is off
+	# screen; keep one pinned in the corner as well.
+	if _fab.is_valid():
+		var fab := UiKit.button(_fab_text, _fab, 34, 280)
+		fab.name = "PinnedStart"
+		fab.custom_minimum_size.y = 84
+		content.add_child(fab)
+		UiKit.place(fab, Vector2(1, 1), Vector2(-300, -96), Vector2(290, 88))
 	_focus_first(root)
 
 
@@ -423,6 +452,8 @@ func _track_picker(mode: String) -> Control:
 			if cc == int(_sel["class"]):
 				b.add_theme_stylebox_override("normal", UiKit.box(Color(0.25, 0.15, 0.5), 16, UiKit.GOLD, 3))
 			crow.add_child(b)
+		_fab = func() -> void: Game.start(Game.quick_request(cur, var_i, int(_sel["class"])))
+		_fab_text = "RACE ▶"
 		var go := UiKit.button("RACE ▶", func() -> void: Game.start(Game.quick_request(cur, var_i, int(_sel["class"]))), 32)
 		v.add_child(go)
 		UiKit.focus_later(go)
@@ -434,6 +465,8 @@ func _track_picker(mode: String) -> Control:
 		v.add_child(UiKit.label("Best: %s   Medal: %s" % [UiKit.time_str(best), ["none", "Bronze", "Silver", "Gold"][medal]], 22))
 		v.add_child(UiKit.label("Bronze %s · Silver %s · Gold %s" % [UiKit.time_str(Game.tt_target(td, 1)), UiKit.time_str(Game.tt_target(td, 2)), UiKit.time_str(Game.tt_target(td, 3))], 20, UiKit.DIM))
 		v.add_child(_wrap("No crates or rivals: just you, the Energy Pods and your ghost.", 18))
+		_fab = func() -> void: Game.start(Game.tt_request(cur, var_i))
+		_fab_text = "START ▶"
 		var go := UiKit.button("START TRIAL ▶", func() -> void: Game.start(Game.tt_request(cur, var_i)), 32)
 		v.add_child(go)
 	return lp[0]

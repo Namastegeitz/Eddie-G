@@ -93,7 +93,7 @@ static func make(race: Node, results: Array, summary: Dictionary) -> Control:
 		l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		right.add_child(l)
 	for a in summary.get("achievements", []):
-		right.add_child(UiKit.label("🏆 " + str(a), 20, UiKit.PINK))
+		right.add_child(UiKit.label("★ " + str(a), 20, UiKit.PINK))
 	if summary.get("cup_last", false):
 		right.add_child(UiKit.label("Cup standings", 24, UiKit.CYAN))
 		var pts: Dictionary = summary.cup_points

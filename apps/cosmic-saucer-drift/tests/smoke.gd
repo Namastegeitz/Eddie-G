@@ -585,6 +585,36 @@ func _menus() -> void:
 		menu.show_screen(s)
 		await get_tree().process_frame
 		check("menu screen " + s, menu._screen == s)
+	# Title screen: a tap must work even though the menu's controls cover
+	# the screen (they used to swallow it), and the rest of that tap must not
+	# press a button on the next screen.
+	menu.show_screen("title")
+	await get_tree().process_frame
+	var tap := InputEventScreenTouch.new()
+	tap.position = Vector2(300, 400)
+	tap.pressed = true
+	menu._input(tap)
+	check("tap on title opens the menu", menu._screen == "home", menu._screen)
+	var click := InputEventMouseButton.new()
+	click.position = Vector2(300, 400)
+	click.button_index = MOUSE_BUTTON_LEFT
+	click.pressed = true
+	menu._input(click)
+	check("same tap doesn't press a home button", menu._screen == "home", menu._screen)
+	menu.show_screen("title")
+	var key := InputEventKey.new()
+	key.physical_keycode = KEY_ENTER
+	key.pressed = true
+	menu._swallow_until = 0
+	menu._input(key)
+	check("key on title opens the menu", menu._screen == "home", menu._screen)
+	check("symbol font for stars and arrows", UiKit.bold().fallbacks.size() > 0)
+	menu.show_screen("quick")
+	await get_tree().process_frame
+	check("quick race has a pinned RACE button", menu.content.get_node_or_null("PinnedStart") != null)
+	menu.show_screen("home")
+	await get_tree().process_frame
+	check("home has no pinned start button", menu.content.get_node_or_null("PinnedStart") == null)
 	# Garage purchase flow.
 	Save.data.credits = 100000
 	menu._sel["garage_saucer"] = "rocket"

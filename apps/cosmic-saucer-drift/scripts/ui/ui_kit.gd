@@ -20,6 +20,12 @@ static func bold() -> FontVariation:
 		_bold = FontVariation.new()
 		_bold.base_font = ThemeDB.fallback_font
 		_bold.variation_embolden = 0.7
+		# Symbols the built-in font lacks (stars, arrows, ticks). Phones
+		# fall back to system fonts, but the web build has none, so these
+		# showed as empty boxes in the browser.
+		var sym: Font = load("res://assets/fonts/DejaVuSans-Bold.ttf")
+		if sym:
+			_bold.fallbacks = [sym]
 	return _bold
 
 
