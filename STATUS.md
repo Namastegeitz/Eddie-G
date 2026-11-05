@@ -102,8 +102,9 @@
   FOV kick, landing dip and a slow-motion finish swing to your cheering pilot. Low/Medium/High/Ultra
   graphics tiers (Auto picks from the device and steps down live). Tuning: eased digital steering,
   fairer AI catch-up per difficulty (none in the last half lap), running start after rescues.
-- v3 tests: smoke test 667 checks (71 new for v3), AI race sim on all 42 layouts; game logic per
-  physics tick about 6% heavier than v2 on this machine (faces only animate when close).
+- v3 tests: smoke test 667 checks (71 new for v3) and the AI race sim on all 42 layouts pass; game
+  logic per physics tick about 6% heavier than v2 on this machine (faces only animate when close).
+  A racer that stops making progress (pinned on a wall or hazard) now gets the rescue beam.
 - Not done here: Play Store AAB (needs the real Android SDK + Gradle on the PC), testing on a real
   phone (especially the graphics tiers and frame rate), music. Next prompts:
   `prompts/claude/cosmic-saucer-drift-next.md`.
