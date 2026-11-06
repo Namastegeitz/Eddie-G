@@ -287,6 +287,11 @@
   take turns returns at 33 and 37 starting from 3 and 5 moves). Every level after 3 moves to the next map (beach,
   disco, moon, jungle...), showdowns on the world's home map; level card, How it works table and results explain it.
   Moon stage free at World 4. Tests: 767 unit checks; play-through clears level 2 by taking turns.
+- Public beta link: `/docs` at the repo root is a GitHub Pages site (landing page with Play button, QR code, tester notes,
+  "copy my device details"; game at docs/monkey-see-monkey-do = dist/www), refreshed by scripts/build_web.mjs via
+  scripts/publish_beta.mjs. Tested from a sub-folder: loads, offline cache installs, reopens offline. Needs Pages switched
+  on once (Settings > Pages > Deploy from a branch > claude/nifty-lamport-bfm2ub, /docs); then
+  https://namastegeitz.github.io/Eddie-G/
 - Not verified on real hardware yet: touch feel and audio latency on an actual phone, install to home screen, and frame
   rate of the new graphics on older phones (Auto steps down if needed).
 - Next: pick add-ons from `prompts/claude/monkey-see-monkey-do-next.md` (prompt 15 is done; replay review, Daily

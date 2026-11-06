@@ -35,3 +35,5 @@ execFileSync('python3', [join(root, 'scripts/build_sw.py'), out], { stdio: 'inhe
 const kb = (f) => (readFileSync(join(out, f)).length / 1024).toFixed(0) + ' KB';
 console.log(`dist/www ready: app.js ${kb('app.js')}, css ${kb('css/game.css')}`);
 if (!existsSync(join(out, 'assets/fonts/lilita-one.woff2'))) throw new Error('fonts missing from dist/www');
+// keep the public beta site (GitHub Pages, /docs) in step with this build
+execFileSync('node', [join(root, 'scripts/publish_beta.mjs')], { stdio: 'inherit' });

@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Monkey See, Monkey Do · Beta</title>
+<meta name="description" content="Beta test of Monkey See, Monkey Do: watch the monkey dance, then copy the moves. Plays in any phone, tablet or computer browser.">
+<meta name="theme-color" content="#0e3527">
+<link rel="icon" href="monkey-see-monkey-do/assets/icons/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="monkey-see-monkey-do/assets/icons/apple-touch-icon.png">
+<style>
+  @font-face { font-family: 'Lilita One'; src: url('monkey-see-monkey-do/assets/fonts/lilita-one.woff2') format('woff2'); font-display: swap; }
+  :root {
+    --bg: #0e3527; --panel: #154633; --line: rgba(255, 255, 255, 0.14);
+    --cream: #fff8e6; --dim: #c9dccf; --banana: #ffd23f; --ink: #23160c;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0; background: radial-gradient(circle at 50% -10%, #2a7a52 0%, var(--bg) 55%) fixed, var(--bg);
+    color: var(--cream); font: 16px/1.5 system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    padding: max(16px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) max(24px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
+  }
+  main { max-width: 640px; margin: 0 auto; }
+  header { text-align: center; padding: 18px 0 8px; }
+  header img { width: 112px; height: 112px; filter: drop-shadow(0 6px 0 rgba(0, 0, 0, 0.3)); }
+  h1 { font-family: 'Lilita One', system-ui, sans-serif; font-weight: 400; font-size: clamp(34px, 9vw, 48px); line-height: 1.05; margin: 10px 0 6px; text-shadow: 0 3px 0 rgba(0, 0, 0, 0.35); }
+  .tag { display: inline-block; background: var(--banana); color: var(--ink); font-weight: 800; letter-spacing: 0.08em; font-size: 13px; padding: 3px 10px; border-radius: 999px; }
+  .lead { color: var(--dim); margin: 10px auto 0; max-width: 32em; }
+  .play {
+    display: block; margin: 22px auto 8px; max-width: 420px; text-align: center; text-decoration: none;
+    background: var(--banana); color: var(--ink); font-family: 'Lilita One', system-ui, sans-serif; font-size: 30px;
+    padding: 16px 20px; border-radius: 20px; box-shadow: 0 6px 0 #b8901a, 0 10px 24px rgba(0, 0, 0, 0.3);
+  }
+  .play:active { transform: translateY(3px); box-shadow: 0 3px 0 #b8901a; }
+  .small { text-align: center; color: var(--dim); font-size: 14px; margin: 0; }
+  section { background: var(--panel); border: 1px solid var(--line); border-radius: 18px; padding: 16px 18px; margin-top: 16px; }
+  h2 { font-family: 'Lilita One', system-ui, sans-serif; font-weight: 400; font-size: 22px; margin: 0 0 8px; letter-spacing: 0.01em; }
+  ul, ol { margin: 0; padding-left: 20px; }
+  li { margin: 4px 0; }
+  a { color: var(--banana); }
+  .qr { display: flex; gap: 16px; align-items: center; }
+  .qr img { width: 148px; height: 148px; border-radius: 12px; background: #fff; padding: 6px; flex: none; }
+  button.copy {
+    font: inherit; font-weight: 800; color: var(--ink); background: var(--cream); border: 0; border-radius: 12px;
+    padding: 10px 16px; margin-top: 10px; cursor: pointer;
+  }
+  pre { white-space: pre-wrap; word-break: break-word; background: rgba(0, 0, 0, 0.25); border-radius: 10px; padding: 10px; font-size: 12px; color: var(--dim); margin: 10px 0 0; display: none; }
+  footer { text-align: center; color: var(--dim); font-size: 13px; margin-top: 20px; }
+  @media (max-width: 420px) { .qr { flex-direction: column; text-align: center; } }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <img src="monkey-see-monkey-do/assets/icons/icon.svg" alt="">
+    <h1>Monkey See, Monkey Do</h1>
+    <span class="tag">BETA</span>
+    <p class="lead">Watch the monkey dance, then copy the moves in the same order. Plays right in the browser on any phone, tablet or computer. Nothing to install.</p>
+  </header>
+
+  <a class="play" href="monkey-see-monkey-do/">Play now</a>
+  <p class="small">Works offline after the first visit.</p>
+
+  <section class="qr" aria-label="Open on your phone">
+    <img src="qr.svg" alt="QR code that opens the game">
+    <div>
+      <h2>On a computer?</h2>
+      <p style="margin:0">Point your phone's camera at this code to open the game on your phone.</p>
+    </div>
+  </section>
+
+  <section>
+    <h2>Make it an app (optional)</h2>
+    <ul>
+      <li><b>iPhone / iPad:</b> open the game in Safari, tap Share, then <i>Add to Home Screen</i>.</li>
+      <li><b>Android:</b> open the game in Chrome, tap the menu (three dots), then <i>Install app</i> or <i>Add to Home screen</i>.</li>
+      <li>It then opens full screen from its own icon and plays without internet.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>What to try</h2>
+    <ul>
+      <li>Levels 1-3 teach the moves. Levels 2 and 3 are <b>take turns</b>: copy the monkey, add a move of your own, and the monkey copies you.</li>
+      <li>From level 4 every level is on a new map: beach, disco, moon, jungle.</li>
+      <li>The Wardrobe (skins and gear), Endless, Free Dance, and Settings &gt; Graphics.</li>
+      <li>The Shop only sells in the phone apps. To try it here with pretend purchases (no money), use <a href="monkey-see-monkey-do/?billing=test">this test-mode link</a>.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Good to know</h2>
+    <ul>
+      <li>Your progress is saved on this device, in this browser only. Another phone or browser starts fresh (Settings &gt; Your data can copy a save code across).</li>
+      <li>No account, no ads, and nothing is collected or sent anywhere.</li>
+      <li>Tap once to start the sound. On iPhone, Settings &gt; Sound &gt; <i>Play sound on silent</i> decides what the silent switch does.</li>
+      <li>Older phone running slowly? Settings &gt; Graphics &gt; Low.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Found a problem?</h2>
+    <p style="margin:0">Tell whoever shared this link with you what happened, and paste your device details with it:</p>
+    <button class="copy" id="copy" type="button">Copy my device details</button>
+    <pre id="info" aria-live="polite"></pre>
+  </section>
+
+  <footer>Beta build 1.0.0 · 2026-11-06</footer>
+</main>
+<script>
+  (function () {
+    function info() {
+      var gl = 'none';
+      try {
+        var c = document.createElement('canvas');
+        gl = c.getContext('webgl2') ? 'WebGL 2' : (c.getContext('webgl') ? 'WebGL 1' : 'none');
+      } catch (e) { /* no WebGL */ }
+      return [
+        'Monkey See, Monkey Do beta 1.0.0 · 2026-11-06',
+        'Browser: ' + navigator.userAgent,
+        'Screen: ' + screen.width + 'x' + screen.height + ' at ' + (window.devicePixelRatio || 1) + 'x',
+        'Window: ' + window.innerWidth + 'x' + window.innerHeight,
+        '3D: ' + gl,
+        'Installed as an app: ' + (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone ? 'yes' : 'no'),
+      ].join('\n');
+    }
+    var btn = document.getElementById('copy');
+    var pre = document.getElementById('info');
+    btn.addEventListener('click', function () {
+      var text = info();
+      pre.textContent = text;
+      pre.style.display = 'block';
+      function done(ok) { btn.textContent = ok ? 'Copied!' : 'Select and copy the text below'; }
+      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(function () { done(true); }, function () { done(false); });
+      else done(false);
+    });
+  })();
+</script>
+</body>
+</html>

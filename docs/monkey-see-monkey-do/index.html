@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>Monkey See, Monkey Do</title>
+<meta name="description" content="Watch the monkey dance, then copy the moves in the same order. A rhythm memory game.">
+<meta name="theme-color" content="#0e3527">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Monkey Do">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="assets/icons/icon.svg" type="image/svg+xml">
+<link rel="icon" href="assets/icons/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
+<link rel="stylesheet" href="css/game.css">
+</head>
+<body>
+<!--APP-START-->
+<canvas id="scene" aria-hidden="true"></canvas>
+<div id="app">
+
+  <div id="loading" class="loading show" role="status">
+    <div class="loading-logo">Monkey See,<br>Monkey Do</div>
+    <div class="loading-bar"><div id="loading-fill"></div></div>
+    <p id="loading-text">Warming up...</p>
+  </div>
+
+  <!-- TITLE -->
+  <section id="scr-title" class="screen" aria-label="Title">
+    <div class="topbar">
+      <span></span>
+      <div class="chips">
+        <button class="chip golden" data-go="shop" aria-label="Golden bananas. Open the wardrobe"><span class="i-golden"></span><span class="golden-count">0</span></button>
+        <button class="chip bananas" data-go="shop" aria-label="Bananas. Open the wardrobe"><span class="i-banana"></span><span class="banana-count">0</span></button>
+      </div>
+    </div>
+    <h1 class="logo"><span class="l1">Monkey See,</span><span class="l2">Monkey Do</span></h1>
+    <p class="tagline">Watch the dance. Copy the moves.</p>
+    <div class="spacer"></div>
+    <div class="title-actions">
+      <button id="btn-play" class="btn primary big">Play</button>
+      <div class="btn-row">
+        <button id="btn-endless" class="btn">Endless</button>
+        <button id="btn-free" class="btn">Free Dance</button>
+      </div>
+      <nav class="mini-row" aria-label="More">
+        <button class="mini" data-go="shop" id="mini-wardrobe"><span class="i-hanger"></span>Wardrobe<span class="new-dot" hidden></span></button>
+        <button class="mini" data-go="help"><span class="i-info"></span>How it works</button>
+        <button class="mini" data-go="store"><span class="i-bag"></span>Shop</button>
+        <button class="mini" data-go="stats"><span class="i-chart"></span>Stats</button>
+        <button class="mini" data-go="settings"><span class="i-gear"></span>Settings</button>
+      </nav>
+    </div>
+  </section>
+
+  <!-- LEVEL MAP -->
+  <section id="scr-map" class="screen panel-screen" aria-label="Levels">
+    <div class="panel">
+      <div class="panel-head">
+        <button class="icon-btn back" data-go="title" aria-label="Back"></button>
+        <h2>Levels</h2>
+        <button class="chip bananas" data-go="shop" aria-label="Bananas"><span class="i-banana"></span><span class="banana-count">0</span></button>
+      </div>
+      <div id="world-tabs" class="tabs" role="tablist"></div>
+      <div id="world-card" class="world-card"></div>
+      <div id="level-grid" class="level-grid"></div>
+    </div>
+  </section>
+
+  <!-- WARDROBE -->
+  <section id="scr-shop" class="screen" aria-label="Wardrobe">
+    <div class="topbar">
+      <button class="icon-btn back" data-go="title" aria-label="Back"></button>
+      <h2 class="topbar-title">Wardrobe</h2>
+      <div class="chips">
+        <button class="chip golden" id="btn-exchange" aria-label="Golden bananas. Swap bananas for golden bananas"><span class="i-golden"></span><span class="golden-count">0</span><span class="plus">+</span></button>
+        <span class="chip bananas"><span class="i-banana"></span><span class="banana-count">0</span></span>
+      </div>
+    </div>
+    <div class="spacer"></div>
+    <div class="sheet">
+      <div id="shop-tabs" class="tabs scroll" role="tablist"></div>
+      <div id="shop-grid" class="shop-grid"></div>
+      <p class="fineprint">Bananas and golden bananas are earned by playing. In the iPhone and Android apps you can also get them in the Shop.</p>
+    </div>
+  </section>
+
+  <!-- SHOP (real money, in the apps) -->
+  <section id="scr-store" class="screen panel-screen" aria-label="Shop">
+    <div class="panel">
+      <div class="panel-head">
+        <button class="icon-btn back" data-go="back" aria-label="Back"></button>
+        <h2>Shop</h2>
+        <div class="chips small-chips">
+          <span class="chip golden small"><span class="i-golden"></span><span class="golden-count">0</span></span>
+          <span class="chip bananas small"><span class="i-banana"></span><span class="banana-count">0</span></span>
+        </div>
+      </div>
+      <div id="store-body" class="panel-body"></div>
+    </div>
+  </section>
+
+  <!-- SETTINGS -->
+  <section id="scr-settings" class="screen panel-screen" aria-label="Settings">
+    <div class="panel">
+      <div class="panel-head">
+        <button class="icon-btn back" data-go="back" aria-label="Back"></button>
+        <h2>Settings</h2>
+        <span></span>
+      </div>
+      <div id="settings-body" class="panel-body"></div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section id="scr-help" class="screen panel-screen" aria-label="How it works">
+    <div class="panel">
+      <div class="panel-head">
+        <button class="icon-btn back" data-go="back" aria-label="Back"></button>
+        <h2>How it works</h2>
+        <span></span>
+      </div>
+      <div id="help-body" class="panel-body prose"></div>
+    </div>
+  </section>
+
+  <!-- STATS -->
+  <section id="scr-stats" class="screen panel-screen" aria-label="Stats">
+    <div class="panel">
+      <div class="panel-head">
+        <button class="icon-btn back" data-go="title" aria-label="Back"></button>
+        <h2>Your stats</h2>
+        <span></span>
+      </div>
+      <div id="stats-body" class="panel-body"></div>
+    </div>
+  </section>
+
+  <!-- IN GAME -->
+  <section id="hud" class="screen" aria-label="Game">
+    <div class="hud-top">
+      <button id="btn-pause" class="icon-btn pause" aria-label="Pause"></button>
+      <div class="hud-title">
+        <div id="hud-level">Level 1</div>
+        <div id="hud-round">Round 1 of 3</div>
+      </div>
+      <div id="hud-lives" class="lives" aria-label="Lives"></div>
+      <span class="chip bananas small"><span class="i-banana"></span><span class="banana-count">0</span></span>
+    </div>
+    <div class="hud-mid">
+      <div id="phase" class="phase watch">WATCH</div>
+      <div id="twist" class="twist" hidden></div>
+      <div id="steps" class="steps" aria-hidden="true"></div>
+      <div id="caption" class="caption"></div>
+    </div>
+    <div id="pops" class="pops" aria-hidden="true"></div>
+    <div class="hud-bottom">
+      <div class="hud-tools">
+        <div class="score-box"><span id="score">0</span><span id="streak" class="streak"></span></div>
+        <button id="btn-replay" class="btn small ghost" hidden>Watch again</button>
+      </div>
+      <div id="timer" class="timer"><div id="timer-fill" class="timer-fill"></div></div>
+      <div id="coach" class="coach" hidden></div>
+      <div class="pad-wrap">
+        <div id="pad" class="pad"></div>
+        <div id="mistake" class="mistake" hidden></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- OVERLAYS -->
+  <div id="ov-intro" class="overlay bottom" role="dialog" aria-modal="true" aria-labelledby="intro-title"><div class="card" id="intro-card"></div></div>
+  <div id="ov-result" class="overlay bottom" role="dialog" aria-modal="true"><div class="card" id="result-card"></div></div>
+  <div id="ov-pause" class="overlay" role="dialog" aria-modal="true" aria-labelledby="pause-title"><div class="card" id="pause-card"></div></div>
+  <div id="ov-howto" class="overlay" role="dialog" aria-modal="true"><div class="card" id="howto-card"></div></div>
+  <div id="ov-confirm" class="overlay" role="dialog" aria-modal="true"><div class="card" id="confirm-card"></div></div>
+  <div id="ov-calibrate" class="overlay" role="dialog" aria-modal="true"><div class="card" id="calibrate-card"></div></div>
+  <div id="ov-exchange" class="overlay" role="dialog" aria-modal="true" aria-labelledby="exchange-title"><div class="card" id="exchange-card"></div></div>
+  <div id="ov-buy" class="overlay" role="dialog" aria-modal="true" aria-labelledby="buy-title"><div class="card" id="buy-card"></div></div>
+  <div id="ov-unlock" class="overlay" role="dialog" aria-modal="true" aria-labelledby="unlock-title"><div class="card unlock-card" id="unlock-card"></div></div>
+  <div id="rotate" class="rotate" aria-live="polite"><div class="rotate-phone"></div><p>Turn your phone upright to play</p></div>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <div id="sr-live" class="sr-only" aria-live="assertive"></div>
+</div>
+<!--APP-END-->
+<script src="app.js" defer></script>
+</body>
+</html>
