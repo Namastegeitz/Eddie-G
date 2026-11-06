@@ -44,7 +44,9 @@
     "root": "F",
     "scale": "dorian",
     "lead": "marimba",
-    "drums": "toms"
+    "drums": "toms",
+    "calm_file": "res://assets/audio/music/calm/yasuni.ogg",
+    "hz": 528
   },
   "facts": [
     "Yasuní is thought to be one of the most biodiverse places on Earth.",

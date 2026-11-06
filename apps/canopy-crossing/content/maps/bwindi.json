@@ -45,7 +45,9 @@
     "root": "Bb",
     "scale": "pentatonic_minor",
     "lead": "kalimba",
-    "drums": "toms"
+    "drums": "toms",
+    "calm_file": "res://assets/audio/music/calm/bwindi.ogg",
+    "hz": 528
   },
   "facts": [
     "Bwindi is home to about half of the world's mountain gorillas.",

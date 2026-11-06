@@ -44,7 +44,9 @@
     "scale": "phrygian_dominant",
     "lead": "sitar",
     "drums": "tabla",
-    "drone": true
+    "drone": true,
+    "calm_file": "res://assets/audio/music/calm/sundarbans.ogg",
+    "hz": 528
   },
   "facts": [
     "The Sundarbans is the largest mangrove forest on Earth.",

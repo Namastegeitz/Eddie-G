@@ -44,7 +44,9 @@
     "root": "A",
     "scale": "pentatonic_minor",
     "lead": "gamelan",
-    "drums": "gong"
+    "drums": "gong",
+    "calm_file": "res://assets/audio/music/calm/borneo.ogg",
+    "hz": 528
   },
   "facts": [
     "Borneo's rainforest is one of the oldest on Earth, often put at around 130 million years.",

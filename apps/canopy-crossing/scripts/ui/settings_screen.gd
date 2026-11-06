@@ -19,6 +19,7 @@ func _ready() -> void:
 	scroll.add_child(box)
 	box.add_child(_slider("Music", "music"))
 	box.add_child(_slider("Sound effects", "sfx"))
+	box.add_child(_music_style())
 	box.add_child(_quality())
 	box.add_child(_toggle("Haptics", "haptics", "Light vibration on hops and hits."))
 	box.add_child(_toggle("Left-handed controls", "left_handed", "Ability button on the left."))
@@ -64,6 +65,40 @@ func _slider(label: String, key: String) -> Control:
 			Sfx.play("tap"))
 	row.add_child(s)
 	return row
+
+
+## Music style: the calm songs (each tuned to 528 Hz or 963 Hz) or the
+## original, livelier ones.
+func _music_style() -> Control:
+	var v := UI.vbox(6)
+	v.add_child(UI.label("Music style", 28))
+	var row := UI.hbox(8)
+	var group := ButtonGroup.new()
+	var hint := UI.label("", 20, UI.MUTED)
+	hint.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	var hints := {"calm": "Slow, soothing songs. Each is tuned to 528 Hz or 963 Hz: every note is a pure ratio of that tone, with the tone itself humming softly underneath.",
+		"classic": "The original livelier songs with drums."}
+	var names := {"calm": "Calm · 528 / 963 Hz", "classic": "Classic"}
+	for st in ["calm", "classic"]:
+		var b := Button.new()
+		b.text = String(names[st])
+		b.toggle_mode = true
+		b.button_group = group
+		b.button_pressed = (st == "calm") == Sfx.calm()
+		b.custom_minimum_size = Vector2(0, 64)
+		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		b.add_theme_font_size_override("font_size", 24)
+		b.toggled.connect(func(on):
+			if on:
+				Save.set_setting("music_style", st)
+				Sfx.refresh_style()
+				Analytics.event("settings_music", {"style": st})
+				hint.text = String(hints[st]))
+		row.add_child(b)
+	v.add_child(row)
+	v.add_child(hint)
+	hint.text = String(hints["calm" if Sfx.calm() else "classic"])
+	return v
 
 
 ## Graphics: Auto / High / Medium / Low as four big tap targets.

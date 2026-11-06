@@ -45,7 +45,9 @@
     "root": "F",
     "scale": "major",
     "lead": "flute",
-    "drums": "soft"
+    "drums": "soft",
+    "calm_file": "res://assets/audio/music/calm/monteverde.ogg",
+    "hz": 963
   },
   "facts": [
     "Monteverde is a cloud forest: much of its water is caught straight from passing clouds.",

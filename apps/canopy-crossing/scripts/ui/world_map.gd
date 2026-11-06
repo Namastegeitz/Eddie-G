@@ -151,6 +151,8 @@ func _detail() -> void:
 		bl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		trow.add_child(bl)
 		detail.add_child(trow)
+	if Sfx.calm() and Sfx.map_hz(selected) > 0:
+		detail.add_child(UI.label("Music: calm song tuned to %d Hz" % Sfx.map_hz(selected), 22, Color("9fd8ff")))
 	var facts: Array = mp.get("facts", [])
 	if not facts.is_empty():
 		detail.add_child(UI.wrap_label(String(facts[0]), 25, UI.TEXT))

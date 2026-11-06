@@ -44,7 +44,9 @@
     "root": "C#",
     "scale": "minor",
     "lead": "bamboo_flute",
-    "drums": "log_drum"
+    "drums": "log_drum",
+    "calm_file": "res://assets/audio/music/calm/new_guinea.ogg",
+    "hz": 963
   },
   "facts": [
     "New Guinea is the world's largest tropical island.",

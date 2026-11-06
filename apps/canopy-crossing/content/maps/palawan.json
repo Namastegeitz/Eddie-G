@@ -44,7 +44,9 @@
     "root": "E",
     "scale": "pentatonic_major",
     "lead": "pluck",
-    "drums": "clap"
+    "drums": "clap",
+    "calm_file": "res://assets/audio/music/calm/palawan.ogg",
+    "hz": 963
   },
   "facts": [
     "The Puerto Princesa Underground River flows for over 8 km beneath the forest.",

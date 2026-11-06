@@ -44,7 +44,9 @@
     "root": "C#",
     "scale": "pentatonic_minor",
     "lead": "pluck",
-    "drums": "gong"
+    "drums": "gong",
+    "calm_file": "res://assets/audio/music/calm/khao_sok.ogg",
+    "hz": 963
   },
   "facts": [
     "Khao Sok's rainforest is often said to be older than the Amazon.",

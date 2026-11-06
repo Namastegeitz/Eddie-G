@@ -38,19 +38,19 @@
     "easy": {
       "name": "Easy",
       "color": "#8fe36a",
-      "blurb": "Gentle levels: new hazards one at a time, so you move on fast.",
+      "blurb": "The gentlest jungles: short, slow levels with safe banks everywhere and 5 lives.",
       "rows": [
-        30,
-        75
+        25,
+        60
       ],
       "difficulty": [
         [
           0.0,
-          0.12
+          0.06
         ],
         [
-          0.32,
-          0.62
+          0.2,
+          0.42
         ]
       ],
       "canopy_rows": [
@@ -59,22 +59,23 @@
           4
         ],
         [
-          5,
-          7
+          4,
+          6
         ]
       ],
       "stars": [
         1,
-        3
+        2
       ],
+      "lives": 5,
       "params": {
         "speed": [
-          0.6,
-          1.15
+          0.5,
+          0.95
         ],
         "density": [
-          0.24,
-          0.5
+          0.2,
+          0.42
         ],
         "band": [
           [
@@ -83,16 +84,16 @@
           ],
           [
             1,
-            3
+            2
           ]
         ],
         "safe_chance": [
           1.0,
-          0.8
+          0.95
         ],
         "special_chance": [
-          0.05,
-          0.3
+          0.0,
+          0.2
         ]
       }
     },
@@ -128,6 +129,7 @@
         2,
         4
       ],
+      "lives": 3,
       "params": {
         "speed": [
           0.7,
@@ -189,6 +191,7 @@
         3,
         5
       ],
+      "lives": 3,
       "params": {
         "speed": [
           0.8,
@@ -250,6 +253,7 @@
         4,
         5
       ],
+      "lives": 3,
       "params": {
         "speed": [
           0.85,

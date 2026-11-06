@@ -44,7 +44,9 @@
     "root": "C",
     "scale": "mixolydian",
     "lead": "marimba",
-    "drums": "toms"
+    "drums": "toms",
+    "calm_file": "res://assets/audio/music/calm/choco.ogg",
+    "hz": 963
   },
   "facts": [
     "The Chocó is one of the rainiest places on Earth.",

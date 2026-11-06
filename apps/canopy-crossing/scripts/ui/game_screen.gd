@@ -109,6 +109,9 @@ func _build_run() -> void:
 	world.setup(map, String(cfg.mode), int(cfg.get("stage", 0)), int(cfg.get("seed", 1)))
 	var opts := {}
 	var lives := 3 if cfg.mode in ["journey", "tutorial"] else 1
+	if cfg.mode == "journey":
+		# the gentlest jungles give more tries (content/difficulty.json "lives")
+		lives = int(Content.tier(Content.tier_of(map)).get("lives", lives))
 	var shields := 0
 	var powerups := []
 	run_items.clear()

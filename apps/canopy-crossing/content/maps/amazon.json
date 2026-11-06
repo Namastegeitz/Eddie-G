@@ -42,7 +42,9 @@
     "root": "D",
     "scale": "dorian",
     "lead": "marimba",
-    "drums": "shaker"
+    "drums": "shaker",
+    "calm_file": "res://assets/audio/music/calm/amazon.ogg",
+    "hz": 528
   },
   "facts": [
     "The Amazon holds around 10% of known species on Earth.",

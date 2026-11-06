@@ -44,7 +44,9 @@
     "scale": "pentatonic_major",
     "lead": "pluck",
     "drums": "clap",
-    "drone": true
+    "drone": true,
+    "calm_file": "res://assets/audio/music/calm/daintree.ogg",
+    "hz": 963
   },
   "facts": [
     "The Daintree is often called the oldest surviving tropical rainforest, at roughly 180 million years old.",

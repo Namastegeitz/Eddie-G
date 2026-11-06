@@ -1156,6 +1156,23 @@ func _phase7() -> void:
 			sfx_missing.append(n)
 	check("sound effects", sfx_missing.is_empty(), str(sfx_missing))
 	check("rainforest ambience", ResourceLoader.exists("res://assets/audio/music/ambience.ogg"))
+	# calm songs: one per region and the menu, each tuned to 528 or 963 Hz,
+	# played by default; Classic brings the original songs back
+	var calm_bad := []
+	var tunings := {}
+	for id in Content.playable_maps():
+		var mus: Dictionary = Content.map(id).music
+		if not ResourceLoader.exists(String(mus.get("calm_file", ""))) or not int(mus.get("hz", 0)) in [528, 963]:
+			calm_bad.append(id)
+		tunings[int(mus.get("hz", 0))] = int(tunings.get(int(mus.get("hz", 0)), 0)) + 1
+	check("a calm song for every region and the menu, tuned to 528 Hz or 963 Hz (both used)", calm_bad.is_empty() and tunings.get(528, 0) >= 5 and tunings.get(963, 0) >= 5 and ResourceLoader.exists(Sfx.MENU_CALM), "%s %s" % [str(calm_bad), str(tunings)])
+	var style0 := String(Save.setting("music_style", "calm"))
+	Save.set_setting("music_style", "calm")
+	var calm_track := Sfx.map_track("amazon")
+	Save.set_setting("music_style", "classic")
+	var classic_track := Sfx.map_track("amazon")
+	Save.set_setting("music_style", style0)
+	check("calm songs play by default; Settings > Music style > Classic plays the originals", String(Content.settings_defaults.get("music_style", "")) == "calm" and calm_track == String(Content.map("amazon").music.calm_file) and classic_track == String(Content.map("amazon").music.file), "%s / %s" % [calm_track, classic_track])
 	# every painter runs for every animal, skin and hazard
 	var canvas := PainterProbe.new()
 	add_child(canvas)
@@ -1586,6 +1603,7 @@ func _difficulty_curve(playable: Array) -> void:
 	var x10: Vector2 = stats.call("khao_sok", 9)
 	print("  mover speed / hazard kinds: Amazon L1 %.2f/%d, Amazon L10 %.2f/%d, Khao Sok L10 %.2f/%d" % [a1.x, a1.y, a10.x, a10.y, x10.x, x10.y])
 	check("Amazon level 1 is gentle: slow movers, few kinds of hazard", a1.x < 0.9 and a1.y <= 3, str(a1))
+	check("the first two jungles are the gentlest: 5 lives, short levels, small bands", int(Content.tier("easy").get("lives", 0)) == 5 and int(Content.tier("medium").get("lives", 0)) == 3 and int(Content.map("amazon").stages[0].rows) <= 30 and int(Content.map("congo").difficulty.band[1][1]) <= 2)
 	check("harder later: Amazon level 10 beats level 1, an Expert jungle's level 10 beats both", a10.x > a1.x and a10.y > a1.y and x10.x > a10.x, "%s %s %s" % [a1, a10, x10])
 
 

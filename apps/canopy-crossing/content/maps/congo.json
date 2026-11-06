@@ -43,7 +43,9 @@
     "root": "G",
     "scale": "mixolydian",
     "lead": "kalimba",
-    "drums": "toms"
+    "drums": "toms",
+    "calm_file": "res://assets/audio/music/calm/congo.ogg",
+    "hz": 963
   },
   "facts": [
     "The Congo Basin holds the second-largest tropical rainforest on Earth.",

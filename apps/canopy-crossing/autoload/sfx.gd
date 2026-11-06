@@ -1,11 +1,15 @@
 extends Node
 ## Sound effects, per-region music, the rainforest ambience and haptics.
-## Music files are named in each map's content file ("music.file"); SFX are
+## Music files are named in each map's content file: "music.calm_file" is the
+## region's calm song (tuned to "music.hz", 528 or 963 Hz; the default) and
+## "music.file" its classic song (Settings > Music style). SFX are
 ## res://assets/audio/sfx/<name>.ogg. Missing files are skipped silently.
 
 const SFX_DIR := "res://assets/audio/sfx/%s.ogg"
 const AMBIENT := "res://assets/audio/music/ambience.ogg"
 const MENU_MUSIC := "res://assets/audio/music/menu.ogg"
+const MENU_CALM := "res://assets/audio/music/calm/menu.ogg"
+const MENU_HZ := 528
 
 var _players: Array[AudioStreamPlayer] = []
 var _music: AudioStreamPlayer
@@ -13,6 +17,7 @@ var _music_b: AudioStreamPlayer
 var _ambient: AudioStreamPlayer
 var _cache := {}
 var _current_music := ""
+var _context := ""                # "menu" or the map id whose music is playing
 var _next := 0
 
 
@@ -96,12 +101,40 @@ func music(path: String) -> void:
 			_ambient.play()
 
 
+func calm() -> bool:
+	return String(Save.setting("music_style", "calm")) != "classic"
+
+
+## The file for a region's music in the chosen style (calm if it has one).
+func map_track(map_id: String) -> String:
+	var mus: Dictionary = Content.map(map_id).get("music", {})
+	if calm() and mus.has("calm_file") and ResourceLoader.exists(String(mus.calm_file)):
+		return String(mus.calm_file)
+	return String(mus.get("file", MENU_MUSIC))
+
+
+## The tone a region's calm song is tuned to (528 or 963 Hz), 0 if none.
+func map_hz(map_id: String) -> int:
+	var mus: Dictionary = Content.map(map_id).get("music", {})
+	return int(mus.get("hz", 0)) if mus.has("calm_file") else 0
+
+
 func map_music(map_id: String) -> void:
-	music(String(Content.map(map_id).get("music", {}).get("file", MENU_MUSIC)))
+	_context = map_id
+	music(map_track(map_id))
 
 
 func menu_music() -> void:
-	music(MENU_MUSIC)
+	_context = "menu"
+	music(MENU_CALM if calm() and ResourceLoader.exists(MENU_CALM) else MENU_MUSIC)
+
+
+## After the music style changes: switch what's playing to the new style.
+func refresh_style() -> void:
+	if _context == "menu":
+		menu_music()
+	elif _context != "":
+		map_music(_context)
 
 
 func haptic(ms: int) -> void:

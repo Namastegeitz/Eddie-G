@@ -43,7 +43,9 @@
     "root": "A",
     "scale": "dorian",
     "lead": "bansuri",
-    "drums": "tabla"
+    "drums": "tabla",
+    "calm_file": "res://assets/audio/music/calm/western_ghats.ogg",
+    "hz": 963
   },
   "facts": [
     "The Western Ghats are older than the Himalayas.",

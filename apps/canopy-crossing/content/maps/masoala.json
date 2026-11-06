@@ -44,7 +44,9 @@
     "root": "C",
     "scale": "lydian",
     "lead": "valiha",
-    "drums": "shaker"
+    "drums": "shaker",
+    "calm_file": "res://assets/audio/music/calm/masoala.ogg",
+    "hz": 528
   },
   "facts": [
     "Masoala is Madagascar's largest protected area.",

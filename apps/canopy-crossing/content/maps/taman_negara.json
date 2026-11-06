@@ -44,7 +44,9 @@
     "root": "D",
     "scale": "pentatonic_minor",
     "lead": "gamelan",
-    "drums": "toms"
+    "drums": "toms",
+    "calm_file": "res://assets/audio/music/calm/taman_negara.ogg",
+    "hz": 528
   },
   "facts": [
     "Taman Negara's forest is often said to be around 130 million years old.",

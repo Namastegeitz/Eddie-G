@@ -43,7 +43,9 @@
     "root": "G",
     "scale": "pentatonic_major",
     "lead": "gamelan",
-    "drums": "gong"
+    "drums": "gong",
+    "calm_file": "res://assets/audio/music/calm/xishuangbanna.ogg",
+    "hz": 963
   },
   "facts": [
     "Xishuangbanna is home to most of China's last wild Asian elephants.",

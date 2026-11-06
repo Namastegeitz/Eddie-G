@@ -81,8 +81,14 @@ Copy an existing map and change:
   (add the product to `content/store/catalog.json`)
 - `flag` (pennant colours + 3-letter code), `palette` (lane, water, canopy
   and UI colours), `atmosphere` (`mist`, `light_shafts`, `rain`, `fog_color`)
-- `music`: `file` plus synth settings (`tempo`, `root`, `scale`, `lead`,
-  `drums`, `drone`). Run `python3 tools/gen_audio.py --maps`, or point
+- `music`: `file` (the classic song) plus synth settings (`tempo`, `root`,
+  `scale`, `lead`, `drums`, `drone`), `calm_file` (the calm song, played by
+  default) and `hz`: the tone the calm song is tuned to, `528` or `963`
+  (the shipped regions alternate along the globe: Amazon 528, Congo 963,
+  ...). The calm song uses the same `scale`, `lead` and `drums`, played slow
+  and soft, with every note a pure ratio of `hz`. Run
+  `python3 tools/gen_audio.py --calm` (then `--check`) for calm songs and
+  `python3 tools/gen_audio.py --maps` for classic ones, or point
   `file` at a recorded track.
 - `facts` (shown on the intro card), `intro_hazards`, `native_animals`
 - `generator`: `classic`, `highlands` or `wetlands` (or your own file)
@@ -149,7 +155,8 @@ Four tiers. Each region gets one by its order on the globe (`by_order`:
 regions 1-2 Easy, 3-5 Medium, 6-10 Hard, 11 on Expert) unless its file sets
 `tier`. A tier gives its regions' 10 levels, from level 1 to level 10:
 
-- `rows`: level length (Easy 30 → 75, Expert 60 → 130)
+- `rows`: level length (Easy 25 → 60, Expert 60 → 130)
+- `lives`: lives per Journey run (Easy 5, the rest 3)
 - `difficulty`: the generator's 0-1 difficulty at the start and end of
   level 1, and of level 10 (in between, levels step up evenly)
 - `canopy_rows`, `stars` (challenge rating shown per level)

@@ -44,7 +44,9 @@
     "root": "Bb",
     "scale": "mixolydian",
     "lead": "kalimba",
-    "drums": "toms"
+    "drums": "toms",
+    "calm_file": "res://assets/audio/music/calm/tai.ogg",
+    "hz": 528
   },
   "facts": [
     "Taï is one of the last large areas of primary forest in West Africa.",

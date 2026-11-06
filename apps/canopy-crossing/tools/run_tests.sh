@@ -25,6 +25,13 @@ if command -v xvfb-run > /dev/null; then
 else
   echo "(skipped: needs xvfb-run)"
 fi
+echo "== calm songs tuned to 528 / 963 Hz (decodes each song, checks its pitches)"
+if command -v ffmpeg > /dev/null && python3 -c "import numpy" 2> /dev/null; then
+  python3 tools/gen_audio.py --check | tail -1
+  python3 tools/gen_audio.py --check > /dev/null || fail=1
+else
+  echo "(skipped: needs ffmpeg and numpy)"
+fi
 if [ "${WEB:-0}" = "1" ]; then
   echo "== web build + phone-browser smoke test"
   tools/build_web.sh || fail=1

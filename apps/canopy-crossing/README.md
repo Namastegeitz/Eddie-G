@@ -16,7 +16,8 @@ time, in ten real rainforests. Built from
   hazards, music and facts. A spinning globe picks the scene.
 - **Difficulty curve:** every jungle's levels get longer and harder from
   1 to 10 (a 1-5 challenge rating on each). The first two jungles are
-  **Easy** (short, slow levels: 30 to 75 rows), the next three **Medium**,
+  **Easy** (short, slow levels of 25 to 60 rows, small bands with a safe
+  bank after nearly every one, 5 lives), the next three **Medium**,
   jungles 6-10 **Hard** and the rest **Expert** (60 to 130 rows, fast and
   crowded). The first five jungles bring their hazards in one or two at a
   time ("New here: caiman backs"), so early levels go quickly. Tuned in
@@ -63,6 +64,14 @@ time, in ten real rainforests. Built from
   rows, landmark rows and the logs, ants and caimans about to come into
   view) a little each frame and reuses them, so hopping forward doesn't
   stall.
+- **Calm music tuned to 528 Hz and 963 Hz:** every jungle and the menu
+  has a slow, soothing song (about a minute, looping seamlessly): soft
+  pads, a sparse melody on the jungle's own instrument, a gentle kalimba
+  arpeggio and light percussion. Each is tuned to 528 Hz or 963 Hz
+  (alternating along the globe): every note is a pure ratio of that tone,
+  and the tone itself hums softly underneath. `tools/gen_audio.py --check`
+  decodes each song and checks its pitches. Settings > Music style >
+  Classic brings back the original livelier songs.
 - **Feel:** hops along a moving log keep pace with it, landing just short
   of a log's end still lands on it, vehicles' hit edges are a touch
   forgiving, and a mover brushing past is a **Close call!** (+2).

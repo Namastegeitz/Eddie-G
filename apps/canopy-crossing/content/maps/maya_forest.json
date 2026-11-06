@@ -44,7 +44,9 @@
     "root": "D",
     "scale": "phrygian_dominant",
     "lead": "flute",
-    "drums": "toms"
+    "drums": "toms",
+    "calm_file": "res://assets/audio/music/calm/maya_forest.ogg",
+    "hz": 528
   },
   "facts": [
     "The ruins of Tikal rise above the Maya Forest canopy.",

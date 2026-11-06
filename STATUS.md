@@ -26,7 +26,7 @@
 - Built from `prompts/claude/canopy-crossing.md` (copied from the Claude doc brief): all 8 phases,
   Godot 4.7.2, portrait 720x1280, GL Compatibility.
 - 200 maps: 20 real rainforest scenes x 10 levels, plus 2 coming soon. Difficulty curve
-  (`content/difficulty.json`): jungles 1-2 Easy (30-75 rows, slow), 3-5 Medium, 6-10 Hard, 11-20
+  (`content/difficulty.json`): jungles 1-2 Easy (25-60 rows, slow, small bands, 5 lives), 3-5 Medium, 6-10 Hard, 11-20
   Expert (60-130 rows); levels ramp 1 to 10 (challenge stars on the world map); the first five
   jungles introduce hazards level by level (`from_level`). Stepping stones are always reachable
   past gullies/brush on the banks, and banks after stones get no flood/fire timing.
@@ -107,6 +107,10 @@
   edges 0.1 tile forgiving, Close call! +2 for movers brushing past, swipe threshold 36 px.
 - Art/audio: procedural chibi animals and hazards, per-region palettes and canopy framing, dot
   globe from Natural Earth, synthesised per-region music + ambience + 26 SFX (`tools/gen_audio.py`).
+  Calm songs (default): one per region + menu, ~1 min seamless loops, tuned to 528 Hz or 963 Hz
+  (alternating by globe order; just-intonation ratios of the tone, drone on the tone, tuned pluck,
+  heartbeat and bowl, reverb fed only above 260 Hz); `gen_audio.py --check` decodes each and checks
+  its 12 strongest pitches sit on the tone (in run_tests.sh). Settings > Music style > Classic.
 - Ads: opt-in rewarded + between-run interstitial (mock; AdMob adapter scaffold). Analytics: events
   + onboarding funnel to `user://analytics.jsonl`, optional HTTP endpoint.
 - Tests: `tools/run_tests.sh` - compile check + first-person GL render check + 349-check phase audit (one section per phase's

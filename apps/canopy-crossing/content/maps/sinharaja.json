@@ -43,7 +43,9 @@
     "root": "A",
     "scale": "mixolydian",
     "lead": "bansuri",
-    "drums": "tabla"
+    "drums": "tabla",
+    "calm_file": "res://assets/audio/music/calm/sinharaja.ogg",
+    "hz": 963
   },
   "facts": [
     "Sinharaja is Sri Lanka's last large patch of primary lowland rainforest.",

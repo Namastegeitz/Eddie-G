@@ -43,7 +43,9 @@
     "root": "E",
     "scale": "dorian",
     "lead": "marimba",
-    "drums": "shaker"
+    "drums": "shaker",
+    "calm_file": "res://assets/audio/music/calm/atlantic_forest.ogg",
+    "hz": 528
   },
   "facts": [
     "Less than a fifth of Brazil's original Atlantic Forest still stands.",

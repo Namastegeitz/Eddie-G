@@ -4,8 +4,16 @@
 drums, drone), a rainforest ambience bed, a menu theme and the SFX set.
 Writes OGG Vorbis through ffmpeg.
 
+Calm songs (the default music): a slow, soft piece per region and for the
+menu, tuned to 528 Hz or 963 Hz (the region's "music.hz"). Every note is a
+pure (just-intonation) ratio of that tone, with a quiet drone on the tone
+itself, so the whole song sits on it. Pads, a sparse melody on the region's
+instrument, a gentle arpeggio, light percussion and reverb; seamless loop.
+
     python3 tools/gen_audio.py            # everything
     python3 tools/gen_audio.py --maps     # only region music (after adding a map)
+    python3 tools/gen_audio.py --calm     # only the calm songs
+    python3 tools/gen_audio.py --check    # check the calm songs' tuning (decodes the OGGs)
 
 A new region gets music by adding its map file and re-running this, or by
 pointing its "music.file" at a recorded track.
@@ -24,6 +32,32 @@ SCALES = {
     "mixolydian": [0, 2, 4, 5, 7, 9, 10], "lydian": [0, 2, 4, 6, 7, 9, 11], "phrygian_dominant": [0, 1, 4, 5, 7, 8, 10],
     "pentatonic_major": [0, 2, 4, 7, 9], "pentatonic_minor": [0, 3, 5, 7, 10],
 }
+
+
+# just-intonation ratios of each scale, from its tonic
+JUST = {
+    "major": [1, 9 / 8, 5 / 4, 4 / 3, 3 / 2, 5 / 3, 15 / 8],
+    "minor": [1, 9 / 8, 6 / 5, 4 / 3, 3 / 2, 8 / 5, 9 / 5],
+    "dorian": [1, 9 / 8, 6 / 5, 4 / 3, 3 / 2, 5 / 3, 9 / 5],
+    "mixolydian": [1, 9 / 8, 5 / 4, 4 / 3, 3 / 2, 5 / 3, 9 / 5],
+    "lydian": [1, 9 / 8, 5 / 4, 45 / 32, 3 / 2, 5 / 3, 15 / 8],
+    "phrygian_dominant": [1, 16 / 15, 5 / 4, 4 / 3, 3 / 2, 8 / 5, 9 / 5],
+    "pentatonic_major": [1, 9 / 8, 5 / 4, 3 / 2, 5 / 3],
+    "pentatonic_minor": [1, 6 / 5, 4 / 3, 3 / 2, 9 / 5],
+}
+MAJ = [1, 5 / 4, 3 / 2]
+MIN = [1, 6 / 5, 3 / 2]
+# two four-chord progressions per family (chord root ratio, triad), for the
+# first and second half of a calm song
+PROG = {
+    "major": ([(1, MAJ), (5 / 3, MIN), (4 / 3, MAJ), (1, MAJ)], [(1, MAJ), (4 / 3, MAJ), (5 / 3, MIN), (3 / 2, MAJ)]),
+    "mixolydian": ([(1, MAJ), (16 / 9, MAJ), (4 / 3, MAJ), (1, MAJ)], [(1, MAJ), (4 / 3, MAJ), (16 / 9, MAJ), (1, MAJ)]),
+    "minor": ([(1, MIN), (8 / 5, MAJ), (6 / 5, MAJ), (9 / 5, MAJ)], [(1, MIN), (4 / 3, MIN), (8 / 5, MAJ), (9 / 5, MAJ)]),
+    "dorian": ([(1, MIN), (4 / 3, MAJ), (1, MIN), (9 / 5, MAJ)], [(1, MIN), (6 / 5, MAJ), (4 / 3, MAJ), (1, MIN)]),
+    "phrygian_dominant": ([(1, MAJ), (16 / 15, MAJ), (1, MAJ), (4 / 3, MIN)], [(1, MAJ), (8 / 5, MAJ), (16 / 15, MAJ), (1, MAJ)]),
+}
+FAMILY = {"major": "major", "lydian": "major", "pentatonic_major": "major", "mixolydian": "mixolydian",
+          "minor": "minor", "pentatonic_minor": "minor", "dorian": "dorian", "phrygian_dominant": "phrygian_dominant"}
 
 
 def midi_hz(m):
@@ -336,6 +370,258 @@ SFX_NAMES = ["hop", "land", "splash", "collect", "combo", "crush", "chomp", "bur
              "fail_jingle", "purchase", "shield", "ability", "whoosh", "wind", "mud", "bump", "respawn", "smash", "equip", "swipe", "intro"]
 
 
+# ------------------------------------------------------------------ calm songs
+
+def _comb(x, d, g):
+    y = x.copy()
+    for i in range(d, len(x), d):
+        j = min(len(x), i + d)
+        y[i:j] += g * y[i - d:j - d]
+    return y
+
+
+def _allpass(x, d, g):
+    y = np.zeros_like(x)
+    y[:d] = -g * x[:d]
+    for i in range(d, len(x), d):
+        j = min(len(x), i + d)
+        y[i:j] = -g * x[i:j] + x[i - d:j - d] + g * y[i - d:j - d]
+    return y
+
+
+def reverb(x, wet=0.32, size=1.0):
+    # only the mids and highs go into the room: low notes and the drone stay
+    # dry, so the room's own resonances never ring off-tune under the song
+    xin = highpass(x, 260)
+    combs = [int(v * size) for v in (558, 594, 638, 678, 712)]
+    w = sum(_comb(xin, d, 0.84) for d in combs) / len(combs)
+    w = lowpass(w, 3200)
+    for d in (278, 222, 170):
+        w = _allpass(w, d, 0.5)
+    return x * (1 - wet) + w * wet * 1.6
+
+
+def pad_tone(f, n):
+    # a pair a hair either side of the note: a slow shimmer, centred on it
+    t = np.arange(n) / SR
+    a = np.sin(2 * np.pi * f * (1 + 0.0006) * t) + np.sin(2 * np.pi * f * (1 - 0.0006) * t)
+    return 0.5 * a + 0.12 * np.sin(2 * np.pi * 2 * f * t)
+
+
+def heartbeat(f, vol):
+    """A soft, round low thump at f (the song's fifth below its floor)."""
+    n = int(1.1 * SR)
+    t = np.arange(n) / SR
+    return np.sin(2 * np.pi * f * t) * env(n, 0.025, 0.7, curve=3.0) * vol * 0.5
+
+
+def bowl(f, vol):
+    """A singing bowl struck on the tone: harmonic partials, long ring."""
+    n = int(5.0 * SR)
+    t = np.arange(n) / SR
+    s = np.sin(2 * np.pi * f * t) + 0.6 * np.sin(2 * np.pi * 2 * f * t) + 0.35 * np.sin(2 * np.pi * 3 * f * t) * env(n, 0.005, 1.5)
+    return s * env(n, 0.01, 4.0, curve=2.2) * vol * 0.3
+
+
+def calm_inst(name, f, dur, rng):
+    n = int(dur * SR)
+    t = np.arange(n) / SR
+    if name in ("marimba", "soft_mallet"):
+        return (np.sin(2 * np.pi * f * t) + 0.12 * np.sin(2 * np.pi * 4 * f * t) * env(n, 0.002, 0.04)) * env(n, 0.012, 1.1, curve=3.2)
+    if name == "kalimba":
+        return (np.sin(2 * np.pi * f * t) + 0.18 * np.sin(2 * np.pi * 5.4 * f * t) * env(n, 0.001, 0.05)) * env(n, 0.004, 1.3, curve=3.0)
+    if name == "gamelan":
+        s = np.sin(2 * np.pi * f * t) + 0.35 * np.sin(2 * np.pi * 2.76 * f * t) * env(n, 0.002, 0.8) + 0.25 * np.sin(2 * np.pi * 2 * f * t)
+        return s * env(n, 0.006, 2.4, curve=2.6) * 0.7
+    if name in ("pluck", "valiha", "sitar"):
+        # a harp-like pluck from exact harmonics (a delay-line string would
+        # round its pitch to whole samples and drift off the tone)
+        out = np.zeros(n)
+        for h, amp in ((1, 1.0), (2, 0.45), (3, 0.22), (4, 0.12), (5, 0.06)):
+            if f * h < SR / 2:
+                out += amp * np.sin(2 * np.pi * f * h * t) * env(n, 0.003, 1.6 / h ** 0.7, curve=3)
+        if name == "sitar":
+            out += 0.15 * np.sin(2 * np.pi * f * 2 * t) * env(n, 0.05, 1.2, curve=2)   # a soft buzz of the octave
+        return out * 0.55
+    if name in ("flute", "bansuri", "bamboo_flute"):
+        vib = 1 + 0.004 * np.sin(2 * np.pi * 4.6 * t) * np.minimum(1, t * 1.5)
+        ph = 2 * np.pi * np.cumsum(f * vib) / SR
+        breath = lowpass(noise(n, rng), 2500) * 0.04
+        return (np.sin(ph) + 0.1 * np.sin(2 * ph) + breath) * env(n, 0.18, 1.5, sustain=0.55, curve=1.6) * 0.65
+    return np.sin(2 * np.pi * f * t) * env(n, 0.01, 1.0, curve=3)
+
+
+def render_calm(m, seed, hz):
+    """A slow, soft loop on `hz`: every pitch is hz x a just ratio x 2^k."""
+    rng = np.random.default_rng(seed)
+    tempo = float(np.clip(float(m.get("tempo", 96)) * 0.66, 58, 76))
+    bars = 16
+    base = float(hz)
+    while base >= 220.0:
+        base /= 2.0           # 528 -> 132, 963 -> 120.375: the song's floor
+    # Loop length: a whole number of the floor tone's cycles that is also a
+    # whole number of samples, so the drone runs on across the loop point
+    # without a click (the tempo moves by a hair to fit).
+    from fractions import Fraction
+    fb_ = Fraction(base).limit_denominator(1000)
+    unit = Fraction(1, 1) / fb_          # one cycle of the floor tone, in seconds
+    k = 1
+    while (unit * k * SR).denominator != 1:
+        k += 1
+    step_s = float(unit * k)
+    length = round(bars * 4 * 60.0 / tempo / step_s) * step_s
+    beat = length / (bars * 4)
+    tail = 5.0
+    buf = np.zeros(int(round((length + tail) * SR)))
+    scale_name = m.get("scale", "pentatonic_major")
+    scale = JUST.get(scale_name, JUST["pentatonic_major"])
+    prog_a, prog_b = PROG[FAMILY.get(scale_name, "major")]
+    lead = m.get("lead", "kalimba")
+    drums = m.get("drums", "soft")
+    # the scale over three octaves for the melody, centred on the tone itself
+    mel_notes = sorted(set(base * 4 * r * 2 ** o for o in (-1, 0, 1) for r in scale))
+    mel_notes = [f for f in mel_notes if base * 2.6 <= f <= base * 10.5]
+    home = min(range(len(mel_notes)), key=lambda i: abs(mel_notes[i] - base * 4))
+    mel_rng = np.random.default_rng(seed * 13 + 5)
+    motifs = []
+    for _ in range(2):
+        idx = home + int(mel_rng.integers(-2, 3))
+        motif = []
+        pos = 0.0
+        while pos < 8 * beat - 1e-6:
+            step = float(mel_rng.choice([1.0, 1.5, 2.0, 2.0, 3.0])) * beat
+            rest = mel_rng.random() < 0.28
+            motif.append((pos, None if rest else idx, step))
+            idx = int(np.clip(idx + int(mel_rng.choice([-2, -1, -1, 0, 1, 1, 2])), 0, len(mel_notes) - 1))
+            pos += step
+        motifs.append(motif)
+    for bar in range(bars):
+        half = bar // 8
+        prog = prog_a if half == 0 else prog_b
+        root_r, triad = prog[bar % 4]
+        t0 = bar * 4 * beat
+        chord = [root_r * r for r in triad]
+        # bass: the chord root, low and round, once a bar (twice in the second half)
+        fb = base * root_r
+        while fb > base * 1.5:
+            fb /= 2.0
+        for b in ((0,) if half == 0 else (0, 2)):
+            n = int(beat * 3.6 * SR)
+            add(buf, np.sin(2 * np.pi * fb * np.arange(n) / SR) * env(n, 0.04, 2.4, curve=2.4) * 0.34, t0 + b * beat)
+        # pad: the chord around the octave above the floor, slow swell
+        n = int((4 * beat + 2.5) * SR)
+        pad = np.zeros(n)
+        for r in chord:
+            f = base * 2 * r
+            while f > base * 4.2:
+                f /= 2.0
+            pad += pad_tone(f, n)
+        e = env(n, 1.4, 4 * beat + 1.0, sustain=0.75, curve=1.2)
+        e *= np.clip((n - np.arange(n)) / (2.5 * SR), 0, 1)
+        add(buf, pad * e * 0.05, t0)
+        # melody: a two-bar motif, played in bars 3-8 and 11-16 with a rest
+        # every fourth bar so it breathes
+        if bar % 8 >= 2 and bar % 4 != 3:
+            motif = motifs[half]
+            off = (bar % 2) * 4 * beat
+            for pos, idx, step in motif:
+                if idx is None or not (off <= pos < off + 4 * beat):
+                    continue
+                f = mel_notes[idx]
+                vol = 0.2 if lead not in ("flute", "bansuri", "bamboo_flute") else 0.16
+                add(buf, calm_inst(lead, f, min(step * 1.8, 3.2), rng) * vol, t0 + pos - off)
+        # arpeggio in the second half: soft kalimba on the chord, rising and falling
+        if half == 1:
+            tones = []
+            for r in chord + [chord[0] * 2]:
+                f = base * 4 * r
+                while f > base * 9:
+                    f /= 2.0
+                tones.append(f)
+            pattern = [0, 1, 2, 3, 2, 1, 0, 2]
+            for k, pi in enumerate(pattern):
+                add(buf, calm_inst("kalimba", tones[pi], 1.4, rng) * 0.075, t0 + k * beat / 2)
+        # percussion: barely there, and pitched on the tone too
+        if drums in ("shaker", "clap"):
+            for st in range(4):
+                add(buf, drum("shaker", rng, 0.28 if st % 2 == 0 else 0.16), t0 + st * beat + beat * 0.5)
+        elif drums in ("toms", "log_drum", "tabla"):
+            add(buf, heartbeat(base * 0.75, 0.55), t0)
+            add(buf, heartbeat(base * 0.75, 0.3), t0 + 1.5 * beat)
+        elif drums == "gong" and bar % 4 == 0:
+            add(buf, bowl(base, 0.5), t0)
+    wet = lowpass(reverb(buf, 0.34), 7000)
+    n_loop = int(round(length * SR))
+    out = wet[:n_loop].copy()
+    out[: len(wet) - n_loop] += wet[n_loop:]
+    # the tone itself, quietly underneath, breathing slowly, with its octaves
+    # below: whole cycles over the loop, so it never breaks
+    tt = np.arange(n_loop) / SR
+    breathe = 0.75 + 0.25 * np.sin(2 * np.pi * tt / (length / 4))
+    drone = 0.022 * np.sin(2 * np.pi * float(hz) * tt) + 0.04 * np.sin(2 * np.pi * base * tt) + 0.03 * np.sin(2 * np.pi * base * 2 * tt)
+    out += drone * breathe
+    out = np.tanh(out * 1.1)
+    # level: a little quieter than the classic songs (about -20 dBFS), never over 0.8
+    rms = np.sqrt(np.mean(out ** 2)) + 1e-9
+    return out * min(0.1 / rms, 0.8 / (np.max(np.abs(out)) + 1e-9))
+
+
+CALM_MENU = {"tempo": 100, "scale": "pentatonic_major", "lead": "kalimba", "drums": "soft"}
+CALM_DIR = os.path.join(MUSIC_DIR, "calm")
+
+
+def calm_songs():
+    """(name, settings, hz, output path) for every calm song."""
+    out = [("menu", CALM_MENU, 528, os.path.join(CALM_DIR, "menu.ogg"))]
+    for f in sorted(glob.glob(os.path.join(ROOT, "content", "maps", "*.json"))):
+        m = json.load(open(f))
+        mus = m.get("music")
+        if not mus or m.get("status", "available") != "available" or not mus.get("calm_file"):
+            continue
+        out.append((m["id"], mus, int(mus.get("hz", 528)), os.path.join(ROOT, mus["calm_file"].replace("res://", ""))))
+    return out
+
+
+def check_tuning():
+    """Decodes each calm song and checks its strongest pitches all sit on its
+    tone: each of the 12 loudest spectral peaks must be within 0.6 Hz (or
+    0.15%) of hz x a just ratio of its scale x a power of two."""
+    bad = 0
+    for name, mus, hz, path in calm_songs():
+        raw = subprocess.run(["ffmpeg", "-loglevel", "error", "-i", path, "-f", "s16le", "-ac", "1", "-ar", str(SR), "-"],
+                             capture_output=True, check=True).stdout
+        x = np.frombuffer(raw, dtype=np.int16).astype(np.float64) / 32768.0
+        spec = np.abs(np.fft.rfft(x * np.hanning(len(x))))
+        freqs = np.fft.rfftfreq(len(x), 1.0 / SR)
+        band = (freqs > 60) & (freqs < 2400)
+        sp = np.where(band, spec, 0)
+        peaks = []
+        for i in np.argsort(sp)[::-1]:
+            if len(peaks) >= 12:
+                break
+            if all(abs(freqs[i] - p) > 3.0 for p in peaks):
+                # refine with the neighbouring bins
+                a, b, c = sp[i - 1], sp[i], sp[i + 1]
+                d = 0.5 * (a - c) / (a - 2 * b + c) if (a - 2 * b + c) != 0 else 0.0
+                peaks.append(freqs[i] + d * (freqs[1] - freqs[0]))
+        scale_name = mus.get("scale", "pentatonic_major")
+        ratios = list(JUST.get(scale_name, JUST["major"]))
+        for prog in PROG[FAMILY.get(scale_name, "major")]:
+            for root_r, triad in prog:
+                ratios += [root_r * r for r in triad]
+        ratios.append(3 / 4)   # the heartbeat
+        grid = [hz * r * 2 ** k for r in ratios for k in range(-5, 3)]
+        off = [p for p in peaks if min(abs(p - g) for g in grid) > max(0.6, p * 0.0015)]
+        tone_bin = np.argmin(abs(freqs - hz))
+        has_tone = sp[tone_bin - 2:tone_bin + 3].max() > 0.05 * sp.max()
+        ok = not off and has_tone
+        bad += 0 if ok else 1
+        print("%-16s %3d Hz  %s  peaks %s%s" % (name, hz, "ok " if ok else "BAD", ", ".join("%.1f" % p for p in sorted(peaks)[:8]),
+                                             ("  off-tune: " + ", ".join("%.1f" % p for p in off)) if off else ""))
+    print("calm tuning check: %d songs, %d bad" % (len(calm_songs()), bad))
+    return bad == 0
+
+
 def write_ogg(path, x, quality=3):
     os.makedirs(os.path.dirname(path), exist_ok=True)
     x = np.clip(x, -1, 1)
@@ -351,6 +637,15 @@ def write_ogg(path, x, quality=3):
 
 
 def main():
+    if "--check" in sys.argv:
+        sys.exit(0 if check_tuning() else 1)
+    if "--calm" in sys.argv or "--maps" not in sys.argv:
+        for name, mus, hz, path in calm_songs():
+            seed = sum(ord(c) for c in name) * 31 + int(hz)
+            write_ogg(path, render_calm(mus, seed, hz), 2)
+            print("calm", name, hz, "Hz", os.path.relpath(path, ROOT))
+        if "--calm" in sys.argv:
+            return
     only_maps = "--maps" in sys.argv
     for f in sorted(glob.glob(os.path.join(ROOT, "content", "maps", "*.json"))):
         m = json.load(open(f))
