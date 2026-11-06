@@ -215,6 +215,7 @@
 .mini-star .ico { width: 100%; height: 100%; }
 .mini-star.on { color: var(--gold); filter: drop-shadow(0 0 4px rgba(255, 211, 107, 0.7)); }
 .level-time { font-size: 0.66rem; color: var(--text-dim); }
+.level-diff { position: absolute; top: 8px; right: 10px; font-size: 0.58rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); opacity: 0.85; }
 
 /* ---------- Daily ---------- */
 .daily-card { display: flex; flex-direction: column; gap: 12px; padding: 16px; border-radius: 20px; border: 1px solid var(--neon-cyan); background: var(--panel); box-shadow: 0 0 18px rgba(var(--c3-rgb), 0.2); }

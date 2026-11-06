@@ -6,11 +6,16 @@ import {
   isSectorUnlocked, isLevelUnlocked, levelRecord, sectorStars, totalStars, nextCampaignLevel, loadSavedGame,
 } from '../../core/profile.js';
 import { formatTime } from '../../core/time.js';
+import { campaignDifficulty } from '../../engine/pool.js';
 import { settings } from '../../core/profile.js';
 import { sfx } from '../../audio/audio.js';
 import { toast } from '../modal.js';
 import { confirmAbandon } from './menu.js';
 import { assetUrl } from '../background.js';
+import { lineupForLevel, sectorLineup } from '../glyphs.js';
+import { THEMES } from '../../data/themes.js';
+
+const DIFF_LABEL = { easy: 'Easy', medium: 'Medium', hard: 'Hard', alien: 'Alien' };
 
 
 function topbar(title, eyebrow, nav) {
@@ -47,11 +52,13 @@ export const campaignScreen = {
         h('div', { class: 'sector-list' }, SECTORS.map((s) => {
           const unlocked = isSectorUnlocked(s.id);
           const stars = sectorStars(s.id);
-          const set = SYMBOL_SETS[s.symbolSet];
+          const lineup = sectorLineup(s.id);
+          const set = SYMBOL_SETS[lineup];
+          const accent = `rgb(${THEMES[lineup].rgb.c1})`;
           return h('button', {
             class: `sector-card${unlocked ? '' : ' locked'}`,
             type: 'button',
-            style: { '--accent': s.accent, backgroundImage: `linear-gradient(90deg, rgba(5,1,15,0.92) 35%, rgba(5,1,15,0.35)), url("${assetUrl(s.bg)}")` },
+            style: { '--accent': accent, backgroundImage: `linear-gradient(90deg, rgba(5,1,15,0.92) 35%, rgba(5,1,15,0.35)), url("${assetUrl(s.bg)}")` },
             'aria-label': `${s.name}${unlocked ? `, ${stars} of 27 stars` : ', locked'}`,
             onclick: () => {
               if (!unlocked) { sfx.reject(); toast(`Finish ${SECTORS[s.id - 1].name} to unlock ${s.name}.`); return; }
@@ -74,10 +81,11 @@ export const sectorScreen = {
   id: 'sector',
   banner: true,
   bg: (p) => SECTORS[p.sector]?.bg,
-  theme: (p) => (settings().sectorSymbols ? SECTORS[p.sector]?.symbolSet : null),
+  theme: (p) => sectorLineup(p.sector),
   create(params, nav) {
     const s = SECTORS[params.sector];
-    const set = SYMBOL_SETS[s.symbolSet];
+    const set = SYMBOL_SETS[sectorLineup(s.id)];
+    const accent = `rgb(${THEMES[sectorLineup(s.id)].rgb.c1})`;
     const nodes = [];
     for (let l = 0; l < LEVELS_PER_SECTOR; l++) {
       const rec = levelRecord(s.id, l);
@@ -86,7 +94,8 @@ export const sectorScreen = {
       nodes.push(h('button', {
         class: `level-node${rec ? ' done' : ''}${unlocked ? '' : ' locked'}${isNext ? ' next' : ''}`,
         type: 'button',
-        style: { '--accent': s.accent },
+        style: { '--accent': `rgb(${THEMES[lineupForLevel(s.id, l)].rgb.c1})` },
+        title: `${DIFF_LABEL[campaignDifficulty(s.id, l)]} · ${SYMBOL_SETS[lineupForLevel(s.id, l)].name}`,
         'data-autofocus': isNext ? true : null,
         'aria-label': `Transmission ${l + 1}${rec ? `, ${rec.stars} stars, best ${formatTime(rec.bestMs)}` : unlocked ? '' : ', locked'}`,
         onclick: () => {
@@ -95,17 +104,18 @@ export const sectorScreen = {
           startLevel(nav, s.id, l);
         },
       },
-      h('span', { class: 'level-glyph', html: unlocked ? set.svgs[l] : '' }, unlocked ? null : icon('lock')),
+      h('span', { class: 'level-glyph', html: unlocked ? SYMBOL_SETS[lineupForLevel(s.id, l)].svgs[l] : '' }, unlocked ? null : icon('lock')),
+      h('small', { class: 'level-diff' }, DIFF_LABEL[campaignDifficulty(s.id, l)]),
       h('span', { class: 'level-num' }, String(l + 1)),
       h('span', { class: 'level-stars' }, [1, 2, 3].map((n) => h('span', { class: `mini-star${rec && rec.stars >= n ? ' on' : ''}` }, icon('star')))),
       rec ? h('small', { class: 'level-time' }, formatTime(rec.bestMs)) : null));
     }
-    const el = h('div', { class: 'page', style: { '--accent': s.accent } },
+    const el = h('div', { class: 'page', style: { '--accent': accent } },
       topbar(s.name, `Sector ${s.id + 1} · ${s.range}`, nav),
       h('div', { class: 'page-body' },
         h('p', { class: 'sector-blurb' }, s.blurb),
         h('div', { class: 'level-grid' }, nodes),
-        h('p', { class: 'page-note' }, `Symbols: ${set.name}. Stars: 3 for a clean solve, 2 for one slip (mistake or hint), 1 otherwise.`)));
+        h('p', { class: 'page-note' }, `${settings().difficultyAliens !== false ? 'Each transmission brings the aliens of its difficulty, from Soft Visitors to the Gnarly Horde.' : `Symbols: ${set.name}.`} Stars: 3 for a clean solve, 2 for one slip (mistake or hint), 1 otherwise.`)));
     return { el };
   },
 };

@@ -124,6 +124,20 @@ test('campaign: level 1 win unlocks level 2 and Next works', async ({ page }) =>
   await expect(page.locator('.topbar-h1')).toHaveText('Transmission 2 / 9');
 });
 
+test('campaign levels bring the aliens of their difficulty', async ({ page }) => {
+  const errors = errorsOf(page);
+  await openMenu(page);
+  await page.locator('.menu-campaign').click();
+  await page.locator('.sector-card').first().click();
+  await expect(page.locator('.level-node').first().locator('.level-diff')).toHaveText('Easy');
+  await expect(page.locator('.level-node').first().locator('use')).toHaveAttribute('href', /^#gl-softies-/);
+  await page.locator('.level-node').first().click();
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'softies');
+  const i = await page.evaluate(() => window.__alienSession.board.findIndex((v) => v !== 0));
+  await expect(page.locator(`.cell[data-i="${i}"] use`)).toHaveAttribute('href', /^#gl-softies-/);
+  expect(errors).toEqual([]);
+});
+
 test('hint, notes, undo and pause work from the keyboard', async ({ page, isMobile }) => {
   test.skip(isMobile, 'keyboard test runs on desktop');
   await openMenu(page);

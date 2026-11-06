@@ -108,8 +108,41 @@ function ensureCtx() {
   return audio.ctx;
 }
 
+/**
+ * iPhone silent switch: by default iOS mutes web audio while the ringer is off.
+ * Asking for a "playback" audio session (Safari 17+), or on older iOS keeping a
+ * silent <audio> element playing, lets game sound play like any media app.
+ */
+let sessionUnlocked = false;
+export function enablePlaybackSession() {
+  if (sessionUnlocked) return;
+  sessionUnlocked = true;
+  try {
+    if (navigator.audioSession) { navigator.audioSession.type = 'playback'; return; }
+  } catch { /* ignore */ }
+  try {
+    const rate = 8000;
+    const samples = rate / 2;
+    const buf = new ArrayBuffer(44 + samples);
+    const v = new DataView(buf);
+    const w = (o, str) => { for (let i = 0; i < str.length; i++) v.setUint8(o + i, str.charCodeAt(i)); };
+    w(0, 'RIFF'); v.setUint32(4, 36 + samples, true); w(8, 'WAVEfmt '); v.setUint32(16, 16, true);
+    v.setUint16(20, 1, true); v.setUint16(22, 1, true); v.setUint32(24, rate, true); v.setUint32(28, rate, true);
+    v.setUint16(32, 1, true); v.setUint16(34, 8, true); w(36, 'data'); v.setUint32(40, samples, true);
+    for (let i = 0; i < samples; i++) v.setUint8(44 + i, 128);
+    const el = document.createElement('audio');
+    el.src = URL.createObjectURL(new Blob([buf], { type: 'audio/wav' }));
+    el.loop = true;
+    el.setAttribute('playsinline', '');
+    el.setAttribute('aria-hidden', 'true');
+    el.volume = 0.01;
+    el.play().catch(() => {});
+  } catch { /* ignore */ }
+}
+
 /** Call from the first pointer/key event. Safe to call repeatedly. */
 export function unlockAudio() {
+  enablePlaybackSession();
   const ctx = ensureCtx();
   if (!ctx) return;
   if (ctx.state === 'suspended' && !audio.suspendedByApp) ctx.resume().catch(() => {});

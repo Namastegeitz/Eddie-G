@@ -78,8 +78,8 @@ export const settingsScreen = {
       h('div', { class: 'page-body settings' },
         group('Glyph lineup & theme', [
           setGrid,
-          toggle('difficultyAliens', 'Each difficulty brings its own aliens', 'Easy: Soft Visitors · Medium: Alien Creatures · Hard: Hostile Visitors · Alien: Gnarly Horde. Off = always use your lineup.'),
-          toggle('sectorSymbols', 'Campaign uses each sector\'s lineup', 'Each sector has its own glyphs and theme. Off = always use your lineup.'),
+          toggle('difficultyAliens', 'Each difficulty brings its own aliens', 'Easy: Soft Visitors · Medium: Alien Creatures · Hard: Hostile Visitors · Alien: Gnarly Horde. In every mode, campaign included.'),
+          toggle('sectorSymbols', 'Otherwise, campaign uses each sector\'s lineup', 'Only when difficulty aliens are off. Off = always use your lineup.'),
         ]),
         group('Sound', [
           toggle('sfx', 'Sound effects'),
