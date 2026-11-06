@@ -45,6 +45,8 @@
   no revive; Berries kept). Other hazards still cost a life. Switch: `content/rules.json`.
 - Onboarding: coached tutorial, region intro cards (globe + facts + hazards), revive / milestone /
   last-life / locked-animal prompts, daily reward, first-unlock guide.
+  Tutorial hints are a see-through strip under the score (were a dark box over the lanes in
+  front of the animal); the "Wait for the gap" hint is gone.
 - Graphics upgrade: outline + shading pass for all animals, hazards, predators, tiles and pickups
   (`scripts/view/draw.gd`), glossy two-catch-light eyes, fur/feather strokes, rosettes; lane grain
   texture; water canvas shader (`assets/shaders/water.gdshader`) driven by each lane's clock; 3D
@@ -103,7 +105,7 @@
   globe from Natural Earth, synthesised per-region music + ambience + 26 SFX (`tools/gen_audio.py`).
 - Ads: opt-in rewarded + between-run interstitial (mock; AdMob adapter scaffold). Analytics: events
   + onboarding funnel to `user://analytics.jsonl`, optional HTTP endpoint.
-- Tests: `tools/run_tests.sh` - compile check + first-person GL render check + 341-check phase audit (one section per phase's
+- Tests: `tools/run_tests.sh` - compile check + first-person GL render check + 343-check phase audit (one section per phase's
   checkpoint) in the project and an exported pack, all passing. A path-finding bot beats all 200
   levels (tools/level_sweep.tscn, ~2 min) and the first 50 Endless rows on every scene with the free Poison Dart Frog.
   Frame cost 0.9 ms (sim + view + draw recording) on the cloud CPU.

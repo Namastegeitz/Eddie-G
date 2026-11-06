@@ -304,19 +304,20 @@ func _build_hud() -> void:
 		ability_btn.pressed.connect(func(): sim.use_ability())
 		col.add_child(ability_btn)
 		hud_buttons.append(ability_btn)
-	# tutorial bubble
-	tut_bubble = UI.panel(Color(0.04, 0.12, 0.08, 0.86), 30, 26)
-	tut_bubble.set_anchors_preset(Control.PRESET_CENTER_BOTTOM)
+	# tutorial hint: a see-through strip just under the score, so the lanes
+	# around your animal stay open to see and play
+	tut_bubble = UI.panel(Color(0.04, 0.12, 0.08, 0.55), 24, 14)
+	tut_bubble.set_anchors_preset(Control.PRESET_CENTER_TOP)
 	tut_bubble.grow_horizontal = Control.GROW_DIRECTION_BOTH
-	tut_bubble.grow_vertical = Control.GROW_DIRECTION_BEGIN
-	tut_bubble.offset_bottom = -230
-	tut_bubble.offset_left = -270
-	tut_bubble.offset_right = 270
+	tut_bubble.grow_vertical = Control.GROW_DIRECTION_END
+	tut_bubble.offset_top = top + 140
+	tut_bubble.offset_left = -250
+	tut_bubble.offset_right = 250
 	tut_bubble.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	var tv := UI.hbox(16)
 	tut_hint = TutHint.new()
 	tv.add_child(tut_hint)
-	tut_label = UI.wrap_label("", 34, Color.WHITE)
+	tut_label = UI.wrap_label("", 28, Color.WHITE)
 	tut_label.add_theme_font_override("font", UI.font(true))
 	tut_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	tv.add_child(tut_label)

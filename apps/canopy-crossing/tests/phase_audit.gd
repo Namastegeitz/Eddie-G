@@ -53,6 +53,8 @@ func _ready() -> void:
 				_skills()
 			"art":
 				await _phase7()
+			"onboarding":
+				await _phase6()
 		print("phase audit (%s): %d passed, %d failed" % [only, passed, failed])
 		Save.wipe()
 		Save.path = real_save
@@ -1000,6 +1002,9 @@ func _phase6() -> void:
 	await get_tree().process_frame
 	await get_tree().process_frame
 	check("coached prompt shows on start", tut.tut_bubble.visible and tut.tut_label.text == "Tap ahead to hop", tut.tut_label.text)
+	var hint_box: Rect2 = tut.tut_bubble.get_global_rect()
+	var player_y: float = tut.wv.to_screen(tut.sim.x, float(tut.sim.row)).y
+	check("tutorial hints sit under the score, clear of the lanes around the animal", hint_box.end.y < tut.get_viewport_rect().size.y * 0.3 and hint_box.end.y < player_y - 200.0, "hint ends at %d, animal at %d" % [hint_box.end.y, player_y])
 	var steps_seen := {}
 	var bot := PathBot.new()
 	var plan := bot.plan(tut.sim, tut.world.goal_row)
@@ -1019,7 +1024,8 @@ func _phase6() -> void:
 			break
 	for _i in 30:
 		tut._process(1.0 / 60.0)
-	check("tutorial prompts appear in order", steps_seen.has("Wait for the gap") and steps_seen.has("Ride the log across the river"), str(steps_seen.keys()))
+	check("tutorial prompts appear in order", steps_seen.has("Ride the log across the river"), str(steps_seen.keys()))
+	check("no \"Wait for the gap\" box over the road", not steps_seen.has("Wait for the gap"), str(steps_seen.keys()))
 	check("tutorial teaches first-person view at the canopy", steps_seen.has("Thick canopy hides the trail. Tap the eye to see through your animal's eyes"), str(steps_seen.keys()))
 	check("tutorial completes", Save.data.tutorial_done)
 	check("welcome gift covers a first unlock", Economy.berries() >= 250, str(Economy.berries()))

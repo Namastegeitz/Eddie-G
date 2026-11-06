@@ -121,13 +121,6 @@
         "until": "row>=2"
       },
       {
-        "id": "wait_gap",
-        "text": "Wait for the gap",
-        "hint": "wait",
-        "trigger": "next_lane:ground",
-        "until": "row>=4"
-      },
-      {
         "id": "first_person",
         "text": "Thick canopy hides the trail. Tap the eye to see through your animal's eyes",
         "hint": "eye",
