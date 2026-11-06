@@ -49,7 +49,7 @@ func _toggle_help() -> void:
 		c.queue_free()
 	var lvl := Level.current
 	if lvl and lvl.player:
-		_help.add_child(BugGuide.build_panel(lvl.player.stats, lvl.player.get_action_labels(), false))
+		_help.add_child(BugGuide.build_panel(lvl.player.stats, lvl.player.action_labels(), false))
 	_help.add_child(UIKit.label(_controls_text(), 16, UIKit.DIM))
 	_help.visible = true
 

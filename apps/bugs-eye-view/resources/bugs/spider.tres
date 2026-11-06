@@ -26,6 +26,7 @@ noise_mult = 0.5
 camo_tags = PackedStringArray("wall", "web", "dark_wood")
 sense_max = 6.0
 sense_range = 70.0
+can_climb = false
 wall_speed = 7.5
 web_range = 32.0
 zip_speed = 32.0

@@ -136,6 +136,14 @@ func show_pickup(def: ItemDef) -> void:
 	_pickup_title.text = def.display_name.to_upper()
 	_pickup_title.add_theme_color_override("font_color", def.color.lerp(Color.WHITE, 0.25))
 	_pickup_text.text = def.blurb
+	if def.is_collectible():
+		var fresh := level != null and level.run != null and level.run.new_treasures.has(def.id)
+		_pickup_title.text = "%s%s  -  %s" % ["NEW!  " if fresh else "", def.rarity_name().to_upper(), def.display_name.to_upper()]
+		_pickup_title.add_theme_color_override("font_color", def.rarity_color())
+		if def.kind == ItemDef.Kind.TREASURE:
+			_pickup_text.text = def.blurb + ("  Added to your showcase!" if fresh else "  (Already in your showcase.)")
+		elif fresh:
+			_pickup_text.text = def.blurb + "  Added to your showcase!"
 	# Stay clear of the stealth meters on the left, centred on wide screens.
 	var w := _root.size.x
 	_pickup.offset_left = maxf(170.0, w * 0.15)

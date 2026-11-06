@@ -1,7 +1,8 @@
 class_name PickupItem
 extends Area3D
-## Bug food or a crumb gem lying in the level. Touch it to eat / collect it;
-## the Level applies its effect (see PowerUps).
+## Bug food, a crumb gem, a power-up or a treasure lying in the level. Touch
+## it to eat / collect it; the Level applies its effect (see PowerUps) and
+## treasures and gems go on your showcase.
 
 signal collected(item: PickupItem)
 
@@ -32,6 +33,10 @@ func is_power() -> bool:
 	return def != null and def.kind == ItemDef.Kind.POWER
 
 
+func is_treasure() -> bool:
+	return def != null and def.kind == ItemDef.Kind.TREASURE
+
+
 func _process(delta: float) -> void:
 	if _visual == null or taken:
 		return
@@ -41,6 +46,11 @@ func _process(delta: float) -> void:
 		# A spinning, gently bobbing token (low enough to fit under the fridge).
 		_visual.rotate_y(delta * 2.6)
 		_visual.position.y = _base_y + sin(_t * 3.0) * 0.12
+		return
+	if is_treasure():
+		# A slow, proud turn, bobbing a little higher the rarer it is.
+		_visual.rotate_y(delta * 1.1)
+		_visual.position.y = _base_y + sin(_t * 1.8) * (0.15 + 0.05 * def.rarity)
 		return
 	_visual.rotate_y(delta * (1.8 if gem else 0.7))
 	_visual.position.y = _base_y + sin(_t * (2.4 if gem else 1.6)) * (0.25 if gem else 0.08)
@@ -59,7 +69,10 @@ func collect() -> void:
 		return
 	taken = true
 	set_deferred("monitoring", false)
-	AudioManager.play_at(&"gem" if is_gem() or is_power() else &"munch", global_position, 0.0, randf_range(0.95, 1.1))
+	if is_treasure():
+		AudioManager.play(&"treasure_legendary" if def.rarity >= 3 else &"treasure", -2.0, 1.0 + 0.04 * def.rarity)
+	else:
+		AudioManager.play_at(&"gem" if is_gem() or is_power() else &"munch", global_position, 0.0, randf_range(0.95, 1.1))
 	collected.emit(self)
 	if _visual:
 		var tw := create_tween()

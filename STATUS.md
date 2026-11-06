@@ -200,6 +200,12 @@
   and holds to run; 10 power-ups hidden in each room (Turbo, Spring Legs, Bug Radar, Double
   Crumbs, Shrink); people no longer vanish mid-chase when their routine ends (they finish, calm
   down and walk out through the door; they also walk in through it).
+- Climb and collect: every bug climbs walls, cupboards, table legs and props (clambers round
+  counter lips, walks over the top, Jump leaps off); a junk-tower staircase in each room
+  (groceries, books, flowerpots) and 3 bounce pads per room (sponges, cushions, mushrooms)
+  that fling you onto the counter, fridge, bookshelf, shed roof; 18 treasures (common to
+  legendary) plus the crumb gems collected into a showcase on the home screen (trophy shelf +
+  Showcase screen of all 24); 16 power-ups per room.
 - Phase-by-phase audit (all 6 phases) done; fixes it found: human feet were never solid,
   props didn't stun via feet, cereal-box domino layout, spider facing/normal errors, fog strength.
 - Android debug APK committed at `apps/bugs-eye-view/dist/android/bugseyeview-debug.apk`.
@@ -207,7 +213,7 @@
   iOS Xcode project (not committed; rebuild with the commands in RUN.md).
 - Playable web build published as a private Claude artifact:
   https://claude.ai/artifact/Gmpx6M1Qb9WmCn1BY1Qbh4
-- Meshy: `apps/bugs-eye-view/tools/meshy/generate.py` + `assets.json` (95 prompts) are ready
+- Meshy: `apps/bugs-eye-view/tools/meshy/generate.py` + `assets.json` (113 prompts) are ready
   but not run yet. The cloud session couldn't reach api.meshy.ai; to run it here, allow
   api.meshy.ai and assets.meshy.ai in the environment's network settings and add
   MESHY_API_KEY as an environment variable, or run it on the PC.

@@ -111,7 +111,8 @@ func take_off() -> void:
 	if stamina < stats.takeoff_stamina:
 		show_hint("Too tired to fly - rest a moment")
 		return
-	var push := cling_normal if clinging else Vector3.UP
+	var push := cling_normal if clinging else (surface_normal if climbing else Vector3.UP)
+	stop_climb()
 	_leave_surface()
 	flying = true
 	gliding = false
@@ -134,6 +135,7 @@ func land() -> void:
 
 ## Perch on a wall or ceiling.
 func cling(n: Vector3) -> void:
+	stop_climb()
 	flying = false
 	gliding = false
 	clinging = true
@@ -409,6 +411,12 @@ func _try_dodge() -> void:
 	_since_dodge = 0.0
 	invuln = maxf(invuln, stats.dodge_duration + 0.05)
 	AudioManager.play(&"dash", -4.0, 1.3)
+
+
+func launch(vel: Vector3, flight_time: float) -> bool:
+	if flying or clinging:
+		return false
+	return super.launch(vel, flight_time)
 
 
 ## Warm air (Thermal zones) calls this every physics frame we're inside it.

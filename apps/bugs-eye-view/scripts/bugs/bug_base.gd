@@ -82,6 +82,8 @@ func _ready() -> void:
 	_cfg = PerceptionSystem.config
 	_probe.collision_mask = Phys.WORLD | Phys.PROP | Phys.WEB
 	_probe.exclude = [get_rid()]
+	_climb_q.collision_mask = Phys.WORLD
+	_climb_q.exclude = [get_rid()]
 	InputRouter.action_pressed.connect(_on_action_pressed)
 	InputRouter.action_released.connect(_on_action_released)
 	if visual:
@@ -135,6 +137,7 @@ func _tick_timers(delta: float) -> void:
 	_dodge_cd = maxf(_dodge_cd - delta * (3.0 if has_effect(&"wired") else 1.0), 0.0)
 	_tick_effects(delta)
 	_dodge_time = maxf(_dodge_time - delta, 0.0)
+	_leap_off_t = maxf(_leap_off_t - delta, 0.0)
 	stuck_time = maxf(stuck_time - delta, 0.0)
 	if _slow_timer > 0.0:
 		_slow_timer -= delta
@@ -193,6 +196,14 @@ func _action_released(_a: StringName) -> void:
 	pass
 
 
+## The button labels right now (Jump leaps off a wall while climbing).
+func action_labels() -> Dictionary:
+	var l := get_action_labels()
+	if climbing:
+		l["jump"] = "Leap off"
+	return l
+
+
 ## Labels for the touch buttons and the controls help.
 func get_action_labels() -> Dictionary:
 	return {"primary": "Sprint", "secondary": "Squeeze", "jump": "Jump",
@@ -202,9 +213,19 @@ func get_action_labels() -> Dictionary:
 # --- Shared ground movement -------------------------------------------------
 
 func ground_move(delta: float, speed: float) -> void:
+	_climb_cd = maxf(_climb_cd - delta, 0.0)
+	if climbing:
+		climb_move(delta, speed * stats.climb_speed_mult)
+		return
 	var dir := flat_dir(move_input())
 	var target := dir * speed
 	var accel := stats.acceleration
+	# Just leapt off a wall or got flung by something springy: keep the
+	# momentum, steer only a little.
+	if _leap_off_t > 0.0 and not is_on_floor():
+		accel *= 0.15
+		if dir.length() < 0.1:
+			target = Vector3(velocity.x, 0.0, velocity.z)
 	velocity.x = move_toward(velocity.x, target.x, accel * delta)
 	velocity.z = move_toward(velocity.z, target.z, accel * delta)
 	if _dodge_time > 0.0:
@@ -229,18 +250,364 @@ func ground_move(delta: float, speed: float) -> void:
 	velocity += ext
 	move_and_slide()
 	velocity -= ext
+	try_grab_wall(delta)
 
 
 ## Bug's-eye view: "up" for the camera (the surface for a wall-walker).
 func fp_up() -> Vector3:
+	if on_surface() and visual:
+		return visual.global_basis.y.normalized()
 	return Vector3.UP
 
 
-## Bug's-eye view: where the eyes look (and the body faces): the camera yaw.
+## Bug's-eye view: where the eyes look (and the body faces): the camera yaw,
+## or straight up the wall while climbing.
 func fp_forward() -> Vector3:
+	var up := fp_up()
+	if up.dot(Vector3.UP) <= 0.95:
+		var w := surface_wish(Vector2(0, 1), up)
+		if w.length_squared() > 0.0001:
+			return w.normalized()
 	var f := -camera_yaw_basis.z
 	f.y = 0.0
 	return f.normalized() if f.length_squared() > 0.0001 else Vector3.FORWARD
+
+
+## Walking on a wall (or, for the spider, any surface) with the body turned to it.
+func on_surface() -> bool:
+	return climbing
+
+
+# --- Climbing: every bug walks up walls and furniture -----------------------
+## Push into a wall, a cupboard, a table leg or a box for a moment and you
+## start up it; at the top you walk over the edge onto it. Pull back to climb
+## down, Jump to leap off. A small lip (a counter's overhang, a table's edge)
+## is clambered round; only the spider walks across ceilings.
+
+const CLIMB_GRAB_TIME := 0.12
+const CLIMB_STICK := 3.0
+const CLIMB_REGRAB := 0.35
+## How far out an overhang's edge can be and still be clambered round.
+const CLAMBER_REACH := 5.0
+const CLAMBER_SPEED := 9.0
+
+var climbing := false
+## The surface underfoot (UP on the ground; a wall's normal while climbing).
+var surface_normal := Vector3.UP
+var _grab_t := 0.0
+var _climb_cd := 0.0
+var _clamber: Array[Vector3] = []
+var _clamber_n := Vector3.UP
+var _clamber_fail := 0.0
+var _leap_off_t := 0.0
+var _settle := 0.0
+var _climb_q := PhysicsRayQueryParameters3D.new()
+static var _climb_hinted := false
+
+
+## Whether this bug can start climbing right now.
+func can_climb() -> bool:
+	return stats.can_climb and not is_squeezing and not dead and knockdown <= 0.0 and stuck_time <= 0.0
+
+
+func _surface_ray(from: Vector3, to: Vector3) -> Dictionary:
+	_climb_q.from = from
+	_climb_q.to = to
+	return get_world_3d().direct_space_state.intersect_ray(_climb_q)
+
+
+## Camera-relative direction projected onto a surface. On walls, pushing
+## "forward" while facing the wall climbs up it.
+func surface_wish(input: Vector2, n: Vector3) -> Vector3:
+	var fl := -camera_yaw_basis.z
+	var d := fl.dot(n)
+	var f := fl - n * d
+	if absf(n.y) < 0.95:
+		var up_proj := (Vector3.UP - n * n.y).normalized()
+		f += up_proj * -d
+	if f.length_squared() < 0.0001:
+		f = Vector3.UP - n * n.y
+	f = f.normalized()
+	var r := f.cross(n).normalized()
+	return r * input.x + f * input.y
+
+
+## After moving on the ground or in the air: pushing into a climbable wall for
+## a moment grabs it.
+func try_grab_wall(delta: float) -> void:
+	if climbing or _climb_cd > 0.0 or not can_climb():
+		_grab_t = 0.0
+		return
+	var n := _wall_contact(flat_dir(move_input()))
+	if n == Vector3.ZERO:
+		_grab_t = 0.0
+		return
+	_grab_t += delta
+	if _grab_t >= CLIMB_GRAB_TIME:
+		start_climb(n)
+
+
+## The wall we're pushing into this frame (ZERO if none). Loose things you
+## can push (props) aren't climbed - and nor are invisible boundaries.
+func _wall_contact(wish: Vector3) -> Vector3:
+	if wish.length() < 0.3:
+		return Vector3.ZERO
+	var w := wish.normalized()
+	for i in get_slide_collision_count():
+		var c := get_slide_collision(i)
+		var n := c.get_normal()
+		if absf(n.y) > 0.6:
+			continue
+		var col := c.get_collider() as CollisionObject3D
+		if col == null or col is PhysicsProp or col.has_meta(&"no_climb") or not col is StaticBody3D \
+				or (col.collision_layer & Phys.WORLD) == 0:
+			continue
+		var flat := Vector3(n.x, 0.0, n.z)
+		if flat.length_squared() > 0.0001 and w.dot(-flat.normalized()) > 0.55:
+			return n.normalized()
+	return Vector3.ZERO
+
+
+func start_climb(n: Vector3) -> void:
+	climbing = true
+	_grab_t = 0.0
+	_clamber.clear()
+	_clamber_fail = 0.0
+	surface_normal = n.normalized()
+	motion_mode = MOTION_MODE_FLOATING
+	up_direction = surface_normal
+	velocity = Vector3.ZERO
+	if not _climb_hinted:
+		_climb_hinted = true
+		show_hint("Climbing! Pull back to climb down, Jump to leap off")
+
+
+## Back to walking (or falling): `push` is the velocity to leave with,
+## `face` the way to face (flattened).
+func stop_climb(push: Vector3 = Vector3.ZERO, face: Vector3 = Vector3.ZERO) -> void:
+	if not climbing:
+		return
+	climbing = false
+	_clamber.clear()
+	var f := face if face != Vector3.ZERO else facing
+	f.y = 0.0
+	if f.length_squared() < 0.0001:
+		f = Vector3(surface_normal.x, 0.0, surface_normal.z)
+	if f.length_squared() > 0.0001:
+		facing = f.normalized()
+	surface_normal = Vector3.UP
+	motion_mode = MOTION_MODE_GROUNDED
+	up_direction = Vector3.UP
+	velocity = push
+	_settle = 0.3
+
+
+func climb_move(delta: float, speed: float) -> void:
+	_clamber_fail = maxf(_clamber_fail - delta, 0.0)
+	var n := surface_normal
+	var input := move_input()
+	if _jump_queued:
+		# Leap off, away from the surface.
+		_jump_queued = false
+		var wish0 := surface_wish(input, n)
+		var push := n * stats.jump_velocity * 0.9 + Vector3.UP * stats.jump_velocity * 0.6 * jump_scale() + wish0 * speed * 0.4
+		_climb_cd = CLIMB_REGRAB
+		_leap_off_t = 0.6
+		stop_climb(push, n)
+		move_and_slide()
+		return
+	if not _clamber.is_empty():
+		_clamber_tick(delta, maxf(speed * 1.6, CLAMBER_SPEED))
+		return
+	var wish := surface_wish(input, n)
+	var hit := _surface_ray(global_position + n * 0.4, global_position - n * 1.0)
+	if hit.is_empty():
+		# Over an edge: round onto the next face, or onto the top.
+		var over := _climb_wrap(wish, n)
+		if over.is_empty() or (over["normal"] as Vector3).y < -0.5:
+			_climb_cd = 0.25
+			stop_climb(n * 2.0, n)
+			return
+		var wn: Vector3 = over["normal"]
+		global_position = (over["position"] as Vector3) + wn * 0.38
+		if wn.y > 0.7:
+			stop_climb(Vector3.ZERO, -n)
+			return
+		surface_normal = wn
+	else:
+		var hn: Vector3 = hit["normal"]
+		if hn.y > 0.7:
+			stop_climb(Vector3.ZERO, -n)
+			return
+		var dn := n.dot(hn)
+		if hn.y < -0.5:
+			pass
+		elif dn > 0.9995 or dn <= -0.5:
+			surface_normal = hn
+		else:
+			surface_normal = n.slerp(hn, 0.35).normalized()
+	n = surface_normal
+	wish = surface_wish(input, n)
+	if wish.length() > 0.05:
+		var from := global_position + n * 0.2
+		var ahead := _surface_ray(from, from + wish.normalized() * 0.9)
+		if not ahead.is_empty():
+			var an: Vector3 = ahead["normal"]
+			if an.dot(n) < 0.7:
+				if an.y > 0.7:
+					# Climbed down to the floor (or a ledge).
+					stop_climb(Vector3.ZERO, n)
+					return
+				elif an.y < -0.5:
+					# An overhang: clamber round its lip if it's a small one.
+					if _clamber_fail <= 0.0 and wish.y > 0.3 and _start_clamber(n):
+						return
+					_clamber_fail = 0.5
+					wish.y = minf(wish.y, 0.0)
+				else:
+					surface_normal = an
+					n = an
+					wish = surface_wish(input, n)
+	up_direction = n
+	var v := wish * speed
+	if _dodge_time > 0.0:
+		var dd := _dodge_dir - n * _dodge_dir.dot(n)
+		if dd.length_squared() < 0.01:
+			dd = wish if wish.length() > 0.1 else facing - n * facing.dot(n)
+		v = dd.normalized() * stats.dodge_speed if dd.length_squared() > 0.0001 else Vector3.ZERO
+	var ext := external_velocity
+	velocity = v - n * CLIMB_STICK + ext
+	move_and_slide()
+	velocity -= ext
+	if wish.length() > 0.05:
+		facing = wish.normalized()
+
+
+## Walked over a convex edge: look back under it for the next face.
+func _climb_wrap(wish: Vector3, n: Vector3) -> Dictionary:
+	var dir := wish.normalized() if wish.length() > 0.05 else facing
+	dir = dir - n * dir.dot(n)
+	if dir.length_squared() < 0.0001:
+		return {}
+	dir = dir.normalized()
+	var origin := global_position - n * 0.7 + dir * 0.15
+	return _surface_ray(origin, origin - dir * 1.6)
+
+
+## Climbing up into an overhang (the lip of a counter, the edge of a table
+## top): find its edge and plot a short clamber out, up and round it.
+func _start_clamber(n: Vector3) -> bool:
+	var pos := global_position
+	var flat := Vector3(n.x, 0.0, n.z)
+	if flat.length_squared() < 0.01:
+		return false
+	var out := flat.normalized()
+	var k := 0.0
+	var d := 0.6
+	while d <= CLAMBER_REACH:
+		var p := pos + out * d
+		if not _surface_ray(pos, p).is_empty():
+			return false
+		if _surface_ray(p, p + Vector3.UP * 1.3).is_empty():
+			k = d
+			break
+		d += 0.6
+	if k == 0.0:
+		return false
+	# The lip's front face, just above us: climb on up it.
+	for h: float in [0.9, 1.5, 2.1, 2.8]:
+		var from := pos + out * (k + 0.4) + Vector3.UP * h
+		var face := _surface_ray(from, from - out * (k + 0.8))
+		if face.is_empty():
+			continue
+		var fn: Vector3 = face["normal"]
+		var beside: Vector3 = (face["position"] as Vector3) + fn * 0.38
+		var dist := (beside - pos).dot(out)
+		if fn.dot(out) > 0.7 and dist > 0.4:
+			_clamber = [pos + out * dist, beside] as Array[Vector3]
+			_clamber_n = fn
+			return true
+		if fn.y > 0.7:
+			# A thin lip: its top is right there.
+			var top: Vector3 = (face["position"] as Vector3) + Vector3.UP * 0.4
+			_clamber = [pos + out * (k + 0.4), Vector3(pos.x, top.y, pos.z) + out * (k + 0.4), top] as Array[Vector3]
+			_clamber_n = Vector3.UP
+			return true
+	# Look down onto a thin lip's top.
+	var above := pos + out * maxf(k - 0.5, 0.3) + Vector3.UP * 3.0
+	var t := _surface_ray(above, above + Vector3.DOWN * 3.0)
+	if t.is_empty() or (t["normal"] as Vector3).y < 0.7:
+		return false
+	var top2: Vector3 = (t["position"] as Vector3) + Vector3.UP * 0.4
+	var outer := pos + out * (k + 0.4)
+	_clamber = [outer, Vector3(outer.x, top2.y, outer.z), top2] as Array[Vector3]
+	_clamber_n = Vector3.UP
+	return true
+
+
+func _clamber_tick(delta: float, speed: float) -> void:
+	var target: Vector3 = _clamber[0]
+	var to := target - global_position
+	var step := speed * delta
+	if to.length() <= step:
+		global_position = target
+		_clamber.pop_front()
+		if _clamber.is_empty():
+			if _clamber_n.y > 0.7:
+				stop_climb(Vector3.ZERO, -surface_normal)
+			else:
+				surface_normal = _clamber_n
+				up_direction = _clamber_n
+		velocity = Vector3.ZERO
+		return
+	global_position += to.normalized() * step
+	velocity = to.normalized() * speed
+	if to.length() > 0.05:
+		var f := to - surface_normal * to.dot(surface_normal)
+		if f.length_squared() > 0.001:
+			facing = f.normalized()
+
+
+## Gravity while airborne (what a bounce pad aims with).
+func air_gravity() -> float:
+	return stats.gravity
+
+
+## Flung by something springy: fly the arc, keeping the momentum. False if
+## this bug can't be launched right now (a fly already in the air).
+func launch(vel: Vector3, flight_time: float) -> bool:
+	if dead or knockdown > 0.0:
+		return false
+	stop_climb()
+	velocity = vel
+	_leap_off_t = flight_time + 0.15
+	_climb_cd = 0.3
+	_coyote = 0.0
+	_jump_buffer = 0.0
+	return true
+
+
+## Turn the body to the surface it's on.
+func orient_to_surface(delta: float) -> void:
+	if visual == null:
+		return
+	var n := surface_normal
+	if in_first_person():
+		facing = surface_wish(Vector2(0, 1), n)
+	var f := facing - n * facing.dot(n)
+	if f.length_squared() < 0.001:
+		f = Vector3.UP - n * n.y
+		if f.length_squared() < 0.001:
+			f = Vector3.FORWARD - n * n.dot(Vector3.FORWARD)
+	_turn_visual(Basis.looking_at(f.normalized(), n), clampf(14.0 * delta, 0.0, 1.0))
+
+
+func _turn_visual(target: Basis, k: float) -> void:
+	var cur := visual.global_basis.orthonormalized()
+	var q := Quaternion(cur).slerp(Quaternion(target), k)
+	var s := visual.scale
+	visual.global_basis = Basis(q)
+	visual.scale = s
 
 
 func in_first_person() -> bool:
@@ -248,6 +615,20 @@ func in_first_person() -> bool:
 
 
 func face_velocity(delta: float) -> void:
+	if climbing:
+		orient_to_surface(delta)
+		return
+	if _settle > 0.0 and visual:
+		# Just stepped off a wall: tip back upright.
+		_settle = maxf(_settle - delta, 0.0)
+		var yaw := atan2(-facing.x, -facing.z)
+		if _settle <= 0.0:
+			var s := visual.scale
+			visual.rotation = Vector3(0.0, yaw, 0.0)
+			visual.scale = s
+		else:
+			_turn_visual(Basis(Vector3.UP, yaw), clampf(16.0 * delta, 0.0, 1.0))
+		return
 	if in_first_person():
 		# Through its eyes the bug faces where you look; it can still crab
 		# sideways without the view swinging round.
@@ -277,6 +658,8 @@ func _try_dodge() -> void:
 
 
 func motion_speed() -> float:
+	if climbing:
+		return (velocity - surface_normal * velocity.dot(surface_normal)).length()
 	return Vector2(velocity.x, velocity.z).length()
 
 
@@ -384,6 +767,8 @@ func has_camo() -> bool:
 
 
 func current_camo_tag() -> StringName:
+	if climbing and surface_normal.y < 0.7:
+		return &"wall"
 	return camo_tag
 
 
@@ -426,7 +811,7 @@ func _emit_noise(delta: float) -> void:
 
 
 func is_scent_active() -> bool:
-	return wiper_count <= 0 and not is_hidden_safe() and not has_effect(&"fresh") and _leaves_scent()
+	return wiper_count <= 0 and not is_hidden_safe() and not has_effect(&"fresh") and not climbing and _leaves_scent()
 
 
 func _leaves_scent() -> bool:
@@ -516,6 +901,7 @@ func take_hit(cause: StringName, from: Vector3) -> bool:
 		return true
 	invuln = stats.invuln_time
 	knockdown = stats.knockdown_time
+	stop_climb()
 	var away := global_position - from
 	away.y = 0.0
 	if away.length() > 0.01:
@@ -712,6 +1098,12 @@ func show_hint(text: String) -> void:
 
 
 func teleport_to(xform: Transform3D) -> void:
+	stop_climb()
+	_settle = 0.0
+	if visual:
+		var s := visual.scale
+		visual.rotation = Vector3(0.0, visual.rotation.y, 0.0)
+		visual.scale = s
 	global_position = xform.origin
 	velocity = Vector3.ZERO
 	_jump_buffer = 0.0

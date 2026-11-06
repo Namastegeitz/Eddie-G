@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="ItemDef" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/item_def.gd" id="1_rxyfg"]
+
+[resource]
+script = ExtResource("1_rxyfg")
+id = &"treasure_thimble"
+display_name = "Golden Thimble"
+kind = 3
+duration = 0.0
+points = 450
+color = Color(0.78, 0.45, 1, 1)
+blurb = "A golden helmet fit for a beetle king."
+rarity = 2
+found_in = "Kitchen"

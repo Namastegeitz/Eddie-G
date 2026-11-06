@@ -18,18 +18,18 @@ rings = 10
 [sub_resource type="BoxMesh" id="BoxMesh_hh1vi"]
 size = Vector3(0.07, 0.06, 1.15)
 
-[node name="CoffeeBean" type="Area3D" unique_id=351376388]
+[node name="CoffeeBean" type="Area3D" unique_id=1557964821]
 script = ExtResource("1_35i5k")
 def = ExtResource("2_nj7jv")
 
-[node name="Shape" type="CollisionShape3D" parent="." unique_id=1052790530]
+[node name="Shape" type="CollisionShape3D" parent="." unique_id=363810231]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.65, 0)
 shape = SubResource("SphereShape3D_q5ews")
 
-[node name="Visual" type="Node3D" parent="." unique_id=1183874530]
+[node name="Visual" type="Node3D" parent="." unique_id=695888762]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.65, 0)
 
-[node name="Bean" type="MeshInstance3D" parent="Visual" unique_id=1984333624]
+[node name="Bean" type="MeshInstance3D" parent="Visual" unique_id=1236745922]
 transform = Transform3D(0.85, 0, 0, 0, 0.6, 0, 0, 0, 1.2, 0, -0.2, 0)
 material_override = ExtResource("3_8vrfn")
 visibility_range_end = 110.0
@@ -37,7 +37,7 @@ visibility_range_end_margin = 16.5
 visibility_range_fade_mode = 1
 mesh = SubResource("SphereMesh_7bbmg")
 
-[node name="Crease" type="MeshInstance3D" parent="Visual" unique_id=826288750]
+[node name="Crease" type="MeshInstance3D" parent="Visual" unique_id=382181125]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.12, 0)
 material_override = ExtResource("4_uyfvu")
 visibility_range_end = 110.0
@@ -45,7 +45,7 @@ visibility_range_end_margin = 16.5
 visibility_range_fade_mode = 1
 mesh = SubResource("BoxMesh_hh1vi")
 
-[node name="Skin" type="Node3D" parent="Visual" unique_id=1596371604]
+[node name="Skin" type="Node3D" parent="Visual" unique_id=320334411]
 script = ExtResource("5_58yhb")
 model_id = "coffee_bean"
 fit_size = Vector3(1, 0.8, 1.4)

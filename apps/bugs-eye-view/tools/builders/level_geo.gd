@@ -284,6 +284,8 @@ func room(size: Vector3, floor_mat: String, floor_surface: StringName, wall_mat:
 func invisible_wall(n: String, center: Vector3, size: Vector3) -> void:
 	var b := box(n, center, size, "glass")
 	(b.get_node("Mesh") as Node3D).visible = false
+	# Bugs climb walls, but not the edge of the world.
+	b.set_meta(&"no_climb", true)
 
 
 # --- Zones --------------------------------------------------------------------
@@ -482,6 +484,190 @@ func perch(n: String, base: Vector3, top_offset: Vector3, knock_radius: float = 
 	p.knock_radius = knock_radius
 	zones.add_child(p)
 	return p
+
+
+# --- Climbing: junk towers and bounce pads ------------------------------------
+
+## A collision-only block (the look comes from decor stacked inside it).
+func solid(n: String, center: Vector3, size: Vector3, surface: StringName, cylinder_radius: float = 0.0) -> StaticBody3D:
+	var b := StaticBody3D.new()
+	b.name = uniq(n)
+	b.collision_layer = Phys.WORLD
+	b.collision_mask = 0
+	b.position = center
+	b.set_meta(&"surface", surface)
+	var cs := CollisionShape3D.new()
+	cs.name = "Shape"
+	if cylinder_radius > 0.0:
+		var c := CylinderShape3D.new()
+		c.radius = cylinder_radius
+		c.height = size.y
+		cs.shape = c
+	else:
+		var sh := BoxShape3D.new()
+		sh.size = size
+		cs.shape = sh
+	b.add_child(cs)
+	geo.add_child(b)
+	return b
+
+
+## A spiral staircase of stacked household junk round a tall middle stack:
+## scramble up it step by step (each step a little higher than the last,
+## with small gaps to hop) to the summit. Themes: "groceries" (boxes and
+## tins), "books", "garden" (flowerpots and bricks). Returns the top centre
+## of every step, the summit last.
+func junk_tower(n: String, center: Vector3, theme: String, steps: int = 7, rise: float = 4.5,
+		radius: float = 7.0, start_angle: float = 0.0, turn: float = deg_to_rad(50.0)) -> Array[Vector3]:
+	var tops: Array[Vector3] = []
+	var rng := RandomNumberGenerator.new()
+	rng.seed = hash(n)
+	for i in steps + 1:
+		var summit := i == steps
+		var h := rise * (i + 1) if not summit else rise * steps + rise * 0.55
+		var a := start_angle + turn * i
+		var c := center if summit else center + Vector3(cos(a), 0.0, sin(a)) * radius
+		var w := 6.0 if summit else 4.5
+		var round_step := not summit and theme != "books" and i % 2 == 1
+		var surface: StringName = {"groceries": &"paper", "books": &"paper", "garden": &"stone"}.get(theme, &"default")
+		solid("%sStep" % n, c + Vector3.UP * h * 0.5, Vector3(w, h, w), surface, w * 0.5 if round_step else 0.0)
+		_stack_look(n, c, w, h, theme, round_step, rng)
+		tops.append(c + Vector3.UP * h)
+	return tops
+
+
+## The decor for one step: items piled up to height `h` inside a w x w footprint.
+func _stack_look(n: String, base: Vector3, w: float, h: float, theme: String, round_step: bool, rng: RandomNumberGenerator) -> void:
+	var y := 0.0
+	var k := 0
+	while y < h - 0.05:
+		var piece := minf(h - y, rng.randf_range(0.9, 1.6) if theme == "books" else rng.randf_range(3.2, 4.8))
+		if h - y - piece < 0.8:
+			piece = h - y
+		var look := ""
+		match theme:
+			"books":
+				look = ["cloth_red", "book_green", "cloth_blue", "paper"][rng.randi() % 4]
+			"groceries":
+				look = (["label_red", "label_blue"][rng.randi() % 2]) if round_step else (["cardboard", "chip_bag", "label_red", "cardboard"][k % 4])
+			"garden":
+				look = "terracotta" if round_step else ["brick", "patio", "brick"][k % 3]
+		var p := base + Vector3.UP * (y + piece * 0.5)
+		if round_step:
+			var cm := CylinderMesh.new()
+			cm.top_radius = w * 0.5 * (0.98 if theme != "garden" else 1.0)
+			cm.bottom_radius = w * 0.5 * (0.98 if theme != "garden" else 0.86)
+			cm.height = piece - 0.06
+			cm.radial_segments = 16
+			cm.rings = 1
+			deco(n + "Tin", cm, look, p, Vector3(0, rng.randf() * TAU, 0))
+			if theme == "groceries":
+				# A shiny rim on each tin.
+				var rim := CylinderMesh.new()
+				rim.top_radius = w * 0.5
+				rim.bottom_radius = w * 0.5
+				rim.height = 0.2
+				rim.radial_segments = 16
+				rim.rings = 1
+				deco(n + "Rim", rim, "metal", p + Vector3.UP * (piece * 0.5 - 0.1))
+		else:
+			var shrink := rng.randf_range(0.0, 0.12) if theme == "books" else 0.0
+			var sz := Vector3(w * (1.0 - shrink), piece - 0.04, w * (1.0 - rng.randf_range(0.0, 0.1)))
+			var yaw := rng.randf_range(-0.08, 0.08) if theme == "books" else 0.0
+			deco_box(n + "Piece", p, sz, look, Vector3(0, yaw, 0))
+			if theme == "books":
+				# Pages: a pale edge on one side.
+				deco_box(n + "Pages", p + Vector3(sz.x * 0.5 - 0.06, 0, 0), Vector3(0.14, sz.y * 0.8, sz.z * 0.92), "paper", Vector3(0, yaw, 0))
+			elif theme == "groceries" and look == "cardboard":
+				deco_box(n + "Tape", p + Vector3.UP * (piece * 0.5 - 0.02), Vector3(w * 1.01, 0.08, 0.8), "chip_bag")
+		y += piece
+		k += 1
+
+
+## Something springy that flings bugs up in an arc onto `target` (see
+## BouncePad): kinds "sponge", "cushion", "mushroom".
+func bounce_pad(n: String, base: Vector3, size: Vector3, kind: String, target: Vector3, apex: float = 6.0) -> BouncePad:
+	var b := StaticBody3D.new()
+	b.name = uniq(n)
+	b.collision_layer = Phys.WORLD
+	b.position = base + Vector3.UP * size.y * 0.5
+	b.set_meta(&"surface", &"cloth")
+	b.set_meta(&"no_climb", true)
+	var cs := CollisionShape3D.new()
+	cs.name = "Shape"
+	var sh := BoxShape3D.new()
+	sh.size = size
+	cs.shape = sh
+	b.add_child(cs)
+	var vis := Node3D.new()
+	vis.name = "Mesh"
+	vis.position = Vector3.DOWN * size.y * 0.5
+	b.add_child(vis)
+	var parts: Array[MeshInstance3D] = []
+	match kind:
+		"sponge":
+			var body := BoxMesh.new()
+			body.size = Vector3(size.x, size.y * 0.72, size.z)
+			parts.append(_part(vis, body, "sponge", Vector3.UP * size.y * 0.36))
+			var top := BoxMesh.new()
+			top.size = Vector3(size.x, size.y * 0.28, size.z)
+			parts.append(_part(vis, top, "scourer", Vector3.UP * size.y * 0.86))
+		"cushion":
+			var pad := BoxMesh.new()
+			pad.size = size
+			parts.append(_part(vis, pad, "cloth_blue", Vector3.UP * size.y * 0.5))
+			var puff := SphereMesh.new()
+			puff.radius = minf(size.x, size.z) * 0.5
+			puff.height = size.y * 0.7
+			parts.append(_part(vis, puff, "cloth_blue", Vector3.UP * size.y * 0.95, Vector3(size.x / minf(size.x, size.z), 1.0, size.z / minf(size.x, size.z))))
+
+		_:
+			var stem := CylinderMesh.new()
+			stem.top_radius = size.x * 0.16
+			stem.bottom_radius = size.x * 0.2
+			stem.height = size.y * 0.6
+			parts.append(_part(vis, stem, "paper", Vector3.UP * size.y * 0.3))
+			var cap := SphereMesh.new()
+			cap.radius = size.x * 0.5
+			cap.height = size.y * 0.9
+			cap.is_hemisphere = true
+			parts.append(_part(vis, cap, "mushroom", Vector3.UP * size.y * 0.55))
+			for i in 5:
+				var a := TAU * i / 5.0
+				var dot := SphereMesh.new()
+				dot.radius = size.x * 0.07
+				dot.height = size.x * 0.05
+				parts.append(_part(vis, dot, "plastic_white", Vector3(cos(a) * size.x * 0.27, size.y * 0.55 + size.y * 0.62, sin(a) * size.x * 0.27)))
+	ActorBuilder.merge_meshes(vis)
+	for m in vis.get_children():
+		# It squashes when it fires: keep it out of the static batches.
+		m.add_to_group(&"no_batch", true)
+	var pad_area := BouncePad.new()
+	pad_area.name = "Pad"
+	pad_area.target = target
+	pad_area.apex_above = apex
+	pad_area.label = kind
+	var acs := CollisionShape3D.new()
+	acs.name = "Shape"
+	var ash := BoxShape3D.new()
+	ash.size = Vector3(size.x * 0.9, 1.6, size.z * 0.9)
+	acs.shape = ash
+	acs.position = Vector3.UP * (size.y * 0.5 + 0.6)
+	pad_area.add_child(acs)
+	b.add_child(pad_area)
+	geo.add_child(b)
+	return pad_area
+
+
+func _part(parent: Node3D, m: Mesh, material: String, pos: Vector3, scl: Vector3 = Vector3.ONE) -> MeshInstance3D:
+	var mi := MeshInstance3D.new()
+	mi.name = "Part"
+	mi.mesh = m
+	mi.material_override = mat(material)
+	mi.position = pos
+	mi.scale = scl
+	parent.add_child(mi, true)
+	return mi
 
 
 # --- Pickups, goal, spawn -------------------------------------------------------

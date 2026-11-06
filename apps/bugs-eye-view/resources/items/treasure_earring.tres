@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="ItemDef" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/item_def.gd" id="1_wvlks"]
+
+[resource]
+script = ExtResource("1_wvlks")
+id = &"treasure_earring"
+display_name = "Crystal Earring"
+kind = 3
+duration = 0.0
+points = 450
+color = Color(0.78, 0.45, 1, 1)
+blurb = "Throws rainbows across the room."
+rarity = 2
+found_in = "Living Room"

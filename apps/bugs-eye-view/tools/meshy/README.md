@@ -8,14 +8,14 @@ instead of the placeholder: it is turned to face forward, scaled to fit the
 slot's box and set on the floor. Gameplay (collisions, hiding spots, light
 and shade) never changes, so the game works the same with or without models.
 
-`assets.json` lists all 95 slots with a text-to-3D prompt for each, in three
+`assets.json` lists all 113 slots with a text-to-3D prompt for each, in three
 tiers:
 
 | Tier | What | Count |
 |---|---|---|
 | 1 | The eight bugs, the human's sneaker, cat, dog, robot vacuum, swatter, crumbs, bug food, crumb gems and power-ups | 32 |
-| 2 | Hiding spots (paper cup, sneaker, slipper, flowerpot, gnome, laundry basket, wheelbarrow...), lures, props | 32 |
-| 3 | Furniture (fridge, stove, island, couch, armchair, aquarium, shed, bird bath...) | 30 |
+| 2 | Hiding spots (paper cup, sneaker, slipper, flowerpot, gnome, laundry basket, wheelbarrow...), lures, props, and the 18 showcase treasures (lost button to the Golden Acorn) | 50 |
+| 3 | Furniture (fridge, stove, island, couch, armchair, aquarium, shed, bird bath...) | 31 |
 
 ## Generate them
 

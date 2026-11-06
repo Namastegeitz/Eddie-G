@@ -12,3 +12,5 @@ duration = 12.0
 points = 300
 color = Color(0.15, 0.9, 0.45, 1)
 blurb = "Calm: the alarm empties and stays empty for 12 seconds."
+rarity = 2
+found_in = "Backyard"

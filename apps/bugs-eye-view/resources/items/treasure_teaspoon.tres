@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="ItemDef" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/item_def.gd" id="1_fljji"]
+
+[resource]
+script = ExtResource("1_fljji")
+id = &"treasure_teaspoon"
+display_name = "Doll's Teaspoon"
+kind = 3
+duration = 0.0
+points = 200
+color = Color(0.35, 0.65, 1, 1)
+blurb = "Tiny, silver, and exactly your size."
+rarity = 1
+found_in = "Kitchen"

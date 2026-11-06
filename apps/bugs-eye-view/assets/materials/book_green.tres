@@ -1,0 +1,15 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/textures/fabric.png" id="1_kujep"]
+[ext_resource type="Texture2D" path="res://assets/textures/fabric_n.png" id="2_6a86p"]
+
+[resource]
+albedo_color = Color(0.17119999, 0.4066, 0.23539999, 1)
+albedo_texture = ExtResource("1_kujep")
+roughness = 0.7
+normal_enabled = true
+normal_scale = 0.5
+normal_texture = ExtResource("2_6a86p")
+uv1_scale = Vector3(0.25, 0.25, 0.25)
+uv1_triplanar = true
+uv1_triplanar_sharpness = 4.0

@@ -49,6 +49,8 @@ func _ready() -> void:
 		await _phase16()
 	if only in [0, 17]:
 		await _phase17()
+	if only in [0, 18]:
+		await _phase18()
 	finish("phase audit")
 
 
@@ -3230,11 +3232,11 @@ func _phase17() -> void:
 					tucked += 1
 				if pi.global_position.distance_to(lvl.player.global_position) > 20.0:
 					far += 1
-		var ok := n == 10 and kinds.size() == 5 and kinds.values().all(func(c: int) -> bool: return c == 2) and tucked == 10 and far == 10
+		var ok := n >= 10 and kinds.size() == 5 and kinds.values().all(func(c: int) -> bool: return c >= 2) and tucked == n and far == n
 		rooms_ok = rooms_ok and ok
 		detail.append("%s %d/%d tucked" % [level, tucked, n])
 		await unload(lvl)
-	check(rooms_ok, "every room hides ten power-ups, two of each kind, in hidden corners %s" % str(detail))
+	check(rooms_ok, "every room hides at least ten power-ups, two or more of each kind, in hidden corners and high places %s" % str(detail))
 
 	# Picking one up; what each does.
 	lvl = await load_level(&"kitchen", &"cockroach")
@@ -3249,6 +3251,10 @@ func _phase17() -> void:
 		if pi and lvl.is_ancestor_of(pi) and pi.is_power() and pi.def.id == &"power_turbo":
 			cup_power = pi
 			break
+	var power_total := 0
+	for it in get_tree().get_nodes_in_group(Phys.GROUP_ITEM):
+		if it is PickupItem and lvl.is_ancestor_of(it) and (it as PickupItem).is_power():
+			power_total += 1
 	var before_text := counter.text
 	p.teleport_to(Transform3D(Basis.IDENTITY, cup_power.global_position + Vector3.UP * 0.6))
 	await frames(10)
@@ -3257,7 +3263,7 @@ func _phase17() -> void:
 	for l: Array in score["lines"]:
 		line_ok = line_ok or String(l[0]).begins_with("Power-ups x1")
 	check(cup_power.taken and p.has_effect(&"turbo") and p.speed_scale() >= 1.59 and lvl.run.powerups == 1
-		and before_text == "POWER-UPS 0 / 10" and counter.text == "POWER-UPS 1 / 10" and line_ok,
+		and before_text == "POWER-UPS 0 / %d" % power_total and counter.text == "POWER-UPS 1 / %d" % power_total and line_ok,
 		"grabbing a power-up (Turbo): 60%% faster, counted on screen (%s) and in the score" % counter.text)
 	p.effects.clear()
 	p.teleport_to(Transform3D(Basis.IDENTITY, Vector3(40, 0.8, 30)))
@@ -3397,3 +3403,317 @@ func _phase17() -> void:
 		"on a wall, the spider's view is the wall's: up is away from the wall (%.2f)" % spc.global_basis.y.dot(sp.surface_normal))
 	SaveSystem.set_setting("first_person", false)
 	await unload(lvl)
+
+
+func _phase18() -> void:
+	print("-- Update: every bug climbs, jump-up routes, rare collectibles and the showcase")
+	SaveSystem.data = SaveSystem.default_data()
+
+	# Every bug climbs: push into the cupboards and you're up them, round the
+	# counter's lip and onto the top.
+	var lvl := await load_level(&"kitchen", &"cockroach")
+	HouseClock.set_hour(13.5)
+	var p := lvl.player
+	p.invuln = 1000.0
+	p.teleport_to(Transform3D(Basis.IDENTITY, Vector3(-30, 0.4, -16)))
+	face(lvl, 0.0)
+	await frames(5)
+	InputRouter.set_touch_move(Vector2(0, 1))
+	var climbed := false
+	var max_y := 0.0
+	var on_top := false
+	for i in 900:
+		await get_tree().physics_frame
+		climbed = climbed or p.climbing
+		max_y = maxf(max_y, p.global_position.y)
+		if not p.climbing and p.global_position.y > 37.5 and p.is_on_floor():
+			on_top = true
+			break
+	InputRouter.set_touch_move(Vector2.ZERO)
+	print("   roach climb: climbed=%s max_y=%.1f on_top=%s pos=%s" % [climbed, max_y, on_top, p.global_position])
+	check(climbed, "pushing into the cupboards starts a climb")
+	check(on_top, "the cockroach climbs the cupboards, round the counter's lip and onto the top (%.1f)" % max_y)
+
+	# Down again: pull back on a wall and you climb down, then walk off.
+	p.teleport_to(Transform3D(Basis.IDENTITY, Vector3(-30, 0.4, -16)))
+	face(lvl, 0.0)
+	await frames(3)
+	InputRouter.set_touch_move(Vector2(0, 1))
+	for i in 200:
+		await get_tree().physics_frame
+		if p.climbing and p.global_position.y > 12.0:
+			break
+	InputRouter.set_touch_move(Vector2(0, -1))
+	var down := false
+	for i in 600:
+		await get_tree().physics_frame
+		if not p.climbing and p.global_position.y < 1.0:
+			down = true
+			break
+	InputRouter.set_touch_move(Vector2.ZERO)
+	await frames(3)
+	check(down and p.motion_mode == CharacterBody3D.MOTION_MODE_GROUNDED and p.visual.global_basis.y.dot(Vector3.UP) > 0.9,
+		"pull back to climb down; at the floor you're walking again, upright")
+
+	# Leap off: Jump on a wall pushes you off it and you fall back to the floor.
+	InputRouter.set_touch_move(Vector2(0, 1))
+	for i in 200:
+		await get_tree().physics_frame
+		if p.climbing and p.global_position.y > 8.0:
+			break
+	InputRouter.set_touch_move(Vector2.ZERO)
+	var was_up := p.climbing
+	InputRouter.set_touch_action(&"jump", true)
+	await frames(2)
+	InputRouter.set_touch_action(&"jump", false)
+	var off := not p.climbing
+	var landed := false
+	for i in 240:
+		await get_tree().physics_frame
+		if p.is_on_floor():
+			landed = true
+			break
+	print("   leap: was_up=%s off=%s landed=%s pos=%s" % [was_up, off, landed, p.global_position])
+	check(was_up and off and landed and p.global_position.z > -20.0, "Jump leaps off the wall, away from it, and you land")
+
+	# Loose things you can push (a grape) get pushed, not climbed.
+	var grape: PhysicsProp = null
+	for pr in get_tree().get_nodes_in_group(Phys.GROUP_PROP):
+		if pr is PhysicsProp and lvl.is_ancestor_of(pr) and (pr as Node3D).global_position.distance_to(Vector3(0, 0.9, -5)) < 2.0:
+			grape = pr
+	p.teleport_to(Transform3D(Basis.IDENTITY, Vector3(0, 0.4, -1.5)))
+	face(lvl, 0.0)
+	await frames(3)
+	InputRouter.set_touch_move(Vector2(0, 1))
+	var climbed_grape := false
+	for i in 50:
+		await get_tree().physics_frame
+		climbed_grape = climbed_grape or p.climbing
+	InputRouter.set_touch_move(Vector2.ZERO)
+	check(grape != null and not climbed_grape, "a grape (a loose prop) gets pushed, not climbed")
+
+	# Through the bug's eyes on a wall: the view is the wall's.
+	SaveSystem.set_setting("first_person", true)
+	lvl.camera.set_first_person(true)
+	p.teleport_to(Transform3D(Basis.IDENTITY, Vector3(-30, 0.4, -16)))
+	face(lvl, 0.0)
+	await frames(3)
+	InputRouter.set_touch_move(Vector2(0, 1))
+	for i in 240:
+		await get_tree().physics_frame
+		if p.climbing and p.global_position.y > 10.0:
+			break
+	InputRouter.set_touch_move(Vector2.ZERO)
+	await frames(20)
+	var fpc := lvl.camera.camera
+	check(p.climbing and fpc.global_basis.y.dot(p.surface_normal) > 0.85,
+		"climbing through the bug's eyes: up is away from the wall (%.2f)" % fpc.global_basis.y.dot(p.surface_normal))
+	lvl.camera.set_first_person(false)
+	SaveSystem.set_setting("first_person", false)
+
+	# A table leg: up the leg, round the table top's edge and onto it.
+	p.teleport_to(Transform3D(Basis.IDENTITY, Vector3(-32.5, 0.4, 2)))
+	face(lvl, -PI * 0.5)
+	await frames(3)
+	InputRouter.set_touch_move(Vector2(0, 1))
+	var on_table := false
+	for i in 900:
+		await get_tree().physics_frame
+		if not p.climbing and p.global_position.y > 31.0 and p.is_on_floor():
+			on_table = true
+			break
+	InputRouter.set_touch_move(Vector2.ZERO)
+	print("   table: pos=%s climbing=%s" % [p.global_position, p.climbing])
+	check(on_table, "up a table leg, round the table top's edge and onto the table")
+	await unload(lvl)
+
+	# Every bug (bar the spider, which crawls its own way) climbs.
+	for bug: StringName in [&"ant", &"cricket", &"ladybug", &"stink_bug", &"fly", &"firefly"]:
+		lvl = await load_level(&"kitchen", bug)
+		HouseClock.set_hour(13.5)
+		p = lvl.player
+		p.invuln = 1000.0
+		p.teleport_to(Transform3D(Basis.IDENTITY, Vector3(-30, 0.4, -16)))
+		face(lvl, 0.0)
+		await frames(5)
+		InputRouter.set_touch_move(Vector2(0, 1))
+		var top := false
+		for i in 1500:
+			await get_tree().physics_frame
+			if not p.climbing and p.global_position.y > 37.5 and p.is_on_floor():
+				top = true
+				break
+		InputRouter.set_touch_move(Vector2.ZERO)
+		check(top, "the %s climbs the cupboards onto the counter (%s)" % [bug, p.global_position])
+		await unload(lvl)
+
+	# Bounce pads: every one flings a bug up onto its target.
+	var pads_ok := true
+	var pad_detail: PackedStringArray = []
+	for level in GameManager.LEVEL_IDS:
+		lvl = await load_level(level, &"cockroach")
+		HouseClock.set_hour(13.5)
+		p = lvl.player
+		p.invuln = 1000.0
+		var pads: Array[BouncePad] = []
+		for n in get_tree().get_nodes_in_group(&"bounce_pad"):
+			if lvl.is_ancestor_of(n):
+				pads.append(n as BouncePad)
+		for pad in pads:
+			# Drop onto the pad from just above it.
+			p.teleport_to(Transform3D(Basis.IDENTITY, (pad.get_node("Shape") as Node3D).global_position + Vector3.UP * 0.3))
+			var pad_landed := false
+			var launched := false
+			for i in 400:
+				await get_tree().physics_frame
+				launched = launched or p.global_position.y > pad.global_position.y + 4.0
+				if launched and p.is_on_floor() and p.velocity.y <= 0.1:
+					pad_landed = true
+					break
+			var miss := Vector2(p.global_position.x - pad.target.x, p.global_position.z - pad.target.z).length()
+			var ok := pad_landed and miss < 2.0 and absf(p.global_position.y - pad.target.y) < 1.0
+			pads_ok = pads_ok and ok
+			pad_detail.append("%s %s miss %.1f y %.1f/%.1f" % [level, pad.get_parent().name, miss, p.global_position.y, pad.target.y])
+		pads_ok = pads_ok and pads.size() == 3
+		await unload(lvl)
+	print("   pads: ", pad_detail)
+	check(pads_ok, "three bounce pads per room, each flinging you onto its high spot %s" % str(pad_detail))
+
+	# The junk towers: scramble up step by step (climbing each rise, hopping
+	# each gap) to the summit, picking up what's on the way.
+	var towers_ok := true
+	var tower_detail: PackedStringArray = []
+	for level in GameManager.LEVEL_IDS:
+		lvl = await load_level(level, &"cockroach")
+		HouseClock.set_hour(13.5)
+		p = lvl.player
+		p.invuln = 1000.0
+		var prefix: String = {&"kitchen": "GroceryTowerStep", &"living_room": "BookTowerStep", &"backyard": "PotTowerStep"}[level]
+		var steps: Array[Vector3] = []
+		for b in lvl.find_children(prefix + "*", "StaticBody3D", true, false):
+			var cs := (b as Node).get_node("Shape") as CollisionShape3D
+			var hh: float = (cs.shape as BoxShape3D).size.y * 0.5 if cs.shape is BoxShape3D else (cs.shape as CylinderShape3D).height * 0.5
+			steps.append((b as Node3D).global_position + Vector3.UP * hh)
+		steps.sort_custom(func(a: Vector3, b: Vector3) -> bool: return a.y < b.y)
+		var first := steps[0]
+		var out := Vector3(first.x - steps[-1].x, 0, first.z - steps[-1].z).normalized()
+		p.teleport_to(Transform3D(Basis.IDENTITY, Vector3(first.x, 0.4, first.z) + out * 7.0))
+		await frames(3)
+		var k := 0
+		var top_y := 0.0
+		for i in 3600:
+			var tgt := steps[k]
+			var d := Vector3(tgt.x - p.global_position.x, 0, tgt.z - p.global_position.z)
+			if p.global_position.y >= tgt.y and d.length() < 1.6:
+				k += 1
+				if k >= steps.size():
+					break
+				continue
+			if d.length() > 0.05:
+				face(lvl, atan2(-d.x, -d.z))
+			InputRouter.set_touch_move(Vector2(0, 1))
+			await get_tree().physics_frame
+			top_y = maxf(top_y, p.global_position.y)
+		InputRouter.set_touch_move(Vector2.ZERO)
+		var ok := k >= steps.size() and steps.size() == 8
+		towers_ok = towers_ok and ok
+		tower_detail.append("%s %d/%d steps, top %.1f of %.1f" % [level, k, steps.size(), top_y, steps[-1].y])
+		await unload(lvl)
+	print("   towers: ", tower_detail)
+	check(towers_ok, "each room's junk tower can be scrambled up, step by step, to the summit %s" % str(tower_detail))
+
+	# Treasures: six per room (two common, two rare, an epic and a legendary),
+	# the rare ones glowing and the great ones sending up a beam.
+	var tr_ok := true
+	var tr_detail: PackedStringArray = []
+	for level in GameManager.LEVEL_IDS:
+		lvl = await load_level(level, &"cockroach")
+		var counts := [0, 0, 0, 0]
+		var beams := 0
+		var gems := 0
+		for it in get_tree().get_nodes_in_group(Phys.GROUP_ITEM):
+			var pi := it as PickupItem
+			if pi == null or not lvl.is_ancestor_of(pi):
+				continue
+			if pi.is_treasure():
+				counts[pi.def.rarity] += 1
+				if pi.get_node_or_null("Beam") != null:
+					beams += 1
+			elif pi.is_gem():
+				gems += 1
+		var ok := counts == [2, 2, 1, 1] and beams == 2 and gems >= 4
+		tr_ok = tr_ok and ok
+		tr_detail.append("%s %s beams %d gems %d" % [level, str(counts), beams, gems])
+		await unload(lvl)
+	check(tr_ok, "every room has six treasures (2 common, 2 rare, 1 epic, 1 legendary) and gems all around %s" % str(tr_detail))
+
+	# Picking one up: it goes on the showcase, the banner says so, and the
+	# second time it's already there.
+	SaveSystem.data = SaveSystem.default_data()
+	lvl = await load_level(&"kitchen", &"cockroach")
+	p = lvl.player
+	p.invuln = 1000.0
+	var ring: PickupItem = null
+	for it in get_tree().get_nodes_in_group(Phys.GROUP_ITEM):
+		if it is PickupItem and lvl.is_ancestor_of(it) and (it as PickupItem).def.id == &"treasure_ring":
+			ring = it
+	var was_found := Collection.is_found(&"treasure_ring")
+	p.teleport_to(Transform3D(Basis.IDENTITY, ring.global_position + Vector3.UP * 0.4))
+	await frames(10)
+	var hud := lvl.find_child("HUD", true, false)
+	var banner := ""
+	if hud and hud.get("_pickup_title"):
+		banner = (hud.get("_pickup_title") as Label).text
+	check(ring != null and ring.taken and not was_found and Collection.is_found(&"treasure_ring") \
+		and lvl.run.new_treasures.has(&"treasure_ring") and lvl.run.best_rarity == 3,
+		"the Lost Wedding Ring goes on your showcase when you pick it up")
+	check(banner.contains("NEW!") and banner.contains("LEGENDARY"), "the banner shouts NEW! LEGENDARY (%s)" % banner)
+	var sc: Dictionary = lvl.run.score(GameManager.scoring, 240.0)
+	check((sc["lines"] as Array).any(func(l: Array) -> bool: return String(l[0]).begins_with("Treasures") and int(l[1]) == 1000)
+		and lvl.run.badges(240.0)["treasure_hunter"], "a legendary find scores 1000 and earns Treasure Hunter")
+	await unload(lvl)
+	lvl = await load_level(&"kitchen", &"cockroach")
+	p = lvl.player
+	p.invuln = 1000.0
+	for it in get_tree().get_nodes_in_group(Phys.GROUP_ITEM):
+		if it is PickupItem and lvl.is_ancestor_of(it) and (it as PickupItem).def.id == &"treasure_ring":
+			ring = it
+	p.teleport_to(Transform3D(Basis.IDENTITY, ring.global_position + Vector3.UP * 0.4))
+	await frames(10)
+	check(ring.taken and lvl.run.new_treasures.is_empty() and int(SaveSystem.treasures_found()["treasure_ring"]) == 2,
+		"found again: points, but it's already on the showcase (found x2)")
+	await unload(lvl)
+
+	# The showcase screen: every piece, room by room; found ones named.
+	var show := (load("res://scenes/ui/showcase.tscn") as PackedScene).instantiate()
+	add_child(show)
+	await frames(2)
+	var cards := show.find_children("Card_*", "", true, false)
+	var ring_card := show.find_child("Card_treasure_ring", true, false)
+	var ring_named := false
+	for l in ring_card.find_children("*", "Label", true, false):
+		ring_named = ring_named or (l as Label).text == "The Lost Wedding Ring"
+	var pearl_card := show.find_child("Card_treasure_pearl", true, false)
+	var pearl_hidden := false
+	for l in pearl_card.find_children("*", "Label", true, false):
+		pearl_hidden = pearl_hidden or (l as Label).text == "???"
+	check(cards.size() == 24 and ring_named and pearl_hidden and Collection.all_ids().size() == 24,
+		"the showcase lists all 24 pieces: found ones by name, the rest as ??? (%d)" % cards.size())
+	show.queue_free()
+	await frames(2)
+
+	# The home screen: a Showcase button and the trophy shelf with your finds.
+	SaveSystem.record_treasure(&"treasure_golden_acorn")
+	SaveSystem.record_gem(&"gem_ruby")
+	var menu := (load("res://scenes/ui/main_menu.tscn") as PackedScene).instantiate()
+	add_child(menu)
+	await frames(2)
+	var has_button := false
+	for b in menu.find_children("*", "Button", true, false):
+		has_button = has_button or (b as Button).text == "Showcase"
+	var shelf: Array = menu.get("shelf_items")
+	check(has_button and shelf.size() == 3 and Collection.best_found(7)[0] in [&"treasure_ring", &"treasure_golden_acorn"],
+		"the home screen has a Showcase button and a trophy shelf with your finds, rarest first (%d)" % shelf.size())
+	menu.queue_free()
+	await frames(2)
+

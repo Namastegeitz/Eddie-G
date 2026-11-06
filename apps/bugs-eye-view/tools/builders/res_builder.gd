@@ -47,6 +47,9 @@ const TEXTURED := {
 	"cloth_red": ["fabric", 6.0, 0.7], "cloth_blue": ["fabric", 8.0, 0.7],
 	"leaf_green": ["leaf", 10.0, 0.6], "leaves": ["leaf", 8.0, 0.6],
 	"metal": ["metal", 20.0, 0.4], "dark_metal": ["metal", 12.0, 0.4], "fridge_white": ["plaster", 40.0, 0.2],
+	# Climbing junk and bounce pads
+	"cardboard": ["plaster", 14.0, 0.5], "brick": ["patio", 12.0, 1.0], "terracotta": ["stone", 10.0, 0.6],
+	"sponge": ["carpet", 4.0, 1.0], "scourer": ["carpet", 3.0, 1.0], "book_green": ["fabric", 4.0, 0.5],
 	# People
 	"skin": ["skin", 6.0, 0.5], "hair": ["hair", 4.0, 0.8], "jeans": ["denim", 4.0, 0.8],
 	"shirt": ["fabric", 3.0, 0.7], "hazmat": ["fabric", 6.0, 0.5], "shoe": ["stone", 5.0, 0.5],
@@ -197,6 +200,24 @@ static func materials(force: bool) -> void:
 		"pet_eye_dog": _mat(Color(0.3, 0.17, 0.08), 0.04),
 		"pet_eye_cat": _mat(Color(0.45, 0.75, 0.25), 0.04),
 		"cat_stripe": _mat(Color(0.62, 0.32, 0.1), 0.9),
+		# Climbing junk and bounce pads.
+		"cardboard": _mat(Color(0.66, 0.5, 0.32), 0.9),
+		"label_red": _mat(Color(0.78, 0.2, 0.15), 0.5, 0.1),
+		"label_blue": _mat(Color(0.2, 0.38, 0.75), 0.5, 0.1),
+		"book_green": _mat(Color(0.16, 0.38, 0.22), 0.7),
+		"terracotta": _mat(Color(0.72, 0.36, 0.2), 0.85),
+		"brick": _mat(Color(0.6, 0.24, 0.16), 0.9),
+		"sponge": _mat(Color(0.98, 0.84, 0.25), 1.0),
+		"scourer": _mat(Color(0.22, 0.55, 0.25), 1.0),
+		"mushroom": _mat(Color(0.85, 0.15, 0.12), 0.45),
+		# Treasures: a beam over the epic and legendary ones.
+		"rarity_beam": _mat(Color(1.0, 0.8, 0.3, 0.22), 1.0, 0.0, true, true),
+		"rarity_beam_epic": _mat(Color(0.75, 0.4, 1.0, 0.2), 1.0, 0.0, true, true),
+		"pearl": _mat(Color(0.96, 0.94, 0.9), 0.15, 0.2, false, false, Color(0.9, 0.9, 1.0, 0.25)),
+		"silver": _mat(Color(0.8, 0.82, 0.86), 0.22, 0.55, false, false, Color(0.75, 0.8, 0.9, 0.18)),
+		"gold": _mat(Color(0.93, 0.68, 0.22), 0.25, 0.6, false, false, Color(1.0, 0.62, 0.15, 0.3)),
+		"acorn": _mat(Color(0.55, 0.36, 0.17), 0.7),
+		"shell": _mat(Color(0.82, 0.68, 0.48), 0.5),
 		# Power-up tokens: glowing coins.
 		"power_turbo": _mat(Color(0.2, 0.85, 1.0), 0.25, 0.3, false, false, Color(0.2, 0.8, 1.0, 1.6)),
 		"power_spring": _mat(Color(0.55, 1.0, 0.25), 0.25, 0.3, false, false, Color(0.5, 1.0, 0.2, 1.6)),
@@ -210,9 +231,9 @@ static func materials(force: bool) -> void:
 			_texture(mat, TEXTURED[k])
 			if k in ANISOTROPIC:
 				mat.texture_filter = BaseMaterial3D.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS_ANISOTROPIC
-		if k in ["web", "beacon", "shadow_tint", "light_tint", "gust", "spray", "fog", "heat", "stink_cloud"]:
+		if k in ["web", "beacon", "shadow_tint", "light_tint", "gust", "spray", "fog", "heat", "stink_cloud", "rarity_beam", "rarity_beam_epic"]:
 			mat.cull_mode = BaseMaterial3D.CULL_DISABLED
-		if k in ["shadow_tint", "light_tint", "gust", "beacon", "heat"]:
+		if k in ["shadow_tint", "light_tint", "gust", "beacon", "heat", "rarity_beam", "rarity_beam_epic"]:
 			mat.disable_receive_shadows = true
 		save(mat, MAT_DIR + k + ".tres", force)
 
@@ -256,6 +277,9 @@ static func items(force: bool) -> void:
 		["power_shrink", "Shrink", ItemDef.Kind.POWER, &"shrink", 15.0, 0.55, 120, Color(0.85, 0.4, 1.0),
 			"Tiny for 15 seconds: any gap hides you and you're hard to see."],
 	]
+	# Crumb gems are showcase pieces too.
+	var gem_rarity := {"gem_amber": [1, "Kitchen"], "gem_diamond": [3, "Kitchen"], "gem_amethyst": [1, "Living Room"],
+		"gem_sapphire": [2, "Living Room"], "gem_ruby": [2, "Backyard"], "gem_emerald": [2, "Backyard"]}
 	for d: Array in defs:
 		var it := ItemDef.new()
 		it.id = StringName(d[0])
@@ -267,7 +291,46 @@ static func items(force: bool) -> void:
 		it.points = d[6]
 		it.color = d[7]
 		it.blurb = d[8]
+		if gem_rarity.has(d[0]):
+			it.rarity = gem_rarity[d[0]][0]
+			it.found_in = gem_rarity[d[0]][1]
 		save(it, "res://resources/items/%s.tres" % d[0], force)
+	for d: Array in TREASURES:
+		var it := ItemDef.new()
+		it.id = StringName(d[0])
+		it.display_name = d[1]
+		it.kind = ItemDef.Kind.TREASURE
+		it.rarity = d[2]
+		it.found_in = d[3]
+		it.points = [75, 200, 450, 1000][int(d[2])]
+		it.color = ItemDef.RARITY_COLORS[int(d[2])]
+		it.duration = 0.0
+		it.blurb = d[4]
+		save(it, "res://resources/items/%s.tres" % d[0], force)
+
+
+## Lost trinkets for the showcase: [id, name, rarity 0-3, room, blurb].
+## Common ones sit low; legendary ones crown the hardest climbs.
+const TREASURES := [
+	["treasure_button", "Lost Button", 0, "Kitchen", "Popped off a shirt. A fine shield for a bug."],
+	["treasure_bead", "Glass Bead", 0, "Kitchen", "Rolled under everything. Shines like a moon."],
+	["treasure_teaspoon", "Doll's Teaspoon", 1, "Kitchen", "Tiny, silver, and exactly your size."],
+	["treasure_sea_glass", "Sea Glass", 1, "Kitchen", "Worn smooth by a faraway sea."],
+	["treasure_thimble", "Golden Thimble", 2, "Kitchen", "A golden helmet fit for a beetle king."],
+	["treasure_ring", "The Lost Wedding Ring", 3, "Kitchen", "Everyone searched for weeks. You found it."],
+	["treasure_toy_brick", "Toy Brick", 0, "Living Room", "Four studs and a lot of pain for bare feet."],
+	["treasure_marble", "Cat's-Eye Marble", 0, "Living Room", "A swirl of colour frozen in glass."],
+	["treasure_pearl", "Loose Pearl", 1, "Living Room", "Slipped off a necklace long ago."],
+	["treasure_gear", "Watch Gear", 1, "Living Room", "Still remembers ticking."],
+	["treasure_earring", "Crystal Earring", 2, "Living Room", "Throws rainbows across the room."],
+	["treasure_brooch", "Grandma's Star Brooch", 3, "Living Room", "Gold and ruby, lost behind the books for years."],
+	["treasure_acorn_cap", "Acorn Cap", 0, "Backyard", "A perfect little bowl. Or hat."],
+	["treasure_snail_shell", "Spiral Snail Shell", 0, "Backyard", "Nobody's home. Lovely spiral, though."],
+	["treasure_old_coin", "Old Coin", 1, "Backyard", "Dug up from under the lawn, older than the house."],
+	["treasure_beetle_shell", "Jewel Beetle Shell", 1, "Backyard", "Green and gold like a cousin's armour."],
+	["treasure_clover", "Four-Leaf Clover", 2, "Backyard", "One in ten thousand. Lucky you."],
+	["treasure_golden_acorn", "The Golden Acorn", 3, "Backyard", "The legend of the yard. Solid gold."],
+]
 
 
 static func configs(force: bool) -> void:
@@ -288,6 +351,7 @@ static func bugs(force: bool) -> void:
 	r.max_hits = 2
 	r.knockdown_time = 1.0
 	r.move_speed = 9.0
+	r.climb_speed_mult = 0.8
 	r.sprint_speed = 15.0
 	r.acceleration = 70.0
 	r.jump_velocity = 7.0
@@ -300,6 +364,7 @@ static func bugs(force: bool) -> void:
 	r.push_force = 0.6
 	r.tagline = "Fast, tough, and gone the moment the lights come on."
 	r.guide = PackedStringArray([
+		"move|Push into a wall, cupboard or table leg to climb it; walk over the top onto it",
 		"primary|Sprint: run faster - louder and easier to spot",
 		"secondary|Squeeze: flatten into gaps to hide completely",
 		"jump|Hop over small things",
@@ -321,6 +386,7 @@ static func bugs(force: bool) -> void:
 	f.rating_toughness = 0.2
 	f.max_hits = 1
 	f.move_speed = 4.0
+	f.climb_speed_mult = 0.9
 	f.acceleration = 50.0
 	f.flight_speed = 13.0
 	f.boost_speed = 21.0
@@ -340,6 +406,7 @@ static func bugs(force: bool) -> void:
 	# Compound eyes see almost all the way round.
 	f.fp_fov = 100.0
 	f.guide = PackedStringArray([
+		"move|Push into a wall, cupboard or table leg to climb it; walk over the top onto it",
 		"jump|Take off, and fly up",
 		"secondary|Fly down, land, or cling to a wall or ceiling",
 		"primary|Boost: faster, but tiring",
@@ -374,6 +441,7 @@ static func bugs(force: bool) -> void:
 	s.rating_toughness = 0.3
 	s.max_hits = 1
 	s.move_speed = 7.0
+	s.can_climb = false
 	s.floor_speed_mult = 0.6
 	s.wall_speed = 7.5
 	s.jump_velocity = 9.0
@@ -410,6 +478,7 @@ static func _new_bugs(force: bool) -> void:
 	a.rating_toughness = 0.2
 	a.max_hits = 1
 	a.move_speed = 5.5
+	a.climb_speed_mult = 0.95
 	a.sprint_speed = 9.0
 	a.jump_velocity = 6.0
 	a.push_force = 0.2
@@ -422,6 +491,7 @@ static func _new_bugs(force: bool) -> void:
 	a.ability_duration = 7.0
 	a.sense_max = 5.0
 	a.guide = PackedStringArray([
+		"move|Push into a wall, cupboard or table leg to climb it; walk over the top onto it",
 		"primary|Sprint",
 		"secondary|Decoys: a column of ants marches off - threats follow them",
 		"jump|Hop",
@@ -446,6 +516,7 @@ static func _new_bugs(force: bool) -> void:
 	c.rating_toughness = 0.35
 	c.max_hits = 1
 	c.move_speed = 6.0
+	c.climb_speed_mult = 0.6
 	c.sprint_speed = 6.0
 	c.visibility_mult = 0.9
 	c.noise_mult = 0.8
@@ -454,6 +525,7 @@ static func _new_bugs(force: bool) -> void:
 	c.ability_cooldown = 5.0
 	c.ability_radius = 24.0
 	c.guide = PackedStringArray([
+		"move|Push into a wall, cupboard or table leg to climb it; walk over the top onto it",
 		"jump|Hold to crouch and charge, let go to leap (aim with the stick)",
 		"primary|Chirp: throw your voice ahead - threats go to look there",
 		"secondary|Squeeze into gaps",
@@ -478,6 +550,7 @@ static func _new_bugs(force: bool) -> void:
 	l.max_hits = 2
 	l.knockdown_time = 0.6
 	l.move_speed = 5.5
+	l.climb_speed_mult = 0.7
 	l.sprint_speed = 5.5
 	l.jump_velocity = 7.0
 	l.visibility_mult = 1.15
@@ -487,6 +560,7 @@ static func _new_bugs(force: bool) -> void:
 	l.ability_meter_max = 4.0
 	l.ability_duration = 3.0
 	l.guide = PackedStringArray([
+		"move|Push into a wall, cupboard or table leg to climb it; walk over the top onto it",
 		"primary|Shell up (hold): nothing can hurt you, but you can't move",
 		"jump|Hop - hold it in the air to flutter down gently",
 		"secondary|Squeeze into gaps",
@@ -512,6 +586,7 @@ static func _new_bugs(force: bool) -> void:
 	f.rating_toughness = 0.2
 	f.max_hits = 1
 	f.move_speed = 4.0
+	f.climb_speed_mult = 0.85
 	f.acceleration = 50.0
 	f.flight_speed = 12.5
 	f.boost_speed = 20.0
@@ -530,6 +605,7 @@ static func _new_bugs(force: bool) -> void:
 	f.dodge_duration = 0.15
 	f.dodge_cooldown = 0.7
 	f.guide = PackedStringArray([
+		"move|Push into a wall, cupboard or table leg to climb it; walk over the top onto it",
 		"jump|Take off, and fly up",
 		"secondary|Fly down, land, or cling to a wall or ceiling",
 		"primary|Boost",
@@ -554,6 +630,7 @@ static func _new_bugs(force: bool) -> void:
 	k.max_hits = 3
 	k.knockdown_time = 0.8
 	k.move_speed = 4.5
+	k.climb_speed_mult = 0.65
 	k.sprint_speed = 4.5
 	k.jump_velocity = 6.0
 	k.visibility_mult = 0.95
@@ -564,6 +641,7 @@ static func _new_bugs(force: bool) -> void:
 	k.ability_duration = 6.0
 	k.ability_radius = 9.0
 	k.guide = PackedStringArray([
+		"move|Push into a wall, cupboard or table leg to climb it; walk over the top onto it",
 		"primary|Stink cloud: pets bolt, people cough and can't see",
 		"secondary|Squeeze into gaps",
 		"jump|Hop",

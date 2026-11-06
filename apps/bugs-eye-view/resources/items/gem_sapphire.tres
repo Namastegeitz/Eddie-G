@@ -12,3 +12,5 @@ amount = 3.0
 points = 300
 color = Color(0.15, 0.35, 1, 1)
 blurb = "Echo Decoy: a humming shard lures threats to where you stood."
+rarity = 2
+found_in = "Living Room"

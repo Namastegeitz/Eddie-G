@@ -580,6 +580,114 @@
       "tier": 1,
       "target_polycount": 7000,
       "prompt": "A brown marmorated stink bug: broad flat shield-shaped body, mottled grey-brown with pale banded edges, banded antennae, six legs, facing forward."
+    },
+    {
+      "id": "treasure_button",
+      "tier": 2,
+      "target_polycount": 1500,
+      "prompt": "A round red plastic sewing button with four holes and a raised rim, standing on its edge, game collectible."
+    },
+    {
+      "id": "treasure_bead",
+      "tier": 2,
+      "target_polycount": 1500,
+      "prompt": "A round blue glass bead with a hole through the middle, glossy and translucent, game collectible."
+    },
+    {
+      "id": "treasure_teaspoon",
+      "tier": 2,
+      "target_polycount": 1500,
+      "prompt": "A tiny ornate silver doll's teaspoon with a curled handle, polished, game collectible."
+    },
+    {
+      "id": "treasure_sea_glass",
+      "tier": 2,
+      "target_polycount": 1500,
+      "prompt": "A smooth frosted piece of green sea glass, rounded pebble shape, softly glowing, game collectible."
+    },
+    {
+      "id": "treasure_thimble",
+      "tier": 2,
+      "target_polycount": 1500,
+      "prompt": "A golden sewing thimble covered in tiny dimples with a decorated band, shining, game collectible."
+    },
+    {
+      "id": "treasure_ring",
+      "tier": 2,
+      "target_polycount": 1500,
+      "prompt": "A gold wedding ring with a single round diamond in a raised setting, standing upright, sparkling, legendary game collectible."
+    },
+    {
+      "id": "treasure_toy_brick",
+      "tier": 2,
+      "target_polycount": 1500,
+      "prompt": "A red plastic toy building brick with four round studs on top, glossy, game collectible."
+    },
+    {
+      "id": "treasure_marble",
+      "tier": 2,
+      "target_polycount": 1500,
+      "prompt": "A clear blue glass marble with an orange cat's-eye swirl inside, glossy, game collectible."
+    },
+    {
+      "id": "treasure_pearl",
+      "tier": 2,
+      "target_polycount": 1500,
+      "prompt": "A single lustrous white pearl, smooth and iridescent, game collectible."
+    },
+    {
+      "id": "treasure_gear",
+      "tier": 2,
+      "target_polycount": 1500,
+      "prompt": "A small brass watch gear with ten teeth and a dark hub, standing on its edge, game collectible."
+    },
+    {
+      "id": "treasure_earring",
+      "tier": 2,
+      "target_polycount": 1500,
+      "prompt": "A crystal drop earring: a silver hook holding a faceted purple teardrop crystal, sparkling, game collectible."
+    },
+    {
+      "id": "treasure_brooch",
+      "tier": 2,
+      "target_polycount": 1500,
+      "prompt": "A vintage gold five-pointed star brooch with a red ruby in the centre, standing upright, legendary game collectible."
+    },
+    {
+      "id": "treasure_acorn_cap",
+      "tier": 2,
+      "target_polycount": 1500,
+      "prompt": "An empty brown acorn cap with a textured scaly surface and a short stem, upside down like a bowl, game collectible."
+    },
+    {
+      "id": "treasure_snail_shell",
+      "tier": 2,
+      "target_polycount": 1500,
+      "prompt": "An empty spiral snail shell, creamy brown with darker bands, game collectible."
+    },
+    {
+      "id": "treasure_old_coin",
+      "tier": 2,
+      "target_polycount": 1500,
+      "prompt": "An old worn gold coin with a raised rim and a faded face in relief, standing on its edge, game collectible."
+    },
+    {
+      "id": "treasure_beetle_shell",
+      "tier": 2,
+      "target_polycount": 1500,
+      "prompt": "An iridescent green and gold jewel beetle wing case, oval and glossy, game collectible."
+    },
+    {
+      "id": "treasure_clover",
+      "tier": 2,
+      "target_polycount": 1500,
+      "prompt": "A four-leaf clover with a short stem, bright green heart-shaped leaves, game collectible."
+    },
+    {
+      "id": "treasure_golden_acorn",
+      "tier": 2,
+      "target_polycount": 1500,
+      "prompt": "A solid gold acorn with a textured cap and a little stem, shining, legendary game collectible."
     }
   ]
 }

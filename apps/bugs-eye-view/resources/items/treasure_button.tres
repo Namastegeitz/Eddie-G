@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="ItemDef" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/item_def.gd" id="1_5mxej"]
+
+[resource]
+script = ExtResource("1_5mxej")
+id = &"treasure_button"
+display_name = "Lost Button"
+kind = 3
+duration = 0.0
+points = 75
+color = Color(0.85, 0.88, 0.92, 1)
+blurb = "Popped off a shirt. A fine shield for a bug."
+found_in = "Kitchen"

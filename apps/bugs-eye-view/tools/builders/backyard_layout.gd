@@ -193,6 +193,30 @@ static func build(tree: SceneTree) -> void:
 	g.item("power_turbo", Vector3(66, 0, 96))  # behind the rock in the back corner
 	g.item("power_radar", Vector3(-55, 20, 40))  # on the doghouse roof
 
+	# --- Climbing: a flowerpot tower and bouncy mushrooms ---
+	var tower := g.junk_tower("PotTower", Vector3(78, 0, -38), "garden", 7, 4.5, 7.0, PI)
+	g.item("treasure_acorn_cap", tower[1])
+	g.item("power_spring", tower[3])
+	g.item("treasure_beetle_shell", tower[5])
+	g.item("treasure_clover", tower[7])
+	# Mushrooms fling you up: onto the shed roof, into the bird bath and onto
+	# the picnic table.
+	g.bounce_pad("ShedMushroom", Vector3(58, 0, 86), Vector3(6, 3, 6), "mushroom", Vector3(86, 39, 84), 6.0)
+	g.bounce_pad("BathMushroom", Vector3(40, 0, 72), Vector3(5, 2.6, 5), "mushroom", Vector3(55, 23, 67), 4.0)
+	g.bounce_pad("PicnicMushroom", Vector3(10, 0, 22), Vector3(5, 2.6, 5), "mushroom", Vector3(-8, 26.75, 15), 4.0)
+	# Treasures, gems and more power-ups up high.
+	g.item("treasure_golden_acorn", Vector3(96, 39, 90))  # on the shed roof
+	g.item("treasure_snail_shell", Vector3(-60, 8, 72))  # on the woodpile
+	g.item("treasure_old_coin", Vector3(-30, 26.75, 10))  # on the picnic table
+	g.item("gem_amethyst", Vector3(35, 17, -38))  # on the grill lid
+	g.item("gem_diamond", Vector3(40, 80, -62))  # along the top of the house wall
+	g.item("gem_amber", Vector3(30, 12, -10))  # on the gnome's hat
+	g.item("power_turbo", Vector3(-34, 26.75, 20))  # on the picnic table
+	g.item("power_double", Vector3(82, 39, 80))  # on the shed roof
+	g.item("power_radar", Vector3(55, 23, 77))  # in the bird bath
+	g.item("power_shrink", Vector3(-30, 14.75, 27))  # on the bench
+	g.item("power_turbo", Vector3(55, 5, 30))  # on the rock
+
 	# --- Threats ---
 	g.human("res://scenes/threats/human.tscn",
 		[Vector3(-45, 0, -14), Vector3(30, 0, -28), Vector3(80, 0, 22), Vector3(82, 0, 55), Vector3(32, 0, 52),

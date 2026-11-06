@@ -36,6 +36,8 @@ func stamina_name() -> String:
 func _action_pressed(a: StringName) -> void:
 	match a:
 		&"jump":
+			if climbing:
+				return
 			_jump_queued = false
 			if is_on_floor() and not leaping:
 				charging = true
@@ -103,6 +105,12 @@ func _custom_move(delta: float) -> bool:
 			leaping = false
 			AudioManager.play(&"thud", -14.0, 1.7)
 			PerceptionSystem.emit_player_noise(global_position, 0.8 * stats.noise_mult)
+		else:
+			# Leap at a wall, holding towards it: grab on.
+			try_grab_wall(delta * 2.0)
+			if climbing:
+				leaping = false
+				AudioManager.play(&"thud", -16.0, 2.0)
 		return true
 	return false
 
@@ -132,6 +140,14 @@ func chirp_spot() -> Vector3:
 	var spot: Vector3 = (hit["position"] as Vector3) - fwd * 1.0 if not hit.is_empty() else to
 	spot.y = global_position.y
 	return spot
+
+
+func launch(vel: Vector3, flight_time: float) -> bool:
+	if not super.launch(vel, flight_time):
+		return false
+	charging = false
+	leaping = false
+	return true
 
 
 func teleport_to(xform: Transform3D) -> void:

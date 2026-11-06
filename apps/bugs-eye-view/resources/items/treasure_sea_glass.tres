@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="ItemDef" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/item_def.gd" id="1_dbpsd"]
+
+[resource]
+script = ExtResource("1_dbpsd")
+id = &"treasure_sea_glass"
+display_name = "Sea Glass"
+kind = 3
+duration = 0.0
+points = 200
+color = Color(0.35, 0.65, 1, 1)
+blurb = "Worn smooth by a faraway sea."
+rarity = 1
+found_in = "Kitchen"

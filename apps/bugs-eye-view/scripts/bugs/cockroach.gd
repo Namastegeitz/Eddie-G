@@ -44,8 +44,8 @@ func _move(delta: float) -> void:
 	speed *= speed_scale()
 	ground_move(delta, speed)
 	face_velocity(delta)
-	_playing_dead = is_frozen() and _suspicious_threat_near()
-	if visual:
+	_playing_dead = is_frozen() and _suspicious_threat_near() and not climbing
+	if visual and not climbing and _settle <= 0.0:
 		var target_y := (0.5 if is_squeezing else 1.0) * size_mult()
 		visual.scale.y = lerpf(visual.scale.y, target_y, clampf(12.0 * delta, 0.0, 1.0))
 		if knockdown <= 0.0:

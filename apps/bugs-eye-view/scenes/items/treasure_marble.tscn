@@ -1,0 +1,51 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/world/pickup_item.gd" id="1_bcqdb"]
+[ext_resource type="Resource" path="res://resources/items/treasure_marble.tres" id="2_1lihf"]
+[ext_resource type="Material" path="res://assets/materials/gem_sapphire.tres" id="3_rht7l"]
+[ext_resource type="Material" path="res://assets/materials/gem_amber.tres" id="4_1k6yk"]
+[ext_resource type="Script" path="res://scripts/core/skin_anchor.gd" id="5_ovd45"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_3xlrp"]
+radius = 1.5
+
+[sub_resource type="SphereMesh" id="SphereMesh_foj68"]
+radius = 0.62
+height = 1.24
+radial_segments = 20
+rings = 10
+
+[sub_resource type="BoxMesh" id="BoxMesh_2gmqs"]
+size = Vector3(0.14, 0.95, 0.32)
+
+[node name="TreasureMarble" type="Area3D" unique_id=1723737500]
+script = ExtResource("1_bcqdb")
+def = ExtResource("2_1lihf")
+
+[node name="Shape" type="CollisionShape3D" parent="." unique_id=720896762]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 0)
+shape = SubResource("SphereShape3D_3xlrp")
+
+[node name="Visual" type="Node3D" parent="." unique_id=405396389]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 0)
+
+[node name="Glass" type="MeshInstance3D" parent="Visual" unique_id=2088495995]
+material_override = ExtResource("3_rht7l")
+visibility_range_end = 50.0
+visibility_range_end_margin = 7.5
+visibility_range_fade_mode = 1
+mesh = SubResource("SphereMesh_foj68")
+
+[node name="Swirl" type="MeshInstance3D" parent="Visual" unique_id=429932943]
+transform = Transform3D(0.8634798, -0.21125089, 0.45801273, 0.37202555, 0.87992316, -0.29552022, -0.3405871, 0.42556816, 0.83838665, 0, 0, 0)
+material_override = ExtResource("4_1k6yk")
+visibility_range_end = 50.0
+visibility_range_end_margin = 7.5
+visibility_range_fade_mode = 1
+mesh = SubResource("BoxMesh_2gmqs")
+
+[node name="Skin" type="Node3D" parent="Visual" unique_id=1374768295]
+script = ExtResource("5_ovd45")
+model_id = "treasure_marble"
+fit_size = Vector3(1.6, 1.6, 1.6)
+hide_paths = Array[NodePath]([NodePath("../Glass"), NodePath("../Swirl")])

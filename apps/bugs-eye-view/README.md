@@ -86,8 +86,18 @@ digs holes you can hide in.
 **Bug's-eye view**: switch to first person (V / EYES) and play through your
 bug's own eyes, with its antennae, mouthparts and front legs moving in view,
 a per-bug field of view and compound-eye facets for flies. **Shift** dashes
-on a tap and runs while held. **Power-ups**: ten hidden in the corners of every
-room (Turbo, Spring Legs, Bug Radar, Double Crumbs, Shrink).
+on a tap and runs while held. **Power-ups**: sixteen per room, hidden in the
+corners and up high (Turbo, Spring Legs, Bug Radar, Double Crumbs, Shrink).
+
+**Climbing**: every bug walks up walls, cupboards, table legs and anything
+solid, clambers round counter lips and walks over the top; Jump leaps off.
+Each room has a **junk tower** (a spiral staircase of groceries, books or
+flowerpots) and three **bounce pads** (sponges, cushions, mushrooms) that
+fling you onto the counter, the fridge, the bookshelf, the shed roof.
+**Treasures**: 18 lost trinkets from common to legendary (the Lost Wedding
+Ring, Grandma's Star Brooch, the Golden Acorn) plus the crumb gems, collected
+into a **showcase** on the home screen: a trophy shelf of your rarest finds
+and a Showcase screen of all 24.
 
 **Look and feel**: high-resolution textures on every surface (tiles, wood
 grain, flagstones, grass, carpet, fabric, denim, fur, bug shells) with bump

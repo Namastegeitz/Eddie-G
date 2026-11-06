@@ -19,9 +19,14 @@ var food_points: int = 0
 ## Ids of crumb gems collected this run.
 var gems: Array[StringName] = []
 var gem_points: int = 0
-## Power-ups found this run (ten per room).
+## Power-ups found this run.
 var powerups: int = 0
 var power_points: int = 0
+## Treasures picked up this run, and the ones new to the showcase.
+var treasures: Array[StringName] = []
+var new_treasures: Array[StringName] = []
+var treasure_points: int = 0
+var best_rarity: int = -1
 var won: bool = false
 var cause: StringName = &""
 
@@ -33,6 +38,7 @@ func badges(par_time: float) -> Dictionary:
 		"golden": golden,
 		"gem_hunter": won and gems.size() >= 2,
 		"power_hunter": powerups >= 10,
+		"treasure_hunter": best_rarity >= 3,
 	}
 
 
@@ -48,6 +54,8 @@ func score(cfg: ScoringConfig, par_time: float) -> Dictionary:
 		lines.append(["Crumb gems x%d" % gems.size(), gem_points])
 	if powerups > 0:
 		lines.append(["Power-ups x%d" % powerups, power_points])
+	if not treasures.is_empty():
+		lines.append(["Treasures x%d" % treasures.size(), treasure_points])
 	if close_calls > 0:
 		lines.append(["Close calls x%d" % close_calls, close_calls * cfg.close_call_points])
 	if pesters > 0:

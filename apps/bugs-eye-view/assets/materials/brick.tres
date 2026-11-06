@@ -1,0 +1,14 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/textures/patio.png" id="1_1eubl"]
+[ext_resource type="Texture2D" path="res://assets/textures/patio_n.png" id="2_43o2f"]
+
+[resource]
+albedo_color = Color(0.642, 0.2568, 0.17119999, 1)
+albedo_texture = ExtResource("1_1eubl")
+roughness = 0.9
+normal_enabled = true
+normal_texture = ExtResource("2_43o2f")
+uv1_scale = Vector3(0.083333336, 0.083333336, 0.083333336)
+uv1_triplanar = true
+uv1_triplanar_sharpness = 4.0

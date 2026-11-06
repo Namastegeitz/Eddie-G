@@ -542,9 +542,9 @@ func _spill_puddle() -> void:
 	w.add_child(mi)
 	get_parent().add_child(w)
 	w.global_position = at + Vector3.UP * 0.6
-	get_tree().create_timer(30.0).timeout.connect(func() -> void:
-		if is_instance_valid(w):
-			w.queue_free())
+	# Bound to the puddle itself, so the link goes when the puddle does (a
+	# lambda holding it would fire on a freed node after leaving the room).
+	get_tree().create_timer(30.0).timeout.connect(w.queue_free)
 
 
 func _can_dig_here() -> bool:

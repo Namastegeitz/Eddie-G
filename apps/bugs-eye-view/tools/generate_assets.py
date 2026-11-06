@@ -261,6 +261,31 @@ def build_npc_sfx():
     write("shake", spray, peak=0.5)
 
 
+def build_climb_sfx():
+    """Bounce pads and treasures: a springy boing, a treasure chime and a
+    bigger fanfare for legendary finds. Own RNG, so it can run on its own."""
+    os.makedirs(SFX, exist_ok=True)
+    n = lambda d: int(RATE * d)
+    # Boing: a pitch that wobbles down, like a sproingy spring.
+    t = t_axis(0.5)
+    f = 180 + 260 * np.exp(-t * 6) * (1 + 0.25 * np.sin(2 * math.pi * 14 * t))
+    boing = np.sin(2 * math.pi * np.cumsum(f) / RATE) * np.exp(-t * 5)
+    write("boing", boing, peak=0.7)
+    # Treasure: a bright bell arpeggio.
+    notes = [(784, 0.0), (988, 0.07), (1175, 0.14), (1568, 0.21)]
+    chime = sum((tone(fr, 0.9) + 0.4 * tone(fr * 2.01, 0.9)) * np.exp(-np.maximum(t_axis(0.9) - d, 0) * 6) * (t_axis(0.9) > d)
+                for fr, d in notes)
+    write("treasure", chime, peak=0.75)
+    # Legendary: a rising triad held over a shimmer.
+    local = np.random.default_rng(23)
+    dur = 1.6
+    tt = t_axis(dur)
+    triad = sum(tone(fr, dur, "tri") * (tt > d) * np.exp(-np.maximum(tt - d, 0) * 1.8)
+                for fr, d in [(523, 0.0), (659, 0.12), (784, 0.24), (1047, 0.36)])
+    shimmer = highpass(local.uniform(-1, 1, n(dur)), 6000) * 0.12 * np.exp(-tt * 1.5)
+    write("treasure_legendary", triad * env(n(dur), 0.01, 0.6) + shimmer, peak=0.8)
+
+
 def build_view_overlays():
     """Bug's-eye view overlays: a soft dark vignette (looking out from inside a
     tiny head) and compound-eye facets for flies, both clear in the middle."""
@@ -371,6 +396,7 @@ if __name__ == "__main__":
     build_pet_sfx()
     build_bug_sfx()
     build_npc_sfx()
+    build_climb_sfx()
     build_view_overlays()
     build_icons()
     print("assets generated")

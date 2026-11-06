@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="ItemDef" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/item_def.gd" id="1_3vluy"]
+
+[resource]
+script = ExtResource("1_3vluy")
+id = &"treasure_clover"
+display_name = "Four-Leaf Clover"
+kind = 3
+duration = 0.0
+points = 450
+color = Color(0.78, 0.45, 1, 1)
+blurb = "One in ten thousand. Lucky you."
+rarity = 2
+found_in = "Backyard"

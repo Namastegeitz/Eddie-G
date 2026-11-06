@@ -26,7 +26,7 @@ func _bug_setup() -> void:
 
 
 func get_action_labels() -> Dictionary:
-	return {"primary": "Shell up", "secondary": "Squeeze", "jump": "Flutter" if not is_on_floor() else "Hop",
+	return {"primary": "Shell up", "secondary": "Squeeze", "jump": "Flutter" if not is_on_floor() and not climbing else "Hop",
 		"dodge": "Run", "interact": "Use", "sense": "Antennae"}
 
 
@@ -54,14 +54,14 @@ func _custom_move(delta: float) -> bool:
 
 
 func _ground_tick(delta: float) -> void:
-	fluttering = not is_on_floor() and InputRouter.is_held(&"jump") and _flutter > 0.0
+	fluttering = not is_on_floor() and not climbing and InputRouter.is_held(&"jump") and _flutter > 0.0
 	if fluttering:
 		_flutter = maxf(_flutter - delta, 0.0)
 		velocity.y = maxf(velocity.y, -FLUTTER_FALL)
 		var flat := Vector3(velocity.x, 0.0, velocity.z)
 		if flat.length() < stats.move_speed * FLUTTER_SPEED:
 			velocity += facing * stats.move_speed * 2.0 * delta
-	elif is_on_floor():
+	elif is_on_floor() or climbing:
 		_flutter = minf(_flutter + delta * 1.5, stats.ability_duration)
 	meter_changed.emit(&"stamina", _flutter, stats.ability_duration)
 	# Wing cases lift to flutter, close otherwise.

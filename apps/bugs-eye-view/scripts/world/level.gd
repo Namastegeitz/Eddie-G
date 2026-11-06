@@ -190,7 +190,7 @@ func show_bug_guide() -> BugGuide:
 	var g := BugGuide.new()
 	g.name = "BugGuide"
 	g.stats = player.stats
-	g.labels = player.get_action_labels()
+	g.labels = player.action_labels()
 	add_child(g)
 	get_tree().paused = true
 	var id := player.stats.id
@@ -261,9 +261,17 @@ func _on_item_collected(item: PickupItem) -> void:
 			run.powerups += 1
 			run.power_points += item.def.points
 		elif item.is_gem():
+			if not SaveSystem.has_collectible(item.def.id):
+				run.new_treasures.append(item.def.id)
 			run.gems.append(item.def.id)
 			run.gem_points += item.def.points
 			SaveSystem.record_gem(item.def.id)
+		elif item.is_treasure():
+			run.treasures.append(item.def.id)
+			run.treasure_points += item.def.points
+			run.best_rarity = maxi(run.best_rarity, item.def.rarity)
+			if SaveSystem.record_treasure(item.def.id):
+				run.new_treasures.append(item.def.id)
 		else:
 			run.foods_eaten += 1
 			run.food_points += item.def.points

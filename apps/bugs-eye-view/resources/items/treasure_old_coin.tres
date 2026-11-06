@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="ItemDef" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/item_def.gd" id="1_jkkt2"]
+
+[resource]
+script = ExtResource("1_jkkt2")
+id = &"treasure_old_coin"
+display_name = "Old Coin"
+kind = 3
+duration = 0.0
+points = 200
+color = Color(0.35, 0.65, 1, 1)
+blurb = "Dug up from under the lawn, older than the house."
+rarity = 1
+found_in = "Backyard"

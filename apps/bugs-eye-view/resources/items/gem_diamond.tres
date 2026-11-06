@@ -13,3 +13,5 @@ amount = 25.0
 points = 300
 color = Color(0.92, 0.97, 1, 1)
 blurb = "Crumb Magnet: nearby crumbs fly to you for 12 seconds."
+rarity = 3
+found_in = "Kitchen"

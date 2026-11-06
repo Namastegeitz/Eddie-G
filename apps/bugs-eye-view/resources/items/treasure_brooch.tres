@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="ItemDef" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/item_def.gd" id="1_7jsd7"]
+
+[resource]
+script = ExtResource("1_7jsd7")
+id = &"treasure_brooch"
+display_name = "Grandma's Star Brooch"
+kind = 3
+duration = 0.0
+points = 1000
+color = Color(1, 0.78, 0.25, 1)
+blurb = "Gold and ruby, lost behind the books for years."
+rarity = 3
+found_in = "Living Room"

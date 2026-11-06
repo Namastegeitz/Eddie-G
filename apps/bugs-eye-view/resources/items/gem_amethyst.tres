@@ -13,3 +13,5 @@ amount = 0.2
 points = 300
 color = Color(0.62, 0.3, 0.95, 1)
 blurb = "Shadow Cloak: almost invisible for 12 seconds."
+rarity = 1
+found_in = "Living Room"

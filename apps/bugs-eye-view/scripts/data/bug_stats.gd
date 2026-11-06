@@ -68,6 +68,10 @@ extends Resource
 @export var bullet_time_cost: float = 2.0
 
 @export_group("Climb")
+## Every bug can climb walls and furniture (the spider crawls its own way).
+@export var can_climb: bool = true
+## Climbing speed as a share of the bug's ground speed.
+@export var climb_speed_mult: float = 0.75
 @export var wall_speed: float = 7.0
 @export var floor_speed_mult: float = 0.6
 @export var web_range: float = 30.0

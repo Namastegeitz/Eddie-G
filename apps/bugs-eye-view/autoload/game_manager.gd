@@ -18,6 +18,7 @@ const SCENES := {
 	&"bug_select": "res://scenes/ui/bug_select.tscn",
 	&"settings": "res://scenes/ui/settings_menu.tscn",
 	&"colony": "res://scenes/hub/colony_hub.tscn",
+	&"showcase": "res://scenes/ui/showcase.tscn",
 }
 const UPGRADE_PATHS: Array[String] = [
 	"res://resources/upgrades/swift_legs.tres",
@@ -292,7 +293,7 @@ func finish_run(won: bool, cause: StringName = &"") -> Dictionary:
 	last_result = {
 		"won": won, "cause": cause, "score": sc, "badges": badges, "new_badges": newly,
 		"banked": banked, "unlocks": unlocks, "time": run.time,
-		"level": current_level, "bug": current_bug,
+		"level": current_level, "bug": current_bug, "new_treasures": run.new_treasures.duplicate(),
 	}
 	set_state(State.WIN if won else State.CAUGHT)
 	run_finished.emit(last_result)

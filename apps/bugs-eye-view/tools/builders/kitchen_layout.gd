@@ -195,6 +195,31 @@ static func build(tree: SceneTree) -> void:
 	g.item("power_radar", Vector3(-56, 0, 76))  # the far corner by the back door
 	g.item("power_shrink", Vector3(-50, 38.15, -38))  # inside the folded towel on the counter
 
+	# --- Climbing: a grocery tower and springy sponges ---
+	# A spiral staircase of boxes and tins up to a summit by the east window.
+	var tower := g.junk_tower("GroceryTower", Vector3(100, 0, 36), "groceries", 7, 4.5, 7.0, PI * 0.5)
+	g.item("treasure_button", tower[1])
+	g.item("power_spring", tower[3])
+	g.item("treasure_teaspoon", tower[5])
+	g.item("gem_amber", tower[6])
+	g.item("treasure_thimble", tower[7])
+	# Sponges fling you up: floor -> counter, counter -> top of the fridge,
+	# and a pot holder by the island -> the island top.
+	g.bounce_pad("FloorSponge", Vector3(-6, 0, -8), Vector3(6, 1.6, 4.5), "sponge", Vector3(-20, 38, -34), 14.0)
+	g.bounce_pad("CounterSponge", Vector3(-3, 38, -37), Vector3(6, 1.6, 4.5), "sponge", Vector3(38, 72, -28), 5.0)
+	g.bounce_pad("PotHolder", Vector3(60, 0, 57), Vector3(6, 1.4, 6), "cushion", Vector3(60, 30, 40), 5.0)
+	# Treasures, gems and more power-ups up high.
+	g.item("treasure_ring", Vector3(50, 72, -36))  # top of the fridge
+	g.item("treasure_bead", Vector3(-26, 31.5, 22))  # on the table
+	g.item("treasure_sea_glass", Vector3(-50, 32, 30))  # on the trash can lid
+	g.item("gem_sapphire", Vector3(72, 70, -33))  # top of the pantry
+	g.item("gem_emerald", Vector3(104, 46, -37))  # on the bread box
+	g.item("power_turbo", Vector3(34, 72, -38))  # top of the fridge
+	g.item("power_turbo", Vector3(70, 30, 30))  # island top
+	g.item("power_radar", Vector3(-55, 38, -30))  # back of the counter
+	g.item("power_double", Vector3(-2, 31.5, 24))  # on the table
+	g.item("power_shrink", Vector3(92, 48, -36))  # on the toaster
+
 	# --- Threats ---
 	# The cook: cooks at the stove and does the dishes with their back to the
 	# room, snacks at the table; cooking and snacking drop crumbs.

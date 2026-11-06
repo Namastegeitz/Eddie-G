@@ -10,7 +10,6 @@ const RIPPLE_INTERVAL := 0.45
 const STRAND_SCENE := "res://scenes/bugs/web_strand.tscn"
 const TRAP_SCENE := "res://scenes/bugs/web_trap.tscn"
 
-var surface_normal := Vector3.UP
 var attached := true
 var zipping := false
 var _zip_target := Vector3.ZERO
@@ -70,22 +69,6 @@ func _ray(from: Vector3, to: Vector3) -> Dictionary:
 	_surf.from = from
 	_surf.to = to
 	return get_world_3d().direct_space_state.intersect_ray(_surf)
-
-
-## Camera-relative direction projected onto the current surface. On walls,
-## pushing "forward" while facing the wall climbs up it.
-func surface_wish(input: Vector2, n: Vector3) -> Vector3:
-	var fl := -camera_yaw_basis.z
-	var d := fl.dot(n)
-	var f := fl - n * d
-	if absf(n.y) < 0.95:
-		var up_proj := (Vector3.UP - n * n.y).normalized()
-		f += up_proj * -d
-	if f.length_squared() < 0.0001:
-		f = Vector3.UP - n * n.y
-	f = f.normalized()
-	var r := f.cross(n).normalized()
-	return r * input.x + f * input.y
 
 
 func _crawl(_delta: float) -> void:
@@ -158,9 +141,16 @@ func _wrap_edge(wish: Vector3, n: Vector3) -> bool:
 func _fall(delta: float) -> void:
 	_jump_queued = false
 	velocity.y -= stats.gravity * delta
-	var air := surface_wish(move_input(), Vector3.UP) * stats.move_speed
-	velocity.x = move_toward(velocity.x, air.x, 10.0 * delta)
-	velocity.z = move_toward(velocity.z, air.z, 10.0 * delta)
+	var input := move_input()
+	var air := surface_wish(input, Vector3.UP) * stats.move_speed
+	var steer := 10.0
+	if _leap_off_t > 0.0:
+		# Flung by a bounce pad: keep the arc unless steering.
+		steer = 1.5
+		if input.length() < 0.1:
+			air = Vector3(velocity.x, 0.0, velocity.z)
+	velocity.x = move_toward(velocity.x, air.x, steer * delta)
+	velocity.z = move_toward(velocity.z, air.z, steer * delta)
 	move_and_slide()
 	if get_slide_collision_count() > 0:
 		surface_normal = get_slide_collision(0).get_normal()
@@ -187,18 +177,22 @@ func _orient_visual(delta: float) -> void:
 	visual.scale = s
 
 
-func fp_up() -> Vector3:
-	if attached and visual:
-		return visual.global_basis.y.normalized()
-	return Vector3.UP
+## The spider crawls its own way (floors, walls and ceilings alike).
+func can_climb() -> bool:
+	return false
 
 
-func fp_forward() -> Vector3:
-	var up := fp_up()
-	if up.dot(Vector3.UP) > 0.95:
-		return super.fp_forward()
-	var f := surface_wish(Vector2(0, 1), up)
-	return f.normalized() if f.length_squared() > 0.0001 else super.fp_forward()
+func launch(vel: Vector3, flight_time: float) -> bool:
+	if zipping or not super.launch(vel, flight_time):
+		return false
+	attached = false
+	surface_normal = Vector3.UP
+	up_direction = Vector3.UP
+	return true
+
+
+func on_surface() -> bool:
+	return attached
 
 
 func motion_speed() -> float:

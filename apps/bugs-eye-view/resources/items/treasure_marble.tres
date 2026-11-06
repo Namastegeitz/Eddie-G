@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="ItemDef" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/item_def.gd" id="1_k7kko"]
+
+[resource]
+script = ExtResource("1_k7kko")
+id = &"treasure_marble"
+display_name = "Cat's-Eye Marble"
+kind = 3
+duration = 0.0
+points = 75
+color = Color(0.85, 0.88, 0.92, 1)
+blurb = "A swirl of colour frozen in glass."
+found_in = "Living Room"

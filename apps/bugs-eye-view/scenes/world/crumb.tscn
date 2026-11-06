@@ -20,23 +20,23 @@ _surfaces = [{
 "vertex_data": PackedByteArray("KkiDhf///5d5nEbfwC0s7ezUHK7Urf+Xtw+ttut/LO3qSwAAPtL/lzmgwlkAACztrNiYKBOA/5d3EyoxKlIs7ezUHK7Ure/Ttw+ttut/8655nEbfwC3v0ypIg4X///OurNiYKBOA79N3EyoxKlLzrjmgwlkAAO/T6ksAAD7S867s1Byu1K1L7+pLAAA+0s7PKkiDhf//S++s2JgoE4DOz3mcRt/ALUvvdxMqMSpSzs+3D622639L7zmgwlkAAM7PD7Qu2Z36+bJgY/S1WjtN0gHX//9LhPmyb0Akj6yxTdIN3Z5wSfD5sl6MZE0HMU3S//9ul/h5+bJsaZQmWadN0gHX//9LhNPvb0Akj6yxEZpgY/S1WjvT7w+0Ltmd+hGa//9ul/h50+9saZQmWacRml6MZE0HMdPvDd2ecEnwEZoB1///S4TO0Q3dnnBJ8KvHD7Qu2Z36ztH//26X+Hmrx2Bj9LVaO87RbGmUJlmnq8dvQCSPrLHO0V6MZE0HMavHswoFV8t8MKz3MTjNwFvH+qs8+Y8wnTCsAABDlFw7x/orO9Ip80wwrG9iBaDoK8f6I23HYldtMKx3MBBngwvH+qs8+Y8wnT7GAABDlFw7hc/3MTjNwFs+xrMKBVfLfIXPI23HYldtPsZ3MBBngwuFz29iBaDoKz7GKzvSKfNMhc+rPPmPMJ3i7Ss70inzTAbiswoFV8t84u0jbcdiV20G4vcxOM3AW+LtdzAQZ4MLBuIAAEOUXDvi7W9iBaDoKwbiOEBEL6J5bOc4QEQvonls5zhARC+ieWznOEBEL6J5bOesYzYJrGR+16xjNgmsZH7XrGM2CaxkftesYzYJrGR+13GKbLAEJbtocYpssAQlu2hximywBCW7aHGKbLAEJbto76+vDeVbM+bvr68N5Vsz5u+vrw3lWzPm76+vDeVbM+ZnoK0WoDAq6GegrRagMCroZ6CtFqAwKuhnoK0WoDAq6DmU7btXTH9JOZTtu1dMf0k5lO27V0x/STmU7btXTH9JZApxx566bh5kCnHHnrpuHmQKcceeum4eZApxx566bh5LvkwCeEaWyEu+TAJ4RpbIS75MAnhGlshLvkwCeEaWyNplO55nFNJO2mU7nmcU0k7aZTueZxTSTtplO55nFNJO")
 }]
 
-[node name="Crumb" type="Area3D" unique_id=1765111954]
+[node name="Crumb" type="Area3D" unique_id=792216430]
 script = ExtResource("1_x4qah")
 
-[node name="Shape" type="CollisionShape3D" parent="." unique_id=1037052800]
+[node name="Shape" type="CollisionShape3D" parent="." unique_id=1788170076]
 shape = SubResource("SphereShape3D_ai87q")
 
-[node name="Visual" type="Node3D" parent="." unique_id=891735381]
+[node name="Visual" type="Node3D" parent="." unique_id=1815136527]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.15, 0)
 
-[node name="A" type="MeshInstance3D" parent="Visual" unique_id=528436773]
+[node name="A" type="MeshInstance3D" parent="Visual" unique_id=518383074]
 material_override = ExtResource("2_7c5mo")
 visibility_range_end = 90.0
 visibility_range_end_margin = 13.5
 visibility_range_fade_mode = 1
 mesh = SubResource("ArrayMesh_80co2")
 
-[node name="Skin" type="Node3D" parent="Visual" unique_id=1473584000]
+[node name="Skin" type="Node3D" parent="Visual" unique_id=510861207]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, 0)
 script = ExtResource("3_0f4vf")
 model_id = "crumb"

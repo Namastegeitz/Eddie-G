@@ -185,6 +185,30 @@ static func build(tree: SceneTree) -> void:
 	g.item("power_radar", Vector3(105, 32.25, 40))  # on top of the cat tree
 	g.item("power_shrink", Vector3(-60, 0, -46))  # the corner behind the couch
 
+	# --- Climbing: a tower of books and bouncy cushions ---
+	var tower := g.junk_tower("BookTower", Vector3(58, 0, -4), "books", 7, 4.5, 7.0, PI)
+	g.item("treasure_toy_brick", tower[1])
+	g.item("power_spring", tower[3])
+	g.item("treasure_pearl", tower[5])
+	g.item("treasure_earring", tower[7])
+	# Cushions fling you up: to the top of the bookshelf, onto the aquarium
+	# and up to the top of the cat tree.
+	g.bounce_pad("ShelfCushion", Vector3(-53, 0, -2), Vector3(6, 1.4, 6), "cushion", Vector3(-62, 70, 6), 5.0)
+	g.bounce_pad("TankCushion", Vector3(44, 0, 32), Vector3(6, 1.4, 6), "cushion", Vector3(58, 38, 43), 5.0)
+	g.bounce_pad("CatTreeCushion", Vector3(92, 0, 26), Vector3(6, 1.4, 6), "cushion", Vector3(105, 32.25, 40), 4.0)
+	# Treasures, gems and more power-ups up high.
+	g.item("treasure_brooch", Vector3(-62, 70, 14))  # top of the bookshelf
+	g.item("treasure_marble", Vector3(-15, 16.75, -4))  # on the coffee table
+	g.item("treasure_gear", Vector3(-20, 46, 47))  # on top of the TV
+	g.item("gem_emerald", Vector3(70, 38, 43))  # on the aquarium lid
+	g.item("gem_amber", Vector3(-30, 34, -46.5))  # along the top of the couch
+	g.item("gem_ruby", Vector3(96, 24, -40))  # on the side table
+	g.item("power_turbo", Vector3(0, 16.75, -12))  # on the coffee table
+	g.item("power_double", Vector3(62, 38, 45))  # on the aquarium lid
+	g.item("power_radar", Vector3(8, 20, 42))  # on the TV stand
+	g.item("power_shrink", Vector3(62, 31, -46.5))  # top of the armchair
+	g.item("power_turbo", Vector3(-62, 70, 0))  # top of the bookshelf
+
 	# --- Threats ---
 	g.human("res://scenes/threats/human_reader.tscn",
 		[Vector3(40, 0, -20), Vector3(-10, 0, -23), Vector3(-34, 0, -22), Vector3(-36, 0, 20), Vector3(25, 0, 26),

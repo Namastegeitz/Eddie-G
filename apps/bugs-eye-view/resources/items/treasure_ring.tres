@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="ItemDef" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/item_def.gd" id="1_07rrk"]
+
+[resource]
+script = ExtResource("1_07rrk")
+id = &"treasure_ring"
+display_name = "The Lost Wedding Ring"
+kind = 3
+duration = 0.0
+points = 1000
+color = Color(1, 0.78, 0.25, 1)
+blurb = "Everyone searched for weeks. You found it."
+rarity = 3
+found_in = "Kitchen"

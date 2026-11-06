@@ -30,6 +30,8 @@ func default_data() -> Dictionary:
 		"levels": {},
 		"colony": {"banked": 0, "lifetime": 0, "upgrades": []},
 		"gems": {},
+		## Treasures found (id -> times), for the showcase on the home screen.
+		"treasures": {},
 		"settings": {
 			"master_volume": 0.9,
 			"music_volume": 0.6,
@@ -193,6 +195,25 @@ func record_gem(id: StringName) -> void:
 
 func gems_found() -> Dictionary:
 	return data.get("gems", {})
+
+
+## Records a treasure; true if it's new to the showcase.
+func record_treasure(id: StringName) -> bool:
+	var t: Dictionary = data.get("treasures", {})
+	var fresh := not t.has(String(id))
+	t[String(id)] = int(t.get(String(id), 0)) + 1
+	data["treasures"] = t
+	progress_changed.emit()
+	return fresh
+
+
+func treasures_found() -> Dictionary:
+	return data.get("treasures", {})
+
+
+## Whether a showcase piece (treasure or crumb gem) has ever been found.
+func has_collectible(id: StringName) -> bool:
+	return treasures_found().has(String(id)) or gems_found().has(String(id))
 
 
 # --- Colony -------------------------------------------------------------

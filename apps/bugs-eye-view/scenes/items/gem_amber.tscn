@@ -1,29 +1,28 @@
 [gd_scene format=4]
 
-[ext_resource type="Script" path="res://scripts/world/pickup_item.gd" id="1_n8kvg"]
-[ext_resource type="Resource" path="res://resources/items/gem_amber.tres" id="2_ejeaj"]
-[ext_resource type="Material" path="res://assets/materials/gem_amber.tres" id="3_ovmn6"]
-[ext_resource type="Material" path="res://assets/materials/roach_dark.tres" id="4_w28l8"]
-[ext_resource type="Script" path="res://scripts/core/skin_anchor.gd" id="5_t80iq"]
-[ext_resource type="Material" path="res://assets/materials/sparkle.tres" id="6_flmgb"]
-[ext_resource type="Material" path="res://assets/materials/light_tint.tres" id="7_qu6vf"]
+[ext_resource type="Script" path="res://scripts/world/pickup_item.gd" id="1_jre0b"]
+[ext_resource type="Resource" path="res://resources/items/gem_amber.tres" id="2_n8kvg"]
+[ext_resource type="Material" path="res://assets/materials/gem_amber.tres" id="3_ejeaj"]
+[ext_resource type="Material" path="res://assets/materials/roach_dark.tres" id="4_ovmn6"]
+[ext_resource type="Script" path="res://scripts/core/skin_anchor.gd" id="5_w28l8"]
+[ext_resource type="Material" path="res://assets/materials/sparkle.tres" id="6_t80iq"]
 
-[sub_resource type="SphereShape3D" id="SphereShape3D_as8ab"]
+[sub_resource type="SphereShape3D" id="SphereShape3D_flmgb"]
 radius = 1.5
 
-[sub_resource type="SphereMesh" id="SphereMesh_lw8sa"]
+[sub_resource type="SphereMesh" id="SphereMesh_qu6vf"]
 radius = 0.7
 height = 1.4
 radial_segments = 20
 rings = 10
 
-[sub_resource type="SphereMesh" id="SphereMesh_t2dom"]
+[sub_resource type="SphereMesh" id="SphereMesh_as8ab"]
 radius = 0.16
 height = 0.32
 radial_segments = 20
 rings = 10
 
-[sub_resource type="ArrayMesh" id="ArrayMesh_ju55s"]
+[sub_resource type="ArrayMesh" id="ArrayMesh_lw8sa"]
 _surfaces = [{
 "aabb": AABB(-1.1833987, -0.102710456, -1.1833987, 2.3667974, 0.20542091, 2.3667974),
 "attribute_data": PackedByteArray("AAAAAKqqAABVVQAA//8AAAAA/3+qqv9/VVX/f////39VVQAAAAD/f6qqAABVVf9/VVX/fwAA//+qqv9/VVX//1VV/3+qqv9/qqr/f////39VVf//qqr//6qq////////AAAAAKqqAABVVQAA//8AAAAA/3+qqv9/VVX/f////39VVQAAAAD/f6qqAABVVf9/VVX/fwAA//+qqv9/VVX//1VV/3+qqv9/qqr/f////39VVf//qqr//6qq////////AAAAAKqqAABVVQAA//8AAAAA/3+qqv9/VVX/f////39VVQAAAAD/f6qqAABVVf9/VVX/fwAA//+qqv9/VVX//1VV/3+qqv9/qqr/f////39VVf//qqr//6qq////////AAAAAKqqAABVVQAA//8AAAAA/3+qqv9/VVX/f////39VVQAAAAD/f6qqAABVVf9/VVX/fwAA//+qqv9/VVX//1VV/3+qqv9/qqr/f////39VVf//qqr//6qq////////"),
@@ -36,68 +35,52 @@ _surfaces = [{
 "vertex_data": PackedByteArray("9O3dZU+GTqKq+P//vH/e+Kr4jqtyik6i9O1Ouph73vhI9QAAQoBOov//IZqved74//+wRWaETqJI9XBUjHXe+Kr4jqtyiv+/9O1Ouph7N82q+P//vH//v/Tt3WVPhjfN//+wRWaE/79I9XBUjHU3zf//IZqvef+/SPUAAEKAN82q+I6rcoq59Ej1AABCgFna9O3dZU+GufT//7BFZoRZ2qr4//+8f7n0SPVwVIx1Wdr07U66mHu59P//IZqveVnaT4bdZf///7+8f///SPU3zXKKjqtI9f+/mHtOuv//N81CgAAAqvj/v695IZr07TfNZoSwRfTt/7+MdXBUqvg3zXKKjqtI9d74mHtOuv//TqK8f///SPXe+E+G3WX//06iZoSwRfTt3viMdXBUqvhOoq95IZr07d74QoAAAKr4TqJyio6rSPVV3UKAAACq+B3uT4bdZf//Vd1mhLBF9O0d7rx///9I9VXdjHVwVKr4He6Ye066//9V3a95IZr07R3uChLdZa953vhUB///QoBOolQHjquMdd74ChJOumaETqK2CgAAvH/e+AAAIZpPhk6iAACwRZh73vi2CnBUcopOolQHjquMdTfNChJOumaE/79UB///QoA3zQoS3WWvef+/AACwRZh7N822CnBUcor/vwAAIZpPhjfNtgoAALx//79UB46rjHVZ2rYKAAC8f7n0ChLdZa95WdoAALBFmHu59FQH//9CgFnatgpwVHKKufQKEk66ZoRZ2gAAIZpPhrn0r3ndZQAAN81CgP//tgr/v4x1jqu2CjfNZoROugAA/7+8fwAAVAc3zU+GIZoKEv+/mHuwRQoSN81yinBUVAf/v4x1jqu2Ck6iZoROugAA3vhCgP//tgpOoq953WUAAN74mHuwRQoSTqJyinBUVAfe+E+GIZoKEk6ivH8AAFQH3viMdY6rtgod7rx/AABUB1Xdr3ndZQAAHe6Ye7BFChJV3UKA//+2Ch3ucopwVFQHVd1mhE66AAAd7k+GIZoKElXdJRGRyOuwdRglEZHI67B1GCURkcjrsHUYJRGRyOuwdRj+swAAzlHN0f6zAADOUc3R/rMAAM5RzdH+swAAzlHN0XFqwaQvDuxWcWrBpC8O7FZxasGkLw7sVnFqwaQvDuxWAEz/M/9/ztEATP8z/3/O0QBM/zP/f87RAEz/M/9/ztETT3UYkkgkkRNPdRiSSCSRE091GJJIJJETT3UYkkgkkWOluJO2QSRfY6W4k7ZBJF9jpbiTtkEkX2OluJO2QSRfiWfsMGy3JJGJZ+wwbLckkYln7DBstySRiWfsMGy3JJEwrs3R/3//MzCuzdH/f/8zMK7N0f9//zMwrs3R/3//M+zW0HE923Dq7NbQcT3bcOrs1tBxPdtw6uzW0HE923DqzlH+//6z/jPOUf7//rP+M85R/v/+s/4zzlH+//6z/jPZ7pHIdZjsMNnukch1mOww2e6RyHWY7DDZ7pHIdZjsMCPfST64E5raI99JPrgTmtoj30k+uBOa2iPfST64E5ra")
 }]
 
-[sub_resource type="CylinderMesh" id="CylinderMesh_dfavh"]
-top_radius = 1.2
-bottom_radius = 1.2
-height = 0.04
-radial_segments = 20
-rings = 1
+[node name="GemAmber" type="Area3D" unique_id=230087325]
+script = ExtResource("1_jre0b")
+def = ExtResource("2_n8kvg")
 
-[node name="GemAmber" type="Area3D" unique_id=1783440158]
-script = ExtResource("1_n8kvg")
-def = ExtResource("2_ejeaj")
-
-[node name="Shape" type="CollisionShape3D" parent="." unique_id=621779588]
+[node name="Shape" type="CollisionShape3D" parent="." unique_id=1843602404]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.7, 0)
-shape = SubResource("SphereShape3D_as8ab")
+shape = SubResource("SphereShape3D_flmgb")
 
-[node name="Visual" type="Node3D" parent="." unique_id=1732267222]
+[node name="Visual" type="Node3D" parent="." unique_id=304398488]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.7, 0)
 
-[node name="Amber" type="MeshInstance3D" parent="Visual" unique_id=1011816705]
+[node name="Amber" type="MeshInstance3D" parent="Visual" unique_id=261441542]
 transform = Transform3D(0.85, 0, 0, 0, 1, 0, 0, 0, 0.7, 0, 0, 0)
-material_override = ExtResource("3_ovmn6")
+material_override = ExtResource("3_ejeaj")
 visibility_range_end = 110.0
 visibility_range_end_margin = 16.5
 visibility_range_fade_mode = 1
-mesh = SubResource("SphereMesh_lw8sa")
+mesh = SubResource("SphereMesh_qu6vf")
 
-[node name="Fossil" type="MeshInstance3D" parent="Visual" unique_id=37106527]
+[node name="Fossil" type="MeshInstance3D" parent="Visual" unique_id=857179312]
 transform = Transform3D(0.7, 0, 0, 0, 0.5, 0, 0, 0, 1.4, 0, -0.05, 0)
-material_override = ExtResource("4_w28l8")
+material_override = ExtResource("4_ovmn6")
 visibility_range_end = 110.0
 visibility_range_end_margin = 16.5
 visibility_range_fade_mode = 1
-mesh = SubResource("SphereMesh_t2dom")
+mesh = SubResource("SphereMesh_as8ab")
 
-[node name="Skin" type="Node3D" parent="Visual" unique_id=452611865]
-script = ExtResource("5_t80iq")
+[node name="Skin" type="Node3D" parent="Visual" unique_id=1188550905]
+script = ExtResource("5_w28l8")
 model_id = "gem_amber"
 fit_size = Vector3(1.2, 1.4, 1)
 hide_paths = Array[NodePath]([NodePath("../Amber"), NodePath("../Fossil")])
 
-[node name="Glow" type="OmniLight3D" parent="Visual" unique_id=1089264755]
+[node name="Glow" type="OmniLight3D" parent="Visual" unique_id=2138223515]
 light_color = Color(1, 0.6, 0.1, 1)
 light_energy = 1.2
 distance_fade_enabled = true
 distance_fade_begin = 88.0
 distance_fade_length = 22.0
 
-[node name="Sparkles" type="Node3D" parent="Visual" unique_id=1278173927]
+[node name="Sparkles" type="Node3D" parent="Visual" unique_id=1170420658]
 
-[node name="Sparkle" type="MeshInstance3D" parent="Visual/Sparkles" unique_id=1791418742]
-material_override = ExtResource("6_flmgb")
+[node name="Sparkle" type="MeshInstance3D" parent="Visual/Sparkles" unique_id=129748828]
+material_override = ExtResource("6_t80iq")
 cast_shadow = 0
 visibility_range_end = 110.0
 visibility_range_end_margin = 16.5
 visibility_range_fade_mode = 1
-mesh = SubResource("ArrayMesh_ju55s")
-
-[node name="Halo" type="MeshInstance3D" parent="." unique_id=181800579]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, 0)
-material_override = ExtResource("7_qu6vf")
-cast_shadow = 0
-visibility_range_end = 110.0
-visibility_range_end_margin = 16.5
-visibility_range_fade_mode = 1
-mesh = SubResource("CylinderMesh_dfavh")
+mesh = SubResource("ArrayMesh_lw8sa")

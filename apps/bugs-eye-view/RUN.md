@@ -71,10 +71,58 @@ again to go back behind the bug.
 **Running.** Tap Shift to dash out of trouble; keep holding it to run (about
 1.5x faster, but louder and easier to spot). In the air the fly flies faster.
 
-**Power-ups.** Ten glowing power-up tokens are tucked into the hidden corners
-of every room (under the fridge, couch and armchair, inside shelters, in the
-secret-route cavities, behind the woodpile, up on the cat tree...), two of
-each:
+**Climbing.** Every bug climbs. Push into a wall, a cupboard, a table leg, a
+box or a stack of books for a moment and you start up it; at the top you walk
+over the edge onto it. Small lips (a counter's overhang, the edge of a table
+top) are clambered round on the way up. Pull back on the stick to climb down
+(at the floor you're walking again) and press Jump to leap off, away from the
+wall. Leap or fall at a wall while pushing towards it and you grab on. Each
+bug climbs at its own pace (ants fastest, crickets slowest); loose things you
+can push, like a grape, are pushed rather than climbed. Through the bug's
+eyes the view turns with the wall. The spider still crawls its own way,
+across ceilings too.
+
+**Jump-up routes.** Each room has a tower of stacked junk, a spiral staircase
+of steps that each rise a little higher, with small gaps to hop across.
+The kitchen's is boxes and tins by the east window, the living room's is
+piles of books, the backyard's is flowerpots and bricks. Treasures and
+power-ups sit on the steps and the summit. Springy **bounce pads** fling you
+up in an arc (steer a little in the air) onto high places:
+
+| Room | Bounce pad | Lands you on |
+|---|---|---|
+| Kitchen | Sponge on the floor | The counter |
+| Kitchen | Sponge on the counter | The top of the fridge |
+| Kitchen | Pot holder by the island | The island top |
+| Living room | Cushion by the bookshelf | The top of the bookshelf |
+| Living room | Cushion by the aquarium | The aquarium lid |
+| Living room | Cushion by the cat tree | The top of the cat tree |
+| Backyard | Mushroom by the shed | The shed roof |
+| Backyard | Mushroom by the bird bath | The bird bath |
+| Backyard | Mushroom by the picnic table | The picnic table |
+
+**Treasures and the showcase.** Lost trinkets are hidden all over the house,
+mostly up high: six per room, from common to legendary, plus the crumb gems.
+Each glows in its rarity's colour (common silver, rare blue, epic purple,
+legendary gold); epic and legendary ones send a beam of light up so you can
+spot them from across the room. Whatever you find goes into your
+**showcase**: the home screen has a trophy shelf with your rarest finds, a
+Showcase button for the full collection (24 pieces, room by room; the ones
+you haven't found are dark silhouettes with a hint), and a line with your
+count. Treasures score 75 / 200 / 450 / 1000 points by rarity, and a
+legendary find earns the Treasure Hunter badge.
+
+| Room | Common | Rare | Epic | Legendary |
+|---|---|---|---|---|
+| Kitchen | Lost Button, Glass Bead | Doll's Teaspoon, Sea Glass, Amber Gem | Golden Thimble | The Lost Wedding Ring (top of the fridge), Diamond Gem |
+| Living room | Toy Brick, Cat's-Eye Marble | Loose Pearl, Watch Gear, Amethyst Gem | Crystal Earring, Sapphire Gem | Grandma's Star Brooch (top of the bookshelf) |
+| Backyard | Acorn Cap, Spiral Snail Shell | Old Coin, Jewel Beetle Shell | Four-Leaf Clover, Ruby Gem, Emerald Gem | The Golden Acorn (on the shed roof) |
+
+**Power-ups.** Glowing power-up tokens are tucked into the hidden corners of
+every room (under the fridge, couch and armchair, inside shelters, in the
+secret-route cavities, behind the woodpile, up on the cat tree...) and up on
+the high places (the fridge top, the island, the bookshelf, the shed roof, the
+tower steps...): sixteen per room, of five kinds:
 
 | Power-up | Does |
 |---|---|
@@ -84,8 +132,8 @@ each:
 | Double Crumbs | Every crumb counts twice for 25 s |
 | Shrink | Tiny for 15 s: any gap hides you and you're hard to see |
 
-The count found shows under your crumbs; finding all ten earns the Power
-Hunter badge.
+The count found shows under your crumbs; finding ten in one run earns the
+Power Hunter badge.
 
 **People keep to their routine - but not mid-chase.** They come in through
 the room's door when their part of the day starts. When it ends they leave,
@@ -262,7 +310,8 @@ touch look stick, 13 the upgraded dog and cat-and-dog rooms, 14 the five new
 bugs, the unlock chain, the how-to-play cards and auto quality, 15 smooth
 motion, lifelike people and pets, textures and quality tiers, 16 new NPC
 movements, chores, pet habits and the obstacles they create, 17 the bug's-eye
-view, Shift to run, power-ups and people finishing the chase).
+view, Shift to run, power-ups and people finishing the chase, 18 climbing for
+every bug, the junk towers, bounce pads, treasures and the showcase).
 
 `godot` means the Godot executable, e.g.
 `C:\Godot\Godot_v4.7.2-stable_win64_console.exe`. The smoke test prints
@@ -357,6 +406,13 @@ godot --headless --path . res://tools/build_all.tscn -- --force --only=levels
 ```
 
 Without `--force` it only creates files that are missing.
+
+The showcase icons (`assets/icons/items/`) are rendered from the item scenes
+and need a display (or `xvfb-run -a` in front):
+
+```bash
+godot --rendering-driver opengl3 --path . res://tools/render_item_icons.tscn
+```
 
 ## Project layout
 

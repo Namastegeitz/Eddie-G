@@ -58,7 +58,7 @@ func _on_touch_mode(on: bool) -> void:
 
 func bind_player(p: BugBase) -> void:
 	player = p
-	_labels = p.get_action_labels()
+	_labels = p.action_labels()
 
 
 func _layout() -> void:
@@ -116,7 +116,7 @@ func _process(delta: float) -> void:
 	_label_timer -= delta
 	if _label_timer <= 0.0 and player and is_instance_valid(player):
 		_label_timer = 0.5
-		_labels = player.get_action_labels()
+		_labels = player.action_labels()
 		queue_redraw()
 
 

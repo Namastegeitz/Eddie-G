@@ -957,8 +957,6 @@ static func items(force: bool) -> void:
 					Vector3(cos(a) * 1.1, 0.35 * sin(a * 2.0), sin(a) * 1.1), Vector3(0.6, a, 0.6))
 				m.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 			merge_meshes(sp)
-			var halo := mesh(it, "Halo", cyl(1.2, 0.04), "light_tint", Vector3(0, 0.05, 0))
-			halo.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		_cull_far(it, 110.0)
 		pack(it, "res://scenes/items/%s.tscn" % id, force)
 	# Power-ups: a glowing coin with a raised symbol on both faces, low enough
@@ -973,6 +971,134 @@ static func items(force: bool) -> void:
 		add_skin(v, id, Vector3(1.2, 1.2, 0.5), Vector3.ZERO, [], 180.0)
 		_cull_far(it, 45.0)
 		pack(it, "res://scenes/items/%s.tscn" % id, force)
+
+
+	# Treasures: lost trinkets for the showcase, glowing in their rarity's
+	# colour; epic and legendary ones send up a beam you can spot from afar.
+	for d: Array in ResBuilder.TREASURES:
+		var id: String = d[0]
+		var rarity: int = d[2]
+		var it := scripted(Area3D.new(), "res://scripts/world/pickup_item.gd", id.to_pascal_case())
+		it.set("def", load("res://resources/items/%s.tres" % id))
+		shape(it, sphere_shape(1.5), Vector3(0, 1.2, 0))
+		var v := node3d(it, "Visual", Vector3(0, 1.2, 0))
+		_treasure_visual(v, id)
+		merge_meshes(v)
+		var keep := ["Glow", "Sparkles"]
+		add_skin(v, id, Vector3(1.6, 1.6, 1.6), Vector3.ZERO, keep, 180.0)
+		var tint := ItemDef.RARITY_COLORS[rarity]
+		if rarity >= 1:
+			var glow := OmniLight3D.new()
+			glow.name = "Glow"
+			glow.light_color = tint
+			glow.omni_range = 4.0 + rarity * 1.5
+			glow.light_energy = 0.8 + rarity * 0.35
+			v.add_child(glow)
+		if rarity >= 2:
+			var sp := node3d(v, "Sparkles")
+			for i in 2 + rarity * 2:
+				var a := TAU * i / float(2 + rarity * 2)
+				var m := mesh(sp, "Sparkle", box(Vector3(0.12, 0.12, 0.12)), "sparkle",
+					Vector3(cos(a) * 1.2, 0.4 * sin(a * 2.0), sin(a) * 1.2), Vector3(0.6, a, 0.6))
+				m.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+			merge_meshes(sp)
+		if rarity >= 2:
+			var beam := mesh(it, "Beam", cyl(0.55, 36.0, 0.3), "rarity_beam" if rarity == 3 else "rarity_beam_epic", Vector3(0, 18.5, 0))
+			beam.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		# Epic and legendary pieces (and their beams) show from across the
+		# room; the everyday ones pop in closer.
+		_cull_far(it, 150.0 if rarity >= 2 else 50.0)
+		pack(it, "res://scenes/items/%s.tscn" % id, force)
+
+
+## The trinket itself, about the size of a bug, from a few simple shapes.
+static func _treasure_visual(v: Node3D, id: String) -> void:
+	match id:
+		"treasure_button":
+			mesh(v, "Disc", cyl(0.8, 0.22), "label_red", Vector3.ZERO, Vector3(PI * 0.5, 0, 0))
+			mesh(v, "Lip", _torus(0.66, 0.8), "label_red", Vector3.ZERO, Vector3(PI * 0.5, 0, 0))
+			for hx in [-0.2, 0.2]:
+				for hy in [-0.2, 0.2]:
+					mesh(v, "Hole", cyl(0.09, 0.26), "dark_metal", Vector3(hx, hy, 0), Vector3(PI * 0.5, 0, 0))
+		"treasure_bead":
+			mesh(v, "Bead", sphere(0.62), "gem_sapphire")
+			mesh(v, "Hole", cyl(0.17, 1.26), "dark_metal", Vector3.ZERO, Vector3(0, 0, PI * 0.5))
+		"treasure_teaspoon":
+			mesh(v, "Handle", box(Vector3(0.2, 0.08, 1.5)), "silver", Vector3(0, 0.1, -0.35), Vector3(0.15, 0, 0))
+			mesh(v, "Bowl", sphere(0.38), "silver", Vector3(0, -0.02, 0.6), Vector3.ZERO, Vector3(1.0, 0.45, 1.3))
+			mesh(v, "Tip", sphere(0.14), "silver", Vector3(0, 0.22, -1.08))
+		"treasure_sea_glass":
+			mesh(v, "Glass", sphere(0.62), "gem_emerald", Vector3.ZERO, Vector3(0.3, 0.4, 0.2), Vector3(1.25, 0.5, 0.9))
+		"treasure_thimble":
+			mesh(v, "Cup", cyl(0.6, 1.0, 0.48), "gold", Vector3(0, -0.1, 0))
+			mesh(v, "Top", sphere(0.48, 0.5), "gold", Vector3(0, 0.4, 0))
+			mesh(v, "Band", cyl(0.64, 0.12), "gold", Vector3(0, -0.55, 0))
+		"treasure_ring":
+			mesh(v, "Band", _torus(0.45, 0.62), "gold", Vector3(0, -0.1, 0), Vector3(PI * 0.5, 0, 0))
+			mesh(v, "Setting", cyl(0.16, 0.2, 0.22), "gold", Vector3(0, 0.55, 0))
+			mesh(v, "Stone", sphere(0.27, 0.42), "gem_diamond", Vector3(0, 0.78, 0))
+		"treasure_toy_brick":
+			mesh(v, "Brick", box(Vector3(1.3, 0.75, 0.85)), "label_red")
+			for sx in [-0.32, 0.32]:
+				for sz in [-0.2, 0.2]:
+					mesh(v, "Stud", cyl(0.15, 0.2), "label_red", Vector3(sx, 0.47, sz))
+		"treasure_marble":
+			mesh(v, "Glass", sphere(0.62), "gem_sapphire")
+			mesh(v, "Swirl", box(Vector3(0.14, 0.95, 0.32)), "gem_amber", Vector3.ZERO, Vector3(0.3, 0.5, 0.4))
+		"treasure_pearl":
+			mesh(v, "Pearl", sphere(0.58), "pearl")
+		"treasure_gear":
+			mesh(v, "Wheel", cyl(0.6, 0.18), "gold", Vector3.ZERO, Vector3(PI * 0.5, 0, 0))
+			for i in 10:
+				var a := TAU * i / 10.0
+				mesh(v, "Tooth", box(Vector3(0.2, 0.22, 0.18)), "gold", Vector3(cos(a) * 0.68, sin(a) * 0.68, 0), Vector3(0, 0, a))
+			mesh(v, "Hub", cyl(0.14, 0.24), "dark_metal", Vector3.ZERO, Vector3(PI * 0.5, 0, 0))
+		"treasure_earring":
+			mesh(v, "Hook", _torus(0.16, 0.24), "silver", Vector3(0, 0.75, 0), Vector3(PI * 0.5, 0, 0))
+			mesh(v, "Crystal", sphere(0.42), "gem_amethyst", Vector3(0, 0.0, 0), Vector3.ZERO, Vector3(0.75, 1.35, 0.75))
+			mesh(v, "Drop", sphere(0.18), "gem_amethyst", Vector3(0, 0.5, 0))
+		"treasure_brooch":
+			for i in 5:
+				var a := TAU * i / 5.0
+				mesh(v, "Ray", box(Vector3(0.32, 0.7, 0.16)), "gold", Vector3(sin(a) * 0.42, cos(a) * 0.42, 0), Vector3(0, 0, -a))
+			mesh(v, "Centre", cyl(0.36, 0.2), "gold", Vector3.ZERO, Vector3(PI * 0.5, 0, 0))
+			mesh(v, "Ruby", sphere(0.24), "gem_ruby", Vector3(0, 0, 0.12))
+		"treasure_acorn_cap":
+			var cap := sphere(0.6, 0.6)
+			cap.is_hemisphere = true
+			mesh(v, "Cap", cap, "acorn", Vector3(0, 0.1, 0), Vector3(PI, 0, 0))
+			mesh(v, "Stem", cyl(0.07, 0.4), "acorn", Vector3(0, 0.25, 0))
+		"treasure_snail_shell":
+			mesh(v, "Whorl", _torus(0.3, 0.62), "shell", Vector3(0, -0.15, 0), Vector3(PI * 0.5, 0, 0.2))
+			mesh(v, "Whorl", _torus(0.15, 0.36), "shell", Vector3(0.05, -0.05, 0.15), Vector3(PI * 0.5, 0, 0.2))
+			mesh(v, "Core", sphere(0.2), "shell", Vector3(0.08, 0.0, 0.25))
+		"treasure_old_coin":
+			mesh(v, "Coin", cyl(0.72, 0.14), "gold", Vector3.ZERO, Vector3(PI * 0.5, 0, 0))
+			mesh(v, "Rim", _torus(0.62, 0.74), "gold", Vector3.ZERO, Vector3(PI * 0.5, 0, 0))
+			mesh(v, "Face", sphere(0.28), "gold", Vector3.ZERO, Vector3.ZERO, Vector3(1, 1, 0.5))
+		"treasure_beetle_shell":
+			mesh(v, "Shell", sphere(0.58), "gem_emerald", Vector3.ZERO, Vector3.ZERO, Vector3(0.8, 0.55, 1.25))
+			mesh(v, "Seam", box(Vector3(0.05, 0.62, 1.4)), "gold", Vector3(0, 0.02, 0))
+		"treasure_clover":
+			for i in 4:
+				var a := TAU * i / 4.0 + 0.4
+				mesh(v, "Leaf", sphere(0.32), "leaf_green", Vector3(cos(a) * 0.3, 0.05, sin(a) * 0.3), Vector3(0, -a, 0), Vector3(1.3, 0.25, 1.0))
+			mesh(v, "Stem", cyl(0.05, 0.8), "leaf_green", Vector3(0, -0.35, 0.1), Vector3(0.3, 0, 0))
+		"treasure_golden_acorn":
+			mesh(v, "Nut", sphere(0.5), "gold", Vector3(0, -0.12, 0), Vector3.ZERO, Vector3(1.0, 1.3, 1.0))
+			var cap2 := sphere(0.56, 0.56)
+			cap2.is_hemisphere = true
+			mesh(v, "Cap", cap2, "gold", Vector3(0, 0.3, 0))
+			mesh(v, "Stem", cyl(0.07, 0.35), "gold", Vector3(0, 0.75, 0))
+
+
+static func _torus(inner: float, outer: float) -> TorusMesh:
+	var t := TorusMesh.new()
+	t.inner_radius = inner
+	t.outer_radius = outer
+	t.rings = 20
+	t.ring_segments = 8
+	return t
 
 
 static func _power_visual(v: Node3D, id: String) -> void:

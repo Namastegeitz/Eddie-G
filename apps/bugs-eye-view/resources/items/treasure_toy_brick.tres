@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="ItemDef" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/item_def.gd" id="1_tb6yg"]
+
+[resource]
+script = ExtResource("1_tb6yg")
+id = &"treasure_toy_brick"
+display_name = "Toy Brick"
+kind = 3
+duration = 0.0
+points = 75
+color = Color(0.85, 0.88, 0.92, 1)
+blurb = "Four studs and a lot of pain for bare feet."
+found_in = "Living Room"

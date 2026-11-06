@@ -1,0 +1,45 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/world/pickup_item.gd" id="1_gpj3r"]
+[ext_resource type="Resource" path="res://resources/items/treasure_pearl.tres" id="2_i46y0"]
+[ext_resource type="Material" path="res://assets/materials/pearl.tres" id="3_cpcgx"]
+[ext_resource type="Script" path="res://scripts/core/skin_anchor.gd" id="4_tncga"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_fxh11"]
+radius = 1.5
+
+[sub_resource type="SphereMesh" id="SphereMesh_70gmo"]
+radius = 0.58
+height = 1.16
+radial_segments = 20
+rings = 10
+
+[node name="TreasurePearl" type="Area3D" unique_id=798207121]
+script = ExtResource("1_gpj3r")
+def = ExtResource("2_i46y0")
+
+[node name="Shape" type="CollisionShape3D" parent="." unique_id=1580319098]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 0)
+shape = SubResource("SphereShape3D_fxh11")
+
+[node name="Visual" type="Node3D" parent="." unique_id=716097981]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 0)
+
+[node name="Pearl" type="MeshInstance3D" parent="Visual" unique_id=1088462248]
+material_override = ExtResource("3_cpcgx")
+visibility_range_end = 50.0
+visibility_range_end_margin = 7.5
+visibility_range_fade_mode = 1
+mesh = SubResource("SphereMesh_70gmo")
+
+[node name="Skin" type="Node3D" parent="Visual" unique_id=70042413]
+script = ExtResource("4_tncga")
+model_id = "treasure_pearl"
+fit_size = Vector3(1.6, 1.6, 1.6)
+hide_paths = Array[NodePath]([NodePath("../Pearl")])
+
+[node name="Glow" type="OmniLight3D" parent="Visual" unique_id=1276891597]
+light_color = Color(0.35, 0.65, 1, 1)
+light_energy = 1.15
+distance_fade_enabled = true
+omni_range = 5.5

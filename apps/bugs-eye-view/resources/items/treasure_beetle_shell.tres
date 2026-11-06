@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="ItemDef" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/item_def.gd" id="1_3go3w"]
+
+[resource]
+script = ExtResource("1_3go3w")
+id = &"treasure_beetle_shell"
+display_name = "Jewel Beetle Shell"
+kind = 3
+duration = 0.0
+points = 200
+color = Color(0.35, 0.65, 1, 1)
+blurb = "Green and gold like a cousin's armour."
+rarity = 1
+found_in = "Backyard"

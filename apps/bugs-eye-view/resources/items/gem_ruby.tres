@@ -11,3 +11,5 @@ effect = &"iron_shell"
 points = 300
 color = Color(0.95, 0.12, 0.2, 1)
 blurb = "Iron Shell: nothing can hurt you for 8 seconds."
+rarity = 2
+found_in = "Backyard"

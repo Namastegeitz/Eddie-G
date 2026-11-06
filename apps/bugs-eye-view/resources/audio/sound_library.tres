@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" path="res://scripts/data/sound_library.gd" id="1_jghwe"]
 [ext_resource type="AudioStream" path="res://assets/sfx/bark.wav" id="2_oalxw"]
+[ext_resource type="AudioStream" path="res://assets/sfx/boing.wav" id="3_0h7ie"]
 [ext_resource type="AudioStream" path="res://assets/sfx/boss_sting.wav" id="3_kmrw0"]
 [ext_resource type="AudioStream" path="res://assets/sfx/buzz.wav" id="4_hkoqi"]
 [ext_resource type="AudioStream" path="res://assets/sfx/chirp.wav" id="5_7eseq"]
@@ -63,11 +64,14 @@
 [ext_resource type="AudioStream" path="res://assets/sfx/switch.wav" id="47_2bok5"]
 [ext_resource type="AudioStream" path="res://assets/sfx/win.wav" id="47_o1k2y"]
 [ext_resource type="AudioStream" path="res://assets/sfx/yelp.wav" id="48_54ysb"]
+[ext_resource type="AudioStream" path="res://assets/sfx/treasure.wav" id="51_4p8jt"]
+[ext_resource type="AudioStream" path="res://assets/sfx/treasure_legendary.wav" id="52_2bok5"]
 
 [resource]
 script = ExtResource("1_jghwe")
 sounds = {
 &"bark": ExtResource("2_oalxw"),
+&"boing": ExtResource("3_0h7ie"),
 &"boss_sting": ExtResource("3_kmrw0"),
 &"buzz": ExtResource("4_hkoqi"),
 &"chirp": ExtResource("5_7eseq"),
@@ -115,6 +119,8 @@ sounds = {
 &"switch": ExtResource("47_2bok5"),
 &"swoosh": ExtResource("33_5fyfp"),
 &"thud": ExtResource("34_kq1by"),
+&"treasure": ExtResource("51_4p8jt"),
+&"treasure_legendary": ExtResource("52_2bok5"),
 &"tv_blare": ExtResource("35_n6xs0"),
 &"tv_mumble": ExtResource("36_afmb2"),
 &"ui_click": ExtResource("37_hrod6"),

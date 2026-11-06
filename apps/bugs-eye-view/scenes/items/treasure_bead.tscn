@@ -1,0 +1,55 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/world/pickup_item.gd" id="1_rxyo6"]
+[ext_resource type="Resource" path="res://resources/items/treasure_bead.tres" id="2_csece"]
+[ext_resource type="Material" path="res://assets/materials/gem_sapphire.tres" id="3_3y6eb"]
+[ext_resource type="Material" path="res://assets/materials/dark_metal.tres" id="4_hai5d"]
+[ext_resource type="Script" path="res://scripts/core/skin_anchor.gd" id="5_dludm"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_v4frg"]
+radius = 1.5
+
+[sub_resource type="SphereMesh" id="SphereMesh_oqlbr"]
+radius = 0.62
+height = 1.24
+radial_segments = 20
+rings = 10
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_cerl2"]
+top_radius = 0.17
+bottom_radius = 0.17
+height = 1.26
+radial_segments = 20
+rings = 1
+
+[node name="TreasureBead" type="Area3D" unique_id=1689785992]
+script = ExtResource("1_rxyo6")
+def = ExtResource("2_csece")
+
+[node name="Shape" type="CollisionShape3D" parent="." unique_id=705210466]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 0)
+shape = SubResource("SphereShape3D_v4frg")
+
+[node name="Visual" type="Node3D" parent="." unique_id=509315032]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 0)
+
+[node name="Bead" type="MeshInstance3D" parent="Visual" unique_id=1895231194]
+material_override = ExtResource("3_3y6eb")
+visibility_range_end = 50.0
+visibility_range_end_margin = 7.5
+visibility_range_fade_mode = 1
+mesh = SubResource("SphereMesh_oqlbr")
+
+[node name="Hole" type="MeshInstance3D" parent="Visual" unique_id=227097746]
+transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, 0, 0, 0)
+material_override = ExtResource("4_hai5d")
+visibility_range_end = 50.0
+visibility_range_end_margin = 7.5
+visibility_range_fade_mode = 1
+mesh = SubResource("CylinderMesh_cerl2")
+
+[node name="Skin" type="Node3D" parent="Visual" unique_id=1767836447]
+script = ExtResource("5_dludm")
+model_id = "treasure_bead"
+fit_size = Vector3(1.6, 1.6, 1.6)
+hide_paths = Array[NodePath]([NodePath("../Bead"), NodePath("../Hole")])
