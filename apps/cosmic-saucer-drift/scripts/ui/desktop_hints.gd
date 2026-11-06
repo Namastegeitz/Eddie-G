@@ -71,9 +71,9 @@ func _draw() -> void:
 		var hs := int(r * 0.2)
 		draw_string(font, base + Vector2(r + 14.0 * u, 4.0), hint, HORIZONTAL_ALIGNMENT_LEFT, -1, hs, Color(1, 1, 1, 0.45 + 0.2 * sin(_t * 4.0)))
 	# Key chips, bottom-right (above DRIFT's spot on touch; here there are no buttons).
-	var chips: Array = [["SPACE", "DRIFT / TRICK"], ["E", "ITEM"], ["Q", "LOOK BACK"], ["V", "COCKPIT"], ["ESC", "PAUSE"]]
+	var chips: Array = [["SPACE", "DRIFT / TRICK"], ["SHIFT", "GLIDE"], ["E", "ITEM"], ["Q", "LOOK BACK"], ["V", "COCKPIT"], ["ESC", "PAUSE"]]
 	if mouse_live:
-		chips = [["LMB", "DRIFT / TRICK"], ["RMB", "ITEM"], ["MMB", "LOOK BACK"], ["V", "COCKPIT"], ["ESC", "PAUSE"]]
+		chips = [["LMB", "DRIFT / TRICK"], ["SHIFT", "GLIDE"], ["RMB", "ITEM"], ["MMB", "LOOK BACK"], ["V", "COCKPIT"], ["ESC", "PAUSE"]]
 	var ch := 30.0 * u
 	var y := s.y - 40.0 * u - ch
 	var ks := int(ch * 0.5)
@@ -88,6 +88,7 @@ func _draw() -> void:
 			"DRIFT / TRICK": held = racer.in_drift
 			"ITEM": held = racer.in_item
 			"LOOK BACK": held = racer.in_look_back
+			"GLIDE": held = racer.gliding
 		var box := Rect2(x, y, kw, ch)
 		draw_rect(box, Color(lit.r, lit.g, lit.b, 0.35) if held else Color(1, 1, 1, 0.1))
 		draw_rect(box, Color(lit.r, lit.g, lit.b, 0.9 if held else 0.45), false, 2.0 * u)

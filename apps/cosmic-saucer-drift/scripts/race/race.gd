@@ -796,6 +796,10 @@ func _on_racer_event(kind: String, d: Dictionary, r: Racer) -> void:
 				cam.warp_cut()
 			if r.is_human:
 				InputRouter.rumble(r.slot, 0.5, 0.2)
+		"glide_on":
+			Audio.play_at("glide", r.global_position)
+			if r.is_human:
+				InputRouter.rumble(r.slot, 0.3, 0.15)
 		"walled", "repulsed":
 			if cam:
 				cam.add_shake(0.5)
@@ -905,6 +909,9 @@ func _fx_for(kind: String, d: Dictionary, r: Racer) -> void:
 		"respawn", "rescued":
 			fx.flash(pos + r.up * 0.6, Color(0.6, 0.9, 1.0), 5.0, 0.35)
 			fx.shockwave(pos, r.up, Color(0.6, 0.9, 1.0), 6.0, 0.5)
+		"glide_on":
+			fx.flash(pos + r.up * 0.4, Color(0.5, 0.95, 1.0), 3.5, 0.25)
+			fx.sparks(pos + r.up * 0.2, -r.heading, Color(0.5, 0.95, 1.0), 18, 7.0, 2.0)
 		"warped":
 			var from: Vector3 = d.get("from", pos)
 			fx.flash(from + r.up * 0.6, Color(0.6, 0.45, 1.0), 6.0, 0.3)

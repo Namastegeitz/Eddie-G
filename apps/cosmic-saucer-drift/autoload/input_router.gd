@@ -15,6 +15,7 @@ class Controls:
 	var drift := false
 	var item := false
 	var look_back := false
+	var glide := false       # unfold the energy wings while airborne (SHIFT / D-pad up; automatic on touch)
 
 ## Auto-drive (touch) cruises a little below full power; hold GAS for 100%.
 const AUTO_CRUISE := 0.92
@@ -129,6 +130,7 @@ func controls(slot: int) -> Controls:
 	var drift := false
 	var item := false
 	var look := false
+	var glide := false
 	var p1 := slot == 0
 	var all_keys := not two_player
 	# Keyboard.
@@ -137,7 +139,8 @@ func controls(slot: int) -> Controls:
 		if _k(KEY_D): steer += 1.0
 		if _k(KEY_W): thr = 1.0
 		if _k(KEY_S): brk = 1.0
-		if _k(KEY_SPACE) or (all_keys and _k(KEY_SHIFT)): drift = true
+		if _k(KEY_SPACE): drift = true
+		if _k(KEY_SHIFT): glide = true
 		if _k(KEY_E) or (all_keys and (_k(KEY_CTRL) or _k(KEY_F))): item = true
 		if _k(KEY_Q) or (all_keys and _k(KEY_C)): look = true
 	if not p1 or all_keys:
@@ -148,6 +151,7 @@ func controls(slot: int) -> Controls:
 		if _k(KEY_SLASH) or _k(KEY_KP_0) or (not all_keys and _k(KEY_CTRL)): drift = true
 		if _k(KEY_PERIOD) or _k(KEY_ENTER) or _k(KEY_KP_ENTER): item = true
 		if _k(KEY_COMMA): look = true
+		if _k(KEY_KP_ADD) or _k(KEY_END): glide = true
 	# Gamepads.
 	for d in _pad_for(slot):
 		var x := Input.get_joy_axis(d, JOY_AXIS_LEFT_X)
@@ -164,6 +168,7 @@ func controls(slot: int) -> Controls:
 		if Input.is_joy_button_pressed(d, JOY_BUTTON_RIGHT_SHOULDER): drift = true
 		if Input.is_joy_button_pressed(d, JOY_BUTTON_X) or Input.is_joy_button_pressed(d, JOY_BUTTON_LEFT_SHOULDER): item = true
 		if Input.is_joy_button_pressed(d, JOY_BUTTON_Y): look = true
+		if Input.is_joy_button_pressed(d, JOY_BUTTON_DPAD_UP) or Input.is_joy_button_pressed(d, JOY_BUTTON_LEFT_STICK): glide = true
 	# Mouse flight stick (player one only).
 	if p1 and mouse_on() and mouse_active:
 		steer += mouse_steer()
@@ -192,6 +197,7 @@ func controls(slot: int) -> Controls:
 		thr = maxf(thr, AUTO_CRUISE)
 	c.steer = clampf(steer, -1.0, 1.0)
 	c.throttle = clampf(thr, 0.0, 1.0)
+	c.glide = glide
 	c.brake = clampf(brk, 0.0, 1.0)
 	c.drift = drift
 	c.item = item

@@ -717,6 +717,8 @@ func _races() -> void:
 	Save.set_setting("fps_cap", 0)
 	check("frame cap off", Engine.max_fps == 0)
 	check("shader warm-up covers the world and effect materials", ShaderWarmup.materials().size() >= 24)
+	check("glide is off by default on keyboard, automatic by setting", Save.defaults().settings.glide_auto == false and InputRouter.Controls.new().glide == false)
+	await _glide_tests(r2)
 	check("loading tips exist", Game.TIPS.size() >= 8)
 	r2.toggle_pause()
 	check("pause pauses", get_tree().paused)
@@ -1299,3 +1301,58 @@ func _more_items_tests(race: Race) -> void:
 	race.items.clear_effects()
 	for r: Racer in rs:
 		_clear(r)
+
+
+## Energy wings: a human holding SHIFT glides (slow sink, speed held, steers),
+## a free-falling craft drops faster, the AI glides by itself.
+func _glide_tests(race: Race) -> void:
+	# The countdown may still be running: release the grid so racers tick.
+	race.racing = true
+	for r: Racer in race.racers:
+		if r.frozen:
+			r.on_go()
+	for f in 5:
+		await get_tree().physics_frame
+	var rs := race.racers
+	var a: Racer = rs[0]
+	var b: Racer = rs[1]
+	var c: Racer = rs[2]
+	var ctrl_a: Object = a.controller
+	var ctrl_b: Object = b.controller
+	var human_b := b.is_human
+	a.controller = null
+	b.controller = null
+	b.is_human = true   # the AI would glide by itself: compare against a human in free fall
+	for r: Racer in [a, b]:
+		_place_on_track(race, r, 150.0, 0.0)
+		r.global_position += r.up * 30.0
+		r.velocity = r.heading * 30.0
+		r.in_throttle = 1.0
+		r.in_brake = 0.0
+		r.in_drift = false
+		r.auto_glide = false
+		r.reset_physics_interpolation()
+	a.in_glide = true
+	b.in_glide = false
+	_place_on_track(race, c, 400.0, 0.0)
+	c.global_position += c.up * 30.0
+	c.velocity = c.heading * 30.0
+	c.reset_physics_interpolation()
+	for f in 45:
+		await get_tree().physics_frame
+	check("holding SHIFT in the air unfolds the wings", a.gliding and a.stats.glides >= 1)
+	check("on the wings the craft sinks gently", a.velocity.y > -race.tuning.glide_sink * 1.3 and a.velocity.y < 0.0)
+	check("thrusters hold the speed on the wings", Vector3(a.velocity.x, 0, a.velocity.z).length() > 25.0)
+	check("free fall drops much faster", not b.gliding and b.velocity.y < a.velocity.y - 4.0)
+	check("wings show on the model", a.model.wings != null and a.model.wings.visible)
+	check("the AI glides by itself", c.gliding)
+	a.in_glide = false
+	for f in 8:
+		await get_tree().physics_frame
+	check("letting go of SHIFT folds the wings", not a.gliding)
+	a.controller = ctrl_a
+	b.controller = ctrl_b
+	b.is_human = human_b
+	for r: Racer in [a, b, c]:
+		_place_on_track(race, r, 150.0 + 20.0 * r.idx, 0.0)
+		r.reset_physics_interpolation()

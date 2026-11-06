@@ -15,6 +15,7 @@ const DEFAULT_SETTINGS := {
 	"quality": "auto",              # auto | low | medium | high | ultra
 	"show_fps": false, "difficulty": 1,
 	"fps_cap": 0,                   # 0 = uncapped, 30 = half rate (weak phones, battery)
+	"glide_auto": false,            # wings unfold by themselves when airborne (always on with touch)
 	"mouse_controls": true,          # mouse = flight stick + throttle lever (desktop/web)
 	"key_hints": true,               # on-screen joystick + key chips with a keyboard/mouse
 }

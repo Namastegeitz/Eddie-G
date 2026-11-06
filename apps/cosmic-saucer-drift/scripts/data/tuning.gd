@@ -8,6 +8,13 @@ extends Resource
 @export var snap_range := 1.3
 @export var gravity := 28.0
 @export var air_steer := 0.35
+# Glide (energy wings while airborne): sink rate, steering multiplier on
+# top of air_steer, thruster share of ground acceleration, air time before
+# the wings may unfold.
+@export var glide_sink := 5.5
+@export var glide_steer := 3.2
+@export var glide_thrust := 0.8
+@export var glide_min_air := 0.3
 
 @export_group("Speed (from stats 1-10)")
 @export var top_speed_base := 40.0

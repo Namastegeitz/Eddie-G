@@ -22,6 +22,10 @@ var pilot_model: PilotModel
 var trail_color := Color(0.3, 0.9, 1.0)
 var breath: Node3D = null            # Quasar Dragon fire while boosting
 var rim_r := 1.9                     # hull radius (for strap-on parts)
+var wings: Node3D = null             # energy wings (glide), unfold from the hull sides
+var _wing_mats: Array[StandardMaterial3D] = []
+var _wing_edges: Array[Node3D] = []
+var _glide_k := 0.0
 var top_y := 0.4                     # height of the hull top
 var eye := Vector3(0, 1.0, 0)        # pilot's eye in pivot space (cockpit camera)
 
@@ -885,6 +889,66 @@ func _react_tick(dt: float) -> void:
 
 
 ## Per-frame visual state from the racer.
+## Translucent energy wings either side of the hull, folded away (scale 0)
+## until the craft glides. Built after `build` so they use the hull radius.
+func build_wings() -> void:
+	wings = Node3D.new()
+	wings.name = "Wings"
+	wings.visible = false
+	pivot.add_child(wings)
+	_wing_mats.clear()
+	_wing_edges.clear()
+	var c := trail_color
+	for sx: float in [-1.0, 1.0]:
+		var w := MeshInstance3D.new()
+		var qm := QuadMesh.new()
+		qm.size = Vector2(3.2, 1.4)
+		qm.center_offset = Vector3(sx * 1.6, 0.0, 0.0)   # root at the hull, tip outward
+		w.mesh = qm
+		# Translucent (not additive) so the wings read against bright lava and
+		# ice worlds too; the emission keeps them glowing in the dark.
+		var m := StandardMaterial3D.new()
+		m.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+		m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+		m.cull_mode = BaseMaterial3D.CULL_DISABLED
+		m.albedo_color = Color(c.r * 0.6 + 0.4, c.g * 0.6 + 0.4, c.b * 0.6 + 0.4, 0.6)
+		m.disable_receive_shadows = true
+		w.material_override = m
+		_wing_mats.append(m)
+		w.position = Vector3(sx * rim_r * 0.72, 0.08, 0.25)
+		# Lay flat, sweep back, lift the tips a little.
+		w.rotation_degrees = Vector3(-90.0 + sx * -8.0, sx * -28.0, sx * 10.0)
+		w.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		wings.add_child(w)
+		# Bright leading edge.
+		var edge := MeshInstance3D.new()
+		var em := BoxMesh.new()
+		em.size = Vector3(3.2, 0.07, 0.08)
+		edge.mesh = em
+		edge.material_override = _glow(c.lerp(Color.WHITE, 0.5), 3.0)
+		edge.position = Vector3(sx * 1.6, 0.0, -0.68)
+		edge.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		w.add_child(edge)
+		_wing_edges.append(edge)
+
+
+## Unfold / fold the wings over about a fifth of a second.
+func set_glide(on: bool, dt: float) -> void:
+	if wings == null:
+		return
+	_glide_k = move_toward(_glide_k, 1.0 if on else 0.0, dt * 5.0)
+	wings.visible = _glide_k > 0.01
+	if not wings.visible:
+		return
+	var k := _glide_k
+	wings.scale = Vector3(k, 1.0, 0.3 + 0.7 * k)
+	var shimmer := 0.55 + 0.2 * sin(_t * 9.0)
+	for m in _wing_mats:
+		m.albedo_color.a = shimmer * k
+	for e in _wing_edges:
+		e.scale = Vector3(1.0, 1.0 + 0.5 * sin(_t * 14.0), 1.0)
+
+
 func animate(dt: float, throttle: float, boosting: bool, drift_tier: int, drifting: bool, speed_ratio: float) -> void:
 	_t += dt
 	if spin_ring:
@@ -896,7 +960,7 @@ func animate(dt: float, throttle: float, boosting: bool, drift_tier: int, drifti
 	for k in flaps.size():
 		var sx := -1.0 if k == 0 else 1.0
 		flaps[k].rotation.z = sx * (sin(_t * (5.0 + speed_ratio * 4.0)) * 0.35 + 0.1)
-	_boost_k = move_toward(_boost_k, 1.0 if boosting else 0.0, dt * 4.0)
+	_boost_k = move_toward(_boost_k, 1.0 if boosting else (0.45 if _glide_k > 0.5 else 0.0), dt * 4.0)
 	var power := 0.35 + throttle * 0.55 + _boost_k * 0.9
 	var flick := 0.88 + 0.12 * sin(_t * 47.0) + 0.06 * sin(_t * 23.0)
 	var wide := 1.0 + 0.3 * _boost_k

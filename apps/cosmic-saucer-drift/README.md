@@ -158,6 +158,14 @@ that holds everyone inside it near half speed), **Phase Cloak** (5 s out of
 phase: nothing locks on, hits or slows you, and you pass through traps and
 other racers) and **Repulsor Pulse** (a hard shove on everyone within 12 m).
 
+**Glide.** Airborne off a ramp, a geyser or an edge, hold **Shift** (D-pad
+up on a pad) to unfold energy wings: thrusters hold your speed, the craft
+sinks slowly and steers almost like on the ground, so you can aim back at
+the road instead of dropping into the lava. Hold brake to flare and stretch
+the glide; let go to drop. On phones and tablets the wings unfold by
+themselves whenever you're in the air long enough (a Settings switch gives
+keyboard players the same), and the AI racers glide too.
+
 **Opens and runs smooth.** Starting a race shows a loading screen with a
 progress bar and a tip while the world is built in stages across frames
 (track, scenery, racers, systems), so the app never freezes; the menu

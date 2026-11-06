@@ -246,6 +246,10 @@ def main():
     n = len(t)
     write("item_repulsor", sine(np.linspace(90, 28, n), t) * env(n, 0.005, 0.15, 0.6, 0.4) + 0.5 * lowpass(noise(n), np.linspace(4000, 300, n)) * decay(n, 8))
 
+    t = t_axis(0.7)
+    n = len(t)
+    write("glide", lowpass(noise(n), np.linspace(500, 3500, n)) * env(n, 0.04, 0.25, 0.5, 0.4) * 0.6 + 0.3 * sine(np.linspace(240, 520, n), t) * env(n, 0.05, 0.3, 0.5, 0.35))
+
     # Music: two 16-beat synthwave loops built from a bass arpeggio, pad,
     # lead hook and drums.
     def song(bpm, bars, chords, lead, name, bright):

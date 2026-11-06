@@ -27,6 +27,10 @@ var in_brake := 0.0
 var in_drift := false
 var in_item := false
 var in_look_back := false
+var in_glide := false          # SHIFT / D-pad up held
+var auto_glide := false        # wings unfold by themselves when airborne (touch)
+var gliding := false           # energy wings out
+var glide_time := 0.0          # seconds on the wings this flight
 var _prev_drift := false
 var _prev_item := false
 
@@ -144,11 +148,12 @@ func setup(p_race: Node, p_idx: int, p_look: Dictionary, upgrades: Dictionary) -
 	model.name = "Model"
 	add_child(model)
 	model.build(look)
+	model.build_wings()
 	build_ms.append(snappedf(float(Time.get_ticks_usec() - tb) / 1000.0, 0.1))
 	_apply_stats(upgrades)
 	stats = {"pods": 0, "tricks": 0, "hits": 0, "hits_taken": 0, "items": 0, "purple": 0, "slips": 0,
 		"shortcuts": 0, "hover_count": 0, "drift_dist": 0.0, "near": 0, "dist": 0.0, "top": 0.0,
-		"shards": 0, "lead_laps": 0, "boosts": 0}
+		"shards": 0, "lead_laps": 0, "boosts": 0, "glides": 0}
 	if pilot.passive == "shield_start":
 		item = "shield"
 		item_uses = 1
@@ -220,6 +225,7 @@ func tick(dt: float) -> void:
 		return
 	var t1 := Time.get_ticks_usec()
 	_probe_ground(dt)
+	_glide(dt)
 	var t2 := Time.get_ticks_usec()
 	_steer_and_drift(dt)
 	_tricks(dt)
@@ -360,7 +366,7 @@ func _steer_and_drift(dt: float) -> void:
 	if fwd < -0.5:
 		turn = -turn
 	if not grounded:
-		turn *= T.air_steer
+		turn *= T.air_steer * (T.glide_steer if gliding else 1.0)
 	if spin_time > 0.0 or stall_time > 0.0 and fwd < 2.0:
 		turn = 0.0
 	heading = heading.rotated(up, -turn * dt).normalized()
@@ -380,7 +386,7 @@ func _end_drift(award: bool) -> void:
 func _tricks(dt: float) -> void:
 	var pressed := in_drift and not _prev_drift
 	_prev_drift = in_drift
-	if not grounded and pressed and air_time > T.trick_min_air and trick_time <= 0.0 and spin_time <= 0.0:
+	if not grounded and pressed and air_time > T.trick_min_air and trick_time <= 0.0 and spin_time <= 0.0 and not gliding:
 		trick_time = T.trick_time
 		trick_kind = (trick_kind + 1 + randi() % 2) % 3
 		emit_signal("event", "trick_start", {})
@@ -388,6 +394,37 @@ func _tricks(dt: float) -> void:
 		trick_time -= dt
 		if trick_time <= 0.0:
 			tricks_in_air += 1
+
+
+## Energy wings. Airborne long enough (off a ramp, a geyser, an edge), a
+## human unfolds them by holding SHIFT, or automatically on touch; the AI
+## always does. On the wings the craft sinks slowly, thrusters hold its
+## speed and it steers almost like on the ground, so you can aim back at the
+## road. Let go of the key to drop; landing or a spin folds them.
+func _glide(dt: float) -> void:
+	if grounded or spin_time > 0.0 or trick_time > 0.0 or rescue_time > 0.0 or finished:
+		if gliding:
+			gliding = false
+			emit_signal("event", "glide_off", {})
+		return
+	var falling := velocity.dot(up) < 1.5
+	var want: bool
+	if is_human:
+		want = in_glide or (auto_glide and air_time > T.glide_min_air and falling)
+	else:
+		want = air_time > T.glide_min_air and falling
+	if want and not gliding and air_time > 0.1:
+		gliding = true
+		glide_time = 0.0
+		# Thrusters kick in: a little lift as the wings catch.
+		velocity += up * maxf(0.0, 2.5 - velocity.dot(up))
+		stats.glides += 1
+		emit_signal("event", "glide_on", {})
+	elif gliding and not want and is_human and not auto_glide:
+		gliding = false
+		emit_signal("event", "glide_off", {})
+	if gliding:
+		glide_time += dt
 
 
 func _integrate(dt: float) -> void:
@@ -471,16 +508,27 @@ func _integrate(dt: float) -> void:
 	else:
 		up = up.lerp(Vector3.UP, 1.0 - exp(-2.5 * dt)).normalized()
 		heading = (heading - up * heading.dot(up)).normalized()
-		velocity += Vector3.DOWN * g * dt
-		if boost_time > 0.0:
-			var hv := Vector3(velocity.x, 0, velocity.z)
-			if hv.length() < top:
-				velocity += Vector3(heading.x, 0, heading.z).normalized() * T.boost_accel * 0.4 * dt
-		# Gently swing the travel direction toward the heading in the air.
+		if gliding:
+			# On the wings: ease down to a gentle sink (brake flares it
+			# gentler still) and let the thrusters hold the speed.
+			var sink: float = T.glide_sink * (0.55 if in_brake > 0.3 else 1.0)
+			velocity.y = move_toward(velocity.y, -sink, g * 0.6 * dt)
+			var hvg := Vector3(velocity.x, 0, velocity.z)
+			var want_spd := top * (1.05 if boost_time > 0.0 else 0.97)
+			if hvg.length() < want_spd:
+				velocity += Vector3(heading.x, 0, heading.z).normalized() * acc * T.glide_thrust * dt
+		else:
+			velocity += Vector3.DOWN * g * dt
+			if boost_time > 0.0:
+				var hv := Vector3(velocity.x, 0, velocity.z)
+				if hv.length() < top:
+					velocity += Vector3(heading.x, 0, heading.z).normalized() * T.boost_accel * 0.4 * dt
+		# Swing the travel direction toward the heading in the air: gently
+		# in free fall, sharply on the wings.
 		var hv2 := Vector3(velocity.x, 0, velocity.z)
 		var hd := Vector3(heading.x, 0, heading.z).normalized()
 		if hv2.length() > 1.0:
-			var nh := hv2.normalized().lerp(hd, 1.0 - exp(-1.5 * dt)).normalized() * hv2.length()
+			var nh := hv2.normalized().lerp(hd, 1.0 - exp(-(6.0 if gliding else 1.5) * dt)).normalized() * hv2.length()
 			velocity = Vector3(nh.x, velocity.y, nh.z)
 	var before := velocity
 	move_and_slide()
@@ -829,6 +877,7 @@ func _visuals(dt: float) -> void:
 		model.visible = false   # fast flicker reads as a half-there craft
 	model.steer = in_steer
 	model.grounded = grounded or air_time < 0.25
+	model.set_glide(gliding, dt)
 	model.mood = _mood()
 	model.animate(dt, in_throttle, boost_time > 0.0, drift_tier, drift_dir != 0, clampf(fwd_speed / max_speed, 0.0, 1.5))
 

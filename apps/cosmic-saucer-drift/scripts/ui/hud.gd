@@ -25,6 +25,8 @@ var _overlay: Control
 var _center_t := 0.0
 var _roll_t := 0.0
 var _splats: Array[Vector3] = []
+var _glide_lbl: Label
+var _glide_toasts := 0
 var _rng := RandomNumberGenerator.new()
 var _lines: ColorRect
 var _lines_mat: ShaderMaterial
@@ -115,6 +117,11 @@ func setup(p_race: Node, p_racer: Racer, is_compact: bool) -> void:
 	_speed = UiKit.label("0", int(30 * k), Color.WHITE, HORIZONTAL_ALIGNMENT_RIGHT)
 	add_child(_speed)
 	UiKit.place(_speed, Vector2(1, 0), Vector2(-220, 210 * k), Vector2(200, 40))
+	# GLIDE tag under the lap counter while the wings are out.
+	_glide_lbl = UiKit.label("▲ GLIDE ▲", int(22 * k), UiKit.CYAN, HORIZONTAL_ALIGNMENT_CENTER)
+	_glide_lbl.visible = false
+	add_child(_glide_lbl)
+	UiKit.place(_glide_lbl, Vector2(0.5, 0), Vector2(-150, 92 * k), Vector2(300, 36))
 	# Energy label (bars are drawn in the overlay).
 	_energy_lbl = UiKit.label("DARK MATTER", int(16 * k), UiKit.CYAN, HORIZONTAL_ALIGNMENT_CENTER)
 	add_child(_energy_lbl)
@@ -229,6 +236,10 @@ func _on_event(kind: String, d: Dictionary) -> void:
 				_splats.append(Vector3(_rng.randf_range(0.1, 0.9), _rng.randf_range(0.15, 0.85), _rng.randf_range(60, 150)))
 		"comet_warning":
 			toast("COMET INCOMING!", UiKit.RED)
+		"glide_on":
+			if _glide_toasts < 3:
+				_glide_toasts += 1
+				toast("GLIDE - thrusters on, steer for the road", UiKit.CYAN)
 		"warped":
 			toast("WARP JUMP!", UiKit.GOLD)
 		"decoy_popped":
@@ -272,6 +283,8 @@ func _on_event(kind: String, d: Dictionary) -> void:
 func _process(dt: float) -> void:
 	if racer == null:
 		return
+	if _glide_lbl and _glide_lbl.visible != racer.gliding:
+		_glide_lbl.visible = racer.gliding
 	if _layout_key != "%s|%s" % [size, InputRouter.touch_seen]:
 		_place_bottom()
 	if not _rotate_hint_shown and size.y > size.x and InputRouter.touch_seen and race.racing:

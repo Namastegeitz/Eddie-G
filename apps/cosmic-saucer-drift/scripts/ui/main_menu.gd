@@ -893,6 +893,7 @@ func _settings() -> Control:
 		["Key hints (keyboard/mouse)", "key_hints", [true, false], {true: "On", false: "Off"}],
 		["Show FPS", "show_fps", [false, true], {true: "On", false: "Off"}],
 		["Frame cap", "fps_cap", [0, 30], {0: "Off (smoothest)", 30: "30 fps (battery)"}],
+		["Glide deploy", "glide_auto", [false, true], {false: "Hold SHIFT (pad: D-pad up)", true: "Automatic (as on touch)"}],
 	]
 	for t in toggles:
 		var key: String = t[1]
@@ -950,6 +951,7 @@ func _howto() -> Control:
 		["Drift = Plasma Boost", "Hold DRIFT while steering into a corner. Sparks turn blue, orange, then purple. Let go to boost: the longer the drift, the bigger the boost."],
 		["Keep your core charged", "Your Dark Matter core drains as you fly. Grab glowing Energy Pods, land tricks, slipstream and near-miss hazards to refill it. If it empties you drop into a slow Emergency Hover until you grab a pod."],
 		["Tricks", "Press DRIFT while in the air (off ramps, geysers, bouncy moss) to spin. Land it cleanly for a boost and energy. Land mid-spin and you wobble."],
+		["Glide", "Airborne off a ramp or an edge? Hold SHIFT (D-pad up on a pad; automatic on phones) to unfold energy wings: thrusters hold your speed, you sink slowly and steer hard, so you can aim back at the road. Hold BRAKE to flare and stretch the glide; let go of SHIFT to drop."],
 		["Crates & items", "Fly through glowing crates for a random power-up, then press ITEM. Racers further back get stronger items."],
 		["Rocket start", "Press gas right as the countdown hits GO. Too early and your engine stalls."],
 		["Secrets", "Every track hides a shortcut and 3 Star Shards. Win a track to unlock its Reverse and Mirror versions."],
