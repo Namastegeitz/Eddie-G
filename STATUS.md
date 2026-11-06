@@ -29,9 +29,12 @@
 - Nov 5 (later): 25 tries per puzzle by default (3/5/10/25 in Settings) with a tries meter; when they
   run out, "the visitors" encounter: a ship rises from the horizon, asks "Who are you?"
   telepathically, remembers the player's name and can gift more tries.
+- Nov 6: each difficulty has its own alien lineup + theme, soft to gnarly: Easy Soft Visitors
+  (light pastel), Medium Alien Creatures, Hard Hostile Visitors, Alien Gnarly Horde; the
+  visitors encounter matches the tier. Share link: rawcdn.githack.com (see RUN.md).
 - Platforms: Vite web/PWA, Capacitor 8 Android + iOS (SPM), Electron desktop. App id
   `com.eddieg.aliensudoku`. Free with AdMob on phones (Google TEST ids until real ones are set).
-- Tests: 96 unit (`npm test`) + 17 Playwright end-to-end on phone and desktop (`npm run test:e2e`).
+- Tests: 96 unit (`npm test`) + 19 Playwright end-to-end on phone and desktop (`npm run test:e2e`).
 - Playable private web build: https://claude.ai/artifact/NdYUzQJYiAGjCra9nF7MHn
 - CI (`.github/workflows/alien-sudoku.yml`) builds APK, iOS simulator app, Windows/macOS/Linux
   installers and publishes the `alien-sudoku-latest` release. BLOCKED: GitHub would not start

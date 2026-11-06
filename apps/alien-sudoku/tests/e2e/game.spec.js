@@ -169,7 +169,7 @@ test('lineups: themes switch, every glyph exists, correct moves score points', a
   await openMenu(page);
   const missing = await page.evaluate(() => {
     const out = [];
-    for (const k of ['encounters', 'fleet', 'planets', 'cosmos', 'creatures', 'ancient']) {
+    for (const k of ['encounters', 'fleet', 'planets', 'cosmos', 'creatures', 'ancient', 'softies', 'hostile', 'gnarly']) {
       for (let i = 1; i <= 9; i++) if (!document.getElementById(`gl-${k}-${i}`)) out.push(`${k}-${i}`);
     }
     return out;
@@ -179,6 +179,8 @@ test('lineups: themes switch, every glyph exists, correct moves score points', a
   await page.locator('.icon-tile', { hasText: 'Settings' }).click();
   await page.locator('.set-card', { hasText: 'Space Fleet' }).click();
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'fleet');
+  // Use the chosen lineup in quick play (otherwise each difficulty brings its own aliens).
+  await page.locator('.set-row', { hasText: 'Each difficulty brings its own aliens' }).locator('input').uncheck();
   await page.locator('.topbar .icon-btn[aria-label="Back"]').click();
   await expect(page.locator('.lineup-chip')).toContainText('Space Fleet');
   await startQuick(page, 'easy');
