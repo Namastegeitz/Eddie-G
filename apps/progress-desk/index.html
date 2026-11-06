@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Eddie-G Progress Desk</title>
+<style>
+  :root {
+    color-scheme: light;
+    --plane:        #f9f9f7;
+    --surface-1:    #fcfcfb;
+    --surface-2:    #f2f1ed;
+    --text-primary: #0b0b0b;
+    --text-secondary:#52514e;
+    --text-muted:   #898781;
+    --grid:         #e1e0d9;
+    --axis:         #c3c2b7;
+    --ring:         rgba(11,11,11,0.10);
+    --series-1:     #2a78d6;
+    --seq-250:      #86b6ef;
+    --seq-350:      #5598e7;
+    --seq-450:      #2a78d6;
+    --seq-550:      #1c5cab;
+    --seq-650:      #104281;
+    --good:         #0ca30c;
+    --warning:      #fab219;
+    --serious:      #ec835a;
+    --critical:     #d03b3b;
+    --good-ink:     #006300;
+    --shadow:       0 1px 2px rgba(11,11,11,.06), 0 8px 24px rgba(11,11,11,.05);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:where(:not([data-theme="light"])) {
+      color-scheme: dark;
+      --plane:        #0d0d0d;
+      --surface-1:    #1a1a19;
+      --surface-2:    #222221;
+      --text-primary: #f0efec;
+      --text-secondary:#c3c2b7;
+      --text-muted:   #898781;
+      --grid:         #2c2c2a;
+      --axis:         #383835;
+      --ring:         rgba(255,255,255,0.10);
+      --series-1:     #3987e5;
+      --seq-250:      #184f95;
+      --seq-350:      #1c5cab;
+      --seq-450:      #256abf;
+      --seq-550:      #3987e5;
+      --seq-650:      #5598e7;
+      --good-ink:     #0ca30c;
+      --shadow:       0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.35);
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --plane:        #0d0d0d;
+    --surface-1:    #1a1a19;
+    --surface-2:    #222221;
+    --text-primary: #f0efec;
+    --text-secondary:#c3c2b7;
+    --text-muted:   #898781;
+    --grid:         #2c2c2a;
+    --axis:         #383835;
+    --ring:         rgba(255,255,255,0.10);
+    --series-1:     #3987e5;
+    --seq-250:      #184f95;
+    --seq-350:      #1c5cab;
+    --seq-450:      #256abf;
+    --seq-550:      #3987e5;
+    --seq-650:      #5598e7;
+    --good-ink:     #0ca30c;
+    --shadow:       0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.35);
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--plane);
+    color: var(--text-primary);
+    font: 15px/1.55 system-ui, -apple-system, "Segoe UI", sans-serif;
+    padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+    -webkit-text-size-adjust: 100%;
+  }
+  .wrap { max-width: 1040px; margin: 0 auto; padding: 20px 16px 72px; }
+
+  header.top { display: flex; align-items: flex-start; gap: 12px; flex-wrap: wrap; margin-bottom: 18px; }
+  header.top h1 { font-size: 22px; margin: 0 0 2px; letter-spacing: -.01em; }
+  header.top .sub { color: var(--text-secondary); font-size: 13px; margin: 0; }
+  .spacer { flex: 1 1 auto; }
+  button.ghost {
+    font: inherit; font-size: 13px; color: var(--text-secondary);
+    background: var(--surface-1); border: 1px solid var(--ring); border-radius: 8px;
+    padding: 7px 11px; cursor: pointer;
+  }
+  button.ghost:hover { color: var(--text-primary); }
+
+  nav.tabs { display: flex; gap: 4px; flex-wrap: wrap; border-bottom: 1px solid var(--grid); margin-bottom: 20px; }
+  nav.tabs a {
+    font-size: 14px; font-weight: 500; text-decoration: none; color: var(--text-secondary);
+    padding: 9px 13px; border-radius: 8px 8px 0 0; border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+  }
+  nav.tabs a[aria-current="page"] { color: var(--text-primary); border-bottom-color: var(--series-1); }
+  nav.tabs a:hover { color: var(--text-primary); background: var(--surface-2); }
+
+  section.view { display: none; }
+  section.view.on { display: block; }
+
+  .card {
+    background: var(--surface-1); border: 1px solid var(--ring); border-radius: 12px;
+    padding: 16px 18px; margin-bottom: 14px; box-shadow: var(--shadow);
+  }
+  .card > h2 { font-size: 15px; margin: 0 0 4px; letter-spacing: -.005em; }
+  .card > h2 + .note { margin-top: 0; }
+  .note { color: var(--text-secondary); font-size: 13px; margin: 0 0 12px; }
+  .note:last-child { margin-bottom: 0; }
+
+  .verdict { border-left: 3px solid var(--critical); }
+  .verdict .lead { font-size: 17px; line-height: 1.45; margin: 6px 0 10px; }
+  .verdict .basis { font-size: 12px; color: var(--text-muted); margin: 0; }
+
+  .chip {
+    display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 600;
+    padding: 2px 8px 2px 6px; border-radius: 999px; white-space: nowrap;
+    border: 1px solid var(--ring); background: var(--surface-2); color: var(--text-primary);
+  }
+  .chip .dot { width: 8px; height: 8px; border-radius: 50%; flex: none; }
+  .chip.good .dot { background: var(--good); }
+  .chip.warning .dot { background: var(--warning); }
+  .chip.serious .dot { background: var(--serious); }
+  .chip.critical .dot { background: var(--critical); }
+  .chip.neutral .dot { background: var(--text-muted); }
+
+  .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; margin-bottom: 14px; }
+  .tile {
+    background: var(--surface-1); border: 1px solid var(--ring); border-radius: 12px;
+    padding: 14px 16px; box-shadow: var(--shadow);
+  }
+  .tile .label { font-size: 12px; color: var(--text-secondary); margin-bottom: 6px; line-height: 1.35; }
+  .tile .value { font-size: 34px; font-weight: 650; letter-spacing: -.02em; line-height: 1; }
+  .tile .value.zero { color: var(--critical); }
+  .tile .foot { font-size: 11.5px; color: var(--text-muted); margin-top: 6px; line-height: 1.35; }
+
+  .ladder { display: grid; gap: 2px; }
+  .rung {
+    display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 12px;
+    padding: 11px 13px; border-radius: 8px; background: var(--surface-2);
+    position: relative; overflow: hidden;
+  }
+  .rung .fill { position: absolute; inset: 0 auto 0 0; border-radius: 0 4px 4px 0; opacity: .20; }
+  .rung .rl { position: relative; }
+  .rung .rl .st { font-size: 13.5px; font-weight: 600; }
+  .rung .rl .rn { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
+  .rung .rv { position: relative; font-size: 26px; font-weight: 650; letter-spacing: -.02em; }
+  .rung .rv.zero { color: var(--critical); }
+
+  table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  th { text-align: left; font-size: 11.5px; text-transform: uppercase; letter-spacing: .04em;
+       color: var(--text-muted); font-weight: 600; padding: 0 10px 7px 0; border-bottom: 1px solid var(--grid); }
+  td { padding: 9px 10px 9px 0; border-bottom: 1px solid var(--grid); vertical-align: top; }
+  tr:last-child td { border-bottom: 0; }
+  td.num { font-variant-numeric: tabular-nums; text-align: right; padding-right: 0; }
+  .scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  a { color: var(--series-1); }
+
+  .app { margin-bottom: 14px; }
+  .app h3 { font-size: 16px; margin: 0 0 2px; }
+  .app .kind { font-size: 12px; color: var(--text-muted); margin: 0 0 10px; }
+  .app .desc { font-size: 13.5px; color: var(--text-secondary); margin: 0 0 12px; }
+  .metrics { display: flex; gap: 18px; flex-wrap: wrap; margin: 0 0 12px; }
+  .metrics div { font-size: 12px; color: var(--text-secondary); }
+  .metrics b { display: block; font-size: 17px; font-weight: 650; color: var(--text-primary);
+               font-variant-numeric: tabular-nums; letter-spacing: -.01em; }
+  .block { background: var(--surface-2); border-radius: 8px; padding: 11px 13px; margin-top: 10px; }
+  .block .bt { font-size: 11.5px; text-transform: uppercase; letter-spacing: .04em;
+               color: var(--text-muted); font-weight: 600; margin-bottom: 6px; }
+  .block ul { margin: 0; padding-left: 18px; font-size: 13px; color: var(--text-secondary); }
+  .block ul li { margin-bottom: 3px; }
+  .block p { margin: 0; font-size: 13px; color: var(--text-secondary); }
+
+  .plan-row { display: grid; grid-template-columns: 34px 1fr; gap: 12px; padding: 13px 0; border-bottom: 1px solid var(--grid); }
+  .plan-row:last-child { border-bottom: 0; }
+  .plan-row .rank { font-size: 19px; font-weight: 650; color: var(--series-1); font-variant-numeric: tabular-nums; }
+  .plan-row .act { font-size: 14.5px; font-weight: 600; margin-bottom: 4px; }
+  .plan-row .why { font-size: 13px; color: var(--text-secondary); margin-bottom: 7px; }
+  .plan-row .meta { display: flex; gap: 8px; flex-wrap: wrap; font-size: 11.5px; color: var(--text-muted); }
+  .plan-row .meta span { background: var(--surface-2); border-radius: 999px; padding: 2px 9px; }
+
+  .filters { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 12px; }
+  .filters input, .filters select {
+    font: inherit; font-size: 13px; padding: 7px 10px; border-radius: 8px;
+    border: 1px solid var(--ring); background: var(--surface-1); color: var(--text-primary);
+  }
+  .filters input { flex: 1 1 180px; min-width: 0; }
+
+  /* chart */
+  .chart svg { display: block; width: 100%; height: auto; overflow: visible; }
+  .chart .tick { font-size: 11px; fill: var(--text-muted); }
+  .chart .catlab { font-size: 12.5px; fill: var(--text-secondary); }
+  .chart .vlab { font-size: 12px; fill: var(--text-primary); font-weight: 600; }
+  .chart .bar { transition: opacity .12s; }
+  .chart .hit { fill: transparent; cursor: default; }
+  .chart g.row.dim .bar { opacity: .45; }
+  .tip {
+    position: fixed; z-index: 40; pointer-events: none; opacity: 0; transition: opacity .1s;
+    background: var(--surface-1); color: var(--text-primary); border: 1px solid var(--ring);
+    border-radius: 8px; padding: 7px 10px; font-size: 12.5px; box-shadow: var(--shadow); max-width: 240px;
+  }
+  .tip.on { opacity: 1; }
+  .tip b { font-variant-numeric: tabular-nums; }
+
+  /* agent */
+  .log { display: flex; flex-direction: column; gap: 12px; margin-bottom: 14px; }
+  .msg { max-width: 92%; }
+  .msg .who { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--text-muted);
+              font-weight: 600; margin-bottom: 4px; }
+  .msg .body { font-size: 14px; line-height: 1.6; white-space: pre-wrap; overflow-wrap: anywhere; }
+  .msg.me { align-self: flex-end; }
+  .msg.me .body { background: var(--series-1); color: #fff; padding: 9px 13px; border-radius: 12px 12px 3px 12px; }
+  .msg.me .who { text-align: right; }
+  .msg.ai .body { background: var(--surface-2); padding: 11px 14px; border-radius: 12px 12px 12px 3px; }
+  .msg.err .body { background: var(--surface-2); border-left: 3px solid var(--critical); padding: 11px 14px; border-radius: 4px; }
+  .composer { display: flex; gap: 8px; align-items: flex-end; }
+  .composer textarea {
+    flex: 1 1 auto; font: inherit; font-size: 14.5px; padding: 11px 13px; border-radius: 10px;
+    border: 1px solid var(--ring); background: var(--surface-1); color: var(--text-primary);
+    resize: none; min-height: 46px; max-height: 160px;
+  }
+  .composer button {
+    font: inherit; font-size: 14.5px; font-weight: 600; padding: 12px 18px; border-radius: 10px;
+    border: 0; background: var(--series-1); color: #fff; cursor: pointer; flex: none;
+  }
+  .composer button:disabled { opacity: .45; cursor: default; }
+  .asks { display: flex; gap: 7px; flex-wrap: wrap; margin-bottom: 12px; }
+  .asks button {
+    font: inherit; font-size: 12.5px; padding: 6px 11px; border-radius: 999px; cursor: pointer;
+    border: 1px solid var(--ring); background: var(--surface-1); color: var(--text-secondary);
+  }
+  .asks button:hover { color: var(--text-primary); border-color: var(--series-1); }
+  .caveats { font-size: 12.5px; color: var(--text-secondary); }
+  .caveats li { margin-bottom: 7px; }
+  @media (max-width: 560px) {
+    .wrap { padding: 16px 12px 56px; }
+    .tile .value { font-size: 28px; }
+    .msg { max-width: 100%; }
+  }
+</style>
+</head>
+<body>
+<script id="portfolio" type="application/json">__PORTFOLIO_JSON__</script>
+<div class="wrap">
+  <header class="top">
+    <div>
+      <h1>Eddie-G Progress Desk</h1>
+      <p class="sub" id="sub"></p>
+    </div>
+    <div class="spacer"></div>
+    <button class="ghost" id="theme" type="button">Dark</button>
+  </header>
+
+  <nav class="tabs" id="tabs">
+    <a href="#verdict">Verdict</a>
+    <a href="#apps">The five apps</a>
+    <a href="#links">All 42 links</a>
+    <a href="#plan">What to do</a>
+    <a href="#agent">Ask the agent</a>
+  </nav>
+
+  <section class="view" id="v-verdict"></section>
+  <section class="view" id="v-apps"></section>
+  <section class="view" id="v-links"></section>
+  <section class="view" id="v-plan"></section>
+  <section class="view" id="v-agent"></section>
+</div>
+<div class="tip" id="tip"></div>
+
+<script>
+(function () {
+  "use strict";
+  var D = JSON.parse(document.getElementById("portfolio").textContent);
+  var esc = function (s) {
+    return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  };
+  var $ = function (id) { return document.getElementById(id); };
+
+  /* ---------- theme ---------- */
+  var themeBtn = $("theme");
+  function storedTheme() { try { return localStorage.getItem("pd-theme"); } catch (e) { return null; } }
+  function applyTheme(t) {
+    if (t) { document.documentElement.setAttribute("data-theme", t); }
+    else { document.documentElement.removeAttribute("data-theme"); }
+    var dark = t === "dark" || (!t && window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches);
+    themeBtn.textContent = dark ? "Light" : "Dark";
+  }
+  applyTheme(storedTheme());
+  themeBtn.addEventListener("click", function () {
+    var dark = themeBtn.textContent === "Light";
+    var next = dark ? "light" : "dark";
+    try { localStorage.setItem("pd-theme", next); } catch (e) {}
+    applyTheme(next);
+    drawChart();
+  });
+
+  $("sub").textContent = "Everything built, who can actually reach it, and what moves the needle · data read " + D.generated;
+
+  /* ---------- tooltip ---------- */
+  var tip = $("tip");
+  function showTip(html, x, y) {
+    tip.innerHTML = html;
+    tip.classList.add("on");
+    var r = tip.getBoundingClientRect();
+    var left = Math.min(Math.max(8, x + 12), window.innerWidth - r.width - 8);
+    var top = Math.max(8, y - r.height - 12);
+    tip.style.left = left + "px";
+    tip.style.top = top + "px";
+  }
+  function hideTip() { tip.classList.remove("on"); }
+
+  /* ---------- verdict ---------- */
+  function statusChip(state) {
+    var s = String(state).toLowerCase(), cls = "neutral";
+    if (/open|instrumented/.test(s)) cls = "warning";
+    else if (/closed|never|none|blocked|not live|in-memory/.test(s)) cls = "critical";
+    else if (/passing|built/.test(s)) cls = "good";
+    return '<span class="chip ' + cls + '"><span class="dot"></span>' + esc(state) + "</span>";
+  }
+
+  function renderVerdict() {
+    var r = D.reach_ladder, max = Math.max.apply(null, r.map(function (x) { return x.count; })) || 1;
+    var tiles = [
+      { label: "Artifacts you have built", value: D.artifact_sharing.total, foot: D.work_timeline.artifact_span },
+      { label: "Links another person can open", value: D.artifact_sharing.public, foot: "The other " + D.artifact_sharing.owner_only + " are owner-only" },
+      { label: "Links with usage data you can read", value: 0, foot: "No view counts, no telemetry" },
+      { label: "Apps on an app store", value: 0, foot: "No AAB or IPA ever submitted" }
+    ];
+    var h = '<div class="card verdict"><h2>' + esc(D.headline.question) + "</h2>" +
+      '<p class="lead">' + esc(D.headline.answer) + "</p>" +
+      '<p class="basis">' + esc(D.headline.basis) + "</p></div>";
+
+    h += '<div class="tiles">' + tiles.map(function (t) {
+      return '<div class="tile"><div class="label">' + esc(t.label) + "</div>" +
+        '<div class="value' + (t.value === 0 ? " zero" : "") + '">' + t.value + "</div>" +
+        '<div class="foot">' + esc(t.foot) + "</div></div>";
+    }).join("") + "</div>";
+
+    h += '<div class="card"><h2>Where it all drains away</h2>' +
+      '<p class="note">Each rung counts how much of the portfolio survives that step. The drop from 42 to 1 is a single setting, not a missing feature.</p>' +
+      '<div class="ladder">' + r.map(function (x, i) {
+        var pct = Math.max(x.count / max * 100, x.count === 0 ? 0 : 1.5);
+        var col = ["--seq-650", "--seq-550", "--seq-450", "--seq-350"][i] || "--seq-350";
+        return '<div class="rung"><div class="fill" style="width:' + pct + "%;background:var(" + col + ')"></div>' +
+          '<div class="rl"><div class="st">' + esc(x.stage) + '</div><div class="rn">' + esc(x.note) + "</div></div>" +
+          '<div class="rv' + (x.count === 0 ? " zero" : "") + '">' + x.count + "</div></div>";
+      }).join("") + "</div></div>";
+
+    h += '<div class="card"><h2>Sharing state of every artifact</h2>' +
+      '<p class="note">' + esc(D.artifact_sharing.what_owner_only_means) + "</p>" +
+      '<div class="metrics"><div><b>' + D.artifact_sharing.total + "</b>checked, one by one</div>" +
+      "<div><b>" + D.artifact_sharing.owner_only + "</b>owner-only</div>" +
+      "<div><b>" + D.artifact_sharing.public + "</b>public</div>" +
+      "<div><b>" + D.artifact_sharing.org + "</b>shared with an org</div>" +
+      "<div><b>" + D.artifact_sharing.named_users + "</b>shared with named people</div></div>" +
+      '<div class="block"><div class="bt">How to change it</div><p>' + esc(D.artifact_sharing.where_to_change_it) + "</p></div>" +
+      '<div class="block"><div class="bt">Why there is no visitor count</div><p>' + esc(D.view_counts.reason) + " " + esc(D.view_counts.implication) + "</p></div></div>";
+
+    h += '<div class="card"><h2>Telemetry audit — what each app reports back to you</h2>' +
+      '<p class="note">' + esc(D.telemetry_audit.verdict) + "</p><div class=\"scroll\"><table><thead><tr>" +
+      "<th>App</th><th>State</th><th>What exists</th><th>Cost to fix</th></tr></thead><tbody>" +
+      D.telemetry_audit.apps.map(function (a) {
+        return "<tr><td><b>" + esc(a.app) + "</b></td><td>" + statusChip(a.state) + "</td>" +
+          "<td>" + esc(a.detail) + '<div class="foot" style="font-size:11.5px;color:var(--text-muted);margin-top:5px">' +
+          esc(a.evidence) + "</div></td><td>" + esc(a.fix_cost) + "</td></tr>";
+      }).join("") + "</tbody></table></div></div>";
+
+    h += '<div class="card"><h2>Every way the work could reach a person</h2><div class="scroll"><table><thead><tr>' +
+      "<th>Surface</th><th>Status</th><th>Detail</th></tr></thead><tbody>" +
+      D.distribution_surfaces.map(function (s) {
+        return "<tr><td><b>" + esc(s.surface) + "</b></td><td>" + statusChip(s.status) + "</td><td>" +
+          esc(s.detail) + (s.where_to_look ? '<div style="font-size:12px;color:var(--text-muted);margin-top:5px">' + esc(s.where_to_look) + "</div>" : "") +
+          "</td></tr>";
+      }).join("") + "</tbody></table></div></div>";
+
+    var p = D.the_real_problem;
+    h += '<div class="card"><h2>The diagnosis</h2><p class="note" style="font-size:14px;color:var(--text-primary)">' +
+      esc(p.diagnosis) + '</p><p class="note">' + esc(p.second_finding) + '</p><p class="note">' + esc(p.third_finding) + "</p></div>";
+
+    h += '<div class="card"><h2>What I could not verify</h2><ul class="caveats">' +
+      D.honest_caveats.map(function (c) { return "<li>" + esc(c) + "</li>"; }).join("") + "</ul></div>";
+
+    $("v-verdict").innerHTML = h;
+  }
+
+  /* ---------- apps + chart ---------- */
+  function renderApps() {
+    var h = '<div class="card chart" id="locchart"></div>';
+    h += D.apps.map(function (a) {
+      return '<div class="card app"><h3>' + esc(a.name) + "</h3>" +
+        '<p class="kind">' + esc(a.kind) + " · " + esc(a.path) + "</p>" +
+        '<p class="desc">' + esc(a.what_it_is) + "</p>" +
+        '<div class="metrics">' +
+          "<div><b>" + a.lines.toLocaleString() + "</b>lines of code</div>" +
+          "<div><b>" + a.files + "</b>files</div>" +
+          "<div><b>" + esc(a.disk) + "</b>on disk</div>" +
+        "</div>" +
+        '<div class="block"><div class="bt">State</div><p>' + esc(a.state) + ". " + esc(a.tests) + ".</p></div>" +
+        '<div class="block"><div class="bt">Ships as</div><p>' + esc(a.ships_as) + "</p></div>" +
+        '<div class="block"><div class="bt">Who can reach it</div><p>' + esc(a.distribution) + "</p></div>" +
+        '<div class="block"><div class="bt">Blocked on</div><ul>' +
+          a.blockers.map(function (b) { return "<li>" + esc(b) + "</li>"; }).join("") + "</ul></div>" +
+        '<div class="block"><div class="bt">Closest win</div><p>' + esc(a.closest_win) + "</p></div>" +
+      "</div>";
+    }).join("");
+    $("v-apps").innerHTML = h;
+    drawChart();
+  }
+
+  function drawChart() {
+    var host = $("locchart");
+    if (!host) return;
+    var rows = D.apps.slice().sort(function (a, b) { return b.lines - a.lines; });
+    var max = Math.max.apply(null, rows.map(function (r) { return r.lines; }));
+    var ticks = [0, 10000, 20000, 30000];
+    var W = 700, labelW = 148, rowH = 34, barH = 14, top = 28, bottom = 10;
+    var H = top + rows.length * rowH + bottom;
+    var plotX = labelW, plotW = W - labelW - 76;
+    var x = function (v) { return plotX + (v / 30000) * plotW; };
+
+    var svg = '<h2>Code written, by app</h2><p class="note">Lines in tracked source files (.gd, .js, .html, .css, .py, .sh). ' +
+      'Roughly ' + Math.round(D.repo_facts.total_app_lines / 1000) + ',000 lines across ' + D.repo_facts.total_app_files + ' files in total.</p>' +
+      '<svg viewBox="0 0 ' + W + " " + H + '" role="img" aria-label="Horizontal bar chart of lines of code per app">';
+    ticks.forEach(function (t) {
+      svg += '<line x1="' + x(t) + '" y1="' + (top - 6) + '" x2="' + x(t) + '" y2="' + (top + rows.length * rowH - 12) +
+        '" stroke="var(--grid)" stroke-width="1"/>' +
+        '<text class="tick" x="' + x(t) + '" y="' + (top - 12) + '" text-anchor="middle">' +
+        (t === 0 ? "0" : t / 1000 + "k") + "</text>";
+    });
+    rows.forEach(function (r, i) {
+      var y = top + i * rowH, w = Math.max(x(r.lines) - plotX, 1);
+      svg += '<g class="row" data-i="' + i + '">' +
+        '<text class="catlab" x="' + (labelW - 12) + '" y="' + (y + barH - 3) + '" text-anchor="end">' +
+          esc(r.name.split(",")[0]) + "</text>" +
+        '<path class="bar" fill="var(--seq-450)" d="M' + plotX + "," + y + "H" + (plotX + w - 4) +
+          "q4,0 4,4V" + (y + barH - 4) + "q0,4 -4,4H" + plotX + 'Z"/>' +
+        '<text class="vlab" x="' + (plotX + w + 9) + '" y="' + (y + barH - 3) + '">' +
+          r.lines.toLocaleString() + "</text>" +
+        '<rect class="hit" x="0" y="' + (y - 8) + '" width="' + W + '" height="' + (barH + 16) + '"/></g>';
+    });
+    svg += "</svg>";
+    host.innerHTML = svg;
+
+    var groups = host.querySelectorAll("g.row");
+    Array.prototype.forEach.call(groups, function (g) {
+      var r = rows[+g.getAttribute("data-i")];
+      var enter = function (ev) {
+        Array.prototype.forEach.call(groups, function (o) { if (o !== g) o.classList.add("dim"); });
+        var t = ev.touches && ev.touches[0];
+        showTip("<b>" + esc(r.name) + "</b><br>" + r.lines.toLocaleString() + " lines · " + r.files +
+          " files<br>" + esc(r.state), t ? t.clientX : ev.clientX, t ? t.clientY : ev.clientY);
+      };
+      var leave = function () {
+        Array.prototype.forEach.call(groups, function (o) { o.classList.remove("dim"); });
+        hideTip();
+      };
+      g.addEventListener("mouseenter", enter);
+      g.addEventListener("mousemove", enter);
+      g.addEventListener("mouseleave", leave);
+      g.addEventListener("touchstart", enter, { passive: true });
+      g.addEventListener("touchend", leave);
+    });
+  }
+
+  /* ---------- links ---------- */
+  function renderLinks() {
+    var kinds = {};
+    D.artifacts.forEach(function (a) { kinds[a.kind] = (kinds[a.kind] || 0) + 1; });
+    var opts = Object.keys(kinds).sort().map(function (k) {
+      return '<option value="' + esc(k) + '">' + esc(k) + " (" + kinds[k] + ")</option>";
+    }).join("");
+    $("v-links").innerHTML = '<div class="card"><h2>Every artifact you own, and who can open it</h2>' +
+      '<p class="note">All ' + D.artifact_sharing.total + ' were checked individually against the artifact service. ' +
+      "Sorted newest first. Only the one marked public is reachable by anyone but you.</p>" +
+      '<div class="filters"><input id="q" type="search" placeholder="Filter by name…" aria-label="Filter by name">' +
+      '<select id="kf" aria-label="Filter by kind"><option value="">All kinds (' + D.artifacts.length + ")</option>" + opts + "</select>" +
+      '<select id="sf" aria-label="Filter by sharing"><option value="">Any sharing</option>' +
+      '<option value="public">Public only</option><option value="owner">Owner-only</option></select></div>' +
+      '<div class="scroll"><table><thead><tr><th>Artifact</th><th>Kind</th><th>Updated</th><th>Who can open it</th></tr></thead>' +
+      '<tbody id="arows"></tbody></table></div><p class="note" id="acount" style="margin-top:12px"></p></div>';
+
+    function paint() {
+      var q = $("q").value.trim().toLowerCase(), kf = $("kf").value, sf = $("sf").value;
+      var rows = D.artifacts.filter(function (a) {
+        return (!q || a.title.toLowerCase().indexOf(q) > -1) && (!kf || a.kind === kf) && (!sf || a.read === sf);
+      });
+      $("arows").innerHTML = rows.map(function (a) {
+        var pub = a.read === "public";
+        return "<tr><td><a href=" + '"' + esc(a.url) + '"' + ' target="_blank" rel="noopener">' + esc(a.title) + "</a></td>" +
+          "<td>" + esc(a.kind) + "</td><td>" + esc(a.updated) + "</td><td>" +
+          '<span class="chip ' + (pub ? "warning" : "critical") + '"><span class="dot"></span>' +
+          (pub ? "Anyone with the link" : "Only you") + "</span></td></tr>";
+      }).join("") || '<tr><td colspan="4" style="color:var(--text-muted)">Nothing matches.</td></tr>';
+      $("acount").textContent = "Showing " + rows.length + " of " + D.artifacts.length + ".";
+    }
+    $("q").addEventListener("input", paint);
+    $("kf").addEventListener("change", paint);
+    $("sf").addEventListener("change", paint);
+    paint();
+  }
+
+  /* ---------- plan ---------- */
+  function renderPlan() {
+    var h = '<div class="card"><h2>Six moves, cheapest first</h2>' +
+      '<p class="note">Not one of these is a feature. Every blocker in this portfolio is a distribution blocker.</p>' +
+      D.plan.map(function (p) {
+        return '<div class="plan-row"><div class="rank">' + p.rank + "</div><div>" +
+          '<div class="act">' + esc(p.action) + "</div>" +
+          '<div class="why">' + esc(p.why) + "</div>" +
+          '<div class="meta"><span>' + esc(p.effort) + "</span><span>unblocks: " + esc(p.unblocks) + "</span></div>" +
+          "</div></div>";
+      }).join("") + "</div>";
+
+    var rf = D.repo_facts, wt = D.work_timeline;
+    h += '<div class="card"><h2>The repo, in numbers</h2><div class="metrics">' +
+      "<div><b>" + esc(rf.visibility) + "</b>visibility</div>" +
+      "<div><b>" + rf.total_app_lines.toLocaleString() + "</b>lines across 5 apps</div>" +
+      "<div><b>" + rf.total_app_files + "</b>tracked files</div>" +
+      "<div><b>" + rf.visible_commits + "+</b>commits visible</div>" +
+      "<div><b>" + rf.remote_branches.length + "</b>remote branches</div></div>" +
+      '<p class="note" style="margin-top:12px">' + esc(rf.visible_commit_window) + ". " + esc(rf.history_caveat) +
+      " " + esc(rf.binaries_committed) + ". There is no <code>main</code> branch on the remote — only " +
+      rf.remote_branches.map(function (b) { return "<code>" + esc(b) + "</code>"; }).join(" and ") + ".</p>" +
+      '<p class="note">' + esc(wt.observation) + " Artifacts by month: " +
+      Object.keys(wt.artifacts_by_month).map(function (k) { return esc(k) + " — " + wt.artifacts_by_month[k]; }).join(", ") +
+      ".</p><p class=\"note\"><a href=\"" + esc(rf.url) + '" target="_blank" rel="noopener">' + esc(rf.url) + "</a></p></div>";
+    $("v-plan").innerHTML = h;
+  }
+
+  /* ---------- agent ---------- */
+  var BRIEF_HEAD = [
+    "You are the Progress Desk agent for Eddie (GitHub user Namastegeitz), a solo builder who ships apps and games with Claude Code.",
+    "You hold a verified snapshot of his entire portfolio, read on " + D.generated + " directly from the artifact service and his repository. It is pasted below as JSON.",
+    "",
+    "How to behave:",
+    "- Be the colleague who tells him the truth. He has a production problem solved and a distribution problem untouched. Do not flatter the volume of work; help him get it in front of people.",
+    "- Ground every claim in the JSON. Cite the specific number, file path or setting. If the JSON does not cover something, say so plainly rather than guessing.",
+    "- Never invent player counts, download numbers, revenue or view counts. There is no usage data anywhere in this portfolio. If he asks how many people played something, the honest answer is zero or unmeasurable, and you should explain which.",
+    "- Respect honest_caveats: those are things that could not be verified from the session. Repeat the caveat rather than resolving it.",
+    "- Keep answers short and concrete. Lead with the answer. Prefer a ranked next action over a survey of options. Plain prose, minimal formatting, no headers unless he asks for a long write-up.",
+    "- When he asks what to do, prefer the cheapest move that puts the work in front of a real person.",
+    "",
+    "PORTFOLIO SNAPSHOT (JSON):"
+  ].join("\n");
+  var BRIEF = BRIEF_HEAD + "\n" + JSON.stringify(D);
+
+  var ASKS = [
+    "So is anyone playing my games?",
+    "What should I do first, today?",
+    "Why can't I see view counts?",
+    "Which app is closest to a store?",
+    "How do I start measuring players?",
+    "What's the risk of the public repo?",
+    "Am I actually making progress?"
+  ];
+
+  var sampleFn = null, sampleState = "loading", history = [], busy = false, abort = null;
+
+  function loadHistory() {
+    try {
+      var raw = localStorage.getItem("pd-chat");
+      if (raw) { var p = JSON.parse(raw); if (Array.isArray(p)) history = p.slice(-24); }
+    } catch (e) {}
+  }
+  function saveHistory() {
+    try { localStorage.setItem("pd-chat", JSON.stringify(history.slice(-24))); } catch (e) {}
+  }
+  loadHistory();
+
+  function renderAgent() {
+    $("v-agent").innerHTML = '<div class="card"><h2>Ask the agent</h2>' +
+      '<p class="note">It has the whole snapshot on this page — all ' + D.artifact_sharing.total +
+      " artifacts and their sharing state, all five apps, the telemetry audit and the plan. " +
+      "It will not invent numbers it does not have. Each question is answered fresh from the snapshot plus this conversation.</p>" +
+      '<div class="asks" id="asks"></div>' +
+      '<div class="log" id="log"></div>' +
+      '<div class="composer"><textarea id="ta" rows="1" placeholder="Ask about your progress…" aria-label="Your question"></textarea>' +
+      '<button id="send" type="button">Ask</button></div>' +
+      '<p class="note" id="status" style="margin-top:10px"></p>' +
+      '<p class="note"><button class="ghost" id="clear" type="button">Clear this conversation</button></p></div>';
+
+    $("asks").innerHTML = ASKS.map(function (a, i) {
+      return '<button type="button" data-i="' + i + '">' + esc(a) + "</button>";
+    }).join("");
+    $("asks").addEventListener("click", function (ev) {
+      var b = ev.target.closest("button[data-i]");
+      if (!b) return;
+      $("ta").value = ASKS[+b.getAttribute("data-i")];
+      send();
+    });
+    $("send").addEventListener("click", send);
+    $("ta").addEventListener("keydown", function (ev) {
+      if (ev.key === "Enter" && !ev.shiftKey) { ev.preventDefault(); send(); }
+    });
+    $("ta").addEventListener("input", function () {
+      this.style.height = "auto";
+      this.style.height = Math.min(this.scrollHeight, 160) + "px";
+    });
+    $("clear").addEventListener("click", function () {
+      history = [];
+      saveHistory();
+      paintLog();
+    });
+    paintLog();
+    setStatus();
+  }
+
+  function setStatus(txt) {
+    var el = $("status");
+    if (!el) return;
+    if (txt) { el.textContent = txt; return; }
+    if (sampleState === "loading") el.textContent = "Connecting…";
+    else if (sampleState === "ready") el.textContent = "Ready. The first question asks your permission to use Claude.";
+    else el.textContent = "The agent cannot run in this view. Everything else on this page still works offline.";
+  }
+
+  function paintLog(streaming) {
+    var log = $("log");
+    if (!log) return;
+    var items = history.slice();
+    if (streaming != null) items = items.concat([{ role: "assistant", content: streaming, live: true }]);
+    log.innerHTML = items.map(function (m) {
+      var cls = m.role === "user" ? "me" : (m.error ? "ai err" : "ai");
+      var who = m.role === "user" ? "You" : "Agent";
+      return '<div class="msg ' + cls + '"><div class="who">' + who + '</div><div class="body">' +
+        esc(m.content) + "</div></div>";
+    }).join("");
+    if (items.length) log.lastElementChild.scrollIntoView({ block: "nearest" });
+  }
+
+  function send() {
+    var ta = $("ta");
+    if (!ta || busy) return;
+    var q = ta.value.trim();
+    if (!q) return;
+    ta.value = "";
+    ta.style.height = "auto";
+    history.push({ role: "user", content: q });
+    if (sampleState === "off") {
+      history.push({
+        role: "assistant",
+        error: true,
+        content: "I cannot answer here — this copy of the page has no connection to Claude. " +
+          "That happens when it is opened as a local file rather than from its claude.ai link, or when permission was declined. " +
+          "Open the published link and ask again. Everything else on this page — the verdict, the five apps, all 42 links and the plan — works without me."
+      });
+      saveHistory();
+      paintLog();
+      setStatus();
+      return;
+    }
+    saveHistory();
+    paintLog("");
+    busy = true;
+    $("send").disabled = true;
+    setStatus("Thinking…");
+
+    var turns = [{ role: "user", content: BRIEF }, { role: "assistant", content: "Snapshot loaded. Ask away." }];
+    history.slice(-12).forEach(function (m) {
+      if (!m.error) turns.push({ role: m.role, content: m.content });
+    });
+
+    var run = function () {
+      abort = new AbortController();
+      return sampleFn(turns, {
+        onText: function (e) { paintLog(e.text || ""); },
+        signal: abort.signal,
+        cache: false,
+        modelTier: "default"
+      });
+    };
+
+    var done = function (text) {
+      history.push({ role: "assistant", content: text });
+      saveHistory();
+      paintLog();
+      busy = false;
+      $("send").disabled = false;
+      setStatus();
+    };
+
+    var fail = function (err) {
+      var code = (err && err.code) || "";
+      var msg;
+      if (code === "not_granted") { sampleState = "off"; msg = "Permission to use Claude was declined, so the agent cannot answer. Every other tab on this page still works."; }
+      else if (code === "rate_limited") msg = "Rate limited. Wait a minute and ask again.";
+      else msg = "That did not go through" + ((err && err.message) ? ": " + err.message : ".") + " Try again.";
+      if (err && err.text) { history.push({ role: "assistant", content: err.text }); }
+      history.push({ role: "assistant", content: msg, error: true });
+      saveHistory();
+      paintLog();
+      busy = false;
+      $("send").disabled = sampleState === "off";
+      setStatus();
+    };
+
+    if (sampleFn) { run().then(function (r) { done((r && r.text) || "(no answer came back)"); }, fail); return; }
+    // capability still resolving: wait for it once
+    waitForSample().then(function (ok) {
+      if (!ok) { fail({ code: "not_granted" }); return; }
+      run().then(function (r) { done((r && r.text) || "(no answer came back)"); }, fail);
+    });
+  }
+
+  var samplePromise = null;
+  function waitForSample() {
+    if (samplePromise) return samplePromise;
+    samplePromise = new Promise(function (resolve) {
+      if (!window.claude || typeof window.claude.use !== "function") { sampleState = "off"; resolve(false); return; }
+      window.claude.use("sample").then(function (s) {
+        if (typeof s === "function") { sampleFn = s; sampleState = "ready"; resolve(true); }
+        else { sampleState = "off"; resolve(false); }
+      }, function () { sampleState = "off"; resolve(false); });
+    });
+    return samplePromise;
+  }
+  waitForSample().then(function () { setStatus(); });
+
+  /* ---------- routing ---------- */
+  var VIEWS = ["verdict", "apps", "links", "plan", "agent"];
+  function route() {
+    var h = (location.hash || "").replace(/^#/, "");
+    if (VIEWS.indexOf(h) < 0) h = "verdict";
+    VIEWS.forEach(function (v) {
+      var el = $("v-" + v);
+      if (el) el.classList.toggle("on", v === h);
+    });
+    Array.prototype.forEach.call($("tabs").querySelectorAll("a"), function (a) {
+      if (a.getAttribute("href") === "#" + h) a.setAttribute("aria-current", "page");
+      else a.removeAttribute("aria-current");
+    });
+    if (h === "apps") drawChart();
+    window.scrollTo(0, 0);
+  }
+
+  renderVerdict();
+  renderApps();
+  renderLinks();
+  renderPlan();
+  renderAgent();
+  window.addEventListener("hashchange", route);
+  window.addEventListener("resize", drawChart);
+  route();
+})();
+</script>
+</body>
+</html>

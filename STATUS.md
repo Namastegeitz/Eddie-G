@@ -250,3 +250,43 @@
 - `prompts/codex/bugs-eye-view-tasks.md` - 10 small Codex tasks.
 - Tool ideas: `apps/bugs-eye-view/docs/TOOL_IDEAS.md`.
 - Next: collect the rest of the new prompt set (Claude + Codex) into `prompts/`.
+
+## Progress Desk (`apps/progress-desk`)
+- Built to answer "is anyone playing or using my links?" with evidence rather than a guess.
+- **Finding, read 2026-11-05: nobody is.** All 42 artifacts owned on claude.ai were checked one
+  by one against the artifact service. 41 are `read: "owner"` — only Eddie, signed in as Eddie,
+  can open them; anyone else gets a dead end. The single exception is "Lead Desk Field Guide"
+  (2026-08-07), which is `read: "public"`. None are shared with an org or with named people.
+- The artifact service exposes no view or visitor count to any tool, and claude.ai does not show
+  one on the artifact page, so even the public link has no number to retrieve.
+- Telemetry audit across the five apps — nothing reports back to anyone:
+  - Canopy Crossing: full analytics autoload (runs, deaths, purchases, unlocks, 7-step funnel)
+    writing to `user://analytics.jsonl`, POSTing only if `canopy/analytics/endpoint` is set.
+    `project.godot:34` has `analytics/endpoint=""`. One string away from working.
+  - Cosmic Saucer Drift: `autoload/events.gd` keeps the last 200 events in memory; nothing is
+    stored or sent. A `provider` hook is left empty.
+  - Monkey See, Monkey Do: no analytics by design (PRIVACY.md, in-game text); the Android build
+    has no INTERNET permission, so it cannot report even if asked.
+  - Off-Grid Survival Kit: no accounts, server, analytics or tracking; everything vendored.
+  - Bug's-Eye View: no analytics module anywhere in the project.
+- Distribution surfaces: the GitHub repo is **public** (anyone can read it and download the two
+  debug APKs, ~120 MB committed) and is the only surface keeping usage data Eddie can read —
+  Insights > Traffic, 14-day window. No gh-pages branch exists on the remote, so the QR code in
+  the Off-Grid hub pointing at namastegeitz.github.io/Eddie-G is currently a 404. Nothing has
+  ever been submitted to Google Play or the App Store. GitHub Actions is refused at account level.
+- The page: `portfolio.json` (the dataset) + `index.html` (template with a `__PORTFOLIO_JSON__`
+  placeholder) + `build.mjs` -> `dist/index.html`. Five tabs: Verdict, The five apps, All 42 links,
+  What to do, Ask the agent.
+- The agent uses the artifact `sample` capability, declared as `{"sample": {}}` on slug
+  `998c62d4-7ed7-4170-ad2a-a6e079257199`. Each question goes up with the whole snapshot plus the
+  last 12 turns; it is briefed not to invent player counts, downloads or revenue, and to repeat
+  the recorded caveats rather than resolve them. History lives in `localStorage` on one device.
+- Checked in Chromium at 1180x900 and 390x844: 20 checks pass (routing, tiles, ladder, telemetry
+  rows, 42 link rows, filters, chart bars + hover, plan rows, agent composer and its offline
+  fallback, dark toggle, no phone overflow, clean console).
+- Published: https://claude.ai/artifact/KxjAMcpniJhvg54EfDapaU (owner-only, like everything else).
+- Not verified from the session: whether namastegeitz.github.io/Eddie-G really 404s (the host is
+  outside the environment's allowed domains), and GitHub repo traffic (no tool reaches it).
+- Next: flip Monkey See, Monkey Do to a shared link and send it to five people; read GitHub
+  Insights > Traffic before the 14-day window rolls; run `scripts/publish_pages.sh`; set
+  `canopy/analytics/endpoint`.

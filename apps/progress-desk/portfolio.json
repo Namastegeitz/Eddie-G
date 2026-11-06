@@ -1,0 +1,206 @@
+{
+  "generated": "2026-11-05",
+  "owner": "Namastegeitz",
+  "headline": {
+    "question": "Is anyone playing or using my links?",
+    "answer": "No. Not 'we don't know' - for 41 of your 42 artifact links it is structurally impossible, because they are set to owner-only. The 42nd is public but has no counter you can read. And none of the five apps sends a single usage event anywhere, so even a real player would leave no trace.",
+    "confidence": "high",
+    "basis": "Sharing state read directly from the artifact service for all 42 artifacts; analytics code and config read from the repo; remote branch list read from GitHub."
+  },
+  "reach_ladder": [
+    { "stage": "Things built and finished", "count": 42, "note": "42 artifacts + 5 full app codebases in the repo" },
+    { "stage": "Links another person could open", "count": 1, "note": "Lead Desk Field Guide (public). All 41 others are owner-only." },
+    { "stage": "Links with any usage signal you can read", "count": 0, "note": "No view counts exposed; no telemetry in any app" },
+    { "stage": "Apps on an app store", "count": 0, "note": "No AAB or IPA has ever been submitted" }
+  ],
+  "artifact_sharing": {
+    "total": 42,
+    "owner_only": 41,
+    "public": 1,
+    "org": 0,
+    "named_users": 0,
+    "checked": "every one of the 42, individually",
+    "what_owner_only_means": "Only you, signed in as you, can open the link. Anyone else - a friend, a tester, a stranger - gets nothing. Pasting the link into a text message delivers a dead end.",
+    "where_to_change_it": "Open the artifact on claude.ai and use its Share control. This cannot be changed by any tool in this session."
+  },
+  "view_counts": {
+    "available": false,
+    "reason": "The artifact service exposes no view or visitor count to tools, and claude.ai does not show one on the artifact page either. There is no number to retrieve, for private or public artifacts.",
+    "implication": "Even after you make a link public, you will not learn how many people opened it from the link itself. Usage has to be measured somewhere you control."
+  },
+  "telemetry_audit": {
+    "verdict": "Zero usage data reaches you from any app. This is by design in four of the five, and switched off in the fifth.",
+    "apps": [
+      { "app": "Canopy Crossing", "state": "Instrumented but disconnected", "detail": "A full analytics autoload exists (runs, deaths, purchases, unlocks, ads, a 7-step onboarding funnel). It writes to user://analytics.jsonl on the player's own device, and POSTs batches only if the setting canopy/analytics/endpoint is non-empty.", "evidence": "apps/canopy-crossing/autoload/analytics.gd; apps/canopy-crossing/project.godot line 34: analytics/endpoint=\"\"", "fix_cost": "Lowest in the portfolio. Set one URL and events start flowing." },
+      { "app": "Cosmic Saucer Drift", "state": "In-memory only", "detail": "Logs first_open, tutorial_complete, race_start, race_finish, cup_complete, unlock, purchase, achievement, daily_complete to an array capped at 200 entries. Nothing is written to disk, nothing is sent. A provider hook is left empty for a future Firebase/Google Ads attachment.", "evidence": "apps/cosmic-saucer-drift/autoload/events.gd", "fix_cost": "Low. The event names and call sites already exist; only a sender is missing." },
+      { "app": "Monkey See, Monkey Do", "state": "Deliberately none", "detail": "No accounts, no ads, no analytics, nothing sent anywhere - stated in the in-game privacy text and PRIVACY.md. The Android build ships without the INTERNET permission, so it physically cannot report.", "evidence": "apps/monkey-see-monkey-do/js/ui.js:1296; apps/monkey-see-monkey-do/PRIVACY.md", "fix_cost": "Highest friction. Adding telemetry means reversing a published privacy promise and adding a permission." },
+      { "app": "Off-Grid Survival Kit", "state": "Deliberately none", "detail": "No accounts, no server, no analytics, no tracking. Every library is vendored; there are no CDN, font, analytics or API calls at runtime.", "evidence": "apps/off-grid-survival-kit/README.md lines 6 and 116", "fix_cost": "Against the product's whole premise. Leave it alone." },
+      { "app": "Bug's-Eye View", "state": "None at all", "detail": "No analytics module, no event log, no endpoint anywhere in the project.", "evidence": "Repo-wide search for analytics/telemetry/firebase/gtag returned no hit in apps/bugs-eye-view", "fix_cost": "Medium. Would need building from scratch." }
+    ]
+  },
+  "distribution_surfaces": [
+    { "surface": "Claude artifact links", "status": "Closed", "detail": "41 of 42 owner-only. This is where almost all of the work lives, and it is the one surface where a share is a single click." },
+    { "surface": "GitHub repo Namastegeitz/Eddie-G", "status": "OPEN - and you may not have realised", "detail": "The repository is public. Anyone who finds it can read every line, read STATUS.md, and download two working Android APKs (Bug's-Eye View 61 MB, Cosmic Saucer Drift 59 MB). This is currently your only real public distribution channel - and the only place with usage data you can actually read.", "where_to_look": "https://github.com/Namastegeitz/Eddie-G -> Insights -> Traffic. It shows views, unique visitors, clones and referring sites for the last 14 days, and nothing older - so whatever it says today is all the history that exists." },
+    { "surface": "GitHub Pages site", "status": "Not live", "detail": "The Off-Grid Survival Kit hub shows a QR code pointing at https://namastegeitz.github.io/Eddie-G/, but no gh-pages branch exists on the remote (only claude/nifty-lamport-bfm2ub and claude/peaceful-carson-qmcyku), and scripts/publish_pages.sh has never been run. Any phone scanning that QR gets a 404." },
+    { "surface": "Google Play", "status": "Never submitted", "detail": "No AAB has been produced for any app. The two APKs that exist are debug-signed (Cosmic Saucer Drift was signed with a hand-rolled signer because Google's build-tools download is blocked in the cloud environment), which is fine for sideloading and not accepted by Play." },
+    { "surface": "App Store", "status": "Never submitted", "detail": "No IPA. Needs a Mac or a cloud Mac service; Codemagic configs exist for two apps." },
+    { "surface": "GitHub Actions (automated builds)", "status": "Blocked", "detail": "A mobile build workflow is committed and ready, but Actions runs are refused at the account level - jobs stop after about 3 seconds with no log." }
+  ],
+  "apps": [
+    {
+      "name": "Off-Grid Survival Kit",
+      "path": "apps/off-grid-survival-kit",
+      "kind": "Offline PWA (vanilla HTML/CSS/JS)",
+      "lines": 19047,
+      "files": 68,
+      "disk": "2.2 MB",
+      "state": "Built and passing",
+      "tests": "25-check Playwright acceptance run, online to offline, all pass",
+      "what_it_is": "Field app that works with no signal: GPS map with saved tiles, waypoints, tracks, MGRS/UTM, sun and moon, triangulation, elevation and contours, QR share, SOS beacon, a live compass with bearing lock and camera sighting, survival guides, device tools, and an 18-page printable emergency PDF.",
+      "ships_as": "Zip at apps/off-grid-survival-kit/dist/off-grid-survival-kit.zip",
+      "distribution": "None - no artifact link, no live site",
+      "blockers": ["Needs HTTPS hosting before a phone can install it", "Never tested on real hardware: install, offline launch, real GPS, compass, torch", "Unknown whether the tile servers allow CORS saving (the sandbox cannot reach them)"],
+      "closest_win": "This is the single easiest thing in the portfolio to put in front of a person, because it is plain static files. Run scripts/publish_pages.sh, and the QR code already in the app starts working."
+    },
+    {
+      "name": "Monkey See, Monkey Do",
+      "path": "apps/monkey-see-monkey-do",
+      "kind": "three.js web game + PWA + Capacitor iOS/Android",
+      "lines": 26519,
+      "files": 159,
+      "disk": "8.2 MB",
+      "state": "Built and passing",
+      "tests": "443 unit checks + a 25-step Playwright play-through including an offline reload, all pass",
+      "what_it_is": "Rhythm-memory game. A cel-shaded 3D monkey built entirely in code - jointed limbs, curly tail, six mouths, blinking eyes that follow your taps - dances a routine on the beat and you copy it. 30 levels across 3 worlds, Endless, Free Dance, 100 skins, 88 pieces of gear in 8 slots, an optional shop with a grown-up check and a monthly limit, and a How it works screen generated from the actual rules.",
+      "ships_as": "One-file build dist/monkey-see-monkey-do.html, PWA at dist/www, artifact link",
+      "distribution": "Private artifact link only (owner-only)",
+      "blockers": ["APK not built: dl.google.com (the Android SDK) is blocked by the environment's network policy", "iOS app needs a Mac or Codemagic", "Real store purchases need products created in App Store Connect / Play Console"],
+      "closest_win": "Flip the artifact to public or shared and it is instantly playable by anyone on any phone. It is the most immediately shareable game you own - no install, no store."
+    },
+    {
+      "name": "Canopy Crossing",
+      "path": "apps/canopy-crossing",
+      "kind": "Godot 4.7.2, portrait 720x1280",
+      "lines": 15523,
+      "files": 456,
+      "disk": "8.9 MB",
+      "state": "All 8 phases built; graphics and feel upgrade done",
+      "tests": "325-check phase audit passes in the project and in an exported pack; a path-finding bot beats all 200 levels with the free starter animal; frame cost 0.9 ms on the cloud CPU",
+      "what_it_is": "Jungle arcade crosser. 50 real animals with signature abilities, 200 maps (20 real rainforests x 10 levels) picked from a spinning globe, bird's-eye and first-person views with 80 themed 3D scenes, dense-canopy zones that force you into first person, Journey/Endless/Daily modes, a Berries + Amber economy, a data-driven store, a 30-tier Expedition Pass and a coached tutorial. Adding an animal or a region is a content file, not code.",
+      "ships_as": "Artifact web build; Android/iOS/desktop export presets ready",
+      "distribution": "Private artifact link only (owner-only)",
+      "blockers": ["No signed Android/iOS builds (needs Android SDK + keystore, Mac/Xcode)", "Billing is a sandbox mock; real store purchases untested", "Art is procedural placeholder - sprites drop in via a \"sprite\" key in the content files", "Never playtested by another human"],
+      "closest_win": "The analytics module is already written and only needs an endpoint URL. This is the one app where you could have real funnel data the same day you get players."
+    },
+    {
+      "name": "Cosmic Saucer Drift",
+      "path": "apps/cosmic-saucer-drift",
+      "kind": "Godot 4.7.2, landscape",
+      "lines": 15190,
+      "files": 290,
+      "disk": "85 MB",
+      "state": "v3 built (HD graphics, characters and feel)",
+      "tests": "667-check smoke test and an AI race sim on all 42 track layouts, all pass",
+      "what_it_is": "Arcade UFO kart racer on real worlds: 14 planet and moon tracks across the Solar System, TRAPPIST-1, Alpha Centauri and four exoplanet extremes, each with real fact cards, a real sun in the sky and its own gravity - plus reverse and mirror versions for 42 layouts and a Grand Prix. 14 alien craft rebuilt in HD from code, 8 pilots with faces, moods and blinking eyes that follow the steering, 8 power-ups in 5 position lineups, drifting, cups, time trial, boss races, a daily challenge and 2-player split-screen. Low to Ultra graphics tiers.",
+      "ships_as": "Debug APK at dist/android/cosmicsaucerdrift-debug.apk (59 MB), desktop shortcut zip, artifact web build",
+      "distribution": "Private artifact link + a downloadable debug APK sitting in a public GitHub repo",
+      "blockers": ["Play Store AAB needs the real Android SDK and Gradle on a PC", "Never run on a real phone - graphics tiers and frame rate unverified", "No music"],
+      "closest_win": "It is the most store-ready thing you have: the listing text, feature graphic, icon, screenshots, privacy policy and an export checklist are all already written in docs/. What is missing is one AAB build on a machine with the Android SDK."
+    },
+    {
+      "name": "Bug's-Eye View",
+      "path": "apps/bugs-eye-view",
+      "kind": "Godot 4.7.2",
+      "lines": 20709,
+      "files": 669,
+      "disk": "75 MB",
+      "state": "All 6 phases built and audited",
+      "tests": "165-check smoke test + 378-check phase audit + an offline Meshy client test, all pass in the project and in an exported build; zero GDScript warnings",
+      "what_it_is": "Action-stealth survival as a tiny bug in a giant house. 8 bugs unlocked in sequence, 3 big rooms with boss chases, perception-based stealth with an alarm gauge, people who cook, sweep, rake, draw curtains and check their phones, pets with moods and body language, a robot vacuum that eats crumbs, 38 hiding places, flight moves for the fly, and auto quality that steps down on slow phones.",
+      "ships_as": "Debug APK at dist/android/bugseyeview-debug.apk (61 MB), artifact web build",
+      "distribution": "Private artifact link + a downloadable debug APK sitting in a public GitHub repo",
+      "blockers": ["Art is placeholder: 90 Meshy model prompts are written but never run - api.meshy.ai is blocked by the environment and needs MESHY_API_KEY", "No real audio", "Play AAB needs a local Android SDK; iOS needs a Mac or Codemagic", "Never playtested"],
+      "closest_win": "Nothing here is a few minutes' work. Treat it as the one that waits."
+    }
+  ],
+  "repo_facts": {
+    "url": "https://github.com/Namastegeitz/Eddie-G",
+    "visibility": "public",
+    "remote_branches": ["claude/nifty-lamport-bfm2ub", "claude/peaceful-carson-qmcyku"],
+    "no_default_main_branch": true,
+    "visible_commits": 50,
+    "visible_commit_window": "2026-11-03 to 2026-11-05 (5 commits, then 24, then 21)",
+    "history_caveat": "This checkout is a shallow clone, so 50 is a floor, not the total. The real history may be longer.",
+    "total_app_lines": 97000,
+    "total_app_files": 1642,
+    "binaries_committed": "About 120 MB of debug APKs are committed into the public repo"
+  },
+  "work_timeline": {
+    "artifact_span": "2026-08-07 to 2026-11-05 (91 days)",
+    "artifacts_by_month": { "2026-08": 8, "2026-09": 7, "2026-10": 13, "2026-11": 14 },
+    "observation": "Output is accelerating - 14 artifacts in the first five days of November, more than all of August. The bottleneck has never been production."
+  },
+  "the_real_problem": {
+    "diagnosis": "You have a production problem solved and a distribution problem untouched. Five finished apps, roughly 97,000 lines, 2,100-plus passing automated checks - and a reach of one public document. Every single blocker on the list is a distribution blocker, not a build blocker: a share toggle, a hosting push, an SDK on a real machine, a store account. None of them need another feature.",
+    "second_finding": "Nothing measures anything. Four of the five apps are privacy-by-design with no telemetry, one has telemetry with an empty endpoint. So the moment you do get players, you still will not know what they did. Fix the endpoint before you chase the players, not after.",
+    "third_finding": "The one thing that IS public - the GitHub repo - is the thing you never pointed anyone at, and it is the only surface that keeps numbers you can read. Check Insights -> Traffic today, because it only remembers 14 days."
+  },
+  "plan": [
+    { "rank": 1, "action": "Flip Monkey See, Monkey Do to a shared link and send it to five people", "why": "It is a finished, tested, offline-capable game that runs in any phone browser with no install. The only thing between it and a player is a share toggle you click on claude.ai.", "effort": "minutes", "unblocks": "Your first real player, ever" },
+    { "rank": 2, "action": "Check GitHub Insights -> Traffic and write the numbers down", "why": "It is the only usage data that exists anywhere in your portfolio, and it is deleted after 14 days. Whatever it says today is unrecoverable tomorrow.", "effort": "minutes", "unblocks": "A baseline to measure against" },
+    { "rank": 3, "action": "Run scripts/publish_pages.sh to put Off-Grid Survival Kit on GitHub Pages", "why": "It is static files, it needs HTTPS to install on a phone, and the QR code inside the app already points at the exact URL Pages would serve. It is currently a dead QR.", "effort": "under an hour", "unblocks": "A real installable app on your own phone, plus a working QR to hand someone" },
+    { "rank": 4, "action": "Set canopy/analytics/endpoint to a real collector", "why": "Canopy Crossing already logs runs, deaths, unlocks, purchases and a 7-step onboarding funnel. One empty string is all that stops you from seeing it. Do this before the players arrive.", "effort": "an hour or two", "unblocks": "The only funnel data you could have" },
+    { "rank": 5, "action": "Build the Cosmic Saucer Drift AAB on a machine with the Android SDK", "why": "The store kit is already written - listing, feature graphic, icon, screenshots, privacy policy, export checklist. This is the shortest path from your work to a storefront.", "effort": "a day, mostly account setup", "unblocks": "Google Play internal testing track" },
+    { "rank": 6, "action": "Run the two debug APKs on an actual phone", "why": "Two 60 MB games have never touched real hardware. Frame rate, graphics tiers and touch controls are all unverified assumptions.", "effort": "an evening", "unblocks": "Confidence that any of it actually plays well" }
+  ],
+  "honest_caveats": [
+    "I could not open https://namastegeitz.github.io/Eddie-G/ to confirm the 404 - that host is outside this session's allowed network domains. The conclusion that no site exists rests on there being no gh-pages branch on the remote and on STATUS.md recording that the publish script was never run.",
+    "I cannot read GitHub repo traffic from this session, so I cannot tell you whether anyone has visited or cloned the public repo. That number exists and only you can see it, at Insights -> Traffic.",
+    "View counts for the one public artifact are not exposed to any tool. There is no way to retrieve that number here, and claude.ai does not display it either.",
+    "Test counts, level counts and feature lists for the five apps are taken from STATUS.md and each app's README, written by the sessions that built and ran them. I verified the analytics wiring, line counts, file counts, disk sizes, commit window and build artifacts directly; I did not re-run the test suites in this session."
+  ],
+  "artifacts": [
+    { "title": "Cosmic Saucer Drift", "url": "https://claude.ai/artifact/Wjris6Pjst5K54bF6z8MUY", "updated": "2026-11-05", "read": "owner", "kind": "game" },
+    { "title": "Alien Sudoku", "url": "https://claude.ai/artifact/NdYUzQJYiAGjCra9nF7MHn", "updated": "2026-11-05", "read": "owner", "kind": "game" },
+    { "title": "Chladni Sand Plate - Nicer Build Buyer's List", "url": "https://claude.ai/artifact/1tPXkB6aLV3KhbbM5Fs6Cj", "updated": "2026-11-05", "read": "owner", "kind": "doc" },
+    { "title": "Bug's-Eye View", "url": "https://claude.ai/artifact/Gmpx6M1Qb9WmCn1BY1Qbh4", "updated": "2026-11-05", "read": "owner", "kind": "game" },
+    { "title": "Canopy Crossing", "url": "https://claude.ai/artifact/NHzAQ2w4jCjWjLkoxLSdB3", "updated": "2026-11-05", "read": "owner", "kind": "game" },
+    { "title": "Monkey See, Monkey Do", "url": "https://claude.ai/artifact/6ARndyKdPDcqbRxZ7ohyMY", "updated": "2026-11-05", "read": "owner", "kind": "game" },
+    { "title": "Dog Whistle & Trainer", "url": "https://claude.ai/artifact/AM9mVry5SaVdYeC8WtB2Y1", "updated": "2026-11-04", "read": "owner", "kind": "tool" },
+    { "title": "RemixDeck - Build Prompt", "url": "https://claude.ai/artifact/Hg7rJGficLj1xgApEF1XmG", "updated": "2026-11-04", "read": "owner", "kind": "page" },
+    { "title": "Very Nice Rejoice Edit", "url": "https://claude.ai/artifact/K67F5rMPRHaPXSrLoFx5bf", "updated": "2026-11-04", "read": "owner", "kind": "tool" },
+    { "title": "Canopy Crossing - Game Build Prompt", "url": "https://claude.ai/artifact/FE6JJoUKuFcJnjBY9asHTT", "updated": "2026-11-04", "read": "owner", "kind": "doc" },
+    { "title": "Top Mobile Games 2026 - Ratings, Playtime & Ad Revenue", "url": "https://claude.ai/artifact/GUtdpxEzMTmEjowoGYtAfR", "updated": "2026-11-04", "read": "owner", "kind": "doc" },
+    { "title": "Dodeca Locket", "url": "https://claude.ai/artifact/CKvEuzstD76gEJEDec3xun", "updated": "2026-10-29", "read": "owner", "kind": "tool" },
+    { "title": "CODEX Master Prompter", "url": "https://claude.ai/artifact/W8HbTxXurY9BrWB4kiUTjr", "updated": "2026-10-29", "read": "owner", "kind": "tool" },
+    { "title": "Bump That Beat", "url": "https://claude.ai/artifact/Qn1rgfAaCgksmLJK7v2uSd", "updated": "2026-10-23", "read": "owner", "kind": "tool" },
+    { "title": "Wrath of the Mountain", "url": "https://claude.ai/artifact/HCouEBPqidfMY91UntQ1Cr", "updated": "2026-10-23", "read": "owner", "kind": "page" },
+    { "title": "Agent Operating Habits - Drop-In Prompt for Any Project", "url": "https://claude.ai/artifact/4DtUPd26tkpNmLQ82xs7uK", "updated": "2026-10-22", "read": "owner", "kind": "doc" },
+    { "title": "Eddie's Focus Playbook - Guides & Practice Sheets", "url": "https://claude.ai/artifact/YFU3J9ykv5KeFxFRbGpR6y", "updated": "2026-10-22", "read": "owner", "kind": "doc" },
+    { "title": "Strategic Agent Habit Formation - A Playbook for the Portfolio", "url": "https://claude.ai/artifact/V796zNhdX9bHDbMBNUEsdM", "updated": "2026-10-22", "read": "owner", "kind": "doc" },
+    { "title": "Bump That Beat (hero screen)", "url": "https://claude.ai/artifact/RMyCxNmgaQtUvZUdEiGbhe", "updated": "2026-10-22", "read": "owner", "kind": "page" },
+    { "title": "Lean Mass Blueprint", "url": "https://claude.ai/artifact/PMZiDMigGxfFhVLXVd6scA", "updated": "2026-10-20", "read": "owner", "kind": "page" },
+    { "title": "ElectroSole Inserts", "url": "https://claude.ai/artifact/7wyFufJJu5WvooNr9Jfdq6", "updated": "2026-10-18", "read": "owner", "kind": "page" },
+    { "title": "Bambu Studio Cheat Sheet", "url": "https://claude.ai/artifact/2qoUamqnA1KExG7SEf5JRu", "updated": "2026-10-12", "read": "owner", "kind": "doc" },
+    { "title": "ElectroSole Build Blueprint", "url": "https://claude.ai/artifact/LA5smSFgNoCySRQUZcNKHA", "updated": "2026-10-07", "read": "owner", "kind": "page" },
+    { "title": "ElectroSole Build Tracker", "url": "https://claude.ai/artifact/WcmqUe51YCZAdqi5eHixtR", "updated": "2026-10-07", "read": "owner", "kind": "tool" },
+    { "title": "The Calcium Antenna", "url": "https://claude.ai/artifact/5GsXWgTc3mXL4Bo4DM2dmv", "updated": "2026-10-07", "read": "owner", "kind": "page" },
+    { "title": "EBITDA Workbench", "url": "https://claude.ai/artifact/BWUQm6J6XZraCA8a3TfzHi", "updated": "2026-10-06", "read": "owner", "kind": "tool" },
+    { "title": "The Build Ledger v2 - ranked by what sells", "url": "https://claude.ai/artifact/DP353CmYfGVvdJ6xgARSF7", "updated": "2026-09-21", "read": "owner", "kind": "page" },
+    { "title": "The Build Ledger - 168 things to build and sell", "url": "https://claude.ai/artifact/P4LvsXVdNipT2RNHyebX7c", "updated": "2026-09-21", "read": "owner", "kind": "page" },
+    { "title": "Aethertek x Float - Partnership Proposal (Two-Page)", "url": "https://claude.ai/artifact/6cK8xU2J8XpNAdcFkbmjSD", "updated": "2026-09-16", "read": "owner", "kind": "business" },
+    { "title": "Red-Flag Forensics", "url": "https://claude.ai/artifact/Xx4R11iMqnXe5Z4Sa62n74", "updated": "2026-09-11", "read": "owner", "kind": "course" },
+    { "title": "The Gold Standard", "url": "https://claude.ai/artifact/9rPSWNikhG5tzHu86HDnpQ", "updated": "2026-09-10", "read": "owner", "kind": "page" },
+    { "title": "NicheForge", "url": "https://claude.ai/artifact/2bx2DLFSUHJ4vUEupjmJn5", "updated": "2026-09-09", "read": "owner", "kind": "tool" },
+    { "title": "Buddy Study Card", "url": "https://claude.ai/artifact/JH11gcZ64iEsSwWhC7jQEk", "updated": "2026-09-06", "read": "owner", "kind": "page" },
+    { "title": "AI TASK", "url": "https://claude.ai/artifact/8pgZ4dMpUAzoBLoidTb134", "updated": "2026-08-30", "read": "owner", "kind": "page" },
+    { "title": "The 2.5-Hour Grid", "url": "https://claude.ai/artifact/SK9CwWBkveWZ3jS8EovTNe", "updated": "2026-08-29", "read": "owner", "kind": "page" },
+    { "title": "The State After", "url": "https://claude.ai/artifact/Hqqxggb5fp8EHXipjQQutx", "updated": "2026-08-25", "read": "owner", "kind": "business" },
+    { "title": "The Alternating Ledger", "url": "https://claude.ai/artifact/A9bu4vvUiJL6h9FgiEpB4Q", "updated": "2026-08-25", "read": "owner", "kind": "business" },
+    { "title": "Float Pilot Term Sheet", "url": "https://claude.ai/artifact/9bJcVjq4REvYit8sSvUwgN", "updated": "2026-08-25", "read": "owner", "kind": "business" },
+    { "title": "Aethertek x Float", "url": "https://claude.ai/artifact/9MnER7kvJLhhtJtMyKDW7J", "updated": "2026-08-25", "read": "owner", "kind": "business" },
+    { "title": "Main Street Deal School", "url": "https://claude.ai/artifact/CkaH6TwVMLLEoHpqqskS5G", "updated": "2026-08-20", "read": "owner", "kind": "course" },
+    { "title": "BL Seller Course", "url": "https://claude.ai/artifact/S6rbQjBYDw3p99mVzak9Wh", "updated": "2026-08-20", "read": "owner", "kind": "course" },
+    { "title": "Lead Desk Field Guide - Seller to Buyer Introduction", "url": "https://claude.ai/artifact/BbSkaHxAiY68cKBEoXaTeg", "updated": "2026-08-07", "read": "public", "kind": "page" }
+  ]
+}
