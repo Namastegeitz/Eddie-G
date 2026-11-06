@@ -61,12 +61,12 @@ func incoming() -> Array:
 			continue
 		var half := 0.93 * (k + 0.8)
 		for e in l.ents:
-			if e.platform or not e.active(sim.wt):
+			if e.platform or not e.active(sim.vt):
 				continue
-			var cx := sim.world.ent_x(l, e, sim.wt) + e.length * 0.5
+			var cx := sim.world.ent_x(l, e, sim.vt) + e.length * 0.5
 			var dx := cx - sim.x
 			var gap := absf(dx) - e.length * 0.5
-			var v := e.velocity(l.speed, sim.wt)
+			var v := e.velocity(l.speed, sim.vt)
 			var approaching := signf(v) != signf(dx) and v != 0.0
 			if approaching and absf(dx) > half and gap < 4.5:
 				out.append([1 if dx > 0 else -1, k, clampf(1.0 - gap / 4.5, 0.0, 1.0)])

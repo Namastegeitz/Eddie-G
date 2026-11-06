@@ -174,6 +174,25 @@ results card says.
   `{"first": 18, "every": [26, 40], "rows": [5, 9]}`.
 - `levels_per_scene`: 10 (documentation; each map's `stages` list is what counts).
 
+## Skill levels: `content/skills.json`
+
+Every animal's signature ability levels up from 1 to `max_level` (5) with
+Berries (`cost`: Berries to reach each level). Runs use the animal's level.
+`rules` says how each ability-module parameter changes per level; a module
+parameter with no rule never changes. Rule fields:
+
+- `mul`: fraction added per level after the first (`-0.08` = 8% shorter a
+  level), with an optional `min` factor so it never goes below that.
+- `add_at`: `{"4": 1}` adds 1 from level 4 on (whole-number parameters stay
+  whole). `add_per`: added every level after the first, up to `max`.
+- `skip_above`: leave the parameter alone when it's already above this
+  (e.g. charges of 99 mean "unlimited").
+- `label` and `unit`: what the animal screen shows ("Cooldown 2.8 s -> 2.6 s").
+
+An animal whose ability has nothing to scale gets `"hop_scale": 1.0` on its
+first module, which the `hop_scale` rule shortens a little each level
+(quicker hops).
+
 ## Store, live ops, seasons, onboarding
 
 - `content/store/catalog.json`: real-money `products` (type, price_usd,

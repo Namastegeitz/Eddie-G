@@ -207,6 +207,20 @@ func _phase1() -> void:
 	check("swipe down moves back", s.row == 0)
 	s.x = 8.5
 	check("edge blocks sideways hop", not s.hop(Vector2i(1, 0)))
+	# smooth drawing: between fixed sim steps the view draws a little ahead
+	# of the last step, so hops glide on any refresh rate
+	var ws := World.from_lanes([_lane(0, "safe"), _lane(1, "safe"), _lane(2, "safe")], -1)
+	var ss := _run(ws)
+	ss.hop(Vector2i(0, 1))
+	ss.step(1.0 / 60.0)
+	ss.set_lead(0.0)
+	var y0 := ss.display_pos().y
+	var h0 := ss.hop_height()
+	ss.set_lead(0.5 / 60.0)
+	var y1 := ss.display_pos().y
+	check("hops are drawn between sim steps (smooth at any frame rate)", y0 > 0.0 and y1 > y0 and y1 < 1.0 and ss.hop_height() > h0 and is_equal_approx(ss.vt, ss.wt + 0.5 / 60.0), "%.3f -> %.3f" % [y0, y1])
+	ss.step(1.0 / 60.0)
+	check("each sim step resets the draw-ahead", ss.vt == ss.wt and ss.lead_real == 0.0)
 	# crushed by a mover
 	var g := _lane(1, "ground")
 	_mover(g, "logging_truck", 3.0 + Lane.MARGIN, 3.0, 0.0)
@@ -1306,6 +1320,24 @@ func _first_person() -> void:
 	for i in 60:
 		gs._process(1.0 / 60.0)
 	check("hopping works in first person", true)
+	check("first person draws at the interpolated time (within one step ahead)", gs.sim.vt >= gs.sim.wt and gs.sim.vt - gs.sim.wt <= 1.0 / 60.0 + 0.0001, "%.4f" % (gs.sim.vt - gs.sim.wt))
+	# moving things that come into view are taken from a pool filled ahead
+	# of time (and returned to it when they leave), so a hop builds nothing
+	var w3v = gs.wv3
+	var missed0: int = w3v.ents_missed
+	var arrived := 0
+	for k in 3:
+		for i in 400:
+			if not w3v._warm_ents():
+				break
+		gs.sim.row += 1
+		arrived += gs.world.lane(gs.sim.row + w3v.AHEAD).ents.size()
+		w3v.update_view(1.0 / 60.0)
+	var pooled := 0
+	for pk in w3v._ent_pool:
+		pooled += (w3v._ent_pool[pk] as Array).size()
+	check("hopping forward reuses pre-built moving things (no builds on a hop)", w3v.ents_missed == missed0 and arrived > 0 and pooled > 0, "missed %d, %d arrived, %d pooled" % [w3v.ents_missed - missed0, arrived, pooled])
+	gs.sim.row = 0
 	var frames := 90
 	gs.visible = false
 	gs.set_process(false)
@@ -1400,6 +1432,35 @@ func _scenes() -> void:
 	print("  most draw calls for one dressed canopy row: %d" % worst)
 	check("all scenes build in 3D (landmark rows too)", empty.is_empty(), str(empty.slice(0, 4)))
 	check("a dressed canopy row stays a few draw calls (<= 6)", worst <= 6, str(worst))
+	# canopy rows are cached: built once (ahead of time by warm_row) and
+	# shared, landmark rows included, with waterfalls still getting their sheet
+	var shared := []
+	var falls := 0
+	for id in Content.playable_maps():
+		var m4 := Content.map(id)
+		var pal4: Dictionary = m4.get("palette", {})
+		for sc in m4.get("fpv_scenes", []):
+			for row in [13, 14]:
+				var l4 := Lane.new()
+				l4.row = row
+				l4.type = "safe"
+				l4.covered = true
+				l4.zone = 0
+				l4.scene = String(sc.id)
+				Scenery3D.warm_row(l4, sc, pal4, 1, Vector2i(12, 16))
+				var again := Scenery3D.warm_row(l4, sc, pal4, 1, Vector2i(12, 16))
+				var a := Scenery3D.build_lane(l4, sc, pal4, 1, Vector2i(12, 16))
+				var b := Scenery3D.build_lane(l4, sc, pal4, 1, Vector2i(12, 16))
+				if again or (a.get_child(0) as MeshInstance3D).mesh != (b.get_child(0) as MeshInstance3D).mesh:
+					shared.append("%s/%s row %d" % [id, sc.id, row])
+				if row == 14 and String(sc.get("landmark", "")) == "waterfall":
+					if a.find_children("*", "MeshInstance3D", true, false).filter(func(n): return n.has_meta("falls")).size() == 1:
+						falls += 1
+					else:
+						shared.append("%s/%s: no falling water" % [id, sc.id])
+				a.free()
+				b.free()
+	check("canopy rows are built once ahead of time and shared (landmarks and waterfalls too)", shared.is_empty() and falls >= 3, "%d waterfalls; %s" % [falls, str(shared.slice(0, 4))])
 	# detailed models: every log, caiman, crocodile and soldier-ant hazard
 	var bad_models := []
 	var built := 0

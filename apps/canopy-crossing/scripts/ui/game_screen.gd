@@ -417,6 +417,7 @@ func _process(dt: float) -> void:
 			last_state = sim.state
 			if blocking or finished:
 				break
+	sim.set_lead(acc)
 	_update_views(dt)
 	_update_hud()
 	if cfg.mode == "tutorial":
@@ -430,6 +431,8 @@ func _update_views(dt: float) -> void:
 		wv3.update_view(dt)
 	else:
 		wv.update_view(dt)
+	if wv3 != null and fpv_warm and (view != "fpv" or wv3.built_this_frame == 0):
+		wv3.warm_step()
 	_web_state(dt)
 	var here := world.lane(sim.row)
 	if here.covered and here.zone >= 0 and not _shown_zones.has(here.zone) and not finished:

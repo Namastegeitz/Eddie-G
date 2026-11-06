@@ -228,7 +228,7 @@ class LaneView extends Node2D:
 
 	func _process(_dt: float) -> void:
 		if water_mat:
-			water_mat.set_shader_parameter("lt", wv.sim.world.lane_time(lane, wv.sim.wt))
+			water_mat.set_shader_parameter("lt", wv.sim.world.lane_time(lane, wv.sim.vt))
 		if lane.type == "water" or not lane.effect.is_empty() or not lane.tiles.is_empty() or lane.goal:
 			dyn.queue_redraw()
 
@@ -299,7 +299,7 @@ class LaneView extends Node2D:
 
 	func _draw_dyn() -> void:
 		var T := WorldView.T
-		var t := wv.sim.wt
+		var t := wv.sim.vt
 		var x0 := -wv.field_x - 40.0
 		var w := wv.vp.x + 80.0
 		if lane.type == "water":
@@ -357,7 +357,7 @@ class EntView extends Node2D:
 		anim = HazardPainter.animated(String(hz.get("art", {}).get("painter", "")))
 
 	func update_view(_dt: float) -> void:
-		var t := wv.sim.wt
+		var t := wv.sim.vt
 		var x := wv.sim.world.ent_x(lane, e, t)
 		position = Vector2(x * WorldView.T, -lane.row * WorldView.T + (0.0 if e.platform else 0.2))
 		visible = x > -3.5 and x < Lane.COLS + 3.5
@@ -385,9 +385,9 @@ class EntView extends Node2D:
 	func _draw() -> void:
 		var dir := 1 if lane.speed >= 0.0 else -1
 		if e.motion == "pendulum":
-			dir = 1 if e.velocity(0.0, wv.sim.wt) >= 0.0 else -1
+			dir = 1 if e.velocity(0.0, wv.sim.vt) >= 0.0 else -1
 		HazardPainter.draw_entity(self, hz, e.length * WorldView.T, WorldView.T,
-			{"dir": dir, "t": wv.sim.wt, "speed": lane.speed, "colorblind": wv.colorblind})
+			{"dir": dir, "t": wv.sim.vt, "speed": lane.speed, "colorblind": wv.colorblind})
 		if e.platform and e.dive_period > 0.0 and last_dive == "warn":
 			for i in 3:
 				Draw.ellipse_line(self, Vector2(e.length * WorldView.T * (0.25 + i * 0.25), 0), 6 + i * 2, 4 + i, Color(1, 1, 1, 0.6), 2)
@@ -411,9 +411,9 @@ class PredView extends Node2D:
 			position = Vector2(int(p.col) * T, -lane.row * T + 1)
 
 	func _draw() -> void:
-		var st := lane.pred_state(p, wv.sim.wt)
+		var st := lane.pred_state(p, wv.sim.vt)
 		var reveal := wv.reveal if bool(p.get("hidden", false)) else 0.0
-		HazardPainter.draw_pred(self, hz, p, WorldView.T, String(st[0]), float(st[1]), wv.sim.wt, reveal)
+		HazardPainter.draw_pred(self, hz, p, WorldView.T, String(st[0]), float(st[1]), wv.sim.vt, reveal)
 		if wv.colorblind and st[0] == "warn" and p.kind != "striker":
 			HazardPainter._hazard_marker(self, Vector2(0, -WorldView.T * 0.4), WorldView.T * 0.14)
 		if st[0] == "distracted":
@@ -436,7 +436,7 @@ class ItemView extends Node2D:
 		var T := WorldView.T
 		var x: float
 		if int(it.ent) >= 0:
-			x = wv.sim.world.ent_x(lane, lane.ents[int(it.ent)], wv.sim.wt) + float(it.rel)
+			x = wv.sim.world.ent_x(lane, lane.ents[int(it.ent)], wv.sim.vt) + float(it.rel)
 		else:
 			x = float(it.col) + 0.5
 		position = Vector2(x * T, -lane.row * T + 2)
@@ -456,8 +456,8 @@ class SwoopView extends Node2D:
 		for s in w.swoopers:
 			if int(s.hi) < vis.x or int(s.lo) > vis.y:
 				continue
-			var st := w.pred_state(s, wv.sim.wt)
-			var col := w.swoop_col(s, wv.sim.wt)
+			var st := w.pred_state(s, wv.sim.vt)
+			var col := w.swoop_col(s, wv.sim.vt)
 			var x := (col + 0.5) * T
 			var top := -float(s.hi) * T - T * 0.5
 			var bottom := -float(s.lo) * T + T * 0.5

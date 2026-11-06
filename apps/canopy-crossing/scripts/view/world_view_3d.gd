@@ -8,6 +8,8 @@ extends SubViewportContainer
 
 const AHEAD := 18
 const BEHIND := 2
+const POOL_MAX := 12              # spare moving-thing nodes kept per kind and size
+const POOL_TOTAL := 64            # ...and in all (lengths vary, so the oldest spares go first)
 const MID := 4.5                 # centre of the 9 play columns
 
 var sim: RunSim
@@ -24,6 +26,10 @@ var t := 0.0
 var shade := 0.0                 # 0 open sky .. 1 deep under canopy
 var _lanes := {}
 var _ents := {}
+var _ent_pool := {}               # "hazard:length" -> hidden nodes ready to reuse
+var _pool_order: Array[Node3D] = []   # every pooled node, oldest first
+var ents_built := 0               # moving-thing nodes built so far (the rest are reused)
+var ents_missed := 0              # ...of which built on the spot, because the pool had none ready
 var _preds := {}
 var _items := {}
 var _swoops := {}
@@ -34,6 +40,8 @@ var _walls: Array[Node3D] = []
 var _grain: NoiseTexture2D       # shared surface grain for ground, water, walls
 var _water_mats: Array[StandardMaterial3D] = []
 var _fit_key := Vector2.ZERO
+var _warm_row := 0                # next row to pre-build scenery for (see warm_step)
+var built_this_frame := 0         # rows built by the last update_view
 var _seg := 10                   # sphere / cylinder smoothness (quality)
 var scene := {}                  # the canopy scene we're in or about to enter
 var _fog0 := Color.WHITE
@@ -183,19 +191,28 @@ func update_view(dt: float) -> void:
 			_lanes.erase(r)
 	var seen := {}
 	var seen_items := {}
+	var built := 0
+	# a fresh view (just switched to, or after a restart) builds everything
+	# at once; while playing, only a hop's worth of rows a frame
+	var fresh := _lanes.size() < (hi - lo + 1) / 2
+	if _warm_row < sim.row:
+		_warm_row = sim.row
 	for r in range(lo, hi + 1):
 		var l := sim.world.lane(r)
 		if not _lanes.has(r):
+			# rows near you are built at once; far rows (in the fog) at most
+			# one a frame, so a hop never builds a burst of rows in one frame
+			if built >= 1 and r > sim.row + 6 and not fresh:
+				continue
 			_lanes[r] = _build_lane(l, r)
+			built += 1
 		_update_lane_fx(l, _lanes[r])
 		for i in l.ents.size():
 			var key := "%d:%d" % [r, i]
 			seen[key] = true
 			var n: Node3D = _ents.get(key)
 			if n == null:
-				n = _build_ent(l, l.ents[i])
-				_bake(n, "%s:%.2f" % [l.ents[i].hazard, l.ents[i].length])
-				world3.add_child(n)
+				n = _take_ent(l, l.ents[i])
 				_ents[key] = n
 			_place_ent(n, l, l.ents[i])
 		for j in l.preds.size():
@@ -222,13 +239,97 @@ func update_view(dt: float) -> void:
 				_items[ik] = inode
 			var ix: float = float(it.col) + 0.5
 			if int(it.ent) >= 0:
-				ix = sim.world.ent_x(l, l.ents[int(it.ent)], sim.wt) + float(it.rel)
+				ix = sim.world.ent_x(l, l.ents[int(it.ent)], sim.vt) + float(it.rel)
 			inode.position = Vector3(ix, 0.35 + sin(t * 3.0 + ix) * 0.05, -r)
 			inode.rotation.y = t * 2.0
-	_prune(_ents, seen)
+	built_this_frame = built
+	for k in _ents.keys():
+		if not seen.has(k):
+			_give_ent(_ents[k])
+			_ents.erase(k)
 	_prune(_preds, seen)
 	_prune(_items, seen_items)
 	_update_swoops(lo, hi)
+
+
+## Pre-builds what the run will need next, at most one real build per call:
+## first (in first person) the moving things of the two rows about to come
+## into view (hidden, in the reuse pool), then row meshes (canopy scenery and grass rows) up to
+## 60 rows ahead. Runs every frame in either view, so by the time you hop
+## forward, reach a canopy or switch to first person, nothing stalls.
+func warm_step() -> void:
+	if is_visible_in_tree() and _warm_ents():
+		return
+	var limit := sim.row + 60
+	if sim.world.goal_row >= 0:
+		limit = mini(limit, sim.world.goal_row)
+	while _warm_row <= limit:
+		var r := _warm_row
+		_warm_row += 1
+		var l := sim.world.lane(r)
+		if _lanes.has(r):
+			continue
+		var zr := Vector2i(r, r)
+		if l.zone >= 0 and l.zone < sim.world.gen.cover.size():
+			zr = sim.world.gen.cover[l.zone]
+		var sc := Scenery3D.scene_def(map, l.scene) if l.covered else {}
+		if Scenery3D.warm_row(l, sc, pal, Draw.detail, zr):
+			return
+
+
+## Moving things are built once per kind and size, then reused: a log that
+## drifts out of range is hidden and handed to the next log of that length,
+## so hopping forward rarely builds anything.
+func _take_ent(l: Lane, e: Ent) -> Node3D:
+	var key := "%s:%.2f" % [e.hazard, e.length]
+	var pool: Array = _ent_pool.get(key, [])
+	if not pool.is_empty():
+		var reused: Node3D = pool.pop_back()
+		_pool_order.erase(reused)
+		reused.visible = true
+		return reused
+	ents_missed += 1
+	return _new_ent(l, e, key)
+
+
+func _new_ent(l: Lane, e: Ent, key: String) -> Node3D:
+	var n := _build_ent(l, e)
+	_bake(n, key)
+	ents_built += 1
+	n.set_meta("pool", key)
+	world3.add_child(n)
+	return n
+
+
+func _warm_ents() -> bool:
+	if world3 == null:
+		return false
+	var need := {}
+	for r in [sim.row + AHEAD + 1, sim.row + AHEAD + 2]:
+		var l := sim.world.lane(r)
+		for e in l.ents:
+			var key := "%s:%.2f" % [e.hazard, e.length]
+			need[key] = int(need.get(key, 0)) + 1
+			if (_ent_pool.get(key, []) as Array).size() < mini(int(need[key]), POOL_MAX):
+				_give_ent(_new_ent(l, e, key))
+				return true
+	return false
+
+
+func _give_ent(n: Node3D) -> void:
+	var key := String(n.get_meta("pool", ""))
+	var pool: Array = _ent_pool.get(key, [])
+	if key == "" or pool.size() >= POOL_MAX:
+		n.queue_free()
+		return
+	n.visible = false
+	pool.append(n)
+	_ent_pool[key] = pool
+	_pool_order.append(n)
+	if _pool_order.size() > POOL_TOTAL:
+		var old: Node3D = _pool_order.pop_front()
+		(_ent_pool[String(old.get_meta("pool"))] as Array).erase(old)
+		old.queue_free()
 
 
 func _prune(d: Dictionary, seen: Dictionary) -> void:
@@ -420,7 +521,7 @@ func _update_lane_fx(l: Lane, n: Node3D) -> void:
 	var fx: Node3D = n.get_node_or_null("Fx")
 	if fx == null:
 		return
-	var st := l.effect_state(sim.wt)
+	var st := l.effect_state(sim.vt)
 	var k := float(st[1])
 	for c in fx.get_children():
 		var mi := c as Node3D
@@ -543,10 +644,10 @@ func _build_ent(l: Lane, e: Ent) -> Node3D:
 
 
 func _place_ent(n: Node3D, l: Lane, e: Ent) -> void:
-	var x := sim.world.ent_x(l, e, sim.wt)
+	var x := sim.world.ent_x(l, e, sim.vt)
 	var dir := 1.0 if l.speed >= 0.0 else -1.0
 	if e.motion == "pendulum":
-		dir = 1.0 if e.velocity(0.0, sim.wt) >= 0.0 else -1.0
+		dir = 1.0 if e.velocity(0.0, sim.vt) >= 0.0 else -1.0
 	n.position = Vector3(x + e.length * 0.5, 0.0, -l.row)
 	n.rotation_degrees.y = 0.0 if dir > 0 else 180.0
 	if n.has_meta("walk"):
@@ -557,9 +658,9 @@ func _place_ent(n: Node3D, l: Lane, e: Ent) -> void:
 		(n.get_node("Body") as Node3D).position.y = absf(sin(ph)) * 0.018
 	elif n.has_meta("roll"):
 		(n.get_node("Spin") as Node3D).rotation.x = -x / 0.3 * dir
-	n.visible = e.active(sim.wt) and x > -4.0 and x < 13.0
+	n.visible = e.active(sim.vt) and x > -4.0 and x < 13.0
 	if e.platform and e.dive_period > 0.0:
-		match sim.world.ent_dive(l, e, sim.wt):
+		match sim.world.ent_dive(l, e, sim.vt):
 			"warn":
 				n.position.y = sin(t * 30.0) * 0.02 - 0.03
 			"under":
@@ -677,7 +778,7 @@ func _build_pred(_l: Lane, p: Dictionary) -> Node3D:
 
 
 func _place_pred(n: Node3D, l: Lane, p: Dictionary) -> void:
-	var st := l.pred_state(p, sim.wt)
+	var st := l.pred_state(p, sim.vt)
 	var k := float(st[1])
 	match String(p.kind):
 		"surfacer":
@@ -739,8 +840,8 @@ func _update_swoops(lo: int, hi: int) -> void:
 			var sh := cyl(0.5, 0.01, Color(0, 0, 0, 0.35), Vector3.ZERO, n)
 			sh.name = "Shadow"
 			_swoops[i] = n
-		var st := w.pred_state(s, sim.wt)
-		var col := w.swoop_col(s, sim.wt)
+		var st := w.pred_state(s, sim.vt)
+		var col := w.swoop_col(s, sim.vt)
 		var bird2: Node3D = n.get_node("Bird")
 		var sh2: Node3D = n.get_node("Shadow")
 		n.position = Vector3(col + 0.5, 0, 0)

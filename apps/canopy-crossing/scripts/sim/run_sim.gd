@@ -67,6 +67,12 @@ var buffer := Vector2i.ZERO
 var fx: Array[Dictionary] = []
 var record_fx := true
 var water_restart := false        # falling into water restarts the run (content/rules.json)
+# Drawing between logic steps: the logic advances in fixed 1/60 s steps; the
+# views draw at the exact moment in between (lead = time since the last
+# step), so motion stays smooth at 120 Hz and through uneven frame timing.
+var lead_real := 0.0
+var lead_world := 0.0
+var vt := 0.0                     # world time to draw at (wt + lead_world)
 var hop_plat := -1                # platform we hopped from, while hopping along the same lane
 var hop_plat_ex := 0.0
 var near_ent: Ent = null          # a mover brushing past (for "Close call!")
@@ -225,12 +231,34 @@ func lane_is_water(l: Lane) -> bool:
 	return false
 
 
+## Called each frame after stepping: how far past the last step to draw.
+func set_lead(real: float) -> void:
+	lead_real = maxf(0.0, real)
+	lead_world = lead_real * (0.45 if slow_left > 0.0 else 1.0)
+	vt = wt + lead_world
+
+
+func _vis_hop_t() -> float:
+	return minf(1.0, hop_t + lead_real / maxf(0.001, hop_dur))
+
+
 func display_pos() -> Vector2:
-	## x in tiles, y in rows (float), for drawing.
+	## x in tiles, y in rows (float), for drawing, at the visual time.
 	if hopping:
-		var k := _ease(hop_t)
+		var k := _ease(_vis_hop_t())
 		return Vector2(lerpf(from_x, to_x, k), lerpf(float(from_row), float(to_row), k))
-	return Vector2(x, float(row))
+	var px := x
+	if lead_world > 0.0 and state == "play":
+		var l := cur_lane()
+		if plat >= 0 and plat < l.ents.size():
+			var e: Ent = l.ents[plat]
+			var dx := world.ent_x(l, e, vt) - world.ent_x(l, e, wt)
+			if absf(dx) > Lane.WRAP * 0.5:
+				dx -= signf(dx) * Lane.WRAP
+			px += dx * minf(1.0, drift_factor())
+		elif swimming:
+			px += l.speed * float(swim_params().get("current", 1.0)) * lead_world
+	return Vector2(px, float(row))
 
 
 func hop_height() -> float:
@@ -240,7 +268,7 @@ func hop_height() -> float:
 	var h := 0.28 + 0.22 * maxi(0, span - 1)
 	if hop_kind in ["dash", "slide", "roll"]:
 		h = 0.05
-	return sin(hop_t * PI) * h
+	return sin(_vis_hop_t() * PI) * h
 
 
 func _ease(k: float) -> float:
@@ -378,6 +406,9 @@ func step(dt: float) -> void:
 	slow_left = maxf(0.0, slow_left - dt)
 	var wt0 := wt
 	wt += wdt
+	vt = wt
+	lead_real = 0.0
+	lead_world = 0.0
 	for a in all_abilities():
 		a.tick(dt)
 	for l in [world.lane(row - 1), world.lane(row), world.lane(row + 1)]:

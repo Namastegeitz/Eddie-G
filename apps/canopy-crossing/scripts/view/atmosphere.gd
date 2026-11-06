@@ -53,7 +53,7 @@ func _draw() -> void:
 			Draw.ellipse(self, Vector2(fposmod(i * 260.0 + t * 12.0, vp.x + 300) - 150, y), 220, 40, Color(fog, mist * 0.18))
 	# rain
 	var rain := float(atm.get("rain", 0.0))
-	rain = maxf(rain, wv.sim.world.downpour(wv.sim.wt))
+	rain = maxf(rain, wv.sim.world.downpour(wv.sim.vt))
 	if rain > 0.02:
 		var n := int(80 * rain)
 		var rng := RandomNumberGenerator.new()
@@ -64,7 +64,7 @@ func _draw() -> void:
 			draw_line(Vector2(x2, y2), Vector2(x2 - 6, y2 + 26), Color(0.8, 0.9, 1.0, 0.35 * rain), 2)
 		draw_rect(Rect2(Vector2.ZERO, vp), Color(0.1, 0.15, 0.25, 0.12 * rain))
 	# gust warning
-	var gw := wv.sim.world.gust_warning(wv.sim.wt)
+	var gw := wv.sim.world.gust_warning(wv.sim.vt)
 	if float(gw[0]) > 0.0:
 		var dir := float(gw[1])
 		var k2 := float(gw[0])

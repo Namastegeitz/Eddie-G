@@ -87,13 +87,23 @@
   seconds, both apps); the owner needs to clear that (Settings > Billing and plans / the failed
   run's message) and set Settings > Pages > Source: GitHub Actions, then run the workflow.
   Meanwhile the claude.ai artifact can be shared publicly from claude.ai (Share).
+- Skill levels: every animal's ability upgrades Lv 1-5 with Berries (120/260/480/800) on the animal
+  screen (pips + what the next level adds); runs use the level. Rules per ability parameter in
+  `content/skills.json` (`scripts/sim/skills.gd`): shorter cooldowns, longer effects, more distance /
+  charges / swings, quicker hops for animals with nothing else to scale.
+- Smoother runs: the fixed 60 Hz sim is drawn at an interpolated time (`RunSim.set_lead`/`vt`), so
+  hops, logs and traffic glide on 90/120 Hz screens and late frames. First person caches canopy rows
+  (4 looks per scene + landmark rows; waterfalls keep their sheet), pre-builds rows up to 60 ahead
+  and the logs/ants/caimans about to come into view one per frame (`warm_step`), reuses moving
+  things from a pool, and builds at most one far row a frame. Cloud CPU, hopping every 14 frames:
+  first-person hitches over 3 ms down from 5-7 a run to 0-2, bird's-eye none (worst frame ~2 ms).
 - Feel: log carry during sideways hops, magnetic landing onto log ends (0.2 tile), vehicle hit
   edges 0.1 tile forgiving, Close call! +2 for movers brushing past, swipe threshold 36 px.
 - Art/audio: procedural chibi animals and hazards, per-region palettes and canopy framing, dot
   globe from Natural Earth, synthesised per-region music + ambience + 26 SFX (`tools/gen_audio.py`).
 - Ads: opt-in rewarded + between-run interstitial (mock; AdMob adapter scaffold). Analytics: events
   + onboarding funnel to `user://analytics.jsonl`, optional HTTP endpoint.
-- Tests: `tools/run_tests.sh` - compile check + first-person GL render check + 330-check phase audit (one section per phase's
+- Tests: `tools/run_tests.sh` - compile check + first-person GL render check + 341-check phase audit (one section per phase's
   checkpoint) in the project and an exported pack, all passing. A path-finding bot beats all 200
   levels (tools/level_sweep.tscn, ~2 min) and the first 50 Endless rows on every scene with the free Poison Dart Frog.
   Frame cost 0.9 ms (sim + view + draw recording) on the cloud CPU.

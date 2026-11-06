@@ -38,6 +38,15 @@ static var _mat: StandardMaterial3D
 static var _glow_mat: StandardMaterial3D
 static var _grain_tex: ImageTexture
 static var _water_mat: StandardMaterial3D
+## Built row meshes, reused: rows of the same scene, lane type and variant
+## look alike, so a new row coming into view costs nothing after the first.
+static var _row_cache := {}
+
+
+static func _cache_put(key: String, value: Array) -> void:
+	if _row_cache.size() > 160:
+		_row_cache.clear()
+	_row_cache[key] = value
 
 
 # ====================================================================== mesh kit
@@ -263,6 +272,19 @@ static func glow_material() -> StandardMaterial3D:
 	return _glow_mat
 
 
+## The waterfall's moving sheet of water (its own node so it can scroll).
+static func _falls_sheet(spec: Dictionary) -> MeshInstance3D:
+	var sheet := MeshInstance3D.new()
+	var qm := QuadMesh.new()
+	qm.size = Vector2(1.1, 3.8)
+	sheet.mesh = qm
+	sheet.material_override = falling_water_material()
+	sheet.position = spec.pos
+	sheet.rotation.y = spec.rot
+	sheet.set_meta("falls", true)
+	return sheet
+
+
 static func falling_water_material() -> StandardMaterial3D:
 	if _water_mat == null:
 		_water_mat = StandardMaterial3D.new()
@@ -300,17 +322,86 @@ static func col(sc: Dictionary, pal: Dictionary, key: String, fallback: String) 
 static func build_lane(lane: Lane, sc: Dictionary, pal: Dictionary, detail: int, zone_rows: Vector2i) -> Node3D:
 	var root := Node3D.new()
 	root.name = "Scenery"
+	var mid := (zone_rows.x + zone_rows.y) / 2
+	var key := _row_key(lane, sc, pal, detail, mid)
+	var meshes: Array = _row_cache.get(key, [])
+	if meshes.is_empty():
+		meshes = _row_meshes(lane, sc, pal, detail, mid)
+		_cache_put(key, meshes)
+	if meshes[0] != null:
+		var mi := MeshInstance3D.new()
+		mi.mesh = meshes[0]
+		mi.material_override = material()
+		root.add_child(mi)
+	if meshes[1] != null:
+		var gi := MeshInstance3D.new()
+		gi.mesh = meshes[1]
+		gi.material_override = glow_material()
+		gi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		root.add_child(gi)
+	for spec in meshes[2]:
+		if spec.get("falls", false):
+			root.add_child(_falls_sheet(spec))
+	# fauna and particles live on the zone's first and middle rows
+	var anim: Array = []
+	var rng := RandomNumberGenerator.new()
+	rng.seed = lane.row * 131 + 7
+	var parts: Array = sc.get("particles", [])
+	if detail > 0 and (lane.row == zone_rows.x or lane.row == mid):
+		var fauna: Array = sc.get("fauna", [])
+		if not fauna.is_empty():
+			var fid := String(fauna[(lane.row / 2) % fauna.size()])
+			if FAUNA.has(fid):
+				anim.append(_fauna_node(root, fid, rng))
+		for p in parts:
+			if String(p) in ["fireflies", "rain", "leaves", "motes", "spray"]:
+				anim.append(_particle_node(root, String(p), rng, col(sc, pal, "light", "#fff2b0")))
+	root.set_meta("anim", anim)
+	return root
+
+
+## Builds (and caches) one row's meshes ahead of time, without making nodes.
+## True if it did any work, so callers can do one per frame.
+static func warm_row(lane: Lane, sc: Dictionary, pal: Dictionary, detail: int, zone_rows: Vector2i) -> bool:
+	if lane.covered:
+		var mid := (zone_rows.x + zone_rows.y) / 2
+		var key := _row_key(lane, sc, pal, detail, mid)
+		if _row_cache.has(key):
+			return false
+		_cache_put(key, _row_meshes(lane, sc, pal, detail, mid))
+		return true
+	if lane.type == "safe" and not lane.goal:
+		var variant := lane.row % 6
+		var key2 := "open|%s|%s|%s|%d|%d|%s" % [String(pal.get("safe", "")), String(pal.get("canopy", "")), lane.type, detail, variant, str(lane.tiles.keys())]
+		if _row_cache.has(key2):
+			return false
+		_cache_put(key2, [_open_mesh(lane, pal, detail, variant)])
+		return true
+	return false
+
+
+## Cache key for a canopy row's meshes. Rows share one of four looks per
+## scene; the zone's middle row (with its landmark) is keyed by itself.
+static func _row_key(lane: Lane, sc: Dictionary, pal: Dictionary, detail: int, mid: int) -> String:
+	var variant := ("lm%d" % lane.row) if lane.row == mid else str(lane.row % 4)
+	return "%s|%s|%s|%d|%s|%s" % [String(sc.get("id", "")), String(pal.get("canopy", "")), lane.type, detail, variant, str(lane.tiles.keys())]
+
+
+## The static part of a canopy row: [opaque mesh or null, glow mesh or null,
+## specs for the few parts that need their own node (a waterfall's sheet)].
+static func _row_meshes(lane: Lane, sc: Dictionary, pal: Dictionary, detail: int, mid: int) -> Array:
+	var landmark := lane.row == mid
 	var k := Kit.new()
 	var g := Kit.new()
 	var rng := RandomNumberGenerator.new()
-	rng.seed = lane.row * 7349 + 17
+	rng.seed = (lane.row if landmark else lane.row % 4) * 7349 + 17
 	var seg := 6 if detail <= 0 else (8 if detail == 1 else 11)
 	var leaf := col(sc, pal, "leaf", String(pal.get("canopy", "#2a7a3a"))).lightened(0.05)
 	var dark := col(sc, pal, "canopy_dark", "#0b3a1a")
 	var bark := col(sc, pal, "bark", "#5a4230")
 	var flower := col(sc, pal, "flower", String(pal.get("accent", "#e8443a")))
 	var ctx := {"k": k, "g": g, "rng": rng, "seg": seg, "leaf": leaf, "dark": dark, "bark": bark, "flower": flower,
-		"detail": detail, "lane": lane, "sc": sc}
+		"detail": detail, "lane": lane, "sc": sc, "nodes": []}
 	_ceiling(ctx)
 	_overhead(ctx, overhead_style(sc))
 	# side dressing, weighted by the scene's prop mix and what suits the lane
@@ -361,44 +452,36 @@ static func build_lane(lane: Lane, sc: Dictionary, pal: Dictionary, detail: int,
 		var beam := xf(Vector3(sx, 2.15, 0.0), rng.randf_range(-0.3, 0.3), 0.0, -0.3)
 		g.beam(beam, rng.randf_range(0.5, 0.9), 1.5, Color(lc, 0.2))
 		g.beam(beam, 0.25, 1.5, Color(lc, 0.14))
-	var parts: Array = sc.get("particles", [])
 	# the zone's landmark sits on its middle row
-	var mid := (zone_rows.x + zone_rows.y) / 2
-	if lane.row == mid:
-		_landmark(ctx, String(sc.get("landmark", "")), root)
-	if not k.empty():
-		var mi := MeshInstance3D.new()
-		mi.mesh = k.mesh()
-		mi.material_override = material()
-		root.add_child(mi)
-	if not g.empty():
-		var gi := MeshInstance3D.new()
-		gi.mesh = g.mesh()
-		gi.material_override = glow_material()
-		gi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-		root.add_child(gi)
-	# fauna and particles live on the zone's first and middle rows
-	var anim: Array = []
-	if detail > 0 and (lane.row == zone_rows.x or lane.row == mid):
-		var fauna: Array = sc.get("fauna", [])
-		if not fauna.is_empty():
-			var fid := String(fauna[(lane.row / 2) % fauna.size()])
-			if FAUNA.has(fid):
-				anim.append(_fauna_node(root, fid, rng))
-		for p in parts:
-			if String(p) in ["fireflies", "rain", "leaves", "motes", "spray"]:
-				anim.append(_particle_node(root, String(p), rng, col(sc, pal, "light", "#fff2b0")))
-	root.set_meta("anim", anim)
-	return root
+	if landmark:
+		_landmark(ctx, String(sc.get("landmark", "")))
+	return [k.mesh() if not k.empty() else null, g.mesh() if not g.empty() else null, ctx.nodes]
 
 
 ## An open (not covered) row: grass tufts and flowers on grassy rows, kept
 ## off tiles that hold something, and a tree on each side every third row.
 ## One merged mesh, or null when there is nothing to draw.
 static func open_lane(lane: Lane, pal: Dictionary, detail: int) -> MeshInstance3D:
+	var variant := lane.row % 6         # covers both the trees (every 3rd row) and the two grass colours
+	var key := "open|%s|%s|%s|%d|%d|%s" % [String(pal.get("safe", "")), String(pal.get("canopy", "")), lane.type, detail, variant, str(lane.tiles.keys())]
+	var entry: Array = _row_cache.get(key, [])
+	if entry.is_empty():
+		entry = [_open_mesh(lane, pal, detail, variant)]
+		_cache_put(key, entry)
+	var mesh: Mesh = entry[0]
+	if mesh == null:
+		return null
+	var mi := MeshInstance3D.new()
+	mi.name = "Open"
+	mi.mesh = mesh
+	mi.material_override = material()
+	return mi
+
+
+static func _open_mesh(lane: Lane, pal: Dictionary, detail: int, variant: int) -> Mesh:
 	var k := Kit.new()
 	var rng := RandomNumberGenerator.new()
-	rng.seed = lane.row * 977 + 5
+	rng.seed = variant * 977 + 5
 	var g := Color(String(pal.get("safe_alt" if lane.row % 2 == 0 else "safe", "#3c9a3a")))
 	var accent := Color(String(pal.get("accent", "#f6d43a")))
 	var leaf := Color(String(pal.get("canopy", "#1e5a2a")))
@@ -425,13 +508,7 @@ static func open_lane(lane: Lane, pal: Dictionary, detail: int) -> MeshInstance3
 			for j in 5:
 				var a2 := TAU * j / 5.0
 				k.blob(xf(fp + Vector3(cos(a2) * 0.025, 0, sin(a2) * 0.025)), Vector3(0.022, 0.008, 0.022), accent.lerp(Color.WHITE, 0.3 * (i % 2)), 4)
-	if k.empty():
-		return null
-	var mi := MeshInstance3D.new()
-	mi.name = "Open"
-	mi.mesh = k.mesh()
-	mi.material_override = material()
-	return mi
+	return k.mesh() if not k.empty() else null
 
 
 static func _pick(props: Dictionary, rng: RandomNumberGenerator, lane_type: String, second: bool) -> String:
@@ -1012,7 +1089,7 @@ static func _karst(ctx: Dictionary, p: Vector3, side: float, s: float) -> void:
 
 # ====================================================================== landmarks
 
-static func _landmark(ctx: Dictionary, kind: String, root: Node3D) -> void:
+static func _landmark(ctx: Dictionary, kind: String) -> void:
 	var k: Kit = ctx.k
 	var g: Kit = ctx.g
 	var rng: RandomNumberGenerator = ctx.rng
@@ -1047,15 +1124,7 @@ static func _landmark(ctx: Dictionary, kind: String, root: Node3D) -> void:
 			var rock := Color("6a6a5e")
 			if kind == "waterfall":
 				k.box(xf(Vector3(sx + side * 0.5, 2.0, 0.0)), Vector3(1.0, 4.2, 2.6), rock, Color(ctx.leaf).darkened(0.2))
-				var sheet := MeshInstance3D.new()
-				var qm := QuadMesh.new()
-				qm.size = Vector2(1.1, 3.8)
-				sheet.mesh = qm
-				sheet.material_override = falling_water_material()
-				sheet.position = Vector3(sx - side * 0.02, 2.0, 0.0)
-				sheet.rotation.y = PI * 0.5 * side
-				sheet.set_meta("falls", true)
-				root.add_child(sheet)
+				(ctx.nodes as Array).append({"falls": true, "pos": Vector3(sx - side * 0.02, 2.0, 0.0), "rot": PI * 0.5 * side})
 				for i in 5:
 					g.blob(xf(Vector3(sx - side * 0.3, 0.2 + i * 0.05, rng.randf_range(-0.5, 0.5))), Vector3(0.5, 0.25, 0.4), Color(1, 1, 1, 0.08), 6, 0.2, 0.0)
 			k.disc(xf(Vector3(sx - side * 0.3, 0.03, 0.0)), 0.9, Color("2a5a6a"), 16, 0.0, 0.06)

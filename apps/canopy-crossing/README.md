@@ -47,6 +47,16 @@ time, in ten real rainforests. Built from
   caimans with armour scutes, raised eyes and nostrils; crocodile jaws full
   of teeth; and **giant red soldier ants hauling wedges of cheese** on the
   Amazon and Yasuní ant highways, legs walking in a tripod gait.
+- **Skill levels:** every animal's ability upgrades from Lv 1 to Lv 5 with
+  Berries on the animal screen (shorter cooldowns, longer effects, more
+  distance or charges, quicker hops), shown as pips with what the next
+  level adds. Rules in `content/skills.json`.
+- **Smooth runs:** the game steps at a fixed 60 Hz but draws hops, logs and
+  traffic between steps, so motion stays smooth on 90/120 Hz screens and
+  when a frame runs late. First person pre-builds what's coming (canopy
+  rows, landmark rows and the logs, ants and caimans about to come into
+  view) a little each frame and reuses them, so hopping forward doesn't
+  stall.
 - **Feel:** hops along a moving log keep pace with it, landing just short
   of a log's end still lands on it, vehicles' hit edges are a touch
   forgiving, and a mover brushing past is a **Close call!** (+2).
@@ -84,7 +94,7 @@ tools/run_tests.sh          # compile check + phase audit (project and exported 
 FAST=1 tools/run_tests.sh   # levels 1 and 10 of each scene instead of all 200
 ```
 
-The phase audit (`tests/phase_audit.gd`, 330 checks) turns each phase's
+The phase audit (`tests/phase_audit.gd`, 341 checks) turns each phase's
 checkpoint from the brief into checks: grid hops, every hazard kind, every
 ability, all 50 animals, every region generating 200 rows, a path-finding bot
 beating **all 200 levels with the free Poison Dart Frog**, adding a map
