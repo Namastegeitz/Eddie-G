@@ -61,6 +61,8 @@ header p b { color: var(--ink); font-weight: 600; }
 .card h2 { margin: 0; font: 700 1.12rem/1.2 var(--display); letter-spacing: 0.03em; text-wrap: balance; }
 .mood { margin: 4px 0 0; color: var(--dim); font-size: 0.9rem; }
 .blurb { margin: 0; max-width: 60ch; }
+.change { margin: 0; padding: 8px 12px; border-left: 3px solid var(--c); border-radius: 0 10px 10px 0; background: color-mix(in srgb, var(--c) 10%, transparent); font-size: 0.92rem; }
+.change b { display: block; font: 700 0.62rem/1.6 var(--display); letter-spacing: 0.16em; text-transform: uppercase; color: var(--c); }
 .player { display: grid; grid-template-columns: auto 1fr auto; gap: 12px; align-items: center; }
 .play { width: 48px; height: 48px; border-radius: 50%; border: 0; cursor: pointer; display: grid; place-items: center;
   background: var(--c); color: #0b0716; box-shadow: 0 6px 20px -6px var(--c); transition: transform 0.15s; }
@@ -101,7 +103,7 @@ footer { color: var(--dim); font-size: 0.85rem; max-width: 60ch; }
   <header>
     <div class="eyebrow">Alien Sudoku</div>
     <h1>Music Lab</h1>
-    <p>Ten theme-music styles for the game, <b>40 seconds each</b>, all played by the game's own synthesizer. Tap a play button to listen. Tap <b>Like</b> on every style you want to keep; the best ones become the theme songs for each difficulty tier.</p>
+    <p>__INTRO__</p>
     <div class="legend" aria-label="Families">
       <span class="fam Cosmos">Cosmos</span><span class="fam Spiritual">Spiritual</span><span class="fam Alien">Alien</span>
     </div>
@@ -153,7 +155,7 @@ const cards = TRACKS.map((t) => {
       <div><h2>${t.name}</h2><p class="mood">${t.mood} · ${t.bpm} BPM</p></div>
       <span class="fam ${t.family}">${t.family}</span>
     </div>
-    <p class="blurb">${t.blurb}</p>
+    <p class="blurb">${t.blurb}</p>${t.change ? `<p class="change"><b>What changed</b> ${t.change}</p>` : ''}
     <div class="player">
       <button class="play" id="play-${t.id}" type="button" aria-label="Play ${t.name}">${ICON.play}</button>
       <canvas class="wave" id="wave-${t.id}" tabindex="0" role="slider" aria-label="Position in ${t.name}" aria-valuemin="0" aria-valuemax="${t.seconds}" aria-valuenow="0"></canvas>

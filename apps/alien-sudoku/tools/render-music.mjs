@@ -3,11 +3,11 @@
    browser (Playwright Chromium, OfflineAudioContext), and checks it: no clipping,
    no silent stretches, loudness close to the others.
 
-   node tools/render-music.mjs [outDir=play/music] [seconds=40]
+   node tools/render-music.mjs [outDir=play/music] [seconds=40] [id,id,...]
    -> <outDir>/NN-<id>.mp3 and <outDir>/samples.json (waveform peaks + levels)
    Needs ffmpeg with libmp3lame. Set PW_CHROMIUM to use a preinstalled browser. */
 import { createServer } from 'node:http';
-import { readFileSync, writeFileSync, mkdirSync, rmSync } from 'node:fs';
+import { readFileSync, writeFileSync, mkdirSync, rmSync, existsSync } from 'node:fs';
 import { join, dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { execFileSync } from 'node:child_process';
@@ -16,6 +16,7 @@ import { chromium } from 'playwright';
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const outDir = resolve(root, process.argv[2] || 'play/music');
 const seconds = Number(process.argv[3] || 40);
+const only = process.argv[4] ? process.argv[4].split(',') : null;
 mkdirSync(outDir, { recursive: true });
 
 const server = createServer((req, res) => {
@@ -37,9 +38,11 @@ page.on('pageerror', (e) => errors.push(e.message));
 await page.goto(`${base}/`);
 
 const ids = await page.evaluate(async () => (await import('/src/audio/music-engine.js')).STYLES.map((s) => s.id));
-const report = {};
+const samplesFile = join(outDir, 'samples.json');
+const report = existsSync(samplesFile) ? JSON.parse(readFileSync(samplesFile, 'utf8')) : {};
 let failed = false;
 for (const [k, id] of ids.entries()) {
+  if (only && !only.includes(id)) continue;
   const res = await page.evaluate(async ({ id, seconds }) => {
     const m = await import('/src/audio/music-engine.js');
     const buf = await m.renderStyle(id, seconds);
@@ -92,7 +95,7 @@ for (const [k, id] of ids.entries()) {
   report[id] = { file, seconds, rms: res.rms, peak: res.peak, peaks: res.peaks };
   console.log(`${file.padEnd(18)} rms ${res.rms} dB  peak ${res.peak} dB  quietest 2s ${res.quietest} dB${problems.length ? `  PROBLEM: ${problems.join(', ')}` : ''}`);
 }
-writeFileSync(join(outDir, 'samples.json'), JSON.stringify(report));
+writeFileSync(samplesFile, JSON.stringify(report));
 await browser.close();
 server.close();
 if (errors.length) { console.error(errors.join('\n')); failed = true; }

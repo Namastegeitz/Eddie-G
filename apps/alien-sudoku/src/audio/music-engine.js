@@ -135,7 +135,7 @@ export function createMixer(ctx, out, { reverb = 3, decay = 3, dark = 0.6, delay
   };
 
   /** An instrument channel: input -> [drive] -> [filters] -> [tremolo] -> [pan] -> dry/reverb/delay sends. */
-  M.channel = ({ gain = 1, pan = 0, rev = 0.3, dly = 0, dry = 1, lowpass, highpass, drive, tremolo } = {}) => {
+  M.channel = ({ gain = 1, pan = 0, rev = 0.3, dly = 0, dry = 1, lowpass, highpass, drive, post, tremolo } = {}) => {
     const input = ctx.createGain();
     input.gain.value = gain;
     let node = input;
@@ -143,6 +143,7 @@ export function createMixer(ctx, out, { reverb = 3, decay = 3, dark = 0.6, delay
     if (drive) { const ws = ctx.createWaveShaper(); ws.curve = driveCurve(drive); ws.oversample = '2x'; chain(ws); }
     if (lowpass) { const f = ctx.createBiquadFilter(); f.type = 'lowpass'; f.frequency.value = lowpass; chain(f); }
     if (highpass) { const f = ctx.createBiquadFilter(); f.type = 'highpass'; f.frequency.value = highpass; chain(f); }
+    if (post != null) { const g = ctx.createGain(); g.gain.value = post; chain(g); } // level after the drive
     if (tremolo) {
       const g = ctx.createGain();
       g.gain.value = 1 - tremolo.depth / 2;
@@ -572,13 +573,18 @@ const OUD_PEDAL = notes('D3 A3 D4 A3 Eb4 D4 A3 F#3');
 const HIJAZ = notes('D4 Eb4 F#4 G4 A4 Bb4 C5 D5');
 
 const WAR_BARS = [
-  { root: 'D3', brass: 'D3 A3 D4 F4', power: 'D4 A4' },
-  { root: 'Bb2', brass: 'Bb2 F3 Bb3 D4', power: 'Bb3 F4' },
-  { root: 'C3', brass: 'C3 G3 C4 E4', power: 'C4 G4' },
-  { root: 'A2', brass: 'A2 E3 A3 C#4', power: 'A3 E4' },
+  { root: 'D2', brass: 'D3 A3 D4 F4', power: 'D3 A3 D4', arp: 'D3 F3 A3 D4 F4 A4 D5 F5' },
+  { root: 'Bb1', brass: 'Bb2 F3 Bb3 D4', power: 'Bb2 F3 Bb3', arp: 'Bb2 D3 F3 Bb3 D4 F4 Bb4 D5' },
+  { root: 'F2', brass: 'F3 A3 C4 F4', power: 'F3 C4 F4', arp: 'F3 A3 C4 F4 A4 C5 F5 A5' },
+  { root: 'C2', brass: 'C3 G3 C4 E4', power: 'C3 G3 C4', arp: 'C3 E3 G3 C4 E4 G4 C5 E5' },
 ];
-const WAR_HOOK = line('A4:2 D5:1 F5:1 | F5:2 E5:1 D5:1 | E5:2 G5:1 E5:1 | C#5:3 A4:1');
+/** The horn call that gathers the crew; later the whole fleet plays it together. */
+const WAR_CALL = line('A3:1.5 D4:.5 A4:2 | Bb4:1 A4:1 F4:2 | C5:1.5 A4:.5 F4:2 | G4:1 E4:1 C4:1 E4:1');
 const WAR_OSTINATO = [0, 12, 0, 7, 0, 12, 0, 10];
+const WAR_FLOW = [0, 1, 2, 3, 4, 5, 6, 7, 7, 6, 5, 4, 3, 2, 1, 0];
+
+/** Boom-bap kick placements (in beats) for even and odd bars. */
+const HIPHOP_KICKS = [[0, 0.75, 2.5], [0, 0.75, 2.25, 2.75]];
 
 export const STYLES = [
   {
@@ -778,45 +784,63 @@ export const STYLES = [
   },
   {
     id: 'synthwave', name: 'Synthwave Odyssey', family: 'Cosmos', tier: 'hard',
-    mood: 'Driving, neon, heroic',
-    blurb: 'Racing a neon starship past Saturn. Pulsing bass, sparkling arpeggios, punchy drums and a soaring lead.',
-    instruments: 'Arpeggiator, pulse bass, poly pads, drums, lead synth',
-    bpm: 104, beats: 16, level: 1.6,
+    mood: 'Neon, head-nodding, heroic',
+    blurb: 'Cruising a neon starship past Saturn. Swung boom-bap drums and a sliding 808 roll under sparkling arpeggios, with synth stabs and a whining G-funk lead on top.',
+    instruments: '808 bass, boom-bap drums, trap hats, arpeggiator, chord stabs, G-funk lead, vinyl crackle',
+    bpm: 90, beats: 16, level: 1.1,
     mix: { reverb: 2.2, decay: 3, dark: 0.5, delayBeats: 0.75, feedback: 0.35, delayTone: 3200 },
     setup: (M) => ({
       arp: M.channel({ rev: 0.25, dly: 0.3, pan: 0.2 }),
-      bass: M.channel({ rev: 0.05 }),
+      bass: M.channel({ rev: 0.03, drive: 2.5, lowpass: 1400, post: 0.25 }),
       pad: M.channel({ rev: 0.4, pan: -0.15 }),
-      drums: M.channel({ rev: 0.12 }),
-      snare: M.channel({ rev: 0.55 }),
+      drums: M.channel({ rev: 0.08 }),
+      snare: M.channel({ rev: 0.3 }),
+      hats: M.channel({ rev: 0.1, pan: 0.15 }),
+      stab: M.channel({ rev: 0.3, dly: 0.2, pan: -0.2 }),
       lead: M.channel({ rev: 0.35, dly: 0.25 }),
+      vinyl: M.channel({ rev: 0, gain: 0.8 }),
     }),
     seg(M, c, t, i, r, B) {
+      const swing = (b) => b + (Math.round(b * 4) % 2 ? 0.045 : 0); // off 16ths land late
       SYNTHWAVE.forEach((cd, k) => {
         const tb = t + k * 4 * B;
         const tones = notes(cd.arp);
         for (let j = 0; j < 16; j++) {
-          synth(M, c.arp, tb + (j * B) / 4, hz(tones[ARP_ORDER[(k * 16 + j) % 6]] + 12), B / 4, { vol: 0.05, cutoff: 700, cutoffPeak: 3200, filterDecay: 0.12, decay: 0.1, sustain: 0.3, release: 0.08 });
+          synth(M, c.arp, tb + swing(j / 4) * B, hz(tones[ARP_ORDER[(k * 16 + j) % 6]] + 12), B / 4, { vol: j % 2 ? 0.032 : 0.045, cutoff: 650, cutoffPeak: 2800, filterDecay: 0.1, decay: 0.1, sustain: 0.25, release: 0.08 });
         }
+        pad(M, c.pad, tb, tones.map((m) => hz(m + 12)), 4 * B, { type: 'sawtooth', voices: 2, spread: 9, vol: 0.045, attack: 0.3, release: 0.8, cutoff: 1600 });
+        for (let j = 0; j < 10; j++) noiseHit(M, c.vinyl, tb + r() * 4 * B, { type: 'highpass', freq: 2500, decay: 0.004 + r() * 0.006, vol: 0.03 + r() * 0.05 });
+        if (i === 0) return; // the intro is pads, arps and crackle only
         const root = midi(cd.bass);
-        for (let j = 0; j < 8; j++) synth(M, c.bass, tb + (j * B) / 2, hz(root + (j % 2 ? 12 : 0)), B / 2.2, { vol: 0.13, cutoff: 380, cutoffPeak: 1100, filterDecay: 0.1, decay: 0.15, sustain: 0.5, release: 0.05 });
-        pad(M, c.pad, tb, tones.map((m) => hz(m + 12)), 4 * B, { type: 'sawtooth', voices: 2, spread: 9, vol: 0.05, attack: 0.3, release: 0.8, cutoff: 2000 });
-        if (i > 0) {
-          kick(M, c.drums, tb, { vol: 0.85 });
-          kick(M, c.drums, tb + 2 * B, { vol: 0.85 });
-          if (k % 2) kick(M, c.drums, tb + 2.75 * B, { vol: 0.6 });
-          snare(M, c.snare, tb + B, { vol: 0.32 });
-          snare(M, c.snare, tb + 3 * B, { vol: 0.32 });
-          for (let j = 0; j < 8; j++) hat(M, c.drums, tb + (j * B) / 2, { vol: j % 2 ? 0.07 : 0.035, open: j === 7 });
+        const ks = HIPHOP_KICKS[k % 2];
+        ks.forEach((b, j) => {
+          const tk = tb + swing(b) * B;
+          kick(M, c.drums, tk, { vol: 0.9, from: 160, to: 50, decay: 0.3, click: 0.2 });
+          const len = (j + 1 < ks.length ? ks[j + 1] : 4) - b;
+          const slide = k % 2 === 1 && j === 1;
+          synth(M, c.bass, tk, hz(root), len * B, { type: 'sine', vol: 0.4, attack: 0.004, decay: 0.9, sustain: 0.35, release: 0.12, cutoff: 1200, glideFrom: slide ? hz(root + 7) : undefined });
+        });
+        for (const b of [1, 3]) {
+          snare(M, c.snare, tb + b * B, { vol: 0.3, tone: 180, bright: 1500, decay: 0.18 });
+          [0, 0.011, 0.022].forEach((o, n) => noiseHit(M, c.snare, tb + b * B + o, { freq: 1300, q: 1, decay: n === 2 ? 0.14 : 0.02, vol: 0.2 }));
         }
+        const roll = k % 2 === 1;
+        for (let j = 0; j < 16; j++) {
+          if (roll && j >= 14) continue;
+          if (j % 2 && r() < 0.15) continue;
+          hat(M, c.hats, tb + swing(j / 4) * B, { vol: j % 4 === 0 ? 0.05 : j % 2 === 0 ? 0.035 : 0.022, open: !roll && j === 14 });
+        }
+        if (roll) for (let n = 0; n < 6; n++) hat(M, c.hats, tb + (3.5 + n / 12) * B, { vol: 0.02 + n * 0.006 });
+        const stabAt = k % 2 ? 1.5 : 2.75;
+        tones.forEach((m) => synth(M, c.stab, tb + swing(stabAt) * B, hz(m + 12), 0.2 * B, { voices: 2, spread: 10, vol: 0.035, cutoff: 1200, cutoffPeak: 4000, filterDecay: 0.12, decay: 0.12, sustain: 0.2, release: 0.1 }));
       });
-      if (i % 4 >= 2) glideLine(M, c.lead, t, SYNTHWAVE_LEAD, B, { wave: 'sawtooth', vol: 0.07, cutoff: 2400, vibRate: 5.5, vibCents: 12, vibDelay: 0.3, glide: 0.06, attack: 0.02, release: 0.3 });
+      if (i % 4 >= 2) glideLine(M, c.lead, t, SYNTHWAVE_LEAD, B, { wave: 'triangle', octave: 1, vol: 0.075, cutoff: 4000, vibRate: 6, vibCents: 30, vibDelay: 0.15, glide: 0.15, attack: 0.03, release: 0.4 });
     },
   },
   {
     id: 'oracle', name: 'Desert Oracle', family: 'Spiritual', tier: 'medium',
     mood: 'Ancient, mysterious, rhythmic',
-    blurb: 'Night over the pyramids as the stars align. An oud and a breathy ney flute trade an old scale over hand drums and a desert drone.',
+    blurb: 'Night over the pyramids as the stars align. An oud and a breathy ney flute trade an old scale over hand drums and a desert drone, with a tight low end.',
     instruments: 'Oud, ney flute, doumbek, finger cymbals, drone',
     bpm: 92, beats: 16, level: 1.8,
     mix: { reverb: 3, decay: 2.8, dark: 0.55, delayBeats: 0.75, feedback: 0.25, delayTone: 2600 },
@@ -824,8 +848,9 @@ export const STYLES = [
       oud: M.channel({ rev: 0.35, pan: -0.15 }),
       ney: M.channel({ rev: 0.55, dly: 0.15, pan: 0.15 }),
       drum: M.channel({ rev: 0.2 }),
+      dum: M.channel({ rev: 0.1 }),
       riq: M.channel({ rev: 0.2, pan: 0.3 }),
-      drone: M.channel({ rev: 0.4 }),
+      drone: M.channel({ rev: 0.1 }),
       zill: M.channel({ rev: 0.5, pan: 0.35 }),
     }),
     seg(M, c, t, i, r, B) {
@@ -834,7 +859,7 @@ export const STYLES = [
       struck(M, c.zill, t + B / 2, 2680, { ...ZILL, dur: 2, vol: 0.025 });
       for (let k = 0; k < 4; k++) {
         const tb = t + k * 4 * B;
-        for (const b of [0, 2]) kick(M, c.drum, tb + b * B, { vol: 0.5, from: 140, to: 85, decay: 0.35, click: 0.05 });
+        for (const b of [0, 2]) kick(M, c.dum, tb + b * B, { vol: 0.5, from: 140, to: 85, decay: 0.35, click: 0.05 });
         const teks = k === 3 ? [0.5, 1.5, 3, 3.25, 3.5, 3.75] : [0.5, 1.5, 3];
         for (const b of teks) noiseHit(M, c.drum, tb + b * B, { freq: 3300, q: 1.5, decay: 0.06, vol: 0.16 });
         for (const b of [2.5, 3.5]) if (k !== 3) noiseHit(M, c.drum, tb + b * B, { freq: 3000, q: 1.5, decay: 0.04, vol: 0.06 });
@@ -858,36 +883,69 @@ export const STYLES = [
     },
   },
   {
-    id: 'wardrums', name: 'War Drums of Orion', family: 'Alien', tier: 'hard',
-    mood: 'Epic, powerful, menacing',
-    blurb: 'The Orion war fleet arrives. Thundering taiko, driving strings, brass blasts and a massive alien horn.',
-    instruments: 'Taiko ensemble, strings, brass, choir, alien horn',
-    bpm: 108, beats: 16, level: 0.55,
-    mix: { reverb: 2.6, decay: 2.8, dark: 0.55, delayBeats: 0.5, feedback: 0.2, delayTone: 2200 },
+    id: 'wardrums', name: 'War Drums of Orion', family: 'Alien', tier: 'alien',
+    mood: 'Legendary, united, rising',
+    blurb: 'A lone horn calls the crew together. Drummer by drummer the fleet joins in, the strings start to flow, the crew shouts back, until everyone plays the anthem as one.',
+    instruments: 'Horn call, taiko ensemble, flowing strings, brass, choir and crew shouts',
+    bpm: 104, beats: 16, level: 0.7,
+    mix: { reverb: 2.8, decay: 2.8, dark: 0.55, delayBeats: 0.5, feedback: 0.2, delayTone: 2200 },
     setup: (M) => ({
-      taiko: M.channel({ rev: 0.3, drive: 1.6 }),
+      drone: M.channel({ rev: 0.3, lowpass: 600 }),
+      taiko: M.channel({ rev: 0.3, drive: 1.6, pan: -0.1 }),
+      taiko2: M.channel({ rev: 0.3, drive: 1.4, pan: 0.35 }),
       rim: M.channel({ rev: 0.25, pan: 0.25 }),
       strings: M.channel({ rev: 0.3, pan: -0.2 }),
+      flow: M.channel({ rev: 0.35, dly: 0.1, pan: 0.25 }),
+      high: M.channel({ rev: 0.45, dly: 0.1, pan: -0.1 }),
       brass: M.channel({ rev: 0.35, pan: 0.1 }),
       choir: M.channel({ rev: 0.6 }),
+      shout: M.channel({ rev: 0.35, drive: 1.5 }),
       braam: M.channel({ rev: 0.4, drive: 2.5, lowpass: 2500 }),
       horn: M.channel({ rev: 0.45, dly: 0.12 }),
+      cym: M.channel({ rev: 0.5 }),
     }),
     seg(M, c, t, i, r, B) {
-      if (i % 2 === 0) pad(M, c.braam, t, notes('D2 A2 D3').map(hz), 2.5 * B, { type: 'sawtooth', voices: 3, spread: 18, vol: 0.14, attack: 0.12, release: 1.5, cutoff: 250, cutoffEnd: 1800 });
+      // Builds up over the first segments: 0 the call, 1 the drummers gather, 2 the crew, 3+ all together.
+      const lvl = Math.min(i, 3);
+      pad(M, c.drone, t, notes('D2 A2').map(hz), 16 * B + 1, { type: 'sawtooth', voices: 2, spread: 8, vol: 0.05 + lvl * 0.01, attack: 2, release: 2, cutoff: 500 });
+      if (i === 2 || (i > 2 && i % 2 === 0)) pad(M, c.braam, t, notes('D2 A2 D3').map(hz), 2.5 * B, { type: 'sawtooth', voices: 3, spread: 18, vol: 0.14, attack: 0.12, release: 1.5, cutoff: 250, cutoffEnd: 1800 });
+      if (lvl >= 2) noiseHit(M, c.cym, t, { type: 'highpass', freq: 4000, q: 0.7, decay: 1.8, vol: 0.09 });
       WAR_BARS.forEach((bar, k) => {
         const tb = t + k * 4 * B;
         const root = midi(bar.root);
-        taiko(M, c.taiko, tb, { vol: 1, pitch: 55, decay: 1 });
-        taiko(M, c.taiko, tb + 2 * B, { vol: 0.9, pitch: 55, decay: 0.9 });
-        for (const b of [1, 1.5, 3, 3.25, 3.5]) taiko(M, c.taiko, tb + b * B, { vol: 0.45, pitch: 95, decay: 0.35 });
-        if (k === 3) for (let s = 0; s < 8; s++) taiko(M, c.taiko, tb + (2 + s / 4) * B, { vol: 0.3 + s * 0.06, pitch: 80, decay: 0.3 });
-        for (const b of [1, 3]) noiseHit(M, c.rim, tb + b * B, { freq: 1800, q: 2, decay: 0.04, vol: 0.12 });
-        WAR_OSTINATO.forEach((o, j) => synth(M, c.strings, tb + (j * B) / 2, hz(root + o), 0.4 * B, { voices: 2, spread: 7, vol: 0.06, cutoff: 1800, cutoffPeak: 3000, decay: 0.1, sustain: 0.25, release: 0.08 }));
-        notes(bar.brass).forEach((m) => synth(M, c.brass, tb, hz(m), 1.5 * B, { voices: 2, spread: 6, vol: 0.05, attack: 0.04, cutoff: 900, cutoffPeak: 2600, filterDecay: 0.3, sustain: 0.7, release: 0.25 }));
-        if (i % 2 === 1) choir(M, c.choir, tb, notes(bar.power).map(hz), 4 * B, { vowel: 'o', vol: 0.09, attack: 0.3, release: 0.8 });
+        taiko(M, c.taiko, tb, { vol: lvl === 0 ? 0.7 : 1, pitch: 55, decay: 1 });
+        taiko(M, c.taiko, tb + 2 * B, { vol: lvl === 0 ? 0.6 : 0.9, pitch: 55, decay: 0.9 });
+        if (lvl >= 1) for (const b of [1, 1.5, 3, 3.5]) taiko(M, c.taiko, tb + b * B, { vol: 0.28 + lvl * 0.06, pitch: 95, decay: 0.35 });
+        if (lvl >= 2) {
+          taiko(M, c.taiko, tb + 3.25 * B, { vol: 0.4, pitch: 95, decay: 0.3 });
+          for (const b of [1, 3]) noiseHit(M, c.rim, tb + b * B, { freq: 1800, q: 2, decay: 0.04, vol: 0.12 });
+        }
+        if (lvl >= 3) {
+          for (const b of [0.75, 2.75]) taiko(M, c.taiko2, tb + b * B, { vol: 0.5, pitch: 70, decay: 0.5 });
+          for (const b of [3, 3.25, 3.5, 3.75]) taiko(M, c.taiko2, tb + b * B, { vol: 0.3, pitch: 110, decay: 0.25 });
+        }
+        if (k === 3 && lvl >= 1) {
+          for (let s = 0; s < 8; s++) taiko(M, c.taiko, tb + (2 + s / 4) * B, { vol: 0.25 + s * 0.06, pitch: 80, decay: 0.3 });
+          swell(M, c.cym, tb + 2 * B, 2 * B, { type: 'highpass', from: 2500, to: 9000, q: 0.7, vol: 0.04 + lvl * 0.02 });
+        }
+        if (lvl >= 1) WAR_OSTINATO.forEach((o, j) => synth(M, c.strings, tb + (j * B) / 2, hz(root + 12 + o), 0.4 * B, { voices: 2, spread: 7, vol: 0.03 + lvl * 0.012, cutoff: 1800, cutoffPeak: 3000, decay: 0.1, sustain: 0.25, release: 0.08 }));
+        if (lvl >= 2) {
+          const run = notes(bar.arp);
+          WAR_FLOW.forEach((n, j) => synth(M, c.flow, tb + (j * B) / 4, hz(run[n]), 0.3 * B, { voices: 2, spread: 6, vol: 0.026, attack: 0.01, cutoff: 2400, decay: 0.15, sustain: 0.5, release: 0.1 }));
+          notes(bar.brass).forEach((m) => synth(M, c.brass, tb, hz(m), 1.5 * B, { voices: 2, spread: 6, vol: 0.05, attack: 0.04, cutoff: 900, cutoffPeak: 2600, filterDecay: 0.3, sustain: 0.7, release: 0.25 }));
+          if (lvl >= 3) notes(bar.brass).forEach((m) => synth(M, c.brass, tb + 2.5 * B, hz(m), 0.6 * B, { voices: 2, spread: 6, vol: 0.035, attack: 0.03, cutoff: 900, cutoffPeak: 2400, filterDecay: 0.2, sustain: 0.5, release: 0.2 }));
+          if (k === 1 || k === 3) {
+            choir(M, c.shout, tb + 3 * B, [hz(root + 12), hz(root + 19)], 0.16, { vowel: 'o', voices: 5, spread: 30, attack: 0.015, release: 0.18, vol: 0.16, vibCents: 0 });
+            noiseHit(M, c.shout, tb + 3 * B, { freq: 1100, q: 0.8, decay: 0.08, vol: 0.2 });
+          }
+        }
+        const power = notes(bar.power).map((m) => hz(m + 12));
+        if (lvl === 1) choir(M, c.choir, tb, power, 4 * B, { vowel: 'u', vol: 0.06, attack: 1.5, release: 1 });
+        if (lvl >= 2) choir(M, c.choir, tb, lvl >= 3 ? [...power, power[0] * 2] : power, 4 * B, { vowel: lvl >= 3 ? 'a' : 'o', vol: 0.09, attack: 0.3, release: 0.8 });
       });
-      if (i % 2 === 1) glideLine(M, c.horn, t, WAR_HOOK, B, { wave: 'sawtooth', vol: 0.08, cutoff: 1600, vibRate: 4, vibCents: 8, vibDelay: 0.4, glide: 0.06, attack: 0.06, release: 0.4 });
+      if (i >= 4 && i % 2 === 1) return; // the fleet breathes: rhythm and strings only
+      glideLine(M, c.horn, t, WAR_CALL, B, { wave: 'sawtooth', vol: lvl === 0 ? 0.07 : 0.08, cutoff: lvl === 0 ? 1100 : 1400 + lvl * 200, vibRate: 4, vibCents: 8, vibDelay: 0.4, glide: 0.05, attack: 0.12, release: 0.5 });
+      if (lvl >= 2) glideLine(M, c.high, t, WAR_CALL, B, { wave: 'sawtooth', octave: 1, vol: lvl >= 3 ? 0.05 : 0.035, cutoff: 3000, vibRate: 5.5, vibCents: 10, vibDelay: 0.3, glide: 0.05, attack: 0.08, release: 0.5 });
     },
   },
   {
