@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Alien Sudoku Music Lab</title>
+<meta name="color-scheme" content="dark">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* One visual world: the game's deep space. Cards are numbered 01-10 to match the style list. */
+:root {
+  --void: #07040f;
+  --panel: #120b22;
+  --panel-2: #1a1131;
+  --ink: #efe9ff;
+  --dim: #a99fc8;
+  --line: rgba(190, 170, 255, 0.16);
+  --cosmos: #a594ff;
+  --spirit: #f2c46d;
+  --alien: #ff6b81;
+  --display: 'Orbitron', 'Eurostile', 'Arial Narrow', sans-serif;
+  --body: 'Space Grotesk', 'Avenir Next', 'Segoe UI', system-ui, sans-serif;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  background: var(--void);
+  background-image:
+    radial-gradient(60rem 40rem at 85% -10%, rgba(120, 80, 255, 0.22), transparent 60%),
+    radial-gradient(50rem 30rem at -10% 30%, rgba(255, 90, 140, 0.12), transparent 60%),
+    radial-gradient(40rem 30rem at 50% 110%, rgba(242, 196, 109, 0.10), transparent 60%);
+  background-attachment: fixed;
+  color: var(--ink);
+  font: 400 16px/1.55 var(--body);
+  padding-bottom: 96px;
+}
+#stars { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+main { position: relative; z-index: 1; max-width: 1080px; margin: 0 auto; padding: 40px 16px 24px; display: grid; gap: 28px; }
+header { display: grid; gap: 10px; max-width: 46rem; }
+.eyebrow { font: 700 0.72rem/1 var(--display); letter-spacing: 0.32em; text-transform: uppercase; color: var(--dim); }
+h1 { margin: 0; font: 900 clamp(2.2rem, 7vw, 3.6rem)/1.02 var(--display); letter-spacing: 0.02em; text-wrap: balance;
+  background: linear-gradient(100deg, var(--cosmos), #e6dcff 45%, var(--spirit) 70%, var(--alien)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+header p { margin: 0; color: var(--dim); font-size: 1.05rem; }
+header p b { color: var(--ink); font-weight: 600; }
+.legend { display: flex; flex-wrap: wrap; gap: 8px; }
+.fam { display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px 3px 8px; border-radius: 999px; border: 1px solid currentColor;
+  font: 700 0.66rem/1.6 var(--display); letter-spacing: 0.14em; text-transform: uppercase; }
+.fam::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+.fam.Cosmos { color: var(--cosmos); } .fam.Spiritual { color: var(--spirit); } .fam.Alien { color: var(--alien); }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 480px), 1fr)); gap: 16px; }
+.card { --c: var(--cosmos); position: relative; display: grid; gap: 12px; padding: 18px 18px 16px; border-radius: 18px;
+  background: linear-gradient(170deg, var(--panel-2), var(--panel)); border: 1px solid var(--line); overflow: hidden; }
+.card.Spiritual { --c: var(--spirit); } .card.Alien { --c: var(--alien); }
+.card::after { content: ''; position: absolute; inset: 0 0 auto 0; height: 3px; background: var(--c); opacity: 0.85; }
+.card.playing { border-color: color-mix(in srgb, var(--c) 55%, transparent); box-shadow: 0 0 0 1px color-mix(in srgb, var(--c) 35%, transparent), 0 18px 50px -20px color-mix(in srgb, var(--c) 60%, transparent); }
+.top { display: grid; grid-template-columns: auto 1fr auto; gap: 12px; align-items: start; }
+.num { font: 900 1.6rem/1 var(--display); color: var(--c); opacity: 0.9; font-variant-numeric: tabular-nums; padding-top: 2px; }
+.card h2 { margin: 0; font: 700 1.12rem/1.2 var(--display); letter-spacing: 0.03em; text-wrap: balance; }
+.mood { margin: 4px 0 0; color: var(--dim); font-size: 0.9rem; }
+.blurb { margin: 0; max-width: 60ch; }
+.player { display: grid; grid-template-columns: auto 1fr auto; gap: 12px; align-items: center; }
+.play { width: 48px; height: 48px; border-radius: 50%; border: 0; cursor: pointer; display: grid; place-items: center;
+  background: var(--c); color: #0b0716; box-shadow: 0 6px 20px -6px var(--c); transition: transform 0.15s; }
+.play:hover { transform: scale(1.06); }
+.play:focus-visible, .like:focus-visible, .copy:focus-visible, canvas:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+.play svg { width: 20px; height: 20px; }
+.wave { width: 100%; height: 44px; display: block; cursor: pointer; border-radius: 6px; touch-action: none; }
+.time { font: 500 0.8rem/1 var(--body); color: var(--dim); font-variant-numeric: tabular-nums; min-width: 4.6em; text-align: right; }
+.meta { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; padding-top: 10px; border-top: 1px solid var(--line); }
+.meta small { color: var(--dim); font-size: 0.82rem; }
+.meta small b { color: var(--ink); font-weight: 500; }
+.tier { color: var(--ink); }
+.like { display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; border-radius: 999px; cursor: pointer;
+  border: 1px solid var(--line); background: transparent; color: var(--ink); font: 600 0.85rem/1 var(--body); }
+.like svg { width: 16px; height: 16px; }
+.like[aria-pressed="true"] { background: var(--c); color: #0b0716; border-color: var(--c); }
+.like[aria-pressed="true"] svg path { fill: currentColor; }
+.dock { position: fixed; left: 0; right: 0; bottom: 0; z-index: 5; padding: 12px 16px; background: rgba(10, 6, 22, 0.88);
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-top: 1px solid var(--line); }
+.dock-in { max-width: 1080px; margin: 0 auto; display: flex; gap: 12px; align-items: center; justify-content: space-between; }
+.dock p { margin: 0; font-size: 0.92rem; color: var(--dim); min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dock p b { color: var(--ink); }
+.copy { flex: none; padding: 10px 16px; border-radius: 12px; border: 0; cursor: pointer; background: var(--ink); color: #0b0716; font: 700 0.85rem/1 var(--body); }
+.copy:disabled { opacity: 0.4; cursor: default; }
+footer { color: var(--dim); font-size: 0.85rem; max-width: 60ch; }
+@media (max-width: 420px) {
+  .card { padding: 16px 14px 14px; }
+  .num { font-size: 1.3rem; }
+  .top { grid-template-columns: auto 1fr; }
+  .top .fam { grid-column: 2; justify-self: start; }
+}
+@media (prefers-reduced-motion: reduce) { .play { transition: none; } }
+</style>
+</head>
+<body>
+<canvas id="stars" aria-hidden="true"></canvas>
+<main>
+  <header>
+    <div class="eyebrow">Alien Sudoku</div>
+    <h1>Music Lab</h1>
+    <p>Ten theme-music styles for the game, <b>40 seconds each</b>, all played by the game's own synthesizer. Tap a play button to listen. Tap <b>Like</b> on every style you want to keep; the best ones become the theme songs for each difficulty tier.</p>
+    <div class="legend" aria-label="Families">
+      <span class="fam Cosmos">Cosmos</span><span class="fam Spiritual">Spiritual</span><span class="fam Alien">Alien</span>
+    </div>
+  </header>
+  <section class="grid" id="grid" aria-label="Music styles"></section>
+  <footer>Tiers: Easy brings the Soft Visitors, Medium the Alien Creatures, Hard the Hostile Visitors, and Alien the Gnarly Horde. Each suggestion is only a starting point.</footer>
+</main>
+<div class="dock" role="region" aria-label="Your likes">
+  <div class="dock-in">
+    <p id="liked">Nothing liked yet. Tap Like on the styles you want.</p>
+    <button class="copy" id="copy" type="button" disabled>Copy my likes</button>
+  </div>
+</div>
+<audio id="audio" preload="none" playsinline></audio>
+<script>
+const TRACKS = __TRACKS__;
+const TIER = { easy: 'Easy · Soft Visitors', medium: 'Medium · Alien Creatures', hard: 'Hard · Hostile Visitors', alien: 'Alien · Gnarly Horde' };
+const ICON = {
+  play: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l13-7.5z" fill="currentColor"/></svg>',
+  pause: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4h4.5v16H6zM13.5 4H18v16h-4.5z" fill="currentColor"/></svg>',
+  heart: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.5s-7.5-4.6-9.3-9.2C1.4 8 3.4 4.5 7 4.5c2.1 0 3.6 1.2 5 3 1.4-1.8 2.9-3 5-3 3.6 0 5.6 3.5 4.3 6.8-1.8 4.6-9.3 9.2-9.3 9.2z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>',
+};
+const audio = document.getElementById('audio');
+const grid = document.getElementById('grid');
+const urls = {};
+let current = null;
+let likes = new Set();
+try { likes = new Set(JSON.parse(localStorage.getItem('music-lab-likes') || '[]')); } catch (e) { /* storage blocked */ }
+
+function srcFor(t) {
+  if (urls[t.id]) return urls[t.id];
+  if (t.b64) {
+    const bin = atob(t.b64);
+    const u8 = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) u8[i] = bin.charCodeAt(i);
+    urls[t.id] = URL.createObjectURL(new Blob([u8], { type: 'audio/mpeg' }));
+  } else urls[t.id] = t.src;
+  return urls[t.id];
+}
+const fmt = (s) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
+
+const cards = TRACKS.map((t) => {
+  const el = document.createElement('article');
+  el.className = `card ${t.family}`;
+  el.id = `style-${t.id}`;
+  el.innerHTML = `
+    <div class="top">
+      <span class="num">${t.n}</span>
+      <div><h2>${t.name}</h2><p class="mood">${t.mood} · ${t.bpm} BPM</p></div>
+      <span class="fam ${t.family}">${t.family}</span>
+    </div>
+    <p class="blurb">${t.blurb}</p>
+    <div class="player">
+      <button class="play" id="play-${t.id}" type="button" aria-label="Play ${t.name}">${ICON.play}</button>
+      <canvas class="wave" id="wave-${t.id}" tabindex="0" role="slider" aria-label="Position in ${t.name}" aria-valuemin="0" aria-valuemax="${t.seconds}" aria-valuenow="0"></canvas>
+      <span class="time" id="time-${t.id}">0:00 / ${fmt(t.seconds)}</span>
+    </div>
+    <div class="meta">
+      <small><b>${t.instruments}</b><br>Suggested for <span class="tier">${TIER[t.tier]}</span></small>
+      <button class="like" id="like-${t.id}" type="button" aria-pressed="${likes.has(t.id)}">${ICON.heart}<span>Like</span></button>
+    </div>`;
+  grid.appendChild(el);
+  const c = { t, el, btn: el.querySelector('.play'), wave: el.querySelector('canvas'), time: el.querySelector('.time'), like: el.querySelector('.like') };
+  c.btn.addEventListener('click', () => toggle(c));
+  c.like.addEventListener('click', () => {
+    if (likes.has(t.id)) likes.delete(t.id); else likes.add(t.id);
+    c.like.setAttribute('aria-pressed', String(likes.has(t.id)));
+    saveLikes();
+  });
+  const seekTo = (x) => {
+    const r = c.wave.getBoundingClientRect();
+    const f = Math.min(1, Math.max(0, (x - r.left) / r.width));
+    if (current !== c) start(c, f * t.seconds); else audio.currentTime = f * t.seconds;
+  };
+  c.wave.addEventListener('pointerdown', (e) => seekTo(e.clientX));
+  c.wave.addEventListener('keydown', (e) => {
+    if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+    e.preventDefault();
+    if (current !== c) { start(c, 0); return; }
+    audio.currentTime = Math.max(0, Math.min(t.seconds, audio.currentTime + (e.key === 'ArrowRight' ? 5 : -5)));
+  });
+  return c;
+});
+
+function cssVar(el, name) { return getComputedStyle(el).getPropertyValue(name).trim(); }
+function draw(c, pos = 0) {
+  const cv = c.wave;
+  const dpr = window.devicePixelRatio || 1;
+  const w = cv.clientWidth; const h = cv.clientHeight;
+  if (!w) return;
+  if (cv.width !== Math.round(w * dpr)) { cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr); }
+  const g = cv.getContext('2d');
+  g.setTransform(dpr, 0, 0, dpr, 0, 0);
+  g.clearRect(0, 0, w, h);
+  const col = cssVar(c.el, '--c');
+  const peaks = c.t.peaks;
+  const n = Math.max(24, Math.min(peaks.length, Math.floor(w / 4)));
+  const bw = w / n;
+  const done = pos / c.t.seconds;
+  for (let i = 0; i < n; i++) {
+    const p0 = Math.floor((i / n) * peaks.length);
+    const p1 = Math.max(p0 + 1, Math.floor(((i + 1) / n) * peaks.length));
+    let p = 0;
+    for (let k = p0; k < p1; k++) p = Math.max(p, peaks[k]);
+    const bh = Math.max(2, Math.pow(p, 0.8) * (h - 4));
+    g.fillStyle = col;
+    g.globalAlpha = i / n < done ? 1 : 0.28;
+    g.beginPath();
+    if (g.roundRect) g.roundRect(i * bw + 1, (h - bh) / 2, Math.max(1, bw - 2), bh, 1.5); else g.rect(i * bw + 1, (h - bh) / 2, Math.max(1, bw - 2), bh);
+    g.fill();
+  }
+  g.globalAlpha = 1;
+}
+
+function setUi(c, playing) {
+  c.btn.innerHTML = playing ? ICON.pause : ICON.play;
+  c.btn.setAttribute('aria-label', `${playing ? 'Pause' : 'Play'} ${c.t.name}`);
+  c.el.classList.toggle('playing', playing);
+}
+function start(c, at = 0) {
+  if (current && current !== c) { setUi(current, false); draw(current, 0); current.time.textContent = `0:00 / ${fmt(current.t.seconds)}`; }
+  current = c;
+  audio.src = srcFor(c.t);
+  const go = () => { try { audio.currentTime = at; } catch (e) { /* not seekable yet */ } };
+  if (at) audio.addEventListener('loadedmetadata', go, { once: true });
+  const p = audio.play();
+  if (p && p.catch) p.catch(() => setUi(c, false));
+  setUi(c, true);
+  tick();
+}
+function toggle(c) {
+  if (current === c && !audio.paused) { audio.pause(); setUi(c, false); return; }
+  if (current === c && audio.src) { audio.play().catch(() => {}); setUi(c, true); tick(); return; }
+  start(c, 0);
+}
+function tick() {
+  if (!current) return;
+  const t = audio.currentTime || 0;
+  draw(current, t);
+  current.time.textContent = `${fmt(t)} / ${fmt(current.t.seconds)}`;
+  current.wave.setAttribute('aria-valuenow', String(Math.round(t)));
+  if (!audio.paused) requestAnimationFrame(tick);
+}
+audio.addEventListener('ended', () => { if (current) { setUi(current, false); draw(current, 0); current.time.textContent = `0:00 / ${fmt(current.t.seconds)}`; } });
+audio.addEventListener('pause', () => { if (current) setUi(current, false); });
+audio.addEventListener('play', () => { if (current) { setUi(current, true); tick(); } });
+
+function likedList() { return TRACKS.filter((t) => likes.has(t.id)); }
+function saveLikes() {
+  try { localStorage.setItem('music-lab-likes', JSON.stringify([...likes])); } catch (e) { /* storage blocked */ }
+  const l = likedList();
+  const p = document.getElementById('liked');
+  p.innerHTML = l.length ? `<b>Liked ${l.length} of ${TRACKS.length}:</b> ${l.map((t) => t.name).join(', ')}` : 'Nothing liked yet. Tap Like on the styles you want.';
+  document.getElementById('copy').disabled = !l.length;
+}
+document.getElementById('copy').addEventListener('click', async (e) => {
+  const text = `Music styles I like: ${likedList().map((t) => `${t.n} ${t.name}`).join(', ')}`;
+  const btn = e.currentTarget;
+  try { await navigator.clipboard.writeText(text); btn.textContent = 'Copied'; }
+  catch (err) { document.getElementById('liked').textContent = text; btn.textContent = 'Select the text to copy'; }
+  setTimeout(() => { btn.textContent = 'Copy my likes'; }, 2200);
+});
+saveLikes();
+
+function redraw() { for (const c of cards) draw(c, c === current ? audio.currentTime || 0 : 0); }
+window.addEventListener('resize', redraw);
+redraw();
+
+(function stars() {
+  const cv = document.getElementById('stars');
+  const dpr = window.devicePixelRatio || 1;
+  const paint = () => {
+    cv.width = innerWidth * dpr; cv.height = innerHeight * dpr;
+    const g = cv.getContext('2d');
+    let seed = 7;
+    const rnd = () => { seed = (seed * 16807) % 2147483647; return seed / 2147483647; };
+    const n = Math.round((innerWidth * innerHeight) / 5000);
+    for (let i = 0; i < n; i++) {
+      const r = rnd() < 0.08 ? 1.4 : 0.7;
+      g.globalAlpha = 0.25 + rnd() * 0.6;
+      g.fillStyle = rnd() < 0.15 ? '#ffd9a0' : rnd() < 0.3 ? '#c8bcff' : '#ffffff';
+      g.beginPath(); g.arc(rnd() * cv.width, rnd() * cv.height, r * dpr, 0, Math.PI * 2); g.fill();
+    }
+  };
+  paint();
+  window.addEventListener('resize', paint);
+})();
+</script>
+</body>
+</html>
