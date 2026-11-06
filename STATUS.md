@@ -80,6 +80,13 @@
   phone smoke test checks it). HUD and pause menu draw above the canopy roof (z 20/30). Home
   screen fills tall screens (its box kept its minimum size, left of centre). The unsupported
   2D MSAA setting is gone (GL Compatibility has none).
+- Beta for phones: `.github/workflows/canopy-crossing-beta.yml` builds web + Android APK (release
+  engine, beta key) on GitHub, tap-tests first person in a phone browser, and publishes a tester
+  site to GitHub Pages (`/canopy-crossing/`: play, add to home screen on iPhone/Android, APK).
+  Not live yet: GitHub refuses every Actions job on this account (all runs since Nov 3 fail in
+  seconds, both apps); the owner needs to clear that (Settings > Billing and plans / the failed
+  run's message) and set Settings > Pages > Source: GitHub Actions, then run the workflow.
+  Meanwhile the claude.ai artifact can be shared publicly from claude.ai (Share).
 - Feel: log carry during sideways hops, magnetic landing onto log ends (0.2 tile), vehicle hit
   edges 0.1 tile forgiving, Close call! +2 for movers brushing past, swipe threshold 36 px.
 - Art/audio: procedural chibi animals and hazards, per-region palettes and canopy framing, dot
