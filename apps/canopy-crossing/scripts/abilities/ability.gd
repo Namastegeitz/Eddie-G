@@ -143,8 +143,10 @@ func rooted() -> bool:
 	return false
 
 
+## Hop time multiplier. Any module may carry "hop_scale" (skill upgrades
+## shrink it for abilities that have nothing else to improve).
 func hop_time_scale(_in_water: bool) -> float:
-	return 1.0
+	return float(p.get("hop_scale", 1.0))
 
 
 func clone() -> Ability:

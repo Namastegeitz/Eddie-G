@@ -138,6 +138,7 @@ func _build_run() -> void:
 	opts.move_timer = mt if bool(Save.setting("move_timer", true)) and cfg.mode != "tutorial" else 0.0
 	opts.creep = map.get("endless", {}).get("creep", [0.2, 0.8])
 	opts.water_restart = bool(Content.rules.get("water_restarts_run", true))
+	opts.skill_level = Skills.level_of(String(animal.id))
 	sim = RunSim.new()
 	sim.setup(world, animal, opts)
 

@@ -16,7 +16,8 @@
     "summary": "Plows through brush obstacles",
     "modules": [
       {
-        "module": "plow"
+        "module": "plow",
+        "hop_scale": 1.0
       }
     ]
   },

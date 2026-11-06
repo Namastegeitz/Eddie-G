@@ -12,4 +12,4 @@ func swim() -> Dictionary:
 func hop_time_scale(in_water: bool) -> float:
 	if in_water and p.has("water_hop_time"):
 		return float(p.water_hop_time) / maxf(0.05, float(run.base_hop))
-	return 1.0
+	return float(p.get("hop_scale", 1.0))

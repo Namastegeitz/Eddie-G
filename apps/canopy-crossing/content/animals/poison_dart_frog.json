@@ -15,7 +15,8 @@
     "summary": "Precise reliable hop (baseline)",
     "modules": [
       {
-        "module": "hop"
+        "module": "hop",
+        "hop_scale": 1.0
       }
     ]
   },

@@ -17,7 +17,8 @@
     "summary": "Night vision — reveals hidden hazards",
     "modules": [
       {
-        "module": "reveal"
+        "module": "reveal",
+        "hop_scale": 1.0
       }
     ]
   },

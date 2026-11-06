@@ -17,7 +17,8 @@
     "modules": [
       {
         "module": "anchor",
-        "knockback": true
+        "knockback": true,
+        "hop_scale": 1.0
       }
     ]
   },

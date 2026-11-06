@@ -26,6 +26,7 @@ var seasons := {}
 var onboarding := {}
 var settings_defaults := {}
 var rules := {}                 # game rules (content/rules.json)
+var skills := {}                # skill upgrade rules (content/skills.json)
 var errors: PackedStringArray = []
 var loaded_files := 0
 var _items := {}
@@ -57,6 +58,7 @@ func reload() -> void:
 	onboarding = _load_one("onboarding.json")
 	settings_defaults = _load_one("settings_defaults.json")
 	rules = _load_one("rules.json")
+	skills = _load_one("skills.json")
 	_items.clear()
 	for it in collectibles.get("items", []):
 		_items[String(it.id)] = it

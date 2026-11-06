@@ -29,7 +29,7 @@ func _ready() -> void:
 			hero.look = AnimalPainter.with_skin(a.look, s)
 	hero.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	root.add_child(hero)
-	var who := UI.label("%s · %s" % [String(a.name), String(a.ability.name)], 28, UI.TEXT, true, HORIZONTAL_ALIGNMENT_CENTER)
+	var who := UI.label("%s · %s Lv %d" % [String(a.name), String(a.ability.name), Skills.level_of(String(a.id))], 28, UI.TEXT, true, HORIZONTAL_ALIGNMENT_CENTER)
 	root.add_child(who)
 	root.add_child(UI.spacer())
 	var sel := String(Save.data.get("selected_map", "amazon"))

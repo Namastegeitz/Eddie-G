@@ -88,6 +88,24 @@ class Flag extends Control:
 			Draw.ellipse(self, Vector2(w * 0.28, h * 0.33), h * 0.08, h * 0.08, Color(String(cols[2])))
 
 
+class Pips extends Control:
+	## Filled / empty dots for a level (skill upgrades).
+	var value := 1
+	var total := 5
+
+	func _init(v := 1, n := 5) -> void:
+		value = v
+		total = n
+		custom_minimum_size = Vector2(n * 26, 22)
+		mouse_filter = Control.MOUSE_FILTER_IGNORE
+
+	func _draw() -> void:
+		for i in total:
+			var c := Vector2(11 + i * 26, size.y * 0.5)
+			Draw.ellipse(self, c, 9, 9, Color(0, 0, 0, 0.35))
+			Draw.ellipse(self, c, 7, 7, UI.ACCENT if i < value else Color(1, 1, 1, 0.14))
+
+
 class Gem extends Control:
 	var rarity := "common"
 

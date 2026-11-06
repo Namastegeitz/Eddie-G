@@ -49,6 +49,8 @@ func _ready() -> void:
 				_scenes()
 			"regions":
 				await _phase3()
+			"skills":
+				_skills()
 			"art":
 				await _phase7()
 		print("phase audit (%s): %d passed, %d failed" % [only, passed, failed])
@@ -60,6 +62,7 @@ func _ready() -> void:
 	await _phase0()
 	_phase1()
 	await _phase2()
+	_skills()
 	await _phase3()
 	_phase4()
 	await _phase5()
@@ -594,6 +597,67 @@ func _phase2() -> void:
 	check("owned filter shows the starters", scr.list.size() == Save.data.owned_animals.size())
 	scr.queue_free()
 	await get_tree().process_frame
+
+
+## Skill upgrades: rules valid, every ability improves level by level, the
+## run uses the saved level, and upgrading spends Berries.
+func _skills() -> void:
+	begin("Skill upgrades")
+	var top := Skills.max_level()
+	var costs: Array = []
+	for l in range(1, top):
+		costs.append(Skills.next_cost(l))
+	var rising := true
+	for i in range(1, costs.size()):
+		rising = rising and costs[i] > costs[i - 1]
+	check("skills: %d levels with rising Berry costs" % top, top >= 3 and rising and Skills.next_cost(top) == 0, str(costs))
+	var rules: Dictionary = Content.skills.get("rules", {})
+	var bad := []
+	var unchanged := []
+	for aid in Content.animal_order:
+		var an := Content.animal(aid)
+		var any := false
+		for m in an.ability.modules:
+			var lo := Skills.scaled(m, 1)
+			var hi := Skills.scaled(m, top)
+			for k in m:
+				if not rules.has(k) or typeof(m[k]) == TYPE_BOOL or typeof(m[k]) == TYPE_STRING:
+					continue
+				var r: Dictionary = rules[k]
+				var a0 := float(lo[k])
+				var a1 := float(hi[k])
+				if a1 != a0:
+					any = true
+				var worse: bool = (float(r.get("mul", 0.0)) < 0.0 and a1 > a0) or (float(r.get("mul", 0.0)) > 0.0 and a1 < a0) or ((r.has("add_at") or r.has("add_per")) and a1 < a0)
+				if worse:
+					bad.append("%s.%s" % [aid, k])
+		if not any:
+			unchanged.append(aid)
+	check("every animal's ability gets better with each level", bad.is_empty() and unchanged.is_empty(), "worse %s, unchanged %s" % [str(bad.slice(0, 4)), str(unchanged.slice(0, 4))])
+	var lemur := Content.animal("ring_tailed_lemur")
+	var m5 := Skills.scaled(lemur.ability.modules[0], top)
+	check("e.g. Ring-Tailed Lemur at level %d: multi-hop 3 tiles, cooldown under 2.5 s" % top, int(m5.tiles) == 3 and float(m5.cooldown) < 2.5, str(m5))
+	var w := World.from_lanes([_lane(0, "safe"), _lane(1, "safe"), _lane(2, "safe")], -1)
+	var s1 := _run(w, "ring_tailed_lemur", {"skill_level": 1})
+	var s5 := _run(w, "ring_tailed_lemur", {"skill_level": top})
+	check("a run uses the saved skill level", s5.abilities[0].cooldown < s1.abilities[0].cooldown, "%.2f vs %.2f" % [s5.abilities[0].cooldown, s1.abilities[0].cooldown])
+	Save.wipe()
+	var starter := String(Content.starters()[0])
+	var locked := ""
+	for aid2 in Content.animal_order:
+		if not Save.owns_animal(aid2):
+			locked = aid2
+			break
+	var poor := not Skills.upgrade(starter)
+	Economy.add("berries", Skills.next_cost(1), "test")
+	var ok_up := Skills.upgrade(starter)
+	check("upgrading spends the Berries and saves the level", poor and ok_up and Skills.level_of(starter) == 2 and Economy.berries() == 0)
+	Economy.add("berries", 99999, "test")
+	var not_owned := locked == "" or not Skills.upgrade(locked)
+	while Skills.upgrade(starter):
+		pass
+	check("upgrades stop at the top level and need the animal", not_owned and Skills.level_of(starter) == top and not Skills.upgrade(starter))
+	Save.wipe()
 
 
 # ====================================================================== 3

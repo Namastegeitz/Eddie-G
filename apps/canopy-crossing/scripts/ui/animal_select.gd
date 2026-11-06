@@ -234,6 +234,8 @@ func _show() -> void:
 	var st: Dictionary = a.get("stats", {})
 	var speed := "quick" if float(st.get("hop_time", 0.14)) <= 0.13 else ("slow" if float(st.get("hop_time", 0.14)) >= 0.18 else "steady")
 	abv.add_child(UI.label("Hop: %s · %s" % [speed, "has a button" if _has_button(a) else "always on"], 22, UI.MUTED))
+	if owned:
+		_skill_rows(abv, a)
 	card_box.add_child(ab)
 	card_box.add_child(UI.wrap_label(String(a.get("fact", "")), 25, UI.TEXT))
 	var cons := UI.hbox(8)
@@ -243,6 +245,34 @@ func _show() -> void:
 	if owned and not a.get("skins", []).is_empty():
 		_skin_row(a)
 	card_box.add_child(_action(a))
+
+
+## Skill level pips, what the next level changes, and the upgrade button.
+func _skill_rows(box: VBoxContainer, a: Dictionary) -> void:
+	var id := String(a.id)
+	var lvl := Skills.level_of(id)
+	var top := Skills.max_level()
+	var row := UI.hbox(8)
+	row.add_child(UI.label("Skill level %d/%d" % [lvl, top], 24, UI.TEXT, true))
+	var pips := Widgets.Pips.new(lvl, top)
+	pips.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	row.add_child(pips)
+	box.add_child(row)
+	var cost := Skills.next_cost(lvl)
+	if cost <= 0:
+		box.add_child(UI.label("Fully upgraded", 22, Color("9cf06a"), true))
+		return
+	for line in Skills.describe_next(a, lvl):
+		box.add_child(UI.label("Next: " + line, 22, UI.MUTED))
+	var can := Economy.can_afford({"berries": cost})
+	var b := UI.button("Upgrade %s · %d Berries" % [String(a.ability.name), cost], func():
+		if Skills.upgrade(id):
+			Sfx.play("unlock")
+			_show(), UI.ACCENT if can else UI.LOCK, 26, 80)
+	b.disabled = not can
+	box.add_child(b)
+	if not can:
+		box.add_child(UI.label("%d more Berries needed — earn them in runs" % (cost - Economy.berries()), 20, UI.MUTED))
 
 
 func _has_button(a: Dictionary) -> bool:

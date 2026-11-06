@@ -1,0 +1,129 @@
+{
+  "max_level": 5,
+  "cost": {
+    "2": 120,
+    "3": 260,
+    "4": 480,
+    "5": 800
+  },
+  "rules": {
+    "cooldown": {
+      "mul": -0.08,
+      "min": 0.6,
+      "label": "Cooldown",
+      "unit": "s"
+    },
+    "recharge": {
+      "mul": -0.08,
+      "min": 0.6,
+      "label": "Recharge",
+      "unit": "s"
+    },
+    "duration": {
+      "mul": 0.12,
+      "label": "Lasts",
+      "unit": "s"
+    },
+    "invincible": {
+      "mul": 0.12,
+      "label": "Untouchable",
+      "unit": "s"
+    },
+    "tiles": {
+      "add_at": {
+        "4": 1
+      },
+      "label": "Distance",
+      "unit": " tiles"
+    },
+    "max_rows": {
+      "add_at": {
+        "4": 1
+      },
+      "label": "Reach",
+      "unit": " rows"
+    },
+    "swings": {
+      "add_at": {
+        "3": 1
+      },
+      "label": "Swings"
+    },
+    "charges": {
+      "add_at": {
+        "5": 1
+      },
+      "skip_above": 9,
+      "label": "Charges"
+    },
+    "radius": {
+      "add_at": {
+        "5": 1
+      },
+      "label": "Radius",
+      "unit": " tiles"
+    },
+    "count": {
+      "add_at": {
+        "5": 1
+      },
+      "label": "Targets"
+    },
+    "push": {
+      "mul": 0.1,
+      "label": "Push",
+      "unit": " tiles"
+    },
+    "current": {
+      "mul": -0.08,
+      "min": 0.5,
+      "label": "Pulled by the current",
+      "unit": "x"
+    },
+    "idle_limit": {
+      "mul": 0.15,
+      "label": "Breath",
+      "unit": "s"
+    },
+    "max_streak": {
+      "add_at": {
+        "4": 1
+      },
+      "label": "Swims in a row"
+    },
+    "drift": {
+      "mul": -0.1,
+      "min": 0.4,
+      "label": "Drift on platforms",
+      "unit": "x"
+    },
+    "bonus": {
+      "mul": 0.15,
+      "label": "Forage bonus",
+      "unit": "x"
+    },
+    "strength": {
+      "add_per": 0.1,
+      "max": 1.0,
+      "label": "Reveal"
+    },
+    "soft_landing": {
+      "mul": 0.15,
+      "label": "Soft landing",
+      "unit": "s"
+    },
+    "water_hop_time": {
+      "mul": -0.05,
+      "min": 0.8,
+      "label": "Water hop",
+      "unit": "s"
+    },
+    "hop_scale": {
+      "mul": -0.04,
+      "min": 0.84,
+      "label": "Hop time",
+      "unit": "x"
+    }
+  },
+  "doc": "Each animal's signature ability levels up from 1 to max_level with Berries (cost = price to reach that level). Rules scale the ability modules' parameters: mul = x(1 + mul*(level-1)), floored at min x the base; add_at = +n from that level on; add_per = +n per level up to max; skip_above leaves big values (e.g. 99 charges) alone."
+}

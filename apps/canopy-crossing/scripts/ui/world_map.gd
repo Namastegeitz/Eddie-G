@@ -161,7 +161,7 @@ func _animal_row() -> Control:
 	row.add_child(p)
 	var v := UI.vbox(0)
 	v.add_child(UI.label(String(a.name), 28, UI.TEXT, true))
-	v.add_child(UI.label(String(a.ability.name) + " · " + String(a.ability.summary), 20, UI.MUTED))
+	v.add_child(UI.label("%s · %s · skill Lv %d" % [String(a.ability.name), String(a.ability.summary), Skills.level_of(String(a.id))], 20, UI.MUTED))
 	v.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	(v.get_child(1) as Label).autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	row.add_child(v)

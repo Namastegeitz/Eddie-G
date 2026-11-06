@@ -19,7 +19,8 @@
         "module": "predator_ward",
         "mode": "passive",
         "charges": 99,
-        "style": "toxic"
+        "style": "toxic",
+        "hop_scale": 1.0
       }
     ]
   },

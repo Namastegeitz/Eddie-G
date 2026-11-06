@@ -91,10 +91,11 @@ func setup(w: World, animal_def: Dictionary, opts: Dictionary = {}) -> void:
 	creep = opts.get("creep", [0.0, 0.0])
 	row = 0
 	x = 4.5
+	var skill := int(opts.get("skill_level", 1))
 	for m in animal.get("ability", {}).get("modules", []):
 		var mid := String(m.get("module", "hop"))
 		if Ability.exists(mid):
-			abilities.append(Ability.create(mid, m, self))
+			abilities.append(Ability.create(mid, Skills.scaled(m, skill), self))
 	for pu in opts.get("powerups", []):
 		var a := Ability.create(String(pu.module), pu, self)
 		a.uses_left = int(pu.get("uses", 1))
