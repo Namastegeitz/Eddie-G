@@ -176,7 +176,9 @@ func _apply_tiers() -> void:
 			var st: Dictionary = stages[i]
 			var k := float(i) / maxf(1.0, float(stages.size() - 1))
 			if not st.has("rows"):
-				st["rows"] = int(roundf(lerpf(float(rows[0]), float(rows[1]), k) / 5.0)) * 5
+				st["rows"] = int(roundf(lerpf(float(rows[0]), float(rows[1]), k)))
+				if i > 0 and int(st.rows) <= int(stages[i - 1].get("rows", 0)):
+					st["rows"] = int(stages[i - 1].rows) + 1
 			if not st.has("difficulty"):
 				st["difficulty"] = [snappedf(lerpf(float(dr[0][0]), float(dr[1][0]), k), 0.01), snappedf(lerpf(float(dr[0][1]), float(dr[1][1]), k), 0.01)]
 			if not st.has("canopy"):

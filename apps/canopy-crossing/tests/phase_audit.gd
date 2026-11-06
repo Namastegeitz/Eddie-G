@@ -1282,7 +1282,16 @@ func _first_person() -> void:
 	var gs = Game.current
 	check("runs start in bird's-eye view", gs.view == "bird" and gs.wv.visible)
 	var zone: Vector2i = gs.world.gen.cover[0]
-	gs.sim.row = zone.x - 2
+	# stand on a plain bank just before the canopy (a teleport onto water
+	# would drown the animal and restart the run mid-test)
+	var stand := zone.x - 2
+	for r in [zone.x - 2, zone.x - 1, zone.x - 3]:
+		var sl: Lane = gs.world.lane(r)
+		if sl.type == "safe" and sl.tiles.is_empty() and sl.preds.is_empty() and sl.effect.is_empty():
+			stand = r
+			break
+	gs.sim.row = stand
+	gs.sim.x = 4.5
 	gs.sim.max_row = gs.sim.row
 	for i in 4:
 		gs._update_views(1.0 / 60.0)
@@ -1314,7 +1323,7 @@ func _first_person() -> void:
 		if gs.wv3._lanes.has(r) and gs.wv3._lanes[r].get_node_or_null("Scenery") != null:
 			dressed += 1
 	check("every canopy row is dressed with its scene in 3D", dressed == zone.y - zone.x + 1, "%d of %d" % [dressed, zone.y - zone.x + 1])
-	gs.sim.row = zone.x - 2
+	gs.sim.row = stand
 	var meshes: int = gs.wv3.world3.find_children("*", "MeshInstance3D", true, false).size()
 	print("  first-person meshes in view: %d" % meshes)
 	check("first-person scene stays light (< 350 meshes)", meshes < 350, str(meshes))
