@@ -719,6 +719,25 @@ func _items_tests() -> void:
 		return
 	for f in 40:
 		await get_tree().physics_frame
+	# Effect nodes are pooled at load and reused (no building mid-race).
+	check("effect pools built at load", race.items.pooled("mine") == Items.MAX_MINES and race.items.pooled("bolt") == 8 and race.items.pooled("rocket") == 3)
+	check("shield badges pre-made for every racer", race.items._badges.size() == 8)
+	var n0 := race.items.get_child_count()
+	var taken := race.items._take("rocket")
+	check("take shows a pooled node", taken.visible and race.items.pooled("rocket") == 2)
+	race.items._give("rocket", taken)
+	check("give hides it and keeps the node count", not taken.visible and race.items.pooled("rocket") == 3 and race.items.get_child_count() == n0)
+	await race.items.warm_up(race.cams[0] if not race.cams.is_empty() else null)
+	var leftovers := 0
+	for kind in Items.POOL_SIZES:
+		if race.items.pooled(kind) != int(Items.POOL_SIZES[kind]):
+			leftovers += 1
+		for node in race.items._pool[kind]:
+			if (node as Node3D).visible or (node as Node3D).get_parent() != race.items:
+				leftovers += 1
+	check("warm-up puts every effect back hidden", leftovers == 0)
+	check("jitter fix off with physics interpolation", is_zero_approx(float(ProjectSettings.get_setting("physics/common/physics_jitter_fix"))))
+	check("particle distance grows with the tier", float(Gfx.Q.low.fx_dist) < float(Gfx.Q.medium.fx_dist) and float(Gfx.Q.medium.fx_dist) < float(Gfx.Q.ultra.fx_dist))
 	var rs := race.racers
 	var a: Racer = rs[0]
 	var b: Racer = rs[1]
@@ -808,6 +827,7 @@ func _items_tests() -> void:
 	race.items.use_item(a)
 	var mn: Dictionary = race.items.mines.back()
 	check("mine has a gravity ring and a light", (mn.node as Node3D).has_node("Ring") and (mn.node as Node3D).has_node("Light"))
+	check("mine came from the pool", race.items.pooled("mine") == Items.MAX_MINES - 1)
 	a.item = "nitro"
 	a.item_uses = 1
 	race.items.use_item(a)

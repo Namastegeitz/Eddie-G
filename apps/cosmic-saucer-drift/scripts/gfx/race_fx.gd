@@ -80,6 +80,39 @@ func _ready() -> void:
 		_bursts.append(p)
 
 
+## Shows one ring, one flash and one burst in front of the camera, tiny, for
+## a couple of frames so their shaders are compiled before the race.
+func warm_up(cam: Camera3D) -> void:
+	if cam == null:
+		return
+	var nodes: Array[Node3D] = [_rings[0], _flashes[0], _bursts[0], _bursts[1]]
+	var parents: Array[Node] = []
+	for n in nodes:
+		parents.append(n.get_parent())
+		n.get_parent().remove_child(n)
+		cam.add_child(n)
+		n.transform = Transform3D(Basis.IDENTITY.scaled(Vector3.ONE * 0.02), Vector3(0, 0, -3.0))
+		n.visible = true
+	_take_burst(false).emitting = true
+	_take_burst(true).emitting = true
+	var tree := get_tree()
+	for i in 3:
+		await tree.process_frame
+		if not is_inside_tree():
+			return   # the race ended during the warm-up
+	for k in nodes.size():
+		var n := nodes[k]
+		if not is_instance_valid(n):
+			continue
+		n.get_parent().remove_child(n)
+		parents[k].add_child(n)
+		n.visible = false
+		n.transform = Transform3D.IDENTITY
+		if n is CPUParticles3D:
+			(n as CPUParticles3D).emitting = false
+	_next_burst = 0
+
+
 ## Expanding glowing ring on the ground plane given by `up`.
 func shockwave(pos: Vector3, up: Vector3, c: Color, size := 7.0, life := 0.45) -> void:
 	var k := _next_ring

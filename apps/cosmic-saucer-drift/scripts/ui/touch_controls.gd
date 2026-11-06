@@ -29,7 +29,7 @@ var _pedal_box: StyleBoxFlat
 var _stick_gas := false
 var _stick_brake := false
 var _was_pressed := {}     # button -> pressed last refresh (for haptic ticks)
-var _sig := ""             # what was drawn last frame; redraw only on change
+var _sig_h := 0            # hash of what was drawn last frame; redraw only on change
 var blockers: Array[Control] = []   # e.g. the COCKPIT tab: touches there aren't the joystick
 
 
@@ -198,12 +198,10 @@ func _refresh() -> void:
 
 func _process(_dt: float) -> void:
 	# Redraw only when something on the controls changed (cheaper on phones).
-	var sig := "%d|%s|%s|%d|%d|%s" % [_stick_id, _stick_knob.round(), _touches.size(), racer.drift_tier if racer else 0,
-		1 if (racer and not racer.grounded and racer.air_time > 0.15) else 0, racer.item if racer else ""]
-	for k in _touches:
-		sig += str(_touches[k].round())
-	if sig != _sig:
-		_sig = sig
+	var h := hash([_stick_id, _stick_knob.round(), _touches.size(), racer.drift_tier if racer else 0,
+		racer != null and not racer.grounded and racer.air_time > 0.15, racer.item if racer else "", _touches.values()])
+	if h != _sig_h:
+		_sig_h = h
 		queue_redraw()
 
 

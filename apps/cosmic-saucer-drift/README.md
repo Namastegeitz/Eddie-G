@@ -49,7 +49,19 @@ Everything is still generated from code, now in much finer detail:
   physics steps (the camera follows the smoothed position), so motion stays
   smooth when a phone can't hold a steady frame rate; phones and browsers
   never pile up catch-up steps after a slow frame, and phone browsers start
-  on Low.
+  on Low. Physics jitter fix is off, as Godot advises with interpolation.
+- **No hitches:** every power-up effect (rockets, mines, comets, beams, EMP
+  domes and bolts, nitro boosters, shield badges, target markers) is built
+  once when the race loads and reused all race, and every effect shader is
+  compiled during the countdown by drawing each effect for a moment in front
+  of the camera. Before, the first rocket or mine of a race built its mesh
+  and compiled its shader on the spot: a visible stall on a phone.
+- **Less work per frame:** craft animation runs once per drawn frame instead
+  of 60 times a second; trails and drift sparks only run for craft near the
+  camera; the on-screen controls and minimap only redraw when something
+  changed; Low and Medium render fewer pixels (70% / 85%) and use a cheaper
+  sky. `tests/bench.tscn` measures frame cost, draw calls and the game-logic
+  profile at any tier.
 
 ![Craft](docs/screenshots/craft.png)
 ![Pilots](docs/screenshots/pilots.png)

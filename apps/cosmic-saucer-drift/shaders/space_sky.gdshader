@@ -50,9 +50,18 @@ vec3 stars(vec3 d, float scale, float amount) {
 void sky() {
 	vec3 d = EYEDIR;
 	vec3 col = mix(bottom_color, top_color, clamp(d.y * 0.6 + 0.5, 0.0, 1.0));
-	float n = noise3(d * 2.6) * 0.65 + noise3(d * 6.3) * 0.35;
-	float m = noise3(d * 1.7 + vec3(3.1, 1.2, 7.7));
-	vec3 neb = mix(nebula_a, nebula_b, m) * smoothstep(0.42, 0.85, n) * nebula_strength;
+	vec3 neb;
+	float n;
+	if (detail < 0.25) {
+		// Low: one octave of nebula (the sky covers most of a phone screen,
+		// so every noise call here is paid per pixel).
+		n = noise3(d * 2.6);
+		neb = mix(nebula_a, nebula_b, n) * smoothstep(0.45, 0.8, n) * nebula_strength;
+	} else {
+		n = noise3(d * 2.6) * 0.65 + noise3(d * 6.3) * 0.35;
+		float m = noise3(d * 1.7 + vec3(3.1, 1.2, 7.7));
+		neb = mix(nebula_a, nebula_b, m) * smoothstep(0.42, 0.85, n) * nebula_strength;
+	}
 	if (detail > 0.5) {
 		vec3 w = d * 3.0 + vec3(noise3(d * 4.0), noise3(d * 4.0 + 5.0), noise3(d * 4.0 + 9.0)) * 1.5;
 		float fine = noise3(w * 3.0) * 0.6 + noise3(w * 7.0) * 0.4;

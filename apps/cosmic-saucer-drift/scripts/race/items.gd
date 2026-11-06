@@ -35,6 +35,12 @@ var only_item := ""            # daily-challenge modifier: crates give only this
 var _rng := RandomNumberGenerator.new()
 var _hold := {}                # racer idx -> seconds holding the item
 var _badges := {}              # racer idx -> held-shield badge node
+## Effect nodes are built once at race load and reused (no mesh building or
+## shader compiling mid-race, which caused a hitch the first time each
+## power-up fired). Pooled nodes stay in the tree, hidden.
+var _pool := {}                # kind -> Array[Node3D]
+const POOL_SIZES := {"rocket": 3, "reticle_air": 3, "reticle_ground": 2, "comet": 2, "laser": 3, "tractor": 2,
+	"dome": 2, "bolt": 8, "boosters": 2, "mine": MAX_MINES}
 
 const ROCKET_C := Color(1.0, 0.5, 0.2)
 const LASER_C := Color(0.3, 1.0, 0.95)
@@ -50,10 +56,115 @@ func setup(p_race: Node) -> void:
 	race = p_race
 	td = race.td
 	_rng.seed = hash(td.id) + int(Time.get_ticks_usec())
+	for kind in POOL_SIZES:
+		_pool[kind] = []
+		for k in int(POOL_SIZES[kind]):
+			_give(kind, _build(kind))
+	for r: Racer in race.racers:
+		if not r.is_ghost:
+			var b := ItemModels.shield_badge()
+			b.visible = false
+			r.add_child(b)
+			_badges[r.idx] = b
+
+
+func _build(kind: String) -> Node3D:
+	match kind:
+		"rocket":
+			return ItemModels.rocket(ROCKET_C)
+		"reticle_air":
+			return ItemModels.reticle(Color(1.0, 0.25, 0.15), 4.2)
+		"reticle_ground":
+			return ItemModels.reticle(Color(1.0, 0.35, 0.2), 10.0, true)
+		"comet":
+			return ItemModels.comet()
+		"laser":
+			return ItemModels.beam_set(LASER_C, 1.0, 14.0)
+		"tractor":
+			return ItemModels.beam_set(TRACTOR_C, 1.3, -8.0)
+		"dome":
+			return ItemModels.dome(EMP_C)
+		"bolt":
+			return ItemModels.bolt(EMP_C)
+		"boosters":
+			var holder := Node3D.new()
+			for sx: float in [-1.0, 1.0]:
+				var bst := ItemModels.booster(NITRO_C)
+				bst.name = "L" if sx < 0.0 else "R"
+				holder.add_child(bst)
+			return holder
+		"mine":
+			return ItemModels.mine(MINE_C)
+	return Node3D.new()
+
+
+## A pooled node of this kind, shown and parented to Items (builds a fresh
+## one if the pool ran dry).
+func _take(kind: String) -> Node3D:
+	var arr: Array = _pool.get(kind, [])
+	var node: Node3D = arr.pop_back() if not arr.is_empty() else _build(kind)
+	if node.get_parent() == null:
+		add_child(node)
+	elif node.get_parent() != self:
+		node.get_parent().remove_child(node)
+		add_child(node)
+	node.visible = true
+	return node
+
+
+## Return a node to its pool (hidden, reset).
+func _give(kind: String, node: Node3D) -> void:
+	if not is_instance_valid(node):
+		return
+	if node.get_parent() == null:
+		add_child(node)
+	elif node.get_parent() != self:
+		node.get_parent().remove_child(node)
+		add_child(node)
+	node.visible = false
+	node.transform = Transform3D.IDENTITY
+	for c in node.get_children():
+		if c is CPUParticles3D:
+			(c as CPUParticles3D).restart()
+			(c as CPUParticles3D).emitting = false
+	if not _pool.has(kind):
+		_pool[kind] = []
+	_pool[kind].append(node)
+
+
+func pooled(kind: String) -> int:
+	return (_pool.get(kind, []) as Array).size()
+
+
+## Shows one of every effect in front of the camera, tiny, for a couple of
+## frames during the countdown so every shader is compiled before the race
+## (first use used to stall a phone for a moment).
+func warm_up(cam: Camera3D) -> void:
+	if cam == null:
+		return
+	var shown: Array = []
+	for kind in POOL_SIZES:
+		var node := _take(kind)
+		remove_child(node)
+		cam.add_child(node)
+		node.transform = Transform3D(Basis.IDENTITY.scaled(Vector3.ONE * 0.02), Vector3(0, 0, -3.0))
+		for c in node.get_children():
+			if c is CPUParticles3D:
+				(c as CPUParticles3D).emitting = true
+		shown.append([kind, node])
+	var tree := get_tree()
+	for i in 3:
+		await tree.process_frame
+		if not is_inside_tree():
+			return   # the race ended during the warm-up
+	for sn in shown:
+		_give(sn[0], sn[1])
 
 
 func _place(node: Node3D, xf: Transform3D) -> Node3D:
-	add_child(node)
+	if node.get_parent() == null:
+		add_child(node)
+	node.visible = true
 	node.global_transform = xf
 	node.reset_physics_interpolation()
 	return node
@@ -160,10 +271,13 @@ static func _basis_y(dir: Vector3) -> Basis:
 func _rocket(r: Racer) -> void:
 	var t := _ahead_of(r, 150.0)
 	var pos := r.global_position + r.heading * 3.0 + r.up * 0.5
-	var node := _place(ItemModels.rocket(r.model.trail_color if r.model else ROCKET_C), Transform3D(_basis_y(r.heading).scaled(Vector3.ONE * 1.5), pos))
+	var node := _place(_take("rocket"), Transform3D(_basis_y(r.heading).scaled(Vector3.ONE * 1.5), pos))
+	for c in node.get_children():
+		if c is CPUParticles3D:
+			(c as CPUParticles3D).emitting = true
 	var ret: Node3D = null
 	if t:
-		ret = _place(ItemModels.reticle(Color(1.0, 0.25, 0.15), 4.2), Transform3D(Basis.IDENTITY, t.global_position + t.up * 2.6))
+		ret = _place(_take("reticle_air"), Transform3D(Basis.IDENTITY, t.global_position + t.up * 2.6))
 		t.emit_signal("event", "rocket_lock", {"by": r})
 	var fx := _fx()
 	if fx:
@@ -195,9 +309,9 @@ func _laser(r: Racer) -> void:
 		var along := d.dot(dir)
 		if along > 0.0 and along < LASER_RANGE and (d - dir * along).length() < LASER_WIDTH + 0.5:
 			_boom(mn.pos, MINE_C, 0.6)
-			mn.node.queue_free()
+			_give("mine", mn.node)
 			mines.remove_at(k)
-	var node := ItemModels.beam_set(LASER_C, 1.0, 14.0)
+	var node := _take("laser")
 	_place(node, Transform3D(Basis.IDENTITY, origin))
 	var b := _basis_y(dir)
 	node.global_transform = Transform3D(Basis(b.x, dir * reach, b.z), origin + dir * reach * 0.5)
@@ -224,9 +338,12 @@ func _comet(r: Racer) -> void:
 				target = o
 	if target == null:
 		return
-	var ring := _place(ItemModels.reticle(Color(1.0, 0.35, 0.2), 10.0, true), Transform3D(Basis.IDENTITY, target.global_position))
-	var rock := _place(ItemModels.comet(), Transform3D(Basis.IDENTITY, target.global_position + Vector3.UP * 90.0))
+	var ring := _place(_take("reticle_ground"), Transform3D(Basis.IDENTITY, target.global_position))
+	var rock := _place(_take("comet"), Transform3D(Basis.IDENTITY, target.global_position + Vector3.UP * 90.0))
 	rock.visible = false
+	for c in rock.get_children():
+		if c is CPUParticles3D:
+			(c as CPUParticles3D).emitting = true
 	comets.append({"owner": r, "target": target, "t": COMET_WARN, "ring": ring, "rock": rock, "pos": target.global_position})
 	target.emit_signal("event", "comet_warning", {})
 
@@ -248,23 +365,14 @@ func _emp(r: Racer) -> void:
 					o.item_uses = 0
 					o.emit_signal("event", "item_lost", {})
 	# Expanding electric dome, a ground shockwave, and bolts to every victim.
-	var dome := MeshInstance3D.new()
-	var sph := SphereMesh.new()
-	sph.radius = 1.0
-	sph.height = 2.0
-	sph.radial_segments = 32
-	sph.rings = 16
-	dome.mesh = sph
-	dome.material_override = Gfx.shield(EMP_C)
-	dome.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	var dome := _take("dome")
 	_place(dome, Transform3D(Basis.IDENTITY.scaled(Vector3.ONE * 0.5), r.global_position))
 	beams.append({"node": dome, "t": 0.5, "life": 0.5, "kind": "emp", "at": r.global_position})
 	if fx:
 		fx.shockwave(r.global_position, r.up, EMP_C, EMP_RADIUS * 2.2, 0.5)
 		fx.flash(r.global_position + r.up * 0.8, EMP_C, 7.0, 0.25)
 	for o in hit_list:
-		var bolt := ItemModels.bolt(EMP_C)
-		add_child(bolt)
+		var bolt := _take("bolt")
 		beams.append({"node": bolt, "t": 0.4, "life": 0.4, "kind": "bolt", "from": r, "to": o, "jit": 0.0})
 	race.shake_near(r.global_position, 0.35)
 
@@ -280,14 +388,15 @@ func _nitro(r: Racer) -> void:
 		if n.r == r:
 			return
 	# Strap-on boosters either side of the craft for the length of the boost.
-	var holder := Node3D.new()
+	var holder := _take("boosters")
+	remove_child(holder)
 	r.model.pivot.add_child(holder)
+	holder.transform = Transform3D.IDENTITY
 	var rim: float = r.model.rim_r
 	for sx: float in [-1.0, 1.0]:
-		var bst := ItemModels.booster(NITRO_C)
+		var bst := holder.get_node("L" if sx < 0.0 else "R") as Node3D
 		bst.position = Vector3(sx * rim * 0.62, r.model.top_y + 0.25, 0.5)
 		bst.scale = Vector3.ONE * 1.4
-		holder.add_child(bst)
 	nitros.append({"r": r, "node": holder, "t": 0.0})
 
 
@@ -296,13 +405,13 @@ func _mine(r: Racer) -> void:
 	var pos := r.global_position - r.heading * 4.0
 	var i := path.nearest(pos, r.track_idx, 8)
 	pos = path.pts[i] + path.rgt[i] * clampf(path.lateral(i, pos), -td.width * 0.45, td.width * 0.45) + path.upv[i] * 0.7
-	var node := _place(ItemModels.mine(r.pilot.color), Transform3D(Basis(path.rgt[i], path.upv[i], -path.tan[i]).scaled(Vector3.ONE * 1.3), pos))
+	var node := _place(_take("mine"), Transform3D(Basis(path.rgt[i], path.upv[i], -path.tan[i]).scaled(Vector3.ONE * 1.3), pos))
 	var ring := node.get_node("Ring") as Node3D
 	ring.scale = Vector3.ONE * 0.1
 	mines.append({"pos": pos, "s": float(i) * path.step, "lane": path.lateral(i, pos), "owner": r, "arm": 0.5, "life": MINE_LIFE, "node": node, "near": {}, "t": 0.0})
 	while mines.size() > MAX_MINES:
 		var old: Dictionary = mines.pop_front()
-		old.node.queue_free()
+		_give("mine", old.node)
 
 
 func _tractor(r: Racer) -> void:
@@ -320,7 +429,7 @@ func _tractor(r: Racer) -> void:
 	t.emit_signal("event", "tractored", {"by": r})
 	r.give_boost(0.7, "tractor")
 	# The beam's energy bands flow from the target back to you.
-	var node := ItemModels.beam_set(TRACTOR_C, 1.3, -8.0)
+	var node := _take("tractor")
 	_place(node, Transform3D(Basis.IDENTITY, r.global_position))
 	var fx := _fx()
 	if fx:
@@ -356,7 +465,7 @@ func _tick_badge(r: Racer, dt: float) -> void:
 		if b:
 			b.visible = false
 		return
-	if b == null:
+	if b == null or not is_instance_valid(b):
 		b = ItemModels.shield_badge()
 		r.add_child(b)
 		_badges[r.idx] = b
@@ -411,9 +520,9 @@ func _tick_rockets(dt: float) -> void:
 		if b.life <= 0.0 and not done:
 			_boom(b.pos, ROCKET_C, 0.6)
 		if done or b.life <= 0.0:
-			node.queue_free()
+			_give("rocket", node)
 			if ret:
-				ret.queue_free()
+				_give("reticle_air", ret)
 			rockets.remove_at(k)
 
 
@@ -448,7 +557,7 @@ func _tick_mines(dt: float) -> void:
 					m.near.erase(r.idx)
 					r.near_miss()
 		if gone:
-			node.queue_free()
+			_give("mine", node)
 			mines.remove_at(k)
 
 
@@ -484,8 +593,8 @@ func _tick_comets(dt: float) -> void:
 					r.hit(m.owner, "comet")
 				elif d < 10.0:
 					r.near_miss()
-			ring.queue_free()
-			rock.queue_free()
+			_give("reticle_ground", ring)
+			_give("comet", rock)
 			comets.remove_at(k)
 			race.shake_all(0.5)
 
@@ -530,7 +639,7 @@ func _tick_beams(dt: float) -> void:
 				var bb := _basis_y(b.dir)
 				node.global_transform = Transform3D(Basis(bb.x * w, b.dir * float(b.reach), bb.z * w), b.origin + b.dir * float(b.reach) * 0.5)
 		if b.t <= 0.0:
-			node.queue_free()
+			_give(String(b.kind), node)
 			beams.remove_at(k)
 
 
@@ -542,8 +651,7 @@ func _tick_nitros(dt: float) -> void:
 		n.t += dt
 		var live := is_instance_valid(r) and r.boost_time > 0.0 and r.boost_kind == "nitro"
 		if not live:
-			if is_instance_valid(n.node):
-				n.node.queue_free()
+			_give("boosters", n.node)
 			nitros.remove_at(k)
 			continue
 		for bst in (n.node as Node3D).get_children():

@@ -45,6 +45,7 @@ var _last_boost := -1.0
 var _flame_r := PackedFloat32Array()
 var _flame_len := PackedFloat32Array()
 var _pilot_lod := 30.0
+var _fx_dist := 60.0
 var _last_flash := 0.0
 var _react := ""
 var _react_t := 0.0
@@ -238,6 +239,7 @@ func build(look: Dictionary) -> void:
 	pilot_model.position = dome_at + Vector3(0, dome_r * 0.55, 0)
 	pivot.add_child(pilot_model)
 	_pilot_lod = float(_qs.lod) * 0.45
+	_fx_dist = float(_qs.get("fx_dist", 60.0))
 	pilot_model.build(pilot, h, bool(_qs.face), _pilot_lod)
 	eye = pilot_model.position + Vector3(0, h * 0.2, -h * 0.75)
 	var glass := MeshInstance3D.new()
@@ -915,8 +917,12 @@ func animate(dt: float, throttle: float, boosting: bool, drift_tier: int, drifti
 		underglow.scale = Vector3.ONE * pulse * (1.0 + 0.25 * _boost_k)
 	if shadow:
 		shadow.visible = grounded
-	trail.emitting = speed_ratio > 0.15
-	var on := drifting and drift_tier > 0
+	# Trails and sparks only for craft near the camera; far ones cost CPU
+	# particles for nothing visible.
+	var cam := get_viewport().get_camera_3d() if is_inside_tree() else null
+	var fx_near := cam == null or cam.global_position.distance_squared_to(global_position) < _fx_dist * _fx_dist
+	trail.emitting = speed_ratio > 0.15 and fx_near
+	var on := drifting and drift_tier > 0 and fx_near
 	for k in sparks.size():
 		sparks[k].emitting = on
 		_spark_glow[k].visible = on
@@ -934,7 +940,6 @@ func animate(dt: float, throttle: float, boosting: bool, drift_tier: int, drifti
 			m.set_shader_parameter("flash", flash)
 	if pilot_model:
 		# Faces are only animated when close enough to be seen.
-		var cam := get_viewport().get_camera_3d() if is_inside_tree() else null
 		var near := cam == null or cam.global_position.distance_squared_to(global_position) < _pilot_lod * _pilot_lod * 1.44
 		if near or mood != pilot_model.mood:
 			pilot_model.animate(dt, mood, steer, speed_ratio)

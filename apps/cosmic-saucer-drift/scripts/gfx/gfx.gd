@@ -9,18 +9,18 @@ extends RefCounted
 const TIERS := ["low", "medium", "high", "ultra"]
 
 const Q := {
-	"low": {"msaa": 0, "scale": 0.8, "shadows": 0, "glow": false, "fog": false, "decor": 0.5,
-		"seg": 18, "detail": 0, "face": false, "particles": 0.5, "reflect": false, "speedlines": false,
-		"road_detail": 0.0, "sky_detail": 0.0, "lod": 40.0},
-	"medium": {"msaa": 0, "scale": 0.9, "shadows": 0, "glow": true, "fog": true, "decor": 1.0,
-		"seg": 28, "detail": 1, "face": true, "particles": 0.8, "reflect": false, "speedlines": true,
-		"road_detail": 0.5, "sky_detail": 0.5, "lod": 55.0},
+	"low": {"msaa": 0, "scale": 0.7, "shadows": 0, "glow": false, "fog": false, "decor": 0.5,
+		"seg": 18, "detail": 0, "face": false, "particles": 0.4, "reflect": false, "speedlines": false,
+		"road_detail": 0.0, "sky_detail": 0.0, "lod": 40.0, "fx_dist": 30.0},
+	"medium": {"msaa": 0, "scale": 0.85, "shadows": 0, "glow": true, "fog": true, "decor": 1.0,
+		"seg": 28, "detail": 1, "face": true, "particles": 0.7, "reflect": false, "speedlines": true,
+		"road_detail": 0.5, "sky_detail": 0.5, "lod": 55.0, "fx_dist": 45.0},
 	"high": {"msaa": 2, "scale": 1.0, "shadows": 1, "glow": true, "fog": true, "decor": 1.0,
 		"seg": 40, "detail": 2, "face": true, "particles": 1.0, "reflect": true, "speedlines": true,
-		"road_detail": 1.0, "sky_detail": 1.0, "lod": 80.0},
+		"road_detail": 1.0, "sky_detail": 1.0, "lod": 80.0, "fx_dist": 80.0},
 	"ultra": {"msaa": 4, "scale": 1.0, "shadows": 2, "glow": true, "fog": true, "decor": 1.0,
 		"seg": 56, "detail": 2, "face": true, "particles": 1.0, "reflect": true, "speedlines": true,
-		"road_detail": 1.0, "sky_detail": 1.0, "lod": 120.0},
+		"road_detail": 1.0, "sky_detail": 1.0, "lod": 120.0, "fx_dist": 130.0},
 }
 
 

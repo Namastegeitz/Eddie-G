@@ -199,7 +199,6 @@ func tick(dt: float) -> void:
 	prof.drive += Time.get_ticks_usec() - t0
 	if frozen:
 		_countdown_input()
-		_visuals(dt)
 		return
 	_timers(dt)
 	if rescue_time > 0.0:
@@ -212,7 +211,6 @@ func tick(dt: float) -> void:
 			velocity = heading * v0
 			fwd_speed = v0
 			emit_signal("event", "rescued", {})
-		_visuals(dt)
 		return
 	var t1 := Time.get_ticks_usec()
 	_probe_ground(dt)
@@ -227,7 +225,6 @@ func tick(dt: float) -> void:
 	_unstick(dt)
 	_items_input()
 	var t5 := Time.get_ticks_usec()
-	_visuals(dt)
 	var t6 := Time.get_ticks_usec()
 	prof.ground += t2 - t1
 	prof.steer += t3 - t2
@@ -727,8 +724,17 @@ func update_slip(dt: float, close: bool) -> void:
 
 
 # ---------------------------------------------------------------- visuals
+## Once per rendered frame (not per physics tick): on a phone drawing 30-45
+## frames a second this halves the animation work, and nothing is animated
+## that the player never sees.
+func _process(dt: float) -> void:
+	var t0 := Time.get_ticks_usec()
+	_visuals(minf(dt, 0.1))
+	prof.visuals += Time.get_ticks_usec() - t0
+
+
 func _visuals(dt: float) -> void:
-	if model == null:
+	if model == null or not is_inside_tree():
 		return
 	var pv := model.pivot
 	var t := Time.get_ticks_msec() * 0.001

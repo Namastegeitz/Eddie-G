@@ -104,6 +104,10 @@ func _ready() -> void:
 	_setup_views()
 	_setup_cockpits()
 	apply_quality()
+	if not cams.is_empty() and not req.get("fast", false):
+		# Compile every effect shader during the countdown, not mid-race.
+		items.warm_up(cams[0])
+		fx.warm_up(cams[0])
 	_audio = RaceAudio.new()
 	_audio.name = "RaceAudio"
 	add_child(_audio)

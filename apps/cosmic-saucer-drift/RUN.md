@@ -97,6 +97,10 @@ xvfb-run -a godot --path . res://tests/shots.tscn --rendering-driver opengl3 -- 
 xvfb-run -a godot --path . res://tests/menu_shots.tscn --rendering-driver opengl3 -- docs/screenshots [garage,pilots,settings]
 # Every craft (3/4 view) and every pilot's face in four moods; --quality=low|medium|high|ultra
 xvfb-run -a godot --path . res://tests/craft_shots.tscn --rendering-driver opengl3 -- --out=docs/screenshots/craft --mode=all
+# Performance probe: CPU time per frame, worst frame, game-logic profile,
+# draw calls and triangles per frame at a tier (software GPU: compare runs,
+# don't read as phone frame times)
+xvfb-run -a godot --path . res://tests/bench.tscn --rendering-driver opengl3 -- --quality=medium --track=io --frames=400
 # Every power-up fired in a live race (slows game time for the shot)
 xvfb-run -a godot --path . res://tests/item_shots.tscn --rendering-driver opengl3 -- --out=/tmp/items [--only=laser,rocket]
 # Portrait (phone held upright) shots, with the touch controls shown; the

@@ -68,8 +68,12 @@ func setup(p_race: Node, p_racer: Racer, is_compact: bool) -> void:
 	_lines_mat = ShaderMaterial.new()
 	_lines_mat.shader = preload("res://shaders/speedlines.gdshader")
 	_lines.material = _lines_mat
-	_lines.visible = false
+	_lines_mat.set_shader_parameter("amount", 0.0)
+	_lines.visible = true   # drawn invisible for a moment so its shader compiles before the first boost
 	add_child(_lines)
+	get_tree().create_timer(0.5).timeout.connect(func() -> void:
+		if is_instance_valid(_lines) and _lines_amt <= 0.01:
+			_lines.visible = false)
 	set_speedlines(bool(Gfx.q().speedlines))
 	add_child(_overlay)
 	# Place (top left).

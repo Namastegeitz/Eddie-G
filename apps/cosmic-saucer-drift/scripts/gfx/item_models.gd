@@ -249,6 +249,20 @@ static func reticle(c: Color, size: float, flat := false) -> MeshInstance3D:
 	return mi
 
 
+## EMP dome: a sphere in the hex shield shader, scaled up as it expands.
+static func dome(c: Color) -> MeshInstance3D:
+	var mi := MeshInstance3D.new()
+	var sph := SphereMesh.new()
+	sph.radius = 1.0
+	sph.height = 2.0
+	sph.radial_segments = 32
+	sph.rings = 16
+	mi.mesh = sph
+	mi.material_override = Gfx.shield(c)
+	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	return mi
+
+
 ## Strap-on nitro booster, nozzle facing back (+Z), with a flame.
 static func booster(c: Color) -> Node3D:
 	var root := Node3D.new()
