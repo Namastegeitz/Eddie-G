@@ -17,14 +17,19 @@ folder (`apps/cosmic-saucer-drift`).
 
 ## 2. Controls
 
-| Action | Keyboard | Gamepad | Touch |
-|---|---|---|---|
-| Steer | A / D or arrows | Left stick / d-pad | Joystick: thumb down anywhere in the lower left and slide (Settings: ◀ ▶ buttons or tilt) |
-| Gas | W / Up | RT or A | Drives itself at cruise speed; push the stick up or hold the GAS pedal for full power (Settings: Auto-drive off = hold GAS to go) |
-| Brake / reverse | S / Down | LT or B | Pull the stick down or hold the BRAKE pedal. Braking while steering turns tighter; hold it at a stop to reverse |
-| Drift (in the air: trick) | Space or Shift | RB | DRIFT (shows TRICK in the air) |
-| Use item | E, Ctrl or F | X or LB | ITEM |
-| Look back | Q or C | Y | - |
+| Action | Keyboard | Mouse (flight stick) | Gamepad | Touch |
+|---|---|---|---|---|
+| Steer | A / D or arrows | Slide left / right (the stick stays where you leave it) | Left stick / d-pad | Joystick: thumb down anywhere in the lower left and slide (Settings: ◀ ▶ buttons or tilt) |
+| Gas | W / Up | Push forward (full power); middle band = cruise | RT or A | Drives itself at cruise speed; push the stick up or hold the GAS pedal for full power (Settings: Auto-drive off = hold GAS to go) |
+| Brake / reverse | S / Down | Pull back | LT or B | Pull the stick down or hold the BRAKE pedal. Braking while steering turns tighter; hold it at a stop to reverse |
+| Drift (in the air: trick) | Space or Shift | Left button | RB | DRIFT (shows TRICK in the air) |
+| Use item | E, Ctrl or F | Right button | X or LB | ITEM |
+| Look back | Q or C | Middle button | Y | - |
+
+With a keyboard or mouse a small on-screen joystick (bottom left) shows what
+you're pressing, with key chips bottom right (Settings: Key hints). The mouse
+stick wakes on its first movement in a race; clicking captures the pointer so
+it never hits the screen edge, Esc (pause) frees it. Settings: Mouse controls.
 | Cockpit view on/off (first person) | V (P2: M) | Back / Select | COCKPIT tab on the left edge |
 | Pause | Esc or P | Start | II (top right), Android back |
 

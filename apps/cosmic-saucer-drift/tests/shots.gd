@@ -30,6 +30,14 @@ func _ready() -> void:
 		add_child(race)
 		if args.has("cockpit"):
 			race._set_cockpit(race.racers[0], true)
+		if args.has("hints"):
+			InputRouter.touch_seen = false
+			var dh := DesktopHints.new()
+			dh.racer = race.racers[0]
+			race.ui_layer.add_child(dh)
+			if args.has("mouse"):
+				InputRouter.mouse_active = true
+				InputRouter.mouse_stick = Vector2(0.6, 0.7)
 		if args.has("touch"):
 			InputRouter.touch_seen = true
 			var tc := TouchControls.new()
@@ -44,7 +52,7 @@ func _ready() -> void:
 				f += 1
 			await RenderingServer.frame_post_draw
 			var img := get_viewport().get_texture().get_image()
-			var path := "%s/%s_v%d_f%s%s%s%s%s.png" % [out, t, variant, target, ("_" + str(args.quality)) if args.has("quality") else "", "_ck" if args.has("cockpit") else "", "_portrait" if args.has("portrait") else "", "_touch" if args.has("touch") else ""]
+			var path := "%s/%s_v%d_f%s%s%s%s%s%s.png" % [out, t, variant, target, ("_" + str(args.quality)) if args.has("quality") else "", "_ck" if args.has("cockpit") else "", "_portrait" if args.has("portrait") else "", "_touch" if args.has("touch") else "", ("_mouse" if args.has("mouse") else "_keys") if args.has("hints") else ""]
 			img.save_png(ProjectSettings.globalize_path("res://" + path) if not path.begins_with("/") else path)
 			print("saved ", path)
 		race.queue_free()

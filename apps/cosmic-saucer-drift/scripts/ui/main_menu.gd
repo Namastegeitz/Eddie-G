@@ -889,6 +889,8 @@ func _settings() -> Control:
 		["Camera", "camera", ["far", "near"], {"far": "Far", "near": "Close"}],
 		["Cockpit view (first person)", "cockpit", [false, true], {false: "Off: chase camera", true: "On"}],
 		["Graphics", "quality", ["auto", "low", "medium", "high", "ultra"], {"auto": "Auto", "low": "Low", "medium": "Medium", "high": "High", "ultra": "Ultra"}],
+		["Mouse controls", "mouse_controls", [true, false], {true: "On: stick + throttle", false: "Off"}],
+		["Key hints (keyboard/mouse)", "key_hints", [true, false], {true: "On", false: "Off"}],
 		["Show FPS", "show_fps", [false, true], {true: "On", false: "Off"}],
 	]
 	for t in toggles:
@@ -942,7 +944,7 @@ func _howto() -> Control:
 	var v: VBoxContainer = lp[1]
 	var touch := InputRouter.touch_seen
 	var lines := [
-		["Steer & go", "Your saucer drives itself. Steer with the joystick: put your thumb down anywhere in the lower left and slide. Push the stick up (or hold the GAS pedal) for full power; pull it down (or hold BRAKE) to slow down. Brake into a corner to turn tighter; keep holding when stopped to reverse. (◀ ▶ buttons or tilt steering in Settings.)" if touch else "Steer with A/D or the arrows, W/Up for gas, S/Down to brake. Gamepad: stick, RT gas, LT brake."],
+		["Steer & go", "Your saucer drives itself. Steer with the joystick: put your thumb down anywhere in the lower left and slide. Push the stick up (or hold the GAS pedal) for full power; pull it down (or hold BRAKE) to slow down. Brake into a corner to turn tighter; keep holding when stopped to reverse. (◀ ▶ buttons or tilt steering in Settings.)" if touch else "Keyboard: A/D or the arrows steer, W/Up is gas, S/Down brakes; the on-screen joystick shows what you're pressing. Mouse: it's a flight stick and throttle lever. Slide left/right to steer, push forward for full power, pull back to brake (it stays where you leave it; click to capture the pointer, Esc frees it). Left button drifts, right button fires your item, middle button looks back. Gamepad: stick, RT gas, LT brake."],
 		["Cockpit view", "Tap the COCKPIT tab on the left edge of the screen any time in a race to fly first-person from your pilot's seat, and tap it again for the chase camera (keyboard: V, gamepad: Back). The game remembers your choice."],
 		["Drift = Plasma Boost", "Hold DRIFT while steering into a corner. Sparks turn blue, orange, then purple. Let go to boost: the longer the drift, the bigger the boost."],
 		["Keep your core charged", "Your Dark Matter core drains as you fly. Grab glowing Energy Pods, land tricks, slipstream and near-miss hazards to refill it. If it empties you drop into a slow Emergency Hover until you grab a pod."],

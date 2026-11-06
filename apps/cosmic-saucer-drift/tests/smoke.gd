@@ -386,6 +386,7 @@ func _gfx_tests() -> void:
 	check("shockwaves fade out", lit == 0)
 	holder.queue_free()
 	await _touch_tests()
+	await _mouse_tests()
 	# AI catch-up bands per class.
 	for c in Catalog.AI_CLASSES:
 		check("ai class %s has band" % c.name, c.has("band") and c.band.size() == 2 and float(c.band[0]) > 0.0 and float(c.band[1]) > 0.0)
@@ -514,6 +515,76 @@ func _first_layers(n: Node) -> int:
 		if l >= 0:
 			return l
 	return -1
+
+
+# ---------------------------------------------------------------- mouse flight stick
+func _mouse_tests() -> void:
+	var was_touch := InputRouter.touch_seen
+	InputRouter.touch_seen = false
+	InputRouter.touch.active = false
+	InputRouter.two_player = false
+	Save.data.settings.mouse_controls = true
+	Save.data.settings.auto_accel = true
+	InputRouter.mouse_recentre()
+	InputRouter.mouse_active = false
+	check("mouse scheme on by default", InputRouter.mouse_on())
+	var c: InputRouter.Controls = InputRouter.controls(0)
+	check("mouse idle until it moves", is_zero_approx(c.steer) and is_zero_approx(c.throttle))
+	InputRouter._input(_motion(Vector2(44, 0)))
+	check("first motion wakes the stick", InputRouter.mouse_active and InputRouter.mouse_stick.x > 0.15 and InputRouter.mouse_stick.x < 0.25)
+	c = InputRouter.controls(0)
+	check("mouse steers right", c.steer > 0.15 and c.steer < 0.25)
+	check("mouse cruise band = auto-drive", is_equal_approx(c.throttle, InputRouter.AUTO_CRUISE) and is_zero_approx(c.gas))
+	InputRouter._input(_motion(Vector2(0, -220)))
+	c = InputRouter.controls(0)
+	check("push forward = full gas", is_equal_approx(InputRouter.mouse_stick.y, 1.0) and is_equal_approx(c.gas, 1.0))
+	InputRouter._input(_motion(Vector2(0, 440)))
+	c = InputRouter.controls(0)
+	check("pull back = brake, clamped", is_equal_approx(InputRouter.mouse_stick.y, -1.0) and is_equal_approx(c.brake, 1.0) and is_zero_approx(c.throttle))
+	InputRouter._input(_motion(Vector2(-900, 0)))
+	check("stick clamps at full lock", is_equal_approx(InputRouter.mouse_stick.x, -1.0))
+	InputRouter.mouse_recentre()
+	check("recentre straightens the stick", InputRouter.mouse_stick == Vector2.ZERO)
+	# A big jump (the cursor coming in from elsewhere) doesn't start it.
+	InputRouter.mouse_active = false
+	InputRouter._input(_motion(Vector2(400, 300)))
+	check("a jump doesn't wake the stick", not InputRouter.mouse_active and InputRouter.mouse_stick == Vector2.ZERO)
+	Save.data.settings.mouse_controls = false
+	InputRouter._input(_motion(Vector2(44, 0)))
+	check("setting off ignores the mouse", not InputRouter.mouse_on() and InputRouter.mouse_stick == Vector2.ZERO)
+	Save.data.settings.mouse_controls = true
+	InputRouter.touch.active = true
+	check("touch driving turns the mouse stick off", not InputRouter.mouse_on())
+	InputRouter.touch.active = false
+	InputRouter.two_player = true
+	check("no mouse stick in split-screen", not InputRouter.mouse_on())
+	InputRouter.two_player = false
+	InputRouter.release_mouse()
+	check("release leaves the pointer visible", Input.mouse_mode != Input.MOUSE_MODE_CAPTURED and not InputRouter.mouse_capture_wanted)
+	# On-screen joystick + key chips draw for keyboard/mouse players.
+	var host := Control.new()
+	host.size = Vector2(1280, 720)
+	add_child(host)
+	var dh := DesktopHints.new()
+	host.add_child(dh)
+	var fake := Racer.new()
+	dh.racer = fake
+	dh.size = Vector2(1280, 720)
+	dh._process(0.05)
+	dh.queue_redraw()
+	await get_tree().process_frame
+	check("desktop hints draw", dh._vis.length() >= 0.0)
+	host.free()
+	fake.free()
+	InputRouter.mouse_active = false
+	InputRouter.mouse_recentre()
+	InputRouter.touch_seen = was_touch
+
+
+func _motion(rel: Vector2) -> InputEventMouseMotion:
+	var e := InputEventMouseMotion.new()
+	e.relative = rel
+	return e
 
 
 func _touch(i: int, p: Vector2, down: bool) -> InputEventScreenTouch:

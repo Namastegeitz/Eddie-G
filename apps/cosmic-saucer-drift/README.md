@@ -77,6 +77,16 @@ falling ice/glass/iron, lava eruptions, supersonic gusts), one hidden
 shortcut, three Star Shards, and Reverse + Mirror versions that unlock when
 you win it: 14 tracks, 42 layouts.
 
+## Keyboard and mouse
+
+On a computer the game shows a small on-screen joystick that mirrors
+W/A/S/D (or the arrows), with key chips for drift, item, look back, cockpit
+and pause. The mouse works as a flight stick and throttle lever: slide
+left/right to steer, push forward to open the throttle, pull back to brake;
+it stays where you leave it, like a real stick. Left button drifts, right
+button fires your item, middle button looks back. Click to capture the
+pointer during a race (Esc frees it). Both can be turned off in Settings.
+
 ## Phone held upright (portrait)
 
 The Android app always plays in landscape, but a browser can't lock the

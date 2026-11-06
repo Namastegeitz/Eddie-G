@@ -26,6 +26,18 @@ var touch := {"steer": 0.0, "throttle": 0.0, "brake": 0.0, "drift": false, "item
 var _tilt_zero := 0.0
 var _c := [Controls.new(), Controls.new()]
 
+## Mouse as a flight stick (player one, when Settings > Mouse controls is on):
+## slide left/right to steer, push forward to open the throttle, pull back
+## to brake; the stick stays where you leave it (like a real stick and a
+## throttle lever) and MOUSE_RANGE px of movement is full travel. Left
+## button drifts, right button fires the item, middle button looks back.
+## A race can capture the pointer so the cursor never hits the screen edge.
+const MOUSE_RANGE := 220.0
+const MOUSE_IDLE := 0.12    # throttle lever band that means "cruise"
+var mouse_stick := Vector2.ZERO       # x steer, y thrust (-1 brake .. 1 full gas)
+var mouse_active := false             # a mouse has been moved during this race
+var mouse_capture_wanted := false     # set by the race while racing with mouse controls
+
 const DEAD := 0.15
 
 
@@ -37,6 +49,33 @@ func _ready() -> void:
 func _input(e: InputEvent) -> void:
 	if e is InputEventScreenTouch:
 		touch_seen = true
+	elif e is InputEventMouseMotion and mouse_on():
+		# Relative motion (works captured or not; captured never hits an edge).
+		var r: Vector2 = e.relative
+		if r.length_squared() > 0.0 and (mouse_active or r.length() < 60.0):
+			mouse_active = true
+			mouse_stick.x = clampf(mouse_stick.x + r.x / MOUSE_RANGE, -1.0, 1.0)
+			mouse_stick.y = clampf(mouse_stick.y - r.y / MOUSE_RANGE, -1.0, 1.0)
+	elif e is InputEventMouseButton and e.pressed and e.button_index == MOUSE_BUTTON_LEFT and mouse_capture_wanted and mouse_on():
+		if Input.mouse_mode != Input.MOUSE_MODE_CAPTURED:
+			Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+
+
+## Mouse controls apply to player one with a mouse (never when a touchscreen
+## is driving, nor in split-screen).
+func mouse_on() -> bool:
+	return bool(Save.setting("mouse_controls")) and not touch.active and not two_player
+
+
+## Straighten the stick and close the throttle lever (race start, re-centre).
+func mouse_recentre() -> void:
+	mouse_stick = Vector2.ZERO
+
+
+func release_mouse() -> void:
+	mouse_capture_wanted = false
+	if Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
+		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 
 
 func pads() -> Array[int]:
@@ -101,6 +140,16 @@ func controls(slot: int) -> Controls:
 		if Input.is_joy_button_pressed(d, JOY_BUTTON_RIGHT_SHOULDER): drift = true
 		if Input.is_joy_button_pressed(d, JOY_BUTTON_X) or Input.is_joy_button_pressed(d, JOY_BUTTON_LEFT_SHOULDER): item = true
 		if Input.is_joy_button_pressed(d, JOY_BUTTON_Y): look = true
+	# Mouse flight stick (player one only).
+	if p1 and mouse_on() and mouse_active:
+		steer += mouse_stick.x
+		if mouse_stick.y > MOUSE_IDLE:
+			thr = maxf(thr, (mouse_stick.y - MOUSE_IDLE) / (1.0 - MOUSE_IDLE))
+		elif mouse_stick.y < -MOUSE_IDLE:
+			brk = maxf(brk, (-mouse_stick.y - MOUSE_IDLE) / (1.0 - MOUSE_IDLE))
+		if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT): drift = true
+		if Input.is_mouse_button_pressed(MOUSE_BUTTON_RIGHT): item = true
+		if Input.is_mouse_button_pressed(MOUSE_BUTTON_MIDDLE): look = true
 	# Touch + tilt (player one only).
 	if p1 and touch.active:
 		steer += touch.steer
@@ -112,7 +161,10 @@ func controls(slot: int) -> Controls:
 		if Save.setting("steering") == "tilt":
 			steer += tilt_steer()
 	c.gas = clampf(thr, 0.0, 1.0)
-	if p1 and Save.setting("auto_accel") and (touch.active or touch_seen) and brk < 0.5:
+	# Auto-drive: on touch, and with the mouse stick while the lever sits in
+	# its cruise band (keys and pads drive themselves as before).
+	var cruise: bool = bool(touch.active) or touch_seen or (mouse_on() and mouse_active)
+	if p1 and Save.setting("auto_accel") and cruise and brk < 0.5:
 		thr = maxf(thr, AUTO_CRUISE)
 	c.steer = clampf(steer, -1.0, 1.0)
 	c.throttle = clampf(thr, 0.0, 1.0)

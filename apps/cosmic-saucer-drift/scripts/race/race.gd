@@ -30,6 +30,7 @@ var autopilot := false
 var cams: Array[RaceCamera] = []
 var huds: Array[Hud] = []
 var touch: TouchControls
+var hints: DesktopHints
 var ui_layer: CanvasLayer
 var _pause_panel: Control
 var _results_panel: Control
@@ -113,6 +114,9 @@ func _ready() -> void:
 	for c in cams:
 		c.intro = 2.4 if countdown_left > 2.0 else 0.0
 	InputRouter.calibrate_tilt()
+	InputRouter.mouse_recentre()
+	InputRouter.mouse_active = false
+	InputRouter.mouse_capture_wanted = not autopilot and humans.size() == 1 and not InputRouter.touch_seen
 	Events.log_event("race_start", {"mode": req.mode, "track": td.id, "variant": td.variant})
 	Audio.music("race")
 
@@ -172,6 +176,7 @@ func _build_world() -> void:
 
 func _exit_tree() -> void:
 	Engine.time_scale = 1.0
+	InputRouter.release_mouse()
 
 
 func _lowest_y() -> float:
@@ -269,6 +274,10 @@ func _setup_views() -> void:
 			touch.racer = view_racers[0]
 			ui_layer.add_child(touch)
 			hud.add_pause(_pause_button())
+		elif not autopilot and bool(Save.setting("key_hints")):
+			hints = DesktopHints.new()
+			hints.racer = view_racers[0]
+			ui_layer.add_child(hints)
 	else:
 		var split := VBoxContainer.new()
 		split.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -646,6 +655,7 @@ func _finish_race() -> void:
 		return
 	done = true
 	racing = false
+	InputRouter.release_mouse()
 	# Estimate times for anyone still racing.
 	var L := td.main.length * td.laps
 	var est: Array = []
@@ -924,8 +934,10 @@ func toggle_pause() -> void:
 		if _pause_panel:
 			_pause_panel.queue_free()
 			_pause_panel = null
+		InputRouter.mouse_capture_wanted = not autopilot and humans.size() == 1 and not InputRouter.touch_seen
 		return
 	tree.paused = true
+	InputRouter.release_mouse()
 	_pause_panel = Game.pause_menu(self)
 	ui_layer.add_child(_pause_panel)
 
