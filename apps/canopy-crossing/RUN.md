@@ -98,6 +98,28 @@ godot --headless --path . --export-release "Web"             build/web/index.htm
   fails, the script fails and the build should not be published. Needs node
   and Playwright (`npm i -g playwright && npx playwright install chromium`).
 
+### Beta testers on phones (Android and iPhone)
+
+The workflow `.github/workflows/canopy-crossing-beta.yml` builds everything
+on GitHub's machines and publishes a beta site to GitHub Pages:
+`https://<owner>.github.io/<repo>/canopy-crossing/`. Run it from the Actions
+tab (Canopy Crossing beta > Run workflow) or push a tag like `canopy-v0.9.1`.
+One-time setup: Settings > Pages > Source: **GitHub Actions**.
+
+The site is a page for testers: **Play in your browser**, how to put it on
+the home screen (iPhone: Safari > Share > Add to Home Screen; Android:
+Chrome > Add to Home screen), and the **Android APK** to download and
+install (Godot's release engine, signed with a beta key kept in the Actions
+cache so new builds install over old ones; set the `CANOPY_ANDROID_KEYSTORE_*`
+secrets for a permanent key). The game page is installable (manifest,
+icons, iPhone tags) and opens full screen from the home screen. Every run
+also checks first person by touch in a phone-sized browser before
+publishing. A native iPhone app needs an Apple Developer account
+(TestFlight); until then iPhone testers use the home-screen version.
+
+Build the same site locally: `tools/build_web.sh`, then
+`python3 tools/web_artifact/package.py build/web build/site --site [--apk build/android/canopycrossing.apk]`.
+
 Store billing and ads are sandboxed by default; see [docs/STORE.md](docs/STORE.md)
 for switching to Google Play Billing, StoreKit and AdMob.
 
