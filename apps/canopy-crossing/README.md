@@ -13,8 +13,14 @@ time, in ten real rainforests. Built from
   Bwindi, New Guinea, Atlantic Forest, Xishuangbanna, Taman Negara,
   Sinharaja, Yasuní, Chocó, Taï Forest, Palawan, Maya Forest and Khao Sok
   are map packs, plus 2 "coming soon". Each scene has its own palette,
-  hazards, music and facts. Levels grow from 40 to 130 rows. A spinning
-  globe picks the scene.
+  hazards, music and facts. A spinning globe picks the scene.
+- **Difficulty curve:** every jungle's levels get longer and harder from
+  1 to 10 (a 1-5 challenge rating on each). The first two jungles are
+  **Easy** (short, slow levels: 30 to 75 rows), the next three **Medium**,
+  jungles 6-10 **Hard** and the rest **Expert** (60 to 130 rows, fast and
+  crowded). The first five jungles bring their hazards in one or two at a
+  time ("New here: caiman backs"), so early levels go quickly. Tuned in
+  `content/difficulty.json`.
 - **Two views:** bird's-eye (top-down) and first person (3D, through your
   animal's eyes). Switch any time with the eye button (or V). Every level
   has 1 to 3 dense-canopy stretches (1 in levels 1-3, 2 in 4-6, 3 in 7-10)

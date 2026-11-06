@@ -695,7 +695,8 @@ func _phase3() -> void:
 				longer_ok = false
 	check("200 maps: 20 scenes x 10 levels", total_levels == 200, str(total_levels))
 	check("every level has dense-canopy areas that need first person", zones_ok)
-	check("levels get longer through each scene (40 to 130 rows)", longer_ok and int(Content.map("amazon").stages[0].rows) >= 40 and int(Content.map("amazon").stages[9].rows) >= 120)
+	check("levels get longer through each scene", longer_ok)
+	_difficulty_curve(playable)
 	var cover_fail := []
 	for id in playable:
 		for li in 10:
@@ -1507,6 +1508,85 @@ func _scenes() -> void:
 	check("detailed models build for every log, caiman, croc and soldier-ant hazard", bad_models.is_empty() and built >= 8 and crocs >= 5, "%d built, %d crocs, bad %s" % [built, crocs, str(bad_models)])
 	var ants: Dictionary = Content.hazard("red_soldier_ants")
 	check("the ant highway is giant red soldier ants carrying cheese", String(ants.get("art", {}).get("painter", "")) == "soldier_ant" and float(ants.length[0]) >= 0.8 and ants.art.colors.has("cheese"))
+
+
+## The difficulty curve: the first two jungles are Easy, 3-5 Medium, 6-10
+## Hard, the rest Expert; levels get longer and harder 1 to 10; each tier
+## starts and ends harder than the one before; the first five jungles bring
+## their hazards in level by level; and generated levels really are gentler
+## early on (slower movers, fewer kinds of hazard).
+func _difficulty_curve(playable: Array) -> void:
+	var want := {"amazon": "easy", "congo": "easy", "borneo": "medium", "daintree": "medium", "masoala": "medium",
+		"monteverde": "hard", "new_guinea": "hard", "atlantic_forest": "expert", "khao_sok": "expert"}
+	var wrong := []
+	for id in want:
+		if Content.tier_of(Content.map(id)) != want[id]:
+			wrong.append("%s=%s" % [id, Content.tier_of(Content.map(id))])
+	check("difficulty tiers by globe order: Easy 1-2, Medium 3-5, Hard 6-10, Expert after", wrong.is_empty(), str(wrong))
+	var ramp_bad := []
+	for id in playable:
+		var st: Array = Content.map(id).stages
+		for i in range(1, st.size()):
+			if float(st[i].difficulty[1]) <= float(st[i - 1].difficulty[1]) or int(st[i].stars) < int(st[i - 1].stars):
+				ramp_bad.append("%s %d" % [id, i + 1])
+	check("every jungle's levels get harder from 1 to 10 (difficulty and challenge stars)", ramp_bad.is_empty(), str(ramp_bad.slice(0, 4)))
+	var order := ["easy", "medium", "hard", "expert"]
+	var tiers_ok := true
+	for i in range(1, order.size()):
+		var a: Dictionary = Content.tier(order[i - 1])
+		var b: Dictionary = Content.tier(order[i])
+		if float(b.difficulty[0][1]) <= float(a.difficulty[0][1]) or float(b.difficulty[1][1]) < float(a.difficulty[1][1]) or int(b.rows[0]) <= int(a.rows[0]) or float(b.params.speed[1]) < float(a.params.speed[1]):
+			tiers_ok = false
+	check("each tier starts and ends harder than the one before (and its levels run longer)", tiers_ok)
+	# hazards arrive level by level in the first five jungles
+	var gated := 0
+	var leaks := []
+	for id in ["amazon", "congo", "borneo", "daintree", "masoala"]:
+		var m: Dictionary = Content.map(id)
+		var late := {}
+		for slot in m.hazards:
+			for e in m.hazards[slot]:
+				if int(e.get("from_level", 1)) > 1:
+					late[String(e.id)] = int(e.from_level)
+		gated += 1 if late.size() >= 3 else 0
+		for li in [0, 1]:
+			var w := World.new()
+			w.setup(m, "journey", li, absi(hash([id, li, "journey"])) % 1000000)
+			w.ensure(w.goal_row + 2)
+			for r in w.goal_row:
+				var l := w.lane(r)
+				var seen := [l.hazard_id, String(l.effect.get("hazard", ""))]
+				for p in l.preds:
+					seen.append(String(p.hazard))
+				for c in l.tiles:
+					seen.append(String(l.tiles[c].hazard))
+				for hid in seen:
+					if late.has(hid) and int(late[hid]) > li + 1:
+						leaks.append("%s L%d row %d: %s" % [id, li + 1, r, hid])
+	check("the first five jungles bring their hazards in level by level", gated == 5 and leaks.is_empty(), "%d gated; %s" % [gated, str(leaks.slice(0, 3))])
+	# generated levels: Amazon level 1 is slow with few hazard kinds; an
+	# Expert jungle's level 10 is faster than Amazon's
+	var stats := func(id: String, li: int) -> Vector2:
+		var w := World.new()
+		w.setup(Content.map(id), "journey", li, absi(hash([id, li, "journey"])) % 1000000)
+		w.ensure(w.goal_row + 2)
+		var spd := 0.0
+		var n := 0
+		var kinds := {}
+		for r in w.goal_row:
+			var l := w.lane(r)
+			if l.hazard_id != "":
+				kinds[l.hazard_id] = true
+			if absf(l.speed) > 0.0:
+				spd += absf(l.speed)
+				n += 1
+		return Vector2(spd / maxi(1, n), kinds.size())
+	var a1: Vector2 = stats.call("amazon", 0)
+	var a10: Vector2 = stats.call("amazon", 9)
+	var x10: Vector2 = stats.call("khao_sok", 9)
+	print("  mover speed / hazard kinds: Amazon L1 %.2f/%d, Amazon L10 %.2f/%d, Khao Sok L10 %.2f/%d" % [a1.x, a1.y, a10.x, a10.y, x10.x, x10.y])
+	check("Amazon level 1 is gentle: slow movers, few kinds of hazard", a1.x < 0.9 and a1.y <= 3, str(a1))
+	check("harder later: Amazon level 10 beats level 1, an Expert jungle's level 10 beats both", a10.x > a1.x and a10.y > a1.y and x10.x > a10.x, "%s %s %s" % [a1, a10, x10])
 
 
 # ====================================================================== 8

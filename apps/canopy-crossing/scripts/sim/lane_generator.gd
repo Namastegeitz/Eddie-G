@@ -18,11 +18,13 @@ var _band_dir := 1
 var _last_band := ""
 var _tail_bank := true
 var _stone_cols: Array = []
+var _prev_block: Array = []       # columns of the lane just made that hold a tile (gully, brush...)
 var _ridge: Array = []
 var _layout: Array = []
 var cover: Array[Vector2i] = []   # canopy zones (first row, last row) that need first-person view
 var cover_scenes: Array[String] = []   # each zone's first-person scene (map "fpv_scenes" id)
 var stage_no := 0
+var level := 1                    # hazards marked "from_level" wait for this level (see _slot)
 
 
 func setup(map_def: Dictionary, run_mode: String, stage_index: int, seed_value: int) -> void:
@@ -31,6 +33,7 @@ func setup(map_def: Dictionary, run_mode: String, stage_index: int, seed_value: 
 	gen = Content.generators.get(String(map.get("generator", "classic")), Content.generators.get("classic", {}))
 	rng.seed = seed_value
 	stage_no = stage_index
+	level = stage_index + 1 if run_mode == "journey" else (99 if run_mode == "tutorial" else 1)
 	next_row = 0
 	if mode == "tutorial":
 		_layout = Content.onboarding.get("tutorial", {}).get("layout", [])
@@ -141,6 +144,9 @@ func build(world: World, upto: int) -> void:
 func _next_lane() -> Lane:
 	var r := next_row
 	var d := difficulty(r)
+	if mode in ["endless", "daily"]:
+		# new hazards arrive as an endless run gets harder, like levels 1-10
+		level = 1 + int(d * 9.0)
 	if mode == "tutorial":
 		return _tutorial_lane(r)
 	var start := int(gen.get("start_rows", 3))
@@ -234,6 +240,7 @@ func _make_lane(r: int, d: float, spec: Dictionary) -> Lane:
 			stones = true
 	if not stones:
 		_stone_cols = []
+	_prev_block = lane.tiles.keys() if lane.type == "safe" else []
 	_add_items(lane, d)
 	return lane
 
@@ -245,6 +252,7 @@ func _plain(r: int, is_start: bool) -> Lane:
 	lane.band = "start" if is_start else "end"
 	lane.start = is_start
 	lane.deco = rng.randi()
+	_prev_block = []
 	return lane
 
 
@@ -390,8 +398,16 @@ func _fill_water(lane: Lane, b: Dictionary, d: float, spec: Dictionary) -> void:
 		"static":
 			var count2 := rng.randi_range(int(h.count[0]), int(h.count[1]))
 			var cols := []
-			if not _stone_cols.is_empty():
-				var keep: int = _stone_cols[rng.randi() % _stone_cols.size()]
+			# columns you can step onto the stones from: the stones below, or
+			# the bank below minus its gullies / brush
+			var entry: Array = _stone_cols
+			if entry.is_empty() and not _prev_block.is_empty():
+				entry = []
+				for c0 in Lane.COLS:
+					if not c0 in _prev_block:
+						entry.append(c0)
+			if not entry.is_empty():
+				var keep: int = entry[rng.randi() % entry.size()]
 				cols.append(keep)
 				var near := clampi(keep + (1 if rng.randf() < 0.5 else -1), 0, Lane.COLS - 1)
 				if not near in cols:
@@ -418,7 +434,7 @@ func _fill_water(lane: Lane, b: Dictionary, d: float, spec: Dictionary) -> void:
 			# the bank) and then by hopping sideways between neighbouring stones.
 			var reach := []
 			for c in steady:
-				if _stone_cols.is_empty() or c in _stone_cols:
+				if entry.is_empty() or c in entry:
 					reach.append(c)
 			var grew := true
 			while grew:
@@ -491,11 +507,14 @@ func _fill_safe(lane: Lane, b: Dictionary, d: float, spec: Dictionary) -> void:
 			var n2 := rng.randi_range(1, 2 + int(roundf(d * 2.0)))
 			for k in n2:
 				var c3 := rng.randi_range(0, Lane.COLS - 1)
-				if used.has(c3) or lane.tiles.size() >= 4:
+				# never on the way off the stepping stones just below
+				if used.has(c3) or lane.tiles.size() >= 4 or c3 in _stone_cols:
 					continue
 				lane.tiles[c3] = {"kind": String(th.kind), "hazard": tid, "hidden": false, "sink": float(th.get("sink", 1.0))}
 				used[c3] = true
-	if b.has("effects") and rng.randf() < _chance(b.effects.chance, d):
+	# no flood or fire on a bank you reach from stepping stones: with only a
+	# stone or two to come from, the timing would be too tight
+	if b.has("effects") and _stone_cols.is_empty() and rng.randf() < _chance(b.effects.chance, d):
 		_add_effect(lane, String(b.effects.slot))
 	if b.has("swoopers") and rng.randf() < _chance(b.swoopers.chance, d):
 		var wid := _pick(String(b.swoopers.slot))
@@ -643,10 +662,18 @@ func _tutorial_lane(r: int) -> Lane:
 
 # ------------------------------------------------------------------ helpers
 
+## A hazard slot's entries that have arrived by this level: an entry with
+## "from_level": 5 first shows up in level 5 (the first maps bring their
+## hazards in one or two at a time).
 func _slot(slot: String) -> Array:
 	if slot == "":
 		return []
-	return map.get("hazards", {}).get(slot, [])
+	var list: Array = map.get("hazards", {}).get(slot, [])
+	var out := []
+	for it in list:
+		if int(it.get("from_level", 1)) <= level:
+			out.append(it)
+	return out
 
 
 func _pick(slot: String) -> String:

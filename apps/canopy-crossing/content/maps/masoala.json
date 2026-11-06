@@ -59,13 +59,15 @@
       },
       {
         "id": "rolling_log",
-        "weight": 1
+        "weight": 1,
+        "from_level": 4
       }
     ],
     "platforms": [
       {
         "id": "rapids_log",
-        "weight": 2
+        "weight": 2,
+        "from_level": 3
       },
       {
         "id": "drifting_branch",
@@ -79,25 +81,29 @@
     "safe_specials": [
       {
         "id": "falling_branch",
-        "weight": 1
+        "weight": 1,
+        "from_level": 2
       }
     ],
     "ground_effects": [
       {
         "id": "slash_and_burn",
-        "weight": 3
+        "weight": 3,
+        "from_level": 2
       }
     ],
     "safe_effects": [
       {
         "id": "slash_and_burn",
-        "weight": 1
+        "weight": 1,
+        "from_level": 6
       }
     ],
     "tiles": [
       {
         "id": "eroded_gully",
-        "weight": 3
+        "weight": 3,
+        "from_level": 5
       }
     ],
     "swoopers": []
@@ -109,185 +115,39 @@
     "zebu_cart"
   ],
   "difficulty": {
-    "speed": [
-      0.85,
-      1.55
-    ],
-    "density": [
-      0.32,
-      0.64
-    ],
-    "band": [
-      [
-        1,
-        2
-      ],
-      [
-        2,
-        4
-      ]
-    ],
-    "safe_chance": [
-      1.0,
-      0.55
-    ],
-    "special_chance": [
-      0.1,
-      0.45
-    ],
     "rows_to_max": 130,
     "move_timer": 0
   },
   "stages": [
     {
-      "name": "Red-earth Road",
-      "rows": 40,
-      "difficulty": [
-        0.0,
-        0.22
-      ],
-      "canopy": {
-        "zones": 1,
-        "rows": [
-          4,
-          6
-        ]
-      }
+      "name": "Red-earth Road"
     },
     {
-      "name": "Burning Fields",
-      "rows": 50,
-      "difficulty": [
-        0.06,
-        0.3
-      ],
-      "canopy": {
-        "zones": 1,
-        "rows": [
-          4,
-          6
-        ]
-      }
+      "name": "Burning Fields"
     },
     {
-      "name": "Fast Streams",
-      "rows": 60,
-      "difficulty": [
-        0.12,
-        0.38
-      ],
-      "canopy": {
-        "zones": 1,
-        "rows": [
-          4,
-          7
-        ]
-      }
+      "name": "Fast Streams"
     },
     {
-      "name": "Lemur Hill",
-      "rows": 70,
-      "difficulty": [
-        0.18,
-        0.46
-      ],
-      "canopy": {
-        "zones": 2,
-        "rows": [
-          5,
-          7
-        ]
-      }
+      "name": "Lemur Hill"
     },
     {
-      "name": "Gully Maze",
-      "rows": 80,
-      "difficulty": [
-        0.24,
-        0.54
-      ],
-      "canopy": {
-        "zones": 2,
-        "rows": [
-          5,
-          8
-        ]
-      }
+      "name": "Gully Maze"
     },
     {
-      "name": "Zebu Track",
-      "rows": 90,
-      "difficulty": [
-        0.3,
-        0.62
-      ],
-      "canopy": {
-        "zones": 2,
-        "rows": [
-          5,
-          8
-        ]
-      }
+      "name": "Zebu Track"
     },
     {
-      "name": "Fossa Ridge",
-      "rows": 100,
-      "difficulty": [
-        0.36,
-        0.7
-      ],
-      "canopy": {
-        "zones": 3,
-        "rows": [
-          6,
-          9
-        ]
-      }
+      "name": "Fossa Ridge"
     },
     {
-      "name": "Coastal Creek",
-      "rows": 110,
-      "difficulty": [
-        0.42,
-        0.78
-      ],
-      "canopy": {
-        "zones": 3,
-        "rows": [
-          6,
-          9
-        ]
-      }
+      "name": "Coastal Creek"
     },
     {
-      "name": "Rainy Season",
-      "rows": 120,
-      "difficulty": [
-        0.48,
-        0.86
-      ],
-      "canopy": {
-        "zones": 3,
-        "rows": [
-          6,
-          10
-        ]
-      }
+      "name": "Rainy Season"
     },
     {
-      "name": "Masoala Point",
-      "rows": 130,
-      "difficulty": [
-        0.54,
-        0.94
-      ],
-      "canopy": {
-        "zones": 3,
-        "rows": [
-          7,
-          11
-        ]
-      }
+      "name": "Masoala Point"
     }
   ],
   "endless": {

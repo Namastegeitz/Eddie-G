@@ -89,15 +89,25 @@ Copy an existing map and change:
 - `hazards`: slot name → weighted hazard ids. Slots the generators use:
   `ground_movers`, `platforms`, `tidal_platforms`, `bridges`, `ridges`,
   `water_predators`, `safe_specials`, `tiles`, `ground_effects`,
-  `safe_effects`, `swoopers`, `events`
-- `difficulty`: `speed`, `density`, `band` (lanes per band, easy → hard),
-  `safe_chance`, `special_chance`, `rows_to_max`, `move_timer` (seconds, 0 = off)
-- `stages`: the scene's 10 levels, `{name, rows, difficulty: [from, to],
-  canopy: {zones, rows: [min, max]}}`. `canopy` places that many
-  dense-canopy zones (each `rows` long) through the level: the lanes under
-  them play as usual, but the bird's-eye view sees only leaves, so the
-  player switches to first person to cross them. The shipped levels use 1
-  zone (levels 1-3), 2 (4-6) and 3 (7-10).
+  `safe_effects`, `swoopers`, `events`. An entry may say `"from_level": 5`:
+  it first appears in level 5 (and in Endless once the run is as hard as
+  level 5). The first five regions use this to bring hazards in one or two
+  at a time; the world map lists what's "New here" on each level.
+- `tier` (optional): `easy`, `medium`, `hard` or `expert`. Without it the
+  region's `order` on the globe decides (see `content/difficulty.json`
+  below).
+- `difficulty`: `rows_to_max` (Endless: rows until full difficulty),
+  `move_timer` (seconds, 0 = off). `speed`, `density`, `band` (lanes per
+  band, easy → hard), `safe_chance` and `special_chance` come from the
+  tier; set them here only to override it.
+- `stages`: the scene's 10 levels, each `{name}`. The tier fills in each
+  level's `rows`, `difficulty: [from, to]`, `canopy: {zones, rows: [min,
+  max]}` and `stars` (the 1-5 challenge rating on the world map); set any
+  of them on a level to override. `canopy` places that many dense-canopy
+  zones (each `rows` long) through the level: the lanes under them play as
+  usual, but the bird's-eye view sees only leaves, so the player switches
+  to first person to cross them. Levels use 1 zone (levels 1-3), 2 (4-6)
+  and 3 (7-10).
 - `fpv_scenes`: what each canopy zone looks like in first person (3 or
   more; the shipped regions have 4). Zones in one level get different
   scenes, and each level starts further along the list, so all of a region's
@@ -132,6 +142,24 @@ Copy an existing map and change:
 - `endless.creep`: how fast the jungle closes in (rows/s, easy → hard)
 - optional `dlc`: `{"url": "https://…/pack.zip"}` to download the pack's
   files on unlock (zip paths like `content/maps/x.json`, unpacked into `user://`)
+
+## Difficulty: `content/difficulty.json`
+
+Four tiers. Each region gets one by its order on the globe (`by_order`:
+regions 1-2 Easy, 3-5 Medium, 6-10 Hard, 11 on Expert) unless its file sets
+`tier`. A tier gives its regions' 10 levels, from level 1 to level 10:
+
+- `rows`: level length (Easy 30 → 75, Expert 60 → 130)
+- `difficulty`: the generator's 0-1 difficulty at the start and end of
+  level 1, and of level 10 (in between, levels step up evenly)
+- `canopy_rows`, `stars` (challenge rating shown per level)
+- `params`: the region's `speed`, `density`, `band`, `safe_chance`,
+  `special_chance` (each easy → hard over a level)
+- `name`, `color`, `blurb`: the tier chip on the world map
+
+`zones` is the canopy zone count per level. Change a tier here and every
+region in it follows. Run the level sweep afterwards (every level must stay
+beatable with the free starter; see RUN.md).
 
 ## A new hazard: `content/hazards/<id>.json`
 

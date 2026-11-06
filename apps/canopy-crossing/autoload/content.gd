@@ -27,6 +27,7 @@ var onboarding := {}
 var settings_defaults := {}
 var rules := {}                 # game rules (content/rules.json)
 var skills := {}                # skill upgrade rules (content/skills.json)
+var difficulty := {}            # difficulty tiers (content/difficulty.json)
 var errors: PackedStringArray = []
 var loaded_files := 0
 var _items := {}
@@ -59,6 +60,7 @@ func reload() -> void:
 	settings_defaults = _load_one("settings_defaults.json")
 	rules = _load_one("rules.json")
 	skills = _load_one("skills.json")
+	difficulty = _load_one("difficulty.json")
 	_items.clear()
 	for it in collectibles.get("items", []):
 		_items[String(it.id)] = it
@@ -66,6 +68,7 @@ func reload() -> void:
 	if not bonus.is_empty():
 		_items[String(bonus.id)] = bonus
 	_sort()
+	_apply_tiers()
 	validate()
 	if not errors.is_empty():
 		for e in errors:
@@ -123,6 +126,64 @@ func _sort() -> void:
 	for id in maps:
 		map_order.append(String(id))
 	map_order.sort_custom(func(a, b): return int(maps[a].get("order", 999)) < int(maps[b].get("order", 999)))
+
+
+# ------------------------------------------------------------------ difficulty
+
+## A map's difficulty tier ("easy", "medium", "hard", "expert"): its own
+## "tier", else by its order on the globe (content/difficulty.json by_order).
+func tier_of(m: Dictionary) -> String:
+	if m.has("tier"):
+		return String(m.tier)
+	var order := int(m.get("order", 999))
+	for r in difficulty.get("by_order", []):
+		if order >= int(r[0]) and order <= int(r[1]):
+			return String(r[2])
+	return ""
+
+
+func tier(id: String) -> Dictionary:
+	return difficulty.get("tiers", {}).get(id, {})
+
+
+## Fills each map's levels from its tier: length, difficulty range, canopy
+## zones and star rating per level (rising from level 1 to level 10), and
+## the map's hazard speed / density / band sizes / safe banks. Anything a
+## map file sets itself is kept.
+func _apply_tiers() -> void:
+	var zones: Array = difficulty.get("zones", [1, 1, 1, 2, 2, 2, 3, 3, 3, 3])
+	for id in maps:
+		var m: Dictionary = maps[id]
+		if m.get("status", "available") != "available":
+			continue
+		var tid := tier_of(m)
+		var t := tier(tid)
+		if t.is_empty():
+			continue
+		m["tier"] = tid
+		var d: Dictionary = m.get("difficulty", {})
+		var params: Dictionary = t.get("params", {})
+		for k in params:
+			if not d.has(k):
+				d[k] = params[k]
+		m["difficulty"] = d
+		var stages: Array = m.get("stages", [])
+		var rows: Array = t.get("rows", [40, 130])
+		var dr: Array = t.get("difficulty", [[0.0, 0.2], [0.5, 0.9]])
+		var cr: Array = t.get("canopy_rows", [[4, 6], [7, 11]])
+		var stars: Array = t.get("stars", [1, 5])
+		for i in stages.size():
+			var st: Dictionary = stages[i]
+			var k := float(i) / maxf(1.0, float(stages.size() - 1))
+			if not st.has("rows"):
+				st["rows"] = int(roundf(lerpf(float(rows[0]), float(rows[1]), k) / 5.0)) * 5
+			if not st.has("difficulty"):
+				st["difficulty"] = [snappedf(lerpf(float(dr[0][0]), float(dr[1][0]), k), 0.01), snappedf(lerpf(float(dr[0][1]), float(dr[1][1]), k), 0.01)]
+			if not st.has("canopy"):
+				st["canopy"] = {"zones": int(zones[mini(i, zones.size() - 1)]),
+					"rows": [int(roundf(lerpf(float(cr[0][0]), float(cr[1][0]), k))), int(roundf(lerpf(float(cr[0][1]), float(cr[1][1]), k)))]}
+			if not st.has("stars"):
+				st["stars"] = int(roundf(lerpf(float(stars[0]), float(stars[1]), k)))
 
 
 # ------------------------------------------------------------------ lookups
@@ -255,6 +316,11 @@ func validate() -> void:
 				errors.append("map %s: intro names unknown hazard %s" % [id, hid])
 		if m.get("stages", []).is_empty():
 			errors.append("map %s: no stages" % id)
+		if tier(tier_of(m)).is_empty():
+			errors.append("map %s: unknown difficulty tier %s" % [id, tier_of(m)])
+		for st in m.get("stages", []):
+			if not st.has("rows") or not st.has("difficulty"):
+				errors.append("map %s: level %s has no length or difficulty" % [id, st.get("name", "?")])
 		for key in ["palette", "music", "facts", "difficulty", "lat", "lon"]:
 			if not m.has(key):
 				errors.append("map %s: missing %s" % [id, key])

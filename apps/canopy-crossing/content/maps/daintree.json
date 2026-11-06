@@ -55,7 +55,8 @@
     "ground_movers": [
       {
         "id": "cassowary_charge",
-        "weight": 2
+        "weight": 2,
+        "from_level": 4
       },
       {
         "id": "tourist_4wd",
@@ -75,19 +76,22 @@
     "tidal_platforms": [
       {
         "id": "tidal_log",
-        "weight": 1
+        "weight": 1,
+        "from_level": 7
       }
     ],
     "water_predators": [
       {
         "id": "saltwater_croc",
-        "weight": 1
+        "weight": 1,
+        "from_level": 2
       }
     ],
     "safe_specials": [
       {
         "id": "amethystine_python",
-        "weight": 1
+        "weight": 1,
+        "from_level": 5
       },
       {
         "id": "falling_branch",
@@ -97,7 +101,8 @@
     "safe_effects": [
       {
         "id": "mangrove_tide",
-        "weight": 1
+        "weight": 1,
+        "from_level": 7
       }
     ],
     "tiles": [
@@ -109,13 +114,15 @@
     "events": [
       {
         "id": "cyclone_gust",
-        "weight": 1
+        "weight": 1,
+        "from_level": 3
       }
     ],
     "swoopers": [
       {
         "id": "sea_eagle_swoop",
-        "weight": 1
+        "weight": 1,
+        "from_level": 6
       }
     ]
   },
@@ -126,185 +133,39 @@
     "cyclone_gust"
   ],
   "difficulty": {
-    "speed": [
-      0.8,
-      1.5
-    ],
-    "density": [
-      0.32,
-      0.64
-    ],
-    "band": [
-      [
-        1,
-        2
-      ],
-      [
-        2,
-        4
-      ]
-    ],
-    "safe_chance": [
-      1.0,
-      0.55
-    ],
-    "special_chance": [
-      0.15,
-      0.5
-    ],
     "rows_to_max": 130,
     "move_timer": 0
   },
   "stages": [
     {
-      "name": "Mangrove Edge",
-      "rows": 40,
-      "difficulty": [
-        0.0,
-        0.22
-      ],
-      "canopy": {
-        "zones": 1,
-        "rows": [
-          4,
-          6
-        ]
-      }
+      "name": "Mangrove Edge"
     },
     {
-      "name": "Croc Creek",
-      "rows": 50,
-      "difficulty": [
-        0.06,
-        0.3
-      ],
-      "canopy": {
-        "zones": 1,
-        "rows": [
-          4,
-          6
-        ]
-      }
+      "name": "Croc Creek"
     },
     {
-      "name": "Cyclone Coast",
-      "rows": 60,
-      "difficulty": [
-        0.12,
-        0.38
-      ],
-      "canopy": {
-        "zones": 1,
-        "rows": [
-          4,
-          7
-        ]
-      }
+      "name": "Cyclone Coast"
     },
     {
-      "name": "Cassowary Crossing",
-      "rows": 70,
-      "difficulty": [
-        0.18,
-        0.46
-      ],
-      "canopy": {
-        "zones": 2,
-        "rows": [
-          5,
-          7
-        ]
-      }
+      "name": "Cassowary Crossing"
     },
     {
-      "name": "Fern Gully",
-      "rows": 80,
-      "difficulty": [
-        0.24,
-        0.54
-      ],
-      "canopy": {
-        "zones": 2,
-        "rows": [
-          5,
-          8
-        ]
-      }
+      "name": "Fern Gully"
     },
     {
-      "name": "Mossman Gorge",
-      "rows": 90,
-      "difficulty": [
-        0.3,
-        0.62
-      ],
-      "canopy": {
-        "zones": 2,
-        "rows": [
-          5,
-          8
-        ]
-      }
+      "name": "Mossman Gorge"
     },
     {
-      "name": "Tidal Flats",
-      "rows": 100,
-      "difficulty": [
-        0.36,
-        0.7
-      ],
-      "canopy": {
-        "zones": 3,
-        "rows": [
-          6,
-          9
-        ]
-      }
+      "name": "Tidal Flats"
     },
     {
-      "name": "Strangler Fig",
-      "rows": 110,
-      "difficulty": [
-        0.42,
-        0.78
-      ],
-      "canopy": {
-        "zones": 3,
-        "rows": [
-          6,
-          9
-        ]
-      }
+      "name": "Strangler Fig"
     },
     {
-      "name": "Reef Shore",
-      "rows": 120,
-      "difficulty": [
-        0.48,
-        0.86
-      ],
-      "canopy": {
-        "zones": 3,
-        "rows": [
-          6,
-          10
-        ]
-      }
+      "name": "Reef Shore"
     },
     {
-      "name": "Ancient Grove",
-      "rows": 130,
-      "difficulty": [
-        0.54,
-        0.94
-      ],
-      "canopy": {
-        "zones": 3,
-        "rows": [
-          7,
-          11
-        ]
-      }
+      "name": "Ancient Grove"
     }
   ],
   "endless": {

@@ -111,7 +111,17 @@ func _regions() -> void:
 		else:
 			status = "Best %d rows" % Progress.best_rows(id)
 		v.add_child(UI.label(status, 20, UI.ACCENT if Save.owns_map(id) else UI.MUTED))
-		v.add_child(UI.label(String(mp.get("location", "")), 18, UI.MUTED))
+		# difficulty tier, then where it is
+		var where := UI.hbox(6)
+		var tr := Content.tier(Content.tier_of(mp))
+		if not tr.is_empty():
+			where.add_child(UI.label(String(tr.name), 18, Color(String(tr.color)), true))
+			where.add_child(UI.label("·", 18, UI.MUTED))
+		var loc := UI.label(String(mp.get("location", "")), 18, UI.MUTED)
+		loc.clip_text = true
+		loc.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		where.add_child(loc)
+		v.add_child(where)
 		for c in v.get_children():
 			c.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		b.add_child(v)
@@ -131,6 +141,16 @@ func _detail() -> void:
 	tv.add_child(UI.label(String(mp.get("location", "")), 24, UI.MUTED))
 	head.add_child(tv)
 	detail.add_child(head)
+	var tr := Content.tier(Content.tier_of(mp))
+	if not tr.is_empty():
+		var trow := UI.hbox(10)
+		var chip := UI.panel(Color(String(tr.color)).darkened(0.55), 14, 6)
+		chip.add_child(UI.label(String(tr.name).to_upper(), 20, Color(String(tr.color)), true))
+		trow.add_child(chip)
+		var bl := UI.wrap_label(String(tr.get("blurb", "")), 22, UI.MUTED)
+		bl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		trow.add_child(bl)
+		detail.add_child(trow)
 	var facts: Array = mp.get("facts", [])
 	if not facts.is_empty():
 		detail.add_child(UI.wrap_label(String(facts[0]), 25, UI.TEXT))
@@ -234,7 +254,23 @@ func _levels(mp: Dictionary) -> void:
 	var st: Dictionary = stages[level_sel]
 	var zones := int(st.get("canopy", {}).get("zones", 0))
 	var best := int(Save.map_progress(selected).get("stage_best", {}).get(str(level_sel), 0))
-	detail.add_child(UI.label("Level %d: %s" % [level_sel + 1, String(st.name)], 32, UI.ACCENT, true))
+	var lrow := UI.hbox(14)
+	var lname := UI.label("Level %d: %s" % [level_sel + 1, String(st.name)], 32, UI.ACCENT, true)
+	lname.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	lrow.add_child(lname)
+	lrow.add_child(UI.label("Challenge", 20, UI.MUTED, true))
+	lrow.add_child(Widgets.Pips.new(int(st.get("stars", 1)), 5))
+	detail.add_child(lrow)
+	# hazards that first show up in this level
+	var fresh := []
+	for slot in mp.get("hazards", {}):
+		for e in mp.hazards[slot]:
+			if int(e.get("from_level", 1)) == level_sel + 1 and level_sel > 0:
+				var nm := String(Content.hazard(String(e.id)).get("name", e.id))
+				if not nm in fresh:
+					fresh.append(nm)
+	if not fresh.is_empty():
+		detail.add_child(UI.wrap_label("New here: " + ", ".join(fresh), 23, Color("ffd34a")))
 	var info := "%d rows · %d dense-canopy zone%s (switch to first person to see under the leaves)" % [int(st.rows), zones, "" if zones == 1 else "s"]
 	if best > 0:
 		info += " · best %d pts" % best

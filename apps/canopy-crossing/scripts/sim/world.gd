@@ -41,7 +41,7 @@ func setup(map_def: Dictionary, run_mode: String, stage_index: int, seed_in: int
 	if run_mode != "tutorial":
 		for ev in map.get("hazards", {}).get("events", []):
 			var h: Dictionary = Content.hazards.get(String(ev.id), {})
-			if h.is_empty():
+			if h.is_empty() or (run_mode == "journey" and int(ev.get("from_level", 1)) > stage_index + 1):
 				continue
 			var per := erng.randf_range(float(h.period[0]), float(h.period[1]))
 			var dur := 0.0

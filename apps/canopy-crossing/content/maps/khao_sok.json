@@ -126,185 +126,39 @@
     "monsoon_rain"
   ],
   "difficulty": {
-    "speed": [
-      0.8,
-      1.5
-    ],
-    "density": [
-      0.32,
-      0.64
-    ],
-    "band": [
-      [
-        1,
-        2
-      ],
-      [
-        2,
-        4
-      ]
-    ],
-    "safe_chance": [
-      1.0,
-      0.5
-    ],
-    "special_chance": [
-      0.15,
-      0.5
-    ],
     "rows_to_max": 130,
     "move_timer": 0
   },
   "stages": [
     {
-      "name": "Cheow Lan Lake",
-      "rows": 40,
-      "difficulty": [
-        0.0,
-        0.22
-      ],
-      "canopy": {
-        "zones": 1,
-        "rows": [
-          4,
-          6
-        ]
-      }
+      "name": "Cheow Lan Lake"
     },
     {
-      "name": "Longtail Lanes",
-      "rows": 50,
-      "difficulty": [
-        0.06,
-        0.3
-      ],
-      "canopy": {
-        "zones": 1,
-        "rows": [
-          4,
-          6
-        ]
-      }
+      "name": "Longtail Lanes"
     },
     {
-      "name": "Rafflesia Trail",
-      "rows": 60,
-      "difficulty": [
-        0.12,
-        0.38
-      ],
-      "canopy": {
-        "zones": 1,
-        "rows": [
-          4,
-          7
-        ]
-      }
+      "name": "Rafflesia Trail"
     },
     {
-      "name": "Elephant Gorge",
-      "rows": 70,
-      "difficulty": [
-        0.18,
-        0.46
-      ],
-      "canopy": {
-        "zones": 2,
-        "rows": [
-          5,
-          7
-        ]
-      }
+      "name": "Elephant Gorge"
     },
     {
-      "name": "Limestone Karst",
-      "rows": 80,
-      "difficulty": [
-        0.24,
-        0.54
-      ],
-      "canopy": {
-        "zones": 2,
-        "rows": [
-          5,
-          8
-        ]
-      }
+      "name": "Limestone Karst"
     },
     {
-      "name": "Cobra Ridge",
-      "rows": 90,
-      "difficulty": [
-        0.3,
-        0.62
-      ],
-      "canopy": {
-        "zones": 2,
-        "rows": [
-          5,
-          8
-        ]
-      }
+      "name": "Cobra Ridge"
     },
     {
-      "name": "Bamboo Rafts",
-      "rows": 100,
-      "difficulty": [
-        0.36,
-        0.7
-      ],
-      "canopy": {
-        "zones": 3,
-        "rows": [
-          6,
-          9
-        ]
-      }
+      "name": "Bamboo Rafts"
     },
     {
-      "name": "Monsoon Falls",
-      "rows": 110,
-      "difficulty": [
-        0.42,
-        0.78
-      ],
-      "canopy": {
-        "zones": 3,
-        "rows": [
-          6,
-          9
-        ]
-      }
+      "name": "Monsoon Falls"
     },
     {
-      "name": "Gibbon Calls",
-      "rows": 120,
-      "difficulty": [
-        0.48,
-        0.86
-      ],
-      "canopy": {
-        "zones": 3,
-        "rows": [
-          6,
-          10
-        ]
-      }
+      "name": "Gibbon Calls"
     },
     {
-      "name": "Old Growth",
-      "rows": 130,
-      "difficulty": [
-        0.54,
-        0.94
-      ],
-      "canopy": {
-        "zones": 3,
-        "rows": [
-          7,
-          11
-        ]
-      }
+      "name": "Old Growth"
     }
   ],
   "endless": {
