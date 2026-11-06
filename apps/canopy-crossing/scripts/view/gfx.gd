@@ -1,8 +1,10 @@
 class_name Gfx
 extends RefCounted
 ## Graphics quality. "auto" picks High on desktop and Medium on phones and in
-## the web player. High: 4x anti-aliasing (2D and 3D), fine details (fur,
-## feathers, glints), 3D at up to 2x resolution with shadows. Medium:
+## the web player. High: fine details (fur, feathers, glints), 3D at up to
+## 2x resolution with 4x anti-aliasing and shadows (2D is drawn at the
+## screen's own resolution; the GL Compatibility renderer has no 2D MSAA,
+## outlines and anti-aliased lines smooth the edges instead). Medium:
 ## outlines and shading, 3D at up to 1.5x resolution (no MSAA, lighter on
 ## phone GPUs). Low: flat shapes, no outlines, smaller 3D buffer.
 
@@ -25,8 +27,6 @@ static func level() -> String:
 static func apply(tree: SceneTree) -> void:
 	var q := level()
 	Draw.detail = 2 if q == "high" else (1 if q == "medium" else 0)
-	if tree != null and tree.root != null:
-		tree.root.msaa_2d = Viewport.MSAA_4X if q == "high" else Viewport.MSAA_DISABLED
 
 
 static func msaa_3d() -> Viewport.MSAA:

@@ -50,6 +50,12 @@ function fail(msg) { console.error('WEB SMOKE FAILED: ' + msg); process.exitCode
     await page.keyboard.press('F2');
     await page.waitForTimeout(1500);
     const box = await page.locator('#canvas').boundingBox();
+    // the page must lay out at the phone's width (viewport meta), or a phone
+    // renders the game at desktop width and several times the pixels
+    const lay = await page.evaluate(() => { const c = document.getElementById('canvas'); return { w: window.innerWidth, cw: c.width }; });
+    console.log(`layout ${lay.w} px wide, canvas ${lay.cw} px`);
+    if (lay.w > 500) fail(`the page lays out ${lay.w} px wide on a 390 px phone (missing viewport meta?)`);
+    if (lay.cw > lay.w * 2 + 2) fail(`the canvas is ${lay.cw} px for a ${lay.w} px wide page (more than 2x)`);
     const g0 = await page.evaluate(() => window.__canopy.game);
     const shot0 = await page.screenshot();
     if (shots) fs.writeFileSync(path.join(shots, 'smoke_bird.png'), shot0);

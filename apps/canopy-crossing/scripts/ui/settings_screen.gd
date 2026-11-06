@@ -74,7 +74,7 @@ func _quality() -> Control:
 	var group := ButtonGroup.new()
 	var hint := UI.label("", 20, UI.MUTED)
 	var names := {"auto": "Auto", "high": "High", "medium": "Medium", "low": "Low"}
-	var hints := {"auto": "Picks for your device (now: %s).", "high": "Sharpest: anti-aliasing, fur and feather detail, full-resolution 3D with shadows.",
+	var hints := {"auto": "Picks for your device (now: %s).", "high": "Sharpest: fur and feather detail, full-resolution anti-aliased 3D with shadows.",
 		"medium": "Outlines and shading, lighter 3D. Best for most phones.", "low": "Flat shapes for older phones and the longest battery life."}
 	var show := func(q: String):
 		hint.text = String(hints[q]) % Gfx.level().capitalize() if q == "auto" else String(hints[q])

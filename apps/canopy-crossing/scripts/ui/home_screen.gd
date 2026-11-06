@@ -13,7 +13,9 @@ func _ready() -> void:
 	var root := UI.vbox(16)
 	root.set_anchors_preset(Control.PRESET_FULL_RECT)
 	add_child(UI.margin(root, 28, int(UI.safe_top(self)) + 20, 28, 28))
-	root.get_parent().set_anchors_preset(Control.PRESET_FULL_RECT)
+	# after add_child: set offsets too, or the box keeps its minimum size and
+	# sits left of centre on tall phone screens
+	root.get_parent().set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	root.add_child(TopBar.make(self, false))
 	var title := UI.label("Canopy Crossing", 68, UI.ACCENT, true, HORIZONTAL_ALIGNMENT_CENTER)
 	title.add_theme_constant_override("outline_size", 14)

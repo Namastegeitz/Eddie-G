@@ -79,6 +79,7 @@ func _ready() -> void:
 	overlay = Control.new()
 	overlay.set_anchors_preset(Control.PRESET_FULL_RECT)
 	overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	overlay.z_index = 30
 	add_child(overlay)
 	Sfx.map_music(String(map.id))
 	Ads.in_run = true
@@ -167,6 +168,9 @@ func _build_hud() -> void:
 	hud = Control.new()
 	hud.set_anchors_preset(Control.PRESET_FULL_RECT)
 	hud.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	# above the world's own layers (canopy roof z 5, player z 6), so a canopy
+	# zone never covers the score, the eye button or the tutorial
+	hud.z_index = 20
 	add_child(hud)
 	var top := UI.safe_top(self) + 18.0
 	var bar := HBoxContainer.new()

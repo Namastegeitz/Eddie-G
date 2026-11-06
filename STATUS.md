@@ -75,13 +75,18 @@
   ~3 ms/frame of script in canopy zones); the first-person warm-up no longer waits on
   frame_post_draw (which never fires headless and left the 3D view up). Frame-cost check now
   takes the median of 5 alternating rounds.
+- Phones: the web page had no viewport meta, so mobile browsers laid it out 980 px wide and the
+  game rendered ~6x the pixels it needed (now 390 px layout, canvas 780 on a 2x phone; the
+  phone smoke test checks it). HUD and pause menu draw above the canopy roof (z 20/30). Home
+  screen fills tall screens (its box kept its minimum size, left of centre). The unsupported
+  2D MSAA setting is gone (GL Compatibility has none).
 - Feel: log carry during sideways hops, magnetic landing onto log ends (0.2 tile), vehicle hit
   edges 0.1 tile forgiving, Close call! +2 for movers brushing past, swipe threshold 36 px.
 - Art/audio: procedural chibi animals and hazards, per-region palettes and canopy framing, dot
   globe from Natural Earth, synthesised per-region music + ambience + 26 SFX (`tools/gen_audio.py`).
 - Ads: opt-in rewarded + between-run interstitial (mock; AdMob adapter scaffold). Analytics: events
   + onboarding funnel to `user://analytics.jsonl`, optional HTTP endpoint.
-- Tests: `tools/run_tests.sh` - compile check + first-person GL render check + 329-check phase audit (one section per phase's
+- Tests: `tools/run_tests.sh` - compile check + first-person GL render check + 330-check phase audit (one section per phase's
   checkpoint) in the project and an exported pack, all passing. A path-finding bot beats all 200
   levels (tools/level_sweep.tscn, ~2 min) and the first 50 Endless rows on every scene with the free Poison Dart Frog.
   Frame cost 0.9 ms (sim + view + draw recording) on the cloud CPU.

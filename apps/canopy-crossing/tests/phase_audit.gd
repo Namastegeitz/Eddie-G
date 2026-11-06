@@ -1185,6 +1185,7 @@ func _first_person() -> void:
 	for i in 4:
 		gs._update_views(1.0 / 60.0)
 	check("bird's-eye roof covers the canopy rows", gs.wv.roof != null and gs.world.lane(zone.x).covered)
+	check("the HUD and menus draw above the canopy roof", gs.hud.z_index > gs.wv.roof.z_index + 1 and gs.overlay.z_index > gs.hud.z_index)
 	check("tip and pulsing eye button near dense canopy", gs.canopy_tip.visible and gs.eye_btn.pulse)
 	var zone_scene := Scenery3D.scene_def(gs.map, gs.world.lane(zone.x).scene)
 	check("the tip names the scene ahead", String(zone_scene.get("name", "?")) in gs.canopy_tip.text, gs.canopy_tip.text)
