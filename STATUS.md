@@ -109,7 +109,7 @@
   globe from Natural Earth, synthesised per-region music + ambience + 26 SFX (`tools/gen_audio.py`).
 - Ads: opt-in rewarded + between-run interstitial (mock; AdMob adapter scaffold). Analytics: events
   + onboarding funnel to `user://analytics.jsonl`, optional HTTP endpoint.
-- Tests: `tools/run_tests.sh` - compile check + first-person GL render check + 343-check phase audit (one section per phase's
+- Tests: `tools/run_tests.sh` - compile check + first-person GL render check + 349-check phase audit (one section per phase's
   checkpoint) in the project and an exported pack, all passing. A path-finding bot beats all 200
   levels (tools/level_sweep.tscn, ~2 min) and the first 50 Endless rows on every scene with the free Poison Dart Frog.
   Frame cost 0.9 ms (sim + view + draw recording) on the cloud CPU.
