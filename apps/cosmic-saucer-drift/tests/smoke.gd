@@ -76,7 +76,13 @@ func _data() -> void:
 		check("track %s has 3 facts" % id, d.get("facts", []).size() == 3)
 		check("track %s system known" % id, Catalog.SYSTEMS.has(d.get("system", "")))
 		check("track %s theme known" % id, Themes.DATA.has(d.theme))
-	check("14 power-ups", Catalog.ITEMS.size() == 14)
+	check("20 power-ups", Catalog.ITEMS.size() == 20)
+	check("plasma walls and cloaks for the front, flares and chains for the back", Catalog.LINEUPS[0].odds.has("plasma") and Catalog.LINEUPS[0].odds.has("cloak") and Catalog.LINEUPS[4].odds.has("chain") and Catalog.LINEUPS[4].odds.has("flare") and not Catalog.LINEUPS[0].odds.has("flare"))
+	for lu in Catalog.LINEUPS:
+		var tot := 0
+		for k in lu.odds:
+			tot += int(lu.odds[k])
+		check("lineup odds add up to 100: " + str(lu.name), tot == 100)
 	for id in Catalog.ITEMS:
 		check("item sound exists " + id, ResourceLoader.exists("res://assets/audio/item_%s.wav" % id))
 	check("warp jump only from the midfield back", not Catalog.LINEUPS[0].odds.has("warp") and not Catalog.LINEUPS[1].odds.has("warp") and Catalog.LINEUPS[4].odds.has("warp"))
@@ -537,7 +543,7 @@ func _mouse_tests() -> void:
 	InputRouter._input(_motion(Vector2(44, 0)))
 	check("first motion wakes the stick", InputRouter.mouse_active and InputRouter.mouse_stick.x > 0.15 and InputRouter.mouse_stick.x < 0.25)
 	c = InputRouter.controls(0)
-	check("mouse steers right", c.steer > 0.15 and c.steer < 0.25)
+	check("mouse steers right (past the dead zone)", c.steer > 0.1 and c.steer < 0.25)
 	check("mouse cruise band = auto-drive", is_equal_approx(c.throttle, InputRouter.AUTO_CRUISE) and is_zero_approx(c.gas))
 	InputRouter._input(_motion(Vector2(0, -220)))
 	c = InputRouter.controls(0)
@@ -1146,6 +1152,7 @@ func _new_items_tests(race: Race) -> void:
 		f.t = 0.0
 	await get_tree().physics_frame
 	check("ice melts and frees its slots", race.items.ice.is_empty() and race.items._ice_free.size() == Items.MAX_ICE)
+	await _more_items_tests(race)
 	# Icons draw for every item.
 	var holder := Control.new()
 	get_tree().root.add_child(holder)
@@ -1155,7 +1162,112 @@ func _new_items_tests(race: Race) -> void:
 		ic.size = Vector2(64, 64)
 		holder.add_child(ic)
 	await get_tree().process_frame
-	check("every item has an icon", holder.get_child_count() == 14)
+	check("every item has an icon", holder.get_child_count() == 20)
 	holder.queue_free()
+	for r: Racer in rs:
+		_clear(r)
+
+
+## Solar Flare, Chain Lightning, Plasma Wall, Stasis Field, Phase Cloak, Repulsor.
+func _more_items_tests(race: Race) -> void:
+	var rs := race.racers
+	var a: Racer = rs[0]
+	var b: Racer = rs[1]
+	var c: Racer = rs[2]
+	for r: Racer in rs:
+		_clear(r)
+		r.flare_time = 0.0
+		r.cloak_time = 0.0
+		r.wobble_time = 0.0
+	for k in range(3, rs.size()):
+		_place_on_track(race, rs[k], 900.0 + k * 40.0, 0.0)
+	race.items.clear_effects()
+	check("tracks are built wider than defined", is_equal_approx(race.td.width, 16.0 * TrackData.WIDTH_SCALE))
+	# Solar Flare blinds the racer ahead, not the one behind.
+	_place_on_track(race, a, 100.0, 0.0)
+	_place_on_track(race, b, 130.0, 0.0)
+	_place_on_track(race, c, 80.0, 0.0)
+	a.item = "flare"
+	a.item_uses = 1
+	race.items.use_item(a)
+	check("flare blinds the racer ahead", b.flare_time > 0.0 and is_zero_approx(c.flare_time) and is_zero_approx(a.flare_time))
+	b.flare_time = 0.0
+	# Chain Lightning hops from the first target to the next within reach.
+	_place_on_track(race, a, 100.0, 0.0)
+	_place_on_track(race, b, 120.0, 0.0)
+	_place_on_track(race, c, 150.0, 3.0)
+	a.item = "chain"
+	a.item_uses = 1
+	race.items.use_item(a)
+	check("chain lightning hits two racers", b.spin_time > 0.0 and c.spin_time > 0.0)
+	check("chain bolts come from the pool", race.items.pooled("chain_bolt") <= 1)
+	for r: Racer in [b, c]:
+		r.spin_time = 0.0
+		r.invuln_time = 0.0
+	race.items.clear_effects()
+	# Plasma Wall stands behind its owner and bounces a racer back.
+	_place_on_track(race, a, 200.0, 0.0)
+	a.item = "plasma"
+	a.item_uses = 1
+	race.items.use_item(a)
+	check("plasma wall dropped behind", race.items.plasmas.size() == 1 and race.td.main.delta(float(race.items.plasmas[0].s), 200.0) > 2.0)
+	var pw: Dictionary = race.items.plasmas[0]
+	_place_on_track(race, a, 400.0, 0.0)
+	_place_on_track(race, b, float(pw.s) - 3.0, float(pw.lane))
+	b.velocity = b.heading * 30.0
+	b.wobble_time = 0.0
+	for f in 12:
+		await get_tree().physics_frame
+		if b.wobble_time > 0.0:
+			break
+	check("plasma wall bounces a racer", b.wobble_time > 0.0 and b.velocity.dot(race.td.main.tan[race.td.main.index_at(float(pw.s))]) < 5.0)
+	_place_on_track(race, c, float(pw.s) - 20.0, float(pw.lane))
+	c.item = "laser"
+	c.item_uses = 1
+	race.items.use_item(c)
+	check("laser clears a plasma wall", race.items.plasmas.is_empty())
+	race.items.clear_effects()
+	# Stasis Field slows racers in range only.
+	_place_on_track(race, a, 100.0, 0.0)
+	_place_on_track(race, b, 108.0, 0.0)
+	_place_on_track(race, c, 300.0, 0.0)
+	b.slow_time = 0.0
+	c.slow_time = 0.0
+	a.item = "stasis"
+	a.item_uses = 1
+	race.items.use_item(a)
+	# The dome grows in over a third of a second before it reaches 8 m out.
+	for f in 28:
+		await get_tree().physics_frame
+		_place_on_track(race, a, 100.0, 0.0)
+		_place_on_track(race, b, 108.0, 0.0)
+	check("stasis slows the racer in range", b.slow_time > 0.0 and is_zero_approx(c.slow_time) and is_zero_approx(a.slow_time))
+	race.items.clear_effects()
+	# Phase Cloak: can't be locked on, hit or bumped.
+	_place_on_track(race, a, 100.0, 0.0)
+	_place_on_track(race, b, 130.0, 0.0)
+	b.item = "cloak"
+	b.item_uses = 1
+	race.items.use_item(b)
+	check("cloak makes the racer untouchable", b.cloak_time > 0.0 and not b.can_be_hit() and b.phased())
+	a.item = "rocket"
+	a.item_uses = 1
+	race.items.use_item(a)
+	check("rockets can't lock on a cloaked racer", race.items.rockets.back().target == null)
+	check("laser passes through a cloaked racer", not b.hit(a, "laser") and b.spin_time <= 0.0)
+	b.cloak_time = 0.0
+	race.items.clear_effects()
+	# Repulsor Pulse shoves a neighbour away.
+	_place_on_track(race, a, 100.0, 0.0)
+	_place_on_track(race, b, 103.0, 2.0)
+	b.velocity = Vector3.ZERO
+	b.wobble_time = 0.0
+	a.item = "repulsor"
+	a.item_uses = 1
+	race.items.use_item(a)
+	check("repulsor shoves the neighbour", b.velocity.length() > 10.0 and b.wobble_time > 0.0)
+	check("repulsor pushes away from the owner", (b.global_position - a.global_position).normalized().dot(b.velocity.normalized()) > 0.5)
+	b.velocity = Vector3.ZERO
+	race.items.clear_effects()
 	for r: Racer in rs:
 		_clear(r)

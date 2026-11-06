@@ -16,6 +16,10 @@ uniform vec3 sun2_dir = vec3(0.0, 1.0, 0.0);
 uniform vec3 sun2_color : source_color = vec3(0.0);
 uniform float sun2_size = 0.0;
 uniform float detail = 1.0;
+// Aurora curtains near the horizon (strength 0 = none) and shooting stars.
+uniform vec3 aurora_color : source_color = vec3(0.3, 1.0, 0.6);
+uniform float aurora_strength = 0.0;
+uniform float shooting_stars = 1.0;
 
 float hash3(vec3 p) { return fract(sin(dot(p, vec3(127.1, 311.7, 74.7))) * 43758.5453); }
 float noise3(vec3 p) {
@@ -78,6 +82,31 @@ void sky() {
 	}
 	col += neb;
 	col += stars(d, 140.0, star_amount) * 1.2;
+	if (aurora_strength > 0.0 && detail > 0.25) {
+		// Slow curtains that ripple along the horizon and fade upward.
+		float h = d.y;
+		float band = smoothstep(0.0, 0.16, h) * (1.0 - smoothstep(0.26, 0.6, h));
+		float ang = atan(d.x, d.z);
+		float cur = noise3(vec3(ang * 2.6, h * 5.0 - TIME * 0.04, TIME * 0.025));
+		float fine = noise3(vec3(ang * 9.0 + 7.0, h * 16.0, TIME * 0.06));
+		float a = band * smoothstep(0.42, 0.78, cur) * (0.55 + 0.45 * fine) * aurora_strength;
+		vec3 ac = mix(aurora_color, aurora_color.gbr * 0.7 + vec3(0.1, 0.0, 0.2), fine * 0.6);
+		col += ac * a * 1.6;
+	}
+	if (shooting_stars > 0.5 && detail > 0.5) {
+		// One streak every few seconds at a new spot, moving along the sky.
+		float slot = floor(TIME / 4.5);
+		float ph = fract(TIME / 4.5);
+		vec3 sd = normalize(vec3(hash3(vec3(slot, 1.0, 2.0)) * 2.0 - 1.0, 0.15 + hash3(vec3(slot, 3.0, 4.0)) * 0.7, hash3(vec3(slot, 5.0, 6.0)) * 2.0 - 1.0));
+		vec3 sv = normalize(cross(sd, vec3(0.0, 1.0, 0.0)));
+		vec3 head = normalize(sd + sv * (ph * 0.9 - 0.15));
+		float along = dot(d - head, sv);
+		vec3 closest = normalize(head + sv * clamp(along, -0.1, 0.0));
+		float dist = acos(clamp(dot(d, closest), -1.0, 1.0));
+		float tail = clamp(1.0 + along / 0.1, 0.0, 1.0);
+		float streak = exp(-dist * 700.0) * tail * step(0.02, ph) * (1.0 - smoothstep(0.22, 0.3, ph));
+		col += vec3(1.0, 0.96, 0.85) * streak * 2.5;
+	}
 	col += sun(d, sun1_dir, sun1_color, sun1_size);
 	col += sun(d, sun2_dir, sun2_color, sun2_size);
 	COLOR = col;

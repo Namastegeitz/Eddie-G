@@ -92,7 +92,7 @@ func drive(r: Racer, dt: float) -> void:
 				var lt := _pickup_goal(r, s_here, lat_target)
 				_lane_cache = _avoid(r, s_here, lt, hw) - lat_target
 			lat_target += _lane_cache
-		lat_target = clampf(lat_target, -(hw - 2.2), hw - 2.2)
+		lat_target = clampf(lat_target, -(hw - 3.5), hw - 3.5)
 		target = path.pts[ahead_i] + path.rgt[ahead_i] * lat_target
 	# ------------------------------------------------ steering
 	var right := r.heading.cross(r.up).normalized()

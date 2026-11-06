@@ -173,10 +173,11 @@ you become first." Choices made:
 - **Race Credits** replace Stardust. Premium craft: earnable with credits now;
   a real-money store layer (Google Play Billing) is built in and switched
   off, like the ads layer.
-- **Power-ups (14):** Homing Rocket, Pulse Laser, Comet Strike, EMP
+- **Power-ups (20):** Homing Rocket, Pulse Laser, Comet Strike, EMP
   Shockwave, Nitro Rocket (1-3 uses), Ion Shield (also blocks one hit while
   held), Gravity Mine, Tractor Beam, Warp Jump, Decoy Drone, Energy Leech,
-  Gravity Well, Frost Trail, Overcharge. Arranged into **5 lineups by race
+  Gravity Well, Frost Trail, Overcharge, Solar Flare, Chain Lightning,
+  Plasma Wall, Stasis Field, Phase Cloak, Repulsor Pulse. Arranged into **5 lineups by race
   position** (Leader, Front pack, Midfield, Chasers, Last place): the
   further back you are, the stronger the comeback items; leaders get the
   traps and decoys.

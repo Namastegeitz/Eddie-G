@@ -243,6 +243,16 @@ func _on_event(kind: String, d: Dictionary) -> void:
 			toast("ICE! Sliding", UiKit.CYAN)
 		"overcharge":
 			toast("OVERCHARGE! %.1f s boost" % float(d.get("secs", 0.0)), Color(1.0, 0.65, 0.2))
+		"flared":
+			toast("SOLAR FLARE - BLINDED!", UiKit.GOLD)
+		"walled":
+			toast("PLASMA WALL!", UiKit.RED)
+		"stasis":
+			toast("STASIS FIELD - slowed", UiKit.CYAN)
+		"cloaked":
+			toast("PHASE CLOAK - untouchable for 5 s", Color(0.85, 0.75, 1.0))
+		"repulsed":
+			toast("KNOCKED BACK!", UiKit.RED)
 		"rocket_lock":
 			toast("ROCKET LOCKED ON YOU!" if racer.item != "shield" else "ROCKET LOCKED ON - shield ready", UiKit.RED)
 		"item_lost":
@@ -434,6 +444,14 @@ func _draw_overlay() -> void:
 		for i in 6:
 			var w := 18.0 * (i + 1)
 			_overlay.draw_rect(Rect2(0, 0, s.x, s.y), Color(1, 0.1, 0.05, a / 6.0), false, w)
+	# Solar Flare: a whiteout that clears over two seconds.
+	if racer.flare_time > 0.0:
+		var fl := pow(clampf(racer.flare_time / Items.FLARE_TIME, 0.0, 1.0), 1.4)
+		_overlay.draw_rect(Rect2(0, 0, s.x, s.y), Color(1.0, 0.97, 0.85, fl * 0.96))
+		var cx := s * 0.5
+		for j in 12:
+			var a := TAU * j / 12.0 + racer.flare_time * 0.6
+			_overlay.draw_line(cx, cx + Vector2(cos(a), sin(a)) * s.length(), Color(1.0, 0.9, 0.6, fl * 0.5), 14.0 * k)
 	# Nebula ink splats.
 	if racer.ink_time > 0.0:
 		var fade := clampf(racer.ink_time / 1.0, 0.0, 1.0)

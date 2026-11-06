@@ -135,16 +135,22 @@ const ITEMS := {
 	"well": {"name": "Gravity Well", "color": Color(0.5, 0.3, 0.9), "kind": "Trap", "text": "Drops a vortex behind you for 7 s that drags racers toward its centre and slows them."},
 	"frost": {"name": "Frost Trail", "color": Color(0.75, 0.95, 1.0), "kind": "Trap", "text": "Lays comet ice behind you for 4 s. Anyone who drives onto it slides."},
 	"overcharge": {"name": "Overcharge", "color": Color(1.0, 0.6, 0.15), "kind": "Speed", "text": "Burns 60% of your core for a boost: the fuller the core, the longer it lasts (up to 3 s)."},
+	"flare": {"name": "Solar Flare", "color": Color(1.0, 0.95, 0.6), "kind": "Attack", "text": "A blinding burst: every racer ahead of you within 70 m sees nothing but white for 2 s."},
+	"chain": {"name": "Chain Lightning", "color": Color(0.6, 0.9, 1.0), "kind": "Attack", "text": "A bolt leaps to the racer ahead, then jumps on to the next two within reach."},
+	"plasma": {"name": "Plasma Wall", "color": Color(1.0, 0.3, 0.75), "kind": "Trap", "text": "Raises a glowing wall across half the road behind you for 6 s. Racers bounce off it; it shatters after three hits or a laser."},
+	"stasis": {"name": "Stasis Field", "color": Color(0.3, 0.95, 0.85), "kind": "Attack", "text": "For 3 s every racer within 22 m of you is held at little more than half speed."},
+	"cloak": {"name": "Phase Cloak", "color": Color(0.8, 0.7, 1.0), "kind": "Defence", "text": "5 s out of phase: nothing can lock on, hit or slow you, and you pass through traps and other racers."},
+	"repulsor": {"name": "Repulsor Pulse", "color": Color(1.0, 0.45, 0.2), "kind": "Attack", "text": "Shoves every racer within 12 m away from you, hard. Great in a crowd or next to a wall."},
 }
 
 # Five power-up lineups by race position: what each place can roll from a
 # crate. The further back you are, the stronger the comeback items.
 const LINEUPS := [
-	{"name": "Leader", "places": "1st", "odds": {"shield": 20, "mine": 16, "decoy": 16, "frost": 16, "well": 12, "laser": 8, "overcharge": 8, "rocket": 4}, "nitro": 1},
-	{"name": "Front pack", "places": "2nd-3rd", "odds": {"rocket": 16, "laser": 12, "decoy": 12, "frost": 10, "well": 10, "shield": 10, "tractor": 10, "leech": 10, "overcharge": 6, "nitro": 4}, "nitro": 1},
-	{"name": "Midfield", "places": "4th-5th", "odds": {"rocket": 16, "leech": 14, "tractor": 12, "nitro": 12, "warp": 10, "laser": 10, "emp": 10, "well": 6, "overcharge": 6, "shield": 4}, "nitro": 2},
-	{"name": "Chasers", "places": "6th-7th", "odds": {"nitro": 18, "warp": 16, "rocket": 12, "emp": 12, "leech": 12, "tractor": 10, "comet": 8, "overcharge": 6, "laser": 6}, "nitro": 2},
-	{"name": "Last place", "places": "last", "odds": {"warp": 24, "nitro": 22, "comet": 18, "emp": 14, "leech": 10, "rocket": 6, "overcharge": 6}, "nitro": 3},
+	{"name": "Leader", "places": "1st", "odds": {"shield": 16, "decoy": 14, "frost": 12, "plasma": 12, "well": 10, "mine": 10, "cloak": 8, "laser": 6, "overcharge": 6, "stasis": 6}, "nitro": 1},
+	{"name": "Front pack", "places": "2nd-3rd", "odds": {"rocket": 12, "decoy": 10, "plasma": 10, "frost": 8, "well": 8, "shield": 8, "cloak": 8, "stasis": 8, "laser": 8, "tractor": 6, "leech": 6, "repulsor": 4, "overcharge": 4}, "nitro": 1},
+	{"name": "Midfield", "places": "4th-5th", "odds": {"rocket": 12, "leech": 10, "tractor": 10, "nitro": 10, "chain": 10, "flare": 8, "warp": 8, "laser": 6, "emp": 6, "stasis": 6, "repulsor": 6, "cloak": 4, "overcharge": 4}, "nitro": 2},
+	{"name": "Chasers", "places": "6th-7th", "odds": {"nitro": 14, "warp": 14, "chain": 12, "flare": 10, "rocket": 10, "emp": 10, "leech": 8, "tractor": 6, "comet": 6, "overcharge": 6, "repulsor": 4}, "nitro": 2},
+	{"name": "Last place", "places": "last", "odds": {"warp": 20, "nitro": 18, "comet": 14, "chain": 12, "flare": 10, "emp": 10, "leech": 6, "overcharge": 6, "rocket": 4}, "nitro": 3},
 ]
 
 ## Which lineup a place uses in a field of n racers.

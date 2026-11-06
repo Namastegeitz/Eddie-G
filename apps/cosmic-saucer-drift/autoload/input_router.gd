@@ -36,9 +36,32 @@ const MOUSE_RANGE := 220.0
 const MOUSE_IDLE := 0.12    # throttle lever band that means "cruise"
 var mouse_stick := Vector2.ZERO       # x steer, y thrust (-1 brake .. 1 full gas)
 var mouse_active := false             # a mouse has been moved during this race
+const MOUSE_STEER_DEAD := 0.07         # tiny stick offsets never steer
+const MOUSE_CENTRE_DELAY := 0.35       # seconds the mouse rests before the stick self-centres
+const MOUSE_CENTRE_RATE := 1.6         # how fast it straightens (stick units per second)
+var _mouse_rest := 0.0                 # seconds since the mouse last moved
 var mouse_capture_wanted := false     # set by the race while racing with mouse controls
 
 const DEAD := 0.15
+
+
+## A flight stick you let go of straightens itself: once the mouse has
+## rested for a moment the steering half of the stick eases back to centre,
+## so a nudge never turns into a lean (the throttle lever stays where it is).
+func _process(dt: float) -> void:
+	if not mouse_active:
+		return
+	_mouse_rest += dt
+	if _mouse_rest > MOUSE_CENTRE_DELAY and mouse_stick.x != 0.0:
+		mouse_stick.x = move_toward(mouse_stick.x, 0.0, MOUSE_CENTRE_RATE * dt)
+
+
+## Steering from the mouse stick with its dead zone taken out.
+func mouse_steer() -> float:
+	var x := mouse_stick.x
+	if absf(x) < MOUSE_STEER_DEAD:
+		return 0.0
+	return signf(x) * (absf(x) - MOUSE_STEER_DEAD) / (1.0 - MOUSE_STEER_DEAD)
 
 
 func _ready() -> void:
@@ -54,6 +77,7 @@ func _input(e: InputEvent) -> void:
 		var r: Vector2 = e.relative
 		if r.length_squared() > 0.0 and (mouse_active or r.length() < 60.0):
 			mouse_active = true
+			_mouse_rest = 0.0
 			mouse_stick.x = clampf(mouse_stick.x + r.x / MOUSE_RANGE, -1.0, 1.0)
 			mouse_stick.y = clampf(mouse_stick.y - r.y / MOUSE_RANGE, -1.0, 1.0)
 	elif e is InputEventMouseButton and e.pressed and e.button_index == MOUSE_BUTTON_LEFT and mouse_capture_wanted and mouse_on():
@@ -142,7 +166,7 @@ func controls(slot: int) -> Controls:
 		if Input.is_joy_button_pressed(d, JOY_BUTTON_Y): look = true
 	# Mouse flight stick (player one only).
 	if p1 and mouse_on() and mouse_active:
-		steer += mouse_stick.x
+		steer += mouse_steer()
 		if mouse_stick.y > MOUSE_IDLE:
 			thr = maxf(thr, (mouse_stick.y - MOUSE_IDLE) / (1.0 - MOUSE_IDLE))
 		elif mouse_stick.y < -MOUSE_IDLE:

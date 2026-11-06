@@ -485,11 +485,11 @@ func _bumps() -> void:
 	var n := racers.size()
 	for a in n:
 		var ra := racers[a]
-		if ra.is_ghost or ra.rescue_time > 0.0:
+		if ra.is_ghost or ra.rescue_time > 0.0 or ra.cloak_time > 0.0:
 			continue
 		for b in range(a + 1, n):
 			var rb := racers[b]
-			if rb.is_ghost or rb.rescue_time > 0.0:
+			if rb.is_ghost or rb.rescue_time > 0.0 or rb.cloak_time > 0.0:
 				continue
 			var d := rb.global_position - ra.global_position
 			var dist := d.length()
@@ -700,6 +700,12 @@ func _on_racer_event(kind: String, d: Dictionary, r: Racer) -> void:
 				cam.warp_cut()
 			if r.is_human:
 				InputRouter.rumble(r.slot, 0.5, 0.2)
+		"walled", "repulsed":
+			if cam:
+				cam.add_shake(0.5)
+			if r.is_human:
+				InputRouter.rumble(r.slot, 0.7, 0.25)
+			Audio.play_at("hit", r.global_position)
 		"wall":
 			if cam and d.impact > 10.0:
 				cam.add_shake(0.35)
@@ -822,6 +828,23 @@ func _fx_for(kind: String, d: Dictionary, r: Racer) -> void:
 			fx.shockwave(pos, r.up, Color(1.0, 0.6, 0.15), 9.0, 0.45)
 			fx.flash(pos + r.up * 0.6, Color(1.0, 0.75, 0.3), 5.0, 0.3)
 			r.model.react("overcharge")
+		"flared":
+			fx.flash(pos + r.up * 0.8, Color(1.0, 0.97, 0.8), 7.0, 0.4)
+		"chained":
+			fx.sparks(pos + r.up * 0.6, r.up, Color(0.6, 0.9, 1.0), 26, 10.0)
+		"walled":
+			fx.flash(pos + r.up * 0.6, Color(1.0, 0.3, 0.75), 5.0, 0.3)
+			fx.sparks(pos + r.up * 0.5, -r.heading + r.up, Color(1.0, 0.4, 0.8), 28, 12.0)
+			r.model.react("plasma")
+		"stasis":
+			fx.flash(pos + r.up * 0.6, Color(0.3, 0.95, 0.85), 3.5, 0.3)
+		"cloaked":
+			fx.flash(pos + r.up * 0.6, Color(0.8, 0.7, 1.0), 6.0, 0.35)
+			fx.shockwave(pos, r.up, Color(0.8, 0.7, 1.0), 7.0, 0.4)
+		"repulsed":
+			fx.sparks(pos + r.up * 0.5, r.up, Color(1.0, 0.45, 0.2), 22, 10.0)
+			fx.flash(pos + r.up * 0.6, Color(1.0, 0.5, 0.25), 4.0, 0.25)
+			r.model.react("repulsor")
 		"finish_fx":
 			for c: Color in [Color(1.0, 0.85, 0.2), Color(0.3, 0.9, 1.0), Color(1.0, 0.35, 0.8)]:
 				fx.sparks(pos + r.up * 1.5, r.up + r.heading * 0.3, c, 26, 14.0, 9.0)

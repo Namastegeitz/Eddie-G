@@ -366,6 +366,43 @@ static func portal() -> Node3D:
 	return root
 
 
+## Plasma Wall: a thin hex-shield slab (scale x = width, y = height).
+static func plasma_wall(c: Color) -> Node3D:
+	var root := Node3D.new()
+	var mi := MeshInstance3D.new()
+	var bm := BoxMesh.new()
+	bm.size = Vector3(1, 1, 1)
+	mi.mesh = bm
+	mi.material_override = Gfx.shield(c)
+	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	root.add_child(mi)
+	# Glowing posts at each end.
+	for sx: float in [-0.5, 0.5]:
+		var post := MeshInstance3D.new()
+		var cm := CylinderMesh.new()
+		cm.top_radius = 0.08
+		cm.bottom_radius = 0.12
+		cm.height = 1.1
+		cm.radial_segments = 8
+		post.mesh = cm
+		post.material_override = _glow(c, 2.4)
+		post.position = Vector3(sx, 0, 0)
+		post.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		root.add_child(post)
+	return root
+
+
+## Bright billboard orb (Solar Flare).
+static func orb(c: Color, size := 4.0) -> MeshInstance3D:
+	var mi := MeshInstance3D.new()
+	var qm := QuadMesh.new()
+	qm.size = Vector2(size, size)
+	mi.mesh = qm
+	mi.material_override = Gfx.additive(Color(c.r, c.g, c.b, 0.9), null, true)
+	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	return mi
+
+
 ## Strap-on nitro booster, nozzle facing back (+Z), with a flame.
 static func booster(c: Color) -> Node3D:
 	var root := Node3D.new()

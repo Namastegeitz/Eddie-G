@@ -3,7 +3,7 @@
 Arcade UFO kart racing across real planets and star systems. Android
 (Google Play first), plus Web, Windows, macOS and Linux from the same Godot
 4.7 project. Pick-up-and-play handling, drifts that charge a Plasma Boost,
-fourteen power-ups, alien spacecraft, and a Dark Matter core you have to keep
+twenty power-ups, alien spacecraft, and a Dark Matter core you have to keep
 charged.
 
 Built from [`prompts/claude/cosmic-saucer-drift.md`](../../prompts/claude/cosmic-saucer-drift.md)
@@ -137,7 +137,7 @@ the cockpit on and off on all 42 layouts and checks the camera every time.
 
 ## Power-ups and lineups
 
-Fourteen power-ups from glowing crates: **Homing Rocket**, **Pulse Laser**
+Twenty power-ups from glowing crates: **Homing Rocket**, **Pulse Laser**
 (instant beam that hits everything in a line and clears mines), **Comet
 Strike** (falls on the leader), **EMP Shockwave** (spins out everyone near you
 and knocks their items loose), **Nitro Rocket** (1-3 boosts), **Ion Shield**
@@ -149,7 +149,19 @@ chase instead), **Energy Leech** (5 s of draining Dark Matter from every
 racer near you into your core), **Gravity Well** (a vortex dropped behind
 you that drags racers in and slows them), **Frost Trail** (lays comet ice
 behind you; anyone on it slides) and **Overcharge** (burns 60% of your core
-for a boost that lasts longer the fuller the core: risk for reward).
+for a boost that lasts longer the fuller the core: risk for reward). The
+third batch: **Solar Flare** (whites out the screen of every racer ahead
+within 70 m for 2 s), **Chain Lightning** (hits the racer ahead and leaps on
+to the next two), **Plasma Wall** (a shield slab across half the road behind
+you that racers bounce off; three hits or a laser shatter it), **Stasis Field** (3 s dome
+that holds everyone inside it near half speed), **Phase Cloak** (5 s out of
+phase: nothing locks on, hits or slows you, and you pass through traps and
+other racers) and **Repulsor Pulse** (a hard shove on everyone within 12 m).
+
+Roads are a quarter wider than the v2 layouts, scraping a wall now costs
+only a few percent of your speed (a head-on hit still bites), gusts push a
+craft you can steer against, magnetic rails never fight the stick, and the
+mouse flight stick straightens itself when you let go of it.
 
 Each has its own detailed model and effects: the rocket (fins, flame, smoke
 trail) shows a red lock-on ring over its target and warns them; the laser

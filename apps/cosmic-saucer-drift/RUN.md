@@ -63,7 +63,7 @@ at 24, the Galactic Grand Prix at 36); Reverse and Mirror open when you win
 the Normal track; craft need stars + Race Credits (premium craft 12,000-22,000
 credits); boss pilots need stars, then a 1-on-1 win.
 
-Power-ups (14) depend on your place (five lineups: Leader, Front pack,
+Power-ups (20) depend on your place (five lineups: Leader, Front pack,
 Midfield, Chasers, Last place). Nitro Rocket comes with 1-3 uses; a held Ion
 Shield blocks one hit; the Pulse Laser fires straight ahead, so aim it (it
 also clears mines and gravity wells). Leaders get defensive tools (Decoy
@@ -80,7 +80,8 @@ runs: parse check of every script, the **smoke test** (`tests/smoke.tscn`:
 data integrity for all 42 track layouts, facts, lineups, craft and store
 products, the power-ups in a live race (laser, EMP, held shield, nitro uses,
 homing rocket, warp jump, decoy drone, energy leech, gravity well, frost
-trail, overcharge), premium perks, the store layer with the debug provider, the
+trail, overcharge, solar flare, chain lightning, plasma wall, stasis field,
+phase cloak, repulsor pulse), premium perks, the store layer with the debug provider, the
 Stardust-to-Race-Credits save migration, the v3 graphics (all four quality
 tiers, the mesh toolkit, all 14 craft built and animated at every tier, every
 pilot's eyes, lids, mouths and moods, pooled effects, per-race quality

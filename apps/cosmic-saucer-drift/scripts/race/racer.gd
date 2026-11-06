@@ -78,6 +78,8 @@ var tractor_time := 0.0
 var ink_time := 0.0
 var slow_time := 0.0
 var slick_time := 0.0          # on comet ice (Frost Trail): grip drops
+var flare_time := 0.0          # blinded by a Solar Flare (HUD whiteout, AI wobble)
+var cloak_time := 0.0          # Phase Cloak: untouchable, untargetable, passes through traps
 var stall_time := 0.0
 var wobble_time := 0.0
 var rescue_time := 0.0
@@ -243,6 +245,8 @@ func _timers(dt: float) -> void:
 	ink_time = maxf(0.0, ink_time - dt)
 	slow_time = maxf(0.0, slow_time - dt)
 	slick_time = maxf(0.0, slick_time - dt)
+	flare_time = maxf(0.0, flare_time - dt)
+	cloak_time = maxf(0.0, cloak_time - dt)
 	stall_time = maxf(0.0, stall_time - dt)
 	wobble_time = maxf(0.0, wobble_time - dt)
 	slip_cd = maxf(0.0, slip_cd - dt)
@@ -316,7 +320,7 @@ func _land() -> void:
 
 func _steer_and_drift(dt: float) -> void:
 	var steer := in_steer
-	if ink_time > 0.0 and not is_human:
+	if (ink_time > 0.0 or flare_time > 0.0) and not is_human:
 		steer += sin(Time.get_ticks_msec() * 0.006 + idx) * 0.35
 	var fwd := velocity.dot(heading)
 	fwd_speed = fwd
@@ -438,11 +442,14 @@ func _integrate(dt: float) -> void:
 			g_eff *= 0.35
 		lat *= exp(-g_eff * dt)
 		if surface == Catalog.S_RAIL and not on_shortcut and drift_dir == 0:
-			# Magnetic rails pull you onto the nearest of three lanes.
+			# Magnetic rails nudge you onto the nearest of three lanes, but
+			# any steering input overrides them (they used to fight small
+			# stick movements, which felt like the craft pulling sideways).
 			var lw: float = td.width / 3.0
 			var target_lat: float = clampf(roundf(lateral / lw), -1.0, 1.0) * lw
-			if absf(in_steer) < 0.3:
-				lat = lerpf(lat, (target_lat - lateral) * 2.5, 1.0 - exp(-6.0 * dt))
+			var hold := clampf(1.0 - absf(in_steer) / 0.2, 0.0, 1.0)
+			if hold > 0.0:
+				lat = lerpf(lat, (target_lat - lateral) * 1.4, (1.0 - exp(-4.0 * dt)) * hold)
 		# Small hops on bouncy moss.
 		if surface == Catalog.S_MOSS and fwd > 20.0:
 			_hop_cd -= dt
@@ -479,11 +486,13 @@ func _integrate(dt: float) -> void:
 		var n := c.get_normal()
 		var into := -before.dot(n)
 		if into > 6.0:
-			velocity *= 0.8
+			# A glancing scrape barely costs speed; only a head-on hit bites.
+			var keep := lerpf(0.97, 0.86, clampf((into - 6.0) / 30.0, 0.0, 1.0))
+			velocity *= keep
 			# Turn the nose along the wall so you don't grind to a stop.
 			var along := (heading - n * heading.dot(n)).normalized()
 			if along.length() > 0.1:
-				heading = heading.lerp(along, 0.5).normalized()
+				heading = heading.lerp(along, 0.6).normalized()
 			emit_signal("event", "wall", {"impact": into})
 	stats.dist += velocity.length() * dt
 	stats.top = maxf(stats.top, velocity.length())
@@ -715,7 +724,12 @@ func _items_input() -> void:
 
 
 func can_be_hit() -> bool:
-	return shield_time <= 0.0 and invuln_time <= 0.0 and spin_time <= 0.0 and rescue_time <= 0.0 and not finished
+	return shield_time <= 0.0 and invuln_time <= 0.0 and spin_time <= 0.0 and rescue_time <= 0.0 and cloak_time <= 0.0 and not finished
+
+
+## Out of phase: items and traps pass straight through.
+func phased() -> bool:
+	return cloak_time > 0.0
 
 
 ## Returns true when the hit landed.
@@ -808,6 +822,8 @@ func _visuals(dt: float) -> void:
 	pv.position.y = sin(t * 3.0 + float(idx)) * 0.07
 	model.shield.visible = shield_time > 0.0
 	model.visible = rescue_time <= 0.0 and not (invuln_time > 0.0 and spin_time <= 0.0 and int(t * 12.0) % 2 == 0 and invuln_time < 2.0)
+	if cloak_time > 0.0 and int(t * 40.0) % 2 == 0:
+		model.visible = false   # fast flicker reads as a half-there craft
 	model.steer = in_steer
 	model.grounded = grounded or air_time < 0.25
 	model.mood = _mood()

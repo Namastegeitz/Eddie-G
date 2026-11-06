@@ -10,6 +10,9 @@ var name := ""
 var theme := "asteroid"
 var laps := 3
 var width := 18.0
+## Every road is built this much wider than its definition says: more room
+## to race side by side and to dodge what the pack throws at you.
+const WIDTH_SCALE := 1.25
 var main: TrackPath
 var short: TrackPath = null
 var short_side := 1
@@ -52,7 +55,7 @@ func _build(track_id: String, var_id: int) -> void:
 	name = def.name
 	theme = def.theme
 	laps = def.get("laps", 3)
-	width = def.get("width", 18.0)
+	width = float(def.get("width", 18.0)) * WIDTH_SCALE
 	var src: Array = def.points
 	_m = src.size()
 	var ctrl: Array = []
@@ -219,8 +222,12 @@ func _build_shortcut(sc: Dictionary) -> void:
 	short_side = int(_lane(float(sc.get("side", 1))))
 	short_surface = sc.get("surface", Catalog.S_METAL)
 	short_tube = sc.get("tube", false)
-	var hw := width * 0.5
+	# Local road half-widths where the shortcut leaves and rejoins.
+	var hw := main.wid[main.index_at(short_a)] * 0.5
+	var hw_b := main.wid[main.index_at(short_b)] * 0.5
 	var sd := float(short_side)
+	var sw: float = float(sc.get("width", 10.0)) * WIDTH_SCALE
+	var shw_in := sw * 0.5
 	var c: Array = []
 	if short_lift_start:
 		# The bridge starts straight ahead of the geyser so launched saucers
@@ -231,15 +238,17 @@ func _build_shortcut(sc: Dictionary) -> void:
 		c.append(g0 + main.tan[ig] * 40.0 + Vector3.UP * (lift + 0.3))
 	else:
 		c.append(main.point_at(short_a - 14.0, sd * (hw - 5.0), -0.06))
-		c.append(main.point_at(short_a + 8.0, sd * (hw + 5.0), 0.0))
+		c.append(main.point_at(short_a + 8.0, sd * (hw + shw_in), 0.0))
 	c.append_array(via)
 	if short_lift_end:
-		c.append(main.point_at(short_b - 34.0, sd * (hw + 2.0), lift + 0.5))
-		c.append(main.point_at(short_b - 16.0, sd * (hw - 5.0), lift))
+		c.append(main.point_at(short_b - 34.0, sd * (hw_b + 2.0), lift + 0.5))
+		c.append(main.point_at(short_b - 16.0, sd * (hw_b - 5.0), lift))
 	else:
-		c.append(main.point_at(short_b - 8.0, sd * (hw + 5.0), 0.0))
-		c.append(main.point_at(short_b + 14.0, sd * (hw - 5.0), -0.06))
-	var sw: float = sc.get("width", 10.0)
+		# A long run-in beside the road so the ribbon never has to hook round
+		# a tight hairpin at the barrier (a wide ribbon folds on one).
+		c.append(main.point_at(short_b - 36.0, sd * (hw_b + shw_in + 4.0), 0.0))
+		c.append(main.point_at(short_b - 8.0, sd * (hw_b + shw_in), 0.0))
+		c.append(main.point_at(short_b + 14.0, sd * (hw_b - 5.0), -0.06))
 	var ws: Array = []
 	var bs: Array = []
 	for i in c.size():
@@ -266,16 +275,17 @@ func _build_shortcut(sc: Dictionary) -> void:
 		var i := main.nearest(p, 0, -1)
 		var lat := main.lateral(i, p)
 		var h := main.height(i, p)
-		if absf(h) > 3.0 or absf(lat) > hw + shw + 3.0:
+		var hwi := main.wid[i] * 0.5
+		if absf(h) > 3.0 or absf(lat) > hwi + shw + 3.0:
 			continue
-		if absf(lat) > hw - shw - 2.5 and absf(lat) < hw + shw - 1.0:
+		if absf(lat) > hwi - shw - 2.5 and absf(lat) < hwi + shw - 1.0:
 			var op := open_r if lat > 0.0 else open_l
 			for k in range(-2, 3):
 				op[main.wi(i + k)] = 1
 		# Side of the shortcut that faces the main road's centre line.
 		var toward := (main.pts[i] - p)
 		var facing_right := toward.dot(short.rgt[j]) > 0.0
-		if absf(lat) < hw + shw + 0.5:
+		if absf(lat) < hwi + shw + 0.5:
 			if facing_right:
 				short_skip_r[j] = 1
 			else:
@@ -302,7 +312,9 @@ func _racing_line() -> void:
 		for k in range(-4, 17):
 			acc += main.curv[main.wi(i + k)]
 		var k_avg := acc / 21.0
-		raw[i] = clampf(k_avg * 130.0, -1.0, 1.0) * (width * 0.5 - 3.0)
+		# Amplitude from the designed width: the extra road is racing room for
+		# players, not a reason for the AI to swing wider through corners.
+		raw[i] = clampf(k_avg * 130.0, -1.0, 1.0) * (width / WIDTH_SCALE * 0.5 - 3.0)
 	line.resize(n)
 	for i in n:
 		var acc := 0.0

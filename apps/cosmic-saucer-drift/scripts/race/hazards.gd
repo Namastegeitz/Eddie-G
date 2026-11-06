@@ -388,6 +388,8 @@ func _tick_wind(h: Dictionary, dt: float) -> void:
 	fx.direction = Vector3(side, 0, 0)
 	if st[0] != 2:
 		return
+	# Mostly a sideways force (grip and a little counter-steer beat it) with
+	# a small direct drift, so the gust is felt but never takes the wheel.
 	var push := float(h.get("strength", 10.0)) * 0.32
 	var span := path.delta(float(h.s), float(h.s1))
 	for r: Racer in race.racers:
@@ -397,8 +399,8 @@ func _tick_wind(h: Dictionary, dt: float) -> void:
 		if ds < 0.0 or ds > span:
 			continue
 		var rg := path.rgt[r.track_idx]
-		r.global_position += rg * side * push * dt
-		r.velocity += rg * side * push * 0.5 * dt
+		r.global_position += rg * side * push * 0.3 * dt
+		r.velocity += rg * side * push * 2.4 * dt
 
 
 ## AI helper: move a lane choice out of hazards between s0 and s1.

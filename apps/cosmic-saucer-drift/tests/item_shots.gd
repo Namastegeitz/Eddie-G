@@ -9,6 +9,8 @@ const PLAN := [
 	["shield", 8, false], ["mine", 30, true], ["tractor", 8, false], ["comet", 40, false],
 	["warp", 12, false], ["decoy", 8, true], ["leech", 8, false], ["well", 30, true],
 	["frost", 60, true], ["overcharge", 8, false],
+	["flare", 6, false], ["chain", 5, false], ["plasma", 30, true], ["stasis", 8, false],
+	["cloak", 8, false], ["repulsor", 6, false],
 ]
 
 
@@ -40,8 +42,8 @@ func _ready() -> void:
 			continue
 		# Make sure there's someone to hit just ahead for the aimed items.
 		var ahead: Racer = race.racers[1]
-		if it in ["rocket", "laser", "tractor", "emp", "leech"]:
-			ahead.global_position = me.global_position + me.heading * (14.0 if it not in ["emp", "leech"] else 7.0) + me.heading.cross(me.up).normalized() * 0.0
+		if it in ["rocket", "laser", "tractor", "emp", "leech", "chain", "flare", "stasis", "repulsor"]:
+			ahead.global_position = me.global_position + me.heading * (14.0 if it not in ["emp", "leech", "stasis", "repulsor"] else 7.0) + me.heading.cross(me.up).normalized() * 0.0
 			ahead.race_dist = me.race_dist + 14.0
 			ahead.reset_physics_interpolation()
 			ahead.invuln_time = 0.0

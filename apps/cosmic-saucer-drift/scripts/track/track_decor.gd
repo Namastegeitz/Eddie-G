@@ -1,7 +1,10 @@
 class_name TrackDecor
 extends RefCounted
-## Backdrop per theme: planets, asteroid fields, alien plants, ice crystals,
-## station structures, lava ground. All batched in MultiMeshes.
+## Backdrop per theme: planets with orbiting moons, asteroid fields and
+## belts, alien plants, ice crystals, station structures, lava ground, plus
+## the extras a world asks for: neon lamp posts and holo gates along the
+## road, floating billboards, satellites and a comet crossing the sky.
+## Scenery is batched in MultiMeshes; only moons and the comet move.
 
 static var _rock_mesh: ArrayMesh = null
 
@@ -28,6 +31,22 @@ static func build(td: TrackData, root: Node3D) -> void:
 	for p in theme.planets:
 		_planet(holder, p, theme)
 	var low := _lowest(td)
+	var hi_detail := int(Gfx.q().detail) > 0
+	for x in theme.get("extras", []):
+		match String(x):
+			"belt":
+				_belt(td, holder, rng, Color(0.4, 0.36, 0.38))
+			"satellites":
+				_satellites(td, holder, rng)
+			"gates":
+				_gates(td, holder, rng, theme.neon)
+			"lamps":
+				_lamps(td, holder, rng, theme.neon)
+			"signs":
+				_signs(td, holder, rng, theme.neon)
+			"comet":
+				if hi_detail:
+					_comet(td, holder, rng)
 	var gy := low - 50.0
 	var g: String = theme.get("ground", "")
 	if GROUNDS.has(g):
@@ -37,8 +56,12 @@ static func build(td: TrackData, root: Node3D) -> void:
 		"asteroids":
 			_rocks(td, holder, rng, 320, Color(0.34, 0.29, 0.30), Vector2(2.0, 16.0), Vector2(-90.0, 110.0), 260.0)
 			_rocks(td, holder, rng, 14, Color(0.28, 0.24, 0.26), Vector2(40.0, 90.0), Vector2(-250.0, 200.0), 700.0, 160.0)
+			if hi_detail:
+				_rocks(td, holder, rng, 260, Color(0.4, 0.34, 0.35), Vector2(0.6, 2.2), Vector2(-14.0, 18.0), 40.0)
 		"rings":
 			_rocks(td, holder, rng, 260, Color(0.75, 0.72, 0.68), Vector2(1.0, 6.0), Vector2(-60.0, 40.0), 320.0)
+			if hi_detail:
+				_rocks(td, holder, rng, 340, Color(0.85, 0.82, 0.78), Vector2(0.4, 1.6), Vector2(-10.0, 14.0), 50.0)
 			_buoys(td, holder, rng, theme.neon)
 		"canyon":
 			_spires(td, holder, rng, gy, Color(0.5, 0.24, 0.14), 160, Vector2(30.0, 95.0), Vector2(14.0, 34.0))
@@ -59,6 +82,8 @@ static func build(td: TrackData, root: Node3D) -> void:
 			_station(td, holder, rng)
 		"twinsuns":
 			_rocks(td, holder, rng, 240, Color(0.55, 0.45, 0.32), Vector2(2.0, 12.0), Vector2(-80.0, 80.0), 300.0)
+			if hi_detail:
+				_rocks(td, holder, rng, 200, Color(0.65, 0.55, 0.4), Vector2(0.5, 2.0), Vector2(-12.0, 16.0), 45.0)
 			_buoys(td, holder, rng, theme.neon)
 		"storm":
 			_clouds(td, holder, rng, Color(0.35, 0.55, 1.0, 0.35), 90)
@@ -119,6 +144,8 @@ static func _planet(parent: Node3D, p: Dictionary, theme: Dictionary) -> void:
 		atmo.position = p.pos
 		atmo.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		parent.add_child(atmo)
+	for mn in p.get("moons", []):
+		_moon(parent, p, mn, theme)
 	if p.get("ring", false):
 		var ring := MeshInstance3D.new()
 		var pm := PlaneMesh.new()
@@ -131,6 +158,207 @@ static func _planet(parent: Node3D, p: Dictionary, theme: Dictionary) -> void:
 		ring.rotation_degrees = Vector3(16, 0, -12)
 		ring.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		parent.add_child(ring)
+
+
+## A moon orbiting a backdrop planet: a pivot at the planet turns slowly,
+## the moon sits out along its x axis.
+static func _moon(parent: Node3D, p: Dictionary, mn: Dictionary, theme: Dictionary) -> void:
+	var pivot := Node3D.new()
+	pivot.position = p.pos
+	pivot.rotation = Vector3(float(mn.get("tilt", 0.2)), fmod(float(mn.get("r", 20.0)) * 0.37, TAU), 0.0)
+	pivot.set_script(preload("res://scripts/track/spinner.gd"))
+	pivot.set("speed", float(mn.get("speed", 0.05)))
+	parent.add_child(pivot)
+	var mi := MeshInstance3D.new()
+	var sm := SphereMesh.new()
+	var r := float(mn.get("r", 20.0))
+	sm.radius = r
+	sm.height = r * 2.0
+	sm.radial_segments = 28
+	sm.rings = 14
+	mi.mesh = sm
+	var mat := ShaderMaterial.new()
+	mat.shader = preload("res://shaders/planet.gdshader")
+	mat.set_shader_parameter("color_a", mn.get("a", Color(p.a).lightened(0.15)))
+	mat.set_shader_parameter("color_b", mn.get("b", Color(p.b).darkened(0.1)))
+	mat.set_shader_parameter("rim_color", p.rim)
+	mat.set_shader_parameter("sun_dir", -Themes.light_dir(theme))
+	mat.set_shader_parameter("bands", 7.0)
+	mat.set_shader_parameter("detail", 1.0 if int(Gfx.q().detail) > 0 else 0.0)
+	mi.material_override = mat
+	mi.position = Vector3(float(p.r) * float(mn.get("dist", 1.8)), 0.0, 0.0)
+	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	pivot.add_child(mi)
+
+
+## A wide band of small rocks far out around the course.
+static func _belt(td: TrackData, parent: Node3D, rng: RandomNumberGenerator, color: Color) -> void:
+	var center := Vector3.ZERO
+	for p in td.main.pts:
+		center += p
+	center /= float(td.main.n)
+	var tfs: Array[Transform3D] = []
+	var count := 520 if int(Gfx.q().detail) > 0 else 260
+	for k in count:
+		var a := rng.randf() * TAU
+		var rad := rng.randf_range(850.0, 1500.0)
+		var p := center + Vector3(cos(a) * rad, rng.randf_range(-260.0, 90.0) + sin(a * 3.0) * 60.0, sin(a) * rad)
+		var r := rng.randf_range(3.0, 14.0)
+		var b := Basis.from_euler(Vector3(rng.randf() * TAU, rng.randf() * TAU, rng.randf() * TAU)).scaled(Vector3(r, r * rng.randf_range(0.6, 1.0), r * rng.randf_range(0.7, 1.2)))
+		tfs.append(Transform3D(b, p))
+	_multimesh(parent, rock_mesh(), tfs, rock_mat(color, 0.3), "Belt")
+
+
+## Satellites drifting around the course: a body, two solar wings and a
+## blinking light (static, far enough out that they read as distant).
+static func _satellites(td: TrackData, parent: Node3D, rng: RandomNumberGenerator) -> void:
+	var bodies: Array[Transform3D] = []
+	var wings: Array[Transform3D] = []
+	var lights: Array[Transform3D] = []
+	var path := td.main
+	for k in 14:
+		var i := rng.randi_range(0, path.n - 1)
+		var side := -1.0 if rng.randf() < 0.5 else 1.0
+		var p := path.pts[i] + path.rgt[i] * side * (td.width * 0.5 + rng.randf_range(90.0, 320.0)) + Vector3.UP * rng.randf_range(20.0, 160.0)
+		if not _clear(td, p, td.width * 0.5 + 40.0):
+			continue
+		var b := Basis.from_euler(Vector3(rng.randf_range(-0.4, 0.4), rng.randf() * TAU, rng.randf_range(-0.3, 0.3)))
+		var sz := rng.randf_range(3.0, 6.0)
+		bodies.append(Transform3D(TrackBuilder.sb(b, Vector3(sz, sz * 0.8, sz * 1.6)), p))
+		for sx: float in [-1.0, 1.0]:
+			wings.append(Transform3D(TrackBuilder.sb(b, Vector3(sz * 3.2, 0.25, sz * 1.1)), p + b.x * sx * sz * 2.4))
+		lights.append(Transform3D(Basis.IDENTITY.scaled(Vector3.ONE * 0.9), p + b.y * sz * 0.6))
+	var bm := BoxMesh.new()
+	_multimesh(parent, bm, bodies, TrackBuilder.flat(Color(0.7, 0.7, 0.75), 0.0, 0.8, 0.35), "SatBodies")
+	_multimesh(parent, bm, wings, TrackBuilder.flat(Color(0.12, 0.2, 0.6), 0.5, 0.9, 0.2), "SatWings")
+	var sph := SphereMesh.new()
+	sph.radial_segments = 8
+	sph.rings = 4
+	_multimesh(parent, sph, lights, TrackBuilder.glow(Color(1.0, 0.3, 0.2), 2.5), "SatLights")
+
+
+## Holographic gates arching over the road every so often.
+static func _gates(td: TrackData, parent: Node3D, rng: RandomNumberGenerator, neon: Color) -> void:
+	var tfs: Array[Transform3D] = []
+	var path := td.main
+	var step := int(170.0 / path.step)
+	var i := rng.randi_range(10, step)
+	while i < path.n - 10:
+		if td.gap[i] == 0 and absf(path.curv[i]) < 0.02:
+			var p := path.pts[i] + path.upv[i] * (td.width * 0.42)
+			var b := Basis(path.rgt[i], path.tan[i], path.upv[i])
+			tfs.append(Transform3D(TrackBuilder.sb(b, Vector3(td.width * 0.62, 1.0, td.width * 0.62)), p))
+		i += step
+	var tm := TorusMesh.new()
+	tm.inner_radius = 0.9
+	tm.outer_radius = 1.0
+	tm.rings = 48
+	tm.ring_segments = 8
+	var mat := TrackBuilder.ghost(neon.lerp(Color.WHITE, 0.3), 0.55)
+	_multimesh(parent, tm, tfs, mat, "Gates")
+
+
+## Neon lamp posts along both barriers.
+static func _lamps(td: TrackData, parent: Node3D, rng: RandomNumberGenerator, neon: Color) -> void:
+	var poles: Array[Transform3D] = []
+	var heads: Array[Transform3D] = []
+	var path := td.main
+	var step := int(26.0 / path.step)
+	var hi := int(Gfx.q().detail) > 0
+	for i in range(0, path.n, step):
+		if td.gap[i] == 1:
+			continue
+		var side := 1.0 if (i / step) % 2 == 0 else -1.0
+		if (side > 0.0 and td.open_r[i] == 1) or (side < 0.0 and td.open_l[i] == 1):
+			continue
+		var base := path.pts[i] + path.rgt[i] * side * (td.width * 0.5 + 1.6)
+		var b := Basis(path.rgt[i], path.upv[i], -path.tan[i])
+		var h := 7.0
+		poles.append(Transform3D(TrackBuilder.sb(b, Vector3(0.35, h, 0.35)), base + path.upv[i] * h * 0.5))
+		heads.append(Transform3D(TrackBuilder.sb(b, Vector3(2.4, 0.5, 0.9)), base + path.upv[i] * h - path.rgt[i] * side * 0.9))
+		if not hi and poles.size() > 60:
+			break
+	var cyl := CylinderMesh.new()
+	cyl.top_radius = 0.4
+	cyl.bottom_radius = 0.5
+	cyl.height = 1.0
+	cyl.radial_segments = 6
+	cyl.rings = 1
+	_multimesh(parent, cyl, poles, TrackBuilder.flat(Color(0.3, 0.32, 0.4), 0.0, 0.7, 0.5), "LampPoles")
+	var bm := BoxMesh.new()
+	_multimesh(parent, bm, heads, TrackBuilder.glow(neon, 2.6), "LampHeads")
+
+
+## Floating billboards beside the road: a glowing frame around a dim panel
+## with a bright stripe, facing the road.
+static func _signs(td: TrackData, parent: Node3D, rng: RandomNumberGenerator, neon: Color) -> void:
+	var panels: Array[Transform3D] = []
+	var frames: Array[Transform3D] = []
+	var path := td.main
+	var step := int(230.0 / path.step)
+	var i := rng.randi_range(5, step)
+	var palette := [neon, Color(0.4, 0.9, 1.0), Color(1.0, 0.5, 0.9), Color(1.0, 0.85, 0.3)]
+	var cols: Array[Color] = []
+	while i < path.n - 5:
+		var side := -1.0 if rng.randf() < 0.5 else 1.0
+		var p := path.pts[i] + path.rgt[i] * side * (td.width * 0.5 + rng.randf_range(14.0, 26.0)) + path.upv[i] * rng.randf_range(9.0, 16.0)
+		var b := Basis(path.tan[i] * -side, path.upv[i], path.rgt[i] * side)
+		b = b.rotated(path.upv[i], rng.randf_range(-0.3, 0.3))
+		var w := rng.randf_range(14.0, 22.0)
+		panels.append(Transform3D(TrackBuilder.sb(b, Vector3(w, w * 0.45, 0.3)), p))
+		frames.append(Transform3D(TrackBuilder.sb(b, Vector3(w * 1.06, w * 0.45 * 1.12, 0.2)), p - b.z * 0.2))
+		cols.append(palette[cols.size() % palette.size()])
+		i += step
+	var bm := BoxMesh.new()
+	var pm := StandardMaterial3D.new()
+	pm.vertex_color_use_as_albedo = true
+	pm.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	pm.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	pm.albedo_color = Color(1, 1, 1, 0.45)
+	_multimesh(parent, bm, panels, pm, "SignPanels", cols)
+	_multimesh(parent, bm, frames, TrackBuilder.glow(neon, 1.8), "SignFrames")
+
+
+## A comet crossing the far sky with a long glowing tail (animated).
+static func _comet(td: TrackData, parent: Node3D, rng: RandomNumberGenerator) -> void:
+	var center := Vector3.ZERO
+	for p in td.main.pts:
+		center += p
+	center /= float(td.main.n)
+	var root := Node3D.new()
+	root.name = "Comet"
+	root.position = center + Vector3(1600.0, 700.0 + rng.randf_range(-100.0, 200.0), -900.0)
+	root.set_script(preload("res://scripts/track/drifter.gd"))
+	root.set("velocity", Vector3(-22.0, -3.0, 9.0))
+	root.set("span", 3200.0)
+	parent.add_child(root)
+	var head := MeshInstance3D.new()
+	var sm := SphereMesh.new()
+	sm.radius = 9.0
+	sm.height = 18.0
+	sm.radial_segments = 16
+	sm.rings = 8
+	head.mesh = sm
+	head.material_override = TrackBuilder.glow(Color(0.85, 0.95, 1.0), 2.6)
+	head.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	root.add_child(head)
+	for k in 3:
+		var tail := MeshInstance3D.new()
+		var cm := CylinderMesh.new()
+		cm.top_radius = 9.0 - 2.0 * k
+		cm.bottom_radius = 0.0
+		cm.height = 420.0 - 90.0 * k
+		cm.radial_segments = 10
+		cm.rings = 1
+		tail.mesh = cm
+		var dir := Vector3(22.0, 3.0, -9.0).normalized()
+		var side := Vector3.UP.cross(dir).normalized()
+		tail.basis = Basis(side, dir, side.cross(dir))
+		tail.position = dir * (cm.height * 0.5) + side * (float(k) - 1.0) * 6.0
+		var tc: Color = [Color(0.5, 0.8, 1.0, 0.22), Color(0.9, 0.95, 1.0, 0.16), Color(0.3, 0.6, 1.0, 0.14)][k]
+		tail.material_override = Gfx.additive(tc)
+		tail.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		root.add_child(tail)
 
 
 ## Strata/dust rock material for spires, boulders and asteroids.

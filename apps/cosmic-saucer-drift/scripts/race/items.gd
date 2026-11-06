@@ -17,6 +17,12 @@ extends Node3D
 ##   well       Gravity Well  - vortex dropped behind: drags racers in, slows them
 ##   frost      Frost Trail   - 4 s of comet ice behind you; anyone on it slides
 ##   overcharge Overcharge    - burns 60% of your core for up to 3 s of boost
+##   flare      Solar Flare   - blinds every racer ahead within 70 m for 2 s
+##   chain      Chain Lightning - bolt hops racer to racer, up to three hits
+##   plasma     Plasma Wall   - wall across half the road behind you for 6 s
+##   stasis     Stasis Field  - 3 s: everyone within 22 m held near half speed
+##   cloak      Phase Cloak   - 5 s untouchable, untargetable, through traps
+##   repulsor   Repulsor Pulse - shoves everyone within 12 m away, hard
 
 const ROCKET_SPEED := 80.0
 const ROCKET_LIFE := 4.5
@@ -43,6 +49,18 @@ const ICE_LIFE := 9.0
 const ICE_RADIUS := 2.3
 const MAX_ICE := 64
 const OVERCHARGE_MAX := 3.0
+const FLARE_RANGE := 70.0
+const FLARE_TIME := 2.4
+const CHAIN_RANGE := 60.0
+const CHAIN_HOP := 40.0
+const CHAIN_MAX := 3
+const PLASMA_TIME := 6.0
+const PLASMA_HITS := 3         # bounces a wall takes before it shatters
+const STASIS_TIME := 3.0
+const STASIS_RADIUS := 22.0
+const CLOAK_TIME := 5.0
+const REPULSOR_RADIUS := 12.0
+const REPULSOR_KICK := 26.0
 
 var race: Node
 var td: TrackData
@@ -60,6 +78,9 @@ var ice: Array[Dictionary] = []      # ice patches on the road
 var _ice_mm: MultiMeshInstance3D = null
 var _ice_free: Array[int] = []
 var _frost_cd := {}            # racer idx -> seconds until the next ICE toast
+var plasmas: Array[Dictionary] = []
+var stases: Array[Dictionary] = []
+var _wall_cd := {}             # racer idx -> seconds before a plasma wall can bounce them again
 var only_item := ""            # daily-challenge modifier: crates give only this
 var _rng := RandomNumberGenerator.new()
 var _hold := {}                # racer idx -> seconds holding the item
@@ -70,7 +91,8 @@ var _badges := {}              # racer idx -> held-shield badge node
 var _pool := {}                # kind -> Array[Node3D]
 const POOL_SIZES := {"rocket": 3, "reticle_air": 3, "reticle_ground": 2, "comet": 2, "laser": 3, "tractor": 2,
 	"dome": 2, "bolt": 8, "boosters": 2, "mine": MAX_MINES,
-	"portal": 2, "decoy": 2, "leech_aura": 2, "leech_beam": 3, "well": 2, "charge_dome": 2}
+	"portal": 2, "decoy": 2, "leech_aura": 2, "leech_beam": 3, "well": 2, "charge_dome": 2,
+	"flare_orb": 2, "chain_bolt": 3, "plasma_wall": 2, "stasis_dome": 2, "repulsor_dome": 2}
 
 const ROCKET_C := Color(1.0, 0.5, 0.2)
 const LASER_C := Color(0.3, 1.0, 0.95)
@@ -86,6 +108,12 @@ const LEECH_C := Color(0.72, 0.3, 1.0)
 const WELL_C := Color(0.55, 0.3, 1.0)
 const FROST_C := Color(0.75, 0.95, 1.0)
 const OVERCHARGE_C := Color(1.0, 0.6, 0.15)
+const FLARE_C := Color(1.0, 0.95, 0.6)
+const CHAIN_C := Color(0.6, 0.9, 1.0)
+const PLASMA_C := Color(1.0, 0.3, 0.75)
+const STASIS_C := Color(0.3, 0.95, 0.85)
+const CLOAK_C := Color(0.8, 0.7, 1.0)
+const REPULSOR_C := Color(1.0, 0.45, 0.2)
 
 
 func setup(p_race: Node) -> void:
@@ -166,6 +194,16 @@ func _build(kind: String) -> Node3D:
 			return ItemModels.well()
 		"charge_dome":
 			return ItemModels.dome(OVERCHARGE_C)
+		"flare_orb":
+			return ItemModels.orb(FLARE_C, 4.0)
+		"chain_bolt":
+			return ItemModels.bolt(CHAIN_C, 8)
+		"plasma_wall":
+			return ItemModels.plasma_wall(PLASMA_C)
+		"stasis_dome":
+			return ItemModels.dome(STASIS_C)
+		"repulsor_dome":
+			return ItemModels.dome(REPULSOR_C)
 	return Node3D.new()
 
 
@@ -239,6 +277,13 @@ func clear_effects() -> void:
 	for w in wells:
 		_give("well", w.node)
 	wells.clear()
+	for pw in plasmas:
+		_give("plasma_wall", pw.node)
+	plasmas.clear()
+	for st in stases:
+		_give("stasis_dome", st.node)
+	stases.clear()
+	_wall_cd.clear()
 	frosts.clear()
 	for p in ice:
 		_ice_mm.multimesh.set_instance_transform(int(p.slot), _ice_hidden())
@@ -316,6 +361,8 @@ func lineup_of(r: Racer) -> int:
 func roll(r: Racer) -> String:
 	var lu := lineup_of(r)
 	var it := only_item
+	if OS.get_environment("CSD_ONLY") != "":
+		it = OS.get_environment("CSD_ONLY")   # test hook: every crate gives this item
 	if it == "":
 		var odds: Dictionary = Catalog.LINEUPS[lu].odds
 		var total := 0
@@ -374,6 +421,18 @@ func use_item(r: Racer) -> void:
 			_frost(r)
 		"overcharge":
 			_overcharge(r)
+		"flare":
+			_flare(r)
+		"chain":
+			_chain(r)
+		"plasma":
+			_plasma(r)
+		"stasis":
+			_stasis(r)
+		"cloak":
+			_cloak(r)
+		"repulsor":
+			_repulsor(r)
 	r.emit_signal("event", "item_used", {"item": it})
 
 
@@ -381,7 +440,7 @@ func _ahead_of(r: Racer, max_dist: float) -> Racer:
 	var best: Racer = null
 	var best_d := INF
 	for o: Racer in race.racers:
-		if o == r or o.finished or o.is_ghost:
+		if o == r or o.finished or o.is_ghost or o.cloak_time > 0.0:
 			continue
 		var d: float = o.race_dist - r.race_dist
 		if d > 1.0 and d < max_dist and d < best_d:
@@ -448,6 +507,14 @@ func _laser(r: Racer) -> void:
 			_boom(w.pos, WELL_C, 1.0)
 			_give("well", w.node)
 			wells.remove_at(k)
+	for k in range(plasmas.size() - 1, -1, -1):
+		var pw: Dictionary = plasmas[k]
+		var d: Vector3 = pw.pos - origin
+		var along := d.dot(dir)
+		if along > 0.0 and along < LASER_RANGE and (d - dir * along).length() < float(pw.half) + 1.0:
+			_boom(pw.pos, PLASMA_C, 1.0, pw.up)
+			_give("plasma_wall", pw.node)
+			plasmas.remove_at(k)
 	var node := _take("laser")
 	_place(node, Transform3D(Basis.IDENTITY, origin))
 	var b := _basis_y(dir)
@@ -712,6 +779,143 @@ func _overcharge(r: Racer) -> void:
 	r.emit_signal("event", "overcharge", {"secs": secs})
 
 
+## Solar Flare: blinds everyone ahead of you (in front, within range).
+func _flare(r: Racer) -> void:
+	var fx := _fx()
+	var origin := r.global_position + r.up * 1.8 + r.heading * 2.0
+	if fx:
+		fx.flash(origin, FLARE_C.lerp(Color.WHITE, 0.5), 16.0, 0.5)
+		fx.shockwave(r.global_position, r.up, FLARE_C, 14.0, 0.5)
+	var orb := _place(_take("flare_orb"), Transform3D(Basis.IDENTITY, origin))
+	beams.append({"node": orb, "kind": "flare_orb", "t": 0.7, "life": 0.7})
+	for o: Racer in race.racers:
+		if o == r or o.is_ghost or o.finished:
+			continue
+		var d := o.global_position - r.global_position
+		if d.dot(r.heading) < 0.0 or d.length() > FLARE_RANGE:
+			continue
+		if not o.can_be_hit():
+			if o.shield_time > 0.0:
+				o.emit_signal("event", "blocked", {"kind": "flare"})
+			continue
+		o.flare_time = FLARE_TIME
+		o.emit_signal("event", "flared", {"by": r})
+		r.stats.hits += 1
+		r.emit_signal("event", "hit_landed", {"target": o, "kind": "flare"})
+	race.shake_near(r.global_position, 0.2)
+
+
+## Chain Lightning: hits the racer ahead, then leaps on to whoever is
+## nearest them, up to three hits.
+func _chain(r: Racer) -> void:
+	var fx := _fx()
+	var cur: Racer = r
+	var t := _ahead_of(r, CHAIN_RANGE)
+	var struck: Array[Racer] = []
+	var hops := 0
+	while t != null and hops < CHAIN_MAX:
+		var bolt := _take("chain_bolt")
+		ItemModels.set_bolt(bolt, cur.global_position + cur.up * 0.8, t.global_position + t.up * 0.8, _rng, 1.3)
+		bolt.reset_physics_interpolation()
+		beams.append({"node": bolt, "t": 0.45, "life": 0.45, "kind": "chain_bolt", "from": cur, "to": t, "jit": 0.0, "fresh": false})
+		if t.hit(r, "chain") and fx:
+			fx.sparks(t.global_position + t.up * 0.6, t.up, CHAIN_C, 24, 10.0)
+		t.emit_signal("event", "chained", {"by": r})
+		struck.append(t)
+		cur = t
+		hops += 1
+		# Next hop: the nearest racer to the last one struck, not yet hit.
+		t = null
+		var best := CHAIN_HOP
+		for o: Racer in race.racers:
+			if o == r or o.is_ghost or o.finished or o.cloak_time > 0.0 or o in struck:
+				continue
+			var d := o.global_position.distance_to(cur.global_position)
+			if d < best:
+				best = d
+				t = o
+	if hops == 0 and fx:
+		# Nothing in reach: the bolt crackles off the nose.
+		var bolt := _take("chain_bolt")
+		var tip := r.global_position + r.heading * 14.0 + r.up * 0.8
+		ItemModels.set_bolt(bolt, r.global_position + r.up * 0.8, tip, _rng, 1.3)
+		bolt.reset_physics_interpolation()
+		beams.append({"node": bolt, "t": 0.3, "life": 0.3, "kind": "chain_bolt", "from": r, "to_pos": tip, "jit": 0.0, "fresh": false})
+		fx.flash(r.global_position + r.heading * 3.0 + r.up * 0.8, CHAIN_C, 3.0, 0.2)
+
+
+## Plasma Wall: a shield slab across your half of the road, behind you.
+func _plasma(r: Racer) -> void:
+	var path := td.main
+	var pos := r.global_position - r.heading * 7.0
+	var i := path.nearest(pos, r.track_idx, 8)
+	var half := td.width * 0.27
+	var lane := clampf(path.lateral(i, pos), -td.width * 0.5 + half, td.width * 0.5 - half)
+	pos = path.pts[i] + path.rgt[i] * lane + path.upv[i] * 1.6
+	var node := _take("plasma_wall")
+	var frame := Basis(path.rgt[i], path.upv[i], -path.tan[i])
+	_place(node, Transform3D(TrackBuilder.sb(frame, Vector3(half * 2.0, 3.4 * 0.05, 0.5)), pos))
+	plasmas.append({"pos": pos, "s": float(i) * path.step, "lane": lane, "half": half, "fwd": path.tan[i], "rgt": path.rgt[i], "up": path.upv[i], "frame": frame, "owner": r, "t": PLASMA_TIME, "age": 0.0, "node": node, "hp": PLASMA_HITS})
+	var fx := _fx()
+	if fx:
+		fx.flash(pos, PLASMA_C, 6.0, 0.3)
+		fx.sparks(pos, path.upv[i], PLASMA_C, 20, 8.0, 4.0)
+	while plasmas.size() > 4:
+		var old: Dictionary = plasmas.pop_front()
+		_give("plasma_wall", old.node)
+
+
+## Stasis Field: a dome around you that holds everyone inside it slow.
+func _stasis(r: Racer) -> void:
+	var dome := _place(_take("stasis_dome"), Transform3D(Basis.IDENTITY.scaled(Vector3.ONE * 0.5), r.global_position + r.up * 0.5))
+	stases.append({"r": r, "t": STASIS_TIME, "node": dome, "near": {}})
+	var fx := _fx()
+	if fx:
+		fx.shockwave(r.global_position, r.up, STASIS_C, STASIS_RADIUS * 2.0, 0.6)
+		fx.flash(r.global_position + r.up * 0.8, STASIS_C, 6.0, 0.3)
+
+
+## Phase Cloak: out of phase for five seconds; locked rockets lose you.
+func _cloak(r: Racer) -> void:
+	r.cloak_time = CLOAK_TIME
+	for b in rockets:
+		if b.target == r:
+			b.target = null
+			if b.reticle:
+				_give("reticle_air", b.reticle)
+				b.reticle = null
+	r.emit_signal("event", "cloaked", {})
+
+
+## Repulsor Pulse: a hard shove on everyone close by.
+func _repulsor(r: Racer) -> void:
+	var fx := _fx()
+	for o: Racer in race.racers:
+		if o == r or o.is_ghost or o.finished or o.cloak_time > 0.0 or o.rescue_time > 0.0:
+			continue
+		var dv := o.global_position - r.global_position
+		var d := dv.length()
+		if d >= REPULSOR_RADIUS:
+			continue
+		dv -= o.up * dv.dot(o.up)
+		if dv.length() < 0.2:
+			dv = o.up.cross(r.heading)
+		var away := dv.normalized()
+		var kick := REPULSOR_KICK * (1.0 - 0.5 * d / REPULSOR_RADIUS) * (0.5 if o.shield_time > 0.0 else 1.0)
+		o.velocity += away * kick
+		o.wobble_time = maxf(o.wobble_time, 0.6)
+		o.emit_signal("event", "repulsed", {"by": r})
+		r.stats.hits += 1
+		r.emit_signal("event", "hit_landed", {"target": o, "kind": "repulsor"})
+	var dome := _take("repulsor_dome")
+	_place(dome, Transform3D(Basis.IDENTITY.scaled(Vector3.ONE * 0.5), r.global_position))
+	beams.append({"node": dome, "t": 0.4, "life": 0.4, "kind": "repulsor_dome", "at": r.global_position})
+	if fx:
+		fx.shockwave(r.global_position, r.up, REPULSOR_C, REPULSOR_RADIUS * 2.2, 0.4)
+		fx.flash(r.global_position + r.up * 0.8, REPULSOR_C, 6.0, 0.25)
+	race.shake_near(r.global_position, 0.3)
+
+
 func _flash(pos: Vector3, c: Color, secs := 0.35) -> void:
 	var fx := _fx()
 	if fx:
@@ -729,6 +933,8 @@ func tick(dt: float) -> void:
 	_tick_leeches(dt)
 	_tick_wells(dt)
 	_tick_frost(dt)
+	_tick_plasma(dt)
+	_tick_stasis(dt)
 	for r: Racer in race.racers:
 		if r.item != "" and r.item_roll <= 0.0:
 			_hold[r.idx] = _hold.get(r.idx, 0.0) + dt
@@ -791,7 +997,7 @@ func _tick_rockets(dt: float) -> void:
 				break
 			if r == b.owner and b.life > ROCKET_LIFE - 0.5:
 				continue
-			if r.is_ghost:
+			if r.is_ghost or r.cloak_time > 0.0:
 				continue
 			var d := r.global_position.distance_to(b.pos)
 			if d < 2.4:
@@ -830,7 +1036,7 @@ func _tick_mines(dt: float) -> void:
 		var gone: bool = m.life <= 0.0
 		if armed:
 			for r: Racer in race.racers:
-				if r.is_ghost or (r == m.owner and m.arm > -0.8):
+				if r.is_ghost or r.cloak_time > 0.0 or (r == m.owner and m.arm > -0.8):
 					continue
 				var d := r.global_position.distance_to(m.pos)
 				if d < 2.5:
@@ -911,6 +1117,13 @@ func _tick_beams(dt: float) -> void:
 			"portal":
 				var s := maxf(0.05, sin((1.0 - f) * PI))
 				node.scale = Vector3.ONE * s
+			"flare_orb":
+				node.scale = Vector3.ONE * lerpf(1.0, 7.0, 1.0 - f)
+				((node as MeshInstance3D).material_override as StandardMaterial3D).albedo_color.a = f
+			"repulsor_dome":
+				var rs := lerpf(REPULSOR_RADIUS, 0.5, f)
+				node.global_transform = Transform3D(Basis.IDENTITY.scaled(Vector3(rs, rs * 0.7, rs)), b.at)
+				(node as MeshInstance3D).material_override.set_shader_parameter("power", f * 1.4)
 			"charge_dome":
 				var cr: Racer = b.r
 				node.global_position = cr.global_position + cr.up * 0.4
@@ -923,11 +1136,12 @@ func _tick_beams(dt: float) -> void:
 				node.global_transform = Transform3D(Basis.IDENTITY.scaled(Vector3(s, s * 0.6, s)), b.at)
 				var m := (node as MeshInstance3D).material_override as ShaderMaterial
 				m.set_shader_parameter("power", f * 1.6)
-			"bolt":
+			"bolt", "chain_bolt":
 				b.jit -= dt
 				if b.jit <= 0.0:
 					b.jit = 0.05
-					ItemModels.set_bolt(node, b.from.global_position + b.from.up * 0.8, b.to.global_position + b.to.up * 0.8, _rng, 1.1)
+					var bto: Vector3 = (b.to.global_position + b.to.up * 0.8) if b.has("to") else (b.to_pos as Vector3)
+					ItemModels.set_bolt(node, b.from.global_position + b.from.up * 0.8, bto, _rng, 1.1)
 					if b.get("fresh", true):
 						b.fresh = false
 						node.reset_physics_interpolation()
@@ -997,7 +1211,7 @@ func _tick_leeches(dt: float) -> void:
 		for o: Racer in race.racers:
 			if o == r or o.is_ghost:
 				continue
-			var in_range := not o.finished and o.rescue_time <= 0.0 and o.shield_time <= 0.0 and o.global_position.distance_to(r.global_position) < LEECH_RADIUS
+			var in_range := not o.finished and o.rescue_time <= 0.0 and o.shield_time <= 0.0 and o.cloak_time <= 0.0 and o.global_position.distance_to(r.global_position) < LEECH_RADIUS
 			if in_range:
 				var taken := o.drain_energy(LEECH_RATE * dt)
 				r.add_energy(taken)
@@ -1041,7 +1255,7 @@ func _tick_wells(dt: float) -> void:
 			continue
 		var up: Vector3 = w.up
 		for r: Racer in race.racers:
-			if r.is_ghost or r.finished or r.rescue_time > 0.0 or (r == w.owner and w.age < 1.2):
+			if r.is_ghost or r.finished or r.rescue_time > 0.0 or r.cloak_time > 0.0 or (r == w.owner and w.age < 1.2):
 				continue
 			var dv: Vector3 = w.pos - r.global_position
 			var d := dv.length()
@@ -1089,7 +1303,7 @@ func _tick_frost(dt: float) -> void:
 			var xf: Transform3D = p.xf
 			_ice_mm.multimesh.set_instance_transform(int(p.slot), Transform3D(xf.basis.scaled(Vector3.ONE * maxf(0.05, float(p.life))), xf.origin))
 		for r: Racer in race.racers:
-			if r.is_ghost or r.finished or r.shield_time > 0.0 or (r == p.owner and p.age < 1.0):
+			if r.is_ghost or r.finished or r.shield_time > 0.0 or r.cloak_time > 0.0 or (r == p.owner and p.age < 1.0):
 				continue
 			if r.global_position.distance_to(p.pos) < ICE_RADIUS:
 				r.slick_time = maxf(r.slick_time, 0.5)
@@ -1098,6 +1312,85 @@ func _tick_frost(dt: float) -> void:
 					r.emit_signal("event", "frosted", {"by": p.owner})
 					if r != p.owner:
 						(p.owner as Racer).emit_signal("event", "hit_landed", {"target": r, "kind": "frost"})
+
+
+## Plasma walls bounce racers that run into them.
+func _tick_plasma(dt: float) -> void:
+	for idx in _wall_cd.keys():
+		_wall_cd[idx] = float(_wall_cd[idx]) - dt
+		if float(_wall_cd[idx]) <= 0.0:
+			_wall_cd.erase(idx)
+	for k in range(plasmas.size() - 1, -1, -1):
+		var pw: Dictionary = plasmas[k]
+		pw.t -= dt
+		pw.age += dt
+		var node: Node3D = pw.node
+		var grow := clampf(float(pw.age) / 0.3, 0.05, 1.0) * clampf(float(pw.t) / 0.4, 0.05, 1.0)
+		(node.get_child(0) as MeshInstance3D).material_override.set_shader_parameter("power", 0.6 + 0.6 * grow + 0.15 * sin(float(pw.age) * 12.0))
+		# Rebuild the whole basis (setting `scale` on a sheared frame would
+		# throw the wall's size away).
+		node.global_transform = Transform3D(TrackBuilder.sb(pw.frame, Vector3(float(pw.half) * 2.0, 3.4 * grow, 0.5)), pw.pos)
+		if pw.t <= 0.0:
+			_give("plasma_wall", node)
+			plasmas.remove_at(k)
+			continue
+		var fwd: Vector3 = pw.fwd
+		var rgt: Vector3 = pw.rgt
+		for r: Racer in race.racers:
+			if r.is_ghost or r.finished or r == pw.owner or r.cloak_time > 0.0 or r.rescue_time > 0.0 or _wall_cd.has(r.idx):
+				continue
+			var d: Vector3 = r.global_position - pw.pos
+			if absf(d.dot(rgt)) > float(pw.half) + 0.8:
+				continue
+			var along := d.dot(fwd)
+			var reach := 1.4 + absf(r.velocity.dot(fwd)) * dt
+			if absf(along) > reach:
+				continue
+			# Bounce back the way they came and stand them off the wall.
+			var side := 1.0 if along >= 0.0 else -1.0
+			var v_in := r.velocity.dot(fwd)
+			r.velocity -= fwd * v_in * 1.45
+			r.global_position = pw.pos + fwd * side * 2.4 + rgt * d.dot(rgt) + (pw.up as Vector3) * (r.T.hover_height - 1.6)
+			r.reset_physics_interpolation()
+			r.wobble_time = maxf(r.wobble_time, 0.6)
+			_wall_cd[r.idx] = 0.5
+			r.emit_signal("event", "walled", {"by": pw.owner})
+			(pw.owner as Racer).stats.hits += 1
+			(pw.owner as Racer).emit_signal("event", "hit_landed", {"target": r, "kind": "plasma"})
+			race.shake_near(r.global_position, 0.3)
+			pw.hp -= 1
+			if int(pw.hp) <= 0:
+				# Third hit shatters it (so a wall can never pin anyone for long).
+				_boom(pw.pos, PLASMA_C, 1.0, pw.up)
+				pw.t = 0.0
+				break
+
+
+## Stasis domes follow their owner and hold everyone inside slow.
+func _tick_stasis(dt: float) -> void:
+	for k in range(stases.size() - 1, -1, -1):
+		var st: Dictionary = stases[k]
+		var r: Racer = st.r
+		st.t -= dt
+		var node: Node3D = st.node
+		if st.t <= 0.0 or r.finished:
+			_give("stasis_dome", node)
+			stases.remove_at(k)
+			continue
+		var grow := clampf((STASIS_TIME - float(st.t)) / 0.35, 0.05, 1.0) * clampf(float(st.t) / 0.3, 0.05, 1.0)
+		node.global_position = r.global_position + r.up * 0.5
+		node.scale = Vector3.ONE * STASIS_RADIUS * grow * (1.0 + 0.03 * sin(float(st.t) * 9.0))
+		(node as MeshInstance3D).material_override.set_shader_parameter("power", 0.35 + 0.2 * grow)
+		for o: Racer in race.racers:
+			if o == r or o.is_ghost or o.finished or o.cloak_time > 0.0 or o.shield_time > 0.0:
+				continue
+			if o.global_position.distance_to(r.global_position) < STASIS_RADIUS * grow:
+				o.slow_time = maxf(o.slow_time, 0.2)
+				if not st.near.has(o.idx):
+					st.near[o.idx] = true
+					o.emit_signal("event", "stasis", {"by": r})
+					r.stats.hits += 1
+					r.emit_signal("event", "hit_landed", {"target": o, "kind": "stasis"})
 
 
 # ---------------------------------------------------------------- AI helpers
@@ -1117,6 +1410,10 @@ func avoid_lane(s0: float, s1: float, lat: float, hw: float) -> float:
 		var ds := path.delta(s0, p.s)
 		if ds >= 0.0 and ds <= s1 - s0 and absf(float(p.lane) - out) < 3.0:
 			out = float(p.lane) + (4.0 if float(p.lane) < 0.0 else -4.0)
+	for pw in plasmas:
+		var ds := path.delta(s0, pw.s)
+		if ds >= -14.0 and ds <= s1 - s0 and absf(float(pw.lane) - out) < float(pw.half) + 2.0:
+			out = float(pw.lane) + (float(pw.half) + 3.0) * (1.0 if float(pw.lane) < 0.0 else -1.0)
 	return clampf(out, -hw + 2.0, hw - 2.0)
 
 
@@ -1199,4 +1496,22 @@ func ai_should_use(r: Racer, style: String, skill: float) -> bool:
 			for k in range(0, 30, 3):
 				curve = maxf(curve, absf(path.curv[path.wi(r.track_idx + k)]))
 			return (curve < 0.012 and r.energy > 45.0 and held > 0.5) or held > 6.0
+		"flare", "chain":
+			var t := _ahead_of(r, FLARE_RANGE * 0.8 if r.item == "flare" else CHAIN_RANGE * 0.9)
+			return t != null and (style == "aggressive" or skill > 0.4 or held > 2.0)
+		"plasma":
+			for o: Racer in race.racers:
+				var d: float = r.race_dist - o.race_dist
+				if o != r and d > 3.0 and d < 35.0:
+					return true
+			return (style == "aggressive" and held > 1.0) or held > 4.0
+		"stasis", "repulsor":
+			var near := 0
+			var rad := STASIS_RADIUS * 0.7 if r.item == "stasis" else REPULSOR_RADIUS * 0.8
+			for o: Racer in race.racers:
+				if o != r and not o.is_ghost and o.global_position.distance_to(r.global_position) < rad:
+					near += 1
+			return near >= 1 or held > 6.0
+		"cloak":
+			return threatened(r) or r.emergency or held > 7.0
 	return held > 2.0

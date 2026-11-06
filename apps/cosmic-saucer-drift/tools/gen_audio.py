@@ -227,6 +227,25 @@ def main():
     n = len(t)
     write("item_overcharge", saw(np.linspace(110, 440, n), t) * env(n, 0.02, 0.2, 0.7, 0.3) * 0.5 + 0.4 * lowpass(noise(n), np.linspace(1500, 7000, n)) * env(n, 0.02, 0.2, 0.6, 0.3))
 
+    t = t_axis(0.7)
+    n = len(t)
+    write("item_flare", lowpass(noise(n), np.linspace(9000, 2500, n)) * env(n, 0.005, 0.25, 0.4, 0.4) * 0.8 + 0.35 * sine(np.linspace(1800, 600, n), t) * decay(n, 5))
+    t = t_axis(0.6)
+    n = len(t)
+    write("item_chain", lowpass(noise(n), 6000.0) * (0.5 + 0.5 * square(38, t)) * env(n, 0.005, 0.1, 0.6, 0.3) * 0.7 + 0.3 * saw(np.linspace(900, 260, n), t) * decay(n, 7))
+    t = t_axis(0.8)
+    n = len(t)
+    write("item_plasma", square(110 + 6 * sine(5, t), t, 0.3) * env(n, 0.05, 0.2, 0.7, 0.4) * 0.45 + 0.3 * lowpass(noise(n), 900.0) * env(n, 0.02, 0.3, 0.5, 0.4))
+    t = t_axis(1.0)
+    n = len(t)
+    write("item_stasis", sine(np.linspace(220, 70, n), t) * (0.6 + 0.4 * sine(7, t)) * env(n, 0.05, 0.3, 0.7, 0.4) * 0.7)
+    t = t_axis(0.8)
+    n = len(t)
+    write("item_cloak", sine(np.linspace(500, 1900, n) + 30 * sine(11, t), t) * env(n, 0.02, 0.3, 0.5, 0.4) * 0.5 + 0.3 * lowpass(noise(n), np.linspace(2000, 8000, n)) * env(n, 0.05, 0.3, 0.3, 0.4))
+    t = t_axis(0.6)
+    n = len(t)
+    write("item_repulsor", sine(np.linspace(90, 28, n), t) * env(n, 0.005, 0.15, 0.6, 0.4) + 0.5 * lowpass(noise(n), np.linspace(4000, 300, n)) * decay(n, 8))
+
     # Music: two 16-beat synthwave loops built from a bass arpeggio, pad,
     # lead hook and drums.
     def song(bpm, bars, chords, lead, name, bright):

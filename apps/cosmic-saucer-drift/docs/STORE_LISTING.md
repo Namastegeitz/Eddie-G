@@ -37,11 +37,12 @@ collected). Graphics are in `docs/store/`.
 > Pods, land mid-air tricks, slipstream rivals and dodge hazards by a whisker
 > to refill it. Run dry and you'll limp along in Emergency Hover.
 >
-> **Power-up chaos.** Fourteen of them: Homing Rockets, Pulse Lasers, Comet
+> **Power-up chaos.** Twenty of them: Homing Rockets, Pulse Lasers, Comet
 > Strikes, EMP Shockwaves, Nitro Rockets, Ion Shields, Gravity Mines,
 > Tractor Beams, Warp Jumps, Decoy Drones, Energy Leeches, Gravity Wells,
-> Frost Trails and Overcharge. The further back you are, the better your
-> comeback tools; leaders get the traps and decoys to defend with.
+> Frost Trails, Overcharge, Solar Flares, Chain Lightning, Plasma Walls,
+> Stasis Fields, Phase Cloaks and Repulsor Pulses. The further back you
+> are, the better your comeback tools; leaders get the traps and decoys.
 >
 > **Fly alien spacecraft.** 14 detailed craft, from classic saucers to a
 > living Bio-Ship, a Crystal Shard and premium showpieces like the Solar Sail
