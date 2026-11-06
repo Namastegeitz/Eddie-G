@@ -229,6 +229,20 @@ func _on_event(kind: String, d: Dictionary) -> void:
 				_splats.append(Vector3(_rng.randf_range(0.1, 0.9), _rng.randf_range(0.15, 0.85), _rng.randf_range(60, 150)))
 		"comet_warning":
 			toast("COMET INCOMING!", UiKit.RED)
+		"warped":
+			toast("WARP JUMP!", UiKit.GOLD)
+		"decoy_popped":
+			toast("Decoy took the hit!", UiKit.CYAN)
+		"leeched":
+			toast("ENERGY LEECHED!", UiKit.RED)
+		"leech_hit":
+			toast("Draining %s" % (d.target as Racer).display_name, UiKit.PINK)
+		"welled":
+			toast("GRAVITY WELL - pull free!", UiKit.RED)
+		"frosted":
+			toast("ICE! Sliding", UiKit.CYAN)
+		"overcharge":
+			toast("OVERCHARGE! %.1f s boost" % float(d.get("secs", 0.0)), Color(1.0, 0.65, 0.2))
 		"rocket_lock":
 			toast("ROCKET LOCKED ON YOU!" if racer.item != "shield" else "ROCKET LOCKED ON - shield ready", UiKit.RED)
 		"item_lost":

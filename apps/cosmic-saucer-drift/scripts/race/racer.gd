@@ -77,6 +77,7 @@ var shield_time := 0.0
 var tractor_time := 0.0
 var ink_time := 0.0
 var slow_time := 0.0
+var slick_time := 0.0          # on comet ice (Frost Trail): grip drops
 var stall_time := 0.0
 var wobble_time := 0.0
 var rescue_time := 0.0
@@ -241,6 +242,7 @@ func _timers(dt: float) -> void:
 	tractor_time = maxf(0.0, tractor_time - dt)
 	ink_time = maxf(0.0, ink_time - dt)
 	slow_time = maxf(0.0, slow_time - dt)
+	slick_time = maxf(0.0, slick_time - dt)
 	stall_time = maxf(0.0, stall_time - dt)
 	wobble_time = maxf(0.0, wobble_time - dt)
 	slip_cd = maxf(0.0, slip_cd - dt)
@@ -432,6 +434,8 @@ func _integrate(dt: float) -> void:
 		var g_eff: float = grip * float(surf.grip) * float(race.mod_grip) * (T.drift_grip if drift_dir != 0 else 1.0)
 		if wobble_time > 0.0:
 			g_eff *= 0.5
+		if slick_time > 0.0:
+			g_eff *= 0.35
 		lat *= exp(-g_eff * dt)
 		if surface == Catalog.S_RAIL and not on_shortcut and drift_dir == 0:
 			# Magnetic rails pull you onto the nearest of three lanes.
@@ -517,6 +521,51 @@ func add_energy(amount: float) -> void:
 	if emergency and energy > 6.0:
 		emergency = false
 		emit_signal("event", "recharged", {})
+
+
+## Dark Matter taken by an Energy Leech (or any drain from outside).
+func drain_energy(amount: float) -> float:
+	var taken := minf(energy, amount)
+	energy -= taken
+	if energy <= 0.0 and not emergency:
+		emergency = true
+		stats.hover_count += 1
+		emit_signal("event", "emergency", {})
+	return taken
+
+
+## Warp Jump: carried `metres` down the track in an instant, keeping speed.
+## Never lands in a gap; lands near the middle of the road.
+func warp_ahead(metres: float) -> void:
+	var td: TrackData = race.td
+	var path := td.main
+	var from := global_position
+	var i := path.wi(track_idx + int(metres / path.step))
+	var guard := 0
+	while td.gap[i] == 1 and guard < 60:
+		i = path.wi(i + 1)
+		guard += 1
+	var lat := clampf(lateral, -td.width * 0.3, td.width * 0.3)
+	global_position = path.pts[i] + path.rgt[i] * lat + path.upv[i] * T.hover_height
+	heading = path.tan[i]
+	up = path.upv[i]
+	ground_n = up
+	velocity = heading * maxf(fwd_speed, 22.0)
+	track_idx = i
+	var s := path.along(i, global_position)
+	race_dist += path.delta(prev_s, s)
+	prev_s = s
+	last_safe_idx = i
+	invuln_time = maxf(invuln_time, 0.8)
+	_end_drift(false)
+	# Arrive level and settled: no trick to land, no air time.
+	trick_time = 0.0
+	tricks_in_air = 0
+	grounded = true
+	air_time = 0.0
+	_orient(2.0)
+	reset_physics_interpolation()
+	emit_signal("event", "warped", {"from": from, "to": global_position})
 
 
 func give_boost(time: float, kind: String) -> void:

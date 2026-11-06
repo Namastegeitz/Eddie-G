@@ -24,6 +24,9 @@ const DAILY_MODS := [
 	{"id": "laser_tag", "name": "Laser Tag", "text": "Crates only give Pulse Lasers. Line up your shots!", "mods": {"only_item": "laser"}},
 	{"id": "nitro_rush", "name": "Nitro Rush", "text": "Crates only give Nitro Rockets.", "mods": {"only_item": "nitro"}},
 	{"id": "shield_wall", "name": "Clean Race", "text": "Crates only give Ion Shields: pure racing.", "mods": {"only_item": "shield"}},
+	{"id": "warp_rush", "name": "Warp Rush", "text": "Crates only give Warp Jumps. Blink and you'll miss it.", "mods": {"only_item": "warp"}},
+	{"id": "deep_freeze", "name": "Deep Freeze", "text": "Crates only give Frost Trails. Mind the ice.", "mods": {"only_item": "frost"}},
+	{"id": "black_holes", "name": "Black Holes", "text": "Crates only give Gravity Wells. Steer wide.", "mods": {"only_item": "well"}},
 ]
 const DAILY_GOALS := [
 	{"id": "win", "text": "Win the race"},

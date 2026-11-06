@@ -116,8 +116,10 @@
 - Spacecraft: 14 craft = 6 saucers + Orb Drone, Crystal Shard, Bio-Ship, Arrowhead Interceptor + premium
   Solar Sail Yacht, Pulsar Phantom, Quasar Dragon, Dyson Racer (perks). Stardust renamed Race Credits
   (old saves migrate). Premium craft 12,000-22,000 credits + stars.
-- Power-ups (8): Homing Rocket, Pulse Laser, Comet Strike, EMP Shockwave, Nitro Rocket (1-3 uses), Ion
-  Shield (use or hold to block one hit), Gravity Mine, Tractor Beam, in 5 lineups by place.
+- Power-ups (14): Homing Rocket, Pulse Laser, Comet Strike, EMP Shockwave, Nitro Rocket (1-3 uses), Ion
+  Shield (use or hold to block one hit), Gravity Mine, Tractor Beam, plus Warp Jump, Decoy Drone,
+  Energy Leech, Gravity Well, Frost Trail and Overcharge, in 5 lineups by place (leaders defend,
+  the back of the pack gets comeback tools).
 - Real-money store layer (`Store` autoload, debug + Play Billing template, products for premium craft,
   fleet bundle, credit packs, remove ads) built and switched off: `docs/STORE_PLAN.md`. Ads layer as
   before: `docs/ADS_PLAN.md`. v1 listing stays "no ads, no purchases, no data collected".

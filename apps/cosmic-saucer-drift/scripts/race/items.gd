@@ -1,16 +1,22 @@
 class_name Items
 extends Node3D
-## The eight power-ups: rolling them from crates (by position lineup), using
-## them, and the live effects they leave in the world. Also answers AI
+## The fourteen power-ups: rolling them from crates (by position lineup),
+## using them, and the live effects they leave in the world. Also answers AI
 ## questions about items.
-##   rocket  Homing Rocket - chases the racer just ahead
-##   laser   Pulse Laser   - instant beam, hits everything in a line ahead
-##   comet   Comet Strike  - falls on the leader (back-of-the-pack only)
-##   emp     EMP Shockwave - spins out everyone close and knocks items loose
-##   nitro   Nitro Rocket  - 1-3 boosts depending on your lineup
-##   shield  Ion Shield    - use: 6 s bubble; hold: blocks one hit
-##   mine    Gravity Mine  - dropped behind
-##   tractor Tractor Beam  - drags the racer ahead back
+##   rocket     Homing Rocket - chases the racer just ahead
+##   laser      Pulse Laser   - instant beam, hits everything in a line ahead
+##   comet      Comet Strike  - falls on the leader (back-of-the-pack only)
+##   emp        EMP Shockwave - spins out everyone close and knocks items loose
+##   nitro      Nitro Rocket  - 1-3 boosts depending on your lineup
+##   shield     Ion Shield    - use: 6 s bubble; hold: blocks one hit
+##   mine       Gravity Mine  - dropped behind
+##   tractor    Tractor Beam  - drags the racer ahead back
+##   warp       Warp Jump     - teleports 40-80 m down the track (more from the back)
+##   decoy      Decoy Drone   - hologram behind you; rockets and tractors take it
+##   leech      Energy Leech  - 5 s aura draining nearby racers' Dark Matter to you
+##   well       Gravity Well  - vortex dropped behind: drags racers in, slows them
+##   frost      Frost Trail   - 4 s of comet ice behind you; anyone on it slides
+##   overcharge Overcharge    - burns 60% of your core for up to 3 s of boost
 
 const ROCKET_SPEED := 80.0
 const ROCKET_LIFE := 4.5
@@ -22,6 +28,21 @@ const COMET_WARN := 2.2
 const EMP_RADIUS := 15.0
 const TRACTOR_TIME := 1.6
 const NITRO_TIME := 1.3
+const WARP_MIN := 40.0
+const WARP_MAX := 80.0
+const DECOY_TIME := 8.0
+const LEECH_TIME := 5.0
+const LEECH_RADIUS := 14.0
+const LEECH_RATE := 9.0        # Dark Matter per second taken from each victim
+const WELL_TIME := 7.0
+const WELL_RADIUS := 11.0
+const WELL_PULL := 16.0
+const FROST_TIME := 4.0
+const FROST_GAP := 3.0         # metres between ice patches
+const ICE_LIFE := 9.0
+const ICE_RADIUS := 2.3
+const MAX_ICE := 64
+const OVERCHARGE_MAX := 3.0
 
 var race: Node
 var td: TrackData
@@ -31,6 +52,14 @@ var comets: Array[Dictionary] = []
 var beams: Array[Dictionary] = []
 var flashes: Array[Dictionary] = []
 var nitros: Array[Dictionary] = []
+var decoys: Array[Dictionary] = []
+var leeches: Array[Dictionary] = []
+var wells: Array[Dictionary] = []
+var frosts: Array[Dictionary] = []   # trails still being laid
+var ice: Array[Dictionary] = []      # ice patches on the road
+var _ice_mm: MultiMeshInstance3D = null
+var _ice_free: Array[int] = []
+var _frost_cd := {}            # racer idx -> seconds until the next ICE toast
 var only_item := ""            # daily-challenge modifier: crates give only this
 var _rng := RandomNumberGenerator.new()
 var _hold := {}                # racer idx -> seconds holding the item
@@ -40,7 +69,8 @@ var _badges := {}              # racer idx -> held-shield badge node
 ## power-up fired). Pooled nodes stay in the tree, hidden.
 var _pool := {}                # kind -> Array[Node3D]
 const POOL_SIZES := {"rocket": 3, "reticle_air": 3, "reticle_ground": 2, "comet": 2, "laser": 3, "tractor": 2,
-	"dome": 2, "bolt": 8, "boosters": 2, "mine": MAX_MINES}
+	"dome": 2, "bolt": 8, "boosters": 2, "mine": MAX_MINES,
+	"portal": 2, "decoy": 2, "leech_aura": 2, "leech_beam": 3, "well": 2, "charge_dome": 2}
 
 const ROCKET_C := Color(1.0, 0.5, 0.2)
 const LASER_C := Color(0.3, 1.0, 0.95)
@@ -50,6 +80,12 @@ const NITRO_C := Color(1.0, 0.35, 0.8)
 const SHIELD_C := Color(0.35, 0.8, 1.0)
 const MINE_C := Color(1.0, 0.8, 0.2)
 const TRACTOR_C := Color(0.45, 1.0, 0.5)
+const WARP_C := Color(0.6, 0.45, 1.0)
+const DECOY_C := Color(0.5, 0.95, 1.0)
+const LEECH_C := Color(0.72, 0.3, 1.0)
+const WELL_C := Color(0.55, 0.3, 1.0)
+const FROST_C := Color(0.75, 0.95, 1.0)
+const OVERCHARGE_C := Color(1.0, 0.6, 0.15)
 
 
 func setup(p_race: Node) -> void:
@@ -66,6 +102,29 @@ func setup(p_race: Node) -> void:
 			b.visible = false
 			r.add_child(b)
 			_badges[r.idx] = b
+	_build_ice()
+
+
+## Frost Trail ice patches share one MultiMesh; free slots are scaled away.
+func _build_ice() -> void:
+	_ice_mm = MultiMeshInstance3D.new()
+	_ice_mm.name = "Ice"
+	var mm := MultiMesh.new()
+	mm.transform_format = MultiMesh.TRANSFORM_3D
+	mm.mesh = ItemModels.ice_mesh()
+	mm.instance_count = MAX_ICE
+	_ice_free.clear()
+	for k in MAX_ICE:
+		mm.set_instance_transform(k, _ice_hidden())
+		_ice_free.append(k)
+	_ice_mm.multimesh = mm
+	_ice_mm.material_override = ItemModels.ice_material()
+	_ice_mm.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	add_child(_ice_mm)
+
+
+static func _ice_hidden() -> Transform3D:
+	return Transform3D(Basis.IDENTITY.scaled(Vector3.ONE * 0.001), Vector3(0, -50.0, 0))
 
 
 func _build(kind: String) -> Node3D:
@@ -95,6 +154,18 @@ func _build(kind: String) -> Node3D:
 			return holder
 		"mine":
 			return ItemModels.mine(MINE_C)
+		"portal":
+			return ItemModels.portal()
+		"decoy":
+			return ItemModels.decoy()
+		"leech_aura":
+			return ItemModels.dome(LEECH_C)
+		"leech_beam":
+			return ItemModels.beam_set(LEECH_C, 0.8, -10.0)
+		"well":
+			return ItemModels.well()
+		"charge_dome":
+			return ItemModels.dome(OVERCHARGE_C)
 	return Node3D.new()
 
 
@@ -136,6 +207,46 @@ func pooled(kind: String) -> int:
 	return (_pool.get(kind, []) as Array).size()
 
 
+## Remove every live effect and return its nodes to the pools (tests,
+## restarts).
+func clear_effects() -> void:
+	for b in rockets:
+		_give("rocket", b.node)
+		if b.reticle:
+			_give("reticle_air", b.reticle)
+	rockets.clear()
+	for m in mines:
+		_give("mine", m.node)
+	mines.clear()
+	for m in comets:
+		_give("reticle_ground", m.ring)
+		_give("comet", m.rock)
+	comets.clear()
+	for b in beams:
+		_give(String(b.kind), b.node)
+	beams.clear()
+	for n in nitros:
+		_give("boosters", n.node)
+	nitros.clear()
+	for d in decoys:
+		_give("decoy", d.node)
+	decoys.clear()
+	for L in leeches:
+		for idx in L.links:
+			_give("leech_beam", L.links[idx])
+		_give("leech_aura", L.aura)
+	leeches.clear()
+	for w in wells:
+		_give("well", w.node)
+	wells.clear()
+	frosts.clear()
+	for p in ice:
+		_ice_mm.multimesh.set_instance_transform(int(p.slot), _ice_hidden())
+		_ice_free.append(int(p.slot))
+	ice.clear()
+	_frost_cd.clear()
+
+
 ## Shows one of every effect in front of the camera, tiny, for a couple of
 ## frames during the countdown so every shader is compiled before the race
 ## (first use used to stall a phone for a moment).
@@ -152,6 +263,8 @@ func warm_up(cam: Camera3D) -> void:
 			if c is CPUParticles3D:
 				(c as CPUParticles3D).emitting = true
 		shown.append([kind, node])
+	if _ice_mm:
+		_ice_mm.multimesh.set_instance_transform(0, Transform3D(Basis.IDENTITY.scaled(Vector3.ONE * 0.02), cam.global_position - cam.global_transform.basis.z * 3.0))
 	var tree := get_tree()
 	for i in 3:
 		await tree.process_frame
@@ -159,6 +272,8 @@ func warm_up(cam: Camera3D) -> void:
 			return   # the race ended during the warm-up
 	for sn in shown:
 		_give(sn[0], sn[1])
+	if _ice_mm and ice.is_empty():
+		_ice_mm.multimesh.set_instance_transform(0, _ice_hidden())
 
 
 func _place(node: Node3D, xf: Transform3D) -> Node3D:
@@ -247,6 +362,18 @@ func use_item(r: Racer) -> void:
 			_mine(r)
 		"tractor":
 			_tractor(r)
+		"warp":
+			_warp(r)
+		"decoy":
+			_decoy(r)
+		"leech":
+			_leech(r)
+		"well":
+			_well(r)
+		"frost":
+			_frost(r)
+		"overcharge":
+			_overcharge(r)
 	r.emit_signal("event", "item_used", {"item": it})
 
 
@@ -276,14 +403,16 @@ func _rocket(r: Racer) -> void:
 		if c is CPUParticles3D:
 			(c as CPUParticles3D).emitting = true
 	var ret: Node3D = null
+	var dec := _decoy_of(t)
 	if t:
-		ret = _place(_take("reticle_air"), Transform3D(Basis.IDENTITY, t.global_position + t.up * 2.6))
-		t.emit_signal("event", "rocket_lock", {"by": r})
+		ret = _place(_take("reticle_air"), Transform3D(Basis.IDENTITY, (dec.pos if not dec.is_empty() else t.global_position) + t.up * 2.6))
+		if dec.is_empty():
+			t.emit_signal("event", "rocket_lock", {"by": r})
 	var fx := _fx()
 	if fx:
 		fx.flash(pos, ROCKET_C, 2.6, 0.18)
 	var spd := maxf(ROCKET_SPEED, r.velocity.length() + 25.0)
-	rockets.append({"pos": pos, "vel": r.heading * spd, "owner": r, "target": t, "life": ROCKET_LIFE, "node": node, "reticle": ret, "i": r.track_idx, "near": {}})
+	rockets.append({"pos": pos, "vel": r.heading * spd, "owner": r, "target": t, "decoy": dec, "life": ROCKET_LIFE, "node": node, "reticle": ret, "i": r.track_idx, "near": {}})
 
 
 ## Instant beam along the heading: hits every racer within the beam and
@@ -311,6 +440,14 @@ func _laser(r: Racer) -> void:
 			_boom(mn.pos, MINE_C, 0.6)
 			_give("mine", mn.node)
 			mines.remove_at(k)
+	for k in range(wells.size() - 1, -1, -1):
+		var w: Dictionary = wells[k]
+		var d: Vector3 = w.pos - origin
+		var along := d.dot(dir)
+		if along > 0.0 and along < LASER_RANGE and (d - dir * along).length() < 3.5:
+			_boom(w.pos, WELL_C, 1.0)
+			_give("well", w.node)
+			wells.remove_at(k)
 	var node := _take("laser")
 	_place(node, Transform3D(Basis.IDENTITY, origin))
 	var b := _basis_y(dir)
@@ -419,6 +556,15 @@ func _tractor(r: Racer) -> void:
 	if t == null:
 		r.give_boost(0.5, "tractor")
 		return
+	var dec := _decoy_of(t)
+	if not dec.is_empty():
+		# The beam grabs the hologram instead and pops it.
+		var dn := _take("tractor")
+		_place(dn, Transform3D(Basis.IDENTITY, r.global_position))
+		beams.append({"from": r, "to_pos": dec.pos, "t": 0.35, "life": 0.35, "node": dn, "kind": "tractor"})
+		_pop_decoy(dec)
+		r.give_boost(0.5, "tractor")
+		return
 	if not t.can_be_hit():
 		t.emit_signal("event", "blocked", {"kind": "tractor"})
 		return
@@ -438,6 +584,134 @@ func _tractor(r: Racer) -> void:
 	beams.append({"from": r, "to": t, "t": TRACTOR_TIME, "life": TRACTOR_TIME, "node": node, "kind": "tractor"})
 
 
+## Warp Jump: 40 m from the front, 80 m from the back, with a portal at
+## each end.
+func _warp(r: Racer) -> void:
+	var n := 0
+	for o: Racer in race.racers:
+		if not o.is_ghost:
+			n += 1
+	var metres := lerpf(WARP_MIN, WARP_MAX, clampf(float(r.place - 1) / maxf(1.0, float(n - 1)), 0.0, 1.0))
+	var from := r.global_position + r.up * 1.2
+	beams.append({"node": _place(_take("portal"), Transform3D(Basis.IDENTITY, from)), "kind": "portal", "t": 0.55, "life": 0.55})
+	r.warp_ahead(metres)
+	beams.append({"node": _place(_take("portal"), Transform3D(Basis.IDENTITY, r.global_position + r.up * 1.2)), "kind": "portal", "t": 0.7, "life": 0.7})
+	race.shake_near(from, 0.2)
+
+
+## Decoy Drone: a hologram trails you for 8 s; rockets already locked on
+## you switch to it.
+func _decoy(r: Racer) -> void:
+	var pos := r.global_position - r.heading * 7.0 + r.up * 0.3
+	var node := _place(_take("decoy"), Transform3D(Basis(r.heading.cross(r.up).normalized(), r.up, -r.heading), pos))
+	var dec := {"owner": r, "node": node, "pos": pos, "t": DECOY_TIME, "live": true}
+	decoys.append(dec)
+	for b in rockets:
+		if b.target == r and (b.decoy as Dictionary).is_empty():
+			b.decoy = dec
+	var fx := _fx()
+	if fx:
+		fx.flash(pos + r.up * 0.6, DECOY_C, 4.0, 0.25)
+		fx.sparks(pos + r.up * 0.4, r.up, DECOY_C, 16, 6.0, 2.0)
+
+
+## The live decoy guarding this racer, or {}.
+func _decoy_of(r: Racer) -> Dictionary:
+	if r == null:
+		return {}
+	for d in decoys:
+		if d.owner == r and d.live:
+			return d
+	return {}
+
+
+func _pop_decoy(dec: Dictionary) -> void:
+	if not dec.get("live", false):
+		return
+	dec.live = false
+	dec.t = 0.0
+	var owner: Racer = dec.owner
+	_boom(dec.pos, DECOY_C, 0.8, owner.up)
+	owner.emit_signal("event", "decoy_popped", {"pos": dec.pos})
+
+
+## Energy Leech: a 5 s aura; beams latch on to up to three racers in range
+## and pour their Dark Matter into your core.
+func _leech(r: Racer) -> void:
+	var aura := _place(_take("leech_aura"), Transform3D(Basis.IDENTITY.scaled(Vector3.ONE * 2.6), r.global_position + r.up * 0.5))
+	(aura as MeshInstance3D).material_override.set_shader_parameter("power", 0.9)
+	leeches.append({"r": r, "t": LEECH_TIME, "aura": aura, "links": {}})
+	var fx := _fx()
+	if fx:
+		fx.shockwave(r.global_position, r.up, LEECH_C, 9.0, 0.4)
+		fx.flash(r.global_position + r.up * 0.6, LEECH_C, 4.5, 0.25)
+	if r.model:
+		r.model.react("leech")
+
+
+## Gravity Well: a vortex dropped on the road behind you.
+func _well(r: Racer) -> void:
+	var path := td.main
+	var pos := r.global_position - r.heading * 6.0
+	var i := path.nearest(pos, r.track_idx, 8)
+	var lane := clampf(path.lateral(i, pos), -td.width * 0.4, td.width * 0.4)
+	pos = path.pts[i] + path.rgt[i] * lane + path.upv[i] * 0.3
+	var node := _place(_take("well"), Transform3D(Basis(path.rgt[i], path.upv[i], -path.tan[i]).scaled(Vector3.ONE * 0.2), pos))
+	wells.append({"pos": pos, "s": float(i) * path.step, "lane": lane, "up": path.upv[i], "owner": r, "t": WELL_TIME, "age": 0.0, "node": node, "near": {}})
+	var fx := _fx()
+	if fx:
+		fx.shockwave(pos, path.upv[i], WELL_C, 12.0, 0.5)
+		fx.flash(pos + path.upv[i] * 0.8, WELL_C, 4.0, 0.3)
+	while wells.size() > 4:
+		var old: Dictionary = wells.pop_front()
+		_give("well", old.node)
+
+
+## Frost Trail: ice patches are laid behind you for 4 s as you drive.
+func _frost(r: Racer) -> void:
+	for f in frosts:
+		if f.r == r:
+			f.t = FROST_TIME
+			return
+	frosts.append({"r": r, "t": FROST_TIME, "last": r.race_dist - FROST_GAP})
+	var fx := _fx()
+	if fx:
+		fx.dust(r.global_position - r.up * 0.5, r.up, FROST_C, 20)
+
+
+func _lay_ice(r: Racer) -> void:
+	var path := td.main
+	var pos := r.global_position - r.heading * 2.5
+	var i := path.nearest(pos, r.track_idx, 6)
+	if td.gap[i] == 1:
+		return
+	var lane := clampf(path.lateral(i, pos), -td.width * 0.48, td.width * 0.48)
+	pos = path.pts[i] + path.rgt[i] * lane + path.upv[i] * 0.12
+	if _ice_free.is_empty():
+		var old: Dictionary = ice.pop_front()
+		_ice_free.append(int(old.slot))
+	var slot: int = _ice_free.pop_back()
+	var b := Basis(path.rgt[i], path.upv[i], -path.tan[i]).rotated(path.upv[i], _rng.randf() * TAU)
+	var xf := Transform3D(b.scaled(Vector3(2.6, 1.1, 2.6)), pos)
+	_ice_mm.multimesh.set_instance_transform(slot, xf)
+	ice.append({"pos": pos, "s": float(i) * path.step, "lane": lane, "owner": r, "life": ICE_LIFE, "age": 0.0, "slot": slot, "xf": xf})
+	var fx := _fx()
+	if fx and _rng.randf() < 0.5:
+		fx.dust(pos, path.upv[i], FROST_C, 8)
+
+
+## Overcharge: burn 60% of the core for a boost that lasts longer the fuller
+## the core was (0.5-3 s).
+func _overcharge(r: Racer) -> void:
+	var frac := clampf(r.energy / maxf(r.T.energy_max, 1.0), 0.0, 1.0)
+	var secs := 0.5 + (OVERCHARGE_MAX - 0.5) * frac
+	r.energy = maxf(0.0, r.energy * 0.4)
+	r.give_boost(secs, "overcharge")
+	var dome := _place(_take("charge_dome"), Transform3D(Basis.IDENTITY.scaled(Vector3.ONE * 2.4), r.global_position + r.up * 0.4))
+	beams.append({"node": dome, "kind": "charge_dome", "t": secs, "life": secs, "r": r})
+	r.emit_signal("event", "overcharge", {"secs": secs})
+
+
 func _flash(pos: Vector3, c: Color, secs := 0.35) -> void:
 	var fx := _fx()
 	if fx:
@@ -451,6 +725,10 @@ func tick(dt: float) -> void:
 	_tick_comets(dt)
 	_tick_beams(dt)
 	_tick_nitros(dt)
+	_tick_decoys(dt)
+	_tick_leeches(dt)
+	_tick_wells(dt)
+	_tick_frost(dt)
 	for r: Racer in race.racers:
 		if r.item != "" and r.item_roll <= 0.0:
 			_hold[r.idx] = _hold.get(r.idx, 0.0) + dt
@@ -479,8 +757,12 @@ func _tick_rockets(dt: float) -> void:
 		var b: Dictionary = rockets[k]
 		b.life -= dt
 		var t: Racer = b.target
+		var dec: Dictionary = b.decoy
+		var on_decoy: bool = not dec.is_empty() and bool(dec.live)
 		var aim: Vector3
-		if t and not t.finished and t.rescue_time <= 0.0:
+		if on_decoy:
+			aim = dec.pos
+		elif t and not t.finished and t.rescue_time <= 0.0:
 			aim = t.global_position
 		else:
 			b.i = path.nearest(b.pos, b.i, 12)
@@ -497,10 +779,16 @@ func _tick_rockets(dt: float) -> void:
 			fl.scale = Vector3(0.2, 1.4 * (0.85 + 0.3 * sin(b.life * 60.0)), 0.2)
 		var ret: Node3D = b.reticle
 		if ret and t:
-			ret.global_position = t.global_position + t.up * 2.6
-			ret.visible = t.rescue_time <= 0.0
+			ret.global_position = (dec.pos if on_decoy else t.global_position) + t.up * 2.6
+			ret.visible = on_decoy or t.rescue_time <= 0.0
 		var done: bool = b.life <= 0.0
+		if on_decoy and b.pos.distance_to(dec.pos) < 2.8:
+			_pop_decoy(dec)
+			race.shake_near(b.pos, 0.3)
+			done = true
 		for r: Racer in race.racers:
+			if done:
+				break
 			if r == b.owner and b.life > ROCKET_LIFE - 0.5:
 				continue
 			if r.is_ghost:
@@ -608,7 +896,7 @@ func _tick_beams(dt: float) -> void:
 		match String(b.kind):
 			"tractor":
 				var a: Vector3 = b.from.global_position + b.from.up * 0.4
-				var c: Vector3 = b.to.global_position + b.to.up * 0.4
+				var c: Vector3 = (b.to.global_position + b.to.up * 0.4) if b.has("to") else (b.to_pos as Vector3)
 				var len := a.distance_to(c)
 				if len > 0.5:
 					var y := (c - a) / len
@@ -618,7 +906,17 @@ func _tick_beams(dt: float) -> void:
 					if b.get("fresh", true):
 						b.fresh = false
 						node.reset_physics_interpolation()
-				if b.to.tractor_time <= 0.0:
+				if b.has("to") and b.to.tractor_time <= 0.0:
+					b.t = 0.0
+			"portal":
+				var s := maxf(0.05, sin((1.0 - f) * PI))
+				node.scale = Vector3.ONE * s
+			"charge_dome":
+				var cr: Racer = b.r
+				node.global_position = cr.global_position + cr.up * 0.4
+				node.scale = Vector3.ONE * 2.4 * (1.0 + 0.08 * sin(float(b.t) * 30.0))
+				(node as MeshInstance3D).material_override.set_shader_parameter("power", 0.5 + 0.9 * f)
+				if cr.boost_time <= 0.0 or cr.finished:
 					b.t = 0.0
 			"emp":
 				var s := lerpf(EMP_RADIUS, 0.5, f)
@@ -660,6 +958,148 @@ func _tick_nitros(dt: float) -> void:
 				fl.scale = Vector3(0.17, 2.2 * (0.8 + 0.35 * sin(float(n.t) * 55.0 + float(k))), 0.17)
 
 
+## The hologram trails its owner, flickering; it pops when something hits it.
+func _tick_decoys(dt: float) -> void:
+	for k in range(decoys.size() - 1, -1, -1):
+		var d: Dictionary = decoys[k]
+		var r: Racer = d.owner
+		d.t -= dt
+		var node: Node3D = d.node
+		if d.t <= 0.0 or not d.live or r.finished:
+			_give("decoy", node)
+			decoys.remove_at(k)
+			continue
+		var want := r.global_position - r.heading * 7.0 + r.up * (0.3 + 0.15 * sin(float(d.t) * 5.0))
+		d.pos = (d.pos as Vector3).lerp(want, 1.0 - exp(-5.0 * dt))
+		var side := r.heading.cross(r.up).normalized()
+		if side.length() > 0.5:
+			node.global_transform = Transform3D(Basis(side, r.up, -r.heading).rotated(r.up, float(d.t) * 0.6), d.pos)
+		node.visible = int(float(d.t) * 24.0) % 7 != 0
+
+
+## Leech aura follows its owner; beams latch on to victims in range.
+func _tick_leeches(dt: float) -> void:
+	for k in range(leeches.size() - 1, -1, -1):
+		var L: Dictionary = leeches[k]
+		var r: Racer = L.r
+		L.t -= dt
+		var links: Dictionary = L.links
+		if L.t <= 0.0 or r.finished:
+			for idx in links:
+				_give("leech_beam", links[idx])
+			_give("leech_aura", L.aura)
+			leeches.remove_at(k)
+			continue
+		var aura: Node3D = L.aura
+		aura.global_position = r.global_position + r.up * 0.5
+		aura.scale = Vector3.ONE * 2.6 * (1.0 + 0.1 * sin(float(L.t) * 14.0))
+		(aura as MeshInstance3D).material_override.set_shader_parameter("power", 0.5 + 0.4 * clampf(float(L.t), 0.0, 1.0))
+		for o: Racer in race.racers:
+			if o == r or o.is_ghost:
+				continue
+			var in_range := not o.finished and o.rescue_time <= 0.0 and o.shield_time <= 0.0 and o.global_position.distance_to(r.global_position) < LEECH_RADIUS
+			if in_range:
+				var taken := o.drain_energy(LEECH_RATE * dt)
+				r.add_energy(taken)
+				if not links.has(o.idx):
+					if links.size() >= 3:
+						continue
+					var bn := _take("leech_beam")
+					_place(bn, Transform3D(Basis.IDENTITY, o.global_position))
+					links[o.idx] = bn
+					o.emit_signal("event", "leeched", {"by": r})
+					r.stats.hits += 1
+					r.emit_signal("event", "leech_hit", {"target": o, "kind": "leech"})
+				var a: Vector3 = o.global_position + o.up * 0.4
+				var c: Vector3 = r.global_position + r.up * 0.4
+				var len := a.distance_to(c)
+				if len > 0.5:
+					var y := (c - a) / len
+					var bb := _basis_y(y)
+					var w := 0.7 + 0.3 * sin(float(L.t) * 22.0)
+					(links[o.idx] as Node3D).global_transform = Transform3D(Basis(bb.x * w, y * len, bb.z * w), (a + c) * 0.5)
+			elif links.has(o.idx):
+				_give("leech_beam", links[o.idx])
+				links.erase(o.idx)
+
+
+## Gravity wells drag racers toward the centre and slow them.
+func _tick_wells(dt: float) -> void:
+	for k in range(wells.size() - 1, -1, -1):
+		var w: Dictionary = wells[k]
+		w.t -= dt
+		w.age += dt
+		var node: Node3D = w.node
+		var grow := clampf(float(w.age) / 0.5, 0.0, 1.0)
+		var shrink := clampf(float(w.t) / 0.6, 0.0, 1.0)
+		node.scale = Vector3.ONE * maxf(0.05, minf(grow, shrink))
+		(node.get_child(0) as Node3D).rotate_y(dt * 4.0)
+		(node.get_child(2) as Node3D).scale = Vector3.ONE * (1.0 + 0.08 * sin(float(w.age) * 6.0))
+		if w.t <= 0.0:
+			_give("well", node)
+			wells.remove_at(k)
+			continue
+		var up: Vector3 = w.up
+		for r: Racer in race.racers:
+			if r.is_ghost or r.finished or r.rescue_time > 0.0 or (r == w.owner and w.age < 1.2):
+				continue
+			var dv: Vector3 = w.pos - r.global_position
+			var d := dv.length()
+			if d >= WELL_RADIUS or r.shield_time > 0.0:
+				continue
+			dv -= up * dv.dot(up)
+			if dv.length() > 0.3:
+				r.velocity += dv.normalized() * WELL_PULL * (0.4 + (1.0 - d / WELL_RADIUS)) * dt
+			r.slow_time = maxf(r.slow_time, 0.25)
+			if not w.near.has(r.idx):
+				w.near[r.idx] = true
+				r.emit_signal("event", "welled", {"by": w.owner})
+				if r != w.owner:
+					(w.owner as Racer).stats.hits += 1
+					(w.owner as Racer).emit_signal("event", "hit_landed", {"target": r, "kind": "well"})
+
+
+## Trails lay ice as their owner drives; ice patches melt away after 9 s and
+## make any craft on them slide.
+func _tick_frost(dt: float) -> void:
+	for k in range(frosts.size() - 1, -1, -1):
+		var f: Dictionary = frosts[k]
+		var r: Racer = f.r
+		f.t -= dt
+		if f.t <= 0.0 or r.finished:
+			frosts.remove_at(k)
+			continue
+		if r.race_dist - float(f.last) >= FROST_GAP and r.grounded:
+			f.last = r.race_dist
+			_lay_ice(r)
+	for idx in _frost_cd.keys():
+		_frost_cd[idx] = float(_frost_cd[idx]) - dt
+		if float(_frost_cd[idx]) <= 0.0:
+			_frost_cd.erase(idx)
+	for k in range(ice.size() - 1, -1, -1):
+		var p: Dictionary = ice[k]
+		p.life -= dt
+		p.age += dt
+		if p.life <= 0.0:
+			_ice_mm.multimesh.set_instance_transform(int(p.slot), _ice_hidden())
+			_ice_free.append(int(p.slot))
+			ice.remove_at(k)
+			continue
+		if p.life < 1.0:
+			var xf: Transform3D = p.xf
+			_ice_mm.multimesh.set_instance_transform(int(p.slot), Transform3D(xf.basis.scaled(Vector3.ONE * maxf(0.05, float(p.life))), xf.origin))
+		for r: Racer in race.racers:
+			if r.is_ghost or r.finished or r.shield_time > 0.0 or (r == p.owner and p.age < 1.0):
+				continue
+			if r.global_position.distance_to(p.pos) < ICE_RADIUS:
+				r.slick_time = maxf(r.slick_time, 0.5)
+				if not _frost_cd.has(r.idx):
+					_frost_cd[r.idx] = 2.5
+					r.emit_signal("event", "frosted", {"by": p.owner})
+					if r != p.owner:
+						(p.owner as Racer).emit_signal("event", "hit_landed", {"target": r, "kind": "frost"})
+
+
 # ---------------------------------------------------------------- AI helpers
 ## Shift a lane choice away from mines ahead.
 func avoid_lane(s0: float, s1: float, lat: float, hw: float) -> float:
@@ -669,12 +1109,20 @@ func avoid_lane(s0: float, s1: float, lat: float, hw: float) -> float:
 		var ds := path.delta(s0, m.s)
 		if ds >= 0.0 and ds <= s1 - s0 and absf(float(m.lane) - out) < 3.5:
 			out = float(m.lane) + (4.5 if float(m.lane) < 0.0 else -4.5)
+	for w in wells:
+		var ds := path.delta(s0, w.s)
+		if ds >= 0.0 and ds <= s1 - s0 and absf(float(w.lane) - out) < WELL_RADIUS * 0.7:
+			out = float(w.lane) + (WELL_RADIUS * 0.8 if float(w.lane) < 0.0 else -WELL_RADIUS * 0.8)
+	for p in ice:
+		var ds := path.delta(s0, p.s)
+		if ds >= 0.0 and ds <= s1 - s0 and absf(float(p.lane) - out) < 3.0:
+			out = float(p.lane) + (4.0 if float(p.lane) < 0.0 else -4.0)
 	return clampf(out, -hw + 2.0, hw - 2.0)
 
 
 func threatened(r: Racer) -> bool:
 	for b in rockets:
-		if b.target == r and b.pos.distance_to(r.global_position) < 40.0:
+		if b.target == r and b.pos.distance_to(r.global_position) < 40.0 and not ((b.decoy as Dictionary).get("live", false)):
 			return true
 	for m in comets:
 		if m.target == r:
@@ -729,4 +1177,26 @@ func ai_should_use(r: Racer, style: String, skill: float) -> bool:
 			return (curve < 0.012 and held > 0.5) or held > 4.0 or r.emergency
 		"comet":
 			return held > 0.8
+		"warp":
+			return held > 0.5
+		"decoy":
+			return threatened(r) or held > 7.0
+		"leech":
+			var near := 0
+			for o: Racer in race.racers:
+				if o != r and not o.is_ghost and o.global_position.distance_to(r.global_position) < LEECH_RADIUS * 0.8:
+					near += 1
+			return near >= 1 or held > 6.0
+		"well", "frost":
+			for o: Racer in race.racers:
+				var d: float = r.race_dist - o.race_dist
+				if o != r and d > 3.0 and d < 40.0:
+					return true
+			return (style == "aggressive" and held > 1.0) or held > 4.0
+		"overcharge":
+			var path := td.main
+			var curve := 0.0
+			for k in range(0, 30, 3):
+				curve = maxf(curve, absf(path.curv[path.wi(r.track_idx + k)]))
+			return (curve < 0.012 and r.energy > 45.0 and held > 0.5) or held > 6.0
 	return held > 2.0

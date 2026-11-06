@@ -263,6 +263,109 @@ static func dome(c: Color) -> MeshInstance3D:
 	return mi
 
 
+## Decoy Drone: a flickering hologram saucer (ghost material).
+static func decoy() -> Node3D:
+	var root := Node3D.new()
+	var m := MeshKit.Merger.new()
+	var holo := StandardMaterial3D.new()
+	holo.albedo_color = Color(0.5, 0.95, 1.0, 0.42)
+	holo.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	holo.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	holo.cull_mode = BaseMaterial3D.CULL_DISABLED
+	var prof := PackedVector2Array([Vector2(0, 0.4), Vector2(0.6, 0.39), Vector2(1.45, 0.22), Vector2(1.95, 0.0), Vector2(1.35, -0.21), Vector2(0.6, -0.4), Vector2(0, -0.42)])
+	m.add(MeshKit.lathe(prof, 24, PackedInt32Array([3])), holo, Transform3D.IDENTITY)
+	var dome := PackedVector2Array()
+	for k in 7:
+		var a := deg_to_rad(90.0 * float(k) / 6.0)
+		dome.append(Vector2(sin(a), cos(a)) * 0.85)
+	m.add(MeshKit.lathe(dome, 20), holo, Transform3D(Basis.IDENTITY, Vector3(0, 0.3, 0)))
+	m.add(MeshKit.lathe(PackedVector2Array(_torus_pts(1.95, 0.08, 8)), 32), _glow(Color(0.5, 0.95, 1.0), 1.6), Transform3D.IDENTITY)
+	_bake(root, m)
+	return root
+
+
+static func _torus_pts(big_r: float, small_r: float, n := 10) -> Array:
+	var out := []
+	for k in n + 1:
+		var a := deg_to_rad(90.0 - 360.0 * float(k) / float(n))
+		out.append(Vector2(big_r + small_r * cos(a), small_r * sin(a)))
+	return out
+
+
+## Gravity Well: dark core, spinning spiral disc and a glowing rim.
+static func well() -> Node3D:
+	var root := Node3D.new()
+	var core := MeshInstance3D.new()
+	core.mesh = MeshKit.blob(Vector3.ONE * 1.1, 1.0, 1.0, 16, 10)
+	var black := StandardMaterial3D.new()
+	black.albedo_color = Color(0.02, 0.0, 0.05)
+	black.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	core.material_override = black
+	core.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	core.position = Vector3(0, 0.6, 0)
+	root.add_child(core)
+	var disc := MeshInstance3D.new()
+	var pm := PlaneMesh.new()
+	pm.size = Vector2(22, 22)
+	disc.mesh = pm
+	var vm := ShaderMaterial.new()
+	vm.shader = preload("res://shaders/vortex.gdshader")
+	vm.set_shader_parameter("color", Color(0.55, 0.3, 1.0))
+	disc.material_override = vm
+	disc.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	disc.position = Vector3(0, 0.15, 0)
+	root.add_child(disc)
+	var rim := MeshInstance3D.new()
+	var rm := PlaneMesh.new()
+	rm.size = Vector2(24, 24)
+	rim.mesh = rm
+	rim.material_override = Gfx.additive(Color(0.6, 0.35, 1.0, 0.6), Gfx.ring_tex())
+	rim.position = Vector3(0, 0.2, 0)
+	rim.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	root.add_child(rim)
+	var glow := MeshInstance3D.new()
+	var gq := QuadMesh.new()
+	gq.size = Vector2(5, 5)
+	glow.mesh = gq
+	glow.material_override = Gfx.additive(Color(0.6, 0.4, 1.0, 0.6), null, true)
+	glow.position = Vector3(0, 0.8, 0)
+	root.add_child(glow)
+	return root
+
+
+## Comet-ice shard for the Frost Trail (used in a MultiMesh).
+static func ice_mesh() -> ArrayMesh:
+	return MeshKit.faceted(MeshKit.lathe(PackedVector2Array([Vector2(0, 0.55), Vector2(0.65, 0.2), Vector2(0.8, -0.05), Vector2(0, -0.1)]), 6, PackedInt32Array([1, 2])))
+
+
+static func ice_material() -> StandardMaterial3D:
+	var m := StandardMaterial3D.new()
+	m.albedo_color = Color(0.8, 0.95, 1.0, 0.85)
+	m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	m.roughness = 0.1
+	m.metallic = 0.2
+	m.rim_enabled = true
+	m.rim = 0.8
+	m.emission_enabled = true
+	m.emission = Color(0.4, 0.8, 1.0)
+	m.emission_energy_multiplier = 0.6
+	return m
+
+
+## Warp portal: a big spinning ring that faces the camera.
+static func portal() -> Node3D:
+	var root := Node3D.new()
+	var ring := reticle(Color(0.6, 0.45, 1.0), 7.0)
+	root.add_child(ring)
+	var glow := MeshInstance3D.new()
+	var gq := QuadMesh.new()
+	gq.size = Vector2(9, 9)
+	glow.mesh = gq
+	glow.material_override = Gfx.additive(Color(0.6, 0.45, 1.0, 0.7), null, true)
+	root.add_child(glow)
+	return root
+
+
 ## Strap-on nitro booster, nozzle facing back (+Z), with a flame.
 static func booster(c: Color) -> Node3D:
 	var root := Node3D.new()

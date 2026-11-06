@@ -695,6 +695,11 @@ func _on_racer_event(kind: String, d: Dictionary, r: Racer) -> void:
 			if r.is_human:
 				InputRouter.rumble(r.slot, 0.9, 0.35)
 			Audio.play_at("hit", r.global_position)
+		"warped":
+			if cam:
+				cam.warp_cut()
+			if r.is_human:
+				InputRouter.rumble(r.slot, 0.5, 0.2)
 		"wall":
 			if cam and d.impact > 10.0:
 				cam.add_shake(0.35)
@@ -798,6 +803,25 @@ func _fx_for(kind: String, d: Dictionary, r: Racer) -> void:
 		"respawn", "rescued":
 			fx.flash(pos + r.up * 0.6, Color(0.6, 0.9, 1.0), 5.0, 0.35)
 			fx.shockwave(pos, r.up, Color(0.6, 0.9, 1.0), 6.0, 0.5)
+		"warped":
+			var from: Vector3 = d.get("from", pos)
+			fx.flash(from + r.up * 0.6, Color(0.6, 0.45, 1.0), 6.0, 0.3)
+			fx.shockwave(from, r.up, Color(0.6, 0.45, 1.0), 7.0, 0.4)
+			fx.flash(pos + r.up * 0.6, Color(0.8, 0.7, 1.0), 7.0, 0.35)
+			fx.shockwave(pos, r.up, Color(0.6, 0.45, 1.0), 9.0, 0.45)
+			fx.sparks(pos + r.up * 0.5, r.heading, Color(0.7, 0.5, 1.0), 26, 12.0, 4.0)
+		"decoy_popped":
+			var dp: Vector3 = d.get("pos", pos)
+			fx.flash(dp + Vector3.UP * 0.6, Color(0.5, 0.95, 1.0), 5.0, 0.3)
+			fx.sparks(dp + Vector3.UP * 0.5, Vector3.UP, Color(0.5, 0.95, 1.0), 24, 9.0)
+		"welled":
+			fx.sparks(pos + r.up * 0.4, r.up, Color(0.55, 0.3, 1.0), 14, 6.0)
+		"frosted":
+			fx.dust(pos - r.up * 0.6, r.up, Color(0.8, 0.95, 1.0), 16)
+		"overcharge":
+			fx.shockwave(pos, r.up, Color(1.0, 0.6, 0.15), 9.0, 0.45)
+			fx.flash(pos + r.up * 0.6, Color(1.0, 0.75, 0.3), 5.0, 0.3)
+			r.model.react("overcharge")
 		"finish_fx":
 			for c: Color in [Color(1.0, 0.85, 0.2), Color(0.3, 0.9, 1.0), Color(1.0, 0.35, 0.8)]:
 				fx.sparks(pos + r.up * 1.5, r.up + r.heading * 0.3, c, 26, 14.0, 9.0)

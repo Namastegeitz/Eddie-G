@@ -129,16 +129,22 @@ const ITEMS := {
 	"shield": {"name": "Ion Shield", "color": Color(0.35, 0.7, 1.0), "kind": "Defence", "text": "Use it to block every hit for 6 s, or just hold it to stop one hit."},
 	"mine": {"name": "Gravity Mine", "color": Color(1.0, 0.8, 0.2), "kind": "Trap", "text": "Drop it behind you. Whoever flies into it spins out."},
 	"tractor": {"name": "Tractor Beam", "color": Color(0.45, 1.0, 0.45), "kind": "Attack", "text": "Drags the racer ahead back toward you and gives you a small boost."},
+	"warp": {"name": "Warp Jump", "color": Color(0.6, 0.45, 1.0), "kind": "Speed", "text": "Jumps you 40-80 m ahead along the track in a flash: the further back you are, the further it takes you."},
+	"decoy": {"name": "Decoy Drone", "color": Color(0.6, 0.95, 1.0), "kind": "Defence", "text": "A hologram of you trails behind for 8 s. Homing rockets and tractor beams go for it instead of you."},
+	"leech": {"name": "Energy Leech", "color": Color(0.72, 0.3, 1.0), "kind": "Attack", "text": "For 5 s, drains Dark Matter from every racer near you into your own core."},
+	"well": {"name": "Gravity Well", "color": Color(0.5, 0.3, 0.9), "kind": "Trap", "text": "Drops a vortex behind you for 7 s that drags racers toward its centre and slows them."},
+	"frost": {"name": "Frost Trail", "color": Color(0.75, 0.95, 1.0), "kind": "Trap", "text": "Lays comet ice behind you for 4 s. Anyone who drives onto it slides."},
+	"overcharge": {"name": "Overcharge", "color": Color(1.0, 0.6, 0.15), "kind": "Speed", "text": "Burns 60% of your core for a boost: the fuller the core, the longer it lasts (up to 3 s)."},
 }
 
 # Five power-up lineups by race position: what each place can roll from a
 # crate. The further back you are, the stronger the comeback items.
 const LINEUPS := [
-	{"name": "Leader", "places": "1st", "odds": {"shield": 30, "mine": 30, "laser": 20, "rocket": 12, "tractor": 8}, "nitro": 1},
-	{"name": "Front pack", "places": "2nd-3rd", "odds": {"rocket": 25, "laser": 20, "mine": 15, "shield": 15, "tractor": 15, "nitro": 10}, "nitro": 1},
-	{"name": "Midfield", "places": "4th-5th", "odds": {"rocket": 22, "tractor": 18, "nitro": 18, "laser": 14, "emp": 14, "mine": 8, "shield": 6}, "nitro": 2},
-	{"name": "Chasers", "places": "6th-7th", "odds": {"nitro": 26, "rocket": 18, "emp": 18, "tractor": 16, "comet": 12, "laser": 10}, "nitro": 2},
-	{"name": "Last place", "places": "last", "odds": {"nitro": 30, "comet": 25, "emp": 20, "rocket": 15, "tractor": 10}, "nitro": 3},
+	{"name": "Leader", "places": "1st", "odds": {"shield": 20, "mine": 16, "decoy": 16, "frost": 16, "well": 12, "laser": 8, "overcharge": 8, "rocket": 4}, "nitro": 1},
+	{"name": "Front pack", "places": "2nd-3rd", "odds": {"rocket": 16, "laser": 12, "decoy": 12, "frost": 10, "well": 10, "shield": 10, "tractor": 10, "leech": 10, "overcharge": 6, "nitro": 4}, "nitro": 1},
+	{"name": "Midfield", "places": "4th-5th", "odds": {"rocket": 16, "leech": 14, "tractor": 12, "nitro": 12, "warp": 10, "laser": 10, "emp": 10, "well": 6, "overcharge": 6, "shield": 4}, "nitro": 2},
+	{"name": "Chasers", "places": "6th-7th", "odds": {"nitro": 18, "warp": 16, "rocket": 12, "emp": 12, "leech": 12, "tractor": 10, "comet": 8, "overcharge": 6, "laser": 6}, "nitro": 2},
+	{"name": "Last place", "places": "last", "odds": {"warp": 24, "nitro": 22, "comet": 18, "emp": 14, "leech": 10, "rocket": 6, "overcharge": 6}, "nitro": 3},
 ]
 
 ## Which lineup a place uses in a field of n racers.

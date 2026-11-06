@@ -41,6 +41,38 @@ func _draw() -> void:
 		"nitro":
 			draw_colored_polygon(PackedVector2Array([c + Vector2(-r * 0.25, -r), c + Vector2(r * 0.25, -r), c + Vector2(r * 0.35, r * 0.4), c + Vector2(-r * 0.35, r * 0.4)]), col)
 			draw_colored_polygon(PackedVector2Array([c + Vector2(-r * 0.35, r * 0.4), c + Vector2(r * 0.35, r * 0.4), c + Vector2(0, r * 1.05)]), Color(1.0, 0.8, 0.2))
+		"warp":
+			draw_arc(c + Vector2(-r * 0.55, 0), r * 0.42, 0, TAU, 24, Color(col, 0.6), r * 0.14)
+			draw_arc(c + Vector2(r * 0.55, 0), r * 0.42, 0, TAU, 24, col, r * 0.14)
+			draw_line(c + Vector2(-r * 0.4, 0), c + Vector2(r * 0.45, 0), Color.WHITE, r * 0.12)
+			draw_colored_polygon(PackedVector2Array([c + Vector2(r * 0.3, -r * 0.3), c + Vector2(r * 0.7, 0), c + Vector2(r * 0.3, r * 0.3)]), Color.WHITE)
+		"decoy":
+			for k in 10:
+				var a0 := TAU * k / 10.0
+				draw_arc(c, r * 0.9, a0, a0 + 0.38, 6, col, r * 0.12)
+			draw_arc(c + Vector2(0, -r * 0.1), r * 0.35, PI, TAU, 16, Color(col, 0.8), r * 0.1)
+			draw_line(c + Vector2(-r * 0.6, r * 0.15), c + Vector2(r * 0.6, r * 0.15), Color(col, 0.8), r * 0.1)
+		"leech":
+			draw_colored_polygon(PackedVector2Array([c + Vector2(0, -r), c + Vector2(r * 0.55, r * 0.15), c + Vector2(0, r * 0.75), c + Vector2(-r * 0.55, r * 0.15)]), col)
+			draw_colored_polygon(PackedVector2Array([c + Vector2(-r * 0.95, -r * 0.2), c + Vector2(-r * 0.4, -r * 0.2), c + Vector2(-r * 0.65, r * 0.15)]), Color.WHITE)
+			draw_colored_polygon(PackedVector2Array([c + Vector2(r * 0.95, -r * 0.2), c + Vector2(r * 0.4, -r * 0.2), c + Vector2(r * 0.65, r * 0.15)]), Color.WHITE)
+		"well":
+			var pts := PackedVector2Array()
+			for k in 40:
+				var a1 := float(k) * 0.42
+				pts.append(c + Vector2(cos(a1), sin(a1)) * r * float(k) / 40.0)
+			draw_polyline(pts, col, r * 0.16)
+			draw_circle(c, r * 0.22, Color(0.05, 0.0, 0.1))
+		"frost":
+			for k in 6:
+				var a2 := TAU * k / 6.0
+				var tip := c + Vector2(cos(a2), sin(a2)) * r
+				draw_line(c, tip, col, r * 0.13)
+				draw_line(tip, tip + Vector2(cos(a2 + 2.4), sin(a2 + 2.4)) * r * 0.3, col, r * 0.1)
+				draw_line(tip, tip + Vector2(cos(a2 - 2.4), sin(a2 - 2.4)) * r * 0.3, col, r * 0.1)
+		"overcharge":
+			draw_arc(c, r * 0.95, 0, TAU, 32, Color(col, 0.7), r * 0.14)
+			draw_colored_polygon(PackedVector2Array([c + Vector2(r * 0.15, -r * 0.85), c + Vector2(-r * 0.4, r * 0.05), c + Vector2(0, r * 0.05), c + Vector2(-r * 0.15, r * 0.85), c + Vector2(r * 0.4, -r * 0.05), c + Vector2(0, -r * 0.05)]), col)
 		"mine":
 			for k in 8:
 				var a := TAU * k / 8.0

@@ -57,6 +57,7 @@ const REACT := {
 	"comet": [Color(0.6, 0.9, 1.0), 0.85], "laser": [Color(0.35, 1.0, 0.95), 0.6],
 	"emp": [Color(1.0, 0.95, 0.4), 1.2], "tractor": [Color(0.45, 1.0, 0.5), 1.4],
 	"block": [Color(0.4, 0.85, 1.0), 0.45], "hazard": [Color(1.0, 1.0, 1.0), 0.6],
+	"overcharge": [Color(1.0, 0.65, 0.2), 0.9], "leech": [Color(0.72, 0.3, 1.0), 0.6],
 }
 static var _mats := {}
 

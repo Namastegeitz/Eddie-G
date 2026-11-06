@@ -76,7 +76,11 @@ func _data() -> void:
 		check("track %s has 3 facts" % id, d.get("facts", []).size() == 3)
 		check("track %s system known" % id, Catalog.SYSTEMS.has(d.get("system", "")))
 		check("track %s theme known" % id, Themes.DATA.has(d.theme))
-	check("8 power-ups", Catalog.ITEMS.size() == 8)
+	check("14 power-ups", Catalog.ITEMS.size() == 14)
+	for id in Catalog.ITEMS:
+		check("item sound exists " + id, ResourceLoader.exists("res://assets/audio/item_%s.wav" % id))
+	check("warp jump only from the midfield back", not Catalog.LINEUPS[0].odds.has("warp") and not Catalog.LINEUPS[1].odds.has("warp") and Catalog.LINEUPS[4].odds.has("warp"))
+	check("decoys and frost for the leaders", Catalog.LINEUPS[0].odds.has("decoy") and Catalog.LINEUPS[0].odds.has("frost") and not Catalog.LINEUPS[4].odds.has("decoy"))
 	check("5 lineups", Catalog.LINEUPS.size() == 5)
 	for lu in Catalog.LINEUPS:
 		for k in lu.odds:
@@ -705,6 +709,18 @@ func _place_on_track(race: Race, r: Racer, s_m: float, lat: float) -> void:
 	r.item_uses = 0
 
 
+func _clear(r: Racer) -> void:
+	r.item = ""
+	r.item_uses = 0
+	r.boost_time = 0.0
+	r.spin_time = 0.0
+	r.invuln_time = 0.0
+	r.shield_time = 0.0
+	r.tractor_time = 0.0
+	r.slow_time = 0.0
+	r.slick_time = 0.0
+
+
 func _items_tests() -> void:
 	Save.data = Save.defaults()
 	var req := Game.quick_request("proxima_station", 0, 1)
@@ -721,6 +737,8 @@ func _items_tests() -> void:
 		await get_tree().physics_frame
 	# Effect nodes are pooled at load and reused (no building mid-race).
 	check("effect pools built at load", race.items.pooled("mine") == Items.MAX_MINES and race.items.pooled("bolt") == 8 and race.items.pooled("rocket") == 3)
+	check("new power-up effects pooled", race.items.pooled("portal") == 2 and race.items.pooled("decoy") == 2 and race.items.pooled("well") == 2 and race.items.pooled("leech_beam") == 3 and race.items.pooled("charge_dome") == 2)
+	check("ice multimesh ready", race.items._ice_mm != null and race.items._ice_mm.multimesh.instance_count == Items.MAX_ICE and race.items._ice_free.size() == Items.MAX_ICE)
 	check("shield badges pre-made for every racer", race.items._badges.size() == 8)
 	var n0 := race.items.get_child_count()
 	var taken := race.items._take("rocket")
@@ -746,6 +764,7 @@ func _items_tests() -> void:
 	var far: Array = rs.slice(4)
 	for k in far.size():
 		_place_on_track(race, far[k], 900.0 + k * 40.0, 0.0)
+	race.items.clear_effects()
 	# Pulse Laser hits a racer straight ahead.
 	_place_on_track(race, a, 100.0, 0.0)
 	_place_on_track(race, b, 130.0, 0.0)
@@ -838,6 +857,7 @@ func _items_tests() -> void:
 		await get_tree().physics_frame
 	a.boost_time = 0.0
 	await get_tree().physics_frame
+	await _new_items_tests(race)
 	check("boosters come off when the nitro ends", race.items.nitros.is_empty())
 	c.item = "shield"
 	c.item_uses = 1
@@ -968,3 +988,174 @@ func _menus() -> void:
 	menu.show_screen("garage")
 	await get_tree().process_frame
 	check("garage shows locked saucer", not Save.has_saucer("rocket"))
+
+
+## Warp Jump, Decoy Drone, Energy Leech, Gravity Well, Frost Trail, Overcharge.
+func _new_items_tests(race: Race) -> void:
+	var rs := race.racers
+	var a: Racer = rs[0]
+	var b: Racer = rs[1]
+	var c: Racer = rs[2]
+	for r: Racer in rs:
+		_clear(r)
+	for k in range(3, rs.size()):
+		_place_on_track(race, rs[k], 900.0 + k * 40.0, 0.0)
+	race.items.clear_effects()
+	check("clear_effects refills every pool", race.items.pooled("rocket") == 3 and race.items.pooled("mine") == Items.MAX_MINES and race.items.pooled("boosters") == 2)
+	# Overcharge: a full core gives the longest boost and burns 60%.
+	_place_on_track(race, a, 100.0, 0.0)
+	_place_on_track(race, b, 130.0, 0.0)
+	_place_on_track(race, c, 400.0, 0.0)
+	a.energy = 100.0
+	a.item = "overcharge"
+	a.item_uses = 1
+	race.items.use_item(a)
+	check("overcharge boosts for 3 s from a full core", absf(a.boost_time - 3.0) < 0.05 and a.boost_kind == "overcharge")
+	check("overcharge burns 60% of the core", absf(a.energy - 40.0) < 0.5)
+	check("overcharge shows a charge dome", race.items.pooled("charge_dome") == 1)
+	a.boost_time = 0.0
+	# Warp Jump: carried down the track, further from the back.
+	a.place = 8
+	var d0 := a.race_dist
+	a.item = "warp"
+	a.item_uses = 1
+	race.items.use_item(a)
+	var jumped := a.race_dist - d0
+	check("warp from last place jumps about 80 m", jumped > 70.0 and jumped < 90.0)
+	check("warp opens two portals", race.items.pooled("portal") == 0)
+	check("warp lands on the road", absf(a.lateral) < race.td.width * 0.5 and race.td.gap[a.track_idx] == 0)
+	a.place = 1
+	_place_on_track(race, a, 100.0, 0.0)
+	d0 = a.race_dist
+	a.item = "warp"
+	a.item_uses = 1
+	race.items.use_item(a)
+	jumped = a.race_dist - d0
+	check("warp from first place jumps about 40 m", jumped > 30.0 and jumped < 50.0)
+	race.items.clear_effects()
+	# Decoy Drone: a rocket already locked on switches to the hologram.
+	_place_on_track(race, a, 100.0, 0.0)
+	_place_on_track(race, b, 130.0, 0.0)
+	a.item = "rocket"
+	a.item_uses = 1
+	race.items.use_item(a)
+	var rk: Dictionary = race.items.rockets.back()
+	check("rocket locked on the leader", rk.target == b)
+	b.item = "decoy"
+	b.item_uses = 1
+	race.items.use_item(b)
+	check("decoy trails its owner", race.items.decoys.size() == 1 and race.items.decoys[0].owner == b)
+	check("locked rocket switches to the decoy", not (rk.decoy as Dictionary).is_empty())
+	check("decoy owner no longer threatened", not race.items.threatened(b))
+	for f in 90:
+		if race.items.rockets.is_empty():
+			break
+		await get_tree().physics_frame
+	var decoy_gone: bool = race.items.decoys.is_empty() or not bool(race.items.decoys[0].live)
+	check("rocket pops the decoy, not the owner", race.items.rockets.is_empty() and b.spin_time <= 0.0 and decoy_gone)
+	# Tractor Beam grabs a decoy too.
+	race.items.clear_effects()
+	_place_on_track(race, a, 100.0, 0.0)
+	_place_on_track(race, b, 125.0, 0.0)
+	b.item = "decoy"
+	b.item_uses = 1
+	race.items.use_item(b)
+	check("decoy is live before the tractor", not race.items._decoy_of(b).is_empty())
+	a.item = "tractor"
+	a.item_uses = 1
+	a.boost_time = 0.0
+	race.items.use_item(a)
+	check("tractor beam takes the decoy", b.tractor_time <= 0.0 and race.items._decoy_of(b).is_empty() and a.boost_time > 0.0)
+	await get_tree().physics_frame
+	race.items.clear_effects()
+	a.boost_time = 0.0
+	# Energy Leech: drains a racer in range into your core.
+	_place_on_track(race, a, 100.0, 0.0)
+	_place_on_track(race, b, 108.0, 0.0)
+	a.energy = 50.0
+	b.energy = 80.0
+	a.item = "leech"
+	a.item_uses = 1
+	race.items.use_item(a)
+	for f in 30:
+		await get_tree().physics_frame
+		_place_on_track(race, a, 100.0, 0.0)
+		_place_on_track(race, b, 108.0, 0.0)
+	check("leech drains the victim", b.energy < 76.0)
+	check("leech feeds the owner", a.energy > 53.0)
+	check("leech beam latched on", (race.items.leeches[0].links as Dictionary).has(b.idx))
+	b.energy = 80.0
+	b.shield_time = 5.0
+	var a0 := a.energy
+	for f in 20:
+		await get_tree().physics_frame
+		_place_on_track(race, a, 100.0, 0.0)
+		_place_on_track(race, b, 108.0, 0.0)
+		b.shield_time = 5.0
+	# A leech would have moved about 3 units; the bubble stops it (both cores
+	# only lose their normal drain).
+	check("shield bubble stops the leech", b.energy > 78.5 and a.energy <= a0 and not (race.items.leeches[0].links as Dictionary).has(b.idx))
+	b.shield_time = 0.0
+	for L in race.items.leeches:
+		L.t = 0.0
+	await get_tree().physics_frame
+	check("leech effects returned to the pools", race.items.leeches.is_empty() and race.items.pooled("leech_beam") == 3 and race.items.pooled("leech_aura") == 2)
+	# Gravity Well: dropped behind, pulls and slows a racer that enters it.
+	_place_on_track(race, a, 200.0, 0.0)
+	a.item = "well"
+	a.item_uses = 1
+	race.items.use_item(a)
+	var w: Dictionary = race.items.wells.back()
+	check("gravity well sits on the road behind", race.td.main.delta(float(w.s), 200.0) > 3.0 and race.td.main.delta(float(w.s), 200.0) < 10.0)
+	_place_on_track(race, b, 200.0 - 6.0 + 4.0, 3.0)
+	_place_on_track(race, a, 400.0, 0.0)
+	var v0 := b.velocity
+	b.velocity = Vector3.ZERO
+	for f in 5:
+		await get_tree().physics_frame
+	check("well slows a racer inside it", b.slow_time > 0.0)
+	check("well pulls the racer toward its centre", b.velocity.length() > 0.5 or b.global_position.distance_to(w.pos) < 5.0)
+	check("AI lane choice avoids the well", absf(race.items.avoid_lane(float(w.s) - 10.0, float(w.s) + 20.0, float(w.lane), race.td.width * 0.5) - float(w.lane)) > 5.0)
+	b.velocity = v0
+	w.t = 0.0
+	await get_tree().physics_frame
+	check("well cleared from the pool", race.items.wells.is_empty() and race.items.pooled("well") == 2)
+	race.items.clear_effects()
+	# Frost Trail: ice laid behind as the owner drives; others slide on it.
+	_place_on_track(race, a, 300.0, 0.0)
+	_place_on_track(race, b, 600.0, 0.0)
+	a.item = "frost"
+	a.item_uses = 1
+	race.items.use_item(a)
+	for f in 20:
+		_place_on_track(race, a, 300.0 + float(f) * 2.5, 0.0)
+		a.grounded = true
+		a.race_dist = 300.0 + float(f) * 2.5
+		await get_tree().physics_frame
+	check("frost trail lays ice patches", race.items.ice.size() >= 8)
+	var patch: Dictionary = race.items.ice[2]
+	b.global_position = patch.pos + Vector3.UP * 0.6
+	b.reset_physics_interpolation()
+	b.slick_time = 0.0
+	await get_tree().physics_frame
+	check("ice makes a racer slide", b.slick_time > 0.0)
+	check("AI lane choice avoids ice", absf(race.items.avoid_lane(float(patch.s) - 10.0, float(patch.s) + 20.0, float(patch.lane), race.td.width * 0.5) - float(patch.lane)) > 3.0)
+	for p in race.items.ice:
+		p.life = 0.0
+	for f in race.items.frosts:
+		f.t = 0.0
+	await get_tree().physics_frame
+	check("ice melts and frees its slots", race.items.ice.is_empty() and race.items._ice_free.size() == Items.MAX_ICE)
+	# Icons draw for every item.
+	var holder := Control.new()
+	get_tree().root.add_child(holder)
+	for id in Catalog.ITEMS:
+		var ic := ItemIcon.new()
+		ic.item = id
+		ic.size = Vector2(64, 64)
+		holder.add_child(ic)
+	await get_tree().process_frame
+	check("every item has an icon", holder.get_child_count() == 14)
+	holder.queue_free()
+	for r: Racer in rs:
+		_clear(r)

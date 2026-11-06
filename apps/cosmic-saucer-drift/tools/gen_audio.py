@@ -208,6 +208,25 @@ def main():
     n = len(t)
     write("item_tractor", sine(220 + 40 * sine(12, t), t) * env(n, 0.05, 0.2, 0.8, 0.3) + 0.3 * sine(440, t) * env(n, 0.05, 0.2, 0.5, 0.3))
 
+    t = t_axis(0.7)
+    n = len(t)
+    write("item_warp", sine(np.linspace(300, 2400, n), t) * env(n, 0.02, 0.15, 0.7, 0.25) * 0.6 + 0.4 * lowpass(noise(n), np.linspace(400, 5000, n)) * env(n, 0.05, 0.2, 0.5, 0.3))
+    t = t_axis(0.6)
+    n = len(t)
+    write("item_decoy", square(880 + 120 * sine(30, t), t, 0.4) * env(n, 0.01, 0.1, 0.5, 0.3) * 0.5 + 0.3 * sine(1760, t) * (0.5 + 0.5 * square(14, t)) * decay(n, 6))
+    t = t_axis(1.0)
+    n = len(t)
+    write("item_leech", sine(np.linspace(140, 420, n), t) * env(n, 0.05, 0.2, 0.8, 0.3) * 0.6 + 0.35 * sine(np.linspace(280, 840, n) + 20 * sine(9, t), t) * env(n, 0.05, 0.2, 0.6, 0.3))
+    t = t_axis(1.0)
+    n = len(t)
+    write("item_well", sine(np.linspace(120, 35, n), t) * env(n, 0.05, 0.3, 0.8, 0.4) + 0.3 * lowpass(noise(n), 500.0) * env(n, 0.1, 0.3, 0.6, 0.4))
+    t = t_axis(0.6)
+    n = len(t)
+    write("item_frost", lowpass(noise(n), np.linspace(6000, 2000, n)) * env(n, 0.01, 0.2, 0.4, 0.3) * 0.7 + mix(*[sine(f, t) * decay(n, 9) * 0.25 for f in (2093, 2637, 3136)]))
+    t = t_axis(0.8)
+    n = len(t)
+    write("item_overcharge", saw(np.linspace(110, 440, n), t) * env(n, 0.02, 0.2, 0.7, 0.3) * 0.5 + 0.4 * lowpass(noise(n), np.linspace(1500, 7000, n)) * env(n, 0.02, 0.2, 0.6, 0.3))
+
     # Music: two 16-beat synthwave loops built from a bass arpeggio, pad,
     # lead hook and drums.
     def song(bpm, bars, chords, lead, name, bright):

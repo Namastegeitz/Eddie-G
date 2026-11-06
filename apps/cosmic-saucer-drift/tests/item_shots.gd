@@ -7,6 +7,8 @@ const PLAN := [
 	# item, frames after use for the shot, look back?
 	["rocket", 4, false], ["laser", 3, false], ["emp", 6, false], ["nitro", 8, false],
 	["shield", 8, false], ["mine", 30, true], ["tractor", 8, false], ["comet", 40, false],
+	["warp", 12, false], ["decoy", 8, true], ["leech", 8, false], ["well", 30, true],
+	["frost", 60, true], ["overcharge", 8, false],
 ]
 
 
@@ -38,8 +40,8 @@ func _ready() -> void:
 			continue
 		# Make sure there's someone to hit just ahead for the aimed items.
 		var ahead: Racer = race.racers[1]
-		if it in ["rocket", "laser", "tractor", "emp"]:
-			ahead.global_position = me.global_position + me.heading * (14.0 if it != "emp" else 7.0) + me.heading.cross(me.up).normalized() * 0.0
+		if it in ["rocket", "laser", "tractor", "emp", "leech"]:
+			ahead.global_position = me.global_position + me.heading * (14.0 if it not in ["emp", "leech"] else 7.0) + me.heading.cross(me.up).normalized() * 0.0
 			ahead.race_dist = me.race_dist + 14.0
 			ahead.reset_physics_interpolation()
 			ahead.invuln_time = 0.0
@@ -49,6 +51,8 @@ func _ready() -> void:
 		me.item_uses = 1
 		me.item_roll = 0.0
 		me.in_look_back = step[2]
+		if it == "overcharge":
+			me.energy = 100.0
 		# Software rendering is slow; run game time slowly so short effects
 		# (a 0.3 s laser) are still on screen when the shot is taken.
 		Engine.time_scale = 0.06

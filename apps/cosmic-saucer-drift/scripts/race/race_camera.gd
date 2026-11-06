@@ -27,6 +27,7 @@ var pilot_mask := 0           # render layer of the target's own pilot (hidden i
 var _ck_fwd := Vector3.FORWARD
 var _ck_up := Vector3.UP
 var _ck_roll := 0.0
+var _hold_tick := -1          # physics tick of a warp: follow the real position until it's pumped
 
 const ALL_LAYERS := 0xFFFFF
 
@@ -63,9 +64,20 @@ func set_cockpit(on: bool) -> void:
 		_restore_hidden()
 
 
+## The target's transform this frame. Right after a warp the interpolated
+## transform still reports the old spot until the next physics tick, so the
+## real one is used for a couple of ticks.
+func _target_xf() -> Transform3D:
+	if _hold_tick >= 0:
+		if Engine.get_physics_frames() <= _hold_tick + 1:
+			return target.global_transform
+		_hold_tick = -1
+	return target.get_global_transform_interpolated()
+
+
 ## World position of the target pilot's eyes this frame.
 func eye_position() -> Vector3:
-	var xf := target.get_global_transform_interpolated()
+	var xf := _target_xf()
 	var m := target.model
 	if m == null or m.pivot == null:
 		return xf.origin + xf.basis.y * 1.0
@@ -97,6 +109,21 @@ func _desired() -> Vector3:
 	return _tp + back * dist + _up * (height + _dip) + side * _swing
 
 
+## Warp Jump: cut straight to the arrival point with a field-of-view punch,
+## so the player sees their craft come out of the portal.
+func warp_cut() -> void:
+	if target == null or intro > 0.0:
+		return
+	_hold_tick = Engine.get_physics_frames()
+	if cockpit:
+		_ck_fwd = target.heading
+		_ck_up = target.up
+	else:
+		snap()
+	_kick = 12.0
+	add_shake(0.3)
+
+
 func add_shake(amount: float) -> void:
 	if Save.setting("shake"):
 		shake = maxf(shake, amount)
@@ -112,7 +139,7 @@ func _process(dt: float) -> void:
 	if target == null:
 		return
 	_fit_orientation()
-	_tp = target.get_global_transform_interpolated().origin
+	_tp = _target_xf().origin
 	# Smoothing below is frame-rate independent, so allow long frames: on a
 	# slow phone a tight cap made the camera fall far behind the craft.
 	dt = minf(dt, 0.25)

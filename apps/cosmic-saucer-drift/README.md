@@ -3,7 +3,7 @@
 Arcade UFO kart racing across real planets and star systems. Android
 (Google Play first), plus Web, Windows, macOS and Linux from the same Godot
 4.7 project. Pick-up-and-play handling, drifts that charge a Plasma Boost,
-eight power-ups, alien spacecraft, and a Dark Matter core you have to keep
+fourteen power-ups, alien spacecraft, and a Dark Matter core you have to keep
 charged.
 
 Built from [`prompts/claude/cosmic-saucer-drift.md`](../../prompts/claude/cosmic-saucer-drift.md)
@@ -137,12 +137,19 @@ the cockpit on and off on all 42 layouts and checks the camera every time.
 
 ## Power-ups and lineups
 
-Eight power-ups from glowing crates: **Homing Rocket**, **Pulse Laser**
+Fourteen power-ups from glowing crates: **Homing Rocket**, **Pulse Laser**
 (instant beam that hits everything in a line and clears mines), **Comet
 Strike** (falls on the leader), **EMP Shockwave** (spins out everyone near you
 and knocks their items loose), **Nitro Rocket** (1-3 boosts), **Ion Shield**
 (use it for 6 s of protection, or just hold it to block one hit), **Gravity
-Mine** and **Tractor Beam**.
+Mine**, **Tractor Beam**, and six made for closer racing: **Warp Jump**
+(teleports you 40-80 m down the track, further the further back you are),
+**Decoy Drone** (a hologram of you that homing rockets and tractor beams
+chase instead), **Energy Leech** (5 s of draining Dark Matter from every
+racer near you into your core), **Gravity Well** (a vortex dropped behind
+you that drags racers in and slows them), **Frost Trail** (lays comet ice
+behind you; anyone on it slides) and **Overcharge** (burns 60% of your core
+for a boost that lasts longer the fuller the core: risk for reward).
 
 Each has its own detailed model and effects: the rocket (fins, flame, smoke
 trail) shows a red lock-on ring over its target and warns them; the laser
