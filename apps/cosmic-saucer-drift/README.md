@@ -77,6 +77,18 @@ falling ice/glass/iron, lava eruptions, supersonic gusts), one hidden
 shortcut, three Star Shards, and Reverse + Mirror versions that unlock when
 you win it: 14 tracks, 42 layouts.
 
+## Phone held upright (portrait)
+
+The Android app always plays in landscape, but a browser can't lock the
+orientation, so the web build works both ways. Held upright, the game
+switches to a 720x1280 layout: the joystick and buttons keep their
+thumb-sized dimensions (about 80 pt, well over the 44 pt / 48 dp platform
+minimums), the energy cells and boost meter move up under the lap counter,
+the pause button sits under the speed, menus go single-column, and the
+camera keeps its field of view across the width so the road ahead stays in
+sight (the cockpit view too). Rotating mid-race re-lays everything out, and
+a one-time tip suggests turning the phone for the widest view.
+
 ## Icon and desktop shortcut
 
 ![Icon](assets/icons/icon_512.png)

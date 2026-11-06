@@ -439,6 +439,41 @@ func _touch_tests() -> void:
 	tc._input(_touch(3, tc._buttons.item.get_center(), true))
 	check("item press", InputRouter.touch.item and tc._stick_id < 0)
 	tc._input(_touch(3, tc._buttons.item.get_center(), false))
+	# Portrait (phone held upright): the controls keep their size on the
+	# 720x1280 canvas, and nothing overlaps.
+	var tall := Control.new()
+	tall.size = Vector2(720, 1280)
+	add_child(tall)
+	var tc2 := TouchControls.new()
+	tall.add_child(tc2)
+	tc2.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	tc2.size = Vector2(720, 1280)
+	await get_tree().process_frame
+	check("portrait buttons same size as landscape", is_equal_approx(tc2._unit(), tc._unit()) and is_equal_approx(tc2._unit(), 1.0))
+	tc2._layout()
+	var jr := Rect2(tc2.stick_home() - Vector2.ONE * tc2.stick_radius(), Vector2.ONE * tc2.stick_radius() * 2.0)
+	var clash := false
+	for n in tc2._buttons:
+		var br: Rect2 = tc2._buttons[n]
+		if br.intersects(jr) or br.end.x > 721.0 or br.end.y > 1281.0:
+			clash = true
+	check("portrait: joystick and buttons don't overlap or spill", not clash)
+	check("portrait: joystick zone excludes the button cluster", not tc2.stick_zone().has_point(tc2._buttons.item.get_center()))
+	var ls := Control.new()
+	ls.size = Vector2(1560, 720)
+	add_child(ls)
+	var tc3 := TouchControls.new()
+	ls.add_child(tc3)
+	tc3.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	tc3.size = Vector2(1560, 720)
+	await get_tree().process_frame
+	check("wide phone landscape keeps unit 1", is_equal_approx(tc3._unit(), 1.0))
+	tc2.free()
+	tall.free()
+	tc3.free()
+	ls.free()
+	InputRouter.touch.active = true   # (freeing the extra controls switched it off)
+	check("landscape window keeps the 1280x720 canvas", get_window().content_scale_size == Vector2i(1280, 720) and not Game.portrait_window())
 	# A touch on the COCKPIT tab must not grab the joystick.
 	var tab := Control.new()
 	host.add_child(tab)
@@ -760,6 +795,21 @@ func _items_tests() -> void:
 		check("chase camera back behind", cam.global_position.distance_to(me.global_position) > 3.0)
 		check("own pilot visible again", (cam.cull_mask & cam.pilot_mask) != 0)
 		Save.data.settings.cockpit = false
+		# Portrait HUD: energy bars go top-centre, pause under the speed, and
+		# the cockpit dash clears the pedals; back to the bottom in landscape.
+		var old_size := hud.size
+		InputRouter.touch_seen = true
+		hud.size = Vector2(720, 1280)
+		hud._process(0.016)
+		check("portrait HUD is tall", hud.tall() and hud.bottom_pad() > 300.0)
+		check("portrait: energy label at the top", hud._energy_lbl.anchor_top == 0.0 and hud._energy_lbl.offset_top > 100.0)
+		hud.size = old_size if old_size.x > 0.0 else Vector2(1280, 720)
+		hud._process(0.016)
+		check("landscape: energy label at the bottom", hud._energy_lbl.anchor_top == 1.0 and is_zero_approx(hud.bottom_pad()))
+		InputRouter.touch_seen = false
+		var rc := race.cams[0]
+		rc._fit_orientation()
+		check("landscape camera keeps height FOV", rc.keep_aspect == Camera3D.KEEP_HEIGHT)
 	# Premium perks.
 	var sail := Racer.new()
 	race.add_child(sail)

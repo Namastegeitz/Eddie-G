@@ -12,6 +12,8 @@ var menu_hint := ""
 var detected_quality := "high"
 var _rng := RandomNumberGenerator.new()
 
+signal orientation_changed
+
 const DAILY_MODS := [
 	{"id": "ice_age", "name": "Ice Age", "text": "Every surface is slippery.", "mods": {"grip": 0.55}},
 	{"id": "power_hungry", "name": "Power Hungry", "text": "Cores drain twice as fast; pods give 50% more.", "mods": {"drain": 2.0, "pod": 1.5}},
@@ -37,11 +39,31 @@ const TT_PACE := [40.0, 45.0, 49.0]   # average m/s for bronze / silver / gold
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	tuning = load("res://resources/tuning.tres")
+	get_tree().root.size_changed.connect(fit_orientation)
+	fit_orientation()
 	detected_quality = Gfx.detect()
 	# On phones and in browsers, if a frame runs long don't pile up physics
 	# steps to catch up (that turns one slow frame into a stutter).
 	if OS.has_feature("web") or OS.has_feature("mobile"):
 		Engine.max_physics_steps_per_frame = 3
+
+
+## The UI is designed on a 1280x720 canvas that scales to fit the screen.
+## A phone held upright (a browser can't lock to landscape) would squeeze
+## 1280 units into the narrow side and shrink every control to a third, so
+## in portrait the canvas becomes 720x1280 instead: buttons, text and the
+## HUD keep their size, and screens lay themselves out for the tall shape.
+static func portrait_window() -> bool:
+	var w := DisplayServer.window_get_size()
+	return w.y > w.x and w.x > 0
+
+
+func fit_orientation() -> void:
+	var want := Vector2i(720, 1280) if portrait_window() else Vector2i(1280, 720)
+	var win := get_window()
+	if win.content_scale_size != want:
+		win.content_scale_size = want
+		orientation_changed.emit()
 
 
 func quality() -> String:

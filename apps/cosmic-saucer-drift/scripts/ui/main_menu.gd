@@ -64,6 +64,9 @@ func _ready() -> void:
 	add_child(_toast)
 	UiKit.place(_toast, Vector2(0.5, 1), Vector2(-400, -70), Vector2(800, 50))
 	Audio.music("menu")
+	Game.orientation_changed.connect(func() -> void:
+		if _screen != "":
+			show_screen(_screen, false))
 	var hint := Game.menu_hint
 	Game.menu_hint = ""
 	if hint != "":
@@ -225,10 +228,17 @@ func _find_button(n: Node) -> Button:
 
 
 # ---------------------------------------------------------------- helpers
+## Width available for a screen's panel (the viewport minus the margins).
+func _avail_w() -> float:
+	return get_viewport().get_visible_rect().size.x - 52.0
+
+
 func _left_panel(width := 640.0) -> Array:
 	## Returns [root, inner vbox]: a scrollable panel on the left.
 	var root := HBoxContainer.new()
 	var p := PanelContainer.new()
+	# Never wider than the screen (portrait phones are 720 units wide).
+	width = minf(width, _avail_w())
 	p.custom_minimum_size = Vector2(width, 0)
 	p.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	root.add_child(p)
@@ -279,9 +289,10 @@ func _title() -> Control:
 	var v := UiKit.vbox(6)
 	root.add_child(v)
 	UiKit.place(v, Vector2(0.5, 0.0), Vector2(-500, 30), Vector2(1000, 260))
-	var t1 := UiKit.label("COSMIC SAUCER", 92, UiKit.CYAN, HORIZONTAL_ALIGNMENT_CENTER)
+	var tk := clampf(_avail_w() / 1100.0, 0.6, 1.0)
+	var t1 := UiKit.label("COSMIC SAUCER", int(92 * tk), UiKit.CYAN, HORIZONTAL_ALIGNMENT_CENTER)
 	v.add_child(t1)
-	var t2 := UiKit.label("D R I F T", 64, UiKit.PINK, HORIZONTAL_ALIGNMENT_CENTER)
+	var t2 := UiKit.label("D R I F T", int(64 * tk), UiKit.PINK, HORIZONTAL_ALIGNMENT_CENTER)
 	v.add_child(t2)
 	var tap := UiKit.label("Tap or press any button", 30, Color.WHITE, HORIZONTAL_ALIGNMENT_CENTER)
 	root.add_child(tap)
@@ -399,7 +410,8 @@ func _track_picker(mode: String) -> Control:
 			var sysd: Dictionary = Catalog.SYSTEMS[last_sys]
 			v.add_child(UiKit.label("%s  ·  %s" % [sysd.name, sysd.distance], 20, UiKit.GOLD))
 			grid = GridContainer.new()
-			grid.columns = 2
+			# One column on a narrow (portrait) screen so names aren't cut off.
+			grid.columns = 2 if _avail_w() >= 900.0 else 1
 			grid.add_theme_constant_override("h_separation", 10)
 			grid.add_theme_constant_override("v_separation", 8)
 			v.add_child(grid)

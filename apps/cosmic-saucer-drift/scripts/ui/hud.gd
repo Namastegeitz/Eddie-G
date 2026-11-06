@@ -31,6 +31,23 @@ var _lines_mat: ShaderMaterial
 var _lines_amt := 0.0
 var cockpit_tab: SideTab
 var _cockpit := false
+var _layout_key := ""
+var pause_btn: Control
+static var _rotate_hint_shown := false
+
+
+## A phone held upright: the energy cells and boost meter go top-centre
+## (the craft sits low on a tall screen and the thumbs own the bottom).
+func tall() -> bool:
+	return size.y > size.x and not compact
+
+
+## Portrait with touch controls: how far the cockpit dashboard sits above
+## the bottom edge to clear the pedals and DRIFT. 0 in landscape.
+func bottom_pad() -> float:
+	if tall() and InputRouter.touch_seen:
+		return 150.0 * 1.25 + 150.0 * 1.05 + 24.0 * 3.0 + 10.0
+	return 0.0
 
 
 func setup(p_race: Node, p_racer: Racer, is_compact: bool) -> void:
@@ -97,7 +114,7 @@ func setup(p_race: Node, p_racer: Racer, is_compact: bool) -> void:
 	# Energy label (bars are drawn in the overlay).
 	_energy_lbl = UiKit.label("DARK MATTER", int(16 * k), UiKit.CYAN, HORIZONTAL_ALIGNMENT_CENTER)
 	add_child(_energy_lbl)
-	UiKit.place(_energy_lbl, Vector2(0.5, 1), Vector2(-250, -128 * k), Vector2(500, 30))
+	_place_bottom()
 	# Centre messages + toasts.
 	_center = UiKit.label("", int(110 * k), Color.WHITE, HORIZONTAL_ALIGNMENT_CENTER)
 	add_child(_center)
@@ -115,6 +132,28 @@ func setup(p_race: Node, p_racer: Racer, is_compact: bool) -> void:
 	add_child(cockpit_tab)
 	UiKit.place(cockpit_tab, Vector2(0, 0.38), Vector2(0, 0), Vector2(48, 168) * k)
 	racer.event.connect(_on_event)
+
+
+## Positions that depend on the screen shape (re-done when it rotates).
+func _place_bottom() -> void:
+	var k := 0.72 if compact else 1.0
+	if tall():
+		UiKit.place(_energy_lbl, Vector2(0.5, 0), Vector2(-250, 150 * k), Vector2(500, 30))
+	else:
+		UiKit.place(_energy_lbl, Vector2(0.5, 1), Vector2(-250, -128 * k), Vector2(500, 30))
+	if pause_btn:
+		if tall():
+			UiKit.place(pause_btn, Vector2(1, 0), Vector2(-96, 262 * k), Vector2(70, 64))
+		else:
+			UiKit.place(pause_btn, Vector2(1, 0), Vector2(-296, 14), Vector2(70, 64))
+	_layout_key = "%s|%s" % [size, InputRouter.touch_seen]
+
+
+## The pause button (made by the race) is laid out with the HUD.
+func add_pause(btn: Control) -> void:
+	pause_btn = btn
+	add_child(btn)
+	_place_bottom()
 
 
 func set_cockpit(on: bool) -> void:
@@ -205,6 +244,11 @@ func _on_event(kind: String, d: Dictionary) -> void:
 func _process(dt: float) -> void:
 	if racer == null:
 		return
+	if _layout_key != "%s|%s" % [size, InputRouter.touch_seen]:
+		_place_bottom()
+	if not _rotate_hint_shown and size.y > size.x and InputRouter.touch_seen and race.racing:
+		_rotate_hint_shown = true
+		toast("Tip: turn your phone sideways for a wider view", UiKit.DIM)
 	var n: int = race.racers.size()
 	_place.text = UiKit.ordinal(racer.place)
 	_place.add_theme_color_override("font_color", UiKit.GOLD if racer.place == 1 else Color.WHITE)
@@ -273,17 +317,24 @@ func _draw_cockpit(s: Vector2, k: float) -> void:
 	for g in [[0.13, 0.17, 0.24, 0.07], [0.18, 0.23, 0.27, 0.11]]:
 		o.draw_line(Vector2(s.x * g[0], s.y * g[1]), Vector2(s.x * g[2], s.y * g[3]), Color(1, 1, 1, 0.09), 7.0 * k)
 	# Dashboard.
+	# The dash spans the middle half in landscape; on a tall screen it's
+	# wider (and sits above the touch controls) so the dial and lamp stay
+	# clear of the energy cells.
+	var tall := s.y > s.x
+	var hw := 0.42 if tall else 0.25
+	var base_y := s.y - bottom_pad()
+	var dh := (s.x * 0.2) if tall else (s.y * 0.13)
 	var dash := PackedVector2Array()
 	for i in 25:
 		var t := float(i) / 24.0
-		dash.append(Vector2(lerpf(s.x * 0.25, s.x * 0.75, t), s.y - sin(t * PI) * s.y * 0.13 - 2.0))
+		dash.append(Vector2(lerpf(s.x * (0.5 - hw), s.x * (0.5 + hw), t), base_y - sin(t * PI) * dh - 2.0))
 	var fill := dash.duplicate()
-	fill.append_array([Vector2(s.x * 0.75, s.y), Vector2(s.x * 0.25, s.y)])
+	fill.append_array([Vector2(s.x * (0.5 + hw), base_y), Vector2(s.x * (0.5 - hw), base_y)])
 	o.draw_colored_polygon(fill, Color(0.04, 0.04, 0.1, 0.72))
 	o.draw_polyline(dash, Color(0.3, 0.92, 1.0, 0.55), 3.0 * k)
 	# Speed dial on the left of the dash.
-	var dc := Vector2(s.x * 0.315, s.y - s.y * 0.05)
-	var dr := s.y * 0.04
+	var dr := (s.x * 0.055) if tall else (s.y * 0.04)
+	var dc := Vector2(s.x * ((0.5 - hw) + 0.085 if tall else 0.315), base_y - dr * 1.25)
 	var a0 := deg_to_rad(150.0)
 	var a1 := deg_to_rad(390.0)
 	var spd := clampf(racer.fwd_speed / maxf(racer.max_speed * 1.3, 1.0), 0.0, 1.0)
@@ -292,7 +343,7 @@ func _draw_cockpit(s: Vector2, k: float) -> void:
 	var na := lerpf(a0, a1, spd)
 	o.draw_line(dc, dc + Vector2(cos(na), sin(na)) * dr * 0.9, Color(1, 0.4, 0.3), 2.5 * k)
 	# Boost / drift lamp on the right.
-	var lc := Vector2(s.x * 0.685, s.y - s.y * 0.05)
+	var lc := Vector2(s.x * ((0.5 + hw) - 0.085 if tall else 0.685), base_y - dr * 1.25)
 	var lamp := Color(0.25, 0.25, 0.3)
 	if racer.boost_time > 0.0:
 		lamp = UiKit.PINK
@@ -319,9 +370,12 @@ func _draw_overlay() -> void:
 	var cw := 34.0 * k
 	var ch := 18.0 * k
 	var gap := 5.0 * k
+	if tall():
+		cw = 24.0 * k
+		ch = 16.0 * k
 	var total := cells * cw + (cells - 1) * gap
 	var x0 := s.x * 0.5 - total * 0.5
-	var y0 := s.y - 52.0 * k
+	var y0 := (124.0 * k) if tall() else (s.y - 52.0 * k)
 	var frac: float = racer.energy / float(race.tuning.energy_max)
 	for i in cells:
 		var r := Rect2(x0 + i * (cw + gap), y0, cw, ch)

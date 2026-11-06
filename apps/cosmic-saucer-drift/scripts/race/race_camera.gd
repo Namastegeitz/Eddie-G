@@ -32,6 +32,17 @@ const ALL_LAYERS := 0xFFFFF
 
 const NEAR_HIDE := 3.2
 
+var _portrait := false
+
+
+## A tall screen (phone held upright in the browser) would see only a slit
+## of the road with a height-based field of view; keep it across the width
+## instead and sit the camera a little higher.
+func _fit_orientation() -> void:
+	var vs := get_viewport().get_visible_rect().size
+	_portrait = vs.y > vs.x
+	keep_aspect = Camera3D.KEEP_WIDTH if _portrait else Camera3D.KEEP_HEIGHT
+
 
 func _ready() -> void:
 	# The camera moves every rendered frame, following the racer's smoothed
@@ -80,7 +91,7 @@ func snap() -> void:
 func _desired() -> Vector3:
 	var far_cam: bool = Save.setting("camera") == "far"
 	var dist := (8.2 if far_cam else 6.0) + _stretch * 1.4
-	var height := (3.1 if far_cam else 2.4) - _stretch * 0.35
+	var height := (3.1 if far_cam else 2.4) - _stretch * 0.35 + (1.1 if _portrait else 0.0)
 	var back := -_vel_dir if not target.in_look_back else _vel_dir
 	var side := _vel_dir.cross(_up).normalized()
 	return _tp + back * dist + _up * (height + _dip) + side * _swing
@@ -100,6 +111,7 @@ func land(impact: float) -> void:
 func _process(dt: float) -> void:
 	if target == null:
 		return
+	_fit_orientation()
 	_tp = target.get_global_transform_interpolated().origin
 	# Smoothing below is frame-rate independent, so allow long frames: on a
 	# slow phone a tight cap made the camera fall far behind the craft.
@@ -167,9 +179,9 @@ func _process(dt: float) -> void:
 		_kick = 9.0
 	_was_boost = boosting
 	_kick = maxf(0.0, _kick - dt * 18.0)
-	var want_fov := 70.0 + ratio * 9.0 + (8.0 if boosting else 0.0)
+	var want_fov := (58.0 if _portrait else 70.0) + ratio * 9.0 + (8.0 if boosting else 0.0)
 	fov = lerpf(fov, want_fov, 1.0 - exp(-4.0 * dt)) + _kick * dt * 6.0
-	fov = clampf(fov, 60.0, 100.0)
+	fov = clampf(fov, 50.0, 100.0)
 	if shake > 0.0:
 		shake = maxf(0.0, shake - dt * 1.8)
 		var s := shake * shake * 0.6
@@ -205,8 +217,8 @@ func _cockpit_process(dt: float, ratio: float) -> void:
 		_kick = 9.0
 	_was_boost = boosting
 	_kick = maxf(0.0, _kick - dt * 18.0)
-	var want_fov := 76.0 + ratio * 12.0 + (8.0 if boosting else 0.0)
-	fov = clampf(lerpf(fov, want_fov, 1.0 - exp(-4.0 * dt)) + _kick * dt * 6.0, 60.0, 105.0)
+	var want_fov := (62.0 if _portrait else 76.0) + ratio * 12.0 + (8.0 if boosting else 0.0)
+	fov = clampf(lerpf(fov, want_fov, 1.0 - exp(-4.0 * dt)) + _kick * dt * 6.0, 50.0, 105.0)
 	if shake > 0.0:
 		shake = maxf(0.0, shake - dt * 1.8)
 		var s := shake * shake * 0.35

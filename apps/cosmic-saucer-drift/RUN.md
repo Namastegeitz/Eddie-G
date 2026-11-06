@@ -94,6 +94,10 @@ xvfb-run -a godot --path . res://tests/menu_shots.tscn --rendering-driver opengl
 xvfb-run -a godot --path . res://tests/craft_shots.tscn --rendering-driver opengl3 -- --out=docs/screenshots/craft --mode=all
 # Every power-up fired in a live race (slows game time for the shot)
 xvfb-run -a godot --path . res://tests/item_shots.tscn --rendering-driver opengl3 -- --out=/tmp/items [--only=laser,rocket]
+# Portrait (phone held upright) shots, with the touch controls shown; the
+# window flag is what actually sets the size under xvfb
+xvfb-run -a godot --path . --resolution 720x1280 res://tests/shots.tscn --rendering-driver opengl3 -- --tracks=mars --frames=330 --portrait --touch [--cockpit]
+xvfb-run -a godot --path . --resolution 720x1280 res://tests/menu_shots.tscn --rendering-driver opengl3 -- /tmp/shots quick,title portrait
 # Race shots at a given graphics tier
 xvfb-run -a godot --path . res://tests/shots.tscn --rendering-driver opengl3 -- --tracks=mars --frames=300 --quality=ultra
 # Top-down maps of every track layout

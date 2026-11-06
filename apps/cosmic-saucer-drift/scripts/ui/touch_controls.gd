@@ -51,8 +51,10 @@ func _exit_tree() -> void:
 	InputRouter.touch.throttle = 0.0
 
 
+## 1.0 on the design canvas (1280x720, or 720x1280 in portrait): a button
+## is about a fifth of the shorter screen side, roughly 80 pt on a phone.
 func _unit() -> float:
-	return minf(size.y / 720.0, size.x / 1280.0)
+	return minf(minf(size.x, size.y) / 720.0, maxf(size.x, size.y) / 1280.0)
 
 
 func _mode() -> String:

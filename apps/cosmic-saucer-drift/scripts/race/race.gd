@@ -268,7 +268,7 @@ func _setup_views() -> void:
 			touch = TouchControls.new()
 			touch.racer = view_racers[0]
 			ui_layer.add_child(touch)
-			hud.add_child(_pause_button())
+			hud.add_pause(_pause_button())
 	else:
 		var split := VBoxContainer.new()
 		split.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -387,7 +387,6 @@ func _pause_button() -> Control:
 	b.text = "II"
 	b.add_theme_font_size_override("font_size", 30)
 	b.custom_minimum_size = Vector2(70, 64)
-	UiKit.place(b, Vector2(1, 0), Vector2(-296, 14), Vector2(70, 64))
 	b.focus_mode = Control.FOCUS_NONE
 	b.pressed.connect(toggle_pause)
 	return b
