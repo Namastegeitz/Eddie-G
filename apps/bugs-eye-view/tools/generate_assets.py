@@ -261,6 +261,57 @@ def build_npc_sfx():
     write("shake", spray, peak=0.5)
 
 
+def build_view_overlays():
+    """Bug's-eye view overlays: a soft dark vignette (looking out from inside a
+    tiny head) and compound-eye facets for flies, both clear in the middle."""
+    from PIL import Image
+    out = os.path.join(ROOT, "assets", "ui")
+    os.makedirs(out, exist_ok=True)
+    n = 512
+    y, x = np.mgrid[0:n, 0:n].astype(float)
+    u = (x - n / 2) / (n / 2)
+    v = (y - n / 2) / (n / 2)
+    r = np.sqrt(u * u + v * v)
+    def smooth(a, b, t):
+        k = np.clip((t - a) / (b - a), 0, 1)
+        return k * k * (3 - 2 * k)
+    # Vignette: warm dark edges.
+    a = smooth(0.62, 1.25, r) * 0.75
+    img = np.zeros((n, n, 4))
+    img[..., 0], img[..., 1], img[..., 2] = 0.05, 0.035, 0.02
+    img[..., 3] = a
+    Image.fromarray((img * 255).astype(np.uint8), "RGBA").save(os.path.join(out, "vignette.png"), optimize=True)
+    # Compound eye: hexagonal facets that show towards the edges.
+    s3 = math.sqrt(3.0)
+    size = 26.0
+    qx = (x * s3 / 3 - y / 3) / size
+    qz = (y * 2 / 3) / size
+    # Cube-round to the nearest hex centre, then distance to its edge.
+    cx, cz = qx, qz
+    cy = -cx - cz
+    rx, ry, rz = np.round(cx), np.round(cy), np.round(cz)
+    dx, dy, dz = np.abs(rx - cx), np.abs(ry - cy), np.abs(rz - cz)
+    fixx = (dx > dy) & (dx > dz)
+    fixy = (~fixx) & (dy > dz)
+    rx = np.where(fixx, -ry - rz, rx)
+    ry = np.where(fixy, -rx - rz, ry)
+    rz = np.where(~fixx & ~fixy, -rx - ry, rz)
+    # Exact distance to the cell's edge (pointy-top hexagon): 1.0 on an edge.
+    hx = size * (s3 * rx + s3 / 2 * rz)
+    hy = size * (1.5 * rz)
+    qx = np.abs(x - hx)
+    qy = np.abs(y - hy)
+    d = np.maximum(qx, 0.5 * qx + s3 / 2 * qy) / (size * s3 / 2)
+    line = smooth(0.86, 0.98, d)
+    ring = smooth(0.7, 1.15, r)
+    img = np.zeros((n, n, 4))
+    img[..., 0] = 0.08 + 0.1 * line
+    img[..., 1] = 0.05 + 0.04 * line
+    img[..., 2] = 0.03
+    img[..., 3] = np.clip(line * 0.45 * ring + smooth(0.85, 1.4, r) * 0.55, 0, 1)
+    Image.fromarray((img * 255).astype(np.uint8), "RGBA").save(os.path.join(out, "compound_eye.png"), optimize=True)
+
+
 def build_icons():
     from PIL import Image, ImageDraw
     os.makedirs(ICONS, exist_ok=True)
@@ -320,5 +371,6 @@ if __name__ == "__main__":
     build_pet_sfx()
     build_bug_sfx()
     build_npc_sfx()
+    build_view_overlays()
     build_icons()
     print("assets generated")

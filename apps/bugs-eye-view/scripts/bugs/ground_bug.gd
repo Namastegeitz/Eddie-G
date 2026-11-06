@@ -33,14 +33,14 @@ func _move(delta: float) -> void:
 	ability_cd = maxf(ability_cd - delta, 0.0)
 	is_squeezing = squeeze_on_secondary and InputRouter.is_held(&"secondary")
 	if not _custom_move(delta):
-		var speed := stats.sprint_speed if is_sprinting() else stats.move_speed
+		var speed := run_speed() if is_sprinting() or is_running() else stats.move_speed
 		if is_squeezing:
 			speed *= stats.squeeze_speed_mult
 		speed *= speed_scale()
 		ground_move(delta, speed)
 		face_velocity(delta)
 		if visual:
-			var target_y := 0.55 if is_squeezing else 1.0
+			var target_y := (0.55 if is_squeezing else 1.0) * size_mult()
 			visual.scale.y = lerpf(visual.scale.y, target_y, clampf(12.0 * delta, 0.0, 1.0))
 	_ground_tick(delta)
 	if ability_name() != "":
@@ -108,3 +108,7 @@ func _sense_tick(delta: float) -> void:
 func _sense_end() -> void:
 	if _arrow:
 		_arrow.visible = false
+
+
+func _owns_visual_height() -> bool:
+	return true

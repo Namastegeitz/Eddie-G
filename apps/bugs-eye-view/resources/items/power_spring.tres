@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="ItemDef" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/item_def.gd" id="1_tlf3a"]
+
+[resource]
+script = ExtResource("1_tlf3a")
+id = &"power_spring"
+display_name = "Spring Legs"
+kind = 2
+effect = &"spring"
+duration = 15.0
+amount = 1.8
+points = 120
+color = Color(0.55, 1, 0.25, 1)
+blurb = "Jumps and leaps go much higher for 15 seconds."

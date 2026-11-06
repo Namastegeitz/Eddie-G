@@ -34,26 +34,26 @@ _surfaces = [{
 "vertex_data": PackedByteArray("AAC2Lf//AID//7YtAAD/////ti3//wCAAAC2LQAA//8AAAAA//8AgP//AAAAAP////8AAP//AIAAAAAAAAD/////ti3///+/AAC2LQAA/7///7YtAAD/vwAAti3///+///8AAP///78AAAAAAAD/v///AAAAAP+/AAAAAP///7///7Yt/////wAAAAD///+/AAC2Lf///////wAA////v///ti0AAP//AAAAAAAA/78AALYtAAD/////AAAAAP+/0UX//22LAIAtuv///y///y26//9tiwCA0UX///8v///RRZHkbYsAgC26keT/L///LbqR5G2LAIDRRZHk/y///y26//9ti/+/0UX///8v/78tuv///y//v9FF//9ti/+/LbqR5G2L/7/RRZHk/y//vy26keT/L/+/0UWR5G2L/78tuv//bYv//9FFkeRti/+/0UX//22L//8tupHkbYv/vy26////L///0UWR5P8v/7/RRf///y///y26keT/L/+/AAD/f/9/AAAAAP9//38AAAAA/3//fwAAAAD/f/9/AAD/fwAA/3/+//9/AAD/f/7//38AAP9//v//fwAA/3/+//+/AAAAAP9//78AAAAA/3//vwAAAAD/f/+/AAAAAP9/AAD/f/9/AAAAAP9//38AAAAA/3//fwAAAAD/f/9/AAD/fwAA/3/+//9/AAD/f/7//38AAP9//v//fwAA/3/+//+/AAAAAP9//78AAAAA/3//vwAAAAD/f/+/AAAAAP9/")
 }]
 
-[node name="Foot" type="Node3D" unique_id=235294148]
+[node name="Foot" type="Node3D" unique_id=37862835]
 script = ExtResource("1_kq7kw")
 
-[node name="Body" type="AnimatableBody3D" parent="." unique_id=1105319404]
+[node name="Body" type="AnimatableBody3D" parent="." unique_id=1727667079]
 
-[node name="Shape" type="CollisionShape3D" parent="Body" unique_id=1785851601]
+[node name="Shape" type="CollisionShape3D" parent="Body" unique_id=1997613404]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.25, 0)
 shape = SubResource("BoxShape3D_08aex")
 
-[node name="Visual" type="Node3D" parent="." unique_id=1921027933]
+[node name="Visual" type="Node3D" parent="." unique_id=1814036797]
 
-[node name="Shoe" type="MeshInstance3D" parent="Visual" unique_id=1511023222]
+[node name="Shoe" type="MeshInstance3D" parent="Visual" unique_id=754204129]
 material_override = ExtResource("2_nneh1")
 mesh = SubResource("ArrayMesh_lk07s")
 
-[node name="Sole" type="MeshInstance3D" parent="Visual" unique_id=896396430]
+[node name="Sole" type="MeshInstance3D" parent="Visual" unique_id=753363390]
 material_override = ExtResource("3_y01u4")
 mesh = SubResource("ArrayMesh_61nh8")
 
-[node name="Skin" type="Node3D" parent="Visual" unique_id=700408977]
+[node name="Skin" type="Node3D" parent="Visual" unique_id=1284447296]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, -1)
 script = ExtResource("4_jhwop")
 model_id = "human_sneaker"

@@ -197,6 +197,12 @@ static func materials(force: bool) -> void:
 		"pet_eye_dog": _mat(Color(0.3, 0.17, 0.08), 0.04),
 		"pet_eye_cat": _mat(Color(0.45, 0.75, 0.25), 0.04),
 		"cat_stripe": _mat(Color(0.62, 0.32, 0.1), 0.9),
+		# Power-up tokens: glowing coins.
+		"power_turbo": _mat(Color(0.2, 0.85, 1.0), 0.25, 0.3, false, false, Color(0.2, 0.8, 1.0, 1.6)),
+		"power_spring": _mat(Color(0.55, 1.0, 0.25), 0.25, 0.3, false, false, Color(0.5, 1.0, 0.2, 1.6)),
+		"power_radar": _mat(Color(1.0, 0.55, 0.15), 0.25, 0.3, false, false, Color(1.0, 0.5, 0.1, 1.6)),
+		"power_double": _mat(Color(1.0, 0.85, 0.2), 0.25, 0.6, false, false, Color(1.0, 0.8, 0.2, 1.6)),
+		"power_shrink": _mat(Color(0.85, 0.4, 1.0), 0.25, 0.3, false, false, Color(0.8, 0.35, 1.0, 1.6)),
 	}
 	for k: String in defs.keys():
 		var mat: StandardMaterial3D = defs[k]
@@ -238,6 +244,17 @@ static func items(force: bool) -> void:
 			"Crumb Magnet: nearby crumbs fly to you for 12 seconds."],
 		["gem_sapphire", "Sapphire Gem", ItemDef.Kind.GEM, &"decoy", 8.0, 3.0, 300, Color(0.15, 0.35, 1),
 			"Echo Decoy: a humming shard lures threats to where you stood."],
+		# Power-ups: two of each hidden in the corners of every room.
+		["power_turbo", "Turbo", ItemDef.Kind.POWER, &"turbo", 12.0, 1.6, 120, Color(0.2, 0.85, 1.0),
+			"60% faster for 12 seconds - hold Run to really fly."],
+		["power_spring", "Spring Legs", ItemDef.Kind.POWER, &"spring", 15.0, 1.8, 120, Color(0.55, 1.0, 0.25),
+			"Jumps and leaps go much higher for 15 seconds."],
+		["power_radar", "Bug Radar", ItemDef.Kind.POWER, &"radar", 20.0, 90.0, 120, Color(1.0, 0.55, 0.15),
+			"Crumbs and power-ups show on screen for 20 seconds."],
+		["power_double", "Double Crumbs", ItemDef.Kind.POWER, &"double", 25.0, 2.0, 120, Color(1.0, 0.85, 0.2),
+			"Every crumb counts twice for 25 seconds."],
+		["power_shrink", "Shrink", ItemDef.Kind.POWER, &"shrink", 15.0, 0.55, 120, Color(0.85, 0.4, 1.0),
+			"Tiny for 15 seconds: any gap hides you and you're hard to see."],
 	]
 	for d: Array in defs:
 		var it := ItemDef.new()
@@ -286,7 +303,7 @@ static func bugs(force: bool) -> void:
 		"primary|Sprint: run faster - louder and easier to spot",
 		"secondary|Squeeze: flatten into gaps to hide completely",
 		"jump|Hop over small things",
-		"dodge|Dash out from under a stomp",
+		"dodge|Tap to dash out from under a stomp; hold to run faster",
 		"sense|Smell: your antennae point to the nearest crumb",
 		"tip|Stand still to blend in. Near a suspicious threat you play dead.",
 	])
@@ -320,11 +337,13 @@ static func bugs(force: bool) -> void:
 	f.dodge_cooldown = 0.7
 	f.unlock_after_bug = &"cockroach"
 	f.tagline = "Buzzing, darting, hovering - the whole room is yours."
+	# Compound eyes see almost all the way round.
+	f.fp_fov = 100.0
 	f.guide = PackedStringArray([
 		"jump|Take off, and fly up",
 		"secondary|Fly down, land, or cling to a wall or ceiling",
 		"primary|Boost: faster, but tiring",
-		"dodge|Burst sideways - twice quickly to loop, with Down to dive",
+		"dodge|Burst sideways (twice quickly to loop, with Down to dive); hold to fly faster",
 		"interact|Pester a person or pet by their head",
 		"sense|Slow motion (kicks in by itself when a swat is coming)",
 		"tip|Let go to hover. Warm air over the stove and lamps refills your wings.",
@@ -340,12 +359,13 @@ static func bugs(force: bool) -> void:
 	s.unlock_hint = "escape a room as the Fly"
 	s.unlock_after_bug = &"fly"
 	s.tagline = "Walls, ceilings and webs: the master of stealth."
+	s.fp_fov = 96.0
 	s.guide = PackedStringArray([
 		"move|Walk on floors, up walls and across ceilings",
 		"primary|Web zip to where you aim (tap the spot on a touch screen)",
 		"secondary|Web trap: slows anything that walks into it",
 		"jump|Leap off a wall or ceiling",
-		"dodge|Dash",
+		"dodge|Tap to dash; hold to run faster",
 		"sense|Feel footsteps through the floor as ripples",
 		"tip|Your web lines stay behind as bridges.",
 	])
@@ -405,7 +425,7 @@ static func _new_bugs(force: bool) -> void:
 		"primary|Sprint",
 		"secondary|Decoys: a column of ants marches off - threats follow them",
 		"jump|Hop",
-		"dodge|Dash",
+		"dodge|Tap to dash; hold to run faster",
 		"sense|Scout: your antennae point to the nearest crumb",
 		"tip|You're tiny: any gap hides you without squeezing, and you're hard to see.",
 	])
@@ -420,6 +440,7 @@ static func _new_bugs(force: bool) -> void:
 	c.color = Color(0.35, 0.24, 0.12)
 	c.unlock_hint = "escape a room as the Ant"
 	c.unlock_after_bug = &"ant"
+	c.fp_fov = 90.0
 	c.rating_speed = 0.75
 	c.rating_stealth = 0.6
 	c.rating_toughness = 0.35
@@ -436,7 +457,7 @@ static func _new_bugs(force: bool) -> void:
 		"jump|Hold to crouch and charge, let go to leap (aim with the stick)",
 		"primary|Chirp: throw your voice ahead - threats go to look there",
 		"secondary|Squeeze into gaps",
-		"dodge|Dash",
+		"dodge|Tap to dash; hold to run faster",
 		"sense|Antennae: point to the nearest crumb",
 		"tip|A full charge lands you on a chair seat. Steer a little in the air.",
 	])
@@ -469,7 +490,7 @@ static func _new_bugs(force: bool) -> void:
 		"primary|Shell up (hold): nothing can hurt you, but you can't move",
 		"jump|Hop - hold it in the air to flutter down gently",
 		"secondary|Squeeze into gaps",
-		"dodge|Dash",
+		"dodge|Tap to dash; hold to run faster",
 		"sense|Antennae: point to the nearest crumb",
 		"tip|Lucky: people won't swat a ladybug until the alarm is full. Pets don't care.",
 	])
@@ -479,6 +500,7 @@ static func _new_bugs(force: bool) -> void:
 	f.id = &"firefly"
 	f.display_name = "Firefly"
 	f.fly_routes = true
+	f.fp_fov = 100.0
 	f.tagline = "Lights up the night - and dazzles anyone close."
 	f.description = "Flies like the fly, but glows while it flies (easy to see in the dark). Flash to dazzle every person and pet nearby: they can't see you for a few seconds."
 	f.scene_path = "res://scenes/bugs/firefly.tscn"
@@ -545,7 +567,7 @@ static func _new_bugs(force: bool) -> void:
 		"primary|Stink cloud: pets bolt, people cough and can't see",
 		"secondary|Squeeze into gaps",
 		"jump|Hop",
-		"dodge|Dash",
+		"dodge|Tap to dash; hold to run faster",
 		"sense|Antennae: point to the nearest crumb",
 		"tip|Slow but takes three hits. Your smell lingers - dogs track you easily.",
 	])

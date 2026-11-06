@@ -22,10 +22,11 @@ The first import takes a minute while Godot processes the sounds and icons.
 | Primary | Left click / F | X / right trigger | Big button |
 | Secondary | Right click / Q | Y / left trigger | Button |
 | Jump | Space | A | Button |
-| Dodge | Shift | Right shoulder | Button |
+| Dodge / Run | Shift: tap to dash, hold to run | Right shoulder | Run button (tap: dash) |
 | Use | E | B | Button |
 | Sense | R | Left shoulder | Button |
 | Pause | Esc / P | Start | II button (top right) |
+| Bug's-eye view | V | Back / Select | EYES button (beside SPEED) |
 
 What each button does depends on the bug (the touch buttons relabel
 themselves). The first time you play a bug, a how-to-play card shows its
@@ -56,6 +57,40 @@ marked **ESCAPED**.
 **Finding the way out.** Once you've collected enough crumbs to open the exit,
 a gold marker points to it (at the screen edge when it's behind you) with the
 distance.
+
+**Bug's-eye view.** Press V (or EYES on a touch screen, or Settings > Bug's-eye
+view) to see through your bug's own eyes. The camera sits exactly at the
+sculpted eyes of each bug: you see your antennae sway, your mandibles, palps or
+fangs below, and your front legs step into the corners of the view, all moved
+by the same animation rig as the model. The body faces where you look (you can
+still step sideways), the view bobs with the gait, each bug has its own field of
+view (the fly's and firefly's compound eyes see widest, with facets at the edge
+of view), and the spider's view follows the wall or ceiling it's on. Press V
+again to go back behind the bug.
+
+**Running.** Tap Shift to dash out of trouble; keep holding it to run (about
+1.5x faster, but louder and easier to spot). In the air the fly flies faster.
+
+**Power-ups.** Ten glowing power-up tokens are tucked into the hidden corners
+of every room (under the fridge, couch and armchair, inside shelters, in the
+secret-route cavities, behind the woodpile, up on the cat tree...), two of
+each:
+
+| Power-up | Does |
+|---|---|
+| Turbo | 60% faster for 12 s |
+| Spring Legs | Much higher jumps and leaps for 15 s |
+| Bug Radar | Crumbs and power-ups show on screen for 20 s |
+| Double Crumbs | Every crumb counts twice for 25 s |
+| Shrink | Tiny for 15 s: any gap hides you and you're hard to see |
+
+The count found shows under your crumbs; finding all ten earns the Power
+Hunter badge.
+
+**People keep to their routine - but not mid-chase.** They come in through
+the room's door when their part of the day starts. When it ends they leave,
+but not while they're onto you: they finish with you, calm down, then walk out
+through the door.
 
 **Smooth at any frame rate.** Movement is interpolated between physics
 steps, so the camera, your bug, the people and the pets glide on 90/120 Hz
@@ -202,7 +237,7 @@ three times faster.
 ## 3. Test it
 
 All checks: import, boot, warnings-as-errors, an offline test of the Meshy
-client, then the 165-check smoke test and the 378-check phase audit
+client, then the 165-check smoke test and the 394-check phase audit
 (`tests/phase_audit.tscn`, one section per build phase plus one per update),
 each run in the project **and** against an exported pack. Any script or
 engine error fails the run:
@@ -226,7 +261,8 @@ and touch look, 11 flying, playful/alert animals and people's activities, 12 the
 touch look stick, 13 the upgraded dog and cat-and-dog rooms, 14 the five new
 bugs, the unlock chain, the how-to-play cards and auto quality, 15 smooth
 motion, lifelike people and pets, textures and quality tiers, 16 new NPC
-movements, chores, pet habits and the obstacles they create).
+movements, chores, pet habits and the obstacles they create, 17 the bug's-eye
+view, Shift to run, power-ups and people finishing the chase).
 
 `godot` means the Godot executable, e.g.
 `C:\Godot\Godot_v4.7.2-stable_win64_console.exe`. The smoke test prints

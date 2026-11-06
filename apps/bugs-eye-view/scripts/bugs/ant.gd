@@ -11,7 +11,7 @@ func _bug_setup() -> void:
 
 func get_action_labels() -> Dictionary:
 	return {"primary": "Sprint", "secondary": "Decoys", "jump": "Hop",
-		"dodge": "Dash", "interact": "Use", "sense": "Scout"}
+		"dodge": "Run", "interact": "Use", "sense": "Scout"}
 
 
 func ability_name() -> String:

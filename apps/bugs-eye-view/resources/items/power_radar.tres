@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="ItemDef" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/item_def.gd" id="1_rsb1r"]
+
+[resource]
+script = ExtResource("1_rsb1r")
+id = &"power_radar"
+display_name = "Bug Radar"
+kind = 2
+effect = &"radar"
+duration = 20.0
+amount = 90.0
+points = 120
+color = Color(1, 0.55, 0.15, 1)
+blurb = "Crumbs and power-ups show on screen for 20 seconds."

@@ -21,25 +21,25 @@ _surfaces = [{
 "vertex_data": PackedByteArray("cFMxhkH+IY7Bf/OSU7FytzJseIkDTuDhUSw7c6E3mvMAAHpmjoQdyY8T9G/f5++ecFMxhkH+IY6QV0RTIP8hjuGDBmAysnK3UnCLVuJO4OFxME5Afzia8yAEjDNthR3JrxcHPb3o756QV0RTIP8hjrBbVyD//yGOAYgZLRGzcrdydJ4jwE/g4ZE0YQ1eOZrzQAifAEyGHcnPGxoKnOnvnrBbVyD//yGO4D+2fPGaEMNwUzGGQf4Qw8F/85JTsRDDMmx4iQNOEMNRLDtzoTcQwwAAemaOhBDDjxP0b9/nEMNwUzGGQf4QwyBI3BaunFG/sFtXIP//Ub8BiBktEbNRv3J0niPAT1G/kTRhDV45Ub9ACJ8ATIZRv88bGgqc6VG/sFtXIP//Ub9ymdhxkLvNk7DavoiUtAeZdPeTkwpXBsP60oGHfQB87byRm3B4B//n+HTGZQJljr1ymdhxkLvNk7ed9D5Ru82T9d7bVVW0B5m5+69gzFYGw0DXnlQ+AHztAZa4PToH/+c9eeMyw2SOvbed9D5Ru82T/KERDBO7zZM64/ciF7QHmf//zC2NVgbDhdu6IQAAfO1GmtQK+wb/54J9AACFZI69/KERDBO7zZM2tqx8Bl6VwHKZ2HGQu5XAsNq+iJS0lcB095OTCleVwPrSgYd9AJXAvJGbcHgHlcD4dMZlAmWVwHKZ2HGQu5XAwL7mFoldGMT8oREME7sYxDrj9yIXtBjE///MLY1WGMSF27ohAAAYxEaa1Ar7BhjEgn0AAIVkGMT8oREME7sYxGiJbOy395+IpLyk/v+2FLG6sv//9U+F25R1Iu+kKe75WULq3F1qaM9DTI/bZtEPpWiJbOy395+IG41guXH2n4hWwJfLubUUsWy28syvToXbR3kVvF4o7vkLRt6pF2loz/ZPg6gg0A+lG41guXH2n4jNkFOGK/WfiAnEi5hytBSxH7rmmWlNhdv5fAmJGCfu+b5J0XbQZ2jPqFN2ddrOD6XNkFOGK/WfiH5/x+2ukJe/aIls7Lf3l7+kvKT+/7aXv7qy///1T5e/lHUi76Qpl79ZQurcXWqXv0NMj9tm0Ze/aIls7Lf3l7/jhq6HIY5Owc2QU4Yr9U7BCcSLmHK0TsEfuuaZaU1Owfl8CYkYJ07BvknRdtBnTsGoU3Z12s5Owc2QU4Yr9U7BqrO9Cy+UVgpojP4J7XOq9kZv1vdOZJj6qrO9C6qzvQsvlFYKaIz+Ce1zqvZGb9b3TmSY+qqzvQuqs70LL5RWCmiM/gntc6r2Rm/W905kmPqqs70L8fhrYvH4a2Lx+Gti8fhrYvH4a2Lx+Gti8fhrYvH4a2KrHqRoqx6kaKsepGirHqRoqx6kaKsepGirHqRoqx6kaIxXYPeyoQ8HG5IHCWSMwAlvcxD2z2xg9oxXYPeMV2D3sqEPBxuSBwlkjMAJb3MQ9s9sYPaMV2D3jFdg97KhDwcbkgcJZIzACW9zEPbPbGD2jFdg98jWGJzI1hicyNYYnMjWGJzI1hicyNYYnMjWGJzI1hictgzyp7YM8qe2DPKntgzyp7YM8qe2DPKntgzyp7YM8qe+O4MI9ZJvBXGNiAcud+z1bnJR9uxm+fS+O4MIvjuDCPWSbwVxjYgHLnfs9W5yUfbsZvn0vjuDCL47gwj1km8FcY2IBy537PVuclH27Gb59L47gwj+/zFv/v8xb/7/MW/+/zFv/v8xb/7/MW/+/zFv/v8xb38QgG9/EIBvfxCAb38QgG9/EIBvfxCAb38QgG9/EIBv")
 }]
 
-[node name="Kibble" type="Area3D" unique_id=402820912]
+[node name="Kibble" type="Area3D" unique_id=195734585]
 script = ExtResource("1_v6nmy")
 def = ExtResource("2_aquiy")
 
-[node name="Shape" type="CollisionShape3D" parent="." unique_id=1044018954]
+[node name="Shape" type="CollisionShape3D" parent="." unique_id=2974106]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.65, 0)
 shape = SubResource("SphereShape3D_f6qb8")
 
-[node name="Visual" type="Node3D" parent="." unique_id=1105599008]
+[node name="Visual" type="Node3D" parent="." unique_id=1241845502]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.65, 0)
 
-[node name="Kibble" type="MeshInstance3D" parent="Visual" unique_id=1764878646]
+[node name="Kibble" type="MeshInstance3D" parent="Visual" unique_id=872076471]
 material_override = ExtResource("3_4v8fa")
 visibility_range_end = 110.0
 visibility_range_end_margin = 16.5
 visibility_range_fade_mode = 1
 mesh = SubResource("ArrayMesh_6viu2")
 
-[node name="Skin" type="Node3D" parent="Visual" unique_id=1559907178]
+[node name="Skin" type="Node3D" parent="Visual" unique_id=445713350]
 script = ExtResource("4_1xyy1")
 model_id = "kibble"
 fit_size = Vector3(1.7, 0.9, 1.3)

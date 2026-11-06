@@ -183,6 +183,18 @@ static func build(tree: SceneTree) -> void:
 	g.goal(Vector3(-58, 0, 40), "crack under the back door")
 	g.deco_box("DoorCrack", Vector3(-59.85, 2.5, 40), Vector3(0.2, 5, 8), "hole", Vector3.ZERO, false)
 
+	# --- Power-ups: ten tucked into the hidden corners ---
+	g.item("power_turbo", Vector3(38, 0, -32))  # under the fridge
+	g.item("power_shrink", Vector3(-48, 0, -22.5))  # in the toe-kick gap under the counter
+	g.item("power_radar", Vector3(104, 0, -22.5))  # in the other toe-kick gap
+	g.item("power_double", Vector3(-40, 0, 8))  # inside the paper cup
+	g.item("power_spring", Vector3(-36, 0, 42))  # inside the sneaker
+	g.item("power_turbo", Vector3(102, 0, -6))  # inside the recycling box
+	g.item("power_double", Vector3(34, 0, -53))  # in the wall cavity (secret route)
+	g.item("power_spring", Vector3(24, 0, 78))  # behind the flour sack
+	g.item("power_radar", Vector3(-56, 0, 76))  # the far corner by the back door
+	g.item("power_shrink", Vector3(-50, 38.15, -38))  # inside the folded towel on the counter
+
 	# --- Threats ---
 	# The cook: cooks at the stove and does the dishes with their back to the
 	# room, snacks at the table; cooking and snacking drop crumbs.
@@ -191,7 +203,7 @@ static func build(tree: SceneTree) -> void:
 			Vector3(-56, 0, 5), Vector3(-20, 0, 34), Vector3(32, 0, 58), Vector3(82, 0, 62), Vector3(90, 0, 18),
 			Vector3(65, 0, 8)],
 		["breakfast", "dishes", "cleaning", "lunch", "late_snack", "midnight_snack"],
-		{"activities": {
+		{"exit_point": Vector3(-52, 0, 40), "activities": {
 			1: {"kind": &"fridge", "time": 6.0, "face": Vector3(43, 40, -30)},
 			2: {"kind": &"cook", "time": 10.0, "face": Vector3(7, 36, -33)},
 			3: {"kind": &"dishes", "time": 8.0, "face": Vector3(-35, 38, -33)},

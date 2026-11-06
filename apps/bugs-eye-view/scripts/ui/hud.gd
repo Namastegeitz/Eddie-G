@@ -7,6 +7,7 @@ var level: Level
 var player: BugBase
 var _lives: Label
 var _crumbs: Label
+var _powers: Label
 var _objective: Label
 var _clock: Label
 var _threat: Label
@@ -131,7 +132,7 @@ func _build_pickup_panel() -> void:
 func show_pickup(def: ItemDef) -> void:
 	if def == null:
 		return
-	var gem := def.kind == ItemDef.Kind.GEM
+	var gem := def.kind != ItemDef.Kind.FOOD
 	_pickup_title.text = def.display_name.to_upper()
 	_pickup_title.add_theme_color_override("font_color", def.color.lerp(Color.WHITE, 0.25))
 	_pickup_text.text = def.blurb
@@ -169,6 +170,10 @@ func _build_top() -> void:
 	_crumbs = _make_label("", 24, UIKit.GOLD)
 	_crumbs.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 	left.add_child(_crumbs)
+	_powers = _make_label("", 18, Color(0.55, 0.9, 1.0))
+	_powers.name = "PowerUps"
+	_powers.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	left.add_child(_powers)
 	_effects = _make_label("", 18, UIKit.GREEN)
 	_effects.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 	left.add_child(_effects)
@@ -209,6 +214,7 @@ func bind(lvl: Level) -> void:
 	lvl.hint_changed.connect(func(t: String) -> void: toast(t))
 	lvl.boss_announced.connect(_on_boss)
 	lvl.item_picked.connect(show_pickup)
+	lvl.item_picked.connect(func(_d: ItemDef) -> void: _update_powers())
 	lvl.close_call.connect(func() -> void: toast("CLOSE CALL!"))
 	PerceptionSystem.alarm_raised.connect(_on_alarm_raised)
 	PerceptionSystem.alarm_cleared.connect(_on_alarm_cleared)
@@ -226,6 +232,20 @@ func bind(lvl: Level) -> void:
 	_update_lives()
 	_update_threat()
 	_update_clock()
+	_update_powers()
+
+
+## Power-ups found in this room (ten are hidden in its corners).
+func _update_powers() -> void:
+	if _powers == null or level == null:
+		return
+	var total := 0
+	for it in get_tree().get_nodes_in_group(Phys.GROUP_ITEM):
+		var pi := it as PickupItem
+		if pi and level.is_ancestor_of(pi) and pi.is_power():
+			total += 1
+	_powers.visible = total > 0
+	_powers.text = "POWER-UPS %d / %d" % [total - level.powerups_left(), total]
 
 
 func _process(_delta: float) -> void:

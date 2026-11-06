@@ -173,11 +173,23 @@ static func build(tree: SceneTree) -> void:
 	g.goal(Vector3(111, 0, -46), "gap under the hall door")
 	g.deco_box("DoorCrack", Vector3(114.85, 2.5, -46), Vector3(0.2, 5, 8), "hole", Vector3.ZERO, false)
 
+	# --- Power-ups: ten tucked into the hidden corners ---
+	g.item("power_turbo", Vector3(-30, 0, -40))  # under the couch
+	g.item("power_double", Vector3(58, 0, -40))  # under the armchair
+	g.item("power_shrink", Vector3(-45, 0, 12))  # inside a slipper
+	g.item("power_spring", Vector3(34, 0, -46))  # inside the shoe
+	g.item("power_radar", Vector3(80, 0, 5))  # inside the laundry basket
+	g.item("power_turbo", Vector3(20, 0, 16))  # under the fallen pillow
+	g.item("power_double", Vector3(-73, 0, -30))  # in the wall cavity (secret route)
+	g.item("power_spring", Vector3(-40, 0, -24))  # inside the other slipper
+	g.item("power_radar", Vector3(105, 32.25, 40))  # on top of the cat tree
+	g.item("power_shrink", Vector3(-60, 0, -46))  # the corner behind the couch
+
 	# --- Threats ---
 	g.human("res://scenes/threats/human_reader.tscn",
 		[Vector3(40, 0, -20), Vector3(-10, 0, -23), Vector3(-34, 0, -22), Vector3(-36, 0, 20), Vector3(25, 0, 26),
 			Vector3(70, 0, 28), Vector3(95, 0, 20), Vector3(92, 0, -14), Vector3(62, 0, -23)],
-		["tv_on", "reading"], {"name": "Reader", "activities": {
+		["tv_on", "reading"], {"name": "Reader", "exit_point": Vector3(104, 0, -44), "activities": {
 			1: {"kind": &"nap", "time": 14.0, "face": Vector3(-10, 0, 10)},
 			6: {"kind": &"curtains", "time": 3.0, "face": Vector3(114, 40, 10)},
 			8: {"kind": &"read", "time": 16.0, "face": Vector3(62, 0, 10)},

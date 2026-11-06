@@ -22,7 +22,7 @@ func _bug_setup() -> void:
 
 func get_action_labels() -> Dictionary:
 	return {"primary": "Chirp", "secondary": "Squeeze", "jump": "Leap",
-		"dodge": "Dash", "interact": "Use", "sense": "Antennae"}
+		"dodge": "Run", "interact": "Use", "sense": "Antennae"}
 
 
 func ability_name() -> String:
@@ -61,7 +61,7 @@ func leap() -> void:
 	if dir.length() < 0.1:
 		dir = facing
 	dir = dir.normalized()
-	velocity = dir * lerpf(6.0, 14.0, k) + Vector3.UP * lerpf(10.0, 29.0, k)
+	velocity = (dir * lerpf(6.0, 14.0, k) + Vector3.UP * lerpf(10.0, 29.0, k)) * sqrt(jump_scale())
 	facing = dir
 	leaping = true
 	AudioManager.play(&"whoosh", -6.0, 1.5)
@@ -79,7 +79,7 @@ func _custom_move(delta: float) -> bool:
 		velocity.y = 0.0 if is_on_floor() else velocity.y - stats.gravity * delta
 		move_and_slide()
 		if visual:
-			visual.scale.y = lerpf(visual.scale.y, 0.7, clampf(10.0 * delta, 0.0, 1.0))
+			visual.scale.y = lerpf(visual.scale.y, 0.7 * size_mult(), clampf(10.0 * delta, 0.0, 1.0))
 		meter_changed.emit(&"stamina", charge, MAX_CHARGE)
 		return true
 	if leaping:
@@ -98,7 +98,7 @@ func _custom_move(delta: float) -> bool:
 		velocity -= ext
 		face_velocity(delta)
 		if visual:
-			visual.scale.y = lerpf(visual.scale.y, 1.0, clampf(10.0 * delta, 0.0, 1.0))
+			visual.scale.y = lerpf(visual.scale.y, size_mult(), clampf(10.0 * delta, 0.0, 1.0))
 		if is_on_floor() and velocity.y <= 0.0:
 			leaping = false
 			AudioManager.play(&"thud", -14.0, 1.7)

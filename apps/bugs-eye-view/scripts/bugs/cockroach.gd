@@ -22,7 +22,7 @@ func _setup() -> void:
 
 func get_action_labels() -> Dictionary:
 	return {"primary": "Sprint", "secondary": "Squeeze", "jump": "Hop",
-		"dodge": "Dash", "interact": "Use", "sense": "Smell"}
+		"dodge": "Run", "interact": "Use", "sense": "Smell"}
 
 
 func _move(delta: float) -> void:
@@ -34,7 +34,7 @@ func _move(delta: float) -> void:
 	_prev_light = light
 	_scatter = maxf(_scatter - delta, 0.0)
 	is_squeezing = InputRouter.is_held(&"secondary")
-	var speed := stats.sprint_speed if is_sprinting() else stats.move_speed
+	var speed := run_speed() if is_sprinting() or is_running() else stats.move_speed
 	if light <= _cfg.light_dim + 0.01:
 		speed *= 1.0 + stats.dark_speed_bonus
 	if _scatter > 0.0:
@@ -46,7 +46,7 @@ func _move(delta: float) -> void:
 	face_velocity(delta)
 	_playing_dead = is_frozen() and _suspicious_threat_near()
 	if visual:
-		var target_y := 0.5 if is_squeezing else 1.0
+		var target_y := (0.5 if is_squeezing else 1.0) * size_mult()
 		visual.scale.y = lerpf(visual.scale.y, target_y, clampf(12.0 * delta, 0.0, 1.0))
 		if knockdown <= 0.0:
 			visual.rotation.z = lerpf(visual.rotation.z, PI if _playing_dead else 0.0, clampf(8.0 * delta, 0.0, 1.0))
@@ -112,3 +112,7 @@ func _sense_tick(delta: float) -> void:
 func _sense_end() -> void:
 	if _arrow:
 		_arrow.visible = false
+
+
+func _owns_visual_height() -> bool:
+	return true

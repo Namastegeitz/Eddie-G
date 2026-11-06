@@ -234,10 +234,21 @@ func _on_crumb_collected(c: Crumb) -> void:
 		run.golden = true
 		set_hint("Golden Crumb!")
 	else:
-		crumbs_got += 1
+		# Double Crumbs: each one counts twice.
+		crumbs_got += 2 if player and player.has_effect(&"double") else 1
 		run.crumbs = crumbs_got
 	crumbs_changed.emit(crumbs_got, crumbs_needed)
 	_check_goal()
+
+
+## Power-ups left to find in this room.
+func powerups_left() -> int:
+	var n := 0
+	for it in get_tree().get_nodes_in_group(Phys.GROUP_ITEM):
+		var pi := it as PickupItem
+		if pi and is_ancestor_of(pi) and pi.is_power() and not pi.taken:
+			n += 1
+	return n
 
 
 ## Bug food and crumb gems.
@@ -246,7 +257,10 @@ func _on_item_collected(item: PickupItem) -> void:
 		return
 	PowerUps.apply(item.def, player)
 	if run:
-		if item.is_gem():
+		if item.is_power():
+			run.powerups += 1
+			run.power_points += item.def.points
+		elif item.is_gem():
 			run.gems.append(item.def.id)
 			run.gem_points += item.def.points
 			SaveSystem.record_gem(item.def.id)

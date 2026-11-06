@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="ItemDef" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/item_def.gd" id="1_m2jut"]
+
+[resource]
+script = ExtResource("1_m2jut")
+id = &"power_double"
+display_name = "Double Crumbs"
+kind = 2
+effect = &"double"
+duration = 25.0
+amount = 2.0
+points = 120
+color = Color(1, 0.85, 0.2, 1)
+blurb = "Every crumb counts twice for 25 seconds."

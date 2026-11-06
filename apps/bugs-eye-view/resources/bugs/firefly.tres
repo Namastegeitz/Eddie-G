@@ -31,6 +31,7 @@ drift = 1.0
 stamina_max = 9.0
 stamina_regen = 2.5
 bullet_time_cost = 3.0
+fp_fov = 100.0
 fly_routes = true
 ability_duration = 3.5
 ability_radius = 18.0

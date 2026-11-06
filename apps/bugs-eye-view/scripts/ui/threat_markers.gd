@@ -27,6 +27,7 @@ func _draw() -> void:
 	var rect := Rect2(Vector2.ZERO, size).grow(-28.0)
 	var center := size * 0.5
 	_draw_exit(cam, rect, center)
+	_draw_radar(cam, rect)
 	for t in PerceptionSystem.threats:
 		if not t.present:
 			continue
@@ -53,6 +54,41 @@ func _draw() -> void:
 
 ## The exit: an arrow at the screen edge when it's off screen, a bobbing
 ## chevron over it when it's on screen; both with the distance.
+## Bug Radar: every crumb and power-up nearby shows as a small diamond,
+## through walls (power-ups in their own colour, slightly bigger).
+func _draw_radar(cam: Camera3D, rect: Rect2) -> void:
+	var p := PerceptionSystem.player
+	if p == null or not p.has_effect(&"radar"):
+		return
+	var reach := float(p.effect_amount.get(&"radar", 90.0))
+	var t := Time.get_ticks_msec() * 0.008
+	for group in [Phys.GROUP_CRUMB, Phys.GROUP_ITEM]:
+		for n in get_tree().get_nodes_in_group(group):
+			var node := n as Node3D
+			if node == null or not node.is_inside_tree():
+				continue
+			var col := Color(1.0, 0.85, 0.4)
+			var dot := 6.0
+			if n is Crumb:
+				if (n as Crumb).taken:
+					continue
+			elif n is PickupItem:
+				var pi := n as PickupItem
+				if pi.taken or not pi.is_power():
+					continue
+				col = pi.def.color
+				dot = 9.0
+			var w := node.global_position + Vector3.UP * 1.0
+			if w.distance_to(p.global_position) > reach or cam.is_position_behind(w):
+				continue
+			var sp := cam.unproject_position(w)
+			if not rect.has_point(sp):
+				continue
+			var s := dot + sin(t + w.x) * 1.5
+			draw_colored_polygon(PackedVector2Array([sp + Vector2(0, -s), sp + Vector2(s, 0), sp + Vector2(0, s), sp + Vector2(-s, 0)]),
+				Color(col.r, col.g, col.b, 0.85))
+
+
 func _draw_exit(cam: Camera3D, rect: Rect2, center: Vector2) -> void:
 	var lvl := Level.current
 	if lvl == null or lvl.goal == null or not lvl.goal.active:

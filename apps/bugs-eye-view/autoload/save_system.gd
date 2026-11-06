@@ -42,6 +42,7 @@ func default_data() -> Dictionary:
 			"invert_y": false,
 			"fly_follow_look": true,
 			"auto_quality": true,
+			"first_person": false,
 		},
 		"bindings": {},
 	}

@@ -76,6 +76,10 @@ extends Resource
 @export var web_trap_duration: float = 6.0
 @export var bridge_duration: float = 8.0
 
+@export_group("Bug's-eye view")
+## Field of view (degrees, vertical) through this bug's eyes.
+@export var fp_fov: float = 86.0
+
 @export_group("Small bugs")
 ## Fits the gaps cockroaches use (under appliances, cracks).
 @export var gap_crawler: bool = false

@@ -34,6 +34,9 @@ var look_center := Vector2.ZERO
 var look_radius := 80.0
 var speed_center := Vector2.ZERO
 var speed_radius := 34.0
+## Switches between the view behind the bug and through its eyes.
+var view_center := Vector2.ZERO
+var _view_held := false
 var _look_index := -1
 var _look_knob := Vector2.ZERO
 var _speed_held := false
@@ -81,6 +84,7 @@ func _layout() -> void:
 	look_center = Vector2(s.x - 16.0 - look_radius - r * 0.4, buttons_top - 16.0 - look_radius)
 	look_center.y = maxf(look_center.y, s.y * 0.13 + look_radius)
 	speed_center = look_center + Vector2(-look_radius - 18.0 - speed_radius, look_radius * 0.3)
+	view_center = speed_center + Vector2(0, -speed_radius * 2.0 - 14.0)
 	_look_knob = look_center
 	queue_redraw()
 
@@ -150,6 +154,11 @@ func _on_down(i: int, pos: Vector2) -> void:
 		_touch_kind[i] = &"speed"
 		_speed_held = true
 		cycle_look_speed()
+	elif pos.distance_to(view_center) <= speed_radius * 1.2:
+		_touch_kind[i] = &"view"
+		_view_held = true
+		GameManager.toggle_first_person()
+		queue_redraw()
 	elif pos.distance_to(look_center) <= look_radius * 1.25 and _look_index == -1:
 		_touch_kind[i] = &"lookstick"
 		_look_index = i
@@ -200,6 +209,8 @@ func _on_up(i: int, pos: Vector2) -> void:
 		InputRouter.set_touch_look_stick(Vector2.ZERO)
 	elif kind == &"speed":
 		_speed_held = false
+	elif kind == &"view":
+		_view_held = false
 	elif kind == &"look":
 		var dt := Time.get_ticks_msec() / 1000.0 - float(_touch_time.get(i, 0.0))
 		var start: Vector2 = _touch_start.get(i, pos)
@@ -278,3 +289,18 @@ func _draw_look_controls(ring_col: Color) -> void:
 	var w2 := _font.get_string_size(val, HORIZONTAL_ALIGNMENT_CENTER, -1, fs2).x
 	draw_string(_font, speed_center + Vector2(-w1 * 0.5, -fs1 * 0.25), top, HORIZONTAL_ALIGNMENT_LEFT, -1, fs1, col)
 	draw_string(_font, speed_center + Vector2(-w2 * 0.5, fs2 * 0.95), val, HORIZONTAL_ALIGNMENT_LEFT, -1, fs2, UIKit.GOLD if not _speed_held else col)
+	# View button: behind the bug / through its eyes.
+	var fp := bool(SaveSystem.get_setting("first_person", false))
+	draw_circle(view_center, speed_radius, Color(UIKit.GOLD.r, UIKit.GOLD.g, UIKit.GOLD.b, 0.75) if _view_held else Color(0, 0, 0, 0.42))
+	draw_arc(view_center, speed_radius, 0.0, TAU, 32, ring_col, 3.0)
+	# A little eye.
+	var ew := speed_radius * 0.5
+	var eye_pts := PackedVector2Array()
+	for k in 17:
+		var a := PI * k / 8.0
+		eye_pts.append(view_center + Vector2(cos(a) * ew, sin(a) * ew * 0.45) + Vector2(0, -fs1 * 0.6))
+	draw_polyline(eye_pts, UIKit.GOLD if fp else UIKit.TEXT, 2.0, true)
+	draw_circle(view_center + Vector2(0, -fs1 * 0.6), ew * 0.22, UIKit.GOLD if fp else UIKit.TEXT)
+	var vl := "EYES" if not fp else "BACK"
+	var w3 := _font.get_string_size(vl, HORIZONTAL_ALIGNMENT_CENTER, -1, fs1).x
+	draw_string(_font, view_center + Vector2(-w3 * 0.5, fs1 * 1.3), vl, HORIZONTAL_ALIGNMENT_LEFT, -1, fs1, col)

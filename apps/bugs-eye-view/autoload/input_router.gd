@@ -67,6 +67,7 @@ func _default_events() -> Dictionary:
 		"dodge": [_key(KEY_SHIFT), _joy(JOY_BUTTON_RIGHT_SHOULDER)],
 		"sense": [_key(KEY_R), _joy(JOY_BUTTON_LEFT_SHOULDER)],
 		"pause": [_key(KEY_ESCAPE), _key(KEY_P), _joy(JOY_BUTTON_START)],
+		"toggle_view": [_key(KEY_V), _joy(JOY_BUTTON_BACK)],
 	}
 
 

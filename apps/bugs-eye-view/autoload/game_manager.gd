@@ -329,6 +329,16 @@ func apply_quality() -> void:
 		Level.current.refresh_quality()
 
 
+## Behind the bug <-> through its eyes (V, the EYES button, Settings).
+func toggle_first_person() -> bool:
+	var on := not bool(SaveSystem.get_setting("first_person", false))
+	SaveSystem.set_setting("first_person", on)
+	if Level.current and is_instance_valid(Level.current) and Level.current.camera:
+		Level.current.camera.set_first_person(on)
+		Level.current.set_hint("Bug's-eye view - V / EYES to switch back" if on else "Behind the bug")
+	return on
+
+
 func quality() -> String:
 	return String(SaveSystem.get_setting("quality", "medium"))
 

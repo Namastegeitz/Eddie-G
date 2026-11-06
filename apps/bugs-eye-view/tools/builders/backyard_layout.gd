@@ -181,11 +181,23 @@ static func build(tree: SceneTree) -> void:
 	g.goal(Vector3(30, 0, 99), "gap under the fence")
 	g.deco_box("FenceGap", Vector3(30, 2.5, 101.9), Vector3(8, 5, 0.2), "hole", Vector3.ZERO, false)
 
+	# --- Power-ups: ten tucked into the hidden corners ---
+	g.item("power_turbo", Vector3(-55, 0, 42))  # under the doghouse
+	g.item("power_double", Vector3(92, 0, 86))  # under the shed
+	g.item("power_shrink", Vector3(2, 0, 15))  # inside the flowerpot
+	g.item("power_spring", Vector3(10, 0, -15))  # inside the coiled hose
+	g.item("power_radar", Vector3(10, 0, 70))  # under the wheelbarrow
+	g.item("power_double", Vector3(-30, 0, -72))  # in the crawlspace under the house (secret route)
+	g.item("power_spring", Vector3(-60, 0, 80))  # behind the woodpile
+	g.item("power_shrink", Vector3(40, 0, 88))  # in the tall grass
+	g.item("power_turbo", Vector3(66, 0, 96))  # behind the rock in the back corner
+	g.item("power_radar", Vector3(-55, 20, 40))  # on the doghouse roof
+
 	# --- Threats ---
 	g.human("res://scenes/threats/human.tscn",
 		[Vector3(-45, 0, -14), Vector3(30, 0, -28), Vector3(80, 0, 22), Vector3(82, 0, 55), Vector3(32, 0, 52),
 			Vector3(35, 0, 40), Vector3(25, 0, 88), Vector3(-25, 0, 62), Vector3(-50, 0, 20)],
-		["gardening", "bbq"], {"name": "Gardener", "activities": {
+		["gardening", "bbq"], {"name": "Gardener", "exit_point": Vector3(0, 0, -56), "activities": {
 			0: {"kind": &"water", "time": 8.0, "face": Vector3(-58, 0, -22)},
 			2: {"kind": &"kneel", "time": 10.0, "face": Vector3(95, 0, 22)},
 			4: {"kind": &"rake", "time": 9.0, "face": Vector3(20, 0, 44)},

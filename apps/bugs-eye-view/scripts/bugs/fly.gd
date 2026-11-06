@@ -86,9 +86,9 @@ func get_action_labels() -> Dictionary:
 			"dodge": "Burst", "interact": "Use", "sense": "Slow-mo"}
 	if flying:
 		return {"primary": "Boost", "secondary": "Down/Cling", "jump": "Up",
-			"dodge": "Burst", "interact": "Pester" if pester_target() else "Use", "sense": "Slow-mo"}
+			"dodge": "Burst/Fast", "interact": "Pester" if pester_target() else "Use", "sense": "Slow-mo"}
 	return {"primary": "Boost", "secondary": "Down/Land", "jump": "Take off",
-		"dodge": "Burst", "interact": "Use", "sense": "Slow-mo"}
+		"dodge": "Run", "interact": "Use", "sense": "Slow-mo"}
 
 
 func is_jinking() -> bool:
@@ -117,7 +117,7 @@ func take_off() -> void:
 	gliding = false
 	motion_mode = MOTION_MODE_FLOATING
 	up_direction = Vector3.UP
-	velocity = push * stats.ascend_speed + Vector3.UP * stats.ascend_speed * 0.5
+	velocity = push * stats.ascend_speed + Vector3.UP * stats.ascend_speed * 0.5 * jump_scale()
 	AudioManager.start_loop(_buzz)
 
 
@@ -175,7 +175,7 @@ func _move(delta: float) -> void:
 		_fly(delta, comp)
 	else:
 		stamina = minf(stamina + stats.stamina_regen * delta, stats.stamina_max)
-		ground_move(delta, stats.move_speed * speed_scale())
+		ground_move(delta, (run_speed() if is_running() else stats.move_speed) * speed_scale())
 		face_velocity(delta)
 	meter_changed.emit(&"stamina", stamina, stats.stamina_max)
 	if _wing_l and _wing_r:
@@ -224,7 +224,7 @@ func flight_wish(input: Vector2) -> Vector3:
 	if InputRouter.is_held(&"secondary"):
 		climb -= 1.0
 	if cam and input.y > 0.2 and bool(SaveSystem.get_setting("fly_follow_look", true)):
-		var tilt := cam.pitch - cam.DEFAULT_PITCH
+		var tilt := cam.pitch - cam.rest_pitch()
 		if tilt > LOOK_CLIMB_DEADZONE:
 			climb += clampf((tilt - LOOK_CLIMB_DEADZONE) / LOOK_STEER_RANGE, 0.0, 1.0) * input.y
 		elif tilt < -LOOK_DIVE_DEADZONE:
@@ -260,7 +260,7 @@ func _fly(delta: float, comp: float) -> void:
 		velocity.z = lerpf(velocity.z, g.z, clampf(2.0 * delta, 0.0, 1.0))
 		velocity.y = move_toward(velocity.y, -GLIDE_SINK + thermal_lift, 10.0 * delta)
 	else:
-		var speed := (stats.boost_speed if is_sprinting() else stats.flight_speed) * speed_scale()
+		var speed := (stats.boost_speed if is_sprinting() or is_running() else stats.flight_speed) * speed_scale()
 		# Buzzy drift from layered sines (no allocation, no RNG); calmer when
 		# hovering, and never pulling you up or down by more than a bob.
 		var t := _wobble_t
@@ -272,7 +272,7 @@ func _fly(delta: float, comp: float) -> void:
 		if _dodge_time > 0.0:
 			velocity = _dodge_dir * stats.dodge_speed
 		if not has_effect(&"wired"):
-			var drain := HOVER_DRAIN if hovering else (2.0 if is_sprinting() else 1.0)
+			var drain := HOVER_DRAIN if hovering else (2.0 if is_sprinting() or is_running() else 1.0)
 			stamina -= stats.stamina_drain * drain * delta * comp
 	if thermal_lift > 0.0:
 		stamina = minf(stamina + THERMAL_REGEN * delta, stats.stamina_max)
@@ -301,10 +301,13 @@ func _fly(delta: float, comp: float) -> void:
 		AudioManager.stop_loop(_buzz)
 		show_hint("Out of stamina - gliding down silently")
 	var dir := velocity
-	if dir.length() > 0.5 and Vector2(dir.x, dir.z).length() > 0.3:
+	if in_first_person():
+		facing = fp_forward()
+	elif dir.length() > 0.5 and Vector2(dir.x, dir.z).length() > 0.3:
 		facing = Vector3(dir.x, 0.0, dir.z).normalized()
 	if visual:
-		visual.rotation.y = lerp_angle(visual.rotation.y, atan2(-facing.x, -facing.z), clampf(stats.turn_speed * delta, 0.0, 1.0))
+		var turn := 30.0 if in_first_person() else stats.turn_speed
+		visual.rotation.y = lerp_angle(visual.rotation.y, atan2(-facing.x, -facing.z), clampf(turn * delta, 0.0, 1.0))
 		visual.rotation.x = lerpf(visual.rotation.x, clampf(-velocity.y * 0.03, -0.5, 0.5), 0.2)
 		# Bank into turns.
 		var side := Vector3(velocity.x, 0.0, velocity.z).dot(Basis(Vector3.UP, visual.rotation.y).x)

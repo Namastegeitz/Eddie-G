@@ -386,10 +386,26 @@ static func new_bugs(force: bool) -> void:
 	pack(k, "res://scenes/bugs/stink_bug.tscn", force)
 
 
+## Where each bug's eyes are on its sculpt (Visual space): just inside the
+## front of the head, between the eyes, so the bug's-eye camera sees past its
+## own antennae, mouthparts and front legs exactly as they're modelled.
+const EYE_POINTS := {
+	"Cockroach": Vector3(0, 0.0, -0.81), "Fly": Vector3(0, 0.08, -0.73), "Spider": Vector3(0, 0.17, -0.5),
+	"Ant": Vector3(0, 0.08, -0.67), "Cricket": Vector3(0, 0.2, -0.86), "Ladybug": Vector3(0, 0.06, -0.71),
+	"Firefly": Vector3(0, 0.08, -0.67), "StinkBug": Vector3(0, 0.1, -0.78),
+}
+
+
 static func _rig(bug: Node, gait: String) -> void:
 	var rig := scripted(Node.new(), "res://scripts/bugs/bug_rig.gd", "Rig")
 	rig.set("gait", gait)
 	bug.add_child(rig)
+	var v := bug.get_node_or_null("Visual") as Node3D
+	if v and EYE_POINTS.has(String(bug.name)):
+		var eye := Marker3D.new()
+		eye.name = "EyePoint"
+		eye.position = EYE_POINTS[String(bug.name)]
+		v.add_child(eye)
 
 
 static func bugs(force: bool) -> void:
@@ -945,6 +961,62 @@ static func items(force: bool) -> void:
 			halo.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		_cull_far(it, 110.0)
 		pack(it, "res://scenes/items/%s.tscn" % id, force)
+	# Power-ups: a glowing coin with a raised symbol on both faces, low enough
+	# to fit under the fridge. One material, so one draw call each.
+	for id: String in ["power_turbo", "power_spring", "power_radar", "power_double", "power_shrink"]:
+		var it := scripted(Area3D.new(), "res://scripts/world/pickup_item.gd", id.to_pascal_case())
+		it.set("def", load("res://resources/items/%s.tres" % id))
+		shape(it, sphere_shape(1.2), Vector3(0, 0.85, 0))
+		var v := node3d(it, "Visual", Vector3(0, 0.85, 0))
+		_power_visual(v, id)
+		merge_meshes(v)
+		add_skin(v, id, Vector3(1.2, 1.2, 0.5), Vector3.ZERO, [], 180.0)
+		_cull_far(it, 45.0)
+		pack(it, "res://scenes/items/%s.tscn" % id, force)
+
+
+static func _power_visual(v: Node3D, id: String) -> void:
+	var m := id
+	# The coin: a disc standing on edge with a rim.
+	mesh(v, "Coin", cyl(0.55, 0.14), m, Vector3.ZERO, Vector3(PI * 0.5, 0, 0))
+	var rim := TorusMesh.new()
+	rim.inner_radius = 0.5
+	rim.outer_radius = 0.62
+	rim.rings = 20
+	rim.ring_segments = 8
+	mesh(v, "Rim", rim, m, Vector3.ZERO, Vector3(PI * 0.5, 0, 0))
+	for face in [-1.0, 1.0]:
+		var z: float = face * 0.09
+		match id:
+			"power_turbo":
+				# A lightning bolt.
+				mesh(v, "Bolt", box(Vector3(0.12, 0.42, 0.06)), m, Vector3(0.06, 0.16, z), Vector3(0, 0, -0.45))
+				mesh(v, "Bolt", box(Vector3(0.12, 0.42, 0.06)), m, Vector3(-0.06, -0.16, z), Vector3(0, 0, -0.45))
+				mesh(v, "Bolt", box(Vector3(0.3, 0.08, 0.06)), m, Vector3(0.0, 0.0, z))
+			"power_spring":
+				# A spring's zigzag.
+				for i in 4:
+					var y := 0.27 - i * 0.18
+					mesh(v, "Coil", box(Vector3(0.42, 0.07, 0.06)), m, Vector3(0, y, z), Vector3(0, 0, 0.35 if i % 2 == 0 else -0.35))
+			"power_radar":
+				# Radar rings around a dot.
+				var ring := TorusMesh.new()
+				ring.inner_radius = 0.24
+				ring.outer_radius = 0.3
+				ring.rings = 16
+				ring.ring_segments = 6
+				mesh(v, "Ring", ring, m, Vector3(0, 0, z), Vector3(PI * 0.5, 0, 0), Vector3(1, 0.3, 1))
+				mesh(v, "Dot", sphere(0.08), m, Vector3(0, 0, z))
+			"power_double":
+				# Two crumbs side by side.
+				for x in [-0.17, 0.17]:
+					mesh(v, "Crumb", box(Vector3(0.2, 0.2, 0.08)), m, Vector3(x, 0, z), Vector3(0, 0, 0.5))
+			"power_shrink":
+				# Arrows pointing in.
+				for x in [-1.0, 1.0]:
+					var pm := PrismMesh.new()
+					pm.size = Vector3(0.22, 0.2, 0.06)
+					mesh(v, "Arrow", pm, m, Vector3(x * 0.2, 0, z), Vector3(0, 0, x * PI * 0.5))
 
 
 ## Builds an item's placeholder look; returns the box a generated model fits in.

@@ -28,11 +28,20 @@ func is_gem() -> bool:
 	return def != null and def.kind == ItemDef.Kind.GEM
 
 
+func is_power() -> bool:
+	return def != null and def.kind == ItemDef.Kind.POWER
+
+
 func _process(delta: float) -> void:
 	if _visual == null or taken:
 		return
 	_t += delta
 	var gem := is_gem()
+	if is_power():
+		# A spinning, gently bobbing token (low enough to fit under the fridge).
+		_visual.rotate_y(delta * 2.6)
+		_visual.position.y = _base_y + sin(_t * 3.0) * 0.12
+		return
 	_visual.rotate_y(delta * (1.8 if gem else 0.7))
 	_visual.position.y = _base_y + sin(_t * (2.4 if gem else 1.6)) * (0.25 if gem else 0.08)
 	if gem:
@@ -50,7 +59,7 @@ func collect() -> void:
 		return
 	taken = true
 	set_deferred("monitoring", false)
-	AudioManager.play_at(&"gem" if is_gem() else &"munch", global_position, 0.0, randf_range(0.95, 1.1))
+	AudioManager.play_at(&"gem" if is_gem() or is_power() else &"munch", global_position, 0.0, randf_range(0.95, 1.1))
 	collected.emit(self)
 	if _visual:
 		var tw := create_tween()

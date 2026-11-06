@@ -426,6 +426,36 @@
       "prompt": "A deep blue sapphire gemstone with an oval faceted cut, translucent and glowing."
     },
     {
+      "id": "power_turbo",
+      "tier": 1,
+      "target_polycount": 1500,
+      "prompt": "A glowing cyan power-up coin standing on its edge, a raised lightning bolt on both faces, a thick rounded rim, game pickup token."
+    },
+    {
+      "id": "power_spring",
+      "tier": 1,
+      "target_polycount": 1500,
+      "prompt": "A glowing lime-green power-up coin standing on its edge, a raised zigzag spring symbol on both faces, a thick rounded rim, game pickup token."
+    },
+    {
+      "id": "power_radar",
+      "tier": 1,
+      "target_polycount": 1500,
+      "prompt": "A glowing orange power-up coin standing on its edge, raised radar rings around a dot on both faces, a thick rounded rim, game pickup token."
+    },
+    {
+      "id": "power_double",
+      "tier": 1,
+      "target_polycount": 1500,
+      "prompt": "A glowing gold power-up coin standing on its edge, two raised bread crumbs side by side on both faces, a thick rounded rim, game pickup token."
+    },
+    {
+      "id": "power_shrink",
+      "tier": 1,
+      "target_polycount": 1500,
+      "prompt": "A glowing violet power-up coin standing on its edge, two raised arrows pointing inward on both faces, a thick rounded rim, game pickup token."
+    },
+    {
       "id": "cover_cardboard_box",
       "tier": 2,
       "target_polycount": 2500,

@@ -27,6 +27,9 @@ var _forced_present := false
 var _sense_timer := 0.0
 var _ray := PhysicsRayQueryParameters3D.new()
 var _icon: Label3D
+## Their routine says go, but they're busy with you: they leave once calm.
+var leave_pending := false
+var _calm_t := 0.0
 ## Turning has momentum: it eases into a turn and out of it.
 const TURN_ACCEL := 9.0
 var _turn_rate := 0.0
@@ -62,6 +65,18 @@ func _setup() -> void:
 func _physics_process(delta: float) -> void:
 	if not present:
 		return
+	if leave_pending:
+		if _routine_wants_present():
+			leave_pending = false
+		elif _too_busy_to_leave():
+			_calm_t = 0.0
+		else:
+			_calm_t += delta
+			if _calm_t > 1.5:
+				leave_pending = false
+				_begin_leave()
+				if not present:
+					return
 	web_time = maxf(web_time - delta, 0.0)
 	blind_time = maxf(blind_time - delta, 0.0)
 	if stun_time > 0.0:
@@ -234,13 +249,39 @@ func force_alert(state: int, pos: Vector3) -> void:
 		alert.force(state, pos)
 
 
+## A direct order (bosses, tests): takes effect at once.
 func force_present(on: bool) -> void:
 	_forced_present = on
-	_on_routine_changed()
+	leave_pending = false
+	_set_present(_routine_wants_present())
+
+
+func _routine_wants_present() -> bool:
+	return _forced_present or active_events.is_empty() or HouseClock.any_active(active_events)
+
+
+## Busy with you (suspicious, searching, chasing, hopping on one foot): their
+## routine can wait - nobody vanishes mid-chase.
+func _too_busy_to_leave() -> bool:
+	return alert.state > AlertState.UNAWARE or stun_time > 0.0
 
 
 func _on_routine_changed() -> void:
-	var now := _forced_present or active_events.is_empty() or HouseClock.any_active(active_events)
+	var now := _routine_wants_present()
+	if not now and present and is_node_ready() and _too_busy_to_leave():
+		leave_pending = true
+		_calm_t = 0.0
+		return
+	leave_pending = false
+	_set_present(now)
+
+
+## Time to go, and calm: leave (people walk out of the room; see Human).
+func _begin_leave() -> void:
+	_set_present(false)
+
+
+func _set_present(now: bool) -> void:
 	if now == present and is_node_ready():
 		return
 	present = now

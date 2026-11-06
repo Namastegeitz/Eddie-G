@@ -35,6 +35,9 @@ extends Threat
 ## Stops on the route: {route index: {"kind": &"cook", "time": 10.0, "face": Vector3}}.
 ## Kinds: cook, dishes, snack, read, nap, water, kneel, fetch.
 @export var activities: Dictionary = {}
+## The room's door: they walk in from here when their routine starts and
+## walk out through it when it ends (ZERO = just appear / vanish).
+@export var exit_point: Vector3 = Vector3.ZERO
 
 const SIT_OFFSET := Vector3(0, -20.5, 10.5)
 const KNEEL_OFFSET := Vector3(0, -15.0, 3.0)
@@ -109,6 +112,9 @@ const GESTURES: Array[StringName] = [&"phone", &"stretch", &"scratch", &"watch"]
 const CROUCH_OFFSET := Vector3(0, -11.0, -2.0)
 const PHONE_SIGHT := 18.0
 var gesture: StringName = &""
+## On the way out of the room.
+var walking_out := false
+var _out_t := 0.0
 var _sweeper: Sweeper
 var _door: SwingDoor
 var _lamp: LightZone
@@ -174,17 +180,56 @@ func _on_presence_changed(now: bool) -> void:
 			var body := (f as FootHazard).get_node_or_null("Body") as AnimatableBody3D
 			if body:
 				body.collision_layer = Phys.WORLD if now else 0
+	walking_out = false
 	if now and route.size() > 0 and is_node_ready():
-		global_position = route[0]
-		_body_pos = route[0]
-		_route_i = 1 % route.size()
-		_plant_feet(route[0], rotation.y)
+		# Coming on shift: in through the door (when there is one).
+		var start := route[0]
+		if exit_point != Vector3.ZERO and not _forced_present:
+			start = exit_point
+		global_position = start
+		_body_pos = start
+		_route_i = 1 % route.size() if start == route[0] else 0
+		_plant_feet(start, rotation.y)
 		_body_vel = Vector3.ZERO
 		_glide_dur = 0.0
 		reset_physics_interpolation()
 
 
+func _too_busy_to_leave() -> bool:
+	return super._too_busy_to_leave() or PerceptionSystem.alarm_active or flustered > 0.0
+
+
+func _begin_leave() -> void:
+	if exit_point == Vector3.ZERO:
+		super._begin_leave()
+		return
+	end_activity()
+	set_gesture(&"")
+	walking_out = true
+	_out_t = 0.0
+
+
+## Off out of the room through the door (anything suspicious stops them).
+func _walk_out(delta: float) -> void:
+	_out_t += delta
+	if alert.state > AlertState.UNAWARE:
+		walking_out = false
+		leave_pending = true
+		return
+	face_towards(exit_point, delta)
+	if Vector2(exit_point.x - _body_pos.x, exit_point.z - _body_pos.z).length() < stride * 0.7 or _out_t > 20.0:
+		walking_out = false
+		_set_present(false)
+		return
+	_walk_towards(exit_point, delta, step_time)
+	_update_torso(delta)
+
+
 func _think(delta: float) -> void:
+	if walking_out:
+		_walk_out(delta)
+		if walking_out:
+			return
 	_attack_cd -= delta * speed_mult()
 	_spray_cd -= delta
 	_voice_cd -= delta

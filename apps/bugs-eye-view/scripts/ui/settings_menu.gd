@@ -24,6 +24,7 @@ func _ready() -> void:
 	col.add_child(_toggle("Vibration / rumble", "haptics"))
 	col.add_child(_toggle("Invert look Y", "invert_y"))
 	col.add_child(_toggle("Fly where you look", "fly_follow_look"))
+	col.add_child(_toggle("Bug's-eye view (see through the bug's eyes)", "first_person"))
 	col.add_child(_slider("Look sensitivity", "look_sensitivity", 0.3, 2.5))
 	col.add_child(_slider("Touch look speed", "touch_look_sensitivity", 0.2, 2.0))
 	col.add_child(_section("Display"))
@@ -74,7 +75,9 @@ func _toggle(text: String, key: String) -> Control:
 		SaveSystem.set_setting(key, on)
 		SaveSystem.save_game()
 		if key == "haptics" and on:
-			Feedback.rumble(0.6, 0.15))
+			Feedback.rumble(0.6, 0.15)
+		if key == "first_person" and Level.current and is_instance_valid(Level.current) and Level.current.camera:
+			Level.current.camera.set_first_person(on))
 	return c
 
 

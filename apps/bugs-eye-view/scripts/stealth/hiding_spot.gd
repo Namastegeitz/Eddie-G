@@ -23,8 +23,9 @@ func _ready() -> void:
 
 
 func fits(bug: BugBase) -> bool:
-	return bug.stats.fits(allowed_bugs)
+	# Shrunk by the power-up, any bug fits the roach's gaps.
+	return bug.stats.fits(allowed_bugs) or (bug.has_effect(&"shrink") and allowed_bugs.has("cockroach"))
 
 
 func is_safe_for(bug: BugBase) -> bool:
-	return fits(bug) and (not requires_squeeze or bug.is_squeezing or bug.stats.tiny)
+	return fits(bug) and (not requires_squeeze or bug.is_squeezing or bug.stats.tiny or bug.has_effect(&"shrink"))

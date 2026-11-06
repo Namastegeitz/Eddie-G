@@ -18,22 +18,22 @@ rings = 1
 inner_radius = 2.4
 outer_radius = 3.0
 
-[node name="Goal" type="Area3D" unique_id=1999761176]
+[node name="Goal" type="Area3D" unique_id=374989587]
 script = ExtResource("1_p6ya0")
 
-[node name="Shape" type="CollisionShape3D" parent="." unique_id=878159953]
+[node name="Shape" type="CollisionShape3D" parent="." unique_id=382517254]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, 0)
 shape = SubResource("BoxShape3D_wc5n6")
 
-[node name="Beacon" type="Node3D" parent="." unique_id=219540735]
+[node name="Beacon" type="Node3D" parent="." unique_id=134793703]
 
-[node name="Beam" type="MeshInstance3D" parent="Beacon" unique_id=1646903545]
+[node name="Beam" type="MeshInstance3D" parent="Beacon" unique_id=654063549]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 20, 0)
 material_override = ExtResource("2_68086")
 cast_shadow = 0
 mesh = SubResource("CylinderMesh_5gq21")
 
-[node name="Ring" type="MeshInstance3D" parent="Beacon" unique_id=510005499]
+[node name="Ring" type="MeshInstance3D" parent="Beacon" unique_id=552716581]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3, 0)
 material_override = ExtResource("3_678um")
 mesh = SubResource("TorusMesh_m6n8t")

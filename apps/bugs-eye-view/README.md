@@ -83,6 +83,12 @@ curtains; pets sit, groom, scratch, drink at their bowls, shake off water,
 run from the robot vacuum (which eats crumbs) and, in the backyard, the dog
 digs holes you can hide in.
 
+**Bug's-eye view**: switch to first person (V / EYES) and play through your
+bug's own eyes, with its antennae, mouthparts and front legs moving in view,
+a per-bug field of view and compound-eye facets for flies. **Shift** dashes
+on a tap and runs while held. **Power-ups**: ten hidden in the corners of every
+room (Turbo, Spring Legs, Bug Radar, Double Crumbs, Shrink).
+
 **Look and feel**: high-resolution textures on every surface (tiles, wood
 grain, flagstones, grass, carpet, fabric, denim, fur, bug shells) with bump
 detail; rounder models; motion smoothed between physics steps so everything
@@ -132,7 +138,7 @@ for a generated 3D model (84 in all); `tools/meshy/generate.py` makes them with 
 (needs your Meshy API key; see [tools/meshy/README.md](tools/meshy/README.md)).
 
 - Two headless test suites pass in the project and in an exported build
-  (`tools/run_tests.sh`): a 165-check smoke test and a 378-check phase audit
+  (`tools/run_tests.sh`): a 165-check smoke test and a 394-check phase audit
   that walks the spec phase by phase, plus every update since (alarm gauge,
   fly moves, hiding spots, model slots, bigger rooms, people, bug detail, food
   and gems, flying, animals and people's activities). Zero GDScript warnings, zero engine errors.

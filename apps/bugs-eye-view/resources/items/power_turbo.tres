@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="ItemDef" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/item_def.gd" id="1_j00cg"]
+
+[resource]
+script = ExtResource("1_j00cg")
+id = &"power_turbo"
+display_name = "Turbo"
+kind = 2
+effect = &"turbo"
+duration = 12.0
+amount = 1.6
+points = 120
+color = Color(0.2, 0.85, 1, 1)
+blurb = "60% faster for 12 seconds - hold Run to really fly."

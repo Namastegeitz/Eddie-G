@@ -8,6 +8,8 @@ const NAMES := {
 	&"soft_step": "Soft Step", &"wired": "Wired", &"big_meal": "Big Meal",
 	&"cloak": "Shadow Cloak", &"freeze": "Time Freeze", &"calm": "Calm",
 	&"iron_shell": "Iron Shell", &"magnet": "Crumb Magnet", &"decoy": "Echo Decoy",
+	&"turbo": "Turbo", &"spring": "Spring Legs", &"radar": "Bug Radar", &"double": "Double Crumbs",
+	&"shrink": "Shrink",
 }
 
 
@@ -48,7 +50,7 @@ static func apply(def: ItemDef, bug: BugBase) -> String:
 			AudioManager.play(&"shield", -4.0)
 		_:
 			bug.add_effect(def.effect, def.duration, def.amount)
-	if def.kind == ItemDef.Kind.GEM or def.duration > 0.0:
+	if def.kind != ItemDef.Kind.FOOD or def.duration > 0.0:
 		AudioManager.play(&"powerup", -8.0)
 	Feedback.rumble(0.25, 0.12)
 	return "%s! %s" % [def.display_name, def.blurb]

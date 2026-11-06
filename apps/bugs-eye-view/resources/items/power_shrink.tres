@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="ItemDef" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/item_def.gd" id="1_odv45"]
+
+[resource]
+script = ExtResource("1_odv45")
+id = &"power_shrink"
+display_name = "Shrink"
+kind = 2
+effect = &"shrink"
+duration = 15.0
+amount = 0.55
+points = 120
+color = Color(0.85, 0.4, 1, 1)
+blurb = "Tiny for 15 seconds: any gap hides you and you're hard to see."

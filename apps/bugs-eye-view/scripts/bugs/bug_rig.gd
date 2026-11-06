@@ -11,6 +11,7 @@ extends Node
 @export var lift_amount: float = 0.35
 
 var bug: BugBase
+const FP_FRONT_REACH := 0.45
 var legs: Array[Node3D] = []
 var antennae: Array[Node3D] = []
 var abdomen: Node3D
@@ -47,10 +48,15 @@ func _process(delta: float) -> void:
 	phase += delta * (5.0 + speed * 0.9) * moving
 	var grooming := bug.motion == BugBase.Motion.STILL and bug.still_time > 3.0 and fmod(_t, 5.0) < 1.6
 	var k := clampf(12.0 * delta, 0.0, 1.0)
+	# Through the bug's own eyes the front pair reaches forward, so you see
+	# your legs step into the bottom corners of the view.
+	var fp := bug.in_first_person()
 	for leg in legs:
 		var side := float(leg.get_meta(&"side"))
 		var g := int(leg.get_meta(&"group"))
 		var base_yaw := float(leg.get_meta(&"base_yaw"))
+		if fp and String(leg.name).ends_with("1"):
+			base_yaw += side * FP_FRONT_REACH
 		var base_z := float(leg.get_meta(&"base_z"))
 		var p := phase + (PI if g == 1 else 0.0)
 		var yaw := base_yaw + sin(p) * swing_amount * moving * side

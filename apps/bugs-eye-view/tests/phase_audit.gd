@@ -47,6 +47,8 @@ func _ready() -> void:
 		await _phase15()
 	if only in [0, 16]:
 		await _phase16()
+	if only in [0, 17]:
+		await _phase17()
 	finish("phase audit")
 
 
@@ -979,13 +981,18 @@ func _phase6() -> void:
 		await frames(240)
 		var ms := (Time.get_ticks_usec() - t0) / 240.0 / 1000.0
 		var meshes := 0
+		var cam_pos := lvl.camera.camera.global_position
 		for m in lvl.find_children("*", "GeometryInstance3D", true, false):
+			var gi := m as GeometryInstance3D
 			# Brief extras (a blink, a phone in hand) don't count toward the
 			# steady-state budget.
-			var path := String((m as Node).get_path())
+			var path := String(gi.get_path())
 			if path.contains("/Lids/") or path.contains("/PhoneHold/"):
 				continue
-			if (m as GeometryInstance3D).is_visible_in_tree():
+			# Beyond its draw distance the renderer skips it (pickups, props).
+			if gi.visibility_range_end > 0.0 and gi.global_position.distance_to(cam_pos) > gi.visibility_range_end + gi.visibility_range_end_margin:
+				continue
+			if gi.is_visible_in_tree():
 				meshes += 1
 		print("     %s: %.2f ms per frame of logic + physics, %d visible meshes" % [level, ms, meshes])
 		check(ms < 4.0, "%s runs its game logic in under 4 ms a frame (%.2f)" % [level, ms])
@@ -3112,3 +3119,281 @@ func _phase16() -> void:
 
 func _flat(a: Vector3, b: Vector3) -> float:
 	return Vector2(a.x - b.x, a.z - b.z).length()
+
+
+
+# --- Update: bug's-eye view, Shift to run, power-ups, people finish the chase -------
+
+func _is_tucked_away(lvl: Level, pos: Vector3) -> bool:
+	var space := lvl.get_world_3d().direct_space_state
+	var at := pos + Vector3.UP * 0.6
+	# Up high (only climbers and flyers get there).
+	if pos.y > 15.0:
+		return true
+	# Something overhead: under furniture, inside a shelter, in a cavity.
+	var up := space.intersect_ray(PhysicsRayQueryParameters3D.create(at, at + Vector3.UP * 15.0, Phys.WORLD))
+	if not up.is_empty():
+		return true
+	# Next to cover (a rock, the woodpile, tall grass, a flour sack...).
+	for m in get_tree().get_nodes_in_group(Phys.GROUP_COVER):
+		if lvl.is_ancestor_of(m) and Vector2((m as Node3D).global_position.x - pos.x, (m as Node3D).global_position.z - pos.z).length() < 10.0:
+			return true
+	# In a corner: walls close by in two directions.
+	var walls := 0
+	for d in [Vector3.RIGHT, Vector3.LEFT, Vector3.FORWARD, Vector3.BACK]:
+		if not space.intersect_ray(PhysicsRayQueryParameters3D.create(at, at + d * 10.0, Phys.WORLD)).is_empty():
+			walls += 1
+	return walls >= 2
+
+
+func _phase17() -> void:
+	print("-- Update: bug's-eye view, Shift to run, power-ups, people finish the chase")
+	SaveSystem.data = SaveSystem.default_data()
+
+	# People don't vanish mid-chase when their routine ends: they finish
+	# with you, calm down and walk out through the door.
+	var lvl := await load_level(&"kitchen", &"cockroach")
+	HouseClock.set_hour(7.3)
+	await frames(5)
+	var p := lvl.player
+	p.invuln = 1000.0
+	var cook := first_in_group(Phys.GROUP_HUMAN, lvl) as Human
+	var came_in := cook.present and cook._body_pos.distance_to(cook.exit_point) < 15.0
+	cook.activities = {}
+	_place_human(cook, Vector3(-40, 0, 40), 0.0)
+	cook.alert.force(AlertState.ALERT, p.global_position)
+	HouseClock.set_hour(7.8)
+	await frames(30)
+	var stayed := cook.present and cook.visible and cook.leave_pending
+	cook.alert.reset()
+	p.teleport_to(Transform3D(Basis.IDENTITY, Vector3(-30, 0.6, -22.5)))
+	InputRouter.set_touch_action(&"secondary", true)
+	var walked_out := false
+	for i in 900:
+		await get_tree().physics_frame
+		walked_out = walked_out or cook.walking_out
+		if not cook.present:
+			break
+	InputRouter.set_touch_action(&"secondary", false)
+	check(came_in, "people come on shift through the door")
+	check(stayed, "a person who has spotted you doesn't vanish when their routine ends")
+	check(walked_out and not cook.present, "once calm they walk out through the door")
+	await unload(lvl)
+
+	# Shift: tap to dash, hold to run - for every bug.
+	lvl = await load_level(&"kitchen", &"cockroach")
+	HouseClock.set_hour(13.5)
+	p = lvl.player
+	p.invuln = 1000.0
+	p.teleport_to(Transform3D(Basis.IDENTITY, Vector3(20, 0.8, 56)))
+	face(lvl, 0.0)
+	await frames(10)
+	InputRouter.set_touch_move(Vector2(0, 1))
+	await frames(30)
+	var walk := Vector2(p.velocity.x, p.velocity.z).length()
+	InputRouter.set_touch_action(&"dodge", true)
+	await frames(2)
+	var dashing := p._dodge_time > 0.0
+	await frames(30)
+	var run := Vector2(p.velocity.x, p.velocity.z).length()
+	var running := p.is_running() and p.motion == BugBase.Motion.SPRINT
+	InputRouter.set_touch_action(&"dodge", false)
+	InputRouter.set_touch_move(Vector2.ZERO)
+	var labels_ok := true
+	for id in GameManager.BUG_IDS:
+		var st := GameManager.get_bug_stats(id)
+		var b := (load(st.scene_path) as PackedScene).instantiate() as BugBase
+		b.stats = st
+		var lab := String(b.get_action_labels().get("dodge", ""))
+		labels_ok = labels_ok and (lab == "Run" or lab.begins_with("Burst"))
+		b.free()
+	check(dashing and running and run > walk * 1.3 and p.run_speed() >= p.stats.move_speed * 1.5,
+		"Shift dashes on a tap and runs while held (walk %.1f, run %.1f units/s)" % [walk, run])
+	check(labels_ok, "every bug's dash button is labelled Run (the fly's: Burst/Fast in the air)")
+	await unload(lvl)
+
+	# Power-ups: ten in each room, two of each kind, tucked away.
+	var rooms_ok := true
+	var detail: PackedStringArray = []
+	for level in GameManager.LEVEL_IDS:
+		lvl = await load_level(level, &"cockroach")
+		var kinds := {}
+		var tucked := 0
+		var far := 0
+		var n := 0
+		for it in get_tree().get_nodes_in_group(Phys.GROUP_ITEM):
+			var pi := it as PickupItem
+			if pi and lvl.is_ancestor_of(pi) and pi.is_power():
+				n += 1
+				kinds[pi.def.id] = int(kinds.get(pi.def.id, 0)) + 1
+				if _is_tucked_away(lvl, pi.global_position):
+					tucked += 1
+				if pi.global_position.distance_to(lvl.player.global_position) > 20.0:
+					far += 1
+		var ok := n == 10 and kinds.size() == 5 and kinds.values().all(func(c: int) -> bool: return c == 2) and tucked == 10 and far == 10
+		rooms_ok = rooms_ok and ok
+		detail.append("%s %d/%d tucked" % [level, tucked, n])
+		await unload(lvl)
+	check(rooms_ok, "every room hides ten power-ups, two of each kind, in hidden corners %s" % str(detail))
+
+	# Picking one up; what each does.
+	lvl = await load_level(&"kitchen", &"cockroach")
+	HouseClock.set_hour(13.5)
+	p = lvl.player
+	p.invuln = 1000.0
+	var hud := lvl.find_child("HUD", true, false)
+	var counter := hud.find_child("PowerUps", true, false) as Label
+	var cup_power: PickupItem = null
+	for it in get_tree().get_nodes_in_group(Phys.GROUP_ITEM):
+		var pi := it as PickupItem
+		if pi and lvl.is_ancestor_of(pi) and pi.is_power() and pi.def.id == &"power_turbo":
+			cup_power = pi
+			break
+	var before_text := counter.text
+	p.teleport_to(Transform3D(Basis.IDENTITY, cup_power.global_position + Vector3.UP * 0.6))
+	await frames(10)
+	var score: Dictionary = lvl.run.score(GameManager.scoring, 999.0)
+	var line_ok := false
+	for l: Array in score["lines"]:
+		line_ok = line_ok or String(l[0]).begins_with("Power-ups x1")
+	check(cup_power.taken and p.has_effect(&"turbo") and p.speed_scale() >= 1.59 and lvl.run.powerups == 1
+		and before_text == "POWER-UPS 0 / 10" and counter.text == "POWER-UPS 1 / 10" and line_ok,
+		"grabbing a power-up (Turbo): 60%% faster, counted on screen (%s) and in the score" % counter.text)
+	p.effects.clear()
+	p.teleport_to(Transform3D(Basis.IDENTITY, Vector3(40, 0.8, 30)))
+	await frames(15)
+	p.add_effect(&"spring", 10.0, 1.8)
+	InputRouter.set_touch_action(&"jump", true)
+	await frames(2)
+	InputRouter.set_touch_action(&"jump", false)
+	var vy := p.velocity.y
+	await frames(60)
+	check(vy > 7.0 * 1.7, "Spring Legs: jumps go much higher (%.1f)" % vy)
+	p.add_effect(&"double", 10.0, 2.0)
+	var got0 := lvl.crumbs_got
+	var extra := lvl.spawn_crumb(Vector3(30, 0.6, 60))
+	if extra:
+		extra.collect()
+	await frames(2)
+	check(lvl.crumbs_got - got0 == 2, "Double Crumbs: a crumb counts twice (%d)" % (lvl.crumbs_got - got0))
+	p.add_effect(&"radar", 10.0, 90.0)
+	check(p.has_effect(&"radar") and hud.get("_markers") != null, "Bug Radar: crumbs and power-ups show on screen")
+	p.add_effect(&"shrink", 10.0, 0.55)
+	p.teleport_to(Transform3D(Basis.IDENTITY, Vector3(-30, 0.6, -22.5)))
+	await frames(80)
+	check(p.visual.scale.x < 0.6 and p.is_hidden_safe() and not p.is_squeezing,
+		"Shrink: tiny (%.2f) and hidden in a gap without squeezing" % p.visual.scale.x)
+	p.effects.clear()
+	await unload(lvl)
+
+	# Bug's-eye view: through each bug's own eyes.
+	var eye_ok: PackedStringArray = []
+	var bad: PackedStringArray = []
+	for id in GameManager.BUG_IDS:
+		SaveSystem.unlock_bug(id)
+		SaveSystem.set_setting("first_person", true)
+		lvl = await load_level(&"kitchen", id)
+		HouseClock.set_hour(13.5)
+		p = lvl.player
+		p.invuln = 1000.0
+		p.teleport_to(Transform3D(Basis.IDENTITY, Vector3(40, 0.8, 30)))
+		face(lvl, PI * 0.5)
+		var cam := lvl.camera as FollowCamera
+		cam.pitch = 0.0
+		await frames(12)
+		await get_tree().process_frame
+		var eye := p.visual.get_node("EyePoint") as Node3D
+		var at_eyes := cam.camera.global_position.distance_to(eye.global_position) < 0.15
+		var c3 := cam.camera
+		# Its own parts in view: antennae looking level, mouthparts and front
+		# legs looking down.
+		var parts_seen := false
+		for look in [0.0, -0.6]:
+			cam.pitch = look
+			await get_tree().process_frame
+			await get_tree().process_frame
+			var pts: Array[Vector3] = []
+			for n in ["AntennaL/Tip", "AntennaR/Tip"]:
+				var part := p.visual.get_node_or_null(n) as Node3D
+				if part:
+					pts.append(part.global_transform * Vector3(0, 0, -0.1))
+			for n in ["PalpL", "PalpR"]:
+				var palp := p.visual.get_node_or_null(n) as Node3D
+				if palp:
+					pts.append(palp.global_transform * Vector3(0, -0.02, -0.2))
+			for n in ["LegL1/Knee", "LegR1/Knee"]:
+				var knee := p.visual.get_node_or_null(n) as Node3D
+				if knee:
+					pts.append(knee.global_transform * Vector3(0.3 * signf(knee.position.x), 0, 0))
+			for pt in pts:
+				if c3.is_position_in_frustum(pt) and not c3.is_position_behind(pt):
+					parts_seen = true
+		# The fly and the firefly look out through their compound eyes (the
+		# facet overlay, checked below) rather than past antennae.
+		if p is Fly:
+			parts_seen = true
+		cam.pitch = 0.0
+		await get_tree().process_frame
+		var fov_ok := absf(c3.fov - p.stats.fp_fov) < 0.5
+		var overlay := cam.get_node_or_null("EyeOverlay") as CanvasLayer
+		var tex_path := ((overlay.get_node("Tex") as TextureRect).texture.resource_path) if overlay else ""
+		var overlay_ok := overlay != null and overlay.visible and tex_path.ends_with("compound_eye.png" if p is Fly else "vignette.png")
+		if at_eyes and parts_seen and fov_ok and overlay_ok:
+			eye_ok.append(String(id))
+		else:
+			bad.append("%s(%s %s %s %s)" % [id, at_eyes, parts_seen, fov_ok, overlay_ok])
+		await unload(lvl)
+	check(bad.is_empty(), "through every bug's eyes: the camera sits at its sculpted eyes, its own antennae or mouthparts in view, its own field of view and eye overlay %s" % str(bad))
+
+	SaveSystem.set_setting("first_person", true)
+	lvl = await load_level(&"kitchen", &"cockroach")
+	HouseClock.set_hour(13.5)
+	p = lvl.player
+	p.invuln = 1000.0
+	var fc := lvl.camera as FollowCamera
+	p.teleport_to(Transform3D(Basis.IDENTITY, Vector3(40, 0.8, 30)))
+	face(lvl, PI * 0.5)
+	fc.pitch = -0.4
+	await frames(10)
+	var legs_seen := false
+	var heights: Array[float] = []
+	InputRouter.set_touch_move(Vector2(0, 1))
+	for i in 60:
+		await get_tree().process_frame
+		heights.append(fc.camera.global_position.y - p.get_global_transform_interpolated().origin.y)
+		for leg_name in ["LegL1", "LegR1"]:
+			var foot := p.visual.get_node("%s/Knee" % leg_name) as Node3D
+			if fc.camera.is_position_in_frustum(foot.global_position + foot.global_basis.x * 0.3):
+				legs_seen = true
+	InputRouter.set_touch_move(Vector2.ZERO)
+	heights.sort()
+	var bob := heights[heights.size() - 1] - heights[0]
+	# Crab sideways: the view doesn't swing round, the body keeps facing it.
+	var yaw0 := fc.yaw
+	InputRouter.set_touch_move(Vector2(1, 0))
+	await frames(40)
+	InputRouter.set_touch_move(Vector2.ZERO)
+	var vis_yaw := p.visual.rotation.y
+	check(legs_seen and bob > 0.005, "walking, you see your front legs step into view and the view bobs with the gait (%.3f)" % bob)
+	check(absf(fc.yaw - yaw0) < 0.001 and absf(wrapf(vis_yaw - fc.yaw, -PI, PI)) < 0.1,
+		"stepping sideways the view stays put and the body keeps facing where you look")
+	var on := GameManager.toggle_first_person()
+	await frames(10)
+	var tp_dist := fc.camera.global_position.distance_to(p.global_position)
+	check(not on and not fc.first_person and tp_dist > 3.0 and not (fc.get_node("EyeOverlay") as CanvasLayer).visible
+		and not bool(SaveSystem.get_setting("first_person", true)),
+		"V / EYES switches back behind the bug (and the choice is remembered)")
+	await unload(lvl)
+
+	# The spider's eyes follow the wall it's walking on.
+	SaveSystem.set_setting("first_person", true)
+	lvl = await load_level(&"kitchen", &"spider")
+	var sp := lvl.player as Spider
+	sp.invuln = 1000.0
+	sp.teleport_to(Transform3D(Basis(Vector3.FORWARD.cross(Vector3.RIGHT), Vector3.RIGHT, Vector3.FORWARD).orthonormalized(), Vector3(-59.6, 20, 0)))
+	await frames(30)
+	var spc := lvl.camera as FollowCamera
+	check(sp.attached and spc.global_basis.y.dot(sp.surface_normal) > 0.85,
+		"on a wall, the spider's view is the wall's: up is away from the wall (%.2f)" % spc.global_basis.y.dot(sp.surface_normal))
+	SaveSystem.set_setting("first_person", false)
+	await unload(lvl)

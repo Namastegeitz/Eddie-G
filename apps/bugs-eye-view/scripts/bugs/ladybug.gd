@@ -27,7 +27,7 @@ func _bug_setup() -> void:
 
 func get_action_labels() -> Dictionary:
 	return {"primary": "Shell up", "secondary": "Squeeze", "jump": "Flutter" if not is_on_floor() else "Hop",
-		"dodge": "Dash", "interact": "Use", "sense": "Antennae"}
+		"dodge": "Run", "interact": "Use", "sense": "Antennae"}
 
 
 func ability_name() -> String:
@@ -47,7 +47,7 @@ func _custom_move(delta: float) -> bool:
 		velocity.y = 0.0 if is_on_floor() else velocity.y - stats.gravity * delta
 		move_and_slide()
 		if visual:
-			visual.scale.y = lerpf(visual.scale.y, 0.8, clampf(12.0 * delta, 0.0, 1.0))
+			visual.scale.y = lerpf(visual.scale.y, 0.8 * size_mult(), clampf(12.0 * delta, 0.0, 1.0))
 		return true
 	shell = minf(shell + delta * 0.5, stats.ability_meter_max)
 	return false

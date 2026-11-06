@@ -43,7 +43,7 @@ func _setup() -> void:
 
 func get_action_labels() -> Dictionary:
 	return {"primary": "Web zip", "secondary": "Web trap", "jump": "Leap",
-		"dodge": "Skitter", "interact": "Use", "sense": "Feel"}
+		"dodge": "Run", "interact": "Use", "sense": "Feel"}
 
 
 func _action_pressed(a: StringName) -> void:
@@ -117,7 +117,8 @@ func _crawl(_delta: float) -> void:
 				n = an
 				wish = surface_wish(input, n)
 	var on_floor := n.dot(Vector3.UP) > 0.7
-	var speed := (stats.move_speed * stats.floor_speed_mult if on_floor else stats.wall_speed) * speed_scale()
+	var speed := (stats.move_speed * stats.floor_speed_mult if on_floor else stats.wall_speed) * speed_scale() \
+		* (RUN_MULT if is_running() else 1.0)
 	up_direction = n
 	var v := wish * speed
 	if _dodge_time > 0.0:
@@ -125,7 +126,7 @@ func _crawl(_delta: float) -> void:
 	if _jump_queued:
 		_jump_queued = false
 		attached = false
-		velocity = n * stats.jump_velocity + v
+		velocity = n * stats.jump_velocity * jump_scale() + v
 		surface_normal = Vector3.UP
 		up_direction = Vector3.UP
 		move_and_slide()
@@ -171,6 +172,8 @@ func _orient_visual(delta: float) -> void:
 	if visual == null:
 		return
 	var n := surface_normal
+	if in_first_person():
+		facing = surface_wish(Vector2(0, 1), n)
 	var f := facing - n * facing.dot(n)
 	if f.length_squared() < 0.001:
 		f = Vector3.FORWARD - n * n.dot(Vector3.FORWARD)
@@ -182,6 +185,20 @@ func _orient_visual(delta: float) -> void:
 	var s := visual.scale
 	visual.global_basis = Basis(q)
 	visual.scale = s
+
+
+func fp_up() -> Vector3:
+	if attached and visual:
+		return visual.global_basis.y.normalized()
+	return Vector3.UP
+
+
+func fp_forward() -> Vector3:
+	var up := fp_up()
+	if up.dot(Vector3.UP) > 0.95:
+		return super.fp_forward()
+	var f := surface_wish(Vector2(0, 1), up)
+	return f.normalized() if f.length_squared() > 0.0001 else super.fp_forward()
 
 
 func motion_speed() -> float:

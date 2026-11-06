@@ -106,6 +106,7 @@ func _physics_process(delta: float) -> void:
 		move_and_slide()
 		return
 	_move(delta)
+	_apply_size(delta)
 	_push_props()
 	_update_motion(delta)
 	_probe_timer -= delta
@@ -195,7 +196,7 @@ func _action_released(_a: StringName) -> void:
 ## Labels for the touch buttons and the controls help.
 func get_action_labels() -> Dictionary:
 	return {"primary": "Sprint", "secondary": "Squeeze", "jump": "Jump",
-		"dodge": "Dodge", "interact": "Use", "sense": "Sense"}
+		"dodge": "Run", "interact": "Use", "sense": "Sense"}
 
 
 # --- Shared ground movement -------------------------------------------------
@@ -217,7 +218,7 @@ func ground_move(delta: float, speed: float) -> void:
 	if _jump_queued:
 		_jump_buffer = JUMP_BUFFER
 	if _jump_buffer > 0.0 and _coyote > 0.0 and velocity.y <= 0.5:
-		velocity.y = stats.jump_velocity
+		velocity.y = stats.jump_velocity * jump_scale()
 		_coyote = 0.0
 		_jump_buffer = 0.0
 	elif not grounded:
@@ -230,7 +231,30 @@ func ground_move(delta: float, speed: float) -> void:
 	velocity -= ext
 
 
+## Bug's-eye view: "up" for the camera (the surface for a wall-walker).
+func fp_up() -> Vector3:
+	return Vector3.UP
+
+
+## Bug's-eye view: where the eyes look (and the body faces): the camera yaw.
+func fp_forward() -> Vector3:
+	var f := -camera_yaw_basis.z
+	f.y = 0.0
+	return f.normalized() if f.length_squared() > 0.0001 else Vector3.FORWARD
+
+
+func in_first_person() -> bool:
+	return cam != null and is_instance_valid(cam) and cam.first_person
+
+
 func face_velocity(delta: float) -> void:
+	if in_first_person():
+		# Through its eyes the bug faces where you look; it can still crab
+		# sideways without the view swinging round.
+		facing = fp_forward()
+		if visual:
+			visual.rotation.y = lerp_angle(visual.rotation.y, atan2(-facing.x, -facing.z), clampf(30.0 * delta, 0.0, 1.0))
+		return
 	var flat := Vector3(velocity.x, 0.0, velocity.z)
 	if flat.length() > 0.5:
 		facing = flat.normalized()
@@ -260,6 +284,50 @@ func is_sprinting() -> bool:
 	return false
 
 
+## Shift (the dash button): a tap dashes; keep holding it and you run.
+const RUN_MULT := 1.55
+
+
+func is_running() -> bool:
+	return InputRouter.is_held(&"dodge") and move_input().length() > 0.1 and not is_squeezing \
+		and stuck_time <= 0.0 and knockdown <= 0.0
+
+
+## Ground speed while running (at least the bug's own sprint).
+func run_speed() -> float:
+	return maxf(stats.sprint_speed, stats.move_speed * RUN_MULT)
+
+
+## Shrink power-up: the body eases down to a fraction of its size.
+var _size := 1.0
+
+
+func size_mult() -> float:
+	return _size
+
+
+## Subclasses that animate the body's height (squeezing, crouching) fold
+## size_mult() into their own targets.
+func _owns_visual_height() -> bool:
+	return false
+
+
+func _apply_size(delta: float) -> void:
+	var want := float(effect_amount.get(&"shrink", 0.55)) if has_effect(&"shrink") else 1.0
+	_size = move_toward(_size, want, delta * 2.0)
+	if visual == null:
+		return
+	visual.scale.x = _size
+	visual.scale.z = _size
+	if not _owns_visual_height():
+		visual.scale.y = _size
+
+
+## Jumps go higher with Spring Legs.
+func jump_scale() -> float:
+	return float(effect_amount.get(&"spring", 1.8)) if has_effect(&"spring") else 1.0
+
+
 func _update_motion(delta: float) -> void:
 	var input_len := move_input().length()
 	if input_len < 0.05 and motion_speed() < 0.6:
@@ -267,7 +335,7 @@ func _update_motion(delta: float) -> void:
 		still_time += delta
 	else:
 		still_time = 0.0
-		if is_sprinting():
+		if is_sprinting() or is_running():
 			motion = Motion.SPRINT
 		elif input_len < _cfg.creep_threshold:
 			motion = Motion.CREEP
@@ -302,7 +370,8 @@ func compute_visibility(light: float, cfg: StealthConfig) -> float:
 	if is_frozen() and has_camo():
 		camo = cfg.camo_factor / maxf(stats.camo_mult, 0.01)
 	var cloak := float(effect_amount.get(&"cloak", 0.2)) if has_effect(&"cloak") else 1.0
-	return clampf(light * m * camo * cloak * stats.visibility_mult * _extra_visibility_mult(), 0.0, 1.5)
+	var small := 0.6 if has_effect(&"shrink") else 1.0
+	return clampf(light * m * camo * cloak * small * stats.visibility_mult * _extra_visibility_mult(), 0.0, 1.5)
 
 
 func is_frozen() -> bool:
@@ -541,6 +610,8 @@ func speed_scale() -> float:
 	var s := slow_mult
 	if has_effect(&"speed"):
 		s *= float(effect_amount.get(&"speed", 1.35))
+	if has_effect(&"turbo"):
+		s *= float(effect_amount.get(&"turbo", 1.6))
 	return s
 
 
