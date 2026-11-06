@@ -140,6 +140,10 @@
 - Scenery v4: moons orbiting the backdrop planets, asteroid belts, satellites, holo gates and neon
   lamp posts along the road, floating billboards, a comet crossing the sky, aurora curtains and
   shooting stars in the sky shader; every world now has a backdrop planet.
+- Opens and runs smooth: loading screen (track, progress, tip) with the race built in stages across
+  frames (`Race._build`, `load_ms` per stage, `tests/loadtime`), race shaders compiled behind the
+  menu (`ShaderWarmup`), two pre-draw frames behind the overlay, dynamic 3D render scale before
+  Auto quality drops a tier, and a 30 fps cap setting.
 - Real-money store layer (`Store` autoload, debug + Play Billing template, products for premium craft,
   fleet bundle, credit packs, remove ads) built and switched off: `docs/STORE_PLAN.md`. Ads layer as
   before: `docs/ADS_PLAN.md`. v1 listing stays "no ads, no purchases, no data collected".

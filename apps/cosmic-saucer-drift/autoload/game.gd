@@ -11,6 +11,27 @@ var last_summary := {}
 var menu_hint := ""
 var detected_quality := "high"
 var _rng := RandomNumberGenerator.new()
+var _loading: CanvasLayer = null
+var _load_bar: ProgressBar = null
+var _load_what: Label = null
+
+## Shown one at a time on the loading screen.
+const TIPS := [
+	"Hold DRIFT through a corner: the longer the slide, the bigger the Plasma Boost.",
+	"Press DRIFT in the air to spin. Land it cleanly for a boost and energy.",
+	"A held Ion Shield blocks one hit. Use it instead for 6 s of protection.",
+	"The Pulse Laser fires straight ahead: it clears mines, gravity wells and plasma walls too.",
+	"Further back in the pack? Crates give you comeback tools: Warp Jump, Comet Strike, Energy Leech.",
+	"Leading? Drop a Plasma Wall or Frost Trail and keep your Decoy Drone ready for rockets.",
+	"Tuck in behind another saucer to slipstream, then swing out for a free burst of speed.",
+	"Near-miss a hazard for a dash of Dark Matter. Empty core? Grab a glowing Energy Pod.",
+	"Press gas right on GO for a rocket start. Too early and the engine stalls.",
+	"Every track hides a shortcut and three Star Shards. Win a track to unlock Reverse and Mirror.",
+	"The COCKPIT tab switches to first person any time, even mid-race.",
+	"Phase Cloak makes you untouchable for 5 s: nothing locks on, and traps pass right through.",
+	"Overcharge burns 60% of your core: the fuller it is, the longer the boost.",
+	"Scraping a wall costs little speed now; only a head-on hit really bites.",
+]
 
 signal orientation_changed
 
@@ -49,6 +70,96 @@ func _ready() -> void:
 	# steps to catch up (that turns one slow frame into a stutter).
 	if OS.has_feature("web") or OS.has_feature("mobile"):
 		Engine.max_physics_steps_per_frame = 3
+	apply_frame_cap()
+
+
+## Settings > Frame cap: 0 = uncapped (vsync), 30 = half rate for weak
+## phones and battery (physics stays at 60 Hz, interpolated).
+func apply_frame_cap() -> void:
+	Engine.max_fps = int(Save.setting("fps_cap"))
+
+
+# ---------------------------------------------------------------- loading screen
+## Full-screen loading overlay: track name, progress bar, a tip. It lives on
+## this autoload so it survives the scene change into the race.
+func show_loading(req: Dictionary) -> void:
+	hide_loading(true)
+	var layer := CanvasLayer.new()
+	layer.name = "Loading"
+	layer.layer = 100
+	layer.process_mode = Node.PROCESS_MODE_ALWAYS
+	add_child(layer)
+	_loading = layer
+	var bg := ColorRect.new()
+	bg.color = Color(0.03, 0.02, 0.08)
+	bg.set_anchors_preset(Control.PRESET_FULL_RECT)
+	layer.add_child(bg)
+	var v := UiKit.vbox(14)
+	v.set_anchors_preset(Control.PRESET_CENTER)
+	v.grow_horizontal = Control.GROW_DIRECTION_BOTH
+	v.grow_vertical = Control.GROW_DIRECTION_BOTH
+	v.alignment = BoxContainer.ALIGNMENT_CENTER
+	v.custom_minimum_size = Vector2(620, 0)
+	layer.add_child(v)
+	var def: Dictionary = TrackDefs.get_def(String(req.get("track", "")))
+	var variant := int(req.get("variant", 0))
+	var title := String(def.get("name", "Cosmic Saucer Drift"))
+	if variant > 0 and variant < Catalog.VARIANT_NAMES.size():
+		title += "  " + Catalog.VARIANT_NAMES[variant]
+	var t := UiKit.label(title, 38, UiKit.GOLD, HORIZONTAL_ALIGNMENT_CENTER)
+	v.add_child(t)
+	var blurb := UiKit.label(String(def.get("blurb", "")), 18, UiKit.DIM, HORIZONTAL_ALIGNMENT_CENTER)
+	blurb.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	blurb.custom_minimum_size = Vector2(620, 0)
+	v.add_child(blurb)
+	var bar := ProgressBar.new()
+	bar.min_value = 0.0
+	bar.max_value = 1.0
+	bar.value = 0.02
+	bar.show_percentage = false
+	bar.custom_minimum_size = Vector2(620, 14)
+	bar.add_theme_stylebox_override("background", UiKit.box(Color(0.12, 0.1, 0.25), 7))
+	bar.add_theme_stylebox_override("fill", UiKit.box(UiKit.CYAN, 7))
+	v.add_child(bar)
+	_load_bar = bar
+	var what := UiKit.label("Charting the course", 18, UiKit.CYAN, HORIZONTAL_ALIGNMENT_CENTER)
+	v.add_child(what)
+	_load_what = what
+	var tip := UiKit.label("TIP  " + TIPS[_rng.randi_range(0, TIPS.size() - 1)], 17, Color(0.85, 0.88, 1.0), HORIZONTAL_ALIGNMENT_CENTER)
+	tip.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	tip.custom_minimum_size = Vector2(620, 0)
+	v.add_child(tip)
+
+
+func loading_progress(frac: float, what: String) -> void:
+	if _load_bar:
+		_load_bar.value = clampf(frac, 0.0, 1.0)
+	if _load_what:
+		_load_what.text = what
+
+
+func is_loading() -> bool:
+	return _loading != null and is_instance_valid(_loading)
+
+
+## Fades the overlay out (or drops it at once).
+func hide_loading(instant := false) -> void:
+	if not is_loading():
+		_loading = null
+		return
+	var layer := _loading
+	_loading = null
+	_load_bar = null
+	_load_what = null
+	if instant:
+		layer.queue_free()
+		return
+	var tw := create_tween()
+	tw.set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
+	for c in layer.get_children():
+		if c is CanvasItem:
+			tw.parallel().tween_property(c, "modulate:a", 0.0, 0.35)
+	tw.tween_callback(layer.queue_free)
 
 
 ## The UI is designed on a 1280x720 canvas that scales to fit the screen.
@@ -224,6 +335,12 @@ func start(req: Dictionary) -> void:
 	request = req
 	InputRouter.two_player = req.get("mode", "") == "versus"
 	get_tree().paused = false
+	if not req.get("fast", false):
+		# Put the loading screen up and let it draw before the heavy scene
+		# swap; the race then builds in stages behind it.
+		show_loading(req)
+		await get_tree().process_frame
+		await get_tree().process_frame
 	get_tree().change_scene_to_file("res://scenes/race.tscn")
 
 

@@ -115,6 +115,7 @@ var _respawn_streak := 0
 var _short_i := 0
 
 var stats := {}
+static var build_ms: Array = []   # model build time per racer (ms), for tests/loadtime
 
 var model: SaucerModel
 var T: Tuning
@@ -138,10 +139,12 @@ func setup(p_race: Node, p_idx: int, p_look: Dictionary, upgrades: Dictionary) -
 	sph.radius = 1.3
 	cs.shape = sph
 	add_child(cs)
+	var tb := Time.get_ticks_usec()
 	model = SaucerModel.new()
 	model.name = "Model"
 	add_child(model)
 	model.build(look)
+	build_ms.append(snappedf(float(Time.get_ticks_usec() - tb) / 1000.0, 0.1))
 	_apply_stats(upgrades)
 	stats = {"pods": 0, "tricks": 0, "hits": 0, "hits_taken": 0, "items": 0, "purple": 0, "slips": 0,
 		"shortcuts": 0, "hover_count": 0, "drift_dist": 0.0, "near": 0, "dist": 0.0, "top": 0.0,

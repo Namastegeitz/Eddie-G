@@ -685,11 +685,39 @@ func _races() -> void:
 	# Reverse + mirror quick races run.
 	race = await _race(Game.quick_request("proxima_station", 2, 1))
 	check("mirror race finished", race != null and race.done)
-	# Pause toggles.
+	# Pause toggles (a normal start: loading screen, staged build).
 	Game.start(Game.quick_request("io", 1, 1))
-	await get_tree().process_frame
-	await get_tree().process_frame
-	var r2: Race = get_tree().current_scene as Race
+	check("loading screen shown for a normal start", Game.is_loading())
+	var r2: Race = null
+	for f in 400:
+		await get_tree().process_frame
+		r2 = get_tree().current_scene as Race
+		# The finished race stays the current scene until the swap: wait for
+		# the new one.
+		if r2 != null and r2 != race and r2.loaded:
+			break
+	check("staged race build completes", r2 != null and r2 != race and r2.loaded)
+	check("build stages were timed", r2 != null and r2.load_ms.has("world_track") and r2.load_ms.has("racers"))
+	for f in 12:
+		if not Game.is_loading():
+			break
+		await get_tree().process_frame
+	check("loading screen gone once loaded", not Game.is_loading())
+	# Dynamic resolution: long frames ease the render scale down, short ones bring it back.
+	Save.data.settings.quality = "auto"
+	r2.racing = true
+	for i in 120:
+		r2._dyn_res(0.05)
+	check("long frames lower the render scale", r2.res_scale < 0.95 and r2.res_scale >= Race.RES_MIN)
+	for i in 400:
+		r2._dyn_res(1.0 / 60.0)
+	check("short frames restore the render scale", r2.res_scale > 0.95)
+	Save.set_setting("fps_cap", 30)
+	check("frame cap 30 applies to the engine", Engine.max_fps == 30)
+	Save.set_setting("fps_cap", 0)
+	check("frame cap off", Engine.max_fps == 0)
+	check("shader warm-up covers the world and effect materials", ShaderWarmup.materials().size() >= 24)
+	check("loading tips exist", Game.TIPS.size() >= 8)
 	r2.toggle_pause()
 	check("pause pauses", get_tree().paused)
 	r2.toggle_pause()

@@ -54,6 +54,21 @@ var _slow_t := 0.0
 var _fps_lbl: Label
 
 var prof := {"racers": 0, "pairs": 0, "pickups": 0, "items": 0, "hazards": 0, "rest": 0, "ticks": 0}
+## Milliseconds each build stage took (track data, world, racers, systems,
+## views, warm-up): tests/loadtime prints them.
+var load_ms := {}
+var _load_t := 0
+## True once every part of the race exists. The build runs in stages over
+## several frames behind the loading screen, so nothing ticks before this.
+var loaded := false
+signal race_loaded
+var _fast := false
+## Dynamic resolution: the 3D render scale eases down when frames run long
+## and back up when they're comfortable, before any tier is dropped.
+var res_scale := 1.0
+var _ft_avg := 1.0 / 60.0
+var _res_t := 0.0
+const RES_MIN := 0.6
 const GHOST_HZ := 15.0
 const GHOST_STRIDE := 8
 
@@ -72,15 +87,35 @@ func _ready() -> void:
 	# the physics tick: racers, items and hazards turn it on for themselves.
 	# Everything else here (camera, effects, scenery, HUD) moves per frame.
 	physics_interpolation_mode = Node.PHYSICS_INTERPOLATION_MODE_OFF
+	_fast = req.get("fast", false)
+	_build()
+
+
+## Lets a frame render between build stages (not in fast/test mode).
+func _yield(frac: float, what: String) -> void:
+	if _fast:
+		return
+	Game.loading_progress(frac, what)
+	await get_tree().process_frame
+
+
+func _build() -> void:
+	_load_t = Time.get_ticks_usec()
 	td = TrackData.make(req.track, req.variant)
 	mod_gravity *= float(td.def.get("gravity", 1.0))
 	if req.has("laps"):
 		td.laps = req.laps
-	_build_world()
+	_stage("track_data")
+	await _yield(0.08, "Charting " + td.name)
+	await _build_world()
+	_stage("world")
 	fx = RaceFx.new()
 	fx.name = "Fx"
 	add_child(fx)
-	_spawn()
+	await _yield(0.55, "Rolling out the grid")
+	await _spawn()
+	_stage("racers")
+	await _yield(0.8, "Arming the crates")
 	pickups = Pickups.new()
 	pickups.name = "Pickups"
 	add_child(pickups)
@@ -90,7 +125,7 @@ func _ready() -> void:
 	items.physics_interpolation_mode = Node.PHYSICS_INTERPOLATION_MODE_ON
 	add_child(items)
 	items.setup(self)
-	items.only_item = mods.get("only_item", "")
+	items.only_item = (req.get("mods", {}) as Dictionary).get("only_item", "")
 	if req.get("free_item", false):
 		for h in humans:
 			if h.item == "":
@@ -101,10 +136,13 @@ func _ready() -> void:
 	add_child(hazards)
 	hazards.setup(self)
 	hazards.reset_physics_interpolation()
+	_stage("systems")
+	await _yield(0.9, "Lighting the track")
 	_setup_views()
 	_setup_cockpits()
 	apply_quality()
-	if not cams.is_empty() and not req.get("fast", false):
+	_stage("views")
+	if not cams.is_empty() and not _fast:
 		# Compile every effect shader during the countdown, not mid-race.
 		items.warm_up(cams[0])
 		fx.warm_up(cams[0])
@@ -123,6 +161,22 @@ func _ready() -> void:
 	InputRouter.mouse_capture_wanted = not autopilot and humans.size() == 1 and not InputRouter.touch_seen
 	Events.log_event("race_start", {"mode": req.mode, "track": td.id, "variant": td.variant})
 	Audio.music("race")
+	_stage("audio")
+	loaded = true
+	race_loaded.emit()
+	if not _fast:
+		# Two frames behind the overlay: the renderer uploads every mesh and
+		# compiles anything left on the first draw before the player sees it.
+		Game.loading_progress(1.0, "Ready")
+		await get_tree().process_frame
+		await get_tree().process_frame
+	Game.hide_loading()
+
+
+func _stage(name: String) -> void:
+	var now := Time.get_ticks_usec()
+	load_ms[name] = float(now - _load_t) / 1000.0
+	_load_t = now
 
 
 # ---------------------------------------------------------------- world
@@ -169,11 +223,16 @@ func _build_world() -> void:
 	_sun = sun
 	var ld := Themes.light_dir(theme)
 	sun.look_at_from_position(Vector3.ZERO, ld, Vector3.UP if absf(ld.y) < 0.95 else Vector3.FORWARD)
+	_stage("world_env")
+	await _yield(0.15, "Laying the road")
 	var track := Node3D.new()
 	track.name = "Track"
 	add_child(track)
 	TrackBuilder.build(td, track)
+	_stage("world_track")
+	await _yield(0.4, "Placing the scenery")
 	TrackDecor.build(td, track)
+	_stage("world_decor")
 	_decor = track.get_node_or_null("Decor")
 	apply_quality()
 
@@ -209,6 +268,7 @@ func apply_quality() -> void:
 	for c in cams:
 		if c.get_viewport() != get_viewport():
 			Gfx.apply_viewport(c.get_viewport(), qs)
+	_apply_res_scale()
 	if _decor:
 		_decor_density(float(qs.decor))
 	if fx:
@@ -245,6 +305,8 @@ func _spawn() -> void:
 		_lap_start[r.idx] = 0.0
 		_led[r.idx] = false
 		_was_short[r.idx] = false
+		if k % 2 == 1 and k < entries.size() - 1:
+			await _yield(0.55 + 0.25 * float(k + 1) / float(entries.size()), "Rolling out the grid")
 	if autopilot and not racers.is_empty():
 		humans.append(racers[0])
 
@@ -360,26 +422,60 @@ func _set_cockpit(r: Racer, on: bool) -> void:
 ## Auto quality: if the game runs below ~28 fps for 3 seconds, step the
 ## graphics down one tier (ultra -> high -> medium -> low) and say so.
 func _process(dt: float) -> void:
+	if not loaded:
+		return
 	if _slowmo_until > 0 and Time.get_ticks_msec() >= _slowmo_until:
 		_slowmo_until = 0
 		Engine.time_scale = 1.0
 	if _fps_lbl:
-		_fps_lbl.text = "%d fps  %s" % [Engine.get_frames_per_second(), Game.quality()]
+		_fps_lbl.text = "%d fps  %s%s" % [Engine.get_frames_per_second(), Game.quality(), "" if res_scale >= 0.999 else "  %d%%" % int(res_scale * 100.0)]
 	if Save.setting("quality") != "auto" or not racing or get_tree().paused:
 		return
+	_dyn_res(dt)
 	if dt > 1.0 / 28.0:
 		_slow_t += dt
 	else:
 		_slow_t = maxf(0.0, _slow_t - dt * 0.5)
-	if _slow_t > 3.0:
+	# Only drop a whole tier once the render scale is already at its floor.
+	if _slow_t > 3.0 and res_scale <= RES_MIN + 0.001:
 		_slow_t = 0.0
 		var i := Gfx.tier_index(Game.detected_quality)
 		if i <= 0:
 			return
 		Game.detected_quality = Gfx.TIERS[i - 1]
+		res_scale = 1.0
 		apply_quality()
 		for h in huds:
 			h.toast("Graphics lowered for smoother play", UiKit.DIM)
+
+
+## Eases the 3D render scale down while frames run long (over ~25 ms on
+## average) and back up once they're comfortably short again. Checked a few
+## times a second so one hitch never changes anything.
+func _dyn_res(dt: float) -> void:
+	_ft_avg = lerpf(_ft_avg, minf(dt, 0.1), 0.08)
+	_res_t += dt
+	if _res_t < 0.5:
+		return
+	_res_t = 0.0
+	var want := res_scale
+	if _ft_avg > 1.0 / 40.0:
+		want = maxf(RES_MIN, res_scale - 0.1)
+	elif _ft_avg < 1.0 / 57.0:
+		want = minf(1.0, res_scale + 0.05)
+	if not is_equal_approx(want, res_scale):
+		res_scale = want
+		_apply_res_scale()
+
+
+func _apply_res_scale() -> void:
+	var qs := Gfx.q()
+	var seen := {}
+	for vp in [get_viewport()] + cams.map(func(c: Camera3D) -> Viewport: return c.get_viewport()):
+		if vp == null or seen.has(vp):
+			continue
+		seen[vp] = true
+		vp.scaling_3d_scale = clampf(float(qs.scale) * res_scale, 0.3, 1.0)
 
 
 func _decor_density(k: float) -> void:
@@ -421,7 +517,7 @@ func cam_for(r: Racer) -> RaceCamera:
 
 # ---------------------------------------------------------------- loop
 func _physics_process(dt: float) -> void:
-	if done:
+	if done or not loaded:
 		return
 	if not racing:
 		countdown_left -= dt

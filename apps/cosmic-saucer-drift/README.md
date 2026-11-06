@@ -158,6 +158,15 @@ that holds everyone inside it near half speed), **Phase Cloak** (5 s out of
 phase: nothing locks on, hits or slows you, and you pass through traps and
 other racers) and **Repulsor Pulse** (a hard shove on everyone within 12 m).
 
+**Opens and runs smooth.** Starting a race shows a loading screen with a
+progress bar and a tip while the world is built in stages across frames
+(track, scenery, racers, systems), so the app never freezes; the menu
+compiles every race shader in the background, so the first race has no
+first-use stutter; a dynamic render scale eases the 3D resolution down
+while frames run long and back up when they're comfortable, before Auto
+quality drops a whole tier; and a 30 fps cap is available in Settings for
+weak phones and battery.
+
 Roads are a quarter wider than the v2 layouts, scraping a wall now costs
 only a few percent of your speed (a head-on hit still bites), gusts push a
 craft you can steer against, magnetic rails never fight the stick, and the

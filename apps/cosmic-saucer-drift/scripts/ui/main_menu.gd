@@ -892,6 +892,7 @@ func _settings() -> Control:
 		["Mouse controls", "mouse_controls", [true, false], {true: "On: stick + throttle", false: "Off"}],
 		["Key hints (keyboard/mouse)", "key_hints", [true, false], {true: "On", false: "Off"}],
 		["Show FPS", "show_fps", [false, true], {true: "On", false: "Off"}],
+		["Frame cap", "fps_cap", [0, 30], {0: "Off (smoothest)", 30: "30 fps (battery)"}],
 	]
 	for t in toggles:
 		var key: String = t[1]

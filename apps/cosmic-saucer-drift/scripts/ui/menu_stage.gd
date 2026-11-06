@@ -109,6 +109,9 @@ func _ready() -> void:
 	cam.position = Vector3(0, 3.0, 12.5)
 	cam.look_at(Vector3(0, -0.2, 0))
 	cam.current = true
+	# Compile the race's shaders now, behind the menu, so the first race
+	# doesn't stutter on each material's first draw.
+	ShaderWarmup.run(cam)
 	show_look(Save.player_look())
 
 

@@ -14,6 +14,7 @@ const DEFAULT_SETTINGS := {
 	"cockpit": false,               # start races in first-person (COCKPIT tab)
 	"quality": "auto",              # auto | low | medium | high | ultra
 	"show_fps": false, "difficulty": 1,
+	"fps_cap": 0,                   # 0 = uncapped, 30 = half rate (weak phones, battery)
 	"mouse_controls": true,          # mouse = flight stick + throttle lever (desktop/web)
 	"key_hints": true,               # on-screen joystick + key chips with a keyboard/mouse
 }
@@ -136,6 +137,8 @@ func setting(k: String) -> Variant:
 func set_setting(k: String, v: Variant) -> void:
 	data.settings[k] = v
 	mark()
+	if k == "fps_cap":
+		Game.apply_frame_cap()
 
 
 # ---------------------------------------------------------------- currency
