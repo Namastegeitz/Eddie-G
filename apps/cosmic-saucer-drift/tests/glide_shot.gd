@@ -25,21 +25,46 @@ func _ready() -> void:
 	for i in 120:
 		await get_tree().process_frame
 	var me: Racer = race.racers[0]
+	var td := race.td
 	for k in [0, 1]:
-		me.global_position += me.up * 26.0
-		me.velocity = me.heading * 40.0
+		# Drive off the skyway ramp (or, on a track without one, a short hop).
+		if td.short_glide:
+			var path := td.main
+			var lane := float(td.short_side) * (td.width * 0.5 - 5.0)
+			var i := path.index_at(td.short_a - 20.0)
+			me.global_position = path.pts[i] + path.rgt[i] * lane + path.upv[i] * 0.9
+			me.heading = path.tan[i]
+			me.up = path.upv[i]
+			me.track_idx = i
+			me.velocity = me.heading * 48.0
+			me.controller = null
+			me.is_human = true      # the AI never glides; shoot a player's run
+			me.auto_glide = true
+			me.in_throttle = 1.0
+			me.in_steer = 0.0
+		else:
+			me.is_human = true
+			me.auto_glide = true
+			me.global_position += me.up * 8.0
+			me.velocity = me.heading * 40.0
 		me.reset_physics_interpolation()
 		me.in_look_back = k == 1
 		Engine.time_scale = 0.25
-		for i in 40:
+		for i in 140:
+			if td.short_glide:
+				# Aim at the strip as a player would.
+				var aim: Vector3 = td.skyway.to + (td.skyway.dir as Vector3) * 60.0 - me.global_position
+				var rgt := me.heading.cross(me.up).normalized()
+				me.in_steer = clampf(atan2(aim.dot(rgt), aim.dot(me.heading)) * 2.0, -1.0, 1.0)
 			await get_tree().process_frame
-			if me.gliding and i > 12:
+			if me.gliding and me.air_time > (0.7 if k == 0 else 1.3):
 				break
 		await RenderingServer.frame_post_draw
 		get_viewport().get_texture().get_image().save_png("%s/glide_%d.png" % [out, k])
 		print("saved glide_%d gliding=%s" % [k, me.gliding])
 		Engine.time_scale = 1.0
 		me.in_look_back = false
-		for i in 90:
+		for i in 150:
 			await get_tree().process_frame
+		print("after flight: on_shortcut=%s rescues=%d" % [me.on_shortcut, me.stats.hover_count])
 	get_tree().quit()

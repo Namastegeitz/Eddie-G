@@ -29,6 +29,7 @@ func _ready() -> void:
 	await _ads()
 	await _achievements()
 	await _items_tests()
+	await _skyway_tests()
 	await _gfx_tests()
 	await _races()
 	await _menus()
@@ -718,6 +719,30 @@ func _races() -> void:
 	check("frame cap off", Engine.max_fps == 0)
 	check("shader warm-up covers the world and effect materials", ShaderWarmup.materials().size() >= 24)
 	check("glide is off by default on keyboard, automatic by setting", Save.defaults().settings.glide_auto == false and InputRouter.Controls.new().glide == false)
+	# Glide skyways: a launch ramp on the road's edge, a corridor of air, a
+	# hidden landing strip that rejoins the road.
+	var sky_tracks := 0
+	for tid in Catalog.TRACK_IDS:
+		for vv in [0, 1, 2]:
+			var tdd := TrackData.make(tid, vv)
+			if not tdd.short_glide:
+				continue
+			sky_tracks += 1
+			var ramp_ok := false
+			for rp in tdd.ramps:
+				if absf(float(rp.lane)) > 3.0 and float(rp.h) >= 5.0:
+					ramp_ok = true
+			var land: Vector3 = tdd.skyway.to
+			var i0 := tdd.main.nearest(land, 0, -1)
+			var off := tdd.main.pts[i0].distance_to(land)
+			var worst := 0.0
+			for j in tdd.short.n:
+				worst = maxf(worst, absf(tdd.short.curv[j]))
+			check("skyway %s v%d: tall ramp in the shortcut lane" % [tid, vv], ramp_ok)
+			check("skyway %s v%d: landing strip is off the road (secret)" % [tid, vv], off > 14.0)
+			check("skyway %s v%d: landing strip has no hairpin" % [tid, vv], worst < 0.09)
+			check("skyway %s v%d: landing below the ramp lip" % [tid, vv], float((land - tdd.skyway.from).dot(tdd.skyway.up)) < -2.0)
+	check("three tracks have glide skyways (forward and mirror)", sky_tracks == 6)
 	await _glide_tests(r2)
 	check("loading tips exist", Game.TIPS.size() >= 8)
 	r2.toggle_pause()
@@ -1345,7 +1370,7 @@ func _glide_tests(race: Race) -> void:
 	check("thrusters hold the speed on the wings", Vector3(a.velocity.x, 0, a.velocity.z).length() > 25.0)
 	check("free fall drops much faster", not b.gliding and b.velocity.y < a.velocity.y - 4.0)
 	check("wings show on the model", a.model.wings != null and a.model.wings.visible)
-	check("the AI glides by itself", c.gliding)
+	check("the AI never glides (wings only floated it past landings)", not c.gliding)
 	a.in_glide = false
 	for f in 8:
 		await get_tree().physics_frame
@@ -1356,3 +1381,77 @@ func _glide_tests(race: Race) -> void:
 	for r: Racer in [a, b, c]:
 		_place_on_track(race, r, 150.0 + 20.0 * r.idx, 0.0)
 		r.reset_physics_interpolation()
+
+
+## A saucer that takes the Io skyway ramp at racing speed and glides lands on
+## the hidden strip; one that doesn't glide comes down short.
+func _skyway_tests() -> void:
+	Save.data = Save.defaults()
+	var req := Game.quick_request("io", 0, 1)
+	req.fast = true
+	req.bot_humans = true
+	Game.start(req)
+	await get_tree().process_frame
+	await get_tree().process_frame
+	var race: Race = get_tree().current_scene as Race
+	check("skyway test race loaded", race != null and race.td.short_glide)
+	if race == null or not race.td.short_glide:
+		return
+	for f in 40:
+		await get_tree().physics_frame
+	race.racing = true
+	for r: Racer in race.racers:
+		if r.frozen:
+			r.on_go()
+	var td := race.td
+	var path := td.main
+	var results := {}
+	for glide in [true, false]:
+		var a: Racer = race.racers[0]
+		for k in range(1, race.racers.size()):
+			_place_on_track(race, race.racers[k], 300.0 + 30.0 * k, 0.0)
+		a.controller = null
+		a.is_human = true
+		a.auto_glide = glide
+		a.in_glide = false
+		var lane := float(td.short_side) * (td.width * 0.5 - 5.0)
+		# Start at the foot of the ramp, lined up with it (a player steers in).
+		var i := path.index_at(td.short_a - 20.0)
+		a.global_position = path.pts[i] + path.rgt[i] * lane + path.upv[i] * 0.9
+		a.heading = path.tan[i]
+		a.up = path.upv[i]
+		a.track_idx = i
+		a.prev_s = path.along(i, a.global_position)
+		a.race_dist = td.short_a - 20.0
+		a.velocity = a.heading * 48.0
+		a.in_throttle = 1.0
+		a.in_steer = 0.0
+		a.in_brake = 0.0
+		a.rescue_time = 0.0
+		a.reset_physics_interpolation()
+		var landed := false
+		var rescued := false
+		var peak := 0.0
+		var rescues0: int = int(a.stats.get("rescues", 0))
+		var aim: Vector3 = td.skyway.to + (td.skyway.dir as Vector3) * 60.0
+		for f in 300:
+			# Aim at the strip as a player would.
+			var to_land := aim - a.global_position
+			var rgt := a.heading.cross(a.up).normalized()
+			a.in_steer = clampf(atan2(to_land.dot(rgt), to_land.dot(a.heading)) * 2.0, -1.0, 1.0)
+			await get_tree().physics_frame
+			peak = maxf(peak, a.global_position.y - path.pts[i].y)
+			if a.on_shortcut and a.grounded:
+				landed = true
+				break
+			if a.rescue_time > 0.0:
+				rescued = true
+				break
+		results[glide] = {"landed": landed, "rescued": rescued, "peak": peak}
+		a.controller = AIDriver.new("clean", 0.8, 7)
+		_place_on_track(race, a, 100.0, 0.0)
+		for f in 10:
+			await get_tree().physics_frame
+	check("gliding off the skyway ramp lands on the hidden strip", results[true].landed and not results[true].rescued)
+	check("the glide never climbs high (a soft float)", results[true].peak < 14.0)
+	check("without the wings the jump comes down short", not results[false].landed)

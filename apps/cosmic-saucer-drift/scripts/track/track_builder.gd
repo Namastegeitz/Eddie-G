@@ -321,7 +321,10 @@ static func _build_path(td: TrackData, path: TrackPath, root: Node3D, prefix: St
 	for side: int in [-1, 1]:
 		var wall_inc := func(i: int) -> bool:
 			return not seg_gap.call(i) and not open_side.call(i, side) and not short_ends.call(i)
-		walls.append_array(wall_faces(path, wall_inc, float(side), td.wall_h if is_main else td.short_wall_h))
+		var heights := td.short_wall_h
+		if is_main:
+			heights = td.wall_h_r if side > 0 else td.wall_h_l
+		walls.append_array(wall_faces(path, wall_inc, float(side), heights))
 	if not walls.is_empty():
 		static_body(root, walls, LAYER_WALLS, prefix + "Walls")
 
@@ -367,6 +370,8 @@ static func _build_ramps(td: TrackData, root: Node3D) -> void:
 		var s1: float = r.s1
 		var h: float = r.h
 		var w: float = r.w * 0.5
+		var lane: float = r.get("lane", 0.0)
+		var yaw: float = r.get("yaw", 0.0)
 		var steps := maxi(2, ceili((s1 - s0) / 1.5))
 		for k in steps:
 			var sa := s0 + (s1 - s0) * float(k) / float(steps)
@@ -376,6 +381,18 @@ static func _build_ramps(td: TrackData, root: Node3D) -> void:
 			var ia := path.index_at(sa)
 			var fa := _frame_at(path, sa)
 			var fb := _frame_at(path, sb)
+			fa.origin += fa.basis.x * lane
+			fb.origin += fb.basis.x * lane
+			if yaw != 0.0:
+				# A yawed ramp pivots about its foot (the first frame) so it
+				# stays on the road where it starts and angles out at the lip.
+				var foot := _frame_at(path, s0)
+				foot.origin += foot.basis.x * lane
+				var rot := Basis(foot.basis.y, -yaw)
+				fa.basis = rot * fa.basis
+				fb.basis = rot * fb.basis
+				fa.origin = foot.origin + rot * (fa.origin - foot.origin)
+				fb.origin = foot.origin + rot * (fb.origin - foot.origin)
 			var a0 := fa.origin + fa.basis.x * -w + fa.basis.y * ha
 			var b0 := fa.origin + fa.basis.x * w + fa.basis.y * ha
 			var a1 := fb.origin + fb.basis.x * -w + fb.basis.y * hb

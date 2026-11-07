@@ -145,7 +145,10 @@
   lamp posts along the road, floating billboards, a comet crossing the sky, aurora curtains and
   shooting stars in the sky shader; every world now has a backdrop planet.
 - Glide: energy wings unfold while airborne (hold Shift / D-pad up; automatic on touch and for AI):
-  slow sink, thrusters hold speed, full air steering, brake flares; wing meshes on every craft.
+  soft sink, no climb, full air steering, brake flares; wing meshes on every craft. Skyways
+  (`"glide"` shortcuts on Io, Mars, Kepler-16b): yawed tall ramp on the road edge, a corridor of air
+  with shard/pillar markers, a hidden landing strip 85 m out that returns as a bridge over the road;
+  AI never glides and avoids the ramp lane; `TrackData.def_overrides` lets tools try placements.
 - Opens and runs smooth: loading screen (track, progress, tip) with the race built in stages across
   frames (`Race._build`, `load_ms` per stage, `tests/loadtime`), race shaders compiled behind the
   menu (`ShaderWarmup`), two pre-draw frames behind the overlay, dynamic 3D render scale before

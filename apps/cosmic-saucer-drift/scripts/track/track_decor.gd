@@ -32,6 +32,8 @@ static func build(td: TrackData, root: Node3D) -> void:
 		_planet(holder, p, theme)
 	var low := _lowest(td)
 	var hi_detail := int(Gfx.q().detail) > 0
+	if not td.skyway.is_empty():
+		_skyway(td, holder, rng, theme)
 	for x in theme.get("extras", []):
 		match String(x):
 			"belt":
@@ -158,6 +160,63 @@ static func _planet(parent: Node3D, p: Dictionary, theme: Dictionary) -> void:
 		ring.rotation_degrees = Vector3(16, 0, -12)
 		ring.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		parent.add_child(ring)
+
+
+## The glide corridor: a trail of faint floating shards along the flight
+## line, tall pillars flanking it so the way over reads from the ramp, and a
+## soft ring over the landing strip. No HUD or minimap marking: a secret.
+static func _skyway(td: TrackData, parent: Node3D, rng: RandomNumberGenerator, theme: Dictionary) -> void:
+	var sw: Dictionary = td.skyway
+	var from: Vector3 = sw.from
+	var to: Vector3 = sw.to
+	var dir: Vector3 = sw.dir
+	var up: Vector3 = sw.up
+	var side := dir.cross(up).normalized()
+	var neon: Color = theme.neon
+	# Shards: along the arc a glider follows (up a little, then down).
+	var shards: Array[Transform3D] = []
+	var cols: Array[Color] = []
+	var n := 9
+	for k in n:
+		var t := float(k + 1) / float(n + 1)
+		var p := from.lerp(to, t) + up * (sin(t * PI) * 3.5 + 1.5)
+		var b := Basis.from_euler(Vector3(0.3, rng.randf() * TAU, 0.2)).scaled(Vector3(0.9, 1.6, 0.9))
+		shards.append(Transform3D(b, p))
+		cols.append(neon.lerp(Color.WHITE, 0.3))
+	var sm := SphereMesh.new()
+	sm.radial_segments = 6
+	sm.rings = 3
+	var mat := StandardMaterial3D.new()
+	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	mat.vertex_color_use_as_albedo = true
+	mat.albedo_color = Color(1, 1, 1, 0.55)
+	_multimesh(parent, sm, shards, mat, "SkywayShards", cols)
+	# Pillars either side of the corridor, leaning in, lower near the landing.
+	var pillars: Array[Transform3D] = []
+	var gy := _lowest(td) - 50.0
+	for k in 7:
+		var t := float(k) / 6.0
+		for sx: float in [-1.0, 1.0]:
+			var p := from.lerp(to, t) + side * sx * (16.0 + rng.randf_range(0.0, 6.0))
+			var h := rng.randf_range(14.0, 26.0) - t * 6.0 + (p.y - gy)
+			var w := rng.randf_range(2.5, 4.5)
+			var base := Vector3(p.x, gy, p.z)
+			var b := Basis.from_euler(Vector3(0.0, rng.randf() * TAU, -sx * 0.06)).scaled(Vector3(w, h, w))
+			pillars.append(Transform3D(b, base + Vector3.UP * h * 0.5))
+	_multimesh(parent, spire_mesh(), pillars, rock_mat(Color(theme.barrier).lightened(0.15), 0.8), "SkywayPillars")
+	# Landing ring.
+	var ring := MeshInstance3D.new()
+	var tm := TorusMesh.new()
+	tm.inner_radius = 0.92
+	tm.outer_radius = 1.0
+	tm.rings = 40
+	tm.ring_segments = 6
+	ring.mesh = tm
+	ring.material_override = TrackBuilder.ghost(neon, 0.4)
+	ring.transform = Transform3D(TrackBuilder.sb(Basis(side, dir, up), Vector3(9.0, 1.0, 9.0)), to + dir * 6.0 + up * 4.0)
+	ring.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	parent.add_child(ring)
 
 
 ## A moon orbiting a backdrop planet: a pivot at the planet turns slowly,

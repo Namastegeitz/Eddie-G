@@ -159,12 +159,23 @@ phase: nothing locks on, hits or slows you, and you pass through traps and
 other racers) and **Repulsor Pulse** (a hard shove on everyone within 12 m).
 
 **Glide.** Airborne off a ramp, a geyser or an edge, hold **Shift** (D-pad
-up on a pad) to unfold energy wings: thrusters hold your speed, the craft
-sinks slowly and steers almost like on the ground, so you can aim back at
-the road instead of dropping into the lava. Hold brake to flare and stretch
-the glide; let go to drop. On phones and tablets the wings unfold by
-themselves whenever you're in the air long enough (a Settings switch gives
-keyboard players the same), and the AI racers glide too.
+up on a pad) to unfold energy wings: the craft floats softly down instead
+of dropping, keeps the speed the jump gave it (the wings never climb or
+accelerate) and steers almost like on the ground, so you can aim where you
+land. Hold brake to flare and stretch the glide; let go to drop. On phones
+and tablets the wings unfold by themselves whenever you're in the air long
+enough (a Settings switch gives keyboard players the same), and the AI
+racers glide too.
+
+**Skyways (secret glide shortcuts).** On Io, Mars and Kepler-16b the
+shortcut is now a skyway: a tall ramp at the edge of the road, angled out
+over the landscape, launches you over nothing but air; a faint trail of
+floating shards and the pillars flanking it show the line; a hidden landing
+strip 85 m out carries you past the corner and comes back as a short bridge
+over the road, where you drop off its end onto the tarmac. Only a glider
+makes it across; a free fall comes down short. The AI never takes it and
+stays off the ramp's lane. Skyways run forward and mirrored; Reverse keeps
+the ordinary shortcut.
 
 **Opens and runs smooth.** Starting a race shows a loading screen with a
 progress bar and a tip while the world is built in stages across frames

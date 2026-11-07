@@ -22,10 +22,16 @@ var short_lift_start := false
 var short_lift_end := false
 var short_surface := Catalog.S_METAL
 var short_tube := false
+## Glide skyway: the shortcut starts with a tall launch ramp on the road and
+## a stretch of nothing but air; wings carry you to a hidden landing strip.
+var short_glide := false
+var skyway := {}             # {"from": ramp end, "to": landing start, "dir", "up", "ramp_h"}
 var short_skip_l := PackedByteArray()
 var short_skip_r := PackedByteArray()
 var short_wall_h := PackedFloat32Array()
-var wall_h := PackedFloat32Array()   # collision wall height per main sample
+var wall_h := PackedFloat32Array()   # collision wall height per main sample (both sides)
+var wall_h_l := PackedFloat32Array() # per side; a skyway lowers only its own side
+var wall_h_r := PackedFloat32Array()
 const WALL_H := 8.0
 
 var lowg := PackedByteArray()
@@ -40,6 +46,9 @@ var tubes: Array[Vector2] = []     # distance ranges with an enclosing tunnel
 var shards: Array[Dictionary] = [] # {pos, slot}
 
 var _m := 0  # control point count
+## Tooling hook: per-track definition keys that replace the shipped ones
+## (tests and placement searches build variants without editing the defs).
+static var def_overrides := {}
 
 
 static func make(track_id: String, var_id: int) -> TrackData:
@@ -52,6 +61,10 @@ func _build(track_id: String, var_id: int) -> void:
 	id = track_id
 	variant = var_id
 	def = TrackDefs.get_def(track_id)
+	if def_overrides.has(track_id):
+		def = def.duplicate(true)
+		for k in def_overrides[track_id]:
+			def[k] = def_overrides[track_id][k]
 	name = def.name
 	theme = def.theme
 	laps = def.get("laps", 3)
@@ -82,6 +95,10 @@ func _build(track_id: String, var_id: int) -> void:
 	gap.fill(0)
 	wall_h.resize(n)
 	wall_h.fill(WALL_H)
+	wall_h_l.resize(n)
+	wall_h_l.fill(WALL_H)
+	wall_h_r.resize(n)
+	wall_h_r.fill(WALL_H)
 	open_l.fill(0)
 	open_r.fill(0)
 	for f in def.features:
@@ -222,6 +239,10 @@ func _build_shortcut(sc: Dictionary) -> void:
 	short_side = int(_lane(float(sc.get("side", 1))))
 	short_surface = sc.get("surface", Catalog.S_METAL)
 	short_tube = sc.get("tube", false)
+	# Skyways are built for the normal direction (and its mirror); driven
+	# backwards the ramp would launch toward the road, so Reverse keeps a
+	# plain ribbon through the via points instead.
+	short_glide = sc.has("glide") and variant != Catalog.V_REVERSE
 	# Local road half-widths where the shortcut leaves and rejoins.
 	var hw := main.wid[main.index_at(short_a)] * 0.5
 	var hw_b := main.wid[main.index_at(short_b)] * 0.5
@@ -229,7 +250,55 @@ func _build_shortcut(sc: Dictionary) -> void:
 	var sw: float = float(sc.get("width", 10.0)) * WIDTH_SCALE
 	var shw_in := sw * 0.5
 	var c: Array = []
-	if short_lift_start:
+	if short_glide:
+		# A tall ramp at the road's edge aims straight along the road's
+		# heading there; the landing strip starts `len` metres out along that
+		# line, a little below the ramp's lip, where a gliding saucer comes
+		# down. Nothing is built in between: it's air.
+		var gd: Dictionary = sc.glide
+		var ramp_h: float = gd.get("ramp_h", 6.0)
+		var ramp_len: float = gd.get("ramp_len", 18.0)
+		var glide_len: float = gd.get("len", 85.0)
+		var lane := sd * (hw - 5.0)
+		# The ramp can be yawed away from the road (degrees, positive = out
+		# toward the shortcut's side) so the corridor never crosses the road.
+		var yaw: float = deg_to_rad(float(gd.get("yaw", 0.0))) * sd
+		ramps.append({"s0": short_a - ramp_len, "s1": short_a, "h": ramp_h, "lane": lane, "w": 9.0, "yaw": yaw})
+		var ir := main.index_at(short_a)
+		var up := main.upv[ir]
+		# Aim along the ramp itself (its mid-point heading), which is where a
+		# saucer running up it is actually pointing.
+		var im := main.index_at(short_a - ramp_len * 0.5)
+		var dir := (main.tan[im] + main.tan[ir]).normalized().rotated(up, -yaw)
+		var ramp_end := main.pts[ir] + main.rgt[ir] * lane + main.upv[ir] * ramp_h + dir * 2.0
+		var land0 := ramp_end + dir * glide_len - up * (ramp_h - 1.2)
+		skyway = {"from": ramp_end, "to": land0, "dir": dir, "up": up, "ramp_h": ramp_h, "len": glide_len}
+		c.append(land0 - dir * 10.0 - up * 0.2)
+		var strip_len: float = gd.get("strip", 90.0)
+		c.append(land0 + dir * strip_len)
+		# The ribbon never merges with the road surface: it comes back as a
+		# short bridge, 3 m up, that ends over the road's centre. You drop
+		# off its end onto the tarmac; the AI below never touches it.
+		c.append(main.point_at(short_b - 46.0, sd * (hw_b + shw_in + 4.0), 3.4))
+		c.append(main.point_at(short_b - 16.0, sd * hw_b * 0.5, 3.1))
+		c.append(main.point_at(short_b + 8.0, 0.0, 2.8))
+		# Only this side's collision wall drops where the bridge crosses it
+		# (the visual barrier opens there); the far side keeps its wall.
+		_each_index(Vector2(short_b - 48.0, short_b - 10.0), func(i: int) -> void:
+			if sd > 0.0:
+				wall_h_r[i] = 2.0
+				open_r[i] = 1
+			else:
+				wall_h_l[i] = 2.0
+				open_l[i] = 1)
+		via = []
+		# The barrier on the ramp's side is open from the ramp's foot to a
+		# stretch past the lip, so a saucer sailing off never clips it (the
+		# other side keeps its full wall; the AI stays off this lane here).
+		_each_index(Vector2(short_a - ramp_len - 2.0, short_a + 32.0), func(i: int) -> void:
+			if sd > 0.0: open_r[i] = 1
+			else: open_l[i] = 1)
+	elif short_lift_start:
 		# The bridge starts straight ahead of the geyser so launched saucers
 		# fly onto it even when the road below turns away.
 		var ig := main.index_at(short_a)
@@ -240,7 +309,9 @@ func _build_shortcut(sc: Dictionary) -> void:
 		c.append(main.point_at(short_a - 14.0, sd * (hw - 5.0), -0.06))
 		c.append(main.point_at(short_a + 8.0, sd * (hw + shw_in), 0.0))
 	c.append_array(via)
-	if short_lift_end:
+	if short_glide:
+		pass
+	elif short_lift_end:
 		c.append(main.point_at(short_b - 34.0, sd * (hw_b + 2.0), lift + 0.5))
 		c.append(main.point_at(short_b - 16.0, sd * (hw_b - 5.0), lift))
 	else:
@@ -252,7 +323,7 @@ func _build_shortcut(sc: Dictionary) -> void:
 	var ws: Array = []
 	var bs: Array = []
 	for i in c.size():
-		ws.append(sw + (8.0 if short_lift_start and i < 2 else 0.0))
+		ws.append(sw + (8.0 if short_lift_start and i < 2 else 0.0) + (14.0 if short_glide and i < 2 else 0.0))
 		bs.append(0.0)
 	short = TrackPath.new()
 	short.build(c, ws, bs, false)
@@ -260,7 +331,10 @@ func _build_shortcut(sc: Dictionary) -> void:
 	if short_lift_start:
 		feats.append({"t": "geyser", "s": short_a, "lane": sd * (hw - 5.0), "launch": 24.0, "shortcut": true})
 		# Low collision walls under the bridge so launched saucers clear them.
-		_each_index(Vector2(short_a - 4.0, short_a + 90.0), func(i: int) -> void: wall_h[i] = 2.5)
+		_each_index(Vector2(short_a - 4.0, short_a + 90.0), func(i: int) -> void:
+			wall_h[i] = 2.5
+			wall_h_l[i] = 2.5
+			wall_h_r[i] = 2.5)
 	# Open the main barrier only where the shortcut ribbon actually covers the
 	# road edge, and drop the shortcut's wall on the side facing the main road
 	# while that wall would stand on the main road. Together this leaves no
@@ -271,6 +345,8 @@ func _build_shortcut(sc: Dictionary) -> void:
 	short_skip_l.fill(0)
 	short_skip_r.fill(0)
 	for j in short.n:
+		if short_glide:
+			break   # a skyway ribbon never meets the road surface
 		var p := short.pts[j]
 		var i := main.nearest(p, 0, -1)
 		var lat := main.lateral(i, p)
@@ -295,6 +371,11 @@ func _build_shortcut(sc: Dictionary) -> void:
 			short_skip_r[j] = 1
 	short_wall_h.resize(short.n)
 	short_wall_h.fill(WALL_H)
+	if short_glide:
+		# Knee-high walls on the landing strip: you come in from above, but
+		# they still catch a saucer rolling off the side.
+		for j in mini(short.n, int(80.0 / short.step)):
+			short_wall_h[j] = 1.5
 	if short_lift_start:
 		# Wide landing pad with knee-high walls: you can land over them from
 		# above, but they still stop you driving off the edge.

@@ -239,7 +239,7 @@ const DEFS := {
 			{"t": "eruption", "at": 19.5, "len": 28.0},
 			{"t": "pods", "at": 19.8, "lane": 0.0, "n": 4, "form": "line"},
 		],
-		"shortcut": {"side": 1, "a": 14.0, "b": 18.0, "via": [Vector3(230, 4, 170), Vector3(170, 2, 215)], "width": 9.0, "surface": 5},
+		"shortcut": {"side": 1, "a": 14.0, "b": 18.0, "via": [Vector3(230, 4, 170), Vector3(170, 2, 215)], "width": 9.0, "surface": 5, "glide": {"len": 85.0, "ramp_h": 6.0, "yaw": 10.0, "strip": 80.0}},
 		"shards": [{"shortcut": 0.5, "h": 1.5}, {"at": 7.63, "lane": 0.0, "h": 7.0}, {"at": 10.5, "lane": -8.0, "h": 1.5}],
 	},
 }
@@ -288,7 +288,7 @@ const NEW_DEFS := {
 			{"t": "crates", "at": 19.5},
 			{"t": "pods", "at": 21.5, "lane": -3.0, "n": 5, "form": "line"},
 		],
-		"shortcut": {"side": 1, "a": 8.0, "b": 13.0, "via": [Vector3(350, -6, -160), Vector3(395, -2, -95)], "width": 10.0, "surface": 1},
+		"shortcut": {"side": 1, "a": 8.0, "b": 13.0, "via": [Vector3(350, -6, -160), Vector3(395, -2, -95)], "width": 10.0, "surface": 1, "glide": {"len": 85.0, "ramp_h": 6.0, "yaw": 40.0, "strip": 60.0}},
 		"shards": [{"at": 3.62, "lane": 0.0, "h": 7.0}, {"shortcut": 0.5, "h": 1.5}, {"at": 15.7, "lane": 7.0, "h": 1.5}],
 	},
 	"trappist1b": {
@@ -493,7 +493,7 @@ const NEW_DEFS := {
 			{"t": "crates", "at": 20.5},
 			{"t": "pods", "at": 22.0, "lane": 0.0, "n": 5, "form": "row"},
 		],
-		"shortcut": {"side": 1, "a": 10.0, "b": 15.0, "via": [Vector3(480, 4, -100), Vector3(520, 2, -55)], "width": 10.0},
+		"shortcut": {"side": 1, "a": 10.0, "b": 15.0, "via": [Vector3(480, 4, -100), Vector3(520, 2, -55)], "width": 10.0, "glide": {"len": 85.0, "ramp_h": 6.0, "yaw": 20.0, "strip": 60.0}},
 		"shards": [{"shortcut": 0.5, "h": 1.5}, {"at": 5.06, "lane": 3.0, "h": 10.0}, {"at": 12.56, "lane": -3.0, "h": 10.0}],
 	},
 	"wasp76b": {

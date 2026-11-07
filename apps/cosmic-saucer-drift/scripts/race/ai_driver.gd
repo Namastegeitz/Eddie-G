@@ -15,6 +15,7 @@ var cruise := false            # after a human finishes: drive calmly
 
 var _short_lap := -1
 var _want_short := false
+var _on_short_last := false
 var _short_i := 0
 var _drift_hold := false
 var _target_tier := 2
@@ -62,7 +63,7 @@ func drive(r: Racer, dt: float) -> void:
 		_want_short = _rng.randf() < chance and not cruise
 	var to_entry := path.delta(s_here, td.short_a) if td.short else 9999.0
 	var use_short := false
-	if td.short and (r.on_shortcut or (_want_short and not td.short_lift_start and to_entry < 22.0 and to_entry > -45.0 and not r.emergency)):
+	if td.short and (r.on_shortcut or (_want_short and not td.short_lift_start and not td.short_glide and to_entry < 22.0 and to_entry > -45.0 and not r.emergency)):
 		use_short = true
 	# ------------------------------------------------ target point
 	var look := 10.0 + speed * 0.42
@@ -71,7 +72,9 @@ func drive(r: Racer, dt: float) -> void:
 	var ahead_i := path.index_at(s_here + look)
 	if use_short:
 		var sp := td.short
-		_short_i = sp.nearest(r.global_position, _short_i, 20)
+		# Landing on a ribbon part-way along (a glide onto a landing strip):
+		# find the place on it from scratch, not from its start.
+		_short_i = sp.nearest(r.global_position, _short_i, 20 if _on_short_last else -1)
 		var j := sp.index_at(float(_short_i) * sp.step + look)
 		if j >= sp.n - 1:
 			use_short = false
@@ -83,7 +86,7 @@ func drive(r: Racer, dt: float) -> void:
 		lat_target = td.line[ahead_i] * line_w + lane_bias * (1.0 - skill * 0.5)
 		lat_target += sin(Time.get_ticks_msec() * 0.0011 + float(r.idx) * 1.7) * (1.0 - skill) * 2.5
 		# Lined up for the shortcut / geyser.
-		if td.short and _want_short and to_entry > 0.0 and to_entry < 70.0:
+		if td.short and _want_short and not td.short_glide and to_entry > 0.0 and to_entry < 70.0:
 			lat_target = float(td.short_side) * (hw - 4.0) if not td.short_lift_start else float(td.short_side) * (hw - 5.0)
 		else:
 			# Lane decisions (pods, crates, rivals, mines, hazards) are re-planned
@@ -163,6 +166,7 @@ func drive(r: Racer, dt: float) -> void:
 	r.in_brake = brake
 	r.in_drift = drift_btn
 	# ------------------------------------------------ items
+	_on_short_last = r.on_shortcut
 	r.in_item = false
 	if r.item != "" and r.item_roll <= 0.0 and not cruise:
 		_item_wait -= dt
@@ -188,8 +192,23 @@ func _pickup_goal(r: Racer, s_here: float, lat: float) -> float:
 	return lat
 
 
-## Sidestep racers, mines and hazards ahead (aggressive pilots aim at rivals).
+## Sidestep racers, mines and hazards ahead (aggressive pilots aim at rivals);
+## then always stay off a skyway ramp's lane.
 func _avoid(r: Racer, s_here: float, lat: float, hw: float) -> float:
+	var out := _avoid_inner(r, s_here, lat, hw)
+	var td: TrackData = r.race.td
+	if td.short_glide:
+		# The ramp launches whoever hits it, and the barrier past it is open.
+		var to_ramp := td.main.delta(s_here, td.short_a)
+		var to_bridge := td.main.delta(s_here, td.short_b)
+		if (to_ramp > -12.0 and to_ramp < 70.0) or (to_bridge > -20.0 and to_bridge < 70.0):
+			var ramp_lane := float(td.short_side) * (hw - 5.0)
+			if absf(out - ramp_lane) < 8.5:
+				out = ramp_lane - signf(ramp_lane) * 9.0
+	return out
+
+
+func _avoid_inner(r: Racer, s_here: float, lat: float, hw: float) -> float:
 	var race := r.race
 	var out := lat
 	var td: TrackData = race.td

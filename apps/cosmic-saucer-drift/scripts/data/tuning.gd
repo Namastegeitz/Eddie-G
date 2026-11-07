@@ -15,6 +15,7 @@ extends Resource
 @export var glide_steer := 3.2
 @export var glide_thrust := 0.8
 @export var glide_min_air := 0.3
+@export var glide_ratio := 7.0   # metres forward per metre down (a fast glider sinks faster, so landings don't depend on speed)
 
 @export_group("Speed (from stats 1-10)")
 @export var top_speed_base := 40.0

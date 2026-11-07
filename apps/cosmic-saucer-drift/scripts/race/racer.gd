@@ -282,7 +282,12 @@ func _probe_ground(dt: float) -> void:
 		var hp: Vector3 = hit.position
 		var dist := (global_position - hp).dot(n)
 		var vn := velocity.dot(n)
-		if dist < T.hover_height + T.snap_range and (vn < 2.5 or dist < T.hover_height * 0.7):
+		# A surface well above the craft's centre (a skyway bridge crossing
+		# overhead) is not ground: never snap up onto it. A fast landing
+		# that sank into the road this tick (falling hard) still counts.
+		if dist < -0.7 and vn > -4.0:
+			hit = {}
+		elif dist < T.hover_height + T.snap_range and (vn < 2.5 or dist < T.hover_height * 0.7):
 			grounded = true
 			ground_n = n
 			var err: float = T.hover_height - dist
@@ -412,15 +417,14 @@ func _glide(dt: float) -> void:
 	if is_human:
 		want = in_glide or (auto_glide and air_time > T.glide_min_air and falling)
 	else:
-		want = air_time > T.glide_min_air and falling
+		# AI racers don't glide: wings only ever floated them past landings.
+		want = false
 	if want and not gliding and air_time > 0.1:
 		gliding = true
 		glide_time = 0.0
-		# Thrusters kick in: a little lift as the wings catch.
-		velocity += up * maxf(0.0, 2.5 - velocity.dot(up))
 		stats.glides += 1
 		emit_signal("event", "glide_on", {})
-	elif gliding and not want and is_human and not auto_glide:
+	elif gliding and not want and ((is_human and not auto_glide) or not is_human):
 		gliding = false
 		emit_signal("event", "glide_off", {})
 	if gliding:
@@ -511,11 +515,21 @@ func _integrate(dt: float) -> void:
 		if gliding:
 			# On the wings: ease down to a gentle sink (brake flares it
 			# gentler still) and let the thrusters hold the speed.
-			var sink: float = T.glide_sink * (0.55 if in_brake > 0.3 else 1.0)
-			velocity.y = move_toward(velocity.y, -sink, g * 0.6 * dt)
+			# A fixed glide slope: the faster you fly, the faster you sink, so
+			# a jump lands at about the same spot whether or not you were
+			# boosting. Brake flares it shallower.
+			var hspeed := Vector3(velocity.x, 0, velocity.z).length()
+			var sink: float = maxf(T.glide_sink, hspeed / T.glide_ratio) * (0.6 if in_brake > 0.3 else 1.0)
+			if velocity.y > 0.0:
+				# Wings out: the climb dies quickly, so a jump never turns
+				# into a flight; from the top you just float down.
+				velocity.y = move_toward(velocity.y, 0.0, g * 1.6 * dt)
+			else:
+				velocity.y = move_toward(velocity.y, -sink, g * 0.8 * dt)
+			# Thrusters only keep a slow glider from stalling; they never add
+			# speed beyond what the jump gave, and the wings never climb.
 			var hvg := Vector3(velocity.x, 0, velocity.z)
-			var want_spd := top * (1.05 if boost_time > 0.0 else 0.97)
-			if hvg.length() < want_spd:
+			if hvg.length() < top * 0.6:
 				velocity += Vector3(heading.x, 0, heading.z).normalized() * acc * T.glide_thrust * dt
 		else:
 			velocity += Vector3.DOWN * g * dt
@@ -704,6 +718,8 @@ func _unstick(dt: float) -> void:
 func respawn(reason := "", from := Vector3.ZERO) -> void:
 	var td: TrackData = race.td
 	var path := td.main
+	if OS.has_environment("CSD_FALLDBG"):
+		print("FALLDBG %s reason=%s safe_s=%.0f from_ramp=%.0f lat=%.1f short=%s glide=%s air=%.1f" % [display_name, reason, float(last_safe_idx) * path.step, path.delta(td.short_a, float(last_safe_idx) * path.step) if td.short else -1.0, last_safe_lat, on_shortcut, gliding, air_time])
 	var i := path.wi(last_safe_idx - 4)
 	# Rescued again soon after the last one: put it further along each time
 	# so no spot can trap a racer in a loop.

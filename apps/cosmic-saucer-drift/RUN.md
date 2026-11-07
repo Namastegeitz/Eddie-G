@@ -106,6 +106,10 @@ xvfb-run -a godot --path . res://tests/craft_shots.tscn --rendering-driver openg
 # Load-time probe: ms per build stage (track data, road, scenery, racers,
 # systems, views) on several tracks, plus the menu build; CPU only.
 godot --headless --path . res://tests/loadtime.tscn -- --quality=high --tracks=io,saturn_rings
+# Glide off a skyway ramp (chase + look back; needs a display)
+xvfb-run -a godot --path . res://tests/glide_shot.tscn --rendering-driver opengl3 -- --out=/tmp/glide --track=io
+# Sim debug hooks: CSD_FALLDBG=1 prints every rescue with where the racer last
+# stood; CSD_ONLY=<item id> makes every crate give that power-up.
 # Loading screen + first race frame of a normal start (needs a display)
 xvfb-run -a godot --path . res://tests/loading_shot.tscn --rendering-driver opengl3 -- --out=/tmp/loading
 # Performance probe: CPU time per frame, worst frame, game-logic profile,
