@@ -799,12 +799,14 @@ func _nearest_ball(radius: float) -> PhysicsProp:
 func _throw_ball() -> void:
 	if _ball == null or not is_instance_valid(_ball):
 		return
+	# Fetch is a dog's game: the cat only gets the ball if there's no dog.
 	var dog: Pet = null
 	for n in get_tree().get_nodes_in_group(Phys.GROUP_PET):
 		var pet := n as Pet
 		if pet and pet.present and not pet.sleeping and get_parent().is_ancestor_of(pet):
-			dog = pet
-			break
+			var doggy := String(pet.name).begins_with("Dog") or pet.is_puppy()
+			if dog == null or (doggy and not (String(dog.name).begins_with("Dog") or dog.is_puppy())):
+				dog = pet
 	var hand := global_transform * Vector3(8, 50, -8)
 	_ball.freeze = false
 	_ball.global_position = hand
@@ -835,8 +837,15 @@ func _clear_throw(dir: Vector3) -> bool:
 	if lvl == null or not is_instance_valid(lvl):
 		return true
 	var ground := Vector3(global_position.x, global_position.y, global_position.z)
-	for d in [8.0, 12.0, 16.0, 20.0]:
-		if not lvl.is_open_floor(ground + dir * d + Vector3.UP * 0.3):
+	var space := get_world_3d().direct_space_state
+	for d in [6.0, 8.0, 10.0, 12.0, 14.0, 16.0, 18.0, 20.0]:
+		var at: Vector3 = ground + dir * d + Vector3.UP * 0.3
+		if not lvl.is_open_floor(at):
+			return false
+		# Open sky above too: a ball can land on top of a hollow flowerpot or
+		# a wheelbarrow, out of the dog's reach.
+		var up := PhysicsRayQueryParameters3D.create(at + Vector3.UP * 0.5, at + Vector3.UP * 12.0, Phys.WORLD)
+		if not space.intersect_ray(up).is_empty():
 			return false
 	return true
 
