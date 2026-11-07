@@ -12,5 +12,6 @@
       9
     ]
   },
-  "levels_per_scene": 10
+  "levels_per_scene": 10,
+  "open_next_jungle": true
 }

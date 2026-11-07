@@ -56,7 +56,7 @@ WEB=1 tools/run_tests.sh    # also build the web version and tap-test it in a ph
    browser and checks first person by tapping.
 
 To check that every level can be beaten with the free Poison Dart Frog
-(about 2 minutes for all 200):
+(about 2 minutes for all 220):
 
 ```bash
 godot --headless --path . res://tools/level_sweep.tscn -- --no-boot [--map=amazon]
@@ -130,5 +130,6 @@ python3 tools/gen_audio.py          # all music, ambience and SFX (needs numpy +
 python3 tools/gen_audio.py --maps   # just region music, after adding a map
 python3 tools/gen_audio.py --calm   # just the calm songs (tuned to each region's 528 / 963 Hz)
 python3 tools/gen_audio.py --check  # decode the calm songs and check every strong pitch sits on its tone
+python3 tools/gen_audio.py --only=el_yunque   # one region's songs (classic + calm), after adding it
 python3 tools/gen_globe_map.py land-50m.json countries-50m.json assets/world/globe_map.png   # from npm pack world-atlas@2.0.2
 ```

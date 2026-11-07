@@ -1,0 +1,27 @@
+{
+  "id": "puerto_rican_boa",
+  "name": "Puerto Rican boa",
+  "kind": "striker",
+  "lane": "safe",
+  "predator": true,
+  "cause": "eaten",
+  "cause_text": "Caught by a Puerto Rican boa",
+  "period": [
+    3.8,
+    5.4
+  ],
+  "warn": 0.9,
+  "strike": 0.45,
+  "span": 2,
+  "hidden": false,
+  "art": {
+    "painter": "snake",
+    "colors": {
+      "body": "#6a5a3a",
+      "pattern": "#3a2e1e",
+      "eye": "#1a1a1a"
+    }
+  },
+  "desc": "The island's biggest snake waits by the path, then strikes along it.",
+  "sprite": ""
+}

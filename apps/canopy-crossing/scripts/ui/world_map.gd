@@ -105,7 +105,8 @@ func _regions() -> void:
 		if mp.get("status", "available") != "available":
 			status = "Coming soon"
 		elif not Save.owns_map(id):
-			status = "Locked · Map pack"
+			var prev := _prev_map(String(id))
+			status = ("Beat %s to open" % _short(prev)) if prev != "" else "Locked · Map pack"
 		elif mode == "journey":
 			status = "%d/%d levels" % [Progress.stages_cleared(id), mp.get("stages", []).size()]
 		else:
@@ -128,6 +129,19 @@ func _regions() -> void:
 		var mid := String(id)
 		b.pressed.connect(func(): _select(mid))
 		region_row.add_child(b)
+
+
+## The jungle before this one on the globe (clearing it opens this one).
+func _prev_map(id: String) -> String:
+	if not bool(Content.rules.get("open_next_jungle", true)):
+		return ""
+	var order := Content.playable_maps()
+	var i := order.find(id)
+	return order[i - 1] if i > 0 else ""
+
+
+func _short(id: String) -> String:
+	return String(Content.map(id).get("name", id)).replace(" Highlands", "").replace(" Basin", "").replace(" Mountains", "")
 
 
 func _detail() -> void:
@@ -161,7 +175,12 @@ func _detail() -> void:
 		return
 	if not Save.owns_map(selected):
 		var prod := Content.product(Store.map_product(selected))
-		detail.add_child(UI.wrap_label("Unlock the %s to explore it. It also brings its native pack animals." % String(prod.get("title", "map pack")), 25, UI.MUTED))
+		var prev := _prev_map(selected)
+		if prev != "":
+			var left: int = Content.map(prev).get("stages", []).size() - Progress.stages_cleared(prev)
+			detail.add_child(UI.wrap_label("Opens free when you clear all of %s (%d level%s to go). Or get the %s now: it also brings its native animals." % [String(Content.map(prev).name), left, "" if left == 1 else "s", String(prod.get("title", "map pack"))], 25, UI.TEXT))
+		else:
+			detail.add_child(UI.wrap_label("Unlock the %s to explore it. It also brings its native pack animals." % String(prod.get("title", "map pack")), 25, UI.MUTED))
 		detail.add_child(UI.button("Get %s · %s" % [String(prod.get("title", "")), Store.price_label(prod)], func(): Game.goto("store", {"focus": String(prod.get("id", ""))}), UI.ACCENT, 28, 92))
 		if String(Progress.daily_challenge().get("map", "")) == selected:
 			detail.add_child(UI.button("Try it free in today's Daily Challenge", func(): Game.start_daily(), Color("2a6a8a"), 26, 84))

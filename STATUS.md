@@ -25,14 +25,19 @@
 ## Canopy Crossing (`apps/canopy-crossing`)
 - Built from `prompts/claude/canopy-crossing.md` (copied from the Claude doc brief): all 8 phases,
   Godot 4.7.2, portrait 720x1280, GL Compatibility.
-- 200 maps: 20 real rainforest scenes x 10 levels, plus 2 coming soon. Difficulty curve
+- 220 maps: 22 real rainforest scenes x 10 levels (El Yunque and the Cardamom Mountains added). Clearing a
+  jungle's last level opens the next one free (rules `open_next_jungle`); packs still open early + bring animals.
+  New terrain: waterfall ledges (`falls` slot, 2D animated white water, 3D rushing water + foam), mossy boulders,
+  trail wildlife per map (`trail_critters`, both views); new creatures (land crabs with a crab painter, mongoose,
+  boa, red-tailed hawk, Asian elephants, dholes, rosewood trucks, Siamese croc, king cobra). Generator: walkable
+  bank columns after stepping stones (boulders can't wall off the next stones), no strikers/fallers there. Difficulty curve
   (`content/difficulty.json`): jungles 1-2 Easy (25-60 rows, slow, small bands, 5 lives), 3-5 Medium, 6-10 Hard, 11-20
   Expert (60-130 rows); levels ramp 1 to 10 (challenge stars on the world map); the first five
   jungles introduce hazards level by level (`from_level`). Stepping stones are always reachable
   past gullies/brush on the banks, and banks after stones get no flood/fire timing.
   Two views: bird's-eye (2D) and first person (3D, eye button / V). Every level has dense-canopy
   zones that hide the ground from above, so first person is needed to cross them.
-- Data-driven: 50 animals, 87 hazards, 22 maps (20 playable + 2 coming soon), 3 lane generators,
+- Data-driven: 50 animals, 97 hazards, 22 maps (all playable), 3 lane generators,
   store catalog, live ops, 2 seasons, onboarding text are JSON under `content/`. Adding an animal
   or region is a file (the audit proves it by adding both at runtime). Guide: `docs/CONTENT.md`.
 - Gameplay: grid hops (tap / swipe / keys / gamepad), movers, platforms (logs, lily pads, diving
@@ -114,7 +119,7 @@
 - Ads: opt-in rewarded + between-run interstitial (mock; AdMob adapter scaffold). Analytics: events
   + onboarding funnel to `user://analytics.jsonl`, optional HTTP endpoint.
 - Tests: `tools/run_tests.sh` - compile check + first-person GL render check + 352-check phase audit (one section per phase's
-  checkpoint) in the project and an exported pack, all passing. A path-finding bot beats all 200
+  checkpoint) in the project and an exported pack, all passing. A path-finding bot beats all 220
   levels (tools/level_sweep.tscn, ~2 min) and the first 50 Endless rows on every scene with the free Poison Dart Frog.
   Frame cost 0.9 ms (sim + view + draw recording) on the cloud CPU.
 - Playable web build (private artifact): https://claude.ai/artifact/NHzAQ2w4jCjWjLkoxLSdB3

@@ -1,0 +1,36 @@
+{
+  "id": "rosewood_truck",
+  "name": "Rosewood smugglers' truck",
+  "kind": "mover",
+  "lane": "ground",
+  "cause": "crushed",
+  "cause_text": "Flattened by a smugglers' truck",
+  "group": [
+    1,
+    1
+  ],
+  "length": [
+    2.6,
+    3.0
+  ],
+  "spacing": 0.0,
+  "speed": [
+    2.0,
+    2.9
+  ],
+  "gap": [
+    3.2,
+    5.6
+  ],
+  "art": {
+    "painter": "truck",
+    "colors": {
+      "body": "#3a4a5a",
+      "cab": "#c8b878",
+      "cargo": "#7a2a1a"
+    }
+  },
+  "desc": "Illegal logging trucks race out with rare rosewood.",
+  "predator": false,
+  "sprite": ""
+}

@@ -7,21 +7,21 @@
   "cause": "eaten",
   "cause_text": "Bitten by a king cobra",
   "period": [
-    3.4,
-    4.8
+    3.6,
+    5.0
   ],
-  "warn": 0.8,
+  "warn": 0.9,
   "strike": 0.45,
   "span": 2,
   "hidden": false,
   "art": {
     "painter": "snake",
     "colors": {
-      "body": "#6a5a2a",
-      "pattern": "#e8d8a0",
+      "body": "#5a5a2a",
+      "pattern": "#e8d890",
       "eye": "#1a1a1a"
     }
   },
-  "desc": "Lurks in the grass, then strikes along the lane.",
+  "desc": "The world's longest venomous snake rears up and strikes.",
   "sprite": ""
 }

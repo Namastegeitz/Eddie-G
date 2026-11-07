@@ -160,6 +160,28 @@
     ]
   },
   "native_animals": [],
+  "trail_critters": [
+    {
+      "kind": "frog",
+      "color": "#f0c020"
+    },
+    {
+      "kind": "butterfly",
+      "color": "#3a7aff"
+    },
+    {
+      "kind": "bird",
+      "color": "#3ab0a0"
+    },
+    {
+      "kind": "lizard",
+      "color": "#5ab04a"
+    },
+    {
+      "kind": "beetle",
+      "color": "#c03a3a"
+    }
+  ],
   "sprite": "",
   "fpv_scenes": [
     {

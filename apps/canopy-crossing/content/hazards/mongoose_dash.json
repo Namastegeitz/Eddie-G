@@ -1,0 +1,35 @@
+{
+  "id": "mongoose_dash",
+  "name": "Mongoose dash",
+  "kind": "mover",
+  "lane": "ground",
+  "cause": "crushed",
+  "cause_text": "Bowled over by a mongoose",
+  "group": [
+    1,
+    2
+  ],
+  "length": [
+    0.7,
+    0.7
+  ],
+  "spacing": 0.3,
+  "speed": [
+    1.8,
+    2.6
+  ],
+  "gap": [
+    3.0,
+    5.0
+  ],
+  "art": {
+    "painter": "herd",
+    "colors": {
+      "body": "#8a6a40",
+      "accent": "#c8b088"
+    }
+  },
+  "desc": "Small, fast and everywhere: introduced to Puerto Rico in 1877.",
+  "predator": false,
+  "sprite": ""
+}

@@ -109,6 +109,12 @@
         "id": "sea_eagle_swoop",
         "weight": 1
       }
+    ],
+    "falls": [
+      {
+        "id": "waterfall_ledge",
+        "weight": 1
+      }
     ]
   },
   "intro_hazards": [
@@ -160,6 +166,28 @@
     ]
   },
   "native_animals": [],
+  "trail_critters": [
+    {
+      "kind": "crab",
+      "color": "#d0603a"
+    },
+    {
+      "kind": "bird",
+      "color": "#3ab0e0"
+    },
+    {
+      "kind": "lizard",
+      "color": "#6a9a4a"
+    },
+    {
+      "kind": "butterfly",
+      "color": "#f0c030"
+    },
+    {
+      "kind": "frog",
+      "color": "#7a8a4a"
+    }
+  ],
   "sprite": "",
   "fpv_scenes": [
     {

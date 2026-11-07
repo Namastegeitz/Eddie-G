@@ -108,6 +108,11 @@
         "id": "quicksand",
         "weight": 1,
         "from_level": 9
+      },
+      {
+        "id": "mossy_boulders",
+        "weight": 1,
+        "from_level": 4
       }
     ],
     "swoopers": [
@@ -115,6 +120,13 @@
         "id": "harpy_swoop",
         "weight": 1,
         "from_level": 7
+      }
+    ],
+    "falls": [
+      {
+        "id": "waterfall_ledge",
+        "weight": 1,
+        "from_level": 6
       }
     ]
   },
@@ -179,6 +191,28 @@
     "giant_otter",
     "harpy_eagle",
     "capuchin_monkey"
+  ],
+  "trail_critters": [
+    {
+      "kind": "frog",
+      "color": "#2a5aff"
+    },
+    {
+      "kind": "butterfly",
+      "color": "#3a7aff"
+    },
+    {
+      "kind": "lizard",
+      "color": "#5ab04a"
+    },
+    {
+      "kind": "beetle",
+      "color": "#3aa060"
+    },
+    {
+      "kind": "bird",
+      "color": "#e83a2a"
+    }
   ],
   "sprite": "",
   "fpv_scenes": [

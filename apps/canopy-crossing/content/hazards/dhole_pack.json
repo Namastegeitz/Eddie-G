@@ -1,0 +1,35 @@
+{
+  "id": "dhole_pack",
+  "name": "Dhole pack",
+  "kind": "mover",
+  "lane": "ground",
+  "cause": "crushed",
+  "cause_text": "Run down by a pack of dholes",
+  "group": [
+    2,
+    4
+  ],
+  "length": [
+    0.7,
+    0.7
+  ],
+  "spacing": 0.2,
+  "speed": [
+    1.9,
+    2.7
+  ],
+  "gap": [
+    3.0,
+    5.0
+  ],
+  "art": {
+    "painter": "herd",
+    "colors": {
+      "body": "#b0582a",
+      "accent": "#f0d8b8"
+    }
+  },
+  "desc": "Whistling wild dogs that hunt as a team.",
+  "predator": false,
+  "sprite": ""
+}

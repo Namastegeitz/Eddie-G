@@ -182,10 +182,13 @@ func update_view(dt: float) -> void:
 	for wall in _walls:
 		wall.position = Vector3(MID + float(wall.get_meta("side")) * 8.4, 1.5, -(dp.y + (AHEAD - BEHIND) * 0.5))
 	sim.world.ensure(hi + 2)
+	Scenery3D.falling_water_material().uv1_offset = Vector3(0.0, -t * 1.6, 0.0)
 	for r in _lanes.keys():
 		var sn: Node3D = _lanes[r].get_node_or_null("Scenery")
 		if sn and r >= lo and r <= hi:
 			Scenery3D.animate(sn, t)
+		if r >= lo and r <= hi and _lanes[r].has_meta("critters"):
+			_animate_critters(_lanes[r].get_meta("critters"), t)
 		if r < lo or r > hi:
 			_lanes[r].queue_free()
 			_lanes.erase(r)
@@ -461,6 +464,16 @@ func _build_lane(l: Lane, r: int) -> Node3D:
 			var g := color("safe_alt" if alt else "safe")
 			if l.goal:
 				box(Vector3(26, 0.3, 1.0), color("goal", "#9cf06a"), Vector3(MID, -0.15, 0), n, Vector3.ZERO, true)
+			elif l.layout == "falls":
+				# a rocky lip with dry, mossy stones; the river pours over the rest
+				var fh := Content.hazard(String(l.tiles.values()[0].hazard)) if not l.tiles.is_empty() else {}
+				var fc: Dictionary = fh.get("art", {}).get("colors", {})
+				var rock := hc(fc, "rock", "#6a6e60")
+				box(Vector3(26, 0.3, 1.0), rock.darkened(0.3), Vector3(MID, -0.2, 0), n).material_override = surface(rock.darkened(0.3), 0.6)
+				for cc in Lane.COLS:
+					if not l.tiles.has(cc):
+						sph(0.47, rock, Vector3(cc + 0.5, -0.12, 0), n, Vector3(1.0, 0.42, 0.95))
+						sph(0.3, hc(fc, "moss", "#4f8a3a"), Vector3(cc + 0.42, 0.04, -0.1), n, Vector3(1.0, 0.3, 0.8))
 			elif l.covered:
 				# forest floor under the canopy: darker, browner, leaf litter
 				var floor_c := g.darkened(0.3).lerp(Color("2e4a22"), 0.35)
@@ -474,8 +487,35 @@ func _build_lane(l: Lane, r: int) -> Node3D:
 		var x := float(col) + 0.5
 		match String(tile.kind):
 			"gap":
-				box(Vector3(0.98, 0.04, 0.98), hc(tc, "body").darkened(0.5), Vector3(x, 0.01, 0), n)
-				box(Vector3(1.0, 0.03, 0.06), hc(tc, "edge"), Vector3(x, 0.02, -0.48), n)
+				if l.layout == "falls":
+					# white water rushing across the ledge towards you and
+					# pouring over its near lip, foam boiling where it goes over
+					box(Vector3(1.0, 0.1, 1.0), hc(tc, "pool", "#2a6a8a"), Vector3(x, -0.08, 0), n)
+					var rush := MeshInstance3D.new()
+					var pm := PlaneMesh.new()
+					pm.size = Vector2(1.0, 1.0)
+					rush.mesh = pm
+					rush.material_override = Scenery3D.falling_water_material()
+					rush.position = Vector3(x, -0.02, 0)
+					n.add_child(rush)
+					var lip := MeshInstance3D.new()
+					var qm := QuadMesh.new()
+					qm.size = Vector2(1.0, 0.5)
+					lip.mesh = qm
+					lip.material_override = Scenery3D.falling_water_material()
+					lip.position = Vector3(x, -0.27, 0.5)
+					n.add_child(lip)
+					for k in 3:
+						sph(0.13, Color(1, 1, 1), Vector3(x - 0.32 + k * 0.32, 0.0, 0.42), n, Vector3(1.5, 0.45, 0.8))
+					sph(0.1, Color(0.92, 0.97, 1.0), Vector3(x + 0.1, 0.02, -0.4), n, Vector3(2.6, 0.3, 0.6))
+				else:
+					box(Vector3(0.98, 0.04, 0.98), hc(tc, "body").darkened(0.5), Vector3(x, 0.01, 0), n)
+					box(Vector3(1.0, 0.03, 0.06), hc(tc, "edge"), Vector3(x, 0.02, -0.48), n)
+			"brush" when String(hz.get("art", {}).get("painter", "")) == "boulders":
+				for k in 3:
+					var br := 0.3 if k == 1 else 0.24
+					sph(br, hc(tc, "body").lightened(0.04 * k), Vector3(x - 0.24 + k * 0.24, br * 0.7, (k % 2) * 0.12 - 0.06), n, Vector3(1.0, 0.85, 1.0))
+					sph(br * 0.7, hc(tc, "moss"), Vector3(x - 0.26 + k * 0.24, br * 1.25, (k % 2) * 0.12 - 0.08), n, Vector3(1.0, 0.35, 1.0))
 			"brush":
 				for k in 3:
 					sph(0.3, hc(tc, "body").lightened(0.06 * k), Vector3(x - 0.2 + k * 0.2, 0.25 + (k % 2) * 0.1, rng.randf_range(-0.15, 0.15)), n)
@@ -494,7 +534,85 @@ func _build_lane(l: Lane, r: int) -> Node3D:
 			n.add_child(open)
 	if not l.effect.is_empty():
 		_build_lane_fx(l, n)
+	_critters(l, n)
 	return n
+
+
+## Harmless wildlife on a bank, matching the bird's-eye view: the map's
+## "trail_critters" (frogs, crabs, butterflies, birds, lizards, beetles).
+func _critters(l: Lane, n: Node3D) -> void:
+	if l.type != "safe" or l.goal or l.layout != "" or Draw.detail <= 0:
+		return
+	var list: Array = sim.world.map.get("trail_critters", [])
+	if list.is_empty():
+		return
+	var made := []
+	for k in mini(int(l.deco % 5), 2):
+		var cr: Dictionary = list[(l.deco / 7 + k * 3) % list.size()]
+		var col := int((l.deco / 13 + k * 4) % Lane.COLS)
+		if l.tiles.has(col):
+			continue
+		var kind := String(cr.get("kind", "frog"))
+		var cc := Color(String(cr.get("color", "#5aaa3a")))
+		var c := Node3D.new()
+		c.position = Vector3(col + 0.5, 0.0, (k - 0.5) * 0.3)
+		n.add_child(c)
+		match kind:
+			"frog":
+				sph(0.08, cc, Vector3(0, 0.06, 0), c, Vector3(1.0, 0.75, 1.1))
+				for s in [-1.0, 1.0]:
+					sph(0.025, Color("1a140c"), Vector3(s * 0.04, 0.11, -0.05), c)
+			"crab":
+				sph(0.08, cc, Vector3(0, 0.05, 0), c, Vector3(1.3, 0.55, 1.0))
+				for s in [-1.0, 1.0]:
+					sph(0.04, cc.lightened(0.15), Vector3(s * 0.08, 0.07, -0.08), c)
+				if cc.r < 0.7:
+					sph(0.07, Color("d8c8a0"), Vector3(0, 0.1, 0.02), c)
+			"butterfly":
+				c.position.y = 0.45
+				for s in [-1.0, 1.0]:
+					var wing := box(Vector3(0.12, 0.01, 0.1), cc, Vector3(s * 0.06, 0, 0), c)
+					wing.name = "WingL" if s < 0 else "WingR"
+			"bird":
+				sph(0.07, cc, Vector3(0, 0.1, 0), c, Vector3(0.9, 1.2, 0.9))
+				sph(0.05, cc.lightened(0.1), Vector3(0, 0.2, -0.02), c)
+				sph(0.02, Color("f0c040"), Vector3(0, 0.2, -0.07), c)
+			"lizard":
+				sph(0.06, cc, Vector3(0, 0.03, 0), c, Vector3(1.8, 0.5, 0.7))
+				sph(0.035, cc.lightened(0.1), Vector3(0.11, 0.04, 0), c)
+			_:
+				sph(0.04, cc, Vector3(0, 0.03, 0), c, Vector3(1.2, 0.7, 1.0))
+		c.set_meta("kind", kind)
+		c.set_meta("phase", float((l.deco + k) % 97) * 0.37)
+		c.set_meta("home", c.position)
+		made.append(c)
+	if not made.is_empty():
+		n.set_meta("critters", made)
+
+
+func _animate_critters(list: Array, tt: float) -> void:
+	for c in list:
+		var node := c as Node3D
+		if node == null or not is_instance_valid(node):
+			continue
+		var ph := float(node.get_meta("phase"))
+		var home: Vector3 = node.get_meta("home")
+		match String(node.get_meta("kind")):
+			"frog":
+				node.position = home + Vector3(sin(tt * 0.21 + ph) * 0.08, pow(maxf(0.0, sin(tt * 1.3 + ph)), 6) * 0.12, 0)
+			"crab":
+				node.position = home + Vector3(sin(tt * 0.9 + ph) * 0.18, 0, 0)
+			"butterfly":
+				node.position = home + Vector3(sin(tt * 0.7 + ph) * 0.3, sin(tt * 1.7 + ph) * 0.06, cos(tt * 0.9 + ph * 1.3) * 0.18)
+				var flap := sin(tt * 12.0 + ph) * 1.1
+				(node.get_node("WingL") as Node3D).rotation.z = flap
+				(node.get_node("WingR") as Node3D).rotation.z = -flap
+			"bird":
+				node.position = home + Vector3(0, sin(tt * 3.0 + ph) * 0.01, 0)
+				node.rotation.y = sin(tt * 0.6 + ph) * 0.8
+			"lizard":
+				var dart := fposmod(tt * 0.4 + ph, 1.0)
+				node.position = home + Vector3((0.2 if dart > 0.5 else -0.2), 0, 0)
 
 
 func _build_lane_fx(l: Lane, n: Node3D) -> void:
@@ -599,6 +717,15 @@ func _build_ent(l: Lane, e: Ent) -> Node3D:
 			box(Vector3(0.18, 0.02, 0.12), hc(cl, "leaf"), Vector3(0.05, 0.22, 0), n, Vector3(0, 0, 25))
 		"soldier_ant":
 			Models3D.soldier_ant(n, L, cl)
+		"crab":
+			# a land crab: wide shell, raised claws, legs splayed to the sides
+			sph(L * 0.36, body, Vector3(0, 0.16, 0), n, Vector3(1.0, 0.45, 0.8))
+			sph(L * 0.2, body.lightened(0.18), Vector3(-L * 0.05, 0.24, 0), n, Vector3(1.0, 0.3, 0.7))
+			for s in [-1.0, 1.0]:
+				for k in 4:
+					box(Vector3(0.04, 0.04, 0.26), hc(cl, "legs", "#8a2a1a"), Vector3((k - 1.5) * L * 0.16, 0.1, s * 0.22), n, Vector3(s * 25.0, 0, 0))
+				sph(0.08, hc(cl, "claw", "#e86a3a"), Vector3(L * 0.42, 0.24, s * 0.13), n, Vector3(1.3, 0.8, 0.9))
+				sph(0.03, Color("140d08"), Vector3(L * 0.3, 0.3, s * 0.06), n)
 		"roll_log", "log":
 			# bark, knots, branch stubs, moss, ringed ends; rolling logs turn
 			var spin := Node3D.new()

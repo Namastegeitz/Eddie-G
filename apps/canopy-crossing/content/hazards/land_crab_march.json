@@ -1,0 +1,36 @@
+{
+  "id": "land_crab_march",
+  "name": "Land-crab march",
+  "kind": "mover",
+  "lane": "ground",
+  "cause": "crushed",
+  "cause_text": "Pinched by a land crab",
+  "group": [
+    2,
+    4
+  ],
+  "length": [
+    0.55,
+    0.6
+  ],
+  "spacing": 0.25,
+  "speed": [
+    0.7,
+    1.1
+  ],
+  "gap": [
+    2.6,
+    4.2
+  ],
+  "art": {
+    "painter": "crab",
+    "colors": {
+      "body": "#c8402a",
+      "claw": "#e86a3a",
+      "legs": "#8a2a1a"
+    }
+  },
+  "desc": "After rain, land crabs march across the trail by the dozen.",
+  "predator": false,
+  "sprite": ""
+}

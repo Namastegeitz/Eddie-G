@@ -33,7 +33,7 @@ func map_complete(map_id: String) -> bool:
 	return stages_cleared(map_id) >= Content.map(map_id).get("stages", []).size()
 
 
-## Next region in map order after this one (for the milestone prompt).
+## Next region in map order after this one (opened when this one is done).
 func next_map(map_id: String) -> String:
 	var order := Content.playable_maps()
 	var i := order.find(map_id)
@@ -67,6 +67,12 @@ func record_run(r: Dictionary) -> Dictionary:
 			if r.won and int(r.stage) >= int(mp.cleared):
 				mp.cleared = int(r.stage) + 1
 				out.stage_cleared = true
+				# the last level of a jungle opens the next one on the globe
+				if bool(Content.rules.get("open_next_jungle", true)) and map_complete(map_id):
+					var nxt := next_map(map_id)
+					if nxt != "" and not Save.owns_map(nxt):
+						Economy.give_map(nxt, "progress")
+						out["opened"] = nxt
 		"endless":
 			if int(r.rows) > int(mp.best_rows):
 				mp.best_rows = int(r.rows)

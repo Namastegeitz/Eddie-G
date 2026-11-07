@@ -1,8 +1,6 @@
 {
   "id": "asian_elephant_herd",
-  "predator": false,
-  "sprite": "",
-  "name": "Asian elephants",
+  "name": "Asian elephant herd",
   "kind": "mover",
   "lane": "ground",
   "cause": "crushed",
@@ -12,24 +10,26 @@
     2
   ],
   "length": [
-    1.9,
-    1.9
+    1.8,
+    1.8
   ],
   "spacing": 0.4,
   "speed": [
-    0.7,
-    1.1
+    0.6,
+    1.0
   ],
   "gap": [
-    3.0,
-    5.0
+    3.2,
+    5.2
   ],
   "art": {
     "painter": "elephant",
     "colors": {
-      "body": "#8a8478",
-      "ear": "#7a7468"
+      "body": "#6e6a68",
+      "ear": "#5e5a58"
     }
   },
-  "desc": "Wild elephants on the move. Give them room."
+  "desc": "Wild elephants still walk the Cardamom corridors.",
+  "predator": false,
+  "sprite": ""
 }

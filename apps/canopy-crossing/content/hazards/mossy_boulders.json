@@ -1,0 +1,17 @@
+{
+  "id": "mossy_boulders",
+  "name": "Mossy boulders",
+  "kind": "brush",
+  "lane": "safe",
+  "art": {
+    "painter": "boulders",
+    "colors": {
+      "body": "#7a7e70",
+      "dark": "#4e5248",
+      "moss": "#5a9a3a"
+    }
+  },
+  "desc": "Big rocks on the bank: find a way round.",
+  "predator": false,
+  "sprite": ""
+}

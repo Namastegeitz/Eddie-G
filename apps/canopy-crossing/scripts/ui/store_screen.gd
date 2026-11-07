@@ -169,6 +169,10 @@ func _product_card(p: Dictionary) -> Control:
 	title.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	tv.add_child(title)
 	tv.add_child(UI.wrap_label(String(p.get("desc", "")), 22, UI.MUTED))
+	if p.has("map") and Save.owns_map(String(p.map)) and not Store.owns_product(String(p.id)):
+		tv.add_child(UI.label("Jungle already open: this pack adds its animals", 22, Color("9cf06a"), true))
+	elif p.has("map") and not Save.owns_map(String(p.map)) and bool(Content.rules.get("open_next_jungle", true)):
+		tv.add_child(UI.label("Or open it free by clearing the jungle before it", 22, Color("9fd8ff")))
 	h.add_child(tv)
 	if String(p.get("badge", "")) != "":
 		var badge := UI.panel(UI.DANGER, 12, 8)

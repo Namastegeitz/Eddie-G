@@ -5,10 +5,10 @@
   "location": "Cambodia",
   "lat": 11.8,
   "lon": 103.3,
-  "status": "coming_soon",
+  "status": "available",
   "access": {
     "type": "pack",
-    "product": ""
+    "product": "map_cardamom"
   },
   "flag": {
     "colors": [
@@ -18,15 +18,272 @@
     "code": "CDM"
   },
   "palette": {
-    "ui": "#1a3a8a",
     "safe": "#3c9a3a",
-    "canopy": "#14592a"
+    "safe_alt": "#46a244",
+    "ground": "#9a6a3a",
+    "ground_alt": "#906236",
+    "water": "#3a6a5a",
+    "water_deep": "#2c5446",
+    "foam": "#e0f0e8",
+    "canopy": "#14592a",
+    "canopy_dark": "#0b3518",
+    "accent": "#f0b030",
+    "goal": "#c8f0a0",
+    "sky": "#1a4a2a",
+    "ui": "#1a3a8a"
   },
   "facts": [
-    "One of the largest remaining rainforests in mainland Southeast Asia."
+    "One of the largest remaining rainforests in mainland Southeast Asia.",
+    "Wild cardamom, the spice the mountains are named for, grows in the shade of the forest.",
+    "Siamese crocodiles, among the rarest on Earth, survive in remote Cardamom rivers.",
+    "Pileated gibbons sing duets at dawn across the valleys."
   ],
-  "hazards": {},
-  "stages": [],
+  "hazards": {
+    "ground_movers": [
+      {
+        "id": "asian_elephant_herd",
+        "weight": 2
+      },
+      {
+        "id": "dhole_pack",
+        "weight": 2
+      },
+      {
+        "id": "rosewood_truck",
+        "weight": 2
+      }
+    ],
+    "platforms": [
+      {
+        "id": "floating_log",
+        "weight": 3
+      },
+      {
+        "id": "stepping_stones",
+        "weight": 2
+      },
+      {
+        "id": "drifting_branch",
+        "weight": 1
+      }
+    ],
+    "bridges": [
+      {
+        "id": "rope_bridge",
+        "weight": 1
+      }
+    ],
+    "ridges": [
+      {
+        "id": "ridge_drop",
+        "weight": 1
+      }
+    ],
+    "water_predators": [
+      {
+        "id": "siamese_croc",
+        "weight": 1
+      }
+    ],
+    "safe_specials": [
+      {
+        "id": "king_cobra",
+        "weight": 2
+      },
+      {
+        "id": "falling_branch",
+        "weight": 1
+      }
+    ],
+    "tiles": [
+      {
+        "id": "mossy_boulders",
+        "weight": 2
+      }
+    ],
+    "falls": [
+      {
+        "id": "waterfall_ledge",
+        "weight": 1
+      }
+    ],
+    "swoopers": [
+      {
+        "id": "serpent_eagle_swoop",
+        "weight": 1
+      }
+    ]
+  },
+  "stages": [
+    {
+      "name": "Koh Kong Road"
+    },
+    {
+      "name": "Tatai River"
+    },
+    {
+      "name": "Elephant Corridor"
+    },
+    {
+      "name": "Rosewood Trail"
+    },
+    {
+      "name": "Gibbon Gorge"
+    },
+    {
+      "name": "Dhole Ridge"
+    },
+    {
+      "name": "Crocodile Creek"
+    },
+    {
+      "name": "Spice Trail"
+    },
+    {
+      "name": "Misty Highlands"
+    },
+    {
+      "name": "Heart of the Cardamoms"
+    }
+  ],
   "native_animals": [],
-  "sprite": ""
+  "sprite": "",
+  "atmosphere": {
+    "mist": 0.35,
+    "light_shafts": 0.45,
+    "rain": 0.0,
+    "steam": 0.2
+  },
+  "music": {
+    "file": "res://assets/audio/music/cardamom.ogg",
+    "tempo": 94,
+    "root": "A",
+    "scale": "pentatonic_minor",
+    "lead": "gamelan",
+    "drums": "gong",
+    "calm_file": "res://assets/audio/music/calm/cardamom.ogg",
+    "hz": 528
+  },
+  "generator": "highlands",
+  "intro_hazards": [
+    "waterfall_ledge",
+    "asian_elephant_herd",
+    "siamese_croc",
+    "dhole_pack"
+  ],
+  "difficulty": {
+    "rows_to_max": 130,
+    "move_timer": 0
+  },
+  "endless": {
+    "creep": [
+      0.25,
+      0.9
+    ]
+  },
+  "trail_critters": [
+    {
+      "kind": "butterfly",
+      "color": "#2a8a5a"
+    },
+    {
+      "kind": "lizard",
+      "color": "#4a8a3a"
+    },
+    {
+      "kind": "bird",
+      "color": "#e8c040"
+    },
+    {
+      "kind": "beetle",
+      "color": "#3a6aa0"
+    },
+    {
+      "kind": "frog",
+      "color": "#6a9a3a"
+    }
+  ],
+  "fpv_scenes": [
+    {
+      "id": "tatai_falls",
+      "name": "Tatai Falls",
+      "line": "The Tatai River tumbles over a wide rock shelf on its way to the sea.",
+      "props": {
+        "giant_tree": 1.0,
+        "bamboo": 0.8,
+        "fern": 1.0,
+        "liana": 0.6
+      },
+      "landmark": "waterfall",
+      "fauna": [
+        "hornbill"
+      ],
+      "particles": [
+        "spray"
+      ],
+      "shafts": 0.6
+    },
+    {
+      "id": "evergreen_highlands",
+      "name": "Evergreen Highlands",
+      "line": "Unbroken evergreen forest still covers these ridges for hundreds of kilometres.",
+      "props": {
+        "giant_tree": 1.4,
+        "strangler_fig": 0.6,
+        "fern": 1.0,
+        "liana": 0.8
+      },
+      "landmark": "giant_ceiba",
+      "fauna": [
+        "hornbill",
+        "swallowtail"
+      ],
+      "particles": [
+        "motes"
+      ],
+      "shafts": 0.75
+    },
+    {
+      "id": "gibbon_gorge",
+      "name": "Gibbon Gorge",
+      "line": "Gibbons sing at dawn over gorges choked with giant bamboo.",
+      "props": {
+        "bamboo": 1.6,
+        "fern": 0.8,
+        "moss_rock": 0.6,
+        "liana": 0.4
+      },
+      "overhead": "bamboo_arch",
+      "landmark": "hanging_bridge",
+      "fauna": [
+        "birdwing"
+      ],
+      "particles": [
+        "leaves"
+      ],
+      "shafts": 0.5
+    },
+    {
+      "id": "spice_trail",
+      "name": "Cardamom Spice Trail",
+      "line": "Wild cardamom grows in the shade; its pods once paid for whole villages' rice.",
+      "props": {
+        "fern": 1.2,
+        "heliconia": 0.8,
+        "giant_tree": 0.8,
+        "moss_rock": 0.6
+      },
+      "landmark": "cave_arch",
+      "fauna": [
+        "swallowtail"
+      ],
+      "particles": [
+        "mist"
+      ],
+      "shafts": 0.35,
+      "colors": {
+        "fog": "#d8e8d8"
+      }
+    }
+  ]
 }

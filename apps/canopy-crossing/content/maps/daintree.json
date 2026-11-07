@@ -111,6 +111,11 @@
       {
         "id": "mangrove_roots",
         "weight": 1
+      },
+      {
+        "id": "mossy_boulders",
+        "weight": 1,
+        "from_level": 4
       }
     ],
     "events": [
@@ -125,6 +130,13 @@
         "id": "sea_eagle_swoop",
         "weight": 1,
         "from_level": 6
+      }
+    ],
+    "falls": [
+      {
+        "id": "waterfall_ledge",
+        "weight": 1,
+        "from_level": 3
       }
     ]
   },
@@ -184,6 +196,28 @@
     "platypus",
     "kookaburra",
     "short_beaked_echidna"
+  ],
+  "trail_critters": [
+    {
+      "kind": "crab",
+      "color": "#3a5ab0"
+    },
+    {
+      "kind": "butterfly",
+      "color": "#2a8aff"
+    },
+    {
+      "kind": "bird",
+      "color": "#e8e0d0"
+    },
+    {
+      "kind": "lizard",
+      "color": "#6a8a5a"
+    },
+    {
+      "kind": "frog",
+      "color": "#7ab04a"
+    }
   ],
   "sprite": "",
   "fpv_scenes": [

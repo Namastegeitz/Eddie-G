@@ -19,6 +19,7 @@ var _last_band := ""
 var _tail_bank := true
 var _stone_cols: Array = []
 var _prev_block: Array = []       # columns of the lane just made that hold a tile (gully, brush...)
+var _bank_reach: Array = []       # on a bank reached from stepping stones: the columns you can walk to
 var _ridge: Array = []
 var _layout: Array = []
 var cover: Array[Vector2i] = []   # canopy zones (first row, last row) that need first-person view
@@ -238,6 +239,20 @@ func _make_lane(r: int, d: float, spec: Dictionary) -> Lane:
 	for e in lane.ents:
 		if e.motion == "static" and e.platform:
 			stones = true
+	# a bank right after stepping stones: walk along it from the stones (tiles
+	# block the way), so the next stones start where you can actually get to
+	_bank_reach = []
+	if lane.type == "safe" and not _stone_cols.is_empty():
+		for c in _stone_cols:
+			if not lane.tiles.has(c):
+				_bank_reach.append(c)
+		var grew := true
+		while grew:
+			grew = false
+			for c in Lane.COLS:
+				if not c in _bank_reach and not lane.tiles.has(c) and (c - 1 in _bank_reach or c + 1 in _bank_reach):
+					_bank_reach.append(c)
+					grew = true
 	if not stones:
 		_stone_cols = []
 	_prev_block = lane.tiles.keys() if lane.type == "safe" else []
@@ -401,7 +416,9 @@ func _fill_water(lane: Lane, b: Dictionary, d: float, spec: Dictionary) -> void:
 			# columns you can step onto the stones from: the stones below, or
 			# the bank below minus its gullies / brush
 			var entry: Array = _stone_cols
-			if entry.is_empty() and not _prev_block.is_empty():
+			if entry.is_empty() and not _bank_reach.is_empty():
+				entry = _bank_reach
+			elif entry.is_empty() and not _prev_block.is_empty():
 				entry = []
 				for c0 in Lane.COLS:
 					if not c0 in _prev_block:
@@ -477,7 +494,9 @@ func _fill_safe(lane: Lane, b: Dictionary, d: float, spec: Dictionary) -> void:
 		_make_ridge(lane, b, d, spec)
 		return
 	var used := {}
-	if b.has("specials") and rng.randf() < _chance(b.specials.chance, d):
+	# no snakes or falling branches on a bank reached from stepping stones:
+	# you may have to walk its whole width to the next stone
+	if b.has("specials") and _stone_cols.is_empty() and rng.randf() < _chance(b.specials.chance, d):
 		var sid := _pick(String(b.specials.slot))
 		if sid != "":
 			var h: Dictionary = Content.hazards[sid]
@@ -529,7 +548,9 @@ func _make_ridge(lane: Lane, b: Dictionary, d: float, spec: Dictionary) -> void:
 	var hid := _pick(String(b.get("slot", "")))
 	if hid == "":
 		return
-	lane.layout = "ridge"
+	# "ridge" (a narrow path between drops) or "falls" (a waterfall ledge:
+	# the river pours over everything but a few dry stones)
+	lane.layout = String(Content.hazards[hid].get("layout_name", "ridge"))
 	var width := clampi(int(roundf(lerpf(3.6, 2.0, d))), 2, 4)
 	var start: int
 	if _ridge.is_empty():

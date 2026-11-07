@@ -680,8 +680,8 @@ func _skills() -> void:
 func _phase3() -> void:
 	begin("Phase 3 maps")
 	var playable := Content.playable_maps()
-	check("20 real-world scenes playable", playable.size() == 20, str(playable.size()))
-	check("coming-soon regions listed", Content.map_order.size() == 22)
+	check("22 real-world scenes playable (El Yunque and the Cardamom Mountains included)", playable.size() == 22 and "el_yunque" in playable and "cardamom" in playable, str(playable.size()))
+	check("all regions listed on the globe", Content.map_order.size() == 22)
 	var total_levels := 0
 	var zones_ok := true
 	var longer_ok := true
@@ -693,7 +693,8 @@ func _phase3() -> void:
 				zones_ok = false
 			if i > 0 and int(st[i].rows) <= int(st[i - 1].rows):
 				longer_ok = false
-	check("200 maps: 20 scenes x 10 levels", total_levels == 200, str(total_levels))
+	check("220 maps: 22 scenes x 10 levels", total_levels == 220, str(total_levels))
+	_new_terrain(playable)
 	check("every level has dense-canopy areas that need first person", zones_ok)
 	check("levels get longer through each scene", longer_ok)
 	_difficulty_curve(playable)
@@ -777,7 +778,7 @@ func _phase3() -> void:
 			bot.max_nodes = 40000
 			if bot.plan(sim, w2.goal_row).is_empty():
 				fails.append("%s/%d" % [id, si])
-	check("every level (%s) beatable with the free Poison Dart Frog" % ("1 and 10 of each scene" if fast else "all 200"), fails.is_empty(), str(fails))
+	check("every level (%s) beatable with the free Poison Dart Frog" % ("1 and 10 of each scene" if fast else "all 220"), fails.is_empty(), str(fails))
 	var efails := []
 	for id in playable:
 		for seed in ([3] if fast else [3, 17]):
@@ -1534,6 +1535,50 @@ func _scenes() -> void:
 	check("detailed models build for every log, caiman, croc and soldier-ant hazard", bad_models.is_empty() and built >= 8 and crocs >= 5, "%d built, %d crocs, bad %s" % [built, crocs, str(bad_models)])
 	var ants: Dictionary = Content.hazard("red_soldier_ants")
 	check("the ant highway is giant red soldier ants carrying cheese", String(ants.get("art", {}).get("painter", "")) == "soldier_ant" and float(ants.length[0]) >= 0.8 and ants.art.colors.has("cheese"))
+
+
+## Jungles open by play; waterfall ledges, mossy boulders, new creatures
+## and trail wildlife.
+func _new_terrain(playable: Array) -> void:
+	# clearing a jungle's last level opens the next one, for free
+	Save.wipe()
+	var amazon_n: int = Content.map("amazon").stages.size()
+	var rec := {}
+	for i in amazon_n:
+		rec = Progress.record_run({"map": "amazon", "mode": "journey", "stage": i, "rows": 30, "score": 10, "won": true, "cause": "", "collected": 0})
+	check("clearing a jungle's last level opens the next one", Save.owns_map("congo") and String(rec.get("opened", "")) == "congo" and not Save.owns_map("borneo"), str(rec))
+	check("an opened jungle's map pack still sells its animals", not Store.product_redundant("map_congo"))
+	Save.wipe()
+	# waterfall ledges: generated, crossable (a dry path), deadly water
+	var ledges := 0
+	var paths_ok := true
+	var early_ledge := false
+	for id in ["el_yunque", "monteverde", "amazon"]:
+		for li in [0, 5, 9]:
+			var w := World.new()
+			w.setup(Content.map(id), "journey", li, absi(hash([id, li, "journey"])) % 1000000)
+			w.ensure(w.goal_row)
+			for r in w.goal_row:
+				var l := w.lane(r)
+				if l.layout != "falls":
+					continue
+				ledges += 1
+				var dry := Lane.COLS - l.tiles.size()
+				if dry < 2 or Content.hazard(String(l.tiles.values()[0].hazard)).get("kind", "") != "gap":
+					paths_ok = false
+				if id == "amazon" and li < 5:
+					early_ledge = true
+	check("waterfall ledges along the trail: water pours over all but a dry path of stones", ledges >= 6 and paths_ok, "%d ledges" % ledges)
+	check("the first jungles keep waterfalls for later levels (Amazon from level 6)", not early_ledge)
+	var crit_bad := []
+	for id in playable:
+		var cl: Array = Content.map(id).get("trail_critters", [])
+		if cl.size() < 3:
+			crit_bad.append(id)
+	check("every jungle has its own wildlife along the trail", crit_bad.is_empty(), str(crit_bad))
+	var creatures := ["land_crab_march", "mongoose_dash", "puerto_rican_boa", "asian_elephant_herd", "dhole_pack", "siamese_croc", "king_cobra", "mossy_boulders", "waterfall_ledge"]
+	var missing := creatures.filter(func(h): return Content.hazard(h).is_empty())
+	check("new creatures and terrain: land crabs, mongooses, boas, elephants, dholes, Siamese crocs, cobras, boulders, waterfalls", missing.is_empty(), str(missing))
 
 
 ## The difficulty curve: the first two jungles are Easy, 3-5 Medium, 6-10

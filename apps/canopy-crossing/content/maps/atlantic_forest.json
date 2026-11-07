@@ -109,11 +109,21 @@
       {
         "id": "thick_brush",
         "weight": 1
+      },
+      {
+        "id": "mossy_boulders",
+        "weight": 1
       }
     ],
     "swoopers": [
       {
         "id": "hawk_eagle_swoop",
+        "weight": 1
+      }
+    ],
+    "falls": [
+      {
+        "id": "waterfall_ledge",
         "weight": 1
       }
     ]
@@ -167,6 +177,28 @@
     ]
   },
   "native_animals": [],
+  "trail_critters": [
+    {
+      "kind": "bird",
+      "color": "#f04a3a"
+    },
+    {
+      "kind": "butterfly",
+      "color": "#3a8aff"
+    },
+    {
+      "kind": "frog",
+      "color": "#f08a20"
+    },
+    {
+      "kind": "lizard",
+      "color": "#6a8a4a"
+    },
+    {
+      "kind": "beetle",
+      "color": "#2a8a6a"
+    }
+  ],
   "sprite": "",
   "fpv_scenes": [
     {

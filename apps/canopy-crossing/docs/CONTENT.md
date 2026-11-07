@@ -99,6 +99,14 @@ Copy an existing map and change:
   it first appears in level 5 (and in Endless once the run is as hard as
   level 5). The first five regions use this to bring hazards in one or two
   at a time; the world map lists what's "New here" on each level.
+- `falls`: hazard slot for waterfall ledges (`waterfall_ledge`): a band of
+  one row where a river pours over the rock except for a few dry stones
+  (the generators add it when the map fills the slot; `from_level` works
+  here too). `mossy_boulders` goes in `tiles` (blocks the way, like brush).
+- `trail_critters`: harmless wildlife drawn on the banks in both views,
+  e.g. `[{"kind": "frog", "color": "#2a5aff"}]`. Kinds: `frog`, `crab`
+  (pale colours get a hermit-crab shell), `butterfly`, `bird`, `lizard`,
+  `beetle`.
 - `tier` (optional): `easy`, `medium`, `hard` or `expert`. Without it the
   region's `order` on the globe decides (see `content/difficulty.json`
   below).
@@ -208,6 +216,8 @@ results card says.
 - `endless_canopy`: canopy zones in Endless and the Daily Challenge:
   `{"first": 18, "every": [26, 40], "rows": [5, 9]}`.
 - `levels_per_scene`: 10 (documentation; each map's `stages` list is what counts).
+- `open_next_jungle` (default `true`): clearing a jungle's last level opens
+  the next one on the globe for free. `false`: jungles open only by map pack.
 
 ## Skill levels: `content/skills.json`
 

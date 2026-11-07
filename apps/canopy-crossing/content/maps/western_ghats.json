@@ -99,7 +99,12 @@
         "weight": 2
       }
     ],
-    "tiles": [],
+    "tiles": [
+      {
+        "id": "mossy_boulders",
+        "weight": 1
+      }
+    ],
     "events": [
       {
         "id": "monsoon_rain",
@@ -109,6 +114,12 @@
     "swoopers": [
       {
         "id": "hawk_eagle_swoop",
+        "weight": 1
+      }
+    ],
+    "falls": [
+      {
+        "id": "waterfall_ledge",
         "weight": 1
       }
     ]
@@ -162,6 +173,28 @@
     ]
   },
   "native_animals": [],
+  "trail_critters": [
+    {
+      "kind": "frog",
+      "color": "#8a5aa0"
+    },
+    {
+      "kind": "butterfly",
+      "color": "#2a7a4a"
+    },
+    {
+      "kind": "lizard",
+      "color": "#c0a040"
+    },
+    {
+      "kind": "beetle",
+      "color": "#5a8a3a"
+    },
+    {
+      "kind": "bird",
+      "color": "#3a3a3a"
+    }
+  ],
   "sprite": "",
   "fpv_scenes": [
     {

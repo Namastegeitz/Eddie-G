@@ -106,9 +106,21 @@
         "id": "eroded_gully",
         "weight": 3,
         "from_level": 5
+      },
+      {
+        "id": "mossy_boulders",
+        "weight": 1,
+        "from_level": 2
       }
     ],
-    "swoopers": []
+    "swoopers": [],
+    "falls": [
+      {
+        "id": "waterfall_ledge",
+        "weight": 1,
+        "from_level": 3
+      }
+    ]
   },
   "intro_hazards": [
     "slash_and_burn",
@@ -164,6 +176,28 @@
     "fossa",
     "panther_chameleon",
     "tomato_frog"
+  ],
+  "trail_critters": [
+    {
+      "kind": "frog",
+      "color": "#e85a2a"
+    },
+    {
+      "kind": "lizard",
+      "color": "#4ac0a0"
+    },
+    {
+      "kind": "butterfly",
+      "color": "#e0c040"
+    },
+    {
+      "kind": "bird",
+      "color": "#2a7ac0"
+    },
+    {
+      "kind": "crab",
+      "color": "#a04a2a"
+    }
   ],
   "sprite": "",
   "fpv_scenes": [

@@ -108,6 +108,11 @@
         "id": "swamp_mud",
         "weight": 2,
         "from_level": 4
+      },
+      {
+        "id": "mossy_boulders",
+        "weight": 1,
+        "from_level": 3
       }
     ],
     "swoopers": [
@@ -115,6 +120,13 @@
         "id": "crowned_eagle_swoop",
         "weight": 1,
         "from_level": 8
+      }
+    ],
+    "falls": [
+      {
+        "id": "waterfall_ledge",
+        "weight": 1,
+        "from_level": 5
       }
     ]
   },
@@ -176,6 +188,28 @@
     "bonobo",
     "leopard",
     "pangolin"
+  ],
+  "trail_critters": [
+    {
+      "kind": "butterfly",
+      "color": "#f0c030"
+    },
+    {
+      "kind": "frog",
+      "color": "#6a8a3a"
+    },
+    {
+      "kind": "bird",
+      "color": "#3a6ab0"
+    },
+    {
+      "kind": "beetle",
+      "color": "#8a3a2a"
+    },
+    {
+      "kind": "lizard",
+      "color": "#8a6a3a"
+    }
   ],
   "sprite": "",
   "fpv_scenes": [

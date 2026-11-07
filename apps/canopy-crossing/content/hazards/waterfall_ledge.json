@@ -1,0 +1,23 @@
+{
+  "id": "waterfall_ledge",
+  "name": "Waterfall ledge",
+  "kind": "gap",
+  "lane": "safe",
+  "cause": "fell",
+  "cause_text": "Swept over the waterfall",
+  "layout": "ridge",
+  "layout_name": "falls",
+  "art": {
+    "painter": "falls",
+    "colors": {
+      "water": "#cdeeff",
+      "pool": "#2a6a8a",
+      "foam": "#ffffff",
+      "rock": "#6a6e60",
+      "moss": "#4f8a3a"
+    }
+  },
+  "desc": "A river pours over the rock: hop across on the dry stones.",
+  "predator": false,
+  "sprite": ""
+}

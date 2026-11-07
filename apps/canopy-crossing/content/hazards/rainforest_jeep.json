@@ -1,0 +1,35 @@
+{
+  "id": "rainforest_jeep",
+  "name": "Rainforest tour jeep",
+  "kind": "mover",
+  "lane": "ground",
+  "cause": "crushed",
+  "cause_text": "Run over by a tour jeep",
+  "group": [
+    1,
+    1
+  ],
+  "length": [
+    1.6,
+    1.8
+  ],
+  "spacing": 0.0,
+  "speed": [
+    1.4,
+    2.2
+  ],
+  "gap": [
+    3.0,
+    5.0
+  ],
+  "art": {
+    "painter": "jeep",
+    "colors": {
+      "body": "#2a8a6a",
+      "roof": "#e8e0c8"
+    }
+  },
+  "desc": "Tours wind up the mountain road to the falls.",
+  "predator": false,
+  "sprite": ""
+}

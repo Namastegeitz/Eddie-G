@@ -262,6 +262,19 @@ class LaneView extends Node2D:
 				draw_rect(Rect2(x0, -T * 0.5, w, T), s)
 				if lane.layout == "ridge":
 					draw_rect(Rect2(x0, -T * 0.5, w, T), s.darkened(0.12))
+				elif lane.layout == "falls":
+					# a rocky lip; the river pours over all but the dry stones
+					var fh := Content.hazard(String(lane.tiles.values()[0].hazard)) if not lane.tiles.is_empty() else {}
+					var fc: Dictionary = fh.get("art", {}).get("colors", {})
+					var rock := Color(String(fc.get("rock", "#6a6e60")))
+					var moss := Color(String(fc.get("moss", "#4f8a3a")))
+					draw_rect(Rect2(x0, -T * 0.5, w, T), rock.darkened(0.25))
+					for cc in Lane.COLS:
+						if lane.tiles.has(cc):
+							continue
+						var sp := Vector2(cc * T + T * 0.5, 0)
+						Draw.shaded(self, sp, T * 0.42, T * 0.36, rock)
+						Draw.ellipse(self, sp + Vector2(-T * 0.08, -T * 0.16), T * 0.26, T * 0.12, moss)
 				for i in int(w / 55.0):
 					var p := Vector2(x0 + rng.randf() * w, rng.randf_range(-T * 0.42, T * 0.42))
 					var k := rng.randi() % 7
@@ -287,7 +300,7 @@ class LaneView extends Node2D:
 				draw_rect(Rect2(x0, -T * 0.5, w, T * 0.06), Color(0, 0, 0, 0.1))
 		for col in lane.tiles:
 			var tile: Dictionary = lane.tiles[col]
-			if tile.kind == "quicksand":
+			if tile.kind == "quicksand" or lane.layout == "falls":
 				continue
 			var hz := Content.hazard(String(tile.hazard))
 			draw_set_transform(Vector2(int(col) * T, 0))
@@ -314,7 +327,7 @@ class LaneView extends Node2D:
 				dyn.draw_line(Vector2(x, y), Vector2(x + len, y), Color(foam, 0.35 if not lane.fast else 0.55), 3, true)
 		for col in lane.tiles:
 			var tile: Dictionary = lane.tiles[col]
-			if tile.kind == "quicksand":
+			if tile.kind == "quicksand" or lane.layout == "falls":
 				dyn.draw_set_transform(Vector2(int(col) * T, 0))
 				HazardPainter.draw_tile(dyn, Content.hazard(String(tile.hazard)), T, t, int(col))
 				dyn.draw_set_transform(Vector2.ZERO)
@@ -327,6 +340,19 @@ class LaneView extends Node2D:
 				if wv.colorblind and st[0] == "warn":
 					HazardPainter._hazard_marker(dyn, Vector2(-T * 0.4, 0), T * 0.2)
 					HazardPainter._hazard_marker(dyn, Vector2(Lane.COLS * T + T * 0.4, 0), T * 0.2)
+		# harmless wildlife on the banks (the map's "trail_critters")
+		if lane.type == "safe" and not lane.goal and lane.layout == "" and Draw.detail > 0:
+			var critters: Array = wv.sim.world.map.get("trail_critters", [])
+			if not critters.is_empty():
+				var n_c := int(lane.deco % 5)
+				for k in mini(n_c, 2):
+					var cr: Dictionary = critters[(lane.deco / 7 + k * 3) % critters.size()]
+					var cc2 := int((lane.deco / 13 + k * 4) % Lane.COLS)
+					if lane.tiles.has(cc2):
+						continue
+					dyn.draw_set_transform(Vector2(cc2 * T + T * 0.5, (k - 0.5) * T * 0.3))
+					HazardPainter.draw_critter(dyn, String(cr.get("kind", "frog")), Color(String(cr.get("color", "#5aaa3a"))), T, t, lane.deco + k)
+					dyn.draw_set_transform(Vector2.ZERO)
 		if lane.goal:
 			var pulse := 0.5 + 0.5 * sin(t * 3.0)
 			dyn.draw_rect(Rect2(0, -T * 0.5, Lane.COLS * T, T), Color(wv.color("goal"), 0.18 + 0.15 * pulse))

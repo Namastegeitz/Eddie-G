@@ -50,6 +50,20 @@
           0.25
         ]
       }
+    },
+    {
+      "id": "falls",
+      "lane": "safe",
+      "layout": "ridge",
+      "slot": "falls",
+      "weight": [
+        0.7,
+        1.0
+      ],
+      "rows": [
+        1,
+        1
+      ]
     }
   ],
   "between": {

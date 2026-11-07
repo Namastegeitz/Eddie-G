@@ -112,6 +112,11 @@
         "id": "thick_brush",
         "weight": 1,
         "from_level": 2
+      },
+      {
+        "id": "mossy_boulders",
+        "weight": 1,
+        "from_level": 6
       }
     ],
     "swoopers": [
@@ -119,6 +124,13 @@
         "id": "serpent_eagle_swoop",
         "weight": 1,
         "from_level": 5
+      }
+    ],
+    "falls": [
+      {
+        "id": "waterfall_ledge",
+        "weight": 1,
+        "from_level": 4
       }
     ]
   },
@@ -181,6 +193,28 @@
     "wallaces_flying_frog",
     "sunda_clouded_leopard",
     "sumatran_tiger"
+  ],
+  "trail_critters": [
+    {
+      "kind": "butterfly",
+      "color": "#2ab080"
+    },
+    {
+      "kind": "lizard",
+      "color": "#7aa03a"
+    },
+    {
+      "kind": "bird",
+      "color": "#e0a030"
+    },
+    {
+      "kind": "beetle",
+      "color": "#4a3a8a"
+    },
+    {
+      "kind": "frog",
+      "color": "#8a6a4a"
+    }
   ],
   "sprite": "",
   "fpv_scenes": [

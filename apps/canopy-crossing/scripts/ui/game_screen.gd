@@ -994,6 +994,8 @@ func leave(target: String) -> void:
 				Game.restart_run()
 			"next":
 				Game.start_journey(String(map.id), int(cfg.get("stage", 0)) + 1)
+			_ when target.begins_with("open:"):
+				Game.start_journey(target.substr(5), 0)
 			"animals":
 				Game.goto("animals")
 			"world":

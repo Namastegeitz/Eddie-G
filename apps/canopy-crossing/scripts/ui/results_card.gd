@@ -79,6 +79,21 @@ func _build(screen, won: bool, rows: int, berries: int, amber: int, rec: Diction
 			return
 		"journey":
 			var stages: Array = map.get("stages", [])
+			var opened := String(rec.get("opened", ""))
+			if opened != "":
+				var om := Content.map(opened)
+				var nb := UI.panel(Color(0.04, 0.2, 0.1, 0.9), 20, 14)
+				var nv := UI.vbox(6)
+				var nh := UI.hbox(12)
+				nh.alignment = BoxContainer.ALIGNMENT_CENTER
+				nh.add_child(Widgets.Flag.new(opened, Vector2(56, 40)))
+				nh.add_child(UI.label("NEW JUNGLE OPEN", 26, UI.ACCENT, true))
+				nv.add_child(nh)
+				nv.add_child(UI.label(String(om.get("name", opened)), 36, Color.WHITE, true, HORIZONTAL_ALIGNMENT_CENTER))
+				nv.add_child(UI.wrap_label("%s · new terrain, creatures and scenes to explore" % String(om.get("location", "")), 22, UI.MUTED, HORIZONTAL_ALIGNMENT_CENTER))
+				nb.add_child(nv)
+				box.add_child(nb)
+				box.add_child(UI.button("Explore %s" % String(om.get("name", opened)), func(): screen.leave("open:" + opened), UI.ACCENT, 30, 92))
 			if won and int(cfg.get("stage", 0)) + 1 < stages.size():
 				box.add_child(UI.button("Next level: %s" % String(stages[int(cfg.stage) + 1].name), func(): screen.leave("next"), UI.ACCENT, 30, 92))
 			box.add_child(UI.button("Retry" if not won else "Play again", func(): screen.leave("retry"), UI.PANEL_3 if won else UI.ACCENT, 30, 88))

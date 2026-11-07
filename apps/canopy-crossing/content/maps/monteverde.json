@@ -101,11 +101,21 @@
       {
         "id": "thick_brush",
         "weight": 1
+      },
+      {
+        "id": "mossy_boulders",
+        "weight": 1
       }
     ],
     "swoopers": [
       {
         "id": "hawk_eagle_swoop",
+        "weight": 1
+      }
+    ],
+    "falls": [
+      {
+        "id": "waterfall_ledge",
         "weight": 1
       }
     ]
@@ -164,6 +174,28 @@
     "kinkajou",
     "coatimundi",
     "bairds_tapir"
+  ],
+  "trail_critters": [
+    {
+      "kind": "frog",
+      "color": "#5ad04a"
+    },
+    {
+      "kind": "butterfly",
+      "color": "#a8e0ff"
+    },
+    {
+      "kind": "bird",
+      "color": "#40c060"
+    },
+    {
+      "kind": "beetle",
+      "color": "#d0b030"
+    },
+    {
+      "kind": "lizard",
+      "color": "#6a8a4a"
+    }
   ],
   "sprite": "",
   "fpv_scenes": [

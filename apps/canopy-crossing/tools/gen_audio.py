@@ -14,6 +14,7 @@ instrument, a gentle arpeggio, light percussion and reverb; seamless loop.
     python3 tools/gen_audio.py --maps     # only region music (after adding a map)
     python3 tools/gen_audio.py --calm     # only the calm songs
     python3 tools/gen_audio.py --check    # check the calm songs' tuning (decodes the OGGs)
+    python3 tools/gen_audio.py --only=<map id>   # one region's songs, after adding it
 
 A new region gets music by adding its map file and re-running this, or by
 pointing its "music.file" at a recorded track.
@@ -639,6 +640,16 @@ def write_ogg(path, x, quality=3):
 def main():
     if "--check" in sys.argv:
         sys.exit(0 if check_tuning() else 1)
+    only = next((a[7:] for a in sys.argv if a.startswith("--only=")), "")
+    if only:
+        # just one region's songs (classic and calm), after adding it
+        m = json.load(open(os.path.join(ROOT, "content", "maps", only + ".json")))
+        mus = m["music"]
+        write_ogg(os.path.join(ROOT, mus["file"].replace("res://", "")), render_music(mus, sum(ord(c) for c in m["id"]) * 31))
+        if mus.get("calm_file"):
+            write_ogg(os.path.join(ROOT, mus["calm_file"].replace("res://", "")), render_calm(mus, sum(ord(c) for c in only) * 31 + int(mus["hz"]), int(mus["hz"])), 2)
+        print("songs for", only)
+        return
     if "--calm" in sys.argv or "--maps" not in sys.argv:
         for name, mus, hz, path in calm_songs():
             seed = sum(ord(c) for c in name) * 31 + int(hz)

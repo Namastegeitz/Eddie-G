@@ -686,6 +686,58 @@
       }
     },
     {
+      "id": "map_cardamom",
+      "type": "non_consumable",
+      "section": "maps",
+      "title": "Cardamom Mountains Map Pack",
+      "desc": "The Cardamom Mountains scene: 10 levels, its waterfalls, hazards and wildlife.",
+      "price_usd": 2.99,
+      "map": "cardamom",
+      "grants": [
+        {
+          "type": "map",
+          "id": "cardamom"
+        },
+        {
+          "type": "animals",
+          "where": {
+            "pack": "cardamom",
+            "unlock": "pack"
+          }
+        }
+      ],
+      "store_ids": {
+        "google": "map_cardamom",
+        "apple": "com.aethertek.canopycrossing.map_cardamom"
+      }
+    },
+    {
+      "id": "map_el_yunque",
+      "type": "non_consumable",
+      "section": "maps",
+      "title": "El Yunque Map Pack",
+      "desc": "The El Yunque scene: 10 levels, its waterfalls, hazards and wildlife.",
+      "price_usd": 2.99,
+      "map": "el_yunque",
+      "grants": [
+        {
+          "type": "map",
+          "id": "el_yunque"
+        },
+        {
+          "type": "animals",
+          "where": {
+            "pack": "el_yunque",
+            "unlock": "pack"
+          }
+        }
+      ],
+      "store_ids": {
+        "google": "map_el_yunque",
+        "apple": "com.aethertek.canopycrossing.map_el_yunque"
+      }
+    },
+    {
       "id": "amber_100",
       "type": "consumable",
       "section": "amber",

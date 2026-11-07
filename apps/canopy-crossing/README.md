@@ -8,12 +8,26 @@ time, in ten real rainforests. Built from
 - **50 animals**, each with a signature ability (18 reusable ability modules).
   5 free starters: Poison Dart Frog, Western Gorilla, Orangutan, Southern
   Cassowary, Ring-Tailed Lemur.
-- **200 maps: 20 real rainforest scenes x 10 levels.** Amazon is free;
+- **220 maps: 22 real rainforest scenes x 10 levels.** Amazon is free;
   Congo, Borneo, Daintree, Masoala, Monteverde, Sundarbans, Western Ghats,
   Bwindi, New Guinea, Atlantic Forest, Xishuangbanna, Taman Negara,
-  Sinharaja, Yasuní, Chocó, Taï Forest, Palawan, Maya Forest and Khao Sok
-  are map packs, plus 2 "coming soon". Each scene has its own palette,
-  hazards, music and facts. A spinning globe picks the scene.
+  Sinharaja, Yasuní, Chocó, Taï Forest, Palawan, Maya Forest, Khao Sok,
+  the Cardamom Mountains and El Yunque follow round the globe. Each scene
+  has its own palette, hazards, music and facts. A spinning globe picks
+  the scene.
+- **Jungles open as you play:** clear a jungle's last level and the next
+  one on the globe opens for free ("New jungle open!" on the results card;
+  the world map says what opens each one). Map packs in the store still
+  open a jungle early and bring its native animals.
+- **New terrain and creatures along the trail:** waterfall ledges (a river
+  pours over the rock; hop across on the dry, mossy stones), mossy boulders
+  to find a way round, and harmless wildlife on the banks of every jungle
+  (coquí frogs, hermit crabs, butterflies, birds, lizards, beetles), in
+  both views. El Yunque brings marching land crabs, mongooses, tour jeeps,
+  Puerto Rican boas and red-tailed hawks; the Cardamom Mountains bring Asian
+  elephants, dhole packs, smugglers' rosewood trucks, Siamese crocodiles
+  and king cobras, each with four first-person scenes (La Mina Falls,
+  Tatai Falls, Gibbon Gorge...).
 - **Difficulty curve:** every jungle's levels get longer and harder from
   1 to 10 (a 1-5 challenge rating on each). The first two jungles are
   **Easy** (short, slow levels of 25 to 60 rows, small bands with a safe
@@ -106,13 +120,13 @@ Q/E (power-ups), R (restart), Esc.
 
 ```bash
 tools/run_tests.sh          # compile check + phase audit (project and exported pack)
-FAST=1 tools/run_tests.sh   # levels 1 and 10 of each scene instead of all 200
+FAST=1 tools/run_tests.sh   # levels 1 and 10 of each scene instead of all 220
 ```
 
 The phase audit (`tests/phase_audit.gd`, 352 checks) turns each phase's
 checkpoint from the brief into checks: grid hops, every hazard kind, every
 ability, all 50 animals, every region generating 200 rows, a path-finding bot
-beating **all 200 levels with the free Poison Dart Frog**, adding a map
+beating **all 220 levels with the free Poison Dart Frog**, adding a map
 and an animal by file, earning/unlocking/relaunching, sandbox purchases and
 restore, a downloadable content pack, the tutorial funnel, prompts, daily
 reward, deals, the pass, ads only between runs, analytics events, and the

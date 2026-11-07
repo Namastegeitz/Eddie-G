@@ -5,10 +5,10 @@
   "location": "Puerto Rico",
   "lat": 18.3,
   "lon": -65.8,
-  "status": "coming_soon",
+  "status": "available",
   "access": {
     "type": "pack",
-    "product": ""
+    "product": "map_el_yunque"
   },
   "flag": {
     "colors": [
@@ -18,15 +18,282 @@
     "code": "ELY"
   },
   "palette": {
-    "ui": "#d8242a",
-    "safe": "#3c9a3a",
-    "canopy": "#14592a"
+    "safe": "#4aa05a",
+    "safe_alt": "#54aa64",
+    "ground": "#8a6a4a",
+    "ground_alt": "#806244",
+    "water": "#3a8ab0",
+    "water_deep": "#2a7096",
+    "foam": "#e8f8ff",
+    "canopy": "#2a7a4a",
+    "canopy_dark": "#164a2c",
+    "accent": "#ffd040",
+    "goal": "#d8f8b0",
+    "sky": "#a8d0d8",
+    "ui": "#d8242a"
   },
   "facts": [
-    "The only tropical rainforest in the US National Forest System."
+    "The only tropical rainforest in the US National Forest System.",
+    "Tiny coquí frogs call \"ko-KEE\" all night long; the loudest reach about 100 decibels.",
+    "La Mina Falls drops about 11 m into a pool fed by mountain rivers.",
+    "The Puerto Rican parrot, found only here, came back from just 13 wild birds in 1975."
   ],
-  "hazards": {},
-  "stages": [],
+  "hazards": {
+    "ground_movers": [
+      {
+        "id": "land_crab_march",
+        "weight": 3
+      },
+      {
+        "id": "mongoose_dash",
+        "weight": 2
+      },
+      {
+        "id": "rainforest_jeep",
+        "weight": 2
+      }
+    ],
+    "platforms": [
+      {
+        "id": "floating_log",
+        "weight": 3
+      },
+      {
+        "id": "drifting_branch",
+        "weight": 2
+      },
+      {
+        "id": "stepping_stones",
+        "weight": 2
+      }
+    ],
+    "tidal_platforms": [
+      {
+        "id": "tidal_log",
+        "weight": 1
+      }
+    ],
+    "water_predators": [],
+    "safe_specials": [
+      {
+        "id": "puerto_rican_boa",
+        "weight": 2
+      },
+      {
+        "id": "falling_branch",
+        "weight": 2
+      }
+    ],
+    "safe_effects": [
+      {
+        "id": "mangrove_tide",
+        "weight": 1
+      }
+    ],
+    "tiles": [
+      {
+        "id": "mossy_boulders",
+        "weight": 2
+      }
+    ],
+    "falls": [
+      {
+        "id": "waterfall_ledge",
+        "weight": 1
+      }
+    ],
+    "events": [
+      {
+        "id": "monsoon_rain",
+        "weight": 1
+      }
+    ],
+    "swoopers": [
+      {
+        "id": "red_tailed_hawk_swoop",
+        "weight": 1
+      }
+    ]
+  },
+  "stages": [
+    {
+      "name": "Rio Grande Road"
+    },
+    {
+      "name": "Coquí Chorus"
+    },
+    {
+      "name": "La Mina Trail"
+    },
+    {
+      "name": "Sierra Palms"
+    },
+    {
+      "name": "Big Tree Trail"
+    },
+    {
+      "name": "Mongoose Run"
+    },
+    {
+      "name": "Crab Crossing"
+    },
+    {
+      "name": "La Coca Falls"
+    },
+    {
+      "name": "Cloud Peak"
+    },
+    {
+      "name": "El Toro Summit"
+    }
+  ],
   "native_animals": [],
-  "sprite": ""
+  "sprite": "",
+  "atmosphere": {
+    "mist": 0.25,
+    "light_shafts": 0.3,
+    "rain": 0.05,
+    "fog_color": "#e2eee8"
+  },
+  "music": {
+    "file": "res://assets/audio/music/el_yunque.ogg",
+    "tempo": 96,
+    "root": "G",
+    "scale": "pentatonic_major",
+    "lead": "marimba",
+    "drums": "shaker",
+    "calm_file": "res://assets/audio/music/calm/el_yunque.ogg",
+    "hz": 963
+  },
+  "generator": "wetlands",
+  "intro_hazards": [
+    "waterfall_ledge",
+    "land_crab_march",
+    "puerto_rican_boa",
+    "mongoose_dash"
+  ],
+  "difficulty": {
+    "rows_to_max": 130,
+    "move_timer": 0
+  },
+  "endless": {
+    "creep": [
+      0.25,
+      0.9
+    ]
+  },
+  "trail_critters": [
+    {
+      "kind": "frog",
+      "color": "#b08a5a"
+    },
+    {
+      "kind": "bird",
+      "color": "#3ab04a"
+    },
+    {
+      "kind": "lizard",
+      "color": "#6ac04a"
+    },
+    {
+      "kind": "crab",
+      "color": "#c8402a"
+    },
+    {
+      "kind": "butterfly",
+      "color": "#f0a030"
+    }
+  ],
+  "fpv_scenes": [
+    {
+      "id": "la_mina_falls",
+      "name": "La Mina Falls",
+      "line": "La Mina Falls drops about 11 m into a pool in the heart of El Yunque.",
+      "props": {
+        "tree_fern": 1.0,
+        "palm": 1.2,
+        "bromeliad": 0.8,
+        "fern": 1.0,
+        "liana": 0.4
+      },
+      "landmark": "waterfall",
+      "fauna": [
+        "parrot",
+        "hummingbird"
+      ],
+      "particles": [
+        "spray",
+        "mist"
+      ],
+      "shafts": 0.6,
+      "colors": {
+        "light": "#f4fff0"
+      }
+    },
+    {
+      "id": "sierra_palm_grove",
+      "name": "Sierra Palm Grove",
+      "line": "Sierra palms crowd the steep slopes, holding the soil when hurricanes pass.",
+      "props": {
+        "palm": 1.6,
+        "fern": 0.8,
+        "bromeliad": 0.6,
+        "liana": 0.3
+      },
+      "overhead": "palm_fronds",
+      "landmark": "hanging_bridge",
+      "fauna": [
+        "parrot"
+      ],
+      "particles": [
+        "motes"
+      ],
+      "shafts": 0.7
+    },
+    {
+      "id": "dwarf_cloud_forest",
+      "name": "Dwarf Cloud Forest",
+      "line": "Near the peaks, wind and cloud keep the trees knee-high and dripping with moss.",
+      "props": {
+        "elfin_tree": 1.5,
+        "moss_rock": 1.0,
+        "fern": 0.8,
+        "bromeliad": 0.6
+      },
+      "overhead": "moss_branches",
+      "landmark": "canopy_walkway",
+      "fauna": [
+        "hummingbird"
+      ],
+      "particles": [
+        "mist"
+      ],
+      "shafts": 0.15,
+      "colors": {
+        "fog": "#e8f0ec"
+      }
+    },
+    {
+      "id": "coqui_creek",
+      "name": "Coquí Creek",
+      "line": "At dusk the creek fills with coquí calls: ko-KEE, ko-KEE.",
+      "props": {
+        "fern": 1.2,
+        "heliconia": 0.8,
+        "tree_fern": 0.8,
+        "giant_tree": 0.4
+      },
+      "landmark": "waterfall",
+      "fauna": [
+        "bats"
+      ],
+      "particles": [
+        "fireflies"
+      ],
+      "shafts": 0.2,
+      "colors": {
+        "light": "#c8e0ff"
+      }
+    }
+  ]
 }

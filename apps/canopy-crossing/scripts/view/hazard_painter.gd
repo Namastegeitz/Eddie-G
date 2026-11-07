@@ -6,7 +6,7 @@ extends RefCounted
 ##
 ## Entities: origin at the entity's left edge, lane centre at y = 0.
 
-const ANIMATED := ["roll_log", "boulder", "ants", "soldier_ant", "herd", "runner", "vine", "caiman_back", "lilypad", "boat", "bridge", "lizard"]
+const ANIMATED := ["roll_log", "boulder", "ants", "soldier_ant", "herd", "runner", "vine", "caiman_back", "lilypad", "boat", "bridge", "lizard", "crab"]
 
 static var _sprites := {}
 
@@ -53,6 +53,8 @@ static func draw_entity(ci: CanvasItem, hz: Dictionary, len_px: float, T: float,
 			_beast(ci, cl, L, T, dir, t)
 		"ants":
 			_ant(ci, cl, L, T, dir, t)
+		"crab":
+			_crab(ci, cl, L, T, dir, t)
 		"soldier_ant":
 			_soldier_ant(ci, cl, L, T, dir, t)
 		"roll_log":
@@ -757,6 +759,9 @@ static func _faller(ci: CanvasItem, hz: Dictionary, cl: Dictionary, T: float, st
 # ------------------------------------------------------------------ tiles
 
 static func draw_tile(ci: CanvasItem, hz: Dictionary, T: float, t: float, salt: int) -> void:
+	if String(hz.get("art", {}).get("painter", "")) == "falls":
+		_falls(ci, hz.get("art", {}).get("colors", {}), T, t, salt)
+		return
 	if Draw.detail > 0 and Draw.outline == 0.0:
 		Draw.begin_outline(maxf(1.0, T * 0.022))
 		draw_tile(ci, hz, T, t, salt)
@@ -785,6 +790,17 @@ static func draw_tile(ci: CanvasItem, hz: Dictionary, T: float, t: float, salt: 
 				inner.append(center + (p - center) * 0.82)
 			Draw.poly(ci, inner, c(cl, "body"))
 			Draw.ellipse(ci, center + Vector2(0, T * 0.06), T * 0.25, T * 0.18, c(cl, "body").darkened(0.4))
+		"boulders":
+			var rng2 := RandomNumberGenerator.new()
+			rng2.seed = salt * 7 + 3
+			Draw.shadow(ci, center + Vector2(4, T * 0.16), T * 0.46, T * 0.22, 0.28)
+			for i in 3:
+				var bp := center + Vector2((i - 1) * T * 0.24 + rng2.randf_range(-3, 3), (1 - i % 2) * T * 0.1 - T * 0.04)
+				var r := T * (0.24 if i == 1 else 0.19) * rng2.randf_range(0.9, 1.1)
+				Draw.shaded(ci, bp, r, r * 0.82, c(cl, "body"))
+				Draw.ellipse(ci, bp + Vector2(-r * 0.15, -r * 0.42), r * 0.62, r * 0.3, c(cl, "moss"))
+				if Draw.detail > 1:
+					Draw.line(ci, bp + Vector2(r * 0.2, -r * 0.1), bp + Vector2(r * 0.5, r * 0.3), c(cl, "dark"), 1.5, true)
 		"roots":
 			for i in 5:
 				var a3 := i * 1.3 + salt
@@ -803,6 +819,112 @@ static func draw_tile(ci: CanvasItem, hz: Dictionary, T: float, t: float, salt: 
 
 
 # ------------------------------------------------------------------ lane effects
+
+## A tile of a waterfall ledge: the river pouring over the lip (streaks
+## running down), foam and spray where it lands, the pool below.
+static func _falls(ci: CanvasItem, cl: Dictionary, T: float, t: float, salt: int) -> void:
+	var water := c(cl, "water", "#cdeeff")
+	var pool := c(cl, "pool", "#2a6a8a")
+	Draw.rect(ci, Rect2(0, -T * 0.5, T, T), pool.lightened(0.18))
+	Draw.rect(ci, Rect2(0, -T * 0.5, T, T * 0.55), water.darkened(0.12))
+	Draw.rect(ci, Rect2(0, -T * 0.5, T, T * 0.1), water.lightened(0.3))
+	var n := 6 if Draw.detail > 0 else 3
+	for i in n:
+		var x := (i + 0.5) * T / n + sin(float(i * 7 + salt)) * T * 0.04
+		var y := fposmod(t * T * 1.4 + float(i * 37 + salt * 13) * 0.61, T * 0.8) - T * 0.45
+		Draw.line(ci, Vector2(x, y), Vector2(x, minf(y + T * 0.28, T * 0.32)), Color(1, 1, 1, 0.75), 3.0 if Draw.detail > 0 else 2.0, true)
+	for i in 4:
+		var fx := (i + 0.5) * T / 4.0
+		Draw.ellipse(ci, Vector2(fx, T * 0.32 + sin(t * 5.0 + i + salt) * 2.0), T * 0.15, T * 0.07, Color(c(cl, "foam", "#ffffff"), 0.9))
+	Draw.ellipse(ci, Vector2(T * 0.5, T * 0.22), T * 0.55, T * 0.16, Color(1, 1, 1, 0.14 + 0.06 * sin(t * 2.0 + salt)))
+
+
+## A land crab scuttling sideways: wide shell, two raised claws, eight legs.
+static func _crab(ci: CanvasItem, cl: Dictionary, L: float, T: float, dir: int, t: float) -> void:
+	var b := c(cl, "body", "#c8402a")
+	var claw := c(cl, "claw", "#e86a3a")
+	var leg := c(cl, "legs", "#8a2a1a")
+	var cx := L * 0.5
+	var sc := sin(t * 18.0 + L * 3.0)
+	Draw.shadow(ci, Vector2(cx + 3, 6), L * 0.42, T * 0.2, 0.22)
+	for side in [-1.0, 1.0]:
+		for k in 4:
+			var lx := cx + (k - 1.5) * L * 0.16
+			var lift := sc * (1 if k % 2 == 0 else -1) * 2.0
+			var knee := Vector2(lx + side * 0.0, side * T * 0.2)
+			Draw.line(ci, Vector2(lx, side * T * 0.08), knee + Vector2(lift, 0), leg, 3, true)
+			Draw.line(ci, knee + Vector2(lift, 0), knee + Vector2(lift + (k - 1.5) * 3.0, side * T * 0.08), leg, 2.5, true)
+	Draw.shaded(ci, Vector2(cx, 0), L * 0.36, T * 0.17, b)
+	if Draw.detail > 0:
+		Draw.ellipse(ci, Vector2(cx - L * 0.06, -T * 0.05), L * 0.18, T * 0.05, b.lightened(0.25))
+	var front := cx + dir * L * 0.32
+	for side in [-1.0, 1.0]:
+		var cp := Vector2(front + dir * T * 0.08, side * T * 0.12)
+		Draw.line(ci, Vector2(front, side * T * 0.06), cp, claw.darkened(0.2), 3.5, true)
+		Draw.ellipse(ci, cp + Vector2(dir * T * 0.06, 0), T * 0.09, T * 0.06, claw)
+		Draw.line(ci, cp + Vector2(dir * T * 0.1, -side * 1.0), cp + Vector2(dir * T * 0.16, side * (2.0 + sc * 2.0)), claw.darkened(0.3), 2, true)
+		_dot_eye(ci, Vector2(front - dir * T * 0.02, side * T * 0.05), T * 0.025)
+
+
+## Harmless wildlife on the banks: coquí frogs, hermit crabs, butterflies,
+## perched birds, lizards and beetles. Purely for looks; kind/colour come
+## from the map's "trail_critters".
+static func draw_critter(ci: CanvasItem, kind: String, col: Color, T: float, t: float, salt: int) -> void:
+	var ph := float(salt % 97) * 0.37
+	match kind:
+		"frog":
+			var hop := maxf(0.0, sin(t * 1.3 + ph)) ** 6
+			var p := Vector2(sin(t * 0.21 + ph) * T * 0.08, -hop * T * 0.12)
+			Draw.shadow(ci, Vector2(0, T * 0.05), T * 0.08, T * 0.03, 0.2)
+			for s in [-1.0, 1.0]:
+				Draw.ellipse(ci, p + Vector2(s * T * 0.06, T * 0.03), T * 0.04, T * 0.025, col.darkened(0.2))
+			Draw.ellipse(ci, p, T * 0.075, T * 0.06, col)
+			for s in [-1.0, 1.0]:
+				Draw.ellipse(ci, p + Vector2(s * T * 0.035, -T * 0.05), T * 0.022, T * 0.022, Color(0.1, 0.08, 0.05))
+		"crab":
+			var sx := sin(t * 0.9 + ph) * T * 0.18
+			var p2 := Vector2(sx, 0)
+			for s in [-1.0, 1.0]:
+				for k in 3:
+					Draw.line(ci, p2 + Vector2((k - 1) * 3.0, 0), p2 + Vector2((k - 1) * 5.0, s * T * 0.07), col.darkened(0.3), 1.5, true)
+			Draw.ellipse(ci, p2, T * 0.07, T * 0.05, col)
+			Draw.ellipse(ci, p2 + Vector2(-T * 0.06, -T * 0.06), T * 0.03, T * 0.025, col.lightened(0.15))
+			Draw.ellipse(ci, p2 + Vector2(T * 0.06, -T * 0.06), T * 0.03, T * 0.025, col.lightened(0.15))
+			if col.r < 0.7:
+				Draw.ellipse(ci, p2 + Vector2(0, -T * 0.02), T * 0.055, T * 0.05, Color("d8c8a0"))   # a hermit crab's shell
+		"butterfly":
+			var c0 := Vector2(sin(t * 0.7 + ph) * T * 0.3, cos(t * 0.9 + ph * 1.3) * T * 0.18 - T * 0.15)
+			var flap := absf(sin(t * 12.0 + ph))
+			for s in [-1.0, 1.0]:
+				Draw.ellipse(ci, c0 + Vector2(s * T * 0.05 * (0.3 + flap), -T * 0.01), T * 0.05 * (0.3 + flap), T * 0.045, col)
+				Draw.ellipse(ci, c0 + Vector2(s * T * 0.035 * (0.3 + flap), T * 0.035), T * 0.03 * (0.3 + flap), T * 0.03, col.darkened(0.25))
+			Draw.line(ci, c0 + Vector2(0, -T * 0.04), c0 + Vector2(0, T * 0.05), Color(0.1, 0.08, 0.06), 2, true)
+		"bird":
+			var bob := sin(t * 3.0 + ph) * 1.5
+			var flap2 := sin(t * 0.5 + ph) > 0.92
+			Draw.shadow(ci, Vector2(0, T * 0.08), T * 0.08, T * 0.03, 0.2)
+			if flap2:
+				for s in [-1.0, 1.0]:
+					Draw.ellipse(ci, Vector2(s * T * 0.1, -T * 0.03), T * 0.09, T * 0.03, col.darkened(0.15), s * 0.3)
+			Draw.ellipse(ci, Vector2(0, bob), T * 0.06, T * 0.09, col)
+			Draw.ellipse(ci, Vector2(0, -T * 0.08 + bob), T * 0.045, T * 0.045, col.lightened(0.1))
+			Draw.ellipse(ci, Vector2(T * 0.04, -T * 0.08 + bob), T * 0.025, T * 0.015, Color("f0c040"))
+			Draw.ellipse(ci, Vector2(0, T * 0.1 + bob), T * 0.03, T * 0.05, col.darkened(0.3))
+		"lizard":
+			var dart := fposmod(t * 0.4 + ph, 1.0)
+			var lx := (T * 0.2 if dart > 0.5 else -T * 0.2) * smoothstep(0.0, 0.08, absf(dart - 0.5) - 0.0)
+			var p3 := Vector2(lx, 0)
+			Draw.line(ci, p3 + Vector2(-T * 0.08, 0), p3 + Vector2(-T * 0.2, sin(t * 4.0 + ph) * 3.0), col.darkened(0.2), 2.5, true)
+			Draw.ellipse(ci, p3, T * 0.09, T * 0.03, col)
+			Draw.ellipse(ci, p3 + Vector2(T * 0.09, 0), T * 0.035, T * 0.025, col.lightened(0.1))
+			for s in [-1.0, 1.0]:
+				Draw.line(ci, p3 + Vector2(T * 0.03, 0), p3 + Vector2(T * 0.05, s * T * 0.05), col.darkened(0.3), 1.5, true)
+				Draw.line(ci, p3 + Vector2(-T * 0.04, 0), p3 + Vector2(-T * 0.06, s * T * 0.05), col.darkened(0.3), 1.5, true)
+		_:
+			var p4 := Vector2(fposmod(t * T * 0.05 + ph * 10.0, T * 0.6) - T * 0.3, 0)
+			Draw.ellipse(ci, p4, T * 0.04, T * 0.03, col)
+			Draw.ellipse(ci, p4 + Vector2(-T * 0.01, -T * 0.01), T * 0.015, T * 0.01, col.lightened(0.5))
+
 
 static func draw_effect(ci: CanvasItem, hz: Dictionary, width: float, T: float, state: String, prog: float, t: float) -> void:
 	var cl: Dictionary = hz.get("art", {}).get("colors", {})
