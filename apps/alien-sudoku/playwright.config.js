@@ -9,7 +9,8 @@ export default defineConfig({
     baseURL: 'http://localhost:4174/',
     trace: 'off',
     // Set PW_CHROMIUM to use a preinstalled Chromium instead of `npx playwright install`.
-    launchOptions: process.env.PW_CHROMIUM ? { executablePath: process.env.PW_CHROMIUM } : {},
+    // Strict autoplay, as on phones: sound may only start during a real tap or click.
+    launchOptions: { args: ['--autoplay-policy=user-gesture-required'], ...(process.env.PW_CHROMIUM ? { executablePath: process.env.PW_CHROMIUM } : {}) },
   },
   webServer: {
     command: 'npx vite build && npx vite preview --port 4174 --strictPort',

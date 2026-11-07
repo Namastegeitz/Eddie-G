@@ -25,7 +25,7 @@ import './styles/encounter.css';
 import { initStorage } from './core/storage.js';
 import { initProfile, settings } from './core/profile.js';
 import { on, emit } from './core/events.js';
-import { configureAudio, unlockAudio, setAudioSuspended, sfx, music } from './audio/audio.js';
+import { configureAudio, unlockAudio, setAudioSuspended, sfx, music, audioStatus } from './audio/audio.js';
 import { initPlatform, hideSplash, isNative, isElectron, setHapticsEnabled } from './platform/native.js';
 import { initAds } from './platform/ads.js';
 import { initBackground } from './ui/background.js';
@@ -83,12 +83,14 @@ async function boot() {
     if (e.key === 'Escape') { handleBack(); e.preventDefault(); }
   });
 
-  // Audio can only start after a user gesture.
+  // Audio can only start during a user gesture. On touch screens that is the finger
+  // lifting (pointerup/touchend/click), not touching down, so listen to all of them.
   const unlock = () => unlockAudio();
-  window.addEventListener('pointerdown', unlock, { capture: true });
-  window.addEventListener('keydown', unlock, { capture: true });
+  for (const type of ['pointerdown', 'pointerup', 'touchend', 'click', 'keydown']) {
+    window.addEventListener(type, unlock, { capture: true, passive: true });
+  }
 
-  if (location.hash.includes('e2e')) window.__alienMusic = music;
+  if (location.hash.includes('e2e')) { window.__alienMusic = music; window.__alienAudioStatus = audioStatus; }
   reset('menu');
   document.getElementById('boot-splash')?.classList.add('gone');
   setTimeout(() => document.getElementById('boot-splash')?.remove(), 600);

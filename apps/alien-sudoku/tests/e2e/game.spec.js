@@ -37,6 +37,8 @@ test('quick play: solve a puzzle, see the win card, stats update', async ({ page
   await expect(page.locator('.win-modal')).toBeVisible({ timeout: 5000 });
   await expect(page.locator('.win-modal .modal-title')).toHaveText(/decoded/i);
   await expect(page.locator('.win-modal .ach-row')).toContainText(['First Contact']);
+  // The Easy theme song plays through the whole puzzle, win card included.
+  expect(await page.evaluate(() => ({ song: window.__alienMusic.current, audio: window.__alienAudioStatus() }))).toEqual({ song: 'lofi', audio: 'running' });
   await page.getByRole('button', { name: 'Menu', exact: true }).click();
   await expect(page.locator('.menu-continue')).toHaveCount(0);
   await page.locator('.icon-tile', { hasText: 'Stats' }).click();
@@ -122,6 +124,23 @@ test('campaign: level 1 win unlocks level 2 and Next works', async ({ page }) =>
   await expect(page.locator('.win-modal .big-star.on')).toHaveCount(3);
   await page.getByRole('button', { name: 'Next transmission', exact: true }).click();
   await expect(page.locator('.topbar-h1')).toHaveText('Transmission 2 / 9');
+});
+
+test('phone: the first tap switches sound on and the tier song keeps playing', async ({ page, isMobile }) => {
+  test.skip(!isMobile, 'touch only');
+  // The browser runs with strict autoplay rules (playwright.config), like an iPhone:
+  // only a real tap may start sound.
+  const errors = errorsOf(page);
+  await openMenu(page);
+  const state = () => page.evaluate(() => ({ song: window.__alienMusic.current, audio: window.__alienAudioStatus() }));
+  await page.tap('.menu-quick');
+  await expect.poll(state).toEqual({ song: 'lofi', audio: 'running' });
+  await page.tap('.diff-option.diff-alien');
+  await expect(page.locator('.screen-play')).toBeVisible();
+  await expect.poll(state).toEqual({ song: 'wardrums', audio: 'running' });
+  await page.waitForTimeout(10000); // longer than a song section: it loops on
+  expect(await state()).toEqual({ song: 'wardrums', audio: 'running' });
+  expect(errors).toEqual([]);
 });
 
 test('settings: every theme song plays from the song list', async ({ page }) => {

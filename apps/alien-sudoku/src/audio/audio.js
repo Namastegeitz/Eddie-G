@@ -44,42 +44,59 @@ function ensureCtx() {
 
 /**
  * iPhone silent switch: by default iOS mutes web audio while the ringer is off.
- * Asking for a "playback" audio session (Safari 17+), or on older iOS keeping a
- * silent <audio> element playing, lets game sound play like any media app.
+ * Asking for a "playback" audio session (Safari 17+), and keeping a silent <audio>
+ * element playing, lets game sound play like any media app. Browsers only allow
+ * play() during a real tap, so a refused attempt is retried on the next one.
  */
-let sessionUnlocked = false;
+let silentEl = null;
+let sessionState = 'idle'; // idle -> trying -> playing
 export function enablePlaybackSession() {
-  if (sessionUnlocked) return;
-  sessionUnlocked = true;
-  // Ask for a media session where supported, and also keep a silent media element
-  // playing: inside embedded web views the session request alone may not apply.
-  try { if (navigator.audioSession) navigator.audioSession.type = 'playback'; } catch { /* ignore */ }
+  try { if (navigator.audioSession && navigator.audioSession.type !== 'playback') navigator.audioSession.type = 'playback'; } catch { /* ignore */ }
+  if (sessionState !== 'idle') return;
   try {
-    const rate = 8000;
-    const samples = rate / 2;
-    const buf = new ArrayBuffer(44 + samples);
-    const v = new DataView(buf);
-    const w = (o, str) => { for (let i = 0; i < str.length; i++) v.setUint8(o + i, str.charCodeAt(i)); };
-    w(0, 'RIFF'); v.setUint32(4, 36 + samples, true); w(8, 'WAVEfmt '); v.setUint32(16, 16, true);
-    v.setUint16(20, 1, true); v.setUint16(22, 1, true); v.setUint32(24, rate, true); v.setUint32(28, rate, true);
-    v.setUint16(32, 1, true); v.setUint16(34, 8, true); w(36, 'data'); v.setUint32(40, samples, true);
-    for (let i = 0; i < samples; i++) v.setUint8(44 + i, 128);
-    const el = document.createElement('audio');
-    el.src = URL.createObjectURL(new Blob([buf], { type: 'audio/wav' }));
-    el.loop = true;
-    el.setAttribute('playsinline', '');
-    el.setAttribute('aria-hidden', 'true');
-    el.volume = 0.01;
-    el.play().catch(() => {});
-  } catch { /* ignore */ }
+    if (!silentEl) {
+      const rate = 8000;
+      const samples = rate / 2;
+      const buf = new ArrayBuffer(44 + samples);
+      const v = new DataView(buf);
+      const w = (o, str) => { for (let i = 0; i < str.length; i++) v.setUint8(o + i, str.charCodeAt(i)); };
+      w(0, 'RIFF'); v.setUint32(4, 36 + samples, true); w(8, 'WAVEfmt '); v.setUint32(16, 16, true);
+      v.setUint16(20, 1, true); v.setUint16(22, 1, true); v.setUint32(24, rate, true); v.setUint32(28, rate, true);
+      v.setUint16(32, 1, true); v.setUint16(34, 8, true); w(36, 'data'); v.setUint32(40, samples, true);
+      for (let i = 0; i < samples; i++) v.setUint8(44 + i, 128);
+      silentEl = document.createElement('audio');
+      silentEl.src = URL.createObjectURL(new Blob([buf], { type: 'audio/wav' }));
+      silentEl.loop = true;
+      silentEl.setAttribute('playsinline', '');
+      silentEl.setAttribute('aria-hidden', 'true');
+      silentEl.volume = 0.01;
+    }
+    sessionState = 'trying';
+    const p = silentEl.play();
+    if (p && p.then) p.then(() => { sessionState = 'playing'; }, () => { sessionState = 'idle'; });
+    else sessionState = 'playing';
+  } catch { sessionState = 'idle'; }
 }
 
-/** Call from the first pointer/key event. Safe to call repeatedly. */
+/**
+ * Call from every tap and key press (main.js listens on pointerdown, pointerup,
+ * touchend, click and keydown). On phones only the finger lifting counts as a tap
+ * that may start sound, so pointerdown alone is not enough. Safe to call repeatedly.
+ */
 export function unlockAudio() {
   enablePlaybackSession();
   const ctx = ensureCtx();
   if (!ctx) return;
-  if ((ctx.state === 'suspended' || ctx.state === 'interrupted') && !audio.suspendedByApp) ctx.resume().catch(() => {});
+  if ((ctx.state === 'suspended' || ctx.state === 'interrupted') && !audio.suspendedByApp) {
+    ctx.resume().catch(() => {});
+    // Older iOS also needs a sound started inside the tap itself.
+    try {
+      const src = ctx.createBufferSource();
+      src.buffer = ctx.createBuffer(1, 1, 22050);
+      src.connect(ctx.destination);
+      src.start(0);
+    } catch { /* ignore */ }
+  }
   audio.unlocked = true;
   if (audio.musicOn) music.start(); // no-op when the right song is already playing
 }
