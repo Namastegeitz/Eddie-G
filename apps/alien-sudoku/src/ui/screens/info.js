@@ -14,6 +14,7 @@ const DIFF_LABEL = { easy: 'Easy', medium: 'Medium', hard: 'Hard', alien: 'Alien
 // ---------------- Stats ----------------
 export const statsScreen = {
   id: 'stats',
+  keepSong: true,
   banner: true,
   bg: 'space/pillars-green.webp',
   create(params, nav) {
@@ -87,6 +88,7 @@ function statGrid(rows) {
 // ---------------- Achievements ----------------
 export const achievementsScreen = {
   id: 'achievements',
+  keepSong: true,
   banner: true,
   bg: 'space/nebula-pink.webp',
   create(params, nav) {
@@ -112,6 +114,7 @@ export const achievementsScreen = {
 // ---------------- How to play ----------------
 export const howtoScreen = {
   id: 'howto',
+  keepSong: true,
   banner: true,
   bg: 'space/moon-planet.webp',
   create(params, nav) {

@@ -13,6 +13,7 @@ import { closeTopModal, hasOpenModal, closeAllModals } from './modal.js';
 import { applyTheme } from './theme.js';
 import { isEncounterOpen } from './encounter.js';
 import { settings } from '../core/profile.js';
+import { music, MENU_SONG } from '../audio/audio.js';
 
 const registry = new Map();
 const stack = []; // [{ def, params, inst }]
@@ -41,6 +42,9 @@ function show(entry, dir) {
   if (dir) el.classList.add(dir === 'back' ? 'enter-back' : 'enter');
   clear(root).appendChild(el);
   applyTheme((def.theme && def.theme(params || {}, entry.inst)) || settings().symbolSet);
+  // Each screen picks its song; keepSong screens (settings, stats, help) leave the current one playing.
+  const song = def.song ? def.song(params || {}, entry.inst) : def.keepSong ? null : MENU_SONG;
+  if (song) music.play(song);
   setBannerVisible(def.banner !== false);
   const bg = typeof def.bg === 'function' ? def.bg(params || {}, entry.inst) : def.bg;
   if (bg !== undefined) setBackground(bg);

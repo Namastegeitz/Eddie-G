@@ -25,7 +25,7 @@ import './styles/encounter.css';
 import { initStorage } from './core/storage.js';
 import { initProfile, settings } from './core/profile.js';
 import { on, emit } from './core/events.js';
-import { configureAudio, unlockAudio, setAudioSuspended, sfx } from './audio/audio.js';
+import { configureAudio, unlockAudio, setAudioSuspended, sfx, music } from './audio/audio.js';
 import { initPlatform, hideSplash, isNative, isElectron, setHapticsEnabled } from './platform/native.js';
 import { initAds } from './platform/ads.js';
 import { initBackground } from './ui/background.js';
@@ -88,6 +88,7 @@ async function boot() {
   window.addEventListener('pointerdown', unlock, { capture: true });
   window.addEventListener('keydown', unlock, { capture: true });
 
+  if (location.hash.includes('e2e')) window.__alienMusic = music;
   reset('menu');
   document.getElementById('boot-splash')?.classList.add('gone');
   setTimeout(() => document.getElementById('boot-splash')?.remove(), 600);

@@ -162,9 +162,17 @@ export function createMixer(ctx, out, { reverb = 3, decay = 3, dark = 0.6, delay
 
 // ---------- instruments ----------
 // Every instrument is (M, channel, time, ...). Nothing here holds state.
+// During live play a style's notes are queued first and each instrument builds its
+// nodes a moment before it sounds, so a phone never builds a whole segment at once.
+function later(M, t, fn, args) {
+  if (!M.queue || M.flushing) return false;
+  M.queue.push({ t, fn, args });
+  return true;
+}
 
 /** FM bell: music box, celesta, glass, toll bell. */
 export function bell(M, ch, t, freq, { dur = 2.4, vol = 0.12, ratio = 3.5, index = 1.8, modDecay = 0.3, attack = 0.002, detune = 0, bend = 0 } = {}) {
+  if (later(M, t, bell, arguments)) return;
   const { ctx } = M;
   const end = t + dur;
   const car = ctx.createOscillator();
@@ -190,6 +198,7 @@ export function bell(M, ch, t, freq, { dur = 2.4, vol = 0.12, ratio = 3.5, index
 
 /** Struck metal with inharmonic partials and beating pairs: singing bowls, gongs, metallophones. */
 export function struck(M, ch, t, freq, { ratios = [1], amps = [1], decays = [1], beats = [], dur = 3, vol = 0.1, attack = 0.003 } = {}) {
+  if (later(M, t, struck, arguments)) return;
   const { ctx } = M;
   ratios.forEach((r, k) => {
     const d = Math.max(attack + 0.05, dur * (decays[k] ?? decays[decays.length - 1]));
@@ -235,6 +244,7 @@ function ksBuffer(ctx, freq, dur, bright, damp) {
   return buf;
 }
 export function pluck(M, ch, t, freq, { dur = 1.6, vol = 0.3, bright = 0.6, damp = 0.994, cutoff = 0, release = 0 } = {}) {
+  if (later(M, t, pluck, arguments)) return;
   const { ctx } = M;
   const src = ctx.createBufferSource();
   src.buffer = ksBuffer(ctx, freq, dur, bright, damp);
@@ -254,6 +264,7 @@ export function synth(M, ch, t, freq, dur, {
   type = 'sawtooth', voices = 1, spread = 8, vol = 0.08, attack = 0.005, decay = 0.2, sustain = 0.6, release = 0.15,
   cutoff = 1200, cutoffPeak, filterDecay = 0.2, q = 1, glideFrom,
 } = {}) {
+  if (later(M, t, synth, arguments)) return;
   const { ctx } = M;
   const end = t + Math.max(dur, attack);
   const g = ctx.createGain();
@@ -286,6 +297,7 @@ export function synth(M, ch, t, freq, dur, {
 export function pad(M, ch, t, freqs, dur, {
   type = 'sawtooth', voices = 2, spread = 10, vol = 0.05, attack = 1.5, release = 2, cutoff = 1000, cutoffEnd, q = 0.5, bend = 0,
 } = {}) {
+  if (later(M, t, pad, arguments)) return;
   const { ctx } = M;
   const hold = t + Math.max(attack, dur);
   const g = ctx.createGain();
@@ -327,6 +339,7 @@ const VOWEL = {
   e: [[400, 1], [1700, 0.3], [2600, 0.12]],
 };
 export function choir(M, ch, t, freqs, dur, { vowel = 'a', vol = 0.06, attack = 1.6, release = 2.2, vibRate = 5.2, vibCents = 12, voices = 3, spread = 11 } = {}) {
+  if (later(M, t, choir, arguments)) return;
   const { ctx } = M;
   const hold = t + Math.max(attack, dur);
   const end = hold + release;
@@ -379,6 +392,7 @@ export function glideLine(M, ch, t, seq, B, {
   wave = 'sine', vol = 0.1, vibRate = 5.8, vibCents = 25, vibDelay = 0.25, glide = 0.07, attack = 0.08, release = 0.25,
   cutoff = 5000, breath = 0, octave = 0,
 } = {}) {
+  if (later(M, t, glideLine, arguments)) return;
   const { ctx } = M;
   const o = ctx.createOscillator();
   if (wave === 'theremin') o.setPeriodicWave(ctx.createPeriodicWave(new Float32Array([0, 0, 0, 0, 0]), new Float32Array([0, 1, 0.3, 0.12, 0.05])));
@@ -446,6 +460,7 @@ function noiseSrc(M, t, dur) {
 }
 /** Filtered noise burst: hats, shakers, teks, brushes, scrapes, whispers. */
 export function noiseHit(M, ch, t, { type = 'bandpass', freq = 2000, freqEnd, q = 1, attack = 0.001, decay = 0.1, vol = 0.2 } = {}) {
+  if (later(M, t, noiseHit, arguments)) return;
   const { ctx } = M;
   const f = ctx.createBiquadFilter();
   f.type = type;
@@ -462,6 +477,7 @@ export function noiseHit(M, ch, t, { type = 'bandpass', freq = 2000, freqEnd, q 
 }
 /** Noise that swells in and out: wind, breath, rumble, air. */
 export function swell(M, ch, t, dur, { type = 'bandpass', from = 400, to = 1200, q = 3, vol = 0.05 } = {}) {
+  if (later(M, t, swell, arguments)) return;
   const { ctx } = M;
   const f = ctx.createBiquadFilter();
   f.type = type;
@@ -477,6 +493,7 @@ export function swell(M, ch, t, dur, { type = 'bandpass', from = 400, to = 1200,
   g.connect(ch);
 }
 export function kick(M, ch, t, { vol = 0.8, from = 150, to = 48, pitchTime = 0.07, decay = 0.45, click = 0.15 } = {}) {
+  if (later(M, t, kick, arguments)) return;
   const { ctx } = M;
   const o = ctx.createOscillator();
   o.frequency.setValueAtTime(from, t);
@@ -565,9 +582,20 @@ const SYNTHWAVE = [
   { bass: 'C2', arp: 'G3 C4 E4 G4' }, { bass: 'G1', arp: 'G3 B3 D4 G4' },
 ];
 const SYNTHWAVE_LEAD = line('E5:1.5 D5:.5 C5:1 B4:1 | A4:2 C5:1 D5:1 | E5:1.5 G5:.5 E5:1 D5:1 | D5:3 B4:1');
+const SYNTHWAVE_LEAD_B = line('A5:1 G5:.5 E5:.5 G5:2 | F5:1 E5:.5 C5:.5 A4:2 | G5:1 E5:.5 C5:.5 E5:1 G5:1 | B5:2 A5:1 G5:1');
+
+const LOFI = [
+  { bass: 'F2', keys: 'A3 C4 E4 G4' }, { bass: 'E2', keys: 'G3 B3 D4 F#4' },
+  { bass: 'D2', keys: 'F3 A3 C4 E4' }, { bass: 'C2', keys: 'E3 G3 B3 D4' },
+];
+const LOFI_MELODY = [
+  line('A5:1.5 G5:.5 E5:1 C5:1 | G5:2 E5:1 D5:1 | F5:1.5 E5:.5 D5:1 A4:1 | E5:3 r:1'),
+  line('C6:1 A5:1 G5:2 | B5:1.5 G5:.5 E5:2 | A5:1 F5:1 D5:1 E5:1 | G5:4'),
+];
 const ARP_ORDER = [0, 1, 2, 3, 2, 1];
 
 const OUD_LINE = line('D4:.5 Eb4:.5 F#4:1 G4:.5 A4:.5 Bb4:.5 A4:.5 | G4:1 F#4:.5 Eb4:.5 D4:2 | A4:.5 Bb4:.5 C5:1 Bb4:.5 A4:.5 G4:.5 A4:.5 | Bb4:.5 A4:.5 G4:.5 F#4:.5 Eb4:.5 F#4:.5 D4:1');
+const OUD_LINE_2 = line('A4:.5 Bb4:.5 A4:.5 G4:.5 F#4:1 G4:1 | A4:.5 C5:.5 Bb4:.5 A4:.5 G4:2 | F#4:.5 G4:.5 A4:.5 Bb4:.5 C5:.5 Bb4:.5 A4:1 | G4:.5 F#4:.5 Eb4:.5 F#4:.5 D4:2');
 const NEY_LINE = line('A5:2 Bb5:1 A5:1 | G5:2 F#5:2 | D6:2 C6:1 Bb5:1 | A5:3 r:1');
 const OUD_PEDAL = notes('D3 A3 D4 A3 Eb4 D4 A3 F#3');
 const HIJAZ = notes('D4 Eb4 F#4 G4 A4 Bb4 C5 D5');
@@ -580,6 +608,7 @@ const WAR_BARS = [
 ];
 /** The horn call that gathers the crew; later the whole fleet plays it together. */
 const WAR_CALL = line('A3:1.5 D4:.5 A4:2 | Bb4:1 A4:1 F4:2 | C5:1.5 A4:.5 F4:2 | G4:1 E4:1 C4:1 E4:1');
+const WAR_CALL_2 = line('D5:2 C5:1 A4:1 | Bb4:1.5 C5:.5 D5:2 | C5:2 A4:1 F4:1 | G4:1 A4:1 C5:2');
 const WAR_OSTINATO = [0, 12, 0, 7, 0, 12, 0, 10];
 const WAR_FLOW = [0, 1, 2, 3, 4, 5, 6, 7, 7, 6, 5, 4, 3, 2, 1, 0];
 
@@ -811,16 +840,17 @@ export const STYLES = [
         pad(M, c.pad, tb, tones.map((m) => hz(m + 12)), 4 * B, { type: 'sawtooth', voices: 2, spread: 9, vol: 0.045, attack: 0.3, release: 0.8, cutoff: 1600 });
         for (let j = 0; j < 10; j++) noiseHit(M, c.vinyl, tb + r() * 4 * B, { type: 'highpass', freq: 2500, decay: 0.004 + r() * 0.006, vol: 0.03 + r() * 0.05 });
         if (i === 0) return; // the intro is pads, arps and crackle only
+        const breakdown = i % 8 === 4; // every so often the beat drops out for a bar of air
         const root = midi(cd.bass);
         const ks = HIPHOP_KICKS[k % 2];
-        ks.forEach((b, j) => {
+        if (!breakdown) ks.forEach((b, j) => {
           const tk = tb + swing(b) * B;
           kick(M, c.drums, tk, { vol: 0.9, from: 160, to: 50, decay: 0.3, click: 0.2 });
           const len = (j + 1 < ks.length ? ks[j + 1] : 4) - b;
           const slide = k % 2 === 1 && j === 1;
           synth(M, c.bass, tk, hz(root), len * B, { type: 'sine', vol: 0.4, attack: 0.004, decay: 0.9, sustain: 0.35, release: 0.12, cutoff: 1200, glideFrom: slide ? hz(root + 7) : undefined });
         });
-        for (const b of [1, 3]) {
+        for (const b of breakdown ? [] : [1, 3]) {
           snare(M, c.snare, tb + b * B, { vol: 0.3, tone: 180, bright: 1500, decay: 0.18 });
           [0, 0.011, 0.022].forEach((o, n) => noiseHit(M, c.snare, tb + b * B + o, { freq: 1300, q: 1, decay: n === 2 ? 0.14 : 0.02, vol: 0.2 }));
         }
@@ -834,7 +864,10 @@ export const STYLES = [
         const stabAt = k % 2 ? 1.5 : 2.75;
         tones.forEach((m) => synth(M, c.stab, tb + swing(stabAt) * B, hz(m + 12), 0.2 * B, { voices: 2, spread: 10, vol: 0.035, cutoff: 1200, cutoffPeak: 4000, filterDecay: 0.12, decay: 0.12, sustain: 0.2, release: 0.1 }));
       });
-      if (i % 4 >= 2) glideLine(M, c.lead, t, SYNTHWAVE_LEAD, B, { wave: 'triangle', octave: 1, vol: 0.075, cutoff: 4000, vibRate: 6, vibCents: 30, vibDelay: 0.15, glide: 0.15, attack: 0.03, release: 0.4 });
+      // Sections repeat every 8 segments: verse, verse, lead A, lead A, breakdown, verse, lead B, lead B.
+      const part = i % 8;
+      const lead = part === 2 || part === 3 ? SYNTHWAVE_LEAD : part >= 6 ? SYNTHWAVE_LEAD_B : null;
+      if (lead) glideLine(M, c.lead, t, lead, B, { wave: 'triangle', octave: 1, vol: 0.075, cutoff: 4000, vibRate: 6, vibCents: 30, vibDelay: 0.15, glide: 0.15, attack: 0.03, release: 0.4 });
     },
   },
   {
@@ -857,16 +890,20 @@ export const STYLES = [
       pad(M, c.drone, t, notes('D2 A2 D3').map(hz), 16 * B + 1, { type: 'sawtooth', voices: 2, spread: 6, vol: 0.07, attack: 2, release: 2, cutoff: 450 });
       struck(M, c.zill, t, 2650, { ...ZILL, dur: 2.5, vol: 0.035 });
       struck(M, c.zill, t + B / 2, 2680, { ...ZILL, dur: 2, vol: 0.025 });
+      // Sections repeat every 6 segments: oud, ney, oud, ney, oud's second line, a quiet ney breakdown.
+      const part = i % 6;
+      const quiet = part === 5;
       for (let k = 0; k < 4; k++) {
         const tb = t + k * 4 * B;
+        for (let j = 0; j < 8; j++) noiseHit(M, c.riq, tb + (j * B) / 2, { type: 'highpass', freq: 6000, decay: 0.05, vol: (j % 2 ? 0.018 : 0.035) * (quiet ? 0.6 : 1) });
+        if (quiet) continue;
         for (const b of [0, 2]) kick(M, c.dum, tb + b * B, { vol: 0.5, from: 140, to: 85, decay: 0.35, click: 0.05 });
         const teks = k === 3 ? [0.5, 1.5, 3, 3.25, 3.5, 3.75] : [0.5, 1.5, 3];
         for (const b of teks) noiseHit(M, c.drum, tb + b * B, { freq: 3300, q: 1.5, decay: 0.06, vol: 0.16 });
         for (const b of [2.5, 3.5]) if (k !== 3) noiseHit(M, c.drum, tb + b * B, { freq: 3000, q: 1.5, decay: 0.04, vol: 0.06 });
-        for (let j = 0; j < 8; j++) noiseHit(M, c.riq, tb + (j * B) / 2, { type: 'highpass', freq: 6000, decay: 0.05, vol: j % 2 ? 0.018 : 0.035 });
       }
-      if (i % 2 === 0) {
-        play(OUD_LINE, t, B, (m, tn, d, beats) => {
+      if (part % 2 === 0) {
+        play(part === 4 ? OUD_LINE_2 : OUD_LINE, t, B, (m, tn, d, beats) => {
           if (r() < 0.25 && beats >= 0.5) {
             const up = HIJAZ.find((x) => x > m) ?? m + 1;
             pluck(M, c.oud, tn - 0.05, hz(up), { dur: 0.3, vol: 0.18, bright: 0.65, damp: 0.99 });
@@ -876,7 +913,7 @@ export const STYLES = [
         });
       } else {
         glideLine(M, c.ney, t, NEY_LINE, B, { wave: 'triangle', vol: 0.1, breath: 0.35, vibRate: 5, vibCents: 14, vibDelay: 0.3, glide: 0.08, attack: 0.15, release: 0.4, cutoff: 2500 });
-        for (let k = 0; k < 4; k++) {
+        if (!quiet) for (let k = 0; k < 4; k++) {
           OUD_PEDAL.forEach((m, j) => pluck(M, c.oud, t + (k * 4 + j / 2) * B, hz(k === 3 && j === 7 ? midi('D3') : m), { dur: 0.9, vol: j % 2 ? 0.16 : 0.24, bright: 0.6, damp: 0.99 }));
         }
       }
@@ -943,9 +980,13 @@ export const STYLES = [
         if (lvl === 1) choir(M, c.choir, tb, power, 4 * B, { vowel: 'u', vol: 0.06, attack: 1.5, release: 1 });
         if (lvl >= 2) choir(M, c.choir, tb, lvl >= 3 ? [...power, power[0] * 2] : power, 4 * B, { vowel: lvl >= 3 ? 'a' : 'o', vol: 0.09, attack: 0.3, release: 0.8 });
       });
-      if (i >= 4 && i % 2 === 1) return; // the fleet breathes: rhythm and strings only
-      glideLine(M, c.horn, t, WAR_CALL, B, { wave: 'sawtooth', vol: lvl === 0 ? 0.07 : 0.08, cutoff: lvl === 0 ? 1100 : 1400 + lvl * 200, vibRate: 4, vibCents: 8, vibDelay: 0.4, glide: 0.05, attack: 0.12, release: 0.5 });
-      if (lvl >= 2) glideLine(M, c.high, t, WAR_CALL, B, { wave: 'sawtooth', octave: 1, vol: lvl >= 3 ? 0.05 : 0.035, cutoff: 3000, vibRate: 5.5, vibCents: 10, vibDelay: 0.3, glide: 0.05, attack: 0.08, release: 0.5 });
+      // After the build: call, breather, second theme, call again with everyone.
+      const part = i >= 4 ? i % 4 : -1;
+      if (part === 1) return; // the fleet breathes: rhythm and strings only
+      const theme = part === 2 ? WAR_CALL_2 : WAR_CALL;
+      if (part === 2) choir(M, c.choir, t, [nhz('D4'), nhz('A4')], 16 * B, { vowel: 'a', vol: 0.05, attack: 2, release: 2 });
+      glideLine(M, c.horn, t, theme, B, { wave: 'sawtooth', vol: lvl === 0 ? 0.07 : 0.08, cutoff: lvl === 0 ? 1100 : 1400 + lvl * 200, vibRate: 4, vibCents: 8, vibDelay: 0.4, glide: 0.05, attack: 0.12, release: 0.5 });
+      if (lvl >= 2) glideLine(M, c.high, t, theme, B, { wave: 'sawtooth', octave: 1, vol: lvl >= 3 ? 0.05 : 0.035, cutoff: 3000, vibRate: 5.5, vibCents: 10, vibDelay: 0.3, glide: 0.05, attack: 0.08, release: 0.5 });
     },
   },
   {
@@ -1000,9 +1041,54 @@ export const STYLES = [
       }
     },
   },
+  {
+    id: 'lofi', name: 'Lo-fi Orbit', family: 'Cosmos', tier: 'easy',
+    mood: 'Cozy, warm, head-nodding',
+    blurb: 'The gentle side of Synthwave Odyssey, for the Soft Visitors. Warm electric piano, a soft swung beat, a round bass and music-box star chimes, with a little vinyl crackle.',
+    instruments: 'Electric piano, soft drums, round bass, star chimes, whistle lead, vinyl crackle',
+    bpm: 80, beats: 16, level: 1.4,
+    mix: { reverb: 2.6, decay: 2.8, dark: 0.6, delayBeats: 0.75, feedback: 0.3, delayTone: 2400 },
+    setup: (M) => ({
+      keys: M.channel({ rev: 0.3, dly: 0.08, tremolo: { rate: 4.2, depth: 0.25 } }),
+      bass: M.channel({ rev: 0.05, lowpass: 700 }),
+      drums: M.channel({ rev: 0.1, lowpass: 5000 }),
+      snare: M.channel({ rev: 0.25, lowpass: 4000 }),
+      hats: M.channel({ rev: 0.1, pan: 0.2, lowpass: 7000 }),
+      chime: M.channel({ rev: 0.45, dly: 0.35, pan: -0.15 }),
+      lead: M.channel({ rev: 0.4, dly: 0.25, pan: 0.1 }),
+      vinyl: M.channel({ rev: 0, gain: 0.7 }),
+    }),
+    seg(M, c, t, i, r, B) {
+      const swing = (b) => b + (Math.round(b * 4) % 2 ? 0.06 : 0);
+      // Intro once, then every 8 segments: groove, groove, chimes, chimes, keys alone, groove, whistle, chimes B.
+      const part = i % 8;
+      LOFI.forEach((cd, k) => {
+        const tb = t + k * 4 * B;
+        const keys = notes(cd.keys);
+        for (const at of [0, k % 2 ? 1.75 : 2.5]) {
+          keys.forEach((m, j) => bell(M, c.keys, tb + swing(at) * B + j * 0.018, hz(m), { ratio: 1, index: 1.1, modDecay: 0.15, dur: at ? 1.6 : 2.6, vol: at ? 0.04 : 0.055 }));
+        }
+        for (let j = 0; j < 8; j++) noiseHit(M, c.vinyl, tb + r() * 4 * B, { type: 'highpass', freq: 2500, decay: 0.004 + r() * 0.006, vol: 0.025 + r() * 0.04 });
+        if (i === 0 || part === 4) return;
+        const root = midi(cd.bass);
+        [[0, 1.5, root], [1.5, 1, root + 7], [2.5, 1.5, root + 12]].forEach(([at, len, m]) => synth(M, c.bass, tb + swing(at) * B, hz(m), len * B, { type: 'triangle', vol: 0.22, attack: 0.01, decay: 0.5, sustain: 0.55, release: 0.12, cutoff: 600 }));
+        for (const at of [0, 2.5]) kick(M, c.drums, tb + swing(at) * B, { vol: 0.6, from: 120, to: 48, decay: 0.28, click: 0.05 });
+        for (const at of [1, 3]) snare(M, c.snare, tb + at * B, { vol: 0.16, tone: 170, bright: 2200, decay: 0.16 });
+        for (let j = 0; j < 8; j++) hat(M, c.hats, tb + swing(j / 2) * B, { vol: j % 2 ? 0.018 : 0.03 });
+      });
+      const chime = (seq) => play(seq, t, B, (m, tn, d) => bell(M, c.chime, tn, hz(m), { vol: 0.08, ratio: 4, index: 1.4, dur: Math.max(1.4, d + 0.8), modDecay: 0.25 }));
+      if (part === 2 || part === 3) chime(LOFI_MELODY[0]);
+      if (part === 7) chime(LOFI_MELODY[1]);
+      if (part === 6) glideLine(M, c.lead, t, LOFI_MELODY[0], B, { wave: 'triangle', vol: 0.05, cutoff: 3000, vibRate: 5.5, vibCents: 22, vibDelay: 0.2, glide: 0.14, attack: 0.05, release: 0.5 });
+    },
+  },
 ];
 
 export const STYLE_BY_ID = Object.fromEntries(STYLES.map((s) => [s.id, s]));
+
+/** The theme song for each difficulty tier, and for the menus. */
+export const TIER_SONG = { easy: 'lofi', medium: 'oracle', hard: 'synthwave', alien: 'wardrums' };
+export const MENU_SONG = 'lofi';
 export const segSeconds = (style) => (style.beats * 60) / style.bpm;
 
 function mixerFor(ctx, out, style) {
@@ -1012,7 +1098,8 @@ function mixerFor(ctx, out, style) {
 
 /**
  * Play a style live. Returns { stop(fadeSeconds), output }.
- * The style's notes are scheduled a segment at a time, about a second ahead.
+ * Segments are queued about a second and a half ahead; each note's nodes are built
+ * under half a second before it sounds, spread over 100 ms ticks.
  */
 export function playStyle(ctx, dest, styleOrId, { fadeIn = 1.2, seed = 1 } = {}) {
   const style = typeof styleOrId === 'string' ? STYLE_BY_ID[styleOrId] : styleOrId;
@@ -1021,6 +1108,7 @@ export function playStyle(ctx, dest, styleOrId, { fadeIn = 1.2, seed = 1 } = {})
   out.gain.linearRampToValueAtTime(1, ctx.currentTime + fadeIn);
   out.connect(dest);
   const M = mixerFor(ctx, out, style);
+  M.queue = [];
   const ch = style.setup(M);
   const B = 60 / style.bpm;
   const segDur = segSeconds(style);
@@ -1028,16 +1116,30 @@ export function playStyle(ctx, dest, styleOrId, { fadeIn = 1.2, seed = 1 } = {})
   let i = 0;
   let stopped = false;
   const tick = () => {
-    if (stopped) return;
-    if (next < ctx.currentTime) next = ctx.currentTime + 0.05; // came back from a suspend
-    while (next < ctx.currentTime + 1.2) {
+    if (stopped || ctx.state !== 'running') return;
+    const now = ctx.currentTime;
+    if (next < now) next = now + 0.05; // came back from a suspend
+    let added = false;
+    while (next < now + 1.5) {
       style.seg(M, ch, next, i, mulberry32(hash(style.id) + seed * 7919 + i), B);
       i++;
       next += segDur;
+      added = true;
     }
+    if (added) M.queue.sort((a, b) => a.t - b.t);
+    // Build nodes only for what sounds soon. Notes that slipped into the past are skipped.
+    const horizon = now + (typeof document !== 'undefined' && document.hidden ? 2.5 : 0.4);
+    M.flushing = true;
+    let n = 0;
+    while (n < M.queue.length && M.queue[n].t < horizon) {
+      const ev = M.queue[n++];
+      if (ev.t >= now - 0.05) { try { ev.fn(...ev.args); } catch { /* one bad note never stops the song */ } }
+    }
+    M.flushing = false;
+    if (n) M.queue = M.queue.slice(n);
   };
   tick();
-  const timer = setInterval(tick, 300);
+  const timer = setInterval(tick, 100);
   return {
     output: out,
     style,
@@ -1045,6 +1147,7 @@ export function playStyle(ctx, dest, styleOrId, { fadeIn = 1.2, seed = 1 } = {})
       if (stopped) return;
       stopped = true;
       clearInterval(timer);
+      M.queue = [];
       const now = ctx.currentTime;
       out.gain.cancelScheduledValues(now);
       out.gain.setValueAtTime(out.gain.value, now);

@@ -33,6 +33,8 @@ export function applyTheme(key) {
   set('--cell-user', t.cellUser);
   set('--grid-line', t.line);
   set('--grid-line-strong', t.lineStrong);
+  // Box separators: the theme's own color if it has one, else its strong line made nearly opaque.
+  set('--box-line', t.boxLine || t.lineStrong.replace(/rgba\(([^)]*?),\s*[\d.]+\)$/, 'rgba($1, 0.95)'));
   set('--r-board', t.radius.board);
   set('--r-btn', t.radius.btn);
   set('--font-display', t.font);

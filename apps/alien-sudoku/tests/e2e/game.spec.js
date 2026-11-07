@@ -124,6 +124,24 @@ test('campaign: level 1 win unlocks level 2 and Next works', async ({ page }) =>
   await expect(page.locator('.topbar-h1')).toHaveText('Transmission 2 / 9');
 });
 
+test('settings: every theme song plays from the song list', async ({ page }) => {
+  const errors = errorsOf(page);
+  await openMenu(page);
+  await page.locator('.icon-tile', { hasText: 'Settings' }).click();
+  const playing = () => page.evaluate(() => window.__alienMusic.current);
+  await expect.poll(playing).toBe('lofi');
+  for (const [tier, song] of [['Medium', 'oracle'], ['Hard', 'synthwave'], ['Alien', 'wardrums'], ['Easy', 'lofi']]) {
+    await page.locator('.song-row', { hasText: tier }).click();
+    await expect.poll(playing).toBe(song);
+    await expect(page.locator('.song-row', { hasText: tier })).toHaveAttribute('aria-pressed', 'true');
+  }
+  // Let a song run so its notes are built and played without errors.
+  await page.waitForTimeout(2500);
+  await page.getByRole('button', { name: 'Test sound' }).click();
+  await expect(page.locator('.sound-check .set-note')).toContainText('Sound is');
+  expect(errors).toEqual([]);
+});
+
 test('campaign levels bring the aliens of their difficulty', async ({ page }) => {
   const errors = errorsOf(page);
   await openMenu(page);
@@ -214,9 +232,12 @@ test('each difficulty brings its own aliens and theme, soft to gnarly', async ({
   const errors = errorsOf(page);
   await openMenu(page);
   const expected = { easy: 'softies', medium: 'creatures', hard: 'hostile', alien: 'gnarly' };
+  const songs = { easy: 'lofi', medium: 'oracle', hard: 'synthwave', alien: 'wardrums' };
+  const playing = () => page.evaluate(() => window.__alienMusic.current);
   for (const [diff, lineup] of Object.entries(expected)) {
     await startQuick(page, diff);
     await expect(page.locator('html')).toHaveAttribute('data-theme', lineup);
+    await expect.poll(playing).toBe(songs[diff]);
     const i = await page.evaluate(() => window.__alienSession.board.findIndex((v) => v !== 0));
     await expect(page.locator(`.cell[data-i="${i}"] use`)).toHaveAttribute('href', new RegExp(`^#gl-${lineup}-`));
     await page.locator('.topbar .icon-btn[aria-label="Back to menu"]').click();

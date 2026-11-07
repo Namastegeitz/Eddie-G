@@ -154,6 +154,7 @@ export const THEMES = {
     cellUser: '#ffeef7',
     line: 'rgba(150, 120, 220, 0.22)',
     lineStrong: 'rgba(255, 110, 175, 0.75)',
+    boxLine: 'rgba(84, 52, 150, 0.72)',
     radius: { board: '28px', btn: '22px' },
     glow: 0.35,
     backdrop: 'space/nebula-pink.webp',

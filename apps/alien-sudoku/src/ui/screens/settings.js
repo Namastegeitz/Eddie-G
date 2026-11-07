@@ -6,7 +6,9 @@ import { SECTORS } from '../../data/sectors.js';
 import { THEMES } from '../../data/themes.js';
 import { topbar } from './campaign.js';
 import { confirmModal, toast } from '../modal.js';
-import { sfx } from '../../audio/audio.js';
+import { sfx, music, TIER_SONG, onMusicChange, audioStatus, testSound } from '../../audio/audio.js';
+
+const TIERS = [['easy', 'Easy'], ['medium', 'Medium'], ['hard', 'Hard'], ['alien', 'Alien']];
 import { appVersion, isNative, isElectron } from '../../platform/native.js';
 import { privacyOptionsAvailable, showPrivacyOptions, adsSupported } from '../../platform/ads.js';
 
@@ -19,6 +21,7 @@ function unlockHint(key) {
 
 export const settingsScreen = {
   id: 'settings',
+  keepSong: true,
   banner: true,
   bg: null,
   create(params, nav) {
@@ -69,6 +72,49 @@ export const settingsScreen = {
       [[25, '25 · Explorer'], [10, '10 · Relaxed'], [5, '5 · Focused'], [3, '3 · Classic']].map(([v, label]) =>
         h('option', { value: String(v), selected: (s.tries || 25) === v }, label)));
 
+    // Theme songs: tap one to hear it right here.
+    const musicToggle = toggle('music', 'Theme music', 'A theme song for each difficulty');
+    const songList = h('div', { class: 'song-list', role: 'group', 'aria-label': 'Theme songs' });
+    function renderSongs(playing = music.current) {
+      songList.replaceChildren(...TIERS.map(([tier, label]) => {
+        const id = TIER_SONG[tier];
+        const on = playing === id;
+        return h('button', {
+          class: `song-row${on ? ' on' : ''}`, type: 'button', 'aria-pressed': String(on),
+          'aria-label': `${label} theme: ${music.songName(id)}${on ? ', playing' : ', tap to play'}`,
+          onclick: () => {
+            if (!settings().music) {
+              setSetting('music', true);
+              const box = musicToggle.querySelector('input');
+              if (box) box.checked = true;
+            }
+            music.play(id);
+          },
+        },
+        h('span', { class: 'song-eq', 'aria-hidden': 'true' }, h('i'), h('i'), h('i')),
+        h('span', { class: 'song-text' }, h('small', {}, label), h('span', {}, music.songName(id))),
+        h('span', { class: 'song-state' }, on ? 'Playing' : 'Play'));
+      }));
+    }
+    renderSongs();
+    const offMusic = onMusicChange((id) => renderSongs(id));
+
+    const soundStatus = h('p', { class: 'set-note', 'aria-live': 'polite' });
+    const soundCheck = h('div', { class: 'sound-check' },
+      h('button', {
+        class: 'btn btn-ghost', type: 'button',
+        onclick: () => {
+          testSound();
+          setTimeout(() => {
+            const st = audioStatus();
+            soundStatus.textContent = st === 'running'
+              ? `Sound is on${music.current ? `, now playing ${music.songName(music.current)}` : ''}. If you still hear nothing, turn up the device volume.`
+              : `Sound is ${st}. Tap anywhere in the game, then try again. Some in-app browsers block sound; if so, open the game in Safari or Chrome.`;
+          }, 350);
+        },
+      }, 'Test sound'),
+      soundStatus);
+
     const inputSel = h('select', { class: 'select', onchange: (e) => setSetting('inputMode', e.target.value) },
       h('option', { value: 'cell', selected: s.inputMode === 'cell' }, 'Cell first (tap cell, then glyph)'),
       h('option', { value: 'glyph', selected: s.inputMode === 'glyph' }, 'Glyph first (pick glyph, then tap cells)'));
@@ -84,8 +130,10 @@ export const settingsScreen = {
         group('Sound', [
           toggle('sfx', 'Sound effects'),
           slider('sfxVolume', 'Effects volume'),
-          toggle('music', 'Space music', '7 synthesized tracks'),
+          musicToggle,
           slider('musicVolume', 'Music volume'),
+          songList,
+          soundCheck,
           isNative ? toggle('haptics', 'Vibration', 'Haptic feedback on taps and mistakes') : null,
         ]),
         group('Board', [
@@ -118,7 +166,7 @@ export const settingsScreen = {
           h('b', {}, 'Alien Sudoku'),
           h('small', {}, `Version ${appVersion()}${isElectron ? ' · desktop' : isNative ? '' : ' · web'}`),
           h('small', {}, 'Space photography, glyph art and synthesized music from the original Alien Glyph Sudoku. Fonts: Orbitron and Space Grotesk (SIL Open Font License).'))));
-    return { el };
+    return { el, destroy: offMusic };
   },
 };
 

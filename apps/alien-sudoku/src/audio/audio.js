@@ -6,77 +6,11 @@
    because browsers and mobile webviews block audio before that.
    ============================================================ */
 
-const H = {
-  D2: 73.42, A2: 110.0, B2: 123.47, D3: 146.83, E3: 164.81, Fs3: 185.0,
-  G3: 196.0, Ab3: 207.65, A3: 220.0, Bb3: 233.08, B3: 246.94,
-  C4: 261.63, Cs4: 277.18, D4: 293.66, Eb4: 311.13, E4: 329.63,
-  F4: 349.23, Fs4: 369.99, G4: 392.0, Ab4: 415.3, A4: 440.0,
-  Bb4: 466.16, B4: 493.88, C5: 523.25, D5: 587.33, Eb5: 622.25,
-  E5: 659.25, F5: 698.46, Fs5: 739.99, G5: 783.99, A5: 880.0, C6: 1046.5,
-};
+import { playStyle, STYLE_BY_ID, TIER_SONG, MENU_SONG } from './music-engine.js';
 
-// Each melody note: [freq, startMs, durMs, relVol, oscType]
-export const TRACKS = [
-  {
-    name: 'The Signal', padFreqs: [H.D2, H.A2], loopMs: 8400,
-    melody: [
-      [H.D4, 0, 350, 0.9, 'triangle'], [H.F4, 900, 280, 0.8, 'triangle'],
-      [H.Eb4, 1400, 280, 0.8, 'triangle'], [H.Cs4, 1900, 350, 0.85, 'triangle'],
-      [H.D4, 2600, 700, 0.9, 'triangle'], [H.D4, 4300, 350, 0.75, 'triangle'],
-      [H.F4, 5200, 280, 0.7, 'triangle'], [H.Eb4, 5700, 280, 0.7, 'triangle'],
-      [H.Cs4, 6200, 350, 0.75, 'triangle'], [H.A3, 6900, 900, 0.85, 'triangle'],
-    ],
-  },
-  {
-    name: 'Abduction', padFreqs: [H.A2, H.E3, H.A3], loopMs: 3500,
-    melody: [
-      [H.A3, 0, 200, 0.7, 'sawtooth'], [H.B3, 350, 200, 0.7, 'sawtooth'],
-      [H.C4, 700, 200, 0.65, 'sawtooth'], [H.Cs4, 1050, 200, 0.65, 'sawtooth'],
-      [H.D4, 1400, 400, 0.8, 'sawtooth'], [H.A3, 2200, 700, 0.7, 'sawtooth'],
-    ],
-  },
-  {
-    name: 'Void Drifter', padFreqs: [H.G3, H.D3], loopMs: 9000,
-    melody: [[H.G4, 0, 1200, 0.5, 'sine'], [H.C5, 3000, 800, 0.4, 'sine'], [H.E4, 6000, 1000, 0.45, 'sine']],
-  },
-  {
-    name: 'Ancient Runes', padFreqs: [H.D2, H.A2, H.E3], loopMs: 3500,
-    melody: [
-      [H.D4, 0, 180, 0.8, 'triangle'], [H.F4, 250, 180, 0.75, 'triangle'],
-      [H.G4, 500, 180, 0.75, 'triangle'], [H.A4, 750, 180, 0.8, 'triangle'],
-      [H.C5, 1000, 180, 0.7, 'triangle'], [H.A4, 1300, 180, 0.7, 'triangle'],
-      [H.G4, 1550, 250, 0.75, 'triangle'], [H.F4, 1900, 350, 0.8, 'triangle'],
-      [H.D4, 2400, 500, 0.85, 'triangle'],
-    ],
-  },
-  {
-    name: 'Close Encounter', padFreqs: [H.D2, H.Ab3], loopMs: 4000,
-    melody: [
-      [H.D3, 0, 300, 0.7, 'sawtooth'], [H.Ab3, 500, 300, 0.65, 'sawtooth'],
-      [H.D3, 1000, 300, 0.7, 'sawtooth'], [H.Ab3, 1500, 500, 0.7, 'sawtooth'],
-      [H.E3, 2500, 200, 0.6, 'sawtooth'], [H.Ab3, 2900, 300, 0.65, 'sawtooth'],
-    ],
-  },
-  {
-    name: 'Beyond the Stars', padFreqs: [H.G3, H.D3, H.B3], loopMs: 7000,
-    melody: [
-      [H.G4, 0, 600, 0.55, 'sine'], [H.B4, 800, 500, 0.5, 'sine'],
-      [H.D5, 1600, 500, 0.45, 'sine'], [H.Fs5, 2400, 700, 0.4, 'sine'],
-      [H.D5, 3500, 500, 0.45, 'sine'], [H.B4, 4200, 500, 0.5, 'sine'],
-      [H.G4, 5000, 800, 0.55, 'sine'],
-    ],
-  },
-  {
-    name: 'Hieroglyph', padFreqs: [H.E3, H.B3], loopMs: 2500,
-    melody: [
-      [H.E4, 0, 120, 0.7, 'triangle'], [H.F4, 170, 120, 0.65, 'triangle'],
-      [H.A4, 340, 120, 0.7, 'triangle'], [H.Bb4, 510, 120, 0.65, 'triangle'],
-      [H.D5, 680, 200, 0.7, 'triangle'], [H.Bb4, 1000, 120, 0.6, 'triangle'],
-      [H.A4, 1170, 120, 0.6, 'triangle'], [H.F4, 1340, 150, 0.65, 'triangle'],
-      [H.E4, 1600, 300, 0.7, 'triangle'],
-    ],
-  },
-];
+export { TIER_SONG, MENU_SONG };
+/** Music is mastered hot; this sets it under the sound effects at the default volume. */
+const MUSIC_TRIM = 2.5;
 
 const audio = {
   ctx: null,
@@ -117,9 +51,9 @@ let sessionUnlocked = false;
 export function enablePlaybackSession() {
   if (sessionUnlocked) return;
   sessionUnlocked = true;
-  try {
-    if (navigator.audioSession) { navigator.audioSession.type = 'playback'; return; }
-  } catch { /* ignore */ }
+  // Ask for a media session where supported, and also keep a silent media element
+  // playing: inside embedded web views the session request alone may not apply.
+  try { if (navigator.audioSession) navigator.audioSession.type = 'playback'; } catch { /* ignore */ }
   try {
     const rate = 8000;
     const samples = rate / 2;
@@ -145,11 +79,9 @@ export function unlockAudio() {
   enablePlaybackSession();
   const ctx = ensureCtx();
   if (!ctx) return;
-  if (ctx.state === 'suspended' && !audio.suspendedByApp) ctx.resume().catch(() => {});
-  if (!audio.unlocked) {
-    audio.unlocked = true;
-    if (audio.musicOn) music.start();
-  }
+  if ((ctx.state === 'suspended' || ctx.state === 'interrupted') && !audio.suspendedByApp) ctx.resume().catch(() => {});
+  audio.unlocked = true;
+  if (audio.musicOn) music.start(); // no-op when the right song is already playing
 }
 
 export function configureAudio({ sfx, sfxVolume, music: musicOn, musicVolume }) {
@@ -230,115 +162,63 @@ export const sfx = {
 // ---------------------------------------------------------
 // Music: pad drones + looping melody, cross-fading between tracks.
 // ---------------------------------------------------------
+let wantSong = MENU_SONG;
+let player = null;
+let playingId = null;
+let trim = null;
+
+/**
+ * Theme music. Screens ask for a song with music.play(id); the player cross-fades
+ * when the song changes and does nothing when it is already playing.
+ */
 export const music = {
-  trackIdx: -1,
-  padGain: null,
-  loopTimer: null,
-  trackName: '',
-
-  _scheduleLoop(def, ctx, tStart) {
-    if (!this.padGain) return;
-    const masterVol = 0.12;
-    for (const [freq, ms, dur, relVol, type] of def.melody) {
-      const t0 = tStart + ms / 1000;
-      const o = ctx.createOscillator();
-      const g = ctx.createGain();
-      o.type = type;
-      o.frequency.value = freq;
-      g.gain.setValueAtTime(0.0001, t0);
-      g.gain.exponentialRampToValueAtTime(relVol * masterVol, t0 + 0.025);
-      g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur / 1000);
-      o.connect(g).connect(this.padGain);
-      o.start(t0);
-      o.stop(t0 + dur / 1000 + 0.06);
-    }
-    const loopSec = def.loopMs / 1000;
-    const msToReschedule = (tStart + loopSec - ctx.currentTime) * 1000 - 200;
-    this.loopTimer = setTimeout(() => {
-      if (!this.padGain) return;
-      // If the context was suspended (app in background), restart the loop from "now".
-      const next = Math.max(tStart + loopSec, ctx.currentTime + 0.05);
-      this._scheduleLoop(def, ctx, next);
-    }, Math.max(50, msToReschedule));
+  get current() { return playingId; },
+  get wanted() { return wantSong; },
+  songName: (id) => STYLE_BY_ID[id]?.name || '',
+  play(id) {
+    if (STYLE_BY_ID[id]) wantSong = id;
+    this.start();
   },
-
-  _stopActive(fadeDur = 2.0) {
-    if (this.loopTimer) { clearTimeout(this.loopTimer); this.loopTimer = null; }
-    const ctx = audio.ctx;
-    if (!ctx || !this.padGain) { this.padGain = null; return; }
-    const pg = this.padGain;
-    const oscs = pg._oscs || [];
-    this.padGain = null;
-    const now = ctx.currentTime;
-    pg.gain.cancelScheduledValues(now);
-    pg.gain.setValueAtTime(Math.max(0.0001, pg.gain.value), now);
-    pg.gain.exponentialRampToValueAtTime(0.0001, now + fadeDur);
-    setTimeout(() => {
-      for (const o of oscs) { try { o.stop(); } catch { /* already stopped */ } }
-      try { pg.disconnect(); } catch { /* ignore */ }
-    }, (fadeDur + 0.3) * 1000);
-  },
-
-  _startTrack(def, fadeInDur = 3.0) {
-    const ctx = ensureCtx();
-    if (!ctx) return;
-    const padGain = ctx.createGain();
-    padGain.gain.value = 0.0001;
-    padGain.gain.exponentialRampToValueAtTime(0.14, ctx.currentTime + fadeInDur);
-    padGain.connect(audio.musicBus);
-    this.padGain = padGain;
-
-    const filter = ctx.createBiquadFilter();
-    filter.type = 'lowpass';
-    filter.frequency.value = 900;
-    filter.Q.value = 4;
-    const lfo = ctx.createOscillator();
-    const lfoGain = ctx.createGain();
-    lfo.type = 'sine';
-    lfo.frequency.value = 0.05;
-    lfoGain.gain.value = 320;
-    lfo.connect(lfoGain).connect(filter.frequency);
-    lfo.start();
-    filter.connect(padGain);
-
-    const oscs = [lfo];
-    for (const f of def.padFreqs) {
-      for (const detune of [-9, 9]) {
-        const o = ctx.createOscillator();
-        o.type = 'sine';
-        o.frequency.value = f;
-        o.detune.value = detune;
-        o.connect(filter);
-        o.start();
-        oscs.push(o);
-      }
-    }
-    padGain._oscs = oscs;
-    this.trackName = def.name;
-    this._scheduleLoop(def, ctx, ctx.currentTime + 0.8);
-  },
-
-  /** Start, or cross-fade to a different random track. */
+  /** Start (or cross-fade to) the wanted song, once audio is allowed. */
   start() {
-    if (!audio.musicOn || !audio.unlocked) return;
+    if (!audio.musicOn || !audio.unlocked || audio.suspendedByApp) return;
     const ctx = ensureCtx();
     if (!ctx) return;
-    let idx;
-    do { idx = Math.floor(Math.random() * TRACKS.length); } while (idx === this.trackIdx && TRACKS.length > 1);
-    this.trackIdx = idx;
-    if (this.padGain) {
-      this._stopActive(2.2);
-      setTimeout(() => { if (audio.musicOn) this._startTrack(TRACKS[idx], 2.5); }, 300);
-    } else {
-      this._startTrack(TRACKS[idx], 3.0);
-    }
+    if (player && playingId === wantSong) return;
+    if (!trim) { trim = ctx.createGain(); trim.gain.value = MUSIC_TRIM; trim.connect(audio.musicBus); }
+    if (player) player.stop(1.6);
+    player = playStyle(ctx, trim, wantSong, { fadeIn: player ? 2 : 2.5 });
+    playingId = wantSong;
+    emitMusic();
   },
-
-  /** Cross-fade only if music is already playing (e.g. on new puzzle). */
-  next() { if (this.padGain) this.start(); },
-
-  stop() { this._stopActive(2.0); },
+  /** Kept for older callers: a new puzzle keeps its tier's song. */
+  next() {},
+  stop() {
+    if (player) player.stop(1.5);
+    player = null;
+    playingId = null;
+    emitMusic();
+  },
 };
+const musicListeners = new Set();
+/** Called with the playing song id (or null) whenever it changes. Returns an unsubscribe. */
+export function onMusicChange(fn) { musicListeners.add(fn); return () => musicListeners.delete(fn); }
+function emitMusic() { for (const fn of musicListeners) { try { fn(playingId); } catch { /* ignore */ } } }
+
+/** A short chime that plays even when sound effects are switched off (Settings, Test sound). */
+export function testSound() {
+  unlockAudio();
+  const was = audio.sfxOn;
+  audio.sfxOn = true;
+  sfx.achievement();
+  audio.sfxOn = was;
+}
+
+/** For the settings screen: is sound actually able to play right now? */
+export function audioStatus() {
+  if (!audio.ctx) return audio.unlocked ? 'starting' : 'waiting for a tap';
+  return audio.ctx.state;
+}
 
 // ---------------------------------------------------------
 // The visitors: sounds for the alien encounter.

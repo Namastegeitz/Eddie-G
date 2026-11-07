@@ -14,7 +14,7 @@ import {
 import { SECTORS, LEVELS_PER_SECTOR, starsFor } from '../../data/sectors.js';
 import { SYMBOL_SETS } from '../../data/symbols.js';
 import { formatTime, prettyDate } from '../../core/time.js';
-import { sfx, music } from '../../audio/audio.js';
+import { sfx, TIER_SONG, MENU_SONG } from '../../audio/audio.js';
 import { haptic } from '../../platform/native.js';
 import { adsSupported, showRewarded, noteGameFinished, maybeShowInterstitial } from '../../platform/ads.js';
 import { openModal, confirmModal, toast } from '../modal.js';
@@ -81,6 +81,7 @@ export const playScreen = {
   banner: true,
   bg: (params, inst) => inst?.session?.bg || null,
   theme: (params, inst) => (inst?.session ? setKeyFor(inst.session) : null),
+  song: (params, inst) => TIER_SONG[inst?.session?.difficulty] || MENU_SONG,
 
   create(params, nav) {
     // ---------- Session ----------
@@ -95,7 +96,6 @@ export const playScreen = {
       session = createSession(params);
       countGameStarted();
     }
-    let firstShow = true;
     session.autoRemoveNotes = settings().autoRemoveNotes;
     // Test hook: end-to-end tests open the app with #e2e to read the solution.
     if (typeof location !== 'undefined' && location.hash.includes('e2e')) window.__alienSession = session;
@@ -848,7 +848,6 @@ export const playScreen = {
         fitBoard();
         render();
         if (!paused && session.status === 'playing') startTimer();
-        if (firstShow) { firstShow = false; music.next(); }
         if (!settings().seenTutorial) {
           setSetting('seenTutorial', true);
           setStatus('Tap a cell, then tap a glyph. Each glyph appears once per row, column and box.', 'hint');

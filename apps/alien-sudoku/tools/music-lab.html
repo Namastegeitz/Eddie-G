@@ -162,7 +162,7 @@ const cards = TRACKS.map((t) => {
       <span class="time" id="time-${t.id}">0:00 / ${fmt(t.seconds)}</span>
     </div>
     <div class="meta">
-      <small><b>${t.instruments}</b><br>Suggested for <span class="tier">${TIER[t.tier]}</span></small>
+      <small><b>${t.instruments}</b><br>${t.tierLabel || 'Suggested for'} <span class="tier">${TIER[t.tier]}</span></small>
       <button class="like" id="like-${t.id}" type="button" aria-pressed="${likes.has(t.id)}">${ICON.heart}<span>Like</span></button>
     </div>`;
   grid.appendChild(el);

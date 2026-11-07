@@ -108,7 +108,30 @@
   box-shadow: var(--shadow-board);
   touch-action: none;
   overflow: hidden;
+  position: relative;
 }
+/* The 3x3 boxes: thick, high-contrast separators drawn over the cells,
+   so every box of 9 reads at a glance (thin lines stay between cells). */
+.board::after {
+  --bw: 3px;
+  content: '';
+  position: absolute;
+  inset: 4px;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    linear-gradient(to right,
+      transparent calc(100% / 3 - var(--bw) / 2), var(--box-line) calc(100% / 3 - var(--bw) / 2),
+      var(--box-line) calc(100% / 3 + var(--bw) / 2), transparent calc(100% / 3 + var(--bw) / 2),
+      transparent calc(200% / 3 - var(--bw) / 2), var(--box-line) calc(200% / 3 - var(--bw) / 2),
+      var(--box-line) calc(200% / 3 + var(--bw) / 2), transparent calc(200% / 3 + var(--bw) / 2)),
+    linear-gradient(to bottom,
+      transparent calc(100% / 3 - var(--bw) / 2), var(--box-line) calc(100% / 3 - var(--bw) / 2),
+      var(--box-line) calc(100% / 3 + var(--bw) / 2), transparent calc(100% / 3 + var(--bw) / 2),
+      transparent calc(200% / 3 - var(--bw) / 2), var(--box-line) calc(200% / 3 - var(--bw) / 2),
+      var(--box-line) calc(200% / 3 + var(--bw) / 2), transparent calc(200% / 3 + var(--bw) / 2));
+}
+@media (min-width: 700px) and (min-height: 700px) { .board::after { --bw: 4px; } }
 /* Glyphs are full-color pictures, so a cell's state is shown by the cell
    (background, ring, corner marks), never by recoloring the glyph. */
 .cell {
@@ -118,16 +141,17 @@
   align-items: center;
   justify-content: center;
   background: var(--cell-bg);
-  border: 1px solid var(--grid-line);
+  border: 0 solid var(--grid-line);
+  border-right-width: 1px;
+  border-bottom-width: 1px;
   cursor: pointer;
   transition: background 0.15s, box-shadow 0.15s;
   min-width: 0;
   min-height: 0;
 }
-.cell.bt { border-top: 2px solid var(--grid-line-strong); }
-.cell.bl { border-left: 2px solid var(--grid-line-strong); }
-.cell.br { border-right: 2px solid var(--grid-line-strong); }
-.cell.bb { border-bottom: 2px solid var(--grid-line-strong); }
+/* One thin line between neighbours; none along the board's own edge. */
+.cell.br { border-right-width: 0; }
+.cell.bb { border-bottom-width: 0; }
 .cell-glyph { display: flex; width: 84%; height: 84%; pointer-events: none; }
 .cell-glyph .gsvg { width: 100%; height: 100%; overflow: visible; }
 
