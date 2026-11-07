@@ -6,7 +6,19 @@ extends SubViewportContainer
 ## show up here too. Under dense canopy the light drops and leaves close in
 ## overhead, but nothing is hidden: this is the view that sees under them.
 
-const AHEAD := 18
+const AHEAD := 22
+## First-person view profiles (Settings > First-person view). h: side-to-side
+## field of view (open sky, under canopy); v: the least top-to-bottom view (so
+## wide screens see the canopy and far ahead too); vmax: the most top-to-bottom
+## on a tall phone (beyond it the edges stretch, so the sides give way);
+## back: how far behind the animal's head the eye sits; up: how far above it
+## (a little higher shows more rows ahead); pitch: look-down angle; fog: how
+## much of the usual mist.
+const VIEWS := {
+	"classic": {"h": [86.0, 97.0], "v": [0.0, 0.0], "vmax": 140.0, "back": 0.8, "up": 0.0, "pitch": [-27.0, -19.0], "fog": 1.0},
+	"wide": {"h": [96.0, 104.0], "v": [80.0, 88.0], "vmax": 124.0, "back": 1.1, "up": 0.35, "pitch": [-27.0, -20.0], "fog": 0.8},
+	"extra": {"h": [108.0, 114.0], "v": [92.0, 98.0], "vmax": 132.0, "back": 1.3, "up": 0.55, "pitch": [-27.0, -19.0], "fog": 0.65},
+}
 const BEHIND := 2
 const POOL_MAX := 12              # spare moving-thing nodes kept per kind and size
 const POOL_TOTAL := 64            # ...and in all (lengths vary, so the oldest spares go first)
@@ -154,10 +166,13 @@ func update_view(dt: float) -> void:
 	var y := eye_h + lift * 0.7 + sin(t * 2.2) * 0.008
 	if sim.state in ["respawn", "dead", "restart", "over"] and sim.cause != "":
 		y = lerpf(cam.position.y, 0.05 if sim.cause in ["drowned", "fell"] else 0.18, minf(1.0, dt * 3.0))
-	cam.position = Vector3(dp.x, y, -dp.y + 0.8)
+	var vw := view_profile()
+	if not (sim.state in ["respawn", "dead", "restart", "over"] and sim.cause != ""):
+		y += float(vw.up)
+	cam.position = Vector3(dp.x, y, -dp.y + float(vw.back))
 	# under the canopy the gaze lifts a little to take in the scene ahead
-	cam.rotation_degrees = Vector3(lerpf(-27.0, -19.0, shade) + lift * 6.0, 0.0, 0.0)
-	cam.fov = lerpf(86.0, 97.0, shade)
+	cam.rotation_degrees = Vector3(lerpf(float(vw.pitch[0]), float(vw.pitch[1]), shade) + lift * 6.0, 0.0, 0.0)
+	_apply_fov(vw)
 	var here := sim.world.lane(sim.row)
 	var next := sim.world.lane(sim.row + 1)
 	var covered := here.covered or next.covered
@@ -175,7 +190,7 @@ func update_view(dt: float) -> void:
 	env.fog_light_color = _fog0.lerp(fog, shade)
 	var mist := 1.0 if "mist" in Array(scene.get("particles", [])) else 0.0
 	# thicker air under the leaves, but capped so hazards a few rows ahead stay readable
-	env.fog_density = lerpf(_fog_d0, minf(0.075, _fog_d0 + 0.015 * mist + 0.008), shade)
+	env.fog_density = lerpf(_fog_d0, minf(0.075, _fog_d0 + 0.015 * mist + 0.008), shade) * float(vw.fog)
 	env.background_color = _sky.lerp(color("canopy_dark", "#0b3a1a"), shade * 0.85).lerp(fog.darkened(0.3), shade * 0.3)
 	var lo := sim.row - BEHIND
 	var hi := sim.row + AHEAD
@@ -260,6 +275,38 @@ func update_view(dt: float) -> void:
 ## into view (hidden, in the reuse pool), then row meshes (canopy scenery and grass rows) up to
 ## 60 rows ahead. Runs every frame in either view, so by the time you hop
 ## forward, reach a canopy or switch to first person, nothing stalls.
+func view_profile() -> Dictionary:
+	return VIEWS.get(String(Save.setting("fpv_view", "wide")), VIEWS.wide)
+
+
+## Field of view for this screen's shape: at least the profile's side-to-side
+## angle, and at least its top-to-bottom angle (a wide screen gets a taller
+## view instead of a letterbox), but never so tall on a phone that the edges
+## smear (the sides give way first).
+func _apply_fov(vw: Dictionary, aspect := -1.0) -> void:
+	var a := aspect if aspect > 0.0 else size.x / maxf(1.0, size.y)
+	var h := lerpf(float(vw.h[0]), float(vw.h[1]), shade)
+	var v_min := lerpf(float(vw.v[0]), float(vw.v[1]), shade)
+	var v_of_h := rad_to_deg(2.0 * atan(tan(deg_to_rad(h) * 0.5) / maxf(0.1, a)))
+	if v_of_h < v_min:
+		cam.keep_aspect = Camera3D.KEEP_HEIGHT
+		cam.fov = v_min
+	else:
+		if v_of_h > float(vw.vmax):
+			h = rad_to_deg(2.0 * atan(tan(deg_to_rad(float(vw.vmax)) * 0.5) * a))
+		cam.keep_aspect = Camera3D.KEEP_WIDTH
+		cam.fov = h
+
+
+## The view's angles on screen now, in degrees: (side to side, top to bottom).
+func view_angles(aspect := -1.0) -> Vector2:
+	var a := aspect if aspect > 0.0 else size.x / maxf(1.0, size.y)
+	var t := tan(deg_to_rad(cam.fov) * 0.5)
+	if cam.keep_aspect == Camera3D.KEEP_WIDTH:
+		return Vector2(cam.fov, rad_to_deg(2.0 * atan(t / a)))
+	return Vector2(rad_to_deg(2.0 * atan(t * a)), cam.fov)
+
+
 func warm_step() -> void:
 	if is_visible_in_tree() and _warm_ents():
 		return

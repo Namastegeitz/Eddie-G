@@ -102,6 +102,9 @@
   screen (pips + what the next level adds); runs use the level. Rules per ability parameter in
   `content/skills.json` (`scripts/sim/skills.gd`): shorter cooldowns, longer effects, more distance /
   charges / swings, quicker hops for animals with nothing else to scale.
+- First-person view widened (Settings > First-person view: Wide default / Extra wide / Classic): the field of
+  view fits the screen's shape (at least ~93 deg side to side on a phone and 80 deg top to bottom on a wide screen,
+  was 86 x 55 there), the eye sits a little higher and further back, 22 rows drawn ahead (was 18), lighter fog.
 - Smoother runs: the fixed 60 Hz sim is drawn at an interpolated time (`RunSim.set_lead`/`vt`), so
   hops, logs and traffic glide on 90/120 Hz screens and late frames. First person caches canopy rows
   (4 looks per scene + landmark rows; waterfalls keep their sheet), pre-builds rows up to 60 ahead

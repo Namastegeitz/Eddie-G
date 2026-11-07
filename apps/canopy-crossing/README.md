@@ -37,7 +37,10 @@ time, in ten real rainforests. Built from
   time ("New here: caiman backs"), so early levels go quickly. Tuned in
   `content/difficulty.json`.
 - **Two views:** bird's-eye (top-down) and first person (3D, through your
-  animal's eyes). Switch any time with the eye button (or V). Every level
+  animal's eyes; a wide view that sees more to the left and right, above
+  and further ahead, fitted to the screen's shape: about 93° x 124° on a
+  phone, 112° x 80° on a wide screen. Settings > First-person view: Wide,
+  Extra wide or Classic). Switch any time with the eye button (or V). Every level
   has 1 to 3 dense-canopy stretches (1 in levels 1-3, 2 in 4-6, 3 in 7-10)
   that hide the ground from above, so you need first person to see the
   traffic, logs and predators under the leaves.

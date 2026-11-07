@@ -1354,6 +1354,15 @@ func _first_person() -> void:
 	for i in 60:
 		gs._process(1.0 / 60.0)
 	check("hopping works in first person", true)
+	# the wide view: more to the sides on a phone, much taller on a wide screen
+	var w3a = gs.wv3
+	w3a._apply_fov(w3a.view_profile(), 720.0 / 1280.0)
+	var port: Vector2 = w3a.view_angles(720.0 / 1280.0)
+	w3a._apply_fov(w3a.view_profile(), 1280.0 / 720.0)
+	var land: Vector2 = w3a.view_angles(1280.0 / 720.0)
+	w3a._apply_fov(w3a.view_profile())
+	print("  first-person view: phone %.0f x %.0f deg, wide screen %.0f x %.0f deg (was 86 x 118 / 86 x 55)" % [port.x, port.y, land.x, land.y])
+	check("first person sees wide by default: more to the sides and above on phones and wide screens", String(Content.settings_defaults.get("fpv_view", "")) == "wide" and port.x >= 90.0 and port.y >= 118.0 and land.x >= 100.0 and land.y >= 78.0, "%s %s" % [port, land])
 	check("first person draws at the interpolated time (within one step ahead)", gs.sim.vt >= gs.sim.wt and gs.sim.vt - gs.sim.wt <= 1.0 / 60.0 + 0.0001, "%.4f" % (gs.sim.vt - gs.sim.wt))
 	# moving things that come into view are taken from a pool filled ahead
 	# of time (and returned to it when they leave), so a hop builds nothing

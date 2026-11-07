@@ -21,6 +21,7 @@ func _ready() -> void:
 	box.add_child(_slider("Sound effects", "sfx"))
 	box.add_child(_music_style())
 	box.add_child(_quality())
+	box.add_child(_fpv_view())
 	box.add_child(_toggle("Haptics", "haptics", "Light vibration on hops and hits."))
 	box.add_child(_toggle("Left-handed controls", "left_handed", "Ability button on the left."))
 	box.add_child(_toggle("Colour-blind hazard markers", "colorblind", "Warning triangles on deadly things, outlines on safe rides."))
@@ -98,6 +99,40 @@ func _music_style() -> Control:
 	v.add_child(row)
 	v.add_child(hint)
 	hint.text = String(hints["calm" if Sfx.calm() else "classic"])
+	return v
+
+
+## First-person view: how much you see to the sides, above and ahead.
+func _fpv_view() -> Control:
+	var v := UI.vbox(6)
+	v.add_child(UI.label("First-person view", 28))
+	var row := UI.hbox(8)
+	var group := ButtonGroup.new()
+	var hint := UI.label("", 20, UI.MUTED)
+	hint.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	var names := {"wide": "Wide", "extra": "Extra wide", "classic": "Classic"}
+	var hints := {"wide": "See more to the left and right, above and further ahead.",
+		"extra": "The widest view: the most to the sides and above (edges stretch a little).",
+		"classic": "The original, closer view."}
+	var cur := String(Save.setting("fpv_view", "wide"))
+	for st in ["wide", "extra", "classic"]:
+		var b := Button.new()
+		b.text = String(names[st])
+		b.toggle_mode = true
+		b.button_group = group
+		b.button_pressed = st == cur
+		b.custom_minimum_size = Vector2(0, 64)
+		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		b.add_theme_font_size_override("font_size", 24)
+		b.toggled.connect(func(on):
+			if on:
+				Save.set_setting("fpv_view", st)
+				Analytics.event("settings_fpv_view", {"view": st})
+				hint.text = String(hints[st]))
+		row.add_child(b)
+	v.add_child(row)
+	v.add_child(hint)
+	hint.text = String(hints.get(cur, hints.wide))
 	return v
 
 
