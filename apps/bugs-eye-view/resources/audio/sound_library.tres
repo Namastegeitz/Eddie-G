@@ -48,7 +48,10 @@
 [ext_resource type="AudioStream" path="res://assets/sfx/snore.wav" id="34_18mw2"]
 [ext_resource type="AudioStream" path="res://assets/sfx/sniff.wav" id="34_ewecc"]
 [ext_resource type="AudioStream" path="res://assets/sfx/thud.wav" id="34_kq1by"]
+[ext_resource type="AudioStream" path="res://assets/sfx/revolver_click.wav" id="34_o6h5b"]
 [ext_resource type="AudioStream" path="res://assets/sfx/tv_blare.wav" id="35_n6xs0"]
+[ext_resource type="AudioStream" path="res://assets/sfx/revolver_fire.wav" id="35_xrcpg"]
+[ext_resource type="AudioStream" path="res://assets/sfx/revolver_spin.wav" id="36_0adl8"]
 [ext_resource type="AudioStream" path="res://assets/sfx/tv_mumble.wav" id="36_afmb2"]
 [ext_resource type="AudioStream" path="res://assets/sfx/ui_click.wav" id="37_hrod6"]
 [ext_resource type="AudioStream" path="res://assets/sfx/vacuum.wav" id="38_rc8cy"]
@@ -57,6 +60,7 @@
 [ext_resource type="AudioStream" path="res://assets/sfx/voice_ow.wav" id="41_di1ih"]
 [ext_resource type="AudioStream" path="res://assets/sfx/voice_shout.wav" id="42_21utm"]
 [ext_resource type="AudioStream" path="res://assets/sfx/voice_spray.wav" id="43_spmsd"]
+[ext_resource type="AudioStream" path="res://assets/sfx/snap.wav" id="43_yvme6"]
 [ext_resource type="AudioStream" path="res://assets/sfx/web_miss.wav" id="44_ye2fn"]
 [ext_resource type="AudioStream" path="res://assets/sfx/web_shoot.wav" id="45_o32l7"]
 [ext_resource type="AudioStream" path="res://assets/sfx/sweep.wav" id="46_4p8jt"]
@@ -102,12 +106,16 @@ sounds = {
 &"phone_buzz": ExtResource("22_2afe2"),
 &"powerup": ExtResource("27_emf2l"),
 &"push": ExtResource("23_o6h5b"),
+&"revolver_click": ExtResource("34_o6h5b"),
+&"revolver_fire": ExtResource("35_xrcpg"),
+&"revolver_spin": ExtResource("36_0adl8"),
 &"sense_on": ExtResource("24_xrcpg"),
 &"shake": ExtResource("34_0h7ie"),
 &"shield": ExtResource("30_52wrj"),
 &"skitter": ExtResource("25_0adl8"),
 &"slowmo": ExtResource("26_yvme6"),
 &"smack": ExtResource("27_xfmrt"),
+&"snap": ExtResource("43_yvme6"),
 &"sniff": ExtResource("34_ewecc"),
 &"snore": ExtResource("34_18mw2"),
 &"spray": ExtResource("28_0r01i"),

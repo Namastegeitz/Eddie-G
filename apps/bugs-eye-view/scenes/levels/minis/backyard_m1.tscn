@@ -1,0 +1,985 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/world/level.gd" id="1_7evfj"]
+[ext_resource type="Material" path="res://assets/materials/wood.tres" id="2_2vj6a"]
+[ext_resource type="Material" path="res://assets/materials/drywall.tres" id="3_rhwsr"]
+[ext_resource type="Material" path="res://assets/materials/metal.tres" id="4_xoayv"]
+[ext_resource type="Material" path="res://assets/materials/copper.tres" id="5_c4suc"]
+[ext_resource type="Material" path="res://assets/materials/dark_metal.tres" id="6_61luv"]
+[ext_resource type="Material" path="res://assets/materials/plastic_white.tres" id="7_pppex"]
+[ext_resource type="Script" path="res://scripts/stealth/light_zone.gd" id="8_mgiik"]
+[ext_resource type="Material" path="res://assets/materials/shadow_tint.tres" id="9_iwcde"]
+[ext_resource type="Script" path="res://scripts/stealth/hiding_spot.gd" id="10_x2hsc"]
+[ext_resource type="PackedScene" path="res://scenes/hazards/mouse_trap.tscn" id="11_o1mpv"]
+[ext_resource type="Script" path="res://scripts/hazards/mouse_trap.gd" id="12_p0rk3"]
+[ext_resource type="PackedScene" path="res://scenes/world/goal.tscn" id="13_d15me"]
+[ext_resource type="Script" path="res://scripts/world/goal.gd" id="14_kcehw"]
+[ext_resource type="PackedScene" path="res://scenes/world/gem_shard.tscn" id="15_m7y4b"]
+[ext_resource type="Script" path="res://scripts/world/crumb.gd" id="16_i1oqa"]
+[ext_resource type="PackedScene" path="res://scenes/items/power_turbo.tscn" id="17_2n6lr"]
+[ext_resource type="Script" path="res://scripts/world/pickup_item.gd" id="18_umkve"]
+[ext_resource type="Resource" path="res://resources/items/power_turbo.tres" id="19_05qif"]
+[ext_resource type="Material" path="res://assets/materials/insulation.tres" id="20_54p20"]
+[ext_resource type="Material" path="res://assets/materials/hole.tres" id="21_dlavk"]
+
+[sub_resource type="NavigationMesh" id="NavigationMesh_ppjje"]
+vertices = PackedVector3Array(-42, 74.5, -10, -42, 74.5, 10, 42, 74.5, 10, 42, 74.5, -10, -28, 0.5, 10, -28, 0.5, 9.5, -29.5, 0.5, 9.5, -39.5, 0.5, 10, -31, 0.5, 8, -31, 0.5, -7.5, -39.5, 0.5, -7.5, -14, 0.5, 10, -14, 0.5, 9.5, -15.5, 0.5, 9.5, -26.5, 0.5, 9.5, -17, 0.5, 8, -17, 0.5, -7.5, -25, 0.5, -7.5, -25, 0.5, 8, -25, 26.25, -7.5, -25, 26.25, 5, -21.5, 26.25, 5, -21.5, 26.25, -7.5, 0, 0.5, 10, 0, 0.5, 9.5, -1.5, 0.5, 9.5, -12.5, 0.5, 9.5, -3, 0.5, 8, -3, 0.5, -7.5, -11, 0.5, -7.5, -11, 0.5, 8, -6.5, 40.75, -7.5, -6.5, 40.75, 5, -3, 40.75, 5, -3, 40.75, -7.5, 14, 0.5, 10, 14, 0.5, 9.5, 12.5, 0.5, 9.5, 1.5, 0.5, 9.5, 11, 0.5, -7.5, 10, 0.5, -7.5, 10, 0.5, -6, 11, 0.5, 8, 4, 0.5, -6, 4, 0.5, -7.5, 3, 0.5, -7.5, 3, 0.5, 8, 8.5, 0.5, -4.5, 5.5, 0.5, -4.5, 4, 35.75, -6, 4, 35.75, -7.5, 3, 35.75, -7.5, 3, 35.75, 5, 6.5, 35.75, 5, 6.5, 35.75, -4.5, 28, 0.5, 10, 28, 0.5, 9.5, 26.5, 0.5, 9.5, 15.5, 0.5, 9.5, 22.5, 0.5, -4.5, 22.5, 0.5, -7.5, 17, 0.5, -7.5, 25, 0.5, -3, 17, 0.5, 8, 25, 0.5, 8, 21.5, 40, -7.5, 21.5, 40, 5, 25, 40, 5, 25, 40, -7.5, 29.5, 0.5, 9.5, 40, 0.5, 10, 40, 0.5, -7.5, 31, 0.5, -7.5, 31, 0.5, 8, -34.5, 47.5, -3.5, -34.5, 47.5, 5, -31, 47.5, 5, -31, 47.5, -3.5, 31, 46.75, -3.5, 31, 46.75, 5, 34.5, 46.75, 5, 34.5, 46.75, -3.5)
+polygons = [PackedInt32Array(3, 2, 0), PackedInt32Array(0, 2, 1), PackedInt32Array(5, 4, 6), PackedInt32Array(6, 4, 7), PackedInt32Array(9, 8, 10), PackedInt32Array(10, 8, 7), PackedInt32Array(8, 6, 7), PackedInt32Array(13, 12, 11), PackedInt32Array(4, 5, 14), PackedInt32Array(14, 13, 4), PackedInt32Array(4, 13, 11), PackedInt32Array(18, 17, 15), PackedInt32Array(15, 17, 16), PackedInt32Array(15, 13, 18), PackedInt32Array(18, 13, 14), PackedInt32Array(22, 21, 19), PackedInt32Array(19, 21, 20), PackedInt32Array(25, 24, 23), PackedInt32Array(11, 12, 26), PackedInt32Array(26, 25, 11), PackedInt32Array(11, 25, 23), PackedInt32Array(30, 29, 27), PackedInt32Array(27, 29, 28), PackedInt32Array(27, 25, 30), PackedInt32Array(30, 25, 26), PackedInt32Array(34, 33, 31), PackedInt32Array(31, 33, 32), PackedInt32Array(37, 36, 35), PackedInt32Array(23, 24, 38), PackedInt32Array(40, 39, 41), PackedInt32Array(41, 39, 42), PackedInt32Array(44, 43, 45), PackedInt32Array(45, 43, 46), PackedInt32Array(38, 37, 23), PackedInt32Array(23, 37, 35), PackedInt32Array(47, 41, 42), PackedInt32Array(42, 37, 46), PackedInt32Array(46, 37, 38), PackedInt32Array(48, 46, 43), PackedInt32Array(47, 42, 48), PackedInt32Array(48, 42, 46), PackedInt32Array(50, 49, 51), PackedInt32Array(51, 49, 52), PackedInt32Array(53, 52, 54), PackedInt32Array(54, 52, 49), PackedInt32Array(57, 56, 55), PackedInt32Array(35, 36, 58), PackedInt32Array(61, 60, 59), PackedInt32Array(59, 62, 61), PackedInt32Array(61, 62, 64), PackedInt32Array(61, 64, 63), PackedInt32Array(58, 57, 35), PackedInt32Array(35, 57, 55), PackedInt32Array(64, 57, 63), PackedInt32Array(63, 57, 58), PackedInt32Array(68, 67, 65), PackedInt32Array(65, 67, 66), PackedInt32Array(56, 69, 55), PackedInt32Array(55, 69, 70), PackedInt32Array(72, 71, 73), PackedInt32Array(73, 71, 70), PackedInt32Array(70, 69, 73), PackedInt32Array(77, 76, 74), PackedInt32Array(74, 76, 75), PackedInt32Array(81, 80, 78), PackedInt32Array(78, 80, 79)]
+geometry_parsed_geometry_type = 1
+geometry_collision_mask = 1
+cell_size = 0.5
+agent_height = 8.0
+agent_radius = 2.0
+agent_max_climb = 1.0
+agent_max_slope = 30.0
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_wyqb0"]
+size = Vector3(88, 2, 24)
+
+[sub_resource type="BoxMesh" id="BoxMesh_kgwho"]
+size = Vector3(88, 2, 24)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_26b85"]
+size = Vector3(88, 72, 2)
+
+[sub_resource type="BoxMesh" id="BoxMesh_upqqg"]
+size = Vector3(88, 72, 2)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_065w6"]
+size = Vector3(2, 72, 24)
+
+[sub_resource type="BoxMesh" id="BoxMesh_ttqgo"]
+size = Vector3(2, 72, 24)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_qs7cr"]
+size = Vector3(2, 72, 24)
+
+[sub_resource type="BoxMesh" id="BoxMesh_bi1md"]
+size = Vector3(2, 72, 24)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_tjkxp"]
+size = Vector3(88, 2, 24)
+
+[sub_resource type="BoxMesh" id="BoxMesh_kncqk"]
+size = Vector3(88, 2, 24)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_3u7g3"]
+size = Vector3(1.5, 54.45735, 17)
+
+[sub_resource type="BoxMesh" id="BoxMesh_d3rc6"]
+size = Vector3(1.5, 54.45735, 17)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_dw5qa"]
+size = Vector3(1.5, 13.542648, 17)
+
+[sub_resource type="BoxMesh" id="BoxMesh_x23gd"]
+size = Vector3(1.5, 13.542648, 17)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_o2h47"]
+size = Vector3(2.4, 0.5, 4)
+
+[sub_resource type="BoxMesh" id="BoxMesh_tdkvl"]
+size = Vector3(2.4, 0.5, 4)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_s674j"]
+size = Vector3(2.4, 0.5, 4)
+
+[sub_resource type="BoxMesh" id="BoxMesh_ntvjm"]
+size = Vector3(2.4, 0.5, 4)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_qd5gj"]
+size = Vector3(2.4, 0.5, 4)
+
+[sub_resource type="BoxMesh" id="BoxMesh_7l81d"]
+size = Vector3(2.4, 0.5, 4)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_fpfth"]
+size = Vector3(1.5, 41.395798, 17)
+
+[sub_resource type="BoxMesh" id="BoxMesh_qqpcs"]
+size = Vector3(1.5, 41.395798, 17)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_rfn2l"]
+size = Vector3(1.5, 26.604202, 17)
+
+[sub_resource type="BoxMesh" id="BoxMesh_43yuu"]
+size = Vector3(1.5, 26.604202, 17)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_j52tl"]
+size = Vector3(2.4, 0.5, 4)
+
+[sub_resource type="BoxMesh" id="BoxMesh_h04of"]
+size = Vector3(2.4, 0.5, 4)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_ig3bm"]
+size = Vector3(2.4, 0.5, 4)
+
+[sub_resource type="BoxMesh" id="BoxMesh_gl1uw"]
+size = Vector3(2.4, 0.5, 4)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_6txv2"]
+size = Vector3(2.4, 0.5, 4)
+
+[sub_resource type="BoxMesh" id="BoxMesh_76bo0"]
+size = Vector3(2.4, 0.5, 4)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_1mhyg"]
+size = Vector3(1.5, 48.23926, 17)
+
+[sub_resource type="BoxMesh" id="BoxMesh_lf1yl"]
+size = Vector3(1.5, 48.23926, 17)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_k7ei8"]
+size = Vector3(1.5, 19.760738, 17)
+
+[sub_resource type="BoxMesh" id="BoxMesh_uwoyt"]
+size = Vector3(1.5, 19.760738, 17)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_6pocr"]
+size = Vector3(2.4, 0.5, 4)
+
+[sub_resource type="BoxMesh" id="BoxMesh_rtdyl"]
+size = Vector3(2.4, 0.5, 4)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_vnkob"]
+size = Vector3(2.4, 0.5, 4)
+
+[sub_resource type="BoxMesh" id="BoxMesh_njdtg"]
+size = Vector3(2.4, 0.5, 4)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_077qb"]
+size = Vector3(2.4, 0.5, 4)
+
+[sub_resource type="BoxMesh" id="BoxMesh_skcri"]
+size = Vector3(2.4, 0.5, 4)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_etk5a"]
+size = Vector3(1.5, 42.35086, 17)
+
+[sub_resource type="BoxMesh" id="BoxMesh_va24p"]
+size = Vector3(1.5, 42.35086, 17)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_js3g8"]
+size = Vector3(1.5, 25.64914, 17)
+
+[sub_resource type="BoxMesh" id="BoxMesh_x3hh5"]
+size = Vector3(1.5, 25.64914, 17)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_nf46o"]
+size = Vector3(2.4, 0.5, 4)
+
+[sub_resource type="BoxMesh" id="BoxMesh_clf0s"]
+size = Vector3(2.4, 0.5, 4)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_2fsc4"]
+size = Vector3(2.4, 0.5, 4)
+
+[sub_resource type="BoxMesh" id="BoxMesh_b88ty"]
+size = Vector3(2.4, 0.5, 4)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_u5ir7"]
+size = Vector3(2.4, 0.5, 4)
+
+[sub_resource type="BoxMesh" id="BoxMesh_fi5a7"]
+size = Vector3(2.4, 0.5, 4)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_y6fco"]
+size = Vector3(1.5, 55.24592, 17)
+
+[sub_resource type="BoxMesh" id="BoxMesh_fufbc"]
+size = Vector3(1.5, 55.24592, 17)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_pnew7"]
+size = Vector3(1.5, 12.754082, 17)
+
+[sub_resource type="BoxMesh" id="BoxMesh_qr2s7"]
+size = Vector3(1.5, 12.754082, 17)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_4vtai"]
+size = Vector3(2.4, 0.5, 4)
+
+[sub_resource type="BoxMesh" id="BoxMesh_5eh1i"]
+size = Vector3(2.4, 0.5, 4)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_wmdye"]
+size = Vector3(2.4, 0.5, 4)
+
+[sub_resource type="BoxMesh" id="BoxMesh_2vvvi"]
+size = Vector3(2.4, 0.5, 4)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_eaeux"]
+size = Vector3(2.4, 0.5, 4)
+
+[sub_resource type="BoxMesh" id="BoxMesh_5srjr"]
+size = Vector3(2.4, 0.5, 4)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_rrchs"]
+size = Vector3(7.5, 1.5, 17)
+
+[sub_resource type="BoxMesh" id="BoxMesh_87s3l"]
+size = Vector3(7.5, 1.5, 17)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_xwtpe"]
+size = Vector3(7.5, 1.5, 17)
+
+[sub_resource type="BoxMesh" id="BoxMesh_8vkac"]
+size = Vector3(7.5, 1.5, 17)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_a4jy2"]
+size = Vector3(7.5, 1.5, 17)
+
+[sub_resource type="BoxMesh" id="BoxMesh_88hkc"]
+size = Vector3(7.5, 1.5, 17)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_sjbnj"]
+size = Vector3(7.5, 1.5, 17)
+
+[sub_resource type="BoxMesh" id="BoxMesh_smeed"]
+size = Vector3(7.5, 1.5, 17)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_xjsxn"]
+size = Vector3(7.5, 1.5, 17)
+
+[sub_resource type="BoxMesh" id="BoxMesh_gb68b"]
+size = Vector3(7.5, 1.5, 17)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_ekk6l"]
+size = Vector3(7.5, 1.5, 17)
+
+[sub_resource type="BoxMesh" id="BoxMesh_5mrf1"]
+size = Vector3(7.5, 1.5, 17)
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_3166m"]
+height = 72.0
+radius = 1.0
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_c6xdr"]
+top_radius = 1.0
+bottom_radius = 1.0
+height = 72.0
+radial_segments = 12
+rings = 1
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_aq0x7"]
+height = 84.0
+radius = 0.35
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_lndk2"]
+top_radius = 0.35
+bottom_radius = 0.35
+height = 84.0
+radial_segments = 12
+rings = 1
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_5foo5"]
+height = 84.0
+radius = 0.35
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_selep"]
+top_radius = 0.35
+bottom_radius = 0.35
+height = 84.0
+radial_segments = 12
+rings = 1
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_408io"]
+size = Vector3(4, 6, 3)
+
+[sub_resource type="BoxMesh" id="BoxMesh_eivab"]
+size = Vector3(4, 6, 3)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_rcqj2"]
+size = Vector3(84, 72, 20)
+
+[sub_resource type="BoxMesh" id="BoxMesh_c6ivv"]
+size = Vector3(84, 0.05, 20)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_shd7l"]
+size = Vector3(12.5, 15.485759, 9.5)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_wo5o5"]
+size = Vector3(12.5, 15.485759, 9.5)
+
+[sub_resource type="BoxMesh" id="BoxMesh_fk2wn"]
+size = Vector3(12.5, 0.05, 9.5)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_8mqt0"]
+size = Vector3(12.5, 15.08408, 9.5)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_vxegv"]
+size = Vector3(12.5, 15.08408, 9.5)
+
+[sub_resource type="BoxMesh" id="BoxMesh_vxrss"]
+size = Vector3(12.5, 0.05, 9.5)
+
+[sub_resource type="Environment" id="Environment_thfu8"]
+background_mode = 1
+background_color = Color(0.05, 0.045, 0.04, 1)
+ambient_light_source = 2
+ambient_light_color = Color(0.75, 0.65, 0.55, 1)
+ambient_light_energy = 0.6
+tonemap_mode = 2
+
+[sub_resource type="BoxMesh" id="BoxMesh_jfgpu"]
+size = Vector3(12.5, 15.485759, 9.5)
+
+[sub_resource type="BoxMesh" id="BoxMesh_ei4lj"]
+size = Vector3(12.5, 15.08408, 9.5)
+
+[sub_resource type="BoxMesh" id="BoxMesh_f0mf7"]
+size = Vector3(4, 0.1, 4)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_qr4di"]
+size = Vector3(88, 72, 2)
+
+[node name="BackyardM1" type="Node3D" unique_id=729754986]
+script = ExtResource("1_7evfj")
+level_id = &"backyard_m1"
+
+[node name="NavRegion" type="NavigationRegion3D" parent="." unique_id=1320741658]
+navigation_mesh = SubResource("NavigationMesh_ppjje")
+
+[node name="Geometry" type="Node3D" parent="NavRegion" unique_id=2141570631]
+
+[node name="BottomPlate" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=164585709]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 0)
+collision_mask = 0
+metadata/surface = &"wood"
+
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/BottomPlate" unique_id=1491852628]
+shape = SubResource("BoxShape3D_wyqb0")
+
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/BottomPlate" unique_id=766749958]
+material_override = ExtResource("2_2vj6a")
+mesh = SubResource("BoxMesh_kgwho")
+
+[node name="Drywall" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1773827991]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 36, -11)
+collision_mask = 0
+metadata/surface = &"default"
+
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/Drywall" unique_id=1079033118]
+shape = SubResource("BoxShape3D_26b85")
+
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/Drywall" unique_id=1504883571]
+material_override = ExtResource("3_rhwsr")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_upqqg")
+
+[node name="EndLeft" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=863572839]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -43, 36, 0)
+collision_mask = 0
+metadata/surface = &"wood"
+
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/EndLeft" unique_id=1445697101]
+shape = SubResource("BoxShape3D_065w6")
+
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/EndLeft" unique_id=1158621048]
+material_override = ExtResource("2_2vj6a")
+mesh = SubResource("BoxMesh_ttqgo")
+
+[node name="EndRight" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=143426542]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 43, 36, 0)
+collision_mask = 0
+metadata/surface = &"wood"
+
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/EndRight" unique_id=1021193555]
+shape = SubResource("BoxShape3D_qs7cr")
+
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/EndRight" unique_id=760510130]
+material_override = ExtResource("2_2vj6a")
+mesh = SubResource("BoxMesh_bi1md")
+
+[node name="TopPlate" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1122357279]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 73, 0)
+collision_mask = 0
+metadata/surface = &"wood"
+
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/TopPlate" unique_id=587251297]
+shape = SubResource("BoxShape3D_tjkxp")
+
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/TopPlate" unique_id=1060205049]
+material_override = ExtResource("2_2vj6a")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_kncqk")
+
+[node name="Stud" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1262629825]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -28, 27.228676, -1.5)
+collision_mask = 0
+metadata/surface = &"wood"
+
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/Stud" unique_id=1265691978]
+shape = SubResource("BoxShape3D_3u7g3")
+
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/Stud" unique_id=1759602629]
+material_override = ExtResource("2_2vj6a")
+mesh = SubResource("BoxMesh_d3rc6")
+
+[node name="Stud2" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=382536311]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -28, 65.228676, -1.5)
+collision_mask = 0
+metadata/surface = &"wood"
+
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/Stud2" unique_id=1702780312]
+shape = SubResource("BoxShape3D_dw5qa")
+
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/Stud2" unique_id=751662041]
+material_override = ExtResource("2_2vj6a")
+mesh = SubResource("BoxMesh_x23gd")
+
+[node name="Bracket" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=363885186]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -26.1, 21.586874, -7.5)
+collision_mask = 0
+metadata/surface = &"metal"
+
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/Bracket" unique_id=331906790]
+shape = SubResource("BoxShape3D_o2h47")
+
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/Bracket" unique_id=515204514]
+material_override = ExtResource("4_xoayv")
+mesh = SubResource("BoxMesh_tdkvl")
+
+[node name="Bracket2" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=282154101]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -29.9, 27.374912, -7.5)
+collision_mask = 0
+metadata/surface = &"metal"
+
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/Bracket2" unique_id=1987495935]
+shape = SubResource("BoxShape3D_s674j")
+
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/Bracket2" unique_id=1480529552]
+material_override = ExtResource("4_xoayv")
+mesh = SubResource("BoxMesh_ntvjm")
+
+[node name="Bracket3" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1682478256]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -26.1, 19.600445, -7.5)
+collision_mask = 0
+metadata/surface = &"metal"
+
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/Bracket3" unique_id=509466764]
+shape = SubResource("BoxShape3D_qd5gj")
+
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/Bracket3" unique_id=1987263810]
+material_override = ExtResource("4_xoayv")
+mesh = SubResource("BoxMesh_7l81d")
+
+[node name="Stud3" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1706783667]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14, 20.697899, -1.5)
+collision_mask = 0
+metadata/surface = &"wood"
+
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/Stud3" unique_id=1551270876]
+shape = SubResource("BoxShape3D_fpfth")
+
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/Stud3" unique_id=2128744561]
+material_override = ExtResource("2_2vj6a")
+mesh = SubResource("BoxMesh_qqpcs")
+
+[node name="Stud4" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1130092453]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14, 58.6979, -1.5)
+collision_mask = 0
+metadata/surface = &"wood"
+
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/Stud4" unique_id=702854022]
+shape = SubResource("BoxShape3D_rfn2l")
+
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/Stud4" unique_id=453478963]
+material_override = ExtResource("2_2vj6a")
+mesh = SubResource("BoxMesh_43yuu")
+
+[node name="Bracket4" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1172226428]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12.1, 21.556921, -7.5)
+collision_mask = 0
+metadata/surface = &"metal"
+
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/Bracket4" unique_id=746380425]
+shape = SubResource("BoxShape3D_j52tl")
+
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/Bracket4" unique_id=1031296774]
+material_override = ExtResource("4_xoayv")
+mesh = SubResource("BoxMesh_h04of")
+
+[node name="Bracket5" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=574856795]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15.9, 24.811323, -7.5)
+collision_mask = 0
+metadata/surface = &"metal"
+
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/Bracket5" unique_id=1830822752]
+shape = SubResource("BoxShape3D_ig3bm")
+
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/Bracket5" unique_id=1554409241]
+material_override = ExtResource("4_xoayv")
+mesh = SubResource("BoxMesh_gl1uw")
+
+[node name="Bracket6" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1785695029]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12.1, 50.529137, -7.5)
+collision_mask = 0
+metadata/surface = &"metal"
+
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/Bracket6" unique_id=1431503805]
+shape = SubResource("BoxShape3D_6txv2")
+
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/Bracket6" unique_id=196548601]
+material_override = ExtResource("4_xoayv")
+mesh = SubResource("BoxMesh_76bo0")
+
+[node name="Stud5" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1399443268]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 24.11963, -1.5)
+collision_mask = 0
+metadata/surface = &"wood"
+
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/Stud5" unique_id=680802163]
+shape = SubResource("BoxShape3D_1mhyg")
+
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/Stud5" unique_id=1682543387]
+material_override = ExtResource("2_2vj6a")
+mesh = SubResource("BoxMesh_lf1yl")
+
+[node name="Stud6" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=915550412]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 62.11963, -1.5)
+collision_mask = 0
+metadata/surface = &"wood"
+
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/Stud6" unique_id=1707786851]
+shape = SubResource("BoxShape3D_k7ei8")
+
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/Stud6" unique_id=1793614777]
+material_override = ExtResource("2_2vj6a")
+mesh = SubResource("BoxMesh_uwoyt")
+
+[node name="Bracket7" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=2002977967]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.9, 28.630598, -7.5)
+collision_mask = 0
+metadata/surface = &"metal"
+
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/Bracket7" unique_id=1375048950]
+shape = SubResource("BoxShape3D_6pocr")
+
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/Bracket7" unique_id=145813347]
+material_override = ExtResource("4_xoayv")
+mesh = SubResource("BoxMesh_rtdyl")
+
+[node name="Bracket8" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1996602438]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.9, 39.519768, -7.5)
+collision_mask = 0
+metadata/surface = &"metal"
+
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/Bracket8" unique_id=1601593436]
+shape = SubResource("BoxShape3D_vnkob")
+
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/Bracket8" unique_id=257994595]
+material_override = ExtResource("4_xoayv")
+mesh = SubResource("BoxMesh_njdtg")
+
+[node name="Bracket9" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=151851361]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.9, 26.925285, -7.5)
+collision_mask = 0
+metadata/surface = &"metal"
+
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/Bracket9" unique_id=192685327]
+shape = SubResource("BoxShape3D_077qb")
+
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/Bracket9" unique_id=1482490827]
+material_override = ExtResource("4_xoayv")
+mesh = SubResource("BoxMesh_skcri")
+
+[node name="Stud7" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1725618742]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14, 21.17543, -1.5)
+collision_mask = 0
+metadata/surface = &"wood"
+
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/Stud7" unique_id=783628973]
+shape = SubResource("BoxShape3D_etk5a")
+
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/Stud7" unique_id=1762499650]
+material_override = ExtResource("2_2vj6a")
+mesh = SubResource("BoxMesh_va24p")
+
+[node name="Stud8" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=208004147]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14, 59.17543, -1.5)
+collision_mask = 0
+metadata/surface = &"wood"
+
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/Stud8" unique_id=781628376]
+shape = SubResource("BoxShape3D_js3g8")
+
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/Stud8" unique_id=1246186210]
+material_override = ExtResource("2_2vj6a")
+mesh = SubResource("BoxMesh_x3hh5")
+
+[node name="Bracket10" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1065193957]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15.9, 13.37245, -7.5)
+collision_mask = 0
+metadata/surface = &"metal"
+
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/Bracket10" unique_id=872039448]
+shape = SubResource("BoxShape3D_nf46o")
+
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/Bracket10" unique_id=642794197]
+material_override = ExtResource("4_xoayv")
+mesh = SubResource("BoxMesh_clf0s")
+
+[node name="Bracket11" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1721917785]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12.1, 28.753017, -7.5)
+collision_mask = 0
+metadata/surface = &"metal"
+
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/Bracket11" unique_id=1919753264]
+shape = SubResource("BoxShape3D_2fsc4")
+
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/Bracket11" unique_id=1194487563]
+material_override = ExtResource("4_xoayv")
+mesh = SubResource("BoxMesh_b88ty")
+
+[node name="Bracket12" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=171156461]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15.9, 22.035925, -7.5)
+collision_mask = 0
+metadata/surface = &"metal"
+
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/Bracket12" unique_id=1687033226]
+shape = SubResource("BoxShape3D_u5ir7")
+
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/Bracket12" unique_id=184206515]
+material_override = ExtResource("4_xoayv")
+mesh = SubResource("BoxMesh_fi5a7")
+
+[node name="Stud9" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=672992459]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28, 27.62296, -1.5)
+collision_mask = 0
+metadata/surface = &"wood"
+
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/Stud9" unique_id=1455782163]
+shape = SubResource("BoxShape3D_y6fco")
+
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/Stud9" unique_id=1056258756]
+material_override = ExtResource("2_2vj6a")
+mesh = SubResource("BoxMesh_fufbc")
+
+[node name="Stud10" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=416492859]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28, 65.622955, -1.5)
+collision_mask = 0
+metadata/surface = &"wood"
+
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/Stud10" unique_id=387184976]
+shape = SubResource("BoxShape3D_pnew7")
+
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/Stud10" unique_id=2134304632]
+material_override = ExtResource("2_2vj6a")
+mesh = SubResource("BoxMesh_qr2s7")
+
+[node name="Bracket13" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=223500871]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 29.9, 22.987898, -7.5)
+collision_mask = 0
+metadata/surface = &"metal"
+
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/Bracket13" unique_id=1437587411]
+shape = SubResource("BoxShape3D_4vtai")
+
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/Bracket13" unique_id=628129617]
+material_override = ExtResource("4_xoayv")
+mesh = SubResource("BoxMesh_5eh1i")
+
+[node name="Bracket14" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=489790477]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26.1, 8.063693, -7.5)
+collision_mask = 0
+metadata/surface = &"metal"
+
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/Bracket14" unique_id=1680012941]
+shape = SubResource("BoxShape3D_wmdye")
+
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/Bracket14" unique_id=781273013]
+material_override = ExtResource("4_xoayv")
+mesh = SubResource("BoxMesh_2vvvi")
+
+[node name="Bracket15" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=741490314]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 29.9, 37.042133, -7.5)
+collision_mask = 0
+metadata/surface = &"metal"
+
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/Bracket15" unique_id=985659005]
+shape = SubResource("BoxShape3D_eaeux")
+
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/Bracket15" unique_id=1109501642]
+material_override = ExtResource("4_xoayv")
+mesh = SubResource("BoxMesh_5srjr")
+
+[node name="FireBlock" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1460442196]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -32.5, 46.308285, -1.5)
+collision_mask = 0
+metadata/surface = &"wood"
+
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/FireBlock" unique_id=1484950153]
+shape = SubResource("BoxShape3D_rrchs")
+
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/FireBlock" unique_id=1915566333]
+material_override = ExtResource("2_2vj6a")
+mesh = SubResource("BoxMesh_87s3l")
+
+[node name="FireBlock2" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=208488236]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -23.5, 25.115156, -1.5)
+collision_mask = 0
+metadata/surface = &"wood"
+
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/FireBlock2" unique_id=1241274253]
+shape = SubResource("BoxShape3D_xwtpe")
+
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/FireBlock2" unique_id=1744648163]
+material_override = ExtResource("2_2vj6a")
+mesh = SubResource("BoxMesh_8vkac")
+
+[node name="FireBlock3" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1764316900]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.5, 39.555504, -1.5)
+collision_mask = 0
+metadata/surface = &"wood"
+
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/FireBlock3" unique_id=1279017530]
+shape = SubResource("BoxShape3D_a4jy2")
+
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/FireBlock3" unique_id=645313811]
+material_override = ExtResource("2_2vj6a")
+mesh = SubResource("BoxMesh_88hkc")
+
+[node name="FireBlock4" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=928865051]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.5, 34.640606, -1.5)
+collision_mask = 0
+metadata/surface = &"wood"
+
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/FireBlock4" unique_id=544713202]
+shape = SubResource("BoxShape3D_sjbnj")
+
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/FireBlock4" unique_id=2147444180]
+material_override = ExtResource("2_2vj6a")
+mesh = SubResource("BoxMesh_smeed")
+
+[node name="FireBlock5" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1741674305]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 23.5, 38.88638, -1.5)
+collision_mask = 0
+metadata/surface = &"wood"
+
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/FireBlock5" unique_id=1757522424]
+shape = SubResource("BoxShape3D_xjsxn")
+
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/FireBlock5" unique_id=255442652]
+material_override = ExtResource("2_2vj6a")
+mesh = SubResource("BoxMesh_gb68b")
+
+[node name="FireBlock6" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=638207692]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 32.5, 45.549572, -1.5)
+collision_mask = 0
+metadata/surface = &"wood"
+
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/FireBlock6" unique_id=1210636291]
+shape = SubResource("BoxShape3D_ekk6l")
+
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/FireBlock6" unique_id=425784427]
+material_override = ExtResource("2_2vj6a")
+mesh = SubResource("BoxMesh_5mrf1")
+
+[node name="CopperPipe" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1334359836]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 7, 36, -7.5)
+collision_mask = 0
+metadata/surface = &"metal"
+
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/CopperPipe" unique_id=78939951]
+shape = SubResource("CylinderShape3D_3166m")
+
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/CopperPipe" unique_id=93870347]
+material_override = ExtResource("5_c4suc")
+mesh = SubResource("CylinderMesh_c6xdr")
+
+[node name="Wire" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=828897020]
+transform = Transform3D(0, 1, 0, -1, 0, 0, 0, 0, 1, 0, 17.951437, -6)
+collision_mask = 0
+metadata/surface = &"plastic"
+
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/Wire" unique_id=1814867814]
+shape = SubResource("CylinderShape3D_aq0x7")
+
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/Wire" unique_id=552800699]
+material_override = ExtResource("6_61luv")
+mesh = SubResource("CylinderMesh_lndk2")
+
+[node name="Wire2" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=805399441]
+transform = Transform3D(0, 1, 0, -1, 0, 0, 0, 0, 1, 0, 53.0302, -6)
+collision_mask = 0
+metadata/surface = &"plastic"
+
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/Wire2" unique_id=126484948]
+shape = SubResource("CylinderShape3D_5foo5")
+
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/Wire2" unique_id=528615509]
+material_override = ExtResource("6_61luv")
+mesh = SubResource("CylinderMesh_selep")
+
+[node name="OutletBox" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1048217500]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11, 18, -8.5)
+collision_mask = 0
+metadata/surface = &"plastic"
+
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/OutletBox" unique_id=1520079352]
+shape = SubResource("BoxShape3D_408io")
+
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/OutletBox" unique_id=368479562]
+material_override = ExtResource("7_pppex")
+mesh = SubResource("BoxMesh_eivab")
+
+[node name="Zones" type="Node3D" parent="." unique_id=274680422]
+
+[node name="CavityDark" type="Area3D" parent="Zones" unique_id=1617781943]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 36, 0)
+script = ExtResource("8_mgiik")
+light_level = 1
+active_events = PackedStringArray()
+inactive_events = PackedStringArray()
+linked_nodes = Array[NodePath]([NodePath("Tint")])
+
+[node name="Shape" type="CollisionShape3D" parent="Zones/CavityDark" unique_id=1878895551]
+shape = SubResource("BoxShape3D_rcqj2")
+
+[node name="Tint" type="MeshInstance3D" parent="Zones/CavityDark" unique_id=1820462150]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -35.94, 0)
+material_override = ExtResource("9_iwcde")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_c6ivv")
+
+[node name="InInsulation" type="Area3D" parent="Zones" unique_id=1158927661]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7, 7.7428794, -5)
+script = ExtResource("10_x2hsc")
+requires_squeeze = false
+allowed_bugs = PackedStringArray()
+hint = "Hidden in the insulation"
+
+[node name="Shape" type="CollisionShape3D" parent="Zones/InInsulation" unique_id=1532979780]
+shape = SubResource("BoxShape3D_shd7l")
+
+[node name="InsulationShade" type="Area3D" parent="Zones" unique_id=1460384623]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7, 7.7428794, -5)
+script = ExtResource("8_mgiik")
+zone_priority = 3
+active_events = PackedStringArray()
+inactive_events = PackedStringArray()
+linked_nodes = Array[NodePath]([NodePath("Tint")])
+
+[node name="Shape" type="CollisionShape3D" parent="Zones/InsulationShade" unique_id=2084562488]
+shape = SubResource("BoxShape3D_wo5o5")
+
+[node name="Tint" type="MeshInstance3D" parent="Zones/InsulationShade" unique_id=1303831522]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -7.6828794, 0)
+material_override = ExtResource("9_iwcde")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_fk2wn")
+
+[node name="InInsulation2" type="Area3D" parent="Zones" unique_id=1072969233]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 7.54204, -5)
+script = ExtResource("10_x2hsc")
+requires_squeeze = false
+allowed_bugs = PackedStringArray()
+hint = "Hidden in the insulation"
+
+[node name="Shape" type="CollisionShape3D" parent="Zones/InInsulation2" unique_id=1654927421]
+shape = SubResource("BoxShape3D_8mqt0")
+
+[node name="InsulationShade2" type="Area3D" parent="Zones" unique_id=296276601]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 7.54204, -5)
+script = ExtResource("8_mgiik")
+zone_priority = 3
+active_events = PackedStringArray()
+inactive_events = PackedStringArray()
+linked_nodes = Array[NodePath]([NodePath("Tint")])
+
+[node name="Shape" type="CollisionShape3D" parent="Zones/InsulationShade2" unique_id=1887389120]
+shape = SubResource("BoxShape3D_vxegv")
+
+[node name="Tint" type="MeshInstance3D" parent="Zones/InsulationShade2" unique_id=1627307102]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -7.48204, 0)
+material_override = ExtResource("9_iwcde")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_vxrss")
+
+[node name="MouseTrap" type="Node3D" parent="Zones" unique_id=859976618 instance=ExtResource("11_o1mpv")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 34.102722, 0, -2)
+
+[node name="Pickups" type="Node3D" parent="." unique_id=1215973294]
+
+[node name="Goal" type="Area3D" parent="Pickups" unique_id=719915100 instance=ExtResource("13_d15me")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 38, 0, -7)
+label = "hole in the bottom plate"
+
+[node name="GemShard" type="Area3D" parent="Pickups" unique_id=577421579 instance=ExtResource("15_m7y4b")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.9, 27.225285, -7.5)
+
+[node name="GemShard2" type="Area3D" parent="Pickups" unique_id=837121267 instance=ExtResource("15_m7y4b")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 29.9, 37.342133, -7.5)
+
+[node name="GemShard3" type="Area3D" parent="Pickups" unique_id=116454224 instance=ExtResource("15_m7y4b")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 29.9, 23.287897, -7.5)
+
+[node name="GemShard4" type="Area3D" parent="Pickups" unique_id=1367110134 instance=ExtResource("15_m7y4b")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -26.1, 21.886873, -7.5)
+
+[node name="GemShard5" type="Area3D" parent="Pickups" unique_id=1951677691 instance=ExtResource("15_m7y4b")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12.1, 50.829136, -7.5)
+
+[node name="GemShard6" type="Area3D" parent="Pickups" unique_id=2126986245 instance=ExtResource("15_m7y4b")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -21, 0, -1.0642085)
+
+[node name="GemShard7" type="Area3D" parent="Pickups" unique_id=794881781 instance=ExtResource("15_m7y4b")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.9, 39.819767, -7.5)
+
+[node name="GemShard8" type="Area3D" parent="Pickups" unique_id=145263677 instance=ExtResource("15_m7y4b")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 23.5, 39.63638, -1.5)
+
+[node name="GemShard9" type="Area3D" parent="Pickups" unique_id=825583820 instance=ExtResource("15_m7y4b")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12.1, 21.85692, -7.5)
+
+[node name="PowerTurbo" type="Area3D" parent="Pickups" unique_id=1787338655 instance=ExtResource("17_2n6lr")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.9, 28.930597, -7.5)
+def = ExtResource("19_05qif")
+
+[node name="Props" type="Node3D" parent="." unique_id=496993353]
+
+[node name="Actors" type="Node3D" parent="." unique_id=376431944]
+
+[node name="Lights" type="Node3D" parent="." unique_id=2043058823]
+
+[node name="Environment" type="WorldEnvironment" parent="Lights" unique_id=1505169435]
+environment = SubResource("Environment_thfu8")
+
+[node name="Sun" type="DirectionalLight3D" parent="Lights" unique_id=561984967]
+transform = Transform3D(0.90630776, -0.3237444, 0.2716538, 0, 0.64278764, 0.76604444, -0.42261827, -0.69427204, 0.5825634, 0, 0, 0)
+light_color = Color(1, 0.94, 0.82, 1)
+light_energy = 0.35
+shadow_enabled = true
+directional_shadow_max_distance = 180.0
+
+[node name="Decor" type="Node3D" parent="." unique_id=165484040]
+
+[node name="Insulation" type="MeshInstance3D" parent="Decor" unique_id=386987288]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7, 7.7428794, -5)
+material_override = ExtResource("20_54p20")
+mesh = SubResource("BoxMesh_jfgpu")
+
+[node name="Insulation2" type="MeshInstance3D" parent="Decor" unique_id=1334361564]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 7.54204, -5)
+material_override = ExtResource("20_54p20")
+mesh = SubResource("BoxMesh_ei4lj")
+
+[node name="ExitCrack" type="MeshInstance3D" parent="Decor" unique_id=365585806]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 38, 0.05, -7)
+material_override = ExtResource("21_dlavk")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_f0mf7")
+
+[node name="Skins" type="Node3D" parent="." unique_id=916655435]
+
+[node name="OpenSide" type="StaticBody3D" parent="." unique_id=302216384]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 36, 11)
+collision_layer = 128
+collision_mask = 0
+metadata/no_climb = true
+
+[node name="Shape" type="CollisionShape3D" parent="OpenSide" unique_id=1932272402]
+shape = SubResource("BoxShape3D_qr4di")
+
+[node name="PlayerSpawn" type="Marker3D" parent="." unique_id=1258521021]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -37, 0.4, 2)

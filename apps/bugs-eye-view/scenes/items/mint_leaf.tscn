@@ -28,18 +28,18 @@ _surfaces = [{
 "vertex_data": PackedByteArray("Da7//3HYOIzEEf//AADG89K///9Z1jiMAAD//xgCxvMNrtiJcdg4jMQR2IkAAMbz0r/YiVnWOIwAANiJGALG89K///9Z1jjMAAD//xgCxrPEEf//AAA4zA2u//9x2Maz0r/YiVnWOMwAANiJGALGs8QR2IkAADjMDa7YiXHYxrPSv///WdZe9w2u2Ilx2OjADa7//3HYXvfSv9iJWdbowMQR//8AAF73AADYiRgC6MAAAP//GAJe98QR2IkAAOjAMPEAAED+6MDD9dEEtv25w+T5zRI5/TfIK/2WKNb8E85F/whEl/z/1P//dWKB/LTcRf/igJf8++Qr/VWc1vym7eT5HbI5/ZD2w/UZwLb9mv8w8evEQP5e953sGcDK/nHufOgdskb/wOU15VWcqf9v3Rvj4oDp/6rVYeJ1Yv//qc4b4whE6f+yyDXlliip/xHEfOjNEkb/FsGd7NEEyv7/vzDxAABA/ujAtNUAAGjc6MBI2tEE3tu5w2jezRJh2zfIr+GWKP7aE87K4whEv9r/1IPkdWKp2rTcyuPigL/a++Sv4VWc/tqm7WjeHbJh25D2SNoZwN7bmv+01evEaNxe9yHRGcDy3HHuAM0dsm7dwOW6yVWc0d1v3Z/H4oAQ3qrV5sZ1Yibeqc6fxwhEEN6yyLrJlijR3RHEAM3NEm7dFsEh0dEE8tz/v7TVAABo3OjAOboAAI+66MDMvtEEBbq5w+3CzRKJuTfINMaWKCa5E85OyAhE57j/1AjJdWLRuLTcTsjigOe4++Q0xlWcJrmm7e3CHbKJuZD2zL4ZwAW6mv85uuvEj7pe96a1GcAZu3HuhbEdspa7wOU+rlWc+btv3SSs4oA4vKrVaqt1Yk68qc4krAhEOLyyyD6ulij5uxHEhbHNEpa7FsGmtdEEGbv/vzm6AACPuujAMPF1YkD+OIww8QAAQP44jMP10QS2/TiM5PnNEjn9OIwr/ZYo1vw4jEX/CESX/DiM//91YoH8OIxF/+KAl/w4jCv9VZzW/DiM5Pkdsjn9OIzD9RnAtv04jDDx68RA/jiMnewZwMr+OIx86B2yRv84jDXlVZyp/ziMG+PigOn/OIxh4nVi//84jBvjCETp/ziMNeWWKKn/OIx86M0SRv84jJ3s0QTK/jiMMPEAAED+OIw5unVij7r//zm6AACPuv//zL7RBAW6///tws0Sibn//zTGligmuf//TsgIROe4//8IyXVi0bj//07I4oDnuP//NMZVnCa5///twh2yibn//8y+GcAFuv//ObrrxI+6//+mtRnAGbv//4WxHbKWu///Pq5VnPm7//8krOKAOLz//2qrdWJOvP//JKwIRDi8//8+rpYo+bv//4WxzRKWu///prXRBBm7//85ugAAj7r///1/AQD/f////X8BAP9////9fwEA/3////1/AQD/f////38AAP9//v//fwAA/3/+//9/AAD/f/7//38AAP9//v/9iIC7tR0kcf2IgLu1HSRx/YiAu7UdJHH9iIC7tR0kcbUdJHGMHcFh3SMKT1goxEHVK203wi7CLl0xCifQM8gfPDacGMg4KhH9iIC7iH8+vsN1/beLbBeyZmM9rNtZI6ZfT22fKkOel/Yz5Y1cH7eAtR0kcbUdJHGMHcFh3SMKT1goxEHVK203wi7CLl0xCifQM8gfPDacGMg4KhH9iIC7iH8+vsN1/beLbBeyZmM9rNtZI6ZfT22fKkOel/Yz5Y1cH7eAtR0kcbUdJHGMHcFh3SMKT1goxEHVK203wi7CLl0xCifQM8gfPDacGMg4KhH9iIC7iH8+vsN1/beLbBeyZmM9rNtZI6ZfT22fKkOel/Yz5Y1cH7eAtR0kcQKAAQACgAEAAoABAAKAAQACgAEAAoABAAKAAQACgAEAAoABAAKAAQACgAEAAoABAAKAAQACgAEAAoABAAKAAQACgAEAAoABAAKAAQACgAEAAoABAAKAAQD//82Q///NkP//zZD//82Q///NkP//zZD//82Q///NkP//zZD//82Q///NkP//zZD//82Q///NkP//zZD//82Q///NkP//zZD//82Q///NkP//zZD//82Q")
 }]
 
-[node name="MintLeaf" type="Area3D" unique_id=355345057]
+[node name="MintLeaf" type="Area3D" unique_id=836126252]
 script = ExtResource("1_0phym")
 def = ExtResource("2_g3bqc")
 
-[node name="Shape" type="CollisionShape3D" parent="." unique_id=545312794]
+[node name="Shape" type="CollisionShape3D" parent="." unique_id=2128330874]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.65, 0)
 shape = SubResource("SphereShape3D_nhngd")
 
-[node name="Visual" type="Node3D" parent="." unique_id=1599844198]
+[node name="Visual" type="Node3D" parent="." unique_id=1058512286]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.65, 0)
 
-[node name="Leaf" type="MeshInstance3D" parent="Visual" unique_id=538491375]
+[node name="Leaf" type="MeshInstance3D" parent="Visual" unique_id=329895640]
 transform = Transform3D(0.76426923, 0, 0.44328034, 0, 0.12, 0, -0.23641618, 0, 1.4330047, 0, -0.4, 0)
 material_override = ExtResource("3_cus2p")
 visibility_range_end = 110.0
@@ -47,14 +47,14 @@ visibility_range_end_margin = 16.5
 visibility_range_fade_mode = 1
 mesh = SubResource("SphereMesh_xd1v6")
 
-[node name="Rib" type="MeshInstance3D" parent="Visual" unique_id=1472529280]
+[node name="Rib" type="MeshInstance3D" parent="Visual" unique_id=1730064171]
 material_override = ExtResource("4_4do48")
 visibility_range_end = 110.0
 visibility_range_end_margin = 16.5
 visibility_range_fade_mode = 1
 mesh = SubResource("ArrayMesh_frq6q")
 
-[node name="Skin" type="Node3D" parent="Visual" unique_id=1386408145]
+[node name="Skin" type="Node3D" parent="Visual" unique_id=650959487]
 script = ExtResource("5_oltdq")
 model_id = "mint_leaf"
 fit_size = Vector3(1.4, 0.4, 2.4)

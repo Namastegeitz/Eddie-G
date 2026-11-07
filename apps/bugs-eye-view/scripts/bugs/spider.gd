@@ -182,6 +182,15 @@ func can_climb() -> bool:
 	return false
 
 
+## Silk Grapple: the spider just fires its own web line at the reticle.
+func grapple(_max_dist: float) -> bool:
+	if cam == null:
+		return false
+	_web_cd = 0.0
+	_fire_web(cam.screen_center())
+	return zipping
+
+
 func launch(vel: Vector3, flight_time: float) -> bool:
 	if zipping or not super.launch(vel, flight_time):
 		return false

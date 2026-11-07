@@ -19,6 +19,7 @@ const SCENES := {
 	&"settings": "res://scenes/ui/settings_menu.tscn",
 	&"colony": "res://scenes/hub/colony_hub.tscn",
 	&"showcase": "res://scenes/ui/showcase.tscn",
+	&"armory": "res://scenes/ui/armory.tscn",
 }
 const UPGRADE_PATHS: Array[String] = [
 	"res://resources/upgrades/swift_legs.tres",
@@ -66,6 +67,9 @@ func _ready() -> void:
 		var lp := "res://resources/levels/%s.tres" % id
 		if ResourceLoader.exists(lp):
 			_levels[id] = load(lp)
+	# The mini maps behind each room (configs built from MiniMaps).
+	for mid in MiniMaps.all_ids():
+		_levels[mid] = MiniMaps.level_config(mid)
 	for up in UPGRADE_PATHS:
 		if ResourceLoader.exists(up):
 			_upgrades.append(load(up))
@@ -138,7 +142,30 @@ func is_level_unlocked(id: StringName) -> bool:
 	var cfg := get_level(id)
 	if cfg == null:
 		return false
+	if cfg.is_mini:
+		return is_mini_unlocked(id)
 	return cfg.unlock_after == &"" or SaveSystem.is_level_completed(cfg.unlock_after)
+
+
+## Mini maps open one after another once their room is open; the crawl space
+## only when it has opened up.
+func is_mini_unlocked(id: StringName) -> bool:
+	var cfg := get_level(id)
+	if cfg == null or not cfg.is_mini or not is_level_unlocked(cfg.parent_room):
+		return false
+	if cfg.hidden_map:
+		return SaveSystem.is_crawl_open(cfg.parent_room)
+	if cfg.mini_index <= 1:
+		return true
+	return SaveSystem.is_mini_done(StringName("%s_m%d" % [cfg.parent_room, cfg.mini_index - 1]))
+
+
+## The next mini map after `id` in its room ("" after the last).
+func next_mini_id(id: StringName) -> StringName:
+	var cfg := get_level(id)
+	if cfg == null or not cfg.is_mini or cfg.hidden_map or cfg.mini_index >= 9:
+		return &""
+	return StringName("%s_m%d" % [cfg.parent_room, cfg.mini_index + 1])
 
 
 func is_slot_unlocked(level_id: StringName, slot: StringName) -> bool:
@@ -266,6 +293,8 @@ func finish_run(won: bool, cause: StringName = &"") -> Dictionary:
 	run.won = won
 	run.cause = cause
 	var cfg := get_level(current_level)
+	if cfg and cfg.is_mini:
+		return _finish_mini(cfg, won, cause)
 	var par := cfg.par_time if cfg else 180.0
 	var sc := run.score(scoring, par)
 	var badges := run.badges(par)
@@ -275,6 +304,12 @@ func finish_run(won: bool, cause: StringName = &"") -> Dictionary:
 	if not won:
 		banked = int(run.crumbs * scoring.caught_bank_ratio)
 	SaveSystem.bank_crumbs(banked)
+	# Crumb gems and treasures are worth credits for add-ons too.
+	var credits := run.gems.size() * 3
+	for t in run.treasures:
+		var d := ItemDef.load_def(t)
+		credits += [2, 5, 10, 20][clampi(d.rarity, 0, 3)] if d else 0
+	SaveSystem.add_credits(credits)
 	var unlocks: Array = []
 	if won and cfg and cfg.unlocks_bug != &"":
 		if SaveSystem.unlock_bug(cfg.unlocks_bug):
@@ -294,6 +329,42 @@ func finish_run(won: bool, cause: StringName = &"") -> Dictionary:
 		"won": won, "cause": cause, "score": sc, "badges": badges, "new_badges": newly,
 		"banked": banked, "unlocks": unlocks, "time": run.time,
 		"level": current_level, "bug": current_bug, "new_treasures": run.new_treasures.duplicate(),
+		"credits": credits,
+	}
+	set_state(State.WIN if won else State.CAUGHT)
+	run_finished.emit(last_result)
+	return last_result
+
+
+## A mini map: gem shards and the task bonus become credits; the next map
+## opens; and now and then the room's crawl space opens up.
+func _finish_mini(cfg: LevelConfig, won: bool, cause: StringName) -> Dictionary:
+	var sc := run.score(scoring, cfg.par_time)
+	var badges := run.badges(cfg.par_time)
+	var newly := SaveSystem.record_level_result(current_level, won, int(sc["total"]), run.time, badges)
+	var per_shard := MiniMaps.SHARD_CREDIT * (2 if cfg.hidden_map else 1)
+	var credits := run.crumbs * per_shard + (cfg.credit_reward if won else 0)
+	if not won:
+		credits = int(run.crumbs * per_shard * 0.5)
+	SaveSystem.add_credits(credits)
+	var was_done := SaveSystem.is_mini_done(current_level)
+	SaveSystem.record_mini(current_level, won, run.crumbs)
+	var unlocks: Array = []
+	if won and not was_done:
+		var nxt := next_mini_id(current_level)
+		if nxt != &"":
+			unlocks.append("Next mini map open: %s" % get_level(nxt).display_name)
+	if cfg.hidden_map:
+		# Played: the crawl space seals up again until the next lucky draught.
+		SaveSystem.set_crawl_open(cfg.parent_room, false)
+	elif won and not SaveSystem.is_crawl_open(cfg.parent_room) and randf() < MiniMaps.CRAWL_CHANCE:
+		SaveSystem.set_crawl_open(cfg.parent_room, true)
+		unlocks.append("You feel a draught... a hidden CRAWL SPACE has opened under the %s!" % get_level(cfg.parent_room).display_name)
+	SaveSystem.save_game()
+	last_result = {
+		"won": won, "cause": cause, "score": sc, "badges": badges, "new_badges": newly,
+		"banked": 0, "unlocks": unlocks, "time": run.time, "level": current_level, "bug": current_bug,
+		"new_treasures": run.new_treasures.duplicate(), "credits": credits, "mini": true,
 	}
 	set_state(State.WIN if won else State.CAUGHT)
 	run_finished.emit(last_result)

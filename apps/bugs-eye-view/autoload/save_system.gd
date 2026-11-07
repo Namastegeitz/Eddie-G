@@ -32,6 +32,16 @@ func default_data() -> Dictionary:
 		"gems": {},
 		## Treasures found (id -> times), for the showcase on the home screen.
 		"treasures": {},
+		## Credits (from gem shards in the mini maps) to spend on add-ons.
+		"credits": 0,
+		## Add-ons owned: id -> level (1-3).
+		"addons": {"decoy_chirp": 1, "iron_shell": 1},
+		## The revolver's six chambers (add-on ids, "" = empty).
+		"revolver": ["decoy_chirp", "iron_shell", "", "", "", ""],
+		## Mini maps finished: id -> {"done": bool, "best": shards}.
+		"minis": {},
+		## Rooms whose crawl space has opened up (it closes again once played).
+		"crawl_open": {},
 		"settings": {
 			"master_volume": 0.9,
 			"music_volume": 0.6,
@@ -209,6 +219,90 @@ func record_treasure(id: StringName) -> bool:
 
 func treasures_found() -> Dictionary:
 	return data.get("treasures", {})
+
+
+# --- Credits, add-ons and the revolver -----------------------------------------
+
+func credits() -> int:
+	return int(data.get("credits", 0))
+
+
+func add_credits(n: int) -> void:
+	data["credits"] = maxi(credits() + n, 0)
+	progress_changed.emit()
+
+
+func spend_credits(n: int) -> bool:
+	if n > credits():
+		return false
+	data["credits"] = credits() - n
+	progress_changed.emit()
+	return true
+
+
+## 0 = not owned.
+func addon_level(id: StringName) -> int:
+	return int((data.get("addons", {}) as Dictionary).get(String(id), 0))
+
+
+## Buys an add-on or its next level. False if it can't be afforded or is maxed.
+func buy_addon(id: StringName) -> bool:
+	var next := addon_level(id) + 1
+	if next > AddOns.MAX_LEVEL or not spend_credits(AddOns.price(id, next)):
+		return false
+	var a: Dictionary = data.get("addons", {})
+	a[String(id)] = next
+	data["addons"] = a
+	progress_changed.emit()
+	return true
+
+
+func revolver() -> Array:
+	var r: Array = data.get("revolver", [])
+	while r.size() < AddOns.CHAMBERS:
+		r.append("")
+	return r
+
+
+## Loads an owned add-on into a chamber (each add-on in one chamber at most).
+func set_chamber(i: int, id: StringName) -> void:
+	var r := revolver()
+	if id != &"":
+		for j in r.size():
+			if String(r[j]) == String(id):
+				r[j] = ""
+	r[i] = String(id)
+	data["revolver"] = r
+	progress_changed.emit()
+
+
+func is_mini_done(id: StringName) -> bool:
+	return bool(((data.get("minis", {}) as Dictionary).get(String(id), {}) as Dictionary).get("done", false))
+
+
+func record_mini(id: StringName, won: bool, shards: int) -> void:
+	var m: Dictionary = data.get("minis", {})
+	var rec: Dictionary = m.get(String(id), {"done": false, "best": 0})
+	rec["done"] = bool(rec.get("done", false)) or won
+	rec["best"] = maxi(int(rec.get("best", 0)), shards)
+	m[String(id)] = rec
+	data["minis"] = m
+	progress_changed.emit()
+
+
+func mini_best(id: StringName) -> int:
+	return int(((data.get("minis", {}) as Dictionary).get(String(id), {}) as Dictionary).get("best", 0))
+
+
+func is_crawl_open(room: StringName) -> bool:
+	return bool((data.get("crawl_open", {}) as Dictionary).get(String(room), false))
+
+
+func set_crawl_open(room: StringName, open: bool) -> void:
+	var c: Dictionary = data.get("crawl_open", {})
+	c[String(room)] = open
+	data["crawl_open"] = c
+	progress_changed.emit()
 
 
 ## Whether a showcase piece (treasure or crumb gem) has ever been found.

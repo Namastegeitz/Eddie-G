@@ -30,6 +30,7 @@ func _ready() -> void:
 	col.add_child(spacer)
 	var play := UIKit.button("Play", func() -> void: GameManager.goto("level_select"), 76)
 	col.add_child(play)
+	col.add_child(UIKit.button("Armory  (%d credits)" % SaveSystem.credits(), func() -> void: GameManager.goto("armory")))
 	col.add_child(UIKit.button("Showcase", func() -> void: GameManager.goto("showcase")))
 	col.add_child(UIKit.button("Colony", func() -> void: GameManager.goto("colony")))
 	col.add_child(UIKit.button("Settings", func() -> void: GameManager.goto("settings")))

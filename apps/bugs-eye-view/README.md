@@ -99,6 +99,17 @@ Ring, Grandma's Star Brooch, the Golden Acorn) plus the crumb gems, collected
 into a **showcase** on the home screen: a trophy shelf of your rarest finds
 and a Showcase screen of all 24.
 
+**Mini maps**: ten small levels behind each room (30 in all) - inside the
+walls, under the sink, the basement and the attic - with small tasks
+(gather shards, beat the clock, find the key, climb to the top), mouse traps,
+drafts, cobwebs and a prowling cat or vacuum, plus a hidden **crawl space**
+that opens now and then, packed with shards. Shards and gems become
+**credits** to spend in the **Armory** on 12 add-ons (strength, defense and
+tactics: Power Legs, Dash Burst, Ground Pound, Iron Shell, Spiky Armor,
+Shadow Cloak, Second Wind, Smoke Bomb, Decoy Chirp, Flash Bead, Silk Grapple,
+Crumb Magnet), each up to level 3, loaded into a six-chamber **revolver**
+that swings open in play: turn it to a chamber and fire.
+
 **Look and feel**: high-resolution textures on every surface (tiles, wood
 grain, flagstones, grass, carpet, fabric, denim, fur, bug shells) with bump
 detail; rounder models; motion smoothed between physics steps so everything

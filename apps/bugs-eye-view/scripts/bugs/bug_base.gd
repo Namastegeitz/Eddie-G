@@ -55,6 +55,8 @@ var _probe := PhysicsRayQueryParameters3D.new()
 var _dodge_time := 0.0
 var _dodge_cd := 0.0
 var _dodge_dir := Vector3.ZERO
+## Dash Burst (an add-on) dashes further than a normal dodge.
+var _dash_mult := 1.0
 var _jump_queued := false
 ## Forgiving jumps: a jump still works just after running off an edge
 ## (coyote time) and a press just before landing is remembered (buffer).
@@ -101,6 +103,10 @@ func _physics_process(delta: float) -> void:
 	if dead:
 		return
 	_tick_timers(delta)
+	if _grapple_left > 0.0:
+		_grapple_tick(delta)
+		_update_motion(delta)
+		return
 	if knockdown > 0.0:
 		velocity.x = move_toward(velocity.x, 0.0, 20.0 * delta)
 		velocity.z = move_toward(velocity.z, 0.0, 20.0 * delta)
@@ -137,6 +143,8 @@ func _tick_timers(delta: float) -> void:
 	_dodge_cd = maxf(_dodge_cd - delta * (3.0 if has_effect(&"wired") else 1.0), 0.0)
 	_tick_effects(delta)
 	_dodge_time = maxf(_dodge_time - delta, 0.0)
+	if _dodge_time <= 0.0:
+		_dash_mult = 1.0
 	_leap_off_t = maxf(_leap_off_t - delta, 0.0)
 	stuck_time = maxf(stuck_time - delta, 0.0)
 	if _slow_timer > 0.0:
@@ -215,7 +223,7 @@ func get_action_labels() -> Dictionary:
 func ground_move(delta: float, speed: float) -> void:
 	_climb_cd = maxf(_climb_cd - delta, 0.0)
 	if climbing:
-		climb_move(delta, speed * stats.climb_speed_mult)
+		climb_move(delta, speed * stats.climb_speed_mult * (float(effect_amount.get(&"grip", 1.0)) if has_effect(&"grip") else 1.0))
 		return
 	var dir := flat_dir(move_input())
 	var target := dir * speed
@@ -229,8 +237,8 @@ func ground_move(delta: float, speed: float) -> void:
 	velocity.x = move_toward(velocity.x, target.x, accel * delta)
 	velocity.z = move_toward(velocity.z, target.z, accel * delta)
 	if _dodge_time > 0.0:
-		velocity.x = _dodge_dir.x * stats.dodge_speed
-		velocity.z = _dodge_dir.z * stats.dodge_speed
+		velocity.x = _dodge_dir.x * stats.dodge_speed * _dash_mult
+		velocity.z = _dodge_dir.z * stats.dodge_speed * _dash_mult
 	var grounded := is_on_floor()
 	if grounded:
 		_coyote = COYOTE_TIME
@@ -568,6 +576,136 @@ func _clamber_tick(delta: float, speed: float) -> void:
 			facing = f.normalized()
 
 
+## Dash Burst: a long, untouchable dash the way you're heading.
+func power_dash(seconds: float, mult: float) -> void:
+	var dir := flat_dir(move_input())
+	if dir.length() < 0.1:
+		dir = fp_forward() if in_first_person() else facing
+	dir.y = 0.0
+	if dir.length_squared() < 0.0001:
+		dir = Vector3.FORWARD
+	stop_climb()
+	_dodge_dir = dir.normalized()
+	_dodge_time = seconds
+	_dash_mult = mult
+	invuln = maxf(invuln, seconds + 0.1)
+	AudioManager.play(&"dash", -2.0, 0.9)
+
+
+## Where the middle of the screen points (on a surface within `max_dist` of
+## the bug), or a spot that far ahead on the floor.
+func aim_point(max_dist: float) -> Vector3:
+	var ahead := fp_forward() if in_first_person() else -camera_yaw_basis.z
+	ahead.y = 0.0
+	ahead = ahead.normalized() if ahead.length_squared() > 0.0001 else facing
+	var fallback := global_position + ahead * max_dist
+	if cam == null or not is_instance_valid(cam):
+		return fallback
+	var hit := _camera_ray(max_dist + cam.camera.global_position.distance_to(global_position))
+	if hit.is_empty():
+		return fallback
+	var p: Vector3 = hit["position"]
+	if p.distance_to(global_position) > max_dist:
+		return global_position + (p - global_position).normalized() * max_dist
+	return p + (hit["normal"] as Vector3) * 0.4
+
+
+func _camera_ray(length: float) -> Dictionary:
+	var c := cam.camera
+	var center := c.get_viewport().get_visible_rect().size * 0.5
+	var from := c.project_ray_origin(center)
+	var q := PhysicsRayQueryParameters3D.create(from, from + c.project_ray_normal(center) * length, Phys.WORLD | Phys.PROP)
+	q.exclude = [get_rid()]
+	return get_world_3d().direct_space_state.intersect_ray(q)
+
+
+# --- Silk Grapple (an add-on) -----------------------------------------------
+
+const GRAPPLE_SPEED := 32.0
+var _grapple_left := 0.0
+var _grapple_to := Vector3.ZERO
+var _grapple_n := Vector3.UP
+var _grapple_from := Vector3.ZERO
+var _silk: MeshInstance3D
+
+
+## Zip to the surface at the middle of the screen, if it's within reach.
+func grapple(max_dist: float) -> bool:
+	if cam == null or not is_instance_valid(cam):
+		return false
+	var hit := _camera_ray(max_dist + cam.camera.global_position.distance_to(global_position))
+	if hit.is_empty() or (hit["position"] as Vector3).distance_to(global_position) > max_dist:
+		return false
+	stop_climb()
+	_grapple_n = hit["normal"]
+	_grapple_to = (hit["position"] as Vector3) + _grapple_n * 0.45
+	_grapple_from = global_position
+	_grapple_left = global_position.distance_to(_grapple_to) / GRAPPLE_SPEED + 0.4
+	AudioManager.play(&"web_shoot", -2.0, 1.1)
+	return true
+
+
+func is_grappling() -> bool:
+	return _grapple_left > 0.0
+
+
+func _grapple_tick(delta: float) -> void:
+	_grapple_left -= delta
+	var to := _grapple_to - global_position
+	_draw_silk()
+	var arrived := to.length() <= GRAPPLE_SPEED * delta + 0.1
+	if arrived:
+		# The last bit: finish exactly at the line's end, against the surface.
+		global_position = _grapple_to
+	else:
+		velocity = to.normalized() * GRAPPLE_SPEED
+		var was := motion_mode
+		motion_mode = MOTION_MODE_FLOATING
+		move_and_slide()
+		motion_mode = was
+		# Arrived when it touches the surface it aimed at (sliding along the
+		# floor on the way doesn't count).
+		for i in get_slide_collision_count():
+			if get_slide_collision(i).get_normal().dot(_grapple_n) > 0.7 and global_position.distance_to(_grapple_to) < 2.5:
+				arrived = true
+	if arrived or _grapple_left <= 0.0:
+		_grapple_left = 0.0
+		if _silk:
+			_silk.visible = false
+		velocity = Vector3.ZERO
+		if absf(_grapple_n.y) < 0.6 and can_climb():
+			start_climb(_grapple_n)
+		elif _grapple_n.y > 0.6:
+			velocity = Vector3.DOWN
+
+
+func _draw_silk() -> void:
+	if _silk == null:
+		_silk = MeshInstance3D.new()
+		var cm := CylinderMesh.new()
+		cm.top_radius = 0.05
+		cm.bottom_radius = 0.05
+		cm.height = 1.0
+		cm.radial_segments = 6
+		cm.rings = 1
+		_silk.mesh = cm
+		_silk.material_override = load("res://assets/materials/web.tres")
+		_silk.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		_silk.top_level = true
+		add_child(_silk)
+	var a := _grapple_to
+	var b := global_position
+	var l := a.distance_to(b)
+	if l < 0.1:
+		_silk.visible = false
+		return
+	_silk.visible = true
+	var dir := (a - b) / l
+	var up := Vector3.UP if absf(dir.y) < 0.95 else Vector3.RIGHT
+	var b2 := Basis.looking_at(dir, up) * Basis(Vector3.RIGHT, PI * 0.5)
+	_silk.global_transform = Transform3D(b2.scaled_local(Vector3(1, l, 1)), (a + b) * 0.5)
+
+
 ## Gravity while airborne (what a bounce pad aims with).
 func air_gravity() -> float:
 	return stats.gravity
@@ -893,6 +1031,22 @@ func take_hit(cause: StringName, from: Vector3) -> bool:
 		AudioManager.play(&"shield", -2.0, 1.3)
 		invuln = 0.5
 		return false
+	if has_effect(&"spikes"):
+		# Spiky Armor: the hit glances off and whoever struck is stunned.
+		var left := float(effect_amount.get(&"spikes", 1.0)) - 1.0
+		if left <= 0.0:
+			effects.erase(&"spikes")
+			effect_amount.erase(&"spikes")
+		else:
+			effect_amount[&"spikes"] = left
+		effects_changed.emit()
+		for t in PerceptionSystem.threats:
+			if t.present and t.global_position.distance_to(from) < 14.0:
+				t.stun(3.0)
+		AudioManager.play(&"shield", 0.0, 0.8)
+		invuln = 0.6
+		show_hint("Spiky Armor! The hit glanced off")
+		return false
 	hits_left -= 1
 	Feedback.rumble(1.0, 0.4)
 	AudioManager.play(&"hit")
@@ -1099,6 +1253,9 @@ func show_hint(text: String) -> void:
 
 func teleport_to(xform: Transform3D) -> void:
 	stop_climb()
+	_grapple_left = 0.0
+	if _silk:
+		_silk.visible = false
 	_settle = 0.0
 	if visual:
 		var s := visual.scale

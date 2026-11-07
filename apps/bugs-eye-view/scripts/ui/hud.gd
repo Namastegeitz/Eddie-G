@@ -22,6 +22,9 @@ var _meters: StealthMeters
 var _markers: ThreatMarkers
 var _touch: TouchControls
 var _alarm: AlarmGauge
+## The add-on revolver (opens over everything) and the loaded-chamber line.
+var revolver: Revolver
+var _loaded: Label
 var _effects: Label
 var _pickup: PanelContainer
 var _pickup_title: Label
@@ -213,6 +216,29 @@ func _build_top() -> void:
 func bind(lvl: Level) -> void:
 	level = lvl
 	player = lvl.player
+	if lvl.config and lvl.config.is_mini:
+		# No people down here: no alarm to raise.
+		_alarm.visible = false
+		_stages.visible = false
+	revolver = Revolver.new()
+	revolver.name = "Revolver"
+	_root.add_child(revolver)
+	revolver.bind(lvl)
+	revolver.opened_changed.connect(func(open: bool) -> void:
+		# The touch buttons step aside while the cylinder is out.
+		_touch.visible = not open and InputRouter.is_touch_mode())
+	_touch.revolver = revolver
+	_loaded = _make_label("", 16, UIKit.GOLD)
+	_loaded.set_anchors_preset(Control.PRESET_CENTER_BOTTOM)
+	_loaded.anchor_left = 0.0
+	_loaded.anchor_right = 1.0
+	_loaded.offset_top = -34
+	_loaded.offset_bottom = -8
+	_loaded.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_root.add_child(_loaded)
+	lvl.revolver_changed.connect(_update_loaded)
+	InputRouter.touch_mode_changed.connect(func(_on: bool) -> void: _update_loaded())
+	_update_loaded()
 	_markers.camera_rig = lvl.camera
 	_meters.bind_player(player)
 	_touch.bind_player(player)
@@ -286,7 +312,10 @@ func _on_hour(_h: float) -> void:
 
 
 func _on_crumbs(got: int, needed: int) -> void:
-	_crumbs.text = "CRUMBS %d / %d" % [got, needed]
+	if level and level.config and level.config.is_mini:
+		_crumbs.text = ("SHARDS %d / %d" % [got, needed]) if needed > 0 else ("SHARDS %d" % got)
+	else:
+		_crumbs.text = "CRUMBS %d / %d" % [got, needed]
 
 
 func _update_lives() -> void:
@@ -315,6 +344,9 @@ func _update_threat() -> void:
 
 
 func _update_clock() -> void:
+	if level and level.config and level.config.is_mini:
+		_clock.text = level.config.display_name
+		return
 	var labels := HouseClock.active_labels()
 	_clock.text = HouseClock.clock_text() + ("  -  " + ", ".join(labels) if not labels.is_empty() else "")
 
@@ -340,3 +372,20 @@ func toast(text: String) -> void:
 	var tw := create_tween()
 	tw.tween_interval(1.2)
 	tw.tween_property(_toast, "modulate:a", 0.0, 0.5)
+
+
+## "Revolver: Iron Shell (2 left) - Tab to open, G to fire" (keyboard); the
+## touch TOOLS button shows the same thing.
+func _update_loaded() -> void:
+	if _loaded == null or level == null:
+		return
+	var id := level.selected_addon()
+	_loaded.visible = not InputRouter.is_touch_mode()
+	if id == &"":
+		_loaded.text = "Revolver: empty chamber  -  Tab to turn it"
+	else:
+		_loaded.text = "Revolver: %s (%d left)  -  %s to open, %s to fire" % [AddOns.display_name(id), level.charges_left(id),
+			InputRouter.binding_text("revolver"), InputRouter.binding_text("fire_addon")]
+	if _touch:
+		_touch.queue_redraw()
+

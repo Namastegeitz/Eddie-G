@@ -2,6 +2,7 @@ extends Node
 ## Generates every config resource and scene from code.
 ##   godot --headless --path . res://tools/build_all.tscn            (only missing files)
 ##   godot --headless --path . res://tools/build_all.tscn -- --force (overwrite all)
+##   ... -- --force --only=res|actors|levels|minis   (one part)
 ## Runs as a scene (not -s) so the game's autoload singletons exist.
 ## After generation the .tres/.tscn files are the editable source of truth.
 
@@ -50,4 +51,7 @@ func _ready() -> void:
 					if ResourceLoader.exists("res://tools/builders/backyard_layout.gd"):
 						(load("res://tools/builders/backyard_layout.gd") as GDScript).call("build", tree)
 		print("  level scenes done")
+	if only == "" or only == "minis":
+		MiniMapBuilder.build_all(tree, force)
+		print("  mini maps done")
 	tree.quit()

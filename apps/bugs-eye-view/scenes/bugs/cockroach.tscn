@@ -186,208 +186,208 @@ _surfaces = [{
 
 [sub_resource type="PrismMesh" id="PrismMesh_bp45d"]
 
-[node name="Cockroach" type="CharacterBody3D" unique_id=323526389]
+[node name="Cockroach" type="CharacterBody3D" unique_id=818153514]
 script = ExtResource("1_00h0l")
 stats = ExtResource("2_m1wuv")
 
-[node name="Shape" type="CollisionShape3D" parent="." unique_id=1358911016]
+[node name="Shape" type="CollisionShape3D" parent="." unique_id=3642683]
 shape = SubResource("SphereShape3D_iqjvi")
 
-[node name="Visual" type="Node3D" parent="." unique_id=960822866]
+[node name="Visual" type="Node3D" parent="." unique_id=1343497664]
 
-[node name="Abdomen" type="MeshInstance3D" parent="Visual" unique_id=1098110634]
+[node name="Abdomen" type="MeshInstance3D" parent="Visual" unique_id=1118317994]
 transform = Transform3D(0.7, 0, 0, 0, 0.36, 0, 0, 0, 1.2, 0, -0.04, 0.15)
 material_override = ExtResource("3_aqhrq")
 mesh = SubResource("SphereMesh_5lt4s")
 
-[node name="Segment" type="MeshInstance3D" parent="Visual" unique_id=1277338642]
+[node name="Segment" type="MeshInstance3D" parent="Visual" unique_id=1426664615]
 material_override = ExtResource("4_r5psg")
 mesh = SubResource("ArrayMesh_ymw23")
 
-[node name="WingCover" type="MeshInstance3D" parent="Visual" unique_id=2022614497]
+[node name="WingCover" type="MeshInstance3D" parent="Visual" unique_id=932858749]
 material_override = ExtResource("5_2gejw")
 mesh = SubResource("ArrayMesh_adphm")
 
-[node name="Shield" type="MeshInstance3D" parent="Visual" unique_id=1954514758]
+[node name="Shield" type="MeshInstance3D" parent="Visual" unique_id=1871378838]
 transform = Transform3D(1.15, 0, 0, 0, 0.31640673, 0.12702243, 0, -0.047820203, 0.8404554, 0, 0.06, -0.47)
 material_override = ExtResource("6_xrbph")
 mesh = SubResource("SphereMesh_em18c")
 
-[node name="Eye" type="MeshInstance3D" parent="Visual" unique_id=1656584938]
+[node name="Eye" type="MeshInstance3D" parent="Visual" unique_id=446906368]
 material_override = ExtResource("7_uwt8t")
 mesh = SubResource("ArrayMesh_r2vpw")
 
-[node name="Palp" type="MeshInstance3D" parent="Visual" unique_id=1982635491]
+[node name="Palp" type="MeshInstance3D" parent="Visual" unique_id=1650241291]
 material_override = ExtResource("3_aqhrq")
 mesh = SubResource("ArrayMesh_f8ftk")
 
-[node name="AntennaL" type="Node3D" parent="Visual" unique_id=725610411]
+[node name="AntennaL" type="Node3D" parent="Visual" unique_id=1440335690]
 transform = Transform3D(0.9393727, -0.10133323, -0.32758278, 0, 0.9553365, -0.29552022, 0.3428978, 0.27760363, 0.89741707, -0.08, 0.02, -0.78)
 metadata/side = -1.0
 metadata/base = Vector3(0.3, -0.35, 0)
 
-[node name="Base" type="MeshInstance3D" parent="Visual/AntennaL" unique_id=996196346]
+[node name="Base" type="MeshInstance3D" parent="Visual/AntennaL" unique_id=1774429970]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.275)
 material_override = ExtResource("3_aqhrq")
 mesh = SubResource("BoxMesh_ew4lo")
 
-[node name="Tip" type="Node3D" parent="Visual/AntennaL" unique_id=1767963201]
+[node name="Tip" type="Node3D" parent="Visual/AntennaL" unique_id=1932236264]
 transform = Transform3D(0.9887711, -0.017889569, -0.14836349, 0, 0.99280864, -0.119712204, 0.14943814, 0.11836796, 0.9816605, 0, 0, -0.55)
 
-[node name="Whip" type="MeshInstance3D" parent="Visual/AntennaL/Tip" unique_id=957562052]
+[node name="Whip" type="MeshInstance3D" parent="Visual/AntennaL/Tip" unique_id=214475769]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.3135)
 material_override = ExtResource("3_aqhrq")
 mesh = SubResource("BoxMesh_8ht4m")
 
-[node name="AntennaR" type="Node3D" parent="Visual" unique_id=1862789144]
+[node name="AntennaR" type="Node3D" parent="Visual" unique_id=1669498314]
 transform = Transform3D(0.9393727, 0.10133323, 0.32758278, 0, 0.9553365, -0.29552022, -0.3428978, 0.27760363, 0.89741707, 0.08, 0.02, -0.78)
 metadata/side = 1.0
 metadata/base = Vector3(0.3, 0.35, 0)
 
-[node name="Base" type="MeshInstance3D" parent="Visual/AntennaR" unique_id=2058623035]
+[node name="Base" type="MeshInstance3D" parent="Visual/AntennaR" unique_id=379034319]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.275)
 material_override = ExtResource("3_aqhrq")
 mesh = SubResource("BoxMesh_nifxa")
 
-[node name="Tip" type="Node3D" parent="Visual/AntennaR" unique_id=2023722677]
+[node name="Tip" type="Node3D" parent="Visual/AntennaR" unique_id=1592742142]
 transform = Transform3D(0.9887711, 0.017889569, 0.14836349, 0, 0.99280864, -0.119712204, -0.14943814, 0.11836796, 0.9816605, 0, 0, -0.55)
 
-[node name="Whip" type="MeshInstance3D" parent="Visual/AntennaR/Tip" unique_id=1673056531]
+[node name="Whip" type="MeshInstance3D" parent="Visual/AntennaR/Tip" unique_id=444282882]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.3135)
 material_override = ExtResource("3_aqhrq")
 mesh = SubResource("BoxMesh_6cato")
 
-[node name="LegL1" type="Node3D" parent="Visual" unique_id=1024605609]
+[node name="LegL1" type="Node3D" parent="Visual" unique_id=1650352038]
 transform = Transform3D(0.7478194, 0.2729754, -0.6051864, -0.3428978, 0.9393727, 0, 0.5684956, 0.20751709, 0.7960838, -0.17, -0.08, -0.25)
 metadata/side = -1.0
 metadata/group = 0
 metadata/base_yaw = -0.65
 metadata/base_z = -0.35
 
-[node name="Femur" type="MeshInstance3D" parent="Visual/LegL1" unique_id=356692397]
+[node name="Femur" type="MeshInstance3D" parent="Visual/LegL1" unique_id=1894855007]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.18, 0, 0)
 material_override = ExtResource("3_aqhrq")
 mesh = SubResource("BoxMesh_kgi2p")
 
-[node name="Knee" type="Node3D" parent="Visual/LegL1" unique_id=1205873225]
+[node name="Knee" type="Node3D" parent="Visual/LegL1" unique_id=149636884]
 transform = Transform3D(0.21900666, -0.9757234, 0, 0.9757234, 0.21900666, 0, 0, 0, 1, -0.36, 0, 0)
 
-[node name="Joint" type="MeshInstance3D" parent="Visual/LegL1/Knee" unique_id=1620486367]
+[node name="Joint" type="MeshInstance3D" parent="Visual/LegL1/Knee" unique_id=253169966]
 material_override = ExtResource("4_r5psg")
 mesh = SubResource("ArrayMesh_vwjcq")
 
-[node name="LegR1" type="Node3D" parent="Visual" unique_id=1357309803]
+[node name="LegR1" type="Node3D" parent="Visual" unique_id=1251859358]
 transform = Transform3D(0.7478194, -0.2729754, 0.6051864, 0.3428978, 0.9393727, 0, -0.5684956, 0.20751709, 0.7960838, 0.17, -0.08, -0.25)
 metadata/side = 1.0
 metadata/group = 1
 metadata/base_yaw = 0.65
 metadata/base_z = 0.35
 
-[node name="Femur" type="MeshInstance3D" parent="Visual/LegR1" unique_id=1741350870]
+[node name="Femur" type="MeshInstance3D" parent="Visual/LegR1" unique_id=2082130566]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.18, 0, 0)
 material_override = ExtResource("3_aqhrq")
 mesh = SubResource("BoxMesh_3sknq")
 
-[node name="Knee" type="Node3D" parent="Visual/LegR1" unique_id=2098878861]
+[node name="Knee" type="Node3D" parent="Visual/LegR1" unique_id=1612083770]
 transform = Transform3D(0.21900666, 0.9757234, 0, -0.9757234, 0.21900666, 0, 0, 0, 1, 0.36, 0, 0)
 
-[node name="Joint" type="MeshInstance3D" parent="Visual/LegR1/Knee" unique_id=1342466967]
+[node name="Joint" type="MeshInstance3D" parent="Visual/LegR1/Knee" unique_id=1928995028]
 material_override = ExtResource("4_r5psg")
 mesh = SubResource("ArrayMesh_eug8t")
 
-[node name="LegL2" type="Node3D" parent="Visual" unique_id=258087200]
+[node name="LegL2" type="Node3D" parent="Visual" unique_id=319991371]
 transform = Transform3D(0.93819875, 0.34246927, -0.04997917, -0.3428978, 0.9393727, 0, 0.046949066, 0.017137747, 0.99875027, -0.17, -0.08, 0)
 metadata/side = -1.0
 metadata/group = 1
 metadata/base_yaw = -0.05
 metadata/base_z = -0.35
 
-[node name="Femur" type="MeshInstance3D" parent="Visual/LegL2" unique_id=453828066]
+[node name="Femur" type="MeshInstance3D" parent="Visual/LegL2" unique_id=1356366464]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.2, 0, 0)
 material_override = ExtResource("3_aqhrq")
 mesh = SubResource("BoxMesh_nxdxq")
 
-[node name="Knee" type="Node3D" parent="Visual/LegL2" unique_id=541324810]
+[node name="Knee" type="Node3D" parent="Visual/LegL2" unique_id=1579894808]
 transform = Transform3D(0.21900666, -0.9757234, 0, 0.9757234, 0.21900666, 0, 0, 0, 1, -0.4, 0, 0)
 
-[node name="Joint" type="MeshInstance3D" parent="Visual/LegL2/Knee" unique_id=1280762533]
+[node name="Joint" type="MeshInstance3D" parent="Visual/LegL2/Knee" unique_id=564007775]
 material_override = ExtResource("4_r5psg")
 mesh = SubResource("ArrayMesh_x2sr8")
 
-[node name="LegR2" type="Node3D" parent="Visual" unique_id=340684096]
+[node name="LegR2" type="Node3D" parent="Visual" unique_id=486667488]
 transform = Transform3D(0.93819875, -0.34246927, 0.04997917, 0.3428978, 0.9393727, 0, -0.046949066, 0.017137747, 0.99875027, 0.17, -0.08, 0)
 metadata/side = 1.0
 metadata/group = 0
 metadata/base_yaw = 0.05
 metadata/base_z = 0.35
 
-[node name="Femur" type="MeshInstance3D" parent="Visual/LegR2" unique_id=404500264]
+[node name="Femur" type="MeshInstance3D" parent="Visual/LegR2" unique_id=847112856]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.2, 0, 0)
 material_override = ExtResource("3_aqhrq")
 mesh = SubResource("BoxMesh_m5bm6")
 
-[node name="Knee" type="Node3D" parent="Visual/LegR2" unique_id=1401735850]
+[node name="Knee" type="Node3D" parent="Visual/LegR2" unique_id=633985786]
 transform = Transform3D(0.21900666, 0.9757234, 0, -0.9757234, 0.21900666, 0, 0, 0, 1, 0.4, 0, 0)
 
-[node name="Joint" type="MeshInstance3D" parent="Visual/LegR2/Knee" unique_id=1627329026]
+[node name="Joint" type="MeshInstance3D" parent="Visual/LegR2/Knee" unique_id=1439830390]
 material_override = ExtResource("4_r5psg")
 mesh = SubResource("ArrayMesh_2ph3q")
 
-[node name="LegL3" type="Node3D" parent="Visual" unique_id=1048307178]
+[node name="LegL3" type="Node3D" parent="Visual" unique_id=2054980633]
 transform = Transform3D(0.77529776, 0.28300577, 0.5646425, -0.3428978, 0.9393727, 0, -0.53040975, -0.19361466, 0.8253356, -0.17, -0.08, 0.25)
 metadata/side = -1.0
 metadata/group = 0
 metadata/base_yaw = 0.6
 metadata/base_z = -0.35
 
-[node name="Femur" type="MeshInstance3D" parent="Visual/LegL3" unique_id=1890930008]
+[node name="Femur" type="MeshInstance3D" parent="Visual/LegL3" unique_id=744802696]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.22, 0, 0)
 material_override = ExtResource("3_aqhrq")
 mesh = SubResource("BoxMesh_xapjl")
 
-[node name="Knee" type="Node3D" parent="Visual/LegL3" unique_id=168115864]
+[node name="Knee" type="Node3D" parent="Visual/LegL3" unique_id=244244616]
 transform = Transform3D(0.21900666, -0.9757234, 0, 0.9757234, 0.21900666, 0, 0, 0, 1, -0.44, 0, 0)
 
-[node name="Joint" type="MeshInstance3D" parent="Visual/LegL3/Knee" unique_id=2130484587]
+[node name="Joint" type="MeshInstance3D" parent="Visual/LegL3/Knee" unique_id=1641756403]
 material_override = ExtResource("4_r5psg")
 mesh = SubResource("ArrayMesh_il6qd")
 
-[node name="LegR3" type="Node3D" parent="Visual" unique_id=783786634]
+[node name="LegR3" type="Node3D" parent="Visual" unique_id=528721127]
 transform = Transform3D(0.77529776, -0.28300577, -0.5646425, 0.3428978, 0.9393727, 0, 0.53040975, -0.19361466, 0.8253356, 0.17, -0.08, 0.25)
 metadata/side = 1.0
 metadata/group = 1
 metadata/base_yaw = -0.6
 metadata/base_z = 0.35
 
-[node name="Femur" type="MeshInstance3D" parent="Visual/LegR3" unique_id=427621837]
+[node name="Femur" type="MeshInstance3D" parent="Visual/LegR3" unique_id=1711064961]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.22, 0, 0)
 material_override = ExtResource("3_aqhrq")
 mesh = SubResource("BoxMesh_rf8fk")
 
-[node name="Knee" type="Node3D" parent="Visual/LegR3" unique_id=670003711]
+[node name="Knee" type="Node3D" parent="Visual/LegR3" unique_id=673844856]
 transform = Transform3D(0.21900666, 0.9757234, 0, -0.9757234, 0.21900666, 0, 0, 0, 1, 0.44, 0, 0)
 
-[node name="Joint" type="MeshInstance3D" parent="Visual/LegR3/Knee" unique_id=2129629428]
+[node name="Joint" type="MeshInstance3D" parent="Visual/LegR3/Knee" unique_id=445218533]
 material_override = ExtResource("4_r5psg")
 mesh = SubResource("ArrayMesh_8iksa")
 
-[node name="Skin" type="Node3D" parent="Visual" unique_id=1204298144]
+[node name="Skin" type="Node3D" parent="Visual" unique_id=352639130]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.05, -0.3)
 script = ExtResource("8_kob3u")
 model_id = "bug_cockroach"
 fit_size = Vector3(1.1, 0.6, 2.2)
 hide_paths = Array[NodePath]([NodePath("../Abdomen"), NodePath("../Segment"), NodePath("../WingCover"), NodePath("../Shield"), NodePath("../Eye"), NodePath("../Palp"), NodePath("../AntennaL"), NodePath("../AntennaR"), NodePath("../LegL1"), NodePath("../LegR1"), NodePath("../LegL2"), NodePath("../LegR2"), NodePath("../LegL3"), NodePath("../LegR3")])
 
-[node name="EyePoint" type="Marker3D" parent="Visual" unique_id=794706893]
+[node name="EyePoint" type="Marker3D" parent="Visual" unique_id=1824887079]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.81)
 
-[node name="Rig" type="Node" parent="." unique_id=979320028]
+[node name="Rig" type="Node" parent="." unique_id=860151525]
 script = ExtResource("9_hvsmm")
 
-[node name="SenseArrow" type="Node3D" parent="." unique_id=1915983649]
+[node name="SenseArrow" type="Node3D" parent="." unique_id=358207414]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.4, 0)
 
-[node name="Arrow" type="MeshInstance3D" parent="SenseArrow" unique_id=589371942]
+[node name="Arrow" type="MeshInstance3D" parent="SenseArrow" unique_id=784193391]
 transform = Transform3D(0.6, 0, 0, 0, -3.4969112e-08, 0.15, 0, -0.8, -6.5567085e-09, 0, 0, -0.6)
 material_override = ExtResource("10_7jque")
 cast_shadow = 0

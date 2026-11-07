@@ -286,6 +286,136 @@ def build_climb_sfx():
     write("treasure_legendary", triad * env(n(dur), 0.01, 0.6) + shimmer, peak=0.8)
 
 
+def build_revolver_sfx():
+    """The mouse trap's snap and the revolver: a chamber click, the cylinder
+    spinning open, and the shot. Own RNG, so it can run on its own."""
+    os.makedirs(SFX, exist_ok=True)
+    n = lambda d: int(RATE * d)
+    local = np.random.default_rng(31)
+    def nz(k):
+        return local.uniform(-1, 1, k)
+    # Snap: a sharp crack with a woody knock.
+    crack = highpass(nz(n(0.05)), 1500) * env(n(0.05), 0.0005, 0.04)
+    knock = tone(320, 0.12) * np.exp(-t_axis(0.12) * 30)
+    write("snap", np.concatenate([crack, np.zeros(n(0.005))]) * 1.0 + np.pad(knock, (0, max(0, n(0.055) - len(knock))))[:n(0.055)] * 0.6, peak=0.9)
+    # Click: a small metallic tick.
+    write("revolver_click", (tone(2600, 0.04) * 0.6 + highpass(nz(n(0.04)), 3000) * 0.4) * np.exp(-t_axis(0.04) * 90), peak=0.6)
+    # Spin: a ratcheting run of ticks.
+    parts = []
+    for i in range(9):
+        tick = (tone(2200 + i * 60, 0.025) * 0.5 + highpass(nz(n(0.025)), 3000) * 0.5) * np.exp(-t_axis(0.025) * 120)
+        parts += [tick, np.zeros(n(0.03 + i * 0.004))]
+    write("revolver_spin", np.concatenate(parts), peak=0.55)
+    # Fire: a soft pop and whoosh (it's a bug-sized gadget, not a gun).
+    pop = lowpass(nz(n(0.08)), 1800) * env(n(0.08), 0.001, 0.07)
+    whoosh = highpass(nz(n(0.3)), 1200) * env(n(0.3), 0.02, 0.25) * 0.5
+    write("revolver_fire", np.concatenate([pop, whoosh]), peak=0.7)
+
+
+def build_addon_icons():
+    """White glyphs for the add-ons (tinted in game): assets/icons/addons."""
+    from PIL import Image, ImageDraw
+    out = os.path.join(ROOT, "assets", "icons", "addons")
+    os.makedirs(out, exist_ok=True)
+    W = 256
+    white = (255, 255, 255, 255)
+    def canvas():
+        im = Image.new("RGBA", (W, W), (0, 0, 0, 0))
+        return im, ImageDraw.Draw(im)
+    def save(im, name):
+        im.resize((128, 128), Image.LANCZOS).save(os.path.join(out, name + ".png"))
+    lw = 18
+    # Power Legs: a coiled spring under an up arrow.
+    im, d = canvas()
+    pts = []
+    for i in range(9):
+        pts.append((80 if i % 2 == 0 else 176, 230 - i * 16))
+    d.line(pts, fill=white, width=lw, joint="curve")
+    d.polygon([(128, 20), (70, 90), (186, 90)], fill=white)
+    save(im, "power_legs")
+    # Dash Burst: an arrow with speed lines.
+    im, d = canvas()
+    d.polygon([(250, 128), (160, 50), (160, 206)], fill=white)
+    d.rectangle([90, 104, 170, 152], fill=white)
+    for y, x0 in [(70, 20), (128, 6), (186, 20)]:
+        d.line([(x0, y), (x0 + 60, y)], fill=white, width=lw - 4)
+    save(im, "dash_burst")
+    # Ground Pound: a fist-like block slamming down with shock lines.
+    im, d = canvas()
+    d.rounded_rectangle([78, 20, 178, 130], 22, fill=white)
+    d.polygon([(128, 190), (88, 130), (168, 130)], fill=white)
+    d.line([(20, 236), (236, 236)], fill=white, width=lw)
+    for x0, x1 in [(30, 60), (226, 196)]:
+        d.line([(x0, 170), (x1, 210)], fill=white, width=lw - 6)
+    save(im, "ground_pound")
+    # Iron Shell: a shield.
+    im, d = canvas()
+    d.polygon([(128, 16), (226, 50), (214, 150), (128, 240), (42, 150), (30, 50)], fill=white)
+    d.polygon([(128, 50), (192, 74), (184, 142), (128, 204)], fill=(0, 0, 0, 0))
+    save(im, "iron_shell")
+    # Spiky Armor: a shell ringed with spikes.
+    im, d = canvas()
+    import math as _m
+    for k in range(10):
+        a = _m.tau * k / 10
+        tip = (128 + _m.cos(a) * 120, 128 + _m.sin(a) * 120)
+        l = (128 + _m.cos(a - 0.22) * 70, 128 + _m.sin(a - 0.22) * 70)
+        r = (128 + _m.cos(a + 0.22) * 70, 128 + _m.sin(a + 0.22) * 70)
+        d.polygon([tip, l, r], fill=white)
+    d.ellipse([58, 58, 198, 198], fill=white)
+    save(im, "spiky_armor")
+    # Shadow Cloak: a crescent moon.
+    im, d = canvas()
+    d.ellipse([24, 24, 232, 232], fill=white)
+    d.ellipse([80, 6, 268, 194], fill=(0, 0, 0, 0))
+    save(im, "shadow_cloak")
+    # Second Wind: a heart with a plus.
+    im, d = canvas()
+    d.ellipse([22, 40, 132, 150], fill=white)
+    d.ellipse([124, 40, 234, 150], fill=white)
+    d.polygon([(28, 112), (228, 112), (128, 236)], fill=white)
+    d.rectangle([114, 70, 142, 170], fill=(0, 0, 0, 0))
+    d.rectangle([78, 106, 178, 134], fill=(0, 0, 0, 0))
+    save(im, "second_wind")
+    # Smoke Bomb: a cloud of puffs.
+    im, d = canvas()
+    for box in [[20, 110, 120, 210], [80, 50, 190, 160], [140, 100, 240, 200], [70, 120, 190, 230]]:
+        d.ellipse(box, fill=white)
+    save(im, "smoke_bomb")
+    # Decoy Chirp: a speaker with sound waves.
+    im, d = canvas()
+    d.polygon([(20, 96), (70, 96), (130, 40), (130, 216), (70, 160), (20, 160)], fill=white)
+    for rr in (40, 80):
+        d.arc([150 - rr, 128 - rr, 150 + rr, 128 + rr], -50, 50, fill=white, width=lw - 4)
+    save(im, "decoy_chirp")
+    # Flash Bead: a star burst.
+    im, d = canvas()
+    pts = []
+    for k in range(16):
+        a = _m.tau * k / 16 - _m.pi / 2
+        rr = 120 if k % 2 == 0 else 48
+        pts.append((128 + _m.cos(a) * rr, 128 + _m.sin(a) * rr))
+    d.polygon(pts, fill=white)
+    save(im, "flash_bead")
+    # Silk Grapple: a hook on a line.
+    im, d = canvas()
+    d.line([(128, 10), (128, 150)], fill=white, width=lw - 6)
+    d.arc([60, 110, 196, 246], 0, 180, fill=white, width=lw + 4)
+    d.polygon([(60, 178), (40, 140), (86, 150)], fill=white)
+    d.polygon([(196, 178), (216, 140), (170, 150)], fill=white)
+    save(im, "silk_grapple")
+    # Crumb Magnet: a horseshoe magnet.
+    im, d = canvas()
+    d.arc([40, 30, 216, 206], 0, 180, fill=white, width=56)
+    d.rectangle([40, 30, 96, 118], fill=white)
+    d.rectangle([160, 30, 216, 118], fill=white)
+    d.rectangle([40, 10, 96, 40], fill=(0, 0, 0, 0))
+    d.rectangle([160, 10, 216, 40], fill=(0, 0, 0, 0))
+    d.rectangle([40, 30, 96, 60], fill=(255, 255, 255, 140))
+    d.rectangle([160, 30, 216, 60], fill=(255, 255, 255, 140))
+    save(im, "crumb_magnet")
+
+
 def build_view_overlays():
     """Bug's-eye view overlays: a soft dark vignette (looking out from inside a
     tiny head) and compound-eye facets for flies, both clear in the middle."""
@@ -397,6 +527,8 @@ if __name__ == "__main__":
     build_bug_sfx()
     build_npc_sfx()
     build_climb_sfx()
+    build_revolver_sfx()
+    build_addon_icons()
     build_view_overlays()
     build_icons()
     print("assets generated")

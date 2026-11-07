@@ -13,7 +13,7 @@ const PREFIX := "bev_"
 const GAME_ACTIONS: Array[StringName] = [&"jump", &"primary", &"secondary", &"interact", &"dodge", &"sense"]
 ## Actions the settings screen lets players rebind (keyboard/mouse only).
 const REBINDABLE: Array[String] = ["move_forward", "move_back", "move_left", "move_right",
-	"jump", "primary", "secondary", "interact", "dodge", "sense", "creep"]
+	"jump", "primary", "secondary", "interact", "dodge", "sense", "creep", "revolver", "fire_addon"]
 const MOUSE_LOOK_SCALE := 1.0
 const STICK_LOOK_SPEED := 900.0
 ## The on-screen look stick at full tilt (gentler than a gamepad; the camera
@@ -68,6 +68,8 @@ func _default_events() -> Dictionary:
 		"sense": [_key(KEY_R), _joy(JOY_BUTTON_LEFT_SHOULDER)],
 		"pause": [_key(KEY_ESCAPE), _key(KEY_P), _joy(JOY_BUTTON_START)],
 		"toggle_view": [_key(KEY_V), _joy(JOY_BUTTON_BACK)],
+		"revolver": [_key(KEY_TAB), _joy(JOY_BUTTON_DPAD_UP)],
+		"fire_addon": [_key(KEY_G), _joy(JOY_BUTTON_DPAD_DOWN)],
 	}
 
 

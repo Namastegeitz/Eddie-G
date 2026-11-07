@@ -876,6 +876,32 @@ static func hazards(force: bool) -> void:
 	m.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	pack(c, "res://scenes/hazards/spray_cloud.tscn", force)
 
+	# The snap trap: a wooden base, a cheese bait and a sprung bar.
+	var mt := scripted(Node3D.new(), "res://scripts/hazards/mouse_trap.gd", "MouseTrap")
+	var base := StaticBody3D.new()
+	base.name = "Base"
+	base.collision_layer = Phys.WORLD
+	base.collision_mask = 0
+	base.set_meta(&"surface", &"wood")
+	mt.add_child(base)
+	shape(base, box_shape(Vector3(3.6, 0.35, 7.0)), Vector3(0, 0.175, 0))
+	mesh(base, "Plank", box(Vector3(3.6, 0.35, 7.0)), "wood", Vector3(0, 0.175, 0))
+	mesh(base, "Plate", box(Vector3(1.6, 0.08, 1.8)), "metal", Vector3(0, 0.39, 1.4))
+	mesh(base, "Bait", box(Vector3(0.9, 0.5, 0.8)), "cheese", Vector3(0, 0.62, 1.4), Vector3(0, 0.4, 0))
+	mesh(base, "Spring", cyl(0.35, 2.6), "metal", Vector3(0, 0.55, -0.4), Vector3(0, 0, PI * 0.5))
+	merge_meshes(base)
+	var bar := node3d(mt, "Bar", Vector3(0, 0.45, -0.4))
+	for x in [-1.5, 1.5]:
+		mesh(bar, "Side", box(Vector3(0.18, 0.18, 3.4)), "metal", Vector3(x, 0, 1.7))
+	mesh(bar, "Cross", box(Vector3(3.2, 0.18, 0.18)), "metal", Vector3(0, 0, 3.4))
+	merge_meshes(bar)
+	var trig := Area3D.new()
+	trig.name = "Trigger"
+	mt.add_child(trig)
+	shape(trig, box_shape(Vector3(3.4, 1.6, 4.0)), Vector3(0, 1.0, 1.4))
+	_cull_far(mt, 80.0)
+	pack(mt, "res://scenes/hazards/mouse_trap.tscn", force)
+
 	var fog := scripted(Node3D.new(), "res://scripts/hazards/fog_front.gd", "FogFront")
 	var fm := mesh(fog, "Mesh", box(Vector3(200, 40, 60)), "fog", Vector3(0, 20, 30))
 	fm.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
@@ -915,6 +941,21 @@ static func pickups(force: bool) -> void:
 			v.add_child(glow)
 		_cull_far(c, 90.0)
 		pack(c, "res://scenes/world/%s.tscn" % ("golden_crumb" if golden else "crumb"), force)
+
+	# Gem shards (the mini maps' crumbs): a small glowing crystal.
+	var sh := scripted(Area3D.new(), "res://scripts/world/crumb.gd", "GemShard")
+	shape(sh, sphere_shape(1.2))
+	var sv := node3d(sh, "Visual", Vector3(0, 0.6, 0))
+	var top_cone := cyl(0.42, 0.7, 0.0)
+	top_cone.radial_segments = 5
+	mesh(sv, "Top", top_cone, "shard", Vector3(0, 0.3, 0))
+	var bottom_cone := cyl(0.0, 0.45, 0.42)
+	bottom_cone.radial_segments = 5
+	mesh(sv, "Bottom", bottom_cone, "shard", Vector3(0, -0.22, 0))
+	mesh(sv, "Chip", cyl(0.0, 0.4, 0.2), "shard", Vector3(0.35, 0.05, 0.1), Vector3(0.3, 0, -0.5))
+	merge_meshes(sv)
+	_cull_far(sh, 70.0)
+	pack(sh, "res://scenes/world/gem_shard.tscn", force)
 
 	var g := scripted(Area3D.new(), "res://scripts/world/goal.gd", "Goal")
 	shape(g, box_shape(Vector3(5, 5, 5)), Vector3(0, 2.5, 0))
@@ -972,6 +1013,25 @@ static func items(force: bool) -> void:
 		_cull_far(it, 45.0)
 		pack(it, "res://scenes/items/%s.tscn" % id, force)
 
+
+	# The mini maps' brass key (opens the way out).
+	var key := scripted(Area3D.new(), "res://scripts/world/pickup_item.gd", "BrassKey")
+	key.set("def", load("res://resources/items/brass_key.tres"))
+	shape(key, sphere_shape(1.6), Vector3(0, 1.2, 0))
+	var kv := node3d(key, "Visual", Vector3(0, 1.2, 0))
+	mesh(kv, "Bow", _torus(0.3, 0.55), "brass", Vector3(0, 0.75, 0), Vector3(PI * 0.5, 0, 0))
+	mesh(kv, "Shaft", box(Vector3(0.22, 1.5, 0.22)), "brass", Vector3(0, -0.2, 0))
+	mesh(kv, "Bit", box(Vector3(0.55, 0.22, 0.2)), "brass", Vector3(0.3, -0.8, 0))
+	mesh(kv, "Bit", box(Vector3(0.4, 0.2, 0.2)), "brass", Vector3(0.22, -0.45, 0))
+	merge_meshes(kv)
+	var kglow := OmniLight3D.new()
+	kglow.name = "Glow"
+	kglow.light_color = Color(1.0, 0.8, 0.35)
+	kglow.omni_range = 6.0
+	kglow.light_energy = 1.4
+	kv.add_child(kglow)
+	_cull_far(key, 120.0)
+	pack(key, "res://scenes/items/brass_key.tscn", force)
 
 	# Treasures: lost trinkets for the showcase, glowing in their rarity's
 	# colour; epic and legendary ones send up a beam you can spot from afar.

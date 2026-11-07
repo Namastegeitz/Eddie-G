@@ -21,6 +21,9 @@ static func label(effect: StringName) -> String:
 static func apply(def: ItemDef, bug: BugBase) -> String:
 	if def == null or bug == null:
 		return ""
+	if def.kind == ItemDef.Kind.KEY:
+		AudioManager.play(&"goal_open", -2.0, 1.3)
+		return "%s! %s" % [def.display_name, def.blurb]
 	if def.kind == ItemDef.Kind.TREASURE:
 		Feedback.rumble(0.2 + 0.1 * def.rarity, 0.12)
 		return "%s treasure: %s!" % [def.rarity_name(), def.display_name]

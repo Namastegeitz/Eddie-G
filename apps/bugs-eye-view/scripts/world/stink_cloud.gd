@@ -1,10 +1,12 @@
 class_name StinkCloud
 extends Node3D
 ## A stink bug's cloud: every person or pet that comes within reach while it
-## lasts reacts once - pets bolt, people cough and can't see.
+## lasts reacts once - pets bolt, people cough and can't see. As a Smoke Bomb
+## (smoke = true) it's grey, and everyone inside is blinded while it lasts.
 
 var radius := 8.0
 var time_left := 6.0
+var smoke := false
 var affected: Array[Threat] = []
 var _check := 0.0
 var _puffs: Array[MeshInstance3D] = []
@@ -12,7 +14,7 @@ var _t := 0.0
 
 
 func _ready() -> void:
-	var m: Material = load("res://assets/materials/stink_cloud.tres")
+	var m: Material = load("res://assets/materials/%s.tres" % ("smoke" if smoke else "stink_cloud"))
 	for i in 5:
 		var puff := MeshInstance3D.new()
 		var s := SphereMesh.new()
@@ -46,7 +48,10 @@ func _physics_process(delta: float) -> void:
 	_check = 0.2
 	for t in PerceptionSystem.threats:
 		if t.present and not affected.has(t) and _reaches(t):
-			if t.stink(global_position, 3.0):
+			if smoke:
+				t.dazzle(maxf(time_left, 1.0))
+				affected.append(t)
+			elif t.stink(global_position, 3.0):
 				affected.append(t)
 
 

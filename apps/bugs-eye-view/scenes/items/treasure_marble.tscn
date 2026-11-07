@@ -18,25 +18,25 @@ rings = 10
 [sub_resource type="BoxMesh" id="BoxMesh_2gmqs"]
 size = Vector3(0.14, 0.95, 0.32)
 
-[node name="TreasureMarble" type="Area3D" unique_id=1723737500]
+[node name="TreasureMarble" type="Area3D" unique_id=1891084835]
 script = ExtResource("1_bcqdb")
 def = ExtResource("2_1lihf")
 
-[node name="Shape" type="CollisionShape3D" parent="." unique_id=720896762]
+[node name="Shape" type="CollisionShape3D" parent="." unique_id=1351625250]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 0)
 shape = SubResource("SphereShape3D_3xlrp")
 
-[node name="Visual" type="Node3D" parent="." unique_id=405396389]
+[node name="Visual" type="Node3D" parent="." unique_id=1232629742]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 0)
 
-[node name="Glass" type="MeshInstance3D" parent="Visual" unique_id=2088495995]
+[node name="Glass" type="MeshInstance3D" parent="Visual" unique_id=443051474]
 material_override = ExtResource("3_rht7l")
 visibility_range_end = 50.0
 visibility_range_end_margin = 7.5
 visibility_range_fade_mode = 1
 mesh = SubResource("SphereMesh_foj68")
 
-[node name="Swirl" type="MeshInstance3D" parent="Visual" unique_id=429932943]
+[node name="Swirl" type="MeshInstance3D" parent="Visual" unique_id=255837310]
 transform = Transform3D(0.8634798, -0.21125089, 0.45801273, 0.37202555, 0.87992316, -0.29552022, -0.3405871, 0.42556816, 0.83838665, 0, 0, 0)
 material_override = ExtResource("4_1k6yk")
 visibility_range_end = 50.0
@@ -44,7 +44,7 @@ visibility_range_end_margin = 7.5
 visibility_range_fade_mode = 1
 mesh = SubResource("BoxMesh_2gmqs")
 
-[node name="Skin" type="Node3D" parent="Visual" unique_id=1374768295]
+[node name="Skin" type="Node3D" parent="Visual" unique_id=317321057]
 script = ExtResource("5_ovd45")
 model_id = "treasure_marble"
 fit_size = Vector3(1.6, 1.6, 1.6)

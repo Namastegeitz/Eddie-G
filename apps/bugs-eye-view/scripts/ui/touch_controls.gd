@@ -36,6 +36,10 @@ var speed_center := Vector2.ZERO
 var speed_radius := 34.0
 ## Switches between the view behind the bug and through its eyes.
 var view_center := Vector2.ZERO
+## The TOOLS button: opens the add-on revolver.
+var tools_center := Vector2.ZERO
+var revolver: Revolver
+var _tools_icon: TextureRect
 var _view_held := false
 var _look_index := -1
 var _look_knob := Vector2.ZERO
@@ -85,6 +89,9 @@ func _layout() -> void:
 	look_center.y = maxf(look_center.y, s.y * 0.13 + look_radius)
 	speed_center = look_center + Vector2(-look_radius - 18.0 - speed_radius, look_radius * 0.3)
 	view_center = speed_center + Vector2(0, -speed_radius * 2.0 - 14.0)
+	# TOOLS (the add-on revolver) under the speed button, clear of the open
+	# screen used for looking.
+	tools_center = speed_center + Vector2(0, speed_radius * 2.0 + 14.0)
 	_look_knob = look_center
 	queue_redraw()
 
@@ -154,6 +161,9 @@ func _on_down(i: int, pos: Vector2) -> void:
 		_touch_kind[i] = &"speed"
 		_speed_held = true
 		cycle_look_speed()
+	elif pos.distance_to(tools_center) <= speed_radius * 1.2 and revolver:
+		_touch_kind[i] = &"tools"
+		revolver.open()
 	elif pos.distance_to(view_center) <= speed_radius * 1.2:
 		_touch_kind[i] = &"view"
 		_view_held = true
@@ -304,3 +314,36 @@ func _draw_look_controls(ring_col: Color) -> void:
 	var vl := "EYES" if not fp else "BACK"
 	var w3 := _font.get_string_size(vl, HORIZONTAL_ALIGNMENT_CENTER, -1, fs1).x
 	draw_string(_font, view_center + Vector2(-w3 * 0.5, fs1 * 1.3), vl, HORIZONTAL_ALIGNMENT_LEFT, -1, fs1, col)
+	_draw_tools_button(ring_col, fs1)
+
+
+## TOOLS: the loaded add-on's icon and uses left; tap to open the revolver.
+func _draw_tools_button(ring_col: Color, fs: int) -> void:
+	if revolver == null or revolver.level == null:
+		return
+	var lvl := revolver.level
+	var id := lvl.selected_addon()
+	draw_circle(tools_center, speed_radius, Color(0, 0, 0, 0.42))
+	draw_arc(tools_center, speed_radius, 0.0, TAU, 32, AddOns.KIND_COLORS.get(AddOns.kind(id), ring_col) if id != &"" else ring_col, 3.0)
+	# A little six-chamber cylinder behind the icon.
+	for k in 6:
+		var a := TAU * k / 6.0 - PI * 0.5
+		draw_circle(tools_center + Vector2(cos(a), sin(a)) * speed_radius * 0.55 + Vector2(0, -fs * 0.4), speed_radius * 0.13, Color(1, 1, 1, 0.18))
+	# The icon is a TextureRect child (renders the same on every GPU).
+	if _tools_icon == null:
+		_tools_icon = TextureRect.new()
+		_tools_icon.name = "ToolsIcon"
+		_tools_icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		_tools_icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		_tools_icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		add_child(_tools_icon)
+	_tools_icon.visible = id != &""
+	if id != &"":
+		var s := speed_radius * 0.8
+		_tools_icon.texture = AddOns.icon(id)
+		_tools_icon.modulate = AddOns.color(id)
+		_tools_icon.position = tools_center - Vector2(s, s) * 0.5 + Vector2(0, -fs * 0.4)
+		_tools_icon.size = Vector2(s, s)
+	var t := "TOOLS" if id == &"" else "x%d" % lvl.charges_left(id)
+	var w := _font.get_string_size(t, HORIZONTAL_ALIGNMENT_CENTER, -1, fs).x
+	draw_string(_font, tools_center + Vector2(-w * 0.5, fs * 1.3), t, HORIZONTAL_ALIGNMENT_LEFT, -1, fs, UIKit.GOLD)

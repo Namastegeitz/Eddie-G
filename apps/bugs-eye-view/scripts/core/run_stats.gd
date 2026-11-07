@@ -27,6 +27,8 @@ var treasures: Array[StringName] = []
 var new_treasures: Array[StringName] = []
 var treasure_points: int = 0
 var best_rarity: int = -1
+## Add-ons fired from the revolver this run.
+var addons_used: int = 0
 var won: bool = false
 var cause: StringName = &""
 

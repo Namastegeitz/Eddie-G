@@ -51,6 +51,8 @@ func _ready() -> void:
 		await _phase17()
 	if only in [0, 18]:
 		await _phase18()
+	if only in [0, 19]:
+		await _phase19()
 	finish("phase audit")
 
 
@@ -3715,5 +3717,316 @@ func _phase18() -> void:
 	check(has_button and shelf.size() == 3 and Collection.best_found(7)[0] in [&"treasure_ring", &"treasure_golden_acorn"],
 		"the home screen has a Showcase button and a trophy shelf with your finds, rarest first (%d)" % shelf.size())
 	menu.queue_free()
+	await frames(2)
+
+
+func _phase19() -> void:
+	print("-- Update: mini maps behind every room, credits, add-ons and the revolver")
+	SaveSystem.data = SaveSystem.default_data()
+
+	# Ten mini maps per room: inside the walls, under the sink, the basement,
+	# the attic, and a hidden crawl space.
+	var themes := {}
+	var count := 0
+	for room in GameManager.LEVEL_IDS:
+		var ids := MiniMaps.ids_for(room)
+		count += ids.size()
+		for mid in ids:
+			var mc := GameManager.get_level(mid)
+			themes[mc.theme] = true
+			if mc == null or not ResourceLoader.exists(mc.scene_path):
+				count = -999
+	check(count == 30 and themes.has("walls") and themes.has("sink") and themes.has("basement") and themes.has("attic") and themes.has("crawl"),
+		"30 mini maps (10 per room): inside the walls, under the sink, basement, attic and crawl spaces (%d)" % count)
+	check(GameManager.is_level_unlocked(&"kitchen_m1") and not GameManager.is_level_unlocked(&"kitchen_m2")
+		and not GameManager.is_level_unlocked(&"kitchen_crawl") and not GameManager.is_level_unlocked(&"living_room_m1"),
+		"the first mini map is open with its room; the rest open one by one; the crawl space is hidden")
+
+	# Every mini map loads with its task in place.
+	var maps_ok := true
+	var maps_detail: PackedStringArray = []
+	for mid in MiniMaps.all_ids():
+		var lvl := await load_level(mid, &"cockroach")
+		var mc := lvl.config
+		var shards := 0
+		for c in get_tree().get_nodes_in_group(Phys.GROUP_CRUMB):
+			if lvl.is_ancestor_of(c):
+				shards += 1
+		var has_key := false
+		for it in get_tree().get_nodes_in_group(Phys.GROUP_ITEM):
+			if lvl.is_ancestor_of(it) and (it as PickupItem).is_key():
+				has_key = true
+		var traps := 0
+		for t in get_tree().get_nodes_in_group(&"mouse_trap"):
+			if lvl.is_ancestor_of(t):
+				traps += 1
+		var ok := lvl.goal != null and shards >= mc.crumbs_required and shards >= 6 and lvl.player.global_position.distance_to(lvl.goal.global_position) > 20.0
+		match mc.task:
+			"key":
+				ok = ok and has_key and not lvl.goal.active
+			"summit":
+				ok = ok and lvl.goal.active and lvl.goal.global_position.y > 15.0
+			"timed":
+				ok = ok and lvl.time_left > 30.0
+		if mc.theme != "crawl":
+			ok = ok and traps >= 1
+		if not ok:
+			maps_detail.append("%s(%s shards %d key %s traps %d)" % [mid, mc.task, shards, has_key, traps])
+		maps_ok = maps_ok and ok
+		await unload(lvl)
+	check(maps_ok, "every mini map loads with its task: shards to gather, a key, a way out at the top, or a clock %s" % str(maps_detail))
+
+	# A shards map, start to finish: gather, escape, get credits, open the next.
+	SaveSystem.data = SaveSystem.default_data()
+	var lv := await load_level(&"kitchen_m1", &"cockroach")
+	var p := lv.player
+	p.invuln = 1000.0
+	check(lv.goal and not lv.goal.active, "the way out stays shut until the shards are in")
+	var got := 0
+	for c in get_tree().get_nodes_in_group(Phys.GROUP_CRUMB):
+		if lv.is_ancestor_of(c) and got < lv.crumbs_needed:
+			p.teleport_to(Transform3D(Basis.IDENTITY, (c as Node3D).global_position + Vector3.UP * 0.4))
+			await frames(4)
+			if (c as Crumb).taken:
+				got += 1
+	var hud := lv.find_child("HUD", true, false)
+	var shard_text := (hud.get("_crumbs") as Label).text
+	check(lv.goal.active and shard_text.begins_with("SHARDS"), "gathering the shards opens the way out (%s)" % shard_text)
+	p.teleport_to(Transform3D(Basis.IDENTITY, lv.goal.global_position + Vector3.UP * 1.0))
+	await frames(10)
+	var res := GameManager.last_result
+	check(lv.finished and bool(res.get("won", false)) and bool(res.get("mini", false))
+		and int(res.get("credits", 0)) == got + MiniMaps.reward(1) and SaveSystem.credits() == int(res.get("credits", 0))
+		and SaveSystem.is_mini_done(&"kitchen_m1") and GameManager.is_level_unlocked(&"kitchen_m2"),
+		"escaping pays credits (shards + task bonus: %d) and opens the next mini map" % int(res.get("credits", 0)))
+	await unload(lv)
+
+	# A key map: the way out opens only with the key.
+	lv = await load_level(&"kitchen_m3", &"cockroach")
+	p = lv.player
+	p.invuln = 1000.0
+	var brass: PickupItem = null
+	for it in get_tree().get_nodes_in_group(Phys.GROUP_ITEM):
+		if lv.is_ancestor_of(it) and (it as PickupItem).is_key():
+			brass = it
+	var shut := not lv.goal.active
+	p.teleport_to(Transform3D(Basis.IDENTITY, brass.global_position + Vector3.UP * 0.5))
+	await frames(6)
+	check(shut and lv.has_key and lv.goal.active, "a key map: the brass key opens the way out")
+	await unload(lv)
+
+	# A timed map: let the clock run out and you're out of time.
+	lv = await load_level(&"kitchen_m4", &"cockroach")
+	lv.player.invuln = 1000.0
+	lv.time_left = 0.5
+	await frames(60)
+	check(lv.finished and StringName(GameManager.last_result.get("cause", &"")) == &"out_of_time",
+		"a timed map: when the clock runs out, it's over")
+	await unload(lv)
+
+	# Mouse traps snap: anything on the plate takes a hit; flyers pass over.
+	lv = await load_level(&"kitchen_m1", &"cockroach")
+	p = lv.player
+	var trap := first_in_group(&"mouse_trap", lv) as MouseTrap
+	var hits0 := p.hits_left
+	p.teleport_to(Transform3D(Basis.IDENTITY, trap.to_global(Vector3(0, 0.8, 1.4))))
+	await frames(30)
+	check(trap.snaps == 1 and (p.hits_left < hits0 or p.dead), "a mouse trap snaps on a bug that steps on the plate")
+	await unload(lv)
+
+	# The crawl space: opens now and then after a mini map, closes once played.
+	SaveSystem.data = SaveSystem.default_data()
+	seed(7)
+	var opened_after := 0
+	for i in 30:
+		GameManager.current_level = &"kitchen_m1"
+		GameManager.begin_run(RunStats.new())
+		GameManager.run.crumbs = 5
+		GameManager.finish_run(true)
+		if SaveSystem.is_crawl_open(&"kitchen"):
+			opened_after = i + 1
+			break
+	var crawl_open := GameManager.is_level_unlocked(&"kitchen_crawl")
+	GameManager.current_level = &"kitchen_crawl"
+	GameManager.begin_run(RunStats.new())
+	GameManager.run.crumbs = 14
+	var cres := GameManager.finish_run(true)
+	check(opened_after > 0 and crawl_open and not SaveSystem.is_crawl_open(&"kitchen") and int(cres["credits"]) == 14 * 2 + MiniMaps.reward(10),
+		"the hidden crawl space opens now and then (after %d maps), pays double for shards, and closes once played" % opened_after)
+	GameManager.set_state(GameManager.State.MENU)
+
+	# The revolver: starter add-ons in the first two chambers; open it, turn
+	# to a chamber, fire. The game holds still while it's open.
+	SaveSystem.data = SaveSystem.default_data()
+	lv = await load_level(&"kitchen", &"cockroach")
+	HouseClock.set_hour(13.5)
+	p = lv.player
+	p.invuln = 0.0
+	var rev := lv.find_child("Revolver", true, false) as Revolver
+	check(rev != null and lv.loadout[0] == &"decoy_chirp" and lv.loadout[1] == &"iron_shell"
+		and lv.charges_left(&"iron_shell") == 2 and lv.selected_addon() == &"decoy_chirp",
+		"you start with Decoy Chirp and Iron Shell loaded (2 uses each)")
+	rev.open()
+	await frames(2)
+	var paused := get_tree().paused and not InputRouter.enabled
+	rev.select(1)
+	await get_tree().process_frame
+	var turned := lv.chamber == 1
+	for i in 20:
+		await get_tree().process_frame
+	var hub := rev.press_at(rev.size * Vector2(0.5, 0.46))
+	await frames(3)
+	check(paused and turned and hub == "fire" and not rev.is_open and not get_tree().paused
+		and p.has_effect(&"iron_shell") and lv.charges_left(&"iron_shell") == 1,
+		"open the revolver (the game holds still), turn to Iron Shell, press USE: it fires")
+	check(not p.take_hit(&"swatted", p.global_position + Vector3(3, 0, 0)), "Iron Shell: hits glance off")
+	p.effects.clear()
+	# Quick fire (G) uses the loaded chamber without opening.
+	key(KEY_G, true)
+	await get_tree().process_frame
+	await get_tree().process_frame
+	key(KEY_G, false)
+	await frames(2)
+	check(lv.charges_left(&"iron_shell") == 0 and not lv.fire_selected(), "G fires the loaded chamber; an empty one won't fire")
+	rev.select(2)
+	check(not lv.fire_selected(), "an empty chamber does nothing")
+	rev.select(0)
+	var before_decoys := 0
+	for c in lv.get_children():
+		if c is DecoyEcho:
+			before_decoys += 1
+	var fired_decoy := lv.fire_selected()
+	var after_decoys := 0
+	for c in lv.get_children():
+		if c is DecoyEcho:
+			after_decoys += 1
+	check(fired_decoy and after_decoys == before_decoys + 1, "Decoy Chirp throws a noise where you look")
+	# Touch: the TOOLS button opens it too.
+	var tc := lv.find_child("TouchControls", true, false)
+	if tc == null:
+		for n in lv.find_children("*", "Control", true, false):
+			if n.get("tools_center") != null:
+				tc = n
+	if tc:
+		tc.set("visible", true)
+		InputRouter.set_enabled(true)
+		tc.call("_on_down", 7, tc.get("tools_center"))
+	await frames(2)
+	check(tc != null and rev.is_open, "the TOOLS touch button opens the revolver")
+	rev.press_at(Vector2(4, 4))
+	await frames(2)
+	check(not rev.is_open and not get_tree().paused, "tapping outside closes it again")
+	await unload(lv)
+
+	# Buying and upgrading with credits; a new add-on goes into an empty chamber.
+	SaveSystem.data = SaveSystem.default_data()
+	check(not SaveSystem.buy_addon(&"power_legs"), "no credits, no add-ons")
+	SaveSystem.add_credits(500)
+	var bought := SaveSystem.buy_addon(&"power_legs")
+	var up := SaveSystem.buy_addon(&"power_legs")
+	check(bought and up and SaveSystem.addon_level(&"power_legs") == 2 and SaveSystem.credits() == 500 - 30 - 60
+		and AddOns.charges(2) == 3, "buy an add-on, then upgrade it: level 2 has three uses (credits %d)" % SaveSystem.credits())
+	var arm := (load("res://scenes/ui/armory.tscn") as PackedScene).instantiate()
+	add_child(arm)
+	await frames(2)
+	var rows := arm.find_children("Row_*", "", true, false)
+	arm.call("buy_addon", &"smoke_bomb")
+	await frames(2)
+	var rv := SaveSystem.revolver()
+	check(rows.size() == 12 and SaveSystem.addon_level(&"smoke_bomb") == 1 and rv.has("smoke_bomb"),
+		"the Armory lists 12 add-ons; buying one loads it into an empty chamber")
+	arm.set("chamber", 5)
+	arm.call("load_into", 5, &"power_legs")
+	await frames(2)
+	check(String(SaveSystem.revolver()[5]) == "power_legs" and SaveSystem.revolver().count("power_legs") == 1,
+		"load an add-on into any chamber (it moves, never doubles up)")
+	arm.queue_free()
+	await frames(2)
+
+	# Every add-on does its thing.
+	for id in AddOns.ids():
+		SaveSystem.data["addons"][String(id)] = 1
+	lv = await load_level(&"kitchen", &"cockroach")
+	HouseClock.set_hour(13.5)
+	p = lv.player
+	p.teleport_to(Transform3D(Basis.IDENTITY, Vector3(-30, 0.4, -12)))
+	face(lv, 0.0)
+	await frames(5)
+	var results := {}
+	AddOns.use(&"power_legs", 1, p)
+	results["power_legs"] = p.has_effect(&"spring") and p.has_effect(&"grip")
+	AddOns.use(&"dash_burst", 1, p)
+	results["dash_burst"] = p._dodge_time > 0.0 and p.has_effect(&"turbo")
+	await frames(30)
+	var pup: Threat = first_in_group(Phys.GROUP_PET, lv) as Threat
+	pup.global_position = p.global_position + Vector3(5, 0, 0)
+	pup.reset_physics_interpolation()
+	AddOns.use(&"ground_pound", 1, p)
+	results["ground_pound"] = pup.stun_time > 0.0
+	p.effects.clear()
+	p.invuln = 0.0
+	AddOns.use(&"spiky_armor", 1, p)
+	pup.stun_time = 0.0
+	var blocked := not p.take_hit(&"pounced", pup.global_position)
+	results["spiky_armor"] = blocked and pup.stun_time > 0.0 and not p.has_effect(&"spikes")
+	AddOns.use(&"shadow_cloak", 1, p)
+	results["shadow_cloak"] = p.has_effect(&"cloak")
+	AddOns.use(&"iron_shell", 1, p)
+	results["iron_shell"] = p.has_effect(&"iron_shell")
+	var shells := p.hits_left
+	AddOns.use(&"second_wind", 1, p)
+	results["second_wind"] = p.hits_left == shells + 1
+	AddOns.use(&"smoke_bomb", 1, p)
+	await frames(2)
+	var smoke := false
+	for c in lv.find_children("*", "Node3D", true, false):
+		if c is StinkCloud and (c as StinkCloud).smoke:
+			smoke = true
+	results["smoke_bomb"] = smoke
+	var decoys0 := 0
+	for c in lv.get_children():
+		if c is DecoyEcho:
+			decoys0 += 1
+	AddOns.use(&"decoy_chirp", 1, p)
+	var decoys1 := 0
+	for c in lv.get_children():
+		if c is DecoyEcho:
+			decoys1 += 1
+	results["decoy_chirp"] = decoys1 == decoys0 + 1
+	pup.global_position = p.global_position + Vector3(4, 0, 0)
+	AddOns.use(&"flash_bead", 1, p)
+	results["flash_bead"] = pup.blind_time > 0.0
+	AddOns.use(&"crumb_magnet", 1, p)
+	results["crumb_magnet"] = p.has_effect(&"magnet")
+	# Silk Grapple: aim at the cupboards and zip over, then cling on.
+	p.effects.clear()
+	p.teleport_to(Transform3D(Basis.IDENTITY, Vector3(20, 0.4, -4)))
+	face(lv, 0.0)
+	lv.camera.pitch = -0.05
+	await frames(10)
+	var from := p.global_position
+	var fired := AddOns.use(&"silk_grapple", 1, p)
+	for i in 60:
+		await get_tree().physics_frame
+	results["silk_grapple"] = fired and p.global_position.distance_to(from) > 8.0 and p.climbing
+	var failed: PackedStringArray = []
+	for k in results.keys():
+		if not results[k]:
+			failed.append(String(k))
+	check(failed.is_empty() and results.size() == 12, "every add-on works: strength, defense and tactics %s" % str(failed))
+	await unload(lv)
+
+	# The level select shows each room's mini maps (the crawl space as ?).
+	SaveSystem.data = SaveSystem.default_data()
+	var ls := (load("res://scenes/ui/level_select.tscn") as PackedScene).instantiate()
+	add_child(ls)
+	await frames(2)
+	var tiles := ls.find_children("Mini_*", "Button", true, false)
+	var crawl_tile := ls.find_child("Mini_kitchen_crawl", true, false) as Button
+	var m1 := ls.find_child("Mini_kitchen_m1", true, false) as Button
+	check(tiles.size() == 10 and crawl_tile.text == "?" and crawl_tile.disabled and not m1.disabled
+		and (ls.find_child("Mini_kitchen_m2", true, false) as Button).disabled,
+		"an open room lists its ten mini maps: the first open, the rest locked, the crawl space as ? (%d)" % tiles.size())
+	ls.queue_free()
 	await frames(2)
 

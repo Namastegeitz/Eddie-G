@@ -670,6 +670,76 @@ func _part(parent: Node3D, m: Mesh, material: String, pos: Vector3, scl: Vector3
 	return mi
 
 
+# --- Mini map pieces ---------------------------------------------------------
+
+## A solid pipe (or wire, duct, rolled rug) from `a` to `b`.
+func pipe(n: String, a: Vector3, b: Vector3, radius: float, material: String, surface: StringName = &"metal") -> StaticBody3D:
+	var body := StaticBody3D.new()
+	body.name = uniq(n)
+	body.collision_layer = Phys.WORLD
+	body.collision_mask = 0
+	body.set_meta(&"surface", surface)
+	var dir := b - a
+	var length := dir.length()
+	var up := dir / length
+	var side := Vector3.RIGHT if absf(up.dot(Vector3.RIGHT)) < 0.9 else Vector3.FORWARD
+	var x := side.cross(up).normalized()
+	var z := x.cross(up).normalized()
+	body.transform = Transform3D(Basis(x, up, z), (a + b) * 0.5)
+	var cs := CollisionShape3D.new()
+	cs.name = "Shape"
+	var sh := CylinderShape3D.new()
+	sh.radius = radius
+	sh.height = length
+	cs.shape = sh
+	body.add_child(cs)
+	var cm := CylinderMesh.new()
+	cm.top_radius = radius
+	cm.bottom_radius = radius
+	cm.height = length
+	cm.radial_segments = 12
+	cm.rings = 1
+	_mesh_child(body, cm, material)
+	geo.add_child(body)
+	return body
+
+
+## A wall bugs can't pass but the camera sees through (the open side of a
+## cut-away space like the inside of a wall).
+func glass_wall(n: String, center: Vector3, size: Vector3) -> void:
+	var b := StaticBody3D.new()
+	b.name = uniq(n)
+	b.collision_layer = Phys.WEB
+	b.collision_mask = 0
+	b.position = center
+	b.set_meta(&"no_climb", true)
+	var cs := CollisionShape3D.new()
+	cs.name = "Shape"
+	var sh := BoxShape3D.new()
+	sh.size = size
+	cs.shape = sh
+	b.add_child(cs)
+	root.add_child(b)
+
+
+func mouse_trap(pos: Vector3, yaw: float) -> Node3D:
+	var t := (load("res://scenes/hazards/mouse_trap.tscn") as PackedScene).instantiate() as Node3D
+	t.name = uniq("MouseTrap")
+	t.position = pos
+	t.rotation.y = yaw
+	zones.add_child(t)
+	return t
+
+
+## A gem shard (counts like a crumb in the mini maps).
+func shard(pos: Vector3) -> Node3D:
+	var c := (load("res://scenes/world/gem_shard.tscn") as PackedScene).instantiate() as Node3D
+	c.name = uniq("GemShard")
+	c.position = pos
+	pickups.add_child(c)
+	return c
+
+
 # --- Pickups, goal, spawn -------------------------------------------------------
 
 func crumb(pos: Vector3, golden: bool = false) -> Node3D:

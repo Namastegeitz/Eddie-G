@@ -48,6 +48,7 @@ const TEXTURED := {
 	"leaf_green": ["leaf", 10.0, 0.6], "leaves": ["leaf", 8.0, 0.6],
 	"metal": ["metal", 20.0, 0.4], "dark_metal": ["metal", 12.0, 0.4], "fridge_white": ["plaster", 40.0, 0.2],
 	# Climbing junk and bounce pads
+	"insulation": ["carpet", 3.0, 1.0], "drywall": ["plaster", 30.0, 0.4], "concrete": ["stone", 30.0, 0.8],
 	"cardboard": ["plaster", 14.0, 0.5], "brick": ["patio", 12.0, 1.0], "terracotta": ["stone", 10.0, 0.6],
 	"sponge": ["carpet", 4.0, 1.0], "scourer": ["carpet", 3.0, 1.0], "book_green": ["fabric", 4.0, 0.5],
 	# People
@@ -211,6 +212,13 @@ static func materials(force: bool) -> void:
 		"scourer": _mat(Color(0.22, 0.55, 0.25), 1.0),
 		"mushroom": _mat(Color(0.85, 0.15, 0.12), 0.45),
 		# Treasures: a beam over the epic and legendary ones.
+		"smoke": _mat(Color(0.62, 0.62, 0.6, 0.45), 1.0, 0.0, true, true),
+		"shard": _mat(Color(0.45, 0.95, 1.0, 0.9), 0.05, 0.3, false, false, Color(0.3, 0.9, 1.0, 1.6)),
+		"brass": _mat(Color(0.85, 0.65, 0.25), 0.3, 0.7, false, false, Color(1.0, 0.7, 0.2, 0.25)),
+		"insulation": _mat(Color(0.95, 0.6, 0.65), 1.0),
+		"drywall": _mat(Color(0.82, 0.8, 0.75), 0.95),
+		"concrete": _mat(Color(0.52, 0.52, 0.5), 0.95),
+		"copper": _mat(Color(0.78, 0.45, 0.25), 0.3, 0.7),
 		"rarity_beam": _mat(Color(1.0, 0.8, 0.3, 0.22), 1.0, 0.0, true, true),
 		"rarity_beam_epic": _mat(Color(0.75, 0.4, 1.0, 0.2), 1.0, 0.0, true, true),
 		"pearl": _mat(Color(0.96, 0.94, 0.9), 0.15, 0.2, false, false, Color(0.9, 0.9, 1.0, 0.25)),
@@ -231,9 +239,9 @@ static func materials(force: bool) -> void:
 			_texture(mat, TEXTURED[k])
 			if k in ANISOTROPIC:
 				mat.texture_filter = BaseMaterial3D.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS_ANISOTROPIC
-		if k in ["web", "beacon", "shadow_tint", "light_tint", "gust", "spray", "fog", "heat", "stink_cloud", "rarity_beam", "rarity_beam_epic"]:
+		if k in ["web", "beacon", "shadow_tint", "light_tint", "gust", "spray", "fog", "heat", "stink_cloud", "rarity_beam", "rarity_beam_epic", "smoke"]:
 			mat.cull_mode = BaseMaterial3D.CULL_DISABLED
-		if k in ["shadow_tint", "light_tint", "gust", "beacon", "heat", "rarity_beam", "rarity_beam_epic"]:
+		if k in ["shadow_tint", "light_tint", "gust", "beacon", "heat", "rarity_beam", "rarity_beam_epic", "smoke"]:
 			mat.disable_receive_shadows = true
 		save(mat, MAT_DIR + k + ".tres", force)
 
@@ -276,6 +284,9 @@ static func items(force: bool) -> void:
 			"Every crumb counts twice for 25 seconds."],
 		["power_shrink", "Shrink", ItemDef.Kind.POWER, &"shrink", 15.0, 0.55, 120, Color(0.85, 0.4, 1.0),
 			"Tiny for 15 seconds: any gap hides you and you're hard to see."],
+		# The mini maps' key.
+		["brass_key", "Brass Key", ItemDef.Kind.KEY, &"", 0.0, 1.0, 50, Color(0.95, 0.75, 0.3),
+			"The way out is open!"],
 	]
 	# Crumb gems are showcase pieces too.
 	var gem_rarity := {"gem_amber": [1, "Kitchen"], "gem_diamond": [3, "Kitchen"], "gem_amethyst": [1, "Living Room"],

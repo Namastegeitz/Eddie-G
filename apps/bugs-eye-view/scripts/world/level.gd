@@ -40,6 +40,17 @@ var swatter_pool: NodePool
 var spray_pool: NodePool
 var ripple_pool: NodePool
 var finished := false
+## Key task: the way out opens once the key is found.
+var has_key := false
+## Timed task: seconds left (counts down until the way out is reached).
+var time_left := 0.0
+## The revolver: add-on ids in its six chambers, uses left this run, and the
+## chamber turned to the top (the one that fires).
+var loadout: Array[StringName] = []
+var charges: Dictionary = {}
+var chamber := 0
+signal revolver_changed
+var _clock_shown := -1
 ## {merged, batches} from the static mesh batcher (draw-call reduction).
 var batch_stats: Dictionary = {}
 var _elapsed := 0.0
@@ -79,6 +90,8 @@ func _ready() -> void:
 			if not crumb.golden:
 				normal += 1
 	crumbs_needed = mini(config.crumbs_required, normal)
+	time_left = config.time_limit
+	_load_revolver()
 	for t in get_tree().get_nodes_in_group(Phys.GROUP_PET):
 		if is_ancestor_of(t):
 			(t as Threat).awareness = config.animal_awareness
@@ -118,8 +131,23 @@ func _ready() -> void:
 	AudioManager.play_music(&"music_ambient")
 	_update_ambient()
 	crumbs_changed.emit(crumbs_got, crumbs_needed)
-	objective_changed.emit("Collect %d crumbs" % crumbs_needed)
+	objective_changed.emit(_objective_text())
+	if config.is_mini and config.task == "summit":
+		_check_goal()
 	_maybe_show_guide()
+
+
+func _objective_text() -> String:
+	if not config.is_mini:
+		return "Collect %d crumbs" % crumbs_needed
+	match config.task:
+		"timed":
+			return "Collect %d gem shards  -  %d s left" % [crumbs_needed, ceili(maxf(time_left, 0.0))]
+		"key":
+			return "Find the key to open the way out"
+		"summit":
+			return "Climb to the way out at the top"
+	return "Collect %d gem shards" % crumbs_needed
 
 
 func _exit_tree() -> void:
@@ -143,8 +171,12 @@ func _spawn_player() -> void:
 	var scene := load(stats.scene_path) as PackedScene
 	player = scene.instantiate() as BugBase
 	player.stats = stats
-	add_child(player)
+	# Placed before it enters the world, so it never touches anything at the
+	# origin on the way to its spawn point.
 	var spawn := find_child("PlayerSpawn", true, false) as Node3D
+	if spawn:
+		player.transform = global_transform.affine_inverse() * spawn.global_transform
+	add_child(player)
 	if spawn:
 		player.global_transform = spawn.global_transform
 
@@ -215,6 +247,18 @@ func _physics_process(delta: float) -> void:
 		return
 	_elapsed += delta
 	run.time = _elapsed
+	if config.time_limit > 0.0 and not finished:
+		time_left -= delta
+		var shown := ceili(maxf(time_left, 0.0))
+		if shown != _clock_shown and not (goal and goal.active):
+			_clock_shown = shown
+			objective_changed.emit(_objective_text())
+			if shown <= 10 and shown > 0:
+				AudioManager.play(&"ui_click", -6.0, 1.6)
+		if time_left <= 0.0 and not (goal and goal.active):
+			set_hint("Out of time!")
+			_finish(false, &"out_of_time")
+			return
 	intensity = clampf(_elapsed / config.intensity_ramp_seconds, 0.0, 1.0)
 	_prop_timer -= delta
 	if _prop_timer <= 0.0:
@@ -256,6 +300,11 @@ func _on_item_collected(item: PickupItem) -> void:
 	if item.def == null or player == null:
 		return
 	PowerUps.apply(item.def, player)
+	if item.is_key():
+		has_key = true
+		_check_goal()
+		item_picked.emit(item.def)
+		return
 	if run:
 		if item.is_power():
 			run.powerups += 1
@@ -324,6 +373,8 @@ func add_bonus_crumbs(n: int) -> void:
 
 
 func _check_goal() -> void:
+	if config.is_mini and config.task == "key" and not has_key:
+		return
 	if goal and crumbs_got >= crumbs_needed and not goal.active:
 		goal.set_active(true)
 		AudioManager.play(&"goal_open")
@@ -352,6 +403,59 @@ func _finish(won: bool, cause: StringName) -> void:
 	HouseClock.running = false
 	AudioManager.play(&"win" if won else &"lose")
 	GameManager.finish_run(won, cause)
+
+
+# --- The revolver (add-ons) --------------------------------------------------
+
+func _load_revolver() -> void:
+	loadout.clear()
+	charges.clear()
+	for v in SaveSystem.revolver():
+		var id := StringName(v)
+		if id != &"" and SaveSystem.addon_level(id) <= 0:
+			id = &""
+		loadout.append(id)
+		if id != &"":
+			charges[id] = AddOns.charges(SaveSystem.addon_level(id))
+	chamber = 0
+	for i in loadout.size():
+		if loadout[i] != &"":
+			chamber = i
+			break
+
+
+func selected_addon() -> StringName:
+	return loadout[chamber] if chamber < loadout.size() else &""
+
+
+func charges_left(id: StringName) -> int:
+	return int(charges.get(id, 0))
+
+
+func select_chamber(i: int) -> void:
+	chamber = posmod(i, maxi(loadout.size(), 1))
+	AudioManager.play(&"revolver_click", -4.0)
+	revolver_changed.emit()
+
+
+## Fires the add-on in the top chamber. True if it went off.
+func fire_selected() -> bool:
+	var id := selected_addon()
+	if id == &"" or player == null or finished:
+		AudioManager.play(&"ui_click", -6.0, 0.6)
+		return false
+	if charges_left(id) <= 0:
+		set_hint("%s is empty this run" % AddOns.display_name(id))
+		AudioManager.play(&"ui_click", -4.0, 0.5)
+		return false
+	if not AddOns.use(id, SaveSystem.addon_level(id), player):
+		return false
+	charges[id] = charges_left(id) - 1
+	if run:
+		run.addons_used += 1
+	AudioManager.play(&"revolver_fire", -2.0)
+	revolver_changed.emit()
+	return true
 
 
 # --- Score hooks ------------------------------------------------------------

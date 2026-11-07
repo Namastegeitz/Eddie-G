@@ -26,3 +26,22 @@ extends Resource
 @export var ambient_noise: float = 0.1
 ## Time slots available once the level has been completed.
 @export var time_slots: PackedStringArray = ["morning", "afternoon", "night"]
+
+@export_group("Mini map")
+## A mini map behind one of the rooms (see MiniMaps).
+@export var is_mini: bool = false
+@export var parent_room: StringName = &""
+## sink, walls, basement, attic, crawl
+@export var theme: String = ""
+## shards, timed, key, summit
+@export var task: String = "shards"
+## Seconds for a timed task (0 = no clock).
+@export var time_limit: float = 0.0
+@export var mini_index: int = 0
+## The crawl space: only open now and then.
+@export var hidden_map: bool = false
+## What the HUD calls the things you collect.
+@export var pickup_noun: String = "crumbs"
+## Credits for finishing the task.
+@export var credit_reward: int = 0
+

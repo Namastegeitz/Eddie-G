@@ -27,6 +27,8 @@ The first import takes a minute while Godot processes the sounds and icons.
 | Sense | R | Left shoulder | Button |
 | Pause | Esc / P | Start | II button (top right) |
 | Bug's-eye view | V | Back / Select | EYES button (beside SPEED) |
+| Open the add-on revolver | Tab | D-pad up | TOOLS button (under SPEED) |
+| Fire the loaded add-on | G | D-pad down | Open TOOLS, tap USE |
 
 What each button does depends on the bug (the touch buttons relabel
 themselves). The first time you play a bug, a how-to-play card shows its
@@ -117,6 +119,60 @@ legendary find earns the Treasure Hunter badge.
 | Kitchen | Lost Button, Glass Bead | Doll's Teaspoon, Sea Glass, Amber Gem | Golden Thimble | The Lost Wedding Ring (top of the fridge), Diamond Gem |
 | Living room | Toy Brick, Cat's-Eye Marble | Loose Pearl, Watch Gear, Amethyst Gem | Crystal Earring, Sapphire Gem | Grandma's Star Brooch (top of the bookshelf) |
 | Backyard | Acorn Cap, Spiral Snail Shell | Old Coin, Jewel Beetle Shell | Four-Leaf Clover, Ruby Gem, Emerald Gem | The Golden Acorn (on the shed roof) |
+
+**Mini maps.** Behind every room are ten small levels, each with a small
+task: inside the walls (studs with drilled holes, fire blocks to get round,
+wires, a copper pipe, pink insulation to hide in, drafts and cobwebs), under
+the sink (the drain's U-bend, supply lines, bottles of cleaner, a bucket and
+a drip), the basement (stairs up to the door, washer and dryer, the water
+heater and furnace, shelving with paint cans, box stacks, a workbench) and
+the attic (boxes under the sloping roof, a trunk, suitcases, a rolled rug, an
+attic fan on the harder ones). They're on the room list under each room you
+can play: number 1 is open, and each one you finish opens the next.
+
+| Task | What to do |
+|---|---|
+| Shards | Gather the gem shards, then get out |
+| Timed | Gather the shards before the clock runs out |
+| Key | Find the brass key: it opens the way out (shards are a bonus) |
+| Climb | The way out is at the very top |
+
+Mouse traps (step on the cheese plate and the bar slams over a moment later)
+get more common as the numbers go up, and some maps have the cat or the robot
+vacuum prowling. **The crawl space** is the tenth map, and it's hidden: after
+you finish a mini map there's a chance (about 1 in 3) that a draught opens it
+up. It's low and dark, packed with shards that pay double, two crumb gems,
+and a bug-bomb fog rolling in. Once you've played it, it seals up again until
+the next lucky draught.
+
+**Credits and the Armory.** Every gem shard you take out of a mini map is a
+credit, finishing the task pays a bonus (more for later maps, 40 for a crawl
+space), and crumb gems and treasures in the rooms pay credits too. Spend them
+in the **Armory** (main menu, room list or the result screen) on add-ons, and
+raise each to level 3 for more uses per run and a stronger effect:
+
+| Add-on | Kind | What it does |
+|---|---|---|
+| Power Legs | Strength | Jump twice as high and climb fast |
+| Dash Burst | Strength | A long untouchable dash, then a burst of Turbo |
+| Ground Pound | Strength | Stomp: stuns pets and the vacuum nearby, knocks props flying |
+| Iron Shell | Defense | Nothing can hurt you for a while |
+| Spiky Armor | Defense | Blocks the next hits (1-3) and stuns whoever struck |
+| Shadow Cloak | Defense | Almost invisible for a while |
+| Second Wind | Defense | One more shell and every meter refilled |
+| Smoke Bomb | Tactics | A cloud ahead: people and pets inside can't see |
+| Decoy Chirp | Tactics | A noise where you look: threats go and check |
+| Flash Bead | Tactics | Dazzles every person and pet close by |
+| Silk Grapple | Tactics | Zip to the spot you aim at (and cling on) |
+| Crumb Magnet | Tactics | Pulls crumbs and gem shards to you |
+
+You start with Decoy Chirp and Iron Shell. **The revolver** has six chambers:
+load add-ons into them in the Armory (a new one goes into an empty chamber by
+itself). In play, open it (TOOLS / Tab / D-pad up) and the cylinder swings
+out while the game holds still; tap a chamber (or arrows, mouse wheel, 1-6,
+D-pad) to turn it to the top, then tap USE in the middle (Enter, Space, F, A)
+to fire it. Brass pips show the uses left this run; G (D-pad down) fires the
+loaded chamber without opening.
 
 **Power-ups.** Glowing power-up tokens are tucked into the hidden corners of
 every room (under the fridge, couch and armchair, inside shelters, in the
@@ -311,7 +367,8 @@ bugs, the unlock chain, the how-to-play cards and auto quality, 15 smooth
 motion, lifelike people and pets, textures and quality tiers, 16 new NPC
 movements, chores, pet habits and the obstacles they create, 17 the bug's-eye
 view, Shift to run, power-ups and people finishing the chase, 18 climbing for
-every bug, the junk towers, bounce pads, treasures and the showcase).
+every bug, the junk towers, bounce pads, treasures and the showcase, 19 the
+mini maps, credits, the Armory's add-ons and the revolver).
 
 `godot` means the Godot executable, e.g.
 `C:\Godot\Godot_v4.7.2-stable_win64_console.exe`. The smoke test prints
@@ -403,7 +460,12 @@ python3 tools/generate_textures.py
 godot --headless --path . res://tools/build_all.tscn -- --force --only=res
 godot --headless --path . res://tools/build_all.tscn -- --force --only=actors
 godot --headless --path . res://tools/build_all.tscn -- --force --only=levels
+godot --headless --path . res://tools/build_all.tscn -- --force --only=minis
 ```
+
+The mini maps (`scenes/levels/minis/`) are laid out by
+`tools/builders/mini_map_builder.gd` from `scripts/data/mini_maps.gd` (each
+room's ten maps: theme, name, task, shards, time limit, prowler).
 
 Without `--force` it only creates files that are missing.
 

@@ -29,25 +29,25 @@ height = 0.24
 radial_segments = 20
 rings = 1
 
-[node name="TreasureGear" type="Area3D" unique_id=1585225137]
+[node name="TreasureGear" type="Area3D" unique_id=943027655]
 script = ExtResource("1_4ujy0")
 def = ExtResource("2_ojw4g")
 
-[node name="Shape" type="CollisionShape3D" parent="." unique_id=1779641078]
+[node name="Shape" type="CollisionShape3D" parent="." unique_id=1213155311]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 0)
 shape = SubResource("SphereShape3D_amjwd")
 
-[node name="Visual" type="Node3D" parent="." unique_id=280186458]
+[node name="Visual" type="Node3D" parent="." unique_id=302662022]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 0)
 
-[node name="Wheel" type="MeshInstance3D" parent="Visual" unique_id=885935787]
+[node name="Wheel" type="MeshInstance3D" parent="Visual" unique_id=1592102094]
 material_override = ExtResource("3_l54ej")
 visibility_range_end = 50.0
 visibility_range_end_margin = 7.5
 visibility_range_fade_mode = 1
 mesh = SubResource("ArrayMesh_lrw5i")
 
-[node name="Hub" type="MeshInstance3D" parent="Visual" unique_id=1814317426]
+[node name="Hub" type="MeshInstance3D" parent="Visual" unique_id=28803848]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0)
 material_override = ExtResource("4_k5i4v")
 visibility_range_end = 50.0
@@ -55,13 +55,13 @@ visibility_range_end_margin = 7.5
 visibility_range_fade_mode = 1
 mesh = SubResource("CylinderMesh_spjji")
 
-[node name="Skin" type="Node3D" parent="Visual" unique_id=1134950655]
+[node name="Skin" type="Node3D" parent="Visual" unique_id=986080826]
 script = ExtResource("5_pbeoe")
 model_id = "treasure_gear"
 fit_size = Vector3(1.6, 1.6, 1.6)
 hide_paths = Array[NodePath]([NodePath("../Wheel"), NodePath("../Hub")])
 
-[node name="Glow" type="OmniLight3D" parent="Visual" unique_id=1801012321]
+[node name="Glow" type="OmniLight3D" parent="Visual" unique_id=636067312]
 light_color = Color(0.35, 0.65, 1, 1)
 light_energy = 1.15
 distance_fade_enabled = true

@@ -43,31 +43,31 @@ height = 36.0
 radial_segments = 20
 rings = 1
 
-[node name="TreasureGoldenAcorn" type="Area3D" unique_id=1125878421]
+[node name="TreasureGoldenAcorn" type="Area3D" unique_id=343477563]
 script = ExtResource("1_hyovt")
 def = ExtResource("2_ue8pd")
 
-[node name="Shape" type="CollisionShape3D" parent="." unique_id=1597635552]
+[node name="Shape" type="CollisionShape3D" parent="." unique_id=197221722]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 0)
 shape = SubResource("SphereShape3D_lwu0q")
 
-[node name="Visual" type="Node3D" parent="." unique_id=611985340]
+[node name="Visual" type="Node3D" parent="." unique_id=2007323747]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 0)
 
-[node name="Nut" type="MeshInstance3D" parent="Visual" unique_id=1856970889]
+[node name="Nut" type="MeshInstance3D" parent="Visual" unique_id=262062881]
 material_override = ExtResource("3_5oj1e")
 visibility_range_end = 150.0
 visibility_range_end_margin = 22.5
 visibility_range_fade_mode = 1
 mesh = SubResource("ArrayMesh_muxrj")
 
-[node name="Skin" type="Node3D" parent="Visual" unique_id=902723658]
+[node name="Skin" type="Node3D" parent="Visual" unique_id=1658400452]
 script = ExtResource("4_2k7nl")
 model_id = "treasure_golden_acorn"
 fit_size = Vector3(1.6, 1.6, 1.6)
 hide_paths = Array[NodePath]([NodePath("../Nut")])
 
-[node name="Glow" type="OmniLight3D" parent="Visual" unique_id=1906853361]
+[node name="Glow" type="OmniLight3D" parent="Visual" unique_id=1089081814]
 light_color = Color(1, 0.78, 0.25, 1)
 light_energy = 1.85
 distance_fade_enabled = true
@@ -75,9 +75,9 @@ distance_fade_begin = 120.0
 distance_fade_length = 30.0
 omni_range = 8.5
 
-[node name="Sparkles" type="Node3D" parent="Visual" unique_id=196305483]
+[node name="Sparkles" type="Node3D" parent="Visual" unique_id=658946839]
 
-[node name="Sparkle" type="MeshInstance3D" parent="Visual/Sparkles" unique_id=1894006225]
+[node name="Sparkle" type="MeshInstance3D" parent="Visual/Sparkles" unique_id=2072950937]
 material_override = ExtResource("5_4lwv7")
 cast_shadow = 0
 visibility_range_end = 150.0
@@ -85,7 +85,7 @@ visibility_range_end_margin = 22.5
 visibility_range_fade_mode = 1
 mesh = SubResource("ArrayMesh_aj8ks")
 
-[node name="Beam" type="MeshInstance3D" parent="." unique_id=1765578356]
+[node name="Beam" type="MeshInstance3D" parent="." unique_id=294626115]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 18.5, 0)
 material_override = ExtResource("6_uxit7")
 cast_shadow = 0

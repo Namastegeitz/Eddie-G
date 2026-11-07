@@ -9,6 +9,8 @@ const CAUSES := {
 	&"sprayed": "Overcome by bug spray",
 	&"drained": "Washed down the drain",
 	&"fell": "Fell out of the world",
+	&"snapped": "Snapped in a mouse trap",
+	&"out_of_time": "Out of time",
 }
 
 var _root: Control
@@ -38,7 +40,7 @@ func show_result(r: Dictionary) -> void:
 	_root.add_child(dim)
 	_col = UIKit.column(_root, 560.0, 10)
 	var won := bool(r.get("won", false))
-	_col.add_child(UIKit.title("ESCAPED!" if won else "SQUISHED!", 54))
+	_col.add_child(UIKit.title("ESCAPED!" if won else ("OUT OF TIME" if StringName(r.get("cause", &"")) == &"out_of_time" else "SQUISHED!"), 54))
 	if not won:
 		_col.add_child(UIKit.label(String(CAUSES.get(StringName(r.get("cause", &"")), "Caught!")), 24, UIKit.RED))
 	_col.add_child(UIKit.label("Time %s" % _fmt_time(float(r.get("time", 0.0))), 20, UIKit.DIM))
@@ -65,19 +67,26 @@ func show_result(r: Dictionary) -> void:
 		var text := String(b[1]) + (" NEW!" if newly.has(b[0]) else "")
 		brow.add_child(UIKit.label(text, 16, UIKit.GOLD if got else Color(0.35, 0.33, 0.3)))
 	_col.add_child(brow)
-	_col.add_child(UIKit.label("+%d crumbs delivered to the colony" % int(r.get("banked", 0)), 20, UIKit.TEXT))
+	var is_mini := bool(r.get("mini", false))
+	if not is_mini:
+		_col.add_child(UIKit.label("+%d crumbs delivered to the colony" % int(r.get("banked", 0)), 20, UIKit.TEXT))
+	if int(r.get("credits", 0)) > 0:
+		_col.add_child(UIKit.label("+%d credits for the Armory  (%d in all)" % [int(r.get("credits", 0)), SaveSystem.credits()], 22, UIKit.GOLD))
 	for t: StringName in r.get("new_treasures", []):
 		var d := ItemDef.load_def(t)
 		if d:
 			_col.add_child(UIKit.label("New for your showcase: %s %s" % [d.rarity_name(), d.display_name], 20, d.rarity_color()))
 	for u in r.get("unlocks", []):
 		_col.add_child(UIKit.label(String(u), 24, UIKit.GREEN))
-	var next := GameManager.next_level_id()
+	var next := GameManager.next_mini_id(GameManager.current_level) if is_mini else GameManager.next_level_id()
 	if won and next != &"" and GameManager.is_level_unlocked(next):
-		_col.add_child(UIKit.button("Next level", func() -> void:
+		_col.add_child(UIKit.button("Next mini map" if is_mini else "Next level", func() -> void:
 			GameManager.current_level = next
 			GameManager.goto("bug_select")))
 	_col.add_child(UIKit.button("Retry", GameManager.restart_level))
+	if is_mini:
+		_col.add_child(UIKit.button("Mini maps", func() -> void: GameManager.goto("level_select")))
+	_col.add_child(UIKit.button("Armory", func() -> void: GameManager.goto("armory")))
 	_col.add_child(UIKit.button("Colony", func() -> void: GameManager.goto("colony")))
 	_col.add_child(UIKit.button("Main menu", func() -> void: GameManager.goto("main_menu")))
 	_root.visible = true

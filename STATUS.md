@@ -222,6 +222,11 @@
   that fling you onto the counter, fridge, bookshelf, shed roof; 18 treasures (common to
   legendary) plus the crumb gems collected into a showcase on the home screen (trophy shelf +
   Showcase screen of all 24); 16 power-ups per room.
+- Mini maps and add-ons: 10 mini maps behind each room (30; inside the walls, under the sink,
+  basement, attic) with tasks (shards, timed, key, climb), mouse traps, drafts, cobwebs, a cat
+  or vacuum on some, and a hidden crawl space that opens now and then; credits from shards,
+  gems and treasures buy 12 add-ons (strength, defense, tactics, 3 levels each) in the Armory,
+  loaded into a six-chamber revolver that swings open in play to choose and fire.
 - Phase-by-phase audit (all 6 phases) done; fixes it found: human feet were never solid,
   props didn't stun via feet, cereal-box domino layout, spider facing/normal errors, fog strength.
 - Android debug APK committed at `apps/bugs-eye-view/dist/android/bugseyeview-debug.apk`.

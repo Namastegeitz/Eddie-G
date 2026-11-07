@@ -18,18 +18,18 @@ rings = 10
 [sub_resource type="BoxMesh" id="BoxMesh_oynq0"]
 size = Vector3(0.05, 0.62, 1.4)
 
-[node name="TreasureBeetleShell" type="Area3D" unique_id=1318831798]
+[node name="TreasureBeetleShell" type="Area3D" unique_id=348629079]
 script = ExtResource("1_f8npr")
 def = ExtResource("2_0tu4q")
 
-[node name="Shape" type="CollisionShape3D" parent="." unique_id=2043738629]
+[node name="Shape" type="CollisionShape3D" parent="." unique_id=1894598786]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 0)
 shape = SubResource("SphereShape3D_h4leb")
 
-[node name="Visual" type="Node3D" parent="." unique_id=129819576]
+[node name="Visual" type="Node3D" parent="." unique_id=159383486]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 0)
 
-[node name="Shell" type="MeshInstance3D" parent="Visual" unique_id=826684388]
+[node name="Shell" type="MeshInstance3D" parent="Visual" unique_id=1447019721]
 transform = Transform3D(0.8, 0, 0, 0, 0.55, 0, 0, 0, 1.25, 0, 0, 0)
 material_override = ExtResource("3_ie82s")
 visibility_range_end = 50.0
@@ -37,7 +37,7 @@ visibility_range_end_margin = 7.5
 visibility_range_fade_mode = 1
 mesh = SubResource("SphereMesh_426hu")
 
-[node name="Seam" type="MeshInstance3D" parent="Visual" unique_id=1412673643]
+[node name="Seam" type="MeshInstance3D" parent="Visual" unique_id=220478074]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.02, 0)
 material_override = ExtResource("4_a0olx")
 visibility_range_end = 50.0
@@ -45,13 +45,13 @@ visibility_range_end_margin = 7.5
 visibility_range_fade_mode = 1
 mesh = SubResource("BoxMesh_oynq0")
 
-[node name="Skin" type="Node3D" parent="Visual" unique_id=2032954256]
+[node name="Skin" type="Node3D" parent="Visual" unique_id=1457985959]
 script = ExtResource("5_ks1o7")
 model_id = "treasure_beetle_shell"
 fit_size = Vector3(1.6, 1.6, 1.6)
 hide_paths = Array[NodePath]([NodePath("../Shell"), NodePath("../Seam")])
 
-[node name="Glow" type="OmniLight3D" parent="Visual" unique_id=1503479520]
+[node name="Glow" type="OmniLight3D" parent="Visual" unique_id=1962751084]
 light_color = Color(0.35, 0.65, 1, 1)
 light_energy = 1.15
 distance_fade_enabled = true

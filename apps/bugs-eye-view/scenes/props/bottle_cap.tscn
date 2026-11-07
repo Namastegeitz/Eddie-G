@@ -15,24 +15,24 @@ height = 0.4
 radial_segments = 20
 rings = 1
 
-[node name="BottleCap" type="RigidBody3D" unique_id=1307439794]
+[node name="BottleCap" type="RigidBody3D" unique_id=633548953]
 mass = 0.2
 script = ExtResource("1_r70py")
 noise_on_impact = 2.2
 
-[node name="Shape" type="CollisionShape3D" parent="." unique_id=430428401]
+[node name="Shape" type="CollisionShape3D" parent="." unique_id=1962368515]
 shape = SubResource("CylinderShape3D_n8ybc")
 
-[node name="Visual" type="Node3D" parent="." unique_id=236053945]
+[node name="Visual" type="Node3D" parent="." unique_id=1345585855]
 
-[node name="Mesh" type="MeshInstance3D" parent="Visual" unique_id=927426629]
+[node name="Mesh" type="MeshInstance3D" parent="Visual" unique_id=1843493671]
 material_override = ExtResource("2_1dlkf")
 visibility_range_end = 100.0
 visibility_range_end_margin = 15.0
 visibility_range_fade_mode = 1
 mesh = SubResource("CylinderMesh_38y6t")
 
-[node name="Skin" type="Node3D" parent="Visual" unique_id=957525937]
+[node name="Skin" type="Node3D" parent="Visual" unique_id=1612266182]
 script = ExtResource("3_4bfnq")
 model_id = "prop_bottle_cap"
 fit_size = Vector3(2, 0.4, 2)

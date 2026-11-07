@@ -37,6 +37,10 @@ func is_treasure() -> bool:
 	return def != null and def.kind == ItemDef.Kind.TREASURE
 
 
+func is_key() -> bool:
+	return def != null and def.kind == ItemDef.Kind.KEY
+
+
 func _process(delta: float) -> void:
 	if _visual == null or taken:
 		return
@@ -47,10 +51,12 @@ func _process(delta: float) -> void:
 		_visual.rotate_y(delta * 2.6)
 		_visual.position.y = _base_y + sin(_t * 3.0) * 0.12
 		return
-	if is_treasure():
+	if is_treasure() or is_key():
 		# A slow, proud turn, bobbing a little higher the rarer it is.
 		_visual.rotate_y(delta * 1.1)
 		_visual.position.y = _base_y + sin(_t * 1.8) * (0.15 + 0.05 * def.rarity)
+		if is_key():
+			_visual.rotate_y(delta * 1.4)
 		return
 	_visual.rotate_y(delta * (1.8 if gem else 0.7))
 	_visual.position.y = _base_y + sin(_t * (2.4 if gem else 1.6)) * (0.25 if gem else 0.08)

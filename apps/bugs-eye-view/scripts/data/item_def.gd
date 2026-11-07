@@ -6,7 +6,7 @@ extends Resource
 ## The numbers live in resources/items/*.tres; what each effect does is in
 ## PowerUps (one-shot effects) and BugBase (timed effects).
 
-enum Kind { FOOD, GEM, POWER, TREASURE }
+enum Kind { FOOD, GEM, POWER, TREASURE, KEY }
 
 const RARITY_NAMES: Array[String] = ["Common", "Rare", "Epic", "Legendary"]
 const RARITY_COLORS: Array[Color] = [Color(0.85, 0.88, 0.92), Color(0.35, 0.65, 1.0), Color(0.78, 0.45, 1.0), Color(1.0, 0.78, 0.25)]

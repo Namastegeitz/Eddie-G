@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="ItemDef" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/item_def.gd" id="1_8t1dw"]
+
+[resource]
+script = ExtResource("1_8t1dw")
+id = &"brass_key"
+display_name = "Brass Key"
+kind = 4
+duration = 0.0
+color = Color(0.95, 0.75, 0.3, 1)
+blurb = "The way out is open!"

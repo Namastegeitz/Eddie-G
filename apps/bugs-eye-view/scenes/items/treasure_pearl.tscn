@@ -14,31 +14,31 @@ height = 1.16
 radial_segments = 20
 rings = 10
 
-[node name="TreasurePearl" type="Area3D" unique_id=798207121]
+[node name="TreasurePearl" type="Area3D" unique_id=616208297]
 script = ExtResource("1_gpj3r")
 def = ExtResource("2_i46y0")
 
-[node name="Shape" type="CollisionShape3D" parent="." unique_id=1580319098]
+[node name="Shape" type="CollisionShape3D" parent="." unique_id=2129896658]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 0)
 shape = SubResource("SphereShape3D_fxh11")
 
-[node name="Visual" type="Node3D" parent="." unique_id=716097981]
+[node name="Visual" type="Node3D" parent="." unique_id=1269777318]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 0)
 
-[node name="Pearl" type="MeshInstance3D" parent="Visual" unique_id=1088462248]
+[node name="Pearl" type="MeshInstance3D" parent="Visual" unique_id=1863707981]
 material_override = ExtResource("3_cpcgx")
 visibility_range_end = 50.0
 visibility_range_end_margin = 7.5
 visibility_range_fade_mode = 1
 mesh = SubResource("SphereMesh_70gmo")
 
-[node name="Skin" type="Node3D" parent="Visual" unique_id=70042413]
+[node name="Skin" type="Node3D" parent="Visual" unique_id=657559626]
 script = ExtResource("4_tncga")
 model_id = "treasure_pearl"
 fit_size = Vector3(1.6, 1.6, 1.6)
 hide_paths = Array[NodePath]([NodePath("../Pearl")])
 
-[node name="Glow" type="OmniLight3D" parent="Visual" unique_id=1276891597]
+[node name="Glow" type="OmniLight3D" parent="Visual" unique_id=1025768179]
 light_color = Color(0.35, 0.65, 1, 1)
 light_energy = 1.15
 distance_fade_enabled = true
