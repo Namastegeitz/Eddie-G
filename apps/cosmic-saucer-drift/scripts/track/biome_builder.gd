@@ -84,7 +84,14 @@ static func formation_meshes(biome: Dictionary, f: Dictionary) -> Dictionary:
 		return _meshes[key]
 	var out := {}
 	var path := String(f.get("mesh", ""))
-	if path != "" and ResourceLoader.exists(path):
+	# A baked slot (tools/meshy/bake_lods: welded, unit space, with LODs)
+	# wins; then the raw GLB; then the procedural recipe.
+	var baked := path.get_basename() + "_lod.res" if path != "" else ""
+	if baked != "" and ResourceLoader.exists(baked):
+		var bm: Mesh = load(baked)
+		if bm:
+			out = {"near": bm, "far": null, "norm": Transform3D.IDENTITY, "source": "asset"}
+	if out.is_empty() and path != "" and ResourceLoader.exists(path):
 		out = _import(path)
 	if out.is_empty():
 		var rc: Dictionary = f.recipe
@@ -112,6 +119,10 @@ static func _import(path: String) -> Dictionary:
 	if mesh == null:
 		push_warning("biome: no mesh in %s, using the recipe" % path)
 		return {}
+	# Lay the model's long side along X (ridges then run along the horizon).
+	var box0 := xf * mesh.get_aabb()
+	if box0.size.z > box0.size.x * 1.2:
+		xf = Transform3D(Basis(Vector3.UP, PI * 0.5), Vector3.ZERO) * xf
 	var box := xf * mesh.get_aabb()
 	var cx := box.get_center()
 	var rad := maxf(maxf(box.size.x, box.size.z) * 0.5, 0.001)
@@ -151,6 +162,7 @@ static func build(td: TrackData, biome: Dictionary, parent: Node3D, ground_y: fl
 	var grid := TrackGrid.new(td)
 	var density := float(qs.get("decor", 1.0))
 	var rock := rock_material(biome, detail)
+	rock.set_shader_parameter("ground_y", ground_y)   # shared material: set per build
 	var placed: Array = []           # Vector3(x, z, radius) of every formation
 	var craters: Array = []          # [world position of the crater, radius]
 	var counts := {}
@@ -172,6 +184,10 @@ static func build(td: TrackData, biome: Dictionary, parent: Node3D, ground_y: fl
 				_add(holder, _disc(), lava_material(biome, true), disc, 0.0, 0.0)
 				if f.get("smoke", false):
 					craters.append([tf * Vector3(0, 1.0, 0), tf.basis.get_scale().x * cr])
+			elif f.get("smoke", false):
+				# A Meshy volcano: its crater shape is its own, so only smoke
+				# rises from the summit (no lava disc that might float).
+				craters.append([tf * Vector3(0, 0.98, 0), tf.basis.get_scale().x * 0.15])
 	_rivers(td, biome, holder, rng, grid, ground_y, placed)
 	if int(qs.detail) > 0:
 		_smoke(biome, holder, craters, float(qs.get("particles", 1.0)))

@@ -6,7 +6,10 @@ For every formation in content/biomes.json that has a "prompt" and a "mesh"
 slot (res://assets/biomes/<biome>/<id>.glb) this:
   1. creates a Meshy Text-to-3D *preview* task (untextured mesh, remeshed to a
      low-poly triangle mesh: should_remesh + topology + target_polycount),
-  2. optionally *refines* it (textures, PBR) unless --no-texture,
+  2. *refines* it (textures, PBR) only for formations that keep the model's
+     own materials ("material": "asset"); formations painted with the biome
+     palette ("material": "biome", the default) skip it: their textures would
+     never show and only bloat the download (about 6 MB each),
   3. downloads the GLB into the slot and records the task in
      assets/biomes/meshy_manifest.json.
 Then open/import the project (godot --headless --path . --import): Godot
@@ -119,7 +122,8 @@ def main(argv=None):
     ap.add_argument("--polycount", type=int, default=0, help="target faces (default by ring: far 6000, mid 4000, near 2500)")
     ap.add_argument("--ai-model", default="latest")
     ap.add_argument("--art-style", default="realistic")
-    ap.add_argument("--no-texture", action="store_true", help="skip the refine (texturing) step")
+    ap.add_argument("--no-texture", action="store_true", help="never run the refine (texturing) step")
+    ap.add_argument("--texture", action="store_true", help="always refine, even for biome-painted formations")
     ap.add_argument("--force", action="store_true", help="regenerate even if the slot already has a GLB")
     ap.add_argument("--dry-run", action="store_true", help="print the requests, call nothing")
     ap.add_argument("--api-base", default=os.environ.get("MESHY_API_BASE", "https://api.meshy.ai"))
@@ -173,10 +177,11 @@ def main(argv=None):
             "target_polycount": poly,
             "symmetry_mode": "off",
         }
-        print("%-18s %d faces  %s" % (name, poly, fm["prompt"][:70] + "..."))
+        textured = a.texture or (not a.no_texture and fm.get("material", "biome") == "asset")
+        print("%-18s %d faces%s  %s" % (name, poly, ", textured" if textured else "", fm["prompt"][:70] + "..."))
         if a.dry_run:
             print("    POST /openapi/v2/text-to-3d " + json.dumps(preview))
-            if not a.no_texture:
+            if textured:
                 print("    POST /openapi/v2/text-to-3d " + json.dumps({"mode": "refine", "preview_task_id": "<preview id>", "enable_pbr": True}))
             print("    -> " + slot)
             continue
@@ -184,7 +189,7 @@ def main(argv=None):
             pid = api.create(preview)
             task = api.wait(pid)
             final_id = pid
-            if not a.no_texture:
+            if textured:
                 rid = api.create({"mode": "refine", "preview_task_id": pid, "enable_pbr": True})
                 task = api.wait(rid)
                 final_id = rid
@@ -193,7 +198,7 @@ def main(argv=None):
                 raise RuntimeError("no GLB in the task result")
             download(url, slot)
             manifest[name] = {"slot": fm["mesh"], "prompt": fm["prompt"], "target_polycount": poly,
-                              "preview_task": pid, "final_task": final_id, "textured": not a.no_texture,
+                              "preview_task": pid, "final_task": final_id, "textured": textured,
                               "ai_model": a.ai_model, "generated": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())}
             os.makedirs(os.path.dirname(manifest_path), exist_ok=True)
             with open(manifest_path, "w") as f:

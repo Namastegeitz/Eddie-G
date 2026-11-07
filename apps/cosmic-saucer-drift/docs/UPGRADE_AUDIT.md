@@ -125,7 +125,7 @@ against the code before it was fixed. Data schemas are in
 - **Super Upgrades**: Stardust from clean, long drifts; a Prototype, Refined, Transcendent Wonder track per premium craft; Core, Field and Drive mods with set bonuses; overclock with heat and burnout; global perks for maxed craft.
 - **Technical Wonders**: Photon Spinnaker, Lighthouse Cloak, Relativistic Jet and Stellar Harvest, on keys, pads and touch, with a HUD meter, effects and AI use.
 - **Volcanic biomes**: Eerie and Divine scenery with formation variants, LODs, lava rivers, smoke, mist and lighting, a Settings switch and per-track defaults.
-- **Meshy pipeline**: a generator, import slots, Godot LOD import and a validation report.
+- **Meshy pipeline**: a generator, import slots, a LOD bake step and a validation report. All 8 biome formations are Meshy-generated (untextured previews, painted by the biome shader) and baked with 5-8 LOD levels.
 
 ## Found, not changed yet
 

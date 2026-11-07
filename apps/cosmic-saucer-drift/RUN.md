@@ -130,6 +130,10 @@ godot --headless --path . --script res://tools/dump_tracks.gd
 python3 tools/plot_tracks.py "<user data dir>/tracks_dump.json" tracks.png 0
 # Content check (packs, effect keys, biome formations: source, triangles, LODs)
 godot --headless --path . res://tools/content_report.tscn
+# Regenerate biome meshes with Meshy (key saved as a network secret for api.meshy.ai),
+# then import and bake LODs
+MESHY_API_KEY=proxy-injected python3 tools/meshy/generate.py --force
+godot --headless --path . --import && godot --headless --path . res://tools/meshy/bake_lods.tscn
 # Meshy pipeline against a local mock (no network, no key)
 python3 tools/meshy/test_pipeline.py
 # Regenerate the import-slot test fixture (a game-made GLB, not a Meshy asset)

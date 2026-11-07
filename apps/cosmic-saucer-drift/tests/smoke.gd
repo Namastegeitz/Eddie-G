@@ -1754,7 +1754,18 @@ func _biome_tests() -> void:
 	check("import slot: the importer made LODs", ContentReportProxy.lods(ms.near) > 0)
 	var ub: AABB = ms.norm * (ms.near as Mesh).get_aabb()
 	check("import slot: GLB normalised to unit space", absf(ub.position.y) < 0.01 and absf(ub.end.y - 1.0) < 0.01 and absf(ub.get_center().x) < 0.01 and absf(maxf(ub.size.x, ub.size.z) - 2.0) < 0.02, str(ub))
-	check("recipe used when the slot is empty", BiomeBuilder.formation_meshes(Content.biome("eerie"), Content.biome("eerie").formations[0]).source == "recipe")
+	check("recipe used when the slot is empty", BiomeBuilder.formation_meshes(Content.biome("slot_test"), test_b.formations[1]).source == "recipe")
+	# The shipped slots hold Meshy meshes, baked to unit space with LODs.
+	var meshy_ok := 0
+	for b: Dictionary in Content.biomes:
+		if b.id == "slot_test":
+			continue
+		for f: Dictionary in b.formations:
+			var fm := BiomeBuilder.formation_meshes(b, f)
+			var bx: AABB = fm.norm * (fm.near as Mesh).get_aabb()
+			if fm.source == "asset" and ContentReportProxy.lods(fm.near) > 0 and absf(bx.end.y - 1.0) < 0.02 and absf(bx.position.y) < 0.02:
+				meshy_ok += 1
+	check("all 8 biome formations are baked Meshy meshes with LODs", meshy_ok == 8, str(meshy_ok))
 	Content.biomes.erase(Content.biome("slot_test"))
 	Content.biome_by_id.erase("slot_test")
 	# A full build on Io stays clear of the road and the shortcut.

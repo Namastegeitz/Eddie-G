@@ -144,9 +144,9 @@
   Lighthouse Cloak, Relativistic Jet, Stellar Harvest; R / R3 / D-pad down / touch WONDER), Core/Field/Drive mods
   with set bonuses, overclock heat + burnout, global perks; Super Upgrades screen + Hangar Wonder/Mods tab.
 - Volcanic biomes Eerie and Divine (content/biomes.json): procedural low-poly formations with LODs, lava rivers,
-  smoke, mist, lighting; Settings > Volcanic biome. Meshy pipeline (tools/meshy/generate.py) + import slots;
-  NOT run: this session had no Meshy key and api.meshy.ai was blocked, so the slots are empty and the procedural
-  formations stand in. Tested offline with a mock API (tools/meshy/test_pipeline.py) and a game-made GLB fixture.
+  smoke, mist, lighting; Settings > Volcanic biome. Meshy pipeline (tools/meshy/generate.py) + import slots +
+  LOD bake (tools/meshy/bake_lods.tscn): all 8 formations generated with Meshy (170 credits), welded, unit space,
+  5-8 LODs; exports ship only the baked meshes. Mock-API test (tools/meshy/test_pipeline.py) kept for offline runs.
 - v1 built from `prompts/claude/cosmic-saucer-drift.md` (concept + every add-on: extra weapons, pro
   moves, living tracks + secrets, rivals + boss races, cups, time trial + ghost, daily, 2P split-screen,
   cosmetics, reverse/mirror, achievements; free/no ads with an ads layer switched off).

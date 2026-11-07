@@ -1,0 +1,82 @@
+{
+  "eerie/ridge": {
+    "slot": "res://assets/biomes/eerie/ridge.glb",
+    "prompt": "colossal jagged volcanic mountain ridge, fractured black basalt and obsidian, glowing molten lava veins deep in the cracks, ash-dusted slopes, ominous and otherworldly, long ridge shape, game asset",
+    "target_polycount": 6000,
+    "preview_task": "01a1b78d-8652-7310-bc5a-e24a2adda00f",
+    "final_task": "01a1b78d-8652-7310-bc5a-e24a2adda00f",
+    "textured": false,
+    "ai_model": "latest",
+    "generated": "2026-11-07T19:49:55Z"
+  },
+  "eerie/cone": {
+    "slot": "res://assets/biomes/eerie/cone.glb",
+    "prompt": "volcanic cone with a smoking crater, black basalt, molten lava glowing in the crater and in deep cracks down its flanks, ash-dusted slopes, ominous, game asset",
+    "target_polycount": 4000,
+    "preview_task": "01a1b78f-fd18-733b-9dfb-ff777dc38836",
+    "final_task": "01a1b78f-fd18-733b-9dfb-ff777dc38836",
+    "textured": false,
+    "ai_model": "latest",
+    "generated": "2026-11-07T19:51:18Z"
+  },
+  "eerie/columns": {
+    "slot": "res://assets/biomes/eerie/columns.glb",
+    "prompt": "cluster of hexagonal black basalt columns, fractured obsidian cliff chunk, thin glowing lava veins between the columns, volcanic, game asset",
+    "target_polycount": 2500,
+    "preview_task": "01a1b790-bccb-7409-9339-73420de597d7",
+    "final_task": "01a1b790-bccb-7409-9339-73420de597d7",
+    "textured": false,
+    "ai_model": "latest",
+    "generated": "2026-11-07T19:52:02Z"
+  },
+  "eerie/shard": {
+    "slot": "res://assets/biomes/eerie/shard.glb",
+    "prompt": "tall jagged obsidian spire, sharp fractured volcanic glass shard rising from ash, faint lava glow in the cracks, eerie, game asset",
+    "target_polycount": 2500,
+    "preview_task": "01a1b791-6902-7401-84a7-a8e010d8e429",
+    "final_task": "01a1b791-6902-7401-84a7-a8e010d8e429",
+    "textured": false,
+    "ai_model": "latest",
+    "generated": "2026-11-07T19:52:40Z"
+  },
+  "divine/peaks": {
+    "slot": "res://assets/biomes/divine/peaks.glb",
+    "prompt": "majestic colossal volcanic mountain peaks, golden-black volcanic rock, crystalline iridescent rock faces, radiant lava rivers catching the light, heavenly and awe-inspiring, game asset",
+    "target_polycount": 6000,
+    "preview_task": "01a1b791-fee4-72b9-95fb-55175e0e8a2d",
+    "final_task": "01a1b791-fee4-72b9-95fb-55175e0e8a2d",
+    "textured": false,
+    "ai_model": "latest",
+    "generated": "2026-11-07T19:53:35Z"
+  },
+  "divine/cone": {
+    "slot": "res://assets/biomes/divine/cone.glb",
+    "prompt": "majestic volcano with a radiant glowing crater, golden-black rock, lava rivers of light down its flanks, soft glowing mist, heavenly, game asset",
+    "target_polycount": 4000,
+    "preview_task": "01a1b792-d51d-7275-917a-7bad0c966b14",
+    "final_task": "01a1b792-d51d-7275-917a-7bad0c966b14",
+    "textured": false,
+    "ai_model": "latest",
+    "generated": "2026-11-07T19:54:19Z"
+  },
+  "divine/crystals": {
+    "slot": "res://assets/biomes/divine/crystals.glb",
+    "prompt": "cluster of giant iridescent crystals growing from golden-black volcanic rock, prismatic crystalline faces, warm glow, heavenly, game asset",
+    "target_polycount": 2500,
+    "preview_task": "01a1b793-813f-755d-8eba-a28bcc4aa6c4",
+    "final_task": "01a1b793-813f-755d-8eba-a28bcc4aa6c4",
+    "textured": false,
+    "ai_model": "latest",
+    "generated": "2026-11-07T19:55:29Z"
+  },
+  "divine/arch": {
+    "slot": "res://assets/biomes/divine/arch.glb",
+    "prompt": "natural stone arch of golden-black volcanic rock with crystalline iridescent faces and thin radiant lava veins, majestic exotic rock formation, game asset",
+    "target_polycount": 2500,
+    "preview_task": "01a1b794-920b-77c7-9f80-58c96f047f55",
+    "final_task": "01a1b794-920b-77c7-9f80-58c96f047f55",
+    "textured": false,
+    "ai_model": "latest",
+    "generated": "2026-11-07T19:56:08Z"
+  }
+}

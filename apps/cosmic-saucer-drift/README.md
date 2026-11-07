@@ -48,9 +48,10 @@ Next steps:
   sulfur smoke) and Divine Summit (golden-black peaks, radiant lava,
   iridescent crystals, glowing mist) on Io, WASP-76 b, TRAPPIST-1 b and
   55 Cancri e. Settings > Volcanic biome turns them on for every rocky world
-  or off. Each scenery piece is a slot for a Meshy-generated mesh
-  ([docs/ASSET_PIPELINE.md](docs/ASSET_PIPELINE.md)); until one is
-  generated, a procedural low-poly version stands in.
+  or off. The ridges, volcanoes, basalt columns, obsidian shards, peaks,
+  crystal clusters and arches are Meshy-generated meshes, baked low-poly
+  with LODs ([docs/ASSET_PIPELINE.md](docs/ASSET_PIPELINE.md)); a
+  procedural version stands in for any empty slot.
 - Content is data: craft, pilots, Wonders, mods and biomes are JSON, and
   packs drop in without code ([docs/SCHEMAS.md](docs/SCHEMAS.md)). The
   full system audit and change list is in

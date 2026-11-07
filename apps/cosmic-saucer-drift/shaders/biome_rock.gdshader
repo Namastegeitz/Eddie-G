@@ -17,8 +17,11 @@ uniform float iridescence = 0.0;
 uniform float gloss = 0.3;
 uniform float scale = 0.03;
 uniform int detail = 2;
+// Lava glows most near the foot of the rock: metres above the ground plane
+// (works for procedural and imported meshes alike, whatever their units).
+uniform float ground_y = 0.0;
+uniform float glow_falloff = 140.0;
 varying vec3 wpos;
-varying float hgt;
 
 float hash3(vec3 p) {
 	p = fract(p * 0.3183099 + vec3(0.1, 0.2, 0.3));
@@ -37,10 +40,16 @@ float noise3(vec3 x) {
 
 void vertex() {
 	wpos = (MODEL_MATRIX * vec4(VERTEX, 1.0)).xyz;
-	hgt = clamp(VERTEX.y, 0.0, 1.0);
 }
 
 void fragment() {
+	// Faceted low-poly look: the face normal from screen-space derivatives
+	// (welded meshes would otherwise shade smooth).
+	vec3 fn = normalize(cross(dFdx(VERTEX), dFdy(VERTEX)));
+	if (dot(fn, NORMAL) < 0.0) {
+		fn = -fn;
+	}
+	NORMAL = fn;
 	vec3 wn = normalize((INV_VIEW_MATRIX * vec4(NORMAL, 0.0)).xyz);
 	vec3 p = wpos * scale;
 	float n = noise3(p);
@@ -70,8 +79,8 @@ void fragment() {
 		r = min(r, abs(noise3(p * 2.3 + 1.7) - 0.5) * 1.6);
 	}
 	float crack = 1.0 - smoothstep(0.0, crack_width, r);
-	float low = 1.0 - hgt;
-	crack *= field * (low * low * 0.85 + 0.15) * (1.0 - up);
+	float low = exp(-max(wpos.y - ground_y, 0.0) / glow_falloff);
+	crack *= field * (low * 0.85 + 0.15) * (1.0 - up);
 	float pulse = 0.85 + 0.15 * sin(TIME * 1.3 + n * 6.0);
 	ALBEDO = mix(col, lava * 0.25, crack);
 	EMISSION = mix(lava, lava_hot, crack * crack) * crack * crack_glow * pulse;
