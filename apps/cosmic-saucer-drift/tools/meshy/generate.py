@@ -21,9 +21,16 @@ Needs an API key in MESHY_API_KEY and network access to api.meshy.ai and
 the asset host Meshy returns download links on (assets.meshy.ai).
 Standard library only.
 
+Credits are spent carefully: a run first prints its plan and estimated
+cost and spends NOTHING unless --yes is given. It refuses to go over
+--max-credits (default 60, three models) and never lets the account drop
+below --keep credits (default 1000). Estimates use the rates measured on
+this account: 20 credits per model (preview), 10 per texture pass.
+
 Usage:
   MESHY_API_KEY=... python3 tools/meshy/generate.py [--biome eerie] [--only ridge,cone]
       [--polycount 4000] [--ai-model latest] [--no-texture] [--dry-run] [--force]
+      [--yes] [--max-credits 60] [--keep 1000]
   --api-base lets the pipeline run against a local mock (tests).
 """
 import argparse
@@ -38,6 +45,10 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 PROJECT = os.path.abspath(os.path.join(HERE, "..", ".."))
 BIOMES = os.path.join(PROJECT, "content", "biomes.json")
 MANIFEST = os.path.join(PROJECT, "assets", "biomes", "meshy_manifest.json")
+
+# Credits per task, measured on this account (8 previews + 1 refine = 170).
+COST_PREVIEW = 20
+COST_REFINE = 10
 
 # Per-ring default face budgets: horizon ridges are seen big, near rocks small.
 RING_POLY = {"far": 6000, "mid": 4000, "near": 2500}
@@ -76,6 +87,9 @@ class Meshy:
                     time.sleep(2 ** attempt * 2)
                     continue
                 raise RuntimeError("%s %s -> %s" % (method, path, e.reason))
+
+    def balance(self):
+        return int(self._req("GET", "/openapi/v1/balance").get("balance", 0))
 
     def create(self, body):
         return self._req("POST", "/openapi/v2/text-to-3d", body)["result"]
@@ -129,6 +143,9 @@ def main(argv=None):
     ap.add_argument("--api-base", default=os.environ.get("MESHY_API_BASE", "https://api.meshy.ai"))
     ap.add_argument("--biomes-file", default=BIOMES, help="biome data (default content/biomes.json)")
     ap.add_argument("--slot-root", default=PROJECT, help="where res:// slots live (tests point this elsewhere)")
+    ap.add_argument("--yes", action="store_true", help="actually spend credits (without it the run only shows its plan and cost)")
+    ap.add_argument("--max-credits", type=int, default=60, help="refuse runs estimated above this (default 60 = three models)")
+    ap.add_argument("--keep", type=int, default=1000, help="never let the account drop below this many credits (default 1000)")
     a = ap.parse_args(argv)
     manifest_path = os.path.join(a.slot_root, "assets", "biomes", "meshy_manifest.json")
 
@@ -149,11 +166,31 @@ def main(argv=None):
         print("nothing to generate")
         return 0
 
+    # Plan: which slots would be (re)made, and what it would cost.
+    def is_textured(fm):
+        return a.texture or (not a.no_texture and fm.get("material", "biome") == "asset")
+    todo = [(b, fm) for b, fm in jobs if a.force or not os.path.exists(res_to_path(fm["mesh"], a.slot_root))]
+    estimate = sum(COST_PREVIEW + (COST_REFINE if is_textured(fm) else 0) for b, fm in todo)
+    print("Plan: %d model(s), about %d credits (budget %d, keep %d in the account)." % (len(todo), estimate, a.max_credits, a.keep))
+    if todo and estimate > a.max_credits and not a.dry_run:
+        print("Over budget: nothing was spent. Narrow it with --only, or raise --max-credits on purpose.")
+        return 3
+
     key = os.environ.get("MESHY_API_KEY", "")
     if not key and not a.dry_run:
         print("MESHY_API_KEY is not set (and api.meshy.ai must be reachable). Use --dry-run to see the requests.")
         return 2
     api = Meshy(key, a.api_base)
+    start_balance = None
+    if todo and not a.dry_run:
+        start_balance = api.balance()
+        print("Account balance: %d credits." % start_balance)
+        if start_balance - estimate < a.keep:
+            print("That would leave fewer than %d credits: nothing was spent. Use --keep to change the reserve." % a.keep)
+            return 4
+        if not a.yes:
+            print("Nothing was spent. Re-run with --yes to generate.")
+            return 0
     manifest = {}
     if os.path.exists(manifest_path):
         with open(manifest_path) as f:
@@ -177,7 +214,7 @@ def main(argv=None):
             "target_polycount": poly,
             "symmetry_mode": "off",
         }
-        textured = a.texture or (not a.no_texture and fm.get("material", "biome") == "asset")
+        textured = is_textured(fm)
         print("%-18s %d faces%s  %s" % (name, poly, ", textured" if textured else "", fm["prompt"][:70] + "..."))
         if a.dry_run:
             print("    POST /openapi/v2/text-to-3d " + json.dumps(preview))
@@ -207,6 +244,12 @@ def main(argv=None):
         except Exception as e:  # keep going with the other formations
             failed += 1
             print("    FAILED: %s" % e)
+    if start_balance is not None:
+        try:
+            end = api.balance()
+            print("Credits spent: %d (balance %d -> %d)." % (start_balance - end, start_balance, end))
+        except RuntimeError:
+            pass
     if not a.dry_run:
         print("Done. Now import: godot --headless --path . --import ; then check: godot --headless --path . res://tools/content_report.tscn")
     return 1 if failed else 0

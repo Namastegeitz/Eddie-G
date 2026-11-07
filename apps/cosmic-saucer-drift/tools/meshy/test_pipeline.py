@@ -3,9 +3,10 @@
 API (no network, no key, no real Meshy output). The mock answers the
 create/poll calls the way the API documents them and serves
 tests/fixtures/formation_fixture.glb (made by the game itself) as the
-"model". Checks that the script creates preview + refine tasks with the
-low-poly settings, waits for them, downloads the GLB into the slot and
-writes the manifest.   python3 tools/meshy/test_pipeline.py
+"model". Checks the credit guard (plan only without --yes, budget cap,
+reserve), that only "asset" formations get a texture pass, the low-poly
+settings, polling, the download into the slot and the manifest.
+    python3 tools/meshy/test_pipeline.py
 """
 import http.server
 import json
@@ -26,6 +27,7 @@ calls = []
 
 class Mock(http.server.BaseHTTPRequestHandler):
     polls = {}
+    balance = 1300
 
     def log_message(self, *a):
         pass
@@ -48,6 +50,8 @@ class Mock(http.server.BaseHTTPRequestHandler):
         self._json({"result": tid})
 
     def do_GET(self):
+        if self.path == "/openapi/v1/balance":
+            return self._json({"balance": Mock.balance})
         if self.path.startswith("/files/"):
             data = open(FIXTURE, "rb").read()
             self.send_response(200)
@@ -74,24 +78,43 @@ def main():
         os.environ["MESHY_API_KEY"] = "test-key"
         orig_wait = generate.Meshy.wait
         generate.Meshy.wait = lambda self, tid, poll=0.05, timeout=30: orig_wait(self, tid, 0.05, 30)
-        rc = generate.main(["--api-base", "http://127.0.0.1:%d" % srv.server_address[1], "--slot-root", tmp,
-                            "--biome", "eerie", "--only", "ridge,shard"])
+        base = ["--api-base", "http://127.0.0.1:%d" % srv.server_address[1], "--slot-root", tmp]
+        checks = []
+        # 1. Without --yes nothing is spent.
+        rc = generate.main(base + ["--biome", "eerie", "--only", "ridge,shard"])
+        checks.append(("plan only: no --yes, no credits spent", rc == 0 and len(calls) == 0))
+        # 2. Over the budget: refused before any call.
+        rc = generate.main(base + ["--biome", "eerie", "--only", "ridge,shard", "--yes", "--max-credits", "30"])
+        checks.append(("over budget: refused, nothing spent", rc == 3 and len(calls) == 0))
+        # 3. Would dip into the reserve: refused.
+        rc = generate.main(base + ["--biome", "eerie", "--only", "ridge,shard", "--yes", "--keep", "1290"])
+        checks.append(("reserve kept: refused, nothing spent", rc == 4 and len(calls) == 0))
+        # 4. A real (mock) run: biome-painted formations get no texture pass.
+        rc = generate.main(base + ["--biome", "eerie", "--only", "ridge,shard", "--yes"])
         slot = os.path.join(tmp, "assets", "biomes", "eerie", "ridge.glb")
         man = json.load(open(os.path.join(tmp, "assets", "biomes", "meshy_manifest.json")))
-        checks = [
-            ("script succeeded", rc == 0),
-            ("4 tasks: preview + refine for 2 formations", len(calls) == 4),
-            ("preview asks for a remeshed low-poly triangle mesh", calls[0]["mode"] == "preview" and calls[0]["should_remesh"] is True
+        checks += [
+            ("generated with --yes", rc == 0),
+            ("2 tasks: one untextured preview per formation", len(calls) == 2 and all(c["mode"] == "preview" for c in calls)),
+            ("preview asks for a remeshed low-poly triangle mesh", calls[0]["should_remesh"] is True
              and calls[0]["topology"] == "triangle" and calls[0]["target_polycount"] == 6000),
-            ("near-ring formation gets a smaller face budget", calls[2]["target_polycount"] == 2500),
-            ("refine textures the preview", calls[1] == {"mode": "refine", "preview_task_id": "task-1", "enable_pbr": True}),
+            ("near-ring formation gets a smaller face budget", calls[1]["target_polycount"] == 2500),
             ("GLB saved in the slot", os.path.exists(slot) and open(slot, "rb").read(4) == b"glTF"),
-            ("manifest records both", set(man) == {"eerie/ridge", "eerie/shard"} and man["eerie/ridge"]["preview_task"] == "task-1"),
+            ("manifest records both, untextured", set(man) == {"eerie/ridge", "eerie/shard"} and not man["eerie/ridge"]["textured"]),
         ]
+        # 5. Existing slots are kept unless --force.
         calls.clear()
-        rc2 = generate.main(["--api-base", "http://127.0.0.1:%d" % srv.server_address[1], "--slot-root", tmp,
-                             "--biome", "eerie", "--only", "ridge"])
-        checks.append(("existing slots are kept unless --force", rc2 == 0 and len(calls) == 0))
+        rc = generate.main(base + ["--biome", "eerie", "--only", "ridge", "--yes"])
+        checks.append(("existing slots are kept unless --force", rc == 0 and len(calls) == 0))
+        # 6. A formation that keeps its own materials gets the texture pass.
+        bio = json.load(open(generate.BIOMES))
+        bio["biomes"][0]["formations"][1]["material"] = "asset"
+        bfile = os.path.join(tmp, "biomes_asset.json")
+        json.dump(bio, open(bfile, "w"))
+        calls.clear()
+        rc = generate.main(base + ["--biomes-file", bfile, "--biome", "eerie", "--only", "cone", "--yes"])
+        checks.append(("asset formation: preview + refine", rc == 0 and len(calls) == 2 and calls[1].get("mode") == "refine"
+                       and calls[1].get("preview_task_id", "").startswith("task-")))
         for name, good in checks:
             print(("PASS " if good else "FAIL ") + name)
             ok = ok and good

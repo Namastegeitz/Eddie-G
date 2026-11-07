@@ -132,7 +132,9 @@ python3 tools/plot_tracks.py "<user data dir>/tracks_dump.json" tracks.png 0
 godot --headless --path . res://tools/content_report.tscn
 # Regenerate biome meshes with Meshy (key saved as a network secret for api.meshy.ai),
 # then import and bake LODs
-MESHY_API_KEY=proxy-injected python3 tools/meshy/generate.py --force
+# (shows the plan and cost first; spends credits only with --yes, max 60 a run,
+# keeps 1000 in the account)
+MESHY_API_KEY=proxy-injected python3 tools/meshy/generate.py --force --only cone --yes
 godot --headless --path . --import && godot --headless --path . res://tools/meshy/bake_lods.tscn
 # Meshy pipeline against a local mock (no network, no key)
 python3 tools/meshy/test_pipeline.py

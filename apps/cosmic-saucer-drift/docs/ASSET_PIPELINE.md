@@ -11,10 +11,19 @@ Needs a Meshy API key and network access to `api.meshy.ai` and the
 download host it returns (`assets.meshy.ai`).
 
 ```sh
-export MESHY_API_KEY=...            # never commit it
-python3 tools/meshy/generate.py --dry-run          # see every request first
-python3 tools/meshy/generate.py --biome eerie      # or --only ridge,cone, or everything
+export MESHY_API_KEY=...            # never commit it (in the cloud session the key is a
+                                    # network secret: use MESHY_API_KEY=proxy-injected)
+python3 tools/meshy/generate.py --dry-run --force --only cone   # see the requests
+python3 tools/meshy/generate.py --force --only cone             # plan + cost, spends nothing
+python3 tools/meshy/generate.py --force --only cone --yes       # generate (20 credits)
 ```
+
+**Credit guard.** A run prints its plan and estimated cost and spends
+nothing without `--yes`. It refuses runs over `--max-credits` (default 60,
+three models) and never lets the account drop below `--keep` credits
+(default 1000). It reports the credits spent afterwards. Rates measured on
+this account: 20 credits per model, 10 per texture pass. Regenerate one
+formation at a time and look at it in the game before doing more.
 
 For each formation the script:
 1. Creates a Text-to-3D **preview** task from the formation's `prompt`, remeshed to a low-poly triangle mesh (`should_remesh`, `topology: triangle`, `target_polycount`: 6000 for horizon ridges, 4000 for volcanoes, 2500 beside the road, or the formation's `polycount`).
