@@ -8,6 +8,9 @@ var model: SaucerModel
 var cam: Camera3D
 var _look := {}
 var _t := 0.0
+var _pilot_focus := false      # Racers page: turn the craft to face us, zoom onto the pilot
+var _cam_pos := Vector3(0, 3.0, 12.5)
+var _cam_aim := Vector3(0, -0.2, 0)
 
 
 func _ready() -> void:
@@ -66,6 +69,7 @@ func _ready() -> void:
 	pm.set_shader_parameter("color_a", theme.planets[0].a)
 	pm.set_shader_parameter("color_b", theme.planets[0].b)
 	pm.set_shader_parameter("rim_color", theme.planets[0].rim)
+	pm.set_shader_parameter("detail", 1.0 if int(qs.detail) > 1 else 0.0)   # full-cost surface only on High/Ultra
 	pm.set_shader_parameter("bands", 12.0)
 	pm.set_shader_parameter("sun_dir", Vector3(0.6, 0.5, 0.4))
 	planet.material_override = pm
@@ -126,6 +130,11 @@ func show_look(look: Dictionary) -> void:
 	model.build(look)
 
 
+## Close-up on the pilot in the cockpit (Racers page) or back to the craft.
+func focus_pilot(on: bool) -> void:
+	_pilot_focus = on
+
+
 ## Shift the saucer sideways so it sits beside the menu panel.
 func frame(offset_x: float) -> void:
 	var tw := create_tween()
@@ -134,7 +143,23 @@ func frame(offset_x: float) -> void:
 
 func _process(dt: float) -> void:
 	_t += dt
-	turntable.rotation.y += dt * 0.6
+	var want_pos := Vector3(0, 3.0, 12.5)
+	var want_aim := Vector3(0, -0.2, 0)
+	if _pilot_focus and model and model.pilot_model:
+		# Face the camera with a slow sway, and frame the pilot to the right
+		# of the menu panel.
+		turntable.rotation.y = lerp_angle(turntable.rotation.y, PI + sin(_t * 0.7) * 0.35, 1.0 - exp(-3.0 * dt))
+		var head := model.pilot_model.global_position
+		want_pos = head + Vector3(-0.9, 0.7, 4.2)
+		want_aim = head + Vector3(-1.6, -0.1, 0)
+	else:
+		turntable.rotation.y += dt * 0.6
+	var k := 1.0 - exp(-5.0 * dt)
+	_cam_pos = _cam_pos.lerp(want_pos, k)
+	_cam_aim = _cam_aim.lerp(want_aim, k)
+	if cam.position.distance_squared_to(_cam_pos) > 1e-6 or _pilot_focus:
+		cam.position = _cam_pos
+		cam.look_at(_cam_aim)
 	if model and model.pivot:
 		model.pivot.position.y = sin(_t * 2.0) * 0.15
 		model.pivot.rotation.z = sin(_t * 1.3) * 0.06

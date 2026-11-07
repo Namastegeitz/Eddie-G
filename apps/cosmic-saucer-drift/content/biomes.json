@@ -1,0 +1,306 @@
+{
+  "schema": "csd.biomes/1",
+  "about": "Volcanic biomes: scenery around the track (the road itself is never touched). Each formation is one variant scattered several times. 'mesh' is the import slot: drop a Meshy GLB there (tools/meshy/generate.py writes it) and it replaces the procedural 'recipe' with no code change. 'material': 'biome' paints any mesh with the biome palette, 'asset' keeps the GLB's own materials. 'ring': far = mountain horizon, mid = between horizon and track, near = beside the track. scale = footprint radius in metres, height = metres above the ground plane. The ground plane sits 50 m below the lowest point of the track.",
+  "biome_defaults": {
+    "io": "eerie",
+    "wasp76b": "eerie",
+    "trappist1b": "divine",
+    "cancri_e": "divine"
+  },
+  "biomes": [
+    {
+      "id": "eerie",
+      "name": "Eerie Caldera",
+      "text": "Colossal jagged ridges of fractured basalt and obsidian, molten veins glowing deep in the cracks, ash on every slope and sulfur smoke drifting from the vents.",
+      "palette": {
+        "rock": "#16120f",
+        "rock_hi": "#3b302b",
+        "ash": "#7d7671",
+        "lava": "#ff5a14",
+        "lava_hot": "#ffcf5a",
+        "crack_width": 0.03,
+        "crack_glow": 2.8,
+        "ash_amount": 0.6,
+        "iridescence": 0.0,
+        "gloss": 0.25,
+        "ground": "#140d0b",
+        "ground_glow": 1.1
+      },
+      "env": {
+        "fog_color": "#3b1a10",
+        "fog_density": 0.0021,
+        "sun_tint": "#ff9a60",
+        "sun_mix": 0.25,
+        "ambient_tint": "#33262a",
+        "ambient_mix": 0.5
+      },
+      "lava": {
+        "rivers": 4,
+        "width": [
+          10,
+          26
+        ],
+        "glow": 3.0,
+        "crust": 0.62,
+        "speed": 0.05
+      },
+      "smoke": {
+        "color": "#4a403b",
+        "alpha": 0.42,
+        "plumes_per_cone": 1,
+        "height": [
+          70,
+          150
+        ]
+      },
+      "mist": {
+        "color": "#000000",
+        "alpha": 0.0,
+        "layers": 0
+      },
+      "formations": [
+        {
+          "id": "ridge",
+          "kind": "ridge",
+          "ring": "far",
+          "count": 9,
+          "scale": [
+            220,
+            420
+          ],
+          "height": [
+            180,
+            420
+          ],
+          "mesh": "res://assets/biomes/eerie/ridge.glb",
+          "material": "biome",
+          "prompt": "colossal jagged volcanic mountain ridge, fractured black basalt and obsidian, glowing molten lava veins deep in the cracks, ash-dusted slopes, ominous and otherworldly, long ridge shape, game asset",
+          "recipe": {
+            "type": "ridge",
+            "peaks": 7,
+            "jag": 0.6,
+            "sharp": 1.4,
+            "seed": 11
+          }
+        },
+        {
+          "id": "cone",
+          "kind": "cone",
+          "ring": "mid",
+          "count": 6,
+          "scale": [
+            90,
+            170
+          ],
+          "height": [
+            120,
+            230
+          ],
+          "mesh": "res://assets/biomes/eerie/cone.glb",
+          "material": "biome",
+          "crater_glow": true,
+          "smoke": true,
+          "prompt": "volcanic cone with a smoking crater, black basalt, molten lava glowing in the crater and in deep cracks down its flanks, ash-dusted slopes, ominous, game asset",
+          "recipe": {
+            "type": "cone",
+            "ribs": 11,
+            "crater": 0.24,
+            "rough": 0.09,
+            "seed": 3
+          }
+        },
+        {
+          "id": "columns",
+          "kind": "cliff",
+          "ring": "near",
+          "count": 16,
+          "scale": [
+            16,
+            38
+          ],
+          "height": [
+            55,
+            110
+          ],
+          "mesh": "res://assets/biomes/eerie/columns.glb",
+          "material": "biome",
+          "prompt": "cluster of hexagonal black basalt columns, fractured obsidian cliff chunk, thin glowing lava veins between the columns, volcanic, game asset",
+          "recipe": {
+            "type": "columns",
+            "count": 14,
+            "seed": 5
+          }
+        },
+        {
+          "id": "shard",
+          "kind": "spire",
+          "ring": "near",
+          "count": 14,
+          "scale": [
+            10,
+            24
+          ],
+          "height": [
+            60,
+            140
+          ],
+          "mesh": "res://assets/biomes/eerie/shard.glb",
+          "material": "biome",
+          "prompt": "tall jagged obsidian spire, sharp fractured volcanic glass shard rising from ash, faint lava glow in the cracks, eerie, game asset",
+          "recipe": {
+            "type": "shard",
+            "lean": 14,
+            "seed": 7
+          }
+        }
+      ]
+    },
+    {
+      "id": "divine",
+      "name": "Divine Summit",
+      "text": "Majestic colossal peaks of golden-black volcanic rock, radiant lava rivers catching the light, crystalline iridescent faces and soft glowing mist: heavenly and awe-inspiring.",
+      "palette": {
+        "rock": "#21180e",
+        "rock_hi": "#5e4520",
+        "ash": "#b38c46",
+        "lava": "#ffa424",
+        "lava_hot": "#fff2b0",
+        "crack_width": 0.025,
+        "crack_glow": 3.0,
+        "ash_amount": 0.35,
+        "iridescence": 0.65,
+        "gloss": 0.55,
+        "ground": "#2b1d0e",
+        "ground_glow": 1.4
+      },
+      "env": {
+        "fog_color": "#d9a860",
+        "fog_density": 0.0009,
+        "sun_tint": "#ffe2a0",
+        "sun_mix": 0.45,
+        "ambient_tint": "#c99a55",
+        "ambient_mix": 0.4
+      },
+      "lava": {
+        "rivers": 3,
+        "width": [
+          14,
+          30
+        ],
+        "glow": 4.2,
+        "crust": 0.48,
+        "speed": 0.04
+      },
+      "smoke": {
+        "color": "#fff0c8",
+        "alpha": 0.2,
+        "plumes_per_cone": 1,
+        "height": [
+          60,
+          120
+        ]
+      },
+      "mist": {
+        "color": "#ffd890",
+        "alpha": 0.16,
+        "layers": 9
+      },
+      "formations": [
+        {
+          "id": "peaks",
+          "kind": "ridge",
+          "ring": "far",
+          "count": 8,
+          "scale": [
+            240,
+            460
+          ],
+          "height": [
+            260,
+            560
+          ],
+          "mesh": "res://assets/biomes/divine/peaks.glb",
+          "material": "biome",
+          "prompt": "majestic colossal volcanic mountain peaks, golden-black volcanic rock, crystalline iridescent rock faces, radiant lava rivers catching the light, heavenly and awe-inspiring, game asset",
+          "recipe": {
+            "type": "ridge",
+            "peaks": 4,
+            "jag": 0.35,
+            "sharp": 2.2,
+            "seed": 21
+          }
+        },
+        {
+          "id": "cone",
+          "kind": "cone",
+          "ring": "mid",
+          "count": 5,
+          "scale": [
+            100,
+            180
+          ],
+          "height": [
+            150,
+            260
+          ],
+          "mesh": "res://assets/biomes/divine/cone.glb",
+          "material": "biome",
+          "crater_glow": true,
+          "smoke": true,
+          "prompt": "majestic volcano with a radiant glowing crater, golden-black rock, lava rivers of light down its flanks, soft glowing mist, heavenly, game asset",
+          "recipe": {
+            "type": "cone",
+            "ribs": 8,
+            "crater": 0.2,
+            "rough": 0.06,
+            "seed": 13
+          }
+        },
+        {
+          "id": "crystals",
+          "kind": "cliff",
+          "ring": "near",
+          "count": 14,
+          "scale": [
+            14,
+            32
+          ],
+          "height": [
+            45,
+            95
+          ],
+          "mesh": "res://assets/biomes/divine/crystals.glb",
+          "material": "biome",
+          "prompt": "cluster of giant iridescent crystals growing from golden-black volcanic rock, prismatic crystalline faces, warm glow, heavenly, game asset",
+          "recipe": {
+            "type": "crystals",
+            "count": 9,
+            "seed": 17
+          }
+        },
+        {
+          "id": "arch",
+          "kind": "arch",
+          "ring": "near",
+          "count": 6,
+          "scale": [
+            26,
+            50
+          ],
+          "height": [
+            50,
+            95
+          ],
+          "mesh": "res://assets/biomes/divine/arch.glb",
+          "material": "biome",
+          "prompt": "natural stone arch of golden-black volcanic rock with crystalline iridescent faces and thin radiant lava veins, majestic exotic rock formation, game asset",
+          "recipe": {
+            "type": "arch",
+            "thick": 0.22,
+            "seed": 19
+          }
+        }
+      ]
+    }
+  ]
+}

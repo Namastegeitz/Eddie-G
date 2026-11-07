@@ -7,6 +7,7 @@ extends Node
 ## xvfb-run godot --path . res://tests/bench.tscn --rendering-driver opengl3 -- --quality=medium --track=io --frames=600
 
 func _ready() -> void:
+	Racer.profiling = true
 	Save.disabled = true
 	var args := {}
 	for a in OS.get_cmdline_user_args():

@@ -16,6 +16,7 @@ class Controls:
 	var item := false
 	var look_back := false
 	var glide := false       # unfold the energy wings while airborne (SHIFT / D-pad up; automatic on touch)
+	var wonder := false      # fire the craft's Technical Wonder (R / right stick click / D-pad down)
 
 ## Auto-drive (touch) cruises a little below full power; hold GAS for 100%.
 const AUTO_CRUISE := 0.92
@@ -23,7 +24,7 @@ const AUTO_CRUISE := 0.92
 var two_player := false
 var touch_seen := false
 ## Written by the on-screen TouchControls.
-var touch := {"steer": 0.0, "throttle": 0.0, "brake": 0.0, "drift": false, "item": false, "look_back": false, "active": false}
+var touch := {"steer": 0.0, "throttle": 0.0, "brake": 0.0, "drift": false, "item": false, "look_back": false, "wonder": false, "active": false}
 var _tilt_zero := 0.0
 var _c := [Controls.new(), Controls.new()]
 
@@ -131,6 +132,7 @@ func controls(slot: int) -> Controls:
 	var item := false
 	var look := false
 	var glide := false
+	var wonder := false
 	var p1 := slot == 0
 	var all_keys := not two_player
 	# Keyboard.
@@ -143,6 +145,7 @@ func controls(slot: int) -> Controls:
 		if _k(KEY_SHIFT): glide = true
 		if _k(KEY_E) or (all_keys and (_k(KEY_CTRL) or _k(KEY_F))): item = true
 		if _k(KEY_Q) or (all_keys and _k(KEY_C)): look = true
+		if _k(KEY_R): wonder = true
 	if not p1 or all_keys:
 		if _k(KEY_LEFT): steer -= 1.0
 		if _k(KEY_RIGHT): steer += 1.0
@@ -152,6 +155,7 @@ func controls(slot: int) -> Controls:
 		if _k(KEY_PERIOD) or _k(KEY_ENTER) or _k(KEY_KP_ENTER): item = true
 		if _k(KEY_COMMA): look = true
 		if _k(KEY_KP_ADD) or _k(KEY_END): glide = true
+		if _k(KEY_SEMICOLON) or _k(KEY_KP_1): wonder = true
 	# Gamepads.
 	for d in _pad_for(slot):
 		var x := Input.get_joy_axis(d, JOY_AXIS_LEFT_X)
@@ -169,6 +173,7 @@ func controls(slot: int) -> Controls:
 		if Input.is_joy_button_pressed(d, JOY_BUTTON_X) or Input.is_joy_button_pressed(d, JOY_BUTTON_LEFT_SHOULDER): item = true
 		if Input.is_joy_button_pressed(d, JOY_BUTTON_Y): look = true
 		if Input.is_joy_button_pressed(d, JOY_BUTTON_DPAD_UP) or Input.is_joy_button_pressed(d, JOY_BUTTON_LEFT_STICK): glide = true
+		if Input.is_joy_button_pressed(d, JOY_BUTTON_DPAD_DOWN) or Input.is_joy_button_pressed(d, JOY_BUTTON_RIGHT_STICK): wonder = true
 	# Mouse flight stick (player one only).
 	if p1 and mouse_on() and mouse_active:
 		steer += mouse_steer()
@@ -187,17 +192,19 @@ func controls(slot: int) -> Controls:
 		drift = drift or touch.drift
 		item = item or touch.item
 		look = look or touch.look_back
+		wonder = wonder or touch.wonder
 		if Save.setting("steering") == "tilt":
 			steer += tilt_steer()
 	c.gas = clampf(thr, 0.0, 1.0)
 	# Auto-drive: on touch, and with the mouse stick while the lever sits in
 	# its cruise band (keys and pads drive themselves as before).
-	var cruise: bool = bool(touch.active) or touch_seen or (mouse_on() and mouse_active)
+	var cruise: bool = bool(touch.active) or (touch_seen and not two_player) or (mouse_on() and mouse_active)
 	if p1 and Save.setting("auto_accel") and cruise and brk < 0.5:
 		thr = maxf(thr, AUTO_CRUISE)
 	c.steer = clampf(steer, -1.0, 1.0)
 	c.throttle = clampf(thr, 0.0, 1.0)
 	c.glide = glide
+	c.wonder = wonder
 	c.brake = clampf(brk, 0.0, 1.0)
 	c.drift = drift
 	c.item = item

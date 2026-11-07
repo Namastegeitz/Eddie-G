@@ -50,6 +50,14 @@ static func build(td: TrackData, root: Node3D) -> void:
 				if hi_detail:
 					_comet(td, holder, rng)
 	var gy := low - 50.0
+	# A volcanic biome replaces the theme's ground scenery (sky, planets and
+	# the extras above stay).
+	var biome := BiomeBuilder.pick(td)
+	if not biome.is_empty():
+		var pal: Dictionary = biome.palette
+		_ground(holder, gy, pal.ground, pal.lava, 1, float(pal.get("ground_glow", 1.0)))
+		BiomeBuilder.build(td, biome, holder, gy)
+		return
 	var g: String = theme.get("ground", "")
 	if GROUNDS.has(g):
 		var gd: Array = GROUNDS[g]
@@ -124,7 +132,7 @@ static func _planet(parent: Node3D, p: Dictionary, theme: Dictionary) -> void:
 	mat.set_shader_parameter("sun_dir", -Themes.light_dir(theme))
 	# Big backdrop worlds are gas giants (bands + storms); small ones are rocky (craters).
 	mat.set_shader_parameter("bands", p.get("bands", 12.0 if float(p.r) >= 850.0 else 9.0))
-	mat.set_shader_parameter("detail", 1.0 if int(Gfx.q().detail) > 0 else 0.0)
+	mat.set_shader_parameter("detail", 1.0 if int(Gfx.q().detail) > 1 else 0.0)
 	mi.material_override = mat
 	mi.position = p.pos
 	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
@@ -180,7 +188,7 @@ static func _skyway(td: TrackData, parent: Node3D, rng: RandomNumberGenerator, t
 	for k in n:
 		var t := float(k + 1) / float(n + 1)
 		var p := from.lerp(to, t) + up * (sin(t * PI) * 3.5 + 1.5)
-		var b := Basis.from_euler(Vector3(0.3, rng.randf() * TAU, 0.2)).scaled(Vector3(0.9, 1.6, 0.9))
+		var b := TrackBuilder.sb(Basis.from_euler(Vector3(0.3, rng.randf() * TAU, 0.2)), Vector3(0.9, 1.6, 0.9))
 		shards.append(Transform3D(b, p))
 		cols.append(neon.lerp(Color.WHITE, 0.3))
 	var sm := SphereMesh.new()
@@ -243,7 +251,7 @@ static func _moon(parent: Node3D, p: Dictionary, mn: Dictionary, theme: Dictiona
 	mat.set_shader_parameter("rim_color", p.rim)
 	mat.set_shader_parameter("sun_dir", -Themes.light_dir(theme))
 	mat.set_shader_parameter("bands", 7.0)
-	mat.set_shader_parameter("detail", 1.0 if int(Gfx.q().detail) > 0 else 0.0)
+	mat.set_shader_parameter("detail", 1.0 if int(Gfx.q().detail) > 1 else 0.0)
 	mi.material_override = mat
 	mi.position = Vector3(float(p.r) * float(mn.get("dist", 1.8)), 0.0, 0.0)
 	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
@@ -361,11 +369,15 @@ static func _signs(td: TrackData, parent: Node3D, rng: RandomNumberGenerator, ne
 	while i < path.n - 5:
 		var side := -1.0 if rng.randf() < 0.5 else 1.0
 		var p := path.pts[i] + path.rgt[i] * side * (td.width * 0.5 + rng.randf_range(14.0, 26.0)) + path.upv[i] * rng.randf_range(9.0, 16.0)
-		var b := Basis(path.tan[i] * -side, path.upv[i], path.rgt[i] * side)
+		var b := Basis(path.tan[i] * side, path.upv[i], path.rgt[i] * side)
+		if b.determinant() < 0.0:
+			b.x = -b.x   # keep it right-handed (a mirrored basis drew the boxes inside out)
 		b = b.rotated(path.upv[i], rng.randf_range(-0.3, 0.3))
 		var w := rng.randf_range(14.0, 22.0)
 		panels.append(Transform3D(TrackBuilder.sb(b, Vector3(w, w * 0.45, 0.3)), p))
-		frames.append(Transform3D(TrackBuilder.sb(b, Vector3(w * 1.06, w * 0.45 * 1.12, 0.2)), p - b.z * 0.2))
+		# The bigger frame sits behind the panel (away from the road), so the
+		# panel shows inside a glowing border instead of being hidden.
+		frames.append(Transform3D(TrackBuilder.sb(b, Vector3(w * 1.06, w * 0.45 * 1.12, 0.2)), p + path.rgt[i] * side * 0.2))
 		cols.append(palette[cols.size() % palette.size()])
 		i += step
 	var bm := BoxMesh.new()
@@ -488,12 +500,18 @@ static func spire_mesh() -> ArrayMesh:
 
 
 ## True when p is clear of the main track by `clear` metres.
+static var _grid: BiomeBuilder.TrackGrid = null
+static var _grid_td: TrackData = null
+
+
+## Is this spot at least `clear` metres from the road (and shortcuts)?
+## A cell grid of track points (it scanned a quarter of the track for
+## every candidate: up to half a million checks while building).
 static func _clear(td: TrackData, p: Vector3, clear: float) -> bool:
-	var path := td.main
-	for i in range(0, path.n, 4):
-		if path.pts[i].distance_squared_to(p) < clear * clear:
-			return false
-	return true
+	if _grid_td != td:
+		_grid = BiomeBuilder.TrackGrid.new(td)
+		_grid_td = td
+	return _grid.clear(p, clear)
 
 
 static func _multimesh(parent: Node3D, mesh: Mesh, tfs: Array[Transform3D], mat: Material, node_name: String, colors: Array[Color] = []) -> void:
@@ -604,7 +622,9 @@ static func _crystals(td: TrackData, parent: Node3D, rng: RandomNumberGenerator,
 		base.y = ground_y if not floating else path.pts[i].y + rng.randf_range(-60.0, 40.0)
 		var h := rng.randf_range(20.0, 75.0) * (0.3 if floating else 1.0)
 		var w := rng.randf_range(3.0, 9.0) * (0.5 if floating else 1.0)
-		var b := Basis.from_euler(Vector3(rng.randf_range(-0.35, 0.35), rng.randf() * TAU, rng.randf_range(-0.35, 0.35))).scaled(Vector3(w, h, w))
+		# Local scale (sb): Basis.scaled() scales in world axes after the
+		# rotation, which straightened every tilted crystal.
+		var b := TrackBuilder.sb(Basis.from_euler(Vector3(rng.randf_range(-0.35, 0.35), rng.randf() * TAU, rng.randf_range(-0.35, 0.35))), Vector3(w, h, w))
 		var tip := base + b.y * 0.5
 		if not _clear(td, tip, td.width * 0.5 + 8.0):
 			continue
@@ -711,8 +731,9 @@ static func _station(td: TrackData, parent: Node3D, rng: RandomNumberGenerator) 
 		if not _clear(td, p, td.width * 0.5 + 22.0):
 			continue
 		var b := Basis.from_euler(Vector3(0, rng.randf() * TAU, PI * 0.5))
-		mods.append(Transform3D(b.scaled(Vector3(rng.randf_range(6, 12), rng.randf_range(20, 50), rng.randf_range(6, 12))), p))
-		panels.append(Transform3D(Basis.from_euler(Vector3(0.2, rng.randf() * TAU, 0)).scaled(Vector3(40, 0.6, 12)), p + Vector3.UP * 14.0))
+		# Local scale: modules are long horizontal cylinders, panels keep their yaw.
+		mods.append(Transform3D(TrackBuilder.sb(b, Vector3(rng.randf_range(6, 12), rng.randf_range(20, 50), rng.randf_range(6, 12))), p))
+		panels.append(Transform3D(TrackBuilder.sb(Basis.from_euler(Vector3(0.2, rng.randf() * TAU, 0)), Vector3(40, 0.6, 12)), p + Vector3.UP * 14.0))
 	var cyl := CylinderMesh.new()
 	cyl.radial_segments = 10
 	cyl.rings = 1

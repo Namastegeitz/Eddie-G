@@ -14,6 +14,55 @@ Next steps:
 
 ![Real worlds](docs/screenshots/worlds.png)
 
+## Racers, Super Upgrades and volcanic biomes
+
+- **RACE NOW** on the home screen repeats your last Quick Race in one tap
+  (Enter or pad A). Every race then opens on the **Racers** page: pilot
+  cards with portraits, a live close-up of your pilot in the cockpit, the
+  rivals you'll face, and a big START (already focused).
+- **Creature pilots**: Ember Imp, Moon Moth, Crystal Seer, Abyss Squid,
+  Star Jelly, Void Wraith, Bog Troll and Hive Mind race amongst the field.
+  Each has a passive. The Imp and the Moth are yours from the start; the
+  Seer, Squid and Jelly cost Race Credits; beat the Wraith, Troll and Hive
+  Mind in boss races.
+- **Super Upgrades** (home > Super Upgrades, or Hangar > Wonder/Mods):
+  **Stardust** comes from clean, long drifts with no walls, hits or long
+  jumps. Every premium craft has a **Technical Wonder** with three tiers:
+  Prototype, Refined and Transcendent. Fire it with R (pad: right stick
+  click or D-pad down; touch: the WONDER button):
+  - **Photon Spinnaker** (Solar Sail Yacht): drifting into the stellar wind
+    tightens the turn and charges the sail; fire for a light slingshot.
+  - **Lighthouse Cloak** (Pulsar Phantom): a magnetar pulse shoves rivals
+    off their line, then you phase out on every other beat of the music.
+  - **Relativistic Jet** (Quasar Dragon): drifts and flat-out speed spin up
+    the accretion disk; vent it for a huge straight-line burst.
+  - **Stellar Harvest** (Dyson Racer): clean drifts feed a Dyson swarm;
+    fire for nova overdrive.
+
+  Every craft also has Core, Field and Drive mod slots, and three mods of
+  one set add a set bonus. **Overclock** pushes a Wonder to 120, 135 or 150 %
+  for more power, but it builds heat; at 100 heat it burns out and the
+  engine sputters. Taking any Wonder to Transcendent unlocks a global perk
+  for every craft.
+- **Volcanic biomes**: Eerie Caldera (black basalt ridges, molten veins,
+  sulfur smoke) and Divine Summit (golden-black peaks, radiant lava,
+  iridescent crystals, glowing mist) on Io, WASP-76 b, TRAPPIST-1 b and
+  55 Cancri e. Settings > Volcanic biome turns them on for every rocky world
+  or off. Each scenery piece is a slot for a Meshy-generated mesh
+  ([docs/ASSET_PIPELINE.md](docs/ASSET_PIPELINE.md)); until one is
+  generated, a procedural low-poly version stands in.
+- Content is data: craft, pilots, Wonders, mods and biomes are JSON, and
+  packs drop in without code ([docs/SCHEMAS.md](docs/SCHEMAS.md)). The
+  full system audit and change list is in
+  [docs/UPGRADE_AUDIT.md](docs/UPGRADE_AUDIT.md).
+
+![Racers page](docs/screenshots/racers.png)
+![Creature pilots](docs/screenshots/creatures.png)
+![Super Upgrades](docs/screenshots/super_upgrades.png)
+![Relativistic Jet with the Divine biome forced on Mars](docs/screenshots/wonder_jet.png)
+![Eerie Caldera on Io](docs/screenshots/biome_eerie.png)
+![Divine Summit on 55 Cancri e](docs/screenshots/biome_divine.png)
+
 ## HD graphics (v3)
 
 Everything is still generated from code, now in much finer detail:

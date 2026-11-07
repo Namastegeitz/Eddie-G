@@ -23,8 +23,9 @@ static func surface(id: int) -> Dictionary:
 # Stats are 1-10. Upgrades add 0.5 per level (5 levels) on top.
 # price is in Race Credits; stars is the star count needed to buy.
 # Premium craft also carry a store product id (real-money layer, off in v1)
-# and a perk the code applies.
-const SAUCERS := [
+# and a perk. Behaviour lives in each entry's "effects" (scripts/data/effects.gd);
+# content packs (autoload/content.gd) can append more craft and pilots.
+static var SAUCERS: Array = [
 	{"id": "classic", "name": "Classic Saucer", "blurb": "The all-rounder. Easy to fly, hard to beat.",
 	 "speed": 5, "accel": 5, "handling": 5, "efficiency": 5, "weight": 5,
 	 "price": 0, "stars": 0, "shape": "classic", "paint": Color(0.80, 0.84, 0.92)},
@@ -42,13 +43,13 @@ const SAUCERS := [
 	 "price": 3000, "stars": 14, "shape": "orb", "paint": Color(0.75, 0.78, 0.85)},
 	{"id": "manta", "name": "Manta", "blurb": "Flat wing that loves to drift. Drift charge +15%.",
 	 "speed": 6, "accel": 5, "handling": 8, "efficiency": 4, "weight": 4,
-	 "price": 3500, "stars": 18, "shape": "manta", "paint": Color(0.25, 0.45, 0.95), "drift_bonus": 0.15},
+	 "price": 3500, "stars": 18, "shape": "manta", "paint": Color(0.25, 0.45, 0.95), "effects": {"drift_charge_pct": 15}},
 	{"id": "crystal", "name": "Crystal Shard", "blurb": "Grown, not built: a faceted crystal ship that cuts through the air.",
 	 "speed": 7, "accel": 5, "handling": 5, "efficiency": 6, "weight": 4,
 	 "price": 4000, "stars": 22, "shape": "crystal", "paint": Color(0.55, 0.9, 1.0)},
 	{"id": "bioship", "name": "Bio-Ship", "blurb": "A living craft with trailing tendrils. Heals its core slowly.",
 	 "speed": 6, "accel": 6, "handling": 6, "efficiency": 7, "weight": 5,
-	 "price": 4500, "stars": 26, "shape": "bioship", "paint": Color(0.55, 0.85, 0.35), "regen": 0.4},
+	 "price": 4500, "stars": 26, "shape": "bioship", "paint": Color(0.55, 0.85, 0.35), "effects": {"regen": 0.4}},
 	{"id": "mothership", "name": "Mothership Jr", "blurb": "Heavy, sips energy, shoves rivals aside.",
 	 "speed": 6, "accel": 4, "handling": 4, "efficiency": 9, "weight": 9,
 	 "price": 5000, "stars": 30, "shape": "mothership", "paint": Color(0.55, 0.50, 0.70)},
@@ -58,19 +59,19 @@ const SAUCERS := [
 	{"id": "sail", "name": "Solar Sail Yacht", "blurb": "PREMIUM. Shimmering sails drink starlight: boosting recharges your core.",
 	 "speed": 7, "accel": 7, "handling": 7, "efficiency": 7, "weight": 4,
 	 "price": 12000, "stars": 12, "shape": "sail", "paint": Color(0.95, 0.85, 0.55), "premium": true,
-	 "perk": "solar", "perk_text": "Boosting recharges your Dark Matter core.", "product": "craft_sail"},
+	 "perk": "solar", "effects": {"boost_energy": 2.5}, "perk_text": "Boosting recharges your Dark Matter core.", "product": "craft_sail"},
 	{"id": "phantom", "name": "Pulsar Phantom", "blurb": "PREMIUM. Half here, half elsewhere: spin-outs end 30% sooner.",
 	 "speed": 8, "accel": 7, "handling": 6, "efficiency": 6, "weight": 5,
 	 "price": 15000, "stars": 20, "shape": "phantom", "paint": Color(0.6, 0.4, 1.0), "premium": true,
-	 "perk": "phase", "perk_text": "Spin-outs from hits end 30% sooner.", "product": "craft_phantom"},
+	 "perk": "phase", "effects": {"spin_time_pct": -30}, "perk_text": "Spin-outs from hits end 30% sooner.", "product": "craft_phantom"},
 	{"id": "dragon", "name": "Quasar Dragon", "blurb": "PREMIUM. A serpent of light. Drift boosts last 25% longer.",
 	 "speed": 8, "accel": 6, "handling": 8, "efficiency": 5, "weight": 6,
 	 "price": 18000, "stars": 28, "shape": "dragon", "paint": Color(1.0, 0.35, 0.3), "premium": true,
-	 "perk": "dragonfire", "perk_text": "Drift boosts last 25% longer.", "product": "craft_dragon"},
+	 "perk": "dragonfire", "effects": {"drift_boost_pct": 25}, "perk_text": "Drift boosts last 25% longer.", "product": "craft_dragon"},
 	{"id": "dyson", "name": "Dyson Racer", "blurb": "PREMIUM. A captured star in a ring of panels. Pods refill 50% more.",
 	 "speed": 7, "accel": 8, "handling": 7, "efficiency": 8, "weight": 7,
 	 "price": 22000, "stars": 36, "shape": "dyson", "paint": Color(1.0, 0.7, 0.2), "premium": true,
-	 "perk": "starcore", "perk_text": "Energy Pods refill 50% more.", "product": "craft_dyson"},
+	 "perk": "starcore", "effects": {"pod_pct": 50}, "perk_text": "Energy Pods refill 50% more.", "product": "craft_dyson"},
 ]
 
 const STAT_KEYS := ["speed", "accel", "handling", "efficiency"]
@@ -86,31 +87,66 @@ static func saucer(id: String) -> Dictionary:
 
 # ---------------------------------------------------------------- pilots
 # passive: what the pilot does for you. style: how the pilot drives as AI.
-const PILOTS := [
+static var PILOTS: Array = [
 	{"id": "zib", "name": "Zib", "color": Color(0.45, 0.95, 0.35), "eyes": 2,
-	 "passive": "drift", "passive_name": "Drift Ace", "passive_text": "Drifts charge Plasma Boost 25% faster.",
+	 "effects": {"drift_charge_pct": 25}, "passive": "drift", "passive_name": "Drift Ace", "passive_text": "Drifts charge Plasma Boost 25% faster.",
 	 "style": "clean", "unlock": "start", "home": "ceres"},
 	{"id": "nova", "name": "Nova Quark", "color": Color(0.35, 0.85, 1.0), "eyes": 2,
-	 "passive": "shield_start", "passive_name": "Shield Start", "passive_text": "Starts every race holding an Ion Shield.",
+	 "effects": {"start_item": "shield"}, "passive": "shield_start", "passive_name": "Shield Start", "passive_text": "Starts every race holding an Ion Shield.",
 	 "style": "clean", "unlock": "start", "home": "saturn_rings"},
 	{"id": "gloop", "name": "Gloop", "color": Color(0.75, 0.40, 1.0), "eyes": 1,
-	 "passive": "efficient", "passive_name": "Slow Burner", "passive_text": "Dark Matter core drains 25% slower.",
+	 "effects": {"drain_pct": -25}, "passive": "efficient", "passive_name": "Slow Burner", "passive_text": "Dark Matter core drains 25% slower.",
 	 "style": "hoarder", "unlock": "boss", "stars": 3, "home": "trappist1e"},
 	{"id": "krell", "name": "Captain Krell", "color": Color(0.95, 0.45, 0.20), "eyes": 4,
-	 "passive": "bumper", "passive_name": "Bumper", "passive_text": "Bumps shove rivals 60% harder; you barely budge.",
+	 "effects": {"weight_add": 4, "bump_pct": 60}, "passive": "bumper", "passive_name": "Bumper", "passive_text": "Bumps shove rivals 60% harder; you barely budge.",
 	 "style": "aggressive", "unlock": "boss", "stars": 7, "home": "io"},
 	{"id": "vexa", "name": "Vexa Starling", "color": Color(1.0, 0.35, 0.65), "eyes": 2,
-	 "passive": "lucky", "passive_name": "Lucky Crates", "passive_text": "Crates roll as if you were two places further back.",
+	 "effects": {"crate_luck": 2}, "passive": "lucky", "passive_name": "Lucky Crates", "passive_text": "Crates roll as if you were two places further back.",
 	 "style": "hoarder", "unlock": "boss", "stars": 12, "home": "proxima_station"},
 	{"id": "bleep", "name": "Bleep-0", "color": Color(0.80, 0.82, 0.88), "eyes": 1,
-	 "passive": "magnet", "passive_name": "Pod Magnet", "passive_text": "Energy Pods fly to you from three times farther.",
+	 "effects": {"pod_magnet_pct": 200}, "passive": "magnet", "passive_name": "Pod Magnet", "passive_text": "Energy Pods fly to you from three times farther.",
 	 "style": "clean", "unlock": "boss", "stars": 18, "home": "trappist1h"},
 	{"id": "zorba", "name": "Mama Zorba", "color": Color(1.0, 0.82, 0.25), "eyes": 3,
-	 "passive": "tricks", "passive_name": "Trick Queen", "passive_text": "Landed tricks give double boost and energy.",
+	 "effects": {"trick_pct": 100}, "passive": "tricks", "passive_name": "Trick Queen", "passive_text": "Landed tricks give double boost and energy.",
 	 "style": "aggressive", "unlock": "boss", "stars": 25, "home": "kepler16b"},
 	{"id": "comet", "name": "Comet the Space Pup", "color": Color(0.85, 0.65, 0.45), "eyes": 2,
-	 "passive": "draft", "passive_name": "Draft Hound", "passive_text": "Slipstream charges twice as fast.",
+	 "effects": {"slip_charge_pct": 100}, "passive": "draft", "passive_name": "Draft Hound", "passive_text": "Slipstream charges twice as fast.",
 	 "style": "aggressive", "unlock": "boss", "stars": 33, "home": "alpha_cen"},
+	# The creatures: mystical things from the dark between the stars. They
+	# race amongst the field from the start; some fly for you right away,
+	# some are bought with Race Credits, the rest must be beaten 1-on-1.
+	{"id": "imp", "name": "Ember Imp", "color": Color(1.0, 0.40, 0.18), "eyes": 2, "kind": "creature",
+	 "effects": {"boost_time_pct": 20}, "passive": "hot_core", "passive_name": "Hot Core", "passive_text": "Every boost burns 20% longer.",
+	 "style": "aggressive", "unlock": "start", "home": "io",
+	 "blurb": "Hatched in a lava vent on Io. Cackles at every corner."},
+	{"id": "moth", "name": "Moon Moth", "color": Color(0.93, 0.88, 0.72), "eyes": 2, "kind": "creature",
+	 "effects": {"glide_sink_pct": -35}, "passive": "light_wings", "passive_name": "Light Wings", "passive_text": "Glides sink 35% slower.",
+	 "style": "clean", "unlock": "start", "home": "trappist1h",
+	 "blurb": "Drawn to any bright light. Especially the finish line."},
+	{"id": "seer", "name": "Crystal Seer", "color": Color(0.72, 0.88, 1.0), "eyes": 3, "kind": "creature",
+	 "effects": {"near_energy_pct": 200}, "passive": "foresight", "passive_name": "Foresight", "passive_text": "Near misses give triple Dark Matter.",
+	 "style": "clean", "unlock": "credits", "price": 600, "home": "cancri_e",
+	 "blurb": "Grew in the diamond rain of 55 Cancri e. Sees the gap before it opens."},
+	{"id": "squid", "name": "Abyss Squid", "color": Color(0.42, 0.28, 0.68), "eyes": 2, "kind": "creature",
+	 "effects": {"low_grip_pct": 35}, "passive": "grip", "passive_name": "Tentacle Grip", "passive_text": "Ice and dust grip 35% better.",
+	 "style": "hoarder", "unlock": "credits", "price": 900, "home": "trappist1e",
+	 "blurb": "From the ocean under the ice of TRAPPIST-1e. Never lets go."},
+	{"id": "jelly", "name": "Star Jelly", "color": Color(0.55, 0.85, 1.0), "eyes": 2, "kind": "creature",
+	 "effects": {"regen": 0.5}, "passive": "glow_core", "passive_name": "Glow Core", "passive_text": "The Dark Matter core slowly refills itself.",
+	 "style": "hoarder", "unlock": "credits", "price": 1200, "home": "wasp76b",
+	 "blurb": "A drifting bell of light that fell from a nebula. Hums when happy."},
+	{"id": "wraith", "name": "Void Wraith", "color": Color(0.62, 0.70, 0.92), "eyes": 2, "kind": "creature",
+	 "effects": {"spin_time_pct": -40}, "passive": "phase", "passive_name": "Phase Walker", "passive_text": "Spin-outs end 40% sooner.",
+	 "style": "clean", "unlock": "boss", "stars": 10, "home": "trappist1b",
+	 "blurb": "Half here, half somewhere else. Hits barely find it."},
+	{"id": "troll", "name": "Bog Troll", "color": Color(0.42, 0.58, 0.32), "eyes": 2, "kind": "creature",
+	 "effects": {"rough_pct": -50}, "passive": "moss_born", "passive_name": "Moss Born", "passive_text": "Dust, moss and lava slow you half as much.",
+	 "style": "aggressive", "unlock": "boss", "stars": 20, "home": "hd189733b",
+	 "blurb": "Dug out of a swamp moon. Smells like it. Drives like a landslide."},
+	{"id": "hive", "name": "Hive Mind", "color": Color(0.52, 0.56, 0.30), "eyes": 4, "kind": "creature",
+	 "effects": {"slip_range_pct": 100}, "passive": "swarm", "passive_name": "Swarm Sense", "passive_text": "Slipstreams reach twice as far.",
+	 "style": "aggressive", "unlock": "boss", "stars": 30, "home": "proxima_b",
+	 "blurb": "A thousand minds in one helmet. They all want to win."},
 ]
 
 static func pilot(id: String) -> Dictionary:
@@ -118,6 +154,23 @@ static func pilot(id: String) -> Dictionary:
 		if p.id == id:
 			return p
 	return PILOTS[0]
+
+
+static func has_pilot_id(id: String) -> bool:
+	for p in PILOTS:
+		if p.id == id:
+			return true
+	return false
+
+
+## One line on how a pilot is unlocked (unlock kinds: start, credits, boss).
+static func pilot_unlock_text(p: Dictionary) -> String:
+	match String(p.get("unlock", "boss")):
+		"start":
+			return "Flies for you from the start"
+		"credits":
+			return "Unlock for %d Race Credits" % int(p.get("price", 0))
+	return "Beat them in a Boss Race (needs %d stars)" % int(p.get("stars", 0))
 
 # ---------------------------------------------------------------- items
 const ITEMS := {

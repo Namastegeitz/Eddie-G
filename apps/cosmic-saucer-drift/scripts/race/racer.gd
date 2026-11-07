@@ -43,9 +43,39 @@ var drain_mult := 1.0
 var weight := 5.0
 var drift_mult := 1.0
 var speed_mult := 1.0          # AI class / rubber band
-var perk := ""                 # premium craft perk
-var regen := 0.0               # Bio-Ship: energy per second
+var perk := ""                 # premium craft perk id (kept for stats/tests)
+var regen := 0.0               # core refill per second (effects "regen")
 var pod_mult := 1.0
+# Effect totals (scripts/data/effects.gd) from the pilot, craft and Super
+# Upgrades, summed once per race; the multipliers below are cached copies
+# read in the hot paths.
+var fx := {}
+var kit := {}                  # Super Upgrades for this racer: {effects, wonder}
+var boost_time_mult := 1.0
+var drift_boost_mult := 1.0
+var trick_mult := 1.0
+var slip_charge_mult := 1.0
+var slip_range_mult := 1.0
+var pod_magnet_mult := 1.0
+var near_energy_mult := 1.0
+var spin_mult := 1.0
+var wall_keep := 0.0           # share of wall-hit speed loss avoided (0..0.8)
+var bump_mult := 1.0
+var low_grip_mult := 1.0
+var rough_mult := 1.0          # share of the dust/moss/lava slowdown kept
+var glide_sink_mult := 1.0
+var shield_time_mult := 1.0
+var crate_luck := 0
+var boost_energy := 0.0
+var stardust_mult := 1.0
+# Technical Wonder (premium craft with a built Wonder track), or null.
+var wonder: Wonder = null
+var in_wonder := false         # R / pad right stick / touch WONDER
+var _prev_wonder := false
+# The drift in progress, for Stardust ("clean" = no wall, hit or long jump).
+var _drift_t := 0.0
+var _drift_m := 0.0
+var _drift_clean := true
 
 # Motion state
 var heading := Vector3.FORWARD
@@ -125,10 +155,11 @@ var model: SaucerModel
 var T: Tuning
 
 
-func setup(p_race: Node, p_idx: int, p_look: Dictionary, upgrades: Dictionary) -> void:
+func setup(p_race: Node, p_idx: int, p_look: Dictionary, upgrades: Dictionary, p_kit := {}) -> void:
 	race = p_race
 	idx = p_idx
 	look = p_look
+	kit = p_kit
 	T = race.tuning
 	pilot = Catalog.pilot(look.get("pilot", "zib"))
 	saucer = Catalog.saucer(look.get("saucer", "classic"))
@@ -154,8 +185,13 @@ func setup(p_race: Node, p_idx: int, p_look: Dictionary, upgrades: Dictionary) -
 	stats = {"pods": 0, "tricks": 0, "hits": 0, "hits_taken": 0, "items": 0, "purple": 0, "slips": 0,
 		"shortcuts": 0, "hover_count": 0, "drift_dist": 0.0, "near": 0, "dist": 0.0, "top": 0.0,
 		"shards": 0, "lead_laps": 0, "boosts": 0, "glides": 0}
-	if pilot.passive == "shield_start":
-		item = "shield"
+	stats["stardust"] = 0
+	stats["wonders"] = 0
+	if kit.has("wonder") and not Content.wonder_for(String(kit.wonder.get("craft", ""))).is_empty():
+		wonder = Wonder.new(self, kit.wonder)
+	var start_item := String(fx.get("start_item", ""))
+	if start_item != "" and Catalog.ITEMS.has(start_item):
+		item = start_item
 		item_uses = 1
 
 
@@ -163,23 +199,34 @@ func _apply_stats(upgrades: Dictionary) -> void:
 	var st := {}
 	for k in Catalog.STAT_KEYS:
 		st[k] = float(saucer[k]) + float(upgrades.get(k, 0)) * Catalog.UPGRADE_STEP
-	max_speed = T.top_speed_base + T.top_speed_per_stat * st.speed
-	accel = T.accel_base + T.accel_per_stat * st.accel
-	steer_rate = T.steer_rate_base + T.steer_rate_per_stat * st.handling
-	grip = T.grip_base + T.grip_per_stat * st.handling
-	drain_mult = 1.25 - 0.05 * st.efficiency
-	weight = float(saucer.weight)
-	drift_mult = 1.0 + saucer.get("drift_bonus", 0.0)
+	fx = Effects.sum([pilot.get("effects", {}), saucer.get("effects", {}), kit.get("effects", {})])
+	max_speed = (T.top_speed_base + T.top_speed_per_stat * st.speed) * Effects.mult(fx, "top_speed_pct")
+	accel = (T.accel_base + T.accel_per_stat * st.accel) * Effects.mult(fx, "accel_pct")
+	steer_rate = (T.steer_rate_base + T.steer_rate_per_stat * st.handling) * Effects.mult(fx, "handling_pct")
+	grip = (T.grip_base + T.grip_per_stat * st.handling) * Effects.mult(fx, "handling_pct")
+	drain_mult = (1.25 - 0.05 * st.efficiency) * Effects.mult(fx, "drain_pct")
+	weight = maxf(1.0, float(saucer.weight) + Effects.val(fx, "weight_add"))
+	drift_mult = Effects.mult(fx, "drift_charge_pct")
 	perk = saucer.get("perk", "")
-	regen = saucer.get("regen", 0.0)
-	pod_mult = 1.5 if perk == "starcore" else 1.0
-	match pilot.passive:
-		"drift":
-			drift_mult *= 1.25
-		"efficient":
-			drain_mult *= 0.75
-		"bumper":
-			weight += 4.0
+	regen = Effects.val(fx, "regen")
+	pod_mult = Effects.mult(fx, "pod_pct")
+	boost_time_mult = Effects.mult(fx, "boost_time_pct")
+	drift_boost_mult = Effects.mult(fx, "drift_boost_pct")
+	trick_mult = Effects.mult(fx, "trick_pct")
+	slip_charge_mult = Effects.mult(fx, "slip_charge_pct")
+	slip_range_mult = Effects.mult(fx, "slip_range_pct")
+	pod_magnet_mult = Effects.mult(fx, "pod_magnet_pct")
+	near_energy_mult = Effects.mult(fx, "near_energy_pct")
+	spin_mult = Effects.mult(fx, "spin_time_pct")
+	wall_keep = Effects.val(fx, "wall_keep_pct") / 100.0
+	bump_mult = Effects.mult(fx, "bump_pct")
+	low_grip_mult = Effects.mult(fx, "low_grip_pct")
+	rough_mult = Effects.mult(fx, "rough_pct")
+	glide_sink_mult = Effects.mult(fx, "glide_sink_pct")
+	shield_time_mult = Effects.mult(fx, "shield_time_pct")
+	crate_luck = int(Effects.val(fx, "crate_luck"))
+	boost_energy = Effects.val(fx, "boost_energy")
+	stardust_mult = Effects.mult(fx, "stardust_pct")
 
 
 func place_at(tf: Transform3D) -> void:
@@ -201,27 +248,33 @@ func place_at(tf: Transform3D) -> void:
 
 # ---------------------------------------------------------------- per tick
 static var prof := {"drive": 0, "ground": 0, "steer": 0, "integrate": 0, "progress": 0, "visuals": 0}
+## Per-stage timing for tests/bench and tests/sim. Off in normal play: on
+## the web every clock read is a call out to JavaScript (about 13 per racer
+## per physics tick).
+static var profiling := false
 
 
 func tick(dt: float) -> void:
+	# The time-trial ghost is replayed by Race._ghost_tick; simulating it as
+	# well made it drain energy and "rescue" itself every few seconds once
+	# its recording ended.
+	if is_ghost:
+		return
+	if not profiling:
+		_tick_fast(dt)
+		return
 	var t0 := Time.get_ticks_usec()
-	if controller and not is_ghost:
+	if controller:
 		controller.call("drive", self, dt)
 	prof.drive += Time.get_ticks_usec() - t0
 	if frozen:
 		_countdown_input()
 		return
 	_timers(dt)
+	if wonder:
+		wonder.tick(dt)
 	if rescue_time > 0.0:
-		rescue_time -= dt
-		velocity = Vector3.ZERO
-		if rescue_time <= 0.0:
-			# Back on the track with a running start, not from a standstill
-			# (gentle enough to make the next corner).
-			var v0 := minf(max_speed * 0.4, 18.0)
-			velocity = heading * v0
-			fwd_speed = v0
-			emit_signal("event", "rescued", {})
+		_rescue_tick(dt)
 		return
 	var t1 := Time.get_ticks_usec()
 	_probe_ground(dt)
@@ -245,6 +298,42 @@ func tick(dt: float) -> void:
 	prof.visuals += t6 - t5
 
 
+func _rescue_tick(dt: float) -> void:
+	rescue_time -= dt
+	velocity = Vector3.ZERO
+	if rescue_time <= 0.0:
+		# Back on the track with a running start, not from a standstill
+		# (gentle enough to make the next corner).
+		var v0 := minf(max_speed * 0.4, 18.0)
+		velocity = heading * v0
+		fwd_speed = v0
+		emit_signal("event", "rescued", {})
+
+
+## tick() without the timers (the normal path).
+func _tick_fast(dt: float) -> void:
+	if controller:
+		controller.call("drive", self, dt)
+	if frozen:
+		_countdown_input()
+		return
+	_timers(dt)
+	if wonder:
+		wonder.tick(dt)
+	if rescue_time > 0.0:
+		_rescue_tick(dt)
+		return
+	_probe_ground(dt)
+	_glide(dt)
+	_steer_and_drift(dt)
+	_tricks(dt)
+	_integrate(dt)
+	_energy(dt)
+	_progress(dt)
+	_unstick(dt)
+	_items_input()
+
+
 func _timers(dt: float) -> void:
 	boost_time = maxf(0.0, boost_time - dt)
 	spin_time = maxf(0.0, spin_time - dt)
@@ -266,14 +355,21 @@ func _timers(dt: float) -> void:
 			emit_signal("event", "item_ready", {"item": item})
 
 
+var _ray: PhysicsRayQueryParameters3D
+
+
 func _probe_ground(dt: float) -> void:
 	var was := grounded
 	var space := get_world_3d().direct_space_state
 	var ray_up := up if grounded else up.lerp(Vector3.UP, 0.5).normalized()
 	var from := global_position + ray_up * 1.2
 	var to := global_position - ray_up * (T.hover_height + T.snap_range + 0.4)
-	var q := PhysicsRayQueryParameters3D.create(from, to, 1)
-	var hit := space.intersect_ray(q)
+	# One query object per racer, reused (was a new one every tick).
+	if _ray == null:
+		_ray = PhysicsRayQueryParameters3D.create(from, to, 1)
+	_ray.from = from
+	_ray.to = to
+	var hit := space.intersect_ray(_ray)
 	grounded = false
 	if not hit.is_empty():
 		var n: Vector3 = hit.normal
@@ -309,6 +405,10 @@ func _probe_ground(dt: float) -> void:
 
 
 func _land() -> void:
+	# Bouncy moss can throw the craft straight back up: that hop starts its
+	# own air time (it used to inherit the previous jump's and allow a
+	# trick right on landing, which then landed sloppy).
+	air_time = 0.0
 	var impact := -velocity.dot(ground_n)
 	# Remove the into-ground part of the velocity.
 	velocity -= ground_n * minf(0.0, velocity.dot(ground_n))
@@ -320,7 +420,7 @@ func _land() -> void:
 		velocity *= 0.7
 		emit_signal("event", "sloppy", {})
 	elif tricks_in_air > 0:
-		var mult := 2.0 if pilot.passive == "tricks" else 1.0
+		var mult := trick_mult
 		give_boost(T.trick_boost_time * mult, "trick")
 		add_energy(T.trick_energy * mult * float(tricks_in_air))
 		stats.tricks += tricks_in_air
@@ -346,6 +446,9 @@ func _steer_and_drift(dt: float) -> void:
 			drift_dir = 1 if steer > 0.0 else -1
 			drift_charge = 0.0
 			drift_tier = 0
+			_drift_t = 0.0
+			_drift_m = 0.0
+			_drift_clean = true
 			emit_signal("event", "drift_start", {})
 	else:
 		var ends: bool = (not in_drift) or fwd < T.drift_min_speed * 0.7 or air_time > 0.5 or spin_time > 0.0
@@ -365,11 +468,15 @@ func _steer_and_drift(dt: float) -> void:
 			drift_tier = tier
 			emit_signal("event", "drift_tier", {"tier": tier})
 		stats.drift_dist += absf(fwd) * dt
+		_drift_t += dt
+		_drift_m += absf(fwd) * dt
 	# Brake into a corner to turn tighter.
 	if in_brake > 0.1 and fwd > 8.0 and drift_dir == 0:
 		turn *= 1.3
 	if fwd < -0.5:
 		turn = -turn
+	if wonder:
+		turn *= wonder.turn_mult()
 	if not grounded:
 		turn *= T.air_steer * (T.glide_steer if gliding else 1.0)
 	if spin_time > 0.0 or stall_time > 0.0 and fwd < 2.0:
@@ -378,8 +485,17 @@ func _steer_and_drift(dt: float) -> void:
 
 
 func _end_drift(award: bool) -> void:
+	if drift_dir != 0:
+		var clean := award and _drift_clean
+		var dust := Upgrades.drift_stardust(_drift_t, _drift_m, drift_tier, clean, stardust_mult)
+		if dust > 0:
+			stats.stardust = int(stats.stardust) + dust
+			if is_human:
+				emit_signal("event", "stardust", {"amount": dust})
+		if wonder:
+			wonder.on_drift_end(_drift_t, clean)
 	if award and drift_tier > 0:
-		give_boost(T.drift_boost_time[drift_tier - 1] * (1.25 if perk == "dragonfire" else 1.0), "drift%d" % drift_tier)
+		give_boost(T.drift_boost_time[drift_tier - 1] * drift_boost_mult, "drift%d" % drift_tier)
 		if drift_tier == 3:
 			stats.purple += 1
 		emit_signal("event", "drift_boost", {"tier": drift_tier})
@@ -433,11 +549,22 @@ func _glide(dt: float) -> void:
 
 func _integrate(dt: float) -> void:
 	var surf := Catalog.surface(surface)
-	var top: float = max_speed * speed_mult * float(surf.speed) * float(race.mod_speed)
+	var surf_speed := float(surf.speed)
+	if surf_speed < 1.0:
+		surf_speed = 1.0 - (1.0 - surf_speed) * rough_mult
+	var top: float = max_speed * speed_mult * surf_speed * float(race.mod_speed)
 	if emergency:
 		top *= T.emergency_speed
+	var boost_k := 1.0
 	if boost_time > 0.0:
-		top *= T.boost_speed_mult * (1.06 if boost_kind == "nitro" else 1.0)
+		boost_k = T.boost_speed_mult * (1.06 if boost_kind == "nitro" else 1.0)
+	var thrust := boost_time > 0.0
+	if wonder:
+		# A running Wonder and a boost don't stack: the bigger one wins.
+		boost_k = maxf(boost_k, wonder.speed_mult())
+		thrust = thrust or wonder.thrusting()
+		top *= wonder.sputter_mult()
+	top *= boost_k
 	if tractor_time > 0.0:
 		top *= 0.6
 	if slow_time > 0.0:
@@ -445,6 +572,8 @@ func _integrate(dt: float) -> void:
 	if spin_time > 0.0:
 		top *= 0.35
 	var acc := accel * (T.emergency_accel if emergency else 1.0)
+	if wonder:
+		acc *= wonder.accel_mult()
 	if stall_time > 0.0:
 		acc *= 0.1
 	var td: TrackData = race.td
@@ -457,8 +586,8 @@ func _integrate(dt: float) -> void:
 		var lat := velocity.dot(right)
 		var vn := velocity.dot(up)
 		var throttle := 0.0 if spin_time > 0.0 else in_throttle
-		if boost_time > 0.0:
-			fwd = move_toward(fwd, top, T.boost_accel * dt)
+		if thrust:
+			fwd = move_toward(fwd, top, T.boost_accel * (wonder.accel_mult() if wonder else 1.0) * dt)
 		elif in_brake > 0.1 and spin_time <= 0.0:
 			# Brake hard while moving; only once you've come to a stop and
 			# kept holding it do you start to reverse.
@@ -479,7 +608,10 @@ func _integrate(dt: float) -> void:
 				fwd = move_toward(fwd, target, T.coast_decel * 2.0 * dt)
 		else:
 			fwd = move_toward(fwd, 0.0, T.coast_decel * dt)
-		var g_eff: float = grip * float(surf.grip) * float(race.mod_grip) * (T.drift_grip if drift_dir != 0 else 1.0)
+		var surf_grip := float(surf.grip)
+		if surf_grip < 1.0:
+			surf_grip = minf(1.0, surf_grip * low_grip_mult)
+		var g_eff: float = grip * surf_grip * float(race.mod_grip) * (T.drift_grip if drift_dir != 0 else 1.0)
 		if wobble_time > 0.0:
 			g_eff *= 0.5
 		if slick_time > 0.0:
@@ -519,7 +651,7 @@ func _integrate(dt: float) -> void:
 			# a jump lands at about the same spot whether or not you were
 			# boosting. Brake flares it shallower.
 			var hspeed := Vector3(velocity.x, 0, velocity.z).length()
-			var sink: float = maxf(T.glide_sink, hspeed / T.glide_ratio) * (0.6 if in_brake > 0.3 else 1.0)
+			var sink: float = maxf(T.glide_sink, hspeed / T.glide_ratio) * (0.6 if in_brake > 0.3 else 1.0) * glide_sink_mult
 			if velocity.y > 0.0:
 				# Wings out: the climb dies quickly, so a jump never turns
 				# into a flight; from the top you just float down.
@@ -551,8 +683,11 @@ func _integrate(dt: float) -> void:
 		var n := c.get_normal()
 		var into := -before.dot(n)
 		if into > 6.0:
+			if drift_dir != 0:
+				_drift_clean = false
 			# A glancing scrape barely costs speed; only a head-on hit bites.
 			var keep := lerpf(0.97, 0.86, clampf((into - 6.0) / 30.0, 0.0, 1.0))
+			keep = 1.0 - (1.0 - keep) * (1.0 - wall_keep)
 			velocity *= keep
 			# Turn the nose along the wall so you don't grind to a stop.
 			var along := (heading - n * heading.dot(n)).normalized()
@@ -580,8 +715,8 @@ func _energy(dt: float) -> void:
 	energy -= drain * dt
 	if regen > 0.0:
 		add_energy(regen * dt)
-	if perk == "solar" and boost_time > 0.0:
-		add_energy(2.5 * dt)
+	if boost_energy > 0.0 and boost_time > 0.0:
+		add_energy(boost_energy * dt)
 	if energy <= 0.0:
 		energy = 0.0
 		if not emergency:
@@ -643,7 +778,7 @@ func warp_ahead(metres: float) -> void:
 
 
 func give_boost(time: float, kind: String) -> void:
-	boost_time = maxf(boost_time, time)
+	boost_time = maxf(boost_time, time * boost_time_mult)
 	boost_kind = kind
 	stats.boosts += 1
 	emit_signal("event", "boost", {"kind": kind})
@@ -674,7 +809,7 @@ func _progress(dt: float) -> void:
 		return
 	_short_i = 0
 	var i := path.nearest(global_position, track_idx, 7)
-	if path.pts[i].distance_to(global_position) > td.width * 1.5 + 12.0:
+	if grounded and path.pts[i].distance_to(global_position) > td.width * 1.5 + 12.0:
 		# Lost the local match (shortcut, big jump). Only re-sync to another
 		# part of the loop once we're actually driving on the road there, so
 		# flying over a different section never counts as progress.
@@ -727,7 +862,7 @@ func respawn(reason := "", from := Vector3.ZERO) -> void:
 	_respawn_streak = _respawn_streak + 1 if now - _last_respawn_t < 8.0 else 0
 	_last_respawn_t = now
 	if _respawn_streak > 0:
-		i = path.wi(last_safe_idx + 12 * _respawn_streak)
+		i = path.wi(last_safe_idx + 12 * mini(_respawn_streak, 2))
 	while td.gap[i] == 1:
 		i = path.wi(i - 3)
 	# Never drop a saucer just before a gap with no run-up: put it past it.
@@ -784,8 +919,12 @@ func on_go() -> void:
 
 # ---------------------------------------------------------------- items & hits
 func _items_input() -> void:
-	var pressed := in_item and not _prev_item
+	var pressed := in_item and not _prev_item and not finished
 	_prev_item = in_item
+	var wpress := in_wonder and not _prev_wonder
+	_prev_wonder = in_wonder
+	if wpress and wonder and spin_time <= 0.0 and not finished:
+		wonder.activate()
 	if pressed and item != "" and item_roll <= 0.0 and spin_time <= 0.0:
 		race.items.use_item(self)
 
@@ -812,7 +951,7 @@ func hit(by: Racer, kind: String) -> bool:
 		invuln_time = 0.6
 		emit_signal("event", "blocked", {"kind": kind, "held": true})
 		return false
-	var spin := T.spin_time * (0.7 if perk == "phase" else 1.0)
+	var spin := T.spin_time * spin_mult
 	spin_time = spin
 	invuln_time = spin + T.invuln_after_hit
 	velocity *= T.spin_speed_keep
@@ -831,7 +970,7 @@ func near_miss() -> void:
 	if near_cd > 0.0 or not race.racing:
 		return
 	near_cd = 1.2
-	add_energy(T.near_miss_energy)
+	add_energy(T.near_miss_energy * near_energy_mult)
 	stats.near += 1
 	emit_signal("event", "near_miss", {})
 
@@ -841,7 +980,7 @@ func update_slip(dt: float, close: bool) -> void:
 	if slip_cd > 0.0:
 		return
 	if close and fwd_speed > 25.0 and grounded:
-		slip_charge += dt * (2.0 if pilot.passive == "draft" else 1.0)
+		slip_charge += dt * slip_charge_mult
 		if slip_charge >= T.slip_charge_time:
 			slip_charge = 0.0
 			slip_cd = 2.5
@@ -863,9 +1002,51 @@ func _process(dt: float) -> void:
 	prof.visuals += Time.get_ticks_usec() - t0
 
 
+## A glowing ring around a craft with a Technical Wonder: faint while
+## charging, pulsing when ready to fire, wide and spinning while active.
+var _wring: MeshInstance3D
+var _wring_mat: StandardMaterial3D
+
+
+func _wonder_visual(dt: float) -> void:
+	if _wring == null:
+		var tm := TorusMesh.new()
+		tm.inner_radius = model.rim_r + 0.25
+		tm.outer_radius = model.rim_r + 0.42
+		tm.rings = 40
+		tm.ring_segments = 6
+		_wring_mat = Gfx.additive(wonder.color)
+		_wring_mat.albedo_texture = null
+		_wring = MeshInstance3D.new()
+		_wring.name = "WonderRing"
+		_wring.mesh = tm
+		_wring.material_override = _wring_mat
+		_wring.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		model.pivot.add_child(_wring)
+	var w := wonder
+	var a := 0.06 + 0.3 * w.charge / 100.0
+	var sc := 1.0
+	var spin := 1.2
+	if w.burnout > 0.0:
+		a = 0.0
+	elif w.active > 0.0:
+		a = 0.85
+		sc = 1.18
+		spin = 7.0
+	elif w.ready():
+		a = 0.5 + 0.25 * sin(Time.get_ticks_msec() * 0.008)
+		spin = 3.0
+	_wring_mat.albedo_color = Color(w.color, a)
+	_wring.visible = a > 0.01
+	_wring.scale = _wring.scale.lerp(Vector3(sc, 1.0, sc), 1.0 - exp(-8.0 * dt))
+	_wring.rotate_y(dt * spin)
+
+
 func _visuals(dt: float) -> void:
 	if model == null or not is_inside_tree():
 		return
+	if wonder:
+		_wonder_visual(dt)
 	var pv := model.pivot
 	var t := Time.get_ticks_msec() * 0.001
 	var target_yaw := -0.42 * float(drift_dir)
@@ -895,7 +1076,7 @@ func _visuals(dt: float) -> void:
 	model.grounded = grounded or air_time < 0.25
 	model.set_glide(gliding, dt)
 	model.mood = _mood()
-	model.animate(dt, in_throttle, boost_time > 0.0, drift_tier, drift_dir != 0, clampf(fwd_speed / max_speed, 0.0, 1.5))
+	model.animate(dt, in_throttle, boost_time > 0.0 or (wonder != null and wonder.thrusting()), drift_tier, drift_dir != 0, clampf(fwd_speed / max_speed, 0.0, 1.5))
 
 
 ## The pilot's expression from what is happening to this racer.

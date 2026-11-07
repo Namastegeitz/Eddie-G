@@ -6,7 +6,9 @@ extends Node3D
 
 const RINGS := 10
 const FLASHES := 16
-const BURSTS := 10
+const SPARK_N := 6
+const DUST_N := 4
+const BURSTS := SPARK_N + DUST_N
 
 var particles := 1.0     # quality scale for burst particle counts
 var _rings: Array[MeshInstance3D] = []
@@ -16,10 +18,11 @@ var _ring_size: PackedFloat32Array = PackedFloat32Array()
 var _flashes: Array[MeshInstance3D] = []
 var _flash_t: PackedFloat32Array = PackedFloat32Array()
 var _flash_size: PackedFloat32Array = PackedFloat32Array()
-var _bursts: Array[CPUParticles3D] = []
+var _bursts: Array[CPUParticles3D] = []   # sparks first, then dust
 var _next_ring := 0
 var _next_flash := 0
-var _next_burst := 0
+var _next_spark := 0
+var _next_dust := 0
 
 
 func _ready() -> void:
@@ -50,26 +53,36 @@ func _ready() -> void:
 		_flashes.append(mi)
 	_flash_t.resize(FLASHES)
 	_flash_size.resize(FLASHES)
+	# Two fixed pools, each with its own material, mesh and particle count:
+	# switching one pool between additive sparks and soft dust changed the
+	# material's shader (a recompile on the web) and resizing amount or the
+	# quad rebuilt buffers on every burst.
 	for k in BURSTS:
+		var soft := k >= SPARK_N
 		var p := CPUParticles3D.new()
 		p.one_shot = true
 		p.emitting = false
 		p.explosiveness = 0.92
-		p.amount = 24
+		p.amount = maxi(6, int((18.0 if soft else 28.0) * particles))
 		p.lifetime = 0.6
 		p.local_coords = false
 		p.emission_shape = CPUParticles3D.EMISSION_SHAPE_SPHERE
 		p.emission_sphere_radius = 0.4
 		p.spread = 70.0
-		p.particle_flag_align_y = true
+		p.particle_flag_align_y = not soft
 		var curve := Curve.new()
 		curve.add_point(Vector2(0, 1))
 		curve.add_point(Vector2(1, 0))
 		p.scale_amount_curve = curve
 		var qm := QuadMesh.new()
-		qm.size = Vector2(0.12, 0.6)
+		qm.size = Vector2(1.1, 1.1) if soft else Vector2(0.1, 0.55)
 		var mat := Gfx.additive(Color(1, 1, 1, 1))
 		mat.vertex_color_use_as_albedo = true
+		if soft:
+			mat.billboard_mode = BaseMaterial3D.BILLBOARD_PARTICLES
+			mat.blend_mode = BaseMaterial3D.BLEND_MODE_MIX
+		else:
+			mat.billboard_mode = BaseMaterial3D.BILLBOARD_DISABLED
 		qm.material = mat
 		p.mesh = qm
 		var ramp := Gradient.new()
@@ -85,7 +98,7 @@ func _ready() -> void:
 func warm_up(cam: Camera3D) -> void:
 	if cam == null:
 		return
-	var nodes: Array[Node3D] = [_rings[0], _flashes[0], _bursts[0], _bursts[1]]
+	var nodes: Array[Node3D] = [_rings[0], _flashes[0], _bursts[0], _bursts[SPARK_N]]
 	var parents: Array[Node] = []
 	for n in nodes:
 		parents.append(n.get_parent())
@@ -110,7 +123,8 @@ func warm_up(cam: Camera3D) -> void:
 		n.transform = Transform3D.IDENTITY
 		if n is CPUParticles3D:
 			(n as CPUParticles3D).emitting = false
-	_next_burst = 0
+	_next_spark = 0
+	_next_dust = 0
 
 
 ## Expanding glowing ring on the ground plane given by `up`.
@@ -144,15 +158,12 @@ func flash(pos: Vector3, c: Color, size := 3.5, secs := 0.22) -> void:
 func sparks(pos: Vector3, dir: Vector3, c: Color, count := 24, speed := 10.0, grav := 12.0) -> void:
 	var p := _take_burst()
 	p.global_position = pos
-	p.amount = maxi(6, int(count * particles))
 	p.direction = dir.normalized() if dir.length() > 0.01 else Vector3.UP
 	p.spread = 60.0
 	p.initial_velocity_min = speed * 0.5
 	p.initial_velocity_max = speed
 	p.gravity = Vector3.DOWN * grav
 	p.lifetime = 0.55
-	p.particle_flag_align_y = true
-	(p.mesh as QuadMesh).size = Vector2(0.1, 0.55)
 	p.color = Color(c.r * 1.6, c.g * 1.6, c.b * 1.6, 1.0)
 	p.restart()
 	p.emitting = true
@@ -162,15 +173,12 @@ func sparks(pos: Vector3, dir: Vector3, c: Color, count := 24, speed := 10.0, gr
 func dust(pos: Vector3, up: Vector3, c: Color, count := 18) -> void:
 	var p := _take_burst(true)
 	p.global_position = pos
-	p.amount = maxi(6, int(count * particles))
 	p.direction = up
 	p.spread = 85.0
 	p.initial_velocity_min = 2.0
 	p.initial_velocity_max = 6.0
 	p.gravity = -up * 3.0
 	p.lifetime = 0.8
-	p.particle_flag_align_y = false
-	(p.mesh as QuadMesh).size = Vector2(1.1, 1.1)
 	p.color = Color(c.r, c.g, c.b, 0.55)
 	p.restart()
 	p.emitting = true
@@ -178,12 +186,11 @@ func dust(pos: Vector3, up: Vector3, c: Color, count := 18) -> void:
 
 ## Next pooled emitter, set up as streaking additive sparks or soft dust.
 func _take_burst(soft := false) -> CPUParticles3D:
-	var p := _bursts[_next_burst]
-	_next_burst = (_next_burst + 1) % BURSTS
-	var mat := (p.mesh as QuadMesh).material as StandardMaterial3D
-	mat.billboard_mode = BaseMaterial3D.BILLBOARD_PARTICLES if soft else BaseMaterial3D.BILLBOARD_DISABLED
-	mat.blend_mode = BaseMaterial3D.BLEND_MODE_MIX if soft else BaseMaterial3D.BLEND_MODE_ADD
-	return p
+	if soft:
+		_next_dust = (_next_dust + 1) % DUST_N
+		return _bursts[SPARK_N + _next_dust]
+	_next_spark = (_next_spark + 1) % SPARK_N
+	return _bursts[_next_spark]
 
 
 static func _basis_up(up: Vector3) -> Basis:

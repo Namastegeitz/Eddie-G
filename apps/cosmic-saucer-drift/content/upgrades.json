@@ -1,0 +1,44 @@
+{
+  "schema": "csd.upgrades/1",
+  "about": "Super Upgrades: Stardust rules, mod slots, mod sets and mods. Mods are bought once with Stardust and can be fitted to any craft, one per slot. Three mods of the same set on one craft add the set bonus. 'effects' use the keys in scripts/data/effects.gd.",
+  "stardust": {
+    "about": "Earned by clean drifts (no wall hit, no spin-out, no long jump during the drift) of at least min_drift_time seconds: per_second * time + per_meter * distance, times the tier bonus for the drift tier reached (0-3).",
+    "min_drift_time": 1.0,
+    "per_second": 3.0,
+    "per_meter": 0.025,
+    "tier_bonus": [1.0, 1.2, 1.45, 1.75],
+    "finish_bonus": [30, 20, 14, 10, 8, 6, 5, 4]
+  },
+  "slots": [
+    {"id": "core", "name": "Core", "text": "Power plant: energy, Wonder charge and heat."},
+    {"id": "field", "name": "Field", "text": "Defence: shields, spin-outs and walls."},
+    {"id": "drive", "name": "Drive", "text": "Propulsion: speed, acceleration and drift."}
+  ],
+  "sets": [
+    {"id": "helios", "name": "Helios", "color": "#ffc94d", "bonus_name": "Solar Flow",
+     "bonus_text": "Boosting refills the core and every boost lasts 8% longer.", "effects": {"boost_energy": 1.5, "boost_time_pct": 8}},
+    {"id": "void", "name": "Void", "color": "#9d7bff", "bonus_name": "Phase Step",
+     "bonus_text": "Spin-outs 15% shorter and walls cost a quarter less speed.", "effects": {"spin_time_pct": -15, "wall_keep_pct": 25}},
+    {"id": "nebula", "name": "Nebula", "color": "#ff6fb5", "bonus_name": "Nebula Bloom",
+     "bonus_text": "25% more Stardust and drift boosts last 10% longer.", "effects": {"stardust_pct": 25, "drift_boost_pct": 10}},
+    {"id": "quantum", "name": "Quantum", "color": "#4de8ff", "bonus_name": "Coherence",
+     "bonus_text": "Wonders hit 15% harder and run 15% cooler.", "effects": {"wonder_power_pct": 15, "heat_pct": -15}}
+  ],
+  "mods": [
+    {"id": "fusion_heart", "slot": "core", "set": "helios", "name": "Fusion Heart", "cost": 180, "effects": {"drain_pct": -8}},
+    {"id": "corona_veil", "slot": "field", "set": "helios", "name": "Corona Veil", "cost": 180, "effects": {"shield_time_pct": 25}},
+    {"id": "helio_thrusters", "slot": "drive", "set": "helios", "name": "Helio Thrusters", "cost": 260, "effects": {"top_speed_pct": 2}},
+    {"id": "null_reactor", "slot": "core", "set": "void", "name": "Null Reactor", "cost": 200, "effects": {"heat_pct": -20}},
+    {"id": "horizon_plating", "slot": "field", "set": "void", "name": "Event Horizon Plating", "cost": 220, "effects": {"spin_time_pct": -15}},
+    {"id": "graviton_keel", "slot": "drive", "set": "void", "name": "Graviton Keel", "cost": 240, "effects": {"handling_pct": 4}},
+    {"id": "stardust_condenser", "slot": "core", "set": "nebula", "name": "Stardust Condenser", "cost": 150, "effects": {"stardust_pct": 20}},
+    {"id": "gas_baffles", "slot": "field", "set": "nebula", "name": "Gas Cloud Baffles", "cost": 170, "effects": {"near_energy_pct": 60}},
+    {"id": "ion_sails", "slot": "drive", "set": "nebula", "name": "Ion Sails", "cost": 220, "effects": {"drift_charge_pct": 8}},
+    {"id": "entangled_cell", "slot": "core", "set": "quantum", "name": "Entangled Cell", "cost": 240, "effects": {"wonder_charge_pct": 15}},
+    {"id": "superposition_shell", "slot": "field", "set": "quantum", "name": "Superposition Shell", "cost": 220, "effects": {"wall_keep_pct": 20}},
+    {"id": "tunnel_drive", "slot": "drive", "set": "quantum", "name": "Tunnel Drive", "cost": 260, "effects": {"accel_pct": 5}},
+    {"id": "heat_sink", "slot": "core", "set": "", "name": "Cryo Heat Sink", "cost": 160, "effects": {"heat_pct": -12}},
+    {"id": "magnet_coil", "slot": "field", "set": "", "name": "Magnet Coil", "cost": 140, "effects": {"pod_magnet_pct": 60}},
+    {"id": "slip_fins", "slot": "drive", "set": "", "name": "Slipstream Fins", "cost": 160, "effects": {"slip_charge_pct": 30}}
+  ]
+}

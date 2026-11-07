@@ -1,0 +1,26 @@
+{
+  "pack": "example_pack",
+  "about": "An example content pack. Copy it to content/packs/ (shipped with the game) or user://packs/ (one device) and the game picks it up on the next start: no code changes. This one adds a pilot, a craft, a mod set with three mods, and a pack biome. The smoke test loads it to prove drop-in content works.",
+  "pilots": [
+    {"id": "glimmer", "name": "Glimmer Wisp", "color": "#9ef7ff", "eyes": 3, "kind": "creature",
+     "effects": {"near_energy_pct": 80, "glide_sink_pct": -15},
+     "passive_name": "Will-o'-the-Wisp", "passive_text": "Near misses give much more Dark Matter; glides sink slower.",
+     "style": "clean", "unlock": "credits", "price": 700, "home": "trappist1h",
+     "blurb": "A drifting light from the ice fields. Nobody has ever caught it.",
+     "look": {"head": "drop", "iris": "#2a3cff", "iris_glow": 1.5, "skin_glow": 0.6, "suit": "#1a2a50", "trim": "#9ef7ff", "acc": "jelly", "slime": true}}
+  ],
+  "saucers": [
+    {"id": "comet_skiff", "name": "Comet Skiff", "blurb": "A light skiff cut from comet ice. Quick and slippery.",
+     "speed": 6, "accel": 7, "handling": 6, "efficiency": 5, "weight": 3, "price": 3200, "stars": 12,
+     "shape": "manta", "paint": "#bfe9ff", "effects": {"drift_charge_pct": 10}}
+  ],
+  "sets": [
+    {"id": "aurora", "name": "Aurora", "color": "#7dffb0", "bonus_name": "Polar Lights",
+     "bonus_text": "Slipstream charges 30% faster and reaches 30% farther.", "effects": {"slip_charge_pct": 30, "slip_range_pct": 30}}
+  ],
+  "mods": [
+    {"id": "aurora_core", "slot": "core", "set": "aurora", "name": "Aurora Core", "cost": 190, "effects": {"regen": 0.2}},
+    {"id": "aurora_veil", "slot": "field", "set": "aurora", "name": "Aurora Veil", "cost": 190, "effects": {"spin_time_pct": -8}},
+    {"id": "aurora_drive", "slot": "drive", "set": "aurora", "name": "Aurora Drive", "cost": 240, "effects": {"accel_pct": 3}}
+  ]
+}

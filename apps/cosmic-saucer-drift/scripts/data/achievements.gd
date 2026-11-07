@@ -19,13 +19,13 @@ const LIST := {
 	"shortcuts_10": ["Off the Map", "Take secret shortcuts 10 times.", "stat", "shortcuts", 10, 400],
 	"dist_500k": ["Light Year Club", "Fly 500 km in races.", "stat", "distance", 500000, 1000],
 	"cup_gold": ["Cup Winner", "Win a Galactic Cup.", "stat", "cups_won", 1, 500],
-	"cups_all": ["Master of the Cups", "Win all 5 Galactic Cups.", "stat", "cups_won", 5, 2500],
+	"cups_all": ["Master of the Cups", "Win every Galactic Cup.", "all", "cups", 0, 2500],
 	"boss_3": ["Crew Builder", "Beat 3 boss pilots.", "stat", "bosses", 3, 600],
-	"boss_all": ["Full Crew", "Beat all 6 boss pilots.", "stat", "bosses", 6, 2000],
+	"boss_all": ["Full Crew", "Beat every boss pilot.", "all", "bosses", 0, 2000],
 	"mirror_win": ["Through the Looking Glass", "Win a Mirror race.", "stat", "mirror_wins", 1, 400],
 	"daily_7": ["Weekly Regular", "Finish 7 daily challenges.", "stat", "dailies", 7, 700],
 	"shards_9": ["Shard Seeker", "Find 15 Star Shards.", "shards", "", 15, 500],
-	"shards_all": ["Constellation", "Find all 42 Star Shards.", "shards", "", 42, 3000],
+	"shards_all": ["Constellation", "Find every Star Shard.", "all", "shards", 0, 3000],
 	"gold_medal": ["Golden Lap", "Earn a gold medal in Time Trial.", "medals", "", 1, 400],
 	"running_on_empty": ["Running on Fumes", "Win a race after hitting Emergency Hover.", "race", "fumes", 1, 400],
 	"clean_sweep": ["Untouchable", "Win a race without being hit.", "race", "untouched", 1, 400],
@@ -44,6 +44,24 @@ static func progress(id: String) -> Vector2:
 	var target := float(a[4])
 	var have := 0.0
 	match a[2]:
+		"all":
+			# "Every X": the target follows the content, so adding a cup, a
+			# boss pilot or a track never makes these unlock early or never.
+			match String(a[3]):
+				"cups":
+					target = float(Catalog.CUPS.size())
+					for c in Catalog.CUPS:
+						if int(Save.data.cup_best.get(c.id, 0)) == 1:
+							have += 1.0
+				"bosses":
+					for p in Catalog.PILOTS:
+						if String(p.get("unlock", "")) == "boss":
+							target += 1.0
+							if Save.data.bosses.get(p.id, false):
+								have += 1.0
+				"shards":
+					target = float(Catalog.TRACK_IDS.size() * 3)
+					have = float(Save.shard_total())
 		"stat":
 			have = Save.stat(a[3])
 		"shards":

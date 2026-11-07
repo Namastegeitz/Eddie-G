@@ -109,7 +109,9 @@ def main():
     t = t_axis(1.0)
     eng = (0.6 * saw(55, t) + 0.35 * sine(110, t) + 0.25 * square(82, t, 0.3) + 0.15 * sine(220, t)
            + 0.06 * sine(330, t) * sine(3, t))
-    eng = lowpass(eng, 900.0)
+    # Filter two copies end to end and keep the second: the one-pole filter
+    # starts from silence, and that fade-in made a click at every loop point.
+    eng = lowpass(np.concatenate([eng, eng]), 900.0)[len(eng):]
     write("engine", eng, loop=True, gain=0.7)
 
     # UI / race cues.

@@ -8,6 +8,7 @@ var failures := 0
 
 
 func _ready() -> void:
+	Racer.profiling = true
 	Save.disabled = true
 	var args := {}
 	for a in OS.get_cmdline_user_args():

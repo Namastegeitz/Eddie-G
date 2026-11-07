@@ -18,6 +18,7 @@ config/icon="res://assets/icons/icon_512.png"
 
 [autoload]
 
+Content="*res://autoload/content.gd"
 Save="*res://autoload/save.gd"
 InputRouter="*res://autoload/input_router.gd"
 Events="*res://autoload/events.gd"

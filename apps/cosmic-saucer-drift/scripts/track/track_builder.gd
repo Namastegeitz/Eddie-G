@@ -63,14 +63,17 @@ static func _n(path: TrackPath, i: int, a: Vector2, b: Vector2) -> Vector3:
 
 
 ## Sweep profile edges [a, b, u_a, u_b] along a path. include(i, e) filters.
-static func sweep(buf: MeshBuf, path: TrackPath, edges: Array, include: Callable, color_of: Callable, v_scale: float, half_w: Callable) -> void:
+## flat: one colour per segment (the road stores its surface id in vertex
+## alpha; blending it between two surfaces drew bands of every surface id
+## in between, e.g. dust, ice and rail chevrons between metal and lava).
+static func sweep(buf: MeshBuf, path: TrackPath, edges: Array, include: Callable, color_of: Callable, v_scale: float, half_w: Callable, flat := false) -> void:
 	var segs := path.n if path.closed else path.n - 1
 	for i in segs:
 		var j := path.wi(i + 1)
 		var v0 := float(i) * path.step * v_scale
 		var v1 := float(i + 1) * path.step * v_scale
 		var c0: Color = color_of.call(i)
-		var c1: Color = color_of.call(j)
+		var c1: Color = c0 if flat else color_of.call(j)
 		var hw0: float = half_w.call(i)
 		var hw1: float = half_w.call(j)
 		for e in edges.size():
@@ -264,7 +267,7 @@ static func _build_path(td: TrackData, path: TrackPath, root: Node3D, prefix: St
 	# Road top.
 	var road := MeshBuf.new()
 	var road_inc := func(i: int, _e: int) -> bool: return not seg_gap.call(i)
-	sweep(road, path, [[Vector2(-1, 0), Vector2(1, 0), 0.0, 1.0]], road_inc, surf_color, 0.125, hw)
+	sweep(road, path, [[Vector2(-1, 0), Vector2(1, 0), 0.0, 1.0]], road_inc, surf_color, 0.125, hw, true)
 	mesh_node(root, road.commit(road_mat), prefix + "Road")
 	# Barriers (inner + outer faces) and neon tops; skirt where open.
 	var bw := BARRIER_W
@@ -319,11 +322,18 @@ static func _build_path(td: TrackData, path: TrackPath, root: Node3D, prefix: St
 	static_body(root, ground_faces(path, ground_inc, 0.0, 0.6), LAYER_GROUND, prefix + "Ground", surf_meta)
 	var walls := PackedVector3Array()
 	for side: int in [-1, 1]:
-		var wall_inc := func(i: int) -> bool:
-			return not seg_gap.call(i) and not open_side.call(i, side) and not short_ends.call(i)
 		var heights := td.short_wall_h
 		if is_main:
 			heights = td.wall_h_r if side > 0 else td.wall_h_l
+		# An open barrier normally has no collision wall, but where the data
+		# asked for a low one (a skyway bridge crossing) it is built low.
+		var hs := heights
+		var wall_inc := func(i: int) -> bool:
+			if seg_gap.call(i) or short_ends.call(i):
+				return false
+			if open_side.call(i, side):
+				return is_main and hs[i] > 0.0 and hs[i] < TrackData.WALL_H - 0.5
+			return true
 		walls.append_array(wall_faces(path, wall_inc, float(side), heights))
 	if not walls.is_empty():
 		static_body(root, walls, LAYER_WALLS, prefix + "Walls")

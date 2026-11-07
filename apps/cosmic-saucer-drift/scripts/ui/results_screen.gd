@@ -37,7 +37,9 @@ static func make(race: Node, results: Array, summary: Dictionary) -> Control:
 				title = "%s PLACE!" % UiKit.ordinal(place).to_upper()
 				tcol = UiKit.GOLD if place == 1 else (UiKit.CYAN if place <= 3 else Color.WHITE)
 	outer.add_child(UiKit.label(title, 52, tcol, HORIZONTAL_ALIGNMENT_CENTER))
-	var cols := UiKit.hbox(24)
+	# Side by side on wide screens; stacked on a portrait phone (720 wide),
+	# where two columns pushed the rewards and buttons off screen.
+	var cols: BoxContainer = UiKit.vbox(12) if Game.portrait_window() else UiKit.hbox(24)
 	cols.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	outer.add_child(cols)
 	# Standings.
@@ -74,6 +76,9 @@ static func make(race: Node, results: Array, summary: Dictionary) -> Control:
 	var total: int = summary.get("credits", 0)
 	var total_lbl := UiKit.label("Race Credits  +%d   (bank %s)" % [total, UiKit.num(Save.credits())], 24, UiKit.GOLD)
 	right.add_child(total_lbl)
+	var dust := int(summary.get("stardust", 0))
+	if dust > 0:
+		right.add_child(UiKit.label("✦ Stardust  +%d   (bank %s)" % [dust, UiKit.num(Upgrades.stardust())], 22, Color(1.0, 0.75, 0.95)))
 	if req.mode == "cup":
 		var mask: int = summary.get("star_mask", 0)
 		var stars := ""
@@ -123,8 +128,12 @@ static func make(race: Node, results: Array, summary: Dictionary) -> Control:
 	if req.mode == "cup":
 		var cup := Game.cup_def(req.cup)
 		if int(req.cup_race) < cup.races.size() - 1:
-			var nb := UiKit.button("Next race ▶", func() -> void:
-				Ads.maybe_interstitial("cup_interstitial", func() -> void: Game.start(Game.cup_request(req.cup, int(req.cup_race) + 1))), 28, 260)
+			var nb := UiKit.button("Next race ▶", func() -> void: pass, 28, 260)
+			nb.pressed.connect(func() -> void:
+				if nb.disabled:
+					return
+				nb.disabled = true
+				Ads.maybe_interstitial("cup_interstitial", func() -> void: Game.start(Game.cup_request(req.cup, int(req.cup_race) + 1))))
 			btns.add_child(nb)
 			first = nb
 			btns.add_child(UiKit.button("Retry race", func() -> void: Game.restart(), 24))
@@ -138,8 +147,12 @@ static func make(race: Node, results: Array, summary: Dictionary) -> Control:
 		first = again
 		if req.mode == "boss" and place == 1:
 			btns.add_child(UiKit.button("Pilots", func() -> void: Game.go_menu("pilots"), 24))
-	btns.add_child(UiKit.button("Garage", func() -> void: Game.go_menu("garage"), 24))
-	btns.add_child(UiKit.button("Menu", func() -> void: Game.go_menu(), 24))
+	var mid_cup: bool = req.mode == "cup" and int(req.cup_race) < Game.cup_def(req.cup).races.size() - 1
+	if not mid_cup:
+		btns.add_child(UiKit.button("Garage", func() -> void: Game.go_menu("garage"), 24))
+		btns.add_child(UiKit.button("Menu", func() -> void: Game.go_menu(), 24))
+	else:
+		btns.add_child(UiKit.button("Quit cup", func() -> void: Game.go_menu("cups"), 22))
 	if first:
 		UiKit.focus_later(first)
 	return root

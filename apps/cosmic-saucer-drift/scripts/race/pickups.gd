@@ -185,10 +185,10 @@ func tick(dt: float) -> void:
 			if c.t <= 0.0:
 				c.active = true
 	for r: Racer in race.racers:
-		if r.rescue_time > 0.0 or r.is_ghost:
+		if r.rescue_time > 0.0 or r.is_ghost or r.finished:
 			continue
 		var rp := r.global_position
-		var pod_r := POD_R * (3.0 if r.pilot.passive == "magnet" else 1.0)
+		var pod_r := POD_R * r.pod_magnet_mult
 		var near_crates := _near(_crate_bucket, r.track_idx)
 		for pk in _near(_pod_bucket, r.track_idx):
 			var p: Dictionary = pods[pk]

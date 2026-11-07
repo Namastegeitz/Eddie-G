@@ -3,7 +3,7 @@ shader_type spatial;
 // only touches their transforms when they're collected or respawn.
 // Facet shading + a bright fresnel edge give them a gem/glass look;
 // frame > 0 draws glowing edges on box faces (item crates).
-render_mode unshaded, cull_back;
+render_mode unshaded, cull_back, depth_draw_always;
 uniform vec4 color : source_color = vec4(0.25, 1.0, 0.95, 1.0);
 uniform float energy = 2.2;
 uniform float spin = 2.0;

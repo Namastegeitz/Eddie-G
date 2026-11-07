@@ -26,6 +26,7 @@ folder (`apps/cosmic-saucer-drift`).
 | Glide (unfold energy wings while airborne) | Shift (hold) | Shift (hold) | D-pad up or L3 | automatic |
 | Use item | E, Ctrl or F | Right button | X or LB | ITEM |
 | Look back | Q or C | Middle button | Y | - |
+| Technical Wonder (premium craft) | R (P2: `;` or keypad 1) | - | Right stick click or D-pad down | WONDER (only on craft with a Wonder) |
 
 With a keyboard or mouse a small on-screen joystick (bottom left) shows what
 you're pressing, with key chips bottom right (Settings: Key hints). The mouse
@@ -127,6 +128,14 @@ xvfb-run -a godot --path . res://tests/shots.tscn --rendering-driver opengl3 -- 
 # Top-down maps of every track layout
 godot --headless --path . --script res://tools/dump_tracks.gd
 python3 tools/plot_tracks.py "<user data dir>/tracks_dump.json" tracks.png 0
+# Content check (packs, effect keys, biome formations: source, triangles, LODs)
+godot --headless --path . res://tools/content_report.tscn
+# Meshy pipeline against a local mock (no network, no key)
+python3 tools/meshy/test_pipeline.py
+# Regenerate the import-slot test fixture (a game-made GLB, not a Meshy asset)
+godot --headless --path . res://tools/make_fixture_glb.tscn
+# Menu shots with some Super Upgrades progress
+xvfb-run -a godot --path . res://tests/menu_shots.tscn --rendering-driver opengl3 -- /tmp/shots wonders,garage,racers landscape demo
 # Regenerate the sounds and music
 python3 tools/gen_audio.py
 # App icon (space, planets and nebulas): render the art, then make every size,
@@ -169,6 +178,14 @@ godot --headless --path . --export-release "iOS"             build/ios/CosmicSau
 
 ## 6. Change the game
 
+- Content packs: drop a JSON file in `content/packs/` (or `user://packs/`)
+  to add pilots, craft, mods, sets, Wonders or biomes; schemas and the list
+  of effect keys are in [docs/SCHEMAS.md](docs/SCHEMAS.md). Check with
+  `godot --headless --path . res://tools/content_report.tscn`. Example:
+  `docs/examples/example_pack.json`.
+- Super Upgrades and Wonders: `content/wonders.json` and `content/upgrades.json`.
+- Volcanic biomes: `content/biomes.json`; Meshy meshes via
+  `tools/meshy/generate.py` ([docs/ASSET_PIPELINE.md](docs/ASSET_PIPELINE.md)).
 - Driving numbers: `resources/tuning.tres` (open in the editor's inspector).
 - Craft, pilots, power-ups, lineups, star systems, cups, challenges,
   cosmetics, rewards: `scripts/data/catalog.gd`.

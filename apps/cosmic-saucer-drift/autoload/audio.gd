@@ -79,8 +79,18 @@ func play_at(sound: String, pos: Vector3, vol_db := 0.0) -> void:
 	var s := stream(sound)
 	if s == null:
 		return
-	var p := _pool3d[_next3d]
-	_next3d = (_next3d + 1) % _pool3d.size()
+	# Prefer an idle voice; only steal (oldest first) when all are busy, so
+	# far-off rivals don't cut off a sound playing right next to you.
+	var p: AudioStreamPlayer3D = null
+	for k in _pool3d.size():
+		var c: AudioStreamPlayer3D = _pool3d[(_next3d + k) % _pool3d.size()]
+		if not c.playing:
+			p = c
+			_next3d = (_next3d + k + 1) % _pool3d.size()
+			break
+	if p == null:
+		p = _pool3d[_next3d]
+		_next3d = (_next3d + 1) % _pool3d.size()
 	p.stream = s
 	p.volume_db = vol_db
 	p.global_position = pos
@@ -89,6 +99,22 @@ func play_at(sound: String, pos: Vector3, vol_db := 0.0) -> void:
 
 func ui(sound: String) -> void:
 	play(sound, -6.0)
+
+
+## Tempo of each music loop (tools/gen_audio.py writes them at these BPMs).
+const MUSIC_BPM := {"menu": 100.0, "race": 128.0}
+
+
+func beat_seconds(track: String) -> float:
+	return 60.0 / float(MUSIC_BPM.get(track, 120.0))
+
+
+## Seconds into the current music loop, or -1 when nothing is playing
+## (Wonders sync to the beat with this).
+func music_position() -> float:
+	if _music == null or not _music.playing:
+		return -1.0
+	return _music.get_playback_position() + AudioServer.get_time_since_last_mix()
 
 
 func music(track: String) -> void:

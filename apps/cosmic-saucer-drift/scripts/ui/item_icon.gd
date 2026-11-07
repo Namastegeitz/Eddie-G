@@ -4,6 +4,8 @@ extends Control
 
 var item := "":
 	set(v):
+		if v == item:
+			return   # the HUD sets this every frame: redraw only on a change
 		item = v
 		queue_redraw()
 

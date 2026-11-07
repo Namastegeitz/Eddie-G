@@ -270,7 +270,13 @@ func _build_shortcut(sc: Dictionary) -> void:
 		# saucer running up it is actually pointing.
 		var im := main.index_at(short_a - ramp_len * 0.5)
 		var dir := (main.tan[im] + main.tan[ir]).normalized().rotated(up, -yaw)
-		var ramp_end := main.pts[ir] + main.rgt[ir] * lane + main.upv[ir] * ramp_h + dir * 2.0
+		# The builder pivots a yawed ramp about its foot, so the lip sits
+		# ramp_len * sin(yaw) to the side of the un-rotated one: start the
+		# corridor from the real lip (Mars was 11 m off).
+		var i0 := main.index_at(short_a - ramp_len)
+		var foot := main.pts[i0] + main.rgt[i0] * lane
+		var lip := foot + (main.pts[ir] + main.rgt[ir] * lane - foot).rotated(main.upv[i0], -yaw)
+		var ramp_end := lip + main.upv[ir] * ramp_h + dir * 2.0
 		var land0 := ramp_end + dir * glide_len - up * (ramp_h - 1.2)
 		skyway = {"from": ramp_end, "to": land0, "dir": dir, "up": up, "ramp_h": ramp_h, "len": glide_len}
 		c.append(land0 - dir * 10.0 - up * 0.2)
@@ -328,6 +334,14 @@ func _build_shortcut(sc: Dictionary) -> void:
 	short = TrackPath.new()
 	short.build(c, ws, bs, false)
 	short.surf.fill(short_surface)
+	if short_lift_end:
+		# Reverse: the bridge comes down over the barrier near short_b; lower
+		# this side's wall there so craft on the bridge don't clip its top.
+		_each_index(Vector2(short_b - 42.0, short_b), func(i: int) -> void:
+			if sd > 0.0:
+				wall_h_r[i] = 2.5
+			else:
+				wall_h_l[i] = 2.5)
 	if short_lift_start:
 		feats.append({"t": "geyser", "s": short_a, "lane": sd * (hw - 5.0), "launch": 24.0, "shortcut": true})
 		# Low collision walls under the bridge so launched saucers clear them.
@@ -344,11 +358,17 @@ func _build_shortcut(sc: Dictionary) -> void:
 	short_skip_r.resize(short.n)
 	short_skip_l.fill(0)
 	short_skip_r.fill(0)
+	var last_i := -1
 	for j in short.n:
 		if short_glide:
 			break   # a skyway ribbon never meets the road surface
 		var p := short.pts[j]
-		var i := main.nearest(p, 0, -1)
+		# Search near the previous match (a full scan per sample was O(n^2));
+		# fall back to the whole loop if the local match is far away.
+		var i := main.nearest(p, last_i, 40) if last_i >= 0 else main.nearest(p, 0, -1)
+		if main.pts[i].distance_to(p) > main.wid[i] + 30.0:
+			i = main.nearest(p, 0, -1)
+		last_i = i
 		var lat := main.lateral(i, p)
 		var h := main.height(i, p)
 		var hwi := main.wid[i] * 0.5

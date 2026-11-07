@@ -8,6 +8,7 @@ extends Control
 var racer: Racer
 var _vis := Vector2.ZERO
 var _t := 0.0
+var _sig := 0
 
 
 func _ready() -> void:
@@ -19,10 +20,16 @@ func _process(dt: float) -> void:
 	_t += dt
 	if racer == null or not is_instance_valid(racer):
 		return
-	var c := InputRouter.controls(0)
-	var want := Vector2(c.steer, c.gas - c.brake)
+	# The racer's own inputs (calling InputRouter.controls again polled every
+	# key and pad a second time each frame).
+	var want := Vector2(racer.in_steer, racer.in_throttle - racer.in_brake)
 	_vis = _vis.lerp(want, 1.0 - exp(-18.0 * dt))
-	queue_redraw()
+	# Redraw only when something shown changed (it redrew ~20 labels a frame).
+	var sig := hash([(_vis * 50.0).round(), racer.in_drift, racer.in_item, racer.in_look_back, racer.gliding,
+		InputRouter.mouse_on() and InputRouter.mouse_active, size])
+	if sig != _sig:
+		_sig = sig
+		queue_redraw()
 
 
 func _draw() -> void:

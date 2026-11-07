@@ -309,8 +309,7 @@ func _geyser_launch(h: Dictionary, i: int, lane: float) -> void:
 				r.velocity += path.upv[i] * (launch - maxf(r.velocity.dot(path.upv[i]), 0.0))
 				r.grounded = false
 				r.global_position += path.upv[i] * 0.4
-				if h.get("shortcut", false):
-					r.stats.shortcuts += 1
+				# (The shortcut itself is counted once, by Race, on landing.)
 				r.emit_signal("event", "geyser", {})
 
 

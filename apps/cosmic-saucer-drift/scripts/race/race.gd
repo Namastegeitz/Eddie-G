@@ -46,6 +46,9 @@ var _ghost_t := 0.0
 var _audio: RaceAudio
 var _env: Environment
 var _sun: DirectionalLight3D
+## Stellar wind: blows away from this world's star, flat along the ground
+## (the Photon Spinnaker tacks against it).
+var stellar_wind := Vector3.RIGHT
 var _sky_mat: ShaderMaterial
 var fx: RaceFx
 var _slowmo_until := 0
@@ -223,6 +226,8 @@ func _build_world() -> void:
 	_sun = sun
 	var ld := Themes.light_dir(theme)
 	sun.look_at_from_position(Vector3.ZERO, ld, Vector3.UP if absf(ld.y) < 0.95 else Vector3.FORWARD)
+	var wind := Vector3(ld.x, 0.0, ld.z)
+	stellar_wind = wind.normalized() if wind.length() > 0.05 else Vector3.RIGHT
 	_stage("world_env")
 	await _yield(0.15, "Laying the road")
 	var track := Node3D.new()
@@ -232,6 +237,9 @@ func _build_world() -> void:
 	_stage("world_track")
 	await _yield(0.4, "Placing the scenery")
 	TrackDecor.build(td, track)
+	var biome := BiomeBuilder.pick(td)
+	if not biome.is_empty():
+		BiomeBuilder.apply_env(_env, _sun, biome)
 	_stage("world_decor")
 	_decor = track.get_node_or_null("Decor")
 	apply_quality()
@@ -287,7 +295,7 @@ func _spawn() -> void:
 		var r := Racer.new()
 		r.name = "Racer%d" % k
 		holder.add_child(r)
-		r.setup(self, k, e.look, e.get("upgrades", {}))
+		r.setup(self, k, e.look, e.get("upgrades", {}), e.get("kit", {}))
 		r.is_human = e.get("human", false) and not autopilot
 		r.slot = e.get("slot", -1) if r.is_human else -1
 		if r.is_human:
@@ -459,9 +467,13 @@ func _dyn_res(dt: float) -> void:
 		return
 	_res_t = 0.0
 	var want := res_scale
-	if _ft_avg > 1.0 / 40.0:
+	# Against the frame time we aim for: with a 30 fps cap (or a browser
+	# throttled to 30 Hz) every frame took 33 ms "late" and the image
+	# dropped to 60% for good.
+	var target := 1.0 / float(Engine.max_fps) if Engine.max_fps > 0 else 1.0 / 60.0
+	if _ft_avg > target * 1.5:
 		want = maxf(RES_MIN, res_scale - 0.1)
-	elif _ft_avg < 1.0 / 57.0:
+	elif _ft_avg < target * 1.05:
 		want = minf(1.0, res_scale + 0.05)
 	if not is_equal_approx(want, res_scale):
 		res_scale = want
@@ -543,6 +555,8 @@ func _physics_process(dt: float) -> void:
 			for r in racers:
 				r.on_go()
 				_lap_start[r.idx] = 0.0
+				# Leading from pole counts toward "lead a whole lap" on lap 1.
+				_led[r.idx] = r.place == 1
 	else:
 		time += dt
 	var t0 := Time.get_ticks_usec()
@@ -595,8 +609,8 @@ func _bumps() -> void:
 			if nrm.length() < 0.01:
 				continue
 			nrm = nrm.normalized()
-			var wa := ra.weight * (1.6 if ra.pilot.passive == "bumper" else 1.0)
-			var wb := rb.weight * (1.6 if rb.pilot.passive == "bumper" else 1.0)
+			var wa := ra.weight * ra.bump_mult
+			var wb := rb.weight * rb.bump_mult
 			var tot := wa + wb
 			var push := 2.75 - dist
 			ra.global_position -= nrm * push * wb / tot
@@ -608,7 +622,7 @@ func _bumps() -> void:
 				rb.velocity += nrm * imp * wa / tot
 				if -rel > 5.0:
 					ra.emit_signal("event", "bump", {"impact": -rel})
-					rb.emit_signal("event", "bump", {"impact": -rel})
+					rb.emit_signal("event", "bump", {"impact": -rel, "quiet": true})
 
 
 func _slipstream(dt: float) -> void:
@@ -622,7 +636,7 @@ func _slipstream(dt: float) -> void:
 				continue
 			var d := o.global_position - r.global_position
 			var along := d.dot(r.heading)
-			if along > 2.5 and along < tuning.slip_range and absf(d.dot(right)) < tuning.slip_width:
+			if along > 2.5 and along < tuning.slip_range * r.slip_range_mult and absf(d.dot(right)) < tuning.slip_width:
 				close = true
 				break
 		r.update_slip(dt, close)
@@ -652,15 +666,27 @@ func _rubber_band() -> void:
 		r.speed_mult = float(base_cls.speed) * (1.0 + band) * float(req.get("boss_edge", 1.0) if req.mode == "boss" else 1.0)
 
 
+## Places, every tick. One reused array and one sort function (it used to
+## duplicate, filter and build two lambdas per tick).
+var _order: Array[Racer] = []
+var _order_n := -1
+static func _ahead(a: Racer, b: Racer) -> bool:
+	if a.finished and b.finished:
+		return a.finish_time < b.finish_time
+	if a.finished != b.finished:
+		return a.finished
+	return a.race_dist > b.race_dist
+
+
 func _rank() -> void:
-	var order := racers.duplicate()
-	order = order.filter(func(r: Racer) -> bool: return not r.is_ghost)
-	order.sort_custom(func(a: Racer, b: Racer) -> bool:
-		if a.finished and b.finished:
-			return a.finish_time < b.finish_time
-		if a.finished != b.finished:
-			return a.finished
-		return a.race_dist > b.race_dist)
+	if _order_n != racers.size():
+		_order_n = racers.size()
+		_order.clear()
+		for r in racers:
+			if not r.is_ghost:
+				_order.append(r)
+	_order.sort_custom(_ahead)
+	var order := _order
 	for k in order.size():
 		var r: Racer = order[k]
 		r.place = k + 1
@@ -721,6 +747,8 @@ func _finish(r: Racer) -> void:
 		var ai := AIDriver.new(r.pilot.style, 0.8, r.idx)
 		ai.cruise = true
 		r.controller = ai
+	elif r.controller is AIDriver:
+		(r.controller as AIDriver).cruise = true
 	if r.is_human:
 		var h := hud_for(r)
 		if h:
@@ -781,6 +809,16 @@ func _finish_race() -> void:
 
 
 # ---------------------------------------------------------------- events
+## A racer's sound: 3D for rivals; flat for local players in split-screen
+## (only player one's view has the 3D listener, so player two's own hits
+## and items were silent once they were far from player one).
+func _sound(name: String, r: Racer, vol_db := 0.0) -> void:
+	if r.is_human and humans.size() > 1:
+		Audio.play(name, vol_db - 3.0)
+	else:
+		Audio.play_at(name, r.global_position, vol_db)
+
+
 func _on_racer_event(kind: String, d: Dictionary, r: Racer) -> void:
 	var cam := cam_for(r)
 	_fx_for(kind, d, r)
@@ -790,14 +828,29 @@ func _on_racer_event(kind: String, d: Dictionary, r: Racer) -> void:
 				cam.add_shake(0.8)
 			if r.is_human:
 				InputRouter.rumble(r.slot, 0.9, 0.35)
-			Audio.play_at("hit", r.global_position)
+			_sound("hit", r)
 		"warped":
 			if cam:
 				cam.warp_cut()
 			if r.is_human:
 				InputRouter.rumble(r.slot, 0.5, 0.2)
+		"wonder":
+			if cam:
+				cam.add_shake(0.45)
+			if r.is_human:
+				InputRouter.rumble(r.slot, 0.8, 0.3)
+			_sound("boost", r, 2.0)
+		"burnout":
+			if r.is_human:
+				InputRouter.rumble(r.slot, 1.0, 0.5)
+			_sound("alarm", r)
+		"pulsed":
+			if cam:
+				cam.add_shake(0.4)
+			if r.is_human:
+				InputRouter.rumble(r.slot, 0.6, 0.2)
 		"glide_on":
-			Audio.play_at("glide", r.global_position)
+			_sound("glide", r)
 			if r.is_human:
 				InputRouter.rumble(r.slot, 0.3, 0.15)
 		"walled", "repulsed":
@@ -805,7 +858,7 @@ func _on_racer_event(kind: String, d: Dictionary, r: Racer) -> void:
 				cam.add_shake(0.5)
 			if r.is_human:
 				InputRouter.rumble(r.slot, 0.7, 0.25)
-			Audio.play_at("hit", r.global_position)
+			_sound("hit", r)
 		"wall":
 			if cam and d.impact > 10.0:
 				cam.add_shake(0.35)
@@ -816,7 +869,8 @@ func _on_racer_event(kind: String, d: Dictionary, r: Racer) -> void:
 				cam.add_shake(0.3)
 			if r.is_human:
 				InputRouter.rumble(r.slot, 0.5, 0.1)
-			Audio.play_at("bump", r.global_position)
+			if not d.get("quiet", false) or r.is_human:
+				_sound("bump", r)   # one sound per collision (both racers get the event)
 		"land":
 			if cam:
 				cam.land(d.impact)
@@ -834,7 +888,7 @@ func _on_racer_event(kind: String, d: Dictionary, r: Racer) -> void:
 			if r.is_human:
 				Audio.play("crate")
 		"item_used":
-			Audio.play_at("item_" + str(d.item), r.global_position)
+			_sound("item_" + str(d.item), r)
 		"trick":
 			if r.is_human:
 				Audio.play("trick")
@@ -872,6 +926,16 @@ func _fx_for(kind: String, d: Dictionary, r: Racer) -> void:
 			r.model.react("block")
 		"tractored":
 			r.model.react("tractor")
+		"wonder":
+			var wc: Color = d.get("color", Color.WHITE)
+			fx.shockwave(pos, r.up, wc, 11.0 * float(d.get("power", 1.0)), 0.55)
+			fx.flash(pos + r.up * 0.8, wc.lerp(Color.WHITE, 0.3), 6.0, 0.3)
+			fx.sparks(pos + r.up * 0.5 - r.heading * 1.5, -r.heading + r.up * 0.3, wc, 34, 14.0, 4.0)
+		"burnout":
+			fx.dust(pos + r.up * 0.8, r.up, Color(0.18, 0.16, 0.16), 30)
+			fx.sparks(pos + r.up * 0.6, r.up, Color(1.0, 0.45, 0.15), 22, 8.0)
+		"pulsed":
+			fx.sparks(pos + r.up * 0.5, r.up, Color(0.7, 0.55, 1.0), 16, 9.0)
 		"item_roll", "crate_smash":
 			# The crate shatters into glowing shards.
 			fx.sparks(pos + r.up * 1.0 + r.heading * 1.5, r.up + r.heading * 0.5, Color(0.85, 0.45, 1.0), 26, 11.0, 14.0)
@@ -1042,14 +1106,14 @@ func _save_ghost() -> void:
 	var me := humans[0]
 	if not me.finished:
 		return
-	var best: float = Save.data.best_time.get(ghost_key(), INF)
+	var best: float = Save.data.best_time.get("%s:%d" % [td.id, td.variant], INF)
 	if me.finish_time <= best + 0.001:
 		Save.save_ghost(ghost_key(), _ghost_rec)
 
 
 # ---------------------------------------------------------------- pause
 func _unhandled_input(e: InputEvent) -> void:
-	if done:
+	if done or not loaded:
 		return
 	var pause := false
 	if e is InputEventKey and e.pressed and not e.echo:
@@ -1073,6 +1137,8 @@ func _unhandled_input(e: InputEvent) -> void:
 
 
 func _notification(what: int) -> void:
+	if not loaded:
+		return
 	if what == NOTIFICATION_WM_GO_BACK_REQUEST and not done and not get_tree().paused:
 		toggle_pause()
 	if what == NOTIFICATION_APPLICATION_FOCUS_OUT and racing and not done and not get_tree().paused and OS.has_feature("mobile"):
@@ -1080,7 +1146,7 @@ func _notification(what: int) -> void:
 
 
 func toggle_pause() -> void:
-	if done:
+	if done or not loaded:
 		return
 	var tree := get_tree()
 	if tree.paused:

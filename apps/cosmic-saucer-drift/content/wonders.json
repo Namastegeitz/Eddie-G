@@ -1,0 +1,104 @@
+{
+  "schema": "csd.wonders/1",
+  "about": "Technical Wonders: one signature system per premium craft. 'mechanic' picks the code that runs it (spinnaker, lighthouse, jet, harvest); everything else is tuning. Tier params replace the previous tier's params key by key. 'effects' use the keys in scripts/data/effects.gd and apply while flying that craft. The global_perk applies to every craft once this craft's track reaches Transcendent.",
+  "overclock": {
+    "levels": [
+      {"pct": 100, "name": "Stock", "power": 1.0, "heat": 0.0},
+      {"pct": 120, "name": "Hot", "power": 1.2, "heat": 1.0},
+      {"pct": 135, "name": "Blazing", "power": 1.35, "heat": 1.7},
+      {"pct": 150, "name": "Critical", "power": 1.5, "heat": 2.6}
+    ],
+    "heat_decay": 3.0,
+    "burnout_time": 5.0,
+    "burnout_speed": 0.88,
+    "burnout_slow_time": 2.5,
+    "cool_to": 35
+  },
+  "wonders": [
+    {
+      "id": "photon_spinnaker",
+      "craft": "sail",
+      "name": "Photon Spinnaker",
+      "tagline": "Light-sail slingshot",
+      "text": "Drift with your nose into the stellar wind to tack: the turn tightens and the sail charges faster. Fire WONDER to slingshot forward on a burst of light.",
+      "mechanic": "spinnaker",
+      "color": "#ffe08a",
+      "heat_per_use": 22,
+      "tiers": [
+        {"name": "Prototype", "cost": 250, "text": "A single shimmering sail.",
+         "params": {"charge_drift": 9, "charge_tack": 16, "tack_turn": 0.12, "min_charge": 40, "burst_time": 1.3, "burst_speed": 1.36, "impulse": 6}},
+        {"name": "Refined", "cost": 700, "text": "Twin sails tack tighter and slingshot harder.",
+         "params": {"charge_drift": 12, "charge_tack": 22, "tack_turn": 0.18, "min_charge": 35, "burst_time": 1.6, "burst_speed": 1.4, "impulse": 8},
+         "effects": {"drift_charge_pct": 4}},
+        {"name": "Transcendent", "cost": 1600, "text": "A sail of pure light. Starlight bends around you.",
+         "params": {"charge_drift": 15, "charge_tack": 28, "tack_turn": 0.24, "min_charge": 30, "burst_time": 1.9, "burst_speed": 1.44, "impulse": 10},
+         "effects": {"drift_charge_pct": 8}}
+      ],
+      "global_perk": {"id": "solar_wind", "name": "Solar Wind", "text": "Every craft: drifts charge 6% faster.", "effects": {"drift_charge_pct": 6}}
+    },
+    {
+      "id": "lighthouse_cloak",
+      "craft": "phantom",
+      "name": "Lighthouse Cloak",
+      "tagline": "Phase-blink on the beat",
+      "text": "Fire WONDER to light the lighthouse: a magnetar pulse shoves nearby rivals off their line, then you phase out of reality on every other beat of the music, slipping through hazards and attacks.",
+      "mechanic": "lighthouse",
+      "color": "#b48cff",
+      "heat_per_use": 28,
+      "tiers": [
+        {"name": "Prototype", "cost": 250, "text": "A flickering beacon.",
+         "params": {"charge_rate": 6.5, "beats": 2, "blink": 0.16, "active_time": 4.0, "pulse_radius": 13, "pulse_push": 9, "pulse_slow": 0.94, "min_charge": 100}},
+        {"name": "Refined", "cost": 700, "text": "Longer phases, a wider pulse.",
+         "params": {"charge_rate": 8, "blink": 0.21, "active_time": 5.0, "pulse_radius": 15, "pulse_push": 11, "pulse_slow": 0.92},
+         "effects": {"spin_time_pct": -5}},
+        {"name": "Transcendent", "cost": 1600, "text": "A pulsar's heartbeat: you are barely here.",
+         "params": {"charge_rate": 9.5, "blink": 0.26, "active_time": 6.0, "pulse_radius": 18, "pulse_push": 13, "pulse_slow": 0.9},
+         "effects": {"spin_time_pct": -10}}
+      ],
+      "global_perk": {"id": "pulsar_timing", "name": "Pulsar Timing", "text": "Every craft: spin-outs end 10% sooner.", "effects": {"spin_time_pct": -10}}
+    },
+    {
+      "id": "relativistic_jet",
+      "craft": "dragon",
+      "name": "Relativistic Jet",
+      "tagline": "Accretion-disk afterburner",
+      "text": "Drifting and flat-out speed spin up the accretion disk. Fire WONDER to vent a plasma jet: a massive straight-line burst that barely turns.",
+      "mechanic": "jet",
+      "color": "#ff6a3d",
+      "heat_per_use": 26,
+      "heat_per_second": 12,
+      "tiers": [
+        {"name": "Prototype", "cost": 250, "text": "A sputtering disk.",
+         "params": {"charge_drift": 10, "charge_speed": 5, "min_charge": 50, "jet_time": 1.3, "jet_speed": 1.48, "jet_accel": 2.2, "jet_steer": 0.35, "impulse": 8}},
+        {"name": "Refined", "cost": 700, "text": "A hotter disk, a longer jet.",
+         "params": {"charge_drift": 12, "charge_speed": 6, "min_charge": 45, "jet_time": 1.6, "jet_speed": 1.54, "jet_accel": 2.5, "jet_steer": 0.4, "impulse": 10},
+         "effects": {"drift_boost_pct": 5}},
+        {"name": "Transcendent", "cost": 1600, "text": "Near light speed. Space itself shortens ahead of you.",
+         "params": {"charge_drift": 14, "charge_speed": 7, "min_charge": 40, "jet_time": 1.9, "jet_speed": 1.6, "jet_accel": 2.8, "jet_steer": 0.45, "impulse": 12},
+         "effects": {"drift_boost_pct": 10}}
+      ],
+      "global_perk": {"id": "accretion_memory", "name": "Accretion Memory", "text": "Every craft: boosts last 6% longer.", "effects": {"boost_time_pct": 6}}
+    },
+    {
+      "id": "stellar_harvest",
+      "craft": "dyson",
+      "name": "Stellar Harvest",
+      "tagline": "Dyson swarm overdrive",
+      "text": "Every clean drift (no walls, no hits) launches collectors into your Dyson swarm. Fire WONDER for nova-thrust overdrive: speed, acceleration and a core refill.",
+      "mechanic": "harvest",
+      "color": "#ffb030",
+      "heat_per_use": 24,
+      "tiers": [
+        {"name": "Prototype", "cost": 250, "text": "A loose ring of collectors.",
+         "params": {"per_clean_second": 14, "min_drift": 0.8, "min_charge": 40, "overdrive_time": 3.0, "overdrive_speed": 1.22, "overdrive_accel": 1.5, "energy": 20}},
+        {"name": "Refined", "cost": 700, "text": "A denser swarm that harvests from shorter drifts.",
+         "params": {"per_clean_second": 17, "min_drift": 0.7, "min_charge": 35, "overdrive_time": 3.8, "overdrive_speed": 1.25, "overdrive_accel": 1.6, "energy": 28},
+         "effects": {"pod_pct": 10}},
+        {"name": "Transcendent", "cost": 1600, "text": "A full Dyson sphere in miniature.",
+         "params": {"per_clean_second": 20, "min_drift": 0.6, "min_charge": 30, "overdrive_time": 4.6, "overdrive_speed": 1.28, "overdrive_accel": 1.7, "energy": 36},
+         "effects": {"pod_pct": 20}}
+      ],
+      "global_perk": {"id": "swarm_network", "name": "Swarm Network", "text": "Every craft: 15% more Stardust from drifts.", "effects": {"stardust_pct": 15}}
+    }
+  ]
+}

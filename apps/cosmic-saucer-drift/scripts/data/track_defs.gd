@@ -493,7 +493,7 @@ const NEW_DEFS := {
 			{"t": "crates", "at": 20.5},
 			{"t": "pods", "at": 22.0, "lane": 0.0, "n": 5, "form": "row"},
 		],
-		"shortcut": {"side": 1, "a": 10.0, "b": 15.0, "via": [Vector3(480, 4, -100), Vector3(520, 2, -55)], "width": 10.0, "glide": {"len": 85.0, "ramp_h": 6.0, "yaw": 20.0, "strip": 60.0}},
+		"shortcut": {"side": 1, "a": 10.0, "b": 15.0, "via": [Vector3(480, 4, -100), Vector3(520, 2, -55)], "width": 10.0, "glide": {"len": 85.0, "ramp_h": 5.0, "yaw": 20.0, "strip": 40.0}},
 		"shards": [{"shortcut": 0.5, "h": 1.5}, {"at": 5.06, "lane": 3.0, "h": 10.0}, {"at": 12.56, "lane": -3.0, "h": 10.0}],
 	},
 	"wasp76b": {

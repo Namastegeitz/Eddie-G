@@ -1,6 +1,9 @@
 extends Node
 ## Renders screenshots of races (needs a display: xvfb-run + opengl3).
 ## godot --path . res://tests/shots.tscn --rendering-driver opengl3 -- --tracks=a,b --frames=420,900 --out=docs/screenshots
+## --wonder=sail|phantom|dragon|dyson flies that premium craft with a
+## Transcendent Wonder (--oc=0..3 overclock) and fires it 25 frames before
+## each shot. --biome=eerie|divine|off forces the scenery.
 
 func _ready() -> void:
 	Save.disabled = true
@@ -14,6 +17,14 @@ func _ready() -> void:
 	var variant := int(args.get("variant", "0"))
 	if args.has("quality"):
 		Save.data.settings.quality = args.quality
+	if args.has("biome"):
+		Save.data.settings.biome = String(args.biome)
+	if args.has("wonder"):
+		var craft := String(args.wonder)
+		Save.unlock_saucer(craft)
+		Save.data.garage.saucer = craft
+		Upgrades.st().tiers[craft] = 3
+		Upgrades.set_overclock(craft, int(args.get("oc", "1")))
 	DisplayServer.window_set_size(Vector2i(720, 1280) if args.has("portrait") else Vector2i(1280, 720))
 	await get_tree().process_frame
 	Game.fit_orientation()
@@ -28,6 +39,9 @@ func _ready() -> void:
 		Game.request = req
 		var race: Race = load("res://scenes/race.tscn").instantiate()
 		add_child(race)
+		# The race builds in stages: wait for its racers and views.
+		while not race.loaded:
+			await get_tree().process_frame
 		if args.has("cockpit"):
 			race._set_cockpit(race.racers[0], true)
 		if args.has("hints"):
@@ -50,9 +64,12 @@ func _ready() -> void:
 			while f < int(target):
 				await get_tree().process_frame
 				f += 1
+				if args.has("wonder") and f == int(target) - 25 and not race.racers.is_empty() and race.racers[0].wonder:
+					race.racers[0].wonder.charge = 100.0
+					race.racers[0].wonder.activate()
 			await RenderingServer.frame_post_draw
 			var img := get_viewport().get_texture().get_image()
-			var path := "%s/%s_v%d_f%s%s%s%s%s%s.png" % [out, t, variant, target, ("_" + str(args.quality)) if args.has("quality") else "", "_ck" if args.has("cockpit") else "", "_portrait" if args.has("portrait") else "", "_touch" if args.has("touch") else "", ("_mouse" if args.has("mouse") else "_keys") if args.has("hints") else ""]
+			var path := "%s/%s%s_v%d_f%s%s%s%s%s%s.png" % [out, t, ("_" + str(args.wonder)) if args.has("wonder") else "", variant, target, ("_" + str(args.quality)) if args.has("quality") else "", "_ck" if args.has("cockpit") else "", "_portrait" if args.has("portrait") else "", "_touch" if args.has("touch") else "", ("_mouse" if args.has("mouse") else "_keys") if args.has("hints") else ""]
 			img.save_png(ProjectSettings.globalize_path("res://" + path) if not path.begins_with("/") else path)
 			print("saved ", path)
 		race.queue_free()

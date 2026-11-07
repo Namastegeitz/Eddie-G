@@ -32,6 +32,7 @@ func drive(r: Racer, dt: float) -> void:
 	r.in_item = c.item
 	r.in_look_back = c.look_back
 	r.in_glide = c.glide
+	r.in_wonder = c.wonder
 	# Touch players (and anyone who asks in Settings) get the wings
 	# automatically whenever they're airborne long enough.
 	r.auto_glide = InputRouter.touch.active or bool(Save.setting("glide_auto"))

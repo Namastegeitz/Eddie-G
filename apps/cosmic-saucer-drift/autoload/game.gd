@@ -62,6 +62,9 @@ const TT_PACE := [40.0, 45.0, 49.0]   # average m/s for bronze / silver / gold
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
+	# Back (Android) is handled by the menus and the race (go back / pause);
+	# without this the engine also quit the app on every Back press.
+	get_tree().set_quit_on_go_back(false)
 	tuning = load("res://resources/tuning.tres")
 	get_tree().root.size_changed.connect(fit_orientation)
 	fit_orientation()
@@ -198,7 +201,8 @@ func player_entry(slot: int) -> Dictionary:
 		if pid == Save.data.garage.pilot:
 			pid = "zib" if pid != "zib" else "nova"
 		look = Save.look_for(p2.get("saucer", "bubble"), pid)
-	return {"look": look, "upgrades": Save.upgrades_for(look.saucer), "human": true, "slot": slot}
+	return {"look": look, "upgrades": Save.upgrades_for(look.saucer), "human": true, "slot": slot,
+		"kit": Upgrades.kit_for(look.saucer)}
 
 
 func _field(exclude: Array, count: int, ai_class: int, seed_v: int) -> Array:
@@ -247,6 +251,33 @@ func versus_request(track: String, variant: int, ai_class: int) -> Dictionary:
 	return {"mode": "versus", "track": track, "variant": variant, "ai_class": ai_class, "racers": racers}
 
 
+## The last Quick Race setup (track, variant, rival class), for RACE NOW.
+## Falls back to Mars if that track has since been locked (e.g. a reset).
+func last_race() -> Dictionary:
+	var lr: Dictionary = Save.data.get("last_race", {})
+	var track := String(lr.get("track", "mars"))
+	if not TrackDefs.has(track) or not Save.track_unlocked(track):
+		track = "mars"
+	var variant := int(lr.get("variant", 0))
+	if not Save.variant_unlocked(track, variant):
+		variant = 0
+	var cls := int(lr.get("class", -1))
+	if cls < 0:
+		cls = int(Save.setting("difficulty"))
+	return {"track": track, "variant": variant, "class": clampi(cls, 0, 3)}
+
+
+func race_now_request() -> Dictionary:
+	var lr := last_race()
+	return quick_request(lr.track, int(lr.variant), int(lr["class"]))
+
+
+func _remember(req: Dictionary) -> void:
+	if req.get("mode", "") == "quick" and not req.get("autopilot", false):
+		Save.data["last_race"] = {"track": req.track, "variant": int(req.variant), "class": int(req.ai_class)}
+		Save.mark()
+
+
 func tt_request(track: String, variant: int) -> Dictionary:
 	return {"mode": "tt", "track": track, "variant": variant, "ai_class": 0, "racers": [player_entry(0)]}
 
@@ -254,8 +285,11 @@ func tt_request(track: String, variant: int) -> Dictionary:
 func boss_request(pilot_id: String) -> Dictionary:
 	var p := Catalog.pilot(pilot_id)
 	var me := player_entry(0)
-	var boss := {"look": {"saucer": _boss_saucer(pilot_id), "pilot": pilot_id, "paint": "stock", "decal": "stars", "dome": "smoke", "trail": "gold"},
+	var boss_craft := _boss_saucer(pilot_id)
+	var boss := {"look": {"saucer": boss_craft, "pilot": pilot_id, "paint": "stock", "decal": "stars", "dome": "smoke", "trail": "gold"},
 		"upgrades": {"speed": 2, "accel": 2, "handling": 2, "efficiency": 2}, "human": false, "style": p.style, "skill": 0.92, "speed": 0.99}
+	if not Content.wonder_for(boss_craft).is_empty():
+		boss["kit"] = {"effects": {}, "wonder": {"craft": boss_craft, "tier": 1, "overclock": 0}}
 	return {"mode": "boss", "track": p.home, "variant": 0, "ai_class": 2, "boss": pilot_id, "boss_edge": 1.0, "racers": [me, boss]}
 
 
@@ -271,6 +305,12 @@ func _boss_saucer(pilot_id: String) -> String:
 			return "ring"
 		"bleep":
 			return "classic"
+		"wraith":
+			return "phantom"
+		"troll":
+			return "bioship"
+		"hive":
+			return "arrow"
 	return "bubble"
 
 
@@ -306,6 +346,13 @@ func today() -> String:
 	return "%04d-%02d-%02d" % [d.year, d.month, d.day]
 
 
+## The calendar day before a "YYYY-MM-DD" date (the daily uses local dates;
+## subtracting a day from the UTC clock broke streaks in most time zones).
+static func day_before(date: String) -> String:
+	var t := Time.get_unix_time_from_datetime_string(date + "T12:00:00")
+	return Time.get_date_string_from_unix_time(int(t) - 86400)
+
+
 func daily_info(date := "") -> Dictionary:
 	if date == "":
 		date = today()
@@ -316,6 +363,9 @@ func daily_info(date := "") -> Dictionary:
 	var mod: Dictionary = DAILY_MODS[rng.randi_range(0, DAILY_MODS.size() - 1)]
 	var goal: Dictionary = DAILY_GOALS[rng.randi_range(0, DAILY_GOALS.size() - 1)]
 	var streak := int(Save.data.daily.streak)
+	var last := String(Save.data.daily.last_done)
+	if last != date and last != day_before(date):
+		streak = 0   # the streak is broken: today starts a new one
 	var reward := 400 + 60 * mini(streak, 7)
 	return {"date": date, "track": track, "variant": variant, "mod": mod, "goal": goal, "reward": reward,
 		"done": Save.data.daily.last_done == date}
@@ -333,6 +383,7 @@ func daily_request() -> Dictionary:
 # ---------------------------------------------------------------- flow
 func start(req: Dictionary) -> void:
 	request = req
+	_remember(req)
 	InputRouter.two_player = req.get("mode", "") == "versus"
 	get_tree().paused = false
 	if not req.get("fast", false):
@@ -432,12 +483,28 @@ func on_race_finished(race: Node, results: Array) -> void:
 			Save.data["_told_" + won_key] = true
 			summary.unlocks.append("Reverse + Mirror %s unlocked" % td.name)
 	Save.add_credits(summary.credits)
+	_bank_stardust(req, place, results, summary)
 	Save.data.ads.races = int(Save.data.ads.races) + 1
 	summary.achievements = Achievements.check(st, place, req)
 	Save.flush()
 	last_summary = summary
 	Events.log_event("race_finish", {"mode": req.mode, "track": td.id, "variant": td.variant, "place": place, "time": me.time})
 	race.show_panel(ResultsScreen.make(race, results, summary))
+
+
+## Stardust (Super Upgrades currency): every local player's clean drifts,
+## plus a finishing bonus for player one outside Time Trial.
+func _bank_stardust(req: Dictionary, place: int, results: Array, summary: Dictionary) -> void:
+	var dust := 0
+	for r: Dictionary in results:
+		if r.get("human", false):
+			dust += int(r.stats.get("stardust", 0))
+	if req.mode != "tt":
+		dust += Upgrades.finish_bonus(place)
+	if dust > 0:
+		Upgrades.add_stardust(dust)
+		Save.stat_add("stardust", dust)
+	summary["stardust"] = dust
 
 
 func _line(summary: Dictionary, text: String, amount: int) -> void:
@@ -595,8 +662,7 @@ func _after_daily(req: Dictionary, me: Dictionary, summary: Dictionary) -> void:
 	if d.last_done == info.date:
 		summary.unlocks.append("Daily challenge already done today")
 		return
-	var yesterday := Time.get_date_string_from_unix_time(int(Time.get_unix_time_from_system()) - 86400)
-	d.streak = int(d.streak) + 1 if d.last_done == yesterday else 1
+	d.streak = int(d.streak) + 1 if d.last_done == day_before(info.date) else 1
 	d.best_streak = maxi(int(d.best_streak), int(d.streak))
 	d.last_done = info.date
 	_line(summary, "Daily challenge (streak %d)" % d.streak, int(info.reward))

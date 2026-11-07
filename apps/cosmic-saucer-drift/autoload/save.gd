@@ -18,6 +18,7 @@ const DEFAULT_SETTINGS := {
 	"glide_auto": false,            # wings unfold by themselves when airborne (always on with touch)
 	"mouse_controls": true,          # mouse = flight stick + throttle lever (desktop/web)
 	"key_hints": true,               # on-screen joystick + key chips with a keyboard/mouse
+	"biome": "auto",                 # volcanic scenery: auto (track default) | eerie | divine | off
 }
 
 var data := {}
@@ -38,7 +39,7 @@ func defaults() -> Dictionary:
 		"credits": 300,
 		"cup_stars": {},          # "cup:race" -> bitmask of the 3 stars
 		"cup_best": {},           # cup id -> best finishing place (1..8)
-		"pilots": ["zib", "nova"],
+		"pilots": start_pilot_ids(),   # every pilot with unlock "start"
 		"saucers": ["classic", "bubble"],
 		"upgrades": {},           # saucer id -> {stat: level}
 		"owned": {"paints": ["stock"], "decals": ["none"], "domes": ["clear"], "trails": ["cyan"]},
@@ -54,6 +55,8 @@ func defaults() -> Dictionary:
 		"daily": {"last_done": "", "streak": 0, "best_streak": 0},
 		"settings": DEFAULT_SETTINGS.duplicate(),
 		"ads": {"removed": false, "consent": "unknown", "sessions": 0, "races": 0, "since_interstitial": 0},
+		"last_race": {"track": "mars", "variant": 0, "class": -1},   # what RACE NOW repeats
+		"wonders": Upgrades.defaults(),   # Super Upgrades: Stardust, Wonder tiers, mods, overclock, perks
 		"tutorial_done": false,
 		"first_launch": Time.get_datetime_string_from_system(),
 	}
@@ -61,15 +64,23 @@ func defaults() -> Dictionary:
 
 func load_game() -> void:
 	data = defaults()
-	if not FileAccess.file_exists(PATH):
+	if not FileAccess.file_exists(PATH) and not FileAccess.file_exists(PATH + ".bak"):
+		_grant_start_pilots()
 		return
-	var f := FileAccess.open(PATH, FileAccess.READ)
-	if f == null:
-		return
-	var parsed: Variant = JSON.parse_string(f.get_as_text())
+	var parsed: Variant = _read(PATH)
+	if not (parsed is Dictionary):
+		# A half-written or damaged file: keep it aside and fall back to the
+		# last good copy (flush keeps one) instead of starting from zero.
+		if FileAccess.file_exists(PATH):
+			DirAccess.copy_absolute(PATH, PATH + ".corrupt-%d" % int(Time.get_unix_time_from_system()))
+		parsed = _read(PATH + ".bak")
+		if parsed is Dictionary:
+			push_warning("save: main file unreadable, restored the backup")
 	if parsed is Dictionary:
 		migrate(parsed)
 		_merge(data, parsed)
+	_fix_setting_types()
+	_grant_start_pilots()
 	data.ads.sessions = int(data.ads.sessions) + 1
 	mark()
 
@@ -110,13 +121,48 @@ func _process(dt: float) -> void:
 			flush()
 
 
+## Writes atomically: the new save goes to a temp file first and only then
+## replaces the real one, and the previous good save is kept as .bak. A
+## crash or a full disk mid-write can no longer leave an empty save.
 func flush() -> void:
 	_dirty = false
 	if disabled:
 		return
-	var f := FileAccess.open(PATH, FileAccess.WRITE)
-	if f:
-		f.store_string(JSON.stringify(data, "\t"))
+	var tmp := PATH + ".tmp"
+	var f := FileAccess.open(tmp, FileAccess.WRITE)
+	if f == null:
+		return
+	f.store_string(JSON.stringify(data, "\t"))
+	f.close()
+	if _read(tmp) == null:
+		return
+	if FileAccess.file_exists(PATH):
+		DirAccess.copy_absolute(PATH, PATH + ".bak")
+	DirAccess.rename_absolute(tmp, PATH)
+
+
+static func _read(path: String) -> Variant:
+	if not FileAccess.file_exists(path):
+		return null
+	var f := FileAccess.open(path, FileAccess.READ)
+	if f == null:
+		return null
+	var v: Variant = JSON.parse_string(f.get_as_text())
+	return v if v is Dictionary else null
+
+
+## JSON brings every number back as a float: give settings their default's
+## type again (Settings compares choices like 30 vs 30.0 and found no match).
+func _fix_setting_types() -> void:
+	var st: Dictionary = data.settings
+	for k: String in DEFAULT_SETTINGS:
+		var d: Variant = DEFAULT_SETTINGS[k]
+		if not st.has(k):
+			continue
+		if d is int and st[k] is float:
+			st[k] = int(st[k])
+		elif d is bool and not (st[k] is bool):
+			st[k] = bool(st[k])
 
 
 func _notification(what: int) -> void:
@@ -128,6 +174,9 @@ func _notification(what: int) -> void:
 func reset_all() -> void:
 	data = defaults()
 	flush()
+	# Volumes and the frame cap live outside the save data: apply them again.
+	Audio.apply_volumes()
+	Game.apply_frame_cap()
 
 
 # ---------------------------------------------------------------- settings
@@ -217,6 +266,33 @@ func has_pilot(id: String) -> bool:
 	return id in data.pilots
 
 
+static func start_pilot_ids() -> Array:
+	var out: Array = []
+	for p in Catalog.PILOTS:
+		if String(p.get("unlock", "")) == "start":
+			out.append(p.id)
+	return out
+
+
+## Pilots marked "start" fly for everyone, including saves from before they
+## were added (a saved pilot list replaces the default one when merged).
+func _grant_start_pilots() -> void:
+	for p in Catalog.PILOTS:
+		if String(p.get("unlock", "")) == "start" and not has_pilot(p.id):
+			data.pilots.append(p.id)
+
+
+## Pilots with unlock "credits" are bought with Race Credits.
+func buy_pilot(id: String) -> bool:
+	var p := Catalog.pilot(id)
+	if has_pilot(id) or String(p.get("unlock", "")) != "credits":
+		return false
+	if not spend(int(p.get("price", 0))):
+		return false
+	unlock_pilot(id)
+	return true
+
+
 func unlock_pilot(id: String) -> void:
 	if not has_pilot(id):
 		data.pilots.append(id)
@@ -293,6 +369,8 @@ func take_shard(track_id: String, slot: int) -> bool:
 func shard_total() -> int:
 	var t := 0
 	for k in data.shards:
+		if not (k in Catalog.TRACK_IDS):
+			continue   # e.g. shards an old 2-player bug saved under a bad track id
 		for b in data.shards[k]:
 			if b:
 				t += 1

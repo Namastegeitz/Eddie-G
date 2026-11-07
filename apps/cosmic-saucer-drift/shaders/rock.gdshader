@@ -17,7 +17,9 @@ float vnoise(vec2 p) {
 }
 void vertex() {
 	wpos = (MODEL_MATRIX * vec4(VERTEX, 1.0)).xyz;
-	wn = normalize((MODEL_MATRIX * vec4(NORMAL, 0.0)).xyz);
+	// Inverse-transpose: spires are scaled about (10, 100, 10), and the plain
+	// model matrix tipped their side normals up so 75% of them got "top dust".
+	wn = normalize(transpose(inverse(mat3(MODEL_MATRIX))) * NORMAL);
 }
 void fragment() {
 	vec3 col = color;

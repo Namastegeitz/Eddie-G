@@ -26,6 +26,11 @@ var _center_t := 0.0
 var _roll_t := 0.0
 var _splats: Array[Vector3] = []
 var _glide_lbl: Label
+var _wonder: WonderMeter
+var _dust_lbl: Label
+var _dust_shown := -1
+var _shown_place := -1
+var _shown_emergency := true
 var _glide_toasts := 0
 var _rng := RandomNumberGenerator.new()
 var _lines: ColorRect
@@ -98,6 +103,18 @@ func setup(p_race: Node, p_racer: Racer, is_compact: bool) -> void:
 	_item_name = UiKit.label("", int(18 * k), UiKit.DIM)
 	add_child(_item_name)
 	UiKit.place(_item_name, Vector2(0, 0), Vector2(26, 200 * k), Vector2(260, 30))
+	# Technical Wonder meter beside the item slot (premium craft with a Wonder).
+	if racer.wonder:
+		_wonder = WonderMeter.new()
+		_wonder.racer = racer
+		_wonder.k = k
+		add_child(_wonder)
+		# Beside the item slot (below it, the COCKPIT tab covers the left edge).
+		UiKit.place(_wonder, Vector2(0, 0), Vector2(26 + 108 * k, 104 * k), Vector2(190, 70) * k)
+	# Stardust earned this race (clean drifts), under the speed readout.
+	_dust_lbl = UiKit.label("", int(20 * k), Color(1.0, 0.75, 0.95), HORIZONTAL_ALIGNMENT_RIGHT)
+	add_child(_dust_lbl)
+	UiKit.place(_dust_lbl, Vector2(1, 0), Vector2(-220, 248 * k), Vector2(200, 30))
 	# Lap + time (top centre).
 	var top := UiKit.vbox(0)
 	add_child(top)
@@ -278,6 +295,14 @@ func _on_event(kind: String, d: Dictionary) -> void:
 			toast("WHOOSH!", UiKit.CYAN)
 		"item_roll":
 			_roll_t = 0.9
+		"stardust":
+			toast("CLEAN DRIFT  +%d ✦" % int(d.amount), Color(1.0, 0.75, 0.95))
+		"wonder":
+			toast(String(racer.wonder.def.name).to_upper() + "!", racer.wonder.color.lightened(0.2))
+		"burnout":
+			toast("BURNOUT! Wonder offline - ease off the overclock", UiKit.RED)
+		"pulsed":
+			toast("MAGNETAR PULSE!", Color(0.75, 0.6, 1.0))
 
 
 func _process(dt: float) -> void:
@@ -291,13 +316,20 @@ func _process(dt: float) -> void:
 		_rotate_hint_shown = true
 		toast("Tip: turn your phone sideways for a wider view", UiKit.DIM)
 	var n: int = race.racers.size()
-	_place.text = UiKit.ordinal(racer.place)
-	_place.add_theme_color_override("font_color", UiKit.GOLD if racer.place == 1 else Color.WHITE)
+	# Theme overrides re-lay-out the label: only touch them on a change.
+	if racer.place != _shown_place:
+		_shown_place = racer.place
+		_place.text = UiKit.ordinal(racer.place)
+		_place.add_theme_color_override("font_color", UiKit.GOLD if racer.place == 1 else Color.WHITE)
 	_place_of.text = "/%d" % n
 	var laps: int = race.td.laps
 	_lap.text = "LAP %d/%d" % [clampi(racer.lap, 1, laps), laps] if not racer.finished else "FINISHED"
 	_time.text = UiKit.time_str(race.time if not racer.finished else racer.finish_time)
 	_speed.text = "%d km/h" % int(maxf(racer.fwd_speed, 0.0) * 3.6)
+	var dust := int(racer.stats.get("stardust", 0))
+	if dust != _dust_shown:
+		_dust_shown = dust
+		_dust_lbl.text = "✦ %d" % dust if dust > 0 else ""
 	# Item slot with roulette.
 	if racer.item_roll > 0.0:
 		_roll_t -= dt
@@ -309,8 +341,10 @@ func _process(dt: float) -> void:
 		_item_name.text = Catalog.ITEMS[racer.item].name if racer.item != "" else ""
 		if racer.item_uses > 1:
 			_item_name.text += "  x%d" % racer.item_uses
-	_energy_lbl.text = "EMERGENCY HOVER - GRAB A POD!" if racer.emergency else "DARK MATTER CORE"
-	_energy_lbl.add_theme_color_override("font_color", UiKit.RED if racer.emergency else UiKit.CYAN)
+	if racer.emergency != _shown_emergency:
+		_shown_emergency = racer.emergency
+		_energy_lbl.text = "EMERGENCY HOVER - GRAB A POD!" if racer.emergency else "DARK MATTER CORE"
+		_energy_lbl.add_theme_color_override("font_color", UiKit.RED if racer.emergency else UiKit.CYAN)
 	if _center_t > 0.0:
 		_center_t -= dt
 		if _center_t <= 0.0:

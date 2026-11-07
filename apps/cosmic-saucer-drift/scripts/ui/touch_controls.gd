@@ -42,11 +42,22 @@ func _ready() -> void:
 	_pedal_box.set_border_width_all(4)
 
 
+## A finger lifted while the game was paused (or the app lost focus) never
+## sends its release here: forget every touch so nothing stays held.
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_PAUSED or what == NOTIFICATION_UNPAUSED or what == NOTIFICATION_APPLICATION_FOCUS_OUT:
+		if not _touches.is_empty() or _stick_id >= 0:
+			_touches.clear()
+			_stick_id = -1
+			_refresh()
+
+
 func _exit_tree() -> void:
 	InputRouter.touch.active = false
 	InputRouter.touch.steer = 0.0
 	InputRouter.touch.drift = false
 	InputRouter.touch.item = false
+	InputRouter.touch.wonder = false
 	InputRouter.touch.brake = 0.0
 	InputRouter.touch.throttle = 0.0
 
@@ -87,6 +98,9 @@ func _layout() -> void:
 		_buttons["right"] = Rect2(m * 2.0 + b, s.y - b - m, b, b)
 	_buttons["drift"] = Rect2(s.x - b * 1.25 - m, s.y - b * 1.25 - m, b * 1.25, b * 1.25)
 	_buttons["item"] = Rect2(s.x - b * 1.25 - m * 2.0 - b * 0.85, s.y - b * 0.85 - m, b * 0.85, b * 0.85)
+	if racer and racer.wonder:
+		# WONDER sits left of ITEM, only on craft with a Technical Wonder.
+		_buttons["wonder"] = Rect2(s.x - b * 1.25 - m * 3.0 - b * 0.85 - b * 0.74, s.y - b * 0.74 - m, b * 0.74, b * 0.74)
 	# Pedals: GAS tall on the right edge above DRIFT, BRAKE beside it.
 	_buttons["gas"] = Rect2(s.x - b * 0.8 - m, s.y - b * 1.25 - m * 2.0 - b * 1.05, b * 0.8, b * 1.05)
 	_buttons["brake"] = Rect2(s.x - b * 0.8 - m * 2.0 - b * 0.72, s.y - b * 1.25 - m * 2.0 - b * 0.8, b * 0.72, b * 0.8)
@@ -158,6 +172,7 @@ func _refresh() -> void:
 	var st := 0.0
 	var dr := false
 	var it := false
+	var wd := false
 	var br := 0.0
 	var gas := 0.0
 	for k in _touches:
@@ -172,6 +187,7 @@ func _refresh() -> void:
 					"right": st += 1.0
 					"drift": dr = true
 					"item": it = true
+					"wonder": wd = true
 					"brake": br = 1.0
 					"gas": gas = 1.0
 	st += stick_steer()
@@ -185,10 +201,11 @@ func _refresh() -> void:
 	InputRouter.touch.steer = clampf(st, -1.0, 1.0)
 	InputRouter.touch.drift = dr
 	InputRouter.touch.item = it
+	InputRouter.touch.wonder = wd
 	InputRouter.touch.brake = br
 	InputRouter.touch.throttle = gas
 	# A short buzz when a button goes down, so presses can be felt.
-	var now := {"drift": dr, "item": it, "brake": br > 0.0, "gas": gas > 0.0}
+	var now := {"drift": dr, "item": it, "wonder": wd, "brake": br > 0.0, "gas": gas > 0.0}
 	for k in now:
 		if now[k] and not _was_pressed.get(k, false):
 			InputRouter.rumble(0, 0.35, 0.018)
@@ -199,7 +216,8 @@ func _refresh() -> void:
 func _process(_dt: float) -> void:
 	# Redraw only when something on the controls changed (cheaper on phones).
 	var h := hash([_stick_id, _stick_knob.round(), _touches.size(), racer.drift_tier if racer else 0,
-		racer != null and not racer.grounded and racer.air_time > 0.15, racer.item if racer else "", _touches.values()])
+		racer != null and not racer.grounded and racer.air_time > 0.15, racer.item if racer else "", _touches.values(),
+		int(racer.wonder.charge / 5.0) if racer and racer.wonder else -1, racer.wonder.status_text() if racer and racer.wonder else ""])
 	if h != _sig_h:
 		_sig_h = h
 		queue_redraw()
@@ -238,6 +256,24 @@ func _draw() -> void:
 				if racer and racer.item != "" and racer.item_roll <= 0.0:
 					edge = Catalog.ITEMS[racer.item].color
 					c.a += 0.1
+			"wonder":
+				var w: Wonder = racer.wonder
+				label = "WONDER"
+				var wc := w.color
+				var ctr := r.get_center()
+				var wr := minf(r.size.x, r.size.y) * 0.5
+				edge = Color(wc, 0.35)
+				if w.ready():
+					edge = Color(wc, 0.95)
+					c.a += 0.12
+					label = "FIRE"
+				elif w.burnout > 0.0:
+					edge = Color(1.0, 0.3, 0.2, 0.8)
+					label = "BURNT"
+				# Charge ring (and heat, when overclocked) just outside the button.
+				draw_arc(ctr, wr + 7.0, -PI * 0.5, -PI * 0.5 + TAU * w.charge / 100.0, 40, Color(wc, 0.9), 6.0)
+				if w.overclocked() and w.heat > 1.0:
+					draw_arc(ctr, wr + 14.0, -PI * 0.5, -PI * 0.5 + TAU * w.heat / 100.0, 40, Color(1.0, 0.45, 0.1).lerp(Color(1, 0.1, 0.1), w.heat / 100.0), 4.0)
 			"brake":
 				_draw_pedal(r, "BRAKE", Color(1.0, 0.35, 0.3), held, font)
 				continue

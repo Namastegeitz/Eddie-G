@@ -133,6 +133,20 @@
   Android AAB + Play internal track with GodotGooglePlayBilling, iOS via a Mac or Codemagic.
 
 ## Cosmic Saucer Drift (`apps/cosmic-saucer-drift`)
+- Upgrade pass (docs/UPGRADE_AUDIT.md): four audits of every system; verified bugs fixed (atomic save + backup,
+  Android Back, ghost, finished AI, pause during load, dynamic resolution at 30 fps, EMP pool leak, leech/comet/
+  repulsor rules, split-screen sound, road surface bands, skyway lip/wall, billboards, rock normals, touch after
+  pause, HUD/hint redraws, daily streak dates, achievements that follow content) plus perf fixes.
+- Data-driven: effects keys (scripts/data/effects.gd) replace passive/perk branches; content/*.json + drop-in
+  packs (autoload/content.gd) for pilots, craft, mods, sets, Wonders, biomes; schemas in docs/SCHEMAS.md.
+- RACE NOW (one tap) + Racers page before every race (portraits, live close-up, rivals, START); 8 creature pilots.
+- Super Upgrades: Stardust from clean drifts, 3-tier Technical Wonder per premium craft (Photon Spinnaker,
+  Lighthouse Cloak, Relativistic Jet, Stellar Harvest; R / R3 / D-pad down / touch WONDER), Core/Field/Drive mods
+  with set bonuses, overclock heat + burnout, global perks; Super Upgrades screen + Hangar Wonder/Mods tab.
+- Volcanic biomes Eerie and Divine (content/biomes.json): procedural low-poly formations with LODs, lava rivers,
+  smoke, mist, lighting; Settings > Volcanic biome. Meshy pipeline (tools/meshy/generate.py) + import slots;
+  NOT run: this session had no Meshy key and api.meshy.ai was blocked, so the slots are empty and the procedural
+  formations stand in. Tested offline with a mock API (tools/meshy/test_pipeline.py) and a game-made GLB fixture.
 - v1 built from `prompts/claude/cosmic-saucer-drift.md` (concept + every add-on: extra weapons, pro
   moves, living tracks + secrets, rivals + boss races, cups, time trial + ghost, daily, 2P split-screen,
   cosmetics, reverse/mirror, achievements; free/no ads with an ads layer switched off).

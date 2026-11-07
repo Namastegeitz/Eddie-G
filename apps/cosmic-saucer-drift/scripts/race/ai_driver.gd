@@ -170,9 +170,25 @@ func drive(r: Racer, dt: float) -> void:
 	r.in_item = false
 	if r.item != "" and r.item_roll <= 0.0 and not cruise:
 		_item_wait -= dt
-		if _item_wait <= 0.0 and r.race.items.ai_should_use(r, style, skill):
-			r.in_item = true
-			_item_wait = _rng.randf_range(0.3, 1.0)
+		if _item_wait <= 0.0:
+			if r.race.items.ai_should_use(r, style, skill):
+				r.in_item = true
+				_item_wait = _rng.randf_range(0.3, 1.0)
+			else:
+				# Ask again shortly, not every tick (chance rolls used to be
+				# re-rolled 60 times a second, so skill made no difference).
+				_item_wait = 0.2
+	# ------------------------------------------------ Technical Wonder
+	r.in_wonder = false
+	if r.wonder and not cruise and r.wonder.ready():
+		r.in_wonder = r.wonder.ai_wants(_need_cache < 0.004, _rival_near(r, 12.0))
+
+
+func _rival_near(r: Racer, dist: float) -> bool:
+	for o: Racer in r.race.racers:
+		if o != r and not o.is_ghost and not o.finished and o.global_position.distance_squared_to(r.global_position) < dist * dist:
+			return true
+	return false
 
 
 ## Steer toward pods when low on energy, crates when empty-handed.
@@ -219,7 +235,10 @@ func _avoid_inner(r: Racer, s_here: float, lat: float, hw: float) -> float:
 		if ds > 2.0 and ds < 14.0:
 			var dl: float = o.lateral - r.lateral
 			if style == "aggressive" and absf(dl) < 5.0 and _rng.randf() < 0.5 * skill:
-				return o.lateral
+				# Ram them, but still dodge mines and hazards below (this used
+				# to return here and drive straight through traps).
+				out = o.lateral
+				break
 			if absf(dl) < 2.6:
 				out = o.lateral + (3.6 if o.lateral < 0.0 else -3.6)
 	if race.items:

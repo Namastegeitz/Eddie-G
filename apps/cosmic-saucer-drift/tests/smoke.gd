@@ -23,16 +23,15 @@ func _ready() -> void:
 	get_tree().current_scene = holder
 	Save.disabled = true
 	Save.data = Save.defaults()
-	await _data()
-	await _save_tests()
-	await _game_logic()
-	await _ads()
-	await _achievements()
-	await _items_tests()
-	await _skyway_tests()
-	await _gfx_tests()
-	await _races()
-	await _menus()
+	# CSD_SMOKE=skyway,wonder runs just those groups (all of them by default).
+	var only := OS.get_environment("CSD_SMOKE").split(",", false)
+	var groups := [["data", _data], ["save", _save_tests], ["logic", _game_logic], ["ads", _ads],
+		["achievements", _achievements], ["items", _items_tests], ["skyway", _skyway_tests],
+		["upgrades", _upgrades_tests], ["biome", _biome_tests], ["wonder", _wonder_tests],
+		["gfx", _gfx_tests], ["races", _races], ["menus", _menus]]
+	for g: Array in groups:
+		if only.is_empty() or String(g[0]) in only:
+			await (g[1] as Callable).call()
 	print("SMOKE %d passed, %d failed" % [passed, failed])
 	get_tree().quit(1 if failed > 0 else 0)
 
@@ -388,7 +387,10 @@ func _gfx_tests() -> void:
 		fx.sparks(Vector3(k, 0, 0), Vector3.UP, Color.ORANGE)
 		fx.dust(Vector3(k, 0, 0), Vector3.UP, Color.TAN)
 	check("fx pools stay fixed", fx.get_child_count() == RaceFx.RINGS + RaceFx.FLASHES + RaceFx.BURSTS)
-	for i in 40:
+	# Rings live 0.45 s of real time: wait for that, not a frame count
+	# (headless frames can be far shorter than 1/60 s).
+	var t_fx := Time.get_ticks_msec()
+	while Time.get_ticks_msec() - t_fx < 700:
 		await get_tree().process_frame
 	var lit := 0
 	for r in fx._rings:
@@ -797,15 +799,15 @@ func _items_tests() -> void:
 	for f in 40:
 		await get_tree().physics_frame
 	# Effect nodes are pooled at load and reused (no building mid-race).
-	check("effect pools built at load", race.items.pooled("mine") == Items.MAX_MINES and race.items.pooled("bolt") == 8 and race.items.pooled("rocket") == 3)
-	check("new power-up effects pooled", race.items.pooled("portal") == 2 and race.items.pooled("decoy") == 2 and race.items.pooled("well") == 2 and race.items.pooled("leech_beam") == 3 and race.items.pooled("charge_dome") == 2)
+	check("effect pools built at load", race.items.pooled("mine") == Items.MAX_MINES and race.items.pooled("bolt") == 8 and race.items.pooled("rocket") == _ps("rocket"))
+	check("new power-up effects pooled", ["portal", "decoy", "well", "leech_beam", "charge_dome"].all(func(k: String) -> bool: return race.items.pooled(k) == _ps(k)))
 	check("ice multimesh ready", race.items._ice_mm != null and race.items._ice_mm.multimesh.instance_count == Items.MAX_ICE and race.items._ice_free.size() == Items.MAX_ICE)
 	check("shield badges pre-made for every racer", race.items._badges.size() == 8)
 	var n0 := race.items.get_child_count()
 	var taken := race.items._take("rocket")
-	check("take shows a pooled node", taken.visible and race.items.pooled("rocket") == 2)
+	check("take shows a pooled node", taken.visible and race.items.pooled("rocket") == _ps("rocket") - 1)
 	race.items._give("rocket", taken)
-	check("give hides it and keeps the node count", not taken.visible and race.items.pooled("rocket") == 3 and race.items.get_child_count() == n0)
+	check("give hides it and keeps the node count", not taken.visible and race.items.pooled("rocket") == _ps("rocket") and race.items.get_child_count() == n0)
 	await race.items.warm_up(race.cams[0] if not race.cams.is_empty() else null)
 	var leftovers := 0
 	for kind in Items.POOL_SIZES:
@@ -1062,7 +1064,7 @@ func _new_items_tests(race: Race) -> void:
 	for k in range(3, rs.size()):
 		_place_on_track(race, rs[k], 900.0 + k * 40.0, 0.0)
 	race.items.clear_effects()
-	check("clear_effects refills every pool", race.items.pooled("rocket") == 3 and race.items.pooled("mine") == Items.MAX_MINES and race.items.pooled("boosters") == 2)
+	check("clear_effects refills every pool", race.items.pooled("rocket") == _ps("rocket") and race.items.pooled("mine") == Items.MAX_MINES and race.items.pooled("boosters") == _ps("boosters"))
 	# Overcharge: a full core gives the longest boost and burns 60%.
 	_place_on_track(race, a, 100.0, 0.0)
 	_place_on_track(race, b, 130.0, 0.0)
@@ -1083,7 +1085,7 @@ func _new_items_tests(race: Race) -> void:
 	race.items.use_item(a)
 	var jumped := a.race_dist - d0
 	check("warp from last place jumps about 80 m", jumped > 70.0 and jumped < 90.0)
-	check("warp opens two portals", race.items.pooled("portal") == 0)
+	check("warp opens two portals", race.items.pooled("portal") == _ps("portal") - 2)
 	check("warp lands on the road", absf(a.lateral) < race.td.width * 0.5 and race.td.gap[a.track_idx] == 0)
 	a.place = 1
 	_place_on_track(race, a, 100.0, 0.0)
@@ -1160,7 +1162,7 @@ func _new_items_tests(race: Race) -> void:
 	for L in race.items.leeches:
 		L.t = 0.0
 	await get_tree().physics_frame
-	check("leech effects returned to the pools", race.items.leeches.is_empty() and race.items.pooled("leech_beam") == 3 and race.items.pooled("leech_aura") == 2)
+	check("leech effects returned to the pools", race.items.leeches.is_empty() and race.items.pooled("leech_beam") == _ps("leech_beam") and race.items.pooled("leech_aura") == _ps("leech_aura"))
 	# Gravity Well: dropped behind, pulls and slows a racer that enters it.
 	_place_on_track(race, a, 200.0, 0.0)
 	a.item = "well"
@@ -1180,7 +1182,7 @@ func _new_items_tests(race: Race) -> void:
 	b.velocity = v0
 	w.t = 0.0
 	await get_tree().physics_frame
-	check("well cleared from the pool", race.items.wells.is_empty() and race.items.pooled("well") == 2)
+	check("well cleared from the pool", race.items.wells.is_empty() and race.items.pooled("well") == _ps("well"))
 	race.items.clear_effects()
 	# Frost Trail: ice laid behind as the owner drives; others slide on it.
 	_place_on_track(race, a, 300.0, 0.0)
@@ -1255,7 +1257,7 @@ func _more_items_tests(race: Race) -> void:
 	a.item_uses = 1
 	race.items.use_item(a)
 	check("chain lightning hits two racers", b.spin_time > 0.0 and c.spin_time > 0.0)
-	check("chain bolts come from the pool", race.items.pooled("chain_bolt") <= 1)
+	check("chain bolts come from the pool", race.items.pooled("chain_bolt") < _ps("chain_bolt"))
 	for r: Racer in [b, c]:
 		r.spin_time = 0.0
 		r.invuln_time = 0.0
@@ -1386,15 +1388,22 @@ func _glide_tests(race: Race) -> void:
 ## A saucer that takes the Io skyway ramp at racing speed and glides lands on
 ## the hidden strip; one that doesn't glide comes down short.
 func _skyway_tests() -> void:
+	# Every skyway (Io, Mars, Kepler-16b): a gliding player lands on the
+	# hidden strip; without the wings the jump falls short.
+	for tid in ["io", "mars", "kepler16b"]:
+		await _skyway_test(tid)
+
+
+func _skyway_test(tid: String) -> void:
 	Save.data = Save.defaults()
-	var req := Game.quick_request("io", 0, 1)
+	var req := Game.quick_request(tid, 0, 1)
 	req.fast = true
 	req.bot_humans = true
 	Game.start(req)
 	await get_tree().process_frame
 	await get_tree().process_frame
 	var race: Race = get_tree().current_scene as Race
-	check("skyway test race loaded", race != null and race.td.short_glide)
+	check("skyway test race loaded (%s)" % tid, race != null and race.td.short_glide)
 	if race == null or not race.td.short_glide:
 		return
 	for f in 40:
@@ -1414,15 +1423,21 @@ func _skyway_tests() -> void:
 		a.is_human = true
 		a.auto_glide = glide
 		a.in_glide = false
-		var lane := float(td.short_side) * (td.width * 0.5 - 5.0)
-		# Start at the foot of the ramp, lined up with it (a player steers in).
-		var i := path.index_at(td.short_a - 20.0)
+		# Start just before the skyway ramp's foot, lined up with the ramp
+		# (yawed up to 40 degrees off the road), as a player would steer in.
+		var sky_ramp: Dictionary = {}
+		for rp: Dictionary in td.ramps:
+			if absf(float(rp.get("lane", 0.0))) > 0.5 and absf(float(rp.s1) - td.short_a) < 1.0:
+				sky_ramp = rp
+		var lane := float(sky_ramp.get("lane", 0.0))
+		var i := path.index_at(float(sky_ramp.get("s0", td.short_a - 30.0)) - 12.0)
+		var hd := path.tan[i].rotated(path.upv[i], -float(sky_ramp.get("yaw", 0.0)))
 		a.global_position = path.pts[i] + path.rgt[i] * lane + path.upv[i] * 0.9
-		a.heading = path.tan[i]
+		a.heading = hd
 		a.up = path.upv[i]
 		a.track_idx = i
 		a.prev_s = path.along(i, a.global_position)
-		a.race_dist = td.short_a - 20.0
+		a.race_dist = float(sky_ramp.get("s0", td.short_a - 30.0)) - 12.0
 		a.velocity = a.heading * 48.0
 		a.in_throttle = 1.0
 		a.in_steer = 0.0
@@ -1433,14 +1448,16 @@ func _skyway_tests() -> void:
 		var rescued := false
 		var peak := 0.0
 		var rescues0: int = int(a.stats.get("rescues", 0))
-		var aim: Vector3 = td.skyway.to + (td.skyway.dir as Vector3) * 60.0
+		var aim: Vector3 = td.skyway.to + (td.skyway.dir as Vector3) * 40.0
 		for f in 300:
 			# Aim at the strip as a player would.
 			var to_land := aim - a.global_position
 			var rgt := a.heading.cross(a.up).normalized()
 			a.in_steer = clampf(atan2(to_land.dot(rgt), to_land.dot(a.heading)) * 2.0, -1.0, 1.0)
 			await get_tree().physics_frame
-			peak = maxf(peak, a.global_position.y - path.pts[i].y)
+			# Height above the ramp's lip: a soft float never climbs much
+			# past where it took off (the road nearby can dip or climb).
+			peak = maxf(peak, a.global_position.y - (td.skyway.from as Vector3).y)
 			if a.on_shortcut and a.grounded:
 				landed = true
 				break
@@ -1452,6 +1469,325 @@ func _skyway_tests() -> void:
 		_place_on_track(race, a, 100.0, 0.0)
 		for f in 10:
 			await get_tree().physics_frame
-	check("gliding off the skyway ramp lands on the hidden strip", results[true].landed and not results[true].rescued)
-	check("the glide never climbs high (a soft float)", results[true].peak < 14.0)
-	check("without the wings the jump comes down short", not results[false].landed)
+	check("%s: gliding off the skyway ramp lands on the hidden strip" % tid, results[true].landed and not results[true].rescued, str(results[true]))
+	check("%s: the glide never climbs high above the lip (a soft float)" % tid, results[true].peak < 8.0, str(results[true].peak))
+	check("%s: without the wings the jump comes down short" % tid, not results[false].landed)
+	print("  skyway %s: glide peak %.1f m above the lip, landed %s" % [tid, float(results[true].peak), results[true].landed])
+
+
+# ---------------------------------------------------------------- content, effects, super upgrades
+func _upgrades_tests() -> void:
+	Save.data = Save.defaults()
+	check("content: 4 Wonders, one per premium craft", Content.wonders.size() == 4 and Content.wonder_for("sail").mechanic == "spinnaker"
+		and Content.wonder_for("phantom").mechanic == "lighthouse" and Content.wonder_for("dragon").mechanic == "jet" and Content.wonder_for("dyson").mechanic == "harvest")
+	check("content: 3 slots, 4 sets, 15 mods", Content.slots.size() == 3 and Content.sets.size() == 4 and Content.mods.size() == 15)
+	check("content: overclock has 4 levels", (Content.overclock.levels as Array).size() == 4)
+	check("content loads with no issues", Content.issues.is_empty(), ", ".join(Content.issues))
+	check("tier params inherit (Refined keeps 'beats')", int(Content.wonder_for("phantom").tiers[1].params.get("beats", 0)) == 2)
+	check("json colours become Colors", Content.norm("#ff0000") is Color and Content.norm(2.0) is int)
+	var fx := Effects.sum([{"top_speed_pct": 10}, {"top_speed_pct": 10, "regen": 0.3}, {"start_item": "shield"}])
+	check("effects add up and clamp", is_equal_approx(float(fx.top_speed_pct), 15.0) and is_equal_approx(float(fx.regen), 0.3) and fx.start_item == "shield")
+	check("effects describe themselves", Effects.describe({"top_speed_pct": 5}).size() == 1)
+	check("unknown effect keys are reported", Effects.unknown_keys({"warp_factor": 9}).size() == 1)
+	# Every pilot and craft only uses known effect keys.
+	var bad := 0
+	for p in Catalog.PILOTS:
+		bad += Effects.unknown_keys(p.get("effects", {})).size()
+	for c in Catalog.SAUCERS:
+		bad += Effects.unknown_keys(c.get("effects", {})).size()
+	check("pilots and craft use known effect keys", bad == 0)
+	# Creatures.
+	check("16 pilots, 8 of them creatures", Catalog.PILOTS.size() == 16 and Catalog.PILOTS.filter(func(p: Dictionary) -> bool: return p.get("kind", "") == "creature").size() == 8)
+	check("two creatures fly from the start", Save.has_pilot("imp") and Save.has_pilot("moth"))
+	Save.data.pilots = ["zib"]
+	Save._grant_start_pilots()
+	check("old saves get the starter creatures", Save.has_pilot("imp") and Save.has_pilot("nova"))
+	Save.data.credits = 1000
+	check("credit creatures can be bought", Save.buy_pilot("seer") and Save.has_pilot("seer") and Save.credits() == 400)
+	check("boss creatures can't be bought", not Save.buy_pilot("wraith"))
+	# Stardust.
+	check("stardust for a clean 2 s drift", Upgrades.drift_stardust(2.0, 60.0, 2, true) == 11, str(Upgrades.drift_stardust(2.0, 60.0, 2, true)))
+	check("no stardust for a dirty drift", Upgrades.drift_stardust(2.0, 60.0, 2, false) == 0)
+	check("no stardust for a short drift", Upgrades.drift_stardust(0.5, 20.0, 1, true) == 0)
+	# Wonder track.
+	Upgrades.add_stardust(5000)
+	check("can't build a Wonder on a craft you don't own", not Upgrades.buy_tier("sail"))
+	Save.unlock_saucer("sail")
+	check("build Prototype", Upgrades.buy_tier("sail") and Upgrades.tier("sail") == 1 and Upgrades.stardust() == 4750)
+	var kit := Upgrades.kit_for("sail")
+	check("kit carries the Wonder", kit.has("wonder") and int(kit.wonder.tier) == 1)
+	check("no Wonder for a standard craft", not Upgrades.kit_for("classic").has("wonder") and Upgrades.next_cost("classic") == -1)
+	# Mods and sets.
+	for id in ["fusion_heart", "corona_veil", "helio_thrusters", "null_reactor"]:
+		check("buy mod " + id, Upgrades.buy_mod(id))
+	check("can't buy a mod twice", not Upgrades.buy_mod("fusion_heart"))
+	check("a mod only fits its slot", not Upgrades.fit("sail", "drive", "fusion_heart"))
+	Upgrades.fit("sail", "core", "fusion_heart")
+	Upgrades.fit("sail", "field", "corona_veil")
+	check("two of a set is no set", Upgrades.set_bonus("sail").is_empty())
+	Upgrades.fit("sail", "drive", "helio_thrusters")
+	check("full Helios set gives its bonus", Upgrades.set_bonus("sail").get("id", "") == "helios")
+	kit = Upgrades.kit_for("sail")
+	check("kit sums mods and set bonus", is_equal_approx(float(kit.effects.get("boost_energy", 0)), 1.5) and is_equal_approx(float(kit.effects.get("top_speed_pct", 0)), 2.0))
+	Upgrades.fit("sail", "core", "null_reactor")
+	check("swapping a mod breaks the set", Upgrades.set_bonus("sail").is_empty())
+	# Transcendent: global perk for every craft.
+	check("Refined", Upgrades.buy_tier("sail") and Upgrades.tier("sail") == 2)
+	check("Transcendent", Upgrades.buy_tier("sail") and Upgrades.tier("sail") == 3)
+	check("no tier past Transcendent", not Upgrades.buy_tier("sail"))
+	check("maxed track unlocks a global perk", Upgrades.perks().size() == 1 and Upgrades.perks()[0].id == "solar_wind")
+	check("global perk reaches other craft", is_equal_approx(float(Upgrades.kit_for("classic").effects.get("drift_charge_pct", 0)), 6.0))
+	# Overclock.
+	check("no heat at Stock", Upgrades.heat_per_use("sail") == 0.0)
+	Upgrades.set_overclock("sail", 3)
+	check("Critical overclock heats up", Upgrades.overclock("sail") == 3 and Upgrades.heat_per_use("sail") > 50.0)
+	check("Void reactor cools", Upgrades.heat_per_use("sail", {"heat_pct": -20}) < Upgrades.heat_per_use("sail"))
+	# Save round trip (JSON turns ints into floats).
+	var saved: Dictionary = JSON.parse_string(JSON.stringify(Save.data))
+	var back := Save.defaults()
+	Save.migrate(saved)
+	Save._merge(back, saved)
+	var keep := Save.data
+	Save.data = back
+	check("super upgrades survive a save round trip", Upgrades.tier("sail") == 3 and Upgrades.owns_mod("null_reactor") and Upgrades.fitted("sail").core == "null_reactor" and Upgrades.overclock("sail") == 3 and Upgrades.perks().size() == 1)
+	Save.data = keep
+	# A drop-in content pack (docs/examples/example_pack.json): new pilot,
+	# craft, mod set and mods with no code changes.
+	var np := Catalog.PILOTS.size()
+	var nc := Catalog.SAUCERS.size()
+	Content._load_file("res://docs/examples/example_pack.json", true)
+	check("pack adds a pilot and a craft", Catalog.PILOTS.size() == np + 1 and Catalog.SAUCERS.size() == nc + 1)
+	check("pack loads cleanly", Content.issues.is_empty(), ", ".join(Content.issues))
+	var gp := Catalog.pilot("glimmer")
+	check("pack pilot keeps its data", gp.id == "glimmer" and gp.look.iris is Color and is_equal_approx(float(gp.effects.near_energy_pct), 80.0))
+	var pm := PilotModel.new()
+	add_child(pm)
+	pm.build(gp, 0.35, true, 30.0)
+	check("pack pilot builds its own face", pm._eyes.size() == 3)
+	pm.free()
+	for id in ["aurora_core", "aurora_veil", "aurora_drive"]:
+		Upgrades.st().mods.append(id)
+	Upgrades.fit("classic", "core", "aurora_core")
+	Upgrades.fit("classic", "field", "aurora_veil")
+	Upgrades.fit("classic", "drive", "aurora_drive")
+	check("pack mod set gives its bonus", Upgrades.set_bonus("classic").get("id", "") == "aurora")
+	check("pack craft uses an existing shape", Catalog.saucer("comet_skiff").shape == "manta")
+	# Take the pack out again so the rest of the suite sees stock content.
+	Catalog.PILOTS.erase(gp)
+	Catalog.SAUCERS.erase(Catalog.saucer("comet_skiff"))
+	for id in ["aurora_core", "aurora_veil", "aurora_drive"]:
+		Content.mods.erase(Content.mod_by_id[id])
+		Content.mod_by_id.erase(id)
+	Content.sets.erase(Content.set_by_id["aurora"])
+	Content.set_by_id.erase("aurora")
+	Content.packs.clear()
+	Save.data = Save.defaults()
+
+
+func _wonder_race(craft: String, tier: int, lvl: int) -> Race:
+	Save.data = Save.defaults()
+	Save.unlock_saucer(craft)
+	Save.data.garage.saucer = craft
+	Upgrades.st().tiers[craft] = tier
+	Upgrades.set_overclock(craft, lvl)
+	var req := Game.quick_request("mars", 0, 0)
+	req.fast = true
+	req.bot_humans = true
+	Game.start(req)
+	await get_tree().process_frame
+	await get_tree().process_frame
+	var race: Race = get_tree().current_scene as Race
+	var f := 0
+	while race and not race.loaded and f < 600:
+		await get_tree().process_frame
+		f += 1
+	for i in 10:
+		await get_tree().physics_frame
+	race.racing = true
+	for r: Racer in race.racers:
+		if r.frozen:
+			r.on_go()
+	return race
+
+
+func _drive_free(race: Race, r: Racer, s_m: float) -> void:
+	r.controller = null
+	_place_on_track(race, r, s_m, 0.0)
+	r.velocity = r.heading * 30.0
+	r.in_throttle = 1.0
+	r.in_brake = 0.0
+	r.in_drift = false
+	r.in_steer = 0.0
+	r.in_wonder = false
+	r.reset_physics_interpolation()
+
+
+func _wonder_tests() -> void:
+	for craft in ["sail", "phantom", "dragon", "dyson"]:
+		var race := await _wonder_race(craft, 2, 0)
+		var me: Racer = race.racers[0] if race else null
+		check("%s: player's craft runs its Wonder" % craft, me != null and me.wonder != null and me.wonder.def.craft == craft)
+		if me == null or me.wonder == null:
+			continue
+		var w := me.wonder
+		check("%s: Refined params loaded" % craft, w.tier == 2 and not w.p.is_empty())
+		check("%s: other racers have no Wonder" % craft, race.racers.slice(1).all(func(o: Racer) -> bool: return o.wonder == null))
+		_drive_free(race, me, 120.0)
+		for k in range(1, race.racers.size()):
+			_drive_free(race, race.racers[k], 600.0 + 20.0 * k)
+			race.racers[k].in_throttle = 0.0
+		var rival: Racer = race.racers[1]
+		if craft == "phantom":
+			# A rival right beside us for the magnetar pulse.
+			_drive_free(race, rival, 121.0)
+			rival.global_position += rival.heading.cross(rival.up).normalized() * 4.0
+			rival.reset_physics_interpolation()
+		w.charge = 30.0
+		me.in_wonder = true
+		await get_tree().physics_frame
+		me.in_wonder = false
+		check("%s: can't fire below the minimum charge" % craft, w.uses == 0 if w.min_charge() > 30.0 else w.uses == 1)
+		w.charge = 100.0
+		w.active = 0.0
+		await get_tree().physics_frame
+		me.in_wonder = true
+		await get_tree().physics_frame
+		me.in_wonder = false
+		check("%s: WONDER fires at full charge" % craft, w.uses >= 1 and w.active > 0.0 and w.charge == 0.0)
+		var top := 0.0
+		var peak_mult := 1.0
+		var phased_on := false
+		var phased_off := false
+		for f in 90:
+			await get_tree().physics_frame
+			top = maxf(top, me.fwd_speed)
+			peak_mult = maxf(peak_mult, w.speed_mult())
+			if w.active > 0.0:
+				if me.phased():
+					phased_on = true
+				else:
+					phased_off = true
+		match craft:
+			"phantom":
+				check("lighthouse: phases on the beat, not all the time", phased_on and phased_off)
+				check("lighthouse: magnetar pulse shoves the rival", rival.wobble_time > 0.0 or rival.velocity.length() > 0.5)
+			_:
+				# (Mars is dusty: the surface itself trims top speed by 14%.)
+				check("%s: the Wonder pushes past top speed" % craft, peak_mult >= 1.2 and top > me.max_speed * 1.03, "%.1f vs %.1f, x%.2f" % [top, me.max_speed, peak_mult])
+		if craft == "sail":
+			race.stellar_wind = -Vector3(me.heading.x, 0, me.heading.z).normalized()
+			me.drift_dir = 1
+			check("spinnaker: tacking into the wind tightens the turn", w._tack() > 0.5 and w.turn_mult() > 1.05)
+			me.drift_dir = 0
+		if craft == "dyson":
+			w.charge = 0.0
+			w.active = 0.0
+			w.on_drift_end(2.0, false)
+			check("harvest: dirty drifts feed nothing", w.charge == 0.0)
+			w.on_drift_end(2.0, true)
+			check("harvest: clean drifts feed the swarm", w.charge > 20.0)
+		if craft == "dragon":
+			w.active = 1.0
+			check("jet: barely turns while venting", w.turn_mult() < 0.5)
+			w.active = 0.0
+	# Overclock and burnout.
+	var race2 := await _wonder_race("dragon", 1, 3)
+	var m2: Racer = race2.racers[0] if race2 else null
+	if m2 and m2.wonder:
+		var w2 := m2.wonder
+		check("overclocked Wonder is stronger", w2.power > 1.4 and w2.overclocked())
+		_drive_free(race2, m2, 150.0)
+		w2.charge = 100.0
+		w2.heat = 80.0
+		m2.in_wonder = true
+		await get_tree().physics_frame
+		m2.in_wonder = false
+		await get_tree().physics_frame
+		await get_tree().physics_frame
+		check("too much heat burns the Wonder out", w2.burnout > 0.0 and w2.charge == 0.0 and w2.burnouts == 1)
+		check("burnout sputters the engine", w2.sputter_mult() < 1.0)
+		w2.charge = 100.0
+		m2.in_wonder = true
+		await get_tree().physics_frame
+		m2.in_wonder = false
+		check("can't fire while burnt out", w2.uses == 1)
+	# Boss on a premium craft uses its Wonder; Stardust gets banked.
+	Save.data = Save.defaults()
+	var dust0 := Upgrades.stardust()
+	var br := await _race(Game.boss_request("wraith"))
+	check("boss wraith flies the Phantom with its Wonder", br != null and br.racers.size() == 2 and br.racers[1].wonder != null)
+	check("stardust banked after a race", Upgrades.stardust() > dust0 and int(Game.last_summary.get("stardust", 0)) > 0, "%d" % Upgrades.stardust())
+
+
+# ---------------------------------------------------------------- volcanic biomes
+func _biome_tests() -> void:
+	Save.data = Save.defaults()
+	check("two biomes, 3-4 formation variants each", Content.biomes.size() == 2 and Content.biomes.all(func(b: Dictionary) -> bool: return (b.formations as Array).size() >= 3 and (b.formations as Array).size() <= 4))
+	var bad := 0
+	for t in ["ridge", "cone", "columns", "shard", "crystals", "arch"]:
+		for d in [0, 2]:
+			var m := Formations.make({"type": t, "seed": 4}, d)
+			var box := m.get_aabb()
+			if m.get_surface_count() == 0 or box.position.y < -0.2 or absf(box.end.y - 1.0) > 0.02 or box.size.x > 2.05 or box.size.z > 2.05:
+				bad += 1
+	check("every formation recipe builds in unit space at both LODs", bad == 0)
+	check("far LOD is lighter", ContentReportProxy.tris(Formations.make({"type": "ridge", "seed": 1}, 0)) < ContentReportProxy.tris(Formations.make({"type": "ridge", "seed": 1}, 2)) / 3)
+	# Which biome a track gets.
+	check("auto: Io is Eerie", BiomeBuilder.pick_for("io", "io").get("id", "") == "eerie")
+	check("auto: 55 Cancri e is Divine", BiomeBuilder.pick_for("cancri_e", "cancri").get("id", "") == "divine")
+	check("auto: Mars keeps its canyon", BiomeBuilder.pick_for("mars", "mars").is_empty())
+	Save.data.settings.biome = "divine"
+	check("forced Divine reaches rocky worlds", BiomeBuilder.pick_for("mars", "mars").get("id", "") == "divine")
+	check("forced biome skips space tracks", BiomeBuilder.pick_for("saturn_rings", "saturn").is_empty())
+	Save.data.settings.biome = "off"
+	check("biome switch off", BiomeBuilder.pick_for("io", "io").is_empty())
+	Save.data.settings.biome = "auto"
+	# Import slot: a GLB dropped in replaces the recipe (fixture made by the game).
+	var test_b := {"id": "slot_test", "name": "Slot test", "palette": Content.biome("eerie").palette,
+		"formations": [{"id": "glb", "kind": "ridge", "ring": "far", "count": 1, "scale": [100, 100], "height": [80, 80],
+			"mesh": "res://tests/fixtures/formation_fixture.glb", "material": "biome", "recipe": {"type": "ridge"}},
+			{"id": "b", "kind": "cone", "ring": "mid", "count": 1, "scale": [50, 50], "height": [50, 50], "recipe": {"type": "cone"}},
+			{"id": "c", "kind": "spire", "ring": "near", "count": 1, "scale": [10, 10], "height": [40, 40], "recipe": {"type": "shard"}}]}
+	check("test biome validates", Content.add_biome(test_b, "smoke"))
+	var ms := BiomeBuilder.formation_meshes(Content.biome("slot_test"), test_b.formations[0])
+	check("import slot: GLB replaces the recipe", ms.source == "asset" and ms.near != null)
+	check("import slot: the importer made LODs", ContentReportProxy.lods(ms.near) > 0)
+	var ub: AABB = ms.norm * (ms.near as Mesh).get_aabb()
+	check("import slot: GLB normalised to unit space", absf(ub.position.y) < 0.01 and absf(ub.end.y - 1.0) < 0.01 and absf(ub.get_center().x) < 0.01 and absf(maxf(ub.size.x, ub.size.z) - 2.0) < 0.02, str(ub))
+	check("recipe used when the slot is empty", BiomeBuilder.formation_meshes(Content.biome("eerie"), Content.biome("eerie").formations[0]).source == "recipe")
+	Content.biomes.erase(Content.biome("slot_test"))
+	Content.biome_by_id.erase("slot_test")
+	# A full build on Io stays clear of the road and the shortcut.
+	for tid in ["io", "cancri_e"]:
+		var td := TrackData.make(tid, 0)
+		var biome := BiomeBuilder.pick(td)
+		var root := Node3D.new()
+		add_child(root)
+		var holder := BiomeBuilder.build(td, biome, root, TrackDecor._lowest(td) - 50.0)
+		var counts: Dictionary = BiomeBuilder.last_stats.get("counts", {})
+		check("%s: every formation variant placed" % tid, counts.size() == (biome.formations as Array).size() and counts.values().all(func(c: int) -> bool: return c >= 2), str(counts))
+		check("%s: lava rivers and pools" % tid, holder.get_node_or_null("LavaRivers") != null and holder.get_node_or_null("LavaPools") != null)
+		var grid := BiomeBuilder.TrackGrid.new(td)
+		var hits := 0
+		for c in holder.get_children():
+			if c is MeshInstance3D and (c as MeshInstance3D).material_override is ShaderMaterial and ((c as MeshInstance3D).material_override as ShaderMaterial).shader.resource_path.ends_with("biome_rock.gdshader"):
+				var mi := c as MeshInstance3D
+				var foot := mi.transform.basis.get_scale().x
+				if not grid.clear(mi.transform.origin, td.width * 0.5 + foot * 0.9):
+					hits += 1
+		check("%s: no formation touches the road" % tid, hits == 0, "%d too close" % hits)
+		root.queue_free()
+	await get_tree().process_frame
+
+
+class ContentReportProxy:
+	static func tris(m: Mesh) -> int:
+		return load("res://tools/content_report.gd").tri_count(m)
+
+	static func lods(m: Mesh) -> int:
+		return load("res://tools/content_report.gd").lod_count(m)
+
+
+## Pool size of an effect kind (tests follow Items.POOL_SIZES).
+func _ps(kind: String) -> int:
+	return int(Items.POOL_SIZES[kind])

@@ -89,10 +89,12 @@ var _badges := {}              # racer idx -> held-shield badge node
 ## shader compiling mid-race, which caused a hitch the first time each
 ## power-up fired). Pooled nodes stay in the tree, hidden.
 var _pool := {}                # kind -> Array[Node3D]
-const POOL_SIZES := {"rocket": 3, "reticle_air": 3, "reticle_ground": 2, "comet": 2, "laser": 3, "tractor": 2,
-	"dome": 2, "bolt": 8, "boosters": 2, "mine": MAX_MINES,
-	"portal": 2, "decoy": 2, "leech_aura": 2, "leech_beam": 3, "well": 2, "charge_dome": 2,
-	"flare_orb": 2, "chain_bolt": 3, "plasma_wall": 2, "stasis_dome": 2, "repulsor_dome": 2}
+## Sized for the most the game allows at once (smaller pools built new
+## nodes mid-race: a hitch on phones).
+const POOL_SIZES := {"rocket": 6, "reticle_air": 6, "reticle_ground": 2, "comet": 2, "laser": 3, "tractor": 2,
+	"dome": 3, "bolt": 8, "boosters": 2, "mine": MAX_MINES,
+	"portal": 4, "decoy": 2, "leech_aura": 2, "leech_beam": 6, "well": 4, "charge_dome": 2,
+	"flare_orb": 2, "chain_bolt": 6, "plasma_wall": 4, "stasis_dome": 2, "repulsor_dome": 2}
 
 const ROCKET_C := Color(1.0, 0.5, 0.2)
 const LASER_C := Color(0.3, 1.0, 0.95)
@@ -261,7 +263,7 @@ func clear_effects() -> void:
 		_give("comet", m.rock)
 	comets.clear()
 	for b in beams:
-		_give(String(b.kind), b.node)
+		_give(String(b.get("pool", b.kind)), b.node)
 	beams.clear()
 	for n in nitros:
 		_give("boosters", n.node)
@@ -352,13 +354,16 @@ func lineup_of(r: Racer) -> int:
 		if not o.is_ghost:
 			n += 1
 	var pl := r.place
-	if r.pilot.passive == "lucky":
-		pl = mini(n, pl + 2)
+	if r.crate_luck > 0:
+		pl = mini(n, pl + r.crate_luck)
 	return Catalog.lineup_for(pl, n)
 
 
 ## Roll an item for a racer and set how many uses it has.
 func roll(r: Racer) -> String:
+	# A fresh item starts a fresh hold timer (an item lost to an EMP or a
+	# rocket left the old one running, so the AI dumped its next item).
+	_hold.erase(r.idx)
 	var lu := lineup_of(r)
 	var it := only_item
 	if OS.get_environment("CSD_ONLY") != "":
@@ -400,7 +405,7 @@ func use_item(r: Racer) -> void:
 			r.give_boost(NITRO_TIME, "nitro")
 			_nitro(r)
 		"shield":
-			r.shield_time = race.tuning.shield_time
+			r.shield_time = race.tuning.shield_time * r.shield_time_mult
 			var fx := _fx()
 			if fx:
 				fx.flash(r.global_position + r.up * 0.6, SHIELD_C, 6.0, 0.3)
@@ -531,15 +536,14 @@ func _laser(r: Racer) -> void:
 
 
 func _comet(r: Racer) -> void:
+	# The leader among racers still racing (once the winner has finished,
+	# "place 1" was a finished racer and the strike fizzled).
 	var target: Racer = null
 	for o: Racer in race.racers:
-		if o.place == 1 and not o.finished and not o.is_ghost:
+		if o == r or o.finished or o.is_ghost:
+			continue
+		if target == null or o.place < target.place:
 			target = o
-	if target == r:
-		target = null
-		for o: Racer in race.racers:
-			if o.place == 2 and not o.finished and not o.is_ghost:
-				target = o
 	if target == null:
 		return
 	var ring := _place(_take("reticle_ground"), Transform3D(Basis.IDENTITY, target.global_position))
@@ -571,7 +575,7 @@ func _emp(r: Racer) -> void:
 	# Expanding electric dome, a ground shockwave, and bolts to every victim.
 	var dome := _take("dome")
 	_place(dome, Transform3D(Basis.IDENTITY.scaled(Vector3.ONE * 0.5), r.global_position))
-	beams.append({"node": dome, "t": 0.5, "life": 0.5, "kind": "emp", "at": r.global_position})
+	beams.append({"node": dome, "t": 0.5, "life": 0.5, "kind": "emp", "pool": "dome", "at": r.global_position})
 	if fx:
 		fx.shockwave(r.global_position, r.up, EMP_C, EMP_RADIUS * 2.2, 0.5)
 		fx.flash(r.global_position + r.up * 0.8, EMP_C, 7.0, 0.25)
@@ -633,7 +637,8 @@ func _tractor(r: Racer) -> void:
 		r.give_boost(0.5, "tractor")
 		return
 	if not t.can_be_hit():
-		t.emit_signal("event", "blocked", {"kind": "tractor"})
+		if t.shield_time > 0.0:
+			t.emit_signal("event", "blocked", {"kind": "tractor"})   # "Shield blocked it" only for a shield
 		return
 	t.tractor_time = TRACTOR_TIME
 	t.velocity *= 0.75
@@ -897,6 +902,13 @@ func _repulsor(r: Racer) -> void:
 		var d := dv.length()
 		if d >= REPULSOR_RADIUS:
 			continue
+		# Same rule as every other item: a raised shield blocks it, and a
+		# racer already spinning or briefly invulnerable isn't hit again
+		# (it used to shove them and count a hit anyway).
+		if not o.can_be_hit():
+			if o.shield_time > 0.0:
+				o.emit_signal("event", "blocked", {"kind": "repulsor"})
+			continue
 		dv -= o.up * dv.dot(o.up)
 		if dv.length() < 0.2:
 			dv = o.up.cross(r.heading)
@@ -997,7 +1009,7 @@ func _tick_rockets(dt: float) -> void:
 				break
 			if r == b.owner and b.life > ROCKET_LIFE - 0.5:
 				continue
-			if r.is_ghost or r.cloak_time > 0.0:
+			if r.is_ghost or r.cloak_time > 0.0 or r.finished or r.rescue_time > 0.0:
 				continue
 			var d := r.global_position.distance_to(b.pos)
 			if d < 2.4:
@@ -1036,7 +1048,7 @@ func _tick_mines(dt: float) -> void:
 		var gone: bool = m.life <= 0.0
 		if armed:
 			for r: Racer in race.racers:
-				if r.is_ghost or r.cloak_time > 0.0 or (r == m.owner and m.arm > -0.8):
+				if r.is_ghost or r.cloak_time > 0.0 or r.finished or r.rescue_time > 0.0 or (r == m.owner and m.arm > -0.8):
 					continue
 				var d := r.global_position.distance_to(m.pos)
 				if d < 2.5:
@@ -1151,7 +1163,7 @@ func _tick_beams(dt: float) -> void:
 				var bb := _basis_y(b.dir)
 				node.global_transform = Transform3D(Basis(bb.x * w, b.dir * float(b.reach), bb.z * w), b.origin + b.dir * float(b.reach) * 0.5)
 		if b.t <= 0.0:
-			_give(String(b.kind), node)
+			_give(String(b.get("pool", b.kind)), node)
 			beams.remove_at(k)
 
 
@@ -1180,6 +1192,7 @@ func _tick_decoys(dt: float) -> void:
 		d.t -= dt
 		var node: Node3D = d.node
 		if d.t <= 0.0 or not d.live or r.finished:
+			d.live = false
 			_give("decoy", node)
 			decoys.remove_at(k)
 			continue
@@ -1213,17 +1226,23 @@ func _tick_leeches(dt: float) -> void:
 				continue
 			var in_range := not o.finished and o.rescue_time <= 0.0 and o.shield_time <= 0.0 and o.cloak_time <= 0.0 and o.global_position.distance_to(r.global_position) < LEECH_RADIUS
 			if in_range:
-				var taken := o.drain_energy(LEECH_RATE * dt)
-				r.add_energy(taken)
 				if not links.has(o.idx):
 					if links.size() >= 3:
 						continue
 					var bn := _take("leech_beam")
 					_place(bn, Transform3D(Basis.IDENTITY, o.global_position))
 					links[o.idx] = bn
-					o.emit_signal("event", "leeched", {"by": r})
-					r.stats.hits += 1
-					r.emit_signal("event", "leech_hit", {"target": o, "kind": "leech"})
+					# Count (and announce) each victim once per leech, even if
+					# they drift out of range and back.
+					var seen: Dictionary = L.get("seen", {})
+					if not seen.has(o.idx):
+						seen[o.idx] = true
+						L["seen"] = seen
+						o.emit_signal("event", "leeched", {"by": r})
+						r.stats.hits += 1
+						r.emit_signal("event", "leech_hit", {"target": o, "kind": "leech"})
+				var taken := o.drain_energy(LEECH_RATE * dt)
+				r.add_energy(taken)
 				var a: Vector3 = o.global_position + o.up * 0.4
 				var c: Vector3 = r.global_position + r.up * 0.4
 				var len := a.distance_to(c)

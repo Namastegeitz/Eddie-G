@@ -8,6 +8,7 @@ var content: Control
 var header_title: Label
 var credits_lbl: Label
 var stars_lbl: Label
+var dust_lbl: Label
 var back_btn: Button
 var _screen := ""
 var _history: Array[String] = []
@@ -16,6 +17,11 @@ var _toast: Label
 var _swallow_until := 0
 var _fab := Callable()     # start button pinned bottom-right on track pickers
 var _fab_text := ""
+var _fab_focus := false    # give the pinned button the focus (Racers page: Enter = START)
+var _focus_target: Control = null
+var _studio: PortraitStudio
+var _portrait_wait := {}   # pilot id -> TextureRects waiting for their portrait
+var _rx := {}              # Racers / Pilots page widgets updated in place
 
 
 func _ready() -> void:
@@ -55,6 +61,8 @@ func _ready() -> void:
 	header.add_child(header_title)
 	stars_lbl = UiKit.label("", 24, UiKit.GOLD)
 	header.add_child(stars_lbl)
+	dust_lbl = UiKit.label("", 24, Color(1.0, 0.75, 0.95))
+	header.add_child(dust_lbl)
 	credits_lbl = UiKit.label("", 24, UiKit.PINK)
 	header.add_child(credits_lbl)
 	content = Control.new()
@@ -62,6 +70,9 @@ func _ready() -> void:
 	col.add_child(content)
 	_toast = UiKit.label("", 26, UiKit.GOLD, HORIZONTAL_ALIGNMENT_CENTER)
 	add_child(_toast)
+	_studio = PortraitStudio.new()
+	add_child(_studio)
+	_studio.portrait_ready.connect(_on_portrait)
 	UiKit.place(_toast, Vector2(0.5, 1), Vector2(-400, -70), Vector2(800, 50))
 	Audio.music("menu")
 	Game.orientation_changed.connect(func() -> void:
@@ -105,8 +116,12 @@ func _unhandled_input(e: InputEvent) -> void:
 
 
 func _notification(what: int) -> void:
-	if what == NOTIFICATION_WM_GO_BACK_REQUEST and _screen != "home" and _screen != "title":
-		go_back()
+	if what == NOTIFICATION_WM_GO_BACK_REQUEST:
+		if _screen != "home" and _screen != "title":
+			go_back()
+		else:
+			Save.flush()
+			get_tree().quit()
 
 
 func toast(text: String, color := UiKit.GOLD) -> void:
@@ -128,19 +143,34 @@ func go_back() -> void:
 func refresh_header() -> void:
 	credits_lbl.text = "%s CR" % UiKit.num(Save.credits())
 	stars_lbl.text = "★ %d" % Save.total_stars()
+	dust_lbl.text = "✦ %s" % UiKit.num(Upgrades.stardust())
 
 
 func show_screen(sname: String, push := true) -> void:
+	# Re-showing the same screen (after a toggle or purchase) keeps the scroll
+	# position and the focused button, so lists don't jump back to the top.
+	var keep := {}
+	if sname == _screen and not push:
+		var sc := _find_scroll(content)
+		var f := get_viewport().gui_get_focus_owner()
+		keep = {"scroll": sc.scroll_vertical if sc else 0, "focus": _button_index(content, f) if f else -1}
 	if push and _screen != "" and _screen != sname and _screen != "title":
 		_history.append(_screen)
 	_screen = sname
 	_fab = Callable()
+	_fab_focus = false
+	_focus_target = null
+	_rx = {}
 	for c in content.get_children():
 		c.queue_free()
 	refresh_header()
 	back_btn.visible = sname != "home" and sname != "title"
-	stage.show_look(Save.player_look())
+	# Screens that show a different craft or pilot set the look themselves
+	# (showing the player's first built the craft twice per click).
+	if not (sname in ["garage", "racers", "pilots"]):
+		stage.show_look(Save.player_look())
 	stage.frame(3.6 if sname != "title" else 0.0)
+	stage.focus_pilot(sname == "racers" or sname == "pilots")
 	var title := ""
 	var root: Control
 	match sname:
@@ -176,6 +206,12 @@ func show_screen(sname: String, push := true) -> void:
 		"pilots":
 			title = "Pilots"
 			root = _pilots()
+		"racers":
+			title = "Racers"
+			root = _racers()
+		"wonders":
+			title = "Super Upgrades"
+			root = _wonders()
 		"achievements":
 			title = "Achievements"
 			root = _achievements()
@@ -205,14 +241,64 @@ func show_screen(sname: String, push := true) -> void:
 		fab.custom_minimum_size.y = 84
 		content.add_child(fab)
 		UiKit.place(fab, Vector2(1, 1), Vector2(-300, -96), Vector2(290, 88))
-	_focus_first(root)
+		if _fab_focus:
+			_focus_target = fab
+	if keep.is_empty():
+		_focus_first(root)
+		# List screens with no buttons (Achievements, Stats): focus Back so a
+		# pad or keyboard can still leave (and scroll with follow_focus).
+		if _find_button(root) == null and back_btn.visible:
+			UiKit.focus_later(back_btn)
+	else:
+		_restore_view(keep)
+
+
+func _find_scroll(n: Node) -> ScrollContainer:
+	if n is ScrollContainer:
+		return n
+	for c in n.get_children():
+		var f := _find_scroll(c)
+		if f:
+			return f
+	return null
+
+
+## Position of a button among the screen's buttons (depth first), or -1.
+func _button_index(root: Node, target: Control) -> int:
+	var list: Array[Button] = []
+	_collect_buttons(root, list)
+	return list.find(target)
+
+
+func _collect_buttons(n: Node, out: Array[Button]) -> void:
+	if n is Button and not n.is_queued_for_deletion():
+		out.append(n)
+	for c in n.get_children():
+		_collect_buttons(c, out)
+
+
+func _restore_view(keep: Dictionary) -> void:
+	await get_tree().process_frame
+	await get_tree().process_frame
+	var sc := _find_scroll(content)
+	if sc:
+		sc.scroll_vertical = int(keep.get("scroll", 0))
+	var list: Array[Button] = []
+	_collect_buttons(content, list)
+	var i := int(keep.get("focus", -1))
+	if i >= 0 and i < list.size() and list[i].is_visible_in_tree() and not list[i].disabled:
+		list[i].grab_focus()
+	elif not list.is_empty():
+		_focus_first(content)
 
 
 func _focus_first(n: Node) -> void:
 	await get_tree().process_frame
 	if not is_instance_valid(n):
 		return
-	var b := _find_button(n)
+	var b: Control = _find_button(n)
+	if is_instance_valid(_focus_target) and _focus_target.is_inside_tree():
+		b = _focus_target
 	if b and is_instance_valid(b) and b.is_inside_tree():
 		b.grab_focus()
 
@@ -244,6 +330,7 @@ func _left_panel(width := 640.0) -> Array:
 	root.add_child(p)
 	var scroll := ScrollContainer.new()
 	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	scroll.follow_focus = true   # a pad or keyboard moving down the list scrolls it
 	p.add_child(scroll)
 	var v := UiKit.vbox(10)
 	v.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -309,8 +396,21 @@ func _title() -> Control:
 func _home() -> Control:
 	var lp := _left_panel(560)
 	var v: VBoxContainer = lp[1]
-	var play := UiKit.button("PLAY", func() -> void: show_screen("play"), 40, 0)
-	play.custom_minimum_size.y = 90
+	# One tap (or Enter / pad A) to race: repeats your last Quick Race setup.
+	var lr := Game.last_race()
+	var now := UiKit.button("RACE NOW ▶", func() -> void:
+		_to_racers(func() -> Dictionary: return Game.race_now_request()), 42, 0)
+	now.name = "RaceNow"
+	now.custom_minimum_size.y = 100
+	now.add_theme_stylebox_override("normal", UiKit.box(Color(0.34, 0.12, 0.46), 18, UiKit.GOLD, 3))
+	now.add_theme_stylebox_override("hover", UiKit.box(Color(0.44, 0.16, 0.58), 18, UiKit.GOLD, 3))
+	v.add_child(now)
+	var lr_name: String = TrackDefs.get_def(lr.track).name
+	if int(lr.variant) > 0:
+		lr_name += " " + String(Catalog.VARIANT_NAMES[int(lr.variant)])
+	v.add_child(UiKit.label("%s  ·  %s rivals" % [lr_name, Catalog.AI_CLASSES[int(lr["class"])].name], 18, UiKit.DIM, HORIZONTAL_ALIGNMENT_CENTER))
+	var play := UiKit.button("All game modes", func() -> void: show_screen("play"), 28, 0)
+	play.custom_minimum_size.y = 64
 	v.add_child(play)
 	var info := Game.daily_info()
 	var daily_text := "Daily Challenge" + ("  ✔ done" if info.done else "  ● new!")
@@ -320,7 +420,7 @@ func _home() -> Control:
 	g.add_theme_constant_override("h_separation", 10)
 	g.add_theme_constant_override("v_separation", 10)
 	v.add_child(g)
-	var entries: Array = [["Hangar", "garage"], ["Pilots", "pilots"], ["Achievements", "achievements"], ["Stats", "stats"], ["Settings", "settings"], ["How to Play", "howto"]]
+	var entries: Array = [["Hangar", "garage"], ["Pilots", "pilots"], ["Super Upgrades ✦", "wonders"], ["Achievements", "achievements"], ["Stats", "stats"], ["Settings", "settings"], ["How to Play", "howto"]]
 	if Store.enabled() and Store.config.show_store_button:
 		entries.insert(0, ["Store", "store"])
 	for pair in entries:
@@ -329,7 +429,7 @@ func _home() -> Control:
 		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		g.add_child(b)
 	var look := Save.player_look()
-	v.add_child(_wrap("Flying %s with %s  ·  %d / 42 Star Shards" % [Catalog.saucer(look.saucer).name, Catalog.pilot(look.pilot).name, Save.shard_total()], 18))
+	v.add_child(_wrap("Flying %s with %s  ·  %d / %d Star Shards" % [Catalog.saucer(look.saucer).name, Catalog.pilot(look.pilot).name, Save.shard_total(), Catalog.TRACK_IDS.size() * 3], 18))
 	return lp[0]
 
 
@@ -384,7 +484,8 @@ func _cups() -> Control:
 			box.add_child(UiKit.label("%d. %s %s   %s   %s" % [i + 1, td_name, var_name, _stars_text(Save.race_stars(cup.id, i)), Catalog.CHALLENGES[r[2]][0]], 18, Color.WHITE if unlocked else UiKit.DIM))
 		if unlocked:
 			var cid: String = cup.id
-			var b := UiKit.button("Start %s  (%s rivals)" % [cup.name, cls.name], func() -> void: Game.start(Game.cup_request(cid, 0)), 22)
+			var b := UiKit.button("Start %s  (%s rivals)" % [cup.name, cls.name], func() -> void:
+				_to_racers(func() -> Dictionary: return Game.cup_request(cid, 0)), 22)
 			box.add_child(b)
 		else:
 			box.add_child(UiKit.label("Locked: earn %d stars (you have %d)" % [cup.stars, Save.total_stars()], 20, UiKit.RED))
@@ -430,6 +531,9 @@ func _track_picker(mode: String) -> Control:
 	var cdef := TrackDefs.get_def(cur)
 	v.add_child(UiKit.label(cdef.name, 30, UiKit.CYAN))
 	v.add_child(_wrap(cdef.blurb, 20))
+	var bdef := BiomeBuilder.pick_for(cur, String(cdef.theme))
+	if not bdef.is_empty():
+		v.add_child(_wrap("Scenery: %s. %s (Settings > Volcanic biome)" % [bdef.name, bdef.text], 16, Color(1.0, 0.7, 0.45)))
 	v.add_child(_fact_card(cur))
 	var vrow := UiKit.hbox(10)
 	v.add_child(vrow)
@@ -465,9 +569,11 @@ func _track_picker(mode: String) -> Control:
 			if cc == int(_sel["class"]):
 				b.add_theme_stylebox_override("normal", UiKit.box(Color(0.25, 0.15, 0.5), 16, UiKit.GOLD, 3))
 			crow.add_child(b)
-		_fab = func() -> void: Game.start(Game.quick_request(cur, var_i, int(_sel["class"])))
+		var quick := func() -> void:
+			_to_racers(func() -> Dictionary: return Game.quick_request(cur, var_i, int(_sel["class"])))
+		_fab = quick
 		_fab_text = "RACE ▶"
-		var go := UiKit.button("RACE ▶", func() -> void: Game.start(Game.quick_request(cur, var_i, int(_sel["class"]))), 32)
+		var go := UiKit.button("RACE ▶", quick, 32)
 		v.add_child(go)
 		UiKit.focus_later(go)
 		_free_item_offer(v, func() -> Dictionary: return Game.quick_request(cur, var_i, int(_sel["class"])))
@@ -478,9 +584,11 @@ func _track_picker(mode: String) -> Control:
 		v.add_child(UiKit.label("Best: %s   Medal: %s" % [UiKit.time_str(best), ["none", "Bronze", "Silver", "Gold"][medal]], 22))
 		v.add_child(UiKit.label("Bronze %s · Silver %s · Gold %s" % [UiKit.time_str(Game.tt_target(td, 1)), UiKit.time_str(Game.tt_target(td, 2)), UiKit.time_str(Game.tt_target(td, 3))], 20, UiKit.DIM))
 		v.add_child(_wrap("No crates or rivals: just you, the Energy Pods and your ghost.", 18))
-		_fab = func() -> void: Game.start(Game.tt_request(cur, var_i))
+		var trial := func() -> void:
+			_to_racers(func() -> Dictionary: return Game.tt_request(cur, var_i))
+		_fab = trial
 		_fab_text = "START ▶"
-		var go := UiKit.button("START TRIAL ▶", func() -> void: Game.start(Game.tt_request(cur, var_i)), 32)
+		var go := UiKit.button("START TRIAL ▶", trial, 32)
 		v.add_child(go)
 	return lp[0]
 
@@ -544,9 +652,10 @@ func _free_item_offer(parent: Control, make_req: Callable) -> void:
 	b.pressed.connect(func() -> void:
 		b.disabled = true
 		Ads.show_rewarded("free_item", func(granted: bool) -> void:
-			var req: Dictionary = make_req.call()
-			req["free_item"] = granted
-			Game.start(req)))
+			_to_racers(func() -> Dictionary:
+				var req: Dictionary = make_req.call()
+				req["free_item"] = granted
+				return req)))
 	parent.add_child(b)
 
 
@@ -575,8 +684,8 @@ func _versus() -> Control:
 		show_screen("versus", false)
 	v.add_child(UiKit.button("P2 pilot: %s ▸" % Catalog.pilot(p2.get("pilot", "nova")).name, func() -> void: cycle.call(pilots, p2.get("pilot", "nova"), "pilot"), 22))
 	v.add_child(UiKit.button("P2 craft: %s ▸" % Catalog.saucer(p2.get("saucer", "bubble")).name, func() -> void: cycle.call(saucers, p2.get("saucer", "bubble"), "saucer"), 22))
-	if not _sel.has("versus_track"):
-		_sel["versus_track"] = "asteroid_belt"
+	if not _sel.has("versus_track") or not Save.track_unlocked(String(_sel["versus_track"])):
+		_sel["versus_track"] = "ceres"
 	var tracks: Array = []
 	for id in Catalog.TRACK_IDS:
 		if Save.track_unlocked(id):
@@ -610,7 +719,8 @@ func _bosses() -> Control:
 		box.add_child(UiKit.label("Home track: %s · Drives %s" % [TrackDefs.get_def(p.home).name, {"clean": "a clean racing line", "aggressive": "aggressively, bumps and fires early", "hoarder": "defensively, hoards items"}[p.style]], 18, UiKit.DIM))
 		if ready:
 			var pid: String = p.id
-			box.add_child(UiKit.button("Race %s%s" % [p.name, " again" if beaten else ""], func() -> void: Game.start(Game.boss_request(pid)), 22))
+			box.add_child(UiKit.button("Race %s%s" % [p.name, " again" if beaten else ""], func() -> void:
+				_to_racers(func() -> Dictionary: return Game.boss_request(pid)), 22))
 	return lp[0]
 
 
@@ -629,9 +739,11 @@ func _daily() -> Control:
 	v.add_child(_wrap("Finish on consecutive days to grow your streak: +60 credits a day, up to a week. Works offline.", 18))
 	if info.done:
 		v.add_child(UiKit.label("Done for today. New challenge tomorrow!", 24, UiKit.GREEN))
-		v.add_child(UiKit.button("Race it again (no reward)", func() -> void: Game.start(Game.daily_request()), 22))
+		v.add_child(UiKit.button("Race it again (no reward)", func() -> void:
+			_to_racers(func() -> Dictionary: return Game.daily_request()), 22))
 	else:
-		var go := UiKit.button("START CHALLENGE ▶", func() -> void: Game.start(Game.daily_request()), 32)
+		var go := UiKit.button("START CHALLENGE ▶", func() -> void:
+			_to_racers(func() -> Dictionary: return Game.daily_request()), 32)
 		v.add_child(go)
 	return lp[0]
 
@@ -713,7 +825,8 @@ func _garage() -> Control:
 	# Tabs.
 	var tabs := UiKit.hbox(6)
 	v.add_child(tabs)
-	for t in [["upgrades", "Upgrades"], ["paints", "Paint"], ["decals", "Decal"], ["domes", "Dome"], ["trails", "Trail"]]:
+	var mods_tab := "Wonder ✦" if not Upgrades.wonder(sid).is_empty() else "Mods ✦"
+	for t in [["upgrades", "Upgrades"], ["mods", mods_tab], ["paints", "Paint"], ["decals", "Decal"], ["domes", "Dome"], ["trails", "Trail"]]:
 		var tid: String = t[0]
 		var b := UiKit.button(t[1], func() -> void:
 			_sel["garage_tab"] = tid
@@ -722,7 +835,9 @@ func _garage() -> Control:
 			b.add_theme_stylebox_override("normal", UiKit.box(Color(0.25, 0.15, 0.5), 16, UiKit.GOLD, 3))
 		tabs.add_child(b)
 	var tab: String = _sel["garage_tab"]
-	if tab == "upgrades":
+	if tab == "mods":
+		v.add_child(_wonder_card(sid, "garage"))
+	elif tab == "upgrades":
 		for st in Catalog.STAT_KEYS:
 			var stat: String = st
 			var lvl := Save.upgrade_level(sid, stat)
@@ -782,28 +897,448 @@ func _garage() -> Control:
 	return lp[0]
 
 
-# ---------------------------------------------------------------- pilots
-func _pilots() -> Control:
-	var lp := _left_panel(780)
+# ---------------------------------------------------------------- super upgrades & wonders
+func _wonders() -> Control:
+	var lp := _left_panel(900)
 	var v: VBoxContainer = lp[1]
-	var cur: String = Save.data.garage.pilot
-	for p in Catalog.PILOTS:
-		var box := UiKit.vbox(2)
-		v.add_child(UiKit.panel(box))
-		var have := Save.has_pilot(p.id)
-		_row(box, [UiKit.label(p.name, 26, p.color), UiKit.label("  " + ("✔ selected" if p.id == cur else ""), 20, UiKit.GREEN)])
-		box.add_child(UiKit.label("%s: %s" % [p.passive_name, p.passive_text], 18, Color.WHITE))
-		if have:
-			if p.id != cur:
-				var pid: String = p.id
-				box.add_child(UiKit.button("Choose %s" % p.name, func() -> void:
-					Save.data.garage.pilot = pid
-					Save.mark()
-					stage.show_look(Save.player_look())
-					show_screen("pilots", false), 20))
-		else:
-			box.add_child(UiKit.label("Beat them in a Boss Race (needs %d stars)" % p.stars, 18, UiKit.RED))
+	v.add_child(_wrap("✦ Stardust: %s. Earn it with clean, long drifts (no walls, no hits); every finish adds a little more. Spend it on each premium craft's Technical Wonder and on mods for any craft." % UiKit.num(Upgrades.stardust()), 18, Color(1.0, 0.8, 0.95)))
+	var grid := GridContainer.new()
+	grid.columns = 2 if _avail_w() >= 1100.0 else 1
+	grid.add_theme_constant_override("h_separation", 10)
+	grid.add_theme_constant_override("v_separation", 10)
+	v.add_child(grid)
+	for w: Dictionary in Content.wonders:
+		var card := _wonder_card(String(w.craft), "wonders")
+		card.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		grid.add_child(card)
+	# Global perks.
+	var perks := Upgrades.perks()
+	v.add_child(UiKit.label("Global perks (every craft)", 22, UiKit.GOLD))
+	if perks.is_empty():
+		v.add_child(_wrap("Take any Wonder to Transcendent to unlock its perk for your whole fleet.", 17, UiKit.DIM))
+	for pk: Dictionary in perks:
+		v.add_child(_wrap("✔ %s: %s" % [pk.name, pk.text], 18, UiKit.GREEN))
+	# Mod shop.
+	v.add_child(UiKit.label("Mod workshop", 22, UiKit.GOLD))
+	v.add_child(_wrap("Bought once, fitted to any craft (Hangar > Mods). Three mods of one set on a craft add the set bonus.", 17, UiKit.DIM))
+	for sl: Dictionary in Content.slots:
+		v.add_child(UiKit.label("%s  ·  %s" % [sl.name, sl.text], 18, UiKit.CYAN))
+		for m: Dictionary in Content.mods_for_slot(String(sl.id)):
+			v.add_child(_mod_row(m))
+	v.add_child(UiKit.label("Sets", 22, UiKit.GOLD))
+	for st: Dictionary in Content.sets:
+		v.add_child(_wrap("%s set  ·  %s: %s" % [st.name, st.bonus_name, st.bonus_text], 17, st.get("color", UiKit.PINK)))
 	return lp[0]
+
+
+func _mod_row(m: Dictionary) -> Control:
+	var row := UiKit.hbox(10)
+	var set_def: Dictionary = Content.set_by_id.get(String(m.get("set", "")), {})
+	var name := UiKit.label(String(m.name), 19, set_def.get("color", Color.WHITE))
+	name.custom_minimum_size = Vector2(230, 0)
+	row.add_child(name)
+	var txt := ", ".join(Effects.describe(m.effects))
+	if not set_def.is_empty():
+		txt += "   (%s set)" % set_def.name
+	row.add_child(_wrap(txt, 16, UiKit.DIM))
+	var mid := String(m.id)
+	if Upgrades.owns_mod(mid):
+		row.add_child(UiKit.label("Owned", 17, UiKit.GREEN))
+	else:
+		var cost := int(m.cost)
+		var b := UiKit.button("✦ %d" % cost, func() -> void:
+			if Upgrades.buy_mod(mid):
+				Events.log_event("purchase", {"type": "mod", "id": mid, "stardust": cost})
+				toast("%s added to the workshop" % m.name, Color(1.0, 0.8, 0.95))
+			else:
+				toast("Not enough Stardust - drift clean and long!", UiKit.RED)
+			show_screen(_screen, false), 18, 110)
+		b.disabled = Upgrades.stardust() < cost
+		row.add_child(b)
+	return row
+
+
+## One craft's Super Upgrades card: Wonder tier bar and next tier, mod
+## slots (tap to cycle through owned mods), set bonus, overclock with its
+## heat meter, and the global perk the Wonder unlocks.
+func _wonder_card(craft: String, from_screen: String) -> Control:
+	var sdef := Catalog.saucer(craft)
+	var w := Upgrades.wonder(craft)
+	var owned := Save.has_saucer(craft)
+	var box := UiKit.vbox(6)
+	var card := PanelContainer.new()
+	var accent: Color = w.get("color", UiKit.CYAN) if not w.is_empty() else UiKit.CYAN
+	card.add_theme_stylebox_override("panel", UiKit.box(Color(0.12, 0.07, 0.24, 0.95), 18, UiKit.GOLD if sdef.get("premium", false) else UiKit.CYAN.darkened(0.4), 3))
+	card.add_child(box)
+	var title := ("★ " if sdef.get("premium", false) else "") + String(sdef.name)
+	_row(box, [UiKit.label(title, 24, UiKit.GOLD if sdef.get("premium", false) else UiKit.CYAN),
+		UiKit.label("" if owned else "   (not owned yet)", 16, UiKit.RED)])
+	var redraw := func() -> void:
+		refresh_header()
+		show_screen(from_screen, false)
+	if not w.is_empty():
+		var t := Upgrades.tier(craft)
+		box.add_child(UiKit.label("%s  ·  %s" % [w.name, w.get("tagline", "")], 20, accent))
+		box.add_child(_wrap(String(w.text), 15, UiKit.DIM))
+		# Tier bar.
+		var bar := UiKit.hbox(4)
+		box.add_child(bar)
+		for i in 3:
+			var seg := PanelContainer.new()
+			seg.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+			var on := i < t
+			seg.add_theme_stylebox_override("panel", UiKit.box(accent.darkened(0.35) if on else Color(0, 0, 0, 0.35), 8, accent if on else accent.darkened(0.6), 2))
+			var tl := UiKit.label(String(w.tiers[i].name), 14, Color.WHITE if on else UiKit.DIM, HORIZONTAL_ALIGNMENT_CENTER)
+			seg.add_child(tl)
+			bar.add_child(seg)
+		if t > 0:
+			box.add_child(_wrap("%s: %s" % [w.tiers[t - 1].name, w.tiers[t - 1].get("text", "")], 15, Color.WHITE))
+		var cost := Upgrades.next_cost(craft)
+		if cost >= 0:
+			var verb: String = ["Build Prototype", "Refine", "Transcend"][t]
+			var b := UiKit.button("%s  ✦ %s" % [verb, UiKit.num(cost)], func() -> void:
+				if Upgrades.buy_tier(craft):
+					Events.log_event("purchase", {"type": "wonder", "id": craft, "tier": Upgrades.tier(craft)})
+					toast("%s: %s!" % [w.name, Upgrades.TIER_NAMES[Upgrades.tier(craft)]], accent)
+					if Upgrades.tier(craft) == 3:
+						toast("Global perk unlocked: %s" % w.global_perk.name, UiKit.GREEN)
+				else:
+					toast("Not enough Stardust" if owned else "Unlock the craft first", UiKit.RED)
+				redraw.call(), 18)
+			b.disabled = not owned or Upgrades.stardust() < cost
+			box.add_child(b)
+		else:
+			box.add_child(UiKit.label("✔ Fully transcended", 17, UiKit.GREEN))
+		# Overclock + heat meter.
+		var lv := Upgrades.overclock(craft)
+		var lvd: Dictionary = Upgrades.levels()[lv]
+		var orow := UiKit.hbox(8)
+		box.add_child(orow)
+		var ob := UiKit.button("Overclock %d%% %s ▸" % [int(lvd.pct), lvd.name], func() -> void:
+			Upgrades.set_overclock(craft, (Upgrades.overclock(craft) + 1) % Upgrades.levels().size())
+			redraw.call(), 16)
+		ob.disabled = t == 0
+		orow.add_child(ob)
+		var heat := Upgrades.heat_per_use(craft, Upgrades.kit_for(craft).get("effects", {}))
+		var hc := Color(1.0, 0.6, 0.1).lerp(Color(1.0, 0.15, 0.1), clampf(heat / 60.0, 0.0, 1.0))
+		orow.add_child(UiKit.label("Heat", 15, hc))
+		orow.add_child(_bar(heat / 100.0, hc, 120))
+		var heat_txt := "no heat" if heat <= 0.0 else ("burnout risk!" if heat >= 50.0 else "%d heat a use" % int(heat))
+		orow.add_child(UiKit.label(heat_txt, 14, hc if heat > 0.0 else UiKit.DIM))
+		# Global perk.
+		var gp: Dictionary = w.global_perk
+		var have_perk := t >= 3
+		box.add_child(_wrap("%s Transcendent perk · %s: %s" % ["✔" if have_perk else "Locked ·", gp.name, gp.text], 15, UiKit.GREEN if have_perk else UiKit.DIM))
+	# Mod slots.
+	var fit := Upgrades.fitted(craft)
+	var srow := HFlowContainer.new()
+	srow.add_theme_constant_override("h_separation", 6)
+	srow.add_theme_constant_override("v_separation", 6)
+	box.add_child(srow)
+	for sl: Dictionary in Content.slots:
+		var slot := String(sl.id)
+		var cur := String(fit.get(slot, ""))
+		var label := "%s: %s" % [sl.name, Content.mod_by_id[cur].name if cur != "" else "empty"]
+		var mb := UiKit.button(label + " ▸", func() -> void:
+			var opts: Array = [""]
+			for m: Dictionary in Content.mods_for_slot(slot):
+				if Upgrades.owns_mod(String(m.id)):
+					opts.append(String(m.id))
+			if opts.size() == 1:
+				toast("No %s mods yet: buy some in Super Upgrades" % sl.name, UiKit.DIM)
+				return
+			var i := opts.find(String(Upgrades.fitted(craft).get(slot, "")))
+			Upgrades.fit(craft, slot, opts[(i + 1) % opts.size()])
+			redraw.call(), 15)
+		if cur != "":
+			var sd: Dictionary = Content.set_by_id.get(String(Content.mod_by_id[cur].get("set", "")), {})
+			if not sd.is_empty():
+				mb.add_theme_color_override("font_color", sd.color)
+		srow.add_child(mb)
+	var sb := Upgrades.set_bonus(craft)
+	if not sb.is_empty():
+		box.add_child(_wrap("%s set bonus · %s: %s" % [sb.name, sb.bonus_name, sb.bonus_text], 15, sb.get("color", UiKit.PINK)))
+	var fx: Dictionary = Upgrades.kit_for(craft).get("effects", {})
+	if not fx.is_empty():
+		box.add_child(_wrap("In races: " + ", ".join(Effects.describe(fx)), 14, Color(0.8, 0.85, 1.0)))
+	if from_screen == "wonders":
+		box.add_child(UiKit.button("Open in Hangar ▸", func() -> void:
+			_sel["garage_saucer"] = craft
+			_sel["garage_tab"] = "mods"
+			show_screen("garage"), 15))
+	return card
+
+
+# ---------------------------------------------------------------- pilots & racers
+## Every race started from the menus goes through the Racers page: pick your
+## pilot, see who you're up against, then START. builder makes the race
+## request; it runs again when you switch pilot so no rival shares yours.
+func _to_racers(builder: Callable) -> void:
+	_sel["racers_builder"] = builder
+	_sel["racers_req"] = builder.call()
+	_sel.erase("racers_pick")
+	show_screen("racers")
+
+
+func _start_from_racers() -> void:
+	var req: Dictionary = _sel.get("racers_req", {})
+	if req.is_empty() or Game.is_loading():
+		return
+	stage.focus_pilot(false)
+	Game.start(req)
+
+
+func _pilots() -> Control:
+	var lp := _left_panel(800)
+	var v: VBoxContainer = lp[1]
+	_pilot_browser(v, false)
+	return lp[0]
+
+
+func _racers() -> Control:
+	if not _sel.has("racers_builder"):
+		_sel["racers_builder"] = func() -> Dictionary: return Game.race_now_request()
+		_sel["racers_req"] = Game.race_now_request()
+	var req: Dictionary = _sel["racers_req"]
+	var lp := _left_panel(800)
+	var v: VBoxContainer = lp[1]
+	v.add_child(_wrap(_race_title(req), 22, UiKit.GOLD))
+	_pilot_browser(v, true)
+	var go := UiKit.button("START ▶", _start_from_racers, 36)
+	go.custom_minimum_size.y = 84
+	go.add_theme_stylebox_override("normal", UiKit.box(Color(0.34, 0.12, 0.46), 18, UiKit.GOLD, 3))
+	v.add_child(go)
+	_fab = _start_from_racers
+	_fab_text = "START ▶"
+	_fab_focus = true
+	return lp[0]
+
+
+func _race_title(req: Dictionary) -> String:
+	var track: String = TrackDefs.get_def(String(req.get("track", "mars"))).name
+	var vi := int(req.get("variant", 0))
+	if vi > 0:
+		track += " " + String(Catalog.VARIANT_NAMES[vi])
+	match String(req.get("mode", "")):
+		"cup":
+			return "%s  ·  Race %d: %s" % [Game.cup_def(String(req.cup)).name, int(req.get("cup_race", 0)) + 1, track]
+		"tt":
+			return "Time Trial  ·  %s" % track
+		"boss":
+			return "Boss Race vs %s  ·  %s" % [Catalog.pilot(String(req.boss)).name, track]
+		"daily":
+			return "Daily Challenge  ·  %s  ·  %s" % [track, req.daily.mod.name]
+	return "Quick Race  ·  %s  ·  %s rivals" % [track, Catalog.AI_CLASSES[clampi(int(req.get("ai_class", 1)), 0, 3)].name]
+
+
+## Pilot detail + (race only) rival strip + card grid. Picking a card updates
+## the page in place (no rebuild, so the scroll position stays put).
+func _pilot_browser(v: VBoxContainer, in_race: bool) -> void:
+	if not _sel.has("racers_pick"):
+		_sel["racers_pick"] = Save.data.garage.pilot
+	var detail := UiKit.hbox(16)
+	v.add_child(UiKit.panel(detail))
+	var big_holder := CenterContainer.new()
+	detail.add_child(big_holder)
+	_rx["big_holder"] = big_holder
+	var info := UiKit.vbox(4)
+	info.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	detail.add_child(info)
+	_rx["name"] = UiKit.label("", 32)
+	info.add_child(_rx["name"])
+	_rx["ability"] = _wrap("", 19, UiKit.GREEN)
+	info.add_child(_rx["ability"])
+	_rx["blurb"] = _wrap("", 17, UiKit.DIM)
+	info.add_child(_rx["blurb"])
+	_rx["action"] = UiKit.hbox(8)
+	info.add_child(_rx["action"])
+	if in_race:
+		v.add_child(UiKit.label("Racing against", 18, UiKit.DIM))
+		var strip := HFlowContainer.new()
+		strip.add_theme_constant_override("h_separation", 6)
+		strip.add_theme_constant_override("v_separation", 6)
+		v.add_child(strip)
+		_rx["strip"] = strip
+	v.add_child(UiKit.label("Choose your pilot", 20, UiKit.CYAN))
+	var grid := GridContainer.new()
+	grid.columns = 4 if _avail_w() >= 900.0 else 3
+	grid.add_theme_constant_override("h_separation", 8)
+	grid.add_theme_constant_override("v_separation", 8)
+	v.add_child(grid)
+	var cards := {}
+	for p in Catalog.PILOTS:
+		var pid: String = p.id
+		var card := _pilot_card(p, func() -> void: _pick_pilot(pid))
+		grid.add_child(card)
+		cards[pid] = card
+	_rx["cards"] = cards
+	_refresh_pilots()
+
+
+func _pick_pilot(pid: String) -> void:
+	_sel["racers_pick"] = pid
+	if Save.has_pilot(pid) and pid != Save.data.garage.pilot:
+		Save.data.garage.pilot = pid
+		Save.mark()
+		toast("%s takes the controls" % Catalog.pilot(pid).name, Catalog.pilot(pid).color)
+		if _sel.has("racers_builder") and _screen == "racers":
+			_sel["racers_req"] = (_sel["racers_builder"] as Callable).call()
+	_refresh_pilots()
+
+
+func _refresh_pilots() -> void:
+	if _rx.is_empty():
+		return
+	var pid: String = _sel.get("racers_pick", Save.data.garage.pilot)
+	var p := Catalog.pilot(pid)
+	var have := Save.has_pilot(pid)
+	stage.show_look(Save.look_for(Save.data.garage.saucer, pid))
+	var holder: Control = _rx["big_holder"]
+	for c in holder.get_children():
+		c.queue_free()
+	holder.add_child(_portrait_frame(p, 132))
+	var nm: Label = _rx["name"]
+	nm.text = p.name + ("   ✦ creature" if p.get("kind", "") == "creature" else "")
+	nm.add_theme_color_override("font_color", p.color)
+	(_rx["ability"] as Label).text = "%s: %s" % [p.passive_name, p.passive_text]
+	var blurb := String(p.get("blurb", ""))
+	(_rx["blurb"] as Label).text = blurb if blurb != "" else "Home track: %s." % TrackDefs.get_def(p.home).name
+	var action: HBoxContainer = _rx["action"]
+	for c in action.get_children():
+		c.queue_free()
+	if have:
+		var flying: bool = pid == Save.data.garage.pilot
+		action.add_child(UiKit.label("✔ Your pilot" if flying else "In your crew", 18, UiKit.GREEN))
+	elif String(p.get("unlock", "")) == "credits":
+		var price := int(p.get("price", 0))
+		var buy := UiKit.button("Unlock for %s CR" % UiKit.num(price), func() -> void:
+			if Save.buy_pilot(pid):
+				Events.log_event("purchase", {"type": "pilot", "id": pid, "price": price})
+				toast("%s joins your crew!" % p.name, p.color)
+				refresh_header()
+				_pick_pilot(pid)
+			else:
+				toast("Not enough Race Credits", UiKit.RED), 20)
+		action.add_child(buy)
+	else:
+		action.add_child(UiKit.label(Catalog.pilot_unlock_text(p), 17, UiKit.RED))
+		action.add_child(UiKit.button("Boss Races ▸", func() -> void: show_screen("bosses"), 18))
+	var cards: Dictionary = _rx.get("cards", {})
+	for id: String in cards:
+		_style_card(cards[id], id == pid, id == Save.data.garage.pilot, Save.has_pilot(id))
+	if _rx.has("strip"):
+		var strip: HFlowContainer = _rx["strip"]
+		for c in strip.get_children():
+			c.queue_free()
+		var req: Dictionary = _sel.get("racers_req", {})
+		var n := 0
+		for e: Dictionary in req.get("racers", []):
+			if e.get("human", false) and int(e.get("slot", 0)) == 0:
+				continue
+			var rp := Catalog.pilot(String(e.look.pilot))
+			var cell := UiKit.vbox(0)
+			cell.add_child(_portrait_frame(rp, 64))
+			var l := UiKit.label(rp.name.get_slice(" ", 0), 13, rp.color, HORIZONTAL_ALIGNMENT_CENTER)
+			l.custom_minimum_size = Vector2(70, 0)
+			cell.add_child(l)
+			strip.add_child(cell)
+			n += 1
+		if n == 0:
+			strip.add_child(UiKit.label("Nobody: a solo run against your ghost.", 17, UiKit.DIM))
+
+
+func _pilot_card(p: Dictionary, on_pick: Callable) -> Button:
+	var b := Button.new()
+	b.custom_minimum_size = Vector2(170, 190)
+	b.focus_mode = Control.FOCUS_ALL
+	b.name = "Card_" + String(p.id)
+	b.pressed.connect(func() -> void:
+		Audio.ui("click")
+		on_pick.call())
+	var col := UiKit.vbox(2)
+	col.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	col.alignment = BoxContainer.ALIGNMENT_CENTER
+	b.add_child(col)
+	col.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT, Control.PRESET_MODE_MINSIZE, 6)
+	var cc := CenterContainer.new()
+	cc.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	cc.add_child(_portrait_frame(p, 110))
+	col.add_child(cc)
+	var nm := UiKit.label(String(p.name), 17 if String(p.name).length() <= 14 else 14, p.color, HORIZONTAL_ALIGNMENT_CENTER)
+	nm.clip_text = true
+	nm.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	col.add_child(nm)
+	var sub := UiKit.label("", 14, UiKit.DIM, HORIZONTAL_ALIGNMENT_CENTER)
+	sub.name = "Sub"
+	sub.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	col.add_child(sub)
+	b.set_meta("pilot", p)
+	return b
+
+
+func _style_card(b: Button, picked: bool, flying: bool, have: bool) -> void:
+	var p: Dictionary = b.get_meta("pilot")
+	var bg := Color(0.12, 0.08, 0.26, 0.95)
+	var border := UiKit.CYAN.darkened(0.5)
+	var bw := 2
+	if p.get("kind", "") == "creature":
+		bg = Color(0.16, 0.06, 0.2, 0.95)
+		border = UiKit.PINK.darkened(0.45)
+	if flying:
+		border = UiKit.GREEN
+		bw = 3
+	if picked:
+		bg = Color(0.25, 0.15, 0.5)
+		border = UiKit.GOLD
+		bw = 3
+	b.add_theme_stylebox_override("normal", UiKit.box(bg, 16, border, bw))
+	b.add_theme_stylebox_override("hover", UiKit.box(bg.lightened(0.08), 16, border, bw))
+	b.add_theme_stylebox_override("pressed", UiKit.box(bg.lightened(0.12), 16, UiKit.GOLD, 3))
+	b.add_theme_stylebox_override("focus", UiKit.box(Color(0, 0, 0, 0), 16, Color.WHITE, 2))
+	b.modulate = Color(1, 1, 1, 1.0 if have else 0.62)
+	var sub: Label = b.find_child("Sub", true, false)
+	if sub:
+		if flying:
+			sub.text = "✔ flying"
+		elif have:
+			sub.text = String(p.passive_name)
+		elif String(p.get("unlock", "")) == "credits":
+			sub.text = "%s CR" % UiKit.num(int(p.get("price", 0)))
+		else:
+			sub.text = "Boss · %d ★" % int(p.get("stars", 0))
+
+
+## A pilot portrait in a round frame tinted with the pilot's colour. The
+## picture is painted off screen on first use and cached for the session.
+func _portrait_frame(p: Dictionary, px: int) -> Control:
+	var frame := PanelContainer.new()
+	frame.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var c: Color = p.color
+	frame.add_theme_stylebox_override("panel", UiKit.box(Color(c.r * 0.22, c.g * 0.18, c.b * 0.3, 1.0), px / 2, c.darkened(0.2), 2))
+	frame.custom_minimum_size = Vector2(px, px)
+	var t := TextureRect.new()
+	t.custom_minimum_size = Vector2(px, px)
+	t.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	t.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	t.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	frame.add_child(t)
+	var pid := String(p.id)
+	var tex := PortraitStudio.texture(pid)
+	if tex:
+		t.texture = tex
+	else:
+		if not _portrait_wait.has(pid):
+			_portrait_wait[pid] = []
+		_portrait_wait[pid].append(t)
+		_studio.request(pid)
+	return frame
+
+
+func _on_portrait(pid: String, tex: Texture2D) -> void:
+	for t: Variant in _portrait_wait.get(pid, []):
+		if is_instance_valid(t):
+			(t as TextureRect).texture = tex
+	_portrait_wait.erase(pid)
 
 
 # ---------------------------------------------------------------- achievements & stats
@@ -840,7 +1375,7 @@ func _stats() -> Control:
 		["Purple boosts", "%d" % Save.stat("purple")], ["Tricks landed", "%d" % Save.stat("tricks")], ["Energy Pods", "%d" % Save.stat("pods")],
 		["Item hits", "%d" % Save.stat("hits")], ["Near misses", "%d" % Save.stat("near")], ["Slipstreams", "%d" % Save.stat("slips")],
 		["Shortcuts taken", "%d" % Save.stat("shortcuts")], ["Top speed", "%d km/h" % Save.stat("top_speed")],
-		["Star Shards", "%d / 42" % Save.shard_total()], ["Daily challenges", "%d (best streak %d)" % [Save.stat("dailies"), int(Save.data.daily.best_streak)]],
+		["Star Shards", "%d / %d" % [Save.shard_total(), Catalog.TRACK_IDS.size() * 3]], ["Daily challenges", "%d (best streak %d)" % [Save.stat("dailies"), int(Save.data.daily.best_streak)]],
 		["Race Credits earned", "%d" % Save.stat("credits_earned")],
 	]
 	var g := GridContainer.new()
@@ -894,6 +1429,7 @@ func _settings() -> Control:
 		["Show FPS", "show_fps", [false, true], {true: "On", false: "Off"}],
 		["Frame cap", "fps_cap", [0, 30], {0: "Off (smoothest)", 30: "30 fps (battery)"}],
 		["Glide deploy", "glide_auto", [false, true], {false: "Hold SHIFT (pad: D-pad up)", true: "Automatic (as on touch)"}],
+		["Volcanic biome", "biome", ["auto", "eerie", "divine", "off"], {"auto": "Auto (volcanic worlds)", "eerie": "Eerie on rocky worlds", "divine": "Divine on rocky worlds", "off": "Off (classic scenery)"}],
 	]
 	for t in toggles:
 		var key: String = t[1]
@@ -931,6 +1467,7 @@ func _settings() -> Control:
 	reset.pressed.connect(func() -> void:
 		if reset.text.begins_with("Tap again"):
 			Save.reset_all()
+			_sel.clear()
 			toast("Progress reset", UiKit.RED)
 			show_screen("home", false)
 		else:
