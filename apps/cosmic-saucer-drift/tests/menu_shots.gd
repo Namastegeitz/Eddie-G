@@ -37,6 +37,9 @@ func _ready() -> void:
 			if "demo" in args:
 				menu._sel["garage_saucer"] = "sail"
 				menu._sel["garage_tab"] = "mods"
+			for a in args:
+				if a.begins_with("craft="):   # e.g. craft=aurora (an HD craft)
+					menu._sel["garage_saucer"] = a.substr(6)
 		menu.show_screen(s)
 		for i in 20:
 			await get_tree().process_frame

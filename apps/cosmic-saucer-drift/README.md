@@ -52,6 +52,14 @@ Next steps:
   crystal clusters and arches are Meshy-generated meshes, baked low-poly
   with LODs ([docs/ASSET_PIPELINE.md](docs/ASSET_PIPELINE.md)); a
   procedural version stands in for any empty slot.
+- **HD fleet and 3D cockpits**: realistic craft built from Meshy models
+  (`content/craft_hd.json`). Each has a PBR hull and its own first-person
+  interior, a Meshy console framed by canopy pillars, sills and light
+  strips. The Aurora Interceptor is done inside and out. Every other craft
+  borrows its cockpit in first person, so the old flat 2D dash is gone. Nine
+  more HD craft are in the data and appear in the Hangar's HD fleet as soon
+  as their models are generated and baked
+  ([docs/ASSET_PIPELINE.md](docs/ASSET_PIPELINE.md)).
 - Content is data: craft, pilots, Wonders, mods and biomes are JSON, and
   packs drop in without code ([docs/SCHEMAS.md](docs/SCHEMAS.md)). The
   full system audit and change list is in
@@ -61,6 +69,8 @@ Next steps:
 ![Creature pilots](docs/screenshots/creatures.png)
 ![Super Upgrades](docs/screenshots/super_upgrades.png)
 ![Relativistic Jet with the Divine biome forced on Mars](docs/screenshots/wonder_jet.png)
+![Aurora Interceptor in the Hangar's HD fleet](docs/screenshots/hd_hangar.png)
+![The Aurora's 3D cockpit in first person](docs/screenshots/hd_cockpit.png)
 ![Eerie Caldera on Io](docs/screenshots/biome_eerie.png)
 ![Divine Summit on 55 Cancri e](docs/screenshots/biome_divine.png)
 

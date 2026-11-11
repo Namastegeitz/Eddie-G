@@ -27,7 +27,7 @@ func _ready() -> void:
 	var only := OS.get_environment("CSD_SMOKE").split(",", false)
 	var groups := [["data", _data], ["save", _save_tests], ["logic", _game_logic], ["ads", _ads],
 		["achievements", _achievements], ["items", _items_tests], ["skyway", _skyway_tests],
-		["upgrades", _upgrades_tests], ["biome", _biome_tests], ["wonder", _wonder_tests],
+		["upgrades", _upgrades_tests], ["biome", _biome_tests], ["wonder", _wonder_tests], ["hd", _hd_tests],
 		["gfx", _gfx_tests], ["races", _races], ["menus", _menus]]
 	for g: Array in groups:
 		if only.is_empty() or String(g[0]) in only:
@@ -103,7 +103,7 @@ func _data() -> void:
 		if c.get("premium", false):
 			premium += 1
 			check("premium %s has perk + product" % c.id, c.has("perk") and c.has("product") and int(c.price) >= 10000)
-	check("14 craft", Catalog.SAUCERS.size() == 14)
+	check("14 standard and premium craft", Catalog.SAUCERS.filter(func(s: Dictionary) -> bool: return not bool(s.get("hd", false))).size() == 14)
 	check("4 premium craft", premium == 4)
 	for c in Catalog.SAUCERS:
 		if c.has("product"):
@@ -956,8 +956,20 @@ func _items_tests() -> void:
 		cam.intro = 0.0
 		for f in 12:
 			await get_tree().process_frame
-		check("cockpit camera at the pilot's eyes", cam.global_position.distance_to(cam.eye_position()) < 0.6, str(cam.global_position.distance_to(cam.eye_position())))
+		# Physics can move the craft between the camera's update and this
+		# check (a frame that compiles shaders runs several ticks), so let
+		# the camera catch up first.
+		cam._process(0.0)
+		check("cockpit camera at the pilot's eyes", cam.global_position.distance_to(cam.eye_position()) < 0.6, "%.2f m" % cam.global_position.distance_to(cam.eye_position()))
 		check("own pilot hidden in cockpit", (cam.cull_mask & cam.pilot_mask) == 0)
+		check("standard craft borrow the default 3D cockpit", me.model.cockpit != null)
+		if me.model.cockpit:
+			check("3D cockpit drawn by its own camera", cam.cockpit_mask != 0 and (cam.cull_mask & cam.cockpit_mask) != 0
+				and me.model._cockpit_meshes[0].layers == cam.cockpit_mask)
+			check("other player's cockpit never drawn", (cam.cull_mask & (RaceCamera.COCKPIT_LAYERS & ~cam.cockpit_mask)) == 0)
+			check("3D cockpit sits at the eye", me.model.cockpit.global_position.distance_to(cam.global_position) < 0.05)
+			check("3D cockpit faces the camera's way", me.model.cockpit.global_basis.z.normalized().dot(cam.global_basis.z.normalized()) > 0.99)
+			check("own hull out of the way in the cockpit", _first_layers(me.model.pivot) == cam.pilot_mask)
 		check("cockpit looks ahead", (-cam.global_basis.z).dot(me.heading) > 0.6)
 		var ev := InputEventKey.new()
 		ev.physical_keycode = KEY_V
@@ -968,6 +980,7 @@ func _items_tests() -> void:
 			await get_tree().process_frame
 		check("chase camera back behind", cam.global_position.distance_to(me.global_position) > 3.0)
 		check("own pilot visible again", (cam.cull_mask & cam.pilot_mask) != 0)
+		check("3D cockpit hidden in chase view", (cam.cull_mask & RaceCamera.COCKPIT_LAYERS) == 0)
 		Save.data.settings.cockpit = false
 		# Portrait HUD: energy bars go top-centre, pause under the speed, and
 		# the cockpit dash clears the pedals; back to the bottom in landscape.
@@ -1620,6 +1633,75 @@ func _drive_free(race: Race, r: Racer, s_m: float) -> void:
 	r.in_steer = 0.0
 	r.in_wonder = false
 	r.reset_physics_interpolation()
+
+
+func _hd_tests() -> void:
+	# The HD fleet (content/craft_hd.json): ten realistic craft built from
+	# Meshy models, each with a first-person interior.
+	var all: Array = JSON.parse_string(FileAccess.get_file_as_string("res://content/craft_hd.json")).saucers
+	check("ten HD craft in the data", all.size() == 10, str(all.size()))
+	var free := 0
+	for s: Dictionary in all:
+		check("HD craft %s is a model" % s.id, String(s.shape) == "model" and String(s.model.mesh) != "")
+		check("HD craft %s has a cockpit" % s.id, String(s.get("cockpit", {}).get("mesh", "")) != "")
+		free += 1 if bool(s.get("free", false)) else 0
+	check("two HD craft are free", free == 2)
+	# Only craft whose model is baked fly; the rest wait (not an error).
+	var hd: Array = Catalog.SAUCERS.filter(func(s: Dictionary) -> bool: return bool(s.get("hd", false)))
+	check("every HD craft flies or waits", hd.size() + Content.waiting.size() == all.size(), "%d + %d" % [hd.size(), Content.waiting.size()])
+	for s: Dictionary in hd:
+		check("HD craft %s is baked" % s.id, ResourceLoader.exists(String(s.model.mesh).get_basename() + "_lod.res"))
+	var keep: Dictionary = Save.data
+	Save.data = Save.defaults()
+	Save._grant_start_pilots()
+	var granted := true
+	for s: Dictionary in hd:
+		granted = granted and Save.has_saucer(s.id) == bool(s.get("free", false))
+	check("free HD craft in a new hangar", granted)
+	Save.data = keep
+	# AI racers stay on the standard fleet (HD maps are for the player's own craft).
+	var ai_hd := false
+	for seed_v in 30:
+		for r: Dictionary in Game._field([], 7, 3, seed_v):
+			ai_hd = ai_hd or bool(Catalog.saucer(r.look.saucer).get("hd", false))
+	check("AI never flies HD craft", not ai_hd)
+	check("default cockpit is an HD craft", Catalog.has_saucer_id(Content.default_cockpit))
+	# A baked craft builds its hull and interior; set the layers like a race.
+	var m := SaucerModel.new()
+	add_child(m)
+	m.build(Save.look_for("aurora", "zib"))
+	var baked := ResourceLoader.exists("res://assets/craft/aurora/exterior_lod.res")
+	check("aurora hull baked", baked)
+	if baked:
+		check("aurora uses its HD hull", m.hd_hull != null and m.hd_hull.mesh.get_surface_count() >= 1)
+		check("HD hull is big enough to race", m.rim_r >= 1.1 and m.rim_r <= 2.6, str(m.rim_r))
+		check("HD hull has engine flames", not m.thrusters.is_empty())
+		check("HD hull keeps its own material", m.hd_hull.material_override is StandardMaterial3D
+			and (m.hd_hull.material_override as StandardMaterial3D).albedo_texture != null)
+	check("no interior until a camera takes it", m.cockpit == null)
+	m.set_cockpit_layer(1 << 12)
+	m.set_pilot_layer(1 << 10)
+	check("aurora has a 3D cockpit", m.cockpit != null and not m._cockpit_meshes.is_empty())
+	if m.cockpit:
+		check("cockpit on its camera's layer", m._cockpit_meshes[0].layers == 1 << 12 and m._cockpit_light.light_cull_mask == 1 << 12)
+		check("hull on the owner's layer", m.hd_hull == null or m.hd_hull.layers == 1 << 10)
+		check("cockpit not on the owner's layer", m._cockpit_meshes[-1].layers == 1 << 12)
+		check("cockpit stays put with the camera", m.cockpit.top_level and m.cockpit.physics_interpolation_mode == Node.PHYSICS_INTERPOLATION_MODE_OFF)
+	# A painted HD craft tints a copy of its material, never the shared one.
+	m.build({"saucer": "aurora", "pilot": "zib", "paint": "cherry", "decal": "none", "dome": "clear", "trail": "cyan"})
+	if baked and m.hd_hull:
+		var shared: StandardMaterial3D = load("res://assets/craft/aurora/exterior_mat.tres")
+		check("paint tints a copy", m.hd_hull.material_override != shared and shared.albedo_color == Color.WHITE)
+	# A model craft whose hull isn't baked (say, from a pack) still flies,
+	# as the classic saucer.
+	var stub := {"id": "hd_stub", "name": "Stub", "blurb": "", "speed": 5, "accel": 5, "handling": 5, "efficiency": 5,
+		"weight": 5, "price": 0, "stars": 0, "shape": "model", "paint": Color.WHITE,
+		"model": {"mesh": "res://assets/craft/nowhere/exterior.glb"}}
+	Catalog.SAUCERS.append(stub)
+	m.build(Save.look_for("hd_stub", "zib"))
+	check("unbaked model falls back to the classic hull", m.hd_hull == null and m.pivot.get_child_count() > 0)
+	Catalog.SAUCERS.erase(stub)
+	m.queue_free()
 
 
 func _wonder_tests() -> void:

@@ -1,0 +1,16 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/craft/aurora/cockpit_albedo.jpg" id="1_sd8u2"]
+[ext_resource type="Texture2D" path="res://assets/craft/aurora/cockpit_orm.jpg" id="2_pghpc"]
+[ext_resource type="Texture2D" path="res://assets/craft/aurora/cockpit_normal.jpg" id="3_v2r58"]
+
+[resource]
+cull_mode = 2
+albedo_texture = ExtResource("1_sd8u2")
+metallic = 1.0
+metallic_texture = ExtResource("2_pghpc")
+metallic_texture_channel = 2
+roughness_texture = ExtResource("2_pghpc")
+roughness_texture_channel = 1
+normal_enabled = true
+normal_texture = ExtResource("3_v2r58")

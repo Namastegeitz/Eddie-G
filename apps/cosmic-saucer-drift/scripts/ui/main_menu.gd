@@ -760,15 +760,15 @@ func _garage() -> Control:
 	var sid: String = _sel["garage_saucer"]
 	var sdef := Catalog.saucer(sid)
 	stage.show_look(Save.look_for(sid, g.pilot))
-	# Craft picker: standard fleet, then premium.
-	for group in [["Alien fleet", false], ["Premium craft", true]]:
-		v.add_child(UiKit.label(group[0], 18, UiKit.GOLD if group[1] else UiKit.DIM))
+	# Craft picker: standard fleet, the HD (Meshy) fleet, then premium.
+	for group in [["Alien fleet", false, false], ["HD fleet · realistic, with a full 3D cockpit", false, true], ["Premium craft", true, false]]:
+		v.add_child(UiKit.label(group[0], 18, UiKit.GOLD if group[1] else (UiKit.CYAN if group[2] else UiKit.DIM)))
 		var srow := HFlowContainer.new()
 		srow.add_theme_constant_override("h_separation", 8)
 		srow.add_theme_constant_override("v_separation", 8)
 		v.add_child(srow)
 		for s in Catalog.SAUCERS:
-			if bool(s.get("premium", false)) != group[1]:
+			if bool(s.get("premium", false)) != group[1] or bool(s.get("hd", false)) != group[2]:
 				continue
 			var id: String = s.id
 			var b := UiKit.button(("★ " if s.get("premium", false) else "") + s.name, func() -> void:

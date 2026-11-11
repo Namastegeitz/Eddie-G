@@ -136,6 +136,14 @@ godot --headless --path . res://tools/content_report.tscn
 # keeps 1000 in the account)
 MESHY_API_KEY=proxy-injected python3 tools/meshy/generate.py --force --only cone --yes
 godot --headless --path . --import && godot --headless --path . res://tools/meshy/bake_lods.tscn
+# HD craft: generate one part (30 credits), extract maps, import, bake, look
+MESHY_API_KEY=proxy-injected python3 tools/meshy/generate.py --source craft --only lancer/model --yes
+python3 -I tools/meshy/extract_textures.py --only lancer && godot --headless --path . --import
+python3 -I tools/meshy/extract_textures.py --only lancer --fix-imports && godot --headless --path . --import
+godot --headless --path . res://tools/meshy/bake_craft.tscn -- --only=lancer
+xvfb-run -a godot --path . res://tests/shots.tscn --rendering-driver opengl3 -- --tracks=ceres --frames=520 --craft=lancer --cockpit
+# Raw craft GLBs are not in git: download them again for free by task id
+MESHY_API_KEY=proxy-injected python3 tools/meshy/generate.py --source craft --refetch
 # Meshy pipeline against a local mock (no network, no key)
 python3 tools/meshy/test_pipeline.py
 # Regenerate the import-slot test fixture (a game-made GLB, not a Meshy asset)
@@ -192,6 +200,8 @@ godot --headless --path . --export-release "iOS"             build/ios/CosmicSau
 - Super Upgrades and Wonders: `content/wonders.json` and `content/upgrades.json`.
 - Volcanic biomes: `content/biomes.json`; Meshy meshes via
   `tools/meshy/generate.py` ([docs/ASSET_PIPELINE.md](docs/ASSET_PIPELINE.md)).
+- HD craft and cockpits: `content/craft_hd.json` (prompts, seat, engines,
+  cockpit offset). Assets live in `assets/craft/<id>/`.
 - Driving numbers: `resources/tuning.tres` (open in the editor's inspector).
 - Craft, pilots, power-ups, lineups, star systems, cups, challenges,
   cosmetics, rewards: `scripts/data/catalog.gd`.

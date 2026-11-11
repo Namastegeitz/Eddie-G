@@ -11,6 +11,8 @@ func _ready() -> void:
 	print("packs: %s" % (", ".join(Content.packs) if not Content.packs.is_empty() else "none"))
 	print("pilots %d, craft %d, wonders %d, mods %d, sets %d, biomes %d" % [Catalog.PILOTS.size(), Catalog.SAUCERS.size(),
 		Content.wonders.size(), Content.mods.size(), Content.sets.size(), Content.biomes.size()])
+	for msg in Content.waiting:
+		print("waiting for its Meshy model (hidden from the Hangar): " + msg)
 	for msg in Content.issues:
 		print("ISSUE: " + msg)
 	print("== Biome formations")

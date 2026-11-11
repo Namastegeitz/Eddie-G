@@ -2,3 +2,9 @@
 build/
 *.tmp
 tools/_parse_check.*
+__pycache__/
+# Raw Meshy craft GLBs (7-9 MB each) stay out of git: the game uses the
+# baked *_lod.res meshes and the *_albedo/orm/normal.jpg maps next to them.
+# Re-download with: python3 tools/meshy/generate.py --source craft --refetch
+assets/craft/*/*.glb
+assets/craft/*/*.glb.import

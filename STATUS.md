@@ -157,6 +157,13 @@
   smoke, mist, lighting; Settings > Volcanic biome. Meshy pipeline (tools/meshy/generate.py) + import slots +
   LOD bake (tools/meshy/bake_lods.tscn): all 8 formations generated with Meshy (170 credits), welded, unit space,
   5-8 LODs; exports ship only the baked meshes. Mock-API test (tools/meshy/test_pipeline.py) kept for offline runs.
+- HD fleet and 3D cockpits:
+  - content/craft_hd.json defines 10 realistic craft from Meshy, each with an exterior and a first-person interior.
+  - Pipeline: --source craft, extract_textures, bake_craft, craft_preview, --refetch.
+  - Aurora is done inside and out; every craft shows a 3D cockpit in first person.
+  - The other 9 are waiting for credits (about 60 each) and stay hidden until baked.
+  - Meshy spend for craft: 75 credits.
+  - The account is shared with the Canopy Crossing session, which was generating animals at the same time.
 - v1 built from `prompts/claude/cosmic-saucer-drift.md` (concept + every add-on: extra weapons, pro
   moves, living tracks + secrets, rivals + boss races, cups, time trial + ghost, daily, 2P split-screen,
   cosmetics, reverse/mirror, achievements; free/no ads with an ads layer switched off).

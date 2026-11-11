@@ -1,0 +1,22 @@
+{
+  "aurora/model": {
+    "slot": "res://assets/craft/aurora/exterior.glb",
+    "prompt": "sleek single-seat space racing interceptor with delta wings, long pointed nose, twin rear thrusters and an open cockpit, photorealistic hard-surface sci-fi spacecraft, detailed panel lines and greebles, worn painted metal, single object, symmetrical, no pilot, no base, no ground",
+    "target_polycount": 9000,
+    "preview_task": "01a1cac9-179d-731f-8062-a2acaa8d4496",
+    "final_task": "01a1cac9-9218-72d2-97ba-577205663c90",
+    "textured": true,
+    "ai_model": "latest",
+    "generated": "2026-11-11T13:26:41Z"
+  },
+  "aurora/cockpit": {
+    "slot": "res://assets/craft/aurora/cockpit.glb",
+    "prompt": "fighter jet style front instrument console seen from the pilot seat, curved dashboard with glowing blue screens, flight yoke, switch panels and a canopy frame arch, photorealistic sci-fi cockpit interior, detailed instruments, worn metal and leather, single object, no pilot, no seat back",
+    "target_polycount": 12000,
+    "preview_task": "01a1cad2-ee5c-7202-a481-6f34a3c75b1a",
+    "final_task": "01a1cad3-cd83-72fb-abfa-28d298782c98",
+    "textured": true,
+    "ai_model": "latest",
+    "generated": "2026-11-11T13:38:14Z"
+  }
+}

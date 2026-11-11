@@ -149,6 +149,13 @@ static var PILOTS: Array = [
 	 "blurb": "A thousand minds in one helmet. They all want to win."},
 ]
 
+static func has_saucer_id(id: String) -> bool:
+	for s in SAUCERS:
+		if s.id == id:
+			return true
+	return false
+
+
 static func pilot(id: String) -> Dictionary:
 	for p in PILOTS:
 		if p.id == id:

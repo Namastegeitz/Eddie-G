@@ -149,6 +149,8 @@ func _build() -> void:
 		# Compile every effect shader during the countdown, not mid-race.
 		items.warm_up(cams[0])
 		fx.warm_up(cams[0])
+		for c in cams:
+			c.warm_cockpit()
 	_audio = RaceAudio.new()
 	_audio.name = "RaceAudio"
 	add_child(_audio)
@@ -384,6 +386,7 @@ func _setup_views() -> void:
 
 # ---------------------------------------------------------------- cockpit view
 const PILOT_LAYER_BIT := 10     # render layer 11/12 hold player 1/2's own pilot
+const COCKPIT_LAYER_BIT := 12   # render layer 13/14 hold player 1/2's cockpit interior
 
 
 ## Gives each viewed racer's pilot its own render layer (so their cockpit
@@ -393,6 +396,11 @@ func _setup_cockpits() -> void:
 		var c := cams[k]
 		if c.target == null or c.target.model == null:
 			continue
+		# Cockpit first: the interior is built here, and with one the pilot
+		# layer also takes the exterior out of the seat's view.
+		var cbit := 1 << (COCKPIT_LAYER_BIT + k)
+		c.target.model.set_cockpit_layer(cbit)
+		c.cockpit_mask = cbit
 		var bit := 1 << (PILOT_LAYER_BIT + k)
 		c.target.model.set_pilot_layer(bit)
 		c.pilot_mask = bit

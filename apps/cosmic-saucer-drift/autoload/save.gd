@@ -276,10 +276,14 @@ static func start_pilot_ids() -> Array:
 
 ## Pilots marked "start" fly for everyone, including saves from before they
 ## were added (a saved pilot list replaces the default one when merged).
+## Craft marked "free" (the starter HD craft) are in every hangar the same way.
 func _grant_start_pilots() -> void:
 	for p in Catalog.PILOTS:
 		if String(p.get("unlock", "")) == "start" and not has_pilot(p.id):
 			data.pilots.append(p.id)
+	for s in Catalog.SAUCERS:
+		if bool(s.get("free", false)) and not has_saucer(s.id):
+			data.saucers.append(s.id)
 
 
 ## Pilots with unlock "credits" are bought with Race Credits.

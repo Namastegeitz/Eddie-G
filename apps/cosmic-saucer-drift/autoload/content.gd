@@ -14,11 +14,11 @@ extends Node
 ##
 ## Loaded in _init, before the other autoloads' _ready (Save reads pilots).
 
-const SHIPPED := ["res://content/wonders.json", "res://content/upgrades.json", "res://content/biomes.json"]
+const SHIPPED := ["res://content/wonders.json", "res://content/upgrades.json", "res://content/biomes.json", "res://content/craft_hd.json"]
 const PACK_DIRS := ["res://content/packs", "user://packs"]
 const PILOT_KEYS := ["id", "name", "color", "eyes", "passive_name", "passive_text", "style", "unlock", "home"]
 const SAUCER_KEYS := ["id", "name", "blurb", "speed", "accel", "handling", "efficiency", "weight", "price", "stars", "shape", "paint"]
-const SHAPES := ["classic", "bubble", "rocket", "ring", "orb", "manta", "crystal", "bioship", "mothership", "arrow", "sail", "phantom", "dragon", "dyson"]
+const SHAPES := ["classic", "bubble", "rocket", "ring", "orb", "manta", "crystal", "bioship", "mothership", "arrow", "sail", "phantom", "dragon", "dyson", "model"]
 const MECHANICS := ["spinnaker", "lighthouse", "jet", "harvest"]
 const STYLES := ["clean", "aggressive", "hoarder"]
 
@@ -34,7 +34,11 @@ var mod_by_id := {}
 var biomes: Array = []
 var biome_by_id := {}
 var biome_defaults := {}
+var default_cockpit := ""     # craft id whose cockpit interior other craft borrow
 var issues: PackedStringArray = []
+## HD craft whose Meshy model isn't generated and baked yet: kept out of the
+## Hangar until it is (not an error).
+var waiting: PackedStringArray = []
 var packs: PackedStringArray = []
 
 
@@ -88,6 +92,8 @@ func _load_file(path: String, is_pack: bool) -> void:
 		slots = d.slots
 	if d.has("biome_defaults"):
 		biome_defaults.merge(d.biome_defaults, true)
+	if d.has("default_cockpit"):
+		default_cockpit = String(d.default_cockpit)
 	for s: Dictionary in d.get("sets", []):
 		add_set(s, src)
 	for m: Dictionary in d.get("mods", []):
@@ -261,6 +267,13 @@ func add_saucer(s: Dictionary, src := "") -> bool:
 	if not (String(s.shape) in SHAPES):
 		issues.append("%s: craft %s shape '%s' unknown (using classic)" % [src, s.id, s.shape])
 		s.shape = "classic"
+	if String(s.shape) == "model" and not (s.get("model", null) is Dictionary and String(s.model.get("mesh", "")) != ""):
+		issues.append("%s: craft %s has shape 'model' but no model.mesh (using classic)" % [src, s.id])
+		s.shape = "classic"
+	if bool(s.get("hd", false)) and String(s.shape) == "model" \
+			and not ResourceLoader.exists(String(s.model.mesh).get_basename() + "_lod.res"):
+		waiting.append("%s (%s)" % [s.id, s.name])
+		return false
 	for k in Catalog.STAT_KEYS + ["weight"]:
 		s[k] = clampi(int(s[k]), 1, 10)
 	s.effects = _check_effects(s.get("effects", {}), "craft " + String(s.id))

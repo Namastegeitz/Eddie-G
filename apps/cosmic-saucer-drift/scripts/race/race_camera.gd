@@ -24,7 +24,13 @@ var _orbit := -1.0
 var _tp := Vector3.ZERO       # target position this frame (interpolated)
 var cockpit := false          # first-person view from the pilot's seat
 var pilot_mask := 0           # render layer of the target's own pilot (hidden in cockpit)
+var cockpit_mask := 0         # render layer of the target's cockpit interior (shown in cockpit)
+## Both players' cockpit interiors: never drawn except by their own camera
+## in first person.
+const COCKPIT_LAYERS := (1 << 12) | (1 << 13)
 var _ck_fwd := Vector3.FORWARD
+var _ck_dash := Vector3.FORWARD   # the 3D interior's facing (stays ahead when looking back)
+var _warm_ck := 0                 # frames left drawing the interior for the shader warm-up
 var _ck_up := Vector3.UP
 var _ck_roll := 0.0
 var _hold_tick := -1          # physics tick of a warp: follow the real position until it's pumped
@@ -76,6 +82,13 @@ func _target_xf() -> Transform3D:
 
 
 ## World position of the target pilot's eyes this frame.
+## Draw the 3D interior in front of this camera for a few frames (during the
+## countdown) so its materials and cabin light compile before the race, not
+## the first time the player looks out of the cockpit.
+func warm_cockpit() -> void:
+	_warm_ck = 3
+
+
 func eye_position() -> Vector3:
 	var xf := _target_xf()
 	var m := target.model
@@ -164,10 +177,17 @@ func _process(dt: float) -> void:
 	# Own pilot hidden only while actually looking out of the cockpit (the
 	# countdown sweep and the finish swing show them).
 	var first_person := cockpit and intro <= 0.0 and not target.finished
-	var mask := (ALL_LAYERS & ~pilot_mask) if first_person else ALL_LAYERS
+	var base := ALL_LAYERS & ~COCKPIT_LAYERS
+	var mask := ((base & ~pilot_mask) | cockpit_mask) if first_person else base
+	if _warm_ck > 0:
+		_warm_ck -= 1
+		if target.model and target.model.cockpit:
+			mask |= cockpit_mask
+			target.model.cockpit.global_transform = Transform3D(global_basis, global_position)
 	if cull_mask != mask:
 		cull_mask = mask
-		near = 0.05 if first_person else 0.3
+		# A 3D interior is shrunk close round the eye (see SaucerModel).
+		near = (0.02 if target.model and target.model.cockpit else 0.05) if first_person else 0.3
 	if intro > 0.0:
 		intro = maxf(0.0, intro - dt)
 		var k := intro / 2.4
@@ -228,9 +248,12 @@ func _cockpit_process(dt: float, ratio: float) -> void:
 	var want_fwd := target.heading
 	if not steady and target.model and target.model.pivot:
 		want_fwd = want_fwd.rotated(target.up.normalized(), wrapf(target.model.pivot.rotation.y, -PI, PI) * 0.5)
+	_ck_dash = _ck_dash.lerp(want_fwd, 1.0 - exp(-16.0 * dt)).normalized()
 	if target.in_look_back:
 		want_fwd = -want_fwd
 	_ck_fwd = _ck_fwd.lerp(want_fwd, 1.0 - exp(-16.0 * dt)).normalized()
+	if not target.in_look_back and _ck_dash.dot(_ck_fwd) > 0.999:
+		_ck_dash = _ck_fwd
 	_ck_up = _ck_up.lerp(target.up, 1.0 - exp(-10.0 * dt)).normalized()
 	var roll := 0.0 if steady else (-target.in_steer * 0.07 - float(target.drift_dir) * 0.05)
 	_ck_roll = lerpf(_ck_roll, roll, 1.0 - exp(-6.0 * dt))
@@ -239,6 +262,11 @@ func _cockpit_process(dt: float, ratio: float) -> void:
 	var eye := eye_position()
 	if _ck_fwd.cross(up).length() > 0.05:
 		global_transform = Transform3D(Basis.looking_at(_ck_fwd, up), eye)
+	# The 3D interior sits round the eye, facing the craft's way (looking
+	# back turns the view away from the dash, not the dash with it).
+	var ck: Node3D = target.model.cockpit if target.model else null
+	if ck and _ck_dash.cross(up).length() > 0.05:
+		ck.global_transform = Transform3D(Basis.looking_at(_ck_dash, up), eye)
 	var boosting := target.boost_time > 0.0
 	if boosting and not _was_boost:
 		_kick = 9.0

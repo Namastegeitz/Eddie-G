@@ -426,11 +426,15 @@ func _draw_cockpit(s: Vector2, k: float) -> void:
 		lamp = SaucerModel.SPARK_COLORS[racer.drift_tier - 1]
 	o.draw_circle(lc, dr * 0.55, lamp)
 	o.draw_arc(lc, dr * 0.75, 0, TAU, 20, Color(1, 1, 1, 0.3), 2.0 * k)
-	# Shield glow round the edges.
+	_draw_shield_glow(s)
+
+
+## Shield glow round the edges (the bubble can't be seen from inside).
+func _draw_shield_glow(s: Vector2) -> void:
 	if racer.shield_time > 0.0:
 		var a := 0.12 + 0.06 * sin(Time.get_ticks_msec() * 0.01)
 		for i in 5:
-			o.draw_rect(Rect2(Vector2.ZERO, s), Color(0.35, 0.8, 1.0, a / 5.0), false, 14.0 * (i + 1))
+			_overlay.draw_rect(Rect2(Vector2.ZERO, s), Color(0.35, 0.8, 1.0, a / 5.0), false, 14.0 * (i + 1))
 
 
 func _draw_overlay() -> void:
@@ -439,7 +443,10 @@ func _draw_overlay() -> void:
 		return
 	var k := 0.72 if compact else 1.0
 	if _cockpit and not racer.finished:
-		_draw_cockpit(s, k)
+		if racer.model and racer.model.cockpit:
+			_draw_shield_glow(s)   # the 3D interior replaces the drawn canopy and dash
+		else:
+			_draw_cockpit(s, k)
 	# Energy cells.
 	var cells := 10
 	var cw := 34.0 * k

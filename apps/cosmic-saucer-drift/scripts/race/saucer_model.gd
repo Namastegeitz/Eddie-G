@@ -28,6 +28,19 @@ var _wing_edges: Array[Node3D] = []
 var _glide_k := 0.0
 var top_y := 0.4                     # height of the hull top
 var eye := Vector3(0, 1.0, 0)        # pilot's eye in pivot space (cockpit camera)
+var hd_hull: MeshInstance3D = null   # HD craft: the baked Meshy hull
+## 3D cockpit interior seen in first person (a Meshy console in front of the
+## pilot's eyes). Its layers stay 0 (drawn by no camera) until a race gives
+## it the viewing player's cockpit layer with set_cockpit_layer().
+var cockpit: Node3D = null
+var _cockpit_meshes: Array[GeometryInstance3D] = []
+var _cockpit_light: OmniLight3D = null
+var _ck_inner: Node3D = null
+var _chassis := {}
+## The interior is built life-size and then shrunk round the eye: the view
+## from the eye is the same, but walls and other craft close by can't poke
+## through it.
+const COCKPIT_SHRINK := 0.45
 
 # Set by the racer every frame.
 var mood := 0
@@ -177,6 +190,7 @@ func build(look: Dictionary) -> void:
 	spin_ring = null
 	spin_ring2 = null
 	breath = null
+	hd_hull = null
 	_qs = Gfx.q()
 	_seg = int(_qs.seg)
 	_shadows = int(_qs.shadows) > 0
@@ -228,6 +242,8 @@ func build(look: Dictionary) -> void:
 			_dragon(paint, under, chrome, dark, glow, d)
 		"dyson":
 			_dyson(paint, under, hull_opts, chrome, dark, glow, d)
+		"model":
+			_hd(chassis, String(paint_def.id), paint, under, hull_opts, chrome, dark, glow, d)
 		_:
 			_classic(paint, under, hull_opts, chrome, dark, glow, d)
 	rim_r = d.rim_r
@@ -238,17 +254,25 @@ func build(look: Dictionary) -> void:
 	if d.nav:
 		_add(MeshKit.blob(Vector3.ONE * 0.07, 1.0, 1.0, 8, 6), _glow(Color(1.0, 0.15, 0.1), 2.5), Vector3(-rim_r - 0.04, 0.0, 0.0))
 		_add(MeshKit.blob(Vector3.ONE * 0.07, 1.0, 1.0, 8, 6), _glow(Color(0.2, 1.0, 0.3), 2.5), Vector3(rim_r + 0.04, 0.0, 0.0))
-	_decal(decal, paint, rim_r, shape)
-	# Cockpit: chrome base ring, pilot, glass.
-	_add(MeshKit.lathe(PackedVector2Array(_torus_pts(dome_r * 1.02, 0.06 + dome_r * 0.04, 8)), _seg), chrome, dome_at)
+	if shape != "model":
+		_decal(decal, paint, rim_r, shape)
+	# Cockpit: chrome base ring, pilot, glass (an HD craft has its own frame).
+	if shape != "model":
+		_add(MeshKit.lathe(PackedVector2Array(_torus_pts(dome_r * 1.02, 0.06 + dome_r * 0.04, 8)), _seg), chrome, dome_at)
 	var h := dome_r * 0.4 * float(d.pilot_k)
 	pilot_model = PilotModel.new()
-	pilot_model.position = dome_at + Vector3(0, dome_r * 0.55, 0)
+	pilot_model.position = dome_at + Vector3(0, dome_r * (0.12 if shape == "model" else 0.55), 0)
 	pivot.add_child(pilot_model)
 	_pilot_lod = float(_qs.lod) * 0.45
 	_fx_dist = float(_qs.get("fx_dist", 60.0))
 	pilot_model.build(pilot, h, bool(_qs.face), _pilot_lod)
 	eye = pilot_model.position + Vector3(0, h * 0.2, -h * 0.75)
+	# The interior is built only when a camera takes it (set_cockpit_layer),
+	# so AI craft and menu models never carry one.
+	_chassis = chassis
+	cockpit = null
+	_cockpit_meshes.clear()
+	_cockpit_light = null
 	var glass := MeshInstance3D.new()
 	var dome_pts := []
 	for k in 9:
@@ -257,7 +281,7 @@ func build(look: Dictionary) -> void:
 	glass.mesh = _lathe(dome_pts, [], maxi(16, _seg - 8))
 	glass.material_override = Gfx.glass(dome_c)
 	glass.position = dome_at
-	glass.scale = Vector3(1.0, 1.15, 1.0)
+	glass.scale = Vector3(0.8, 0.75, 1.45) if shape == "model" else Vector3(1.0, 1.15, 1.0)
 	glass.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	pivot.add_child(glass)
 	# Bake the static hull.
@@ -328,6 +352,170 @@ func build(look: Dictionary) -> void:
 		_spark_glow.append(g)
 	if not thrusters.is_empty():
 		thruster = thrusters[0]
+
+
+# ---------------------------------------------------------------- HD craft (Meshy)
+## A craft from content/craft_hd.json: the baked Meshy hull with its own
+## PBR material (a paint job tints it), the pilot under a glass canopy at the
+## data's seat, and flames at its engines. Until the hull is baked, the
+## classic saucer stands in.
+func _hd(chassis: Dictionary, paint_id: String, paint: Color, under: Color, hull_opts: Dictionary,
+		chrome: Material, dark: Material, glow: Material, d: Dictionary) -> void:
+	var m: Dictionary = chassis.get("model", {})
+	var base := String(m.get("mesh", "")).get_basename()
+	if base == "" or not ResourceLoader.exists(base + "_lod.res"):
+		_classic(paint, under, hull_opts, chrome, dark, glow, d)
+		return
+	var L := float(m.get("length", 4.4))
+	var mi := MeshInstance3D.new()
+	mi.name = "HDHull"
+	mi.mesh = load(base + "_lod.res")
+	var mat: Material = load(base + "_mat.tres") if ResourceLoader.exists(base + "_mat.tres") else null
+	if mat and paint_id != "stock":
+		mat = mat.duplicate()
+		(mat as StandardMaterial3D).albedo_color = Color.WHITE.lerp(paint, 0.5)
+	mi.material_override = mat
+	mi.scale = Vector3.ONE * L
+	mi.position = Vector3(0, float(m.get("lift", 0.0)) * L, 0)
+	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_ON if _shadows else GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	pivot.add_child(mi)
+	hd_hull = mi
+	var box := mi.mesh.get_aabb()
+	d.rim_r = clampf(box.size.x * L * 0.5, 1.1, 2.6)
+	var seat: Array = m.get("seat", [0.0, 0.1, -0.1])
+	var cr := float(m.get("canopy", 0.1)) * L
+	d.dome_r = cr
+	d.dome_y = float(seat[1]) * L + float(m.get("lift", 0.0)) * L - cr * 0.3
+	d.dome_z = float(seat[2]) * L
+	d.pilot_k = 1.0
+	d.nav = false
+	var fr := float(m.get("flame", 0.045)) * L
+	for e: Array in m.get("engines", [[0.0, 0.0, 0.5]]):
+		_flame(Vector3(float(e[0]), float(e[1]) + float(m.get("lift", 0.0)), float(e[2])) * L, fr, fr * 5.0)
+
+
+## The first-person interior: this craft's own Meshy cockpit, or the shared
+## one (craft_hd.json "default_cockpit") for craft without their own.
+func _build_cockpit(chassis: Dictionary) -> void:
+	cockpit = null
+	_cockpit_meshes.clear()
+	var ck: Dictionary = chassis.get("cockpit", {})
+	if ck.is_empty() or not ResourceLoader.exists(String(ck.get("mesh", "")).get_basename() + "_lod.res"):
+		var other := Content.default_cockpit
+		ck = Catalog.saucer(other).get("cockpit", {}) if other != "" and Catalog.has_saucer_id(other) else {}
+	var base := String(ck.get("mesh", "")).get_basename()
+	if base == "" or not ResourceLoader.exists(base + "_lod.res"):
+		return
+	cockpit = Node3D.new()
+	cockpit.name = "CockpitInterior"
+	# Placed by the first-person camera every frame (at the eye, facing its
+	# way), so it stays put in view through spins, tricks and the camera's
+	# own softened lean; nothing else ever draws it.
+	cockpit.top_level = true
+	cockpit.physics_interpolation_mode = Node.PHYSICS_INTERPOLATION_MODE_OFF
+	pivot.add_child(cockpit)
+	_ck_inner = Node3D.new()
+	_ck_inner.scale = Vector3.ONE * COCKPIT_SHRINK
+	cockpit.add_child(_ck_inner)
+	var mi := MeshInstance3D.new()
+	mi.mesh = load(base + "_lod.res")
+	if ResourceLoader.exists(base + "_mat.tres"):
+		mi.material_override = load(base + "_mat.tres")
+	var off: Array = ck.get("offset", [0.0, -0.42, -0.95])
+	mi.position = Vector3(float(off[0]), float(off[1]), float(off[2]))
+	mi.rotation_degrees = Vector3(0, float(ck.get("turn", 0.0)), 0)
+	mi.scale = Vector3.ONE * float(ck.get("width", 1.7))
+	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	mi.layers = 0
+	_ck_inner.add_child(mi)
+	_cockpit_meshes.append(mi)
+	if bool(ck.get("frame", true)):
+		_cockpit_frame(float(ck.get("width", 1.7)), Color(ck.get("accent", "#4fd8ff")))
+	# A soft cabin light that only touches the interior.
+	_cockpit_light = OmniLight3D.new()
+	_cockpit_light.position = Vector3(0, 0.25, 0.1)
+	_cockpit_light.omni_range = 2.6 * COCKPIT_SHRINK
+	_cockpit_light.light_energy = float(ck.get("light", 0.9))
+	_cockpit_light.light_color = Color(0.85, 0.92, 1.0)
+	_cockpit_light.light_cull_mask = 0
+	_cockpit_light.visible = false
+	_ck_inner.add_child(_cockpit_light)
+
+
+## Canopy framing round the Meshy console, in eye space (-Z ahead): side
+## sills down by the pilot's elbows, two windscreen pillars bowing over the
+## head to a frame hoop behind, and thin light strips along the sills, so
+## the view out is framed like a real cockpit and not a floating dash.
+func _cockpit_frame(w: float, accent: Color) -> void:
+	var metal := StandardMaterial3D.new()
+	metal.albedo_color = Color(0.15, 0.16, 0.18)
+	metal.metallic = 0.75
+	metal.roughness = 0.42
+	var pad := StandardMaterial3D.new()
+	pad.albedo_color = Color(0.07, 0.07, 0.08)
+	pad.roughness = 0.85
+	var strip := StandardMaterial3D.new()
+	strip.albedo_color = accent
+	strip.emission_enabled = true
+	strip.emission = accent
+	strip.emission_energy_multiplier = 2.2
+	strip.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	var x := w * 0.42
+	for sx: float in [-1.0, 1.0]:
+		# Sill: a padded top on a metal side wall.
+		_ck_box(Vector3(sx * x, -0.78, -0.55), Vector3(0.26, 0.86, 2.3), metal)
+		_ck_box(Vector3(sx * (x - 0.04), -0.33, -0.55), Vector3(0.3, 0.06, 2.3), pad)
+		_ck_box(Vector3(sx * (x - 0.19), -0.34, -0.55), Vector3(0.018, 0.018, 2.2), strip)
+		# Windscreen pillar: from the dash corner, up and over the head.
+		var pts := [Vector3(sx * x, -0.32, -1.6), Vector3(sx * x * 0.86, 0.22, -1.2),
+			Vector3(sx * x * 0.62, 0.62, -0.7), Vector3(sx * x * 0.34, 0.84, -0.05)]
+		for k in pts.size() - 1:
+			_ck_bar(pts[k], pts[k + 1], 0.07, metal)
+	# The hoop behind the head joins the two pillars.
+	_ck_bar(Vector3(-x * 0.34, 0.84, -0.05), Vector3(x * 0.34, 0.84, -0.05), 0.08, metal)
+
+
+func _ck_box(at: Vector3, size: Vector3, mat: Material) -> void:
+	var b := BoxMesh.new()
+	b.size = size
+	var mi := MeshInstance3D.new()
+	mi.mesh = b
+	mi.material_override = mat
+	mi.position = at
+	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	mi.layers = 0
+	_ck_inner.add_child(mi)
+	_cockpit_meshes.append(mi)
+
+
+func _ck_bar(a: Vector3, b: Vector3, thick: float, mat: Material) -> void:
+	var len := a.distance_to(b)
+	var bm := BoxMesh.new()
+	bm.size = Vector3(thick, thick, len + thick * 0.5)
+	var mi := MeshInstance3D.new()
+	mi.mesh = bm
+	mi.material_override = mat
+	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	mi.layers = 0
+	_ck_inner.add_child(mi)
+	var mid := (a + b) * 0.5
+	var dir := (b - a).normalized()
+	var up := Vector3.UP if absf(dir.dot(Vector3.UP)) < 0.95 else Vector3.BACK
+	mi.transform = Transform3D(Basis.looking_at(dir, up), mid)
+	_cockpit_meshes.append(mi)
+
+
+## Show the interior to one camera (its cockpit layer bit), or to none (0).
+## Builds it the first time. Call before set_pilot_layer (which then also
+## moves the exterior onto the owner's layer).
+func set_cockpit_layer(mask: int) -> void:
+	if mask != 0 and cockpit == null and pivot:
+		_build_cockpit(_chassis)
+	for g in _cockpit_meshes:
+		g.layers = mask
+	if _cockpit_light:
+		_cockpit_light.light_cull_mask = mask
+		_cockpit_light.visible = mask != 0
 
 
 # ---------------------------------------------------------------- parts
@@ -841,13 +1029,20 @@ func _particles(pos: Vector3, c: Color, amount: int, life: float, size: float) -
 func set_pilot_layer(mask: int) -> void:
 	if pilot_model:
 		_set_layers(pilot_model, mask)
+	# With a 3D interior, the whole outside of the craft goes on the
+	# player's own layer too: from the seat the hull would only get in the
+	# way (the camera sits inside it), and the interior replaces it.
+	if cockpit and pivot:
+		_set_layers(pivot, mask, cockpit)
 
 
-static func _set_layers(n: Node, mask: int) -> void:
-	if n is VisualInstance3D:
+static func _set_layers(n: Node, mask: int, skip: Node = null) -> void:
+	if n == skip:
+		return
+	if n is VisualInstance3D and not n is Light3D:
 		(n as VisualInstance3D).layers = mask
 	for c in n.get_children():
-		_set_layers(c, mask)
+		_set_layers(c, mask, skip)
 
 
 ## Show a hit: rockets and mines throw the craft up, a comet squashes it,

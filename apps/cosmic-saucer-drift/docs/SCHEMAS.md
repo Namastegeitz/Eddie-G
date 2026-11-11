@@ -52,7 +52,27 @@ Pilots, craft, mods, set bonuses, global perks and Wonder tiers carry an
  "premium": false, "perk_text": "optional line for the Hangar", "product": "optional store id"}
 ```
 - Stats are 1..10 (clamped). `price` is in Race Credits; `stars` must be earned before buying.
-- `shape` must be one of the 14 built-in hulls: classic, bubble, rocket, ring, orb, manta, crystal, bioship, mothership, arrow, sail, phantom, dragon, dyson.
+- `shape` must be one of the 14 built-in hulls (classic, bubble, rocket, ring, orb, manta, crystal, bioship, mothership, arrow, sail, phantom, dragon, dyson) or `model`.
+- `"free": true` puts the craft in every hangar.
+
+HD craft (`content/craft_hd.json`, shape `model`) add:
+```json
+{"hd": true, "free": false, "paint": "#ffffff",
+ "model": {"mesh": "res://assets/craft/lancer/exterior.glb", "prompt": "...", "polycount": 9000,
+           "length": 4.4, "yaw": 0, "lift": 0.0, "seat": [0, 0.1, -0.05], "canopy": 0.13,
+           "engines": [[0, 0.02, 0.48]], "flame": 0.045, "symmetry": "on"},
+ "cockpit": {"mesh": "res://assets/craft/lancer/cockpit.glb", "prompt": "...", "polycount": 12000,
+             "offset": [0, -0.72, -0.9], "width": 2.4, "turn": 0, "frame": true,
+             "accent": "#4fd8ff", "light": 0.9, "symmetry": "auto"}}
+```
+- `model` positions are in the baked hull's unit space: longest side 1,
+  centred, nose to -Z after `yaw`. `length` is the world size.
+- `cockpit.offset` and `cockpit.width` place the interior relative to the
+  pilot's eye, in metres before it is shrunk.
+- A `model` craft without a mesh is reported and flies as `classic`. So does
+  one whose mesh isn't baked yet.
+- The file's top-level `default_cockpit` names the craft whose interior
+  craft without their own borrow in first person.
 
 ## Pilots (`pilots`; `Catalog.PILOTS`)
 

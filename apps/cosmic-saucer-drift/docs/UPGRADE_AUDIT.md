@@ -125,6 +125,14 @@ against the code before it was fixed. Data schemas are in
 - **Super Upgrades**: Stardust from clean, long drifts; a Prototype, Refined, Transcendent Wonder track per premium craft; Core, Field and Drive mods with set bonuses; overclock with heat and burnout; global perks for maxed craft.
 - **Technical Wonders**: Photon Spinnaker, Lighthouse Cloak, Relativistic Jet and Stellar Harvest, on keys, pads and touch, with a HUD meter, effects and AI use.
 - **Volcanic biomes**: Eerie and Divine scenery with formation variants, LODs, lava rivers, smoke, mist and lighting, a Settings switch and per-track defaults.
+- **HD fleet and 3D cockpits**:
+  - 10 realistic craft are defined in `content/craft_hd.json`. Each has a Meshy exterior with PBR maps and its own Meshy cockpit interior.
+  - Aurora is generated, baked and in the game.
+  - The other nine are hidden until their models are made.
+  - In first person every craft shows a 3D interior with a canopy frame. It is shrunk round the eye and placed by the camera.
+  - The player's exterior is hidden from the seat.
+  - Per-player render layers keep each split-screen player's interior private.
+  - The pipeline gained `--source craft`, texture extraction (lossy WebP), `bake_craft`, `craft_preview`, `--refetch`, and a per-run credit report that counts only the run's own tasks.
 - **Meshy pipeline**: a generator, import slots, a LOD bake step and a validation report. All 8 biome formations are Meshy-generated (untextured previews, painted by the biome shader) and baked with 5-8 LOD levels.
 
 ## Found, not changed yet

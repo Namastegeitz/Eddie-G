@@ -1,0 +1,507 @@
+{
+ "schema": "csd.craft/1",
+ "about": "HD spacecraft made with Meshy (tools/meshy/generate.py --source craft). 'model' is the exterior, 'cockpit' the first-person interior; each 'mesh' is an import slot, baked by tools/meshy/bake_craft.tscn into <slot>_lod.res plus a PBR material. Calibration (set after looking at each model): yaw = degrees to turn the model so its nose points forward; length = metres nose to tail; seat = pilot position and canopy = glass dome radius, both as fractions of the length (x across, y up, z back); engines = thruster positions, same units. Cockpit: offset = where the console sits from the pilot's eyes (metres: x right, y up, z back) and width = its width in metres. Free craft are given to every player. default_cockpit: the craft whose cockpit interior the standard craft borrow in first person.",
+ "saucers": [
+  {
+   "id": "aurora",
+   "name": "Aurora Interceptor",
+   "blurb": "Sleek delta-wing interceptor. Balanced, quick, easy to love.",
+   "speed": 7,
+   "accel": 6,
+   "handling": 7,
+   "efficiency": 5,
+   "weight": 4,
+   "price": 0,
+   "stars": 0,
+   "free": true,
+   "hd": true,
+   "shape": "model",
+   "paint": "#ffffff",
+   "model": {
+    "mesh": "res://assets/craft/aurora/exterior.glb",
+    "prompt": "sleek single-seat space racing interceptor with delta wings, long pointed nose, twin rear thrusters and an open cockpit, photorealistic hard-surface sci-fi spacecraft, detailed panel lines and greebles, worn painted metal, single object, symmetrical, no pilot, no base, no ground",
+    "polycount": 9000,
+    "length": 5.0,
+    "yaw": -90,
+    "seat": [
+     0,
+     0.1,
+     -0.05
+    ],
+    "canopy": 0.13,
+    "engines": [
+     [
+      0,
+      0.02,
+      0.48
+     ]
+    ],
+    "symmetry": "on"
+   },
+   "cockpit": {
+    "mesh": "res://assets/craft/aurora/cockpit.glb",
+    "prompt": "fighter jet style front instrument console seen from the pilot seat, curved dashboard with glowing blue screens, flight yoke, switch panels and a canopy frame arch, photorealistic sci-fi cockpit interior, detailed instruments, worn metal and leather, single object, no pilot, no seat back",
+    "polycount": 12000,
+    "offset": [
+     0,
+     -0.72,
+     -0.9
+    ],
+    "width": 2.4,
+    "yaw": 0,
+    "symmetry": "auto"
+   }
+  },
+  {
+   "id": "nebula",
+   "name": "Nebula Saucer",
+   "blurb": "A real flying saucer: titanium disc, glowing rim, three thrusters.",
+   "speed": 6,
+   "accel": 6,
+   "handling": 6,
+   "efficiency": 6,
+   "weight": 5,
+   "price": 0,
+   "stars": 0,
+   "free": true,
+   "hd": true,
+   "shape": "model",
+   "paint": "#ffffff",
+   "model": {
+    "mesh": "res://assets/craft/nebula/exterior.glb",
+    "prompt": "realistic flying saucer racer, polished titanium disc hull with panel lines, glowing rim lights, central open cockpit, three rear thrusters, photorealistic hard-surface sci-fi spacecraft, detailed panel lines and greebles, worn painted metal, single object, symmetrical, no pilot, no base, no ground",
+    "polycount": 9000,
+    "length": 5.0,
+    "yaw": 0,
+    "seat": [
+     0,
+     0.1,
+     -0.05
+    ],
+    "canopy": 0.13,
+    "engines": [
+     [
+      0,
+      0.02,
+      0.48
+     ]
+    ],
+    "symmetry": "on"
+   },
+   "cockpit": {
+    "mesh": "res://assets/craft/nebula/cockpit.glb",
+    "prompt": "round flying saucer cockpit console seen from the pilot seat, circular dashboard with holographic screens, twin control sticks, glowing rim of lights, photorealistic sci-fi cockpit interior, detailed instruments, worn metal and leather, single object, no pilot, no seat back",
+    "polycount": 12000,
+    "offset": [
+     0,
+     -0.42,
+     -0.95
+    ],
+    "width": 1.7,
+    "yaw": 0,
+    "symmetry": "auto"
+   }
+  },
+  {
+   "id": "lancer",
+   "name": "Comet Lancer",
+   "blurb": "Needle nose, huge engines, wide turns.",
+   "speed": 9,
+   "accel": 5,
+   "handling": 4,
+   "efficiency": 4,
+   "weight": 5,
+   "price": 2500,
+   "stars": 4,
+   "free": false,
+   "hd": true,
+   "shape": "model",
+   "paint": "#ffffff",
+   "model": {
+    "mesh": "res://assets/craft/lancer/exterior.glb",
+    "prompt": "needle-nosed hyperspeed space racer, slim fuselage, small swept wings, two huge rear engines, open cockpit, photorealistic hard-surface sci-fi spacecraft, detailed panel lines and greebles, worn painted metal, single object, symmetrical, no pilot, no base, no ground",
+    "polycount": 9000,
+    "length": 5.0,
+    "yaw": 0,
+    "seat": [
+     0,
+     0.1,
+     -0.05
+    ],
+    "canopy": 0.13,
+    "engines": [
+     [
+      0,
+      0.02,
+      0.48
+     ]
+    ],
+    "symmetry": "on"
+   },
+   "cockpit": {
+    "mesh": "res://assets/craft/lancer/cockpit.glb",
+    "prompt": "narrow racing cockpit dashboard seen from the pilot seat, speed gauges and throttle levers, orange warning lights, carbon fibre panels, photorealistic sci-fi cockpit interior, detailed instruments, worn metal and leather, single object, no pilot, no seat back",
+    "polycount": 12000,
+    "offset": [
+     0,
+     -0.42,
+     -0.95
+    ],
+    "width": 1.7,
+    "yaw": 0,
+    "symmetry": "auto"
+   }
+  },
+  {
+   "id": "falcon",
+   "name": "Ion Falcon",
+   "blurb": "Forward-swept wings that bite into every corner.",
+   "speed": 7,
+   "accel": 7,
+   "handling": 8,
+   "efficiency": 4,
+   "weight": 4,
+   "price": 3000,
+   "stars": 8,
+   "free": false,
+   "hd": true,
+   "shape": "model",
+   "paint": "#ffffff",
+   "model": {
+    "mesh": "res://assets/craft/falcon/exterior.glb",
+    "prompt": "space fighter racer with forward-swept wings, canards, one large glowing ion engine, open cockpit, photorealistic hard-surface sci-fi spacecraft, detailed panel lines and greebles, worn painted metal, single object, symmetrical, no pilot, no base, no ground",
+    "polycount": 9000,
+    "length": 5.0,
+    "yaw": 0,
+    "seat": [
+     0,
+     0.1,
+     -0.05
+    ],
+    "canopy": 0.13,
+    "engines": [
+     [
+      0,
+      0.02,
+      0.48
+     ]
+    ],
+    "symmetry": "on"
+   },
+   "cockpit": {
+    "mesh": "res://assets/craft/falcon/cockpit.glb",
+    "prompt": "military space fighter cockpit console seen from the pilot seat, multifunction displays, flight stick, throttle quadrant, canopy frame, photorealistic sci-fi cockpit interior, detailed instruments, worn metal and leather, single object, no pilot, no seat back",
+    "polycount": 12000,
+    "offset": [
+     0,
+     -0.42,
+     -0.95
+    ],
+    "width": 1.7,
+    "yaw": 0,
+    "symmetry": "auto"
+   }
+  },
+  {
+   "id": "titan",
+   "name": "Titan Hauler",
+   "blurb": "Armoured, heavy, unstoppable in a shoving match.",
+   "speed": 6,
+   "accel": 4,
+   "handling": 4,
+   "efficiency": 9,
+   "weight": 9,
+   "price": 3500,
+   "stars": 12,
+   "free": false,
+   "hd": true,
+   "shape": "model",
+   "paint": "#ffffff",
+   "model": {
+    "mesh": "res://assets/craft/titan/exterior.glb",
+    "prompt": "heavy armored industrial space racer, chunky hull plates, hazard stripes, four big rear thrusters, open cockpit, photorealistic hard-surface sci-fi spacecraft, detailed panel lines and greebles, worn painted metal, single object, symmetrical, no pilot, no base, no ground",
+    "polycount": 9000,
+    "length": 5.0,
+    "yaw": 0,
+    "seat": [
+     0,
+     0.1,
+     -0.05
+    ],
+    "canopy": 0.13,
+    "engines": [
+     [
+      0,
+      0.02,
+      0.48
+     ]
+    ],
+    "symmetry": "on"
+   },
+   "cockpit": {
+    "mesh": "res://assets/craft/titan/cockpit.glb",
+    "prompt": "industrial heavy hauler cockpit console seen from the pilot seat, chunky switches, analog gauges, yellow hazard stripes, steel plates, photorealistic sci-fi cockpit interior, detailed instruments, worn metal and leather, single object, no pilot, no seat back",
+    "polycount": 12000,
+    "offset": [
+     0,
+     -0.42,
+     -0.95
+    ],
+    "width": 1.7,
+    "yaw": 0,
+    "symmetry": "auto"
+   }
+  },
+  {
+   "id": "wasp",
+   "name": "Pulsar Wasp",
+   "blurb": "Insect-quick and twitchy. Light as a breath.",
+   "speed": 7,
+   "accel": 8,
+   "handling": 8,
+   "efficiency": 3,
+   "weight": 3,
+   "price": 4000,
+   "stars": 16,
+   "free": false,
+   "hd": true,
+   "shape": "model",
+   "paint": "#ffffff",
+   "model": {
+    "mesh": "res://assets/craft/wasp/exterior.glb",
+    "prompt": "insect-inspired space racer with a segmented hull, slender translucent wings and a stinger-shaped tail engine, open cockpit, photorealistic hard-surface sci-fi spacecraft, detailed panel lines and greebles, worn painted metal, single object, symmetrical, no pilot, no base, no ground",
+    "polycount": 9000,
+    "length": 5.0,
+    "yaw": 0,
+    "seat": [
+     0,
+     0.1,
+     -0.05
+    ],
+    "canopy": 0.13,
+    "engines": [
+     [
+      0,
+      0.02,
+      0.48
+     ]
+    ],
+    "symmetry": "on"
+   },
+   "cockpit": {
+    "mesh": "res://assets/craft/wasp/cockpit.glb",
+    "prompt": "organic alien insect-like cockpit console seen from the pilot seat, curved ribbed panels, glowing green screens, bone-like control levers, photorealistic sci-fi cockpit interior, detailed instruments, worn metal and leather, single object, no pilot, no seat back",
+    "polycount": 12000,
+    "offset": [
+     0,
+     -0.42,
+     -0.95
+    ],
+    "width": 1.7,
+    "yaw": 0,
+    "symmetry": "auto"
+   }
+  },
+  {
+   "id": "glider",
+   "name": "Solar Glider",
+   "blurb": "Golden sails drink starlight. Sips energy.",
+   "speed": 7,
+   "accel": 6,
+   "handling": 7,
+   "efficiency": 8,
+   "weight": 3,
+   "price": 4500,
+   "stars": 20,
+   "free": false,
+   "hd": true,
+   "shape": "model",
+   "paint": "#ffffff",
+   "model": {
+    "mesh": "res://assets/craft/glider/exterior.glb",
+    "prompt": "elegant solar-sail racing yacht with gold reflective sail panels, slim white hull and an open cockpit, photorealistic hard-surface sci-fi spacecraft, detailed panel lines and greebles, worn painted metal, single object, symmetrical, no pilot, no base, no ground",
+    "polycount": 9000,
+    "length": 5.0,
+    "yaw": 0,
+    "seat": [
+     0,
+     0.1,
+     -0.05
+    ],
+    "canopy": 0.13,
+    "engines": [
+     [
+      0,
+      0.02,
+      0.48
+     ]
+    ],
+    "symmetry": "on"
+   },
+   "cockpit": {
+    "mesh": "res://assets/craft/glider/cockpit.glb",
+    "prompt": "luxury yacht style cockpit dashboard seen from the pilot seat, gold trim, wood and white leather, elegant glowing gauges, photorealistic sci-fi cockpit interior, detailed instruments, worn metal and leather, single object, no pilot, no seat back",
+    "polycount": 12000,
+    "offset": [
+     0,
+     -0.42,
+     -0.95
+    ],
+    "width": 1.7,
+    "yaw": 0,
+    "symmetry": "auto"
+   }
+  },
+  {
+   "id": "ray",
+   "name": "Void Ray",
+   "blurb": "A manta of shadow that loves to drift.",
+   "speed": 7,
+   "accel": 6,
+   "handling": 9,
+   "efficiency": 5,
+   "weight": 4,
+   "price": 5000,
+   "stars": 24,
+   "free": false,
+   "hd": true,
+   "shape": "model",
+   "paint": "#ffffff",
+   "model": {
+    "mesh": "res://assets/craft/ray/exterior.glb",
+    "prompt": "manta-ray shaped stealth space racer, wide flat wing body, dark matte panels with purple glow lines, open cockpit, photorealistic hard-surface sci-fi spacecraft, detailed panel lines and greebles, worn painted metal, single object, symmetrical, no pilot, no base, no ground",
+    "polycount": 9000,
+    "length": 5.0,
+    "yaw": 0,
+    "seat": [
+     0,
+     0.1,
+     -0.05
+    ],
+    "canopy": 0.13,
+    "engines": [
+     [
+      0,
+      0.02,
+      0.48
+     ]
+    ],
+    "symmetry": "on"
+   },
+   "cockpit": {
+    "mesh": "res://assets/craft/ray/cockpit.glb",
+    "prompt": "stealth craft cockpit console seen from the pilot seat, dark matte panels, purple glowing holographic displays, minimal controls, photorealistic sci-fi cockpit interior, detailed instruments, worn metal and leather, single object, no pilot, no seat back",
+    "polycount": 12000,
+    "offset": [
+     0,
+     -0.42,
+     -0.95
+    ],
+    "width": 1.7,
+    "yaw": 0,
+    "symmetry": "auto"
+   }
+  },
+  {
+   "id": "quasar_arrow",
+   "name": "Quasar Arrow",
+   "blurb": "An arrowhead with a ring engine. Pure speed.",
+   "speed": 8,
+   "accel": 7,
+   "handling": 6,
+   "efficiency": 5,
+   "weight": 5,
+   "price": 6000,
+   "stars": 28,
+   "free": false,
+   "hd": true,
+   "shape": "model",
+   "paint": "#ffffff",
+   "model": {
+    "mesh": "res://assets/craft/quasar_arrow/exterior.glb",
+    "prompt": "arrowhead-shaped space racer with a ring-shaped engine around the tail, chrome trim, open cockpit, photorealistic hard-surface sci-fi spacecraft, detailed panel lines and greebles, worn painted metal, single object, symmetrical, no pilot, no base, no ground",
+    "polycount": 9000,
+    "length": 5.0,
+    "yaw": 0,
+    "seat": [
+     0,
+     0.1,
+     -0.05
+    ],
+    "canopy": 0.13,
+    "engines": [
+     [
+      0,
+      0.02,
+      0.48
+     ]
+    ],
+    "symmetry": "on"
+   },
+   "cockpit": {
+    "mesh": "res://assets/craft/quasar_arrow/cockpit.glb",
+    "prompt": "high-tech arrowhead racer cockpit console seen from the pilot seat, chrome trim, ring-shaped display, red and white screens, photorealistic sci-fi cockpit interior, detailed instruments, worn metal and leather, single object, no pilot, no seat back",
+    "polycount": 12000,
+    "offset": [
+     0,
+     -0.42,
+     -0.95
+    ],
+    "width": 1.7,
+    "yaw": 0,
+    "symmetry": "auto"
+   }
+  },
+  {
+   "id": "skimmer",
+   "name": "Star Skimmer",
+   "blurb": "A hover-bike for the bold: tiny, fast, wild.",
+   "speed": 8,
+   "accel": 8,
+   "handling": 6,
+   "efficiency": 4,
+   "weight": 2,
+   "price": 7000,
+   "stars": 32,
+   "free": false,
+   "hd": true,
+   "shape": "model",
+   "paint": "#ffffff",
+   "model": {
+    "mesh": "res://assets/craft/skimmer/exterior.glb",
+    "prompt": "hover-bike style single-seat space speeder with exposed engines, handlebars and an open saddle, photorealistic hard-surface sci-fi spacecraft, detailed panel lines and greebles, worn painted metal, single object, symmetrical, no pilot, no base, no ground",
+    "polycount": 9000,
+    "length": 5.0,
+    "yaw": 0,
+    "seat": [
+     0,
+     0.1,
+     -0.05
+    ],
+    "canopy": 0.13,
+    "engines": [
+     [
+      0,
+      0.02,
+      0.48
+     ]
+    ],
+    "symmetry": "on"
+   },
+   "cockpit": {
+    "mesh": "res://assets/craft/skimmer/cockpit.glb",
+    "prompt": "hover-bike handlebar console seen from the rider seat, handlebars with grips, small speedometer screen, exposed wiring, photorealistic sci-fi cockpit interior, detailed instruments, worn metal and leather, single object, no pilot, no seat back",
+    "polycount": 12000,
+    "offset": [
+     0,
+     -0.42,
+     -0.95
+    ],
+    "width": 1.7,
+    "yaw": 0,
+    "symmetry": "auto"
+   }
+  }
+ ],
+ "default_cockpit": "aurora"
+}

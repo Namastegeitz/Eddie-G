@@ -1,4 +1,8 @@
-# Biome asset pipeline (Meshy)
+# Meshy asset pipeline (biomes and HD craft)
+
+Two kinds of Meshy assets: rock formations for the volcanic biomes (below)
+and the HD craft, exteriors plus first-person cockpits (see "HD craft"
+further down).
 
 The volcanic biomes are built from formation variants. Each variant has an
 import slot (`mesh` in `content/biomes.json`). All 8 slots now hold
@@ -66,6 +70,85 @@ Procedural recipes are built at two detail levels instead (about 2,000 and
   plume. Lava rivers run on the ground plane 50 m below the road and end in
   pools.
 
+## HD craft (exteriors and cockpits)
+
+`content/craft_hd.json` holds the 10 HD craft (`"hd": true`, shape
+`"model"`). Each has two slots: `model` (the exterior,
+`assets/craft/<id>/exterior.glb`) and `cockpit` (the first-person interior,
+`cockpit.glb`).
+
+```sh
+export MESHY_API_KEY=proxy-injected
+python3 tools/meshy/generate.py --source craft --only lancer             # plan + cost (60), spends nothing
+python3 tools/meshy/generate.py --source craft --only lancer/model --yes # one part (30)
+python3 -I tools/meshy/extract_textures.py --only lancer                 # albedo / ORM / normal JPEGs
+godot --headless --path . --import
+python3 -I tools/meshy/extract_textures.py --only lancer --fix-imports   # lossy WebP + mipmaps
+godot --headless --path . --import
+godot --headless --path . res://tools/meshy/bake_craft.tscn -- --only=lancer
+xvfb-run -a godot --path . res://tools/meshy/craft_preview.tscn --rendering-driver opengl3 -- \
+    --out=/tmp/views res://assets/craft/lancer/exterior_lod.res,res://assets/craft/lancer/cockpit_lod.res
+xvfb-run -a godot --path . res://tests/shots.tscn --rendering-driver opengl3 -- --tracks=ceres --frames=520 --craft=lancer --cockpit
+```
+
+- **Quality.** Craft use the `latest` Meshy model (20 credits a preview)
+  plus a PBR texture pass (10), so 30 credits a part and 60 a craft. A
+  `meshy-6-lite` test (15) came out blobby, so it isn't used for craft.
+- **Textures.** `extract_textures` pulls the base colour, metal/rough and
+  normal maps out of the GLB and downsizes them. Exteriors use 1024 colour
+  and normal maps with a 512 ORM. Cockpits get a 2048 colour map because
+  they're seen up close. Lossy WebP keeps each map to a few hundred KB.
+  The GLB's own images are never imported (`embedded_image_handling=0`).
+- **Bake.** `bake_craft` welds the mesh, turns it nose-forward (-Z) by the
+  data's `yaw`, scales it to unit size (longest side 1), adds tangents
+  (and LODs for exteriors), and saves `<slot>_lod.res` with a
+  `<slot>_mat.tres` material (ORM: G = roughness, B = metal).
+  `craft_preview` renders top, 3/4 and front views. The green arrow in the
+  top view is the game's forward.
+- **Git and exports.** Raw craft GLBs (7-9 MB) are in neither git nor the
+  exports. The baked meshes, materials and JPEGs are. To get the GLBs back
+  for free, while Meshy still keeps the task results:
+  `generate.py --source craft --refetch`.
+- **Calibrate in the data**, not the mesh:
+  - `model.yaw`: turns the nose to -Z.
+  - `seat` and `canopy`: unit-space pilot seat and glass size.
+  - `engines` and `flame`: flame positions and size.
+  - `length`: world size.
+  - `cockpit.offset` and `cockpit.width`: the interior's place relative to
+    the eye, in metres before it is shrunk.
+  - `cockpit.turn`: rotates the interior.
+  - `cockpit.frame`: false skips the procedural canopy frame.
+  - `cockpit.accent`: colour of the light strips.
+
+**In the game.** An HD craft draws its baked hull and its own PBR material.
+A paint job tints a copy of that material. The pilot sits under a
+streamlined glass canopy at `seat`, and flames burn at `engines`. A craft
+whose hull isn't baked yet flies as the classic saucer.
+
+In first person, every craft has a 3D interior: its own cockpit, or the
+`default_cockpit` craft's for the standard fleet. Around the Meshy console
+the game adds a canopy frame (side sills, windscreen pillars over the head,
+light strips) and a cabin light. The interior:
+- is built life-size, then shrunk round the eye (`COCKPIT_SHRINK`), so nearby
+  walls can't poke through it
+- is placed by the first-person camera every frame, so spins and leans
+  don't swing it
+- sits on that player's own cockpit render layer (13 or 14), which no other
+  camera draws
+
+The player's own exterior goes on their pilot layer and is hidden from the
+seat. AI racers never fly HD craft.
+
+**Credits used so far for craft:**
+- 15: lite test
+- 30: Aurora exterior
+- 30: Aurora cockpit
+
+A run now reports its own tasks' cost separately from the change in the
+account balance. Another client was generating models on the same account at
+the same time, and the balance-only report counted its spend too. Before
+each model the run also checks the balance again against the `--keep` reserve.
+
 ## Tests
 
 - `python3 tools/meshy/test_pipeline.py`: runs the generator against a local
@@ -75,3 +158,9 @@ Procedural recipes are built at two detail levels instead (about 2,000 and
   itself (`tools/make_fixture_glb.tscn`). The smoke test puts it in a slot to
   check the import path: GLB in place of the recipe, importer LODs, unit
   bounds. It is not a Meshy asset.
+- `CSD_SMOKE=hd` checks the HD fleet. It covers the data, the free grants,
+  AI never flying HD craft, and the baked hull with its material and flames.
+  It also checks the 3D cockpit's layers, the paint tint copy and the
+  classic fallback.
+- The race group checks that the 3D cockpit is drawn only by its own
+  camera, sits at the eye and faces the camera's way.
