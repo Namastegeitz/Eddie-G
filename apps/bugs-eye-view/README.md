@@ -157,6 +157,16 @@ lantern; they clean their antennae when left idle.
   garden gnome block sight lines; tall grass keeps you in shade.
 - Escalation chain: a human who spots you shouts, grabs the swatter, calls the
   pet, then brings out the bug spray.
+- **Up on the furniture nobody stomps**: a person's feet stay on the floor.
+  Within arm's reach they lean over the table, counter or shelf and slap at
+  you with an open hand (their own arm reaches over and the palm smacks down
+  where a ring warned) - or use the swatter or newspaper once they have it
+  ready. Out of reach they throw what's handy: a sponge in the kitchen, a
+  slipper in the living room, a ball of paper outside. It arcs over and lands
+  on a marked spot (get off it in time), then lies there and fades. They
+  won't walk under the furniture to get at you; low things (a step, a stool)
+  still get a foot. Once the whole house is after you, things come flying at
+  you across the floor too.
 - Lures (phone, spoon, TV remote, knocked-off peas) and turning threats on
   each other (a swatter clanging off a pan, a foot on a grape, a mug knocked
   onto a foot).

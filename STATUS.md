@@ -270,6 +270,10 @@
   stomps/swats still cost a whole hit; crumbs +6, gems +12, food +20, power-ups +40. Snap traps
   trigger on anyone standing or landing on the plate, knock you out for 3 s under the bar and
   take 65 health; one snap never kills, two back to back do (HUD shows DAZED meanwhile).
+- Up on the furniture: people no longer step up onto tables to stomp (feet stay on the floor,
+  and they won't walk under furniture). Within reach they lean over and slap with their own hand
+  (arm IK, lean and crouch; swatter/newspaper too); out of reach they throw a sponge, slipper or
+  ball of paper in a telegraphed arc. Fetch throws now find open lawn (the lane check was broken).
 - Phase-by-phase audit (all 6 phases) done; fixes it found: human feet were never solid,
   props didn't stun via feet, cereal-box domino layout, spider facing/normal errors, fog strength.
 - Android debug APK committed at `apps/bugs-eye-view/dist/android/bugseyeview-debug.apk`.

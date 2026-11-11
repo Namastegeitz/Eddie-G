@@ -322,6 +322,20 @@ On their rounds people also stop now and then to **check their phone**
 glance at their watch, and they **crouch to pet a calm pet** (it sits, wags
 and stops watching for a bit). Their feet knock small things out of the way.
 
+**Up on the furniture nobody stomps.** A person's feet stay on the floor, and
+they won't walk under a table to get at you. If you're up on a table, a
+counter, a shelf or a seat within arm's reach, they lean over and **slap** at
+you with an open hand: a ring shrinks on the spot while their arm reaches
+over it, then the palm smacks down (a hit, like a swat; get off the ring in
+time and it misses). Once they've grabbed the swatter, or if they carry the
+newspaper, they use those too. Out of reach they **throw** whatever's
+handy - a sponge in the kitchen, a slipper in the living room, a ball of
+paper outside: they wind up, a ring marks where it will land, and it arcs
+over and comes down there (it lies there a moment, then fades). When the
+whole house is after you (the swatter's out) they'll also throw things at
+you across the floor from a distance. Something low - a step, a stool - still
+gets a foot.
+
 **Pets go about their day too.** At stops on their rounds they sit, lie down,
 stretch, groom a paw (cats) or scratch an ear (dogs), and wander over to the
 **water bowl** for a drink - a sloppy drinker leaves a puddle that washes

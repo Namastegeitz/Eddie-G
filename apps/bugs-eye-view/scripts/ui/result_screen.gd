@@ -4,6 +4,8 @@ extends CanvasLayer
 const CAUSES := {
 	&"stomped": "Stomped by a giant foot",
 	&"swatted": "Swatted!",
+	&"slapped": "Slapped flat by a giant hand",
+	&"thrown": "Flattened by something thrown",
 	&"pounced": "Pounced on",
 	&"vacuumed": "Sucked into the vacuum",
 	&"sprayed": "Overcome by bug spray",

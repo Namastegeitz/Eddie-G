@@ -53,6 +53,8 @@ func _ready() -> void:
 		await _phase18()
 	if only in [0, 19]:
 		await _phase19()
+	if only in [0, 20]:
+		await _phase20()
 	finish("phase audit")
 
 
@@ -4127,3 +4129,125 @@ func _phase19() -> void:
 	ls.queue_free()
 	await frames(2)
 
+
+func _phase20() -> void:
+	print("-- Update: up on the furniture, people slap at you or throw things instead of stomping")
+	SaveSystem.data = SaveSystem.default_data()
+	var lv := await load_level(&"backyard", &"cockroach")
+	HouseClock.set_hour(10.0)
+	var p := lv.player
+	var g: Human = null
+	for n in get_tree().get_nodes_in_group(Phys.GROUP_HUMAN):
+		if lv.is_ancestor_of(n) and String((n as Node).name).begins_with("Gardener"):
+			g = n
+	for n in get_tree().get_nodes_in_group(Phys.GROUP_PET):
+		if lv.is_ancestor_of(n):
+			(n as Node3D).global_position = Vector3(90, 0.5, 90)
+			(n as Node).process_mode = Node.PROCESS_MODE_DISABLED
+	g.force_present(true)
+	g.end_activity()
+	# The picnic table top is about 27 up; the bug sits on it.
+	var on_table := Vector3(-6, 27.4, 15)
+
+	# Walking over to it: feet stay on the grass, and they stop at the table's
+	# edge instead of walking under it (no throwing yet, to see the approach).
+	_place_human(g, Vector3(34, 0, 15), PI * 0.5)
+	p.invuln = 1000.0
+	p.teleport_to(Transform3D(Basis.IDENTITY, on_table))
+	await frames(5)
+	g._throw_cd = 999.0
+	g._attack_cd = 999.0
+	g.alert.force(AlertState.ALERT, p.global_position)
+	var top_foot := 0.0
+	for i in 300:
+		await get_tree().physics_frame
+		for f in [g.left_foot, g.right_foot]:
+			if (f as FootHazard).is_planted():
+				top_foot = maxf(top_foot, (f as Node3D).global_position.y)
+		g.alert.force(AlertState.ALERT, p.global_position)
+	check(top_foot < 1.0 and g._body_pos.x > -3.0 and g.can_slap(p.global_position),
+		"they walk up to the table on the floor (feet never higher than %.1f) and stop at its edge, within reach (x %.1f)" % [top_foot, g._body_pos.x])
+
+	# Within reach: they lean over and slap it with their own hand.
+	_place_human(g, Vector3(6, 0, 15), PI * 0.5)
+	p.invuln = 0.0
+	p.health = BugBase.MAX_HEALTH
+	p.teleport_to(Transform3D(Basis.IDENTITY, on_table))
+	await frames(5)
+	var at := p.global_position
+	g._attack_cd = 0.0
+	g._throw_cd = 999.0
+	g.alert.force(AlertState.ALERT, at)
+	var closest := 999.0
+	var stomped_high := false
+	var leaned := 0.0
+	for i in 120:
+		await get_tree().physics_frame
+		await get_tree().process_frame
+		if g._slap.busy:
+			closest = minf(closest, g.hand_position().distance_to(at))
+		leaned = maxf(leaned, g._lean)
+		for f in [g.left_foot, g.right_foot]:
+			if (f as Node3D).global_position.y > 3.0 and not (f as FootHazard).is_planted() and (f as FootHazard).swing_progress() < 0.0:
+				stomped_high = true
+		if g._slap.landed > 0:
+			break
+	check(g._slap.landed >= 1 and p.health < BugBase.MAX_HEALTH and not stomped_high,
+		"a bug up on the table gets slapped with an open hand, not stomped (health %d)" % roundi(p.health))
+	check(closest < 4.0 and leaned > 0.3, "they lean over (%.2f rad) and their own palm comes down on the spot (%.1f away)" % [leaned, closest])
+	await frames(60)
+
+	# A slap is telegraphed: get off the ring in time and it misses.
+	p.dead = false
+	p.health = BugBase.MAX_HEALTH
+	p.invuln = 0.0
+	p.knockdown = 0.0
+	p.teleport_to(Transform3D(Basis.IDENTITY, on_table))
+	await frames(5)
+	var landed0 := g._slap.landed
+	g._slap.strike(p.global_position, 0.6, g)
+	await frames(10)
+	p.teleport_to(Transform3D(Basis.IDENTITY, on_table + Vector3(-9, 0, 0)))
+	g._attack_cd = 999.0
+	await frames(50)
+	check(g._slap.landed == landed0 and is_equal_approx(p.health, BugBase.MAX_HEALTH), "get off the ring in time and the slap misses")
+	await frames(40)
+
+	# Out of reach at the far end of the table: they throw something at it.
+	p.health = BugBase.MAX_HEALTH
+	p.invuln = 0.0
+	p.knockdown = 0.0
+	var far := Vector3(-32, 27.4, 15)
+	p.teleport_to(Transform3D(Basis.IDENTITY, far))
+	await frames(5)
+	_place_human(g, Vector3(6, 0, 15), PI * 0.5)
+	var throws0 := g.throws
+	g._throw_cd = 0.0
+	g._attack_cd = 0.0
+	g.alert.force(AlertState.ALERT, p.global_position)
+	var thrown: ThrownObject = null
+	for i in 150:
+		await get_tree().physics_frame
+		if thrown == null:
+			for c in lv.get_children():
+				if c is ThrownObject:
+					thrown = c
+		if thrown and thrown.hit_bug:
+			break
+	check(g.throws > throws0 and thrown != null and thrown.kind == ThrownObject.Kind.PAPER and thrown.hit_bug and p.health < BugBase.MAX_HEALTH,
+		"out of reach, they throw a ball of paper that arcs over and hits (throws %d, health %d)" % [g.throws - throws0, roundi(p.health)])
+	await frames(int((ThrownObject.REST_TIME + ThrownObject.FADE_TIME) * 60.0) + 60)
+	check(not is_instance_valid(thrown), "the thrown thing lies there a moment, then fades away")
+	await unload(lv)
+
+	# In the kitchen it's a sponge, in the living room a slipper.
+	lv = await load_level(&"kitchen", &"cockroach")
+	var kh := first_in_group(Phys.GROUP_HUMAN, lv) as Human
+	var kitchen_kind := kh._throwable()
+	await unload(lv)
+	lv = await load_level(&"living_room", &"cockroach")
+	var lh := first_in_group(Phys.GROUP_HUMAN, lv) as Human
+	var living_kind := lh._throwable()
+	await unload(lv)
+	check(kitchen_kind == ThrownObject.Kind.SPONGE and living_kind == ThrownObject.Kind.SLIPPER,
+		"what they grab fits the room: a sponge in the kitchen, a slipper in the living room")

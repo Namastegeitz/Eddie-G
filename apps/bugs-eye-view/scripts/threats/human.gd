@@ -21,6 +21,13 @@ extends Threat
 ## their phone (eyes down: they only notice what's close), stretch, scratch
 ## their head or glance at their watch, and stop to pet a calm pet. Their
 ## feet knock small things out of the way.
+##
+## Up on a table, a counter or a shelf you're out of a foot's reach: nobody
+## stomps at a table top. Within arm's reach they lean over and slap at you
+## with an open hand (or the swatter / newspaper when they have it ready);
+## out of reach they throw whatever's handy - a slipper, a sponge, a ball of
+## paper - in an arc that lands where a ring warned. They won't walk under
+## the furniture to get at you. Low things (a step, a stool) still get a foot.
 
 @export var route: PackedVector3Array = []
 @export var stride: float = 9.0
@@ -126,6 +133,34 @@ var _curtains_done := false
 var _petting: Node3D
 var _phone: Node3D
 
+# Up off the floor: slaps and throws instead of stomps.
+## Up to this high above the floor a foot can still reach (a step, a stool).
+const STOMP_TOP := 14.0
+## How far (flat, from where they stand) a leaning slap reaches.
+const SLAP_REACH := 21.0
+const SLAP_TOP := 72.0
+## How far they'll throw, the rest between throws and the wind-up.
+const THROW_RANGE := 70.0
+const THROW_COOLDOWN := 3.2
+const THROW_WINDUP := 0.65
+## Right arm: shoulder to elbow, elbow to the middle of the palm.
+const UPPER_ARM := 12.0
+const FOREARM := 13.3
+var _slap: HandSlap
+var _reach_point := Vector3.ZERO
+var _reach_blend := 0.0
+var _lean := 0.0
+var _crouch := 0.0
+var _lean_shift := Vector3.ZERO
+var _shoulder_z: Array[float] = []
+var _hand_r: Node3D
+var _throw_cd := 1.5
+var _held: ThrownObject
+var _throw_wind := 0.0
+var _follow := 0.0
+## Things thrown so far (for tests).
+var throws := 0
+
 
 func _setup() -> void:
 	add_to_group(Phys.GROUP_HUMAN)
@@ -140,11 +175,13 @@ func _setup() -> void:
 			if sh:
 				_shoulders.append(sh)
 				_elbows.append(sh.get_node_or_null("Elbow") as Node3D)
+				_shoulder_z.append(sh.rotation.z)
 		_head = _torso.get_node_or_null("Head") as Node3D
 		if _head:
 			_lids = _head.get_node_or_null("Lids") as Node3D
 			_gaze = _head.get_node_or_null("Gaze") as Node3D
 		_phone = _torso.get_node_or_null("ShoulderR/Elbow/Hand/PhoneHold") as Node3D
+		_hand_r = _torso.get_node_or_null("ShoulderR/Elbow/Hand") as Node3D
 	_legs = get_node_or_null("Legs") as Node3D
 	# Posed every frame: ride on the smoothed body (and feet).
 	if _torso:
@@ -161,6 +198,9 @@ func _setup() -> void:
 			(f as FootHazard).heavy = heavy_boots
 	if newspaper:
 		newspaper.owner_threat = self
+	_slap = HandSlap.new()
+	_slap.name = "HandSlap"
+	add_child(_slap)
 	_body_pos = global_position
 	_plant_feet(global_position, rotation.y)
 
@@ -177,6 +217,7 @@ func _plant_feet(center: Vector3, yaw: float) -> void:
 
 
 func _on_presence_changed(now: bool) -> void:
+	_cancel_strikes()
 	end_activity()
 	for f in [left_foot, right_foot]:
 		if f:
@@ -235,6 +276,8 @@ func _think(delta: float) -> void:
 		if walking_out:
 			return
 	_attack_cd -= delta * speed_mult()
+	_throw_cd -= delta * speed_mult()
+	_throw_tick(delta)
 	_spray_cd -= delta
 	_voice_cd -= delta
 	_pester_cd -= delta
@@ -321,7 +364,7 @@ func _patrol(delta: float) -> void:
 	_walk_towards(target, delta, step_time)
 
 
-func _walk_towards(target: Vector3, delta: float, cadence: float) -> void:
+func _walk_towards(target: Vector3, delta: float, cadence: float, avoid_under: bool = false) -> void:
 	_step_timer -= delta * speed_mult()
 	if _step_timer > 0.0:
 		return
@@ -339,7 +382,11 @@ func _walk_towards(target: Vector3, delta: float, cadence: float) -> void:
 	var side := Basis(Vector3.UP, yaw).x * foot_spacing * 0.5 * (-1.0 if _left_next else 1.0)
 	var step := minf(stride, dist + stride * 0.5)
 	var land := _body_pos + dir * step * 0.75 + side
-	land.y = target.y
+	# Feet stay on the floor: walking towards something up on a table
+	# doesn't mean stepping up onto it.
+	land.y = target.y if absf(target.y - ground_y()) < 3.0 else ground_y()
+	if avoid_under and _overhead_blocked(land):
+		return
 	foot.step_to(land, yaw, cadence * 0.85, true)
 	var stance := right_foot if foot == left_foot else left_foot
 	_glide_from = _body_pos
@@ -355,6 +402,19 @@ func _search(delta: float) -> void:
 	var target := alert.last_known
 	face_towards(target, delta)
 	var flat := Vector2(target.x - _body_pos.x, target.z - _body_pos.z).length()
+	if is_up_high(target):
+		# Searching a table top: pat it down with a hand, never a foot.
+		if _busy_striking():
+			return
+		if can_slap(target):
+			if _attack_cd <= 0.0 and not (PerceptionSystem.player and PerceptionSystem.player.is_spared_by_people() \
+					and not PerceptionSystem.alarm_active):
+				_attack_cd = config.attack_cooldown * 1.1
+				var off := Vector3(randf_range(-2.5, 2.5), 0.0, randf_range(-2.5, 2.5))
+				_slap.strike(target + off, config.attack_windup * 1.1, self)
+		else:
+			_walk_towards(target, delta, step_time * 0.8, true)
+		return
 	if flat > 10.0:
 		_walk_towards(target, delta, step_time * 0.8)
 	elif _attack_cd <= 0.0 and not (PerceptionSystem.player and PerceptionSystem.player.is_spared_by_people() \
@@ -375,8 +435,19 @@ func _attack(delta: float) -> void:
 		face_towards(target, delta)
 		return
 	face_towards(target, delta, config.turn_speed * 2.0)
+	if _busy_striking():
+		return
 	var flat := Vector2(target.x - _body_pos.x, target.z - _body_pos.z).length()
+	if is_up_high(target):
+		_attack_high(target, flat, delta)
+		return
 	if flat > config.attack_range:
+		# On the floor but far off, with the house up in arms: something
+		# comes flying while they close in.
+		if escalation_stage >= 2 and flat > config.attack_range * 2.5 and flat <= THROW_RANGE * 0.6 \
+				and _throw_cd <= 0.0 and not (p is Fly and (p as Fly).flying) and _clear_throw_line(target):
+			_start_throw(target)
+			return
 		_walk_towards(target, delta, step_time * 0.7)
 		return
 	if _attack_cd > 0.0:
@@ -400,9 +471,141 @@ func _stomp(target: Vector3, windup: float) -> void:
 		return
 	var to := target - _body_pos
 	var yaw := atan2(-to.x, -to.z) if to.length() > 0.5 else foot.yaw
-	foot.step_to(Vector3(target.x, foot.global_position.y, target.z), yaw, windup)
+	# On the floor the sole lands on the floor; on something low (a step, a
+	# stool) it comes down on top of it.
+	var fy := foot.global_position.y
+	if target.y - ground_y() > 1.5:
+		fy = target.y - 0.4
+	foot.step_to(Vector3(target.x, fy, target.z), yaw, windup)
 	_glide_dur = 0.0
 	_left_next = not _left_next
+
+
+# --- Up on the furniture: slaps and throws -------------------------------
+
+## The floor this person walks on.
+func ground_y() -> float:
+	return route[0].y if not route.is_empty() else _body_pos.y
+
+
+## Up on something (a table, counter, shelf) out of a foot's reach.
+func is_up_high(pos: Vector3) -> bool:
+	return pos.y - ground_y() > STOMP_TOP
+
+
+## Close enough to lean over and slap this spot from where they stand.
+func can_slap(pos: Vector3) -> bool:
+	var flat := Vector2(pos.x - _body_pos.x, pos.z - _body_pos.z).length()
+	var h := pos.y - ground_y()
+	return flat <= SLAP_REACH and h > STOMP_TOP and h < SLAP_TOP
+
+
+func _busy_striking() -> bool:
+	return (_slap != null and _slap.busy) or _held != null
+
+
+func _attack_high(target: Vector3, flat: float, delta: float) -> void:
+	if can_slap(target):
+		if _attack_cd > 0.0:
+			return
+		_attack_cd = config.attack_cooldown
+		var windup := config.attack_windup / speed_mult()
+		if has_newspaper and newspaper and not newspaper.busy and flat < newspaper.length and randf() < 0.35:
+			newspaper.sweep_at(_body_pos, target, windup)
+		elif has_swatter and escalation_stage >= 2 and Level.current and randf() < 0.5:
+			var sw := Level.current.swatter_pool.acquire() as Swatter
+			sw.strike(target, windup, self, Level.current.swatter_pool)
+		else:
+			_slap.strike(target, windup, self)
+		return
+	# Out of arm's reach: throw something, or come closer - but not by
+	# walking under the table.
+	if _throw_cd <= 0.0 and flat <= THROW_RANGE and _clear_throw_line(target):
+		_start_throw(target)
+		return
+	if flat > SLAP_REACH - 3.0:
+		_walk_towards(target, delta, step_time * 0.7, true)
+
+
+## A clear line from their eyes to just above the spot (nothing in the way).
+func _clear_throw_line(target: Vector3) -> bool:
+	var space := get_world_3d().direct_space_state
+	var q := PhysicsRayQueryParameters3D.create(eye_position(), target + Vector3.UP * 1.5, Phys.WORLD)
+	return space.intersect_ray(q).is_empty()
+
+
+## Furniture overhead at this spot (below hip height): no walking under it.
+func _overhead_blocked(at: Vector3) -> bool:
+	var space := get_world_3d().direct_space_state
+	var q := PhysicsRayQueryParameters3D.create(at + Vector3.UP * 3.5, at + Vector3.UP * HIP_Y, Phys.WORLD)
+	return not space.intersect_ray(q).is_empty()
+
+
+## What they grab to throw: a sponge in the kitchen, a slipper in the living
+## room, a ball of paper anywhere else.
+func _throwable() -> int:
+	var lv := Level.current
+	var id := String(lv.config.id) if lv and lv.config else ""
+	if id.begins_with("kitchen"):
+		return ThrownObject.Kind.SPONGE
+	if id.begins_with("living"):
+		return ThrownObject.Kind.SLIPPER
+	return ThrownObject.Kind.PAPER
+
+
+func _start_throw(target: Vector3) -> void:
+	_throw_cd = THROW_COOLDOWN
+	_attack_cd = maxf(_attack_cd, THROW_WINDUP + 0.5)
+	_held = ThrownObject.make(_throwable())
+	var parent: Node = Level.current if Level.current else get_parent()
+	parent.add_child(_held)
+	_throw_wind = THROW_WINDUP / speed_mult()
+	_held.hold(self, target, _throw_wind)
+
+
+## The wind-up (arm cocked back over the shoulder), the release and the
+## follow-through.
+func _throw_tick(delta: float) -> void:
+	if _held:
+		if not is_instance_valid(_held):
+			_held = null
+			return
+		_throw_wind -= delta * speed_mult()
+		set_reach(global_transform * Vector3(9.0, 74.0, 9.0), 1.0)
+		if _throw_wind <= 0.0:
+			_held.release(hand_position())
+			_held = null
+			throws += 1
+			_follow = 0.3
+			AudioManager.play_at(&"whoosh", eye_position(), -2.0, 1.1)
+	elif _follow > 0.0:
+		_follow -= delta
+		set_reach(global_transform * Vector3(5.0, 40.0, -20.0), clampf(_follow / 0.3, 0.0, 1.0))
+
+
+## Where the right palm is (what a held thing sits in).
+func hand_position() -> Vector3:
+	if _hand_r:
+		return _hand_r.global_transform * Vector3(0, -2.0, -0.6)
+	return eye_position()
+
+
+## Reach the right palm towards `point` (blend 0 = arm back to normal).
+## Leans over and dips at the knees as needed (HandSlap, throws).
+func set_reach(point: Vector3, blend: float) -> void:
+	_reach_point = point
+	_reach_blend = clampf(blend, 0.0, 1.0)
+
+
+func _cancel_strikes() -> void:
+	if _slap and _slap.busy:
+		_slap.cancel()
+	if _held and is_instance_valid(_held):
+		_held.drop()
+	_held = null
+	_throw_wind = 0.0
+	_follow = 0.0
+	_reach_blend = 0.0
 
 
 func _spray_at(target: Vector3) -> void:
@@ -425,6 +628,7 @@ func call_pet() -> void:
 
 
 func _on_stunned() -> void:
+	_cancel_strikes()
 	AudioManager.play_at(&"voice_ow", eye_position(), 2.0, 1.0, &"Muffled")
 	_attack_cd = config.stun_duration
 
@@ -478,6 +682,10 @@ func pose_body(delta: float) -> void:
 			arm_x *= 0.5
 			elbow_x = 0.5
 		sh.rotation.x = lerp_angle(sh.rotation.x, arm_x, k)
+		# After a reach, the arm settles back into its usual hang.
+		sh.rotation.y = lerp_angle(sh.rotation.y, 0.0, k)
+		if i < _shoulder_z.size():
+			sh.rotation.z = lerp_angle(sh.rotation.z, _shoulder_z[i], k)
 		if _elbows[i]:
 			_elbows[i].rotation.x = lerp_angle(_elbows[i].rotation.x, elbow_x, k)
 	if _head:
@@ -504,6 +712,7 @@ func pose_body(delta: float) -> void:
 	# Breathing lifts the shoulders a touch.
 	for sh in _shoulders:
 		sh.position.y = SHOULDER_Y + sin(_breath * 1.7) * 0.18
+	_pose_reach(delta)
 	_pose_legs(fwd)
 
 
@@ -591,7 +800,7 @@ func _pose_legs(fwd: Vector3) -> void:
 		var parts: Array = _leg_parts[i]
 		if f == null or parts[0] == null or parts[2] == null:
 			continue
-		var hip := body_xf * (Vector3((-1.0 if i == 0 else 1.0) * HIP_X, HIP_Y, BODY_Z) + _torso.position)
+		var hip := body_xf * (Vector3((-1.0 if i == 0 else 1.0) * HIP_X, HIP_Y, BODY_Z) + _torso.position - _lean_shift)
 		var ankle := f.get_global_transform_interpolated() * ANKLE
 		var knee := knee_point(hip, ankle, fwd)
 		# The thigh and shin are built at rest length between joint centres.
@@ -599,6 +808,49 @@ func _pose_legs(fwd: Vector3) -> void:
 		if parts[1]:
 			(parts[1] as Node3D).global_position = knee
 		_place_bone(parts[2] as Node3D, knee, ankle, SHIN)
+
+
+## Reaching (a slap, a throw): bend forward at the hips and dip at the knees
+## as low as the spot needs, then two-bone IK for the right arm so the palm
+## lands on it (elbow up and out, wrist bent so the palm faces down).
+func _pose_reach(delta: float) -> void:
+	var b := _reach_blend if stun_time <= 0.0 else 0.0
+	var h := _reach_point.y - ground_y()
+	var k := clampf(10.0 * delta, 0.0, 1.0) if delta > 0.0 else 1.0
+	_lean = lerpf(_lean, clampf((52.0 - h) / 38.0, 0.0, 1.0) * b, k)
+	_crouch = lerpf(_crouch, clampf((44.0 - h) * 0.5, 0.0, 12.0) * b, k)
+	_torso.rotation.x = -_lean
+	var pivot := Vector3(0, HIP_Y, BODY_Z)
+	_lean_shift = pivot - Basis(Vector3.RIGHT, -_lean) * pivot
+	_torso.position += _lean_shift + Vector3(0, -_crouch, 0)
+	if _hand_r:
+		_hand_r.rotation.x = 0.6 * b
+	if b < 0.01 or _shoulders.size() < 2:
+		return
+	var sh := _shoulders[1]
+	var body_xf := get_global_transform_interpolated()
+	var s_pos := _torso.transform * sh.position
+	var t_pos := body_xf.affine_inverse() * _reach_point
+	var d := t_pos - s_pos
+	var dist := clampf(d.length(), 1.0, UPPER_ARM + FOREARM - 0.05)
+	var dn := d.normalized() if d.length() > 0.001 else Vector3.DOWN
+	var cos_a := clampf((UPPER_ARM * UPPER_ARM + dist * dist - FOREARM * FOREARM) / (2.0 * UPPER_ARM * dist), -1.0, 1.0)
+	var cos_g := clampf((UPPER_ARM * UPPER_ARM + FOREARM * FOREARM - dist * dist) / (2.0 * UPPER_ARM * FOREARM), -1.0, 1.0)
+	var alpha := acos(cos_a)
+	var elbow_bend := PI - acos(cos_g)
+	# The bend plane: elbow up and out to the right.
+	var n := Vector3.LEFT - dn * dn.dot(Vector3.LEFT)
+	if n.length() < 0.01:
+		n = Vector3.FORWARD - dn * dn.dot(Vector3.FORWARD)
+	n = n.normalized()
+	var w := n.cross(dn).normalized()
+	var u := dn * cos(alpha) - w * sin(alpha)
+	var ik := Basis(n, -u, n.cross(-u)).orthonormalized()
+	var local_ik := (_torso.basis.orthonormalized().inverse() * ik).orthonormalized()
+	var q := Quaternion(sh.basis.orthonormalized()).slerp(Quaternion(local_ik), b)
+	sh.basis = Basis(q)
+	if _elbows.size() > 1 and _elbows[1]:
+		_elbows[1].rotation = Vector3(lerpf(_elbows[1].rotation.x, elbow_bend, b), 0, 0)
 
 
 ## Two-bone IK: where the knee goes for a hip and an ankle (bends forward).
