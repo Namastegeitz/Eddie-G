@@ -44,6 +44,8 @@ const KNEEL_OFFSET := Vector3(0, -15.0, 3.0)
 const PEEK_EVERY := 5.0
 const PEEK_TIME := 1.8
 const FLUSTER_TIME := 3.5
+## How far a thrown ball can bounce and roll from the hand (for aiming fetch).
+const THROW_RUN := 26.0
 
 ## The activity under way (&"" when walking).
 var activity: StringName = &""
@@ -816,13 +818,21 @@ func _throw_ball() -> void:
 	_ball.linear_damp = 1.2
 	_ball.angular_damp = 2.0
 	# Aim for open lawn: a ball behind a hedge or under the shed is no game.
-	var dir := (-global_basis.z).rotated(Vector3.UP, randf_range(-0.6, 0.6))
-	for attempt in 8:
-		var tryd := (-global_basis.z).rotated(Vector3.UP, randf_range(-0.6, 0.6) if attempt < 6 else (attempt - 6.5) * 0.4)
+	# A few random angles first, then a wider fan; the first one that's open
+	# all the way wins, otherwise the one that stays open the longest.
+	var dir := -global_basis.z
+	var best := -1.0
+	var fan := [-0.25, 0.25, -0.9, 0.9, -1.3, 1.3]
+	for attempt in 6 + fan.size():
+		var ang: float = randf_range(-0.6, 0.6) if attempt < 6 else fan[attempt - 6]
+		var tryd := (-global_basis.z).rotated(Vector3.UP, ang)
 		tryd.y = 0.0
 		tryd = tryd.normalized()
-		if _clear_throw(tryd):
+		var run := _clear_run(Vector3(hand.x, global_position.y, hand.z), tryd)
+		if run > best:
+			best = run
 			dir = tryd
+		if run >= THROW_RUN:
 			break
 	dir.y = 0.0
 	_ball.apply_central_impulse((dir.normalized() * 13.0 + Vector3.UP * 4.0) * _ball.mass)
@@ -832,23 +842,26 @@ func _throw_ball() -> void:
 		dog.fetch(_ball, self)
 
 
-## Open floor all along where a thrown ball would roll.
-func _clear_throw(dir: Vector3) -> bool:
+## How far the floor stays open along where a thrown ball would roll, from
+## under the hand that throws it out to where a lob can bounce and roll to
+## (THROW_RUN): open lawn with open sky above.
+func _clear_run(ground: Vector3, dir: Vector3) -> float:
 	var lvl := Level.current
 	if lvl == null or not is_instance_valid(lvl):
-		return true
-	var ground := Vector3(global_position.x, global_position.y, global_position.z)
+		return THROW_RUN
 	var space := get_world_3d().direct_space_state
-	for d in [6.0, 8.0, 10.0, 12.0, 14.0, 16.0, 18.0, 20.0]:
+	var d := 2.0
+	while d <= THROW_RUN:
 		var at: Vector3 = ground + dir * d + Vector3.UP * 0.3
 		if not lvl.is_open_floor(at):
-			return false
+			return d - 2.0
 		# Open sky above too: a ball can land on top of a hollow flowerpot or
 		# a wheelbarrow, out of the dog's reach.
 		var up := PhysicsRayQueryParameters3D.create(at + Vector3.UP * 0.5, at + Vector3.UP * 12.0, Phys.WORLD)
 		if not space.intersect_ray(up).is_empty():
-			return false
-	return true
+			return d - 2.0
+		d += 2.0
+	return THROW_RUN
 
 
 ## The head is lower when sitting or kneeling.
