@@ -2,7 +2,8 @@
 """Packages build/web (Godot's Web export) for hosts that cap file size at
 15 MB and only serve common web file types (e.g. a claude.ai artifact):
 splits index.wasm into three parts, renames index.pck to a served
-extension, and copies the custom page that stitches them back together.
+extension (in parts too when it is over 14 MB, as with the detailed
+models), and copies the custom page that stitches them back together.
 
     godot --headless --path . --export-release "Web" build/web/index.html
     python3 tools/web_artifact/package.py build/web build/web_artifact
@@ -35,12 +36,22 @@ here = os.path.dirname(os.path.abspath(__file__))
 os.makedirs(dst, exist_ok=True)
 for f in ["index.js", "index.audio.worklet.js", "index.audio.position.worklet.js", "index.png"]:
     shutil.copy(os.path.join(src, f), dst)
-shutil.copy(os.path.join(src, "index.pck"), os.path.join(dst, "index-gamedata.wasm"))
+pck = open(os.path.join(src, "index.pck"), "rb").read()
+LIMIT = 14 * 1024 * 1024
+n_pck = max(1, -(-len(pck) // LIMIT))
+pck_names = ["index-gamedata.wasm"] if n_pck == 1 else ["index-gamedata%d.wasm" % i for i in range(n_pck)]
+psize = -(-len(pck) // n_pck)
+for old in os.listdir(dst):
+    if old.startswith("index-gamedata"):
+        os.remove(os.path.join(dst, old))
+for i, nm in enumerate(pck_names):
+    open(os.path.join(dst, nm), "wb").write(pck[i * psize:(i + 1) * psize])
 wasm = open(os.path.join(src, "index.wasm"), "rb").read()
 size = -(-len(wasm) // 3)
 for i in range(3):
     open(os.path.join(dst, "index.part%d.wasm" % i), "wb").write(wasm[i * size:(i + 1) * size])
 page = open(os.path.join(here, "canopy-crossing.html")).read()
+page = re.sub(r'"index\.pck": \[[^\]]*\]', '"index.pck": ' + json.dumps(pck_names), page)
 sizes = {"index.pck": os.path.getsize(os.path.join(src, "index.pck")), "index.wasm": len(wasm)}
 page = re.sub(r'"fileSizes":\{[^}]*\}', '"fileSizes":' + json.dumps(sizes, separators=(",", ":")), page)
 page = re.sub(r'const SIZES = \{[^}]*\};', 'const SIZES = ' + json.dumps(sizes, separators=(",", ":")) + ';', page)
