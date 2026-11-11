@@ -13,7 +13,7 @@ var _t := 0.0
 
 
 func _ready() -> void:
-	custom_minimum_size = Vector2(190, 20)
+	custom_minimum_size = Vector2(150, 18)
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 
 

@@ -1596,7 +1596,7 @@ func _phase9() -> void:
 	var before := p.hits_left
 	await _grab(lvl, &"cheese")
 	await get_tree().process_frame
-	check(p.hits_left == before + 1 and p.health > BugBase.MAX_HEALTH and String(hud._lives.text).begins_with("HEALTH"),
+	check(p.hits_left == before + 1 and p.health > BugBase.MAX_HEALTH and String(hud._lives.text).begins_with("HP "),
 		"Cheese Crumb: one extra hit of health, past full (%s)" % hud._lives.text)
 	var got := lvl.crumbs_got
 	await _grab(lvl, &"kibble")

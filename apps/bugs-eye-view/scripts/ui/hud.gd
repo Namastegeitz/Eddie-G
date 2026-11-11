@@ -187,7 +187,8 @@ func _build_top() -> void:
 	left.add_child(life_row)
 	_lives = _make_label("", 22, UIKit.RED)
 	_lives.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
-	_lives.custom_minimum_size = Vector2(118, 0)
+	_lives.autowrap_mode = TextServer.AUTOWRAP_OFF
+	_lives.custom_minimum_size = Vector2(100, 0)
 	life_row.add_child(_lives)
 	_health_bar = HealthBar.new()
 	_health_bar.name = "HealthBar"
@@ -350,7 +351,7 @@ func _on_crumbs(got: int, needed: int) -> void:
 func _update_lives() -> void:
 	if player == null:
 		return
-	var t := "HEALTH %d" % ceili(player.health - 0.001)
+	var t := "HP %d" % ceili(player.health - 0.001)
 	if player.trap_danger():
 		t = "DAZED %d" % ceili(player.health - 0.001)
 	if t != _lives.text:
