@@ -1254,8 +1254,9 @@ static func _landmark(ctx: Dictionary, kind: String) -> void:
 			k.blob(xf(Vector3(sx - side * 0.5, 0.15, 0.0)), Vector3(0.45, 0.18, 0.45), stone2.darkened(0.1), 10, 0.1)
 		"waterfall", "cenote":
 			var rock := Color("6a6a5e")
-			if kind == "waterfall" and lmd.is_empty():
-				k.box(xf(Vector3(sx + side * 0.5, 2.0, 0.0)), Vector3(1.0, 4.2, 2.6), rock, Color(ctx.leaf).darkened(0.2))
+			if kind == "waterfall":
+				if lmd.is_empty():
+					k.box(xf(Vector3(sx + side * 0.5, 2.0, 0.0)), Vector3(1.0, 4.2, 2.6), rock, Color(ctx.leaf).darkened(0.2))
 				(ctx.nodes as Array).append({"falls": true, "pos": Vector3(sx - side * 0.02, 2.0, 0.0), "rot": PI * 0.5 * side})
 				for i in 5:
 					g.blob(xf(Vector3(sx - side * 0.3, 0.2 + i * 0.05, rng.randf_range(-0.5, 0.5))), Vector3(0.5, 0.25, 0.4), Color(1, 1, 1, 0.08), 6, 0.2, 0.0)

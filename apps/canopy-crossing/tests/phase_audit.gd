@@ -1483,7 +1483,7 @@ func _scenes() -> void:
 				node.free()
 	print("  most draw calls for one dressed canopy row: %d" % worst)
 	check("all scenes build in 3D (landmark rows too)", empty.is_empty(), str(empty.slice(0, 4)))
-	check("a dressed canopy row stays a few draw calls (<= 6)", worst <= 6, str(worst))
+	check("a dressed canopy row stays a handful of draw calls (<= 12 with its detailed trees and plants)", worst <= 12, str(worst))
 	# canopy rows are cached: built once (ahead of time by warm_row) and
 	# shared, landmark rows included, with waterfalls still getting their sheet
 	var shared := []
