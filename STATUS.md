@@ -102,6 +102,16 @@
   screen (pips + what the next level adds); runs use the level. Rules per ability parameter in
   `content/skills.json` (`scripts/sim/skills.gd`): shorter cooldowns, longer effects, more distance /
   charges / swings, quicker hops for animals with nothing else to scale.
+- Meshy models (`apps/canopy-crossing/tools/meshy/`, budget-capped pipeline; 480 credits fauna + 690 scenery of the
+  account's 1,255; 55 left, shared with another project): 16 creatures/starter animals and 23 scenery pieces,
+  mapped by `content/models.json`. First person uses them for movers (tinted per species, stride bounce), caiman
+  backs, surfacing crocs, striking snakes/tigers, swooping eagles, logs/lily pads/stones/trucks/jeeps/boats, canopy
+  props and landmarks, open-row trees/plants/undergrowth walls, boulder tiles; Low graphics keeps built shapes.
+  Starters turn in 3D on the home and animal screens (ModelView). Textures Basis Universal (1024 colour / 512
+  others), ~0.4-1.2 MB per model in the game. Bird's-eye 2D art is unchanged.
+- First-person light: procedural sky (closes in under canopy), ACES tone mapping, contrast/saturation, bloom on
+  High, normal-mapped ground. Jumps: arc by landing surface, eye rides on logs/pads/stones, landing dip, per-surface
+  landing sounds (timing unchanged). Live mini-map (both views, tap to resize, Settings > Mini-map).
 - First-person view widened (Settings > First-person view: Wide default / Extra wide / Classic): the field of
   view fits the screen's shape (at least ~93 deg side to side on a phone and 80 deg top to bottom on a wide screen,
   was 86 x 55 there), the eye sits a little higher and further back, 22 rows drawn ahead (was 18), lighter fog.
