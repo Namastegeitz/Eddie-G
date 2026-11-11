@@ -256,6 +256,10 @@
   bugs (elbows, knees, wrists, tails, bug legs and antennae), one-piece torso, head and pet
   bodies, rounded sneakers, soft shading baked into vertex colours, sheen on fur/cloth/shells,
   cream belly and bibs on pets, gentler skin, a little more saturation and contrast.
+- Health and live snap traps: a health bar (100) that regenerates 4 s after the last hurt;
+  stomps/swats still cost a whole hit; crumbs +6, gems +12, food +20, power-ups +40. Snap traps
+  trigger on anyone standing or landing on the plate, knock you out for 3 s under the bar and
+  take 65 health; one snap never kills, two back to back do (HUD shows DAZED meanwhile).
 - Phase-by-phase audit (all 6 phases) done; fixes it found: human feet were never solid,
   props didn't stun via feet, cereal-box domino layout, spider facing/normal errors, fog strength.
 - Android debug APK committed at `apps/bugs-eye-view/dist/android/bugseyeview-debug.apk`.

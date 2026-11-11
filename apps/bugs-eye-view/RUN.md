@@ -137,7 +137,12 @@ can play: number 1 is open, and each one you finish opens the next.
 | Key | Find the brass key: it opens the way out (shards are a bonus) |
 | Climb | The way out is at the very top |
 
-Mouse traps (step on the cheese plate and the bar slams over a moment later)
+Mouse traps (step or land on the cheese plate: it clicks, and a moment later
+the bar slams down) knock you out cold for 3 s and take 65 of your 100
+health; one snap never kills, but a second one back to back (while the HUD
+says DAZED, before you've healed past it) does. Health comes back on its own
+4 s after you were last hurt, and from pickups: crumb +6, gem or treasure
++12, bug food +20, hidden power-up +40, golden crumb all of it. Traps
 get more common as the numbers go up, and some maps have the cat or the robot
 vacuum prowling. **The crawl space** is the tenth map, and it's hidden: after
 you finish a mini map there's a chance (about 1 in 3) that a draught opens it
@@ -159,7 +164,7 @@ raise each to level 3 for more uses per run and a stronger effect:
 | Iron Shell | Defense | Nothing can hurt you for a while |
 | Spiky Armor | Defense | Blocks the next hits (1-3) and stuns whoever struck |
 | Shadow Cloak | Defense | Almost invisible for a while |
-| Second Wind | Defense | One more shell and every meter refilled |
+| Second Wind | Defense | One more hit of health (past full) and every meter refilled |
 | Smoke Bomb | Tactics | A cloud ahead: people and pets inside can't see |
 | Decoy Chirp | Tactics | A noise where you look: threats go and check |
 | Flash Bead | Tactics | Dazzles every person and pet close by |
@@ -267,7 +272,7 @@ Touch one to use it: its name and what it does stay on screen (6 s for gems,
 | Food | Effect |
 |---|---|
 | Sugar Cube | Sugar Rush: 35% faster for 8 s, meters topped up |
-| Cheese Crumb | One extra shell (one more hit) |
+| Cheese Crumb | One extra hit of health, past full (shown in gold) |
 | Mint Leaf | No scent trail for 15 s - dogs lose you |
 | Honey Drop | Steps 70% quieter for 12 s |
 | Coffee Bean | Wired for 10 s: fast dodges, Sense and stamina don't run out |

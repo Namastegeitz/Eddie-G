@@ -84,5 +84,13 @@ func take_hit(cause: StringName, from: Vector3) -> bool:
 	return super.take_hit(cause, from)
 
 
+## Shelled up, a trap's bar bounces off too.
+func snap_trap(at: Vector3) -> bool:
+	if shelled:
+		AudioManager.play(&"shield", -2.0, 1.4)
+		return false
+	return super.snap_trap(at)
+
+
 func _extra_visibility_mult() -> float:
 	return (0.75 if shelled else 1.0) * super._extra_visibility_mult()

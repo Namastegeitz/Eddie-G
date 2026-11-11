@@ -17,6 +17,21 @@ static func label(effect: StringName) -> String:
 	return String(NAMES.get(effect, String(effect).capitalize()))
 
 
+## Health a pickup gives on top of its effect: bug food a fair bite, gems and
+## treasures a little, the hidden power-ups a lot (keys nothing).
+static func heal_for(def: ItemDef) -> float:
+	if def == null:
+		return 0.0
+	match def.kind:
+		ItemDef.Kind.FOOD:
+			return BugBase.HEAL_FOOD
+		ItemDef.Kind.POWER:
+			return BugBase.HEAL_POWER
+		ItemDef.Kind.GEM, ItemDef.Kind.TREASURE:
+			return BugBase.HEAL_GEM
+	return 0.0
+
+
 ## Applies the item to the bug. Returns the line to show on screen.
 static func apply(def: ItemDef, bug: BugBase) -> String:
 	if def == null or bug == null:

@@ -10,4 +10,4 @@ effect = &"hearty"
 duration = 0.0
 points = 60
 color = Color(1, 0.8, 0.25, 1)
-blurb = "One extra shell: you can take another hit."
+blurb = "Health past full: you can take another hit."

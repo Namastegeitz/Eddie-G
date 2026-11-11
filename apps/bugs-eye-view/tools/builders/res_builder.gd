@@ -274,7 +274,7 @@ static func items(force: bool) -> void:
 		["sugar_cube", "Sugar Cube", ItemDef.Kind.FOOD, &"speed", 8.0, 1.35, 40, Color(1, 1, 1),
 			"Faster for 8 seconds, and your meters are topped up."],
 		["cheese", "Cheese Crumb", ItemDef.Kind.FOOD, &"hearty", 0.0, 1.0, 60, Color(1, 0.8, 0.25),
-			"One extra shell: you can take another hit."],
+			"Health past full: you can take another hit."],
 		["mint_leaf", "Mint Leaf", ItemDef.Kind.FOOD, &"fresh", 15.0, 1.0, 40, Color(0.3, 0.8, 0.45),
 			"No scent trail for 15 seconds. Dogs lose you."],
 		["honey_drop", "Honey Drop", ItemDef.Kind.FOOD, &"soft_step", 12.0, 0.3, 40, Color(1, 0.65, 0.1),

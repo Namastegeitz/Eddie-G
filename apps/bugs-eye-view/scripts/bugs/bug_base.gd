@@ -1,7 +1,7 @@
 class_name BugBase
 extends CharacterBody3D
 ## Shared bug interface. Levels, hazards and threats treat every bug the same:
-## hits/lives, stealth inputs (motion, surface, camouflage), senses, external
+## health (hits, healing, snap-trap knockouts), stealth inputs (motion, surface, camouflage), senses, external
 ## forces (wind, suction, sticky traps) and interaction. Subclasses implement
 ## _move() and their abilities.
 
@@ -12,6 +12,10 @@ signal meter_changed(meter: StringName, value: float, max_value: float)
 signal hint_changed(text: String)
 ## Bug food / gem effects started, ended or healed (see PowerUps).
 signal effects_changed
+## Health went up or down (gain > 0 when healed, < 0 when hurt).
+signal health_changed(health: float, gain: float)
+## Snapped in a trap: out cold for `seconds`.
+signal knocked_out(seconds: float)
 
 enum Motion { STILL, CREEP, WALK, SPRINT }
 
@@ -21,7 +25,39 @@ const HINT_INTERVAL := 0.25
 
 @export var stats: BugStats
 
-var hits_left := 1
+## Health: every bug has 100. A stomp, swat or bite costs a whole "hit"
+## (100 / the bug's max_hits, so most bugs still die to one), a snap trap
+## costs TRAP_DAMAGE and knocks you out. Health comes back on its own once
+## nothing has hurt you for REGEN_DELAY seconds, and from crumbs and
+## power-ups (HEAL_*). Cheese can push it one hit above full.
+const MAX_HEALTH := 100.0
+const REGEN_DELAY := 4.0
+const REGEN_RATE := 5.0
+const TRAP_DAMAGE := 65.0
+const TRAP_KO_TIME := 3.0
+## A second snap within this many seconds of the last one (before you've
+## healed back up) can kill; a single snap never does.
+const TRAP_BACK_TO_BACK := 15.0
+const TRAP_FLOOR := 5.0
+## Health from pickups: a crumb, a bite of bug food, a gem or treasure, a
+## hidden power-up, a golden crumb (everything).
+const HEAL_CRUMB := 6.0
+const HEAL_FOOD := 20.0
+const HEAL_GEM := 12.0
+const HEAL_POWER := 40.0
+
+var health := MAX_HEALTH
+## Whole hits left before the next stomp kills (derived from health; setting
+## it sets health to that many hits' worth).
+var hits_left: int:
+	get:
+		return 0 if health <= 0.0 else ceili(health / hit_damage() - 0.001)
+	set(v):
+		health = clampf(float(v) * hit_damage(), 0.0, health_cap())
+var _since_hurt := 99.0
+var _since_snap := 99.0
+## Out cold in a trap (seconds left); the bug can't move.
+var knocked_out_left := 0.0
 var motion: int = Motion.STILL
 var still_time := 0.0
 var surface_id: StringName = &"default"
@@ -77,7 +113,7 @@ func _ready() -> void:
 	collision_mask = Phys.WORLD | Phys.PROP | Phys.WEB
 	if stats == null:
 		stats = BugStats.new()
-	hits_left = stats.max_hits
+	health = MAX_HEALTH
 	sense_meter = stats.sense_max
 	floor_max_angle = deg_to_rad(stats.floor_max_angle_deg)
 	floor_snap_length = 0.3
@@ -140,6 +176,16 @@ func _move(_delta: float) -> void:
 func _tick_timers(delta: float) -> void:
 	invuln = maxf(invuln - delta, 0.0)
 	knockdown = maxf(knockdown - delta, 0.0)
+	_since_hurt += delta
+	_since_snap += delta
+	if knocked_out_left > 0.0:
+		knocked_out_left = maxf(knocked_out_left - delta, 0.0)
+		_spin_stars(delta)
+		if knocked_out_left <= 0.0:
+			_come_to()
+	# Health creeps back once nothing has hurt you for a moment.
+	if _since_hurt >= REGEN_DELAY and health < MAX_HEALTH:
+		health = minf(health + REGEN_RATE * delta, MAX_HEALTH)
 	_dodge_cd = maxf(_dodge_cd - delta * (3.0 if has_effect(&"wired") else 1.0), 0.0)
 	_tick_effects(delta)
 	_dodge_time = maxf(_dodge_time - delta, 0.0)
@@ -154,7 +200,7 @@ func _tick_timers(delta: float) -> void:
 	external_velocity = external_velocity.move_toward(Vector3.ZERO, 25.0 * delta)
 	spray_exposure = maxf(spray_exposure - _cfg.spray_exposure_decay * delta, 0.0)
 	if visual:
-		visual.visible = invuln <= 0.0 or fmod(invuln, 0.2) > 0.1
+		visual.visible = knocked_out_left > 0.0 or invuln <= 0.0 or fmod(invuln, 0.2) > 0.1
 
 
 # --- Input helpers ----------------------------------------------------------
@@ -1047,10 +1093,10 @@ func take_hit(cause: StringName, from: Vector3) -> bool:
 		invuln = 0.6
 		show_hint("Spiky Armor! The hit glanced off")
 		return false
-	hits_left -= 1
+	_hurt(hit_damage())
 	Feedback.rumble(1.0, 0.4)
 	AudioManager.play(&"hit")
-	if hits_left <= 0:
+	if health <= 0.0:
 		die(cause)
 		return true
 	invuln = stats.invuln_time
@@ -1069,11 +1115,150 @@ func take_hit(cause: StringName, from: Vector3) -> bool:
 	return true
 
 
+# --- Health ------------------------------------------------------------------
+
+## Health one ordinary hit (a stomp, swat or bite) costs this bug.
+func hit_damage() -> float:
+	return MAX_HEALTH / float(maxi(stats.max_hits if stats else 1, 1))
+
+
+## The most health can reach: full, plus one hit's worth from cheese.
+func health_cap() -> float:
+	return MAX_HEALTH + hit_damage()
+
+
+func _hurt(amount: float) -> void:
+	health = maxf(health - amount, 0.0)
+	if health < 0.05:
+		health = 0.0
+	_since_hurt = 0.0
+	health_changed.emit(health, -amount)
+
+
+## Heals by `amount` (crumbs, food, power-ups); only cheese (over = true) can
+## go above full, and nothing takes away health already above it. Returns
+## what was actually gained.
+func add_health(amount: float, over: bool = false) -> float:
+	if dead or amount <= 0.0:
+		return 0.0
+	var cap := health_cap() if over else maxf(MAX_HEALTH, health)
+	var before := health
+	health = minf(health + amount, cap)
+	var gain := health - before
+	if gain > 0.0:
+		health_changed.emit(health, gain)
+	return gain
+
+
+## Healing on its own right now (nothing has hurt it for a while).
+func is_regenerating() -> bool:
+	return not dead and health > 0.0 and health < MAX_HEALTH and _since_hurt >= REGEN_DELAY
+
+
+## True while a second snap would kill: snapped recently and not yet healed
+## past what a snap takes.
+func trap_danger() -> bool:
+	return not dead and _since_snap < TRAP_BACK_TO_BACK and health <= TRAP_DAMAGE
+
+
+## Caught under a snap trap's bar: knocked out cold for TRAP_KO_TIME and a
+## big bite out of your health. One snap never kills; a second one back to
+## back (before you've healed past it) does. False if the bar missed you
+## (dodging, shielded, already out cold).
+func snap_trap(at: Vector3) -> bool:
+	if dead or knocked_out_left > 0.0 or invuln > 0.0 or is_hidden_safe():
+		return false
+	if has_effect(&"iron_shell"):
+		AudioManager.play(&"shield", -2.0, 1.3)
+		invuln = 0.6
+		show_hint("Iron Shell! The bar bounced off")
+		return false
+	var back_to_back := _since_snap < TRAP_BACK_TO_BACK
+	_since_snap = 0.0
+	var dmg := TRAP_DAMAGE if back_to_back else minf(TRAP_DAMAGE, maxf(health - TRAP_FLOOR, 0.0))
+	_hurt(dmg)
+	Feedback.rumble(1.0, 0.6)
+	AudioManager.play(&"hit", 2.0, 0.8)
+	if health <= 0.0:
+		die(&"snapped")
+		return true
+	knock_out(TRAP_KO_TIME, at)
+	return true
+
+
+## Out cold: flat on your back with stars going round, can't move, and
+## nothing else can hurt you until you come to (a moment after).
+func knock_out(seconds: float, _at: Vector3) -> void:
+	stop_climb()
+	is_squeezing = false
+	knocked_out_left = seconds
+	knockdown = maxf(knockdown, seconds)
+	invuln = maxf(invuln, seconds + 0.5)
+	velocity = Vector3.ZERO
+	_show_stars(true)
+	if visual:
+		var tw := create_tween()
+		tw.tween_property(visual, "rotation:z", PI, 0.12)
+	knocked_out.emit(seconds)
+
+
+func _come_to() -> void:
+	_show_stars(false)
+	if visual and not dead:
+		var tw := create_tween()
+		tw.tween_property(visual, "rotation:z", 0.0, 0.25)
+	if not dead:
+		show_hint("You come to - get off that trap!")
+
+
+var _stars: Node3D
+
+
+func _show_stars(on: bool) -> void:
+	if not on:
+		if _stars:
+			_stars.visible = false
+		return
+	if _stars == null:
+		_stars = Node3D.new()
+		_stars.name = "DizzyStars"
+		var mat := StandardMaterial3D.new()
+		mat.albedo_color = Color(1.0, 0.86, 0.25)
+		mat.emission_enabled = true
+		mat.emission = Color(1.0, 0.8, 0.2)
+		mat.emission_energy_multiplier = 1.4
+		mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+		for i in 3:
+			var star := MeshInstance3D.new()
+			var pm := PrismMesh.new()
+			pm.size = Vector3(0.5, 0.5, 0.12)
+			star.mesh = pm
+			star.material_override = mat
+			star.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+			var a := TAU * i / 3.0
+			star.position = Vector3(cos(a) * 0.9, 0.0, sin(a) * 0.9)
+			_stars.add_child(star)
+		add_child(_stars)
+	var s := clampf(size_mult(), 0.6, 2.0)
+	_stars.position = Vector3(0, 1.1 * s, 0)
+	_stars.scale = Vector3.ONE * s
+	_stars.visible = true
+
+
+func _spin_stars(delta: float) -> void:
+	if _stars and _stars.visible:
+		_stars.rotate_y(delta * 4.0)
+		for c in _stars.get_children():
+			(c as Node3D).rotate_y(delta * 9.0)
+
+
 func die(cause: StringName) -> void:
 	if dead:
 		return
 	dead = true
-	hits_left = 0
+	health = 0.0
+	knocked_out_left = 0.0
+	_show_stars(false)
 	velocity = Vector3.ZERO
 	is_squeezing = false
 	_end_sense()
@@ -1166,7 +1351,7 @@ func refill() -> void:
 
 ## Cheese: one more hit of shell, up to one above the bug's normal maximum.
 func heal(amount: int = 1) -> void:
-	hits_left = mini(hits_left + amount, stats.max_hits + 1)
+	add_health(float(amount) * hit_damage(), true)
 	effects_changed.emit()
 
 

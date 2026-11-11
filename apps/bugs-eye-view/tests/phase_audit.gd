@@ -1595,7 +1595,9 @@ func _phase9() -> void:
 	check(String(hud._effects.text).contains("SUGAR RUSH"), "the HUD shows active effects and their timers (%s)" % hud._effects.text)
 	var before := p.hits_left
 	await _grab(lvl, &"cheese")
-	check(p.hits_left == before + 1 and String(hud._lives.text).count("O") == before + 1, "Cheese Crumb: one extra shell (%s)" % hud._lives.text)
+	await get_tree().process_frame
+	check(p.hits_left == before + 1 and p.health > BugBase.MAX_HEALTH and String(hud._lives.text).begins_with("HEALTH"),
+		"Cheese Crumb: one extra hit of health, past full (%s)" % hud._lives.text)
 	var got := lvl.crumbs_got
 	await _grab(lvl, &"kibble")
 	check(lvl.crumbs_got == got + 2, "Dog Kibble counts as two crumbs")
@@ -3825,14 +3827,108 @@ func _phase19() -> void:
 		"a timed map: when the clock runs out, it's over")
 	await unload(lv)
 
-	# Mouse traps snap: anything on the plate takes a hit; flyers pass over.
+	# Snap traps are live: standing on the plate springs one. The bar knocks
+	# you out cold and takes a big bite of health, but one snap never kills;
+	# it holds you until you come to and won't re-arm while you're on it.
 	lv = await load_level(&"kitchen_m1", &"cockroach")
 	p = lv.player
 	var trap := first_in_group(&"mouse_trap", lv) as MouseTrap
-	var hits0 := p.hits_left
+	var off_trap := p.global_transform
+	var death := [&""]
+	p.died.connect(func(c: StringName) -> void: death[0] = c)
+	p.invuln = 0.0
 	p.teleport_to(Transform3D(Basis.IDENTITY, trap.to_global(Vector3(0, 0.8, 1.4))))
 	await frames(30)
-	check(trap.snaps == 1 and (p.hits_left < hits0 or p.dead), "a mouse trap snaps on a bug that steps on the plate")
+	check(trap.snaps == 1 and not p.dead and p.knocked_out_left > 0.0 and trap.is_holding()
+		and absf(p.health - (BugBase.MAX_HEALTH - BugBase.TRAP_DAMAGE)) < 0.5,
+		"a snap trap springs on a bug on the plate: knocked out, held down, health %d" % roundi(p.health))
+	var khud := _hud(lv)
+	await get_tree().process_frame
+	check(khud._ko.visible and String(khud._lives.text).begins_with("DAZED") and p.trap_danger(),
+		"the HUD shows KNOCKED OUT with a countdown, and DAZED health (%s)" % khud._lives.text)
+	var ko_at := p.global_position
+	await frames(60)
+	check(p.global_position.distance_to(ko_at) < 0.3 and p.knocked_out_left > 0.0 and trap.snaps == 1,
+		"out cold: the bug can't move and the bar stays down on it")
+	await frames(int(BugBase.TRAP_KO_TIME * 60.0))
+	check(p.knocked_out_left == 0.0 and not trap.is_holding() and not khud._ko.visible, "it comes to after %d seconds" % int(BugBase.TRAP_KO_TIME))
+	await frames(int(MouseTrap.RESET_TIME * 60.0) + 30)
+	check(not trap.armed and trap.snaps == 1, "the trap won't re-arm while the bug is still on it")
+	# Back to back: off the plate, the trap re-arms; straight back on, the
+	# second snap (before it has healed past one) finishes it.
+	p.teleport_to(off_trap)
+	for i in 120:
+		await get_tree().physics_frame
+		if trap.armed:
+			break
+	var re_armed := trap.armed
+	p.invuln = 0.0
+	p.teleport_to(Transform3D(Basis.IDENTITY, trap.to_global(Vector3(0, 0.8, 1.4))))
+	await frames(30)
+	check(re_armed and trap.snaps == 2 and p.dead and death[0] == &"snapped",
+		"two snaps back to back kill (re-armed %s, snaps %d, %s)" % [re_armed, trap.snaps, death[0]])
+	await unload(lv)
+
+	# One snap never kills, even when you're already hurt; healed up past a
+	# snap, a second one doesn't either. Health comes back on its own.
+	lv = await load_level(&"kitchen_m1", &"cockroach")
+	p = lv.player
+	trap = first_in_group(&"mouse_trap", lv) as MouseTrap
+	p.invuln = 0.0
+	p.health = 20.0
+	check(p.snap_trap(trap.global_position) and not p.dead and absf(p.health - BugBase.TRAP_FLOOR) < 0.5,
+		"a single snap knocks you out but never kills, even when hurt (health %d)" % roundi(p.health))
+	p.knocked_out_left = 0.0
+	p.knockdown = 0.0
+	p.invuln = 0.0
+	p.health = 90.0
+	check(p.snap_trap(trap.global_position) and not p.dead, "healed past a snap, a second one back to back doesn't kill")
+	p.knocked_out_left = 0.0
+	p.knockdown = 0.0
+	p.health = 50.0
+	p._since_hurt = 0.0
+	await frames(int(BugBase.REGEN_DELAY * 60.0) - 30)
+	var h_wait := p.health
+	await frames(120)
+	check(absf(h_wait - 50.0) < 0.5 and p.health > 55.0, "health comes back on its own a few seconds after you were hurt (%d -> %d)" % [roundi(h_wait), roundi(p.health)])
+	# Crumbs heal a little, food more, gems a bit, hidden power-ups a lot.
+	var crumb: Crumb = null
+	for c in get_tree().get_nodes_in_group(Phys.GROUP_CRUMB):
+		if lv.is_ancestor_of(c) and not (c as Crumb).golden and not (c as Crumb).taken:
+			crumb = c
+			break
+	p.health = 50.0
+	p._since_hurt = 0.0
+	p.teleport_to(Transform3D(Basis.IDENTITY, crumb.global_position + Vector3.UP * 0.5))
+	await frames(6)
+	var food := load("res://resources/items/sugar_cube.tres") as ItemDef
+	var power := load("res://resources/items/power_turbo.tres") as ItemDef
+	var gem := load("res://resources/items/gem_ruby.tres") as ItemDef
+	check(crumb.taken and absf(p.health - (50.0 + BugBase.HEAL_CRUMB)) < 0.5
+		and PowerUps.heal_for(food) == BugBase.HEAL_FOOD and PowerUps.heal_for(power) == BugBase.HEAL_POWER
+		and PowerUps.heal_for(gem) == BugBase.HEAL_GEM
+		and BugBase.HEAL_CRUMB < BugBase.HEAL_GEM and BugBase.HEAL_GEM < BugBase.HEAL_FOOD and BugBase.HEAL_FOOD < BugBase.HEAL_POWER,
+		"a crumb gives %d health, gems %d, bug food %d, hidden power-ups %d" % [BugBase.HEAL_CRUMB, BugBase.HEAL_GEM, BugBase.HEAL_FOOD, BugBase.HEAL_POWER])
+	p.health = 98.0
+	p.add_health(BugBase.HEAL_POWER)
+	check(is_equal_approx(p.health, BugBase.MAX_HEALTH), "pickups heal up to full (only cheese goes past it)")
+	await unload(lv)
+
+	# A fly hovering over the plate passes; one that lands on it gets snapped.
+	lv = await load_level(&"kitchen_m1", &"fly")
+	var fl := lv.player as Fly
+	trap = first_in_group(&"mouse_trap", lv) as MouseTrap
+	fl.invuln = 0.0
+	fl.take_off()
+	fl.teleport_to(Transform3D(Basis.IDENTITY, trap.to_global(Vector3(0, 1.2, 1.4))))
+	fl.take_off()
+	await frames(20)
+	var hover_ok := trap.snaps == 0
+	fl.land()
+	fl.teleport_to(Transform3D(Basis.IDENTITY, trap.to_global(Vector3(0, 0.8, 1.4))))
+	await frames(40)
+	check(hover_ok and trap.snaps == 1 and fl.knocked_out_left > 0.0 and not fl.dead,
+		"a fly hovering over the trap is safe; one that lands on it is knocked out (snaps %d)" % trap.snaps)
 	await unload(lv)
 
 	# The crawl space: opens now and then after a mini map, closes once played.

@@ -1,11 +1,17 @@
 extends CanvasLayer
-## In-game HUD: lives, crumbs, objective, clock + routine, threat indicator
+## In-game HUD: health bar (and the knocked-out screen), crumbs, objective, clock + routine, threat indicator
 ## with escalation stages, stealth meters, hints, boss banner, reticle,
 ## off-screen threat markers and touch controls. Scales for portrait/landscape.
 
 var level: Level
 var player: BugBase
 var _lives: Label
+var _health_bar: HealthBar
+var _health_gain: Label
+var _gain_tween: Tween
+## Knocked out in a trap: a dark wash, the words and a countdown.
+var _ko: Control
+var _ko_count: Label
 var _crumbs: Label
 var _powers: Label
 var _objective: Label
@@ -52,6 +58,7 @@ func _ready() -> void:
 	_markers = ThreatMarkers.new()
 	_root.add_child(_markers)
 	_build_top()
+	_build_ko()
 	_meters = StealthMeters.new()
 	_meters.position = Vector2(12, 150)
 	_root.add_child(_meters)
@@ -175,9 +182,21 @@ func _build_top() -> void:
 	left.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	left.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	row.add_child(left)
-	_lives = _make_label("", 24, UIKit.RED)
+	var life_row := UIKit.hbox(8)
+	life_row.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	left.add_child(life_row)
+	_lives = _make_label("", 22, UIKit.RED)
 	_lives.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
-	left.add_child(_lives)
+	_lives.custom_minimum_size = Vector2(118, 0)
+	life_row.add_child(_lives)
+	_health_bar = HealthBar.new()
+	_health_bar.name = "HealthBar"
+	_health_bar.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	life_row.add_child(_health_bar)
+	_health_gain = _make_label("", 20, UIKit.GREEN)
+	_health_gain.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	_health_gain.modulate.a = 0.0
+	life_row.add_child(_health_gain)
 	_crumbs = _make_label("", 24, UIKit.GOLD)
 	_crumbs.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 	left.add_child(_crumbs)
@@ -255,6 +274,9 @@ func bind(lvl: Level) -> void:
 	player.hit_taken.connect(func(_l: int) -> void:
 		_update_lives()
 		toast("Hit! Shake it off"))
+	_health_bar.bind_player(player)
+	player.health_changed.connect(_on_health_changed)
+	player.knocked_out.connect(func(_s: float) -> void: _update_lives())
 	player.died.connect(func(_c: StringName) -> void: _update_lives())
 	player.effects_changed.connect(_update_lives)
 	player.hint_changed.connect(func(t: String) -> void: _hint.text = t)
@@ -285,6 +307,13 @@ func _update_powers() -> void:
 func _process(_delta: float) -> void:
 	if _effects == null:
 		return
+	if player:
+		_update_lives()
+		var out := player.knocked_out_left > 0.0 and not player.dead
+		if _ko and _ko.visible != out:
+			_ko.visible = out
+		if out:
+			_ko_count.text = "coming to in %.1f" % player.knocked_out_left
 	var text := ""
 	if player and not player.effects.is_empty():
 		var parts: PackedStringArray = []
@@ -321,10 +350,61 @@ func _on_crumbs(got: int, needed: int) -> void:
 func _update_lives() -> void:
 	if player == null:
 		return
-	var s := ""
-	for i in maxi(player.stats.max_hits, player.hits_left):
-		s += "O " if i < player.hits_left else "x "
-	_lives.text = "SHELL " + s if player.stats.max_hits > 1 else "LIFE " + s
+	var t := "HEALTH %d" % ceili(player.health - 0.001)
+	if player.trap_danger():
+		t = "DAZED %d" % ceili(player.health - 0.001)
+	if t != _lives.text:
+		_lives.text = t
+		_lives.add_theme_color_override("font_color", UIKit.RED if player.trap_danger() or player.health < 30.0 else Color(0.55, 1.0, 0.6))
+
+
+func _on_health_changed(_h: float, gain: float) -> void:
+	_update_lives()
+	if gain < 1.0 or _health_gain == null:
+		return
+	_health_gain.text = "+%d" % roundi(gain)
+	if _gain_tween:
+		_gain_tween.kill()
+	_health_gain.modulate.a = 1.0
+	_gain_tween = create_tween()
+	_gain_tween.tween_interval(0.8)
+	_gain_tween.tween_property(_health_gain, "modulate:a", 0.0, 0.6)
+
+
+func _build_ko() -> void:
+	_ko = Control.new()
+	_ko.name = "KnockedOut"
+	_ko.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	_ko.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_ko.visible = false
+	_root.add_child(_ko)
+	var wash := ColorRect.new()
+	wash.color = Color(0.12, 0.0, 0.02, 0.45)
+	wash.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	wash.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_ko.add_child(wash)
+	var title := _make_label("KNOCKED OUT", 46, UIKit.RED)
+	title.set_anchors_preset(Control.PRESET_CENTER)
+	title.anchor_left = 0.0
+	title.anchor_right = 1.0
+	title.offset_top = -230
+	title.offset_bottom = -180
+	_ko.add_child(title)
+	_ko_count = _make_label("", 30, UIKit.TEXT)
+	_ko_count.set_anchors_preset(Control.PRESET_CENTER)
+	_ko_count.anchor_left = 0.0
+	_ko_count.anchor_right = 1.0
+	_ko_count.offset_top = -176
+	_ko_count.offset_bottom = -136
+	_ko.add_child(_ko_count)
+	var sub := _make_label("Snap trap! Another one before you heal will finish you.", 18, UIKit.DIM)
+	sub.set_anchors_preset(Control.PRESET_CENTER)
+	sub.anchor_left = 0.05
+	sub.anchor_right = 0.95
+	sub.offset_top = -132
+	sub.offset_bottom = -100
+	sub.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_ko.add_child(sub)
 
 
 func _update_threat() -> void:

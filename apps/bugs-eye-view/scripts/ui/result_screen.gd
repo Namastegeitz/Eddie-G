@@ -9,7 +9,7 @@ const CAUSES := {
 	&"sprayed": "Overcome by bug spray",
 	&"drained": "Washed down the drain",
 	&"fell": "Fell out of the world",
-	&"snapped": "Snapped in a mouse trap",
+	&"snapped": "Snapped by two traps back to back",
 	&"out_of_time": "Out of time",
 }
 

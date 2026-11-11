@@ -279,6 +279,9 @@ func hazard_speed() -> float:
 # --- Objectives -----------------------------------------------------------
 
 func _on_crumb_collected(c: Crumb) -> void:
+	# Every crumb is a bite of food: a little health (a golden one, all of it).
+	if player and not player.dead:
+		player.add_health(BugBase.MAX_HEALTH if c.golden else BugBase.HEAL_CRUMB)
 	if c.golden:
 		run.golden = true
 		set_hint("Golden Crumb!")
@@ -305,6 +308,7 @@ func _on_item_collected(item: PickupItem) -> void:
 	if item.def == null or player == null:
 		return
 	PowerUps.apply(item.def, player)
+	player.add_health(PowerUps.heal_for(item.def))
 	if item.is_key():
 		has_key = true
 		_check_goal()

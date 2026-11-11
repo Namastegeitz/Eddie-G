@@ -20,7 +20,7 @@ const DEFS := {
 	&"iron_shell": ["Iron Shell", "defense", 30, "Nothing can hurt you for a while", Color(0.4, 0.7, 1.0)],
 	&"spiky_armor": ["Spiky Armor", "defense", 40, "Blocks the next hits and stuns whoever struck", Color(0.3, 0.55, 1.0)],
 	&"shadow_cloak": ["Shadow Cloak", "defense", 35, "Almost invisible for a while", Color(0.55, 0.5, 1.0)],
-	&"second_wind": ["Second Wind", "defense", 45, "One more shell, and every meter refilled", Color(0.35, 0.85, 1.0)],
+	&"second_wind": ["Second Wind", "defense", 45, "One more hit of health, and every meter refilled", Color(0.35, 0.85, 1.0)],
 	&"smoke_bomb": ["Smoke Bomb", "tactic", 30, "A cloud ahead: people and pets inside can't see", Color(0.6, 0.9, 0.4)],
 	&"decoy_chirp": ["Decoy Chirp", "tactic", 25, "A noise where you look: threats go and check", Color(0.45, 0.9, 0.55)],
 	&"flash_bead": ["Flash Bead", "tactic", 40, "Dazzles every person and pet close by", Color(0.95, 0.95, 0.45)],
@@ -91,7 +91,7 @@ static func detail(id: StringName, level: int) -> String:
 		&"shadow_cloak":
 			return "%d s almost invisible" % int(8 * k)
 		&"second_wind":
-			return "+1 shell, meters full%s" % (", 6 s Iron Shell" if level >= 3 else "")
+			return "+1 hit of health, meters full%s" % (", 6 s Iron Shell" if level >= 3 else "")
 		&"smoke_bomb":
 			return "A %d-wide cloud for %d s" % [int(16 * k), int(6 * k)]
 		&"decoy_chirp":

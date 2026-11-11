@@ -110,6 +110,19 @@ Shadow Cloak, Second Wind, Smoke Bomb, Decoy Chirp, Flash Bead, Silk Grapple,
 Crumb Magnet), each up to level 3, loaded into a six-chamber **revolver**
 that swings open in play: turn it to a chamber and fire.
 
+**Health and snap traps**: every bug has a health bar (100). A stomp, swat
+or bite still costs a whole hit (one for most bugs, so it's deadly; the
+cockroach and ladybug can take two, the stink bug three), and health comes
+back on its own a few seconds after you were last hurt. Crumbs give a
+little (+6), gems and treasures +12, bug food +20 and the hidden power-ups
++40 (a golden crumb fills you up; cheese can push you one hit past full).
+**Snap traps are live**: step or land on the plate and, after a click, the
+bar slams down. It knocks you out cold for 3 s (on your back, stars
+circling, the bar holding you down) and takes 65 health, but one snap never
+kills. A second snap back to back - before you've healed past it - does;
+the HUD shows **DAZED** while you're in that danger. A dodge, a shield or
+the ladybug's shell gets you out of it, and flies in the air pass over.
+
 **Smooth characters**: everyone's joints blend - people, pets and bugs are
 built from tapered limbs whose rounded ends meet exactly at each joint (same
 radius on both sides), so elbows, knees, wrists, tails and bug legs bend like
