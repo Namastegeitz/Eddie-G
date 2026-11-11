@@ -81,6 +81,32 @@ time, in ten real rainforests. Built from
   rows, landmark rows and the logs, ants and caimans about to come into
   view) a little each frame and reuses them, so hopping forward doesn't
   stall.
+- **Detailed 3D models (made with Meshy):** in first person, the creatures
+  are detailed, textured models: giant red soldier ants with their cheese,
+  land crabs, crocodiles and floating caiman backs, elephants, wild pigs,
+  wild dogs, gaur, coiled vipers and cobras, harpy eagles, cassowaries,
+  monitor lizards and tigers (one model per kind, tinted per species), with
+  a stride bounce as they walk. The scenery is too: giant buttressed trees,
+  strangler figs, palms, tree ferns, bamboo, heliconias, ferns, bromeliads,
+  monsteras and mossy rocks line the trail, with model logs, lily pads,
+  stepping stones and landmarks (temple ruins, stelae, waterfall cliffs,
+  karst towers). The free starter animals turn and breathe in 3D on the home
+  and animal screens. Graphics Low keeps the light built shapes.
+  Pipeline and credit budgets: `tools/meshy/`.
+- **More lifelike first person:** a real sky with a hazy horizon that
+  closes in under the canopy, film-like tone mapping, soft bloom on High,
+  fine bumps on soil, turf and water that catch the light.
+- **Jumps follow the ground:** a real leap onto a log, lily pad or
+  waterfall stone, a quick low skip across a road; in first person the eye
+  rides on top of what you stand on (up on a log's back, low on a lily pad
+  or swimming), landings dip the view a little, and each surface sounds
+  different (a hollow thunk on a log, a click on stone). Hop timing is the
+  same everywhere, so difficulty doesn't change.
+- **Live mini-map:** in the corner of every run, in both views: a zoomed-in
+  map of the rows around you with lanes, logs, traffic and creatures moving
+  in real time, canopy patches, waterfall ledges and the goal, and a gauge
+  for the whole level (where you are, the canopy zones, the part shown).
+  Tap it to make it bigger. Settings > Mini-map turns it off.
 - **Calm music tuned to 528 Hz and 963 Hz:** every jungle and the menu
   has a slow, soothing song (about a minute, looping seamlessly): soft
   pads, a sparse melody on the jungle's own instrument, a gentle kalimba

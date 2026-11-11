@@ -33,6 +33,8 @@ var world3: Node3D
 var cam: Camera3D
 var sun: DirectionalLight3D
 var env: Environment
+var _sky_mat: ProceduralSkyMaterial    # open-sky gradient with a sun (darkens under the canopy)
+var _normal: NoiseTexture2D            # fine bumps for soil, grass and mud (not on Low)
 var eye_h := 0.55
 var t := 0.0
 var shade := 0.0                 # 0 open sky .. 1 deep under canopy
@@ -40,6 +42,8 @@ var _lanes := {}
 var _ents := {}
 var _ent_pool := {}               # "hazard:length" -> hidden nodes ready to reuse
 var _pool_order: Array[Node3D] = []   # every pooled node, oldest first
+var _open_trees: Array = []        # tree kinds for the open rows (from this jungle's scenes)
+var _open_plants: Array = []
 var ents_built := 0               # moving-thing nodes built so far (the rest are reused)
 var ents_missed := 0              # ...of which built on the spot, because the pool had none ready
 var _preds := {}
@@ -54,6 +58,9 @@ var _water_mats: Array[StandardMaterial3D] = []
 var _fit_key := Vector2.ZERO
 var _warm_row := 0                # next row to pre-build scenery for (see warm_step)
 var built_this_frame := 0         # rows built by the last update_view
+var _land_t := 1.0                # time since the last landing (camera dip)
+var _land_k := 1.0                # how hard that landing was
+var _ride_y := 0.0                # eye height from what you stand on (log top, stone, water)
 var _seg := 10                   # sphere / cylinder smoothness (quality)
 var scene := {}                  # the canopy scene we're in or about to enter
 var _fog0 := Color.WHITE
@@ -67,6 +74,17 @@ func setup(run: RunSim, animal_def: Dictionary) -> void:
 	animal = animal_def
 	stretch = false
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
+	# the open rows grow this jungle's own trees (from its first-person scenes)
+	var weights := {}
+	for sc in map.get("fpv_scenes", []):
+		for kind in sc.get("props", {}):
+			weights[kind] = float(weights.get(kind, 0.0)) + float(sc.props[kind])
+	for kind in Content.models.get("open_trees", []):
+		if weights.has(kind):
+			_open_trees.append(kind)
+	if _open_trees.is_empty():
+		_open_trees = Content.models.get("open_trees", []).slice(0, 2)
+	_open_plants = Content.models.get("open_plants", [])
 	_seg = 18 if Gfx.level() == "high" else (12 if Gfx.level() == "medium" else 8)
 	if Gfx.level() != "low":
 		_grain = NoiseTexture2D.new()
@@ -95,6 +113,42 @@ func setup(run: RunSim, animal_def: Dictionary) -> void:
 	env = Environment.new()
 	env.background_mode = Environment.BG_COLOR
 	env.background_color = _sky
+	if Gfx.level() != "low":
+		# a real sky: deep blue-green overhead fading to a hazy, sunlit horizon
+		_sky_mat = ProceduralSkyMaterial.new()
+		_sky_mat.sky_top_color = _sky.darkened(0.25).lerp(Color("4a86b8"), 0.35)
+		_sky_mat.sky_horizon_color = _sky.lightened(0.25)
+		_sky_mat.ground_horizon_color = _sky.lightened(0.1)
+		_sky_mat.ground_bottom_color = color("canopy_dark", "#0b3a1a")
+		_sky_mat.sun_angle_max = 18.0
+		var skyr := Sky.new()
+		skyr.sky_material = _sky_mat
+		env.sky = skyr
+		env.background_mode = Environment.BG_SKY
+		# film-like light: soft highlights, a touch more contrast and colour
+		env.tonemap_mode = Environment.TONE_MAPPER_ACES
+		env.tonemap_exposure = 1.08
+		env.tonemap_white = 6.0
+		env.adjustment_enabled = true
+		env.adjustment_contrast = 1.06
+		env.adjustment_saturation = 1.08
+		env.fog_sun_scatter = 0.18
+		if Gfx.level() == "high":
+			env.glow_enabled = true
+			env.glow_intensity = 0.35
+			env.glow_bloom = 0.04
+			env.glow_hdr_threshold = 1.1
+		_normal = NoiseTexture2D.new()
+		_normal.width = 256
+		_normal.height = 256
+		_normal.seamless = true
+		_normal.as_normal_map = true
+		_normal.bump_strength = 5.0
+		_normal.generate_mipmaps = true
+		var nn := FastNoiseLite.new()
+		nn.frequency = 0.06
+		nn.fractal_octaves = 3
+		_normal.noise = nn
 	env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
 	env.ambient_light_color = Color(0.85, 0.92, 0.82)
 	env.ambient_light_energy = 0.75
@@ -169,6 +223,26 @@ func update_view(dt: float) -> void:
 	var vw := view_profile()
 	if not (sim.state in ["respawn", "dead", "restart", "over"] and sim.cause != ""):
 		y += float(vw.up)
+		# ride at the height of what you stand on: up on a log's back or a
+		# waterfall stone, low on a lily pad, lower still when swimming
+		var want := 0.0
+		var cl := sim.cur_lane()
+		if sim.hopping:
+			want = _ride_y
+		elif sim.plat >= 0 and sim.plat < cl.ents.size():
+			var ph := String(Content.hazard(cl.ents[sim.plat].hazard).get("art", {}).get("painter", ""))
+			want = 0.04 if ph in ["lilypad"] else (0.14 if ph in ["stones", "bridge", "boat"] else 0.2)
+		elif sim.swimming:
+			want = -0.22
+		elif cl.layout == "falls":
+			want = 0.1
+		_ride_y = lerpf(_ride_y, want, minf(1.0, dt * 9.0))
+		y += _ride_y
+		# a landing dips the view and recovers with a little spring
+		_land_t += dt
+		if _land_t < 0.32:
+			var kk := _land_t / 0.32
+			y -= sin(kk * PI) * exp(-kk * 2.0) * 0.07 * _land_k
 	cam.position = Vector3(dp.x, y, -dp.y + float(vw.back))
 	# under the canopy the gaze lifts a little to take in the scene ahead
 	cam.rotation_degrees = Vector3(lerpf(float(vw.pitch[0]), float(vw.pitch[1]), shade) + lift * 6.0, 0.0, 0.0)
@@ -192,6 +266,12 @@ func update_view(dt: float) -> void:
 	# thicker air under the leaves, but capped so hazards a few rows ahead stay readable
 	env.fog_density = lerpf(_fog_d0, minf(0.075, _fog_d0 + 0.015 * mist + 0.008), shade) * float(vw.fog)
 	env.background_color = _sky.lerp(color("canopy_dark", "#0b3a1a"), shade * 0.85).lerp(fog.darkened(0.3), shade * 0.3)
+	if _sky_mat:
+		# under the leaves the sky closes in: dim green overhead, misty below
+		var dark := color("canopy_dark", "#0b3a1a")
+		_sky_mat.sky_top_color = _sky.darkened(0.25).lerp(Color("4a86b8"), 0.35).lerp(dark, shade * 0.9)
+		_sky_mat.sky_horizon_color = _sky.lightened(0.25).lerp(fog.darkened(0.2), shade * 0.8)
+		_sky_mat.sky_energy_multiplier = lerpf(1.0, 0.45, shade)
 	var lo := sim.row - BEHIND
 	var hi := sim.row + AHEAD
 	for wall in _walls:
@@ -275,6 +355,12 @@ func update_view(dt: float) -> void:
 ## into view (hidden, in the reuse pool), then row meshes (canopy scenery and grass rows) up to
 ## 60 rows ahead. Runs every frame in either view, so by the time you hop
 ## forward, reach a canopy or switch to first person, nothing stalls.
+## Called when you land: the view dips a little (more after a big leap).
+func landed(surface: String) -> void:
+	_land_t = 0.0
+	_land_k = 1.3 if surface == "platform" else (0.8 if surface == "ground" else 1.0)
+
+
 func view_profile() -> Dictionary:
 	return VIEWS.get(String(Save.setting("fpv_view", "wide")), VIEWS.wide)
 
@@ -323,7 +409,7 @@ func warm_step() -> void:
 		if l.zone >= 0 and l.zone < sim.world.gen.cover.size():
 			zr = sim.world.gen.cover[l.zone]
 		var sc := Scenery3D.scene_def(map, l.scene) if l.covered else {}
-		if Scenery3D.warm_row(l, sc, pal, Draw.detail, zr):
+		if Scenery3D.warm_row(l, sc, pal, Draw.detail, zr, _open_trees, _open_plants):
 			return
 
 
@@ -425,6 +511,11 @@ func surface(c: Color, uv := 0.35, water := false) -> StandardMaterial3D:
 		m.uv1_world_triplanar = true
 		m.uv1_scale = Vector3.ONE * uv
 		m.texture_filter = BaseMaterial3D.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
+		if _normal:
+			# fine bumps that catch the light: soil grit, turf, ripples on water
+			m.normal_enabled = true
+			m.normal_texture = _normal
+			m.normal_scale = 0.35 if water else 0.8
 		if water:
 			_water_mats.append(m)
 	_mats[key] = m
@@ -558,6 +649,9 @@ func _build_lane(l: Lane, r: int) -> Node3D:
 				else:
 					box(Vector3(0.98, 0.04, 0.98), hc(tc, "body").darkened(0.5), Vector3(x, 0.01, 0), n)
 					box(Vector3(1.0, 0.03, 0.06), hc(tc, "edge"), Vector3(x, 0.02, -0.48), n)
+			"brush" when String(hz.get("art", {}).get("painter", "")) == "boulders" and Models3D.has_model(String(Content.models.get("tiles", {}).get("boulders", {}).get("model", ""))) and Draw.detail > 0:
+				var bd: Dictionary = Content.models.tiles.boulders
+				n.add_child(Scenery3D.model_node({"model": String(bd.model), "pos": Vector3(x, 0.0, rng.randf_range(-0.1, 0.1)), "yaw": rng.randf() * TAU, "height": float(bd.height) * rng.randf_range(0.85, 1.1)}))
 			"brush" when String(hz.get("art", {}).get("painter", "")) == "boulders":
 				for k in 3:
 					var br := 0.3 if k == 1 else 0.24
@@ -576,7 +670,7 @@ func _build_lane(l: Lane, r: int) -> Node3D:
 		n.add_child(Scenery3D.build_lane(l, Scenery3D.scene_def(map, l.scene), pal, Draw.detail, zr))
 	else:
 		# grass tufts, flowers and the trees along the sides: one mesh a row
-		var open := Scenery3D.open_lane(l, pal, Draw.detail)
+		var open := Scenery3D.open_lane(l, pal, Draw.detail, _open_trees, _open_plants)
 		if open:
 			n.add_child(open)
 	if not l.effect.is_empty():
@@ -713,6 +807,34 @@ func _build_ent(l: Lane, e: Ent) -> Node3D:
 	var L := e.length
 	var n := Node3D.new()
 	var body := hc(cl, "body")
+	# a detailed model where there is one (content/models.json)
+	var md := Models3D.model_def(e.hazard, String(hz.get("art", {}).get("painter", "")))
+	if not md.is_empty() and String(hz.get("art", {}).get("painter", "")) in ["log", "roll_log"]:
+		# a detailed log, centred on a spinning axle so rolling logs roll
+		var spin := Node3D.new()
+		spin.name = "Spin"
+		var rad := float(md.get("thick", 0.42)) * 0.5
+		spin.position.y = rad - float(md.get("sink", 0.0)) if hz.kind == "platform" else 0.3
+		n.add_child(spin)
+		var dd: Dictionary = md.duplicate()
+		dd["center"] = true
+		spin.add_child(Models3D.creature(dd, L))
+		if hz.kind != "platform":
+			n.set_meta("roll", true)
+		n.set_meta("platform", e.platform)
+		return n
+	if not md.is_empty():
+		var mdl := Models3D.creature(md, L * float(md.get("length", 0.95)))
+		mdl.position.y = -float(md.get("sink", 0.0))
+		n.add_child(mdl)
+		if String(hz.get("art", {}).get("painter", "")) == "soldier_ant":
+			# the ant's wedge of cheese, held out in front
+			var ch := box(Vector3(0.16, 0.1, 0.16), hc(cl, "cheese", "#ffd23a"), Vector3(L * 0.52, 0.14, 0), n, Vector3(0, 45, 0))
+			ch.name = "Cheese"
+		n.set_meta("bob", float(md.get("bob", 1.0)))
+		n.set_meta("model_y", mdl.position.y)
+		n.set_meta("platform", e.platform)
+		return n
 	match String(hz.get("art", {}).get("painter", "")):
 		"truck":
 			box(Vector3(L * 0.68, 0.5, 0.62), body, Vector3(-L * 0.15, 0.36, 0), n)
@@ -824,7 +946,14 @@ func _place_ent(n: Node3D, l: Lane, e: Ent) -> void:
 		dir = 1.0 if e.velocity(0.0, sim.vt) >= 0.0 else -1.0
 	n.position = Vector3(x + e.length * 0.5, 0.0, -l.row)
 	n.rotation_degrees.y = 0.0 if dir > 0 else 180.0
-	if n.has_meta("walk"):
+	if n.has_meta("bob"):
+		# a stride: a small bounce and sway, faster for small quick animals
+		var bob := float(n.get_meta("bob"))
+		var mdl: Node3D = n.get_node("Model")
+		var ph2 := t * (7.0 + 5.0 / maxf(0.5, e.length)) + x * 2.0
+		mdl.position.y = float(n.get_meta("model_y")) + absf(sin(ph2)) * 0.022 * bob
+		mdl.rotation.z = sin(ph2) * 0.025 * bob
+	elif n.has_meta("walk"):
 		# tripod gait: one set of three legs swings forward while the other pushes
 		var ph := t * 11.0 + x * 3.0
 		(n.get_node("LegsA") as Node3D).rotation.y = sin(ph) * 0.32
@@ -908,7 +1037,32 @@ func _build_pred(_l: Lane, p: Dictionary) -> Node3D:
 	var hz := Content.hazard(String(p.hazard))
 	var cl: Dictionary = hz.get("art", {}).get("colors", {})
 	var n := Node3D.new()
+	var md := Models3D.model_def(String(p.hazard), String(hz.get("art", {}).get("painter", "")))
 	match String(p.kind):
+		"surfacer" when not md.is_empty():
+			# the detailed crocodile lunges up out of the water, nose first
+			var head := Node3D.new()
+			head.name = "Head"
+			n.add_child(head)
+			var upper := Node3D.new()
+			upper.name = "Upper"
+			head.add_child(upper)
+			var croc := Models3D.creature(md, float(p.get("span", 1.2)) * 1.9)
+			croc.rotation_degrees.z = 28.0
+			croc.position = Vector3(-0.35, -0.2, 0)
+			head.add_child(croc)
+			var ring0 := torus(0.3, 0.38, Color(1, 1, 1, 0.6), Vector3.ZERO, n)
+			ring0.name = "Ring"
+		"striker" when not md.is_empty():
+			# a detailed snake (or tiger) waiting at its spot; it lunges along the lane
+			var tiger0 := String(hz.get("art", {}).get("painter", "")) == "tiger"
+			var beast := Models3D.creature(md, 1.3 if tiger0 else 0.7)
+			beast.name = "Head"
+			n.add_child(beast)
+			var strike0 := Node3D.new()
+			strike0.name = "Strike"
+			n.add_child(strike0)
+			n.set_meta("lunge", true)
 		"surfacer":
 			var head := Node3D.new()
 			head.name = "Head"
@@ -966,6 +1120,21 @@ func _place_pred(n: Node3D, l: Lane, p: Dictionary) -> void:
 				var rise := sin(minf(1.0, k * 3.0) * PI * 0.5)
 				head.position.y = -0.3 + rise * 0.32
 				(head.get_node("Upper") as Node3D).rotation_degrees.z = -sin(minf(1.0, k) * PI) * 35.0
+		"striker" when n.has_meta("lunge"):
+			n.position = Vector3(int(p.col) + 0.5, 0.0, -l.row)
+			var beast: Node3D = n.get_node("Head")
+			var hidden2 := bool(p.get("hidden", false))
+			beast.visible = not hidden2 or st[0] in ["warn", "active"]
+			beast.rotation_degrees.y = 0.0 if int(p.dir) > 0 else 180.0
+			beast.position = Vector3.ZERO
+			beast.scale = Vector3.ONE
+			if st[0] == "warn":
+				# rears up, quivering
+				beast.position.y = sin(t * 40.0) * 0.01 + k * 0.05
+				beast.scale = Vector3(1.0, 1.0 + k * 0.25, 1.0)
+			elif st[0] == "active":
+				var ext2 := sin(minf(1.0, k) * PI) * float(p.span)
+				beast.position.x = int(p.dir) * ext2 * 0.6
 		"striker":
 			var col := int(p.col)
 			n.position = Vector3(col + 0.5, 0.0, -l.row)
@@ -1009,8 +1178,13 @@ func _update_swoops(lo: int, hi: int) -> void:
 			var bird := Node3D.new()
 			bird.name = "Bird"
 			n.add_child(bird)
-			box(Vector3(1.6, 0.04, 0.4), hc(cl, "wing", "#2a2a30"), Vector3.ZERO, bird)
-			sph(0.16, hc(cl, "body", "#55565e"), Vector3(0, 0.02, 0), bird, Vector3(1.0, 0.8, 2.0))
+			var bmd := Models3D.model_def(String(s.hazard), String(hz.get("art", {}).get("painter", "")))
+			if not bmd.is_empty():
+				# a detailed eagle gliding in, wings spread
+				bird.add_child(Models3D.creature(bmd, 1.9))
+			else:
+				box(Vector3(1.6, 0.04, 0.4), hc(cl, "wing", "#2a2a30"), Vector3.ZERO, bird)
+				sph(0.16, hc(cl, "body", "#55565e"), Vector3(0, 0.02, 0), bird, Vector3(1.0, 0.8, 2.0))
 			var sh := cyl(0.5, 0.01, Color(0, 0, 0, 0.35), Vector3.ZERO, n)
 			sh.name = "Shadow"
 			_swoops[i] = n

@@ -53,6 +53,7 @@ var tut_bubble: PanelContainer
 var tut_label: Label
 var tut_hint: Control
 var fps_label: Label
+var mini_map: MiniMap
 var hud_buttons: Array[Control] = []
 var scene_card: PanelContainer      # "Kapok Cathedral" title as you enter a canopy zone
 var _web_t := 0.0
@@ -327,6 +328,10 @@ func _build_hud() -> void:
 	tut_bubble.add_child(tv)
 	tut_bubble.visible = false
 	hud.add_child(tut_bubble)
+	if bool(Save.setting("mini_map", true)) and cfg.mode != "tutorial":
+		mini_map = MiniMap.new()
+		hud.add_child(mini_map)
+		mini_map.setup(sim, world, map, top + 136)
 	if bool(Save.setting("show_fps", false)):
 		fps_label = UI.label("", 22, Color(1, 1, 1, 0.8), true)
 		fps_label.position = Vector2(24, top + 96)
@@ -590,8 +595,20 @@ func _drain_fx() -> void:
 				Sfx.haptic(8)
 				wv.fx.burst(p + Vector2(0, 14), Color(1, 1, 1, 0.5), 4, 60.0, "dot", 4.0)
 			"land":
-				if f.get("surface", "") == "platform":
-					Sfx.play("land", 0.9, -6.0)
+				# each surface lands with its own sound: a hollow thunk on a log,
+				# a click on stone, a soft pat on grass, grit on a road
+				var surf := String(f.get("surface", ""))
+				var on_stone := world.lane(int(f.row)).layout == "falls"
+				if surf == "platform":
+					Sfx.play("land", 0.82, -5.0)
+				elif on_stone:
+					Sfx.play("bump", 1.35, -9.0)
+				elif surf == "ground":
+					Sfx.play("land", 1.1, -11.0)
+				else:
+					Sfx.play("land", 1.25, -14.0)
+				if view == "fpv" and wv3 != null:
+					wv3.landed(surf)
 			"splash", "swim", "float":
 				Sfx.play("splash", 1.0 if f.type == "splash" else 1.2, 0.0 if f.type == "splash" else -6.0)
 				wv.fx.ring(p, Color(1, 1, 1, 0.9), 10, 50)

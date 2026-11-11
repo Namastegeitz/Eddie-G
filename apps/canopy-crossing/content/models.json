@@ -1,0 +1,256 @@
+{
+  "_doc": "Which detailed (Meshy) model each hazard uses in first person: assets/models/<model>.glb. 'painters' maps a drawing style to a model; 'hazards' picks one per hazard id (and wins). length: share of the hazard's length the model fills; tint multiplies the model's colours (for a related species); yaw turns the model to face +X; fit 'x' measures across +X after the turn (wingspan for birds); bob: stride bounce; sink: how deep it sits (floating backs). A model that hasn't been made yet just leaves the old shape in place. See docs/CONTENT.md. 'scenery' maps a first-person scenery prop or landmark ('lm_<kind>') to a model and its height in tiles; 'open_trees' and 'open_plants' are what grows beside the open (sunny) rows. align 'long' turns a model so its longest side runs along +X (logs, vehicles). 'animals' gives an animal its model for the home and animal screens.",
+  "yaw": 90,
+  "painters": {
+    "soldier_ant": {
+      "model": "fauna_soldier_ant",
+      "length": 1.0,
+      "bob": 1.2
+    },
+    "crab": {
+      "model": "fauna_land_crab",
+      "length": 1.0,
+      "bob": 0.6
+    },
+    "elephant": {
+      "model": "fauna_elephant",
+      "length": 0.95,
+      "bob": 0.5
+    },
+    "caiman_back": {
+      "model": "fauna_croc",
+      "length": 1.0,
+      "bob": 0.0,
+      "sink": 0.24
+    },
+    "croc": {
+      "model": "fauna_croc"
+    },
+    "snake": {
+      "model": "fauna_snake"
+    },
+    "raptor": {
+      "model": "fauna_eagle",
+      "yaw": 0
+    },
+    "runner": {
+      "model": "fauna_cassowary",
+      "length": 0.9,
+      "bob": 1.0
+    },
+    "lizard": {
+      "model": "fauna_monitor",
+      "length": 1.0,
+      "bob": 0.7
+    },
+    "tiger": {
+      "model": "fauna_tiger"
+    },
+    "log": {
+      "model": "scene_mossy_log",
+      "align": "long",
+      "length": 1.0,
+      "bob": 0.0,
+      "sink": 0.08,
+      "stretch": true
+    },
+    "roll_log": {
+      "model": "scene_mossy_log",
+      "align": "long",
+      "length": 1.0,
+      "bob": 0.0,
+      "stretch": true
+    },
+    "lilypad": {
+      "model": "scene_lily_pads",
+      "align": "long",
+      "length": 1.05,
+      "bob": 0.0,
+      "sink": 0.02
+    },
+    "stones": {
+      "model": "scene_river_stones",
+      "align": "long",
+      "length": 1.0,
+      "bob": 0.0,
+      "sink": 0.1
+    },
+    "truck": {
+      "model": "scene_logging_truck",
+      "length": 1.0,
+      "bob": 0.15
+    },
+    "jeep": {
+      "model": "scene_safari_jeep",
+      "length": 1.0,
+      "bob": 0.2
+    }
+  },
+  "hazards": {
+    "peccary_herd": {
+      "model": "fauna_boar",
+      "length": 1.0,
+      "bob": 1.0
+    },
+    "red_river_hogs": {
+      "model": "fauna_boar",
+      "length": 1.0,
+      "bob": 1.0,
+      "tint": "#ff9a6a"
+    },
+    "wild_boar": {
+      "model": "fauna_boar",
+      "length": 1.0,
+      "bob": 1.0,
+      "tint": "#c8b8a8"
+    },
+    "dhole_pack": {
+      "model": "fauna_wild_dog",
+      "length": 1.0,
+      "bob": 1.1
+    },
+    "mongoose_dash": {
+      "model": "fauna_wild_dog",
+      "length": 0.9,
+      "bob": 1.3,
+      "tint": "#c8a070"
+    },
+    "gaur_herd": {
+      "model": "fauna_buffalo",
+      "length": 0.95,
+      "bob": 0.6
+    },
+    "forest_buffalo": {
+      "model": "fauna_buffalo",
+      "length": 0.95,
+      "bob": 0.6,
+      "tint": "#d08050"
+    }
+  },
+  "tiles": {
+    "boulders": {
+      "model": "scene_mossy_boulder",
+      "height": 0.75
+    }
+  },
+  "scenery": {
+    "giant_tree": {
+      "model": "scene_giant_tree",
+      "height": 7.5
+    },
+    "strangler_fig": {
+      "model": "scene_strangler_fig",
+      "height": 6.0
+    },
+    "banyan": {
+      "model": "scene_strangler_fig",
+      "height": 5.5
+    },
+    "palm": {
+      "model": "scene_palm",
+      "height": 5.0
+    },
+    "walking_palm": {
+      "model": "scene_palm",
+      "height": 4.2
+    },
+    "fan_palm": {
+      "model": "scene_palm",
+      "height": 3.6
+    },
+    "ravenala": {
+      "model": "scene_palm",
+      "height": 3.8
+    },
+    "nipa": {
+      "model": "scene_palm",
+      "height": 2.6
+    },
+    "tree_fern": {
+      "model": "scene_tree_fern",
+      "height": 2.9
+    },
+    "bamboo": {
+      "model": "scene_bamboo",
+      "height": 4.6
+    },
+    "mangrove": {
+      "model": "scene_mangrove",
+      "height": 3.0
+    },
+    "pneumatophores": {
+      "model": "scene_mangrove",
+      "height": 1.6
+    },
+    "heliconia": {
+      "model": "scene_heliconia",
+      "height": 1.5
+    },
+    "bromeliad": {
+      "model": "scene_bromeliad",
+      "height": 0.6
+    },
+    "fern": {
+      "model": "scene_fern",
+      "height": 0.85
+    },
+    "moss_rock": {
+      "model": "scene_mossy_boulder",
+      "height": 0.9
+    },
+    "mushroom": {
+      "model": "scene_stump",
+      "height": 0.7
+    },
+    "karst": {
+      "model": "scene_karst_tower",
+      "height": 6.0
+    },
+    "lm_ruin_temple": {
+      "model": "scene_ruin_temple",
+      "height": 4.2
+    },
+    "lm_stela": {
+      "model": "scene_stela",
+      "height": 2.3
+    },
+    "lm_waterfall": {
+      "model": "scene_waterfall_cliff",
+      "height": 4.4
+    },
+    "lm_karst_tower": {
+      "model": "scene_karst_tower",
+      "height": 7.0
+    },
+    "lm_giant_ceiba": {
+      "model": "scene_giant_tree",
+      "height": 9.5
+    },
+    "monstera": {
+      "model": "scene_monstera",
+      "height": 1.3
+    }
+  },
+  "open_trees": [
+    "giant_tree",
+    "palm",
+    "strangler_fig",
+    "tree_fern",
+    "bamboo"
+  ],
+  "open_plants": [
+    "fern",
+    "heliconia",
+    "bromeliad",
+    "moss_rock",
+    "mushroom",
+    "monstera"
+  ],
+  "animals": {
+    "poison_dart_frog": "animal_poison_dart_frog",
+    "western_gorilla": "animal_western_gorilla",
+    "orangutan": "animal_orangutan",
+    "southern_cassowary": "fauna_cassowary",
+    "ring_tailed_lemur": "animal_ring_tailed_lemur"
+  }
+}

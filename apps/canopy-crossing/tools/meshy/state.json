@@ -1,0 +1,670 @@
+{
+  "_log": [
+    {
+      "asset": "fauna_soldier_ant",
+      "balance_before": 1255,
+      "cost": 20,
+      "step": "preview",
+      "t": 1794403951
+    },
+    {
+      "asset": "fauna_soldier_ant",
+      "balance_before": 1235,
+      "cost": 10,
+      "step": "refine",
+      "t": 1794404019
+    },
+    {
+      "asset": "fauna_land_crab",
+      "balance_before": 1205,
+      "cost": 20,
+      "step": "preview",
+      "t": 1794404235
+    },
+    {
+      "asset": "fauna_croc",
+      "balance_before": 1205,
+      "cost": 20,
+      "step": "preview",
+      "t": 1794404235
+    },
+    {
+      "asset": "fauna_elephant",
+      "balance_before": 1205,
+      "cost": 20,
+      "step": "preview",
+      "t": 1794404235
+    },
+    {
+      "asset": "fauna_land_crab",
+      "balance_before": 1135,
+      "cost": 10,
+      "step": "refine",
+      "t": 1794404299
+    },
+    {
+      "asset": "fauna_croc",
+      "balance_before": 1135,
+      "cost": 10,
+      "step": "refine",
+      "t": 1794404299
+    },
+    {
+      "asset": "fauna_elephant",
+      "balance_before": 1115,
+      "cost": 10,
+      "step": "refine",
+      "t": 1794404300
+    },
+    {
+      "asset": "fauna_boar",
+      "balance_before": 1105,
+      "cost": 20,
+      "step": "preview",
+      "t": 1794404342
+    },
+    {
+      "asset": "fauna_wild_dog",
+      "balance_before": 1105,
+      "cost": 20,
+      "step": "preview",
+      "t": 1794404343
+    },
+    {
+      "asset": "fauna_buffalo",
+      "balance_before": 1065,
+      "cost": 20,
+      "step": "preview",
+      "t": 1794404353
+    },
+    {
+      "asset": "fauna_wild_dog",
+      "balance_before": 1045,
+      "cost": 10,
+      "step": "refine",
+      "t": 1794404387
+    },
+    {
+      "asset": "fauna_buffalo",
+      "balance_before": 1035,
+      "cost": 10,
+      "step": "refine",
+      "t": 1794404406
+    },
+    {
+      "asset": "fauna_boar",
+      "balance_before": 1025,
+      "cost": 10,
+      "step": "refine",
+      "t": 1794404407
+    },
+    {
+      "asset": "fauna_snake",
+      "balance_before": 1015,
+      "cost": 20,
+      "step": "preview",
+      "t": 1794404470
+    },
+    {
+      "asset": "fauna_eagle",
+      "balance_before": 995,
+      "cost": 20,
+      "step": "preview",
+      "t": 1794404509
+    },
+    {
+      "asset": "fauna_cassowary",
+      "balance_before": 975,
+      "cost": 20,
+      "step": "preview",
+      "t": 1794404530
+    },
+    {
+      "asset": "fauna_snake",
+      "balance_before": 955,
+      "cost": 10,
+      "step": "refine",
+      "t": 1794404533
+    },
+    {
+      "asset": "fauna_eagle",
+      "balance_before": 945,
+      "cost": 10,
+      "step": "refine",
+      "t": 1794404583
+    },
+    {
+      "asset": "fauna_monitor",
+      "balance_before": 935,
+      "cost": 20,
+      "step": "preview",
+      "t": 1794404586
+    },
+    {
+      "asset": "fauna_tiger",
+      "balance_before": 915,
+      "cost": 20,
+      "step": "preview",
+      "t": 1794404627
+    },
+    {
+      "asset": "fauna_monitor",
+      "balance_before": 895,
+      "cost": 10,
+      "step": "refine",
+      "t": 1794404630
+    },
+    {
+      "asset": "fauna_cassowary",
+      "balance_before": 885,
+      "cost": 10,
+      "step": "refine",
+      "t": 1794404644
+    },
+    {
+      "asset": "fauna_tiger",
+      "balance_before": 875,
+      "cost": 10,
+      "step": "refine",
+      "t": 1794404671
+    },
+    {
+      "asset": "animal_poison_dart_frog",
+      "balance_before": 865,
+      "cost": 20,
+      "step": "preview",
+      "t": 1794404673
+    },
+    {
+      "asset": "animal_western_gorilla",
+      "balance_before": 845,
+      "cost": 20,
+      "step": "preview",
+      "t": 1794404677
+    },
+    {
+      "asset": "animal_orangutan",
+      "balance_before": 825,
+      "cost": 20,
+      "step": "preview",
+      "t": 1794404714
+    },
+    {
+      "asset": "animal_poison_dart_frog",
+      "balance_before": 805,
+      "cost": 10,
+      "step": "refine",
+      "t": 1794404716
+    },
+    {
+      "asset": "animal_western_gorilla",
+      "balance_before": 795,
+      "cost": 10,
+      "step": "refine",
+      "t": 1794404730
+    },
+    {
+      "asset": "animal_ring_tailed_lemur",
+      "balance_before": 785,
+      "cost": 20,
+      "step": "preview",
+      "t": 1794404750
+    },
+    {
+      "asset": "animal_ring_tailed_lemur",
+      "balance_before": 765,
+      "cost": 10,
+      "step": "refine",
+      "t": 1794404794
+    },
+    {
+      "asset": "animal_orangutan",
+      "balance_before": 755,
+      "cost": 10,
+      "step": "refine",
+      "t": 1794404829
+    },
+    {
+      "asset": "scene_giant_tree",
+      "balance_before": 745,
+      "cost": 20,
+      "step": "preview",
+      "t": 1794404949
+    },
+    {
+      "asset": "scene_strangler_fig",
+      "balance_before": 745,
+      "cost": 20,
+      "step": "preview",
+      "t": 1794404949
+    },
+    {
+      "asset": "scene_palm",
+      "balance_before": 745,
+      "cost": 20,
+      "step": "preview",
+      "t": 1794404949
+    },
+    {
+      "asset": "scene_palm",
+      "balance_before": 685,
+      "cost": 10,
+      "step": "refine",
+      "t": 1794405034
+    },
+    {
+      "asset": "scene_tree_fern",
+      "balance_before": 675,
+      "cost": 20,
+      "step": "preview",
+      "t": 1794405068
+    },
+    {
+      "asset": "scene_giant_tree",
+      "balance_before": 655,
+      "cost": 10,
+      "step": "refine",
+      "t": 1794405075
+    },
+    {
+      "asset": "scene_strangler_fig",
+      "balance_before": 645,
+      "cost": 10,
+      "step": "refine",
+      "t": 1794405086
+    },
+    {
+      "asset": "scene_bamboo",
+      "balance_before": 635,
+      "cost": 20,
+      "step": "preview",
+      "t": 1794405108
+    },
+    {
+      "asset": "scene_heliconia",
+      "balance_before": 615,
+      "cost": 20,
+      "step": "preview",
+      "t": 1794405131
+    },
+    {
+      "asset": "scene_tree_fern",
+      "balance_before": 615,
+      "cost": 10,
+      "step": "refine",
+      "t": 1794405133
+    },
+    {
+      "asset": "scene_heliconia",
+      "balance_before": 585,
+      "cost": 10,
+      "step": "refine",
+      "t": 1794405164
+    },
+    {
+      "asset": "scene_fern",
+      "balance_before": 575,
+      "cost": 20,
+      "step": "preview",
+      "t": 1794405167
+    },
+    {
+      "asset": "scene_bromeliad",
+      "balance_before": 555,
+      "cost": 20,
+      "step": "preview",
+      "t": 1794405198
+    },
+    {
+      "asset": "scene_bamboo",
+      "balance_before": 535,
+      "cost": 10,
+      "step": "refine",
+      "t": 1794405245
+    },
+    {
+      "asset": "scene_bromeliad",
+      "balance_before": 525,
+      "cost": 10,
+      "step": "refine",
+      "t": 1794405262
+    },
+    {
+      "asset": "scene_monstera",
+      "balance_before": 515,
+      "cost": 20,
+      "step": "preview",
+      "t": 1794405279
+    },
+    {
+      "asset": "scene_fern",
+      "balance_before": 495,
+      "cost": 10,
+      "step": "refine",
+      "t": 1794405292
+    },
+    {
+      "asset": "scene_mangrove",
+      "balance_before": 485,
+      "cost": 20,
+      "step": "preview",
+      "t": 1794405306
+    },
+    {
+      "asset": "scene_monstera",
+      "balance_before": 465,
+      "cost": 10,
+      "step": "refine",
+      "t": 1794405325
+    },
+    {
+      "asset": "scene_mossy_boulder",
+      "balance_before": 455,
+      "cost": 20,
+      "step": "preview",
+      "t": 1794405337
+    },
+    {
+      "asset": "scene_river_stones",
+      "balance_before": 435,
+      "cost": 20,
+      "step": "preview",
+      "t": 1794405359
+    },
+    {
+      "asset": "scene_river_stones",
+      "balance_before": 415,
+      "cost": 10,
+      "step": "refine",
+      "t": 1794405433
+    },
+    {
+      "asset": "scene_mangrove",
+      "balance_before": 405,
+      "cost": 10,
+      "step": "refine",
+      "t": 1794405442
+    },
+    {
+      "asset": "scene_mossy_boulder",
+      "balance_before": 395,
+      "cost": 10,
+      "step": "refine",
+      "t": 1794405463
+    },
+    {
+      "asset": "scene_mossy_log",
+      "balance_before": 385,
+      "cost": 20,
+      "step": "preview",
+      "t": 1794405476
+    },
+    {
+      "asset": "scene_stump",
+      "balance_before": 365,
+      "cost": 20,
+      "step": "preview",
+      "t": 1794405485
+    }
+  ],
+  "_spent": {
+    "fauna": 480,
+    "scenery": 400
+  },
+  "animal_orangutan": {
+    "bytes": 5481648,
+    "bytes_optimized": 1068876,
+    "done": true,
+    "preview_id": "01a1cadb-0678-7173-9baf-fbd91015e05e",
+    "prompt": "A Bornean orangutan standing on all fours: long shaggy reddish-orange hair, long arms, wide cheek pads, gentle dark face. Photorealistic, highly detailed, game-ready single object on its own, no ground plane, no background.",
+    "refine_id": "01a1cadc-c87c-731d-9b86-d4e73665961b",
+    "textured": true
+  },
+  "animal_poison_dart_frog": {
+    "bytes": 6066112,
+    "bytes_optimized": 494760,
+    "done": true,
+    "preview_id": "01a1cada-682e-76aa-8e8a-0373e6dfc7b1",
+    "prompt": "A blue poison dart frog sitting: bright cobalt-blue skin with black spots, darker blue legs, large dark eyes, toe pads, glossy wet skin. Photorealistic, highly detailed, game-ready single object on its own, no ground plane, no background.",
+    "refine_id": "01a1cadb-1181-72e4-8a25-02d97aad219b",
+    "textured": true
+  },
+  "animal_ring_tailed_lemur": {
+    "bytes": 10403772,
+    "bytes_optimized": 1232680,
+    "done": true,
+    "preview_id": "01a1cadb-94f5-70bf-9250-c94517dc7968",
+    "prompt": "A ring-tailed lemur walking on all fours with its long tail raised in a curve: soft grey fur, white belly, black-and-white ringed tail, white face with black eye patches and bright orange eyes. Photorealistic, highly detailed, game-ready single object on its own, no ground plane, no background.",
+    "refine_id": "01a1cadc-40ff-7767-9aa9-f01d14cd0992",
+    "textured": true
+  },
+  "animal_western_gorilla": {
+    "bytes": 8900620,
+    "bytes_optimized": 943812,
+    "done": true,
+    "preview_id": "01a1cada-7809-7342-9609-5bb70c16229e",
+    "prompt": "A western lowland gorilla walking on its knuckles: dark grey-black fur, silver-grey back, broad muscular shoulders, expressive face with deep-set eyes. Photorealistic, highly detailed, game-ready single object on its own, no ground plane, no background.",
+    "refine_id": "01a1cadb-489f-746c-9b7c-23726ffd58f9",
+    "textured": true
+  },
+  "fauna_boar": {
+    "bytes": 8430200,
+    "bytes_optimized": 766380,
+    "done": true,
+    "preview_id": "01a1cad5-5ced-77ed-b83a-ad9dcff4ab5e",
+    "prompt": "A collared peccary wild pig trotting: coarse bristly dark grey-brown coat with a pale band around the neck, short pig snout, small ears, slim legs with hooves. Photorealistic, highly detailed, game-ready single object on its own, no ground plane, no background.",
+    "refine_id": "01a1cad6-5762-7644-ad9a-2a1563623427",
+    "textured": true
+  },
+  "fauna_buffalo": {
+    "bytes": 6277764,
+    "bytes_optimized": 849472,
+    "done": true,
+    "preview_id": "01a1cad5-8583-739b-9c7b-12c145985116",
+    "prompt": "A gaur, the wild jungle ox, walking: massive dark brown-black body with a high shoulder ridge, curved pale horns, white lower legs like stockings. Photorealistic, highly detailed, game-ready single object on its own, no ground plane, no background.",
+    "refine_id": "01a1cad6-551f-776e-aade-b7ed93401d87",
+    "textured": true
+  },
+  "fauna_cassowary": {
+    "bytes": 6425708,
+    "bytes_optimized": 968512,
+    "done": true,
+    "preview_id": "01a1cad8-3ac2-7731-94a1-057110563613",
+    "prompt": "A southern cassowary walking: shaggy glossy black feathers, bright blue bare neck with two red wattles, tall brown horn-like casque on its head, powerful grey legs with big three-toed feet. Photorealistic, highly detailed, game-ready single object on its own, no ground plane, no background.",
+    "refine_id": "01a1cad9-f75d-7280-b494-62269eb2ec16",
+    "textured": true
+  },
+  "fauna_croc": {
+    "bytes": 9283680,
+    "bytes_optimized": 1015164,
+    "done": true,
+    "preview_id": "01a1cad3-baea-77b0-bcf7-4aaf7d6e0f42",
+    "prompt": "A spectacled caiman crocodile lying flat with legs spread: dark olive-brown armored scutes along the back and long tail, broad snout with visible teeth, raised eyes and nostrils, pale yellow belly edges. Photorealistic, highly detailed, game-ready single object on its own, no ground plane, no background.",
+    "refine_id": "01a1cad4-b466-727a-ab3e-ca7d91a5a56d",
+    "textured": true
+  },
+  "fauna_eagle": {
+    "bytes": 9329032,
+    "bytes_optimized": 1062996,
+    "done": true,
+    "preview_id": "01a1cad7-e987-74ab-abd3-9f8aaa962fdc",
+    "prompt": "A harpy eagle in flight with wings fully spread: grey head with a split crest, black chest band, white belly, broad wings barred black and grey, large yellow talons, seen in a gliding pose. Photorealistic, highly detailed, game-ready single object on its own, no ground plane, no background.",
+    "refine_id": "01a1cad9-0924-71fc-838f-017649c4fdf1",
+    "textured": true
+  },
+  "fauna_elephant": {
+    "bytes": 6883020,
+    "bytes_optimized": 786204,
+    "done": true,
+    "preview_id": "01a1cad3-bba4-7725-be8f-40c584aaf759",
+    "prompt": "An African forest elephant walking: grey wrinkled skin, rounded ears, straight downward-pointing tusks, trunk hanging down, four thick legs mid-stride, short tail. Photorealistic, highly detailed, game-ready single object on its own, no ground plane, no background.",
+    "refine_id": "01a1cad4-b640-757e-8bd4-6c251567fe73",
+    "textured": true
+  },
+  "fauna_land_crab": {
+    "bytes": 9637500,
+    "bytes_optimized": 836300,
+    "done": true,
+    "preview_id": "01a1cad3-b9e0-71fc-87af-e817cdec56b9",
+    "prompt": "A Caribbean land crab: wide domed red-orange shell, two big raised claws, eight jointed walking legs splayed to the sides, short stalked eyes, standing on the ground. Photorealistic, highly detailed, game-ready single object on its own, no ground plane, no background.",
+    "refine_id": "01a1cad4-b4d1-7072-b3fe-d634cbbdc7e4",
+    "textured": true
+  },
+  "fauna_monitor": {
+    "bytes": 9063828,
+    "bytes_optimized": 759756,
+    "done": true,
+    "preview_id": "01a1cad9-1470-77c6-b39c-10f556b9652a",
+    "prompt": "An Asian water monitor lizard walking: long muscular body, dark grey-black scaly skin with pale yellow spots in bands, long flattened tail, forked tongue, four splayed legs. Photorealistic, highly detailed, game-ready single object on its own, no ground plane, no background.",
+    "refine_id": "01a1cad9-c18f-7452-aa80-afb01bee1156",
+    "textured": true
+  },
+  "fauna_snake": {
+    "bytes": 10572600,
+    "bytes_optimized": 698568,
+    "done": true,
+    "preview_id": "01a1cad7-4e79-75de-8808-e7c0d0cb0f80",
+    "prompt": "A coiled jungle viper raising its head ready to strike: thick body with brown, cream and black diamond pattern, broad triangular head, forked tongue, coils on the ground. Photorealistic, highly detailed, game-ready single object on its own, no ground plane, no background.",
+    "refine_id": "01a1cad8-435f-7423-933a-0a3b383ee2aa",
+    "textured": true
+  },
+  "fauna_soldier_ant": {
+    "bytes": 5708432,
+    "bytes_optimized": 725008,
+    "done": true,
+    "preview_id": "01a1cacf-6316-76cb-b507-216778bd65de",
+    "prompt": "A giant red soldier ant walking, carrying a wedge of yellow cheese with round holes in its curved black mandibles. Glossy deep-red segmented exoskeleton, large head, elbowed antennae, six jointed legs mid-stride, slim waist, round abdomen. Photorealistic, highly detailed, game-ready single object on its own, no ground plane, no background.",
+    "refine_id": "01a1cad0-6e84-773f-8334-677dab98f555",
+    "textured": true
+  },
+  "fauna_tiger": {
+    "bytes": 8899084,
+    "bytes_optimized": 1069828,
+    "done": true,
+    "preview_id": "01a1cad9-b5a6-76a5-a630-f044445342e9",
+    "prompt": "A Bengal tiger crouched low and about to pounce: orange coat with black stripes, white belly and face markings, muscular legs, long striped tail. Photorealistic, highly detailed, game-ready single object on its own, no ground plane, no background.",
+    "refine_id": "01a1cada-5eae-71db-a776-2a5572b06942",
+    "textured": true
+  },
+  "fauna_wild_dog": {
+    "bytes": 8131420,
+    "bytes_optimized": 546480,
+    "done": true,
+    "preview_id": "01a1cad5-60c1-72f1-be0a-9b3281506f23",
+    "prompt": "A dhole, the Asian wild dog, trotting: rusty red-orange coat, cream throat and belly, bushy black-tipped tail, rounded ears, slender legs. Photorealistic, highly detailed, game-ready single object on its own, no ground plane, no background.",
+    "refine_id": "01a1cad6-09ab-738e-a2da-8c510c8289f6",
+    "textured": true
+  },
+  "scene_bamboo": {
+    "bytes": 7199356,
+    "bytes_optimized": 494880,
+    "done": true,
+    "preview_id": "01a1cae1-0d64-7504-beba-a765459d5bef",
+    "prompt": "A dense clump of giant green bamboo: many tall jointed green and yellow canes with narrow leaves near the top. Photorealistic, highly detailed, game-ready single object on its own, no ground plane, no background.",
+    "refine_id": "01a1cae3-2246-74ba-82dd-52b3c27df7da",
+    "textured": true
+  },
+  "scene_bromeliad": {
+    "bytes": 8182000,
+    "bytes_optimized": 401668,
+    "done": true,
+    "preview_id": "01a1cae2-6c41-7645-9f31-11d4cee11d1f",
+    "prompt": "A bromeliad plant: a rosette of stiff glossy green and red striped leaves with a bright pink flower spike in the middle. Photorealistic, highly detailed, game-ready single object on its own, no ground plane, no background.",
+    "refine_id": "01a1cae3-65a2-7324-a4b2-549acbe6dcd0",
+    "textured": true
+  },
+  "scene_fern": {
+    "bytes": 7048616,
+    "bytes_optimized": 221684,
+    "done": true,
+    "preview_id": "01a1cae1-f091-740e-9218-a74d5bb5bc70",
+    "prompt": "A lush clump of ground ferns: many arching bright green fronds from a central base. Photorealistic, highly detailed, game-ready single object on its own, no ground plane, no background.",
+    "refine_id": "01a1cae3-da18-7011-bf93-4cfea6f19e1e",
+    "textured": true
+  },
+  "scene_giant_tree": {
+    "bytes": 3453360,
+    "bytes_optimized": 615740,
+    "done": true,
+    "preview_id": "01a1cade-9f6a-75bc-8e22-bea4f4a4e834",
+    "prompt": "A giant rainforest kapok tree: massive straight grey trunk with huge flared buttress roots at the base, mossy bark with lichens, a broad dense green crown high above. Photorealistic, highly detailed, game-ready single object on its own, no ground plane, no background.",
+    "refine_id": "01a1cae0-8903-7058-8c72-24964a509fcb",
+    "textured": true
+  },
+  "scene_heliconia": {
+    "bytes": 7289428,
+    "bytes_optimized": 372852,
+    "done": true,
+    "preview_id": "01a1cae1-657f-721e-ab7b-257e933975a2",
+    "prompt": "A heliconia plant: broad paddle-shaped green leaves on long stems with hanging bright red and yellow lobster-claw flowers. Photorealistic, highly detailed, game-ready single object on its own, no ground plane, no background.",
+    "refine_id": "01a1cae1-e699-71ad-b35e-1d0c3003649e",
+    "textured": true
+  },
+  "scene_mangrove": {
+    "bytes": 8314932,
+    "bytes_optimized": 541192,
+    "done": true,
+    "preview_id": "01a1cae4-102c-70d8-b70b-35343c245215",
+    "prompt": "A mangrove tree standing on arching stilt roots above muddy water: twisted grey roots, dark green leathery leaves. Photorealistic, highly detailed, game-ready single object on its own, no ground plane, no background.",
+    "refine_id": "01a1cae6-2351-7527-810a-56ad64bce8ea",
+    "textured": true
+  },
+  "scene_monstera": {
+    "bytes": 6450832,
+    "bytes_optimized": 344764,
+    "done": true,
+    "preview_id": "01a1cae3-a667-7687-a8be-341aa211da32",
+    "prompt": "A large monstera elephant-ear plant: big glossy dark green split leaves on long stalks, growing from the forest floor. Photorealistic, highly detailed, game-ready single object on its own, no ground plane, no background.",
+    "refine_id": "01a1cae4-5af9-7791-9b06-9f3cc7c1faa5",
+    "textured": true
+  },
+  "scene_mossy_boulder": {
+    "preview_id": "01a1cae4-88a7-7347-98ef-07bddceb210f",
+    "prompt": "A large rounded granite boulder covered in thick bright green moss on top, grey lichen-spotted stone below. Photorealistic, highly detailed, game-ready single object on its own, no ground plane, no background.",
+    "refine_id": "01a1cae6-76c8-7742-8959-e5137e1879d5"
+  },
+  "scene_mossy_log": {
+    "preview_id": "01a1cae6-a916-7478-91c6-a15a434d34fb",
+    "prompt": "A fallen tree log lying horizontally: rough brown bark, broken branch stubs, patches of green moss and small mushrooms, ringed cut ends. Photorealistic, highly detailed, game-ready single object on its own, no ground plane, no background."
+  },
+  "scene_palm": {
+    "bytes": 8563928,
+    "bytes_optimized": 492552,
+    "done": true,
+    "preview_id": "01a1cade-a0cc-74ae-aee0-4e73b8bc8837",
+    "prompt": "A tall slender tropical palm tree: smooth ringed grey trunk, crown of long arching green feather-like fronds. Photorealistic, highly detailed, game-ready single object on its own, no ground plane, no background.",
+    "refine_id": "01a1cadf-eae1-7566-9677-dba683bacf05",
+    "textured": true
+  },
+  "scene_river_stones": {
+    "bytes": 4502640,
+    "bytes_optimized": 354724,
+    "done": true,
+    "preview_id": "01a1cae4-e16e-76e9-8701-c192c256beb1",
+    "prompt": "A cluster of smooth wet grey river stones of different sizes, some with patches of green moss. Photorealistic, highly detailed, game-ready single object on its own, no ground plane, no background.",
+    "refine_id": "01a1cae5-ffd3-75d8-9f71-5a205a1569ff",
+    "textured": true
+  },
+  "scene_strangler_fig": {
+    "bytes": 8643284,
+    "bytes_optimized": 682768,
+    "done": true,
+    "preview_id": "01a1cade-a15e-736c-b39f-778e89b56d06",
+    "prompt": "A strangler fig tree: a lattice of thick tangled aerial roots wrapping a trunk, hanging roots, mossy bark, leafy green canopy. Photorealistic, highly detailed, game-ready single object on its own, no ground plane, no background.",
+    "refine_id": "01a1cae0-b790-74df-8c0a-c4c8f98a064c",
+    "textured": true
+  },
+  "scene_stump": {
+    "preview_id": "01a1cae6-ccfb-77de-b806-b564414d779d",
+    "prompt": "An old rotting tree stump with orange shelf fungi, moss and small ferns growing from it. Photorealistic, highly detailed, game-ready single object on its own, no ground plane, no background."
+  },
+  "scene_tree_fern": {
+    "bytes": 6819184,
+    "bytes_optimized": 395584,
+    "done": true,
+    "preview_id": "01a1cae0-6f51-7504-a400-bfae8639d0c2",
+    "prompt": "A tree fern: a thin furry brown trunk about three meters tall topped with a wide crown of long lacy green fronds. Photorealistic, highly detailed, game-ready single object on its own, no ground plane, no background.",
+    "refine_id": "01a1cae1-6b5d-7643-8e6d-67dbd3930545",
+    "textured": true
+  }
+}

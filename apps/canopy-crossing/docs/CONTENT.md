@@ -157,6 +157,23 @@ Copy an existing map and change:
 - optional `dlc`: `{"url": "https://…/pack.zip"}` to download the pack's
   files on unlock (zip paths like `content/maps/x.json`, unpacked into `user://`)
 
+## Detailed models: `content/models.json`
+
+Which detailed (Meshy) model each thing uses (`assets/models/<model>.glb`,
+made with `tools/meshy/`). A missing model just leaves the built shape.
+
+- `painters` (by a hazard's `art.painter`) and `hazards` (by hazard id,
+  wins): `model`, `length` (share of the hazard's length), `tint` (multiplies
+  the model's colours for a related species), `yaw` (turn to face +X),
+  `bob` (stride bounce), `sink` (how deep it floats), `align: "long"` (turn
+  the longest side along +X), `stretch` + `thick` (logs of any length).
+- `tiles`: `boulders` (mossy-boulder tiles in first person).
+- `scenery`: first-person props by kind (`giant_tree`, `palm`, `fern`...)
+  and landmarks as `lm_<kind>`, each with a `height` in tiles.
+- `open_trees`, `open_plants`: what grows beside the open rows (a jungle uses
+  the trees its own scenes have).
+- `animals`: animal id → model shown on the home and animal screens.
+
 ## Difficulty: `content/difficulty.json`
 
 Four tiers. Each region gets one by its order on the globe (`by_order`:

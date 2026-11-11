@@ -216,16 +216,23 @@ func _show() -> void:
 	head.add_child(UI.label(String(Content.rarities[a.rarity].name), 24, UI.rarity_color(String(a.rarity)), true))
 	card_box.add_child(head)
 	card_box.add_child(UI.label("%s · %s" % [String(a.home), String(Content.map(String(a.region)).get("location", ""))], 24, UI.MUTED))
+	var skin := String(Save.data.equipped_skin.get(id, ""))
+	if skin == "" and ModelView.has_for(id):
+		var mv := ModelView.make(id, Vector2(360, 300))
+		mv.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+		if not owned:
+			mv.modulate = Color(1, 1, 1, 0.92)
+		card_box.add_child(mv)
 	portrait = Widgets.Portrait.new(a, Vector2(340, 300))
 	portrait.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
-	var skin := String(Save.data.equipped_skin.get(id, ""))
 	for s in a.get("skins", []):
 		if s.id == skin:
 			portrait.look = AnimalPainter.with_skin(a.look, s)
 	portrait.silhouette = false
 	if not owned:
 		portrait.modulate = Color(1, 1, 1, 0.92)
-	card_box.add_child(portrait)
+	if not (skin == "" and ModelView.has_for(id)):
+		card_box.add_child(portrait)
 	var ab := UI.panel(UI.PANEL_2, 22, 18)
 	var abv := UI.vbox(4)
 	ab.add_child(abv)

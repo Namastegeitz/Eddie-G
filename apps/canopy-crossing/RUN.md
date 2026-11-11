@@ -131,5 +131,6 @@ python3 tools/gen_audio.py --maps   # just region music, after adding a map
 python3 tools/gen_audio.py --calm   # just the calm songs (tuned to each region's 528 / 963 Hz)
 python3 tools/gen_audio.py --check  # decode the calm songs and check every strong pitch sits on its tone
 python3 tools/gen_audio.py --only=el_yunque   # one region's songs (classic + calm), after adding it
+python3 tools/meshy/generate.py --list         # detailed models made with Meshy (see tools/meshy/README.md)
 python3 tools/gen_globe_map.py land-50m.json countries-50m.json assets/world/globe_map.png   # from npm pack world-atlas@2.0.2
 ```

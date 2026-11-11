@@ -55,6 +55,8 @@ func _ready() -> void:
 				await _phase7()
 			"onboarding":
 				await _phase6()
+			"models":
+				_models()
 		print("phase audit (%s): %d passed, %d failed" % [only, passed, failed])
 		Save.wipe()
 		Save.path = real_save
@@ -71,6 +73,7 @@ func _ready() -> void:
 	await _phase6()
 	await _phase7()
 	await _first_person()
+	_models()
 	_phase8()
 	Save.wipe()
 	Save.path = real_save
@@ -1362,6 +1365,12 @@ func _first_person() -> void:
 	var land: Vector2 = w3a.view_angles(1280.0 / 720.0)
 	w3a._apply_fov(w3a.view_profile())
 	print("  first-person view: phone %.0f x %.0f deg, wide screen %.0f x %.0f deg (was 86 x 118 / 86 x 55)" % [port.x, port.y, land.x, land.y])
+	check("a live mini-map rides in the corner of the run", gs.mini_map != null and gs.mini_map.is_visible_in_tree() and gs.mini_map.size.y > 200.0)
+	var modelled := 0
+	for k in gs.wv3._ents:
+		if (gs.wv3._ents[k] as Node).get_node_or_null("Model") != null or (gs.wv3._ents[k] as Node).has_meta("roll") or ((gs.wv3._ents[k] as Node).get_node_or_null("Spin") != null and (gs.wv3._ents[k] as Node).get_node("Spin").get_child_count() > 0 and (gs.wv3._ents[k] as Node).get_node("Spin").get_child(0).name == "Model"):
+			modelled += 1
+	check("first person shows detailed models for the creatures and logs in view", modelled > 0, str(modelled))
 	check("first person sees wide by default: more to the sides and above on phones and wide screens", String(Content.settings_defaults.get("fpv_view", "")) == "wide" and port.x >= 90.0 and port.y >= 118.0 and land.x >= 100.0 and land.y >= 78.0, "%s %s" % [port, land])
 	check("first person draws at the interpolated time (within one step ahead)", gs.sim.vt >= gs.sim.wt and gs.sim.vt - gs.sim.wt <= 1.0 / 60.0 + 0.0001, "%.4f" % (gs.sim.vt - gs.sim.wt))
 	# moving things that come into view are taken from a pool filled ahead
@@ -1588,6 +1597,72 @@ func _new_terrain(playable: Array) -> void:
 	var creatures := ["land_crab_march", "mongoose_dash", "puerto_rican_boa", "asian_elephant_herd", "dhole_pack", "siamese_croc", "king_cobra", "mossy_boulders", "waterfall_ledge"]
 	var missing := creatures.filter(func(h): return Content.hazard(h).is_empty())
 	check("new creatures and terrain: land crabs, mongooses, boas, elephants, dholes, Siamese crocs, cobras, boulders, waterfalls", missing.is_empty(), str(missing))
+
+
+## Detailed (Meshy) models: every model content/models.json names is in the
+## project, light for phones (Basis textures), fitted to the size the game
+## asks for; the first-person view uses them for creatures and scenery;
+## starter animals turn on the home screen; surface-shaped hops; the
+## mini-map.
+func _models() -> void:
+	begin("Detailed models, mini-map, jumps")
+	var named := {}
+	for group in ["painters", "hazards", "tiles", "scenery"]:
+		for k in Content.models.get(group, {}):
+			named[String(Content.models[group][k].model)] = true
+	for k in Content.models.get("animals", {}):
+		named[String(Content.models.animals[k])] = true
+	var missing := []
+	for id in named:
+		if not Models3D.has_model(id):
+			missing.append(id)
+	check("every detailed model the content names is in the project", missing.is_empty() and named.size() >= 30, "%d named; missing %s" % [named.size(), str(missing)])
+	var heavy := []
+	var dir := DirAccess.open("res://assets/models")
+	if dir:
+		for f in dir.get_files():
+			if f.ends_with(".webp.import"):
+				var txt := FileAccess.get_file_as_string("res://assets/models/" + f)
+				if not txt.contains("compress/mode=4"):
+					heavy.append(f)
+	check("model textures are Basis Universal (small download, compressed on the phone)", heavy.is_empty(), str(heavy.slice(0, 3)))
+	var keep := Draw.detail
+	Draw.detail = 1
+	var md := Models3D.model_def("red_soldier_ants", "soldier_ant")
+	var fit := 0.0
+	if not md.is_empty():
+		var holder := Models3D.creature(md, 0.9)
+		fit = Models3D._bounds(holder, Transform3D.IDENTITY).size.x
+		holder.free()
+	check("a creature model is fitted to the size the game asks for (0.9 tiles)", absf(fit - 0.9) < 0.05, "%.3f" % fit)
+	var tree := Scenery3D.scenery_def("giant_tree")
+	var node := Scenery3D.model_node({"model": String(tree.get("model", "")), "pos": Vector3.ZERO, "yaw": 0.0, "height": 6.0}) if not tree.is_empty() else MeshInstance3D.new()
+	var th := node.get_aabb().size.y * node.transform.basis.get_scale().y if node.mesh != null else 0.0
+	node.free()
+	check("scenery models stand at the height asked (a 6-tile giant tree)", absf(th - 6.0) < 0.3, "%.2f" % th)
+	Draw.detail = 0
+	check("Low graphics keeps the light built shapes (no models)", Models3D.model_def("red_soldier_ants", "soldier_ant").is_empty() and Scenery3D.scenery_def("giant_tree").is_empty())
+	Draw.detail = keep
+	var starters := []
+	for a in Content.starters():
+		if not ModelView.has_for(String(a)):
+			starters.append(a)
+	check("every free starter animal has a 3D model that turns on the home screen", starters.is_empty(), str(starters))
+	# hops: a leap onto a log arcs higher than a skip across a road
+	var w := World.from_lanes([_lane(0, "safe"), _lane(1, "ground"), _lane(2, "safe"), _lane(3, "water"), _lane(4, "safe")], -1)
+	var s := _run(w)
+	s.hop(Vector2i(0, 1))
+	s.step(1.0 / 60.0)
+	_steps(s, 0.04)
+	var road := s.hop_height()
+	var surf_road := s.hop_surface
+	s.row = 2
+	s.hopping = false
+	s.state = "play"
+	s.hop(Vector2i(0, 1))
+	_steps(s, 0.05)
+	var water := s.hop_height()
+	check("hops follow the ground: a quick low skip across a road, a real leap onto the river", surf_road == "ground" and s.hop_surface == "water" and water > road * 1.3, "road %.3f water %.3f" % [road, water])
 
 
 ## The difficulty curve: the first two jungles are Easy, 3-5 Medium, 6-10

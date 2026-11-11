@@ -272,6 +272,65 @@ static func glow_material() -> StandardMaterial3D:
 	return _glow_mat
 
 
+## Detailed scenery models (Meshy), by prop / landmark kind ({} if none,
+## not made yet, or graphics on Low).
+static var _units := {}
+
+
+static func scenery_def(kind: String) -> Dictionary:
+	if Draw.detail <= 0:
+		return {}
+	var d: Dictionary = Content.models.get("scenery", {}).get(kind, {})
+	if d.is_empty() or not Models3D.has_model(String(d.get("model", ""))):
+		return {}
+	return d
+
+
+## A model's mesh and the transform that stands it on the origin at one
+## unit tall (cached per model).
+static func _unit(id: String) -> Array:
+	if _units.has(id):
+		return _units[id]
+	var inst: Node3D = (load(Models3D.model_path(id)) as PackedScene).instantiate()
+	var found := _first_mesh(inst, Transform3D.IDENTITY)
+	inst.free()
+	if found.is_empty():
+		_units[id] = []
+		return []
+	var mesh: Mesh = found[0]
+	var xf0: Transform3D = found[1]
+	var box: AABB = xf0 * mesh.get_aabb()
+	var s := 1.0 / maxf(0.001, box.size.y)
+	var c := box.get_center()
+	var unit := Transform3D(Basis.from_scale(Vector3.ONE * s), Vector3(-c.x * s, -box.position.y * s, -c.z * s)) * xf0
+	_units[id] = [mesh, unit]
+	return _units[id]
+
+
+static func _first_mesh(n: Node, xf: Transform3D) -> Array:
+	if n is MeshInstance3D and (n as MeshInstance3D).mesh != null:
+		return [(n as MeshInstance3D).mesh, xf]
+	for ch in n.get_children():
+		if ch is Node3D:
+			var r := _first_mesh(ch, xf * (ch as Node3D).transform)
+			if not r.is_empty():
+				return r
+	return []
+
+
+## A placed scenery model: {"model", "pos", "yaw", "height"}.
+static func model_node(spec: Dictionary) -> MeshInstance3D:
+	var u := _unit(String(spec.model))
+	var mi := MeshInstance3D.new()
+	if u.is_empty():
+		return mi
+	mi.mesh = u[0]
+	var h := float(spec.height)
+	mi.transform = Transform3D(Basis(Vector3.UP, float(spec.get("yaw", 0.0))).scaled(Vector3.ONE * h), spec.pos) * (u[1] as Transform3D)
+	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_ON if h > 2.0 else GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	return mi
+
+
 ## The waterfall's moving sheet of water (its own node so it can scroll).
 static func _falls_sheet(spec: Dictionary) -> MeshInstance3D:
 	var sheet := MeshInstance3D.new()
@@ -342,6 +401,8 @@ static func build_lane(lane: Lane, sc: Dictionary, pal: Dictionary, detail: int,
 	for spec in meshes[2]:
 		if spec.get("falls", false):
 			root.add_child(_falls_sheet(spec))
+		elif spec.has("model"):
+			root.add_child(model_node(spec))
 	# fauna and particles live on the zone's first and middle rows
 	var anim: Array = []
 	var rng := RandomNumberGenerator.new()
@@ -362,7 +423,7 @@ static func build_lane(lane: Lane, sc: Dictionary, pal: Dictionary, detail: int,
 
 ## Builds (and caches) one row's meshes ahead of time, without making nodes.
 ## True if it did any work, so callers can do one per frame.
-static func warm_row(lane: Lane, sc: Dictionary, pal: Dictionary, detail: int, zone_rows: Vector2i) -> bool:
+static func warm_row(lane: Lane, sc: Dictionary, pal: Dictionary, detail: int, zone_rows: Vector2i, trees: Array = [], plants: Array = []) -> bool:
 	if lane.covered:
 		var mid := (zone_rows.x + zone_rows.y) / 2
 		var key := _row_key(lane, sc, pal, detail, mid)
@@ -371,11 +432,10 @@ static func warm_row(lane: Lane, sc: Dictionary, pal: Dictionary, detail: int, z
 		_cache_put(key, _row_meshes(lane, sc, pal, detail, mid))
 		return true
 	if lane.type == "safe" and not lane.goal:
-		var variant := lane.row % 6
-		var key2 := "open|%s|%s|%s|%d|%d|%s" % [String(pal.get("safe", "")), String(pal.get("canopy", "")), lane.type, detail, variant, str(lane.tiles.keys())]
+		var key2 := _open_key(lane, pal, detail, trees, plants)
 		if _row_cache.has(key2):
 			return false
-		_cache_put(key2, [_open_mesh(lane, pal, detail, variant)])
+		_cache_put(key2, _open_entry(lane, pal, detail, trees, plants))
 		return true
 	return false
 
@@ -461,24 +521,73 @@ static func _row_meshes(lane: Lane, sc: Dictionary, pal: Dictionary, detail: int
 ## An open (not covered) row: grass tufts and flowers on grassy rows, kept
 ## off tiles that hold something, and a tree on each side every third row.
 ## One merged mesh, or null when there is nothing to draw.
-static func open_lane(lane: Lane, pal: Dictionary, detail: int) -> MeshInstance3D:
-	var variant := lane.row % 6         # covers both the trees (every 3rd row) and the two grass colours
-	var key := "open|%s|%s|%s|%d|%d|%s" % [String(pal.get("safe", "")), String(pal.get("canopy", "")), lane.type, detail, variant, str(lane.tiles.keys())]
+## An open row's dressing: grass and flowers (one mesh), and, with detailed
+## models, the jungle's own trees on both sides every third row and plants
+## and mossy rocks along the edges. `trees` / `plants`: prop kinds to use.
+static func open_lane(lane: Lane, pal: Dictionary, detail: int, trees: Array = [], plants: Array = []) -> Node3D:
+	var key := _open_key(lane, pal, detail, trees, plants)
 	var entry: Array = _row_cache.get(key, [])
 	if entry.is_empty():
-		entry = [_open_mesh(lane, pal, detail, variant)]
+		entry = _open_entry(lane, pal, detail, trees, plants)
 		_cache_put(key, entry)
-	var mesh: Mesh = entry[0]
-	if mesh == null:
+	if entry[0] == null and (entry[1] as Array).is_empty():
 		return null
-	var mi := MeshInstance3D.new()
-	mi.name = "Open"
-	mi.mesh = mesh
-	mi.material_override = material()
-	return mi
+	var root := Node3D.new()
+	root.name = "Open"
+	if entry[0] != null:
+		var mi := MeshInstance3D.new()
+		mi.mesh = entry[0]
+		mi.material_override = material()
+		root.add_child(mi)
+	for spec in entry[1]:
+		root.add_child(model_node(spec))
+	return root
 
 
-static func _open_mesh(lane: Lane, pal: Dictionary, detail: int, variant: int) -> Mesh:
+static func _open_key(lane: Lane, pal: Dictionary, detail: int, trees: Array, plants: Array) -> String:
+	# row % 6 covers both the trees (every 3rd row) and the two grass colours
+	return "open|%s|%s|%s|%d|%d|%s|%s|%s" % [String(pal.get("safe", "")), String(pal.get("canopy", "")), lane.type, detail, lane.row % 6, str(lane.tiles.keys()), ",".join(trees), ",".join(plants)]
+
+
+static func _open_entry(lane: Lane, pal: Dictionary, detail: int, trees: Array, plants: Array) -> Array:
+	var variant := lane.row % 6
+	var specs := _open_models(lane, detail, variant, trees, plants)
+	var has_trees := false
+	for sp in specs:
+		if float(sp.height) > 2.0:
+			has_trees = true
+	return [_open_mesh(lane, pal, detail, variant, has_trees), specs]
+
+
+static func _open_models(lane: Lane, detail: int, variant: int, trees: Array, plants: Array) -> Array:
+	var out := []
+	if detail <= 0 or lane.type == "water":
+		return out
+	var rng := RandomNumberGenerator.new()
+	rng.seed = variant * 4111 + 23
+	if lane.row % 3 == 0 and not trees.is_empty():
+		for side in [-1.0, 1.0]:
+			var kind := String(trees[(variant + (1 if side > 0.0 else 0)) % trees.size()])
+			var md := scenery_def(kind)
+			if md.is_empty():
+				continue
+			var h := float(md.height) * rng.randf_range(0.8, 1.05)
+			var x: float = (-1.4 if side < 0.0 else 10.4) + side * 0.15 * maxf(0.0, h - 2.0)
+			out.append({"model": String(md.model), "pos": Vector3(x, 0.0, rng.randf_range(-0.25, 0.25)), "yaw": rng.randf() * TAU, "height": h})
+	if lane.type == "safe" and not plants.is_empty():
+		for side in [-1.0, 1.0]:
+			if rng.randf() < 0.35:
+				continue
+			var kind2 := String(plants[rng.randi() % plants.size()])
+			var md2 := scenery_def(kind2)
+			if md2.is_empty():
+				continue
+			var x2: float = rng.randf_range(-1.15, -0.65) if side < 0.0 else rng.randf_range(9.65, 10.15)
+			out.append({"model": String(md2.model), "pos": Vector3(x2, 0.0, rng.randf_range(-0.35, 0.35)), "yaw": rng.randf() * TAU, "height": float(md2.height) * rng.randf_range(0.75, 1.1)})
+	return out
+
+
+static func _open_mesh(lane: Lane, pal: Dictionary, detail: int, variant: int, model_trees := false) -> Mesh:
 	var k := Kit.new()
 	var rng := RandomNumberGenerator.new()
 	rng.seed = variant * 977 + 5
@@ -486,7 +595,7 @@ static func _open_mesh(lane: Lane, pal: Dictionary, detail: int, variant: int) -
 	var accent := Color(String(pal.get("accent", "#f6d43a")))
 	var leaf := Color(String(pal.get("canopy", "#1e5a2a")))
 	var seg := 6 if detail <= 0 else (8 if detail == 1 else 10)
-	if lane.row % 3 == 0:
+	if lane.row % 3 == 0 and not model_trees:
 		for side in [-1.0, 1.0]:
 			var p := Vector3(-1.2 if side < 0.0 else 10.2, 0.0, rng.randf_range(-0.2, 0.2))
 			k.cylinder(xf(p), 0.2, 0.14, 2.7, Color("4a3422"), Color("5a3e26"), seg)
@@ -681,6 +790,15 @@ static func _overhead(ctx: Dictionary, style: String) -> void:
 # ====================================================================== props
 
 static func _prop(ctx: Dictionary, kind: String, p: Vector3, side: float) -> void:
+	# a detailed model where there is one (content/models.json "scenery")
+	var md := scenery_def(kind)
+	if not md.is_empty():
+		var rng: RandomNumberGenerator = ctx.rng
+		var h := float(md.height) * rng.randf_range(0.85, 1.15)
+		# big trees stand a little further out so trunks and buttresses stay off the path
+		var q := p + Vector3(side * (0.15 * maxf(0.0, h - 2.0)), 0.0, 0.0)
+		(ctx.nodes as Array).append({"model": String(md.model), "pos": q, "yaw": rng.randf() * TAU, "height": h})
+		return
 	match kind:
 		"giant_tree":
 			_giant_tree(ctx, p, side, 1.0)
@@ -1096,6 +1214,14 @@ static func _landmark(ctx: Dictionary, kind: String) -> void:
 	var lane: Lane = ctx.lane
 	var side := -1.0 if lane.row % 2 == 0 else 1.0
 	var sx := -1.3 if side < 0.0 else 10.3
+	# a detailed model of the landmark, facing the path (the waterfall keeps
+	# its pouring water and pool, in front of the model's cliff)
+	var lmd := scenery_def("lm_" + kind)
+	if not lmd.is_empty():
+		var h := float(lmd.height)
+		(ctx.nodes as Array).append({"model": String(lmd.model), "pos": Vector3(sx + side * (0.6 + h * 0.18), 0.0, 0.0), "yaw": -side * PI * 0.5, "height": h})
+		if kind != "waterfall":
+			return
 	match kind:
 		"ruin_temple":
 			var stone := Color("a89a82")
@@ -1122,7 +1248,7 @@ static func _landmark(ctx: Dictionary, kind: String) -> void:
 			k.blob(xf(Vector3(sx - side * 0.5, 0.15, 0.0)), Vector3(0.45, 0.18, 0.45), stone2.darkened(0.1), 10, 0.1)
 		"waterfall", "cenote":
 			var rock := Color("6a6a5e")
-			if kind == "waterfall":
+			if kind == "waterfall" and lmd.is_empty():
 				k.box(xf(Vector3(sx + side * 0.5, 2.0, 0.0)), Vector3(1.0, 4.2, 2.6), rock, Color(ctx.leaf).darkened(0.2))
 				(ctx.nodes as Array).append({"falls": true, "pos": Vector3(sx - side * 0.02, 2.0, 0.0), "rot": PI * 0.5 * side})
 				for i in 5:

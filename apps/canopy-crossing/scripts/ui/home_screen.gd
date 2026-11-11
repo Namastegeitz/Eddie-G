@@ -22,13 +22,19 @@ func _ready() -> void:
 	title.add_theme_color_override("font_outline_color", Color("0a2012"))
 	root.add_child(title)
 	var a := Content.animal(String(Save.data.equipped_animal))
-	var hero := Widgets.Portrait.new(a, Vector2(320, 320))
 	var skin := String(Save.data.equipped_skin.get(String(a.id), ""))
-	for s in a.get("skins", []):
-		if s.id == skin:
-			hero.look = AnimalPainter.with_skin(a.look, s)
-	hero.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
-	root.add_child(hero)
+	if skin == "" and ModelView.has_for(String(a.id)):
+		# the detailed 3D model, turning and breathing
+		var mv := ModelView.make(String(a.id), Vector2(360, 340))
+		mv.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+		root.add_child(mv)
+	else:
+		var hero := Widgets.Portrait.new(a, Vector2(320, 320))
+		for s in a.get("skins", []):
+			if s.id == skin:
+				hero.look = AnimalPainter.with_skin(a.look, s)
+		hero.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+		root.add_child(hero)
 	var who := UI.label("%s · %s Lv %d" % [String(a.name), String(a.ability.name), Skills.level_of(String(a.id))], 28, UI.TEXT, true, HORIZONTAL_ALIGNMENT_CENTER)
 	root.add_child(who)
 	root.add_child(UI.spacer())

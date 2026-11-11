@@ -28,6 +28,7 @@ var settings_defaults := {}
 var rules := {}                 # game rules (content/rules.json)
 var skills := {}                # skill upgrade rules (content/skills.json)
 var difficulty := {}            # difficulty tiers (content/difficulty.json)
+var models := {}                # detailed models per hazard (content/models.json)
 var errors: PackedStringArray = []
 var loaded_files := 0
 var _items := {}
@@ -61,6 +62,7 @@ func reload() -> void:
 	rules = _load_one("rules.json")
 	skills = _load_one("skills.json")
 	difficulty = _load_one("difficulty.json")
+	models = _load_one("models.json")
 	_items.clear()
 	for it in collectibles.get("items", []):
 		_items[String(it.id)] = it

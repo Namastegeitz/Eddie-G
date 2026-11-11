@@ -1,0 +1,282 @@
+{
+  "_doc": "Models for Canopy Crossing, made with Meshy text to 3D (preview + texture). tools/meshy/generate.py reads this; see tools/meshy/README.md.",
+  "style": "Photorealistic, highly detailed, game-ready single object on its own, no ground plane, no background.",
+  "defaults": {
+    "ai_model": "latest",
+    "art_style": "realistic",
+    "topology": "triangle",
+    "target_polycount": 8000,
+    "should_remesh": true,
+    "symmetry_mode": "auto",
+    "enable_pbr": true
+  },
+  "costs": {
+    "preview": 20,
+    "refine": 10
+  },
+  "budgets": {
+    "fauna": 500,
+    "scenery": 755
+  },
+  "assets": [
+    {
+      "id": "fauna_soldier_ant",
+      "group": "fauna",
+      "tier": 1,
+      "target_polycount": 12000,
+      "prompt": "A giant red soldier ant walking, carrying a wedge of yellow cheese with round holes in its curved black mandibles. Glossy deep-red segmented exoskeleton, large head, elbowed antennae, six jointed legs mid-stride, slim waist, round abdomen."
+    },
+    {
+      "id": "fauna_land_crab",
+      "group": "fauna",
+      "tier": 1,
+      "target_polycount": 8000,
+      "prompt": "A Caribbean land crab: wide domed red-orange shell, two big raised claws, eight jointed walking legs splayed to the sides, short stalked eyes, standing on the ground."
+    },
+    {
+      "id": "fauna_croc",
+      "group": "fauna",
+      "tier": 1,
+      "target_polycount": 14000,
+      "prompt": "A spectacled caiman crocodile lying flat with legs spread: dark olive-brown armored scutes along the back and long tail, broad snout with visible teeth, raised eyes and nostrils, pale yellow belly edges."
+    },
+    {
+      "id": "fauna_elephant",
+      "group": "fauna",
+      "tier": 1,
+      "target_polycount": 14000,
+      "prompt": "An African forest elephant walking: grey wrinkled skin, rounded ears, straight downward-pointing tusks, trunk hanging down, four thick legs mid-stride, short tail."
+    },
+    {
+      "id": "fauna_boar",
+      "group": "fauna",
+      "tier": 1,
+      "target_polycount": 8000,
+      "prompt": "A collared peccary wild pig trotting: coarse bristly dark grey-brown coat with a pale band around the neck, short pig snout, small ears, slim legs with hooves."
+    },
+    {
+      "id": "fauna_wild_dog",
+      "group": "fauna",
+      "tier": 1,
+      "target_polycount": 8000,
+      "prompt": "A dhole, the Asian wild dog, trotting: rusty red-orange coat, cream throat and belly, bushy black-tipped tail, rounded ears, slender legs."
+    },
+    {
+      "id": "fauna_buffalo",
+      "group": "fauna",
+      "tier": 2,
+      "target_polycount": 12000,
+      "prompt": "A gaur, the wild jungle ox, walking: massive dark brown-black body with a high shoulder ridge, curved pale horns, white lower legs like stockings."
+    },
+    {
+      "id": "fauna_snake",
+      "group": "fauna",
+      "tier": 1,
+      "target_polycount": 8000,
+      "prompt": "A coiled jungle viper raising its head ready to strike: thick body with brown, cream and black diamond pattern, broad triangular head, forked tongue, coils on the ground."
+    },
+    {
+      "id": "fauna_eagle",
+      "group": "fauna",
+      "tier": 1,
+      "target_polycount": 12000,
+      "prompt": "A harpy eagle in flight with wings fully spread: grey head with a split crest, black chest band, white belly, broad wings barred black and grey, large yellow talons, seen in a gliding pose."
+    },
+    {
+      "id": "fauna_cassowary",
+      "group": "fauna",
+      "tier": 1,
+      "target_polycount": 12000,
+      "prompt": "A southern cassowary walking: shaggy glossy black feathers, bright blue bare neck with two red wattles, tall brown horn-like casque on its head, powerful grey legs with big three-toed feet."
+    },
+    {
+      "id": "fauna_monitor",
+      "group": "fauna",
+      "tier": 2,
+      "target_polycount": 12000,
+      "prompt": "An Asian water monitor lizard walking: long muscular body, dark grey-black scaly skin with pale yellow spots in bands, long flattened tail, forked tongue, four splayed legs."
+    },
+    {
+      "id": "fauna_tiger",
+      "group": "fauna",
+      "tier": 1,
+      "target_polycount": 14000,
+      "prompt": "A Bengal tiger crouched low and about to pounce: orange coat with black stripes, white belly and face markings, muscular legs, long striped tail."
+    },
+    {
+      "id": "animal_poison_dart_frog",
+      "group": "fauna",
+      "tier": 1,
+      "target_polycount": 10000,
+      "prompt": "A blue poison dart frog sitting: bright cobalt-blue skin with black spots, darker blue legs, large dark eyes, toe pads, glossy wet skin."
+    },
+    {
+      "id": "animal_western_gorilla",
+      "group": "fauna",
+      "tier": 1,
+      "target_polycount": 14000,
+      "prompt": "A western lowland gorilla walking on its knuckles: dark grey-black fur, silver-grey back, broad muscular shoulders, expressive face with deep-set eyes."
+    },
+    {
+      "id": "animal_orangutan",
+      "group": "fauna",
+      "tier": 1,
+      "target_polycount": 14000,
+      "prompt": "A Bornean orangutan standing on all fours: long shaggy reddish-orange hair, long arms, wide cheek pads, gentle dark face."
+    },
+    {
+      "id": "animal_ring_tailed_lemur",
+      "group": "fauna",
+      "tier": 1,
+      "target_polycount": 12000,
+      "prompt": "A ring-tailed lemur walking on all fours with its long tail raised in a curve: soft grey fur, white belly, black-and-white ringed tail, white face with black eye patches and bright orange eyes."
+    },
+    {
+      "id": "scene_giant_tree",
+      "group": "scenery",
+      "tier": 1,
+      "target_polycount": 9000,
+      "prompt": "A giant rainforest kapok tree: massive straight grey trunk with huge flared buttress roots at the base, mossy bark with lichens, a broad dense green crown high above."
+    },
+    {
+      "id": "scene_strangler_fig",
+      "group": "scenery",
+      "tier": 2,
+      "target_polycount": 9000,
+      "prompt": "A strangler fig tree: a lattice of thick tangled aerial roots wrapping a trunk, hanging roots, mossy bark, leafy green canopy."
+    },
+    {
+      "id": "scene_palm",
+      "group": "scenery",
+      "tier": 1,
+      "target_polycount": 6000,
+      "prompt": "A tall slender tropical palm tree: smooth ringed grey trunk, crown of long arching green feather-like fronds."
+    },
+    {
+      "id": "scene_tree_fern",
+      "group": "scenery",
+      "tier": 1,
+      "target_polycount": 6000,
+      "prompt": "A tree fern: a thin furry brown trunk about three meters tall topped with a wide crown of long lacy green fronds."
+    },
+    {
+      "id": "scene_bamboo",
+      "group": "scenery",
+      "tier": 1,
+      "target_polycount": 7000,
+      "prompt": "A dense clump of giant green bamboo: many tall jointed green and yellow canes with narrow leaves near the top."
+    },
+    {
+      "id": "scene_heliconia",
+      "group": "scenery",
+      "tier": 2,
+      "target_polycount": 6000,
+      "prompt": "A heliconia plant: broad paddle-shaped green leaves on long stems with hanging bright red and yellow lobster-claw flowers."
+    },
+    {
+      "id": "scene_fern",
+      "group": "scenery",
+      "tier": 1,
+      "target_polycount": 4000,
+      "prompt": "A lush clump of ground ferns: many arching bright green fronds from a central base."
+    },
+    {
+      "id": "scene_bromeliad",
+      "group": "scenery",
+      "tier": 2,
+      "target_polycount": 4000,
+      "prompt": "A bromeliad plant: a rosette of stiff glossy green and red striped leaves with a bright pink flower spike in the middle."
+    },
+    {
+      "id": "scene_monstera",
+      "group": "scenery",
+      "tier": 2,
+      "target_polycount": 5000,
+      "prompt": "A large monstera elephant-ear plant: big glossy dark green split leaves on long stalks, growing from the forest floor."
+    },
+    {
+      "id": "scene_mangrove",
+      "group": "scenery",
+      "tier": 3,
+      "target_polycount": 8000,
+      "prompt": "A mangrove tree standing on arching stilt roots above muddy water: twisted grey roots, dark green leathery leaves."
+    },
+    {
+      "id": "scene_mossy_boulder",
+      "group": "scenery",
+      "tier": 1,
+      "target_polycount": 5000,
+      "prompt": "A large rounded granite boulder covered in thick bright green moss on top, grey lichen-spotted stone below."
+    },
+    {
+      "id": "scene_river_stones",
+      "group": "scenery",
+      "tier": 2,
+      "target_polycount": 4000,
+      "prompt": "A cluster of smooth wet grey river stones of different sizes, some with patches of green moss."
+    },
+    {
+      "id": "scene_mossy_log",
+      "group": "scenery",
+      "tier": 1,
+      "target_polycount": 6000,
+      "prompt": "A fallen tree log lying horizontally: rough brown bark, broken branch stubs, patches of green moss and small mushrooms, ringed cut ends."
+    },
+    {
+      "id": "scene_stump",
+      "group": "scenery",
+      "tier": 3,
+      "target_polycount": 5000,
+      "prompt": "An old rotting tree stump with orange shelf fungi, moss and small ferns growing from it."
+    },
+    {
+      "id": "scene_lily_pads",
+      "group": "scenery",
+      "tier": 3,
+      "target_polycount": 4000,
+      "prompt": "A cluster of round green water lily pads floating flat with one open pink water lily flower."
+    },
+    {
+      "id": "scene_ruin_temple",
+      "group": "scenery",
+      "tier": 1,
+      "target_polycount": 10000,
+      "prompt": "An ancient Maya stone pyramid temple ruin in the jungle: stepped grey limestone tiers, a small shrine on top with a doorway, carved blocks, moss and vines growing over the stones."
+    },
+    {
+      "id": "scene_stela",
+      "group": "scenery",
+      "tier": 2,
+      "target_polycount": 5000,
+      "prompt": "A carved ancient Maya stone stela: a tall standing grey stone slab covered in relief carvings of glyphs and a figure, weathered with moss."
+    },
+    {
+      "id": "scene_waterfall_cliff",
+      "group": "scenery",
+      "tier": 1,
+      "target_polycount": 9000,
+      "prompt": "A tall jungle rock cliff for a waterfall: layered dark wet basalt rock face with a central notch where water would pour, ferns and moss on the ledges, a rocky pool rim at the bottom."
+    },
+    {
+      "id": "scene_karst_tower",
+      "group": "scenery",
+      "tier": 3,
+      "target_polycount": 8000,
+      "prompt": "A tall jagged limestone karst tower: vertical grey and black rock spire with jungle plants clinging to its ledges."
+    },
+    {
+      "id": "scene_logging_truck",
+      "group": "scenery",
+      "tier": 2,
+      "target_polycount": 10000,
+      "prompt": "A muddy old logging truck loaded with stacked tree trunks: red cab, flatbed trailer with chained logs, big off-road tires."
+    },
+    {
+      "id": "scene_safari_jeep",
+      "group": "scenery",
+      "tier": 2,
+      "target_polycount": 9000,
+      "prompt": "An open-top green safari jeep for rainforest tours: roll bar, spare tire on the back, muddy off-road tires."
+    }
+  ]
+}

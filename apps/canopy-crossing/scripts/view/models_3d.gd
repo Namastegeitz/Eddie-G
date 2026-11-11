@@ -349,3 +349,104 @@ static func soldier_ant(root: Node3D, L: float, cl: Dictionary) -> void:
 		root.add_child(hipn)
 		_mi(parts[1 + i], gloss(), hipn)
 	root.set_meta("walk", true)
+
+
+# ====================================================================== detailed models
+
+## Detailed models made with Meshy (tools/meshy/generate.py), stored as
+## assets/models/<id>.glb and mapped to hazards by content/models.json. Each
+## is fitted to the size the game needs, turned to face its direction of
+## travel (+X), centred and stood on the ground. Hazards without a model
+## (or on the Low graphics setting) keep their built shapes.
+static var _scenes := {}
+static var _tints := {}
+
+
+static func model_path(id: String) -> String:
+	return "res://assets/models/%s.glb" % id
+
+
+static func has_model(id: String) -> bool:
+	return id != "" and ResourceLoader.exists(model_path(id))
+
+
+## The model settings for a hazard ({} when it has none, the file isn't
+## there, or graphics are on Low).
+static func model_def(hazard_id: String, painter: String) -> Dictionary:
+	if Draw.detail <= 0:
+		return {}
+	var d: Dictionary = Content.models.get("hazards", {}).get(hazard_id, Content.models.get("painters", {}).get(painter, {}))
+	if d.is_empty() or not has_model(String(d.get("model", ""))):
+		return {}
+	return d
+
+
+## A fitted copy of a model: `size` along +X (after turning it to face +X).
+## Returns a Node3D "Model" holding it (animate that node).
+static func creature(d: Dictionary, size: float) -> Node3D:
+	var id := String(d.model)
+	var ps: PackedScene = _scenes.get(id)
+	if ps == null:
+		ps = load(model_path(id))
+		_scenes[id] = ps
+	var inst: Node3D = ps.instantiate()
+	inst.rotation_degrees.y = float(d.get("yaw", Content.models.get("yaw", 90.0)))
+	if String(d.get("align", "")) == "long":
+		# logs, pads, stones, vehicles: their longest side runs along +X
+		inst.rotation_degrees.y = 0.0
+		var b0 := _bounds(inst, inst.transform)
+		if b0.size.z > b0.size.x:
+			inst.rotation_degrees.y = 90.0
+	var pivot := Node3D.new()
+	pivot.add_child(inst)
+	var box := _bounds(inst, inst.transform)
+	if box.size.x > 0.0001:
+		pivot.scale = Vector3.ONE * (size / box.size.x)
+		if bool(d.get("stretch", false)):
+			# a log of any length: stretched lengthwise, as thick as the game's logs
+			var th := float(d.get("thick", 0.42)) / maxf(0.001, maxf(box.size.y, box.size.z))
+			pivot.scale = Vector3(size / box.size.x, th, th)
+	var c := box.get_center()
+	inst.position = -Vector3(c.x, c.y if bool(d.get("center", false)) else box.position.y, c.z)
+	var tint := String(d.get("tint", ""))
+	if tint != "":
+		_tint(inst, id, Color(tint))
+	var holder := Node3D.new()
+	holder.name = "Model"
+	holder.add_child(pivot)
+	holder.set_meta("height", box.size.y * pivot.scale.y)
+	return holder
+
+
+static func _bounds(n: Node, xf: Transform3D) -> AABB:
+	var out := AABB()
+	var first := true
+	if n is MeshInstance3D and (n as MeshInstance3D).mesh != null:
+		out = xf * (n as MeshInstance3D).mesh.get_aabb()
+		first = false
+	for ch in n.get_children():
+		if ch is Node3D:
+			var b := _bounds(ch, xf * (ch as Node3D).transform)
+			if b.size != Vector3.ZERO:
+				out = b if first else out.merge(b)
+				first = false
+	return out
+
+
+static func _tint(n: Node, id: String, tint: Color) -> void:
+	if n is MeshInstance3D:
+		var mi := n as MeshInstance3D
+		for i in mi.mesh.get_surface_count():
+			var key := "%s|%d|%s|%s" % [id, i, tint.to_html(), mi.name]
+			var m: Material = _tints.get(key)
+			if m == null:
+				var src := mi.mesh.surface_get_material(i)
+				if src is StandardMaterial3D:
+					var sm := (src as StandardMaterial3D).duplicate() as StandardMaterial3D
+					sm.albedo_color = sm.albedo_color * tint
+					m = sm
+					_tints[key] = m
+			if m != null:
+				mi.set_surface_override_material(i, m)
+	for ch in n.get_children():
+		_tint(ch, id, tint)

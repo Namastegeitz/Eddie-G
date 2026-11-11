@@ -9,6 +9,7 @@
   "move_timer": true,
   "ads_personalised": false,
   "show_fps": false,
+  "mini_map": true,
   "first_person": false,
   "fpv_view": "wide",
   "graphics": "auto"

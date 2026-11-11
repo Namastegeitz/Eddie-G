@@ -30,6 +30,11 @@ var to_row := 0
 var to_x := 4.5
 var hop_air := false
 var hop_kind := "hop"
+var hop_surface := "safe"          # what this hop lands on: safe, ground, water, stones (shapes the arc)
+## How high a hop arcs, by what it lands on: a real leap onto a log or lily
+## pad and over waterfall stones, a quick low skip across a road. Looks only:
+## hop timing (and so the game's difficulty) is the same everywhere.
+const HOP_ARC := {"safe": 1.0, "ground": 0.82, "water": 1.32, "stones": 1.2}
 var face := Vector2i(0, 1)
 var plat := -1
 var swimming := false
@@ -265,7 +270,7 @@ func hop_height() -> float:
 	if not hopping:
 		return 0.0
 	var span := absi(to_row - from_row)
-	var h := 0.28 + 0.22 * maxi(0, span - 1)
+	var h := (0.28 + 0.22 * maxi(0, span - 1)) * float(HOP_ARC.get(hop_surface, 1.0))
 	if hop_kind in ["dash", "slide", "roll"]:
 		h = 0.05
 	return sin(_vis_hop_t() * PI) * h
@@ -388,6 +393,8 @@ func _start_hop(target_row: int, tx: float, dur: float, air: bool, kind: String)
 	to_x = tx
 	hop_air = air
 	hop_kind = kind
+	var tl := world.lane(target_row)
+	hop_surface = "stones" if tl.layout == "falls" else ("water" if tl.type == "water" else ("ground" if tl.type == "ground" else "safe"))
 	plat = -1
 	swimming = false
 	sink = 0.0
