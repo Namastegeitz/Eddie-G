@@ -13,26 +13,26 @@ height = 3.2
 radial_segments = 20
 rings = 10
 
-[node name="Ball" type="RigidBody3D" unique_id=905301685]
+[node name="Ball" type="RigidBody3D" unique_id=253227555]
 mass = 0.6
 script = ExtResource("1_3mkuf")
 noise_on_impact = 1.0
 trip_hazard = true
 impact_sound = &"thud"
 
-[node name="Shape" type="CollisionShape3D" parent="." unique_id=1006700955]
+[node name="Shape" type="CollisionShape3D" parent="." unique_id=1179556313]
 shape = SubResource("SphereShape3D_pk8oo")
 
-[node name="Visual" type="Node3D" parent="." unique_id=1401130811]
+[node name="Visual" type="Node3D" parent="." unique_id=980694052]
 
-[node name="Mesh" type="MeshInstance3D" parent="Visual" unique_id=79280049]
+[node name="Mesh" type="MeshInstance3D" parent="Visual" unique_id=807924949]
 material_override = ExtResource("2_i372f")
 visibility_range_end = 100.0
 visibility_range_end_margin = 15.0
 visibility_range_fade_mode = 1
 mesh = SubResource("SphereMesh_pu6a8")
 
-[node name="Skin" type="Node3D" parent="Visual" unique_id=1202350717]
+[node name="Skin" type="Node3D" parent="Visual" unique_id=443496725]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.1920929e-07, -1.1920929e-07, 1.1920929e-07)
 script = ExtResource("3_nlcrk")
 model_id = "prop_ball"

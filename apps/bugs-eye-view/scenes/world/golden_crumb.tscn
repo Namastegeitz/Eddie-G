@@ -20,31 +20,31 @@ _surfaces = [{
 "vertex_data": PackedByteArray("KkiDhf//sr55nEbfwC2C/OzUHK7UrbK+tw+ttut/gvzqSwAAPtKyvjmgwlkAAIL8rNiYKBOAsr53EyoxKlKC/OzUHK7Urdbytw+ttut/8655nEbfwC3W8ipIg4X///OurNiYKBOA1vJ3EyoxKlLzrjmgwlkAANby6ksAAD7S867s1Byu1K1L7+pLAAA+0iz2KkiDhf//S++s2JgoE4As9nmcRt/ALUvvdxMqMSpSLPa3D622639L7zmgwlkAACz2D7Qu2Z360rxgY/S1WjvW2gHX//9LhNK8b0Akj6yx1toN3Z5wSfDSvF6MZE0HMdba//9ul/h50rxsaZQmWafW2gHX//9LhBz4b0Akj6yxEZpgY/S1Wjsc+A+0Ltmd+hGa//9ul/h5HPhsaZQmWacRml6MZE0HMRz4Dd2ecEnwEZoB1///S4TO0Q3dnnBJ8FPuD7Qu2Z36ztH//26X+HlT7mBj9LVaO87RbGmUJlmnU+5vQCSPrLHO0V6MZE0HMVPuswoFV8t8yqn3MTjNwFvo56s8+Y8wncqpAABDlFw76OcrO9Ip80zKqW9iBaDoK+jnI23HYldtyql3MBBngwvo56s8+Y8wnTfUAABDlFw7hc/3MTjNwFs31LMKBVfLfIXPI23HYldtN9R3MBBngwuFz29iBaDoKzfUKzvSKfNMhc+rPPmPMJ3i7Ss70inzTDzmswoFV8t84u0jbcdiV2085vcxOM3AW+LtdzAQZ4MLPOYAAEOUXDvi7W9iBaDoKzzmtIV7Wr9HvLG0hXtav0e8sbSFe1q/R7yxtIV7Wr9HvLEDyxB5rGR+1wPLEHmsZH7XA8sQeaxkftcDyxB5rGR+13GKbLBtQUPvcYpssG1BQ+9ximywbUFD73GKbLBtQUPvZrC5XY8/MKRmsLldjz8wpGawuV2PPzCkZrC5XY8/MKSV2AKVoDAq6JXYApWgMCroldgClaAwKuiV2AKVoDAq6DmU7buyJivXOZTtu7ImK9c5lO27siYr1zmU7buyJivXMFMaYS7h+k4wUxphLuH6TjBTGmEu4fpOMFMaYS7h+k5GugmCeEaWyEa6CYJ4RpbIRroJgnhGlshGugmCeEaWyNplO560k9oz2mU7nrST2jPaZTuetJPaM9plO560k9oz")
 }]
 
-[node name="GoldenCrumb" type="Area3D" unique_id=16335662]
+[node name="GoldenCrumb" type="Area3D" unique_id=906368201]
 script = ExtResource("1_7jsvh")
 golden = true
 
-[node name="Shape" type="CollisionShape3D" parent="." unique_id=2001438940]
+[node name="Shape" type="CollisionShape3D" parent="." unique_id=1701930610]
 shape = SubResource("SphereShape3D_pj7ic")
 
-[node name="Visual" type="Node3D" parent="." unique_id=991968845]
+[node name="Visual" type="Node3D" parent="." unique_id=2071698819]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.15, 0)
 
-[node name="A" type="MeshInstance3D" parent="Visual" unique_id=1930190434]
+[node name="A" type="MeshInstance3D" parent="Visual" unique_id=1388845907]
 material_override = ExtResource("2_4lc62")
 visibility_range_end = 90.0
 visibility_range_end_margin = 13.5
 visibility_range_fade_mode = 1
 mesh = SubResource("ArrayMesh_ww3s7")
 
-[node name="Skin" type="Node3D" parent="Visual" unique_id=2059091815]
+[node name="Skin" type="Node3D" parent="Visual" unique_id=2070306416]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, 0)
 script = ExtResource("3_d2h8b")
 model_id = "golden_crumb"
 fit_size = Vector3(1.3, 0.9, 1.3)
 hide_paths = Array[NodePath]([NodePath("../A")])
 
-[node name="Glow" type="OmniLight3D" parent="Visual" unique_id=720902366]
+[node name="Glow" type="OmniLight3D" parent="Visual" unique_id=5152591]
 light_color = Color(1, 0.8, 0.3, 1)
 light_energy = 1.5
 distance_fade_enabled = true

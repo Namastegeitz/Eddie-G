@@ -35,18 +35,18 @@ _surfaces = [{
 "vertex_data": PackedByteArray("KVwPvY/C9TwzMxM/KVwPPY/C9TwzMxO/KVwPPY/C9TwzMxM/KVwPvY/C9TwzMxO/KVwPvY/C9bwzMxM/KVwPPY/C9bwzMxO/KVwPPY/C9bwzMxM/KVwPvY/C9bwzMxO/KVwPPY/C9TwzMxM/KVwPvY/C9TwzMxO/KVwPPY/C9TwzMxO/KVwPvY/C9TwzMxM/KVwPPY/C9bwzMxM/KVwPvY/C9bwzMxO/KVwPPY/C9bwzMxO/KVwPvY/C9bwzMxM/KVwPPY/C9TwzMxM/KVwPvY/C9bwzMxM/KVwPvY/C9TwzMxM/KVwPPY/C9bwzMxM/KVwPPY/C9TwzMxO/KVwPvY/C9bwzMxO/KVwPvY/C9TwzMxO/KVwPPY/C9bwzMxO//3//fwCAAID//////38AgP9//38AgACA//////9/AID/f/9/AIAAgP//////fwCA/3//fwCAAID//////38AgP//AIAAgP+/AAAAgP9//7///wCAAID/vwAAAID/f/+///8AgACA/78AAACA/3//v///AIAAgP+/AAAAgP9//78AgP//AAD/vwCAAAAAAP+/AID//wAA/78AgAAAAAD/vwCA//8AAP+/AIAAAAAA/78AgP//AAD/vwCAAAAAAP+/")
 }]
 
-[node name="CoffeeBean" type="Area3D" unique_id=182103267]
+[node name="CoffeeBean" type="Area3D" unique_id=2086878284]
 script = ExtResource("1_35i5k")
 def = ExtResource("2_nj7jv")
 
-[node name="Shape" type="CollisionShape3D" parent="." unique_id=1932099263]
+[node name="Shape" type="CollisionShape3D" parent="." unique_id=723707195]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.65, 0)
 shape = SubResource("SphereShape3D_q5ews")
 
-[node name="Visual" type="Node3D" parent="." unique_id=854740732]
+[node name="Visual" type="Node3D" parent="." unique_id=216130020]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.65, 0)
 
-[node name="Bean" type="MeshInstance3D" parent="Visual" unique_id=699406067]
+[node name="Bean" type="MeshInstance3D" parent="Visual" unique_id=381877730]
 transform = Transform3D(0.85, 0, 0, 0, 0.6, 0, 0, 0, 1.2, 0, -0.2, 0)
 material_override = ExtResource("3_8vrfn")
 visibility_range_end = 110.0
@@ -54,7 +54,7 @@ visibility_range_end_margin = 16.5
 visibility_range_fade_mode = 1
 mesh = SubResource("ArrayMesh_7bbmg")
 
-[node name="Crease" type="MeshInstance3D" parent="Visual" unique_id=19739563]
+[node name="Crease" type="MeshInstance3D" parent="Visual" unique_id=1451926094]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.12, 0)
 material_override = ExtResource("4_uyfvu")
 visibility_range_end = 110.0
@@ -62,7 +62,7 @@ visibility_range_end_margin = 16.5
 visibility_range_fade_mode = 1
 mesh = SubResource("ArrayMesh_hh1vi")
 
-[node name="Skin" type="Node3D" parent="Visual" unique_id=1882212891]
+[node name="Skin" type="Node3D" parent="Visual" unique_id=207309573]
 script = ExtResource("5_58yhb")
 model_id = "coffee_bean"
 fit_size = Vector3(1, 0.8, 1.4)

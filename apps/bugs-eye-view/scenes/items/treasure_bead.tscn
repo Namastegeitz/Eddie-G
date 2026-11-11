@@ -35,25 +35,25 @@ _surfaces = [{
 "vertex_data": PackedByteArray("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")
 }]
 
-[node name="TreasureBead" type="Area3D" unique_id=786208789]
+[node name="TreasureBead" type="Area3D" unique_id=1193875289]
 script = ExtResource("1_rxyo6")
 def = ExtResource("2_csece")
 
-[node name="Shape" type="CollisionShape3D" parent="." unique_id=868035943]
+[node name="Shape" type="CollisionShape3D" parent="." unique_id=647270339]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 0)
 shape = SubResource("SphereShape3D_v4frg")
 
-[node name="Visual" type="Node3D" parent="." unique_id=784924698]
+[node name="Visual" type="Node3D" parent="." unique_id=2128588322]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 0)
 
-[node name="Bead" type="MeshInstance3D" parent="Visual" unique_id=2065021397]
+[node name="Bead" type="MeshInstance3D" parent="Visual" unique_id=761878925]
 material_override = ExtResource("3_3y6eb")
 visibility_range_end = 50.0
 visibility_range_end_margin = 7.5
 visibility_range_fade_mode = 1
 mesh = SubResource("ArrayMesh_oqlbr")
 
-[node name="Hole" type="MeshInstance3D" parent="Visual" unique_id=328000606]
+[node name="Hole" type="MeshInstance3D" parent="Visual" unique_id=459879759]
 transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, 0, 0, 0)
 material_override = ExtResource("4_hai5d")
 visibility_range_end = 50.0
@@ -61,7 +61,7 @@ visibility_range_end_margin = 7.5
 visibility_range_fade_mode = 1
 mesh = SubResource("ArrayMesh_cerl2")
 
-[node name="Skin" type="Node3D" parent="Visual" unique_id=1281831676]
+[node name="Skin" type="Node3D" parent="Visual" unique_id=2011040421]
 script = ExtResource("5_dludm")
 model_id = "treasure_bead"
 fit_size = Vector3(1.6, 1.6, 1.6)

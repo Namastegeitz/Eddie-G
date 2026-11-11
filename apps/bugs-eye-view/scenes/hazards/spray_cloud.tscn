@@ -9,10 +9,10 @@ height = 2.0
 radial_segments = 20
 rings = 10
 
-[node name="SprayCloud" type="Node3D" unique_id=846945614]
+[node name="SprayCloud" type="Node3D" unique_id=1876959890]
 script = ExtResource("1_y2rl2")
 
-[node name="Mesh" type="MeshInstance3D" parent="." unique_id=1554452946]
+[node name="Mesh" type="MeshInstance3D" parent="." unique_id=994358173]
 material_override = ExtResource("2_r20gg")
 cast_shadow = 0
 mesh = SubResource("SphereMesh_ve5br")

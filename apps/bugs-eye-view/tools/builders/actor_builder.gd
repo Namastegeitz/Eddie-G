@@ -738,8 +738,8 @@ static func human(force: bool, path: String, config: String, outfit: String, has
 	# meet, slimmer at the ankle.
 	for side in ["L", "R"]:
 		mesh(legs, "Thigh" + side, SmoothMesh.limb(3.15, 2.3, Human.THIGH, 20, 6, 1.0, 1.08), pants)
-		# Hidden just inside the two rounded ends (they make the knee itself).
-		mesh(legs, "Knee" + side, sphere(2.2), pants)
+		# Just a marker at the joint: the two rounded ends make the knee itself.
+		node3d(legs, "Knee" + side, Vector3.ZERO)
 		mesh(legs, "Shin" + side, SmoothMesh.limb(2.3, 1.55, Human.SHIN, 20, 6, 1.0, 1.06), pants)
 
 	var foot_scene: PackedScene = load("res://scenes/hazards/foot.tscn")
