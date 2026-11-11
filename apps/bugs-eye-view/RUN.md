@@ -360,7 +360,7 @@ three times faster.
 ## 3. Test it
 
 All checks: import, boot, warnings-as-errors, an offline test of the Meshy
-client, then the 165-check smoke test and the 451-check phase audit
+client, then the 165-check smoke test and the 458-check phase audit
 (`tests/phase_audit.tscn`, one section per build phase plus one per update),
 each run in the project **and** against an exported pack. Any script or
 engine error fails the run:
