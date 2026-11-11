@@ -44,7 +44,9 @@ export class GameSession {
    * @param {object} o
    * @param {number[]} o.puzzle    81 values, 0 = empty
    * @param {number[]} o.solution  81 values
-   * @param {string}   o.mode      'quick' | 'campaign' | 'daily' | 'zen'
+   * @param {string}   o.mode      'quick' | 'campaign' | 'daily' | 'zen' | 'duel'
+   * @param {object}  [o.duel]     Alien Duel only: { rival (resolved config), seed, clock, outcome }
+   *                               outcome: null while racing, then 'player' or 'rival' (who finished first)
    * @param {string}   o.difficulty
    */
   constructor(o) {
@@ -58,6 +60,7 @@ export class GameSession {
     this.maxMistakes = Math.min(25, Math.max(1, o.maxMistakes || MAX_MISTAKES));
     this.symbolSet = o.symbolSet || null;
     this.bg = o.bg || null;
+    this.duel = this.mode === 'duel' && o.duel ? { clock: 0, outcome: null, ...o.duel } : null;
 
     this.puzzle = o.puzzle.slice();
     this.solution = o.solution.slice();
@@ -97,6 +100,7 @@ export class GameSession {
       puzzleId: this.puzzleId, mode: this.mode, difficulty: this.difficulty,
       sector: this.sector, level: this.level, date: this.date,
       symbolSet: this.symbolSet, bg: this.bg,
+      duel: this.duel ? { ...this.duel } : null,
       puzzle: this.puzzle, solution: this.solution, board: this.board,
       fixed: this.fixed, hinted: this.hinted, notes: this.notes,
       mistakes: this.mistakes, hints: this.hints, notesPlaced: this.notesPlaced,

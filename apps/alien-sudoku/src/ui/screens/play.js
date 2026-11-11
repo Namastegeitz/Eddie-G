@@ -9,8 +9,10 @@ import { playEncounter } from '../encounter.js';
 import { randomPuzzle, getCampaignPuzzle, getDailyPuzzle } from '../../engine/pool.js';
 import {
   settings, setSetting, recordResult, loadSavedGame, storeSavedGame, clearSavedGame,
-  countGameStarted, getProfile, playerName, recordEncounter,
+  countGameStarted, getProfile, playerName, recordEncounter, recordDuel,
 } from '../../core/profile.js';
+import { Rival, resolveRival, paceRate, rivalLine, DUEL_DEFAULTS } from '../../game/rival.js';
+import { createRivalPanel, rivalAvatar } from '../rival-panel.js';
 import { SECTORS, LEVELS_PER_SECTOR, starsFor } from '../../data/sectors.js';
 import { SYMBOL_SETS } from '../../data/symbols.js';
 import { formatTime, prettyDate } from '../../core/time.js';
@@ -42,6 +44,10 @@ export function createSession(params) {
   } else if (params.mode === 'daily') {
     p = getDailyPuzzle(params.date);
     extra = { date: params.date };
+  } else if (params.mode === 'duel') {
+    const d = { ...DUEL_DEFAULTS, ...(s.duel || {}) };
+    p = randomPuzzle(d.difficulty);
+    extra = { duel: { rival: resolveRival(d), seed: 1 + Math.floor(Math.random() * 1e9), clock: 0, outcome: null } };
   } else {
     p = randomPuzzle(params.difficulty || s.quickDifficulty || 'medium');
   }
@@ -63,6 +69,7 @@ export function sessionTitle(session) {
     case 'campaign': return { eyebrow: `Campaign · ${SECTORS[session.sector].name}`, title: `Transmission ${session.level + 1} / ${LEVELS_PER_SECTOR}` };
     case 'daily': return { eyebrow: 'Daily Transmission', title: prettyDate(session.date) };
     case 'zen': return { eyebrow: 'Zen Mode', title: DIFF_LABEL[session.difficulty] };
+    case 'duel': return { eyebrow: `Alien Duel · ${DIFF_LABEL[session.difficulty]}`, title: `vs ${session.duel?.rival?.name || 'Rival'}` };
     default: return { eyebrow: 'Quick Play', title: DIFF_LABEL[session.difficulty] };
   }
 }
@@ -99,6 +106,15 @@ export const playScreen = {
     session.autoRemoveNotes = settings().autoRemoveNotes;
     // Test hook: end-to-end tests open the app with #e2e to read the solution.
     if (typeof location !== 'undefined' && location.hash.includes('e2e')) window.__alienSession = session;
+
+    // ---------- Alien Duel: the rival ----------
+    const duel = session.duel;
+    const rival = duel ? new Rival({ puzzle: session.puzzle, solution: session.solution, difficulty: session.difficulty, rival: duel.rival, seed: duel.seed, clock: duel.clock }) : null;
+    const panel = rival ? createRivalPanel({ rival: duel.rival, puzzle: session.puzzle, total: rival.total, youName: playerName() || 'You', setKey: () => setKeyFor(session) }) : null;
+    if (rival && typeof location !== 'undefined' && location.hash.includes('e2e')) window.__alienRival = rival;
+    let lastSayAt = -Infinity;
+    let lastLeader = 0;
+    const said = new Set();
 
     let selected = null;        // cell index
     let armed = null;           // glyph armed in glyph-first input mode
@@ -186,10 +202,12 @@ export const playScreen = {
           livesEl,
           scoreEl,
           h('span', { class: 'hud-timer' }, icon('bolt', 'hud-timer-ico'), timerEl)),
+        panel?.el,
         boardArea,
         statusEl,
         tools,
         palette));
+    if (panel) el.classList.add('duel-layout');
 
     // ---------- Board sizing ----------
     const ro = new ResizeObserver(() => fitBoard());
@@ -262,6 +280,7 @@ export const playScreen = {
         }
       }
       renderConstellation(focusVal);
+      if (panel) updateRace();
       renderPalette(setKey);
       renderTools();
       renderLives();
@@ -446,6 +465,7 @@ export const playScreen = {
         setTimeout(() => { cells[i].classList.remove('reject'); cellCache[i] = ''; render(); }, 560);
         renderLives();
         livesEl.classList.remove('shake'); void livesEl.offsetWidth; livesEl.classList.add('shake');
+        if (rival) rivalSays('playerSlip', 0.55);
         if (r.lost) {
           setStatus('Signal lost.', 'error');
           scheduleSave(true);
@@ -597,6 +617,7 @@ export const playScreen = {
       if (!paused && session.status === 'playing' && !document.hidden && dt < 5000) {
         session.tick(dt);
         renderTimer();
+        if (rival) advanceRival(dt);
       }
     }
     function startTimer() { stopTimer(); lastTick = performance.now(); timerId = setInterval(tick, 250); }
@@ -664,6 +685,94 @@ export const playScreen = {
         icon(ico), h('span', { class: 'pause-item-text' }, h('span', {}, label), sub ? h('small', {}, sub) : null));
     }
 
+    // ---------- Alien Duel ----------
+    function playerFilled() {
+      let n = 0;
+      for (let i = 0; i < 81; i++) if (!session.puzzle[i] && session.board[i]) n++;
+      return n;
+    }
+
+    /** Say one line, at most every 9 seconds unless `force`. */
+    function rivalSays(situation, chance = 1, force = false) {
+      if (!rival || !duel.rival.chatter) return;
+      const now = performance.now();
+      if (!force && now - lastSayAt < 9000) return;
+      if (Math.random() > chance) return;
+      lastSayAt = now;
+      panel.say(rivalLine(duel.rival.tone, situation));
+    }
+
+    function updateRace() {
+      const you = playerFilled();
+      const them = rival.filled;
+      panel.setRace(you, them);
+      if (duel.outcome || session.status !== 'playing') return;
+      const leader = Math.sign(you - them);
+      if (leader && leader !== lastLeader && you + them > 4) rivalSays(leader < 0 ? 'ahead' : 'behind', 0.8);
+      if (leader) lastLeader = leader;
+      if (rival.remaining <= 5 && !said.has('closing')) { said.add('closing'); rivalSays('closing', 1, true); }
+      if (rival.total - you <= 5 && !said.has('playerClosing')) { said.add('playerClosing'); rivalSays('playerClosing', 1, true); }
+    }
+
+    function advanceRival(dt) {
+      if (duel.outcome) return;
+      const evs = rival.advance(dt, paceRate(playerFilled() - rival.filled, duel.rival.adaptive));
+      duel.clock = Math.round(rival.clock);
+      if (!evs.length) return;
+      let placed = false;
+      let fumbled = false;
+      for (const e of evs) { panel.event(e, rival.board); if (e.wrong) fumbled = true; else placed = true; }
+      if (placed) sfx.rivalPlace();
+      if (fumbled) { sfx.rivalFumble(); rivalSays('fumble', 0.6); }
+      updateRace();
+      scheduleSave();
+      if (rival.finished) rivalFinished();
+    }
+    // Test hook: end-to-end tests fast-forward the rival through the real path.
+    if (rival && typeof location !== 'undefined' && location.hash.includes('e2e')) window.__alienDuelAdvance = (ms) => advanceRival(ms);
+
+    /** The rival filled its board first. The player can still finish the puzzle. */
+    function rivalFinished() {
+      duel.outcome = 'rival';
+      tick();
+      stopTimer();
+      scheduleSave(true);
+      recordDuel({ rival: duel.rival.id, beat: false });
+      sfx.duelLost();
+      haptic('error');
+      panel.setFinished(`Finished in ${formatTime(session.elapsedMs)}`);
+      const you = playerFilled();
+      openModal({
+        eyebrow: sessionTitle(session).eyebrow,
+        title: `${duel.rival.name} finished first`,
+        className: 'duel-modal duel-lost',
+        dismissible: false,
+        body: [
+          duelFaceoff(false),
+          duel.rival.chatter ? h('p', { class: 'duel-quote' }, `“${rivalLine(duel.rival.tone, 'won')}”`) : null,
+          h('p', { class: 'modal-text' }, `You had ${you} of ${rival.total} glyphs. You can keep going and finish the puzzle, or ask for a rematch.`),
+        ],
+        actions: [
+          { label: 'Menu', kind: 'ghost', onClick: () => afterResult(() => leave()) },
+          { label: 'Keep solving', kind: 'ghost', onClick: () => { setStatus(`${duel.rival.name} won the race. Finish the puzzle anyway!`, 'info'); if (!paused) startTimer(); } },
+          { label: 'Rematch', kind: 'primary', icon: 'duel', autofocus: true, onClick: () => afterResult(() => nav.replace('play', { mode: 'duel' })) },
+        ],
+      });
+    }
+
+    /** "You 4:12  vs  Zorp 3 left" for the result cards. */
+    function duelFaceoff(playerWon) {
+      const name = duel.rival.name;
+      const youText = playerWon ? formatTime(session.elapsedMs) : `${rival.total - playerFilled()} left`;
+      const themText = rival.finished ? (playerWon ? 'Second' : formatTime(session.elapsedMs)) : `${rival.remaining} left`;
+      return h('div', { class: 'faceoff' },
+        h('div', { class: `faceoff-side${playerWon ? ' win' : ''}` }, h('small', {}, playerName() || 'You'), h('b', {}, youText)),
+        h('span', { class: 'faceoff-vs' }, 'vs'),
+        h('div', { class: `faceoff-side${playerWon ? '' : ' win'}` },
+          h('span', { class: 'faceoff-face', html: rivalAvatar(duel.rival.look) }),
+          h('small', {}, name), h('b', {}, themText)));
+    }
+
     // ---------- Win / lose ----------
     function resultPayload(won) {
       return {
@@ -683,6 +792,16 @@ export const playScreen = {
       selected = null;
       armed = null;
       const res = recordResult(resultPayload(true));
+      if (duel && !duel.outcome) {
+        duel.outcome = 'player';
+        const won = recordDuel({
+          rival: duel.rival.id, beat: true, ms: Math.round(session.elapsedMs), speed: duel.rival.speed,
+          clean: session.mistakes === 0 && session.hints === 0,
+        });
+        res.achievements = [...res.achievements, ...won];
+        panel.setFinished(`${rival.remaining} left`);
+        panel.setRace(playerFilled(), rival.filled);
+      }
       noteGameFinished();
       sfx.win();
       haptic('success');
@@ -690,11 +809,12 @@ export const playScreen = {
       render();
       const wr = boardWrap.getBoundingClientRect();
       fx.fireworks(SYMBOL_SETS[setKeyFor(session)].colors, wr.width, wr.height);
-      setStatus('Transmission decoded!', 'success');
+      setStatus(duel?.outcome === 'player' ? `You beat ${duel.rival.name}!` : 'Transmission decoded!', 'success');
       setTimeout(() => showWinModal(res), 1100);
     }
 
     function showWinModal(res) {
+      if (duel) { showDuelWinModal(res); return; }
       const stars = session.zen ? 0 : starsFor(session);
       const best = session.zen ? null : getProfile().stats.byDiff[session.difficulty]?.bestMs;
       const body = [
@@ -750,6 +870,35 @@ export const playScreen = {
       });
     }
 
+    function showDuelWinModal(res) {
+      const beat = duel.outcome === 'player';
+      openModal({
+        eyebrow: sessionTitle(session).eyebrow,
+        title: beat ? `You beat ${duel.rival.name}!` : 'Puzzle decoded',
+        className: `duel-modal ${beat ? 'duel-won' : 'duel-lost'}`,
+        dismissible: false,
+        body: [
+          duelFaceoff(beat),
+          duel.rival.chatter ? h('p', { class: 'duel-quote' }, `“${rivalLine(duel.rival.tone, beat ? 'lost' : 'won')}”`) : null,
+          h('div', { class: 'result-score' },
+            h('small', {}, 'Score'),
+            h('b', {}, session.score.toLocaleString()),
+            h('span', {}, `best combo ×${session.bestCombo}`)),
+          h('div', { class: 'result-grid' },
+            resultStat('Time', formatTime(session.elapsedMs)),
+            resultStat('Mistakes', String(session.mistakes)),
+            resultStat('Hints', String(session.hints))),
+          res.achievements.length ? h('div', { class: 'result-achievements' },
+            res.achievements.map((a) => h('div', { class: 'ach-row' }, h('span', { class: 'ach-ico' }, a.icon), h('span', {}, h('b', {}, a.name), h('small', {}, a.desc))))) : null,
+        ],
+        actions: [
+          { label: 'Menu', kind: 'ghost', onClick: () => afterResult(() => nav.reset('menu')) },
+          { label: 'Change rival', kind: 'ghost', onClick: () => afterResult(() => nav.replace('duel')) },
+          { label: 'Rematch', kind: 'primary', icon: 'duel', autofocus: true, onClick: () => afterResult(() => nav.replace('play', { mode: 'duel' })) },
+        ],
+      });
+    }
+
     // Out of tries: the visitors arrive and ask who you are.
     let encounterRunning = false;
     async function onLose() {
@@ -765,7 +914,7 @@ export const playScreen = {
         canGift: !session.revived,
         giftTries,
         giftNeedsAd: adsSupported,
-        allowNew: session.mode === 'quick',
+        allowNew: session.mode === 'quick' || session.mode === 'duel',
         tone: { softies: 'soft', hostile: 'hostile', gnarly: 'gnarly' }[setKeyFor(session)] || 'normal',
         beforeChoice: async (choice) => {
           if (choice !== 'gift') return true;
@@ -790,8 +939,9 @@ export const playScreen = {
         return;
       }
       recordLoss();
+      if (duel && !duel.outcome) { duel.outcome = 'rival'; recordDuel({ rival: duel.rival.id, beat: false }); }
       if (result.choice === 'retry') afterResult(() => nav.replace('play', retryParams()));
-      else if (result.choice === 'new') afterResult(() => nav.replace('play', { mode: 'quick', difficulty: session.difficulty }));
+      else if (result.choice === 'new') afterResult(() => nav.replace('play', duel ? { mode: 'duel' } : { mode: 'quick', difficulty: session.difficulty }));
       else afterResult(() => nav.reset('menu'));
     }
 
@@ -810,7 +960,7 @@ export const playScreen = {
     }
 
     function freshSnapshot() {
-      const s = new GameSession({ ...session.snapshot(), board: null, fixed: null, hinted: null, notes: null, mistakes: 0, hints: 0, revived: false, elapsedMs: 0, status: 'playing', completedUnits: null, notesPlaced: 0 });
+      const s = new GameSession({ ...session.snapshot(), board: null, fixed: null, hinted: null, notes: null, mistakes: 0, hints: 0, revived: false, elapsedMs: 0, status: 'playing', completedUnits: null, notesPlaced: 0, scoredCells: null, scoredUnits: null, score: 0, combo: 0, bestCombo: 0, lastCorrectAt: null, winBonus: 0, duel: session.duel ? { ...session.duel, clock: 0, outcome: null } : null });
       return s.snapshot();
     }
 
@@ -848,6 +998,12 @@ export const playScreen = {
         fitBoard();
         render();
         if (!paused && session.status === 'playing') startTimer();
+        if (panel) {
+          panel.sync(rival.board);
+          if (duel.outcome === 'rival') panel.setFinished('Finished first');
+          else if (duel.outcome === 'player') panel.setFinished(`${rival.remaining} left`);
+          else if (!said.has('start')) { said.add('start'); panel.rest(); if (rival.filled === 0) setTimeout(() => rivalSays('start', 1, true), 700); }
+        }
         if (!settings().seenTutorial) {
           setSetting('seenTutorial', true);
           setStatus('Tap a cell, then tap a glyph. Each glyph appears once per row, column and box.', 'hint');
@@ -865,6 +1021,7 @@ export const playScreen = {
         return true;
       },
       destroy() {
+        panel?.destroy();
         fx.destroy();
         ro.disconnect();
         unsubs.forEach((u) => u());

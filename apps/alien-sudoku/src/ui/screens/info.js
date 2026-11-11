@@ -1,6 +1,7 @@
 /* Stats, Achievements and How-to-play screens. */
 import { h, icon, clear } from '../dom.js';
 import { getProfile, totalStars, currentStreak, DIFFS } from '../../core/profile.js';
+import { RIVALS, RIVAL_ORDER } from '../../game/rival.js';
 import { ACHIEVEMENTS } from '../../data/achievements.js';
 import { MAX_STARS } from '../../data/sectors.js';
 import { SYMBOL_SETS } from '../../data/symbols.js';
@@ -23,7 +24,7 @@ export const statsScreen = {
     const body = h('div', { class: 'stats-body' });
     const tabs = h('div', { class: 'tabs', role: 'tablist' });
 
-    const tabDefs = [['overview', 'Overview'], ...DIFFS.map((d) => [d, DIFF_LABEL[d]])];
+    const tabDefs = [['overview', 'Overview'], ...DIFFS.map((d) => [d, DIFF_LABEL[d]]), ['duel', 'Duel']];
     function renderTabs() {
       clear(tabs);
       for (const [k, label] of tabDefs) {
@@ -55,6 +56,23 @@ export const statsScreen = {
           ['Glyphs rejected', t.mistakes],
           ['Symbol sets', `${p.unlockedSets.length} / ${Object.keys(SYMBOL_SETS).length}`],
         ]));
+      } else if (tab === 'duel') {
+        const d = p.stats.duel;
+        const rate = d.played ? Math.round((d.won / d.played) * 100) : 0;
+        const rows = [...RIVAL_ORDER, 'custom'].filter((id) => d.byRival[id]?.played).map((id) => {
+          const r = d.byRival[id];
+          return [id === 'custom' ? 'Custom rivals' : RIVALS[id].name, `${r.won} won of ${r.played}${r.bestMs != null ? ` · best ${formatTime(r.bestMs)}` : ''}`];
+        });
+        body.append(
+          h('div', { class: 'winrate', style: { '--rate': `${rate}%` } },
+            h('span', { class: 'winrate-num' }, `${rate}%`), h('small', {}, 'duels won')),
+          statGrid([
+            ['Duels played', d.played],
+            ['Duels won', d.won],
+            ['Win streak', `${d.streak} (best ${d.bestStreak})`],
+            ['Flawless wins', d.flawless],
+            ...rows,
+          ]));
       } else {
         const s = p.stats.byDiff[tab];
         const rate = s.played ? Math.round((s.won / s.played) * 100) : 0;
@@ -164,6 +182,15 @@ export const howtoScreen = {
           h('li', {}, h('b', {}, 'Daily Transmission: '), 'one puzzle a day, the same for everyone. Keep your streak going.'),
           h('li', {}, h('b', {}, 'Quick Play: '), 'a fresh puzzle at the difficulty you choose.'),
           h('li', {}, h('b', {}, 'Zen: '), 'no lives, no clock, unlimited hints.'),
+          h('li', {}, h('b', {}, 'Alien Duel: '), 'race an AI rival on the same puzzle. First to fill every cell wins.'),
+        ),
+      ]],
+      ['Alien Duel', [
+        h('ul', {},
+          h('li', {}, 'Pick a rival, from the sleepy Baby Blip to The Maw, then make it yours: rename it, change its look, and set its speed, accuracy and play style.'),
+          h('li', {}, 'Your rival solves the same puzzle on its own board. The bars show who is ahead; tap the rival or its small board to see where it has been.'),
+          h('li', {}, 'Too hard? Give yourself a head start, slow your rival down, or let it keep pace with you so every race is close.'),
+          h('li', {}, 'If your rival finishes first you can still finish the puzzle, or ask for a rematch. Your record against each rival is in Stats, under Duel.'),
         ),
       ]],
       ['Keyboard (computer)', [

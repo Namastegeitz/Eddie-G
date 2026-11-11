@@ -143,6 +143,71 @@ test('phone: the first tap switches sound on and the tier song keeps playing', a
   expect(errors).toEqual([]);
 });
 
+test('alien duel: customize a rival, beat it, and see it in stats', async ({ page }) => {
+  const errors = errorsOf(page);
+  await openMenu(page);
+  await page.locator('.menu-duel').click();
+  await expect(page.locator('.screen-duel')).toBeVisible();
+  await page.locator('.rival-card', { hasText: 'Commander Vex' }).click();
+  await expect(page.locator('.rival-card.on')).toContainText('Commander Vex');
+  await page.locator('#duel-name').fill('Zappo');
+  await page.locator('#duel-name').press('Enter');
+  await page.locator('#duel-name').blur();
+  await expect(page.locator('.duel-summary')).toContainText('You vs Zappo');
+  await page.locator('.duel-diff.diff-easy').click();
+  await page.locator('#duel-style').selectOption('streaky');
+  await page.locator('.look-current').click();
+  await page.locator('.look-tab', { hasText: 'Gnarly' }).click();
+  await page.locator('.look-opt').nth(3).click();
+  await expect(page.locator('.duel-summary')).toContainText('Streaky');
+  await page.locator('.duel-start').click();
+  await expect(page.locator('.screen-play .rival')).toBeVisible();
+  await expect(page.locator('.rival-name')).toHaveText('Zappo');
+  await expect(page.locator('.topbar-h1')).toHaveText('vs Zappo');
+  expect(await page.evaluate(() => window.__alienRival.config.style)).toBe('streaky');
+  // The rival moves on its own clock; the race bars and mini board follow.
+  await page.evaluate(() => window.__alienDuelAdvance(60_000));
+  const them = await page.evaluate(() => window.__alienRival.filled);
+  expect(them).toBeGreaterThan(0);
+  await expect(page.locator('.race-them .race-num')).toContainText(`${them}/`);
+  await expect(page.locator('.rival-mini i.f')).toHaveCount(them);
+  await solveAll(page);
+  await expect(page.locator('.duel-modal .modal-title')).toHaveText('You beat Zappo!');
+  await expect(page.locator('.duel-modal .ach-row')).toContainText(['First Rival']);
+  await page.getByRole('button', { name: 'Menu', exact: true }).click();
+  await page.locator('.icon-tile', { hasText: 'Stats' }).click();
+  await page.getByRole('tab', { name: 'Duel' }).click();
+  await expect(page.locator('.stat-cell', { hasText: 'Duels won' }).locator('b')).toHaveText('1');
+  expect(errors).toEqual([]);
+});
+
+test('alien duel: the rival finishes first, you can keep solving, and a duel resumes', async ({ page }) => {
+  const errors = errorsOf(page);
+  await openMenu(page);
+  await page.locator('.menu-duel').click();
+  await page.locator('.rival-card', { hasText: 'Baby Blip' }).click();
+  await page.locator('.duel-start').click();
+  await expect(page.locator('.screen-play .rival')).toBeVisible();
+  // Some rival progress survives a reload.
+  await page.evaluate(() => window.__alienDuelAdvance(120_000));
+  const before = await page.evaluate(() => window.__alienRival.filled);
+  await page.locator('.topbar .icon-btn[aria-label="Back to menu"]').click();
+  await page.reload();
+  await page.locator('.menu-continue').click();
+  await expect(page.locator('.screen-play .rival')).toBeVisible();
+  expect(await page.evaluate(() => window.__alienRival.filled)).toBe(before);
+  // Fast-forward to the end of the rival's game.
+  await page.evaluate(() => window.__alienDuelAdvance(60 * 60_000));
+  await expect(page.locator('.duel-modal .modal-title')).toHaveText('Baby Blip finished first');
+  await page.getByRole('button', { name: 'Keep solving' }).click();
+  await solveAll(page);
+  await expect(page.locator('.duel-modal .modal-title')).toHaveText('Puzzle decoded');
+  await page.getByRole('button', { name: 'Rematch' }).click();
+  await expect(page.locator('.screen-play .rival')).toBeVisible();
+  expect(await page.evaluate(() => window.__alienRival.filled)).toBe(0);
+  expect(errors).toEqual([]);
+});
+
 test('settings: every theme song plays from the song list', async ({ page }) => {
   const errors = errorsOf(page);
   await openMenu(page);

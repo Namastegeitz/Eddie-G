@@ -34,8 +34,10 @@ export const DEFAULT_SETTINGS = {
   quickDifficulty: 'medium',
   tries: 25,               // mistakes allowed per puzzle: 3, 5, 10 or 25
   seenTutorial: false,
+  duel: null,              // Alien Duel setup (see DUEL_DEFAULTS in game/rival.js)
 };
 
+const emptyDuelStats = () => ({ played: 0, won: 0, streak: 0, bestStreak: 0, flawless: 0, lightning: 0, byRival: {} });
 const emptyDiffStats = () => ({ played: 0, won: 0, perfect: 0, bestMs: null, totalWinMs: 0, streak: 0, bestStreak: 0, bestScore: 0 });
 
 function defaultProfile() {
@@ -48,6 +50,7 @@ function defaultProfile() {
     stats: {
       byDiff: Object.fromEntries(DIFFS.map((d) => [d, emptyDiffStats()])),
       totals: { notes: 0, hints: 0, mistakes: 0, playMs: 0, zenWins: 0, zenPlayed: 0, gamesStarted: 0, bestCombo: 0, encounters: 0 },
+      duel: emptyDuelStats(),
     },
     achievements: {},                        // id -> unlocked timestamp
     playerName: '',                          // the answer to the visitors' "Who are you?"
@@ -69,6 +72,7 @@ function hydrate(stored) {
   p.stats = {
     byDiff: Object.fromEntries(DIFFS.map((d) => [d, { ...emptyDiffStats(), ...(stored.stats?.byDiff?.[d] || {}) }])),
     totals: { ...base.stats.totals, ...(stored.stats?.totals || {}) },
+    duel: { ...emptyDuelStats(), ...(stored.stats?.duel || {}), byRival: { ...(stored.stats?.duel?.byRival || {}) } },
   };
   p.achievements = { ...(stored.achievements || {}) };
   const migrate = (k) => OLD_SET_KEYS[k] || k;
@@ -182,7 +186,7 @@ export function recordResult(result) {
   if (result.mode === 'zen') {
     t.zenPlayed++;
     if (result.won) t.zenWins++;
-  } else {
+  } else if (result.mode !== 'duel') {
     const s = profile.stats.byDiff[result.difficulty];
     if (s) {
       s.played++;
@@ -262,6 +266,35 @@ export function evaluateAchievements(result = null) {
   }
   return fresh;
 }
+
+// ---------------- Alien Duel ----------------
+/**
+ * Record how a duel ended, once per duel: when the player or the rival finishes
+ * first (or the player gives up).
+ * duel: { rival: id ('blip'|'zorp'|'vex'|'maw'|'custom'), beat: boolean, ms, speed, clean }
+ * Returns the achievements it unlocked.
+ */
+export function recordDuel(duel) {
+  const d = profile.stats.duel;
+  const r = d.byRival[duel.rival] || (d.byRival[duel.rival] = { played: 0, won: 0, bestMs: null });
+  d.played++;
+  r.played++;
+  if (duel.beat) {
+    d.won++;
+    r.won++;
+    d.streak++;
+    d.bestStreak = Math.max(d.bestStreak, d.streak);
+    if (duel.ms != null && (r.bestMs == null || duel.ms < r.bestMs)) r.bestMs = duel.ms;
+    if (duel.clean) d.flawless++;
+    if (duel.speed >= 5) d.lightning++;
+  } else {
+    d.streak = 0;
+  }
+  persist();
+  // A win shows its achievements on the result card (no toast), like any other win.
+  return evaluateAchievements(duel.beat ? { won: true, duelOnly: true } : null);
+}
+export function duelStats() { return profile.stats.duel; }
 
 // ---------------- The visitors ----------------
 export function playerName() { return profile.playerName || ''; }

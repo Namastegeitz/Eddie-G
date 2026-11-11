@@ -144,6 +144,13 @@ function tone({ freq, dur = 0.18, type = 'sine', vol = 1, slideTo = null, delay 
 
 export const sfx = {
   place() { tone({ freq: 660, slideTo: 880, dur: 0.12, type: 'triangle', vol: 0.9 }); },
+  /** Alien Duel: the rival placed a glyph (quiet, lower than your own), fumbled, or won. */
+  rivalPlace() { tone({ freq: 330, slideTo: 392, dur: 0.09, type: 'triangle', vol: 0.3 }); },
+  rivalFumble() { tone({ freq: 196, slideTo: 130, dur: 0.14, type: 'square', vol: 0.18 }); },
+  duelLost() {
+    [392, 330, 262, 196].forEach((f, i) => tone({ freq: f, dur: 0.24, type: 'triangle', vol: 0.7, delay: i * 0.13 }));
+    tone({ freq: 98, dur: 0.7, type: 'sawtooth', vol: 0.35, delay: 0.5 });
+  },
   note() { tone({ freq: 990, dur: 0.06, type: 'sine', vol: 0.4 }); },
   erase() { tone({ freq: 320, slideTo: 180, dur: 0.1, type: 'sine', vol: 0.6 }); },
   select() { tone({ freq: 1320, dur: 0.05, type: 'sine', vol: 0.35 }); },

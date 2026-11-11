@@ -21,6 +21,7 @@ import './styles/play.css';
 import './styles/screens.css';
 import './styles/themes.css';
 import './styles/encounter.css';
+import './styles/duel.css';
 
 import { initStorage } from './core/storage.js';
 import { initProfile, settings } from './core/profile.js';
@@ -40,6 +41,7 @@ import { campaignScreen, sectorScreen } from './ui/screens/campaign.js';
 import { dailyScreen } from './ui/screens/daily.js';
 import { statsScreen, achievementsScreen, howtoScreen } from './ui/screens/info.js';
 import { settingsScreen } from './ui/screens/settings.js';
+import { duelScreen } from './ui/screens/duel.js';
 import { SYMBOL_SETS } from './data/symbols.js';
 
 function applySettings() {
@@ -64,7 +66,7 @@ async function boot() {
   initBackground();
   initModals(document.getElementById('modal-root'), document.getElementById('toast-root'));
   initRouter(document.getElementById('screen-root'));
-  [menuScreen, playScreen, campaignScreen, sectorScreen, dailyScreen, statsScreen, achievementsScreen, howtoScreen, settingsScreen]
+  [menuScreen, playScreen, campaignScreen, sectorScreen, dailyScreen, statsScreen, achievementsScreen, howtoScreen, settingsScreen, duelScreen]
     .forEach(registerScreen);
 
   on('achievements', (list) => {

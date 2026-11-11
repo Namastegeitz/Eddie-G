@@ -32,6 +32,22 @@ describe('profile', () => {
     expect(s.played).toBe(3);
   });
 
+  it('records duels per rival, streaks and duel achievements; duel puzzles stay out of difficulty stats', () => {
+    let got = P.recordDuel({ rival: 'maw', beat: true, ms: 180_000, speed: 5, clean: true }).map((a) => a.id);
+    expect(got).toEqual(expect.arrayContaining(['duel-1', 'duel-flawless', 'duel-lightning', 'duel-maw']));
+    expect(got).not.toContain('first-contact'); // beating a rival is not a solved puzzle by itself
+    P.recordDuel({ rival: 'zorp', beat: false });
+    P.recordDuel({ rival: 'zorp', beat: true, ms: 300_000, speed: 3 });
+    P.recordDuel({ rival: 'custom', beat: true, ms: 250_000, speed: 2 });
+    got = P.recordDuel({ rival: 'zorp', beat: true, ms: 240_000, speed: 3 }).map((a) => a.id);
+    expect(got).toContain('duel-streak');
+    const d = P.duelStats();
+    expect(d).toMatchObject({ played: 5, won: 4, streak: 3, bestStreak: 3, flawless: 1, lightning: 1 });
+    expect(d.byRival.zorp).toEqual({ played: 3, won: 2, bestMs: 240_000 });
+    P.recordResult(win({ mode: 'duel', difficulty: 'hard' }));
+    expect(P.getProfile().stats.byDiff.hard.played).toBe(0);
+  });
+
   it('first win unlocks achievements (returned, not toasted)', () => {
     const r = P.recordResult(win());
     const ids = r.achievements.map((a) => a.id);

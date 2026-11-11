@@ -1,8 +1,9 @@
 /* Main menu. */
 import { h, icon } from '../dom.js';
 import {
-  loadSavedGame, clearSavedGame, totalStars, currentStreak, dailyRecord, settings, setSetting, getProfile, playerName,
+  loadSavedGame, clearSavedGame, totalStars, currentStreak, dailyRecord, settings, setSetting, getProfile, playerName, duelStats,
 } from '../../core/profile.js';
+import { resolveRival } from '../../game/rival.js';
 import { MAX_STARS } from '../../data/sectors.js';
 import { ACHIEVEMENTS } from '../../data/achievements.js';
 import { todayStr, formatTime } from '../../core/time.js';
@@ -125,6 +126,7 @@ export const menuScreen = {
           dailyDone ? `Today's signal decoded ✓${streak ? ` · 🔥 ${streak}` : ''}` : `New signal today${streak ? ` · 🔥 ${streak}-day streak` : ''}`,
           () => nav.go('daily')),
         big('menu-quick', 'bolt', 'Quick Play', 'Pick a difficulty, play instantly', () => pickDifficulty({ mode: 'quick', nav })),
+        big('menu-duel', 'duel', 'Alien Duel', duelSub(), () => nav.go('duel')),
         big('menu-zen', 'zen', 'Zen Mode', 'No lives, no clock, unlimited hints', () => pickDifficulty({ mode: 'zen', nav }))),
       h('div', { class: 'menu-icons' },
         iconTile('trophy', 'Achievements', `${achCount}/${ACHIEVEMENTS.length}`, () => nav.go('achievements')),
@@ -138,6 +140,12 @@ export const menuScreen = {
     return { el };
   },
 };
+
+function duelSub() {
+  const d = duelStats();
+  const r = resolveRival(settings().duel || {});
+  return d.played ? `Race ${r.name} · won ${d.won} of ${d.played}` : 'Race an AI rival you can customize';
+}
 
 function iconTile(ico, label, badge, onclick) {
   return h('button', { class: 'icon-tile', type: 'button', onclick: () => { sfx.tap(); onclick(); } },

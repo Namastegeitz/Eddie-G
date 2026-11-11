@@ -6,7 +6,8 @@ import { SECTORS, LEVELS_PER_SECTOR, MAX_STARS } from './sectors.js';
 import { SYMBOL_SET_ORDER } from './glyphs/index.js';
 
 const MIN = 60_000;
-const won = (r) => r && r.won;
+const won = (r) => r && r.won && !r.duelOnly; // duelOnly: a duel result, not a solved puzzle
+const duel = (p) => p.stats.duel || { won: 0, bestStreak: 0, flawless: 0, lightning: 0, byRival: {} };
 const clean = (r) => won(r) && r.mistakes === 0 && r.hints === 0;
 const totalWins = (p) => Object.values(p.stats.byDiff).reduce((n, d) => n + d.won, 0) + p.stats.totals.zenWins;
 const totalStars = (p) => Object.values(p.campaign.levels).reduce((n, l) => n + (l.stars || 0), 0);
@@ -42,6 +43,12 @@ export const ACHIEVEMENTS = [
   { id: 'sector-all', icon: '🗺️', name: 'Galactic Cartographer', desc: 'Clear all six sectors.', check: ({ profile }) => SECTORS.every((s) => sectorDone(profile, s.id)) },
   { id: 'stars-50', icon: '✨', name: 'Star Collector', desc: 'Earn 50 campaign stars.', check: ({ profile }) => totalStars(profile) >= 50 },
   { id: 'stars-all', icon: '☄️', name: 'Supernova', desc: `Earn all ${MAX_STARS} campaign stars.`, check: ({ profile }) => totalStars(profile) >= MAX_STARS },
+  { id: 'duel-1', icon: '🤺', name: 'First Rival', desc: 'Win an Alien Duel.', check: ({ profile }) => duel(profile).won >= 1 },
+  { id: 'duel-10', icon: '⚔️', name: 'Duelist', desc: 'Win 10 Alien Duels.', check: ({ profile }) => duel(profile).won >= 10 },
+  { id: 'duel-streak', icon: '🥇', name: 'Unbeaten', desc: 'Win 3 Alien Duels in a row.', check: ({ profile }) => duel(profile).bestStreak >= 3 },
+  { id: 'duel-flawless', icon: '🎯', name: 'Clean Sweep', desc: 'Win an Alien Duel with no mistakes or hints.', check: ({ profile }) => duel(profile).flawless >= 1 },
+  { id: 'duel-lightning', icon: '🌩️', name: 'Faster Than Light', desc: 'Beat a rival set to Lightning speed.', check: ({ profile }) => duel(profile).lightning >= 1 },
+  { id: 'duel-maw', icon: '🦷', name: 'Maw Slayer', desc: 'Beat The Maw at full strength.', check: ({ profile }) => (duel(profile).byRival.maw?.won || 0) >= 1 },
   { id: 'collector', icon: '🧩', name: 'Archivist', desc: 'Unlock every symbol set.', check: ({ profile }) => SYMBOL_SET_ORDER.every((k) => profile.unlockedSets.includes(k)) },
 ];
 
