@@ -110,6 +110,15 @@ Shadow Cloak, Second Wind, Smoke Bomb, Decoy Chirp, Flash Bead, Silk Grapple,
 Crumb Magnet), each up to level 3, loaded into a six-chamber **revolver**
 that swings open in play: turn it to a chamber and fire.
 
+**Smooth characters**: everyone's joints blend - people, pets and bugs are
+built from tapered limbs whose rounded ends meet exactly at each joint (same
+radius on both sides), so elbows, knees, wrists, tails and bug legs bend like
+one smooth piece; people have a one-piece torso and head, tapered hands and
+fingers and rounded sneakers; pets have a one-piece body with a cream belly
+(the tabby) or a white bib and saddle (the dogs). Soft shading is baked into
+every part (undersides a touch darker) and fur, cloth, hair and shells have a
+gentle sheen; every room gets a little more colour (saturation and contrast).
+
 **Look and feel**: high-resolution textures on every surface (tiles, wood
 grain, flagstones, grass, carpet, fabric, denim, fur, bug shells) with bump
 detail; rounder models; motion smoothed between physics steps so everything

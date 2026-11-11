@@ -4,6 +4,7 @@
 [ext_resource type="Texture2D" path="res://assets/textures/leaf_n.png" id="2_lhx0e"]
 
 [resource]
+vertex_color_use_as_albedo = true
 albedo_color = Color(0.2675, 0.642, 0.214, 1)
 albedo_texture = ExtResource("1_o65k8")
 roughness = 0.8

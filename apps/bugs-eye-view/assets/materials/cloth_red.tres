@@ -4,11 +4,15 @@
 [ext_resource type="Texture2D" path="res://assets/textures/fabric_n.png" id="2_0ast3"]
 
 [resource]
+vertex_color_use_as_albedo = true
 albedo_color = Color(0.6634, 0.17119999, 0.1498, 1)
 albedo_texture = ExtResource("1_08gsg")
 normal_enabled = true
 normal_scale = 0.7
 normal_texture = ExtResource("2_0ast3")
+rim_enabled = true
+rim = 0.25
+rim_tint = 0.6
 uv1_scale = Vector3(0.16666667, 0.16666667, 0.16666667)
 uv1_triplanar = true
 uv1_triplanar_sharpness = 4.0

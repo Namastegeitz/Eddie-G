@@ -252,6 +252,10 @@
   or vacuum on some, and a hidden crawl space that opens now and then; credits from shards,
   gems and treasures buy 12 add-ons (strength, defense, tactics, 3 levels each) in the Armory,
   loaded into a six-chamber revolver that swings open in play to choose and fire.
+- Smooth characters and colour: tapered limbs meeting at rounded joints for people, pets and
+  bugs (elbows, knees, wrists, tails, bug legs and antennae), one-piece torso, head and pet
+  bodies, rounded sneakers, soft shading baked into vertex colours, sheen on fur/cloth/shells,
+  cream belly and bibs on pets, gentler skin, a little more saturation and contrast.
 - Phase-by-phase audit (all 6 phases) done; fixes it found: human feet were never solid,
   props didn't stun via feet, cereal-box domino layout, spider facing/normal errors, fog strength.
 - Android debug APK committed at `apps/bugs-eye-view/dist/android/bugseyeview-debug.apk`.

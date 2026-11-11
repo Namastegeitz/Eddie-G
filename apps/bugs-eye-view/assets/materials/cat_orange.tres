@@ -4,12 +4,16 @@
 [ext_resource type="Texture2D" path="res://assets/textures/fur_n.png" id="2_4ghqk"]
 
 [resource]
+vertex_color_use_as_albedo = true
 albedo_color = Color(0.963, 0.5885, 0.214, 1)
 albedo_texture = ExtResource("1_pp7a0")
 roughness = 0.8
 normal_enabled = true
 normal_scale = 0.9
 normal_texture = ExtResource("2_4ghqk")
+rim_enabled = true
+rim = 0.45
+rim_tint = 0.6
 uv1_scale = Vector3(0.33333334, 0.33333334, 0.33333334)
 uv1_triplanar = true
 uv1_triplanar_sharpness = 4.0

@@ -1508,9 +1508,10 @@ func _phase9() -> void:
 		var shin := h.get_node("Legs/Shin" + side) as Node3D
 		var hip := h.global_transform * (Vector3((-1.0 if i == 0 else 1.0) * Human.HIP_X, Human.HIP_Y, Human.BODY_Z) + (h.get_node("Torso") as Node3D).position)
 		var ankle := foot.global_transform * Human.ANKLE
-		# Bones run along +Y from the upper joint to the lower one.
-		gaps.append(snappedf((thigh.global_transform * Vector3(0, -9.75, 0)).distance_to(hip), 0.01))
-		gaps.append(snappedf((shin.global_transform * Vector3(0, 9.5, 0)).distance_to(ankle), 0.01))
+		# Bones run along +Y from the upper joint to the lower one; their
+		# rounded ends are centred on the joints (built at rest length).
+		gaps.append(snappedf((thigh.global_transform * Vector3(0, -Human.THIGH * 0.5, 0)).distance_to(hip), 0.01))
+		gaps.append(snappedf((shin.global_transform * Vector3(0, Human.SHIN * 0.5, 0)).distance_to(ankle), 0.01))
 		var knee := (h.get_node("Legs/Knee" + side) as Node3D).global_position
 		var fwd := -h.global_basis.z
 		fwd.y = 0.0

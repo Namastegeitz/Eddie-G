@@ -469,6 +469,19 @@ room's ten maps: theme, name, task, shards, time limit, prowler).
 
 Without `--force` it only creates files that are missing.
 
+The characters' smooth shapes come from `tools/builders/smooth_mesh.gd`:
+`lathe()` (one-piece torsos, heads, pet bodies, shoes), `limb()` (tapered
+limbs whose rounded ends sit on the joints) and `toned()` (soft shading baked
+into vertex colours when parts are merged). To keep a joint seamless, give
+the two limbs the same radius at the joint and centre both ends on it: their
+ends are true spheres, so they are the same ball at any bend (a smaller or
+oval end leaves a visible crease or a ragged seam). The bug portraits on the bug
+select screen are rendered from the bug scenes (display needed):
+
+```bash
+godot --rendering-driver opengl3 --path . res://tools/render_portraits.tscn
+```
+
 The showcase icons (`assets/icons/items/`) are rendered from the item scenes
 and need a display (or `xvfb-run -a` in front):
 

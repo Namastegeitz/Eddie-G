@@ -4,6 +4,7 @@
 [ext_resource type="Texture2D" path="res://assets/textures/chitin_n.png" id="2_nsv3t"]
 
 [resource]
+vertex_color_use_as_albedo = true
 albedo_color = Color(0.5885, 0.5885, 0.5564, 1)
 albedo_texture = ExtResource("1_sav3y")
 roughness = 0.6

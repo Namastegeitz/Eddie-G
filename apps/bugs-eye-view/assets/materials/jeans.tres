@@ -4,12 +4,16 @@
 [ext_resource type="Texture2D" path="res://assets/textures/denim_n.png" id="2_3cp6g"]
 
 [resource]
+vertex_color_use_as_albedo = true
 albedo_color = Color(0.23539999, 0.321, 0.535, 1)
 albedo_texture = ExtResource("1_vdi4k")
 roughness = 0.8
 normal_enabled = true
 normal_scale = 0.8
 normal_texture = ExtResource("2_3cp6g")
+rim_enabled = true
+rim = 0.2
+rim_tint = 0.6
 uv1_scale = Vector3(0.25, 0.25, 0.25)
 uv1_triplanar = true
 uv1_triplanar_sharpness = 4.0

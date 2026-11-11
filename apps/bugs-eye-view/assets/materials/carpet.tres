@@ -4,6 +4,7 @@
 [ext_resource type="Texture2D" path="res://assets/textures/carpet_n.png" id="2_y1x40"]
 
 [resource]
+vertex_color_use_as_albedo = true
 albedo_color = Color(0.4815, 0.34239998, 0.23539999, 1)
 albedo_texture = ExtResource("1_fxxi2")
 normal_enabled = true

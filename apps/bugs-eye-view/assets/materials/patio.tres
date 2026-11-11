@@ -4,6 +4,7 @@
 [ext_resource type="Texture2D" path="res://assets/textures/patio_n.png" id="2_376gf"]
 
 [resource]
+vertex_color_use_as_albedo = true
 albedo_color = Color(0.535, 0.5029, 0.44939998, 1)
 albedo_texture = ExtResource("1_fvdpd")
 roughness = 0.9

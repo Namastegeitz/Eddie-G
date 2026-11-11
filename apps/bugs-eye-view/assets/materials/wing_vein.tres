@@ -2,5 +2,6 @@
 
 [resource]
 transparency = 1
+vertex_color_use_as_albedo = true
 albedo_color = Color(0.25, 0.22, 0.2, 0.7)
 roughness = 0.4

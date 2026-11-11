@@ -4,12 +4,16 @@
 [ext_resource type="Texture2D" path="res://assets/textures/chitin_n.png" id="2_1efdw"]
 
 [resource]
+vertex_color_use_as_albedo = true
 albedo_color = Color(0.085599996, 0.0749, 0.0749, 1)
 albedo_texture = ExtResource("1_b7g5s")
 roughness = 0.5
 normal_enabled = true
 normal_scale = 0.5
 normal_texture = ExtResource("2_1efdw")
+rim_enabled = true
+rim = 0.3
+rim_tint = 0.6
 uv1_scale = Vector3(0.8333333, 0.8333333, 0.8333333)
 uv1_triplanar = true
 uv1_triplanar_sharpness = 4.0

@@ -4,6 +4,7 @@
 [ext_resource type="Texture2D" path="res://assets/textures/soil_n.png" id="2_qfalp"]
 
 [resource]
+vertex_color_use_as_albedo = true
 albedo_color = Color(0.321, 0.214, 0.1284, 1)
 albedo_texture = ExtResource("1_dcuui")
 normal_enabled = true

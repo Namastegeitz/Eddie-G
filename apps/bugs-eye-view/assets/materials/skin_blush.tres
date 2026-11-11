@@ -1,0 +1,19 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/textures/skin.png" id="1_rf0o3"]
+[ext_resource type="Texture2D" path="res://assets/textures/skin_n.png" id="2_cryr6"]
+
+[resource]
+vertex_color_use_as_albedo = true
+albedo_color = Color(0.9523, 0.6634, 0.5564, 1)
+albedo_texture = ExtResource("1_rf0o3")
+roughness = 0.6
+normal_enabled = true
+normal_scale = 0.08
+normal_texture = ExtResource("2_cryr6")
+rim_enabled = true
+rim = 0.15
+rim_tint = 0.6
+uv1_scale = Vector3(0.4, 0.4, 0.4)
+uv1_triplanar = true
+uv1_triplanar_sharpness = 4.0

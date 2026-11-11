@@ -4,6 +4,7 @@
 [ext_resource type="Texture2D" path="res://assets/textures/wood_n.png" id="2_e0qfr"]
 
 [resource]
+vertex_color_use_as_albedo = true
 albedo_color = Color(0.5885, 0.44939998, 0.321, 1)
 albedo_texture = ExtResource("1_0e4ox")
 roughness = 0.8

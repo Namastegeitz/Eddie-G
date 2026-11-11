@@ -4,6 +4,7 @@
 [ext_resource type="Texture2D" path="res://assets/textures/plaster_n.png" id="2_or7u1"]
 
 [resource]
+vertex_color_use_as_albedo = true
 albedo_color = Color(0.8774, 0.8132, 0.6634, 1)
 albedo_texture = ExtResource("1_f0ycw")
 roughness = 0.8

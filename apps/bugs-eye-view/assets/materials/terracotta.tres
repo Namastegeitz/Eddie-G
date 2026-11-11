@@ -4,6 +4,7 @@
 [ext_resource type="Texture2D" path="res://assets/textures/stone_n.png" id="2_8xv1l"]
 
 [resource]
+vertex_color_use_as_albedo = true
 albedo_color = Color(0.77040005, 0.38520002, 0.214, 1)
 albedo_texture = ExtResource("1_m2q6c")
 roughness = 0.85

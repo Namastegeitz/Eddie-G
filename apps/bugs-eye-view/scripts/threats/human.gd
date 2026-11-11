@@ -590,10 +590,11 @@ func _pose_legs(fwd: Vector3) -> void:
 		var hip := body_xf * (Vector3((-1.0 if i == 0 else 1.0) * HIP_X, HIP_Y, BODY_Z) + _torso.position)
 		var ankle := f.get_global_transform_interpolated() * ANKLE
 		var knee := knee_point(hip, ankle, fwd)
-		_place_bone(parts[0] as Node3D, hip, knee, 19.5)
+		# The thigh and shin are built at rest length between joint centres.
+		_place_bone(parts[0] as Node3D, hip, knee, THIGH)
 		if parts[1]:
 			(parts[1] as Node3D).global_position = knee
-		_place_bone(parts[2] as Node3D, knee, ankle, 19.0)
+		_place_bone(parts[2] as Node3D, knee, ankle, SHIN)
 
 
 ## Two-bone IK: where the knee goes for a hip and an ankle (bends forward).

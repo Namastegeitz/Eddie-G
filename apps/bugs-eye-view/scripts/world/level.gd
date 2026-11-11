@@ -204,6 +204,11 @@ func refresh_quality() -> void:
 		e.glow_bloom = 0.04
 		e.glow_hdr_threshold = 0.95
 		e.glow_blend_mode = Environment.GLOW_BLEND_MODE_SOFTLIGHT
+		# Richer colour: a touch more saturation and contrast on every setting.
+		e.adjustment_enabled = true
+		e.adjustment_saturation = 1.12
+		e.adjustment_contrast = 1.06
+		e.adjustment_brightness = 1.0
 		# A faint haze gives the giant rooms depth (cheap on every setting).
 		e.fog_enabled = true
 		e.fog_light_color = Color(_bg_base.r, _bg_base.g, _bg_base.b).lerp(Color(0.8, 0.78, 0.74), 0.5)

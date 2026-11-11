@@ -50,17 +50,32 @@ static func mesh(parent: Node, name: String, m: Mesh, material: String, pos: Vec
 	return mi
 
 
+## A smooth tapered limb from joint point `a` (radius ra) to `b` (radius
+## rb): its rounded ends sit exactly on the joints, so a limb that starts at
+## `b` with the same radius meets it in a seamless ball joint at any angle.
+static func bone(parent: Node, name: String, a: Vector3, b: Vector3, ra: float, rb: float, material: String,
+		sx: float = 1.0, sz: float = 1.0) -> MeshInstance3D:
+	var mi := mesh(parent, name, SmoothMesh.limb(ra, rb, a.distance_to(b), 14, 4, sx, sz), material)
+	mi.transform = SmoothMesh.between(a, b)
+	return mi
+
+
 ## Merges the plain mesh children of `parent` that share a material into one
 ## mesh per material (far fewer draw calls on phones, same look). Pivots
 ## (nodes with children) and names in `skip` stay separate. A merged mesh keeps
-## the first part's name.
+## the first part's name. Every part first gets soft shading baked into its
+## vertex colours (undersides a touch darker), so parts blend into each other.
 static func merge_meshes(parent: Node, skip: Array = []) -> void:
 	var groups := {}
 	var order: Array = []
+	# Faces are built from many overlapping pieces: shade them only lightly so
+	# no piece shows its own edge.
+	var low := 0.95 if String(parent.name) in ["Head", "Gaze", "Lids"] else 0.82
 	for c in parent.get_children():
 		var mi := c as MeshInstance3D
 		if mi == null or mi.get_child_count() > 0 or mi.mesh == null or skip.has(String(mi.name)):
 			continue
+		mi.mesh = SmoothMesh.toned(mi.mesh, mi.transform.basis, low)
 		var key: Material = mi.material_override
 		if not groups.has(key):
 			groups[key] = []
@@ -208,13 +223,15 @@ static func _leg(v: Node3D, name: String, side: float, fwd: float, hip: Vector3,
 	pivot.set_meta(&"group", group)
 	pivot.set_meta(&"base_yaw", side * fwd)
 	pivot.set_meta(&"base_z", side * up)
-	mesh(pivot, "Femur", box(Vector3(femur, thick, thick)), mat_f, Vector3(side * femur * 0.5, 0, 0))
+	# Tapered segments whose rounded ends meet at the joints (the same radius
+	# either side), so the leg bends smoothly instead of kinking at a box edge.
+	bone(pivot, "Femur", Vector3.ZERO, Vector3(side * femur, 0, 0), thick * 0.58, thick * 0.42, mat_f, 1.0, 0.85)
 	var knee := node3d(pivot, "Knee", Vector3(side * femur, 0, 0))
 	knee.rotation = Vector3(0, 0, -side * (up + down))
-	mesh(knee, "Joint", sphere(thick * 0.75), mat_t)
-	mesh(knee, "Tibia", box(Vector3(tibia, thick * 0.8, thick * 0.8)), mat_t, Vector3(side * tibia * 0.5, 0, 0))
-	mesh(knee, "Foot", box(Vector3(tibia * 0.3, thick * 0.6, thick * 0.6)), mat_t,
-		Vector3(side * tibia * 1.08, -thick * 0.2, 0), Vector3(0, 0, side * 0.6))
+	mesh(knee, "Joint", sphere(thick * 0.4), mat_t)
+	bone(knee, "Tibia", Vector3.ZERO, Vector3(side * tibia, 0, 0), thick * 0.42, thick * 0.28, mat_t, 1.0, 0.85)
+	var ankle := Vector3(side * tibia, 0, 0)
+	bone(knee, "Foot", ankle, ankle + Vector3(side * cos(0.6), sin(0.6), 0) * tibia * 0.32, thick * 0.28, thick * 0.15, mat_t, 1.0, 0.85)
 	if spines:
 		for k in 2:
 			mesh(knee, "Spine", box(Vector3(0.015, 0.09, 0.015)), "roach_dark",
@@ -228,10 +245,10 @@ static func _antenna(v: Node3D, name: String, side: float, pos: Vector3, seg: fl
 	a.rotation = Vector3(0.3, side * 0.35, 0)
 	a.set_meta(&"side", side)
 	a.set_meta(&"base", a.rotation)
-	mesh(a, "Base", box(Vector3(thick, thick, seg)), material, Vector3(0, 0, -seg * 0.5))
+	bone(a, "Base", Vector3.ZERO, Vector3(0, 0, -seg), thick * 0.62, thick * 0.45, material)
 	var tip := node3d(a, "Tip", Vector3(0, 0, -seg))
 	tip.rotation = Vector3(0.12, side * 0.15, 0)
-	mesh(tip, "Whip", box(Vector3(thick * 0.8, thick * 0.8, seg * 1.15)), material, Vector3(0, 0, -seg * 0.57))
+	bone(tip, "Whip", Vector3.ZERO, Vector3(0, 0, -seg * 1.15), thick * 0.45, thick * 0.2, material)
 	return a
 
 
@@ -298,11 +315,11 @@ static func new_bugs(force: bool) -> void:
 	var c := _bug_root("res://scripts/bugs/cricket.gd", "Cricket", "cricket")
 	var cv := node3d(c, "Visual")
 	mesh(cv, "Abdomen", sphere(0.3), "cricket", Vector3(0, 0.05, 0.35), Vector3.ZERO, Vector3(0.85, 0.8, 1.6))
-	mesh(cv, "Thorax", box(Vector3(0.5, 0.38, 0.5)), "cricket_dark", Vector3(0, 0.12, -0.25))
+	mesh(cv, "Thorax", sphere(0.3), "cricket_dark", Vector3(0, 0.12, -0.25), Vector3.ZERO, Vector3(0.88, 0.68, 0.9))
 	mesh(cv, "Head", sphere(0.24), "cricket_dark", Vector3(0, 0.12, -0.6))
 	for x in [-1.0, 1.0]:
 		mesh(cv, "Eye", sphere(0.07), "spider_eye", Vector3(x * 0.17, 0.22, -0.66))
-		mesh(cv, "Wing", box(Vector3(0.22, 0.04, 0.95)), "cricket_dark", Vector3(x * 0.11, 0.33, 0.25), Vector3(0, -x * 0.05, 0))
+		mesh(cv, "Wing", sphere(1.0), "cricket_dark", Vector3(x * 0.11, 0.33, 0.25), Vector3(0, -x * 0.05, 0), Vector3(0.12, 0.022, 0.5))
 		mesh(cv, "Cercus", cyl(0.03, 0.4, 0.005), "cricket", Vector3(x * 0.09, 0.05, 0.95), Vector3(PI * 0.5, 0, -x * 0.3))
 		_antenna(cv, "AntennaL" if x < 0.0 else "AntennaR", x, Vector3(x * 0.08, 0.2, -0.78), 0.75, 0.02, "cricket")
 	for i in 2:
@@ -428,7 +445,7 @@ static func bugs(force: bool) -> void:
 	mesh(rv, "Head", sphere(0.19), "roach_dark", Vector3(0, -0.05, -0.68), Vector3.ZERO, Vector3(1, 0.8, 0.9))
 	for x in [-1.0, 1.0]:
 		mesh(rv, "Eye", sphere(0.075), "spider_eye", Vector3(x * 0.13, 0.0, -0.73), Vector3.ZERO, Vector3(0.7, 1.2, 0.7))
-		mesh(rv, "Palp", box(Vector3(0.04, 0.04, 0.18)), "roach", Vector3(x * 0.06, -0.14, -0.8), Vector3(0.6, x * 0.2, 0))
+		bone(rv, "Palp", Vector3(x * 0.05, -0.1, -0.72), Vector3(x * 0.08, -0.2, -0.88), 0.025, 0.016, "roach")
 		mesh(rv, "Cercus", cyl(0.035, 0.28, 0.005), "roach", Vector3(x * 0.1, -0.02, 0.92), Vector3(PI * 0.5, 0, -x * 0.35))
 		_antenna(rv, "AntennaL" if x < 0.0 else "AntennaR", x, Vector3(x * 0.08, 0.02, -0.78), 0.55, 0.035, "roach")
 	var roach_fwd := [0.65, 0.05, -0.6]
@@ -508,7 +525,7 @@ static func bugs(force: bool) -> void:
 		mesh(sv, "Chelicera", sphere(0.07), "spider", Vector3(x * 0.06, -0.04, -0.44), Vector3.ZERO, Vector3(0.8, 1.3, 0.8))
 		mesh(sv, "Fang", cyl(0.025, 0.1, 0.0), "fang", Vector3(x * 0.06, -0.14, -0.46))
 		var palp := node3d(sv, "Palp" + ("L" if x < 0.0 else "R"), Vector3(x * 0.11, -0.02, -0.4))
-		mesh(palp, "Seg", box(Vector3(0.04, 0.04, 0.2)), "spider", Vector3(0, 0.03, -0.09), Vector3(0.4, x * 0.2, 0))
+		bone(palp, "Seg", Vector3.ZERO, Vector3(x * 0.04, -0.05, -0.19), 0.028, 0.02, "spider")
 		mesh(palp, "Club", sphere(0.04), "spider_band", Vector3(0, -0.02, -0.2))
 	var spider_fwd := [0.95, 0.35, -0.3, -0.9]
 	for i in 4:
@@ -553,10 +570,23 @@ static func foot(force: bool) -> void:
 	f.add_child(body)
 	shape(body, box_shape(Vector3(4.0, 2.5, 10.0)), Vector3(0, 1.25, 0))
 	var v := node3d(f, "Visual")
-	mesh(v, "Shoe", box(Vector3(4.2, 2.6, 10.4)), "shoe", Vector3(0, 1.3, -0.6))
-	mesh(v, "Toe", sphere(2.1), "shoe", Vector3(0, 1.2, -5.2), Vector3.ZERO, Vector3(1, 0.6, 0.6))
-	mesh(v, "Sole", box(Vector3(4.4, 0.5, 11.2)), "plastic_white", Vector3(0, 0.25, -0.9))
-	mesh(v, "Laces", box(Vector3(2.0, 0.3, 4.0)), "plastic_white", Vector3(0, 2.65, -2.4))
+	# A rounded sneaker: a soft upper on a white rubber sole, a toe cap,
+	# laces across the top and the opening at the ankle.
+	# Built heel (t = -5) to toe (t = +6), turned so t runs forward (-Z) and
+	# the cross-section's second axis is height.
+	mesh(v, "Shoe", SmoothMesh.lathe([
+		[-5.0, 0.0, 0.0, 0.0, 1.3], [-4.6, 1.5, 1.3, 0.0, 1.35], [-3.4, 1.95, 1.5, 0.0, 1.5],
+		[-1.0, 2.1, 1.55, 0.0, 1.55], [2.0, 2.15, 1.45, 0.0, 1.45], [4.4, 2.0, 1.25, 0.0, 1.25],
+		[5.6, 1.4, 0.95, 0.0, 1.1], [6.0, 0.0, 0.0, 0.0, 1.05]], 18), "shoe", Vector3(0, 0, -0.8), Vector3(-PI * 0.5, 0, 0))
+	mesh(v, "Sole", SmoothMesh.lathe([
+		[-5.4, 0.0, 0.0, 0.0, 0.0], [-4.6, 2.15, 0.32, 0.0, 0.0], [-1.0, 2.3, 0.32, 0.0, 0.0],
+		[4.6, 2.2, 0.32, 0.0, 0.0], [5.9, 1.5, 0.3, 0.0, 0.0], [6.3, 0.0, 0.0, 0.0, 0.0]], 18),
+		"plastic_white", Vector3(0, 0.32, -0.8), Vector3(-PI * 0.5, 0, 0))
+	mesh(v, "ToeCap", sphere(1.9), "plastic_white", Vector3(0, 0.95, -5.6), Vector3.ZERO, Vector3(1.0, 0.5, 0.62))
+	for i in 4:
+		mesh(v, "Lace", capsule(0.16, 2.4), "plastic_white", Vector3(0, 2.95 - i * 0.08, -1.0 - i * 0.95), Vector3(0, 0, PI * 0.5))
+	mesh(v, "Opening", sphere(1.3), "dog_black", Vector3(0, 3.05, 2.3), Vector3.ZERO, Vector3(1.1, 0.25, 1.35))
+	mesh(v, "HeelTab", box(Vector3(1.2, 1.5, 0.5)), "plastic_white", Vector3(0, 2.6, 3.9), Vector3(-0.2, 0, 0))
 	merge_meshes(v)
 	add_skin(v, "human_sneaker", Vector3(4.6, 3.2, 11.6), Vector3(0, 1.6, -1.0))
 	pack(f, "res://scenes/hazards/foot.tscn", force)
@@ -581,31 +611,40 @@ static func human(force: bool, path: String, config: String, outfit: String, has
 	var sleeve_long := outfit != "casual"
 
 	var torso := node3d(h, "Torso")
-	mesh(torso, "Pelvis", sphere(1.0), pants, Vector3(0, 38.5, 2), Vector3.ZERO, Vector3(7.2, 5.5, 4.6))
-	mesh(torso, "Belt", cyl(6.9, 1.6), "belt" if outfit != "hazmat" else "dark_metal", Vector3(0, 42.5, 2), Vector3.ZERO, Vector3(1, 1, 0.68))
-	mesh(torso, "Buckle", box(Vector3(2.0, 1.4, 0.4)), "metal", Vector3(0, 42.5, -2.75))
-	mesh(torso, "Waist", cyl(6.2, 7.0, 7.0), top, Vector3(0, 46.6, 2), Vector3.ZERO, Vector3(1, 1, 0.66))
-	mesh(torso, "Chest", sphere(1.0), top, Vector3(0, 54.5, 2), Vector3.ZERO, Vector3(8.0, 9.0, 5.0))
-	# Shoulder line and upper back: a smooth slope from neck to shoulders.
-	mesh(torso, "ShoulderLine", capsule(2.6, 19.5), top, Vector3(0, 59.6, 2.2), Vector3(0, 0, PI * 0.5), Vector3(1.0, 1.0, 0.95))
-	mesh(torso, "UpperBack", sphere(1.0), top, Vector3(0, 57.5, 3.6), Vector3.ZERO, Vector3(7.4, 5.2, 3.0))
-	for x in [-1.0, 1.0]:
-		mesh(torso, "Trapezius", sphere(1.0), top, Vector3(x * 3.6, 61.4, 2.4), Vector3(0, 0, -x * 0.35), Vector3(3.4, 1.6, 2.4))
-	mesh(torso, "Collar", cyl(2.7, 1.4), top, Vector3(0, 62.6, 2))
-	mesh(torso, "Neck", cyl(2.0, 4.0), "skin" if outfit != "hazmat" else "hazmat", Vector3(0, 64.2, 2))
+	# One smooth body from the hips to the neck (no seams between chest,
+	# waist and pelvis): [height, half-width, half-depth, x, z centre].
+	mesh(torso, "Pelvis", SmoothMesh.lathe([
+		[32.0, 0.0, 0.0, 0.0, 2.3], [32.5, 3.6, 2.8, 0.0, 2.3], [33.8, 6.0, 4.1, 0.0, 2.4],
+		[36.2, 7.2, 4.8, 0.0, 2.5], [39.0, 7.3, 4.75, 0.0, 2.3], [41.6, 6.85, 4.4, 0.0, 2.15],
+		[43.8, 6.45, 4.2, 0.0, 2.05]]), pants)
+	mesh(torso, "Belt", cyl(6.95, 1.6), "belt" if outfit != "hazmat" else "dark_metal", Vector3(0, 42.5, 2.1), Vector3.ZERO, Vector3(1, 1, 0.66))
+	mesh(torso, "Buckle", box(Vector3(2.0, 1.4, 0.4)), "metal", Vector3(0, 42.5, -2.55))
+	mesh(torso, "Chest", SmoothMesh.lathe([
+		[41.0, 6.5, 4.25, 0.0, 2.1], [43.8, 6.25, 4.05, 0.0, 2.0], [46.4, 6.15, 4.0, 0.0, 1.95],
+		[49.4, 6.85, 4.55, 0.0, 1.75], [52.4, 7.6, 5.05, 0.0, 1.6], [55.4, 8.0, 5.1, 0.0, 1.75],
+		[57.9, 8.35, 4.85, 0.0, 2.05], [59.8, 8.4, 4.35, 0.0, 2.3], [61.2, 6.4, 3.5, 0.0, 2.35],
+		[62.3, 3.6, 2.95, 0.0, 2.2], [62.9, 2.7, 2.55, 0.0, 2.1], [63.2, 0.0, 0.0, 0.0, 2.1]], 22), top)
+	mesh(torso, "Neck", SmoothMesh.lathe([
+		[60.4, 2.9, 2.7, 0.0, 2.3], [62.4, 2.55, 2.4, 0.0, 2.15], [64.4, 2.4, 2.3, 0.0, 2.1],
+		[66.4, 2.45, 2.35, 0.0, 2.2], [67.8, 0.0, 0.0, 0.0, 2.3]]), "skin" if outfit != "hazmat" else "hazmat")
 	if outfit == "reader":
 		for x in [-1.0, 1.0]:
-			mesh(torso, "Button", sphere(0.35), "belt", Vector3(0, 50 + x * 3.0, -2.95))
-		mesh(torso, "Placket", box(Vector3(0.5, 16, 0.3)), "belt", Vector3(0, 53, -2.85))
+			mesh(torso, "Button", sphere(0.35), "belt", Vector3(0, 50 + x * 3.0, -3.25))
+		mesh(torso, "Placket", box(Vector3(0.5, 16, 0.3)), "belt", Vector3(0, 52, -3.1), Vector3(0.06, 0, 0))
 	if outfit == "hazmat":
-		mesh(torso, "Tank", cyl(2.6, 14.0), "metal", Vector3(0, 52, 7.6))
-		mesh(torso, "TankCap", cyl(1.0, 1.6), "dark_metal", Vector3(0, 59.8, 7.6))
-		mesh(torso, "Strap", box(Vector3(1.2, 16, 0.4)), "dark_metal", Vector3(-3.5, 54, -2.9))
-		mesh(torso, "Strap", box(Vector3(1.2, 16, 0.4)), "dark_metal", Vector3(3.5, 54, -2.9))
+		mesh(torso, "Tank", cyl(2.6, 14.0), "metal", Vector3(0, 52, 9.2))
+		mesh(torso, "TankCap", cyl(1.0, 1.6), "dark_metal", Vector3(0, 59.8, 9.2))
+		mesh(torso, "Strap", box(Vector3(1.2, 16, 0.4)), "dark_metal", Vector3(-3.5, 53, -3.2), Vector3(0.06, 0, 0))
+		mesh(torso, "Strap", box(Vector3(1.2, 16, 0.4)), "dark_metal", Vector3(3.5, 53, -3.2), Vector3(0.06, 0, 0))
 
 	var head := node3d(torso, "Head", Vector3(0, 65.5, 2))
-	mesh(head, "Skull", sphere(4.4), "skin", Vector3(0, 4.8, 0), Vector3.ZERO, Vector3(1, 1.18, 1.08))
-	mesh(head, "Jaw", sphere(3.4), "skin", Vector3(0, 2.6, -0.8), Vector3.ZERO, Vector3(1, 0.72, 1))
+	# One smooth head from chin to crown: the jaw, cheekbones, temples and
+	# forehead flow into each other (no seams between separate balls).
+	mesh(head, "Skull", SmoothMesh.lathe([
+		[0.6, 0.0, 0.0, 0.0, -1.6], [1.0, 1.6, 1.5, 0.0, -1.7], [1.8, 2.7, 2.6, 0.0, -1.2],
+		[2.8, 3.4, 3.6, 0.0, -0.6], [4.0, 4.0, 4.4, 0.0, -0.25], [5.4, 4.3, 4.75, 0.0, 0.0],
+		[6.9, 4.35, 4.85, 0.0, 0.15], [8.3, 3.9, 4.45, 0.0, 0.3], [9.4, 2.7, 3.2, 0.0, 0.45],
+		[10.0, 1.2, 1.5, 0.0, 0.5], [10.25, 0.0, 0.0, 0.0, 0.5]], 24), "skin")
 	# Eyes that move (Gaze: irises and pupils) and blink (Lids, shown briefly).
 	var gaze := node3d(head, "Gaze")
 	var lids := node3d(head, "Lids")
@@ -618,15 +657,14 @@ static func human(force: bool, path: String, config: String, outfit: String, has
 		mesh(lids, "Lid" + side, sphere(0.86), "skin", Vector3(x * 1.6, 5.35, -4.3), Vector3.ZERO, Vector3(1.05, 0.95, 1.0))
 		mesh(head, "Brow" + side, box(Vector3(1.9, 0.35, 0.45)), "hair", Vector3(x * 1.6, 6.55, -4.25), Vector3(0, 0, -x * 0.08))
 		mesh(head, "Crease" + side, sphere(0.75), "skin", Vector3(x * 1.6, 5.95, -4.05), Vector3.ZERO, Vector3(1.05, 0.35, 0.9))
-		mesh(head, "Ear" + side, sphere(0.9), "skin", Vector3(x * 4.35, 4.8, 0.4), Vector3.ZERO, Vector3(0.5, 1.3, 1))
-		mesh(head, "EarLobe" + side, sphere(0.35), "skin", Vector3(x * 4.4, 3.75, 0.2))
-		mesh(head, "Cheek" + side, sphere(1.15), "skin", Vector3(x * 2.25, 3.7, -3.35), Vector3.ZERO, Vector3(1.0, 0.8, 0.75))
-		mesh(head, "Nostril" + side, sphere(0.28), "skin", Vector3(x * 0.42, 3.75, -4.95))
+		mesh(head, "Ear" + side, sphere(0.9), "skin_blush", Vector3(x * 4.3, 4.8, 0.4), Vector3.ZERO, Vector3(0.45, 1.3, 1))
+		mesh(head, "EarLobe" + side, sphere(0.33), "skin_blush", Vector3(x * 4.35, 3.75, 0.2))
+		mesh(head, "Nostril" + side, sphere(0.2), "skin_blush", Vector3(x * 0.4, 3.78, -4.88))
+		mesh(head, "Lash" + side, capsule(0.09, 1.55), "hair", Vector3(x * 1.6, 5.82, -4.62), Vector3(0, 0, PI * 0.5 - x * 0.12))
 	mesh(head, "Nose", sphere(0.6), "skin", Vector3(0, 4.2, -4.85), Vector3.ZERO, Vector3(0.8, 1.25, 1.3))
 	mesh(head, "NoseBridge", capsule(0.32, 1.6), "skin", Vector3(0, 4.9, -4.55), Vector3(0.25, 0, 0))
-	mesh(head, "Chin", sphere(1.05), "skin", Vector3(0, 1.45, -3.2), Vector3.ZERO, Vector3(1.15, 0.8, 0.9))
-	mesh(head, "UpperLip", capsule(0.24, 2.1), "lips", Vector3(0, 2.72, -4.12), Vector3(0, 0, PI * 0.5))
-	mesh(head, "LowerLip", capsule(0.28, 1.9), "lips", Vector3(0, 2.36, -4.0), Vector3(0, 0, PI * 0.5))
+	mesh(head, "UpperLip", capsule(0.17, 1.9), "lips", Vector3(0, 2.74, -4.16), Vector3(0, 0, PI * 0.5), Vector3(1.0, 1.0, 0.8))
+	mesh(head, "LowerLip", capsule(0.2, 1.7), "lips", Vector3(0, 2.42, -4.04), Vector3(0, 0, PI * 0.5), Vector3(1.0, 1.0, 0.8))
 	if outfit == "hazmat":
 		mesh(head, "Hood", sphere(4.9), "hazmat", Vector3(0, 5.6, 0.6), Vector3.ZERO, Vector3(1.05, 1.15, 1.12))
 		mesh(head, "Goggles", box(Vector3(6.4, 1.8, 1.2)), "goggles", Vector3(0, 5.4, -4.3))
@@ -651,25 +689,33 @@ static func human(force: bool, path: String, config: String, outfit: String, has
 		var side := "L" if x < 0.0 else "R"
 		var sh := node3d(torso, "Shoulder" + side, Vector3(x * 8.4, 59.5, 2))
 		sh.rotation = Vector3(0, 0, -x * 0.07)
-		mesh(sh, "Deltoid", sphere(2.3), top, Vector3(0, -0.6, 0), Vector3.ZERO, Vector3(1.0, 1.2, 1.0))
+		mesh(sh, "Deltoid", sphere(2.3), top, Vector3(0, -0.7, 0), Vector3.ZERO, Vector3(1.0, 1.15, 1.0))
+		# Shoulder to elbow, elbow to wrist: the radius where two meet is the
+		# same, so the elbow is one smooth rounded joint at any bend.
+		var elbow_r := 1.7 if sleeve_long else 1.55
 		if sleeve_long:
-			mesh(sh, "UpperArm", capsule(1.95, 13.0), top, Vector3(0, -6.0, 0))
+			bone(sh, "UpperArm", Vector3(0, -0.4, 0), Vector3(0, -12.0, 0), 2.1, elbow_r, top)
 		else:
-			mesh(sh, "Sleeve", capsule(2.1, 7.0), top, Vector3(0, -3.0, 0))
-			mesh(sh, "UpperArm", capsule(1.6, 9.5), "skin", Vector3(0, -7.4, 0))
+			bone(sh, "Sleeve", Vector3(0, 0.2, 0), Vector3(0, -6.0, 0), 2.3, 2.15, top)
+			bone(sh, "UpperArm", Vector3(0, -1.0, 0), Vector3(0, -12.0, 0), 1.85, elbow_r, "skin")
 		var el := node3d(sh, "Elbow", Vector3(0, -12.0, 0))
 		el.rotation = Vector3(0.15, 0, 0)
-		mesh(el, "Forearm", capsule(1.55 if not sleeve_long else 1.75, 11.5), "skin" if not sleeve_long else top, Vector3(0, -5.2, 0))
+		var arm_mat := "skin" if not sleeve_long else top
+		bone(el, "Forearm", Vector3.ZERO, Vector3(0, -11.3, 0), elbow_r, 1.12 if not sleeve_long else 1.3, arm_mat, 1.12, 0.95)
 		if outfit == "hazmat":
-			mesh(el, "Cuff", cyl(1.9, 1.2), "dark_metal", Vector3(0, -10.4, 0))
+			mesh(el, "Cuff", cyl(1.55, 1.2), "dark_metal", Vector3(0, -10.4, 0))
 		elif x < 0.0 and outfit == "casual":
-			mesh(el, "Watch", cyl(1.75, 1.0), "dark_metal", Vector3(0, -9.6, 0))
+			mesh(el, "Watch", cyl(1.38, 1.0), "dark_metal", Vector3(0, -9.6, 0))
 		var hd := node3d(el, "Hand", Vector3(0, -11.3, 0))
-		mesh(hd, "Palm", sphere(1.0), hand, Vector3(0, -1.0, 0), Vector3.ZERO, Vector3(1.5, 1.9, 0.85))
-		mesh(hd, "Thumb", capsule(0.45, 2.4), hand, Vector3(-x * 1.2, -1.2, -0.9), Vector3(0.5, 0, x * 0.5))
+		# The wrist: a ball the forearm and the palm both melt into.
+		mesh(hd, "Wrist", sphere(1.12), hand, Vector3.ZERO, Vector3.ZERO, Vector3(1.12, 1.0, 0.92))
+		mesh(hd, "Palm", sphere(1.0), hand, Vector3(0, -1.55, -0.05), Vector3.ZERO, Vector3(1.42, 1.75, 0.72))
+		bone(hd, "Thumb", Vector3(-x * 1.0, -0.9, -0.45), Vector3(-x * 1.75, -2.65, -1.05), 0.5, 0.36, hand)
 		for i in 4:
-			mesh(hd, "Finger", capsule(0.36, 2.5 if i in [1, 2] else 2.1), hand,
-				Vector3(lerpf(-1.05, 1.05, i / 3.0), -3.5, 0), Vector3(0.12, 0, 0))
+			var fx := lerpf(-1.0, 1.0, i / 3.0)
+			var flen: float = [2.0, 2.5, 2.6, 2.2][i] if x > 0.0 else [2.2, 2.6, 2.5, 2.0][i]
+			bone(hd, "Finger", Vector3(fx, -3.0, -0.05), Vector3(fx * 1.08, -3.0 - flen, -0.3), 0.38, 0.3, hand)
+			mesh(hd, "Knuckle", sphere(0.3), hand, Vector3(fx, -2.95, -0.42), Vector3.ZERO, Vector3(1.0, 0.8, 0.6))
 		if x > 0.0 and outfit != "hazmat":
 			# A phone they check on their rounds (shown only then).
 			var ph := node3d(hd, "PhoneHold", Vector3(0, -2.6, -1.1))
@@ -687,10 +733,14 @@ static func human(force: bool, path: String, config: String, outfit: String, has
 	# Legs: posed every frame from the hip sockets to the feet (two-bone IK).
 	var legs := node3d(h, "Legs")
 	legs.top_level = true
+	# Built at rest length between the joint centres (human.gd stretches them
+	# to fit): wide at the hip, the knee and shin the same radius where they
+	# meet, slimmer at the ankle.
 	for side in ["L", "R"]:
-		mesh(legs, "Thigh" + side, capsule(2.75, 19.5), pants)
-		mesh(legs, "Knee" + side, sphere(2.45), pants)
-		mesh(legs, "Shin" + side, capsule(2.3, 19.0), pants)
+		mesh(legs, "Thigh" + side, SmoothMesh.limb(3.15, 2.3, Human.THIGH, 20, 6, 1.0, 1.08), pants)
+		# Hidden just inside the two rounded ends (they make the knee itself).
+		mesh(legs, "Knee" + side, sphere(2.2), pants)
+		mesh(legs, "Shin" + side, SmoothMesh.limb(2.3, 1.55, Human.SHIN, 20, 6, 1.0, 1.06), pants)
 
 	var foot_scene: PackedScene = load("res://scenes/hazards/foot.tscn")
 	var lf := foot_scene.instantiate()
@@ -735,25 +785,39 @@ static func pet(force: bool, path: String, config: String, color: String, size: 
 	var dark := "fur_dark" if is_dog else "cat_stripe"
 	var white := "dog_white"
 	var black := "dog_black"
-	mesh(v, "Body", capsule(2.35 * k, 11.5 * k), color, Vector3(0, 5.0 * k, 0.8 * k), Vector3(PI * 0.5, 0, 0))
-	mesh(v, "Chest", sphere(2.6 * k), white if is_dog else color, Vector3(0, 5.3 * k, -3.4 * k), Vector3.ZERO, Vector3(1, 1.05, 1.1))
+	# One smooth animal from rump to chest (haunches, a tucked belly, a deep
+	# chest, shoulders rising into the neck): [along, half-width,
+	# half-height, -, height of the middle]. Built along +Y, turned to run
+	# forward (-Z) with the second axis as height.
+	var prof: Array = [
+		[-6.7, 0.0, 0.0, 0.0, 5.4], [-6.2, 1.3, 1.5, 0.0, 5.4], [-5.2, 2.0, 2.2, 0.0, 5.35],
+		[-3.8, 2.3, 2.5, 0.0, 5.3], [-1.8, 2.1, 2.35, 0.0, 5.2], [0.0, 1.95, 2.05, 0.0, 5.3],
+		[2.0, 2.15, 2.45, 0.0, 5.15], [3.4, 2.35, 2.65, 0.0, 5.15], [4.6, 2.2, 2.5, 0.0, 5.4],
+		[5.6, 1.6, 1.9, 0.0, 5.9], [6.1, 0.0, 0.0, 0.0, 6.2]]
+	var body_rings: Array = []
+	for r: Array in prof:
+		body_rings.append([r[0] * k, r[1] * k, r[2] * k, 0.0, r[4] * k])
+	mesh(v, "Body", SmoothMesh.lathe(body_rings, 22), color, Vector3.ZERO, Vector3(-PI * 0.5, 0, 0))
+	# The chest bib (white on the dog, cream on the tabby) and the tabby's belly.
+	mesh(v, "Chest", sphere(2.35 * k), white if is_dog else "cat_cream", Vector3(0, 4.9 * k, -3.7 * k), Vector3.ZERO, Vector3(0.94, 1.0, 1.0))
+	if not is_dog:
+		mesh(v, "Belly", sphere(1.9 * k), "cat_cream", Vector3(0, 3.55 * k, 0.4 * k), Vector3.ZERO, Vector3(0.9, 0.62, 2.3))
 	if is_dog:
-		mesh(v, "Saddle", sphere(2.4 * k), black, Vector3(0, 6.75 * k, 1.4 * k), Vector3.ZERO, Vector3(1.02, 0.5, 1.65))
+		mesh(v, "Saddle", sphere(2.4 * k), black, Vector3(0, 6.75 * k, 1.4 * k), Vector3.ZERO, Vector3(0.98, 0.5, 1.65))
 		var collar := TorusMesh.new()
 		collar.inner_radius = 1.55 * k
 		collar.outer_radius = 2.0 * k
 		mesh(v, "Collar", collar, "cloth_red", Vector3(0, 6.3 * k, -4.9 * k), Vector3(PI * 0.5 - 0.5, 0, 0))
 		mesh(v, "Tag", cyl(0.45 * k, 0.15 * k), white, Vector3(0, 4.75 * k, -5.95 * k), Vector3(PI * 0.5, 0, 0))
 	else:
-		# Tabby bands that wrap the body.
+		# Tabby bands that follow the body's own shape round the back.
 		for i in 4:
-			mesh(v, "Stripe", cyl(2.4 * k, 0.55 * k), dark, Vector3(0, 5.0 * k, -2.2 * k + i * 2.0 * k), Vector3(PI * 0.5, 0, 0), Vector3(1.0, 1.0, 1.0))
-	# Neck, shoulders and haunches: one smooth animal, not a tube.
-	mesh(v, "Neck", capsule(1.4 * k, 4.2 * k), color, Vector3(0, 6.4 * k, -4.9 * k), Vector3(-0.85, 0, 0))
-	for x in [-1.0, 1.0]:
-		mesh(v, "Shoulder", sphere(1.55 * k), color, Vector3(x * 1.15 * k, 5.4 * k, -3.3 * k), Vector3.ZERO, Vector3(0.8, 1.15, 1.1))
-		mesh(v, "Haunch", sphere(1.9 * k), color, Vector3(x * 1.05 * k, 5.6 * k, 3.7 * k), Vector3.ZERO, Vector3(0.85, 1.15, 1.2))
-
+			var z := -2.2 + i * 2.0
+			var r := _profile_at(prof, -z)
+			mesh(v, "Stripe", sphere(1.0), dark, Vector3(0, r[2] * k, z * k), Vector3.ZERO,
+				Vector3(r[0] * 1.03, r[1] * 1.03, 0.26) * k)
+	# The neck rises out of the shoulders into the head.
+	bone(v, "Neck", Vector3(0, 5.6 * k, -3.9 * k), Vector3(0, 7.0 * k, -6.0 * k), 1.75 * k, 1.35 * k, color, 1.0, 1.05)
 	var head := node3d(v, "Head", Vector3(0, 7.0 * k, -6.2 * k))
 	if is_dog:
 		mesh(head, "Skull", sphere(2.2 * k), color, Vector3(0, 0.35 * k, -0.4 * k), Vector3.ZERO, Vector3(1.0, 0.95, 1.05))
@@ -794,25 +858,27 @@ static func pet(force: bool, path: String, config: String, color: String, size: 
 			mesh(ear, "Point", PrismMesh.new(), color, Vector3(0, 0.8 * k, 0), Vector3.ZERO, Vector3(1.5, 1.9, 0.6) * k)
 			mesh(ear, "Inner", PrismMesh.new(), "lips", Vector3(0, 0.72 * k, -0.2 * k), Vector3.ZERO, Vector3(0.95, 1.3, 0.3) * k)
 
-	var tail := node3d(v, "Tail", Vector3(0, 6.6 * k, 6.2 * k))
+	var tail := node3d(v, "Tail", Vector3(0, 6.3 * k, 5.8 * k))
 	var tail_len := 4.2 if is_dog else 5.0
 	tail.rotation = Vector3(-0.7 if is_dog else -0.5, 0, 0)
-	mesh(tail, "Base", cyl(0.6 * k, tail_len * k, 0.45 * k), color, Vector3(0, 0, tail_len * 0.5 * k), Vector3(PI * 0.5, 0, 0))
+	# Two tapered pieces meeting in a round joint, so the wag bends smoothly.
+	bone(tail, "Base", Vector3.ZERO, Vector3(0, 0, tail_len * k), 0.62 * k, 0.45 * k, color)
 	var tip := node3d(tail, "Tip", Vector3(0, 0, tail_len * k))
-	mesh(tip, "Fluff", cyl(0.45 * k, tail_len * 0.8 * k, 0.2 * k), white if is_dog else dark,
-		Vector3(0, 0, tail_len * 0.4 * k), Vector3(PI * 0.5, 0, 0))
+	bone(tip, "Fluff", Vector3.ZERO, Vector3(0, 0, tail_len * 0.8 * k), 0.45 * k, 0.2 * k, white if is_dog else dark)
 
 	for leg_name in ["LegFL", "LegFR", "LegBL", "LegBR"]:
 		var x := -1.0 if leg_name.ends_with("L") else 1.0
 		var z := -3.6 if leg_name.contains("F") else 3.6
 		var leg := node3d(v, leg_name, Vector3(x * 1.45 * k, 4.3 * k, z * k))
 		leg.set_meta(&"front", z < 0.0)
-		mesh(leg, "Upper", capsule(0.78 * k, 3.4 * k), color, Vector3(0, -1.2 * k, 0), Vector3.ZERO, Vector3(1.0, 1.0, 1.1))
+		# Hip to knee to paw: tapered, the same radius where they meet, so the
+		# knee is one smooth joint whichever way the walk bends it.
+		bone(leg, "Upper", Vector3(0, 0.4 * k, 0), Vector3(0, -2.5 * k, 0), 0.98 * k, 0.6 * k, color, 1.0, 1.18)
 		var knee := node3d(leg, "Knee", Vector3(0, -2.5 * k, 0))
 		var lower := white if is_dog else color
-		mesh(knee, "Joint", sphere(0.62 * k), lower)
-		mesh(knee, "Lower", capsule(0.55 * k, 2.4 * k), lower, Vector3(0, -0.95 * k, 0))
-		mesh(knee, "Paw", sphere(0.75 * k), lower, Vector3(0, -1.75 * k, -0.25 * k), Vector3.ZERO, Vector3(1, 0.6, 1.3))
+		mesh(knee, "Joint", sphere(0.56 * k), lower)
+		bone(knee, "Lower", Vector3.ZERO, Vector3(0, -1.55 * k, -0.05 * k), 0.6 * k, 0.42 * k, lower)
+		mesh(knee, "Paw", sphere(0.72 * k), lower, Vector3(0, -1.78 * k, -0.28 * k), Vector3.ZERO, Vector3(1, 0.56, 1.3))
 		for t in 3:
 			mesh(knee, "Toe", sphere(0.28 * k), lower, Vector3((t - 1) * 0.36 * k, -1.85 * k, -0.95 * k), Vector3.ZERO, Vector3(1, 0.8, 1.1))
 	for n: Node in _pivots(v):
@@ -827,6 +893,17 @@ static func pet(force: bool, path: String, config: String, color: String, size: 
 	agent.path_max_distance = 6.0
 	p.add_child(agent)
 	pack(p, path, force)
+
+
+## [half-width, half-height, middle height] of a pet body profile at `t`.
+static func _profile_at(prof: Array, t: float) -> Array:
+	for i in prof.size() - 1:
+		var a: Array = prof[i]
+		var b: Array = prof[i + 1]
+		if t >= float(a[0]) and t <= float(b[0]):
+			var f := (t - float(a[0])) / maxf(float(b[0]) - float(a[0]), 0.0001)
+			return [lerpf(a[1], b[1], f), lerpf(a[2], b[2], f), lerpf(a[4], b[4], f)]
+	return [1.0, 1.0, 5.0]
 
 
 static func vacuum(force: bool) -> void:

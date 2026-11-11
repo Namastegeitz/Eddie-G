@@ -52,11 +52,11 @@ const TEXTURED := {
 	"cardboard": ["plaster", 14.0, 0.5], "brick": ["patio", 12.0, 1.0], "terracotta": ["stone", 10.0, 0.6],
 	"sponge": ["carpet", 4.0, 1.0], "scourer": ["carpet", 3.0, 1.0], "book_green": ["fabric", 4.0, 0.5],
 	# People
-	"skin": ["skin", 6.0, 0.5], "hair": ["hair", 4.0, 0.8], "jeans": ["denim", 4.0, 0.8],
+	"skin": ["skin", 2.5, 0.08], "skin_blush": ["skin", 2.5, 0.08], "hair": ["hair", 4.0, 0.8], "jeans": ["denim", 4.0, 0.8],
 	"shirt": ["fabric", 3.0, 0.7], "hazmat": ["fabric", 6.0, 0.5], "shoe": ["stone", 5.0, 0.5],
 	"belt": ["stone", 3.0, 0.5],
 	# Pets
-	"cat_orange": ["fur", 3.0, 0.9], "dog_brown": ["fur", 4.0, 0.9], "dog_white": ["fur", 4.0, 0.9],
+	"cat_orange": ["fur", 3.0, 0.9], "cat_cream": ["fur", 3.0, 0.9], "dog_brown": ["fur", 4.0, 0.9], "dog_white": ["fur", 4.0, 0.9],
 	"dog_black": ["fur", 4.0, 0.9], "fur_dark": ["fur", 4.0, 0.9], "cat_stripe": ["fur", 3.0, 0.9],
 	# Bugs
 	"roach": ["chitin", 1.2, 0.6], "roach_light": ["chitin", 1.2, 0.6], "roach_dark": ["chitin", 1.2, 0.6],
@@ -65,6 +65,15 @@ const TEXTURED := {
 	"spider_band": ["chitin", 1.0, 0.5], "fly": ["chitin", 1.0, 0.5], "fly_belly": ["chitin", 1.0, 0.5],
 	"fly_stripe": ["chitin", 1.0, 0.5], "ladybug_red": ["chitin", 1.0, 0.25], "firefly_body": ["chitin", 1.0, 0.5],
 	"firefly_orange": ["chitin", 1.0, 0.5],
+}
+## Edge sheen (rim light strength) for fur, cloth, hair and bug shells.
+const SHEEN := {
+	"cat_orange": 0.45, "cat_cream": 0.45, "cat_stripe": 0.4, "dog_brown": 0.45, "dog_white": 0.4,
+	"dog_black": 0.35, "fur_dark": 0.4, "hair": 0.35, "shirt": 0.25, "jeans": 0.2, "cloth_blue": 0.25,
+	"cloth_red": 0.25, "hazmat": 0.2, "skin": 0.15, "skin_blush": 0.15,
+	"roach": 0.3, "roach_light": 0.3, "roach_dark": 0.3, "ant": 0.3, "cricket": 0.25, "cricket_dark": 0.25,
+	"stink": 0.25, "stink_edge": 0.25, "spider": 0.3, "spider_band": 0.3, "fly": 0.3, "fly_belly": 0.3,
+	"ladybug_red": 0.35, "ladybug_black": 0.3, "firefly_body": 0.3, "firefly_orange": 0.3,
 }
 ## Floors and walls are seen at a low angle from bug height: keep them sharp.
 const ANISOTROPIC := ["tile", "wood", "dark_wood", "carpet", "rug", "grass", "soil", "patio", "wall_paint", "wall_blue", "fence"]
@@ -116,7 +125,11 @@ static func materials(force: bool) -> void:
 		"leaves": _mat(Color(0.7, 0.45, 0.15), 1.0),
 		"crumb": _mat(Color(0.86, 0.66, 0.34)),
 		"golden": _mat(Color(1.0, 0.8, 0.2), 0.2, 0.9, false, false, Color(1.0, 0.7, 0.2, 1.5)),
-		"skin": _mat(Color(0.86, 0.66, 0.52)),
+		"skin": _mat(Color(0.88, 0.67, 0.53), 0.65),
+		# Rosier skin for cheeks, ears and knuckles.
+		"skin_blush": _mat(Color(0.89, 0.62, 0.52), 0.6),
+		# A tabby's cream belly, chest and chin.
+		"cat_cream": _mat(Color(0.96, 0.86, 0.68)),
 		"jeans": _mat(Color(0.22, 0.3, 0.5)),
 		"shirt": _mat(Color(0.75, 0.3, 0.25)),
 		"shoe": _mat(Color(0.2, 0.17, 0.15)),
@@ -235,6 +248,15 @@ static func materials(force: bool) -> void:
 	}
 	for k: String in defs.keys():
 		var mat: StandardMaterial3D = defs[k]
+		# Characters carry soft shading in their vertex colours (SmoothMesh);
+		# meshes without vertex colours (rooms, props) look exactly the same.
+		mat.vertex_color_use_as_albedo = true
+		if k in SHEEN:
+			# A soft rim of light along the edges: fur and cloth look soft,
+			# shells look glossy.
+			mat.rim_enabled = true
+			mat.rim = float(SHEEN[k])
+			mat.rim_tint = 0.6
 		if TEXTURED.has(k):
 			_texture(mat, TEXTURED[k])
 			if k in ANISOTROPIC:

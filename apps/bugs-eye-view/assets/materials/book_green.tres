@@ -4,6 +4,7 @@
 [ext_resource type="Texture2D" path="res://assets/textures/fabric_n.png" id="2_6a86p"]
 
 [resource]
+vertex_color_use_as_albedo = true
 albedo_color = Color(0.17119999, 0.4066, 0.23539999, 1)
 albedo_texture = ExtResource("1_kujep")
 roughness = 0.7
