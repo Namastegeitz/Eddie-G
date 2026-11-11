@@ -1,5 +1,5 @@
 {
-  "_doc": "Which detailed (Meshy) model each hazard uses in first person: assets/models/<model>.glb. 'painters' maps a drawing style to a model; 'hazards' picks one per hazard id (and wins). length: share of the hazard's length the model fills; tint multiplies the model's colours (for a related species); yaw turns the model to face +X; fit 'x' measures across +X after the turn (wingspan for birds); bob: stride bounce; sink: how deep it sits (floating backs). A model that hasn't been made yet just leaves the old shape in place. See docs/CONTENT.md. 'scenery' maps a first-person scenery prop or landmark ('lm_<kind>') to a model and its height in tiles; 'open_trees' and 'open_plants' are what grows beside the open (sunny) rows. align 'long' turns a model so its longest side runs along +X (logs, vehicles). 'animals' gives an animal its model for the home and animal screens.",
+  "_doc": "Which detailed (Meshy) model each hazard uses in first person: assets/models/<model>.glb. 'painters' maps a drawing style to a model; 'hazards' picks one per hazard id (and wins). length: share of the hazard's length the model fills; tint multiplies the model's colours (for a related species); yaw turns the model to face +X; fit 'x' measures across +X after the turn (wingspan for birds); bob: stride bounce; sink: how deep it sits (floating backs). A model that hasn't been made yet just leaves the old shape in place. See docs/CONTENT.md. 'scenery' maps a first-person scenery prop or landmark ('lm_<kind>') to a model and its height in tiles; 'open_trees' and 'open_plants' are what grows beside the open (sunny) rows. align 'long' turns a model so its longest side runs along +X (logs, vehicles). 'animals' gives an animal its model for the home and animal screens. 'edge' lines the far edges of the open rows (every other row).",
   "yaw": 90,
   "painters": {
     "soldier_ant": {
@@ -84,6 +84,13 @@
       "model": "scene_safari_jeep",
       "length": 1.0,
       "bob": 0.2
+    },
+    "boat": {
+      "model": "scene_longboat",
+      "align": "long",
+      "length": 1.0,
+      "bob": 0.15,
+      "sink": 0.06
     }
   },
   "hazards": {
@@ -252,5 +259,9 @@
     "orangutan": "animal_orangutan",
     "southern_cassowary": "fauna_cassowary",
     "ring_tailed_lemur": "animal_ring_tailed_lemur"
+  },
+  "edge": {
+    "model": "scene_undergrowth",
+    "height": 2.3
   }
 }

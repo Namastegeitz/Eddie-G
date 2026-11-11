@@ -127,11 +127,11 @@ func setup(run: RunSim, animal_def: Dictionary) -> void:
 		env.background_mode = Environment.BG_SKY
 		# film-like light: soft highlights, a touch more contrast and colour
 		env.tonemap_mode = Environment.TONE_MAPPER_ACES
-		env.tonemap_exposure = 1.08
+		env.tonemap_exposure = 0.9
 		env.tonemap_white = 6.0
 		env.adjustment_enabled = true
-		env.adjustment_contrast = 1.06
-		env.adjustment_saturation = 1.08
+		env.adjustment_contrast = 1.14
+		env.adjustment_saturation = 1.12
 		env.fog_sun_scatter = 0.18
 		if Gfx.level() == "high":
 			env.glow_enabled = true
@@ -257,7 +257,7 @@ func update_view(dt: float) -> void:
 	var light := Scenery3D.col(scene, pal, "light", "#fff2c8")
 	var fog := Scenery3D.col(scene, pal, "fog", _fog0.to_html(false))
 	var dim := 0.3 + float(scene.get("shafts", 0.4)) * 0.16
-	env.ambient_light_energy = lerpf(0.5, dim, shade)
+	env.ambient_light_energy = lerpf(0.42 if _sky_mat else 0.5, dim, shade)
 	env.ambient_light_color = Color(0.85, 0.92, 0.82).lerp(light, shade * 0.35)
 	sun.light_energy = lerpf(0.8, 0.25 + float(scene.get("shafts", 0.4)) * 0.25, shade)
 	sun.light_color = Color.WHITE.lerp(light, shade * 0.6)

@@ -574,6 +574,12 @@ static func _open_models(lane: Lane, detail: int, variant: int, trees: Array, pl
 			var h := float(md.height) * rng.randf_range(0.8, 1.05)
 			var x: float = (-1.4 if side < 0.0 else 10.4) + side * 0.15 * maxf(0.0, h - 2.0)
 			out.append({"model": String(md.model), "pos": Vector3(x, 0.0, rng.randf_range(-0.25, 0.25)), "yaw": rng.randf() * TAU, "height": h})
+	# dense undergrowth walls the far edges, so the jungle closes in on both sides
+	var edge: Dictionary = Content.models.get("edge", {})
+	if lane.row % 2 == 0 and not edge.is_empty() and Models3D.has_model(String(edge.model)):
+		for side in [-1.0, 1.0]:
+			out.append({"model": String(edge.model), "pos": Vector3(-3.1 if side < 0.0 else 12.1, 0.0, rng.randf_range(-0.3, 0.3)),
+				"yaw": PI * 0.5 * side + rng.randf_range(-0.2, 0.2), "height": float(edge.height) * rng.randf_range(0.9, 1.15)})
 	if lane.type == "safe" and not plants.is_empty():
 		for side in [-1.0, 1.0]:
 			if rng.randf() < 0.35:

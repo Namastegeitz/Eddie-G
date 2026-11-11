@@ -426,11 +426,130 @@
       "cost": 10,
       "step": "refine",
       "t": 1794405539
+    },
+    {
+      "asset": "scene_ruin_temple",
+      "balance_before": 305,
+      "cost": 20,
+      "step": "preview",
+      "t": 1794405553
+    },
+    {
+      "asset": "scene_stela",
+      "balance_before": 285,
+      "cost": 20,
+      "step": "preview",
+      "t": 1794405582
+    },
+    {
+      "asset": "scene_lily_pads",
+      "balance_before": 285,
+      "cost": 10,
+      "step": "refine",
+      "t": 1794405582
+    },
+    {
+      "asset": "scene_ruin_temple",
+      "balance_before": 255,
+      "cost": 10,
+      "step": "refine",
+      "t": 1794405618
+    },
+    {
+      "asset": "scene_stela",
+      "balance_before": 245,
+      "cost": 10,
+      "step": "refine",
+      "t": 1794405626
+    },
+    {
+      "asset": "scene_waterfall_cliff",
+      "balance_before": 245,
+      "cost": 20,
+      "step": "preview",
+      "t": 1794405626
+    },
+    {
+      "asset": "scene_karst_tower",
+      "balance_before": 215,
+      "cost": 20,
+      "step": "preview",
+      "t": 1794405660
+    },
+    {
+      "asset": "scene_logging_truck",
+      "balance_before": 215,
+      "cost": 20,
+      "step": "preview",
+      "t": 1794405662
+    },
+    {
+      "asset": "scene_waterfall_cliff",
+      "balance_before": 175,
+      "cost": 10,
+      "step": "refine",
+      "t": 1794405691
+    },
+    {
+      "asset": "scene_karst_tower",
+      "balance_before": 165,
+      "cost": 10,
+      "step": "refine",
+      "t": 1794405724
+    },
+    {
+      "asset": "scene_logging_truck",
+      "balance_before": 155,
+      "cost": 10,
+      "step": "refine",
+      "t": 1794405727
+    },
+    {
+      "asset": "scene_safari_jeep",
+      "balance_before": 145,
+      "cost": 20,
+      "step": "preview",
+      "t": 1794405735
+    },
+    {
+      "asset": "scene_safari_jeep",
+      "balance_before": 125,
+      "cost": 10,
+      "step": "refine",
+      "t": 1794405843
+    },
+    {
+      "asset": "scene_undergrowth",
+      "balance_before": 115,
+      "cost": 20,
+      "step": "preview",
+      "t": 1794405948
+    },
+    {
+      "asset": "scene_longboat",
+      "balance_before": 115,
+      "cost": 20,
+      "step": "preview",
+      "t": 1794405949
+    },
+    {
+      "asset": "scene_longboat",
+      "balance_before": 75,
+      "cost": 10,
+      "step": "refine",
+      "t": 1794406015
+    },
+    {
+      "asset": "scene_undergrowth",
+      "balance_before": 65,
+      "cost": 10,
+      "step": "refine",
+      "t": 1794406045
     }
   ],
   "_spent": {
     "fauna": 480,
-    "scenery": 440
+    "scenery": 690
   },
   "animal_orangutan": {
     "bytes": 5481648,
@@ -621,9 +740,41 @@
     "refine_id": "01a1cae1-e699-71ad-b35e-1d0c3003649e",
     "textured": true
   },
+  "scene_karst_tower": {
+    "bytes": 7596276,
+    "bytes_optimized": 622284,
+    "done": true,
+    "preview_id": "01a1cae9-7924-708c-9955-1f821017e87d",
+    "prompt": "A tall jagged limestone karst tower: vertical grey and black rock spire with jungle plants clinging to its ledges. Photorealistic, highly detailed, game-ready single object on its own, no ground plane, no background.",
+    "refine_id": "01a1caea-72d6-7293-80ba-a7eb3beb4f17",
+    "textured": true
+  },
   "scene_lily_pads": {
+    "bytes": 6379524,
+    "bytes_optimized": 338192,
+    "done": true,
     "preview_id": "01a1cae7-4cc5-7566-8415-b5f437ffb72f",
-    "prompt": "A cluster of round green water lily pads floating flat with one open pink water lily flower. Photorealistic, highly detailed, game-ready single object on its own, no ground plane, no background."
+    "prompt": "A cluster of round green water lily pads floating flat with one open pink water lily flower. Photorealistic, highly detailed, game-ready single object on its own, no ground plane, no background.",
+    "refine_id": "01a1cae8-4838-74e9-91ab-f14fd02a6b1c",
+    "textured": true
+  },
+  "scene_logging_truck": {
+    "bytes": 8801292,
+    "bytes_optimized": 786688,
+    "done": true,
+    "preview_id": "01a1cae9-7ebc-7186-920d-d5fd3ead6efb",
+    "prompt": "A muddy old logging truck loaded with stacked tree trunks: red cab, flatbed trailer with chained logs, big off-road tires. Photorealistic, highly detailed, game-ready single object on its own, no ground plane, no background.",
+    "refine_id": "01a1caea-7d80-717f-9b22-830c5b12461b",
+    "textured": true
+  },
+  "scene_longboat": {
+    "bytes": 6987440,
+    "bytes_optimized": 633640,
+    "done": true,
+    "preview_id": "01a1caed-dffc-719c-9fbd-ffc59eeed31c",
+    "prompt": "A long narrow wooden river longboat with an outboard motor at the back and a small curved palm-thatch canopy in the middle, painted planks, used on jungle rivers. Photorealistic, highly detailed, game-ready single object on its own, no ground plane, no background.",
+    "refine_id": "01a1caee-e274-7315-8cf8-e0970e773ead",
+    "textured": true
   },
   "scene_mangrove": {
     "bytes": 8314932,
@@ -653,9 +804,13 @@
     "textured": true
   },
   "scene_mossy_log": {
+    "bytes": 7705372,
+    "bytes_optimized": 406200,
+    "done": true,
     "preview_id": "01a1cae6-a916-7478-91c6-a15a434d34fb",
     "prompt": "A fallen tree log lying horizontally: rough brown bark, broken branch stubs, patches of green moss and small mushrooms, ringed cut ends. Photorealistic, highly detailed, game-ready single object on its own, no ground plane, no background.",
-    "refine_id": "01a1cae7-526e-76d1-874d-48eefea86162"
+    "refine_id": "01a1cae7-526e-76d1-874d-48eefea86162",
+    "textured": true
   },
   "scene_palm": {
     "bytes": 8563928,
@@ -675,6 +830,33 @@
     "refine_id": "01a1cae5-ffd3-75d8-9f71-5a205a1569ff",
     "textured": true
   },
+  "scene_ruin_temple": {
+    "bytes": 9378380,
+    "bytes_optimized": 725664,
+    "done": true,
+    "preview_id": "01a1cae7-d809-76c0-8a2b-087144ae69a2",
+    "prompt": "An ancient Maya stone pyramid temple ruin in the jungle: stepped grey limestone tiers, a small shrine on top with a doorway, carved blocks, moss and vines growing over the stones. Photorealistic, highly detailed, game-ready single object on its own, no ground plane, no background.",
+    "refine_id": "01a1cae8-d397-7344-bc85-ea7a9c5c7134",
+    "textured": true
+  },
+  "scene_safari_jeep": {
+    "bytes": 7778948,
+    "bytes_optimized": 687808,
+    "done": true,
+    "preview_id": "01a1caea-9dd5-7371-b13f-574ced50214f",
+    "prompt": "An open-top green safari jeep for rainforest tours: roll bar, spare tire on the back, muddy off-road tires. Photorealistic, highly detailed, game-ready single object on its own, no ground plane, no background.",
+    "refine_id": "01a1caec-4360-707d-b960-c36f1ea83ab8",
+    "textured": true
+  },
+  "scene_stela": {
+    "bytes": 8164064,
+    "bytes_optimized": 391580,
+    "done": true,
+    "preview_id": "01a1cae8-489f-72cf-afe3-fa370ac4cb4c",
+    "prompt": "A carved ancient Maya stone stela: a tall standing grey stone slab covered in relief carvings of glyphs and a figure, weathered with moss. Photorealistic, highly detailed, game-ready single object on its own, no ground plane, no background.",
+    "refine_id": "01a1cae8-f550-7422-b154-2e40c15c9fd3",
+    "textured": true
+  },
   "scene_strangler_fig": {
     "bytes": 8643284,
     "bytes_optimized": 682768,
@@ -685,9 +867,13 @@
     "textured": true
   },
   "scene_stump": {
+    "bytes": 8167052,
+    "bytes_optimized": 386156,
+    "done": true,
     "preview_id": "01a1cae6-ccfb-77de-b806-b564414d779d",
     "prompt": "An old rotting tree stump with orange shelf fungi, moss and small ferns growing from it. Photorealistic, highly detailed, game-ready single object on its own, no ground plane, no background.",
-    "refine_id": "01a1cae7-9efd-77f9-b420-cb1cea2fc8db"
+    "refine_id": "01a1cae7-9efd-77f9-b420-cb1cea2fc8db",
+    "textured": true
   },
   "scene_tree_fern": {
     "bytes": 6819184,
@@ -696,6 +882,24 @@
     "preview_id": "01a1cae0-6f51-7504-a400-bfae8639d0c2",
     "prompt": "A tree fern: a thin furry brown trunk about three meters tall topped with a wide crown of long lacy green fronds. Photorealistic, highly detailed, game-ready single object on its own, no ground plane, no background.",
     "refine_id": "01a1cae1-6b5d-7643-8e6d-67dbd3930545",
+    "textured": true
+  },
+  "scene_undergrowth": {
+    "bytes": 6302580,
+    "bytes_optimized": 497960,
+    "done": true,
+    "preview_id": "01a1caed-dfe7-740b-867e-2cdce1e82879",
+    "prompt": "A dense wall of tropical rainforest undergrowth about four meters wide and two meters tall: layered ferns, young palms, broad leaves, hanging vines and a few thin trunks, packed together like a living hedge. Photorealistic, highly detailed, game-ready single object on its own, no ground plane, no background.",
+    "refine_id": "01a1caef-57b2-71d1-9db6-c3854bb90c9a",
+    "textured": true
+  },
+  "scene_waterfall_cliff": {
+    "bytes": 7526180,
+    "bytes_optimized": 589528,
+    "done": true,
+    "preview_id": "01a1cae8-f446-757b-aed7-5e603eb775cd",
+    "prompt": "A tall jungle rock cliff for a waterfall: layered dark wet basalt rock face with a central notch where water would pour, ferns and moss on the ledges, a rocky pool rim at the bottom. Photorealistic, highly detailed, game-ready single object on its own, no ground plane, no background.",
+    "refine_id": "01a1cae9-f0b1-7332-8fa4-929b48037524",
     "textured": true
   }
 }

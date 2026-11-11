@@ -277,6 +277,20 @@
       "tier": 2,
       "target_polycount": 9000,
       "prompt": "An open-top green safari jeep for rainforest tours: roll bar, spare tire on the back, muddy off-road tires."
+    },
+    {
+      "id": "scene_undergrowth",
+      "group": "scenery",
+      "tier": 1,
+      "target_polycount": 7000,
+      "prompt": "A dense wall of tropical rainforest undergrowth about four meters wide and two meters tall: layered ferns, young palms, broad leaves, hanging vines and a few thin trunks, packed together like a living hedge."
+    },
+    {
+      "id": "scene_longboat",
+      "group": "scenery",
+      "tier": 2,
+      "target_polycount": 8000,
+      "prompt": "A long narrow wooden river longboat with an outboard motor at the back and a small curved palm-thatch canopy in the middle, painted planks, used on jungle rivers."
     }
   ]
 }
