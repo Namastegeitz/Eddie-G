@@ -343,6 +343,16 @@
   real music, GitHub Pages, Android/iOS builds, opt-in leaderboard, Spanish/Portuguese) and
   `prompts/codex/monkey-see-monkey-do-tasks.md` (10 small tasks).
 
+## Behemoth's Mountain Lion (`apps/behemoths-mountain-lion`)
+- Built from `prompts/claude/behemoths-mountain-lion.md` (8-step build order).
+- Step 1 done: Desktop workspace (`OG Bars/A-Z + #`, `Remixed`, `Stems`, `Library.db`),
+  SQLite index with FTS5 live search, A-Z filing (SHA-256 dedupe, verified read-only copies,
+  tag + file-name auto-tagging), Bar 1/Bar 2 with type/paste-path/drag-drop, library browser,
+  one-time rights notice. Bar 3, FUSE, Batch and Discoveries are laid out but not wired.
+- Tests: `python -m pytest` - 24 pass (core + headless UI). Run on Windows with `run.bat`.
+- Not yet run on a real Windows machine; screenshots are from a headless Linux render.
+- Next: step 2 - analysis (BPM/key/sections), Demucs stems, waveforms.
+
 ## NeuroForge (not in this repo)
 - Source on the Windows PC: `C:\Users\edwar\Desktop\AI and ALL\Aethertek\content poster\neuroforge`
 - Live web: https://neuroforged.surge.sh and https://neuroforge.surge.sh

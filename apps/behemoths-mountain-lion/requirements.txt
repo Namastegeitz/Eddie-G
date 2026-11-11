@@ -1,0 +1,12 @@
+# Step 1 - workspace, library index, A-Z filing, live search bars
+PySide6>=6.6
+mutagen>=1.47
+
+# Dev / tests
+pytest>=8
+
+# Added as later steps land (all free and local):
+#   step 2  librosa, essentia, madmom, demucs, soundfile, numpy
+#   step 3  pyrubberband (+ rubberband CLI), ffmpeg, pedalboard
+#   step 5  RVC / so-vits-svc, Coqui XTTS / Bark
+#   step 7  matchering

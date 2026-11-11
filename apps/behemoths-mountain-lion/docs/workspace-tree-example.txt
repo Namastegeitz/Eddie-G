@@ -1,0 +1,24 @@
+Behemoth's Mountain Lion/
+    Library.db
+    OG Bars/
+        #/
+            Sierra Vane - 99 Peaks.wav
+        A/
+            Cold Front - Afterglow Engine.wav
+        B/
+            Tall Grass Union - Born in the Mountains.wav
+        C/
+            Halcyon Drift - Copper Sun.wav
+        E/
+            Nightfall Choir - Echo Basin.wav
+        G/
+            Sierra Vane - Granite Hymn.wav
+        L/
+            The Talus Kids - Lionheart Parade.wav
+        R/
+            Iron Valley - Rebel Heart.wav
+            Tall Grass Union - Rise of the Behemoth.wav
+    Remixed/
+    Stems/
+
+(empty letter folders, created and ready: D F H I J K M N O P Q S T U V W X Y Z)

@@ -1,0 +1,12 @@
+[project]
+name = "behemoths-mountain-lion"
+version = "0.1.0"
+description = "Dual-song fusion (remix + remake) engine with a prompted vocal layer. Free and local."
+requires-python = ">=3.11"
+dependencies = ["PySide6>=6.6", "mutagen>=1.47"]
+
+[project.gui-scripts]
+behemoths-mountain-lion = "bml.ui.app:main"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
