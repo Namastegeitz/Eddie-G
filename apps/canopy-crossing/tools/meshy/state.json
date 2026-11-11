@@ -405,11 +405,32 @@
       "cost": 20,
       "step": "preview",
       "t": 1794405485
+    },
+    {
+      "asset": "scene_lily_pads",
+      "balance_before": 345,
+      "cost": 20,
+      "step": "preview",
+      "t": 1794405518
+    },
+    {
+      "asset": "scene_mossy_log",
+      "balance_before": 345,
+      "cost": 10,
+      "step": "refine",
+      "t": 1794405519
+    },
+    {
+      "asset": "scene_stump",
+      "balance_before": 315,
+      "cost": 10,
+      "step": "refine",
+      "t": 1794405539
     }
   ],
   "_spent": {
     "fauna": 480,
-    "scenery": 400
+    "scenery": 440
   },
   "animal_orangutan": {
     "bytes": 5481648,
@@ -600,6 +621,10 @@
     "refine_id": "01a1cae1-e699-71ad-b35e-1d0c3003649e",
     "textured": true
   },
+  "scene_lily_pads": {
+    "preview_id": "01a1cae7-4cc5-7566-8415-b5f437ffb72f",
+    "prompt": "A cluster of round green water lily pads floating flat with one open pink water lily flower. Photorealistic, highly detailed, game-ready single object on its own, no ground plane, no background."
+  },
   "scene_mangrove": {
     "bytes": 8314932,
     "bytes_optimized": 541192,
@@ -619,13 +644,18 @@
     "textured": true
   },
   "scene_mossy_boulder": {
+    "bytes": 7715492,
+    "bytes_optimized": 390744,
+    "done": true,
     "preview_id": "01a1cae4-88a7-7347-98ef-07bddceb210f",
     "prompt": "A large rounded granite boulder covered in thick bright green moss on top, grey lichen-spotted stone below. Photorealistic, highly detailed, game-ready single object on its own, no ground plane, no background.",
-    "refine_id": "01a1cae6-76c8-7742-8959-e5137e1879d5"
+    "refine_id": "01a1cae6-76c8-7742-8959-e5137e1879d5",
+    "textured": true
   },
   "scene_mossy_log": {
     "preview_id": "01a1cae6-a916-7478-91c6-a15a434d34fb",
-    "prompt": "A fallen tree log lying horizontally: rough brown bark, broken branch stubs, patches of green moss and small mushrooms, ringed cut ends. Photorealistic, highly detailed, game-ready single object on its own, no ground plane, no background."
+    "prompt": "A fallen tree log lying horizontally: rough brown bark, broken branch stubs, patches of green moss and small mushrooms, ringed cut ends. Photorealistic, highly detailed, game-ready single object on its own, no ground plane, no background.",
+    "refine_id": "01a1cae7-526e-76d1-874d-48eefea86162"
   },
   "scene_palm": {
     "bytes": 8563928,
@@ -656,7 +686,8 @@
   },
   "scene_stump": {
     "preview_id": "01a1cae6-ccfb-77de-b806-b564414d779d",
-    "prompt": "An old rotting tree stump with orange shelf fungi, moss and small ferns growing from it. Photorealistic, highly detailed, game-ready single object on its own, no ground plane, no background."
+    "prompt": "An old rotting tree stump with orange shelf fungi, moss and small ferns growing from it. Photorealistic, highly detailed, game-ready single object on its own, no ground plane, no background.",
+    "refine_id": "01a1cae7-9efd-77f9-b420-cb1cea2fc8db"
   },
   "scene_tree_fern": {
     "bytes": 6819184,
