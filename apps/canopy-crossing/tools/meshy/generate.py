@@ -51,6 +51,7 @@ THUMBS = HERE / "thumbnails"
 RAW = HERE / "raw"
 GLTF_TRANSFORM = "@gltf-transform/cli@4.5.1"
 TEXTURE_SIZE = {"fauna": 1024, "scenery": 512}
+SIMPLIFY = {"fauna": 0.6, "scenery": 0.5}   # share of triangles kept (phones draw many at once)
 
 API_BASE = os.environ.get("MESHY_API_BASE", "https://api.meshy.ai").rstrip("/")
 ENDPOINT = "/openapi/v2/text-to-3d"
@@ -165,13 +166,15 @@ class BudgetError(MeshyError):
 
 def optimize(aid: str, group: str) -> int:
     """Phone-friendly copy: textures resized (1024 px for animals, 512 for
-    scenery) and stored as WebP; meshes welded and pruned. Returns bytes."""
+    scenery) and stored as WebP; meshes welded, pruned and simplified
+    (SIMPLIFY). Returns bytes."""
     src = RAW / f"{aid}.glb"
     dest = MODELS / f"{aid}.glb"
     MODELS.mkdir(parents=True, exist_ok=True)
     size = TEXTURE_SIZE.get(group, 1024)
     cmd = ["npx", "-y", GLTF_TRANSFORM, "optimize", str(src), str(dest), "--compress", "false",
-           "--texture-compress", "webp", "--texture-size", str(size), "--simplify", "false",
+           "--texture-compress", "webp", "--texture-size", str(size), "--simplify", "true",
+           "--simplify-ratio", str(SIMPLIFY.get(group, 0.6)), "--simplify-error", "0.002",
            "--instance", "false", "--palette", "false", "--flatten", "false", "--join", "false"]
     r = subprocess.run(cmd, capture_output=True, text=True)
     if r.returncode != 0 or not dest.exists():

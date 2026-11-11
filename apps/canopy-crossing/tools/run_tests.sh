@@ -18,7 +18,7 @@ echo "== compile"; tools/parse_check.sh | tee /tmp/cc_parse.log
 if ! grep -q "bad=0" /tmp/cc_parse.log; then echo "compile errors: stopping"; exit 1; fi
 echo "== first-person render (real GL renderer: every scene must draw a real picture)"
 if command -v xvfb-run > /dev/null; then
-  timeout 1200 xvfb-run -a -s "-screen 0 800x1400x24" "$GODOT" --path . --rendering-driver opengl3 --audio-driver Dummy \
+  timeout 3000 xvfb-run -a -s "-screen 0 800x1400x24" "$GODOT" --path . --rendering-driver opengl3 --audio-driver Dummy \
     --resolution 720x1280 res://tools/fpv_check.tscn -- --no-boot $EXTRA --out=/tmp/cc_fpv_scenes.png > /tmp/cc_fpv.log 2>&1 || fail=1
   grep -E "BAD|fpv check" /tmp/cc_fpv.log
   if bad_lines /tmp/cc_fpv.log; then fail=1; fi

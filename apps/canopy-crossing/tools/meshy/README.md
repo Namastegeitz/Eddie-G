@@ -15,7 +15,7 @@ setting, so the game works the same with or without these files.
   1024 px for animals, 512 for scenery, WebP) goes to `assets/models/`.
 - `godot_textures.py`: after Godot imports the models, switches their
   textures to Basis Universal (small download, GPU-compressed on phones),
-  1024 px for colour maps and 512 for the rest.
+  1024 px for the starter animals' colour maps and 512 for everything else.
 - `content/models.json` says which hazard, prop, landmark and animal uses
   which model (see docs/CONTENT.md).
 

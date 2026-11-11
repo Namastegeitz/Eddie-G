@@ -1623,7 +1623,8 @@ func _models() -> void:
 		for f in dir.get_files():
 			if f.ends_with(".webp.import"):
 				var txt := FileAccess.get_file_as_string("res://assets/models/" + f)
-				if not txt.contains("compress/mode=4"):
+				# (an exported pack keeps only the remap header, not the settings)
+				if txt.contains("[params]") and not txt.contains("compress/mode=4"):
 					heavy.append(f)
 	check("model textures are Basis Universal (small download, compressed on the phone)", heavy.is_empty(), str(heavy.slice(0, 3)))
 	var keep := Draw.detail

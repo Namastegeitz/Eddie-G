@@ -24,9 +24,10 @@ for imp in sorted((ROOT / "assets" / "models").glob("*.webp.import")):
     text = imp.read_text()
     new = setting(text, "compress/mode", "4")                 # Basis Universal
     new = setting(new, "compress/rdo_quality_loss", "2.0")    # much smaller, barely visible
-    # the colour map keeps its detail; the roughness and normal maps (_1, _2
-    # in Meshy's order) and all scenery textures are fine at 512 px
-    small = not imp.name.split(".")[0].endswith("_0") or imp.name.startswith("scene_")
+    # only the starter animals' colour maps (shown big on the home screen)
+    # keep 1024 px; creatures and scenery (seen in the jungle, at a distance)
+    # and every roughness / normal map (_1, _2 in Meshy's order) use 512 px
+    small = not (imp.name.startswith("animal_") and imp.name.split(".")[0].endswith("_0"))
     new = setting(new, "process/size_limit", "512" if small else "0")
     if new != text:
         imp.write_text(new)
