@@ -46,6 +46,8 @@ const PEEK_TIME := 1.8
 const FLUSTER_TIME := 3.5
 ## How far a thrown ball can bounce and roll from the hand (for aiming fetch).
 const THROW_RUN := 26.0
+## A lob from the hand doesn't come down closer than this.
+const THROW_LAND := 6.0
 
 ## The activity under way (&"" when walking).
 var activity: StringName = &""
@@ -843,16 +845,19 @@ func _throw_ball() -> void:
 
 
 ## How far the floor stays open along where a thrown ball would roll, from
-## under the hand that throws it out to where a lob can bounce and roll to
+## where a lob first comes down (THROW_LAND out from under the hand; it
+## sails over anything low before that) to where it can bounce and roll to
 ## (THROW_RUN): open lawn with open sky above.
 func _clear_run(ground: Vector3, dir: Vector3) -> float:
 	var lvl := Level.current
 	if lvl == null or not is_instance_valid(lvl):
 		return THROW_RUN
 	var space := get_world_3d().direct_space_state
-	var d := 2.0
+	var d := THROW_LAND
 	while d <= THROW_RUN:
-		var at: Vector3 = ground + dir * d + Vector3.UP * 0.3
+		# is_open_floor tests a ball just above the point, so the point sits
+		# a little above the ground (at ground level it touches the floor).
+		var at: Vector3 = ground + dir * d + Vector3.UP * 0.6
 		if not lvl.is_open_floor(at):
 			return d - 2.0
 		# Open sky above too: a ball can land on top of a hollow flowerpot or
