@@ -10,6 +10,7 @@
   "ads_personalised": false,
   "show_fps": false,
   "mini_map": true,
+  "silly_faces": "fpv",
   "first_person": false,
   "fpv_view": "wide",
   "graphics": "auto"

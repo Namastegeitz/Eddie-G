@@ -64,6 +64,14 @@ var _ride_y := 0.0                # eye height from what you stand on (log top, 
 var _seg := 10                   # sphere / cylinder smoothness (quality)
 var scene := {}                  # the canopy scene we're in or about to enter
 var _flock: Node3D                # macaws crossing the open sky now and then
+var silly: SillyFaces             # an animal now and then pulls a silly face at you (null when off)
+var _sf_key := ""
+var _sf_face: Node3D
+var _sf_anchor: Node3D
+var _sf_pivot: Node3D             # what turns to look at you (the model, a giraffe's head, a critter)
+var _sf_base := 0.0
+var _sf_size := 0.3
+var _sf_limit := 1.5
 var _fog0 := Color.WHITE
 var _fog_d0 := 0.05
 
@@ -87,6 +95,8 @@ func setup(run: RunSim, animal_def: Dictionary) -> void:
 		_open_trees = Content.models.get("open_trees", []).slice(0, 2)
 	_open_plants = Content.models.get("open_plants", [])
 	_seg = 18 if Gfx.level() == "high" else (12 if Gfx.level() == "medium" else 8)
+	if SillyFaces.enabled(map, sim.mode, "fpv") and Gfx.level() != "low":
+		silly = SillyFaces.new()
 	if Gfx.level() != "low":
 		_grain = NoiseTexture2D.new()
 		_grain.width = 256
@@ -360,6 +370,111 @@ func update_view(dt: float) -> void:
 	_prune(_items, seen_items)
 	_update_swoops(lo, hi)
 	_update_flock(dp)
+	_update_silly(dt)
+
+
+## Silly faces: picks an animal a few rows ahead and in view now and then;
+## it turns towards you, a cartoon face pops onto its head for a moment,
+## then it turns back. Only the picture changes, never where it goes.
+func _update_silly(dt: float) -> void:
+	if silly == null:
+		return
+	var cands := []
+	var by := {}
+	var px := sim.display_pos().x
+	for k in _ents:
+		var n: Node3D = _ents[k]
+		if not n.has_meta("face") or not n.visible:
+			continue
+		var r := int(String(k).split(":")[0])
+		if r < sim.row + 1 or r > sim.row + 6 or absf(n.position.x - px) > 4.5:
+			continue
+		if not _in_view(n.global_position + Vector3(0, 0.4, 0)):
+			continue
+		cands.append(k)
+		by[k] = n
+	for r in range(sim.row, sim.row + 4):
+		if _lanes.has(r) and _lanes[r].has_meta("critters"):
+			var list: Array = _lanes[r].get_meta("critters")
+			for i in list.size():
+				var c := list[i] as Node3D
+				if c != null and is_instance_valid(c) and c.has_meta("face") and _in_view(c.global_position):
+					var ck := "c%d:%d" % [r, i]
+					cands.append(ck)
+					by[ck] = c
+	silly.step(dt, cands)
+	if silly.key != _sf_key:
+		_silly_end()
+		_sf_key = silly.key
+		if _sf_key != "" and by.has(_sf_key):
+			_silly_begin(by[_sf_key])
+	if _sf_face == null or not is_instance_valid(_sf_face) or _sf_pivot == null or not is_instance_valid(_sf_pivot):
+		return
+	var a := silly.amount(_sf_key)
+	var e := a * a * (3.0 - 2.0 * a)
+	# turn to look at you (as far as its neck allows)
+	var parent := _sf_pivot.get_parent() as Node3D
+	var d := parent.global_transform.affine_inverse() * cam.global_position - _sf_pivot.position
+	var want := clampf(wrapf(atan2(-d.z, d.x) - _sf_base, -PI, PI), -_sf_limit, _sf_limit)
+	_sf_pivot.rotation.y = _sf_base + want * e
+	# the face sits just in front of its head, facing you, big enough to
+	# read from a few rows away
+	var ap := _sf_anchor.global_position
+	var to_cam := (cam.global_position - ap).normalized()
+	var size := maxf(_sf_size, cam.global_position.distance_to(ap) * 0.075)
+	_sf_face.global_position = ap + to_cam * size * 0.3
+	if absf(to_cam.dot(Vector3.UP)) < 0.98:
+		_sf_face.look_at(cam.global_position, Vector3.UP)
+	Critters3D.silly_animate(_sf_face, silly.kind, a, t, size)
+
+
+func _in_view(p: Vector3) -> bool:
+	return not cam.is_position_behind(p) and cam.is_position_in_frustum(p)
+
+
+func _silly_begin(n: Node3D) -> void:
+	var anchor_pos := Vector3.ZERO
+	match String(n.get_meta("face")):
+		"model":
+			_sf_pivot = n.get_node_or_null("Model")
+			if _sf_pivot == null:
+				return
+			var ab := Models3D._bounds(_sf_pivot, Transform3D.IDENTITY)
+			var hd: Array = n.get_meta("head", [0.9, 0.78])
+			anchor_pos = Vector3(lerpf(ab.position.x, ab.end.x, float(hd[0])), lerpf(ab.position.y, ab.end.y, float(hd[1])), ab.get_center().z)
+			_sf_size = clampf(ab.size.y * 0.32, 0.16, 0.5)
+			_sf_limit = 1.5
+		"giraffe":
+			_sf_pivot = n.get_node_or_null("Giraffe/Neck/Head")
+			if _sf_pivot == null:
+				return
+			var gs := float(n.get_meta("gscale", 1.0))
+			anchor_pos = Vector3(0.17, 0.03, 0.0) * gs
+			_sf_size = 0.24 * gs
+			_sf_limit = 1.1
+		"critter":
+			_sf_pivot = n
+			anchor_pos = Vector3(0, float(n.get_meta("face_y", 0.14)), 0)
+			_sf_size = 0.13
+			_sf_limit = PI
+	_sf_base = _sf_pivot.rotation.y
+	_sf_anchor = Node3D.new()
+	_sf_anchor.name = "FaceAnchor"
+	_sf_anchor.position = anchor_pos
+	_sf_pivot.add_child(_sf_anchor)
+	_sf_face = Critters3D.silly_face(silly.kind)
+	_sf_anchor.add_child(_sf_face)
+	Critters3D.silly_animate(_sf_face, silly.kind, 0.0, t, _sf_size)
+
+
+func _silly_end() -> void:
+	if _sf_anchor != null and is_instance_valid(_sf_anchor):
+		_sf_anchor.queue_free()
+	if _sf_pivot != null and is_instance_valid(_sf_pivot):
+		_sf_pivot.rotation.y = _sf_base
+	_sf_anchor = null
+	_sf_face = null
+	_sf_pivot = null
 
 
 ## The macaws cross the sky ahead every 16 seconds or so, wings beating,
@@ -873,6 +988,9 @@ func _critters(l: Lane, n: Node3D) -> void:
 			_:
 				sph(0.04, cc, Vector3(0, 0.03, 0), c, Vector3(1.2, 0.7, 1.0))
 		c.set_meta("kind", kind)
+		if kind in ["frog", "crab", "bird", "lizard"]:
+			c.set_meta("face", "critter")
+			c.set_meta("face_y", 0.32 if kind == "bird" else 0.14)
 		c.set_meta("phase", float((l.deco + k) % 97) * 0.37)
 		c.set_meta("home", c.position)
 		made.append(c)
@@ -986,6 +1104,9 @@ func _build_ent(l: Lane, e: Ent) -> Node3D:
 			# the ant's wedge of cheese, held out in front
 			var ch := box(Vector3(0.16, 0.1, 0.16), hc(cl, "cheese", "#ffd23a"), Vector3(L * 0.52, 0.14, 0), n, Vector3(0, 45, 0))
 			ch.name = "Cheese"
+		if SillyFaces.is_animal(String(hz.get("art", {}).get("painter", ""))):
+			n.set_meta("face", "model")
+			n.set_meta("head", Content.models.get("faces", {}).get(String(md.model), [0.9, 0.78]))
 		if md.has("hop"):
 			n.set_meta("hop", float(md.hop))
 		else:
@@ -1000,6 +1121,8 @@ func _build_ent(l: Lane, e: Ent) -> Node3D:
 			gir.name = "Giraffe"
 			n.add_child(gir)
 			n.set_meta("giraffe", true)
+			n.set_meta("face", "giraffe")
+			n.set_meta("gscale", L * 2.3 / 3.0)
 		"kangaroo":
 			# the simple kangaroo (Low graphics): body, head, ears, big feet, tail
 			var kh := Node3D.new()

@@ -59,6 +59,8 @@ func _ready() -> void:
 				_models()
 			"roads":
 				await _trade_roads()
+			"silly":
+				await _silly_faces()
 		print("phase audit (%s): %d passed, %d failed" % [only, passed, failed])
 		Save.wipe()
 		Save.path = real_save
@@ -77,6 +79,7 @@ func _ready() -> void:
 	await _first_person()
 	_models()
 	await _trade_roads()
+	await _silly_faces()
 	_phase8()
 	Save.wipe()
 	Save.path = real_save
@@ -1808,6 +1811,119 @@ func _trade_roads() -> void:
 	check("the giraffe's swing misses the leaping kangaroo by a whisker, in slow motion", miss > 0.08 and miss < 0.6 and miss_speed < 0.3, "%.2f m at x%.2f" % [miss, miss_speed])
 	film.queue_free()
 	await get_tree().process_frame
+
+
+## Silly faces: now and then an animal looks right at you and pulls a
+## silly face, seen from your own animal's eyes (first person) by default,
+## in bird's-eye too if you choose, or off; never in the tutorial; only the
+## picture changes.
+func _silly_faces() -> void:
+	begin("Silly faces")
+	Save.wipe()
+	var amazon := Content.map("amazon")
+	check("silly faces are on by default, seen from your animal's own eyes (first person)", SillyFaces.choice() == "fpv" and SillyFaces.enabled(amazon, "journey", "fpv") and not SillyFaces.enabled(amazon, "journey", "bird"))
+	Save.set_setting("silly_faces", "both")
+	var both := SillyFaces.enabled(amazon, "journey", "fpv") and SillyFaces.enabled(amazon, "journey", "bird")
+	Save.set_setting("silly_faces", "off")
+	var off := not SillyFaces.enabled(amazon, "journey", "fpv") and not SillyFaces.enabled(amazon, "journey", "bird")
+	Save.set_setting("silly_faces", "fpv")
+	check("you choose: first person, both views (bird's-eye too) or off", both and off)
+	var on_maps := Content.playable_maps().filter(func(m): return SillyFaces.enabled(Content.map(m), "journey", "fpv"))
+	check("animals pull faces in the jungles, never in the tutorial", on_maps.size() == Content.playable_maps().size() and not SillyFaces.enabled(amazon, "tutorial", "fpv"), "%d jungles" % on_maps.size())
+	var sf := SillyFaces.new(5)
+	var picked := {}
+	var t := 0.0
+	var overlap := false
+	while t < 120.0:
+		sf.step(0.1, ["a", "b", "c"])
+		if sf.key != "":
+			picked[sf.key] = true
+		t += 0.1
+	check("one animal at a time, every few seconds, each one briefly", sf.count >= 10 and sf.count <= 30 and picked.size() == 3, "%d in 2 minutes" % sf.count)
+	sf.key = ""
+	sf.wait = 0.0
+	sf.step(0.1, [])
+	check("nobody pulls a face when no animal is in view", sf.key == "")
+	# in first person: a real run, a glance on an animal ahead
+	Save.data.seen_intro = Content.playable_maps()
+	Save.set_setting("first_person", true)
+	var main: Control = load("res://scenes/main.tscn").instantiate()
+	add_child(main)
+	await get_tree().process_frame
+	Game.start_run({"mode": "journey", "map": "daintree", "stage": 4, "seed": 5, "animal": "poison_dart_frog", "view": "fpv"})
+	await get_tree().process_frame
+	var gs = Game.current
+	gs.started = true
+	gs.blocking = false
+	var v3 = gs.wv3
+	check("first person has silly faces", v3.silly != null)
+	var started := false
+	var faced := false
+	var turned := false
+	var restored := true
+	var ent_before := {}
+	# stand on a bank just before a road with animals on it
+	var row := 0
+	for r in range(2, 60):
+		var has_animal := false
+		for e in gs.world.lane(r).ents:
+			if SillyFaces.is_animal(String(Content.hazard(e.hazard).get("art", {}).get("painter", ""))):
+				has_animal = true
+		if has_animal and gs.world.lane(r - 1).type == "safe":
+			row = r - 1
+			break
+	for i in 240:
+		gs.sim.row = row
+		gs.sim.max_row = row
+		gs.sim.x = 4.5
+		gs.sim.state = "play"
+		if v3.silly != null and v3.silly.key == "" and not started:
+			v3.silly.wait = 0.0
+		gs._update_views(1.0 / 30.0)
+		if v3._sf_face != null and is_instance_valid(v3._sf_face):
+			started = true
+			if v3.silly.amount(v3._sf_key) > 0.9:
+				faced = v3._sf_face.get_child_count() >= 9 and v3._sf_face.scale.x > 0.1
+				if absf(v3._sf_pivot.rotation.y - v3._sf_base) > 0.05 or v3._sf_limit < 0.0:
+					turned = true
+				ent_before["pivot"] = v3._sf_pivot
+				ent_before["base"] = v3._sf_base
+		elif started and ent_before.has("pivot"):
+			var pv: Node3D = ent_before["pivot"]
+			if is_instance_valid(pv) and absf(pv.rotation.y - float(ent_before["base"])) > 0.001:
+				restored = false
+			break
+	check("an animal ahead turns to look at you and a silly face pops on its head", started and faced and turned, "started %s face %s turned %s" % [started, faced, turned])
+	check("then it turns back to normal (nothing left over)", restored and v3._sf_face == null)
+	# bird's-eye, when chosen
+	Save.set_setting("silly_faces", "both")
+	Save.set_setting("first_person", false)
+	Game.start_run({"mode": "journey", "map": "daintree", "stage": 4, "seed": 5, "animal": "poison_dart_frog", "view": "bird"})
+	await get_tree().process_frame
+	gs = Game.current
+	gs.started = true
+	gs.blocking = false
+	var drew := false
+	for i in 240:
+		gs.sim.row = row
+		gs.sim.max_row = row
+		gs.sim.x = 4.5
+		gs.sim.state = "play"
+		if gs.wv.silly != null and gs.wv.silly.key == "":
+			gs.wv.silly.wait = 0.0
+		gs._update_views(1.0 / 30.0)
+		if gs.wv.silly != null and gs.wv.silly.key != "" and gs.wv._ents.has(gs.wv.silly.key):
+			drew = true
+			break
+	check("bird's-eye silly faces when you choose Both views", gs.wv.silly != null and drew, "row %d silly %s" % [row, gs.wv.silly != null])
+	Save.set_setting("silly_faces", "fpv")
+	Game.goto("home")
+	await get_tree().process_frame
+	var mv := Game.current.find_children("*", "ModelView", true, false)
+	check("your animal on the home screen does it too", not mv.is_empty() and (mv[0] as ModelView)._silly != null)
+	main.queue_free()
+	await get_tree().process_frame
+	Save.wipe()
 
 
 ## The difficulty curve: the first two jungles are Easy, 3-5 Medium, 6-10

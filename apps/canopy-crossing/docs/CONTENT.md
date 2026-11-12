@@ -177,6 +177,11 @@ made with `tools/meshy/`). A missing model just leaves the built shape.
 - `open_trees`, `open_plants`: what grows beside the open rows (a jungle uses
   the trees its own scenes have).
 - `animals`: animal id → model shown on the home and animal screens.
+- `faces`: where a model's head is, for the silly-face glances: `[share of
+  the way to its nose, share of its height]` (default `[0.9, 0.78]`).
+
+A jungle file can set `"silly_faces": false` to keep its animals serious
+(they pull faces in every jungle by default, never in the tutorial).
 
 ## Difficulty: `content/difficulty.json`
 

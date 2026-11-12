@@ -7,7 +7,13 @@ extends SubViewportContainer
 
 var _pivot: Node3D
 var _model: Node3D
+var _cam: Camera3D
 var _t := 0.0
+# now and then it looks right at you and pulls a silly face (Settings > Silly faces)
+var _silly: SillyFaces
+var _face: Node3D
+var _anchor: Node3D
+var _face_size := 0.25
 
 
 static func has_for(animal_id: String) -> bool:
@@ -63,6 +69,17 @@ func _build(animal_id: String, px: Vector2) -> void:
 	cam.look_at_from_position(cam.position, Vector3(0, h * 0.42, 0))
 	vp.add_child(cam)
 	cam.current = true
+	_cam = cam
+	if SillyFaces.choice() != "off":
+		_silly = SillyFaces.new()
+		_silly.wait = _silly.rng.randf_range(3.0, 6.0)
+		# its head: towards the front (+Z here) and near the top
+		var ab := Models3D._bounds(_model, Transform3D.IDENTITY)
+		var hd: Array = Content.models.get("faces", {}).get(id, [0.9, 0.78])
+		_anchor = Node3D.new()
+		_anchor.position = Vector3(ab.get_center().x, lerpf(ab.position.y, ab.end.y, float(hd[1])), lerpf(ab.position.z, ab.end.z, float(hd[0])))
+		_model.add_child(_anchor)
+		_face_size = clampf(ab.size.y * 0.34, 0.12, 0.42)
 
 
 func _process(dt: float) -> void:
@@ -70,6 +87,22 @@ func _process(dt: float) -> void:
 		return
 	_t += dt
 	_pivot.rotation.y = sin(_t * 0.35) * 0.9 + 0.35
+	if _silly != null:
+		_silly.step(dt, ["me"])
+		var a := _silly.amount("me")
+		if a > 0.0:
+			# turn to face you, then the face pops on
+			_pivot.rotation.y = lerpf(_pivot.rotation.y, 0.0, a * a * (3.0 - 2.0 * a))
+			if _face == null:
+				_face = Critters3D.silly_face(_silly.kind)
+				_anchor.add_child(_face)
+			var to_cam := (_cam.global_position - _anchor.global_position).normalized()
+			_face.global_position = _anchor.global_position + to_cam * _face_size * 0.3
+			_face.look_at(_cam.global_position, Vector3.UP)
+			Critters3D.silly_animate(_face, _silly.kind, a, _t, _face_size)
+		elif _face != null:
+			_face.queue_free()
+			_face = null
 	var breathe := 1.0 + sin(_t * 2.4) * 0.012
 	_model.scale = Vector3(1.0, breathe, 1.0)
 	var hop := fposmod(_t, 4.5)

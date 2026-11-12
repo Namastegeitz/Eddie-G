@@ -13,6 +13,7 @@ var animal: Dictionary = {}
 var look_override: Dictionary = {}
 var trail: Dictionary = {}
 var colorblind := false
+var silly: SillyFaces           # Settings > Silly faces > Both views (null otherwise)
 var reveal := 0.0
 var field_x := 0.0
 var cam_row := -0.5
@@ -41,6 +42,8 @@ func setup(run: RunSim, animal_def: Dictionary, look: Dictionary, trail_def: Dic
 	look_override = look
 	trail = trail_def
 	colorblind = bool(Save.setting("colorblind", false))
+	if SillyFaces.enabled(map, run.mode, "bird"):
+		silly = SillyFaces.new()
 	reveal = run.reveal_amount()
 	ground = Node2D.new()
 	ground.name = "Ground"
@@ -145,6 +148,7 @@ func _sync_things(dt: float) -> void:
 			if ev == null:
 				ev = EntView.new()
 				ev.setup(self, l, l.ents[i])
+				ev.key = key
 				objects.add_child(ev)
 				_ents[key] = ev
 			ev.update_view(dt)
@@ -178,6 +182,18 @@ func _sync_things(dt: float) -> void:
 		if not seen.has(k):
 			_ents[k].queue_free()
 			_ents.erase(k)
+	if silly != null:
+		# an animal a few rows ahead, on screen, now and then pulls a silly face
+		var cands := []
+		for k in _ents:
+			var ev: EntView = _ents[k]
+			if not ev.face:
+				continue
+			var row := ev.lane.row
+			var ex := w.ent_x(ev.lane, ev.e, sim.vt) + ev.e.length * 0.5
+			if row >= sim.row + 1 and row <= sim.row + 7 and ex > -0.3 and ex < Lane.COLS + 0.3 and ev.e.active(sim.vt):
+				cands.append(k)
+		silly.step(dt, cands)
 	for k in _preds.keys():
 		if not seen.has(k):
 			_preds[k].queue_free()
@@ -374,6 +390,8 @@ class EntView extends Node2D:
 	var hz: Dictionary
 	var anim := false
 	var last_dive := ""
+	var key := ""
+	var face := false            # an animal that can pull a silly face
 
 	func setup(world_view: WorldView, l: Lane, ent: Ent) -> void:
 		wv = world_view
@@ -381,6 +399,7 @@ class EntView extends Node2D:
 		e = ent
 		hz = Content.hazard(e.hazard)
 		anim = HazardPainter.animated(String(hz.get("art", {}).get("painter", "")))
+		face = SillyFaces.is_animal(String(hz.get("art", {}).get("painter", "")))
 
 	func update_view(_dt: float) -> void:
 		var t := wv.sim.vt
@@ -414,6 +433,9 @@ class EntView extends Node2D:
 			dir = 1 if e.velocity(0.0, wv.sim.vt) >= 0.0 else -1
 		HazardPainter.draw_entity(self, hz, e.length * WorldView.T, WorldView.T,
 			{"dir": dir, "t": wv.sim.vt, "speed": lane.speed, "colorblind": wv.colorblind})
+		if face and wv.silly != null and wv.silly.key == key:
+			var hp := HazardPainter.head_pos(String(hz.get("art", {}).get("painter", "")), e.length * WorldView.T, WorldView.T, dir, wv.sim.vt)
+			HazardPainter.draw_silly(self, Vector2(hp.x, hp.y), hp.z, wv.silly.kind, wv.silly.amount(key), wv.sim.vt)
 		if e.platform and e.dive_period > 0.0 and last_dive == "warn":
 			for i in 3:
 				Draw.ellipse_line(self, Vector2(e.length * WorldView.T * (0.25 + i * 0.25), 0), 6 + i * 2, 4 + i, Color(1, 1, 1, 0.6), 2)

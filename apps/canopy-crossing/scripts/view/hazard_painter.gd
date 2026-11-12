@@ -1068,3 +1068,78 @@ static func draw_item(ci: CanvasItem, def: Dictionary, T: float, t: float, ghost
 			Draw.ellipse(ci, p, T * 0.17, T * 0.14, Color(c(cl, "body"), a))
 			_spot_row(ci, p, T * 0.12, T * 0.08, Color(c(cl, "shine"), 0.6 * a))
 			Draw.star(ci, p + Vector2(T * 0.16, -T * 0.16), T * 0.07, Color(1, 0.95, 0.6, a), 4, 0.35)
+
+
+# ------------------------------------------------------------------ silly faces
+
+## Where an animal's head is in the bird's-eye drawing (entity origin at its
+## left edge, lane centre at y = 0): x, y and the head's radius.
+static func head_pos(painter: String, L: float, T: float, dir: int, t: float) -> Vector3:
+	match painter:
+		"herd":
+			return Vector3(L * 0.5 + dir * L * 0.42, 0, T * 0.15)
+		"runner":
+			var cx := L * 0.45 if dir > 0 else L * 0.55
+			return Vector3(cx + dir * L * 0.32 + dir * T * 0.34, 0, T * 0.11)
+		"elephant":
+			var cx2 := L * 0.45 if dir > 0 else L * 0.55
+			return Vector3(cx2 + dir * L * 0.36, 0, T * 0.22)
+		"kangaroo":
+			var lift := sin(fposmod(t * 2.1 + L * 0.37, 1.0) * PI)
+			return Vector3(L * 0.5 + dir * L * 0.3, -lift * T * 0.16, T * 0.12)
+		"giraffe":
+			var cx3 := L * 0.42 if dir > 0 else L * 0.58
+			var swing := sin(t * 1.4 + L) * 0.55
+			var hd := Vector2(dir * cos(swing), sin(swing))
+			var tip := Vector2(cx3 + dir * L * 0.18, 0) + hd * L * 0.42 + hd * T * 0.08
+			return Vector3(tip.x, tip.y, T * 0.12)
+		"lizard":
+			return Vector3(L * 0.5 + dir * L * 0.3, 0, T * 0.1)
+		"crab":
+			return Vector3(L * 0.5, 0, T * 0.14)
+	return Vector3(L * 0.5 + dir * L * 0.38, 0, T * 0.13)
+
+
+## A cartoon silly face looking up at you, over an animal's head: big
+## googly eyes, rosy cheeks, a tongue. `a` 0..1 how far in (it pops).
+static func draw_silly(ci: CanvasItem, at: Vector2, r: float, kind: String, a: float, t: float) -> void:
+	if a <= 0.0:
+		return
+	var s := r * 1.5 * SillyFaces.pop(a)
+	var ink := Color("1a1010")
+	var cheek := Color(1.0, 0.55, 0.65, 0.9)
+	var puff := kind == "puff"
+	# cheeks first (behind the eyes)
+	for side in [-1.0, 1.0]:
+		var cr := s * (0.42 * (1.5 + 0.12 * sin(t * 9.0)) if puff else 0.3)
+		Draw.ellipse(ci, at + Vector2(side * s * 0.82, s * 0.38), cr, cr, cheek)
+	for side in [-1.0, 1.0]:
+		var c := at + Vector2(side * s * 0.5, -s * 0.2)
+		if kind == "wink" and side < 0.0:
+			Draw.arc(ci, c + Vector2(0, s * 0.05), s * 0.32, PI * 0.15, PI * 0.85, 8, ink, maxf(2.0, s * 0.12))
+			continue
+		Draw.ellipse(ci, c, s * 0.42, s * 0.46, Color("fbfaf2"))
+		Draw.ellipse_line(ci, c, s * 0.42, s * 0.46, ink, maxf(1.5, s * 0.07))
+		var po := Vector2.ZERO
+		match kind:
+			"crossed":
+				po = Vector2(-side * s * 0.18, s * 0.06)
+			"puff":
+				po = Vector2(0, -s * 0.2)
+			"googly":
+				po = Vector2(cos(t * 13.0 + side), sin(t * 13.0 + side)) * s * 0.2
+		Draw.ellipse(ci, c + po, s * 0.19, s * 0.2, ink)
+		Draw.ellipse(ci, c + po + Vector2(-s * 0.06, -s * 0.07), s * 0.06, s * 0.06, Color(1, 1, 1, 0.9))
+	# brows
+	for side in [-1.0, 1.0]:
+		var by := -s * 0.78 - (s * 0.12 if kind == "wink" and side > 0.0 else 0.0) - (absf(sin(t * 16.0)) * s * 0.08 if kind == "googly" else 0.0)
+		Draw.line(ci, at + Vector2(side * s * 0.25, by + side * s * 0.04), at + Vector2(side * s * 0.72, by - s * 0.06), ink, maxf(2.0, s * 0.12), true)
+	if puff:
+		Draw.ellipse(ci, at + Vector2(0, s * 0.45), s * 0.12, s * 0.12, ink)
+		return
+	# the tongue, wagging
+	var wag := sin(t * 16.0) * s * 0.12 + (s * 0.18 if kind == "wink" else 0.0)
+	var tp := at + Vector2(wag, s * 0.62)
+	Draw.ellipse(ci, tp, s * 0.2, s * 0.3, Color("ff5f86"))
+	Draw.line(ci, tp + Vector2(0, -s * 0.18), tp + Vector2(0, s * 0.12), Color("d23a62"), maxf(1.5, s * 0.05), true)
+	Draw.arc(ci, at + Vector2(0, s * 0.42), s * 0.36, PI * 0.1, PI * 0.9, 10, ink, maxf(1.5, s * 0.08))

@@ -106,6 +106,14 @@ time, in ten real rainforests. Built from
   fruit at roadside market stalls (High graphics). The giraffe, bee, macaws and
   hibiscus are built in the game with moving joints (`scripts/view/critters_3d.gd`);
   the kangaroo is a Meshy model with a fur coat.
+- **Silly faces:** now and then an animal near you turns, looks right at
+  you and pulls a silly face for a moment (crossed googly eyes and a tongue
+  out, puffed-up cheeks, a wink, spinning eyes), then goes back to normal.
+  Seen through your animal's own eyes in first person by default; Settings >
+  Silly faces can add bird's-eye (a face pops over the animal, looking up at
+  you) or turn it off. Your animal does it on the home screen too. One at a
+  time, a few seconds apart, in every jungle (never the tutorial); only the
+  picture changes, never where anything goes.
 - **Film: "The Bee and the Giraffe"** (home screen > Watch): a half-minute
   short on a trade road. Macaws fly over a honeybee working a hibiscus; the
   camera zooms into the bee as time slows 12x; it rides along as the bee
@@ -172,7 +180,7 @@ tools/run_tests.sh          # compile check + phase audit (project and exported 
 FAST=1 tools/run_tests.sh   # levels 1 and 10 of each scene instead of all 220
 ```
 
-The phase audit (`tests/phase_audit.gd`, 393 checks) turns each phase's
+The phase audit (`tests/phase_audit.gd`, 403 checks) turns each phase's
 checkpoint from the brief into checks: grid hops, every hazard kind, every
 ability, all 50 animals, every region generating 200 rows, a path-finding bot
 beating **all 220 levels with the free Poison Dart Frog**, adding a map

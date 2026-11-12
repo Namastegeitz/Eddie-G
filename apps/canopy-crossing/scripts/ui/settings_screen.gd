@@ -28,6 +28,7 @@ func _ready() -> void:
 	box.add_child(_toggle("Reduce motion", "reduce_motion", "No screen shake."))
 	box.add_child(_toggle("Per-move timer on harder maps", "move_timer", "Some regions (like Bwindi) time each forward move."))
 	box.add_child(_toggle("Personalised ads", "ads_personalised", "Off by default. Only affects optional ads."))
+	box.add_child(_silly_faces())
 	box.add_child(_toggle("Mini-map", "mini_map", "A live map of the rows around you, and where you are in the level. Tap it to resize."))
 	box.add_child(_toggle("Show FPS counter", "show_fps", "For checking smoothness on your device."))
 	box.add_child(UI.label("Controls", 30, UI.ACCENT, true))
@@ -168,6 +169,39 @@ func _quality() -> Control:
 	v.add_child(row)
 	v.add_child(hint)
 	show.call(Gfx.choice())
+	return v
+
+
+## Silly faces: seen from your own animal's eyes (first person), in both
+## views, or off.
+func _silly_faces() -> Control:
+	var v := UI.vbox(6)
+	v.add_child(UI.label("Silly faces", 28))
+	var row := UI.hbox(8)
+	var group := ButtonGroup.new()
+	var hint := UI.label("", 20, UI.MUTED)
+	hint.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	var hints := {"fpv": "Now and then an animal looks right at you through your animal's own eyes (first person) and pulls a silly face. Just for fun: it never changes where they go.",
+		"both": "Silly faces in first person, and in bird's-eye too (a face pops over the animal, looking up at you).",
+		"off": "No silly faces."}
+	var names := {"fpv": "First person", "both": "Both views", "off": "Off"}
+	for st in ["fpv", "both", "off"]:
+		var b := Button.new()
+		b.text = String(names[st])
+		b.toggle_mode = true
+		b.button_group = group
+		b.button_pressed = st == SillyFaces.choice()
+		b.custom_minimum_size = Vector2(0, 64)
+		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		b.add_theme_font_size_override("font_size", 24)
+		b.toggled.connect(func(on):
+			if on:
+				Save.set_setting("silly_faces", st)
+				hint.text = String(hints[st]))
+		row.add_child(b)
+	v.add_child(row)
+	hint.text = String(hints[SillyFaces.choice()])
+	v.add_child(hint)
 	return v
 
 

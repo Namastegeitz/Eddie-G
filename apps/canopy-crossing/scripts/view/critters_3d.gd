@@ -410,3 +410,103 @@ static func _petal(k: Scenery3D.Kit, xf: Transform3D, length: float, width: floa
 		for j in nw:
 			var a := base + i * (nw + 1) + j
 			k.quad(a, a + nw + 1, a + nw + 2, a + 1)
+
+
+# ------------------------------------------------------------------ silly faces
+
+static var _face_mats := {}
+
+
+static func _face_mat(c: Color) -> StandardMaterial3D:
+	var k := c.to_html()
+	if not _face_mats.has(k):
+		var m := StandardMaterial3D.new()
+		m.albedo_color = c
+		m.roughness = 0.3
+		# a little glow so it reads in the shade under the canopy
+		m.emission_enabled = true
+		m.emission = c
+		m.emission_energy_multiplier = 0.25
+		_face_mats[k] = m
+	return _face_mats[k]
+
+
+static func _face_part(mesh: Mesh, c: Color, pos: Vector3, parent: Node3D, name: String) -> MeshInstance3D:
+	var mi := MeshInstance3D.new()
+	mi.mesh = mesh
+	mi.material_override = _face_mat(c)
+	mi.position = pos
+	mi.name = name
+	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	parent.add_child(mi)
+	return mi
+
+
+## A cartoon silly face, one unit across, looking along -Z (point it at the
+## camera with look_at): big googly eyes with pupils, brows, rosy cheeks and
+## a tongue. silly_animate() poses it for each kind of face.
+static func silly_face(kind: String) -> Node3D:
+	var f := Node3D.new()
+	f.name = "SillyFace"
+	f.set_meta("kind", kind)
+	var eye := SphereMesh.new()
+	eye.radius = 0.24
+	eye.height = 0.48
+	var pupil := SphereMesh.new()
+	pupil.radius = 0.1
+	pupil.height = 0.2
+	var cheek := SphereMesh.new()
+	cheek.radius = 0.15
+	cheek.height = 0.3
+	var brow := BoxMesh.new()
+	brow.size = Vector3(0.26, 0.055, 0.06)
+	var tongue := CapsuleMesh.new()
+	tongue.radius = 0.1
+	tongue.height = 0.46
+	for side in [-1.0, 1.0]:
+		var n := "L" if side < 0.0 else "R"
+		_face_part(eye, Color("fbfaf2"), Vector3(side * 0.25, 0.12, -0.04), f, "Eye" + n)
+		_face_part(pupil, Color("141010"), Vector3(side * 0.25, 0.12, -0.26), f, "Pupil" + n)
+		_face_part(cheek, Color("ff96aa"), Vector3(side * 0.38, -0.16, -0.06), f, "Cheek" + n)
+		_face_part(brow, Color("3a2414"), Vector3(side * 0.25, 0.43, -0.12), f, "Brow" + n)
+	var tg := _face_part(tongue, Color("ff5f86"), Vector3(0, -0.3, -0.22), f, "Tongue")
+	tg.rotation.x = -0.6
+	return f
+
+
+## Poses a silly face: `a` how far in (0..1), `t` time (wiggles), `size` metres across.
+static func silly_animate(f: Node3D, kind: String, a: float, t: float, size: float) -> void:
+	f.scale = Vector3.ONE * maxf(0.001, SillyFaces.pop(a) * size)
+	var pl: Node3D = f.get_node("PupilL")
+	var pr: Node3D = f.get_node("PupilR")
+	var tongue: Node3D = f.get_node("Tongue")
+	var show_tongue := 1.0
+	var cheeks := 0.7
+	match kind:
+		"crossed":
+			# both pupils roll in towards the nose
+			pl.position = Vector3(-0.12, 0.1, -0.26)
+			pr.position = Vector3(0.12, 0.1, -0.26)
+		"puff":
+			# cheeks blown up like balloons, eyes up, no tongue
+			pl.position = Vector3(-0.25, 0.24, -0.24)
+			pr.position = Vector3(0.25, 0.24, -0.24)
+			cheeks = 1.55 + 0.15 * sin(t * 9.0)
+			show_tongue = 0.0
+		"wink":
+			# one eye squeezed shut, the other brow up, tongue out of the side
+			(f.get_node("EyeL") as Node3D).scale = Vector3(1.0, 0.16, 1.0)
+			pl.visible = false
+			(f.get_node("BrowR") as Node3D).position = Vector3(0.25, 0.52, -0.12)
+			(f.get_node("BrowR") as Node3D).rotation.z = -0.35
+			tongue.position = Vector3(0.14, -0.3, -0.22)
+		"googly":
+			# pupils spin round and round, brows bounce
+			pl.position = Vector3(-0.25 + cos(t * 13.0) * 0.1, 0.12 + sin(t * 13.0) * 0.1, -0.26)
+			pr.position = Vector3(0.25 + cos(t * 13.0 + 2.0) * 0.1, 0.12 + sin(t * 13.0 + 2.0) * 0.1, -0.26)
+			for b in ["BrowL", "BrowR"]:
+				(f.get_node(b) as Node3D).position.y = 0.45 + absf(sin(t * 16.0)) * 0.06
+	for c in ["CheekL", "CheekR"]:
+		(f.get_node(c) as Node3D).scale = Vector3.ONE * cheeks
+	tongue.scale = Vector3.ONE * show_tongue
+	tongue.rotation.z = sin(t * 16.0) * 0.35
