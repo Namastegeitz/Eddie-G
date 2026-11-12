@@ -42,7 +42,7 @@
   --text: #000000;
   --muted: #2f3a45;
   --border: #4a5560;
-  --accent: #b34700;          /* dark orange, white text = high contrast */
+  --accent: #9a3c00;          /* dark orange, white text ≥ 5:1 contrast (WCAG AA even when blended) */
   --accent-text: #ffffff;
   --link: #0040a8;
   --focus: #0050d0;
@@ -63,10 +63,10 @@
   --bg: #000000;
   --surface: #120000;
   --surface-2: #1f0303;
-  --text: #ff4a3d;
-  --muted: #c4352b;
+  --text: #ff6a5c;
+  --muted: #e8463a;          /* ≥ 4.5:1 on the red-black surfaces */
   --border: #5c140f;
-  --accent: #d1281c;
+  --accent: #e8392b;         /* black text on it ≥ 5:1 */
   --accent-text: #000000;
   --link: #ff6a5c;
   --focus: #ff7a6b;
@@ -90,11 +90,18 @@
 /* ---------- base ---------- */
 *, *::before, *::after { box-sizing: border-box; }
 html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+/* Text size setting (hub → Display): scales every rem-based size in the app */
+:root[data-textsize="large"] { font-size: 112.5%; }
+:root[data-textsize="xl"] { font-size: 125%; }
+/* the map is a dense tool screen: cap it at "large" so its controls stay usable on small phones */
+:root[data-textsize="xl"]:has(body.map-page) { font-size: 112.5%; }
+/* no double-tap-zoom delay on controls; pages themselves can still be pinch-zoomed */
+a, button, .btn, .fab, .hdr-btn, input, select, label, summary { touch-action: manipulation; }
 body {
   margin: 0;
   background: var(--bg);
   color: var(--text);
-  font: 18px/1.55 system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font: 1.125rem/1.55 system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;   /* 18px at normal size */
   min-height: 100vh;
 }
 h1, h2, h3, h4 { line-height: 1.25; margin: 1.2em 0 .5em; }
@@ -166,8 +173,8 @@ img, svg { max-width: 100%; }
   padding: 4px 16px 12px; margin: 16px 0;
 }
 .card > h2:first-child, .card > h3:first-child { margin-top: .7em; }
-.grid-2 { display: grid; grid-template-columns: 1fr; gap: 12px; }
-@media (min-width: 720px) { .grid-2 { grid-template-columns: 1fr 1fr; } }
+.grid-2 { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; }
+@media (min-width: 720px) { .grid-2 { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } }
 .row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
 
 /* table of contents: big tappable chips */
@@ -207,7 +214,10 @@ input[type="date"], input[type="time"], input[type="datetime-local"], select, te
 textarea { min-height: 96px; resize: vertical; }
 input[type="checkbox"], input[type="radio"] { width: 26px; height: 26px; accent-color: var(--accent); vertical-align: middle; }
 input[type="range"] { width: 100%; min-height: 48px; accent-color: var(--accent); }
-.field { margin: 10px 0 14px; }
+.field { margin: 10px 0 14px; min-width: 0; }
+/* date/time pickers have a wide built-in minimum width: let them shrink on narrow phones and big text */
+input, select, textarea { max-width: 100%; min-width: 0; }
+input[type="datetime-local"], input[type="date"], input[type="time"] { font-size: max(1rem, 16px); padding-left: 8px; padding-right: 4px; }
 .field > label { display: block; margin-bottom: 6px; }
 .check { display: flex; align-items: center; gap: 12px; min-height: 48px; font-weight: 500; cursor: pointer; }
 

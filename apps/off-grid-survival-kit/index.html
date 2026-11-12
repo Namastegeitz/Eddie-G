@@ -4,11 +4,21 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#000000">
-<meta name="description" content="Off-Grid Survival Kit: an offline field app with a GPS map that works with no signal, plus survival guides for water, food, fire, shelter, first aid and power.">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Survival Kit">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Off-Grid Survival Kit">
+<meta property="og:title" content="Off-Grid Survival Kit — offline map, compass &amp; survival guides">
+<meta property="og:description" content="Free app that works with no signal: GPS map with saved maps, 3D terrain, live satellite &amp; radar, compass, backtrack, trip plan, first aid, water, fire &amp; shelter guides. Works on iPhone, Android and tablets.">
+<meta property="og:url" content="https://namastegeitz.github.io/Eddie-G/">
+<meta property="og:image" content="https://namastegeitz.github.io/Eddie-G/assets/icons/og-card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Off-Grid Survival Kit: offline map, compass and survival guides">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="description" content="Off-Grid Survival Kit: an offline field app with a GPS map that works with no signal, plus survival guides for water, food, fire, shelter, first aid and power.">
 <title>Off-Grid Survival Kit</title>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="assets/icons/icon.svg" type="image/svg+xml">
@@ -119,21 +129,37 @@
     <p id="install-state" class="muted">Checking…</p>
     <div class="row"><button class="btn primary" type="button" id="install-btn" hidden>Install app</button></div>
     <details class="item" style="margin-top:10px">
-      <summary>How to install on a phone</summary>
+      <summary>How to install — iPhone, iPad, Android phone or tablet</summary>
       <div class="body">
-        <p><strong>Android (Chrome):</strong> tap <em>Install app</em> above, or the ⋮ menu → <em>Install app / Add to Home screen</em>.</p>
-        <p><strong>iPhone / iPad (Safari):</strong> tap the Share button → <em>Add to Home Screen</em>. Open it once from the home screen while online so it saves itself.</p>
-        <p><strong>GPS needs a secure address:</strong> open the app from an <code>https://</code> address or <code>http://localhost</code>. Opening the HTML file directly (<code>file://</code>) blocks GPS and offline install.</p>
+        <ol class="steps">
+          <li><strong>iPhone:</strong> open this page in <strong>Safari</strong> → tap the <strong>Share</strong> button (square with an arrow, bottom of the screen) → <em>Add to Home Screen</em> → <em>Add</em>.</li>
+          <li><strong>iPad:</strong> in <strong>Safari</strong>, the <strong>Share</strong> button is at the <strong>top right</strong> → <em>Add to Home Screen</em> → <em>Add</em>.</li>
+          <li><strong>Android phone or tablet:</strong> in <strong>Chrome</strong>, tap <em>Install app</em> above, or the <strong>⋮</strong> menu → <em>Install app</em> (or <em>Add to Home screen</em>). Samsung Internet: menu → <em>Add page to</em> → <em>Home screen</em>.</li>
+          <li><strong>Open it once from the new icon while you have signal</strong> and wait for the green <em>Offline-ready ✓</em> chip. From then on it works with no signal.</li>
+          <li>Allow <strong>Location</strong> when asked (and on iPhone/iPad, <strong>Motion &amp; Orientation</strong> for the compass).</li>
+        </ol>
+        <p class="muted">Works in any up-to-date browser on phones, tablets and computers. The address must be <code>https://</code> (the shared link is) for GPS and offline use.</p>
       </div>
     </details>
   </section>
 
   <section class="card" id="share-app">
-    <h2>Open on another phone</h2>
-    <p>Scan this with the other phone's camera to open the app there, then install it on that phone too. (Needs signal on that phone the first time.)</p>
+    <h2>Share this app</h2>
+    <p>Send this link to family and friends — it opens on any iPhone, iPad, Android phone or tablet, with nothing to download from an app store. Or let them scan the code with their camera. They need signal the first time; after installing, it works offline.</p>
     <div class="qr-box" id="app-qr" aria-hidden="true"></div>
     <p class="mono" id="app-url" style="word-break:break-all"></p>
-    <div class="row no-print"><button class="btn" type="button" id="app-url-copy">Copy link</button><button class="btn" type="button" id="app-url-share" hidden>Share link…</button></div>
+    <div class="row no-print"><button class="btn" type="button" id="app-url-copy">Copy link</button><button class="btn primary" type="button" id="app-url-share" hidden>Share link…</button></div>
+  </section>
+
+  <section class="card" id="display">
+    <h2>Display &amp; accessibility</h2>
+    <p class="muted">Bigger text for reading at arm's length, in the cold, or without glasses. Applies to every page.</p>
+    <div class="seg" role="group" aria-label="Text size">
+      <button class="btn" type="button" data-textsize-set="normal">Text: normal</button>
+      <button class="btn" type="button" data-textsize-set="large">Large</button>
+      <button class="btn" type="button" data-textsize-set="xl">Extra large</button>
+    </div>
+    <p class="muted" style="margin-top:10px">The moon / sun / eye button at the top switches <strong>Night</strong> (dark), <strong>Day</strong> (high contrast for sunlight) and <strong>Red</strong> (keeps night vision). Pages can be pinch-zoomed, and the app works with VoiceOver (iPhone/iPad) and TalkBack (Android).</p>
   </section>
 
   <section class="card">

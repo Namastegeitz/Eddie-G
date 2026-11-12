@@ -224,6 +224,30 @@
         b.textContent = anyClosed ? 'Collapse all' : 'Expand all';
       });
     });
+    /* Text size: buttons with data-textsize-set="normal|large|xl" (hub → Display) */
+    function paintTextSize() {
+      var cur = document.documentElement.getAttribute('data-textsize') || 'normal';
+      document.querySelectorAll('[data-textsize-set]').forEach(function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-textsize-set') === cur ? 'true' : 'false'); });
+    }
+    document.querySelectorAll('[data-textsize-set]').forEach(function (b) {
+      b.addEventListener('click', function () {
+        var v = b.getAttribute('data-textsize-set');
+        if (v === 'normal') document.documentElement.removeAttribute('data-textsize'); else document.documentElement.setAttribute('data-textsize', v);
+        try { localStorage.setItem('ogsk.textsize', v); } catch (e) {}
+        paintTextSize();
+      });
+    });
+    paintTextSize();
+    /* Wide tables scroll sideways: make each scroll box keyboard-reachable and named for screen readers */
+    document.querySelectorAll('.table-wrap').forEach(function (w) {
+      if (!w.hasAttribute('tabindex')) w.setAttribute('tabindex', '0');
+      if (!w.hasAttribute('role')) w.setAttribute('role', 'region');
+      if (!w.hasAttribute('aria-label')) {
+        var cap = w.querySelector('caption'), h = null, el = w;
+        while (!cap && el && !h) { el = el.previousElementSibling || el.parentElement; if (el && /^H[2-4]$/.test(el.tagName)) h = el; if (el === document.body) break; }
+        w.setAttribute('aria-label', ((cap || h) ? (cap || h).textContent.trim() : 'Table') + ' (scrolls sideways)');
+      }
+    });
     paintThemeButtons();
     paintNet();
     var meta = document.querySelector('meta[name="theme-color"]');
