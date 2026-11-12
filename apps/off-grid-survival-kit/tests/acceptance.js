@@ -268,8 +268,21 @@ let failures = 0;
     if (!(await page.isVisible('#cmp-overlay'))) throw new Error('map compass overlay did not open');
     await page.click('#cmp-close');
   });
+  await step('offline: search finds the right guide section', async () => {
+    await page.goto(BASE + 'search/index.html?q=tourniquet');
+    await page.waitForTimeout(800);
+    const first = await page.locator('#results a, [role="list"] a').first().textContent().catch(() => '');
+    console.log('   top result for "tourniquet":', (first || '').replace(/\s+/g, ' ').trim().slice(0, 90));
+    if (!/tourniquet|bleeding/i.test(first || '')) throw new Error('search did not find the bleeding/tourniquet section');
+  });
+  await step('offline: trip plan page loads offline', async () => {
+    await page.goto(BASE + 'plan/index.html');
+    await page.waitForTimeout(600);
+    const ok = await page.evaluate(() => typeof OGStore !== 'undefined');
+    if (!ok) throw new Error('plan page did not load its scripts offline');
+  });
   await step('offline: other pages open', async () => {
-    for (const p of ['index.html', 'compass/index.html', 'tools/index.html', 'water/index.html', 'foraging/index.html', 'firstaid/index.html', 'fireshelter/index.html', 'food/index.html', 'electricity/index.html', 'emergency/index.html']) {
+    for (const p of ['index.html', 'compass/index.html', 'plan/index.html', 'search/index.html', 'tools/index.html', 'water/index.html', 'foraging/index.html', 'firstaid/index.html', 'fireshelter/index.html', 'food/index.html', 'electricity/index.html', 'emergency/index.html']) {
       const r = await page.goto(BASE + p).catch(e => null);
       const title = await page.title().catch(() => '?');
       console.log('   ', p, r ? r.status() : 'FAILED', title);

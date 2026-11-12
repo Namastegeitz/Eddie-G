@@ -1779,9 +1779,13 @@
 
   function ltgThunder() {
     ensureAudio();
-    var now = Date.now();
-    if (ltg.flashAt) {
-      var s = Math.round((now - ltg.flashAt) / 100) / 10;
+    var now = Date.now(), flashAt = ltg.flashAt;
+    // Every thunder (measured or not) restarts the 30-minute all-clear. Set it first so
+    // the wake lock stays held without a gap while the count stops.
+    ltg.lastThunder = now;
+    ltg.clearDone = false;
+    if (flashAt) {
+      var s = Math.round((now - flashAt) / 100) / 10;
       ltgStopCount();
       ltg.log.unshift({ t: now, s: s });
       ltg.log = ltg.log.slice(0, LTG_LOG_MAX);
@@ -1792,9 +1796,6 @@
       $('#ltg-res').textContent = 'Thunder heard — the 30-minute clock restarted. Tap FLASH at the next lightning to measure the distance.';
       ltgVerdict(null);
     }
-    // Every thunder (measured or not) restarts the 30-minute all-clear.
-    ltg.lastThunder = now;
-    ltg.clearDone = false;
     ltgStartClear();
     ltgPaintLog();
     ltgSave();
@@ -1840,7 +1841,9 @@
     if (!ltg.clearDone) {
       ltg.clearDone = true;
       beep(2);
-      try { if (navigator.vibrate) navigator.vibrate([300, 150, 300]); } catch (e) {}
+      // (Chrome refuses vibration before the first tap, e.g. right after a reload.)
+      var act = navigator.userActivation;
+      try { if (navigator.vibrate && !(act && !act.hasBeenActive)) navigator.vibrate([300, 150, 300]); } catch (e) {}
       toast('Lightning all-clear: 30 minutes since the last thunder.');
     }
     ltgWake();

@@ -837,7 +837,7 @@
     if (r.start && r.loc && window.SunCalc) {
       r.sun = daylight(r.start, r.loc);
       var s = r.sun;
-      if (s.polar === 'night') r.level = 'bad';
+      if (s.polar === 'night') r.level = s.deadline && r.finish <= s.deadline ? 'warn' : 'bad';   // twilight only, at best
       else if (!s.deadline) r.level = 'ok';            // no darkness that day (midnight sun / white night)
       else if (s.sunset && r.finish.getTime() <= s.sunset.getTime() - COMFORT_MIN * MIN) r.level = 'ok';
       else if (r.finish <= s.deadline) r.level = 'warn';
@@ -898,8 +898,8 @@
   function renderDaylight(out, r) {
     var s = r.sun, ref = r.start;
     out.appendChild(el('h3', { text: 'Daylight on ' + fmtDay(r.start) }));
-    if (s.polar === 'night') {
-      out.appendChild(el('p', { class: 'chip margin-chip bad', id: 'pl-margin', text: 'The sun does not rise that day here — the whole trip is in darkness.' }));
+    if (s.polar === 'night' && !s.deadline) {
+      out.appendChild(el('p', { class: 'chip margin-chip bad', id: 'pl-margin', 'data-level': 'bad', text: 'The sun does not rise that day here and there is no twilight — the whole trip is in darkness.' }));
       return;
     }
     if (s.polar === 'day') {
@@ -908,15 +908,19 @@
       return;
     }
     var dl = el('dl', { class: 'kv' });
+    if (s.polar === 'night') kvRow(dl, 'First light', fmtWhen(s.dawn, ref) + ' (civil dawn)');
     if (s.sunrise) kvRow(dl, 'Sunrise', fmtWhen(s.sunrise, ref));
-    kvRow(dl, 'Sunset', el('span', { id: 'pl-sunset', text: fmtWhen(s.sunset, ref) }));
+    kvRow(dl, 'Sunset', el('span', { id: 'pl-sunset', text: s.sunset ? fmtWhen(s.sunset, ref) : 'the sun does not rise (polar night)' }));
     kvRow(dl, 'Last light', el('span', { id: 'pl-lastlight', text: s.lastLight ? fmtWhen(s.lastLight, ref) + ' (civil dusk)' : 'stays light all night' }));
     if (s.deadline) kvRow(dl, 'Be out by', fmtWhen(s.deadline, ref) + ' (last light − ' + BUFFER_MIN + ' min)');
     out.appendChild(dl);
 
     // Finish margin: green ≥ 1 h before sunset · amber before (last light − buffer) · red later
-    var toSunset = (s.sunset - r.finish) / MIN, marginTxt;
-    if (!s.deadline) {
+    var toSunset = s.sunset ? (s.sunset - r.finish) / MIN : 0, marginTxt;
+    if (s.polar === 'night') {
+      marginTxt = 'The sun does not rise that day — twilight only, ' + fmtTime(s.dawn) + ' to ' + fmtTime(s.lastLight) + '. ' +
+        (r.level === 'warn' ? 'You finish before last light − ' + BUFFER_MIN + ' min, but it is dim all day: carry headlamps.' : 'You would be out in the dark. Start earlier, shorten the route or change the plan.');
+    } else if (!s.deadline) {
       marginTxt = 'It stays light all night (civil twilight). Finish ' + (toSunset >= 0 ? fmtDur(toSunset) + ' before' : fmtDur(-toSunset) + ' after') + ' sunset.';
     } else if (r.level === 'ok') {
       marginTxt = 'Finish ' + fmtDur(toSunset) + ' before sunset. Good margin.';

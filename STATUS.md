@@ -9,7 +9,8 @@
   MGRS/UTM grid, triangulation, elevation/slope + contours, QR share, SOS beacon, NJ/Algarve presets.
 - Content: foraging, water, first aid, fire/shelter/knots (SVG knot steps), food, electricity, tools
   (strobe/Morse/tones/checklists/rendezvous), emergency PDF (18 pages, reportlab) + HTML version.
-- Tests: `tests/acceptance.js` (Playwright, mock tile server) — 25 checks online→offline all pass;
+- Tests: `tests/acceptance.js` (Playwright, mock tile server) — 28 checks online→offline all pass;
+  `tests/wmm.test.js` magnetic model check passes;
   Chrome reports no PWA installability errors; print preview checked.
 - Not verified on real hardware yet: install + offline launch on a phone, real GPS/compass, torch,
   and whether tile.openstreetmap.org / OpenTopoMap allow CORS saving (sandbox couldn't reach them).
@@ -17,10 +18,14 @@
   `assets/js/compass.js`): true/magnetic, bearing lock + steering, back bearing, level, sun/moon check,
   point-to-waypoint, camera sighting tape, bearing log, spoken heading; locked bearing drawn on the map.
 - Hub has an "Open on another phone" QR (points at https://namastegeitz.github.io/Eddie-G/).
-- Hosting: `scripts/publish_pages.sh` pushes the app to a gh-pages branch for GitHub Pages. Not run yet —
-  publishing a public site needs the owner's go-ahead (the session's permission check blocked it).
+- Live: https://namastegeitz.github.io/Eddie-G/ (GitHub Pages from the gh-pages branch, published with
+  `scripts/publish_pages.sh` after the owner approved; Pages build succeeded).
+- Research-driven upgrade (Nov 12): automatic magnetic declination (WMM2025 on-device, matches all 100
+  official test values), Backtrack (auto breadcrumb + guided return, Garmin TracBack-style), GPS battery
+  saver + battery prompt, Trip Plan page (leave-a-note + Naismith time + turnaround vs last light +
+  alarm), lightning flash-to-bang with NWS 30-30 timer, offline search across all guides (350 sections).
 - Zip: `apps/off-grid-survival-kit/dist/off-grid-survival-kit.zip`.
-- Next: host it on HTTPS (e.g. GitHub Pages), install on a phone, save NJ/Algarve areas, field test.
+- Next: open the live link on a phone, install, save NJ/Algarve map areas, field test GPS/compass/backtrack.
 
 ## Canopy Crossing (`apps/canopy-crossing`)
 - Built from `prompts/claude/canopy-crossing.md` (copied from the Claude doc brief): all 8 phases,
