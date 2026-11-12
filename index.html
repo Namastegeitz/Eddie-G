@@ -20,6 +20,22 @@
 <script src="assets/js/store.js" defer></script>
 <script src="assets/vendor/qrcode.js" defer></script>
 <script src="assets/js/hub.js" defer></script>
+<style>
+  /* Hub search box: a plain GET form to search/index.html?q=… (works without JS). */
+  .hub-search { margin: 14px 0 4px; }
+  .hub-search .search-box { position: relative; display: flex; gap: 8px; }
+  .hub-search .s-ico {
+    position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+    width: 24px; height: 24px; fill: none; stroke: var(--muted); stroke-width: 2.4;
+    stroke-linecap: round; pointer-events: none;
+  }
+  .hub-search input[type="search"] {
+    flex: 1; min-width: 0; min-height: 56px; padding: 10px 12px 10px 48px;
+    font-size: 1.15rem; border-radius: 12px;
+  }
+  .hub-search input[type="search"]:focus { border-color: var(--accent); outline: none; box-shadow: 0 0 0 3px color-mix(in srgb, var(--focus) 55%, transparent); }
+  .hub-search .btn { min-height: 56px; border-radius: 12px; padding: 0 18px; }
+</style>
 </head>
 <body>
 <a class="skip-link" href="#main">Skip to content</a>
@@ -38,6 +54,15 @@
     <span class="chip" id="chip-tiles">Saved map: …</span>
   </div>
 
+  <form class="hub-search" role="search" action="search/index.html" method="get">
+    <label for="hub-q" class="sr-only">Search all guides (works offline)</label>
+    <div class="search-box">
+      <svg class="s-ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L21 21"/></svg>
+      <input type="search" id="hub-q" name="q" enterkeyhint="search" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="Search all guides">
+      <button class="btn primary" type="submit">Search</button>
+    </div>
+  </form>
+
   <nav class="hub-grid" aria-label="Modules">
     <a class="hub-tile big" href="map/index.html">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4L3 6v14l6-2 6 2 6-2V4l-6 2z"/><path d="M9 4v14M15 6v14"/></svg>
@@ -50,6 +75,10 @@
     <a class="hub-tile" href="compass/index.html">
       <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9.5"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/></svg>
       <div><strong>Compass</strong><br><span>Live heading, lock &amp; follow a bearing</span></div>
+    </a>
+    <a class="hub-tile" href="plan/index.html">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4H6a1 1 0 0 0-1 1v15a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1h-3"/><rect x="9" y="2.5" width="6" height="3.5" rx="1"/><path d="M8.5 12.5l2 2 4-4M8.5 17.5h7"/></svg>
+      <div><strong>Trip plan</strong><br><span>Leave a plan · turnaround time</span></div>
     </a>
     <a class="hub-tile" href="tools/index.html">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z"/></svg>
