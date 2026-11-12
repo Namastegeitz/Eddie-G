@@ -32,6 +32,19 @@
       note: 'OpenTopoMap: contour lines, hill shading, trails and peaks — the best choice for backcountry use. Max detail zoom 17.'
     }
   };
+  // Photo layers (both allow saving offline; checked: CORS headers present)
+  App.SOURCES.sat = {
+    id: 'sat', name: 'Satellite', long: 'Satellite photo (Sentinel-2, 2024)',
+    url: 'https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless-2024_3857/default/g/{z}/{y}/{x}.jpg', maxNative: 15, bulkMax: 14, conc: 2, avgKB: 14, public: true,
+    attr: 'Sentinel-2 cloudless – <a href="https://s2maps.eu" rel="noopener">s2maps.eu</a> by EOX IT Services GmbH (contains modified Copernicus Sentinel data 2024)',
+    note: 'A cloud-free satellite photo of the whole world, made from 2024 Sentinel-2 images (about 10 m detail: fields, forest, rivers, roads, towns — not individual cars). Free for personal, non-commercial use. Not live: for today\'s sky use the Live button.'
+  };
+  App.SOURCES.aerial = {
+    id: 'aerial', name: 'Aerial (US)', long: 'Aerial photos (USGS, United States)',
+    url: 'https://basemap.nationalmap.gov/arcgis/rest/services/USGSImageryOnly/MapServer/tile/{z}/{y}/{x}', maxNative: 16, bulkMax: 16, conc: 2, avgKB: 28, public: true,
+    attr: 'Imagery: <a href="https://www.usgs.gov/programs/national-geospatial-program/national-map" rel="noopener">USGS The National Map</a>',
+    note: 'Sharp aerial photos of the United States from the US Geological Survey (individual buildings and trails visible). Blank outside the US — use Satellite there.'
+  };
   App.DEM = { id: 'dem', maxNative: 15, avgKB: 60 };
 
   function hash(s) { var h = 0; for (var i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) | 0; return (h >>> 0).toString(36); }
@@ -457,7 +470,7 @@
   /* source selector in the Layers tab */
   function paintSourceUI() {
     var seg = $('src-seg'), cur = App.settings.source;
-    seg.innerHTML = ['osm', 'topo', 'custom'].map(function (id) {
+    seg.innerHTML = ['osm', 'topo', 'sat', 'aerial', 'custom'].map(function (id) {
       var name = id === 'custom' ? 'Custom URL' : App.SOURCES[id].long;
       return '<button class="btn" type="button" role="radio" data-src="' + id + '" aria-pressed="' + (cur === id) + '" aria-checked="' + (cur === id) + '">' + App.esc(name) + '</button>';
     }).join('');

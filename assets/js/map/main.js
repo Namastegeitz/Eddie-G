@@ -159,6 +159,10 @@
       App.openCompass();
     } else if (h === 'backtrack') {
       App.bt.ask();
+    } else if (h === '3d') {
+      if (App.open3D) App.open3D();
+    } else if (h === 'live') {
+      if (App.openLive) App.openLive();
     } else if ((m = /^tab=(\w+)/.exec(h))) {
       App.openDrawer(m[1]);
     } else return;
@@ -201,6 +205,8 @@
       });
       paintCenter();
       App.dem.updateCenter();
+      if (App.t3dInit) App.t3dInit();     // 3D terrain view (terrain3d.js)
+      if (App.liveInit) App.liveInit();   // live satellite / radar overlays (live.js)
       return Promise.all([App.wp.init(), App.tracksInit(), App.triInit(), App.btInit()]);
     }).then(function () {
       handleHash();

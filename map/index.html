@@ -13,6 +13,7 @@
 <link rel="stylesheet" href="../assets/css/app.css">
 <link rel="stylesheet" href="../assets/css/map.css">
 <link rel="stylesheet" href="../assets/css/compass.css">
+<link rel="stylesheet" href="../assets/css/terrain3d.css">
 <script src="../assets/js/theme.js"></script>
 <script src="../assets/js/common.js" defer></script>
 <!-- bundled libraries (no CDN) -->
@@ -34,6 +35,8 @@
 <script src="../assets/js/map/waypoints.js" defer></script>
 <script src="../assets/js/map/tracks.js" defer></script>
 <script src="../assets/js/map/backtrack.js" defer></script>
+<script src="../assets/js/map/terrain3d.js" defer></script>
+<script src="../assets/js/map/live.js" defer></script>
 <script src="../assets/js/map/measure.js" defer></script>
 <script src="../assets/js/map/sunmoon.js" defer></script>
 <script src="../assets/js/map/triangulate.js" defer></script>
@@ -78,6 +81,10 @@
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 14L4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-3"/></svg><span>Back</span></button>
     <button class="fab" id="fab-measure" type="button" aria-pressed="false" aria-label="Measure distance">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 17L17 3l4 4L7 21z"/><path d="M7 13l2 2M10 10l2 2M13 7l2 2"/></svg><span>Measure</span></button>
+    <button class="fab" id="fab-3d" type="button" aria-label="3D terrain view of this area">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 19l6-10 4 6 3-4 7 8z"/><path d="M12 3l4 2-4 2-4-2z"/></svg><span>3D</span></button>
+    <button class="fab" id="fab-live" type="button" aria-label="Live satellite pictures and weather radar">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M5.6 5.6a9 9 0 0 0 0 12.8M18.4 5.6a9 9 0 0 1 0 12.8M8.5 8.5a4.5 4.5 0 0 0 0 7M15.5 8.5a4.5 4.5 0 0 1 0 7"/></svg><span>Live</span></button>
     <button class="fab" id="fab-layers" type="button" aria-label="Map layers and offline maps">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13l9 5 9-5"/></svg><span>Layers</span></button>
     <button class="fab sos" id="fab-sos" type="button" aria-label="SOS beacon and location share">
@@ -138,6 +145,7 @@
     <div class="row"><button class="btn primary" type="button" id="pick-center">Use crosshair</button><button class="btn" type="button" id="pick-cancel">Cancel</button></div>
   </section>
 
+  <div id="live-chip" class="center-readout live-chip" role="button" tabindex="0" hidden title="Live pictures: tap for options"></div>
   <div id="center-readout" class="center-readout" role="button" tabindex="0" title="Map centre (crosshair). Tap for position details."></div>
 </div>
 
@@ -151,6 +159,7 @@
     <button role="tab" type="button" data-tab="waypoints">Waypoints</button>
     <button role="tab" type="button" data-tab="tracks">Tracks</button>
     <button role="tab" type="button" data-tab="layers">Layers</button>
+    <button role="tab" type="button" data-tab="live">Live sky</button>
     <button role="tab" type="button" data-tab="offline">Offline maps</button>
     <button role="tab" type="button" data-tab="sun">Sun &amp; Moon</button>
     <button role="tab" type="button" data-tab="position">Position / MGRS</button>
@@ -201,6 +210,7 @@
       <p class="help" id="src-note"></p>
 
       <h3>Overlays</h3>
+      <label class="check"><input type="checkbox" id="ov-relief"> Relief shading — hills in 3D-style light and shadow (from radar-measured elevation, works offline)</label>
       <label class="check"><input type="checkbox" id="ov-contours"> Contour lines (from elevation data)</label>
       <label class="check"><input type="checkbox" id="ov-tracks" checked> Saved tracks</label>
       <label class="check"><input type="checkbox" id="ov-wplabels" checked> Waypoint names</label>
@@ -219,6 +229,25 @@
       <div class="row" id="preset-row"></div>
       <div class="row" style="margin-top:8px"><button class="btn" type="button" id="bm-add">+ Bookmark this view</button></div>
       <ul class="list" id="bm-list"></ul>
+    </section>
+
+    <!-- LIVE SKY (assets/js/map/live.js) -->
+    <section class="pane" data-pane="live" role="tabpanel" hidden>
+      <p class="help" style="margin-top:10px">The newest real pictures of this area from weather satellites and rain radar. No satellite sends public live video — these are the latest pictures, every 10–15 minutes, played as a short loop. They need signal and are not saved offline.</p>
+      <div class="callout warn" id="live-offline" hidden><p>No signal: live pictures can't load. The saved map, 3D view and relief still work.</p></div>
+      <label class="check"><input type="checkbox" id="live-sat"> Satellite now — clouds, dust storms, smoke (every 10–15 min)</label>
+      <p class="help" id="live-sat-info"></p>
+      <label class="check"><input type="checkbox" id="live-radar"> Rain radar — past 2 hours (every 10 min)</label>
+      <p class="help" id="live-radar-info"></p>
+      <label class="check"><input type="checkbox" id="live-daily"> Today's satellite photo (NASA, sharper, once a day)</label>
+      <div class="seg" id="live-day"><button class="btn" type="button" data-d="0">Today</button><button class="btn" type="button" data-d="1">Yesterday</button><button class="btn" type="button" data-d="2">2 days ago</button></div>
+      <p class="help" id="live-daily-info"></p>
+      <h3>Playback</h3>
+      <p class="bigread" style="font-size:1.25rem" id="live-time">—</p>
+      <div class="row"><button class="btn primary" type="button" id="live-play">Pause</button><button class="btn" type="button" id="live-refresh">Refresh</button></div>
+      <div class="field"><label for="live-frame">Frame</label><input type="range" id="live-frame" min="0" max="0" value="0"></div>
+      <div class="field"><label for="live-opacity">Opacity</label><input type="range" id="live-opacity" min="20" max="100" value="85"></div>
+      <p class="help">Tip: satellite pictures are about 1–3 km per pixel — zoom out (zoom 6–9) to see clouds and storms moving. Sources: NOAA GOES and JMA Himawari via NASA GIBS, EUMETSAT Meteosat, RainViewer radar, NASA NOAA-20 VIIRS daily photo.</p>
     </section>
 
     <!-- OFFLINE MAPS -->
@@ -404,6 +433,15 @@
     <button type="button" id="sos-mode">Flash: slow</button>
     <button type="button" id="sos-close">Close</button>
   </div>
+</div>
+
+<!-- ======================= 3D TERRAIN VIEW (assets/js/map/terrain3d.js) ======================= -->
+<div id="t3d-overlay" class="t3d-overlay" hidden role="dialog" aria-modal="true" aria-labelledby="t3d-title">
+  <div class="t3d-head">
+    <h2 id="t3d-title">3D terrain</h2>
+    <button class="hdr-btn" type="button" id="t3d-close" aria-label="Close 3D view and return to the map"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg><span>Map</span></button>
+  </div>
+  <div id="t3d-host" class="t3d-host"></div>
 </div>
 
 <!-- ======================= FULL COMPASS ======================= -->

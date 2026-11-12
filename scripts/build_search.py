@@ -388,6 +388,15 @@ HAND_ENTRIES = [
           'Back button guides you along it to where you started, warning you if you stray off the trail. '
           'Saved tracks can be followed back too: Tracks → Backtrack.',
      'k': 'backtrack return start way back retrace breadcrumb trail track record route lost tracback'},
+    {'p': 'map/index.html', 'pt': 'Map', 'h': '3D terrain view', 'a': '3d',
+     't': 'See the area around you in 3D: hills and valleys from radar-measured elevation (SRTM) with the map or '
+          'satellite photo draped over them, your position, waypoints and tracks. Rotate, tilt and zoom. Works offline '
+          'for areas saved with elevation data.',
+     'k': '3d three dimensional terrain relief mountains hills valleys elevation radar srtm view tilt'},
+    {'p': 'map/index.html', 'pt': 'Map', 'h': 'Live satellite pictures & rain radar', 'a': 'live',
+     't': 'The newest real pictures of your area: weather satellites every 10–15 minutes (clouds, dust storms, smoke), '
+          'rain radar for the past 2 hours, and NASA\'s daily satellite photo. Needs signal.',
+     'k': 'live satellite now weather clouds storm dust smoke radar rain picture photo footage nasa meteosat goes'},
     {'p': 'map/index.html', 'pt': 'Map', 'h': 'Navigate to a waypoint', 'a': 'tab=waypoints',
      't': 'Pin waypoints (camp, car, water, rally point) at the crosshair or your GPS position, then tap Go '
           'for a live arrow, distance and bearing to it. Long-press the map to drop a pin.',
@@ -405,7 +414,7 @@ HAND_ENTRIES = [
           'bearing log.',
      'k': 'compass heading bearing north direction declination magnetic true navigate'},
 ]
-MAP_ROUTES = {'sos', 'compass', 'backtrack'}     # non-tab hashes handled by map/main.js
+MAP_ROUTES = {'sos', 'compass', 'backtrack', '3d', 'live'}     # non-tab hashes handled by map/main.js
 
 # Curated keywords ("k") for the life-critical sections, so the obvious
 # panicked query lands on them first. Keyed by (page, exact heading).

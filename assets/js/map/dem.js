@@ -14,6 +14,7 @@
 (function () {
   'use strict';
   var App = window.MapApp;
+  var D2R = Math.PI / 180;
   var LOOKUP_ZOOMS = [12, 11, 10];
   var mem = new Map();                  // "z/x/y" -> Float32Array | null (LRU-ish)
   var pending = new Map();
@@ -184,6 +185,61 @@
     }
   });
 
+  /* ---------------- relief shading (hillshade) ----------------
+     Computed on the device from the same elevation tiles (SRTM — measured by
+     radar from the Space Shuttle — and USGS 3DEP). Light from the north-west,
+     45° up (the cartographic convention); shadows darken, sunlit slopes lighten. */
+  var ReliefLayer = L.GridLayer.extend({
+    options: { minZoom: 8, maxZoom: 20, tileSize: 256, pane: 'reliefPane', updateWhenIdle: true },
+    createTile: function (k, done) {
+      var c = document.createElement('canvas'); c.width = c.height = 128;
+      var demZ = Math.min(k.z, 12);
+      (function find(z, triesLeft) {
+        var dz = k.z - z, px = k.x >> dz, py = k.y >> dz;
+        return tileData(z, px, py, z === demZ).then(function (d) {
+          if (d) return { d: d, dz: dz, px: px, py: py };
+          if (triesLeft <= 0 || z <= 8) return null;
+          return find(z - 1, triesLeft - 1);
+        });
+      })(demZ, 3).then(function (r) { if (r) shade(c, k, r); done(null, c); }, function (e) { done(e, c); });
+      return c;
+    }
+  });
+  function shade(c, k, r) {
+    var N = 128, s = 1 << r.dz, size = 256 / s;
+    var ox = (k.x - r.px * s) * size, oy = (k.y - r.py * s) * size;
+    var G = new Float32Array((N + 2) * (N + 2));
+    for (var j = 0; j < N + 2; j++) for (var i = 0; i < N + 2; i++) {
+      G[j * (N + 2) + i] = sample(r.d, ox + ((i - 0.5) / N) * size, oy + ((j - 0.5) / N) * size);
+    }
+    var latC = App.tile2lat(k.y + 0.5, k.z);
+    var cell = 40075016.686 * Math.cos(latC * D2R) / Math.pow(2, k.z + 8) * (256 / N);   // metres per grid cell
+    var zf = k.z < 11 ? 2 : 1.4;                        // a little vertical exaggeration so gentle relief still reads
+    var az = 315 * D2R, alt = 45 * D2R;
+    var Lx = Math.sin(az) * Math.cos(alt), Ly = Math.cos(az) * Math.cos(alt), Lz = Math.sin(alt), flat = Lz;
+    var red = OGSK.theme() === 'red';
+    var ctx = c.getContext('2d'), img = ctx.createImageData(N, N), px = img.data;
+    for (j = 0; j < N; j++) for (i = 0; i < N; i++) {
+      var w = N + 2, at = (j + 1) * w + (i + 1);
+      var dzdx = (G[at + 1] - G[at - 1]) * zf / (2 * cell);
+      var dzdy = (G[at - w] - G[at + w]) * zf / (2 * cell);   // north positive
+      var nl = Math.sqrt(dzdx * dzdx + dzdy * dzdy + 1);
+      var sh = (-dzdx * Lx - dzdy * Ly + Lz) / nl;
+      var o = (j * N + i) * 4;
+      if (sh < flat) { px[o] = px[o + 1] = px[o + 2] = 0; px[o + 3] = Math.min(200, (flat - sh) * 330); }
+      else if (!red) { px[o] = px[o + 1] = px[o + 2] = 255; px[o + 3] = Math.min(110, (sh - flat) * 260); }
+    }
+    ctx.putImageData(img, 0, 0);
+  }
+  var reliefLayer = null;
+  function applyRelief() {
+    if (reliefLayer) { App.map.removeLayer(reliefLayer); reliefLayer = null; }
+    if (App.settings.relief) {
+      reliefLayer = new ReliefLayer().addTo(App.map);
+      if (App.map.getZoom() < 8) OGSK.toast('Relief shading appears at zoom 8 and closer');
+    }
+  }
+
   var contourLayer = null;
   function applyContours() {
     if (contourLayer) { App.map.removeLayer(contourLayer); contourLayer = null; }
@@ -216,6 +272,12 @@
     demIn.value = App.settings.demUrl;
     demIn.addEventListener('change', function () { App.set('demUrl', demIn.value.trim() || App.DEFAULTS.demUrl); });
     applyContours();
+    var rp = App.map.createPane('reliefPane'); rp.style.zIndex = 260; rp.style.pointerEvents = 'none'; rp.style.opacity = '0.75';
+    var rb = App.$('ov-relief');
+    rb.checked = !!App.settings.relief;
+    rb.addEventListener('change', function () { App.set('relief', rb.checked); applyRelief(); });
+    document.addEventListener('ogsk:theme', function () { if (reliefLayer) reliefLayer.redraw(); });
+    applyRelief();
     var t = null;
     App.map.on('moveend', function () { clearTimeout(t); t = setTimeout(App.dem.updateCenter, 250); });
     // new DEM tiles may have been saved: forget cached "not found" results

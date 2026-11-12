@@ -323,3 +323,7 @@ dialog h2 { margin: 2px 0 10px; font-size: 1.2rem; }
 
 /* toasts at the top on the map page so they never cover the bottom panels */
 .map-page .toast-host { top: calc(130px + env(safe-area-inset-top)); bottom: auto; }
+
+/* live sky strip (bottom stack) */
+.live-chip { border-color: var(--danger); }
+.live-chip .k { color: var(--danger); animation: recpulse 1.6s infinite; }
