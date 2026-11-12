@@ -12,12 +12,13 @@
 'use strict';
 
 // PRECACHE-START (generated — do not edit by hand)
-const VERSION = "38338feae12a";
+const VERSION = "0b81efaabf15";
 const PRECACHE = [
   "./",
   "assets/css/app.css",
   "assets/css/compass.css",
   "assets/css/map.css",
+  "assets/data/search-index.json",
   "assets/icons/apple-touch-icon.png",
   "assets/icons/favicon-32.png",
   "assets/icons/icon-192.png",
@@ -30,6 +31,7 @@ const PRECACHE = [
   "assets/js/compass.js",
   "assets/js/geo.js",
   "assets/js/hub.js",
+  "assets/js/map/backtrack.js",
   "assets/js/map/core.js",
   "assets/js/map/data.js",
   "assets/js/map/dem.js",
@@ -43,8 +45,10 @@ const PRECACHE = [
   "assets/js/map/tracks.js",
   "assets/js/map/triangulate.js",
   "assets/js/map/waypoints.js",
+  "assets/js/search.js",
   "assets/js/store.js",
   "assets/js/theme.js",
+  "assets/js/wmm.js",
   "assets/vendor/LICENSE-leaflet.txt",
   "assets/vendor/LICENSE-mgrs.txt",
   "assets/vendor/LICENSE-suncalc.txt",
@@ -69,6 +73,9 @@ const PRECACHE = [
   "index.html",
   "manifest.webmanifest",
   "map/index.html",
+  "plan/index.html",
+  "plan/plan.js",
+  "search/index.html",
   "tools/index.html",
   "tools/tools.js",
   "water/index.html"
