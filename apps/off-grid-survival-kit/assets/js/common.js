@@ -115,6 +115,94 @@
   });
   window.addEventListener('afterprint', function () { reopened.forEach(function (d) { d.open = false; }); reopened = []; });
 
+  /* ---------------- deep links: page#section (search results, TOC chips) ----------------
+     When a page opens with #id (or the hash changes):
+       1. find the target; search results may add ?find=<exact heading text>
+          for headings without an id of their own — then we land on the first
+          h2/h3/h4/<summary> inside #id whose text matches;
+       2. open every closed <details> around it (a <summary> target opens its card);
+       3. scroll it to the top, just below the sticky header (an explicit offset,
+          so it is the same on every page whatever its own scroll-margin CSS);
+       4. flash an outline for ~2 s so the eye finds it.
+     Hashes that are not element ids (the map's #tab=…, #sos, #wp=…) are ignored. */
+  (function () {
+    var style = document.createElement('style');
+    style.textContent = '.ogsk-flash{outline:3px solid var(--accent);outline-offset:3px;border-radius:8px}' +
+      '@media print{.ogsk-flash{outline:0}}';
+    document.head.appendChild(style);
+
+    function norm(s) { return (s || '').replace(/\s+/g, ' ').trim(); }
+
+    /** Space the sticky header covers at the top of the viewport (+8 px air). */
+    function headerPad() {
+      var hdr = document.querySelector('.app-header');
+      var cs = hdr && getComputedStyle(hdr);
+      return cs && (cs.position === 'sticky' || cs.position === 'fixed') ? Math.ceil(hdr.getBoundingClientRect().height) + 8 : 0;
+    }
+    function scrollToEl(el) {
+      var y = el.getBoundingClientRect().top + window.pageYOffset - headerPad();
+      window.scrollTo(0, Math.max(0, y));
+    }
+
+    function target() {
+      var id = location.hash.slice(1), find = null, base = null;
+      try { id = decodeURIComponent(id); } catch (e) { /* keep raw */ }
+      if (id) base = document.getElementById(id);
+      try { find = new URLSearchParams(location.search).get('find'); } catch (e) { /* old browser */ }
+      if (find) {
+        var want = norm(find), scope = base || document.querySelector('main') || document.body;
+        var cands = scope.querySelectorAll('h2, h3, h4, summary'), hit = null, i;
+        for (i = 0; i < cands.length && !hit; i++) if (norm(cands[i].textContent) === want) hit = cands[i];
+        for (i = 0; i < cands.length && !hit; i++) if (norm(cands[i].textContent).indexOf(want) === 0) hit = cands[i];
+        if (hit) return hit.tagName === 'SUMMARY' ? hit.parentElement : hit;
+      }
+      if (!base || base.tagName === 'MAIN' || base === document.body) return null;   // skip-link etc.
+      return base;
+    }
+
+    var flashTimer = null;
+    function reveal(flash) {
+      var el = target();
+      if (!el) return null;
+      for (var d = el.closest('details'); d; d = d.parentElement && d.parentElement.closest('details')) d.open = true;
+      scrollToEl(el);
+      if (flash) {
+        document.querySelectorAll('.ogsk-flash').forEach(function (x) { x.classList.remove('ogsk-flash'); });
+        el.classList.add('ogsk-flash');
+        clearTimeout(flashTimer);
+        flashTimer = setTimeout(function () { el.classList.remove('ogsk-flash'); }, 2000);
+      }
+      return el;
+    }
+
+    OGSK.revealHash = reveal;
+    window.addEventListener('hashchange', function () { reveal(true); });
+    // Run after the page's own DOMContentLoaded handlers (registered earlier),
+    // so a page script that also scrolls to the hash can't undo ours.
+    function onReady() {
+      if (!location.hash && location.search.indexOf('find=') < 0) return;
+      var el = reveal(true);
+      if (!el) return;
+      // ?find= has done its job: drop it so later TOC jumps aren't re-targeted.
+      if (location.search.indexOf('find=') >= 0) {
+        try {
+          var u = new URL(location.href);
+          u.searchParams.delete('find');
+          history.replaceState(history.state, '', u.pathname + u.search + u.hash);
+        } catch (e) { /* file:// on some browsers */ }
+      }
+      // The browser's own #anchor scroll can land after ours once the page has
+      // fully loaded; put the target back on top unless the user has moved.
+      var moved = false;
+      ['touchstart', 'wheel', 'keydown'].forEach(function (t) { window.addEventListener(t, function () { moved = true; }, { once: true, passive: true }); });
+      window.addEventListener('load', function () {
+        if (!moved && Math.abs(el.getBoundingClientRect().top - headerPad()) > 4) scrollToEl(el);
+      });
+    }
+    if (document.readyState === 'complete') onReady();
+    else document.addEventListener('DOMContentLoaded', onReady);
+  })();
+
   /* ---------------- wire-up ---------------- */
   function init() {
     document.querySelectorAll('[data-theme-toggle]').forEach(function (b) {
