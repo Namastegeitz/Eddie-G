@@ -14,7 +14,7 @@ require('fs').mkdirSync(S, { recursive: true });
 const BASE = process.env.BASE || 'http://127.0.0.1:8765/';
 let failures = 0;
 (async () => {
-  const browser = await chromium.launch();
+  const browser = await chromium.launch({ args: ['--use-gl=swiftshader', '--enable-unsafe-swiftshader'] });
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 1, geolocation: { latitude: 40.3573, longitude: -74.6672, accuracy: 8 }, permissions: ['geolocation'], serviceWorkers: 'allow' });
   const page = await ctx.newPage();
   const errors = [];
@@ -188,6 +188,17 @@ let failures = 0;
     await page.evaluate(() => MapApp.map.setZoom(13));
     await page.waitForTimeout(1200);
     console.log('   centre readout:', await page.textContent('#center-readout'));
+  });
+  await step('offline: 3D terrain view from saved tiles + elevation', async () => {
+    await page.evaluate(() => MapApp.map.setView([40.3573, -74.6672], 13));
+    await page.waitForTimeout(800);
+    await page.click('#fab-3d');
+    await page.waitForFunction(() => MapApp.t3d && MapApp.t3d.ready(), null, { timeout: 30000 });
+    await page.waitForTimeout(500);
+    const snap = await page.evaluate(() => MapApp.t3d.snapshot());
+    console.log('   3D snapshot', JSON.stringify(snap));
+    if (snap && snap.colours < 10) throw new Error('3D view looks blank');
+    await page.click('#t3d-close');
   });
   await step('offline: graticule fallback where nothing saved', async () => {
     await page.evaluate(() => MapApp.map.setView([10, 20], 9));

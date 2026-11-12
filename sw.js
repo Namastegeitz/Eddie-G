@@ -12,12 +12,13 @@
 'use strict';
 
 // PRECACHE-START (generated — do not edit by hand)
-const VERSION = "0b81efaabf15";
+const VERSION = "67f13e10d6ce";
 const PRECACHE = [
   "./",
   "assets/css/app.css",
   "assets/css/compass.css",
   "assets/css/map.css",
+  "assets/css/terrain3d.css",
   "assets/data/search-index.json",
   "assets/icons/apple-touch-icon.png",
   "assets/icons/favicon-32.png",
@@ -26,6 +27,7 @@ const PRECACHE = [
   "assets/icons/icon-maskable-512.png",
   "assets/icons/icon-maskable.svg",
   "assets/icons/icon.svg",
+  "assets/icons/og-card.png",
   "assets/js/common.js",
   "assets/js/compass-ui.js",
   "assets/js/compass.js",
@@ -37,10 +39,12 @@ const PRECACHE = [
   "assets/js/map/dem.js",
   "assets/js/map/gps.js",
   "assets/js/map/grid.js",
+  "assets/js/map/live.js",
   "assets/js/map/main.js",
   "assets/js/map/measure.js",
   "assets/js/map/share.js",
   "assets/js/map/sunmoon.js",
+  "assets/js/map/terrain3d.js",
   "assets/js/map/tiles.js",
   "assets/js/map/tracks.js",
   "assets/js/map/triangulate.js",
