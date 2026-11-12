@@ -1421,225 +1421,234 @@ size = Vector3(6, 3.7505257, 5.49757)
 [sub_resource type="BoxMesh" id="BoxMesh_4xbaw"]
 size = Vector3(6.06, 0.08, 0.8)
 
-[node name="Kitchen" type="Node3D" unique_id=1707522355]
+[sub_resource type="BoxMesh" id="BoxMesh_wuf1l"]
+size = Vector3(16.72, 6.08, 10.64)
+
+[sub_resource type="BoxMesh" id="BoxMesh_eumpp"]
+size = Vector3(16.28, 5.92, 10.36)
+
+[sub_resource type="BoxMesh" id="BoxMesh_q6uuh"]
+size = Vector3(14.96, 5.44, 9.52)
+
+[node name="Kitchen" type="Node3D" unique_id=984934582]
 script = ExtResource("1_5d1jx")
 
-[node name="NavRegion" type="NavigationRegion3D" parent="." unique_id=1708956451]
+[node name="NavRegion" type="NavigationRegion3D" parent="." unique_id=1339953286]
 navigation_mesh = SubResource("NavigationMesh_r46k3")
 
-[node name="Geometry" type="Node3D" parent="NavRegion" unique_id=1242879669]
+[node name="Geometry" type="Node3D" parent="NavRegion" unique_id=1928286009]
 
-[node name="Floor" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=699483977]
+[node name="Floor" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=468459521]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25, -1, 17.5)
 collision_mask = 0
 metadata/surface = &"tile"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/Floor" unique_id=776261424]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/Floor" unique_id=855555325]
 shape = SubResource("BoxShape3D_6h5ns")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/Floor" unique_id=554474209]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/Floor" unique_id=1009661821]
 material_override = ExtResource("2_3jpue")
 mesh = SubResource("BoxMesh_l8cok")
 
-[node name="WallBack" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1309697599]
+[node name="WallBack" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1168229597]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25, 50, -46)
 collision_mask = 0
 metadata/surface = &"default"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/WallBack" unique_id=1567525650]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/WallBack" unique_id=1132023968]
 shape = SubResource("BoxShape3D_lbhl1")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/WallBack" unique_id=1007197113]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/WallBack" unique_id=1478680153]
 material_override = ExtResource("3_u7dbw")
 cast_shadow = 0
 mesh = SubResource("BoxMesh_8kxb6")
 
-[node name="WallFront" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=786403254]
+[node name="WallFront" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1742584779]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25, 50, 81)
 collision_mask = 0
 metadata/surface = &"default"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/WallFront" unique_id=772035868]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/WallFront" unique_id=643494618]
 shape = SubResource("BoxShape3D_kdnpp")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/WallFront" unique_id=591740529]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/WallFront" unique_id=315692821]
 material_override = ExtResource("3_u7dbw")
 cast_shadow = 0
 mesh = SubResource("BoxMesh_pqb8v")
 
-[node name="WallLeft" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1866737665]
+[node name="WallLeft" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1647047232]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -61, 50, 17.5)
 collision_mask = 0
 metadata/surface = &"default"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/WallLeft" unique_id=1153926862]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/WallLeft" unique_id=1064185853]
 shape = SubResource("BoxShape3D_dl05y")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/WallLeft" unique_id=481759547]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/WallLeft" unique_id=1706946149]
 material_override = ExtResource("3_u7dbw")
 cast_shadow = 0
 mesh = SubResource("BoxMesh_nc5ai")
 
-[node name="WallRight" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1797917941]
+[node name="WallRight" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1235034071]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 111, 50, 17.5)
 collision_mask = 0
 metadata/surface = &"default"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/WallRight" unique_id=1992682868]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/WallRight" unique_id=45610545]
 shape = SubResource("BoxShape3D_1nmk8")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/WallRight" unique_id=1737584373]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/WallRight" unique_id=538401730]
 material_override = ExtResource("3_u7dbw")
 cast_shadow = 0
 mesh = SubResource("BoxMesh_xax01")
 
-[node name="Ceiling" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=893670316]
+[node name="Ceiling" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1151620005]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25, 101, 17.5)
 collision_mask = 0
 metadata/surface = &"default"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/Ceiling" unique_id=1951911993]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/Ceiling" unique_id=1275775760]
 shape = SubResource("BoxShape3D_74rdi")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/Ceiling" unique_id=1182523963]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/Ceiling" unique_id=1155750643]
 material_override = ExtResource("4_gb40l")
 cast_shadow = 0
 mesh = SubResource("BoxMesh_7rl5y")
 
-[node name="ToeKick" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1295855147]
+[node name="ToeKick" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1510184488]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -30, 2, -34.5)
 collision_mask = 0
 metadata/surface = &"wood"
 metadata/camo = &"dark_wood"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/ToeKick" unique_id=681219958]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/ToeKick" unique_id=2012582532]
 shape = SubResource("BoxShape3D_3wjld")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/ToeKick" unique_id=506930142]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/ToeKick" unique_id=1939043276]
 material_override = ExtResource("5_emjnc")
 mesh = SubResource("BoxMesh_s4apd")
 
-[node name="Cabinets" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1434936630]
+[node name="Cabinets" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=559582677]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -30, 20, -33)
 collision_mask = 0
 metadata/surface = &"wood"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/Cabinets" unique_id=164072917]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/Cabinets" unique_id=360812813]
 shape = SubResource("BoxShape3D_67ide")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/Cabinets" unique_id=751051699]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/Cabinets" unique_id=1834394516]
 material_override = ExtResource("6_maigf")
 mesh = SubResource("BoxMesh_tjrqw")
 
-[node name="Countertop" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=513111558]
+[node name="Countertop" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=33755927]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -30, 37, -32.5)
 collision_mask = 0
 metadata/surface = &"stone"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/Countertop" unique_id=1225838303]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/Countertop" unique_id=331476554]
 shape = SubResource("BoxShape3D_n2i7q")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/Countertop" unique_id=351578757]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/Countertop" unique_id=467688067]
 material_override = ExtResource("7_w8g0e")
 mesh = SubResource("BoxMesh_qv2px")
 
-[node name="Stove" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=676218295]
+[node name="Stove" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=701867774]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13, 18, -33)
 collision_mask = 0
 metadata/surface = &"metal"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/Stove" unique_id=1675442243]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/Stove" unique_id=225291225]
 shape = SubResource("BoxShape3D_deife")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/Stove" unique_id=1937204433]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/Stove" unique_id=1429145378]
 material_override = ExtResource("8_65k1k")
 mesh = SubResource("BoxMesh_d1ac3")
 
-[node name="Pot" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=2133051191]
+[node name="Pot" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1312571989]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14, 5, -11)
 metadata/surface = &"metal"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/Pot" unique_id=1868647077]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/Pot" unique_id=1787000182]
 shape = SubResource("CylinderShape3D_7hmd1")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/Pot" unique_id=576889662]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/Pot" unique_id=995756692]
 material_override = ExtResource("9_fkprg")
 mesh = SubResource("CylinderMesh_71gxo")
 
-[node name="FoilSheet" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1046613476]
+[node name="FoilSheet" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=2101167231]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25, -0.2, -14)
 collision_mask = 0
 metadata/surface = &"foil"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/FoilSheet" unique_id=925707136]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/FoilSheet" unique_id=447894032]
 shape = SubResource("BoxShape3D_1q4m0")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/FoilSheet" unique_id=82892398]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/FoilSheet" unique_id=2065160790]
 material_override = ExtResource("10_752ef")
 cast_shadow = 0
 mesh = SubResource("BoxMesh_w8nhb")
 
-[node name="Fridge" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=496516533]
+[node name="Fridge" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=15564623]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 43, 37, -30)
 collision_mask = 0
 metadata/surface = &"metal"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/Fridge" unique_id=1127239507]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/Fridge" unique_id=1841312073]
 shape = SubResource("BoxShape3D_6gnlx")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/Fridge" unique_id=1406900364]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/Fridge" unique_id=1501686914]
 material_override = ExtResource("11_ibpgx")
 mesh = SubResource("BoxMesh_4ahvr")
 
-[node name="FridgeFoot" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=538681384]
+[node name="FridgeFoot" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1318410080]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 31, 1, -41)
 collision_mask = 0
 metadata/surface = &"metal"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/FridgeFoot" unique_id=1181722059]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/FridgeFoot" unique_id=848640871]
 shape = SubResource("BoxShape3D_jhljg")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/FridgeFoot" unique_id=1446708298]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/FridgeFoot" unique_id=1865533625]
 material_override = ExtResource("8_65k1k")
 mesh = SubResource("BoxMesh_pijng")
 
-[node name="FridgeFoot2" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=2106270552]
+[node name="FridgeFoot2" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=61670140]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 31, 1, -19)
 collision_mask = 0
 metadata/surface = &"metal"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/FridgeFoot2" unique_id=386658123]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/FridgeFoot2" unique_id=703077271]
 shape = SubResource("BoxShape3D_cwttl")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/FridgeFoot2" unique_id=21304120]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/FridgeFoot2" unique_id=25871734]
 material_override = ExtResource("8_65k1k")
 mesh = SubResource("BoxMesh_n1uoe")
 
-[node name="FridgeFoot3" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1284055745]
+[node name="FridgeFoot3" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=795501634]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 55, 1, -41)
 collision_mask = 0
 metadata/surface = &"metal"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/FridgeFoot3" unique_id=290065535]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/FridgeFoot3" unique_id=1059675573]
 shape = SubResource("BoxShape3D_3t6uv")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/FridgeFoot3" unique_id=1749322685]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/FridgeFoot3" unique_id=318086626]
 material_override = ExtResource("8_65k1k")
 mesh = SubResource("BoxMesh_xqvrf")
 
-[node name="FridgeFoot4" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=992778506]
+[node name="FridgeFoot4" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=2081373457]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 55, 1, -19)
 collision_mask = 0
 metadata/surface = &"metal"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/FridgeFoot4" unique_id=1920680341]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/FridgeFoot4" unique_id=1335395898]
 shape = SubResource("BoxShape3D_p8if4")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/FridgeFoot4" unique_id=1142238527]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/FridgeFoot4" unique_id=243483715]
 material_override = ExtResource("8_65k1k")
 mesh = SubResource("BoxMesh_6tt41")
 
-[node name="FridgeDoor" type="AnimatableBody3D" parent="NavRegion/Geometry" unique_id=1932875706]
+[node name="FridgeDoor" type="AnimatableBody3D" parent="NavRegion/Geometry" unique_id=1794486035]
 physics_interpolation_mode = 2
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 57, 37, -17)
 collision_mask = 0
@@ -1649,900 +1658,900 @@ light_zone_path = NodePath("../../../Zones/FridgeLight")
 reveal_path = NodePath("../../../Skins/FridgeFood")
 metadata/surface = &"metal"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/FridgeDoor" unique_id=1301716871]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/FridgeDoor" unique_id=1754273724]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14, 0, 0.75)
 shape = SubResource("BoxShape3D_pltxi")
 
-[node name="Panel" type="MeshInstance3D" parent="NavRegion/Geometry/FridgeDoor" unique_id=1712690958 groups=["no_batch"]]
+[node name="Panel" type="MeshInstance3D" parent="NavRegion/Geometry/FridgeDoor" unique_id=1480358656 groups=["no_batch"]]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14, 0, 0.75)
 material_override = ExtResource("11_ibpgx")
 mesh = SubResource("BoxMesh_c5cvi")
 
-[node name="Handle" type="MeshInstance3D" parent="NavRegion/Geometry/FridgeDoor" unique_id=904659822 groups=["no_batch"]]
+[node name="Handle" type="MeshInstance3D" parent="NavRegion/Geometry/FridgeDoor" unique_id=1969510357 groups=["no_batch"]]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -25.5, 6.8, 2.1)
 material_override = ExtResource("9_fkprg")
 mesh = SubResource("BoxMesh_ph254")
 
-[node name="TableTop" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=555838037]
+[node name="TableTop" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=2140787778]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12, 30.75, 14)
 collision_mask = 0
 metadata/surface = &"wood"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/TableTop" unique_id=40680096]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/TableTop" unique_id=53792427]
 shape = SubResource("BoxShape3D_e3epx")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/TableTop" unique_id=109707594]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/TableTop" unique_id=543210922]
 material_override = ExtResource("6_maigf")
 mesh = SubResource("BoxMesh_gygfv")
 
-[node name="TableLeg" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1394868922]
+[node name="TableLeg" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1095307412]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -30, 15, 2)
 metadata/surface = &"wood"
 metadata/camo = &"dark_wood"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/TableLeg" unique_id=1119201606]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/TableLeg" unique_id=60683391]
 shape = SubResource("CylinderShape3D_svk2m")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/TableLeg" unique_id=1192550490]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/TableLeg" unique_id=566325433]
 material_override = ExtResource("5_emjnc")
 mesh = SubResource("CylinderMesh_ujwd4")
 
-[node name="TableLeg2" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=959178808]
+[node name="TableLeg2" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1686748010]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 15, 2)
 metadata/surface = &"wood"
 metadata/camo = &"dark_wood"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/TableLeg2" unique_id=1226189247]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/TableLeg2" unique_id=439619000]
 shape = SubResource("CylinderShape3D_xh8nb")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/TableLeg2" unique_id=1208865403]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/TableLeg2" unique_id=975713618]
 material_override = ExtResource("5_emjnc")
 mesh = SubResource("CylinderMesh_kjcah")
 
-[node name="TableLeg3" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=167404229]
+[node name="TableLeg3" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=2140604059]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -30, 15, 26)
 metadata/surface = &"wood"
 metadata/camo = &"dark_wood"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/TableLeg3" unique_id=1525546647]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/TableLeg3" unique_id=545363804]
 shape = SubResource("CylinderShape3D_j0ubb")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/TableLeg3" unique_id=105605455]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/TableLeg3" unique_id=1251981631]
 material_override = ExtResource("5_emjnc")
 mesh = SubResource("CylinderMesh_pwysy")
 
-[node name="TableLeg4" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1542930799]
+[node name="TableLeg4" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1896944127]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 15, 26)
 metadata/surface = &"wood"
 metadata/camo = &"dark_wood"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/TableLeg4" unique_id=80895970]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/TableLeg4" unique_id=1888638923]
 shape = SubResource("CylinderShape3D_fb2rg")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/TableLeg4" unique_id=962735863]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/TableLeg4" unique_id=232644006]
 material_override = ExtResource("5_emjnc")
 mesh = SubResource("CylinderMesh_it41g")
 
-[node name="ChairSeat" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=751277780]
+[node name="ChairSeat" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1266940071]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -24, 18, -7)
 collision_mask = 0
 metadata/surface = &"wood"
 metadata/camo = &"dark_wood"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/ChairSeat" unique_id=1984483882]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/ChairSeat" unique_id=693329243]
 shape = SubResource("BoxShape3D_8loxb")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/ChairSeat" unique_id=885661412]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/ChairSeat" unique_id=1127410732]
 material_override = ExtResource("5_emjnc")
 mesh = SubResource("BoxMesh_ni5um")
 
-[node name="ChairBack" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=946437915]
+[node name="ChairBack" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1121547140]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -24, 28, -13.5)
 collision_mask = 0
 metadata/surface = &"wood"
 metadata/camo = &"dark_wood"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/ChairBack" unique_id=1521892423]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/ChairBack" unique_id=974515209]
 shape = SubResource("BoxShape3D_fc0ki")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/ChairBack" unique_id=1643135511]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/ChairBack" unique_id=730567100]
 material_override = ExtResource("5_emjnc")
 mesh = SubResource("BoxMesh_4gisa")
 
-[node name="ChairLeg" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1454831766]
+[node name="ChairLeg" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1911747288]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -30, 8.6, -13)
 collision_mask = 0
 metadata/surface = &"wood"
 metadata/camo = &"dark_wood"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/ChairLeg" unique_id=901409538]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/ChairLeg" unique_id=2142830859]
 shape = SubResource("BoxShape3D_mksi8")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/ChairLeg" unique_id=393786531]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/ChairLeg" unique_id=1956972948]
 material_override = ExtResource("5_emjnc")
 mesh = SubResource("BoxMesh_y7ysp")
 
-[node name="ChairLeg2" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=694428593]
+[node name="ChairLeg2" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=537257824]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -30, 8.6, -1)
 collision_mask = 0
 metadata/surface = &"wood"
 metadata/camo = &"dark_wood"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/ChairLeg2" unique_id=627307644]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/ChairLeg2" unique_id=934139630]
 shape = SubResource("BoxShape3D_3u0ak")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/ChairLeg2" unique_id=342332954]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/ChairLeg2" unique_id=809964042]
 material_override = ExtResource("5_emjnc")
 mesh = SubResource("BoxMesh_b3kxf")
 
-[node name="ChairLeg3" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=716497874]
+[node name="ChairLeg3" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=197503661]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -18, 8.6, -13)
 collision_mask = 0
 metadata/surface = &"wood"
 metadata/camo = &"dark_wood"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/ChairLeg3" unique_id=222434613]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/ChairLeg3" unique_id=580526655]
 shape = SubResource("BoxShape3D_rsfxt")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/ChairLeg3" unique_id=73108857]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/ChairLeg3" unique_id=608444630]
 material_override = ExtResource("5_emjnc")
 mesh = SubResource("BoxMesh_u4geq")
 
-[node name="ChairLeg4" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=132637107]
+[node name="ChairLeg4" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1333441416]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -18, 8.6, -1)
 collision_mask = 0
 metadata/surface = &"wood"
 metadata/camo = &"dark_wood"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/ChairLeg4" unique_id=500104690]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/ChairLeg4" unique_id=1379114179]
 shape = SubResource("BoxShape3D_wewo8")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/ChairLeg4" unique_id=1116312097]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/ChairLeg4" unique_id=1018996703]
 material_override = ExtResource("5_emjnc")
 mesh = SubResource("BoxMesh_knyvc")
 
-[node name="ChairSeat2" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=434285621]
+[node name="ChairSeat2" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1133904407]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 18, 35)
 collision_mask = 0
 metadata/surface = &"wood"
 metadata/camo = &"dark_wood"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/ChairSeat2" unique_id=95417848]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/ChairSeat2" unique_id=513990800]
 shape = SubResource("BoxShape3D_dmjcg")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/ChairSeat2" unique_id=1116294503]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/ChairSeat2" unique_id=331530006]
 material_override = ExtResource("5_emjnc")
 mesh = SubResource("BoxMesh_mk5yg")
 
-[node name="ChairBack2" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1089199709]
+[node name="ChairBack2" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=174309459]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 5.68248e-07, 28, 41.5)
 collision_mask = 0
 metadata/surface = &"wood"
 metadata/camo = &"dark_wood"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/ChairBack2" unique_id=1403545417]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/ChairBack2" unique_id=327026944]
 shape = SubResource("BoxShape3D_nid46")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/ChairBack2" unique_id=36250427]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/ChairBack2" unique_id=1035443235]
 material_override = ExtResource("5_emjnc")
 mesh = SubResource("BoxMesh_wxmmw")
 
-[node name="ChairLeg5" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=55078636]
+[node name="ChairLeg5" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1776858357]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 6.0000005, 8.6, 41)
 collision_mask = 0
 metadata/surface = &"wood"
 metadata/camo = &"dark_wood"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/ChairLeg5" unique_id=859300855]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/ChairLeg5" unique_id=1874671575]
 shape = SubResource("BoxShape3D_v685e")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/ChairLeg5" unique_id=173562914]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/ChairLeg5" unique_id=916327]
 material_override = ExtResource("5_emjnc")
 mesh = SubResource("BoxMesh_bclmg")
 
-[node name="ChairLeg6" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=2145932930]
+[node name="ChairLeg6" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=375432687]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 5.9999995, 8.6, 29)
 collision_mask = 0
 metadata/surface = &"wood"
 metadata/camo = &"dark_wood"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/ChairLeg6" unique_id=392968532]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/ChairLeg6" unique_id=1667254298]
 shape = SubResource("BoxShape3D_xx2h5")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/ChairLeg6" unique_id=474332714]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/ChairLeg6" unique_id=679856232]
 material_override = ExtResource("5_emjnc")
 mesh = SubResource("BoxMesh_toxic")
 
-[node name="ChairLeg7" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1001022016]
+[node name="ChairLeg7" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=201223401]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -5.9999995, 8.6, 41)
 collision_mask = 0
 metadata/surface = &"wood"
 metadata/camo = &"dark_wood"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/ChairLeg7" unique_id=1784590404]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/ChairLeg7" unique_id=1017566534]
 shape = SubResource("BoxShape3D_8a8aj")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/ChairLeg7" unique_id=1442321319]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/ChairLeg7" unique_id=1622314596]
 material_override = ExtResource("5_emjnc")
 mesh = SubResource("BoxMesh_082xs")
 
-[node name="ChairLeg8" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=950574114]
+[node name="ChairLeg8" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=695342840]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -6.0000005, 8.6, 29)
 collision_mask = 0
 metadata/surface = &"wood"
 metadata/camo = &"dark_wood"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/ChairLeg8" unique_id=1573290220]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/ChairLeg8" unique_id=50366059]
 shape = SubResource("BoxShape3D_6ggn7")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/ChairLeg8" unique_id=942052128]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/ChairLeg8" unique_id=1796996349]
 material_override = ExtResource("5_emjnc")
 mesh = SubResource("BoxMesh_0nmae")
 
-[node name="CuttingBoard" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1354312048]
+[node name="CuttingBoard" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=384203402]
 transform = Transform3D(0, -0.6660158, -0.7459377, 0, 0.7459377, -0.6660158, 1, 0, 0, -41.233593, 9.076625, -7)
 collision_mask = 0
 metadata/surface = &"wood"
 metadata/camo = &"dark_wood"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/CuttingBoard" unique_id=1922001302]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/CuttingBoard" unique_id=716726648]
 shape = SubResource("BoxShape3D_uvdds")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/CuttingBoard" unique_id=2138469017]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/CuttingBoard" unique_id=848809051]
 material_override = ExtResource("5_emjnc")
 mesh = SubResource("BoxMesh_pgq20")
 
-[node name="Cookbook" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1376476737]
+[node name="Cookbook" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1111653149]
 transform = Transform3D(-1, 0, 0, 0, 0.7043284, -0.7098743, 0, -0.7098743, -0.7043284, -24, 24.868269, -5.76605)
 collision_mask = 0
 metadata/surface = &"paper"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/Cookbook" unique_id=1047272843]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/Cookbook" unique_id=745492045]
 shape = SubResource("BoxShape3D_b5v88")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/Cookbook" unique_id=186816499]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/Cookbook" unique_id=563057028]
 material_override = ExtResource("13_ih7bu")
 mesh = SubResource("BoxMesh_sld68")
 
-[node name="ChipBag" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=495356718]
+[node name="ChipBag" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=95115253]
 transform = Transform3D(0.9553365, 0, 0.29552022, 0, 1, 0, -0.29552022, 0, 0.9553365, 20, -0.2, 18)
 collision_mask = 0
 metadata/surface = &"chip_bag"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/ChipBag" unique_id=1702790079]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/ChipBag" unique_id=89697685]
 shape = SubResource("BoxShape3D_ypgsp")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/ChipBag" unique_id=384737034]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/ChipBag" unique_id=29053604]
 material_override = ExtResource("14_8f0hs")
 mesh = SubResource("BoxMesh_1q2rw")
 
-[node name="DishTowel" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1823797164]
+[node name="DishTowel" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=374048631]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -30, -0.2, -12)
 collision_mask = 0
 metadata/surface = &"cloth"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/DishTowel" unique_id=66046317]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/DishTowel" unique_id=274091243]
 shape = SubResource("BoxShape3D_bqumf")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/DishTowel" unique_id=852466475]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/DishTowel" unique_id=434678113]
 material_override = ExtResource("13_ih7bu")
 cast_shadow = 0
 mesh = SubResource("BoxMesh_vk0n1")
 
-[node name="Doormat" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1470524884]
+[node name="Doormat" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1738018972]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -50, -0.2, 38)
 collision_mask = 0
 metadata/surface = &"carpet"
 metadata/camo = &"soil"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/Doormat" unique_id=1104555331]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/Doormat" unique_id=1483892517]
 shape = SubResource("BoxShape3D_eov4h")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/Doormat" unique_id=905886859]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/Doormat" unique_id=1248950628]
 material_override = ExtResource("15_uv5lh")
 cast_shadow = 0
 mesh = SubResource("BoxMesh_cgbi6")
 
-[node name="TrashCan" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1968978507]
+[node name="TrashCan" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=859494981]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -50, 16, 30)
 metadata/surface = &"metal"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/TrashCan" unique_id=2071137758]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/TrashCan" unique_id=1920903737]
 shape = SubResource("CylinderShape3D_b11c6")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/TrashCan" unique_id=1219555903]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/TrashCan" unique_id=978499321]
 material_override = ExtResource("9_fkprg")
 mesh = SubResource("CylinderMesh_plmne")
 
-[node name="Pantry" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=594728006]
+[node name="Pantry" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1039914721]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 72, 36, -33)
 collision_mask = 0
 metadata/surface = &"wood"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/Pantry" unique_id=1714646085]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/Pantry" unique_id=1175859726]
 shape = SubResource("BoxShape3D_xcg26")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/Pantry" unique_id=684327574]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/Pantry" unique_id=960921373]
 material_override = ExtResource("6_maigf")
 mesh = SubResource("BoxMesh_qgpmn")
 
-[node name="PantryKick" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1854339933]
+[node name="PantryKick" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1760282470]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 72, 1, -35)
 collision_mask = 0
 metadata/surface = &"wood"
 metadata/camo = &"dark_wood"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/PantryKick" unique_id=60636200]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/PantryKick" unique_id=465013938]
 shape = SubResource("BoxShape3D_vhlkt")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/PantryKick" unique_id=35608671]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/PantryKick" unique_id=1855799761]
 material_override = ExtResource("5_emjnc")
 mesh = SubResource("BoxMesh_atuvi")
 
-[node name="ToeKick2" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=2016315008]
+[node name="ToeKick2" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1176446611]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 97, 2, -34.5)
 collision_mask = 0
 metadata/surface = &"wood"
 metadata/camo = &"dark_wood"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/ToeKick2" unique_id=1881048759]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/ToeKick2" unique_id=769492164]
 shape = SubResource("BoxShape3D_5i8v2")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/ToeKick2" unique_id=1411068442]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/ToeKick2" unique_id=1690793852]
 material_override = ExtResource("5_emjnc")
 mesh = SubResource("BoxMesh_ig1nm")
 
-[node name="Cabinets2" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1721556567]
+[node name="Cabinets2" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1363766535]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 97, 20, -33)
 collision_mask = 0
 metadata/surface = &"wood"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/Cabinets2" unique_id=1735879269]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/Cabinets2" unique_id=550040075]
 shape = SubResource("BoxShape3D_mec2h")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/Cabinets2" unique_id=1089555773]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/Cabinets2" unique_id=2108673613]
 material_override = ExtResource("6_maigf")
 mesh = SubResource("BoxMesh_i3e4x")
 
-[node name="Countertop2" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=20918856]
+[node name="Countertop2" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=970465771]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 97, 37, -32.5)
 collision_mask = 0
 metadata/surface = &"stone"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/Countertop2" unique_id=1083109092]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/Countertop2" unique_id=1839555577]
 shape = SubResource("BoxShape3D_c86t5")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/Countertop2" unique_id=1403917571]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/Countertop2" unique_id=1526661719]
 material_override = ExtResource("7_w8g0e")
 mesh = SubResource("BoxMesh_xqq5r")
 
-[node name="Toaster" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=705135449]
+[node name="Toaster" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1794795073]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 93, 43, -36)
 collision_mask = 0
 metadata/surface = &"metal"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/Toaster" unique_id=81555058]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/Toaster" unique_id=724957176]
 shape = SubResource("BoxShape3D_ywkb0")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/Toaster" unique_id=1536054745]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/Toaster" unique_id=1498289448]
 material_override = ExtResource("9_fkprg")
 mesh = SubResource("BoxMesh_f0acq")
 
-[node name="BreadBox" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=203971132]
+[node name="BreadBox" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=692571376]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 104, 42, -37)
 collision_mask = 0
 metadata/surface = &"wood"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/BreadBox" unique_id=1150995054]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/BreadBox" unique_id=1721064584]
 shape = SubResource("BoxShape3D_6xdyb")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/BreadBox" unique_id=175253999]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/BreadBox" unique_id=129441485]
 material_override = ExtResource("6_maigf")
 mesh = SubResource("BoxMesh_1wwwc")
 
-[node name="Island" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=600437503]
+[node name="Island" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1191231368]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 60, 14, 35)
 collision_mask = 0
 metadata/surface = &"wood"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/Island" unique_id=1937871158]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/Island" unique_id=2124255967]
 shape = SubResource("BoxShape3D_qfgtw")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/Island" unique_id=971073113]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/Island" unique_id=1222779242]
 material_override = ExtResource("6_maigf")
 mesh = SubResource("BoxMesh_jyhud")
 
-[node name="IslandTop" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=198162430]
+[node name="IslandTop" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=806478897]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 60, 29, 35)
 collision_mask = 0
 metadata/surface = &"stone"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/IslandTop" unique_id=1058957305]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/IslandTop" unique_id=181323903]
 shape = SubResource("BoxShape3D_h1tjm")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/IslandTop" unique_id=618583643]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/IslandTop" unique_id=1581218942]
 material_override = ExtResource("7_w8g0e")
 mesh = SubResource("BoxMesh_ha1a2")
 
-[node name="StoolPost" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=82129210]
+[node name="StoolPost" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=259506662]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 48, 12, 52)
 metadata/surface = &"metal"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/StoolPost" unique_id=1171677734]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/StoolPost" unique_id=1429516883]
 shape = SubResource("CylinderShape3D_ess3c")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/StoolPost" unique_id=38484253]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/StoolPost" unique_id=1813997152]
 material_override = ExtResource("9_fkprg")
 mesh = SubResource("CylinderMesh_fqthf")
 
-[node name="StoolSeat" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=817421678]
+[node name="StoolSeat" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1248145005]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 48, 25, 52)
 metadata/surface = &"wood"
 metadata/camo = &"dark_wood"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/StoolSeat" unique_id=1613047238]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/StoolSeat" unique_id=675885582]
 shape = SubResource("CylinderShape3D_5glol")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/StoolSeat" unique_id=104612360]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/StoolSeat" unique_id=729034935]
 material_override = ExtResource("5_emjnc")
 mesh = SubResource("CylinderMesh_j1b3r")
 
-[node name="StoolPost2" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1976796491]
+[node name="StoolPost2" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1981478946]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 72, 12, 52)
 metadata/surface = &"metal"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/StoolPost2" unique_id=825209700]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/StoolPost2" unique_id=8237726]
 shape = SubResource("CylinderShape3D_hi7i6")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/StoolPost2" unique_id=894328459]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/StoolPost2" unique_id=224285196]
 material_override = ExtResource("9_fkprg")
 mesh = SubResource("CylinderMesh_5nblm")
 
-[node name="StoolSeat2" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1771514353]
+[node name="StoolSeat2" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=844755853]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 72, 25, 52)
 metadata/surface = &"wood"
 metadata/camo = &"dark_wood"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/StoolSeat2" unique_id=2104366519]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/StoolSeat2" unique_id=1663874433]
 shape = SubResource("CylinderShape3D_a3xvi")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/StoolSeat2" unique_id=869563574]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/StoolSeat2" unique_id=93006436]
 material_override = ExtResource("5_emjnc")
 mesh = SubResource("CylinderMesh_aaslp")
 
-[node name="FoodBowl" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=665137337]
+[node name="FoodBowl" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=767068375]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 92, 1.5, 64)
 metadata/surface = &"metal"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/FoodBowl" unique_id=1060278396]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/FoodBowl" unique_id=1713413950]
 shape = SubResource("CylinderShape3D_kossi")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/FoodBowl" unique_id=473067007]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/FoodBowl" unique_id=309209754]
 material_override = ExtResource("9_fkprg")
 mesh = SubResource("CylinderMesh_y8uro")
 
-[node name="WaterBowl" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=571829803]
+[node name="WaterBowl" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1788839722]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 102, 1.5, 64)
 metadata/surface = &"metal"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/WaterBowl" unique_id=212402522]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/WaterBowl" unique_id=2047844118]
 shape = SubResource("CylinderShape3D_mqd5d")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/WaterBowl" unique_id=54783117]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/WaterBowl" unique_id=1611464977]
 material_override = ExtResource("9_fkprg")
 mesh = SubResource("CylinderMesh_21lgi")
 
-[node name="MopBucket" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1182990614]
+[node name="MopBucket" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=2095577121]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 98, 6, 8)
 metadata/surface = &"metal"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/MopBucket" unique_id=978534502]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/MopBucket" unique_id=1936991704]
 shape = SubResource("CylinderShape3D_rmcfr")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/MopBucket" unique_id=356209110]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/MopBucket" unique_id=1633765003]
 material_override = ExtResource("16_o6tps")
 mesh = SubResource("CylinderMesh_w5stx")
 
-[node name="PlaceMat" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1371876900]
+[node name="PlaceMat" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=785526362]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 60, -0.2, 64)
 collision_mask = 0
 metadata/surface = &"carpet"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/PlaceMat" unique_id=2008990405]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/PlaceMat" unique_id=375666429]
 shape = SubResource("BoxShape3D_hm50a")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/PlaceMat" unique_id=1693616372]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/PlaceMat" unique_id=1990313669]
 material_override = ExtResource("17_dvi1v")
 cast_shadow = 0
 mesh = SubResource("BoxMesh_ew0n1")
 
-[node name="CavityFloor" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=479690598]
+[node name="CavityFloor" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1332401611]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 44, -1, -53)
 collision_mask = 0
 metadata/surface = &"wood"
 metadata/camo = &"dark_wood"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/CavityFloor" unique_id=827755959]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/CavityFloor" unique_id=737958853]
 shape = SubResource("BoxShape3D_djtiw")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/CavityFloor" unique_id=207228544]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/CavityFloor" unique_id=1782374895]
 material_override = ExtResource("5_emjnc")
 mesh = SubResource("BoxMesh_3boyy")
 
-[node name="CavityBack" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1313391155]
+[node name="CavityBack" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1454765803]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 44, 6, -59.5)
 collision_mask = 0
 metadata/surface = &"wood"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/CavityBack" unique_id=728239900]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/CavityBack" unique_id=1441441994]
 shape = SubResource("BoxShape3D_ttmb5")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/CavityBack" unique_id=260629751]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/CavityBack" unique_id=1868391730]
 material_override = ExtResource("5_emjnc")
 mesh = SubResource("BoxMesh_5unv3")
 
-[node name="CavityLeft" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=676032978]
+[node name="CavityLeft" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=2034753748]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 27.5, 6, -53)
 collision_mask = 0
 metadata/surface = &"wood"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/CavityLeft" unique_id=1431175345]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/CavityLeft" unique_id=1068679289]
 shape = SubResource("BoxShape3D_gjty1")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/CavityLeft" unique_id=1248472718]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/CavityLeft" unique_id=768010015]
 material_override = ExtResource("5_emjnc")
 mesh = SubResource("BoxMesh_5mfwt")
 
-[node name="CavityRight" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1307079125]
+[node name="CavityRight" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1642137909]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 60.5, 6, -53)
 collision_mask = 0
 metadata/surface = &"wood"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/CavityRight" unique_id=1797130752]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/CavityRight" unique_id=1933998494]
 shape = SubResource("BoxShape3D_0mpq7")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/CavityRight" unique_id=1375760602]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/CavityRight" unique_id=515686989]
 material_override = ExtResource("5_emjnc")
 mesh = SubResource("BoxMesh_m6dc5")
 
-[node name="CavityTop" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1929757968]
+[node name="CavityTop" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=149486285]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 44, 13.5, -53)
 collision_mask = 0
 metadata/surface = &"wood"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/CavityTop" unique_id=599886775]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/CavityTop" unique_id=2035306506]
 shape = SubResource("BoxShape3D_rrcno")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/CavityTop" unique_id=2096629170]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/CavityTop" unique_id=1930467948]
 material_override = ExtResource("5_emjnc")
 mesh = SubResource("BoxMesh_513ct")
 
-[node name="PaperCupRoof" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=367015782]
+[node name="PaperCupRoof" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=555432089]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -40, 3.1750002, 8)
 collision_mask = 0
 metadata/surface = &"paper"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/PaperCupRoof" unique_id=109231733]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/PaperCupRoof" unique_id=1172118101]
 shape = SubResource("BoxShape3D_a5rcw")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/PaperCupRoof" unique_id=389254838]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/PaperCupRoof" unique_id=1865349250]
 material_override = ExtResource("18_gwehj")
 mesh = SubResource("BoxMesh_ouupt")
 
-[node name="PaperCupSide" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=4924492]
+[node name="PaperCupSide" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1647640942]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -40, 1.475, 6.325)
 collision_mask = 0
 metadata/surface = &"paper"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/PaperCupSide" unique_id=295342992]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/PaperCupSide" unique_id=1452307421]
 shape = SubResource("BoxShape3D_2rb81")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/PaperCupSide" unique_id=95572198]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/PaperCupSide" unique_id=1975196813]
 material_override = ExtResource("18_gwehj")
 mesh = SubResource("BoxMesh_8fpsm")
 
-[node name="PaperCupSide2" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1289919914]
+[node name="PaperCupSide2" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=446442224]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -40, 1.475, 9.675)
 collision_mask = 0
 metadata/surface = &"paper"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/PaperCupSide2" unique_id=910422484]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/PaperCupSide2" unique_id=1758204415]
 shape = SubResource("BoxShape3D_iwxxj")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/PaperCupSide2" unique_id=1591119768]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/PaperCupSide2" unique_id=1738524504]
 material_override = ExtResource("18_gwehj")
 mesh = SubResource("BoxMesh_17ccy")
 
-[node name="SneakerRoof" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1472680520]
+[node name="SneakerRoof" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1786551765]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -36, 3.975, 42)
 collision_mask = 0
 metadata/surface = &"cloth"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/SneakerRoof" unique_id=1677058997]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/SneakerRoof" unique_id=1870610208]
 shape = SubResource("BoxShape3D_5ttgm")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/SneakerRoof" unique_id=1110363996]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/SneakerRoof" unique_id=1906409968]
 material_override = ExtResource("16_o6tps")
 mesh = SubResource("BoxMesh_01sv4")
 
-[node name="SneakerSide" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1546656791]
+[node name="SneakerSide" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=2136256761]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -36, 1.8749999, 39.925)
 collision_mask = 0
 metadata/surface = &"cloth"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/SneakerSide" unique_id=640082906]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/SneakerSide" unique_id=1111784563]
 shape = SubResource("BoxShape3D_e1l0k")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/SneakerSide" unique_id=373629320]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/SneakerSide" unique_id=72422788]
 material_override = ExtResource("16_o6tps")
 mesh = SubResource("BoxMesh_0mb1x")
 
-[node name="SneakerSide2" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=74795379]
+[node name="SneakerSide2" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=93940691]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -36, 1.8749999, 44.075)
 collision_mask = 0
 metadata/surface = &"cloth"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/SneakerSide2" unique_id=192802388]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/SneakerSide2" unique_id=930435486]
 shape = SubResource("BoxShape3D_fd7lp")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/SneakerSide2" unique_id=1865456734]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/SneakerSide2" unique_id=1035261093]
 material_override = ExtResource("16_o6tps")
 mesh = SubResource("BoxMesh_8rtbc")
 
-[node name="GroceryBagRoof" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1348804584]
+[node name="GroceryBagRoof" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1062825686]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 54, 4.775, 16)
 collision_mask = 0
 metadata/surface = &"paper"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/GroceryBagRoof" unique_id=1561897740]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/GroceryBagRoof" unique_id=140393747]
 shape = SubResource("BoxShape3D_w5c06")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/GroceryBagRoof" unique_id=463203157]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/GroceryBagRoof" unique_id=1008223447]
 material_override = ExtResource("19_wf2dc")
 mesh = SubResource("BoxMesh_tbliu")
 
-[node name="GroceryBagSide" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=2037217386]
+[node name="GroceryBagSide" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=211229123]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 50.975, 2.275, 16)
 collision_mask = 0
 metadata/surface = &"paper"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/GroceryBagSide" unique_id=39072477]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/GroceryBagSide" unique_id=1809667808]
 shape = SubResource("BoxShape3D_k31wo")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/GroceryBagSide" unique_id=1904086896]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/GroceryBagSide" unique_id=2072151638]
 material_override = ExtResource("19_wf2dc")
 mesh = SubResource("BoxMesh_kplmo")
 
-[node name="GroceryBagSide2" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=2120392936]
+[node name="GroceryBagSide2" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1857231522]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 57.025, 2.275, 16)
 collision_mask = 0
 metadata/surface = &"paper"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/GroceryBagSide2" unique_id=1888166074]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/GroceryBagSide2" unique_id=1496722951]
 shape = SubResource("BoxShape3D_0hhgu")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/GroceryBagSide2" unique_id=924777239]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/GroceryBagSide2" unique_id=206499325]
 material_override = ExtResource("19_wf2dc")
 mesh = SubResource("BoxMesh_6dm47")
 
-[node name="MailStack" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=794454123]
+[node name="MailStack" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=957089691]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15, 1.3, -16)
 collision_mask = 0
 metadata/surface = &"paper"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/MailStack" unique_id=1838346073]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/MailStack" unique_id=1901458521]
 shape = SubResource("BoxShape3D_m3c8p")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/MailStack" unique_id=1364845514]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/MailStack" unique_id=698805537]
 material_override = ExtResource("19_wf2dc")
 mesh = SubResource("BoxMesh_l58f1")
 
-[node name="FoldedTowelRoof" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=791025950]
+[node name="FoldedTowelRoof" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=492421819]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -50, 40.375, -38)
 collision_mask = 0
 metadata/surface = &"cloth"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/FoldedTowelRoof" unique_id=688761710]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/FoldedTowelRoof" unique_id=1884044311]
 shape = SubResource("BoxShape3D_ndwq5")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/FoldedTowelRoof" unique_id=2008813166]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/FoldedTowelRoof" unique_id=1633435977]
 material_override = ExtResource("13_ih7bu")
 mesh = SubResource("BoxMesh_a6g1b")
 
-[node name="FoldedTowelSide" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=684286207]
+[node name="FoldedTowelSide" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1376224844]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -50, 39.075, -40.775)
 collision_mask = 0
 metadata/surface = &"cloth"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/FoldedTowelSide" unique_id=490043038]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/FoldedTowelSide" unique_id=306530822]
 shape = SubResource("BoxShape3D_5f6hm")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/FoldedTowelSide" unique_id=1278358513]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/FoldedTowelSide" unique_id=1424816734]
 material_override = ExtResource("13_ih7bu")
 mesh = SubResource("BoxMesh_qqi5m")
 
-[node name="FoldedTowelSide2" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1187611694]
+[node name="FoldedTowelSide2" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=860378397]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -50, 39.075, -35.225)
 collision_mask = 0
 metadata/surface = &"cloth"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/FoldedTowelSide2" unique_id=1396303033]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/FoldedTowelSide2" unique_id=1213839321]
 shape = SubResource("BoxShape3D_ll3x3")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/FoldedTowelSide2" unique_id=1958183966]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/FoldedTowelSide2" unique_id=1609225985]
 material_override = ExtResource("13_ih7bu")
 mesh = SubResource("BoxMesh_wqjw5")
 
-[node name="NapkinTentRoof" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=910160294]
+[node name="NapkinTentRoof" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=524090518]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20, 33.675, 8)
 collision_mask = 0
 metadata/surface = &"paper"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/NapkinTentRoof" unique_id=1189470675]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/NapkinTentRoof" unique_id=1171494835]
 shape = SubResource("BoxShape3D_c3j4e")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/NapkinTentRoof" unique_id=1371832461]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/NapkinTentRoof" unique_id=338257408]
 material_override = ExtResource("19_wf2dc")
 mesh = SubResource("BoxMesh_roeew")
 
-[node name="NapkinTentSide" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1193869787]
+[node name="NapkinTentSide" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=835759012]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -22.775, 32.475, 8)
 collision_mask = 0
 metadata/surface = &"paper"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/NapkinTentSide" unique_id=1354542792]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/NapkinTentSide" unique_id=1412263440]
 shape = SubResource("BoxShape3D_orfer")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/NapkinTentSide" unique_id=1197651839]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/NapkinTentSide" unique_id=1391357453]
 material_override = ExtResource("19_wf2dc")
 mesh = SubResource("BoxMesh_pwn52")
 
-[node name="NapkinTentSide2" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=210424595]
+[node name="NapkinTentSide2" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=876451628]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -17.225, 32.475, 8)
 collision_mask = 0
 metadata/surface = &"paper"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/NapkinTentSide2" unique_id=1879494012]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/NapkinTentSide2" unique_id=259875170]
 shape = SubResource("BoxShape3D_0nya6")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/NapkinTentSide2" unique_id=1856241814]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/NapkinTentSide2" unique_id=372584518]
 material_override = ExtResource("19_wf2dc")
 mesh = SubResource("BoxMesh_806p1")
 
-[node name="RecycleBoxRoof" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=292816763]
+[node name="RecycleBoxRoof" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1883625249]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 102, 7.775, -6)
 collision_mask = 0
 metadata/surface = &"paper"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/RecycleBoxRoof" unique_id=1704973703]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/RecycleBoxRoof" unique_id=1975497690]
 shape = SubResource("BoxShape3D_n5s16")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/RecycleBoxRoof" unique_id=2042294153]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/RecycleBoxRoof" unique_id=1058250129]
 material_override = ExtResource("19_wf2dc")
 mesh = SubResource("BoxMesh_l4fb6")
 
-[node name="RecycleBoxSide" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=565535684]
+[node name="RecycleBoxSide" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1288457005]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 97.225, 3.775, -6)
 collision_mask = 0
 metadata/surface = &"paper"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/RecycleBoxSide" unique_id=100400005]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/RecycleBoxSide" unique_id=398928534]
 shape = SubResource("BoxShape3D_iegy0")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/RecycleBoxSide" unique_id=1759509714]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/RecycleBoxSide" unique_id=1952456751]
 material_override = ExtResource("19_wf2dc")
 mesh = SubResource("BoxMesh_7lubt")
 
-[node name="RecycleBoxSide2" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=570431066]
+[node name="RecycleBoxSide2" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1763754391]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 106.775, 3.775, -6)
 collision_mask = 0
 metadata/surface = &"paper"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/RecycleBoxSide2" unique_id=1148127838]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/RecycleBoxSide2" unique_id=571609679]
 shape = SubResource("BoxShape3D_s22l7")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/RecycleBoxSide2" unique_id=815731985]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/RecycleBoxSide2" unique_id=733504780]
 material_override = ExtResource("19_wf2dc")
 mesh = SubResource("BoxMesh_2eflb")
 
-[node name="FlourSack" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=759561620]
+[node name="FlourSack" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=545917162]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30, 3, 72)
 collision_mask = 0
 metadata/surface = &"cloth"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/FlourSack" unique_id=137016538]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/FlourSack" unique_id=59588882]
 shape = SubResource("BoxShape3D_khwcb")
 
-[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/FlourSack" unique_id=590587737]
+[node name="Mesh" type="MeshInstance3D" parent="NavRegion/Geometry/FlourSack" unique_id=1754818758]
 material_override = ExtResource("19_wf2dc")
 mesh = SubResource("BoxMesh_r83bd")
 
-[node name="GroceryTowerStep" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=919626616]
+[node name="GroceryTowerStep" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1619539831]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 100, 2.25, 43)
 collision_mask = 0
 metadata/surface = &"paper"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/GroceryTowerStep" unique_id=2005952759]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/GroceryTowerStep" unique_id=1917532966]
 shape = SubResource("BoxShape3D_q8773")
 
-[node name="GroceryTowerStep2" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=2113571210]
+[node name="GroceryTowerStep2" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=220390432]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 94.63769, 4.5, 40.49951)
 collision_mask = 0
 metadata/surface = &"paper"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/GroceryTowerStep2" unique_id=1539273411]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/GroceryTowerStep2" unique_id=2009206554]
 shape = SubResource("CylinderShape3D_7bpdb")
 
-[node name="GroceryTowerStep3" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=945764368]
+[node name="GroceryTowerStep3" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1030792367]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 93.106346, 6.75, 34.784462)
 collision_mask = 0
 metadata/surface = &"paper"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/GroceryTowerStep3" unique_id=1790766184]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/GroceryTowerStep3" unique_id=23656356]
 shape = SubResource("BoxShape3D_4dvm7")
 
-[node name="GroceryTowerStep4" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=334454916]
+[node name="GroceryTowerStep4" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1970664363]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 96.5, 9, 29.937822)
 collision_mask = 0
 metadata/surface = &"paper"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/GroceryTowerStep4" unique_id=375345583]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/GroceryTowerStep4" unique_id=1553599019]
 shape = SubResource("CylinderShape3D_1efhg")
 
-[node name="GroceryTowerStep5" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=596145835]
+[node name="GroceryTowerStep5" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=690874857]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 102.39414, 11.25, 29.422152)
 collision_mask = 0
 metadata/surface = &"paper"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/GroceryTowerStep5" unique_id=700313440]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/GroceryTowerStep5" unique_id=913389452]
 shape = SubResource("BoxShape3D_03sai")
 
-[node name="GroceryTowerStep6" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=2138783725]
+[node name="GroceryTowerStep6" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1326320358]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 106.57785, 13.5, 33.605858)
 collision_mask = 0
 metadata/surface = &"paper"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/GroceryTowerStep6" unique_id=654134421]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/GroceryTowerStep6" unique_id=581028861]
 shape = SubResource("CylinderShape3D_2e1ay")
 
-[node name="GroceryTowerStep7" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=783105489]
+[node name="GroceryTowerStep7" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=2039339902]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 106.06218, 15.75, 39.5)
 collision_mask = 0
 metadata/surface = &"paper"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/GroceryTowerStep7" unique_id=421723934]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/GroceryTowerStep7" unique_id=2086858997]
 shape = SubResource("BoxShape3D_17pvy")
 
-[node name="GroceryTowerStep8" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=363677883]
+[node name="GroceryTowerStep8" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1082908661]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 100, 16.9875, 36)
 collision_mask = 0
 metadata/surface = &"paper"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/GroceryTowerStep8" unique_id=1490428664]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/GroceryTowerStep8" unique_id=2075641245]
 shape = SubResource("BoxShape3D_chfpn")
 
-[node name="FloorSponge" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=529143014]
+[node name="FloorSponge" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=448456641]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 0.8, -8)
 metadata/surface = &"cloth"
 metadata/no_climb = true
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/FloorSponge" unique_id=689274674]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/FloorSponge" unique_id=292183795]
 shape = SubResource("BoxShape3D_jd6q1")
 
-[node name="Mesh" type="Node3D" parent="NavRegion/Geometry/FloorSponge" unique_id=401335787]
+[node name="Mesh" type="Node3D" parent="NavRegion/Geometry/FloorSponge" unique_id=396486936]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.8, 0)
 
-[node name="Part" type="MeshInstance3D" parent="NavRegion/Geometry/FloorSponge/Mesh" unique_id=2022395735 groups=["no_batch"]]
+[node name="Part" type="MeshInstance3D" parent="NavRegion/Geometry/FloorSponge/Mesh" unique_id=979342540 groups=["no_batch"]]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.57600003, 0)
 material_override = ExtResource("20_rxr38")
 mesh = SubResource("ArrayMesh_ayat4")
 
-[node name="Part2" type="MeshInstance3D" parent="NavRegion/Geometry/FloorSponge/Mesh" unique_id=1154563847 groups=["no_batch"]]
+[node name="Part2" type="MeshInstance3D" parent="NavRegion/Geometry/FloorSponge/Mesh" unique_id=551492801 groups=["no_batch"]]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.376, 0)
 material_override = ExtResource("21_5t8rm")
 mesh = SubResource("ArrayMesh_6a10n")
 
-[node name="Pad" type="Area3D" parent="NavRegion/Geometry/FloorSponge" unique_id=1424864460]
+[node name="Pad" type="Area3D" parent="NavRegion/Geometry/FloorSponge" unique_id=2014412661]
 collision_layer = 64
 collision_mask = 2
 monitorable = false
@@ -2550,32 +2559,32 @@ script = ExtResource("22_7vast")
 target = Vector3(-20, 38, -34)
 apex_above = 14.0
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/FloorSponge/Pad" unique_id=1467586643]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/FloorSponge/Pad" unique_id=1559720196]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.4, 0)
 shape = SubResource("BoxShape3D_4ybui")
 
-[node name="CounterSponge" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1071733631]
+[node name="CounterSponge" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=1611917267]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 38.8, -37)
 metadata/surface = &"cloth"
 metadata/no_climb = true
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/CounterSponge" unique_id=2003913807]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/CounterSponge" unique_id=1881745411]
 shape = SubResource("BoxShape3D_r2a4l")
 
-[node name="Mesh" type="Node3D" parent="NavRegion/Geometry/CounterSponge" unique_id=827563508]
+[node name="Mesh" type="Node3D" parent="NavRegion/Geometry/CounterSponge" unique_id=861724612]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.8, 0)
 
-[node name="Part" type="MeshInstance3D" parent="NavRegion/Geometry/CounterSponge/Mesh" unique_id=1247406387 groups=["no_batch"]]
+[node name="Part" type="MeshInstance3D" parent="NavRegion/Geometry/CounterSponge/Mesh" unique_id=1473189009 groups=["no_batch"]]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.57600003, 0)
 material_override = ExtResource("20_rxr38")
 mesh = SubResource("ArrayMesh_70p4n")
 
-[node name="Part2" type="MeshInstance3D" parent="NavRegion/Geometry/CounterSponge/Mesh" unique_id=38130301 groups=["no_batch"]]
+[node name="Part2" type="MeshInstance3D" parent="NavRegion/Geometry/CounterSponge/Mesh" unique_id=1447869774 groups=["no_batch"]]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.376, 0)
 material_override = ExtResource("21_5t8rm")
 mesh = SubResource("ArrayMesh_87qbb")
 
-[node name="Pad" type="Area3D" parent="NavRegion/Geometry/CounterSponge" unique_id=1709207083]
+[node name="Pad" type="Area3D" parent="NavRegion/Geometry/CounterSponge" unique_id=2069612342]
 collision_layer = 64
 collision_mask = 2
 monitorable = false
@@ -2583,26 +2592,26 @@ script = ExtResource("22_7vast")
 target = Vector3(38, 72, -28)
 apex_above = 5.0
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/CounterSponge/Pad" unique_id=2125780146]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/CounterSponge/Pad" unique_id=834775963]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.4, 0)
 shape = SubResource("BoxShape3D_v1pq0")
 
-[node name="PotHolder" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=884917098]
+[node name="PotHolder" type="StaticBody3D" parent="NavRegion/Geometry" unique_id=789211651]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 60, 0.7, 57)
 metadata/surface = &"cloth"
 metadata/no_climb = true
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/PotHolder" unique_id=1365271672]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/PotHolder" unique_id=1256454892]
 shape = SubResource("BoxShape3D_6vw8k")
 
-[node name="Mesh" type="Node3D" parent="NavRegion/Geometry/PotHolder" unique_id=234547847]
+[node name="Mesh" type="Node3D" parent="NavRegion/Geometry/PotHolder" unique_id=1800305090]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.7, 0)
 
-[node name="Part" type="MeshInstance3D" parent="NavRegion/Geometry/PotHolder/Mesh" unique_id=870735968 groups=["no_batch"]]
+[node name="Part" type="MeshInstance3D" parent="NavRegion/Geometry/PotHolder/Mesh" unique_id=1215392068 groups=["no_batch"]]
 material_override = ExtResource("16_o6tps")
 mesh = SubResource("ArrayMesh_mm32r")
 
-[node name="Pad" type="Area3D" parent="NavRegion/Geometry/PotHolder" unique_id=1129262911]
+[node name="Pad" type="Area3D" parent="NavRegion/Geometry/PotHolder" unique_id=1872889616]
 collision_layer = 64
 collision_mask = 2
 monitorable = false
@@ -2611,21 +2620,21 @@ target = Vector3(60, 30, 40)
 apex_above = 5.0
 label = "cushion"
 
-[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/PotHolder/Pad" unique_id=1687074966]
+[node name="Shape" type="CollisionShape3D" parent="NavRegion/Geometry/PotHolder/Pad" unique_id=1246679006]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.3, 0)
 shape = SubResource("BoxShape3D_cb4ji")
 
-[node name="Zones" type="Node3D" parent="." unique_id=1108574248]
+[node name="Zones" type="Node3D" parent="." unique_id=270579098]
 
-[node name="ToeKickGap" type="Area3D" parent="Zones" unique_id=626498672]
+[node name="ToeKickGap" type="Area3D" parent="Zones" unique_id=1808409453]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -30, 1.6, -22.5)
 script = ExtResource("23_djrud")
 allowed_bugs = PackedStringArray("cockroach")
 
-[node name="Shape" type="CollisionShape3D" parent="Zones/ToeKickGap" unique_id=1261949761]
+[node name="Shape" type="CollisionShape3D" parent="Zones/ToeKickGap" unique_id=1489192208]
 shape = SubResource("BoxShape3D_epbvg")
 
-[node name="ToeKickShadow" type="Area3D" parent="Zones" unique_id=150361479]
+[node name="ToeKickShadow" type="Area3D" parent="Zones" unique_id=1447205033]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -30, 2, -22.5)
 script = ExtResource("24_5upt7")
 zone_priority = 3
@@ -2633,38 +2642,38 @@ active_events = PackedStringArray()
 inactive_events = PackedStringArray()
 linked_nodes = Array[NodePath]([NodePath("Tint")])
 
-[node name="Shape" type="CollisionShape3D" parent="Zones/ToeKickShadow" unique_id=360350174]
+[node name="Shape" type="CollisionShape3D" parent="Zones/ToeKickShadow" unique_id=828895532]
 shape = SubResource("BoxShape3D_nkc8m")
 
-[node name="Tint" type="MeshInstance3D" parent="Zones/ToeKickShadow" unique_id=499959700]
+[node name="Tint" type="MeshInstance3D" parent="Zones/ToeKickShadow" unique_id=897763531]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.94, 0)
 material_override = ExtResource("25_78jkx")
 cast_shadow = 0
 mesh = SubResource("BoxMesh_peu5s")
 
-[node name="SinkDrain" type="Area3D" parent="Zones" unique_id=1951574109]
+[node name="SinkDrain" type="Area3D" parent="Zones" unique_id=850277759]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -35, 39, -33)
 script = ExtResource("26_213pd")
 respawn_path = NodePath("Respawn")
 active_events = PackedStringArray("dishes")
 
-[node name="Shape" type="CollisionShape3D" parent="Zones/SinkDrain" unique_id=972165682]
+[node name="Shape" type="CollisionShape3D" parent="Zones/SinkDrain" unique_id=1153693344]
 shape = SubResource("BoxShape3D_eui0g")
 
-[node name="Grate" type="MeshInstance3D" parent="Zones/SinkDrain" unique_id=1609505963]
+[node name="Grate" type="MeshInstance3D" parent="Zones/SinkDrain" unique_id=1870603052]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.95, 0)
 material_override = ExtResource("8_65k1k")
 mesh = SubResource("CylinderMesh_ay5vv")
 
-[node name="Water" type="MeshInstance3D" parent="Zones/SinkDrain" unique_id=1252527832]
+[node name="Water" type="MeshInstance3D" parent="Zones/SinkDrain" unique_id=1813020593]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.9, 0)
 material_override = ExtResource("27_h06y3")
 mesh = SubResource("CylinderMesh_5cium")
 
-[node name="Respawn" type="Marker3D" parent="Zones/SinkDrain" unique_id=2137486446]
+[node name="Respawn" type="Marker3D" parent="Zones/SinkDrain" unique_id=1974377465]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15, -0.40000153, 3)
 
-[node name="Dishwasher" type="Node3D" parent="Zones" unique_id=1218762871]
+[node name="Dishwasher" type="Node3D" parent="Zones" unique_id=1428767731]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 10, -30)
 script = ExtResource("28_n78tt")
 radius = 45.0
@@ -2673,25 +2682,25 @@ sound_key = &"dishwasher"
 active_events = PackedStringArray("dishes")
 inactive_events = PackedStringArray()
 
-[node name="PanRebound" type="Node3D" parent="Zones" unique_id=1369396000]
+[node name="PanRebound" type="Node3D" parent="Zones" unique_id=1676256977]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13, 37, -30)
 script = ExtResource("29_gnpfl")
 radius = 7.0
 
-[node name="PotRebound" type="Node3D" parent="Zones" unique_id=765065407]
+[node name="PotRebound" type="Node3D" parent="Zones" unique_id=1905005553]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14, 0, -11)
 script = ExtResource("29_gnpfl")
 radius = 6.5
 
-[node name="UnderFridge" type="Area3D" parent="Zones" unique_id=155976309]
+[node name="UnderFridge" type="Area3D" parent="Zones" unique_id=590417198]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 43, 1, -30)
 script = ExtResource("23_djrud")
 allowed_bugs = PackedStringArray("cockroach")
 
-[node name="Shape" type="CollisionShape3D" parent="Zones/UnderFridge" unique_id=1729178243]
+[node name="Shape" type="CollisionShape3D" parent="Zones/UnderFridge" unique_id=94743830]
 shape = SubResource("BoxShape3D_3hayp")
 
-[node name="UnderFridgeShadow" type="Area3D" parent="Zones" unique_id=1302820213]
+[node name="UnderFridgeShadow" type="Area3D" parent="Zones" unique_id=1684177364]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 43, 1, -30)
 script = ExtResource("24_5upt7")
 zone_priority = 3
@@ -2699,16 +2708,16 @@ active_events = PackedStringArray()
 inactive_events = PackedStringArray()
 linked_nodes = Array[NodePath]([NodePath("Tint")])
 
-[node name="Shape" type="CollisionShape3D" parent="Zones/UnderFridgeShadow" unique_id=2123280118]
+[node name="Shape" type="CollisionShape3D" parent="Zones/UnderFridgeShadow" unique_id=230435641]
 shape = SubResource("BoxShape3D_sqdt1")
 
-[node name="Tint" type="MeshInstance3D" parent="Zones/UnderFridgeShadow" unique_id=16764969]
+[node name="Tint" type="MeshInstance3D" parent="Zones/UnderFridgeShadow" unique_id=1419317429]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.94, 0)
 material_override = ExtResource("25_78jkx")
 cast_shadow = 0
 mesh = SubResource("BoxMesh_2hffm")
 
-[node name="FridgeLight" type="Area3D" parent="Zones" unique_id=624575696]
+[node name="FridgeLight" type="Area3D" parent="Zones" unique_id=311969810]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 43, 6, -9)
 script = ExtResource("24_5upt7")
 light_level = 3
@@ -2717,22 +2726,22 @@ active_events = PackedStringArray("fridge_open")
 inactive_events = PackedStringArray()
 linked_nodes = Array[NodePath]([NodePath("Tint"), NodePath("Light")])
 
-[node name="Shape" type="CollisionShape3D" parent="Zones/FridgeLight" unique_id=1357955499]
+[node name="Shape" type="CollisionShape3D" parent="Zones/FridgeLight" unique_id=2020664984]
 shape = SubResource("BoxShape3D_bm2uf")
 
-[node name="Tint" type="MeshInstance3D" parent="Zones/FridgeLight" unique_id=405558460]
+[node name="Tint" type="MeshInstance3D" parent="Zones/FridgeLight" unique_id=339930838]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -5.94, 0)
 material_override = ExtResource("30_qwk2c")
 cast_shadow = 0
 mesh = SubResource("BoxMesh_dgs28")
 
-[node name="Light" type="OmniLight3D" parent="Zones/FridgeLight" unique_id=129759357]
+[node name="Light" type="OmniLight3D" parent="Zones/FridgeLight" unique_id=737207748]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6, 0)
 light_color = Color(1, 0.92, 0.75, 1)
 light_energy = 3.0
 omni_range = 27.0
 
-[node name="FridgeHum" type="Node3D" parent="Zones" unique_id=1742761216]
+[node name="FridgeHum" type="Node3D" parent="Zones" unique_id=1008411518]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 43, 10, -30)
 script = ExtResource("28_n78tt")
 level = 0.35
@@ -2741,7 +2750,7 @@ volume_db = -14.0
 active_events = PackedStringArray()
 inactive_events = PackedStringArray()
 
-[node name="UnderTable" type="Area3D" parent="Zones" unique_id=1098999859]
+[node name="UnderTable" type="Area3D" parent="Zones" unique_id=131040747]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12, 5, 14)
 script = ExtResource("24_5upt7")
 light_level = 1
@@ -2750,42 +2759,42 @@ active_events = PackedStringArray()
 inactive_events = PackedStringArray()
 linked_nodes = Array[NodePath]([NodePath("Tint")])
 
-[node name="Shape" type="CollisionShape3D" parent="Zones/UnderTable" unique_id=919170365]
+[node name="Shape" type="CollisionShape3D" parent="Zones/UnderTable" unique_id=117254431]
 shape = SubResource("BoxShape3D_2bdkh")
 
-[node name="Tint" type="MeshInstance3D" parent="Zones/UnderTable" unique_id=64034032]
+[node name="Tint" type="MeshInstance3D" parent="Zones/UnderTable" unique_id=239363612]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -4.94, 0)
 material_override = ExtResource("25_78jkx")
 cast_shadow = 0
 mesh = SubResource("BoxMesh_njrw2")
 
-[node name="Puddle" type="Area3D" parent="Zones" unique_id=790654213]
+[node name="Puddle" type="Area3D" parent="Zones" unique_id=677434535]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38, 0.6, -15)
 script = ExtResource("31_16kjj")
 active_events = PackedStringArray()
 
-[node name="Shape" type="CollisionShape3D" parent="Zones/Puddle" unique_id=898347625]
+[node name="Shape" type="CollisionShape3D" parent="Zones/Puddle" unique_id=1429037734]
 shape = SubResource("BoxShape3D_il2pq")
 
-[node name="Water" type="MeshInstance3D" parent="Zones/Puddle" unique_id=1219338756]
+[node name="Water" type="MeshInstance3D" parent="Zones/Puddle" unique_id=186542097]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.55, 0)
 material_override = ExtResource("27_h06y3")
 cast_shadow = 0
 mesh = SubResource("BoxMesh_j7f7v")
 
-[node name="GlueTrap" type="Area3D" parent="Zones" unique_id=1974082074]
+[node name="GlueTrap" type="Area3D" parent="Zones" unique_id=1461962136]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -46, 0.5, 18)
 script = ExtResource("32_fyedp")
 
-[node name="Shape" type="CollisionShape3D" parent="Zones/GlueTrap" unique_id=1228301076]
+[node name="Shape" type="CollisionShape3D" parent="Zones/GlueTrap" unique_id=1098720438]
 shape = SubResource("BoxShape3D_sf0fu")
 
-[node name="Visual" type="MeshInstance3D" parent="Zones/GlueTrap" unique_id=1749211099]
+[node name="Visual" type="MeshInstance3D" parent="Zones/GlueTrap" unique_id=2085318003]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.45, 0)
 material_override = ExtResource("14_8f0hs")
 mesh = SubResource("BoxMesh_1knit")
 
-[node name="CeilingLight" type="Area3D" parent="Zones" unique_id=1769289052]
+[node name="CeilingLight" type="Area3D" parent="Zones" unique_id=1418032855]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25, 20, 17.5)
 script = ExtResource("24_5upt7")
 light_level = 2
@@ -2793,16 +2802,16 @@ active_events = PackedStringArray("breakfast", "lunch", "late_snack", "dishes", 
 inactive_events = PackedStringArray()
 linked_nodes = Array[NodePath]([NodePath("Light")])
 
-[node name="Shape" type="CollisionShape3D" parent="Zones/CeilingLight" unique_id=153022365]
+[node name="Shape" type="CollisionShape3D" parent="Zones/CeilingLight" unique_id=302756915]
 shape = SubResource("BoxShape3D_xogq6")
 
-[node name="Light" type="OmniLight3D" parent="Zones/CeilingLight" unique_id=72040565]
+[node name="Light" type="OmniLight3D" parent="Zones/CeilingLight" unique_id=1370126524]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 20, 0)
 light_color = Color(1, 0.92, 0.75, 1)
 light_energy = 0.45
 omni_range = 151.2
 
-[node name="Sunbeam" type="Area3D" parent="Zones" unique_id=2085890495]
+[node name="Sunbeam" type="Area3D" parent="Zones" unique_id=1736883646]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -46, 2, 0)
 script = ExtResource("24_5upt7")
 light_level = 3
@@ -2811,24 +2820,24 @@ active_events = PackedStringArray("sunbeam")
 inactive_events = PackedStringArray("lights_out")
 linked_nodes = Array[NodePath]([NodePath("Tint")])
 
-[node name="Shape" type="CollisionShape3D" parent="Zones/Sunbeam" unique_id=543365741]
+[node name="Shape" type="CollisionShape3D" parent="Zones/Sunbeam" unique_id=567504427]
 shape = SubResource("BoxShape3D_7oj1w")
 
-[node name="Tint" type="MeshInstance3D" parent="Zones/Sunbeam" unique_id=2007275191]
+[node name="Tint" type="MeshInstance3D" parent="Zones/Sunbeam" unique_id=175297966]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.94, 0)
 material_override = ExtResource("30_qwk2c")
 cast_shadow = 0
 mesh = SubResource("BoxMesh_irah6")
 
-[node name="ToeKickGap2" type="Area3D" parent="Zones" unique_id=850121581]
+[node name="ToeKickGap2" type="Area3D" parent="Zones" unique_id=1917707860]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 97, 1.6, -22.5)
 script = ExtResource("23_djrud")
 allowed_bugs = PackedStringArray("cockroach")
 
-[node name="Shape" type="CollisionShape3D" parent="Zones/ToeKickGap2" unique_id=809572440]
+[node name="Shape" type="CollisionShape3D" parent="Zones/ToeKickGap2" unique_id=1781783842]
 shape = SubResource("BoxShape3D_jtrct")
 
-[node name="ToeKickShadow2" type="Area3D" parent="Zones" unique_id=1546097502]
+[node name="ToeKickShadow2" type="Area3D" parent="Zones" unique_id=2099781703]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 97, 2, -22.5)
 script = ExtResource("24_5upt7")
 zone_priority = 3
@@ -2836,16 +2845,16 @@ active_events = PackedStringArray()
 inactive_events = PackedStringArray()
 linked_nodes = Array[NodePath]([NodePath("Tint")])
 
-[node name="Shape" type="CollisionShape3D" parent="Zones/ToeKickShadow2" unique_id=1674097953]
+[node name="Shape" type="CollisionShape3D" parent="Zones/ToeKickShadow2" unique_id=886903691]
 shape = SubResource("BoxShape3D_dcxlc")
 
-[node name="Tint" type="MeshInstance3D" parent="Zones/ToeKickShadow2" unique_id=663084911]
+[node name="Tint" type="MeshInstance3D" parent="Zones/ToeKickShadow2" unique_id=1169271041]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.94, 0)
 material_override = ExtResource("25_78jkx")
 cast_shadow = 0
 mesh = SubResource("BoxMesh_mesvu")
 
-[node name="UnderIslandLip" type="Area3D" parent="Zones" unique_id=742175061]
+[node name="UnderIslandLip" type="Area3D" parent="Zones" unique_id=1923168014]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 60, 3, 35)
 script = ExtResource("24_5upt7")
 light_level = 1
@@ -2854,48 +2863,48 @@ active_events = PackedStringArray()
 inactive_events = PackedStringArray()
 linked_nodes = Array[NodePath]([NodePath("Tint")])
 
-[node name="Shape" type="CollisionShape3D" parent="Zones/UnderIslandLip" unique_id=1164502488]
+[node name="Shape" type="CollisionShape3D" parent="Zones/UnderIslandLip" unique_id=1368321804]
 shape = SubResource("BoxShape3D_v6wib")
 
-[node name="Tint" type="MeshInstance3D" parent="Zones/UnderIslandLip" unique_id=463619893]
+[node name="Tint" type="MeshInstance3D" parent="Zones/UnderIslandLip" unique_id=2075117583]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -2.94, 0)
 material_override = ExtResource("25_78jkx")
 cast_shadow = 0
 mesh = SubResource("BoxMesh_d4v21")
 
-[node name="BowlSpot" type="Marker3D" parent="Zones" unique_id=1085347084 groups=["water_bowl"]]
+[node name="BowlSpot" type="Marker3D" parent="Zones" unique_id=1105371172 groups=["water_bowl"]]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 102, 1.5, 64)
 metadata/approach = Vector3(0, 0, -1)
 
-[node name="BowlSplash" type="Area3D" parent="Zones" unique_id=435244533]
+[node name="BowlSplash" type="Area3D" parent="Zones" unique_id=1284693496]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 100, 0.6, 56)
 script = ExtResource("31_16kjj")
 active_events = PackedStringArray()
 
-[node name="Shape" type="CollisionShape3D" parent="Zones/BowlSplash" unique_id=937843432]
+[node name="Shape" type="CollisionShape3D" parent="Zones/BowlSplash" unique_id=232174482]
 shape = SubResource("BoxShape3D_hrdwa")
 
-[node name="Water" type="MeshInstance3D" parent="Zones/BowlSplash" unique_id=1696726713]
+[node name="Water" type="MeshInstance3D" parent="Zones/BowlSplash" unique_id=1500913522]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.55, 0)
 material_override = ExtResource("27_h06y3")
 cast_shadow = 0
 mesh = SubResource("BoxMesh_ofgxo")
 
-[node name="MopSpill" type="Area3D" parent="Zones" unique_id=1754119804]
+[node name="MopSpill" type="Area3D" parent="Zones" unique_id=1224932017]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 88, 0.6, 10)
 script = ExtResource("31_16kjj")
 active_events = PackedStringArray()
 
-[node name="Shape" type="CollisionShape3D" parent="Zones/MopSpill" unique_id=1020219185]
+[node name="Shape" type="CollisionShape3D" parent="Zones/MopSpill" unique_id=872957394]
 shape = SubResource("BoxShape3D_ay247")
 
-[node name="Water" type="MeshInstance3D" parent="Zones/MopSpill" unique_id=1376868964]
+[node name="Water" type="MeshInstance3D" parent="Zones/MopSpill" unique_id=2005406954]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.55, 0)
 material_override = ExtResource("27_h06y3")
 cast_shadow = 0
 mesh = SubResource("BoxMesh_2hvno")
 
-[node name="SunbeamEast" type="Area3D" parent="Zones" unique_id=2110554574]
+[node name="SunbeamEast" type="Area3D" parent="Zones" unique_id=558040874]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 98, 2, 30)
 script = ExtResource("24_5upt7")
 light_level = 3
@@ -2904,65 +2913,65 @@ active_events = PackedStringArray("sunbeam")
 inactive_events = PackedStringArray("lights_out")
 linked_nodes = Array[NodePath]([NodePath("Tint")])
 
-[node name="Shape" type="CollisionShape3D" parent="Zones/SunbeamEast" unique_id=220397074]
+[node name="Shape" type="CollisionShape3D" parent="Zones/SunbeamEast" unique_id=96074922]
 shape = SubResource("BoxShape3D_utum6")
 
-[node name="Tint" type="MeshInstance3D" parent="Zones/SunbeamEast" unique_id=982696959]
+[node name="Tint" type="MeshInstance3D" parent="Zones/SunbeamEast" unique_id=885517583]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.94, 0)
 material_override = ExtResource("30_qwk2c")
 cast_shadow = 0
 mesh = SubResource("BoxMesh_uwh2p")
 
-[node name="StoveHeat" type="Area3D" parent="Zones" unique_id=562585679]
+[node name="StoveHeat" type="Area3D" parent="Zones" unique_id=164251434]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13, 56, -30)
 script = ExtResource("33_7gsus")
 active_events = PackedStringArray("breakfast", "lunch", "late_snack", "midnight_snack")
 
-[node name="Shape" type="CollisionShape3D" parent="Zones/StoveHeat" unique_id=907476582]
+[node name="Shape" type="CollisionShape3D" parent="Zones/StoveHeat" unique_id=105058733]
 shape = SubResource("BoxShape3D_dh3c5")
 
-[node name="Shimmer0" type="MeshInstance3D" parent="Zones/StoveHeat" unique_id=764862734]
+[node name="Shimmer0" type="MeshInstance3D" parent="Zones/StoveHeat" unique_id=1231342983]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -18, 0)
 material_override = ExtResource("34_vjulk")
 cast_shadow = 0
 mesh = SubResource("TorusMesh_i3yvc")
 
-[node name="ToasterHeat" type="Area3D" parent="Zones" unique_id=1772633950]
+[node name="ToasterHeat" type="Area3D" parent="Zones" unique_id=694940546]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 93, 62, -36)
 script = ExtResource("33_7gsus")
 lift = 6.0
 active_events = PackedStringArray("breakfast")
 
-[node name="Shape" type="CollisionShape3D" parent="Zones/ToasterHeat" unique_id=1747871554]
+[node name="Shape" type="CollisionShape3D" parent="Zones/ToasterHeat" unique_id=665785204]
 shape = SubResource("BoxShape3D_0tbfb")
 
-[node name="Shimmer0" type="MeshInstance3D" parent="Zones/ToasterHeat" unique_id=825786595]
+[node name="Shimmer0" type="MeshInstance3D" parent="Zones/ToasterHeat" unique_id=206659620]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -14, 0)
 material_override = ExtResource("34_vjulk")
 cast_shadow = 0
 mesh = SubResource("TorusMesh_prerl")
 
-[node name="CavityDark" type="Area3D" parent="Zones" unique_id=1041231453]
+[node name="CavityDark" type="Area3D" parent="Zones" unique_id=1986765454]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 44, 6, -53)
 script = ExtResource("24_5upt7")
 zone_priority = 3
 active_events = PackedStringArray()
 inactive_events = PackedStringArray()
 
-[node name="Shape" type="CollisionShape3D" parent="Zones/CavityDark" unique_id=1853369004]
+[node name="Shape" type="CollisionShape3D" parent="Zones/CavityDark" unique_id=295397176]
 shape = SubResource("BoxShape3D_3kgcf")
 
-[node name="PaperCupInside" type="Area3D" parent="Zones" unique_id=107574725]
+[node name="PaperCupInside" type="Area3D" parent="Zones" unique_id=1752994968]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -40, 1.475, 8)
 script = ExtResource("23_djrud")
 requires_squeeze = false
 allowed_bugs = PackedStringArray()
 hint = "Hidden in the paper cup"
 
-[node name="Shape" type="CollisionShape3D" parent="Zones/PaperCupInside" unique_id=617222666]
+[node name="Shape" type="CollisionShape3D" parent="Zones/PaperCupInside" unique_id=954942001]
 shape = SubResource("BoxShape3D_pt6nx")
 
-[node name="PaperCupShade" type="Area3D" parent="Zones" unique_id=560452668]
+[node name="PaperCupShade" type="Area3D" parent="Zones" unique_id=1973717861]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -40, 1.475, 8)
 script = ExtResource("24_5upt7")
 zone_priority = 3
@@ -2970,31 +2979,31 @@ active_events = PackedStringArray()
 inactive_events = PackedStringArray()
 linked_nodes = Array[NodePath]([NodePath("Tint")])
 
-[node name="Shape" type="CollisionShape3D" parent="Zones/PaperCupShade" unique_id=1008291852]
+[node name="Shape" type="CollisionShape3D" parent="Zones/PaperCupShade" unique_id=234942183]
 shape = SubResource("BoxShape3D_xlra0")
 
-[node name="Tint" type="MeshInstance3D" parent="Zones/PaperCupShade" unique_id=1714319243]
+[node name="Tint" type="MeshInstance3D" parent="Zones/PaperCupShade" unique_id=447168248]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.4150001, 0)
 material_override = ExtResource("25_78jkx")
 cast_shadow = 0
 mesh = SubResource("BoxMesh_58cx8")
 
-[node name="PaperCupCover" type="Marker3D" parent="Zones" unique_id=1956221243 groups=["cover"]]
+[node name="PaperCupCover" type="Marker3D" parent="Zones" unique_id=2116539029 groups=["cover"]]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -40, 1.475, 8)
 metadata/kind = "shelter"
 metadata/label = "paper cup"
 
-[node name="SneakerInside" type="Area3D" parent="Zones" unique_id=387989531]
+[node name="SneakerInside" type="Area3D" parent="Zones" unique_id=939810427]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -36, 1.8749999, 42)
 script = ExtResource("23_djrud")
 requires_squeeze = false
 allowed_bugs = PackedStringArray()
 hint = "Hidden in the old sneaker"
 
-[node name="Shape" type="CollisionShape3D" parent="Zones/SneakerInside" unique_id=828613640]
+[node name="Shape" type="CollisionShape3D" parent="Zones/SneakerInside" unique_id=1885080614]
 shape = SubResource("BoxShape3D_46igh")
 
-[node name="SneakerShade" type="Area3D" parent="Zones" unique_id=28419235]
+[node name="SneakerShade" type="Area3D" parent="Zones" unique_id=1797863859]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -36, 1.8749999, 42)
 script = ExtResource("24_5upt7")
 zone_priority = 3
@@ -3002,31 +3011,31 @@ active_events = PackedStringArray()
 inactive_events = PackedStringArray()
 linked_nodes = Array[NodePath]([NodePath("Tint")])
 
-[node name="Shape" type="CollisionShape3D" parent="Zones/SneakerShade" unique_id=1003473814]
+[node name="Shape" type="CollisionShape3D" parent="Zones/SneakerShade" unique_id=1193107246]
 shape = SubResource("BoxShape3D_2k3cb")
 
-[node name="Tint" type="MeshInstance3D" parent="Zones/SneakerShade" unique_id=1876753900]
+[node name="Tint" type="MeshInstance3D" parent="Zones/SneakerShade" unique_id=1181416414]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.8149999, 0)
 material_override = ExtResource("25_78jkx")
 cast_shadow = 0
 mesh = SubResource("BoxMesh_yf54i")
 
-[node name="SneakerCover" type="Marker3D" parent="Zones" unique_id=881574805 groups=["cover"]]
+[node name="SneakerCover" type="Marker3D" parent="Zones" unique_id=564052216 groups=["cover"]]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -36, 1.8749999, 42)
 metadata/kind = "shelter"
 metadata/label = "old sneaker"
 
-[node name="GroceryBagInside" type="Area3D" parent="Zones" unique_id=1830626197]
+[node name="GroceryBagInside" type="Area3D" parent="Zones" unique_id=963745976]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 54, 2.275, 16)
 script = ExtResource("23_djrud")
 requires_squeeze = false
 allowed_bugs = PackedStringArray()
 hint = "Hidden in the grocery bag"
 
-[node name="Shape" type="CollisionShape3D" parent="Zones/GroceryBagInside" unique_id=16880303]
+[node name="Shape" type="CollisionShape3D" parent="Zones/GroceryBagInside" unique_id=1294646885]
 shape = SubResource("BoxShape3D_csfnl")
 
-[node name="GroceryBagShade" type="Area3D" parent="Zones" unique_id=1369088606]
+[node name="GroceryBagShade" type="Area3D" parent="Zones" unique_id=768163746]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 54, 2.275, 16)
 script = ExtResource("24_5upt7")
 zone_priority = 3
@@ -3034,36 +3043,36 @@ active_events = PackedStringArray()
 inactive_events = PackedStringArray()
 linked_nodes = Array[NodePath]([NodePath("Tint")])
 
-[node name="Shape" type="CollisionShape3D" parent="Zones/GroceryBagShade" unique_id=957433047]
+[node name="Shape" type="CollisionShape3D" parent="Zones/GroceryBagShade" unique_id=1633443243]
 shape = SubResource("BoxShape3D_w6crg")
 
-[node name="Tint" type="MeshInstance3D" parent="Zones/GroceryBagShade" unique_id=884892313]
+[node name="Tint" type="MeshInstance3D" parent="Zones/GroceryBagShade" unique_id=669669025]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -2.215, 0)
 material_override = ExtResource("25_78jkx")
 cast_shadow = 0
 mesh = SubResource("BoxMesh_naveg")
 
-[node name="GroceryBagCover" type="Marker3D" parent="Zones" unique_id=889932676 groups=["cover"]]
+[node name="GroceryBagCover" type="Marker3D" parent="Zones" unique_id=163941718 groups=["cover"]]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 54, 2.275, 16)
 metadata/kind = "shelter"
 metadata/label = "grocery bag"
 
-[node name="MailStackCover" type="Marker3D" parent="Zones" unique_id=1304064968 groups=["cover"]]
+[node name="MailStackCover" type="Marker3D" parent="Zones" unique_id=1280026821 groups=["cover"]]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15, 1.3, -16)
 metadata/kind = "block"
 metadata/label = "stack of mail"
 
-[node name="FoldedTowelInside" type="Area3D" parent="Zones" unique_id=2088919040]
+[node name="FoldedTowelInside" type="Area3D" parent="Zones" unique_id=1581661130]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -50, 39.075, -38)
 script = ExtResource("23_djrud")
 requires_squeeze = false
 allowed_bugs = PackedStringArray()
 hint = "Hidden in the folded towel"
 
-[node name="Shape" type="CollisionShape3D" parent="Zones/FoldedTowelInside" unique_id=432701883]
+[node name="Shape" type="CollisionShape3D" parent="Zones/FoldedTowelInside" unique_id=599502832]
 shape = SubResource("BoxShape3D_7gs42")
 
-[node name="FoldedTowelShade" type="Area3D" parent="Zones" unique_id=1748818028]
+[node name="FoldedTowelShade" type="Area3D" parent="Zones" unique_id=1472898923]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -50, 39.075, -38)
 script = ExtResource("24_5upt7")
 zone_priority = 3
@@ -3071,31 +3080,31 @@ active_events = PackedStringArray()
 inactive_events = PackedStringArray()
 linked_nodes = Array[NodePath]([NodePath("Tint")])
 
-[node name="Shape" type="CollisionShape3D" parent="Zones/FoldedTowelShade" unique_id=979037479]
+[node name="Shape" type="CollisionShape3D" parent="Zones/FoldedTowelShade" unique_id=635978511]
 shape = SubResource("BoxShape3D_au2xh")
 
-[node name="Tint" type="MeshInstance3D" parent="Zones/FoldedTowelShade" unique_id=1420650797]
+[node name="Tint" type="MeshInstance3D" parent="Zones/FoldedTowelShade" unique_id=666122421]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.015, 0)
 material_override = ExtResource("25_78jkx")
 cast_shadow = 0
 mesh = SubResource("BoxMesh_q1fnw")
 
-[node name="FoldedTowelCover" type="Marker3D" parent="Zones" unique_id=58873596 groups=["cover"]]
+[node name="FoldedTowelCover" type="Marker3D" parent="Zones" unique_id=946940919 groups=["cover"]]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -50, 39.075, -38)
 metadata/kind = "shelter"
 metadata/label = "folded towel"
 
-[node name="NapkinTentInside" type="Area3D" parent="Zones" unique_id=1843780780]
+[node name="NapkinTentInside" type="Area3D" parent="Zones" unique_id=868831508]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20, 32.475, 8)
 script = ExtResource("23_djrud")
 requires_squeeze = false
 allowed_bugs = PackedStringArray()
 hint = "Hidden in the napkin"
 
-[node name="Shape" type="CollisionShape3D" parent="Zones/NapkinTentInside" unique_id=2098875670]
+[node name="Shape" type="CollisionShape3D" parent="Zones/NapkinTentInside" unique_id=1797660443]
 shape = SubResource("BoxShape3D_yed3b")
 
-[node name="NapkinTentShade" type="Area3D" parent="Zones" unique_id=284502843]
+[node name="NapkinTentShade" type="Area3D" parent="Zones" unique_id=115116121]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20, 32.475, 8)
 script = ExtResource("24_5upt7")
 zone_priority = 3
@@ -3103,31 +3112,31 @@ active_events = PackedStringArray()
 inactive_events = PackedStringArray()
 linked_nodes = Array[NodePath]([NodePath("Tint")])
 
-[node name="Shape" type="CollisionShape3D" parent="Zones/NapkinTentShade" unique_id=368552526]
+[node name="Shape" type="CollisionShape3D" parent="Zones/NapkinTentShade" unique_id=2001312092]
 shape = SubResource("BoxShape3D_wq7yp")
 
-[node name="Tint" type="MeshInstance3D" parent="Zones/NapkinTentShade" unique_id=148649812]
+[node name="Tint" type="MeshInstance3D" parent="Zones/NapkinTentShade" unique_id=2049983544]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.9150001, 0)
 material_override = ExtResource("25_78jkx")
 cast_shadow = 0
 mesh = SubResource("BoxMesh_fj5tg")
 
-[node name="NapkinTentCover" type="Marker3D" parent="Zones" unique_id=458840996 groups=["cover"]]
+[node name="NapkinTentCover" type="Marker3D" parent="Zones" unique_id=2028224928 groups=["cover"]]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20, 32.475, 8)
 metadata/kind = "shelter"
 metadata/label = "napkin"
 
-[node name="RecycleBoxInside" type="Area3D" parent="Zones" unique_id=1611440079]
+[node name="RecycleBoxInside" type="Area3D" parent="Zones" unique_id=1328344046]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 102, 3.775, -6)
 script = ExtResource("23_djrud")
 requires_squeeze = false
 allowed_bugs = PackedStringArray()
 hint = "Hidden in the recycling box"
 
-[node name="Shape" type="CollisionShape3D" parent="Zones/RecycleBoxInside" unique_id=1979788162]
+[node name="Shape" type="CollisionShape3D" parent="Zones/RecycleBoxInside" unique_id=816149951]
 shape = SubResource("BoxShape3D_5hw77")
 
-[node name="RecycleBoxShade" type="Area3D" parent="Zones" unique_id=1162977272]
+[node name="RecycleBoxShade" type="Area3D" parent="Zones" unique_id=831946739]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 102, 3.775, -6)
 script = ExtResource("24_5upt7")
 zone_priority = 3
@@ -3135,103 +3144,103 @@ active_events = PackedStringArray()
 inactive_events = PackedStringArray()
 linked_nodes = Array[NodePath]([NodePath("Tint")])
 
-[node name="Shape" type="CollisionShape3D" parent="Zones/RecycleBoxShade" unique_id=1135039785]
+[node name="Shape" type="CollisionShape3D" parent="Zones/RecycleBoxShade" unique_id=1169545216]
 shape = SubResource("BoxShape3D_ts37j")
 
-[node name="Tint" type="MeshInstance3D" parent="Zones/RecycleBoxShade" unique_id=595416017]
+[node name="Tint" type="MeshInstance3D" parent="Zones/RecycleBoxShade" unique_id=1064962179]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -3.715, 0)
 material_override = ExtResource("25_78jkx")
 cast_shadow = 0
 mesh = SubResource("BoxMesh_mwh2g")
 
-[node name="RecycleBoxCover" type="Marker3D" parent="Zones" unique_id=709302349 groups=["cover"]]
+[node name="RecycleBoxCover" type="Marker3D" parent="Zones" unique_id=549143824 groups=["cover"]]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 102, 3.775, -6)
 metadata/kind = "shelter"
 metadata/label = "recycling box"
 
-[node name="FlourSackCover" type="Marker3D" parent="Zones" unique_id=385834076 groups=["cover"]]
+[node name="FlourSackCover" type="Marker3D" parent="Zones" unique_id=1476337028 groups=["cover"]]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30, 3, 72)
 metadata/kind = "block"
 metadata/label = "flour sack"
 
-[node name="Pickups" type="Node3D" parent="." unique_id=804706848]
+[node name="Pickups" type="Node3D" parent="." unique_id=1501511711]
 
 [node name="Crumb" type="Area3D" parent="Pickups" unique_id=395796814 instance=ExtResource("35_51gm2")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30, 0.6, 30)
 
-[node name="Crumb2" type="Area3D" parent="Pickups" unique_id=1238398674 instance=ExtResource("35_51gm2")]
+[node name="Crumb2" type="Area3D" parent="Pickups" unique_id=558131411 instance=ExtResource("35_51gm2")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14, 0.6, 2)
 
-[node name="Crumb3" type="Area3D" parent="Pickups" unique_id=1566214978 instance=ExtResource("35_51gm2")]
+[node name="Crumb3" type="Area3D" parent="Pickups" unique_id=1214224659 instance=ExtResource("35_51gm2")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 0.6, 14)
 
-[node name="Crumb4" type="Area3D" parent="Pickups" unique_id=88629012 instance=ExtResource("35_51gm2")]
+[node name="Crumb4" type="Area3D" parent="Pickups" unique_id=578009222 instance=ExtResource("35_51gm2")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -28, 0.6, 22)
 
-[node name="Crumb5" type="Area3D" parent="Pickups" unique_id=379198710 instance=ExtResource("35_51gm2")]
+[node name="Crumb5" type="Area3D" parent="Pickups" unique_id=117390639 instance=ExtResource("35_51gm2")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -45, 0.6, -17)
 
-[node name="Crumb6" type="Area3D" parent="Pickups" unique_id=677769817 instance=ExtResource("35_51gm2")]
+[node name="Crumb6" type="Area3D" parent="Pickups" unique_id=2139475450 instance=ExtResource("35_51gm2")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20, 0.6, -22.5)
 
-[node name="Crumb7" type="Area3D" parent="Pickups" unique_id=1119639196 instance=ExtResource("35_51gm2")]
+[node name="Crumb7" type="Area3D" parent="Pickups" unique_id=360312479 instance=ExtResource("35_51gm2")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 43, 0.6, -13)
 
-[node name="Crumb8" type="Area3D" parent="Pickups" unique_id=491550740 instance=ExtResource("35_51gm2")]
+[node name="Crumb8" type="Area3D" parent="Pickups" unique_id=1662672049 instance=ExtResource("35_51gm2")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 52, 0.6, 5)
 
-[node name="Crumb9" type="Area3D" parent="Pickups" unique_id=1658732052 instance=ExtResource("35_51gm2")]
+[node name="Crumb9" type="Area3D" parent="Pickups" unique_id=17198352 instance=ExtResource("35_51gm2")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -55, 0.6, 20)
 
-[node name="Crumb10" type="Area3D" parent="Pickups" unique_id=291071129 instance=ExtResource("35_51gm2")]
+[node name="Crumb10" type="Area3D" parent="Pickups" unique_id=306332649 instance=ExtResource("35_51gm2")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 27, 0.6, 22)
 
-[node name="Crumb11" type="Area3D" parent="Pickups" unique_id=139314850 instance=ExtResource("35_51gm2")]
+[node name="Crumb11" type="Area3D" parent="Pickups" unique_id=1032268446 instance=ExtResource("35_51gm2")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -24, 19.4, -7)
 
-[node name="Crumb12" type="Area3D" parent="Pickups" unique_id=416148165 instance=ExtResource("35_51gm2")]
+[node name="Crumb12" type="Area3D" parent="Pickups" unique_id=1215654849 instance=ExtResource("35_51gm2")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16, 32.2, 18)
 
-[node name="Crumb13" type="Area3D" parent="Pickups" unique_id=700211514 instance=ExtResource("35_51gm2")]
+[node name="Crumb13" type="Area3D" parent="Pickups" unique_id=749418520 instance=ExtResource("35_51gm2")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 32.2, 8)
 
-[node name="Crumb14" type="Area3D" parent="Pickups" unique_id=1612548357 instance=ExtResource("35_51gm2")]
+[node name="Crumb14" type="Area3D" parent="Pickups" unique_id=1545160334 instance=ExtResource("35_51gm2")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -28, 38.6, -27)
 
-[node name="Crumb15" type="Area3D" parent="Pickups" unique_id=1989095010 instance=ExtResource("35_51gm2")]
+[node name="Crumb15" type="Area3D" parent="Pickups" unique_id=105016226 instance=ExtResource("35_51gm2")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 36.6, -28)
 
-[node name="Crumb16" type="Area3D" parent="Pickups" unique_id=447804130 instance=ExtResource("35_51gm2")]
+[node name="Crumb16" type="Area3D" parent="Pickups" unique_id=1237490046 instance=ExtResource("35_51gm2")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 75, 0.6, 10)
 
-[node name="Crumb17" type="Area3D" parent="Pickups" unique_id=27914903 instance=ExtResource("35_51gm2")]
+[node name="Crumb17" type="Area3D" parent="Pickups" unique_id=1464537779 instance=ExtResource("35_51gm2")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 95, 0.6, 22)
 
-[node name="Crumb18" type="Area3D" parent="Pickups" unique_id=832363154 instance=ExtResource("35_51gm2")]
+[node name="Crumb18" type="Area3D" parent="Pickups" unique_id=1513488629 instance=ExtResource("35_51gm2")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 105, 0.6, 48)
 
-[node name="Crumb19" type="Area3D" parent="Pickups" unique_id=2064816839 instance=ExtResource("35_51gm2")]
+[node name="Crumb19" type="Area3D" parent="Pickups" unique_id=546062543 instance=ExtResource("35_51gm2")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 75, 0.6, 72)
 
-[node name="Crumb20" type="Area3D" parent="Pickups" unique_id=267520900 instance=ExtResource("35_51gm2")]
+[node name="Crumb20" type="Area3D" parent="Pickups" unique_id=166049517 instance=ExtResource("35_51gm2")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 40, 0.6, 62)
 
-[node name="Crumb21" type="Area3D" parent="Pickups" unique_id=1786057889 instance=ExtResource("35_51gm2")]
+[node name="Crumb21" type="Area3D" parent="Pickups" unique_id=310839565 instance=ExtResource("35_51gm2")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0.6, 70)
 
-[node name="Crumb22" type="Area3D" parent="Pickups" unique_id=948577033 instance=ExtResource("35_51gm2")]
+[node name="Crumb22" type="Area3D" parent="Pickups" unique_id=117581917 instance=ExtResource("35_51gm2")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -30, 0.6, 62)
 
-[node name="Crumb23" type="Area3D" parent="Pickups" unique_id=1668995946 instance=ExtResource("35_51gm2")]
+[node name="Crumb23" type="Area3D" parent="Pickups" unique_id=1666591917 instance=ExtResource("35_51gm2")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -50, 0.6, 58)
 
-[node name="Crumb24" type="Area3D" parent="Pickups" unique_id=1324888799 instance=ExtResource("35_51gm2")]
+[node name="Crumb24" type="Area3D" parent="Pickups" unique_id=1869745952 instance=ExtResource("35_51gm2")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 100, 38.6, -28)
 
-[node name="Crumb25" type="Area3D" parent="Pickups" unique_id=1476108047 instance=ExtResource("35_51gm2")]
+[node name="Crumb25" type="Area3D" parent="Pickups" unique_id=1883920013 instance=ExtResource("35_51gm2")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 52, 30.6, 32)
 
-[node name="Crumb26" type="Area3D" parent="Pickups" unique_id=1640167007 instance=ExtResource("35_51gm2")]
+[node name="Crumb26" type="Area3D" parent="Pickups" unique_id=1089956018 instance=ExtResource("35_51gm2")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 68, 30.6, 40)
 
 [node name="SugarCube" type="Area3D" parent="Pickups" unique_id=1465280466 instance=ExtResource("37_yf5ji")]
@@ -3246,7 +3255,7 @@ def = ExtResource("41_xfy8o")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 87, 0, 60)
 def = ExtResource("43_awwug")
 
-[node name="Kibble2" type="Area3D" parent="Pickups" unique_id=1884290992 instance=ExtResource("42_dv76i")]
+[node name="Kibble2" type="Area3D" parent="Pickups" unique_id=619145777 instance=ExtResource("42_dv76i")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 95, 0, 57)
 def = ExtResource("43_awwug")
 
@@ -3294,23 +3303,23 @@ def = ExtResource("62_26wm2")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -36, 0, 42)
 def = ExtResource("64_8636w")
 
-[node name="PowerTurbo2" type="Area3D" parent="Pickups" unique_id=1964280267 instance=ExtResource("55_fi7l8")]
+[node name="PowerTurbo2" type="Area3D" parent="Pickups" unique_id=1772863126 instance=ExtResource("55_fi7l8")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 102, 0, -6)
 def = ExtResource("56_dlo4p")
 
-[node name="PowerDouble2" type="Area3D" parent="Pickups" unique_id=1705314245 instance=ExtResource("61_tj0t3")]
+[node name="PowerDouble2" type="Area3D" parent="Pickups" unique_id=2009031287 instance=ExtResource("61_tj0t3")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 34, 0, -53)
 def = ExtResource("62_26wm2")
 
-[node name="PowerSpring2" type="Area3D" parent="Pickups" unique_id=297491505 instance=ExtResource("63_x3h3l")]
+[node name="PowerSpring2" type="Area3D" parent="Pickups" unique_id=1715640819 instance=ExtResource("63_x3h3l")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24, 0, 78)
 def = ExtResource("64_8636w")
 
-[node name="PowerRadar2" type="Area3D" parent="Pickups" unique_id=1639574614 instance=ExtResource("59_ttrr2")]
+[node name="PowerRadar2" type="Area3D" parent="Pickups" unique_id=410395686 instance=ExtResource("59_ttrr2")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -56, 0, 76)
 def = ExtResource("60_2vbll")
 
-[node name="PowerShrink2" type="Area3D" parent="Pickups" unique_id=446320342 instance=ExtResource("57_272ac")]
+[node name="PowerShrink2" type="Area3D" parent="Pickups" unique_id=258951463 instance=ExtResource("57_272ac")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -50, 38.15, -38)
 def = ExtResource("58_ggsmq")
 
@@ -3318,7 +3327,7 @@ def = ExtResource("58_ggsmq")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 94.63769, 9, 40.49951)
 def = ExtResource("66_p8i1l")
 
-[node name="PowerSpring3" type="Area3D" parent="Pickups" unique_id=1623763336 instance=ExtResource("63_x3h3l")]
+[node name="PowerSpring3" type="Area3D" parent="Pickups" unique_id=183529961 instance=ExtResource("63_x3h3l")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 96.5, 18, 29.937822)
 def = ExtResource("64_8636w")
 
@@ -3326,7 +3335,7 @@ def = ExtResource("64_8636w")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 106.57785, 27, 33.605858)
 def = ExtResource("68_7elo6")
 
-[node name="GemAmber2" type="Area3D" parent="Pickups" unique_id=1639657609 instance=ExtResource("48_s2nxu")]
+[node name="GemAmber2" type="Area3D" parent="Pickups" unique_id=1718629279 instance=ExtResource("48_s2nxu")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 106.06218, 31.5, 39.5)
 def = ExtResource("49_iplno")
 
@@ -3354,27 +3363,27 @@ def = ExtResource("78_70w53")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 104, 46, -37)
 def = ExtResource("80_7d843")
 
-[node name="PowerTurbo3" type="Area3D" parent="Pickups" unique_id=712704480 instance=ExtResource("55_fi7l8")]
+[node name="PowerTurbo3" type="Area3D" parent="Pickups" unique_id=384967105 instance=ExtResource("55_fi7l8")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 34, 72, -38)
 def = ExtResource("56_dlo4p")
 
-[node name="PowerTurbo4" type="Area3D" parent="Pickups" unique_id=1160709646 instance=ExtResource("55_fi7l8")]
+[node name="PowerTurbo4" type="Area3D" parent="Pickups" unique_id=1241645432 instance=ExtResource("55_fi7l8")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 70, 30, 30)
 def = ExtResource("56_dlo4p")
 
-[node name="PowerRadar3" type="Area3D" parent="Pickups" unique_id=1770699333 instance=ExtResource("59_ttrr2")]
+[node name="PowerRadar3" type="Area3D" parent="Pickups" unique_id=227412803 instance=ExtResource("59_ttrr2")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -55, 38, -30)
 def = ExtResource("60_2vbll")
 
-[node name="PowerDouble3" type="Area3D" parent="Pickups" unique_id=1475296964 instance=ExtResource("61_tj0t3")]
+[node name="PowerDouble3" type="Area3D" parent="Pickups" unique_id=1468296435 instance=ExtResource("61_tj0t3")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 31.5, 24)
 def = ExtResource("62_26wm2")
 
-[node name="PowerShrink3" type="Area3D" parent="Pickups" unique_id=144364763 instance=ExtResource("57_272ac")]
+[node name="PowerShrink3" type="Area3D" parent="Pickups" unique_id=1729176263 instance=ExtResource("57_272ac")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 92, 48, -36)
 def = ExtResource("58_ggsmq")
 
-[node name="Props" type="Node3D" parent="." unique_id=2095520337]
+[node name="Props" type="Node3D" parent="." unique_id=1597161150]
 
 [node name="Pea" type="RigidBody3D" parent="Props" unique_id=988586047 instance=ExtResource("81_gbhbj")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -22, 38.6, -20.2)
@@ -3392,27 +3401,27 @@ mass = 1.2
 impact_sound = &"thud"
 commotion = 2.5
 
-[node name="CerealBox2" type="RigidBody3D" parent="Props" unique_id=665418805 instance=ExtResource("84_xb3rg")]
+[node name="CerealBox2" type="RigidBody3D" parent="Props" unique_id=717356996 instance=ExtResource("84_xb3rg")]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -10, 42.6, -26)
 mass = 1.2
 impact_sound = &"thud"
 commotion = 2.5
 
-[node name="CerealBox3" type="RigidBody3D" parent="Props" unique_id=2041030514 instance=ExtResource("84_xb3rg")]
+[node name="CerealBox3" type="RigidBody3D" parent="Props" unique_id=1351922760 instance=ExtResource("84_xb3rg")]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -6, 42.6, -26)
 mass = 1.2
 impact_sound = &"thud"
 commotion = 2.5
 
-[node name="Spoon" type="Area3D" parent="Props" unique_id=1315709984]
+[node name="Spoon" type="Area3D" parent="Props" unique_id=626216050]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -46, 38.3, -27)
 script = ExtResource("85_ttbgl")
 loudness = 2.6
 
-[node name="Shape" type="CollisionShape3D" parent="Props/Spoon" unique_id=956081260]
+[node name="Shape" type="CollisionShape3D" parent="Props/Spoon" unique_id=1913303457]
 shape = SubResource("BoxShape3D_hhwre")
 
-[node name="Visual" type="MeshInstance3D" parent="Props/Spoon" unique_id=1027444660]
+[node name="Visual" type="MeshInstance3D" parent="Props/Spoon" unique_id=1603906945]
 material_override = ExtResource("9_fkprg")
 mesh = SubResource("BoxMesh_mptsn")
 
@@ -3444,7 +3453,7 @@ crash_speed = 12.0
 crash_sound = &"shatter"
 fragile = true
 
-[node name="Glass2" type="RigidBody3D" parent="Props" unique_id=1412384916 instance=ExtResource("86_68frx")]
+[node name="Glass2" type="RigidBody3D" parent="Props" unique_id=1867264536 instance=ExtResource("86_68frx")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 44, 31.85, 24.4)
 mass = 0.4
 noise_on_impact = 1.4
@@ -3453,26 +3462,26 @@ crash_speed = 12.0
 crash_sound = &"shatter"
 fragile = true
 
-[node name="Phone" type="Area3D" parent="Props" unique_id=1817779619]
+[node name="Phone" type="Area3D" parent="Props" unique_id=1788182737]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 31.75, 20)
 script = ExtResource("85_ttbgl")
 kind = 0
 loudness = 2.2
 glow_path = NodePath("Glow")
 
-[node name="Shape" type="CollisionShape3D" parent="Props/Phone" unique_id=597115058]
+[node name="Shape" type="CollisionShape3D" parent="Props/Phone" unique_id=812694217]
 shape = SubResource("BoxShape3D_83boq")
 
-[node name="Visual" type="MeshInstance3D" parent="Props/Phone" unique_id=1370057098]
+[node name="Visual" type="MeshInstance3D" parent="Props/Phone" unique_id=1290379375]
 material_override = ExtResource("8_65k1k")
 mesh = SubResource("BoxMesh_6fr0q")
 
-[node name="Glow" type="MeshInstance3D" parent="Props/Phone" unique_id=419297138]
+[node name="Glow" type="MeshInstance3D" parent="Props/Phone" unique_id=2102952312]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.28, 0)
 material_override = ExtResource("89_ykgsx")
 mesh = SubResource("BoxMesh_xbdgj")
 
-[node name="GlowLight" type="OmniLight3D" parent="Props/Phone/Glow" unique_id=1135407985]
+[node name="GlowLight" type="OmniLight3D" parent="Props/Phone/Glow" unique_id=591001351]
 light_color = Color(0.7, 0.85, 1, 1)
 light_energy = 2.0
 omni_range = 10.0
@@ -3491,7 +3500,7 @@ noise_on_impact = 0.8
 trip_hazard = true
 impact_sound = &"squish"
 
-[node name="Grape2" type="RigidBody3D" parent="Props" unique_id=1357422559 instance=ExtResource("91_qehrr")]
+[node name="Grape2" type="RigidBody3D" parent="Props" unique_id=1844802899 instance=ExtResource("91_qehrr")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -22, 0.9, 37)
 mass = 0.5
 noise_on_impact = 0.8
@@ -3505,61 +3514,61 @@ noise_on_impact = 1.0
 trip_hazard = true
 impact_sound = &"thud"
 
-[node name="FridgeGap" type="Area3D" parent="Props" unique_id=1810879621]
+[node name="FridgeGap" type="Area3D" parent="Props" unique_id=660184680]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 58.5, 1.5, -16)
 script = ExtResource("93_3fv5e")
 allowed_bugs = PackedStringArray("cockroach")
 exit_path = NodePath("Exit")
 label = "gap behind the fridge"
 
-[node name="Shape" type="CollisionShape3D" parent="Props/FridgeGap" unique_id=863712765]
+[node name="Shape" type="CollisionShape3D" parent="Props/FridgeGap" unique_id=780725811]
 shape = SubResource("BoxShape3D_otgos")
 
-[node name="Exit" type="Marker3D" parent="Props/FridgeGap" unique_id=838973311]
+[node name="Exit" type="Marker3D" parent="Props/FridgeGap" unique_id=1656961985]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5, -0.7, -37)
 
-[node name="Marker" type="MeshInstance3D" parent="Props/FridgeGap" unique_id=1464360361]
+[node name="Marker" type="MeshInstance3D" parent="Props/FridgeGap" unique_id=1385591124]
 transform = Transform3D(1, 0, 0, 0, 0.3, 0, 0, 0, 1, 0, 0, 0)
 material_override = ExtResource("94_ya4mr")
 mesh = SubResource("TorusMesh_ee7kt")
 
-[node name="AirVent" type="Area3D" parent="Props" unique_id=1878394668]
+[node name="AirVent" type="Area3D" parent="Props" unique_id=1466303268]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -50, 62, -44)
 script = ExtResource("93_3fv5e")
 allowed_bugs = PackedStringArray("fly", "spider")
 exit_path = NodePath("Exit")
 label = "air vent"
 
-[node name="Shape" type="CollisionShape3D" parent="Props/AirVent" unique_id=1760450481]
+[node name="Shape" type="CollisionShape3D" parent="Props/AirVent" unique_id=1909309294]
 shape = SubResource("BoxShape3D_vox0d")
 
-[node name="Exit" type="Marker3D" parent="Props/AirVent" unique_id=1688278475]
+[node name="Exit" type="Marker3D" parent="Props/AirVent" unique_id=1470130243]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 90, -61.2, -9)
 
-[node name="Marker" type="MeshInstance3D" parent="Props/AirVent" unique_id=1839748373]
+[node name="Marker" type="MeshInstance3D" parent="Props/AirVent" unique_id=1832393364]
 transform = Transform3D(1, 0, 0, 0, 0.3, 0, 0, 0, 1, 0, 0, 0)
 material_override = ExtResource("94_ya4mr")
 mesh = SubResource("TorusMesh_ilea4")
 
-[node name="CavityExit" type="Area3D" parent="Props" unique_id=664428406]
+[node name="CavityExit" type="Area3D" parent="Props" unique_id=266161118]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 31, 1.5, -53)
 script = ExtResource("93_3fv5e")
 allowed_bugs = PackedStringArray()
 exit_path = NodePath("Exit")
 label = "crack back to the kitchen"
 
-[node name="Shape" type="CollisionShape3D" parent="Props/CavityExit" unique_id=49689211]
+[node name="Shape" type="CollisionShape3D" parent="Props/CavityExit" unique_id=545738104]
 shape = SubResource("BoxShape3D_p6eu6")
 
-[node name="Exit" type="Marker3D" parent="Props/CavityExit" unique_id=2145709521]
+[node name="Exit" type="Marker3D" parent="Props/CavityExit" unique_id=1712404268]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25, -0.7, 43)
 
-[node name="Marker" type="MeshInstance3D" parent="Props/CavityExit" unique_id=2086634255]
+[node name="Marker" type="MeshInstance3D" parent="Props/CavityExit" unique_id=2013269069]
 transform = Transform3D(1, 0, 0, 0, 0.3, 0, 0, 0, 1, 0, 0, 0)
 material_override = ExtResource("94_ya4mr")
 mesh = SubResource("TorusMesh_xtajf")
 
-[node name="Actors" type="Node3D" parent="." unique_id=1604073430]
+[node name="Actors" type="Node3D" parent="." unique_id=589195422]
 
 [node name="Human" type="CharacterBody3D" parent="Actors" unique_id=659765007 instance=ExtResource("95_o5hkc")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 40, 0, 8)
@@ -3614,561 +3623,561 @@ config = ExtResource("103_q2xrl")
 active_events = PackedStringArray("cleaning")
 icon_height = 5.0
 
-[node name="Lights" type="Node3D" parent="." unique_id=972768560]
+[node name="Lights" type="Node3D" parent="." unique_id=142586366]
 
-[node name="Environment" type="WorldEnvironment" parent="Lights" unique_id=1477977926]
+[node name="Environment" type="WorldEnvironment" parent="Lights" unique_id=1256428048]
 environment = SubResource("Environment_7iku7")
 
-[node name="Sun" type="DirectionalLight3D" parent="Lights" unique_id=1315877130]
+[node name="Sun" type="DirectionalLight3D" parent="Lights" unique_id=339267277]
 transform = Transform3D(0.81915206, -0.48642042, 0.3039492, 0, 0.52991927, 0.8480481, -0.57357645, -0.69468033, 0.43408445, 0, 0, 0)
 light_color = Color(1, 0.94, 0.82, 1)
 light_energy = 0.9
 shadow_enabled = true
 directional_shadow_max_distance = 180.0
 
-[node name="Decor" type="Node3D" parent="." unique_id=1636180353]
+[node name="Decor" type="Node3D" parent="." unique_id=612879848]
 
-[node name="CabinetDoor" type="MeshInstance3D" parent="Decor" unique_id=941605605]
+[node name="CabinetDoor" type="MeshInstance3D" parent="Decor" unique_id=568798467]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -52, 20, -20.9)
 material_override = ExtResource("5_emjnc")
 mesh = SubResource("BoxMesh_sokty")
 
-[node name="CabinetDoor2" type="MeshInstance3D" parent="Decor" unique_id=1326964571]
+[node name="CabinetDoor2" type="MeshInstance3D" parent="Decor" unique_id=530995755]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -37, 20, -20.9)
 material_override = ExtResource("5_emjnc")
 mesh = SubResource("BoxMesh_8dx4l")
 
-[node name="CabinetDoor3" type="MeshInstance3D" parent="Decor" unique_id=271267289]
+[node name="CabinetDoor3" type="MeshInstance3D" parent="Decor" unique_id=807080640]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -22, 20, -20.9)
 material_override = ExtResource("5_emjnc")
 mesh = SubResource("BoxMesh_0pem3")
 
-[node name="CabinetDoor4" type="MeshInstance3D" parent="Decor" unique_id=573087953]
+[node name="CabinetDoor4" type="MeshInstance3D" parent="Decor" unique_id=742073263]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7, 20, -20.9)
 material_override = ExtResource("5_emjnc")
 mesh = SubResource("BoxMesh_ghbg5")
 
-[node name="SinkBasin" type="MeshInstance3D" parent="Decor" unique_id=1524062885]
+[node name="SinkBasin" type="MeshInstance3D" parent="Decor" unique_id=1834666907]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -35, 38.05, -33)
 material_override = ExtResource("9_fkprg")
 mesh = SubResource("BoxMesh_nt4ls")
 
-[node name="Faucet" type="MeshInstance3D" parent="Decor" unique_id=449238743]
+[node name="Faucet" type="MeshInstance3D" parent="Decor" unique_id=1522288259]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -35, 44, -42)
 material_override = ExtResource("9_fkprg")
 mesh = SubResource("BoxMesh_vio1l")
 
-[node name="FaucetSpout" type="MeshInstance3D" parent="Decor" unique_id=733297130]
+[node name="FaucetSpout" type="MeshInstance3D" parent="Decor" unique_id=567905759]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -35, 49.5, -38.5)
 material_override = ExtResource("9_fkprg")
 mesh = SubResource("BoxMesh_wyr4t")
 
-[node name="Burner" type="MeshInstance3D" parent="Decor" unique_id=376222790]
+[node name="Burner" type="MeshInstance3D" parent="Decor" unique_id=1168909116]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 36.2, -38)
 material_override = ExtResource("9_fkprg")
 mesh = SubResource("CylinderMesh_m4x27")
 
-[node name="Burner2" type="MeshInstance3D" parent="Decor" unique_id=2039964753]
+[node name="Burner2" type="MeshInstance3D" parent="Decor" unique_id=662706493]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19, 36.2, -38)
 material_override = ExtResource("9_fkprg")
 mesh = SubResource("CylinderMesh_nnsm4")
 
-[node name="Burner3" type="MeshInstance3D" parent="Decor" unique_id=1394535048]
+[node name="Burner3" type="MeshInstance3D" parent="Decor" unique_id=1220527931]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 36.2, -27)
 material_override = ExtResource("9_fkprg")
 mesh = SubResource("CylinderMesh_nonck")
 
-[node name="Burner4" type="MeshInstance3D" parent="Decor" unique_id=333426100]
+[node name="Burner4" type="MeshInstance3D" parent="Decor" unique_id=126633743]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19, 36.2, -27)
 material_override = ExtResource("9_fkprg")
 mesh = SubResource("CylinderMesh_21hm7")
 
-[node name="Pan" type="MeshInstance3D" parent="Decor" unique_id=967167872]
+[node name="Pan" type="MeshInstance3D" parent="Decor" unique_id=1785968622]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13, 58, -30)
 material_override = ExtResource("8_65k1k")
 mesh = SubResource("CylinderMesh_lg3f3")
 
-[node name="PanHandle" type="MeshInstance3D" parent="Decor" unique_id=1491018054]
+[node name="PanHandle" type="MeshInstance3D" parent="Decor" unique_id=193127236]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13, 58, -41)
 material_override = ExtResource("8_65k1k")
 mesh = SubResource("BoxMesh_kanam")
 
-[node name="PanHook" type="MeshInstance3D" parent="Decor" unique_id=1086774201]
+[node name="PanHook" type="MeshInstance3D" parent="Decor" unique_id=2116021147]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13, 80, -30)
 material_override = ExtResource("9_fkprg")
 mesh = SubResource("BoxMesh_3eo0l")
 
-[node name="Window" type="MeshInstance3D" parent="Decor" unique_id=1078244739]
+[node name="Window" type="MeshInstance3D" parent="Decor" unique_id=427903539]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -59.85, 52, 0)
 material_override = ExtResource("104_ttcmq")
 cast_shadow = 0
 mesh = SubResource("BoxMesh_54tgj")
 
-[node name="PantryDoor" type="MeshInstance3D" parent="Decor" unique_id=505958998]
+[node name="PantryDoor" type="MeshInstance3D" parent="Decor" unique_id=618929217]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 72, 36, -20.9)
 material_override = ExtResource("5_emjnc")
 mesh = SubResource("BoxMesh_agljy")
 
-[node name="PantryKnob" type="MeshInstance3D" parent="Decor" unique_id=877517960]
+[node name="PantryKnob" type="MeshInstance3D" parent="Decor" unique_id=1516151727]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 80, 36, -20.5)
 material_override = ExtResource("9_fkprg")
 mesh = SubResource("BoxMesh_vhm1o")
 
-[node name="BowlWater" type="MeshInstance3D" parent="Decor" unique_id=2111285896]
+[node name="BowlWater" type="MeshInstance3D" parent="Decor" unique_id=1131048091]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 102, 3.05, 64)
 material_override = ExtResource("27_h06y3")
 mesh = SubResource("CylinderMesh_7lw0a")
 
-[node name="WindowEast" type="MeshInstance3D" parent="Decor" unique_id=1650728116]
+[node name="WindowEast" type="MeshInstance3D" parent="Decor" unique_id=1003152462]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 109.85, 52, 30)
 material_override = ExtResource("104_ttcmq")
 cast_shadow = 0
 mesh = SubResource("BoxMesh_2jn5w")
 
-[node name="VentGrille" type="MeshInstance3D" parent="Decor" unique_id=378695464]
+[node name="VentGrille" type="MeshInstance3D" parent="Decor" unique_id=1736263898]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -50, 62, -44.8)
 material_override = ExtResource("8_65k1k")
 mesh = SubResource("BoxMesh_cnisc")
 
-[node name="DoorCrack" type="MeshInstance3D" parent="Decor" unique_id=690789522]
+[node name="DoorCrack" type="MeshInstance3D" parent="Decor" unique_id=1177338336]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -59.85, 2.5, 40)
 material_override = ExtResource("94_ya4mr")
 cast_shadow = 0
 mesh = SubResource("BoxMesh_xud4b")
 
-[node name="GroceryTowerPiece" type="MeshInstance3D" parent="Decor" unique_id=2090939283]
+[node name="GroceryTowerPiece" type="MeshInstance3D" parent="Decor" unique_id=562344194]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 100, 1.7154031, 43)
 material_override = ExtResource("105_4mj81")
 mesh = SubResource("BoxMesh_4g8px")
 
-[node name="GroceryTowerTape" type="MeshInstance3D" parent="Decor" unique_id=2422631]
+[node name="GroceryTowerTape" type="MeshInstance3D" parent="Decor" unique_id=1161473382]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 100, 3.4108062, 43)
 material_override = ExtResource("14_8f0hs")
 mesh = SubResource("BoxMesh_tgxck")
 
-[node name="GroceryTowerPiece2" type="MeshInstance3D" parent="Decor" unique_id=1518620648]
+[node name="GroceryTowerPiece2" type="MeshInstance3D" parent="Decor" unique_id=1508810189]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 100, 3.965403, 43)
 material_override = ExtResource("14_8f0hs")
 mesh = SubResource("BoxMesh_fswj7")
 
-[node name="GroceryTowerTin" type="MeshInstance3D" parent="Decor" unique_id=1761723315]
+[node name="GroceryTowerTin" type="MeshInstance3D" parent="Decor" unique_id=1703179097]
 transform = Transform3D(0.9774066, 0, 0.21136774, 0, 1, 0, -0.21136774, 0, 0.9774066, 94.63769, 2.1563423, 40.49951)
 material_override = ExtResource("106_iu0nk")
 mesh = SubResource("CylinderMesh_flp4j")
 
-[node name="GroceryTowerRim" type="MeshInstance3D" parent="Decor" unique_id=260001911]
+[node name="GroceryTowerRim" type="MeshInstance3D" parent="Decor" unique_id=1150513766]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 94.63769, 4.2126846, 40.49951)
 material_override = ExtResource("9_fkprg")
 mesh = SubResource("CylinderMesh_wdo0v")
 
-[node name="GroceryTowerTin2" type="MeshInstance3D" parent="Decor" unique_id=2128568473]
+[node name="GroceryTowerTin2" type="MeshInstance3D" parent="Decor" unique_id=1741009175]
 transform = Transform3D(0.40284646, 0, -0.9152676, 0, 1, 0, 0.9152676, 0, 0.40284646, 94.63769, 6.6563425, 40.49951)
 material_override = ExtResource("107_8i3o0")
 mesh = SubResource("CylinderMesh_v4edi")
 
-[node name="GroceryTowerRim2" type="MeshInstance3D" parent="Decor" unique_id=2010308369]
+[node name="GroceryTowerRim2" type="MeshInstance3D" parent="Decor" unique_id=1327231024]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 94.63769, 8.900001, 40.49951)
 material_override = ExtResource("9_fkprg")
 mesh = SubResource("CylinderMesh_d5ops")
 
-[node name="GroceryTowerPiece3" type="MeshInstance3D" parent="Decor" unique_id=1935194700]
+[node name="GroceryTowerPiece3" type="MeshInstance3D" parent="Decor" unique_id=1566883146]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 93.106346, 2.1294692, 34.784462)
 material_override = ExtResource("105_4mj81")
 mesh = SubResource("BoxMesh_o0tt5")
 
-[node name="GroceryTowerTape2" type="MeshInstance3D" parent="Decor" unique_id=895414560]
+[node name="GroceryTowerTape2" type="MeshInstance3D" parent="Decor" unique_id=666748826]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 93.106346, 4.2389383, 34.784462)
 material_override = ExtResource("14_8f0hs")
 mesh = SubResource("BoxMesh_p7xwi")
 
-[node name="GroceryTowerPiece4" type="MeshInstance3D" parent="Decor" unique_id=983275830]
+[node name="GroceryTowerPiece4" type="MeshInstance3D" parent="Decor" unique_id=121122542]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 93.106346, 6.1738744, 34.784462)
 material_override = ExtResource("14_8f0hs")
 mesh = SubResource("BoxMesh_x50mu")
 
-[node name="GroceryTowerPiece5" type="MeshInstance3D" parent="Decor" unique_id=1915230109]
+[node name="GroceryTowerPiece5" type="MeshInstance3D" parent="Decor" unique_id=1725210083]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 93.106346, 10.185732, 34.784462)
 material_override = ExtResource("107_8i3o0")
 mesh = SubResource("BoxMesh_7dcbj")
 
-[node name="GroceryTowerPiece6" type="MeshInstance3D" parent="Decor" unique_id=262521744]
+[node name="GroceryTowerPiece6" type="MeshInstance3D" parent="Decor" unique_id=756506015]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 93.106346, 12.891327, 34.784462)
 material_override = ExtResource("105_4mj81")
 mesh = SubResource("BoxMesh_pdypo")
 
-[node name="GroceryTowerTape3" type="MeshInstance3D" parent="Decor" unique_id=400729472]
+[node name="GroceryTowerTape3" type="MeshInstance3D" parent="Decor" unique_id=1883235220]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 93.106346, 13.4800005, 34.784462)
 material_override = ExtResource("14_8f0hs")
 mesh = SubResource("BoxMesh_ewdxo")
 
-[node name="GroceryTowerTin3" type="MeshInstance3D" parent="Decor" unique_id=594277302]
+[node name="GroceryTowerTin3" type="MeshInstance3D" parent="Decor" unique_id=174772207]
 transform = Transform3D(-0.4302236, 0, 0.90272236, 0, 1, 0, -0.90272236, 0, -0.4302236, 96.5, 1.8998239, 29.937822)
 material_override = ExtResource("106_iu0nk")
 mesh = SubResource("CylinderMesh_jle7p")
 
-[node name="GroceryTowerRim3" type="MeshInstance3D" parent="Decor" unique_id=1747527693]
+[node name="GroceryTowerRim3" type="MeshInstance3D" parent="Decor" unique_id=2053364016]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 96.5, 3.699648, 29.937822)
 material_override = ExtResource("9_fkprg")
 mesh = SubResource("CylinderMesh_ohl0d")
 
-[node name="GroceryTowerTin4" type="MeshInstance3D" parent="Decor" unique_id=404848839]
+[node name="GroceryTowerTin4" type="MeshInstance3D" parent="Decor" unique_id=257822769]
 transform = Transform3D(0.8405578, 0, 0.5417218, 0, 1, 0, -0.5417218, 0, 0.8405578, 96.5, 5.623664, 29.937822)
 material_override = ExtResource("107_8i3o0")
 mesh = SubResource("CylinderMesh_6txm6")
 
-[node name="GroceryTowerRim4" type="MeshInstance3D" parent="Decor" unique_id=1030189377]
+[node name="GroceryTowerRim4" type="MeshInstance3D" parent="Decor" unique_id=1787414448]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 96.5, 7.34768, 29.937822)
 material_override = ExtResource("9_fkprg")
 mesh = SubResource("CylinderMesh_8g6w3")
 
-[node name="GroceryTowerTin5" type="MeshInstance3D" parent="Decor" unique_id=1016546960]
+[node name="GroceryTowerTin5" type="MeshInstance3D" parent="Decor" unique_id=276993689]
 transform = Transform3D(0.34251177, 0, 0.93951356, 0, 1, 0, -0.93951356, 0, 0.34251177, 96.5, 9.753286, 29.937822)
 material_override = ExtResource("106_iu0nk")
 mesh = SubResource("CylinderMesh_n5nbu")
 
-[node name="GroceryTowerRim5" type="MeshInstance3D" parent="Decor" unique_id=446927673]
+[node name="GroceryTowerRim5" type="MeshInstance3D" parent="Decor" unique_id=1092945328]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 96.5, 11.958893, 29.937822)
 material_override = ExtResource("9_fkprg")
 mesh = SubResource("CylinderMesh_wh05x")
 
-[node name="GroceryTowerTin6" type="MeshInstance3D" parent="Decor" unique_id=840221473]
+[node name="GroceryTowerTin6" type="MeshInstance3D" parent="Decor" unique_id=1886644915]
 transform = Transform3D(0.04067534, 0, 0.9991724, 0, 1, 0, -0.9991724, 0, 0.04067534, 96.5, 13.908634, 29.937822)
 material_override = ExtResource("106_iu0nk")
 mesh = SubResource("CylinderMesh_hiw1i")
 
-[node name="GroceryTowerRim6" type="MeshInstance3D" parent="Decor" unique_id=988896326]
+[node name="GroceryTowerRim6" type="MeshInstance3D" parent="Decor" unique_id=719421530]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 96.5, 15.658377, 29.937822)
 material_override = ExtResource("9_fkprg")
 mesh = SubResource("CylinderMesh_g2c3o")
 
-[node name="GroceryTowerTin7" type="MeshInstance3D" parent="Decor" unique_id=1829595329]
+[node name="GroceryTowerTin7" type="MeshInstance3D" parent="Decor" unique_id=384934641]
 transform = Transform3D(0.9966567, 0, -0.08170291, 0, 1, 0, 0.08170291, 0, 0.9966567, 96.5, 16.879189, 29.937822)
 material_override = ExtResource("107_8i3o0")
 mesh = SubResource("CylinderMesh_3ktt8")
 
-[node name="GroceryTowerRim7" type="MeshInstance3D" parent="Decor" unique_id=1608846700]
+[node name="GroceryTowerRim7" type="MeshInstance3D" parent="Decor" unique_id=1117162711]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 96.5, 17.9, 29.937822)
 material_override = ExtResource("9_fkprg")
 mesh = SubResource("CylinderMesh_qbs5a")
 
-[node name="GroceryTowerPiece7" type="MeshInstance3D" parent="Decor" unique_id=1517223672]
+[node name="GroceryTowerPiece7" type="MeshInstance3D" parent="Decor" unique_id=1873946270]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 102.39414, 2.2802708, 29.422152)
 material_override = ExtResource("105_4mj81")
 mesh = SubResource("BoxMesh_oyci8")
 
-[node name="GroceryTowerTape4" type="MeshInstance3D" parent="Decor" unique_id=356664096]
+[node name="GroceryTowerTape4" type="MeshInstance3D" parent="Decor" unique_id=1794141684]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 102.39414, 4.5405416, 29.422152)
 material_override = ExtResource("14_8f0hs")
 mesh = SubResource("BoxMesh_tqww4")
 
-[node name="GroceryTowerPiece8" type="MeshInstance3D" parent="Decor" unique_id=182159688]
+[node name="GroceryTowerPiece8" type="MeshInstance3D" parent="Decor" unique_id=1571848489]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 102.39414, 6.3207235, 29.422152)
 material_override = ExtResource("14_8f0hs")
 mesh = SubResource("BoxMesh_t6ig3")
 
-[node name="GroceryTowerPiece9" type="MeshInstance3D" parent="Decor" unique_id=462040298]
+[node name="GroceryTowerPiece9" type="MeshInstance3D" parent="Decor" unique_id=819409302]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 102.39414, 9.831435, 29.422152)
 material_override = ExtResource("107_8i3o0")
 mesh = SubResource("BoxMesh_j27sa")
 
-[node name="GroceryTowerPiece10" type="MeshInstance3D" parent="Decor" unique_id=632073881]
+[node name="GroceryTowerPiece10" type="MeshInstance3D" parent="Decor" unique_id=1112706443]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 102.39414, 13.478778, 29.422152)
 material_override = ExtResource("105_4mj81")
 mesh = SubResource("BoxMesh_gf0p8")
 
-[node name="GroceryTowerTape5" type="MeshInstance3D" parent="Decor" unique_id=407730084]
+[node name="GroceryTowerTape5" type="MeshInstance3D" parent="Decor" unique_id=2138965325]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 102.39414, 15.355591, 29.422152)
 material_override = ExtResource("14_8f0hs")
 mesh = SubResource("BoxMesh_6syhy")
 
-[node name="GroceryTowerPiece11" type="MeshInstance3D" parent="Decor" unique_id=1634045888]
+[node name="GroceryTowerPiece11" type="MeshInstance3D" parent="Decor" unique_id=1443730915]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 102.39414, 17.751097, 29.422152)
 material_override = ExtResource("105_4mj81")
 mesh = SubResource("BoxMesh_7x8vs")
 
-[node name="GroceryTowerTape6" type="MeshInstance3D" parent="Decor" unique_id=878272010]
+[node name="GroceryTowerTape6" type="MeshInstance3D" parent="Decor" unique_id=51853252]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 102.39414, 20.106604, 29.422152)
 material_override = ExtResource("14_8f0hs")
 mesh = SubResource("BoxMesh_3fvno")
 
-[node name="GroceryTowerPiece12" type="MeshInstance3D" parent="Decor" unique_id=2047440751]
+[node name="GroceryTowerPiece12" type="MeshInstance3D" parent="Decor" unique_id=1817892620]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 102.39414, 21.313301, 29.422152)
 material_override = ExtResource("14_8f0hs")
 mesh = SubResource("BoxMesh_gqx1v")
 
-[node name="GroceryTowerTin8" type="MeshInstance3D" parent="Decor" unique_id=165487]
+[node name="GroceryTowerTin8" type="MeshInstance3D" parent="Decor" unique_id=639990214]
 transform = Transform3D(0.405456, 0, -0.91411453, 0, 1, 0, 0.91411453, 0, 0.405456, 106.57785, 1.7031605, 33.605858)
 material_override = ExtResource("107_8i3o0")
 mesh = SubResource("CylinderMesh_fdki2")
 
-[node name="GroceryTowerRim8" type="MeshInstance3D" parent="Decor" unique_id=1562340264]
+[node name="GroceryTowerRim8" type="MeshInstance3D" parent="Decor" unique_id=667990268]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 106.57785, 3.3063211, 33.605858)
 material_override = ExtResource("9_fkprg")
 mesh = SubResource("CylinderMesh_j4nss")
 
-[node name="GroceryTowerTin9" type="MeshInstance3D" parent="Decor" unique_id=867839141]
+[node name="GroceryTowerTin9" type="MeshInstance3D" parent="Decor" unique_id=1764350187]
 transform = Transform3D(-0.6068593, 0, 0.7948093, 0, 1, 0, -0.7948093, 0, -0.6068593, 106.57785, 5.222969, 33.605858)
 material_override = ExtResource("107_8i3o0")
 mesh = SubResource("CylinderMesh_6cn6n")
 
-[node name="GroceryTowerRim9" type="MeshInstance3D" parent="Decor" unique_id=544569578]
+[node name="GroceryTowerRim9" type="MeshInstance3D" parent="Decor" unique_id=941361226]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 106.57785, 6.939617, 33.605858)
 material_override = ExtResource("9_fkprg")
 mesh = SubResource("CylinderMesh_slm2k")
 
-[node name="GroceryTowerTin10" type="MeshInstance3D" parent="Decor" unique_id=1219873575]
+[node name="GroceryTowerTin10" type="MeshInstance3D" parent="Decor" unique_id=209990959]
 transform = Transform3D(-0.5521, 0, -0.8337779, 0, 1, 0, 0.8337779, 0, -0.5521, 106.57785, 8.681887, 33.605858)
 material_override = ExtResource("107_8i3o0")
 mesh = SubResource("CylinderMesh_y8cij")
 
-[node name="GroceryTowerRim10" type="MeshInstance3D" parent="Decor" unique_id=251178132]
+[node name="GroceryTowerRim10" type="MeshInstance3D" parent="Decor" unique_id=694960503]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 106.57785, 10.224155, 33.605858)
 material_override = ExtResource("9_fkprg")
 mesh = SubResource("CylinderMesh_vror0")
 
-[node name="GroceryTowerTin11" type="MeshInstance3D" parent="Decor" unique_id=2134358808]
+[node name="GroceryTowerTin11" type="MeshInstance3D" parent="Decor" unique_id=1538686475]
 transform = Transform3D(0.6362077, 0, 0.7715178, 0, 1, 0, -0.7715178, 0, 0.6362077, 106.57785, 12.154615, 33.605858)
 material_override = ExtResource("106_iu0nk")
 mesh = SubResource("CylinderMesh_uorv4")
 
-[node name="GroceryTowerRim11" type="MeshInstance3D" parent="Decor" unique_id=1257355507]
+[node name="GroceryTowerRim11" type="MeshInstance3D" parent="Decor" unique_id=1828158843]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 106.57785, 13.885076, 33.605858)
 material_override = ExtResource("9_fkprg")
 mesh = SubResource("CylinderMesh_a2ipt")
 
-[node name="GroceryTowerTin12" type="MeshInstance3D" parent="Decor" unique_id=1838307980]
+[node name="GroceryTowerTin12" type="MeshInstance3D" parent="Decor" unique_id=1677112391]
 transform = Transform3D(-0.004086471, 0, -0.99999166, 0, 1, 0, 0.99999166, 0, -0.004086471, 106.57785, 15.609283, 33.605858)
 material_override = ExtResource("106_iu0nk")
 mesh = SubResource("CylinderMesh_5k124")
 
-[node name="GroceryTowerRim12" type="MeshInstance3D" parent="Decor" unique_id=1396657004]
+[node name="GroceryTowerRim12" type="MeshInstance3D" parent="Decor" unique_id=1193325098]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 106.57785, 17.133492, 33.605858)
 material_override = ExtResource("9_fkprg")
 mesh = SubResource("CylinderMesh_i822o")
 
-[node name="GroceryTowerTin13" type="MeshInstance3D" parent="Decor" unique_id=1783020400]
+[node name="GroceryTowerTin13" type="MeshInstance3D" parent="Decor" unique_id=172874582]
 transform = Transform3D(-0.22644112, 0, 0.97402483, 0, 1, 0, -0.97402483, 0, -0.22644112, 106.57785, 19.245367, 33.605858)
 material_override = ExtResource("107_8i3o0")
 mesh = SubResource("CylinderMesh_7kytb")
 
-[node name="GroceryTowerRim13" type="MeshInstance3D" parent="Decor" unique_id=189051259]
+[node name="GroceryTowerRim13" type="MeshInstance3D" parent="Decor" unique_id=122130299]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 106.57785, 21.157244, 33.605858)
 material_override = ExtResource("9_fkprg")
 mesh = SubResource("CylinderMesh_77isg")
 
-[node name="GroceryTowerTin14" type="MeshInstance3D" parent="Decor" unique_id=827530604]
+[node name="GroceryTowerTin14" type="MeshInstance3D" parent="Decor" unique_id=477880246]
 transform = Transform3D(-0.7073787, 0, -0.70683473, 0, 1, 0, 0.70683473, 0, -0.7073787, 106.57785, 23.293013, 33.605858)
 material_override = ExtResource("106_iu0nk")
 mesh = SubResource("CylinderMesh_66fkg")
 
-[node name="GroceryTowerRim14" type="MeshInstance3D" parent="Decor" unique_id=1848613251]
+[node name="GroceryTowerRim14" type="MeshInstance3D" parent="Decor" unique_id=744972318]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 106.57785, 25.22878, 33.605858)
 material_override = ExtResource("9_fkprg")
 mesh = SubResource("CylinderMesh_o5gxx")
 
-[node name="GroceryTowerTin15" type="MeshInstance3D" parent="Decor" unique_id=112856802]
+[node name="GroceryTowerTin15" type="MeshInstance3D" parent="Decor" unique_id=292581696]
 transform = Transform3D(-0.5232592, 0, -0.85217357, 0, 1, 0, 0.85217357, 0, -0.5232592, 106.57785, 26.16439, 33.605858)
 material_override = ExtResource("107_8i3o0")
 mesh = SubResource("CylinderMesh_4qdc3")
 
-[node name="GroceryTowerRim15" type="MeshInstance3D" parent="Decor" unique_id=3163656]
+[node name="GroceryTowerRim15" type="MeshInstance3D" parent="Decor" unique_id=645084797]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 106.57785, 26.9, 33.605858)
 material_override = ExtResource("9_fkprg")
 mesh = SubResource("CylinderMesh_bnvh1")
 
-[node name="GroceryTowerPiece13" type="MeshInstance3D" parent="Decor" unique_id=907290452]
+[node name="GroceryTowerPiece13" type="MeshInstance3D" parent="Decor" unique_id=1070207871]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 106.06218, 1.6491925, 39.5)
 material_override = ExtResource("105_4mj81")
 mesh = SubResource("BoxMesh_kfkjp")
 
-[node name="GroceryTowerTape7" type="MeshInstance3D" parent="Decor" unique_id=1890308849]
+[node name="GroceryTowerTape7" type="MeshInstance3D" parent="Decor" unique_id=996998270]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 106.06218, 3.278385, 39.5)
 material_override = ExtResource("14_8f0hs")
 mesh = SubResource("BoxMesh_aghxs")
 
-[node name="GroceryTowerPiece14" type="MeshInstance3D" parent="Decor" unique_id=293763967]
+[node name="GroceryTowerPiece14" type="MeshInstance3D" parent="Decor" unique_id=857887481]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 106.06218, 5.5316114, 39.5)
 material_override = ExtResource("14_8f0hs")
 mesh = SubResource("BoxMesh_ivtt3")
 
-[node name="GroceryTowerPiece15" type="MeshInstance3D" parent="Decor" unique_id=1088682208]
+[node name="GroceryTowerPiece15" type="MeshInstance3D" parent="Decor" unique_id=928216172]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 106.06218, 9.880028, 39.5)
 material_override = ExtResource("107_8i3o0")
 mesh = SubResource("BoxMesh_54d8y")
 
-[node name="GroceryTowerPiece16" type="MeshInstance3D" parent="Decor" unique_id=1420779457]
+[node name="GroceryTowerPiece16" type="MeshInstance3D" parent="Decor" unique_id=221567491]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 106.06218, 14.304719, 39.5)
 material_override = ExtResource("105_4mj81")
 mesh = SubResource("BoxMesh_33m8t")
 
-[node name="GroceryTowerTape8" type="MeshInstance3D" parent="Decor" unique_id=252788182]
+[node name="GroceryTowerTape8" type="MeshInstance3D" parent="Decor" unique_id=1562135434]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 106.06218, 16.594221, 39.5)
 material_override = ExtResource("14_8f0hs")
 mesh = SubResource("BoxMesh_e4tg2")
 
-[node name="GroceryTowerPiece17" type="MeshInstance3D" parent="Decor" unique_id=270115401]
+[node name="GroceryTowerPiece17" type="MeshInstance3D" parent="Decor" unique_id=254148313]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 106.06218, 18.663794, 39.5)
 material_override = ExtResource("105_4mj81")
 mesh = SubResource("BoxMesh_rntu6")
 
-[node name="GroceryTowerTape9" type="MeshInstance3D" parent="Decor" unique_id=673822135]
+[node name="GroceryTowerTape9" type="MeshInstance3D" parent="Decor" unique_id=161885524]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 106.06218, 20.693367, 39.5)
 material_override = ExtResource("14_8f0hs")
 mesh = SubResource("BoxMesh_w5wvy")
 
-[node name="GroceryTowerPiece18" type="MeshInstance3D" parent="Decor" unique_id=502887617]
+[node name="GroceryTowerPiece18" type="MeshInstance3D" parent="Decor" unique_id=90240812]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 106.06218, 22.857264, 39.5)
 material_override = ExtResource("14_8f0hs")
 mesh = SubResource("BoxMesh_68e2g")
 
-[node name="GroceryTowerPiece19" type="MeshInstance3D" parent="Decor" unique_id=1076866780]
+[node name="GroceryTowerPiece19" type="MeshInstance3D" parent="Decor" unique_id=411251519]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 106.06218, 26.9549, 39.5)
 material_override = ExtResource("107_8i3o0")
 mesh = SubResource("BoxMesh_w72ua")
 
-[node name="GroceryTowerPiece20" type="MeshInstance3D" parent="Decor" unique_id=1587817073]
+[node name="GroceryTowerPiece20" type="MeshInstance3D" parent="Decor" unique_id=779659012]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 106.06218, 30.20432, 39.5)
 material_override = ExtResource("105_4mj81")
 mesh = SubResource("BoxMesh_evqm4")
 
-[node name="GroceryTowerTape10" type="MeshInstance3D" parent="Decor" unique_id=816691125]
+[node name="GroceryTowerTape10" type="MeshInstance3D" parent="Decor" unique_id=700724748]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 106.06218, 31.480001, 39.5)
 material_override = ExtResource("14_8f0hs")
 mesh = SubResource("BoxMesh_181y5")
 
-[node name="GroceryTowerPiece21" type="MeshInstance3D" parent="Decor" unique_id=188573047]
+[node name="GroceryTowerPiece21" type="MeshInstance3D" parent="Decor" unique_id=1039214385]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 100, 2.3753462, 36)
 material_override = ExtResource("105_4mj81")
 mesh = SubResource("BoxMesh_kdjes")
 
-[node name="GroceryTowerTape11" type="MeshInstance3D" parent="Decor" unique_id=485981571]
+[node name="GroceryTowerTape11" type="MeshInstance3D" parent="Decor" unique_id=1475656286]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 100, 4.7306924, 36)
 material_override = ExtResource("14_8f0hs")
 mesh = SubResource("BoxMesh_wuok7")
 
-[node name="GroceryTowerPiece22" type="MeshInstance3D" parent="Decor" unique_id=801821919]
+[node name="GroceryTowerPiece22" type="MeshInstance3D" parent="Decor" unique_id=477648667]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 100, 6.7403927, 36)
 material_override = ExtResource("14_8f0hs")
 mesh = SubResource("BoxMesh_7f8oo")
 
-[node name="GroceryTowerPiece23" type="MeshInstance3D" parent="Decor" unique_id=140247458]
+[node name="GroceryTowerPiece23" type="MeshInstance3D" parent="Decor" unique_id=1416211449]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 100, 10.337551, 36)
 material_override = ExtResource("107_8i3o0")
 mesh = SubResource("BoxMesh_66tkv")
 
-[node name="GroceryTowerPiece24" type="MeshInstance3D" parent="Decor" unique_id=1378447826]
+[node name="GroceryTowerPiece24" type="MeshInstance3D" parent="Decor" unique_id=890868788]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 100, 14.288739, 36)
 material_override = ExtResource("105_4mj81")
 mesh = SubResource("BoxMesh_741tt")
 
-[node name="GroceryTowerTape12" type="MeshInstance3D" parent="Decor" unique_id=1448648267]
+[node name="GroceryTowerTape12" type="MeshInstance3D" parent="Decor" unique_id=688277885]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 100, 16.612469, 36)
 material_override = ExtResource("14_8f0hs")
 mesh = SubResource("BoxMesh_cjuo6")
 
-[node name="GroceryTowerPiece25" type="MeshInstance3D" parent="Decor" unique_id=1219204473]
+[node name="GroceryTowerPiece25" type="MeshInstance3D" parent="Decor" unique_id=1209796391]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 100, 19.011576, 36)
 material_override = ExtResource("105_4mj81")
 mesh = SubResource("BoxMesh_glkpn")
 
-[node name="GroceryTowerTape13" type="MeshInstance3D" parent="Decor" unique_id=1854251095]
+[node name="GroceryTowerTape13" type="MeshInstance3D" parent="Decor" unique_id=1567800278]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 100, 21.370684, 36)
 material_override = ExtResource("14_8f0hs")
 mesh = SubResource("BoxMesh_qpj2q")
 
-[node name="GroceryTowerPiece26" type="MeshInstance3D" parent="Decor" unique_id=659806036]
+[node name="GroceryTowerPiece26" type="MeshInstance3D" parent="Decor" unique_id=1317015569]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 100, 23.696941, 36)
 material_override = ExtResource("14_8f0hs")
 mesh = SubResource("BoxMesh_e1t6p")
 
-[node name="GroceryTowerPiece27" type="MeshInstance3D" parent="Decor" unique_id=174161609]
+[node name="GroceryTowerPiece27" type="MeshInstance3D" parent="Decor" unique_id=1826645405]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 100, 28.093838, 36)
 material_override = ExtResource("107_8i3o0")
 mesh = SubResource("BoxMesh_xxiel")
 
-[node name="GroceryTowerPiece28" type="MeshInstance3D" parent="Decor" unique_id=2121517364]
+[node name="GroceryTowerPiece28" type="MeshInstance3D" parent="Decor" unique_id=1718322327]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 100, 32.07974, 36)
 material_override = ExtResource("105_4mj81")
 mesh = SubResource("BoxMesh_3ee38")
 
-[node name="GroceryTowerTape14" type="MeshInstance3D" parent="Decor" unique_id=977067550]
+[node name="GroceryTowerTape14" type="MeshInstance3D" parent="Decor" unique_id=431540700]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 100, 33.955, 36)
 material_override = ExtResource("14_8f0hs")
 mesh = SubResource("BoxMesh_4xbaw")
 
-[node name="Skins" type="Node3D" parent="." unique_id=1379906212]
+[node name="Skins" type="Node3D" parent="." unique_id=893529839]
 
-[node name="SpoonSkin" type="Node3D" parent="Skins" unique_id=780863068]
+[node name="SpoonSkin" type="Node3D" parent="Skins" unique_id=669223436]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -46, 38.3, -27)
 script = ExtResource("108_nom1b")
 model_id = "lure_spoon"
 fit_size = Vector3(1.2, 0.4, 7)
 hide_paths = Array[NodePath]([NodePath("../../Props/Spoon/Visual")])
 
-[node name="PhoneSkin" type="Node3D" parent="Skins" unique_id=148439545]
+[node name="PhoneSkin" type="Node3D" parent="Skins" unique_id=1324184371]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 31.75, 20)
 script = ExtResource("108_nom1b")
 model_id = "lure_phone"
 fit_size = Vector3(3.2, 0.5, 6.4)
 hide_paths = Array[NodePath]([NodePath("../../Props/Phone/Visual")])
 
-[node name="PaperCupSkin" type="Node3D" parent="Skins" unique_id=1149388113]
+[node name="PaperCupSkin" type="Node3D" parent="Skins" unique_id=1352198083]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -40, 1.7, 8)
 script = ExtResource("108_nom1b")
 model_id = "cover_paper_cup"
 fit_size = Vector3(6.5, 3.4, 3.8)
 hide_paths = Array[NodePath]([NodePath("../../NavRegion/Geometry/PaperCupRoof/Mesh"), NodePath("../../NavRegion/Geometry/PaperCupSide/Mesh"), NodePath("../../NavRegion/Geometry/PaperCupSide2/Mesh")])
 
-[node name="SneakerSkin" type="Node3D" parent="Skins" unique_id=238209936]
+[node name="SneakerSkin" type="Node3D" parent="Skins" unique_id=1331333285]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -36, 2.1, 42)
 script = ExtResource("108_nom1b")
 model_id = "cover_sneaker"
 fit_size = Vector3(10, 4.2, 4.6)
 hide_paths = Array[NodePath]([NodePath("../../NavRegion/Geometry/SneakerRoof/Mesh"), NodePath("../../NavRegion/Geometry/SneakerSide/Mesh"), NodePath("../../NavRegion/Geometry/SneakerSide2/Mesh")])
 
-[node name="GroceryBagSkin" type="Node3D" parent="Skins" unique_id=1732027734]
+[node name="GroceryBagSkin" type="Node3D" parent="Skins" unique_id=1009971926]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 54, 2.5, 16)
 script = ExtResource("108_nom1b")
 model_id = "cover_grocery_bag"
 fit_size = Vector3(6.5, 5, 9)
 hide_paths = Array[NodePath]([NodePath("../../NavRegion/Geometry/GroceryBagRoof/Mesh"), NodePath("../../NavRegion/Geometry/GroceryBagSide/Mesh"), NodePath("../../NavRegion/Geometry/GroceryBagSide2/Mesh")])
 
-[node name="MailStackSkin" type="Node3D" parent="Skins" unique_id=113046993]
+[node name="MailStackSkin" type="Node3D" parent="Skins" unique_id=963123545]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15, 1.3, -16)
 script = ExtResource("108_nom1b")
 model_id = "cover_mail_stack"
 fit_size = Vector3(8, 2.6, 4.5)
 hide_paths = Array[NodePath]([NodePath("../../NavRegion/Geometry/MailStack/Mesh")])
 
-[node name="FoldedTowelSkin" type="Node3D" parent="Skins" unique_id=3170352]
+[node name="FoldedTowelSkin" type="Node3D" parent="Skins" unique_id=1608483682]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -50, 39.3, -38)
 script = ExtResource("108_nom1b")
 model_id = "cover_folded_towel"
 fit_size = Vector3(8, 2.6, 6)
 hide_paths = Array[NodePath]([NodePath("../../NavRegion/Geometry/FoldedTowelRoof/Mesh"), NodePath("../../NavRegion/Geometry/FoldedTowelSide/Mesh"), NodePath("../../NavRegion/Geometry/FoldedTowelSide2/Mesh")])
 
-[node name="NapkinTentSkin" type="Node3D" parent="Skins" unique_id=1003760376]
+[node name="NapkinTentSkin" type="Node3D" parent="Skins" unique_id=1126799781]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20, 32.7, 8)
 script = ExtResource("108_nom1b")
 model_id = "cover_napkin"
 fit_size = Vector3(6, 2.4, 5)
 hide_paths = Array[NodePath]([NodePath("../../NavRegion/Geometry/NapkinTentRoof/Mesh"), NodePath("../../NavRegion/Geometry/NapkinTentSide/Mesh"), NodePath("../../NavRegion/Geometry/NapkinTentSide2/Mesh")])
 
-[node name="RecycleBoxSkin" type="Node3D" parent="Skins" unique_id=298696888]
+[node name="RecycleBoxSkin" type="Node3D" parent="Skins" unique_id=2088543011]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 102, 4, -6)
 script = ExtResource("108_nom1b")
 model_id = "cover_cardboard_box"
 fit_size = Vector3(10, 8, 12)
 hide_paths = Array[NodePath]([NodePath("../../NavRegion/Geometry/RecycleBoxRoof/Mesh"), NodePath("../../NavRegion/Geometry/RecycleBoxSide/Mesh"), NodePath("../../NavRegion/Geometry/RecycleBoxSide2/Mesh")])
 
-[node name="FlourSackSkin" type="Node3D" parent="Skins" unique_id=356753927]
+[node name="FlourSackSkin" type="Node3D" parent="Skins" unique_id=2088242540]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30, 3, 72)
 script = ExtResource("108_nom1b")
 model_id = "cover_flour_sack"
 fit_size = Vector3(12, 6, 8)
 hide_paths = Array[NodePath]([NodePath("../../NavRegion/Geometry/FlourSack/Mesh")])
 
-[node name="FridgeSkin" type="Node3D" parent="Skins" unique_id=1444358778]
+[node name="FridgeSkin" type="Node3D" parent="Skins" unique_id=1745985568]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 43, 36, -30)
 script = ExtResource("108_nom1b")
 model_id = "kitchen_fridge"
@@ -4177,64 +4186,82 @@ hide_paths = Array[NodePath]([NodePath("../../NavRegion/Geometry/Fridge/Mesh"), 
 yaw_offset_deg = 0.0
 stretch = true
 
-[node name="FridgeFood" type="Node3D" parent="Skins" unique_id=1751977325]
+[node name="FridgeFood" type="Node3D" parent="Skins" unique_id=306464546]
 
-[node name="FridgeFoodSkin" type="Node3D" parent="Skins/FridgeFood" unique_id=885128074]
+[node name="FoodBox" type="MeshInstance3D" parent="Skins/FridgeFood" unique_id=447909383]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 41.6, 33.04, -26.5)
+material_override = ExtResource("107_8i3o0")
+mesh = SubResource("BoxMesh_wuf1l")
+
+[node name="FridgeFoodSkin" type="Node3D" parent="Skins/FridgeFood" unique_id=290711517]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 41.6, 33.8, -26.5)
 script = ExtResource("108_nom1b")
 model_id = "fridge_groceries"
 fit_size = Vector3(19.76, 7.6, 14.44)
+hide_paths = Array[NodePath]([NodePath("../FoodBox")])
 yaw_offset_deg = 0.0
 
-[node name="FridgeFoodSkin2" type="Node3D" parent="Skins/FridgeFood" unique_id=889564960]
+[node name="@MeshInstance3D@32" type="MeshInstance3D" parent="Skins/FridgeFood" unique_id=1132784713]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 43.1, 41.859997, -26.5)
+material_override = ExtResource("107_8i3o0")
+mesh = SubResource("BoxMesh_eumpp")
+
+[node name="FridgeFoodSkin2" type="Node3D" parent="Skins/FridgeFood" unique_id=1889373199]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 43.1, 42.6, -26.5)
 script = ExtResource("108_nom1b")
 model_id = "fridge_groceries"
 fit_size = Vector3(19.24, 7.4, 14.06)
+hide_paths = Array[NodePath]([NodePath("../@MeshInstance3D@32")])
 
-[node name="FridgeFoodSkin3" type="Node3D" parent="Skins/FridgeFood" unique_id=1595596534]
+[node name="@MeshInstance3D@33" type="MeshInstance3D" parent="Skins/FridgeFood" unique_id=1465412974]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 42.1, 50.12, -26.5)
+material_override = ExtResource("107_8i3o0")
+mesh = SubResource("BoxMesh_q6uuh")
+
+[node name="FridgeFoodSkin3" type="Node3D" parent="Skins/FridgeFood" unique_id=342890274]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 42.1, 50.8, -26.5)
 script = ExtResource("108_nom1b")
 model_id = "fridge_groceries"
 fit_size = Vector3(17.68, 6.8, 12.92)
+hide_paths = Array[NodePath]([NodePath("../@MeshInstance3D@33")])
 yaw_offset_deg = 15.0
 
-[node name="StoveSkin" type="Node3D" parent="Skins" unique_id=1045246872]
+[node name="StoveSkin" type="Node3D" parent="Skins" unique_id=2124175251]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13, 18.2, -33)
 script = ExtResource("108_nom1b")
 model_id = "kitchen_stove"
 fit_size = Vector3(26, 36.4, 24)
 hide_paths = Array[NodePath]([NodePath("../../NavRegion/Geometry/Stove/Mesh"), NodePath("../../Decor/Burner"), NodePath("../../Decor/Burner2"), NodePath("../../Decor/Burner3"), NodePath("../../Decor/Burner4")])
 
-[node name="PanSkin" type="Node3D" parent="Skins" unique_id=503479997]
+[node name="PanSkin" type="Node3D" parent="Skins" unique_id=475544152]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13, 58, -35)
 script = ExtResource("108_nom1b")
 model_id = "frying_pan"
 fit_size = Vector3(12, 2, 24)
 hide_paths = Array[NodePath]([NodePath("../../Decor/Pan"), NodePath("../../Decor/PanHandle")])
 
-[node name="PotSkin" type="Node3D" parent="Skins" unique_id=1413001654]
+[node name="PotSkin" type="Node3D" parent="Skins" unique_id=539026439]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14, 5, -11)
 script = ExtResource("108_nom1b")
 model_id = "cooking_pot"
 fit_size = Vector3(9, 10, 9)
 hide_paths = Array[NodePath]([NodePath("../../NavRegion/Geometry/Pot/Mesh")])
 
-[node name="TableSkin" type="Node3D" parent="Skins" unique_id=1231148963]
+[node name="TableSkin" type="Node3D" parent="Skins" unique_id=1474692983]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12, 15.75, 14)
 script = ExtResource("108_nom1b")
 model_id = "kitchen_table"
 fit_size = Vector3(40, 31.5, 28)
 hide_paths = Array[NodePath]([NodePath("../../NavRegion/Geometry/TableTop/Mesh"), NodePath("../../NavRegion/Geometry/TableLeg/Mesh"), NodePath("../../NavRegion/Geometry/TableLeg2/Mesh"), NodePath("../../NavRegion/Geometry/TableLeg3/Mesh"), NodePath("../../NavRegion/Geometry/TableLeg4/Mesh")])
 
-[node name="ChairASkin" type="Node3D" parent="Skins" unique_id=637058492]
+[node name="ChairASkin" type="Node3D" parent="Skins" unique_id=1283525737]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -24, 19, -7)
 script = ExtResource("108_nom1b")
 model_id = "kitchen_chair"
 fit_size = Vector3(14, 38, 14)
 hide_paths = Array[NodePath]([NodePath("../../NavRegion/Geometry/ChairSeat/Mesh"), NodePath("../../NavRegion/Geometry/ChairBack/Mesh"), NodePath("../../NavRegion/Geometry/ChairLeg/Mesh"), NodePath("../../NavRegion/Geometry/ChairLeg2/Mesh"), NodePath("../../NavRegion/Geometry/ChairLeg3/Mesh"), NodePath("../../NavRegion/Geometry/ChairLeg4/Mesh")])
 
-[node name="ChairBSkin" type="Node3D" parent="Skins" unique_id=447093459]
+[node name="ChairBSkin" type="Node3D" parent="Skins" unique_id=1041599013]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 19, 35)
 script = ExtResource("108_nom1b")
 model_id = "kitchen_chair"
@@ -4242,48 +4269,48 @@ fit_size = Vector3(14, 38, 14)
 hide_paths = Array[NodePath]([NodePath("../../NavRegion/Geometry/ChairSeat2/Mesh"), NodePath("../../NavRegion/Geometry/ChairBack2/Mesh"), NodePath("../../NavRegion/Geometry/ChairLeg5/Mesh"), NodePath("../../NavRegion/Geometry/ChairLeg6/Mesh"), NodePath("../../NavRegion/Geometry/ChairLeg7/Mesh"), NodePath("../../NavRegion/Geometry/ChairLeg8/Mesh")])
 yaw_offset_deg = 0.0
 
-[node name="TrashCanSkin" type="Node3D" parent="Skins" unique_id=844313114]
+[node name="TrashCanSkin" type="Node3D" parent="Skins" unique_id=600195225]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -50, 16, 30)
 script = ExtResource("108_nom1b")
 model_id = "kitchen_trash_can"
 fit_size = Vector3(14, 32, 14)
 hide_paths = Array[NodePath]([NodePath("../../NavRegion/Geometry/TrashCan/Mesh")])
 
-[node name="IslandSkin" type="Node3D" parent="Skins" unique_id=1777557136]
+[node name="IslandSkin" type="Node3D" parent="Skins" unique_id=769996283]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 60, 15, 35)
 script = ExtResource("108_nom1b")
 model_id = "kitchen_island"
 fit_size = Vector3(40, 30, 24)
 hide_paths = Array[NodePath]([NodePath("../../NavRegion/Geometry/Island/Mesh"), NodePath("../../NavRegion/Geometry/IslandTop/Mesh")])
 
-[node name="ToasterSkin" type="Node3D" parent="Skins" unique_id=2056451439]
+[node name="ToasterSkin" type="Node3D" parent="Skins" unique_id=2062822239]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 93, 43, -36)
 script = ExtResource("108_nom1b")
 model_id = "toaster"
 fit_size = Vector3(10, 10, 7)
 hide_paths = Array[NodePath]([NodePath("../../NavRegion/Geometry/Toaster/Mesh")])
 
-[node name="PetBowlsSkin" type="Node3D" parent="Skins" unique_id=338779646]
+[node name="PetBowlsSkin" type="Node3D" parent="Skins" unique_id=1701653257]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 92, 1.5, 64)
 script = ExtResource("108_nom1b")
 model_id = "pet_bowl"
 fit_size = Vector3(10, 3, 10)
 hide_paths = Array[NodePath]([NodePath("../../NavRegion/Geometry/FoodBowl/Mesh")])
 
-[node name="MopBucketSkin" type="Node3D" parent="Skins" unique_id=942764515]
+[node name="MopBucketSkin" type="Node3D" parent="Skins" unique_id=983680940]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 98, 6, 8)
 script = ExtResource("108_nom1b")
 model_id = "mop_bucket"
 fit_size = Vector3(12, 12, 12)
 hide_paths = Array[NodePath]([NodePath("../../NavRegion/Geometry/MopBucket/Mesh")])
 
-[node name="PlayerSpawn" type="Marker3D" parent="." unique_id=178469002]
+[node name="PlayerSpawn" type="Marker3D" parent="." unique_id=1862896313]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 84, 0.8, 74)
 
-[node name="EscalationDirector" type="Node" parent="." unique_id=1331993406]
+[node name="EscalationDirector" type="Node" parent="." unique_id=1589482624]
 script = ExtResource("109_7egtd")
 
-[node name="BossDirector" type="Node" parent="." unique_id=1893731765]
+[node name="BossDirector" type="Node" parent="." unique_id=215944256]
 script = ExtResource("110_akx7k")
 subtitle = "The robot vacuum hunts your noise - then the spray comes out. Run for the door!"
 vacuum_path = NodePath("../Actors/RobotVacuum")

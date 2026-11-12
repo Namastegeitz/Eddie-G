@@ -181,10 +181,21 @@ static func build(tree: SceneTree) -> void:
 	g.skins.add_child(food)
 	for shelf: Array in [[30.0, 0.0, -1.0, 7.6], [38.9, 180.0, 0.5, 7.4], [47.4, 15.0, -0.5, 6.8]]:
 		var hgt: float = shelf[3]
-		var f := g.skin("FridgeFood", "fridge_groceries", Vector3(42.6 + float(shelf[2]), float(shelf[0]) + hgt * 0.5, -26.5),
-			Vector3(hgt * 2.6, hgt, hgt * 1.9), [], float(shelf[1]))
+		var at := Vector3(42.6 + float(shelf[2]), float(shelf[0]) + hgt * 0.5, -26.5)
+		# Stand-in cartons until (or without) the generated groceries.
+		var box := MeshInstance3D.new()
+		box.name = "FoodBox"
+		var bm := BoxMesh.new()
+		bm.size = Vector3(hgt * 2.2, hgt * 0.8, hgt * 1.4)
+		box.mesh = bm
+		box.material_override = LevelGeo.mat("label_red")
+		box.position = at + Vector3(0, -hgt * 0.1, 0)
+		food.add_child(box)
+		var f := g.skin("FridgeFood", "fridge_groceries", at, Vector3(hgt * 2.6, hgt, hgt * 1.9), [], float(shelf[1]))
 		g.skins.remove_child(f)
 		food.add_child(f)
+		var hide: Array[NodePath] = [f.get_path_to(box)]
+		f.hide_paths = hide
 	var fridge_door := g.geo.get_node("FridgeDoor") as SwingDoor
 	fridge_door.reveal_path = fridge_door.get_path_to(food)
 	g.skin_region("Stove", "kitchen_stove", Vector3(13, 18.2, -33), Vector3(26, 36.4, 24), ["Stove", "Burner"])

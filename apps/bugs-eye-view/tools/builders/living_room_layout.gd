@@ -58,7 +58,7 @@ static func build(tree: SceneTree) -> void:
 	g.domino_run("Dominoes", Vector3(-22, 16.75, -9), Vector3.RIGHT, 9, 2.3)
 	g.prop("glass", Vector3(95, 25.85, -29.0))
 	g.prop("teacup", Vector3(4, 17.6, -16.0))
-	g.prop("potted_plant", Vector3(-61.5, 71.65, 6))
+	g.prop("potted_plant", Vector3(-61.5, 71.65, 24))
 	g.prop("bottle_cap", Vector3(95, 24.3, -30))
 	g.perch("SideTablePerch", Vector3(100, 0, -22), Vector3(0, 24.6, -12), 9.0)
 
