@@ -6,4 +6,7 @@
   try { t = localStorage.getItem('ogsk.theme') || 'dark'; } catch (e) { /* storage blocked */ }
   if (t !== 'dark' && t !== 'day' && t !== 'red') t = 'dark';
   document.documentElement.setAttribute('data-theme', t);
+  var ts = 'normal';
+  try { ts = localStorage.getItem('ogsk.textsize') || 'normal'; } catch (e) {}
+  if (ts === 'large' || ts === 'xl') document.documentElement.setAttribute('data-textsize', ts);
 })();

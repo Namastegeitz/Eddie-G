@@ -16,6 +16,19 @@ An installable web app that works with **no internet and no cell signal** once i
 
 **https://namastegeitz.github.io/Eddie-G/** — open it once with signal, wait for "Offline-ready ✓", then *Add to Home Screen* (iPhone: Share button; Android: Install app). After that it works with no signal. To hand it to someone else, use the hub's "Open on another phone" QR code.
 
+## Share it
+
+Send **https://namastegeitz.github.io/Eddie-G/** in a text, email or chat. It opens on any iPhone, iPad, Android phone or tablet (and computers) with nothing to download from an app store, and shows a preview card with the app's name and picture. On the hub, **Share this app** opens the phone's share sheet or copies the link, and shows a QR code another phone can scan. A printable QR card is in `dist/share-card.png`.
+
+## Accessibility
+
+- **Text size:** Normal, Large or Extra large (hub → Display). Applies to every page; the map caps at Large so its controls stay usable.
+- **Three themes:** Night (dark), Day (high contrast for sunlight) and Red (keeps night vision). All three pass automated WCAG 2.1 AA checks (axe) on every page — `node tests/a11y.js`.
+- **Pinch-zoom** is allowed everywhere, including the map page.
+- **Touch targets** are at least 44–48 px; no page scrolls sideways on small iPhones, iPads or Android tablets, in portrait or landscape, even with Extra-large text — `node tests/devices.js`.
+- **Screen readers:** buttons and controls are labelled for VoiceOver (iPhone/iPad) and TalkBack (Android); wide tables are keyboard-scrollable, named regions; reduced-motion settings are respected.
+- **Installs** on iPhone/iPad (Safari → Share → Add to Home Screen) and Android phones/tablets (Chrome → Install app); every page carries the home-screen settings, so it opens full-screen from any page.
+
 ## Run it locally (one line)
 
 ```bash

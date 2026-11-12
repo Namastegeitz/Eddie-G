@@ -35,7 +35,7 @@ button.tl-cell { cursor: pointer; }
 @media (max-width: 560px) {
   .telemetry { grid-template-columns: repeat(4, 1fr); }
   .tl-coords { grid-column: 1 / 4; }
-  .tl-cell { min-height: 42px; padding: 2px 6px; font-size: .8rem; }
+  .tl-cell { min-height: 44px; padding: 2px 6px; font-size: .8rem; }
   .tl-k { font-size: .6rem; }
 }
 
