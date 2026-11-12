@@ -61,6 +61,7 @@ ul.wp-pick .sub { display: block; font-size: .85rem; color: var(--muted); font-w
   background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 12px 14px;
 }
 .qr-note { font-size: .95rem; }
+#tp-qr svg { width: min(360px, 88vw); }   /* dense code: draw it a little bigger than the default */
 
 /* planner results */
 .res-big { font-size: 1.9rem; font-weight: 800; font-variant-numeric: tabular-nums; line-height: 1.2; margin: .2em 0; }
@@ -70,7 +71,11 @@ ul.wp-pick .sub { display: block; font-size: .85rem; color: var(--muted); font-w
 dl.kv { display: grid; grid-template-columns: max-content 1fr; gap: 4px 14px; margin: 10px 0; }
 dl.kv dt { color: var(--muted); font-weight: 700; }
 dl.kv dd { margin: 0; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
-.margin-chip { margin: 6px 0; }
+.margin-chip { display: flex; align-items: flex-start; margin: 8px 0; padding: 8px 14px; border-radius: 14px; font-size: 1rem; line-height: 1.35; }
+.margin-chip::before { flex: 0 0 auto; width: 14px; height: 14px; margin-top: .25em; }
+.margin-chip.ok { background: var(--ok-bg); border-color: var(--ok); }
+.margin-chip.warn { background: var(--warn-bg); border-color: var(--warn); }
+.margin-chip.bad { background: var(--danger-bg); border-color: var(--danger); }
 
 /* turnaround alarm */
 .clock { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-weight: 800; font-size: 2.6rem; line-height: 1.15; text-align: center; font-variant-numeric: tabular-nums; padding: 8px 0; }
@@ -90,8 +95,9 @@ dl.kv dd { margin: 0; font-variant-numeric: tabular-nums; overflow-wrap: anywher
   main > :not(#share) { display: none !important; }
   #share .no-print, .alarm-ring { display: none !important; }
   .tp-text { border: 0; padding: 0; margin: 0 0 8pt; font-size: 10.5pt; line-height: 1.35; }
-  .qr-box { justify-content: flex-start; padding: 0; break-inside: avoid; }
-  .qr-box svg { width: 60mm; }
+  .qr-wrap { break-inside: avoid; }
+  .qr-box { justify-content: flex-start; padding: 0; }
+  #tp-qr svg { width: 70mm; }
   .qr-note { font-size: 9pt; }
 }
 </style>
@@ -265,8 +271,10 @@ dl.kv dd { margin: 0; font-variant-numeric: tabular-nums; overflow-wrap: anywher
     </div>
     <p class="hint no-print" id="tp-share-hint">Share works with no internet on many phones (Bluetooth / Nearby Share / AirDrop) as well as by text message.</p>
     <pre class="tp-text" id="tp-text" aria-label="Trip plan text"></pre>
-    <p class="qr-note" id="tp-qr-note"></p>
-    <div class="qr-box" id="tp-qr"></div>
+    <div class="qr-wrap">
+      <p class="qr-note" id="tp-qr-note"></p>
+      <div class="qr-box" id="tp-qr"></div>
+    </div>
 
     <div class="card no-print">
       <h3>Back safely?</h3>

@@ -130,6 +130,17 @@ ul.cl-items { list-style: none; padding: 0; margin: 6px 0 10px; }
 .cd-set { display: flex; gap: 10px; }
 .cd-set .field { flex: 1 1 0; margin-top: 0; }
 
+/* Lightning flash-to-bang */
+.ltg-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 12px 0 4px; }
+.ltg-btns .btn { flex-direction: column; gap: 2px; min-height: 96px; padding: 6px 8px; font-size: 1.35rem; font-weight: 900; letter-spacing: .04em; line-height: 1.15; }
+.ltg-btns .btn small { font-size: .85rem; font-weight: 600; letter-spacing: 0; color: inherit; opacity: .85; }
+.ltg-btns .ltg-thunder { border: 2px solid var(--text); }
+.ltg-btns .ltg-flash[aria-pressed="true"] { outline: 4px solid var(--focus); outline-offset: 2px; }
+.ltg-res { text-align: center; font-weight: 700; font-size: 1.1rem; min-height: 1.6em; margin: 0 0 8px; }
+ol.ltg-log { list-style: none; padding: 0; margin: 6px 0 10px; }
+ol.ltg-log li { display: flex; flex-wrap: wrap; gap: 4px 12px; margin: 0; padding: 8px 0; border-bottom: 1px solid var(--border); font-variant-numeric: tabular-nums; }
+ol.ltg-log li b { min-width: 4.2em; }
+
 /* GPS position card */
 .pos-big { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-weight: 800; font-size: 1.4rem; overflow-wrap: anywhere; }
 dl.pos { display: grid; grid-template-columns: max-content 1fr; gap: 4px 12px; margin: 10px 0; }
@@ -172,6 +183,7 @@ dl.pos dd { margin: 0; font-family: ui-monospace, "SF Mono", Menlo, Consolas, mo
     <li><a href="#checklists">Checklists</a></li>
     <li><a href="#rendezvous">Rendezvous plan</a></li>
     <li><a href="#timer">Timer</a></li>
+    <li><a href="#lightning">Lightning</a></li>
     <li><a href="#gps">My position</a></li>
   </ul></nav>
 
@@ -388,6 +400,55 @@ dl.pos dd { margin: 0; font-family: ui-monospace, "SF Mono", Menlo, Consolas, mo
         <button class="btn big" type="button" id="cd-reset">Reset</button>
       </div>
       <p class="hint">Keep this page open: phones pause web timers when the screen turns off. The screen is kept awake while a countdown runs. At zero the phone beeps and vibrates (where supported).</p>
+    </div>
+  </section>
+
+  <!-- =============================================================== -->
+  <section id="lightning">
+    <h2>Lightning distance &amp; 30-minute timer</h2>
+    <div class="callout danger"><strong class="callout-title">When thunder roars, go indoors</strong>
+      <p>If you can hear thunder, you are close enough to be struck. Get to shelter now — don't wait for rain or a close strike. Stay there until <strong>30 minutes after the last thunder</strong>.</p></div>
+    <div class="no-print">
+      <p>Tap <strong>FLASH</strong> when you see lightning, then <strong>THUNDER</strong> when you hear it. Sound covers about <strong>1 mile every 5 seconds</strong> (1 km every 3 seconds).</p>
+      <div class="ltg-btns">
+        <button class="btn primary ltg-flash" type="button" id="ltg-flash" aria-pressed="false">FLASH<small>I see lightning</small></button>
+        <button class="btn ltg-thunder" type="button" id="ltg-thunder">THUNDER<small>I hear it</small></button>
+      </div>
+      <div class="clock" id="ltg-count" aria-live="off">0.0 s</div>
+      <p class="ltg-res" id="ltg-res" role="status" aria-live="polite">Tap FLASH when you see lightning.</p>
+      <div class="callout" id="ltg-verdict" hidden></div>
+
+      <div class="card">
+        <h3>30-minute all-clear</h3>
+        <div class="clock" id="ltg-clear" aria-live="off">--:--</div>
+        <p class="clock-sub" id="ltg-clear-sub">Starts with the first THUNDER tap and restarts with every thunder.</p>
+      </div>
+
+      <h3>Recent counts</h3>
+      <p class="hint" id="ltg-trend">Each FLASH → THUNDER count is listed here, newest first.</p>
+      <ol class="ltg-log" id="ltg-log"></ol>
+      <button class="btn" type="button" id="ltg-reset">Clear counts &amp; stop timers</button>
+      <p class="hint">Keep this page open: the screen stays on while counting. The 5-second rule is approximate — use it to judge urgency, not to decide you are safe.</p>
+    </div>
+
+    <div class="card">
+      <h3>Lightning safety <span class="hint">(US National Weather Service guidance)</span></h3>
+      <ul>
+        <li><strong>No place outside is safe</strong> when a thunderstorm is near.</li>
+        <li><strong>Best shelter:</strong> an enclosed building with wiring and plumbing, or a hard-topped metal vehicle with the windows up. <strong>Tents, picnic shelters and open sheds offer no protection.</strong></li>
+        <li><strong>Caught outside?</strong> These lower the risk a little; they don't make you safe — keep moving toward shelter:
+          <ul>
+            <li>Get off peaks, ridges and hilltops.</li>
+            <li>Stay away from isolated tall trees, cliffs and rock overhangs.</li>
+            <li>Get out of and away from water — lakes, rivers, ponds.</li>
+            <li>Stay away from metal fences, power lines and other things that conduct electricity.</li>
+            <li>Don't lie flat on the ground.</li>
+            <li>In a group, spread out so one strike can't injure everyone.</li>
+          </ul>
+        </li>
+        <li>The old “lightning crouch” does not make you safe. Use the time to reach shelter.</li>
+        <li><strong>Someone struck?</strong> They carry no electric charge — it is safe to touch them. Call for help. If they are not breathing normally, start <a href="../firstaid/index.html#cpr">CPR</a>.</li>
+      </ul>
     </div>
   </section>
 
