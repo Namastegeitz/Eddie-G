@@ -9,6 +9,8 @@
    4. Group rendezvous plan          (IndexedDB kv key "rendezvous")
    5. Stopwatch / countdown timer
    6. GPS position card
+   7. Lightning flash-to-bang distance + 30-minute all-clear
+                                     (IndexedDB kv key "tools.lightning")
    Settings for the light/sound tools live in kv key "tools.prefs".
    Everything runs offline; nothing ever leaves the device.
    Depends on: common.js (OGSK), store.js (OGStore), geo.js (OGGeo),
@@ -1726,6 +1728,178 @@
   }
 
   /* =================================================================
+     7. LIGHTNING — flash-to-bang distance + 30-minute all-clear
+        (US National Weather Service: "When thunder roars, go indoors";
+        under 30 s flash-to-bang = close enough to strike; wait 30 min
+        after the LAST thunder). kv "tools.lightning" {log, lastThunder}
+     ================================================================= */
+  var LTG_S_PER_MI = 5, LTG_S_PER_KM = 3;   // rule of thumb: ~5 s per mile, ~3 s per km
+  var LTG_DANGER_S = 30;                    // under 30 s: shelter now
+  var LTG_CLEAR_MS = 30 * 60000;            // all-clear 30 min after the last thunder
+  var LTG_MAX_S = 120;                      // no thunder 2 min after a flash: drop the count
+  var LTG_LOG_MAX = 10;
+  var LTG_TREND_S = 2;                      // hand timing is ±1 s: need a 2 s change to call a trend
+  var ltg = { flashAt: 0, timer: 0, log: [], lastThunder: 0, clearTimer: 0, clearDone: false };
+
+  function ltgFmt(x) { return x < 10 ? x.toFixed(1) : String(Math.round(x)); }
+  function ltgSave() {
+    if (hasStore()) OGStore.kvSet('tools.lightning', { log: ltg.log, lastThunder: ltg.lastThunder }).catch(function () { /* non-critical */ });
+  }
+  function ltgClearRunning() { return !!ltg.lastThunder && Date.now() < ltg.lastThunder + LTG_CLEAR_MS; }
+  /* One wake-lock hold covers both the flash count and the all-clear countdown. */
+  function ltgWake() { hold('lightning', !!ltg.flashAt || ltgClearRunning()); }
+
+  function ltgFlash() {
+    ensureAudio();                             // unlock audio inside the tap, for the all-clear beep
+    ltg.flashAt = Date.now();
+    clearInterval(ltg.timer);
+    ltg.timer = setInterval(ltgTick, 100);
+    $('#ltg-flash').setAttribute('aria-pressed', 'true');
+    $('#ltg-res').textContent = 'Counting… tap THUNDER when you hear it.';
+    ltgTick();
+    ltgWake();
+  }
+  function ltgStopCount() {
+    ltg.flashAt = 0;
+    clearInterval(ltg.timer);
+    $('#ltg-flash').setAttribute('aria-pressed', 'false');
+    ltgWake();
+  }
+  function ltgTick() {
+    if (!ltg.flashAt) return;
+    var s = (Date.now() - ltg.flashAt) / 1000;
+    if (s > LTG_MAX_S) {
+      ltgStopCount();
+      $('#ltg-count').textContent = '0.0 s';
+      $('#ltg-res').textContent = 'No thunder within 2 minutes — count cancelled. Tap FLASH at the next lightning.';
+      return;
+    }
+    $('#ltg-count').textContent = s.toFixed(1) + ' s';
+  }
+
+  function ltgThunder() {
+    ensureAudio();
+    var now = Date.now();
+    if (ltg.flashAt) {
+      var s = Math.round((now - ltg.flashAt) / 100) / 10;
+      ltgStopCount();
+      ltg.log.unshift({ t: now, s: s });
+      ltg.log = ltg.log.slice(0, LTG_LOG_MAX);
+      $('#ltg-count').textContent = s.toFixed(1) + ' s';
+      $('#ltg-res').textContent = s.toFixed(1) + ' s ≈ ' + ltgFmt(s / LTG_S_PER_MI) + ' mi / ' + ltgFmt(s / LTG_S_PER_KM) + ' km away';
+      ltgVerdict(s);
+    } else {
+      $('#ltg-res').textContent = 'Thunder heard — the 30-minute clock restarted. Tap FLASH at the next lightning to measure the distance.';
+      ltgVerdict(null);
+    }
+    // Every thunder (measured or not) restarts the 30-minute all-clear.
+    ltg.lastThunder = now;
+    ltg.clearDone = false;
+    ltgStartClear();
+    ltgPaintLog();
+    ltgSave();
+  }
+
+  /* s = flash-to-bang seconds, or null when thunder was heard without a count. */
+  function ltgVerdict(s) {
+    var v = $('#ltg-verdict'), danger = s != null && s < LTG_DANGER_S;
+    v.className = 'callout ' + (danger ? 'danger' : 'warn');
+    v.setAttribute('data-level', danger ? 'danger' : 'warn');
+    v.textContent = '';
+    v.appendChild(el('strong', { class: 'callout-title', text: danger ? 'Danger — get to safety now' : 'Storm in range — prepare to move to shelter' }));
+    v.appendChild(el('p', { text: danger
+      ? 'Under 30 seconds: the storm is close enough to strike you. Get inside a building or a hard-topped metal vehicle now.'
+      : 'Any thunder you can hear means you are within striking distance — lightning can strike 10 miles (16 km) from a storm. Start moving to shelter now; don\'t wait for it to get closer.' }));
+    v.hidden = false;
+  }
+
+  function ltgStartClear() {
+    clearInterval(ltg.clearTimer);
+    ltg.clearTimer = setInterval(ltgClearTick, 500);
+    ltgClearTick();
+    ltgWake();
+  }
+  function ltgClearTick() {
+    var clock = $('#ltg-clear'), sub = $('#ltg-clear-sub');
+    if (!ltg.lastThunder) {
+      clearInterval(ltg.clearTimer);
+      clock.textContent = '--:--';
+      sub.textContent = 'Starts with the first THUNDER tap and restarts with every thunder.';
+      return;
+    }
+    var end = ltg.lastThunder + LTG_CLEAR_MS, rem = end - Date.now();
+    if (rem > 0) {
+      clock.textContent = fmtClock(Math.ceil(rem / 1000) * 1000, false);
+      clock.classList.remove('alarm');
+      sub.textContent = 'Safe to resume at ' + clockTime(new Date(end)) + ' — restarts with each thunder. Last thunder ' + clockTime(new Date(ltg.lastThunder)) + '.';
+      return;
+    }
+    clearInterval(ltg.clearTimer);
+    clock.textContent = '00:00';
+    sub.textContent = '30 minutes since the last thunder (' + clockTime(new Date(ltg.lastThunder)) + '). If you have heard no thunder since, you can go back outside.';
+    if (!ltg.clearDone) {
+      ltg.clearDone = true;
+      beep(2);
+      try { if (navigator.vibrate) navigator.vibrate([300, 150, 300]); } catch (e) {}
+      toast('Lightning all-clear: 30 minutes since the last thunder.');
+    }
+    ltgWake();
+  }
+
+  /* Compare the newest count with the previous one or two. */
+  function ltgTrend() {
+    var L = ltg.log;
+    if (L.length < 2 || L[0].t - L[1].t > LTG_CLEAR_MS) return '';
+    var prev = L.slice(1, 3), avg = prev.reduce(function (a, x) { return a + x.s; }, 0) / prev.length;
+    if (L[0].s <= avg - LTG_TREND_S) return 'Getting closer — the counts are going down. Get to shelter now.';
+    if (L[0].s >= avg + LTG_TREND_S) return 'Moving away — the counts are going up. Stay sheltered until 30 minutes after the last thunder.';
+    return 'About the same distance as before.';
+  }
+  function ltgPaintLog() {
+    var ol = $('#ltg-log');
+    ol.textContent = '';
+    ltg.log.forEach(function (x) {
+      ol.appendChild(el('li', null, [
+        el('span', { text: clockTime(new Date(x.t)) }),
+        el('b', { text: x.s.toFixed(1) + ' s' }),
+        el('span', { text: '≈ ' + ltgFmt(x.s / LTG_S_PER_MI) + ' mi / ' + ltgFmt(x.s / LTG_S_PER_KM) + ' km' })
+      ]));
+    });
+    var tr = ltgTrend(), p = $('#ltg-trend');
+    p.textContent = tr || (ltg.log.length ? 'Measure a few more strikes to see if the storm is coming closer.' : 'Each FLASH → THUNDER count is listed here, newest first.');
+    p.className = tr && /closer/.test(tr) ? 'err' : 'hint';
+  }
+
+  function initLightning() {
+    $('#ltg-flash').addEventListener('click', ltgFlash);
+    $('#ltg-thunder').addEventListener('click', ltgThunder);
+    $('#ltg-reset').addEventListener('click', function () {
+      if (ltgClearRunning() && !confirm('Stop the 30-minute all-clear timer and clear the counts?')) return;
+      ltgStopCount();
+      ltg.log = []; ltg.lastThunder = 0; ltg.clearDone = false;
+      $('#ltg-count').textContent = '0.0 s';
+      $('#ltg-res').textContent = 'Tap FLASH when you see lightning.';
+      $('#ltg-verdict').hidden = true;
+      ltgClearTick(); ltgPaintLog(); ltgWake(); ltgSave();
+    });
+    // Timers are throttled while hidden: catch up when the page comes back.
+    document.addEventListener('visibilitychange', function () {
+      if (document.visibilityState === 'visible') { ltgTick(); if (ltg.lastThunder) ltgClearTick(); }
+    });
+    ltgPaintLog();
+    if (!hasStore()) return;
+    // Resume a running all-clear after a reload (no beep if it already ended while closed).
+    OGStore.kvGet('tools.lightning', null).then(function (d) {
+      if (!d || typeof d !== 'object') return;
+      ltg.log = Array.isArray(d.log) ? d.log.filter(function (x) { return x && isFinite(x.t) && isFinite(x.s); }).slice(0, LTG_LOG_MAX) : [];
+      ltg.lastThunder = +d.lastThunder || 0;
+      ltg.clearDone = !ltgClearRunning();
+      if (ltgClearRunning()) ltgStartClear(); else ltgClearTick();
+      ltgPaintLog();
+    });
+  }
+
+  /* =================================================================
      Boot
      ================================================================= */
   function init() {
@@ -1734,6 +1908,7 @@
     initChecklists();
     initRendezvous();
     initTimer();
+    initLightning();
     initGps();
 
     // The page "Print this page" button prints everything: drop any single-section scope first.
