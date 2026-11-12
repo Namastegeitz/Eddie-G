@@ -2,9 +2,10 @@
 """After Godot first imports the models, switch the textures it extracted
 from them (assets/models/*.webp) to Basis Universal: small in the download
 and kept GPU-compressed on a phone (lossless textures would make the web
-build much bigger and use a lot of memory). Colour maps (<id>_0) keep their
-size; the other maps (roughness / normal, _1 and _2 in Meshy's order) are
-capped at 512 px. Then re-import:
+build much bigger and use a lot of memory). Every map is capped at 512 px:
+plenty on a phone, and the web build's game data has to stay under the
+20 MiB a published file can be (a 1024 px colour map is ~540 KB, 512 px
+~135 KB). Then re-import:
 
     godot --headless --path . --import
     python3 tools/meshy/godot_textures.py
@@ -31,8 +32,7 @@ for imp in sorted((ROOT / "assets" / "models").glob("*.webp.import")):
     text = imp.read_text()
     new = setting(text, "compress/mode", "4")                 # Basis Universal
     new = setting(new, "compress/rdo_quality_loss", "2.0")    # much smaller, barely visible
-    colour = imp.name.split(".")[0].endswith("_0")
-    new = setting(new, "process/size_limit", "0" if colour else "512")
+    new = setting(new, "process/size_limit", "512")
     if new != text:
         imp.write_text(new)
         changed += 1

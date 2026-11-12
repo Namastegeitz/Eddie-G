@@ -83,8 +83,10 @@ godot --headless --path . --import
 ```
 
 `godot_textures.py` switches the textures Godot pulls out of the models to
-Basis Universal (small download, compressed on the GPU). Use 512 px for
-small things. To cut a part out of a model (a door left open, a stand),
+Basis Universal (small download, compressed on the GPU) and caps them at
+512 px: the web build's game data has to stay under the 20 MiB a published
+file can be (if it ever doesn't, split it like the engine: the page already
+stitches parts, see `tools/web_artifact/package.py`). To cut a part out of a model (a door left open, a stand),
 run `cut.py` on the raw file first (see its header). Check a new model with
 a preview first (`--preview-only`, the shape only) before paying for its
 textures: delete the preview from `assets/models/` and run again without
