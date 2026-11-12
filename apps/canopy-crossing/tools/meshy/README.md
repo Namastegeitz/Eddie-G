@@ -34,3 +34,14 @@ conditions on using generated models in a commercial game, they apply.
 
 Note: other projects may use the same Meshy account at the same time; the
 budgets here count only this game's own tasks.
+
+Spend so far: creatures and animals 485 of their 500 credits, scenery 690.
+An entry can set its own `costs` (the kangaroo used the lighter
+`meshy-6-lite` model: 5 for the shape, 10 to texture). The kangaroo is shape
+only: the shared account ran out of credits before its texture step, so the
+game colours it with a fur shader (`fur` in `content/models.json`). To give
+it a real texture later, top up the account and run
+`python3 tools/meshy/generate.py --only fauna_kangaroo` after deleting
+`assets/models/fauna_kangaroo.glb` and `raw/fauna_kangaroo.glb` (`state.json`
+keeps the shape's task, so only the 10-credit texture step runs; then drop
+`fur` from the kangaroo in `content/models.json`).

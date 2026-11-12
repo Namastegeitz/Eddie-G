@@ -143,10 +143,11 @@ def balance(key: str) -> int:
     return int(request("GET", f"{API_BASE}/openapi/v1/balance", key).get("balance", 0))
 
 
-def charge(state: dict, manifest: dict, group: str, step: str, key: str, label: str) -> None:
+def charge(state: dict, manifest: dict, group: str, step: str, key: str, label: str, asset: dict | None = None) -> None:
     """Records a task's cost against its group's budget before it is sent;
-    refuses if that would go over the budget or over the live balance."""
-    cost = int(manifest.get("costs", {}).get(step, 0))
+    refuses if that would go over the budget or over the live balance. An
+    asset may give its own "costs" (e.g. a cheaper ai_model)."""
+    cost = int(((asset or {}).get("costs") or manifest.get("costs", {})).get(step, 0))
     budget = int(manifest.get("budgets", {}).get(group, 10 ** 9))
     with _lock:
         spent = state.setdefault("_spent", {})
@@ -237,7 +238,7 @@ def run_asset(asset: dict, manifest: dict, state: dict, key: str, args) -> str:
 
     if not s.get("preview_id"):
         body = preview_body(asset, manifest)
-        charge(state, manifest, group, "preview", key, aid)
+        charge(state, manifest, group, "preview", key, aid, asset)
         s["preview_id"] = request("POST", API_BASE + ENDPOINT, key, body)["result"]
         s["prompt"] = body["prompt"]
         save_state(state)
@@ -247,7 +248,7 @@ def run_asset(asset: dict, manifest: dict, state: dict, key: str, args) -> str:
     final = preview
     if not args.preview_only:
         if not s.get("refine_id"):
-            charge(state, manifest, group, "refine", key, aid)
+            charge(state, manifest, group, "refine", key, aid, asset)
             s["refine_id"] = request("POST", API_BASE + ENDPOINT, key,
                                      refine_body(asset, manifest, s["preview_id"]))["result"]
             save_state(state)

@@ -57,6 +57,8 @@ func _ready() -> void:
 				await _phase6()
 			"models":
 				_models()
+			"roads":
+				await _trade_roads()
 		print("phase audit (%s): %d passed, %d failed" % [only, passed, failed])
 		Save.wipe()
 		Save.path = real_save
@@ -74,6 +76,7 @@ func _ready() -> void:
 	await _phase7()
 	await _first_person()
 	_models()
+	await _trade_roads()
 	_phase8()
 	Save.wipe()
 	Save.path = real_save
@@ -1664,6 +1667,147 @@ func _models() -> void:
 	_steps(s, 0.05)
 	var water := s.hop_height()
 	check("hops follow the ground: a quick low skip across a road, a real leap onto the river", surf_road == "ground" and s.hop_surface == "water" and water > road * 1.3, "road %.3f water %.3f" % [road, water])
+
+
+## Trade roads: vehicles that drive the way they face, ruts and goods by
+## the road, giraffes and kangaroos on the move, macaws over the open rows,
+## bees at the market stalls, and the short film of the bee, the giraffe and
+## the kangaroo.
+func _trade_roads() -> void:
+	begin("Trade roads, giraffes, kangaroos, the bee film")
+	for v in ["jeep", "truck"]:
+		var vd: Dictionary = Content.models.get("painters", {}).get(v, {})
+		check("the %s model drives facing the way it goes (turned 180°, long side along the road)" % v, int(vd.get("yaw", 0)) == 180 and String(vd.get("align", "")) == "")
+	var homes := {"kangaroo_mob": ["daintree", "new_guinea"], "giraffe_stroll": ["congo", "tai", "bwindi"]}
+	for hid in homes:
+		var hz := Content.hazard(hid)
+		var on := []
+		for m in homes[hid]:
+			for e in Content.map(m).get("hazards", {}).get("ground_movers", []):
+				if String(e.id) == hid:
+					on.append(m)
+		check("%s roam the roads of %s" % [String(hz.get("name", hid)), ", ".join(homes[hid])], not hz.is_empty() and on.size() == homes[hid].size() and HazardPainter.animated(String(hz.art.painter)), str(on))
+	var keep := Draw.detail
+	Draw.detail = 2
+	var g := Critters3D.giraffe(3.0)
+	var gparts := ["Neck", "Neck/Head", "LegsA", "LegsB", "Body"].filter(func(n): return g.get_node_or_null(n) != null)
+	Critters3D.giraffe_swing(g, 1.0, 0.0, 0.5)
+	check("giraffes are jointed: a neck that swings, a head, legs that step", gparts.size() == 5 and absf((g.get_node("Neck") as Node3D).rotation.z) > 1.0)
+	g.free()
+	var b := Critters3D.bee(0.06)
+	check("the bee has see-through wings that beat", b.get_node_or_null("WingL") != null and b.get_node_or_null("WingR") != null)
+	b.free()
+	var kd: Dictionary = Models3D.model_def("kangaroo_mob", "kangaroo")
+	var roo := Models3D.creature(kd, 0.8) if not kd.is_empty() else Node3D.new()
+	var furred := false
+	for mi in roo.find_children("*", "MeshInstance3D", true, false):
+		if (mi as MeshInstance3D).material_override is ShaderMaterial:
+			furred = true
+	check("kangaroos use their detailed model, coloured with a fur coat, and bound", not kd.is_empty() and furred and float(kd.get("hop", 0.0)) > 0.2)
+	roo.free()
+	Draw.detail = keep
+	# in first person: a Daintree road with kangaroos, ruts, goods and macaws
+	Save.wipe()
+	Save.data.seen_intro = Content.playable_maps()
+	Save.set_setting("first_person", true)
+	var main: Control = load("res://scenes/main.tscn").instantiate()
+	add_child(main)
+	await get_tree().process_frame
+	Game.start_run({"mode": "journey", "map": "daintree", "stage": 4, "seed": 5, "animal": "poison_dart_frog", "view": "fpv"})
+	await get_tree().process_frame
+	var gs = Game.current
+	gs.started = true
+	gs.blocking = false
+	var road_row := -1
+	for r in range(2, 40):
+		if gs.world.lane(r).type == "ground" and gs.world.lane(r - 1).type == "safe" and not gs.world.lane(r - 1).goal:
+			road_row = r
+			break
+	var ruts := 0
+	var goods := 0
+	if road_row > 0:
+		var rn: Node3D = gs.wv3._build_lane(gs.world.lane(road_row), road_row)
+		var rm := rn.get_node_or_null("Ruts") as MeshInstance3D
+		if rm and rm.mesh:
+			ruts = int(rm.mesh.get_aabb().size.z > 0.9 and rm.mesh.get_aabb().size.x > 20.0)
+		rn.free()
+		var bank: Node3D = gs.wv3._build_lane(gs.world.lane(road_row - 1), road_row - 1)
+		var gm := bank.get_node_or_null("Goods") as MeshInstance3D
+		if gm and gm.mesh:
+			var ab := gm.mesh.get_aabb()
+			goods = int(ab.position.x < -0.4) + int(ab.end.x > 9.4)
+		bank.free()
+	check("roads look like trade roads: wheel ruts, a grassy hump, gravel shoulders (one mesh)", ruts == 1)
+	check("goods wait on both sides of the road: crates, sacks, barrels, stalls, signposts (one mesh)", goods == 2, "%d sides" % goods)
+	var rl := Lane.new()
+	rl.row = 3
+	rl.type = "ground"
+	rl.speed = 2.0
+	var ke := _mover(rl, "kangaroo_mob", 1.0, 0.8, 2.0)
+	var kn: Node3D = gs.wv3._build_ent(rl, ke)
+	var ge := _mover(rl, "giraffe_stroll", 4.0, 1.3, 1.0)
+	var gn: Node3D = gs.wv3._build_ent(rl, ge)
+	check("in first person kangaroos bound and giraffes stroll", kn.has_meta("hop") and gn.has_meta("giraffe") and gn.get_node_or_null("Giraffe/Neck/Head") != null)
+	kn.free()
+	gn.free()
+	var flock: Node3D = gs.wv3._flock
+	var seen_flock := false
+	if flock:
+		for i in 40:
+			gs.wv3.t = 2.0 + i * 0.2
+			gs.wv3._update_flock(gs.sim.display_pos())
+			if flock.visible and flock.position.y > 3.0:
+				seen_flock = true
+	check("macaws fly over the open rows now and then", flock != null and flock.get_child_count() >= 4 and seen_flock)
+	Game.goto("home")
+	await get_tree().process_frame
+	var watch := false
+	for btn in Game.current.find_children("*", "Button", true, false):
+		if "Bee and the Giraffe" in (btn as Button).text:
+			watch = true
+	check("the home screen has a button to watch the film", watch and Game.SCREENS.has("film"))
+	main.queue_free()
+	await get_tree().process_frame
+	Save.wipe()
+	# the film: zoom into the bee in slow motion, past the giraffe's eye,
+	# a swing at the kangaroo that misses by a whisker
+	var film: Control = load("res://scripts/ui/film_screen.gd").new()
+	film.setup({"stay": true})
+	film.size = Vector2(1280, 720)
+	add_child(film)
+	film.set_process(false)
+	var closest_cam := 99.0
+	var slowest := 1.0
+	var eye_pass := 99.0
+	var miss := 99.0
+	var miss_speed := 1.0
+	var birds_over := false
+	var guard := 0
+	while not film.done and guard < 2000:
+		film._step(1.0 / 30.0)
+		guard += 1
+		if film.done:
+			break
+		match film.shot:
+			1:
+				closest_cam = minf(closest_cam, film.cam.global_position.distance_to(film.bee.global_position))
+				slowest = minf(slowest, film.speed)
+				if film.flock.global_position.y > film.bee.global_position.y + 3.0 and film.cam.is_position_in_frustum(film.flock.get_child(0).global_position):
+					birds_over = true
+			2:
+				eye_pass = minf(eye_pass, film.bee.global_position.distance_to(film._eye()))
+			3:
+				var d: float = film.near_miss()
+				if d < miss:
+					miss = d
+					miss_speed = film.speed
+	check("the film plays to its end (about half a minute)", film.done and guard > 600 and guard < 2000, "%d frames" % guard)
+	check("exotic birds fly over the bee, in shot", birds_over)
+	check("the camera zooms right into the bee, in slow motion", closest_cam < 0.2 and slowest <= 0.1, "%.3f m, x%.2f" % [closest_cam, slowest])
+	check("the bee flies right by the giraffe's eye", eye_pass < 0.45, "%.2f m" % eye_pass)
+	check("the giraffe's swing misses the leaping kangaroo by a whisker, in slow motion", miss > 0.08 and miss < 0.6 and miss_speed < 0.3, "%.2f m at x%.2f" % [miss, miss_speed])
+	film.queue_free()
+	await get_tree().process_frame
 
 
 ## The difficulty curve: the first two jungles are Easy, 3-5 Medium, 6-10

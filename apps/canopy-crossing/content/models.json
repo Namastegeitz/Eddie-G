@@ -1,5 +1,5 @@
 {
-  "_doc": "Which detailed (Meshy) model each hazard uses in first person: assets/models/<model>.glb. 'painters' maps a drawing style to a model; 'hazards' picks one per hazard id (and wins). length: share of the hazard's length the model fills; tint multiplies the model's colours (for a related species); yaw turns the model to face +X; fit 'x' measures across +X after the turn (wingspan for birds); bob: stride bounce; sink: how deep it sits (floating backs). A model that hasn't been made yet just leaves the old shape in place. See docs/CONTENT.md. 'scenery' maps a first-person scenery prop or landmark ('lm_<kind>') to a model and its height in tiles; 'open_trees' and 'open_plants' are what grows beside the open (sunny) rows. align 'long' turns a model so its longest side runs along +X (logs, vehicles). 'animals' gives an animal its model for the home and animal screens. 'edge' lines the far edges of the open rows (every other row).",
+  "_doc": "Which detailed (Meshy) model each hazard uses in first person: assets/models/<model>.glb. 'painters' maps a drawing style to a model; 'hazards' picks one per hazard id (and wins). length: share of the hazard's length the model fills; tint multiplies the model's colours (for a related species); yaw turns the model to face +X; fit 'x' measures across +X after the turn (wingspan for birds); bob: stride bounce; sink: how deep it sits (floating backs); hop: a kangaroo's bound height instead of a stride; fur: colours for a model that came without a texture (top, belly, dark). A model that hasn't been made yet just leaves the old shape in place. See docs/CONTENT.md. 'scenery' maps a first-person scenery prop or landmark ('lm_<kind>') to a model and its height in tiles; 'open_trees' and 'open_plants' are what grows beside the open (sunny) rows. align 'long' turns a model so its longest side runs along +X (logs, vehicles). 'animals' gives an animal its model for the home and animal screens. 'edge' lines the far edges of the open rows (every other row).",
   "yaw": 90,
   "painters": {
     "soldier_ant": {
@@ -78,12 +78,14 @@
     "truck": {
       "model": "scene_logging_truck",
       "length": 1.0,
-      "bob": 0.15
+      "bob": 0.15,
+      "yaw": 180
     },
     "jeep": {
       "model": "scene_safari_jeep",
       "length": 1.0,
-      "bob": 0.2
+      "bob": 0.2,
+      "yaw": 180
     },
     "boat": {
       "model": "scene_longboat",
@@ -91,6 +93,16 @@
       "length": 1.0,
       "bob": 0.15,
       "sink": 0.06
+    },
+    "kangaroo": {
+      "model": "fauna_kangaroo",
+      "length": 0.95,
+      "hop": 0.38,
+      "fur": {
+        "top": "#b4643c",
+        "belly": "#ead3ad",
+        "dark": "#4a2616"
+      }
     }
   },
   "hazards": {
@@ -132,6 +144,16 @@
       "length": 0.95,
       "bob": 0.6,
       "tint": "#d08050"
+    },
+    "kangaroo_mob": {
+      "model": "fauna_kangaroo",
+      "length": 0.95,
+      "hop": 0.38,
+      "fur": {
+        "top": "#b4643c",
+        "belly": "#ead3ad",
+        "dark": "#4a2616"
+      }
     }
   },
   "tiles": {

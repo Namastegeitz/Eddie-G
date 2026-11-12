@@ -291,6 +291,18 @@
       "tier": 2,
       "target_polycount": 8000,
       "prompt": "A long narrow wooden river longboat with an outboard motor at the back and a small curved palm-thatch canopy in the middle, painted planks, used on jungle rivers."
+    },
+    {
+      "id": "fauna_kangaroo",
+      "group": "fauna",
+      "tier": 1,
+      "target_polycount": 9000,
+      "ai_model": "meshy-6-lite",
+      "costs": {
+        "preview": 5,
+        "refine": 10
+      },
+      "prompt": "A red kangaroo mid-hop: powerful hind legs bent and pushing off, long thick tail held out straight behind for balance, short front arms tucked in, upright ears, reddish-tan fur with a pale belly."
     }
   ]
 }

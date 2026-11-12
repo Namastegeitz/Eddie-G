@@ -166,7 +166,11 @@ made with `tools/meshy/`). A missing model just leaves the built shape.
   wins): `model`, `length` (share of the hazard's length), `tint` (multiplies
   the model's colours for a related species), `yaw` (turn to face +X),
   `bob` (stride bounce), `sink` (how deep it floats), `align: "long"` (turn
-  the longest side along +X), `stretch` + `thick` (logs of any length).
+  the longest side along +X), `stretch` + `thick` (logs of any length),
+  `hop` (a kangaroo's bound height, instead of a stride), `fur` (`top`,
+  `belly`, `dark`: a coat for a model that came without a texture).
+  Vehicles from Meshy lie along X, so they take `yaw: 180` to face the way
+  they drive.
 - `tiles`: `boulders` (mossy-boulder tiles in first person).
 - `scenery`: first-person props by kind (`giant_tree`, `palm`, `fern`...)
   and landmarks as `lm_<kind>`, each with a `height` in tiles.
@@ -210,7 +214,7 @@ beatable with the free starter; see RUN.md).
 | gust / downpour | map event | period, warn, duration, boost |
 
 `art.painter` picks a drawing (truck, jeep, tractor, cart, scooter, herd,
-ants, soldier_ant, roll_log, elephant, runner, vine, boulder, lizard, log, lilypad,
+ants, soldier_ant, roll_log, elephant, runner, kangaroo, giraffe, vine, boulder, lizard, log, lilypad,
 caiman_back, branch, boat, bridge, stones, croc, snake, tiger, raptor,
 branch_fall, fruit_fall, quicksand, gully, roots, bush, fire, tide, mud) and
 `art.colors` recolours it (`soldier_ant` also takes `cheese` and `rind`);

@@ -411,6 +411,8 @@ static func creature(d: Dictionary, size: float) -> Node3D:
 	var tint := String(d.get("tint", ""))
 	if tint != "":
 		_tint(inst, id, Color(tint))
+	if d.has("fur"):
+		_fur(inst, id, d.fur, box)
 	var holder := Node3D.new()
 	holder.name = "Model"
 	holder.add_child(pivot)
@@ -450,3 +452,58 @@ static func _tint(n: Node, id: String, tint: Color) -> void:
 				mi.set_surface_override_material(i, m)
 	for ch in n.get_children():
 		_tint(ch, id, tint)
+
+
+## Coat for a model that came without a texture (the kangaroo): its colour
+## runs from `belly` low down to `top` up the back, with a darker `dark`
+## on the feet and tail tip, and fine fur grain so it doesn't look plastic.
+static var _fur_shader: Shader
+static var _furs := {}
+
+
+static func _fur(n: Node, id: String, fur: Dictionary, box: AABB) -> void:
+	var mat: ShaderMaterial = _furs.get(id)
+	if mat == null:
+		if _fur_shader == null:
+			_fur_shader = Shader.new()
+			_fur_shader.code = """
+shader_type spatial;
+render_mode cull_disabled;
+uniform vec4 top_col : source_color = vec4(0.69, 0.38, 0.23, 1.0);
+uniform vec4 belly_col : source_color = vec4(0.9, 0.81, 0.66, 1.0);
+uniform vec4 dark_col : source_color = vec4(0.35, 0.18, 0.1, 1.0);
+uniform float y0 = 0.0;
+uniform float y1 = 1.0;
+varying vec3 lp;
+varying vec3 ln;
+void vertex() { lp = VERTEX; ln = NORMAL; }
+float h3(vec3 p) { return fract(sin(dot(p, vec3(12.9898, 78.233, 37.719))) * 43758.5453); }
+void fragment() {
+	float t = clamp((lp.y - y0) / max(0.0001, y1 - y0), 0.0, 1.0);
+	vec3 c = mix(belly_col.rgb, top_col.rgb, smoothstep(0.1, 0.55, t));
+	c = mix(dark_col.rgb, c, smoothstep(0.0, 0.08, t));
+	// paler underneath (normals facing down), darker along the spine
+	c = mix(c, belly_col.rgb, clamp(-ln.y, 0.0, 1.0) * 0.6);
+	c *= 0.93 + 0.12 * clamp(ln.y, 0.0, 1.0);
+	float g = h3(floor(lp * (90.0 / max(0.0001, y1 - y0))));
+	c *= 0.86 + 0.22 * g;
+	ALBEDO = c;
+	ROUGHNESS = 0.82;
+	SPECULAR = 0.25;
+}
+"""
+		mat = ShaderMaterial.new()
+		mat.shader = _fur_shader
+		mat.set_shader_parameter("top_col", Color(String(fur.get("top", "#b0603a"))))
+		mat.set_shader_parameter("belly_col", Color(String(fur.get("belly", "#e6cfa8"))))
+		mat.set_shader_parameter("dark_col", Color(String(fur.get("dark", "#5a2e1a"))))
+		_furs[id] = mat
+	# heights in the mesh's own space (one mesh per model, so one material)
+	if n is MeshInstance3D and (n as MeshInstance3D).mesh != null:
+		var mi := n as MeshInstance3D
+		var ab := mi.mesh.get_aabb()
+		mat.set_shader_parameter("y0", ab.position.y)
+		mat.set_shader_parameter("y1", ab.end.y)
+		mi.material_override = mat
+	for ch in n.get_children():
+		_fur(ch, id, fur, box)

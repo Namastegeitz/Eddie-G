@@ -63,6 +63,7 @@ var _land_k := 1.0                # how hard that landing was
 var _ride_y := 0.0                # eye height from what you stand on (log top, stone, water)
 var _seg := 10                   # sphere / cylinder smoothness (quality)
 var scene := {}                  # the canopy scene we're in or about to enter
+var _flock: Node3D                # macaws crossing the open sky now and then
 var _fog0 := Color.WHITE
 var _fog_d0 := 0.05
 
@@ -176,6 +177,16 @@ func setup(run: RunSim, animal_def: Dictionary) -> void:
 	world3.add_child(cam)
 	cam.current = true
 	eye_h = 0.62 + 0.3 * float(animal.get("look", {}).get("size", 0.75))
+	if Gfx.level() != "low":
+		# exotic birds: a few scarlet and blue-and-gold macaws flying over
+		_flock = Node3D.new()
+		_flock.name = "Flock"
+		world3.add_child(_flock)
+		for i in 4:
+			var bd := Critters3D.bird(0.9) if i % 2 == 0 else Critters3D.bird(0.85, Color("1f6fd0"), Color("2a8ad8"), Color("173a8a"))
+			bd.position = Vector3(-i * 0.9 - (i % 2) * 0.4, (i % 3) * 0.35, (i - 2) * 0.8 + (i % 2) * 0.3)
+			bd.set_meta("phase", i * 1.3)
+			_flock.add_child(bd)
 	# two long jungle walls follow the camera and hide where things loop around
 	for side in [-1.0, 1.0]:
 		var wall := box(Vector3(5.0, 3.2, float(AHEAD + BEHIND + 8)), color("canopy_dark", "#0b3a1a"), Vector3.ZERO, world3)
@@ -348,6 +359,27 @@ func update_view(dt: float) -> void:
 	_prune(_preds, seen)
 	_prune(_items, seen_items)
 	_update_swoops(lo, hi)
+	_update_flock(dp)
+
+
+## The macaws cross the sky ahead every 16 seconds or so, wings beating,
+## in the open (under the canopy you can't see the sky).
+func _update_flock(dp: Vector2) -> void:
+	if _flock == null:
+		return
+	var period := 16.0
+	var k := fposmod(t, period) / 9.0
+	_flock.visible = k < 1.0 and shade < 0.6
+	if not _flock.visible:
+		return
+	var lap := int(t / period)
+	var dirx := 1.0 if lap % 2 == 0 else -1.0
+	_flock.position = Vector3(MID + dirx * lerpf(-14.0, 14.0, k), 3.4 + sin(k * PI) * 0.6 + (lap % 3) * 0.4, -(dp.y + 5.5 + (lap % 3) * 1.5))
+	_flock.rotation.y = 0.0 if dirx > 0.0 else PI
+	for bd in _flock.get_children():
+		var ph := float(bd.get_meta("phase"))
+		Critters3D.bird_flap(bd, t + ph)
+		(bd as Node3D).rotation.z = sin(t * 1.3 + ph) * 0.08
 
 
 ## Pre-builds what the run will need next, at most one real build per call:
@@ -597,7 +629,7 @@ func _build_lane(l: Lane, r: int) -> Node3D:
 			box(Vector3(26, 0.3, 1.0), color("water"), Vector3(MID, -0.27, 0), n).material_override = surface(color("water"), 0.22, true)
 		"ground":
 			box(Vector3(26, 0.3, 1.0), color("ground_alt" if alt else "ground"), Vector3(MID, -0.15, 0), n).material_override = surface(color("ground_alt" if alt else "ground"))
-			box(Vector3(26, 0.02, 0.06), color("ground").darkened(0.2), Vector3(MID, 0.005, -0.25), n)
+			_trade_road(n, rng)
 		_:
 			var g := color("safe_alt" if alt else "safe")
 			if l.goal:
@@ -676,7 +708,122 @@ func _build_lane(l: Lane, r: int) -> Node3D:
 	if not l.effect.is_empty():
 		_build_lane_fx(l, n)
 	_critters(l, n)
+	_roadside(l, n, rng)
 	return n
+
+
+## A trade road: two worn wheel ruts with a grassy hump between, gravel
+## shoulders, the odd pothole and tyre-churned mud, so it reads as a real
+## route that carries goods.
+func _trade_road(n: Node3D, rng: RandomNumberGenerator) -> void:
+	# one mesh: two wheel ruts, the grassy hump between, gravel shoulders, potholes
+	var dirt := color("ground")
+	var k := Scenery3D.Kit.new()
+	for z in [-0.2, 0.2]:
+		k.box(Scenery3D.xf(Vector3(MID, 0.004, z)), Vector3(26, 0.012, 0.16), dirt.darkened(0.28))
+	k.box(Scenery3D.xf(Vector3(MID, 0.003, 0.0)), Vector3(26, 0.01, 0.12), dirt.lerp(color("safe"), 0.35).darkened(0.1))
+	for z2 in [-0.47, 0.47]:
+		k.box(Scenery3D.xf(Vector3(MID, 0.005, z2)), Vector3(26, 0.014, 0.06), dirt.lightened(0.18))
+	if Draw.detail > 0:
+		for i in 3:
+			var px := rng.randf_range(-0.5, 9.5)
+			k.disc(Scenery3D.xf(Vector3(px, 0.012, [-0.2, 0.2][i % 2])), rng.randf_range(0.08, 0.14), dirt.darkened(0.45), 10)
+	var mi := MeshInstance3D.new()
+	mi.name = "Ruts"
+	mi.mesh = k.mesh()
+	mi.material_override = Scenery3D.material()
+	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	n.add_child(mi)
+
+
+## Goods by a trade road (on the bank beside it, outside the play columns):
+## crates, coffee and cacao sacks, barrels and banana bunches; every few rows
+## a market stall with an awning, or a signpost to the market or the port.
+## All one mesh ("Goods"), plus the sign's text and a bee at the fruit.
+func _roadside(l: Lane, n: Node3D, rng: RandomNumberGenerator) -> void:
+	if l.type != "safe" or l.goal or l.covered or Draw.detail <= 0:
+		return
+	var near_road := sim.world.lane(l.row - 1).type == "ground" or sim.world.lane(l.row + 1).type == "ground"
+	if not near_road:
+		return
+	var wood := Color("8a6038")
+	var sack := Color("c8b07a")
+	var fruit := [Color("f2a83a"), Color("e8442a"), Color("f6d43a"), Color("7ac03a")]
+	var k := Scenery3D.Kit.new()
+	for side in [-1.0, 1.0]:
+		var x0 := -0.9 if side < 0.0 else 9.9
+		var kind := (l.deco / (3 if side < 0.0 else 5)) % 4
+		match kind:
+			0:
+				# a stack of crates, one open with fruit
+				for c in 3:
+					var cp := Vector3(x0 + side * 0.05 * c, (0.26 if c == 2 else 0.0), -0.18 + (c % 2) * 0.34)
+					k.box(Scenery3D.xf(cp + Vector3(0, 0.13, 0), deg_to_rad(rng.randf_range(-12, 12))), Vector3(0.32, 0.26, 0.3), wood.darkened(0.08 * c), wood.lightened(0.08))
+				for f in 5:
+					k.blob(Scenery3D.xf(Vector3(x0 + rng.randf_range(-0.1, 0.1), 0.42, 0.16 + rng.randf_range(-0.08, 0.08))), Vector3.ONE * 0.05, fruit[f % 3], 7)
+			1:
+				# sacks of coffee and cacao beans
+				for c2 in 4:
+					k.blob(Scenery3D.xf(Vector3(x0 + side * (c2 / 2) * 0.22, 0.12 + (0.18 if c2 == 3 else 0.0), -0.2 + (c2 % 2) * 0.32)), Vector3(0.15, 0.12, 0.18), sack.darkened(0.06 * (c2 % 2)), 9, 0.15)
+			2:
+				# barrels and a banana bunch on a pallet
+				k.box(Scenery3D.xf(Vector3(x0, 0.025, 0.0)), Vector3(0.6, 0.05, 0.5), wood.lightened(0.1))
+				for c3 in 2:
+					var bc := Color("5a3a22").lightened(0.1 * c3)
+					k.cylinder(Scenery3D.xf(Vector3(x0 - 0.15 + c3 * 0.3, 0.05, -0.05)), 0.14, 0.14, 0.36, bc, bc.lightened(0.1), 12)
+					k.disc(Scenery3D.xf(Vector3(x0 - 0.15 + c3 * 0.3, 0.41, -0.05)), 0.14, bc.lightened(0.15), 12)
+				for b in 6:
+					k.cylinder(Scenery3D.xf(Vector3(x0 + rng.randf_range(-0.15, 0.15), 0.06, 0.2 + rng.randf_range(-0.06, 0.06)), 0.0, deg_to_rad(rng.randf_range(-30, 30)), deg_to_rad(rng.randf_range(50, 80))), 0.025, 0.02, 0.16, Color("f0d040"), Color("d8c030"), 6)
+			3:
+				if (l.row / 2) % 2 == 0:
+					# a market stall: posts, a striped awning, goods on the counter
+					var awn := [Color("d8442a"), Color("f2e2b0")]
+					for px in [-0.35, 0.35]:
+						for pz in [-0.35, 0.35]:
+							k.cylinder(Scenery3D.xf(Vector3(x0 + px, 0.0, pz)), 0.025, 0.025, 1.05, wood, wood, 6)
+					for st in 4:
+						k.box(Scenery3D.xf(Vector3(x0 - 0.3 + st * 0.2, 1.06, 0.0), 0.0, 0.0, deg_to_rad(-side * 8)), Vector3(0.2, 0.03, 0.84), awn[st % 2])
+					k.box(Scenery3D.xf(Vector3(x0, 0.5, 0.0)), Vector3(0.78, 0.06, 0.7), wood.lightened(0.15))
+					for f2 in 8:
+						k.blob(Scenery3D.xf(Vector3(x0 + rng.randf_range(-0.3, 0.3), 0.58, rng.randf_range(-0.25, 0.25))), Vector3.ONE * 0.06, fruit[f2 % 4], 7)
+					_bee(n, Vector3(x0, 0.8, 0.0), l.deco + 3)
+				else:
+					# a signpost to where the goods are going
+					k.cylinder(Scenery3D.xf(Vector3(x0, 0.0, 0.0)), 0.03, 0.03, 1.1, wood, wood, 6)
+					k.box(Scenery3D.xf(Vector3(x0, 1.05, -0.02)), Vector3(0.62, 0.16, 0.03), wood.lightened(0.05))
+					var places := ["MARKET", "PORT", "SAWMILL", "CO-OP", "TRADING POST"]
+					var sign := Label3D.new()
+					sign.text = "%s %d km" % [places[l.deco % places.size()], 1 + l.deco % 9]
+					sign.font_size = 42
+					sign.pixel_size = 0.004
+					sign.outline_size = 10
+					sign.modulate = Color("fff6d8")
+					sign.outline_modulate = Color("3a2412")
+					sign.billboard = BaseMaterial3D.BILLBOARD_FIXED_Y
+					sign.position = Vector3(x0, 1.05, 0.0)
+					n.add_child(sign)
+	if k.v.is_empty():
+		return
+	var mi := MeshInstance3D.new()
+	mi.name = "Goods"
+	mi.mesh = k.mesh()
+	mi.material_override = Scenery3D.material()
+	n.add_child(mi)
+
+
+## A honeybee working the fruit at a market stall (High graphics only).
+func _bee(n: Node3D, home: Vector3, salt: int) -> void:
+	if Draw.detail < 2:
+		return
+	var b := Critters3D.bee(0.11, true)
+	b.position = home
+	b.set_meta("kind", "bee")
+	b.set_meta("phase", float(salt % 97) * 0.37)
+	b.set_meta("home", home)
+	n.add_child(b)
+	var list: Array = n.get_meta("critters") if n.has_meta("critters") else []
+	list.append(b)
+	n.set_meta("critters", list)
 
 
 ## Harmless wildlife on a bank, matching the bird's-eye view: the map's
@@ -715,9 +862,11 @@ func _critters(l: Lane, n: Node3D) -> void:
 					var wing := box(Vector3(0.12, 0.01, 0.1), cc, Vector3(s * 0.06, 0, 0), c)
 					wing.name = "WingL" if s < 0 else "WingR"
 			"bird":
-				sph(0.07, cc, Vector3(0, 0.1, 0), c, Vector3(0.9, 1.2, 0.9))
-				sph(0.05, cc.lightened(0.1), Vector3(0, 0.2, -0.02), c)
-				sph(0.02, Color("f0c040"), Vector3(0, 0.2, -0.07), c)
+				# a small bird perched upright, wings folded, long tail down
+				var pb := Critters3D.bird(0.45, cc, cc.lightened(0.25), cc.darkened(0.35))
+				Critters3D.perch(pb)
+				pb.position.y = 0.12
+				c.add_child(pb)
 			"lizard":
 				sph(0.06, cc, Vector3(0, 0.03, 0), c, Vector3(1.8, 0.5, 0.7))
 				sph(0.035, cc.lightened(0.1), Vector3(0.11, 0.04, 0), c)
@@ -754,6 +903,12 @@ func _animate_critters(list: Array, tt: float) -> void:
 			"lizard":
 				var dart := fposmod(tt * 0.4 + ph, 1.0)
 				node.position = home + Vector3((0.2 if dart > 0.5 else -0.2), 0, 0)
+			"bee":
+				# loops over the fruit, darting, wings a blur
+				var a := tt * 1.6 + ph
+				node.position = home + Vector3(sin(a) * 0.22, sin(a * 2.3) * 0.06, cos(a * 0.8) * 0.2)
+				node.rotation.y = -a + PI * 0.5
+				Critters3D.bee_beat(node, tt)
 
 
 func _build_lane_fx(l: Lane, n: Node3D) -> void:
@@ -831,11 +986,33 @@ func _build_ent(l: Lane, e: Ent) -> Node3D:
 			# the ant's wedge of cheese, held out in front
 			var ch := box(Vector3(0.16, 0.1, 0.16), hc(cl, "cheese", "#ffd23a"), Vector3(L * 0.52, 0.14, 0), n, Vector3(0, 45, 0))
 			ch.name = "Cheese"
-		n.set_meta("bob", float(md.get("bob", 1.0)))
+		if md.has("hop"):
+			n.set_meta("hop", float(md.hop))
+		else:
+			n.set_meta("bob", float(md.get("bob", 1.0)))
 		n.set_meta("model_y", mdl.position.y)
 		n.set_meta("platform", e.platform)
 		return n
 	match String(hz.get("art", {}).get("painter", "")):
+		"giraffe":
+			# built in the game, with a neck that swings and legs that step
+			var gir := Critters3D.giraffe(L * 2.3)
+			gir.name = "Giraffe"
+			n.add_child(gir)
+			n.set_meta("giraffe", true)
+		"kangaroo":
+			# the simple kangaroo (Low graphics): body, head, ears, big feet, tail
+			var kh := Node3D.new()
+			kh.name = "Model"
+			n.add_child(kh)
+			sph(0.2, body, Vector3(0, 0.42, 0), kh, Vector3(0.9, 1.3, 0.8))
+			sph(0.11, body.darkened(0.05), Vector3(L * 0.2, 0.72, 0), kh, Vector3(1.4, 0.9, 0.9))
+			for ez in [-0.05, 0.05]:
+				sph(0.05, body.darkened(0.15), Vector3(L * 0.12, 0.86, ez), kh, Vector3(0.6, 1.6, 0.5))
+				box(Vector3(0.3, 0.05, 0.07), hc(cl, "dark"), Vector3(0.0, 0.04, ez * 2.4), kh)
+			cyl(0.06, L * 0.6, body.darkened(0.1), Vector3(-L * 0.38, 0.22, 0), kh, Vector3(0, 0, 70))
+			n.set_meta("hop", 0.5)
+			n.set_meta("model_y", 0.0)
 		"truck":
 			box(Vector3(L * 0.68, 0.5, 0.62), body, Vector3(-L * 0.15, 0.36, 0), n)
 			box(Vector3(L * 0.26, 0.68, 0.6), hc(cl, "cab"), Vector3(L * 0.36, 0.45, 0), n)
@@ -953,6 +1130,23 @@ func _place_ent(n: Node3D, l: Lane, e: Ent) -> void:
 		var ph2 := t * (7.0 + 5.0 / maxf(0.5, e.length)) + x * 2.0
 		mdl.position.y = float(n.get_meta("model_y")) + absf(sin(ph2)) * 0.022 * bob
 		mdl.rotation.z = sin(ph2) * 0.025 * bob
+	elif n.has_meta("hop"):
+		# a kangaroo's bound: up off both feet, nose up on the rise and down
+		# on the fall, a little squash as it lands
+		var hop := float(n.get_meta("hop"))
+		var mk: Node3D = n.get_node("Model")
+		var ph3 := fposmod(t * 1.9 + x * 0.21 + e.length * 3.1, 1.0)
+		var air := clampf(ph3 / 0.8, 0.0, 1.0)
+		var lift := 4.0 * air * (1.0 - air) * hop if ph3 < 0.8 else 0.0
+		mk.position.y = float(n.get_meta("model_y")) + lift
+		mk.rotation.z = (0.5 - air) * 0.45 if ph3 < 0.8 else 0.0
+		var sq := 1.0 - (0.12 * sin((ph3 - 0.8) / 0.2 * PI) if ph3 >= 0.8 else 0.0)
+		mk.scale = Vector3(1.0 / sqrt(sq), sq, 1.0)
+	elif n.has_meta("giraffe"):
+		# an amble, with the long neck swinging now and then
+		var gn: Node3D = n.get_node("Giraffe")
+		Critters3D.giraffe_walk(gn, t + x * 0.3, 1.0)
+		Critters3D.giraffe_swing(gn, sin(t * 0.9 + x * 0.4) * 0.35 + maxf(0.0, sin(t * 0.45 + e.length * 5.0)) * 0.5, t)
 	elif n.has_meta("walk"):
 		# tripod gait: one set of three legs swings forward while the other pushes
 		var ph := t * 11.0 + x * 3.0

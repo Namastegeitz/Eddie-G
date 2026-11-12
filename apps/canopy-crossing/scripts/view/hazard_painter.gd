@@ -6,7 +6,7 @@ extends RefCounted
 ##
 ## Entities: origin at the entity's left edge, lane centre at y = 0.
 
-const ANIMATED := ["roll_log", "boulder", "ants", "soldier_ant", "herd", "runner", "vine", "caiman_back", "lilypad", "boat", "bridge", "lizard", "crab"]
+const ANIMATED := ["roll_log", "boulder", "ants", "soldier_ant", "herd", "runner", "vine", "caiman_back", "lilypad", "boat", "bridge", "lizard", "crab", "kangaroo", "giraffe"]
 
 static var _sprites := {}
 
@@ -63,6 +63,10 @@ static func draw_entity(ci: CanvasItem, hz: Dictionary, len_px: float, T: float,
 			_elephant(ci, cl, L, T, dir, t)
 		"runner":
 			_runner(ci, cl, L, T, dir, t)
+		"kangaroo":
+			_kangaroo(ci, cl, L, T, dir, t)
+		"giraffe":
+			_giraffe(ci, cl, L, T, dir, t)
 		"vine":
 			_vine(ci, cl, L, T, t)
 		"boulder":
@@ -382,6 +386,70 @@ static func _runner(ci: CanvasItem, cl: Dictionary, L: float, T: float, dir: int
 	Draw.ellipse(ci, Vector2(nx + dir * T * 0.34, 0), T * 0.1, T * 0.08, c(cl, "neck"))
 	Draw.ellipse(ci, Vector2(nx + dir * T * 0.3, 0), T * 0.07, T * 0.05, Color("8a6a3a"))
 	_dot_eye(ci, Vector2(nx + dir * T * 0.36, -T * 0.035), T * 0.025)
+
+
+## A kangaroo bounding along: it rises off its shadow on each hop, big
+## hind feet trailing, thick tail out behind for balance.
+static func _kangaroo(ci: CanvasItem, cl: Dictionary, L: float, T: float, dir: int, t: float) -> void:
+	var b := c(cl, "body")
+	var pale := c(cl, "belly", "#ead3ad")
+	var dk := c(cl, "dark", "#5a2e1a")
+	var cx := L * 0.5
+	var ph := fposmod(t * 2.1 + L * 0.37, 1.0)
+	var lift := sin(ph * PI)
+	Draw.shadow(ci, Vector2(cx + 4, 8), L * 0.36 * (1.0 - lift * 0.25), T * 0.2 * (1.0 - lift * 0.25), 0.24 - lift * 0.1)
+	var up := Vector2(0, -lift * T * 0.16)
+	var sc := 1.0 + lift * 0.12
+	# tail, then the big hind feet (tucked when landing, stretched mid-air)
+	var tail0 := Vector2(cx - dir * L * 0.18, 0) + up
+	var tail1 := Vector2(cx - dir * L * 0.5, T * 0.02) + up * 0.6
+	Draw.line(ci, tail0, tail1, b.darkened(0.12), T * 0.11 * sc, true)
+	Draw.line(ci, tail1.lerp(tail0, 0.25), tail1, b.darkened(0.25), T * 0.06 * sc, true)
+	for sy in [-1.0, 1.0]:
+		var fx := cx - dir * L * (0.12 + lift * 0.14)
+		Draw.ellipse(ci, Vector2(fx, sy * T * 0.13) + up, T * 0.16 * sc, T * 0.05 * sc, dk)
+	Draw.shaded(ci, Vector2(cx, 0) + up, L * 0.26 * sc, T * 0.19 * sc, b)
+	Draw.ellipse(ci, Vector2(cx + dir * L * 0.06, 0) + up, L * 0.12 * sc, T * 0.1 * sc, pale)
+	var hx := cx + dir * L * 0.3
+	for sy2 in [-1.0, 1.0]:
+		Draw.ellipse(ci, Vector2(hx - dir * T * 0.1, sy2 * T * 0.07) + up, T * 0.08 * sc, T * 0.035 * sc, b.darkened(0.15), sy2 * dir * 0.5)
+	Draw.ellipse(ci, Vector2(hx, 0) + up, T * 0.12 * sc, T * 0.09 * sc, b.darkened(0.04))
+	Draw.ellipse(ci, Vector2(hx + dir * T * 0.1, 0) + up, T * 0.05 * sc, T * 0.045 * sc, dk)
+	for sy3 in [-1.0, 1.0]:
+		_dot_eye(ci, Vector2(hx + dir * T * 0.02, sy3 * T * 0.05) + up, T * 0.022)
+
+
+## A giraffe ambling along: patched body, legs stepping, and the long neck
+## swinging from side to side with the head at its tip.
+static func _giraffe(ci: CanvasItem, cl: Dictionary, L: float, T: float, dir: int, t: float) -> void:
+	var b := c(cl, "body")
+	var patch := c(cl, "patch", "#7a4a22")
+	var cx := L * 0.42 if dir > 0 else L * 0.58
+	var step := sin(t * 4.0) * T * 0.06
+	Draw.shadow(ci, Vector2(cx + 8, 12), L * 0.42, T * 0.34, 0.26)
+	for lx in [-0.16, 0.16]:
+		for ly in [-1.0, 1.0]:
+			Draw.ellipse(ci, Vector2(cx + lx * L + step * ly * (1.0 if lx > 0.0 else -1.0), ly * T * 0.2), T * 0.06, T * 0.05, Color("3a2412"))
+	Draw.line(ci, Vector2(cx - dir * L * 0.22, 0), Vector2(cx - dir * L * 0.36, sin(t * 3.0) * T * 0.06), b.darkened(0.2), 3, true)
+	Draw.ellipse(ci, Vector2(cx - dir * L * 0.36, sin(t * 3.0) * T * 0.06), T * 0.04, T * 0.04, Color("2a1a10"))
+	Draw.shaded(ci, Vector2(cx, 0), L * 0.24, T * 0.24, b)
+	for i in 7:
+		var a := i * 2.4
+		Draw.ellipse(ci, Vector2(cx + cos(a) * L * 0.13, sin(a) * T * 0.13), T * 0.07, T * 0.055, patch, a)
+	# the neck swings; the head rides at its tip
+	var swing := sin(t * 1.4 + L) * 0.55
+	var base := Vector2(cx + dir * L * 0.18, 0)
+	var tip := base + Vector2(dir * cos(swing), sin(swing)) * L * 0.42
+	Draw.line(ci, base, tip, b.darkened(0.05), T * 0.13, true)
+	for k in 3:
+		Draw.ellipse(ci, base.lerp(tip, 0.25 + k * 0.25), T * 0.04, T * 0.03, patch)
+	Draw.line(ci, base, tip, Color(0.35, 0.2, 0.1, 0.5), T * 0.03, true)
+	var hd := Vector2(dir * cos(swing), sin(swing))
+	Draw.ellipse(ci, tip + hd * T * 0.08, T * 0.13, T * 0.08, b.darkened(0.08), hd.angle())
+	for sy in [-1.0, 1.0]:
+		var side: Vector2 = Vector2(-hd.y, hd.x) * float(sy)
+		Draw.ellipse(ci, tip + side * T * 0.05, T * 0.03, T * 0.03, Color("2a1a10"))
+		_dot_eye(ci, tip + hd * T * 0.1 + side * T * 0.05, T * 0.022)
 
 
 static func _vine(ci: CanvasItem, cl: Dictionary, L: float, T: float, t: float) -> void:

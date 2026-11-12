@@ -13,6 +13,7 @@ const SCREENS := {
 	"pass": "res://scripts/ui/pass_screen.gd",
 	"settings": "res://scripts/ui/settings_screen.gd",
 	"game": "res://scripts/ui/game_screen.gd",
+	"film": "res://scripts/ui/film_screen.gd",
 }
 
 var host: Control

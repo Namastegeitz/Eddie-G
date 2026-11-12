@@ -93,6 +93,26 @@ time, in ten real rainforests. Built from
   karst towers). The free starter animals turn and breathe in 3D on the home
   and animal screens. Graphics Low keeps the light built shapes.
   Pipeline and credit budgets: `tools/meshy/`.
+- **Trade roads:** the roads are working trade routes: wheel ruts worn
+  into the dirt with a grassy hump between, gravel shoulders, potholes;
+  crates of fruit, coffee and cacao sacks, barrels, banana bunches, market
+  stalls and signposts ("PORT 3 km") wait on the banks beside them, and
+  jeeps and logging trucks drive facing the way they go.
+- **Giraffes, kangaroos, macaws and bees:** kangaroo mobs bound down the
+  roads of Daintree and New Guinea (from level 2-3), and giraffes amble
+  along those of the Congo, Taï and Bwindi (from level 2-3), swinging their
+  long necks; both are new hazards in both views. Flocks of scarlet and
+  blue-and-gold macaws fly over the open rows, and honeybees work the
+  fruit at roadside market stalls (High graphics). The giraffe, bee, macaws and
+  hibiscus are built in the game with moving joints (`scripts/view/critters_3d.gd`);
+  the kangaroo is a Meshy model with a fur coat.
+- **Film: "The Bee and the Giraffe"** (home screen > Watch): a half-minute
+  short on a trade road. Macaws fly over a honeybee working a hibiscus; the
+  camera zooms into the bee as time slows 12x; it rides along as the bee
+  climbs and zips past a giraffe's eye; the annoyed giraffe hammers its
+  neck down at a kangaroo, which leaps clear by a whisker in slow motion,
+  then bounds off down the road with its mob (Skip button). Rendered to a
+  video with `tools/render_film.sh` (Godot's movie writer + ffmpeg).
 - **More lifelike first person:** a real sky with a hazy horizon that
   closes in under the canopy, film-like tone mapping, soft bloom on High,
   fine bumps on soil, turf and water that catch the light.
@@ -152,7 +172,7 @@ tools/run_tests.sh          # compile check + phase audit (project and exported 
 FAST=1 tools/run_tests.sh   # levels 1 and 10 of each scene instead of all 220
 ```
 
-The phase audit (`tests/phase_audit.gd`, 376 checks) turns each phase's
+The phase audit (`tests/phase_audit.gd`, 393 checks) turns each phase's
 checkpoint from the brief into checks: grid hops, every hazard kind, every
 ability, all 50 animals, every region generating 200 rows, a path-finding bot
 beating **all 220 levels with the free Poison Dart Frog**, adding a map
@@ -176,6 +196,6 @@ scripts/abilities/  one file per ability module
 scripts/view/ painters (animals, hazards), world view, player, fx, atmosphere
 scripts/ui/   screens and widgets
 scripts/platform/  billing backends (sandbox, Google Play, App Store), AdMob adapter
-tools/        run_tests.sh, capture.sh, gen_audio.py, gen_globe_map.py, fpv_check, build_web.sh, web_artifact/
+tools/        run_tests.sh, capture.sh, gen_audio.py, gen_globe_map.py, fpv_check, build_web.sh, render_film.sh, web_artifact/, meshy/
 docs/         CONTENT.md, STORE.md
 ```

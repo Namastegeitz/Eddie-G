@@ -59,6 +59,8 @@ func _ready() -> void:
 			b.text = "Pass (%d)" % Progress.claimable_count()
 		row2.add_child(b)
 	root.add_child(row2)
+	var film := UI.button("▶  Watch: The Bee and the Giraffe", func(): Game.goto("film"), Color("3a6a2a"), 24, 72)
+	root.add_child(film)
 	var info := UI.label(_status_line(), 22, UI.MUTED, false, HORIZONTAL_ALIGNMENT_CENTER)
 	info.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	root.add_child(info)

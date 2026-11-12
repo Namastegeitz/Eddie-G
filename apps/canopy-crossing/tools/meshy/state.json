@@ -545,10 +545,17 @@
       "cost": 10,
       "step": "refine",
       "t": 1794406045
+    },
+    {
+      "asset": "fauna_kangaroo",
+      "balance_before": 10,
+      "cost": 5,
+      "step": "preview",
+      "t": 1794458194
     }
   ],
   "_spent": {
-    "fauna": 480,
+    "fauna": 485,
     "scenery": 690
   },
   "animal_orangutan": {
@@ -640,6 +647,15 @@
     "prompt": "An African forest elephant walking: grey wrinkled skin, rounded ears, straight downward-pointing tusks, trunk hanging down, four thick legs mid-stride, short tail. Photorealistic, highly detailed, game-ready single object on its own, no ground plane, no background.",
     "refine_id": "01a1cad4-b640-757e-8bd4-6c251567fe73",
     "textured": true
+  },
+  "fauna_kangaroo": {
+    "preview_id": "01a1ce0b-14dc-72e1-b3ad-32768deb3b33",
+    "prompt": "A red kangaroo mid-hop: powerful hind legs bent and pushing off, long thick tail held out straight behind for balance, short front arms tucked in, upright ears, reddish-tan fur with a pale belly. Photorealistic, highly detailed, game-ready single object on its own, no ground plane, no background.",
+    "done": true,
+    "textured": false,
+    "bytes": 343684,
+    "bytes_optimized": 249240,
+    "note": "shape only: the shared Meshy account ran out of credits before the texture step; coloured in game by a fur shader (content/models.json 'fur')"
   },
   "fauna_land_crab": {
     "bytes": 9637500,
