@@ -12,7 +12,10 @@
    (circular standard deviation over ~1.5 s) flags interference/calibration.
    Phone sensors give MAGNETIC north; add the declination (E +, W −) for TRUE.
    With no sensor, GPS course over ground is used while moving (> 0.7 m/s).
-   Declination is shared with the map (stored in IndexedDB kv 'map.settings').
+   Declination: AUTO by default — computed on the device from the World
+   Magnetic Model 2025 (assets/js/wmm.js) at your GPS position (else the last
+   fix, else the map view); or a MANUAL value. Shared with the map through
+   IndexedDB kv 'map.settings' {declMode: 'auto'|'manual', declination: manual°}.
    ===================================================================== */
 (function () {
   'use strict';
@@ -25,7 +28,11 @@
   var listening = false, granted = false;
 
   var C = window.OGCompass = {
-    declination: 0,
+    declination: 0,     // EFFECTIVE declination in use (deg, East +)
+    declMode: 'auto',   // 'auto' (WMM2025) | 'manual'
+    manualDecl: 0,      // the user's manual value
+    autoDecl: null,     // last WMM2025 value, or null if unavailable
+    declAt: null,       // {lat, lon, src} the auto value was computed for
     magHeading: null,   // smoothed magnetic heading (deg)
     heading: null,      // TRUE heading (deg) from sensor, or GPS course fallback
     source: null,       // 'compass' | 'gps' | null
@@ -65,24 +72,67 @@
     /* GPS fix {course, speed, t} — used as a heading when no compass reading is available. */
     feedGps: function (fix) { gps = fix; if (!sensorFresh()) emit(); },
 
+    /* Manual declination (switches to manual mode). */
     setDeclination: function (d) {
       d = parseFloat(d); if (isNaN(d) || Math.abs(d) > 90) d = 0;
-      C.declination = d;
-      if (window.OGStore) {
-        OGStore.kvGet('map.settings', {}).then(function (s) { s = s || {}; s.declination = d; return OGStore.kvSet('map.settings', s); }).catch(function () {});
-      }
-      emit();
+      C.manualDecl = d; C.declMode = 'manual';
+      applyDecl(); saveDecl();
       return d;
     },
+    setDeclMode: function (mode) {
+      C.declMode = mode === 'manual' ? 'manual' : 'auto';
+      applyDecl(); saveDecl();
+    },
+    /* Tell the engine where you are, for the automatic (WMM2025) declination. */
+    setPosition: function (lat, lon, src) {
+      if (lat == null || lon == null || !isFinite(lat) || !isFinite(lon)) return;
+      var p = C.declAt;
+      // the field changes slowly: recompute only after ~5 km or if never computed
+      if (p && Math.abs(p.lat - lat) < 0.05 && Math.abs(p.lon - lon) < 0.05 && (p.src === src || src !== 'gps')) return;
+      C.declAt = { lat: lat, lon: lon, src: src || 'gps' };
+      applyDecl();
+    },
     loadDeclination: function () {
-      if (!window.OGStore) return Promise.resolve(C.declination);
+      // best guess of position until GPS arrives: last fix, else last map view
+      try {
+        var lf = JSON.parse(localStorage.getItem('ogsk.lastfix') || 'null');
+        var mv = JSON.parse(localStorage.getItem('ogsk.map.view') || 'null');
+        if (lf && isFinite(lf.lat)) C.setPosition(lf.lat, lf.lon, 'last fix');
+        else if (mv && isFinite(mv.lat)) C.setPosition(mv.lat, mv.lon, 'map view');
+      } catch (e) {}
+      if (!window.OGStore) { applyDecl(); return Promise.resolve(C.declination); }
       return OGStore.kvGet('map.settings', {}).then(function (s) {
-        if (s && isFinite(+s.declination)) C.declination = +s.declination;
-        emit();
+        s = s || {};
+        if (isFinite(+s.declination)) C.manualDecl = +s.declination;
+        // older saves had only a manual number: keep honouring it
+        C.declMode = s.declMode === 'manual' || s.declMode === 'auto' ? s.declMode : (+s.declination ? 'manual' : 'auto');
+        applyDecl();
         return C.declination;
       });
+    },
+    declLabel: function () {
+      var d = C.declination, txt = Math.abs(d).toFixed(1) + '° ' + (d >= 0 ? 'E' : 'W');
+      if (C.declMode === 'manual') return txt + ' (manual)';
+      if (C.autoDecl == null) return '0° (auto: position unknown — get a GPS fix)';
+      return txt + ' (auto, WMM2025' + (C.declAt && C.declAt.src !== 'gps' ? ', from ' + C.declAt.src : '') + ')';
     }
   };
+
+  function applyDecl() {
+    C.autoDecl = null;
+    if (C.declAt && window.OGWMM) {
+      try { C.autoDecl = Math.round(OGWMM.declination(C.declAt.lat, C.declAt.lon, 0, new Date()) * 10) / 10; } catch (e) { C.autoDecl = null; }
+    }
+    C.declination = C.declMode === 'manual' ? C.manualDecl : (C.autoDecl == null ? 0 : C.autoDecl);
+    emit();
+  }
+  function saveDecl() {
+    if (!window.OGStore) return;
+    OGStore.kvGet('map.settings', {}).then(function (s) {
+      s = s || {}; s.declination = C.manualDecl; s.declMode = C.declMode;
+      return OGStore.kvSet('map.settings', s);
+    }).catch(function () {});
+  }
 
   function setStatus(s) { C.status = s; emit(); }
   function sensorFresh() { return C.lastSensorT && Date.now() - C.lastSensorT < 3000; }

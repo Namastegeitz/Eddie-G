@@ -67,7 +67,7 @@
 
   function mount(root, opts) {
     opts = opts || {};
-    var ref = localStorage.getItem('ogsk.compass.ref') || (+C.declination ? 'true' : 'mag');
+    var ref = localStorage.getItem('ogsk.compass.ref') || 'true';   // declination is automatic (WMM2025), so TRUE is a safe default
     var lock = null;          // TRUE bearing or null
     var target = null;        // waypoint {id,name,lat,lon} (lock follows it)
     var sight = false, stream = null, active = false, unsub = null, onCourse = false;
@@ -117,7 +117,7 @@
       '    <li><strong>Calibrate</strong> if readings jump or disagree with the sun marker: move the phone slowly in a figure-8 a few times.</li>' +
       '  </ol>' +
       '  <div class="callout warn"><strong class="callout-title">Phone compasses can be wrong</strong><p>Metal, magnets (phone cases with magnetic clasps), vehicles, power lines and speakers bend the reading by tens of degrees. Step away from them. Check against the sun marker when the sun is out, and carry a real baseplate compass for anything that matters.</p></div>' +
-      '  <p class="muted">Phones measure <strong>magnetic</strong> north. Map grid and GPS bearings are <strong>true</strong>. Enter your declination below so the two agree (New Jersey ≈ −12.5, Algarve ≈ −1; values drift yearly).</p>' +
+      '  <p class="muted">Phones measure <strong>magnetic</strong> north. Map grid and GPS bearings are <strong>true</strong>. The app works out the difference (declination) for your position automatically from the World Magnetic Model 2025, so TRUE readings match the map. You can enter your own value with <em>Manual</em> (e.g. from a current topo map).</p>' +
       '</div></details>';
 
     var $ = function (sel) { return root.querySelector(sel); };
@@ -228,7 +228,7 @@
       el.hidden = !w.length;
     }
 
-    var infoT = 0;
+    var infoT = 0, infoHold = false, infoLast = '';
     function paintInfo(h) {
       if (Date.now() - infoT < 500) return; infoT = Date.now();
       var f = opts.getFix && opts.getFix(), html = '';
@@ -237,13 +237,15 @@
         (target && !f ? ' · <em>needs a GPS fix</em>' : '') + '</dd>';
       if (h != null) html += '<dt>Back bearing</dt><dd>' + p3(dispFromTrue(h + 180)) + '° ' + card(dispFromTrue(h + 180)) + '</dd>';
       if (h != null && +C.declination) html += '<dt>True / magnetic</dt><dd>' + p3(h) + '° T · ' + p3(C.toMag(h)) + '° M</dd>';
-      html += '<dt>Declination</dt><dd><input class="cmp-decl" type="number" step="0.1" min="-90" max="90" value="' + (+C.declination || 0) + '" aria-label="Magnetic declination, degrees, east positive"> ° <span class="muted">(E +, W −)</span></dd>';
+      if (C.declMode === 'manual') html += '<dt>Declination</dt><dd><input class="cmp-decl" type="number" step="0.1" min="-90" max="90" value="' + (+C.manualDecl || 0) + '" aria-label="Manual magnetic declination, degrees, east positive"> ° <span class="muted">(E +, W −)</span> <button class="btn cmp-declauto" type="button">Use auto</button></dd>';
+      else html += '<dt>Declination</dt><dd>' + esc(C.declLabel()) + ' <button class="btn cmp-declman" type="button">Manual…</button></dd>';
       if (f) html += '<dt>GPS</dt><dd>' + f.lat.toFixed(5) + ', ' + f.lon.toFixed(5) + ' ±' + Math.round(f.acc || 0) + ' m' + (f.speed != null ? ' · ' + OGGeo.fmtSpeed(f.speed, unitsPref()) : '') + '</dd>';
       if (sunPos) html += '<dt>Sun</dt><dd>' + p3(dispFromTrue(sunPos.az)) + '° ' + (sunPos.alt > 0 ? Math.round(sunPos.alt) + '° up — check: point the top of the phone at the sun; the ☀ mark should sit under the top line' : 'below the horizon') + '</dd>';
       if (moonPos && moonPos.alt > 0) html += '<dt>Moon</dt><dd>' + p3(dispFromTrue(moonPos.az)) + '° · ' + Math.round(moonPos.alt) + '° up</dd>';
       var dl = $('.cmp-info');
       var focused = document.activeElement && document.activeElement.classList.contains('cmp-decl');
-      if (!focused) dl.innerHTML = html;
+      // don't rebuild while a finger is on the panel (a rebuild would swallow the tap) or nothing changed
+      if (!focused && !infoHold && html !== infoLast) { dl.innerHTML = html; infoLast = html; }
     }
     var units = 'metric';
     if (window.OGStore) OGStore.kvGet('map.settings', {}).then(function (st) { if (st && st.units) units = st.units; });
@@ -336,7 +338,7 @@
     $('.cmp-ref').addEventListener('click', function () {
       ref = ref === 'true' ? 'mag' : 'true';
       try { localStorage.setItem('ogsk.compass.ref', ref); } catch (e) {}
-      if (ref === 'true' && !+C.declination) toast('Declination is 0 — set it below so TRUE differs from magnetic');
+      if (ref === 'true' && C.autoDecl == null && C.declMode === 'auto') toast('Declination unknown until the first GPS fix — TRUE equals magnetic for now');
       infoT = 0; paint();
     });
     $('.cmp-lock').addEventListener('click', function () {
@@ -386,8 +388,15 @@
       if (!window.OGStore || !confirm('Clear all captured bearings?')) return;
       OGStore.kvSet('compass.log', []).then(function () { paintLog([]); });
     });
+    var infoEl = $('.cmp-info');
+    infoEl.addEventListener('pointerdown', function () { infoHold = true; });
+    ['pointerup', 'pointercancel', 'pointerleave'].forEach(function (t) { infoEl.addEventListener(t, function () { setTimeout(function () { infoHold = false; }, 400); }); });
+    root.addEventListener('click', function (e) {
+      if (e.target.closest('.cmp-declman')) { C.setDeclination(C.autoDecl != null ? C.autoDecl : C.manualDecl); infoT = 0; paint(); setTimeout(function () { var i = $('.cmp-decl'); if (i) { i.focus(); i.select(); } }, 50); }
+      if (e.target.closest('.cmp-declauto')) { C.setDeclMode('auto'); infoT = 0; toast('Declination: ' + C.declLabel()); }
+    });
     root.addEventListener('change', function (e) {
-      if (e.target.classList.contains('cmp-decl')) { C.setDeclination(e.target.value); infoT = 0; toast('Declination ' + C.declination + '°'); }
+      if (e.target.classList.contains('cmp-decl')) { C.setDeclination(e.target.value); infoT = 0; toast('Declination: ' + C.declLabel()); }
     });
 
     // restore a saved lock / target

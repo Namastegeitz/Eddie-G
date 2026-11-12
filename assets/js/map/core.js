@@ -21,8 +21,8 @@
   /* ---------------- settings ---------------- */
   App.DEFAULTS = {
     source: 'osm', customUrl: '', customName: 'Custom tiles', customMax: 18, customAttr: '',
-    units: 'metric', coordFmt: 'dd', grid: 'auto', contours: false, showTracks: true, wpLabels: true, showAreas: false,
-    declination: 0, autoGps: true, wakeLock: true, minAcc: 50, dimTiles: true, crosshair: true, saveOnView: true,
+    units: 'metric', coordFmt: 'dd', grid: 'auto', contours: false, showTracks: true, wpLabels: true, showAreas: false, breadcrumb: true, showCrumbs: false, gpsMode: 'high',
+    declination: 0, declMode: 'auto', autoGps: true, wakeLock: true, minAcc: 50, dimTiles: true, crosshair: true, saveOnView: true,
     demUrl: 'https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png'
   };
   App.loadSettings = function () {
@@ -46,12 +46,13 @@
   App.fmtSpeed = function (ms) { return OGGeo.fmtSpeed(ms, App.settings.units); };
   App.mgrs = function (lat, lon, digits) { return OGGeo.spaceMGRS(OGGeo.toMGRS(lat, lon, digits)); };
   /* true -> magnetic, using the declination setting (E positive) */
-  App.toMag = function (trueDeg) { return OGGeo.norm360(trueDeg - (+App.settings.declination || 0)); };
-  App.toTrue = function (magDeg) { return OGGeo.norm360(magDeg + (+App.settings.declination || 0)); };
+  App.decl = function () { return window.OGCompass ? (+OGCompass.declination || 0) : (+App.settings.declination || 0); };
+  App.toMag = function (trueDeg) { return OGGeo.norm360(trueDeg - App.decl()); };
+  App.toTrue = function (magDeg) { return OGGeo.norm360(magDeg + App.decl()); };
   App.fmtBrg = function (trueDeg) {
     if (trueDeg == null || isNaN(trueDeg)) return '—';
     var s = OGGeo.fmtBearing(trueDeg) + ' T';
-    if (+App.settings.declination) s += ' · ' + Math.round(App.toMag(trueDeg)) + '° M';
+    if (App.decl()) s += ' · ' + Math.round(App.toMag(trueDeg)) + '° M';
     return s;
   };
   App.fmtTime = function (d) {

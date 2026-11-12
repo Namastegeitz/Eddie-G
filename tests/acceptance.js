@@ -159,6 +159,23 @@ let failures = 0;
     console.log('   ', JSON.stringify(r));
     if (r.w.length < 2 || r.t.length < 1) throw new Error('data missing');
   });
+  await step('offline: automatic declination (WMM2025) + Backtrack along the breadcrumb', async () => {
+    const d = await page.evaluate(() => [OGCompass.declMode, OGCompass.declination]);
+    console.log('   declination', JSON.stringify(d));
+    if (d[0] !== 'auto' || Math.abs(d[1] + 12.1) > 0.4) throw new Error('expected auto ≈ −12.1° in central NJ');
+    const n = await page.evaluate(() => MapApp.bt.outing().length);
+    if (n < 3) throw new Error('breadcrumb not recorded (' + n + ')');
+    await page.click('#fab-back');
+    await page.waitForSelector('#dlg-ask[open]');
+    await page.click('#ask-ok');
+    await page.waitForTimeout(500);
+    const r = await page.evaluate(() => ({ route: MapApp.nav.target && MapApp.nav.target.route ? MapApp.nav.target.route.length : 0 }));
+    const brg = (await page.textContent('#nav-brg')).trim();
+    console.log('   backtrack route points', r.route, '| bearing', brg, '| dist', await page.textContent('#nav-dist'));
+    if (r.route < 2) throw new Error('backtrack did not start');
+    if (!/S|W/.test(brg.split(' ')[1] || '')) throw new Error('backtrack should head back south-west, got ' + brg);
+    await page.click('#nav-stop');
+  });
   await step('offline: elevation at centre', async () => {
     await page.evaluate(() => MapApp.map.setZoom(13));
     await page.waitForTimeout(1200);

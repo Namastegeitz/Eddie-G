@@ -80,9 +80,11 @@ Altitude, slope, aspect and the **contour-line overlay** come from open **Terrai
 | Live GPS | `watchPosition` high accuracy, pulsing dot, accuracy circle, heading cone, follow-me (stops when you drag), stale-fix greying |
 | Telemetry | Lat/lon (tap to cycle DD / DMS / DDM), altitude ± accuracy, speed, accuracy, heading, **daylight left** |
 | Full compass | Tap the map's compass rose (or `map/index.html#compass`, or the standalone **/compass/** page): big live heading, true/magnetic toggle, bearing lock with turn-left/right steering, back bearing, level bubble, calibration and interference warnings, sun and moon marks on the dial to check the compass against the sky, point-to-waypoint, camera sighting with a heading tape, bearing log, spoken heading. A locked bearing is drawn on the map |
-| Compass | DeviceOrientation (`deviceorientationabsolute` on Android, `webkitCompassHeading` with permission prompt on iOS), smoothed, screen-rotation aware; GPS course used while moving if no compass; manual magnetic declination → true bearings |
+| Compass | DeviceOrientation (`deviceorientationabsolute` on Android, `webkitCompassHeading` with permission prompt on iOS), smoothed, screen-rotation aware; GPS course used while moving if no compass; **automatic magnetic declination** from the World Magnetic Model 2025 computed on the device for your position (manual override available) → true bearings |
 | Waypoints | 9 categories with icons (water, camp, food, cache, hazard, rally, landmark, medical, custom), name + note, at crosshair / GPS / long-press / typed coordinates (DD, DMS, DDM, MGRS, UTM); edit, delete, searchable sortable list |
 | Navigate to | Live distance, true (and magnetic) bearing, turn arrow relative to your heading, ETA, guide line, "arrived" alert; survives reloads |
+| Backtrack | Automatic breadcrumb trail while GPS is on (a point every ~15 m, kept 48 h, on-device). **Back** button guides you back the way you came to where you started — like Garmin TracBack / Apple Watch Backtrack. Handles out-and-back trails (never sends you back out to the far end), warns when you're off the trail, "Direct" for a straight line; any saved track can be backtracked too |
+| Battery | GPS battery saver (one fix a minute) vs continuous; battery level and a low-battery prompt where the browser reports it (Android Chrome); battery tips |
 | Tracks | Breadcrumb recording with accuracy filter, live line, distance/time/points, pause, save/name, show/hide, rename, delete, per-track GPX; checkpointed so a crash doesn't lose it; screen wake lock |
 | Measure | Tap or add-crosshair points; cumulative distance, every leg's distance + bearing |
 | Units & formats | Metric/imperial (scale bar follows), DD / DMS / DDM |
@@ -126,7 +128,7 @@ Uninstalling the app or clearing site data deletes everything, so use **Map → 
 - **Tiles live in IndexedDB; app files live in the service worker cache.** The service worker never intercepts tile requests.
 - **Elevation from Terrarium tiles at zoom 10–12** (≈30 m). This roughly matches the SRTM source resolution while keeping downloads small. Contours are computed on the device with marching squares.
 - **Map is always north-up.** Leaflet doesn't rotate maps. The compass rose, heading cone and navigation arrow show direction instead.
-- **Magnetic declination is a manual setting.** A full World Magnetic Model wasn't bundled. The Settings help gives approximate values for New Jersey (≈12–13° W) and the Algarve (≈1° W).
+- **Magnetic declination is automatic.** The app bundles NOAA's World Magnetic Model 2025 coefficients (`assets/js/wmm.js`, valid 2025–2030) and computes declination on the device for your GPS position (or the map view before the first fix): about 12.1° W in central New Jersey and 0.5–0.7° W in the Algarve in late 2026. It matches all 100 official WMM2025 test values to within 0.005° (`node tests/wmm.test.js`). A manual value can still be entered to match a specific paper map.
 - **Three themes:** dark (default), day (high-contrast for sunlight), and **red** for night vision.
 - **Conservative content:** canonical figures (boil times, bleach dosing, CPR rate/depth, tourniquet placement, canning rules, OTC limits) are kept identical across pages and the PDF.
 - **QR codes are always black on white,** because scanners need contrast.
@@ -154,11 +156,12 @@ assets/
   js/common.js        header toggle, service worker, print, toasts, wake lock
   js/store.js         IndexedDB wrapper (kv, waypoints, tracks, checklists, tiles)
   js/geo.js           distance/bearing, DMS/DDM, UTM, MGRS, coordinate parser, resection
+  js/wmm.js           World Magnetic Model 2025 (automatic magnetic declination)
   js/hub.js           hub status + install + "open on another phone" QR
   js/compass.js       compass engine (sensor, iOS permission, tilt modes, smoothing, declination)
   js/compass-ui.js    full compass interface (standalone page + map overlay)
   js/map/*.js         map modules: core, tiles, grid, dem, gps, waypoints, tracks,
-                      measure, sunmoon, triangulate, share, data, main
+                      backtrack, measure, sunmoon, triangulate, share, data, main
   vendor/             leaflet 1.9.4, suncalc 1.9.0, qrcode-generator 1.4.4, mgrs 2.1.0 (+ licences)
   icons/              app icons (SVG + PNG + maskable)
 scripts/
@@ -168,6 +171,8 @@ scripts/
 tests/
   acceptance.js       Playwright end-to-end test (online prime → offline checks)
   mocktiles.py        local mock tile + elevation server used by the test
+  wmm.test.js         checks wmm.js against the 100 official WMM2025 test values
+  wmm2025_test_values.csv
 ```
 
 ### After editing
@@ -183,6 +188,7 @@ python3 scripts/build_sw.py          # always: new version hash → installed ap
 python3 -m http.server 8765 --bind 127.0.0.1 &   # from this folder
 python3 tests/mocktiles.py 8790 &                  # needs Pillow
 node tests/acceptance.js                           # needs Playwright + Chromium
+node tests/wmm.test.js                             # magnetic model check (Node only)
 ```
 
 The test:
