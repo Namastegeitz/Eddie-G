@@ -79,7 +79,10 @@ Altitude, slope, aspect and the **contour-line overlay** come from open **Terrai
 | Feature | Details |
 |---|---|
 | Offline tiles | IndexedDB-first tile layer, browse-to-prime, "Save this area" bulk job with estimate, progress, caps and cancel, parent-tile fallback, per-source clear |
-| Base maps | OpenStreetMap, OpenTopoMap, custom URL; dimmed tiles in night mode, red filter in red mode |
+| Base maps | OpenStreetMap, OpenTopoMap, **Satellite photo** (Sentinel-2 cloudless 2024 by EOX, worldwide ~10 m), **Aerial photos** (USGS, United States, sharp), custom URL — all can be saved offline; dimmed tiles in night mode, red filter in red mode |
+| 3D terrain | **3D** button: the current area as a 3D landscape from the saved elevation data (SRTM, measured by radar from the Space Shuttle) with the map or satellite photo draped over it, your position, waypoints and tracks; rotate, tilt, zoom, vertical exaggeration, lit by the sun's real position now; works offline |
+| Live sky | **Live** button (needs signal): the newest weather-satellite pictures of the area every 10–15 min played as a loop (GOES-East/West for the Americas, Meteosat for Europe/Portugal and the Middle East/Saudi Arabia, Himawari for Asia; infrared at night), rain radar for the past 2 h (RainViewer), and NASA's daily true-colour photo. No satellite sends public live video — these are the latest pictures |
+| Relief shading | Hill shading computed on the device from the elevation data (works offline) |
 | Fallback grid | Lat/lon graticule whenever no tiles are available (Auto), or always on; UTM/MGRS grid with 100 km square letters |
 | Live GPS | `watchPosition` high accuracy, pulsing dot, accuracy circle, heading cone, follow-me (stops when you drag), stale-fix greying |
 | Telemetry | Lat/lon (tap to cycle DD / DMS / DDM), altitude ± accuracy, speed, accuracy, heading, **daylight left** |
@@ -145,6 +148,7 @@ Uninstalling the app or clearing site data deletes everything, so use **Map → 
 - **Trip-plan and turnaround alarms only ring while the app is open** (a web app can't wake a sleeping phone) — also set the phone's own clock alarm.
 - **Browsers pause GPS when the screen is off or the app is in the background.** The app requests a screen wake lock while recording or navigating. Keep the screen on, or expect gaps.
 - **iOS needs a tap to allow the compass.** Some desktop and Android browsers have no absolute compass; the app then uses GPS course while you're moving.
+- **Live pictures need signal and aren't saved offline;** the newest satellite picture is typically 20–45 minutes old (processing delay). Satellite-photo and aerial base maps are not live (2024 mosaic / recent survey years).
 - **No offline place search or routing.** Use waypoints, coordinates and bookmarks.
 - **Whether OpenTopoMap allows saving depends on its server sending CORS headers.** If it doesn't, the app says so and the layer works online only. Use OSM or a custom source offline.
 
@@ -215,6 +219,8 @@ The test:
 - Map data © OpenStreetMap contributors (ODbL).
 - OpenTopoMap style © OpenTopoMap (CC-BY-SA).
 - Elevation: Terrain Tiles (Mapzen/AWS Open Data; SRTM, USGS 3DEP and others).
+- Satellite photo: Sentinel-2 cloudless – s2maps.eu by EOX IT Services GmbH (contains modified Copernicus Sentinel data 2024), free for non-commercial use.
+- Aerial photos: USGS The National Map. Live: NOAA GOES and JMA Himawari via NASA GIBS; © EUMETSAT Meteosat; RainViewer radar; NASA NOAA-20 VIIRS.
 - Libraries, each under its own licence (see `assets/vendor/LICENSE-*`):
   - Leaflet (BSD-2-Clause)
   - SunCalc (BSD-2-Clause)

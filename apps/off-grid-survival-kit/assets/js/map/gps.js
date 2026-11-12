@@ -77,7 +77,14 @@
     if (e.code === 1) {
       stop();
       App._gpsErrBanner = true;
-      App.banner('<strong>Location permission denied.</strong> Allow location for this app in your browser/phone settings (Settings → Privacy → Location), then tap Follow again.', { danger: true });
+      var ua = navigator.userAgent, how;
+      if (/iPhone|iPad|iPod/.test(ua)) how = 'iPhone: <em>Settings → Privacy &amp; Security → Location Services</em> → turn it on, then <em>Safari Websites</em> (or this app) → <em>While Using</em>. Also tap <strong>aA</strong> in Safari\'s address bar → <em>Website Settings → Location → Allow</em>.';
+      else if (/Android/.test(ua)) how = 'Android: tap the <strong>lock / ⓘ icon</strong> left of the address → <em>Permissions → Location → Allow</em>, and make sure the phone\'s Location is switched on.';
+      else how = 'Computer: click the <strong>lock / ⓘ icon</strong> left of the address → <em>Site settings → Location → Allow</em>, then reload. (A computer without GPS uses Wi-Fi location, which can be far off.)';
+      App.banner('<strong>Location is blocked for this app.</strong> ' + how +
+        ' <button class="btn primary" type="button" id="gps-retry">Try again</button>', { danger: true });
+      var rb = document.getElementById('gps-retry');
+      if (rb) rb.onclick = function () { App.banner(null); App._gpsErrBanner = false; start(true); };
     } else if (e.code === 2) {
       App._gpsErrBanner = true;
       App.banner('No GPS position yet. Go outside, away from tall buildings and dense canopy, and hold still for a minute. Make sure Location is turned on.');

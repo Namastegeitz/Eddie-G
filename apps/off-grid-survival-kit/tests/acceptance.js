@@ -176,6 +176,14 @@ let failures = 0;
     if (!/S|W/.test(brg.split(' ')[1] || '')) throw new Error('backtrack should head back south-west, got ' + brg);
     await page.click('#nav-stop');
   });
+  await step('offline: relief shading from saved elevation', async () => {
+    await page.evaluate(() => { if (!MapApp.settings.relief) document.getElementById('ov-relief').click(); MapApp.map.setView([40.3573, -74.6672], 13); });
+    await page.waitForTimeout(1500);
+    const n = await page.evaluate(() => document.querySelectorAll('.leaflet-reliefPane-pane canvas, .leaflet-pane.leaflet-reliefPane-pane canvas').length || MapApp.map.getPane('reliefPane').querySelectorAll('canvas').length);
+    console.log('   relief tiles drawn:', n);
+    if (!n) throw new Error('no relief tiles');
+    await page.evaluate(() => document.getElementById('ov-relief').click());
+  });
   await step('offline: elevation at centre', async () => {
     await page.evaluate(() => MapApp.map.setZoom(13));
     await page.waitForTimeout(1200);
