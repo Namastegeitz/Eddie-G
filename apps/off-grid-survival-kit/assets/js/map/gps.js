@@ -9,6 +9,7 @@
   'use strict';
   var App = window.MapApp;
   var $ = App.$;
+  var SAVER_MS = 60000, pollTimer = null;
   var watchId = null, marker = null, accCircle = null, staleTimer = null, follow = false;
   var lastSaved = 0;
 
@@ -20,15 +21,24 @@
         '</code>. Open it from <code>http://localhost</code>, an <code>https://</code> address, or the installed app. (Opening the file directly, file://, never allows GPS.)', { danger: true });
       return;
     }
-    if (watchId !== null) return;
+    if (watchId !== null || pollTimer !== null) return;
     App.gps.watching = true;
-    watchId = navigator.geolocation.watchPosition(onFix, onErr, { enableHighAccuracy: true, maximumAge: 1000, timeout: 30000 });
+    if (App.settings.gpsMode === 'saver') {
+      // Battery saver: one fresh fix a minute instead of continuous tracking
+      var poll = function () { navigator.geolocation.getCurrentPosition(onFix, onErr, { enableHighAccuracy: true, maximumAge: 15000, timeout: 50000 }); };
+      poll(); pollTimer = setInterval(poll, SAVER_MS);
+    } else {
+      watchId = navigator.geolocation.watchPosition(onFix, onErr, { enableHighAccuracy: true, maximumAge: 1000, timeout: 30000 });
+    }
     if (fromUser) OGSK.toast('Starting GPS… go outside with a clear view of the sky for the best fix');
   }
   function stop() {
     if (watchId !== null) navigator.geolocation.clearWatch(watchId);
-    watchId = null; App.gps.watching = false;
+    if (pollTimer !== null) clearInterval(pollTimer);
+    watchId = null; pollTimer = null; App.gps.watching = false;
   }
+  function restart() { var was = App.gps.watching; stop(); if (was || App.settings.autoGps) start(false); }
+  App.gpsRestart = restart;
   App.gpsStart = start; App.gpsStop = stop;
 
   function onFix(p) {
@@ -44,7 +54,10 @@
     var prev = App.gps.fix;
     if (f.speed == null && prev) {
       var dt = (f.t - prev.t) / 1000;
-      if (dt > 0.5) f.speed = OGGeo.distance(prev.lat, prev.lon, f.lat, f.lon) / dt;
+      if (dt > 0.5) {
+        var v = OGGeo.distance(prev.lat, prev.lon, f.lat, f.lon) / dt;
+        f.speed = v < 90 ? v : null;   // ignore GPS jumps (> ~320 km/h) — not real movement
+      }
     }
     App.gps.fix = f; App.gps.error = null;
     if (App._gpsErrBanner) { App.banner(null); App._gpsErrBanner = false; }
@@ -56,7 +69,7 @@
       try { localStorage.setItem('ogsk.lastfix', JSON.stringify(f)); } catch (e) {}
     }
     clearTimeout(staleTimer);
-    staleTimer = setTimeout(function () { markerEl() && markerEl().classList.add('stale'); paintTelemetry(); }, 30000);
+    staleTimer = setTimeout(function () { markerEl() && markerEl().classList.add('stale'); paintTelemetry(); }, App.settings.gpsMode === 'saver' ? SAVER_MS + 30000 : 30000);
     App.emit('gps', f);
   }
   function onErr(e) {
@@ -146,7 +159,7 @@
     } else {
       rose.style.transform = 'rotate(' + (-h.deg) + 'deg)';
       deg.textContent = String(Math.round(h.deg) % 360).padStart(3, '0') + '° ' + OGGeo.cardinal(h.deg);
-      src.textContent = h.src === 'compass' ? ((+App.settings.declination ? 'true' : 'magnetic') + ' · tap') : 'GPS course';
+      src.textContent = h.src === 'compass' ? ((App.decl() || OGCompass.declMode === 'manual' ? 'true' : 'magnetic') + ' · tap') : 'GPS course';
     }
   }
   function enableCompass(fromUser) {
@@ -253,11 +266,21 @@
     $('set-compass').addEventListener('click', function () { enableCompass(true); OGSK.toast('Move the phone in a slow figure-8 to calibrate'); });
     App.on('settings', function (e) {
       if (e.key === 'coordFmt' || e.key === 'units') paintTelemetry();
-      if (e.key === 'declination') { OGCompass.declination = +e.value || 0; updateHeading(); }
+      if (e.key === 'declination') updateHeading();
     });
-    App.on('gps', function (f) { OGCompass.feedGps(f); if (OGCompass.source !== 'compass') updateHeading(); });
-    OGCompass.on(updateHeading);
-    OGCompass.declination = +App.settings.declination || 0;
+    App.on('gps', function (f) { OGCompass.feedGps(f); OGCompass.setPosition(f.lat, f.lon, 'gps'); if (OGCompass.source !== 'compass') updateHeading(); });
+    // automatic declination follows the map view until there is a GPS fix
+    App.map.on('moveend', function () { if (!App.gps.fix) { var c = App.map.getCenter(); OGCompass.setPosition(c.lat, c.lng, 'map view'); } });
+    var lastDecl = null, lastMode = null;
+    OGCompass.on(function () {
+      updateHeading();
+      if (OGCompass.declination !== lastDecl || OGCompass.declMode !== lastMode) {
+        lastDecl = OGCompass.declination; lastMode = OGCompass.declMode;
+        App.settings.declination = OGCompass.manualDecl; App.settings.declMode = OGCompass.declMode;   // keep in-memory settings in step (engine saves them)
+        App.emit('settings', { key: 'declination', value: lastDecl });
+      }
+    });
+    OGCompass.loadDeclination();
     setInterval(function () { if (App.gps.fix) paintTelemetry(); }, 5000);
     // restore last known fix (shown grey/stale until a live one arrives)
     try {

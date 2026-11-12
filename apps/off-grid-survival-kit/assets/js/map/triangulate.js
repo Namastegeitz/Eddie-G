@@ -24,9 +24,9 @@
   function paintRows() {
     $('tri-rows').innerHTML = rows.map(rowHtml).join('');
     $('tri-add').hidden = rows.length >= 3;
-    var d = +App.settings.declination || 0;
-    $('tri-decl').innerHTML = 'Declination setting: <strong>' + (d ? Math.abs(d) + '° ' + (d > 0 ? 'E' : 'W') : '0° (not set)') + '</strong>' +
-      (d ? '' : ' — set it in Settings if your bearings are magnetic, or results can be off by several hundred metres per km.');
+    var unknown = OGCompass.declMode === 'auto' && OGCompass.autoDecl == null;
+    $('tri-decl').innerHTML = 'Declination used for magnetic bearings: <strong>' + App.esc(OGCompass.declLabel()) + '</strong>' +
+      (unknown ? ' — get a GPS fix or move the map to your area first; a wrong declination puts the fix off by ~17 m per km for every degree.' : '');
   }
   function save() { OGStore.kvSet('map.tri', { rows: rows, type: $('tri-type').value }); }
 

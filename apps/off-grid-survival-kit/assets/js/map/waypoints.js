@@ -167,11 +167,12 @@
   App.wp.paintList = paintList;
 
   /* ---------------- navigate to ---------------- */
-  var navLine = null, arrived = false;
+  var navLine = null, navRoute = null, arrived = false;
   App.nav = {
     target: null,
     start: function (t) {
-      App.nav.target = { id: t.id || null, name: t.name || 'Target', lat: t.lat, lon: t.lon };
+      App.nav.target = { id: t.id || null, name: t.name || 'Target', lat: t.lat, lon: t.lon, route: t.route || null, kind: t.kind || null };
+      $('nav-direct').hidden = !App.nav.target.route;
       arrived = false;
       OGStore.kvSet('map.nav', App.nav.target);
       $('panel-nav').hidden = false;
@@ -181,6 +182,7 @@
       paintMarkers();
       App.nav.update();
       var f = App.gps.fix;
+      if (t.route) return;   // the caller frames the whole route
       if (f) App.map.fitBounds(L.latLngBounds([[f.lat, f.lon], [t.lat, t.lon]]).pad(0.25), { maxZoom: 16 });
       else App.map.setView([t.lat, t.lon], Math.max(App.map.getZoom(), 13));
     },
@@ -189,6 +191,7 @@
       OGStore.kvDel('map.nav');
       $('panel-nav').hidden = true;
       if (navLine) { App.map.removeLayer(navLine); navLine = null; }
+      if (navRoute) { App.map.removeLayer(navRoute); navRoute = null; }
       if (App._navWake) { OGSK.wakeLock.release(); App._navWake = false; }
       paintMarkers();
     },
@@ -196,10 +199,22 @@
       var t = App.nav.target; if (!t) return;
       var f = App.gps.fix, fresh = f && Date.now() - f.t < 60000;
       var from = fresh ? { lat: f.lat, lon: f.lon } : (function () { var c = App.map.getCenter(); return { lat: c.lat, lon: c.lng }; })();
-      var d = OGGeo.distance(from.lat, from.lon, t.lat, t.lon), b = OGGeo.bearing(from.lat, from.lon, t.lat, t.lon);
+      var d, b, pts, note = '';
+      if (t.route && t.route.length > 1 && App.bt) {
+        // follow a route (Backtrack): distance along the trail, arrow to the next trail point
+        var g = App.bt.guide(from, t.route, fresh ? f.acc : 0);
+        var aim = g.off ? g.P : g.next;
+        d = g.remaining; b = OGGeo.bearing(from.lat, from.lon, aim[0], aim[1]);
+        pts = [[from.lat, from.lon], g.P].concat(t.route.slice(g.k + 1));
+        note = g.off ? '⚠ ' + App.fmtDist(g.offBy) + ' off your trail — head back to it first' :
+          'along your trail · ' + App.fmtDist(OGGeo.distance(from.lat, from.lon, t.lat, t.lon)) + ' straight line';
+      } else {
+        d = OGGeo.distance(from.lat, from.lon, t.lat, t.lon); b = OGGeo.bearing(from.lat, from.lon, t.lat, t.lon);
+        pts = [[from.lat, from.lon], [t.lat, t.lon]];
+      }
       $('nav-dist').textContent = App.fmtDist(d);
       $('nav-brg').textContent = App.fmtBrg(b);
-      $('nav-from').textContent = fresh ? '' : '(from map centre — no GPS fix)';
+      $('nav-from').textContent = fresh ? note : '(from map centre — no GPS fix)';
       var h = App.heading.deg;
       var rot = h != null && fresh ? b - h : b;
       $('nav-arrow').style.transform = 'rotate(' + rot + 'deg)';
@@ -207,9 +222,20 @@
       var eta = '';
       if (fresh && f.speed && f.speed > 0.3) eta = 'ETA ' + OGGeo.fmtDuration(d / f.speed * 1000) + ' at ' + App.fmtSpeed(f.speed);
       $('nav-eta').textContent = (h != null && fresh ? 'Arrow = turn this way (relative to your heading)' : 'Arrow is north-up (no heading yet)') + (eta ? ' · ' + eta : '');
-      var pts = [[from.lat, from.lon], [t.lat, t.lon]];
-      if (!navLine) navLine = L.polyline(pts, { color: '#ffb000', weight: 4, dashArray: '10 8', opacity: 0.9, interactive: false }).addTo(App.map);
-      else navLine.setLatLngs(pts);
+      if (t.route) {
+        // remaining trail drawn solid; a dashed link from you to the trail
+        if (navLine) { App.map.removeLayer(navLine); navLine = null; }
+        var rest = pts.slice(1);
+        if (!navRoute) navRoute = L.layerGroup().addTo(App.map);
+        navRoute.clearLayers();
+        L.polyline(rest, { color: '#ffb000', weight: 6, opacity: 0.9, interactive: false }).addTo(navRoute);
+        L.polyline([pts[0], pts[1]], { color: '#ffb000', weight: 3, dashArray: '6 8', interactive: false }).addTo(navRoute);
+        L.circleMarker([t.lat, t.lon], { radius: 9, color: '#000', weight: 2, fillColor: '#2fbf71', fillOpacity: 1, interactive: false }).addTo(navRoute);
+      } else {
+        if (navRoute) { App.map.removeLayer(navRoute); navRoute = null; }
+        if (!navLine) navLine = L.polyline(pts, { color: '#ffb000', weight: 4, dashArray: '10 8', opacity: 0.9, interactive: false }).addTo(App.map);
+        else navLine.setLatLngs(pts);
+      }
       if (fresh && !arrived && d < Math.max(12, Math.min(f.acc || 0, 40))) {
         arrived = true;
         OGSK.toast('Arrived at ' + t.name);
@@ -279,6 +305,10 @@
       if (n) App.nav.start(w); else if (ed) App.wp.edit(w); else App.share.showQR({ lat: w.lat, lon: w.lon, name: w.name });
     });
     $('nav-stop').addEventListener('click', App.nav.stop);
+    $('nav-direct').addEventListener('click', function () {   // leave the trail: straight line to the same goal
+      var t = App.nav.target; if (!t) return;
+      App.nav.start({ name: t.name + ' (direct)', lat: t.lat, lon: t.lon });
+    });
     $('nav-center').addEventListener('click', function () {
       var t = App.nav.target, f = App.gps.fix; if (!t) return;
       if (f) App.map.fitBounds(L.latLngBounds([[f.lat, f.lon], [t.lat, t.lon]]).pad(0.25), { maxZoom: 17 });
@@ -296,7 +326,7 @@
     var lt = 0;
     function throttledList() { if (Date.now() - lt > 3000) { lt = Date.now(); paintList(); } }
     return reload().then(function () {
-      return OGStore.kvGet('map.nav', null).then(function (t) { if (t && t.lat != null) { App.nav.target = t; $('panel-nav').hidden = false; $('nav-name').textContent = t.name; paintMarkers(); App.nav.update(); if (App.settings.wakeLock) { OGSK.wakeLock.request(); App._navWake = true; } } });
+      return OGStore.kvGet('map.nav', null).then(function (t) { if (t && t.lat != null) { App.nav.target = t; $('panel-nav').hidden = false; $('nav-name').textContent = t.name; $('nav-direct').hidden = !t.route; paintMarkers(); App.nav.update(); if (App.settings.wakeLock) { OGSK.wakeLock.request(); App._navWake = true; } } });
     });
   };
 })();

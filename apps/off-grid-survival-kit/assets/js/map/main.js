@@ -54,15 +54,48 @@
     App.seg($('set-units'), 'data-v', s.units, function (v) { App.set('units', v); setScale(); });
     var paintFmt = App.seg($('set-fmt'), 'data-v', s.coordFmt, function (v) { App.set('coordFmt', v); });
     App.on('settings', function (e) { if (e.key === 'coordFmt') { paintFmt(e.value); paintCenter(); } if (e.key === 'units') paintCenter(); });
-    $('set-decl').value = s.declination || 0;
-    $('set-decl').addEventListener('change', function () {
-      var v = parseFloat(this.value); if (isNaN(v) || Math.abs(v) > 90) v = 0;
-      this.value = v; App.set('declination', v);
+    // magnetic declination: automatic (WMM2025, in the compass engine) or manual
+    var paintDeclMode = App.seg($('set-declmode'), 'data-v', OGCompass.declMode, function (v) {
+      if (v === 'manual') OGCompass.setDeclination(OGCompass.autoDecl != null ? OGCompass.autoDecl : OGCompass.manualDecl);
+      else OGCompass.setDeclMode('auto');
     });
+    function paintDecl() {
+      paintDeclMode(OGCompass.declMode);
+      $('decl-now').textContent = OGCompass.declLabel();
+      $('set-decl-wrap').hidden = OGCompass.declMode !== 'manual';
+      if (document.activeElement !== $('set-decl')) $('set-decl').value = OGCompass.manualDecl;
+    }
+    $('set-decl').addEventListener('change', function () { this.value = OGCompass.setDeclination(this.value); });
+    App.on('settings', function (e) { if (e.key === 'declination') paintDecl(); });
+    App.on('tab', function (t) { if (t === 'settings') paintDecl(); });
+    paintDecl();
     [['set-autogps', 'autoGps'], ['set-wake', 'wakeLock'], ['set-dim', 'dimTiles'], ['set-cross', 'crosshair'], ['set-saveview', 'saveOnView']].forEach(function (p) {
       var el = $(p[0]); el.checked = s[p[1]] !== false;
       el.addEventListener('change', function () { App.set(p[1], el.checked); applyDisplay(); });
     });
+    // GPS mode + battery (Battery Status API: Chrome/Android; not available on iPhone)
+    var paintGpsMode = App.seg($('set-gpsmode'), 'data-v', s.gpsMode || 'high', function (v) {
+      App.set('gpsMode', v); App.gpsRestart();
+      OGSK.toast(v === 'saver' ? 'Battery saver: one GPS fix a minute' : 'Continuous GPS');
+    });
+    var lowWarned = false;
+    function batteryText(b) {
+      return 'Battery: ' + Math.round(b.level * 100) + ' %' + (b.charging ? ' (charging)' : '') + '. GPS is ' + (App.settings.gpsMode === 'saver' ? 'in battery saver mode.' : 'continuous.');
+    }
+    if (navigator.getBattery) {
+      navigator.getBattery().then(function (b) {
+        function upd() {
+          $('battery-now').textContent = batteryText(b);
+          if (!b.charging && b.level <= 0.2 && !lowWarned && App.settings.gpsMode !== 'saver') {
+            lowWarned = true;
+            App.banner('<strong>Battery ' + Math.round(b.level * 100) + ' %.</strong> Save power: switch GPS to battery saver, turn on airplane mode (GPS still works), dim the screen and keep the phone warm. <button class="btn" type="button" id="use-saver">Use battery saver</button>');
+            var u = document.getElementById('use-saver');
+            if (u) u.onclick = function () { App.set('gpsMode', 'saver'); paintGpsMode('saver'); App.gpsRestart(); App.banner(null); };
+          }
+        }
+        b.addEventListener('levelchange', upd); b.addEventListener('chargingchange', upd); upd();
+      }).catch(function () {});
+    } else $('battery-now').textContent = 'This browser does not report battery level (iPhone/Safari). Check it in the status bar.';
     $('set-minacc').value = String(s.minAcc || 50);
     $('set-minacc').addEventListener('change', function () { App.set('minAcc', +this.value); });
   }
@@ -124,6 +157,8 @@
       App.openBeacon();
     } else if (h === 'compass') {
       App.openCompass();
+    } else if (h === 'backtrack') {
+      App.bt.ask();
     } else if ((m = /^tab=(\w+)/.exec(h))) {
       App.openDrawer(m[1]);
     } else return;
@@ -166,7 +201,7 @@
       });
       paintCenter();
       App.dem.updateCenter();
-      return Promise.all([App.wp.init(), App.tracksInit(), App.triInit()]);
+      return Promise.all([App.wp.init(), App.tracksInit(), App.triInit(), App.btInit()]);
     }).then(function () {
       handleHash();
       window.addEventListener('hashchange', handleHash);

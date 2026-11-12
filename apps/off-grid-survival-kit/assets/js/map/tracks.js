@@ -135,6 +135,7 @@
         new Date(t.created).toLocaleDateString() + ' · ' + App.fmtDist(s.dist) + ' · ' + OGGeo.fmtDuration(s.dur) + (s.gain ? ' · ↑' + App.fmtAlt(s.gain) : '') + '</small></button>' +
         '<div class="row" style="width:100%;justify-content:flex-end">' +
         '<button class="btn" type="button" data-vis="' + t.id + '">' + (t.hidden ? 'Show' : 'Hide') + '</button>' +
+        '<button class="btn" type="button" data-back="' + t.id + '" title="Follow this track back to its start">Backtrack</button>' +
         '<button class="btn" type="button" data-gpx="' + t.id + '">GPX</button>' +
         '<button class="btn" type="button" data-ren="' + t.id + '">Rename</button>' +
         '<button class="btn danger" type="button" data-del="' + t.id + '">Delete</button></div></li>';
@@ -161,10 +162,12 @@
     App.on('settings', function (e) { if (e.key === 'units') { paintList(); paintPanel(); } });
     $('trk-list').addEventListener('click', function (e) {
       var b = e.target.closest('button'); if (!b) return;
-      var id = b.getAttribute('data-zoom') || b.getAttribute('data-vis') || b.getAttribute('data-gpx') || b.getAttribute('data-ren') || b.getAttribute('data-del');
+      var id = b.getAttribute('data-zoom') || b.getAttribute('data-back') || b.getAttribute('data-vis') || b.getAttribute('data-gpx') || b.getAttribute('data-ren') || b.getAttribute('data-del');
       var t = byId(id); if (!t) return;
       if (b.hasAttribute('data-zoom')) {
         if (t.points.length) { App.map.fitBounds(L.latLngBounds(t.points.map(function (p) { return [p[0], p[1]]; })).pad(0.1)); if (innerWidth < 800) App.closeDrawer(); }
+      } else if (b.hasAttribute('data-back')) {
+        App.closeDrawer(); App.bt.start(t.points, 'Start of ' + t.name);
       } else if (b.hasAttribute('data-vis')) {
         t.hidden = !t.hidden; OGStore.put('tracks', t).then(reload);
       } else if (b.hasAttribute('data-gpx')) {
