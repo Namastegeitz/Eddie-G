@@ -21,25 +21,25 @@ _surfaces = [{
 "vertex_data": PackedByteArray("m1Go3///icCkov//hTK692XdaOpJw4nA2RY+9TtvuvezUscIau6JwLujHinwILr3fd6IE7SxicDxF10epl2692XdaOpJwwz82RY+9Ttv/q+kov//hTIM/JtRqN////6vfd6IE7SxDPzxF10epl3+r7ujHinwIAz8s1LHCGru/q9l3WjqScPA87NSxwhq7nL1m1Go3///wPN93ogTtLFy9aSi//+FMsDz8RddHqZdcvXZFj71O2/A87ujHinwIHL1uugVLtzWJMXn7AhOA7Gw/P//TDlUxCTFotXRQovDsPwB5dQJFcYkxS7pxik8oLD8RvwLFY2zJMXq0Y8exLKw/P//TDlUxGjtotXRQovDXqnn7AhOA7Fo7broFS7c1l6pRvwLFY2zaO3q0Y8exLJeqS7pxik8oGjtAeXUCRXGXqn//0w5VMQA6gHl1AkVxobuuugVLtzWAOpG/AsVjbOG7ufsCE4DsQDq6tGPHsSyhu6i1dFCi8MA6i7pxik8oIbuAABBJLlYt7aJJDREYlrc32QTeC+Xb7e2JRH9OIRD3N/NDwAAq1O3tlc08h9VVdzfMiM3C4lqt7bzILsUdz7c32QTeC+Xb6DoJRH9OIRDEOGJJDREYlqg6AAAQSS5WBDhMiM3C4lqoOjzILsUdz4Q4Vc08h9VVaDozQ8AAKtTEOFkE3gvl2+4980PAACrU1zdAABBJLlYuPcyIzcLiWpc3YkkNERiWrj38yC7FHc+XN0lEf04hEO491c08h9VVVzdP4dBJNEsfbk1nzRECRB99H+keC81K3259YH9OKURffRFjQAAyBx9uTyl8h8AAH30hao3Cywbfbn8h7sUmwF99H+keC81K/rp9YH9OKURs741nzRECRD66T+HQSTRLLO+hao3Cywb+un8h7sUmwGzvjyl8h8AAPrpRY0AAMgcs75/pHgvNSuv9UWNAADIHH38P4dBJNEsr/WFqjcLLBt9/DWfNEQJEK/1/Ie7FJsBffz1gf04pRGv9Tyl8h8AAH38fY1YaG5G4bd9jVhobkbht32NWGhuRuG3fY1YaG5G4bdey3l9JXZ58F7LeX0ldnnwXst5fSV2efBey3l9JXZ58OuKT7fvPIHz64pPt+88gfPrik+37zyB8+uKT7fvPIHzxYRMTG9Ohq3FhExMb06GrcWETExvToatxYRMTG9Ohq2lzbFwfVutv6XNsXB9W62/pc2xcH1brb+lzbFwfVutv2OSlqV9RcLpY5KWpX1FwuljkpalfUXC6WOSlqV9RcLpGU7PkGPIXFQZTs+QY8hcVBlOz5BjyFxUGU7PkGPIXFT4pM2CsV6z4fikzYKxXrPh+KTNgrFes+H4pM2CsV6z4ZvZqB9udsI4m9moH252wjib2agfbnbCOJvZqB9udsI4K20JYvPPxz0rbQli88/HPSttCWLzz8c9K20JYvPPxz1bv2B30l1O0Vu/YHfSXU7RW79gd9JdTtFbv2B30l1O0Q58UK3qiq81DnxQreqKrzUOfFCt6oqvNQ58UK3qiq81")
 }]
 
-[node name="SugarCube" type="Area3D" unique_id=1851887606]
+[node name="SugarCube" type="Area3D" unique_id=1465280466]
 script = ExtResource("1_mtx5o")
 def = ExtResource("2_lqrps")
 
-[node name="Shape" type="CollisionShape3D" parent="." unique_id=2142850440]
+[node name="Shape" type="CollisionShape3D" parent="." unique_id=708984934]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.65, 0)
 shape = SubResource("SphereShape3D_rcjf0")
 
-[node name="Visual" type="Node3D" parent="." unique_id=1440569284]
+[node name="Visual" type="Node3D" parent="." unique_id=796841915]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.65, 0)
 
-[node name="Cube" type="MeshInstance3D" parent="Visual" unique_id=1075505624]
+[node name="Cube" type="MeshInstance3D" parent="Visual" unique_id=1629823015]
 material_override = ExtResource("3_dc4p8")
 visibility_range_end = 110.0
 visibility_range_end_margin = 16.5
 visibility_range_fade_mode = 1
 mesh = SubResource("ArrayMesh_cv6fh")
 
-[node name="Skin" type="Node3D" parent="Visual" unique_id=685422612]
+[node name="Skin" type="Node3D" parent="Visual" unique_id=1197309586]
 script = ExtResource("4_b3gwr")
 model_id = "sugar_cube"
 fit_size = Vector3(1.8, 1.3, 1.8)

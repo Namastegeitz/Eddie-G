@@ -519,6 +519,34 @@ def build_icons():
     splash.save(os.path.join(ICONS, "splash.png"))
 
 
+def build_crash_sfx():
+    """Things falling over: a glass shattering, a clay pot breaking (and its
+    soil spilling) and the clack of a wooden domino."""
+    os.makedirs(SFX, exist_ok=True)
+    n = lambda d: int(RATE * d)
+    rng = np.random.default_rng(31)
+    # Glass: a bright crack, then a shower of tiny tinkles dying away.
+    dur = 0.9
+    crack = highpass(noise(n(0.05)), 2500) * env(n(0.05), 0.0005, 0.04)
+    tink = np.zeros(n(dur))
+    for i in range(26):
+        at = int(rng.uniform(0.0, 0.55) * RATE)
+        f = rng.uniform(2800, 6800)
+        d = rng.uniform(0.03, 0.09)
+        bit = tone(f, d) * env(n(d), 0.0005, d * 0.9) * rng.uniform(0.3, 1.0)
+        tink[at:at + len(bit)] += bit[:len(tink) - at]
+    shatter = tink * np.exp(-t_axis(dur) * 3.0)
+    shatter[:len(crack)] += crack * 1.2
+    write("shatter", shatter, peak=0.8)
+    # Clay pot: a dull crack and a short hiss of soil.
+    thud = lowpass(noise(n(0.12)), 1200) * env(n(0.12), 0.001, 0.1) + tone(160, 0.12) * env(n(0.12), 0.001, 0.09) * 0.7
+    soil = lowpass(highpass(noise(n(0.35)), 900), 4000) * env(n(0.35), 0.01, 0.3) * 0.5
+    write("pot_crash", np.concatenate([thud, np.zeros(n(0.01)), soil]), peak=0.75)
+    # Domino: a short hollow wooden clack.
+    clack = lowpass(highpass(noise(n(0.05)), 900), 5000) * env(n(0.05), 0.0005, 0.035) + tone(1350, 0.05) * env(n(0.05), 0.0005, 0.03) * 0.5
+    write("domino", clack, peak=0.6)
+
+
 if __name__ == "__main__":
     build_sfx()
     build_item_sfx()
@@ -528,6 +556,7 @@ if __name__ == "__main__":
     build_npc_sfx()
     build_climb_sfx()
     build_revolver_sfx()
+    build_crash_sfx()
     build_addon_icons()
     build_view_overlays()
     build_icons()

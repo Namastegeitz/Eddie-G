@@ -81,6 +81,9 @@ static func build(tree: SceneTree) -> void:
 	g.prop("ball", Vector3(0, 1.6, 20))
 	g.prop("acorn", Vector3(40, 0.7, 50))
 	g.prop("acorn", Vector3(-30, 0.7, 50))
+	# A glass on the picnic table and a plant on the bench, near the edges.
+	g.prop("glass", Vector3(-10, 28.6, 6.9))
+	g.prop("potted_plant", Vector3(-30, 16.4, 25.0))
 
 	# --- Vegetable garden (soil camo, shade under the leaves) ---
 	g.box("VeggieBed", Vector3(95, -0.2, 28), Vector3(24, 0.5, 44), "soil", &"soil", &"soil", 0.0, false)

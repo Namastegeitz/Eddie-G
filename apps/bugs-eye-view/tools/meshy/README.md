@@ -59,6 +59,40 @@ A run can be stopped and restarted: progress is saved in
 `assets/models/` are skipped, so nothing is paid for twice. Thumbnails go to
 `tools/meshy/thumbnails/`.
 
+## Generated so far
+
+| Model | How | Credits |
+|---|---|---|
+| `kitchen_fridge` | Full model; Meshy left its door hanging open, so it was cut off with `cut.py` (the game's own door swings in front). Stretched to fill the fridge's box. | 30 |
+| `fridge_groceries` | `meshy-6-lite` (5 for the shape, 10 for the textures); three copies stand on the fridge shelves | 15 |
+
+## Making them phone-sized (do this for every new model)
+
+The files Meshy sends are big (4-6 MB, 2048 px textures). Keep the
+originals in `tools/meshy/raw/` (Godot ignores that folder; nothing there is
+exported, and it means you never pay twice) and put a phone-sized copy in
+`assets/models/`:
+
+```bash
+npx -y @gltf-transform/cli@4.5.1 optimize tools/meshy/raw/<id>.glb assets/models/<id>.glb \
+  --compress false --texture-compress webp --texture-size 1024 --simplify false \
+  --instance false --palette false --flatten false --join false
+godot --headless --path . --import
+python3 tools/meshy/godot_textures.py
+godot --headless --path . --import
+```
+
+`godot_textures.py` switches the textures Godot pulls out of the models to
+Basis Universal (small download, compressed on the GPU). Use 512 px for
+small things. To cut a part out of a model (a door left open, a stand),
+run `cut.py` on the raw file first (see its header). Check a new model with
+a preview first (`--preview-only`, the shape only) before paying for its
+textures: delete the preview from `assets/models/` and run again without
+`--preview-only` and it textures that same preview.
+
+The account's cost per task (checked with the balance endpoint): 20 for a
+`latest` shape, 5 for a `meshy-6-lite` shape, 10 for textures.
+
 ## If a model looks wrong
 
 - **Faces the wrong way**: select its `...Skin` node in the level or actor

@@ -915,9 +915,7 @@ func _push_props() -> void:
 		var c := get_slide_collision(i)
 		var prop := c.get_collider() as PhysicsProp
 		if prop:
-			prop.freeze = false
-			prop.apply_central_impulse(-c.get_normal() * stats.push_force)
-			prop.mark_touched()
+			prop.push_by_bug(-c.get_normal() * stats.push_force)
 
 
 # --- Stealth ------------------------------------------------------------------

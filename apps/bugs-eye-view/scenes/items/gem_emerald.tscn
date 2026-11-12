@@ -35,40 +35,40 @@ _surfaces = [{
 "vertex_data": PackedByteArray("9O3dZU+G+q2q+P//vH9y6qr4jqtyivqt9O1Ouph7cupI9QAAQoD6rf//IZqveXLq//+wRWaE+q1I9XBUjHVy6qr4jqtyiofe9O1Ouph7N82q+P//vH+H3vTt3WVPhjfN//+wRWaEh95I9XBUjHU3zf//IZqveYfeSPUAAEKAN82q+I6rcoq59Ej1AABCgHLq9O3dZU+GufT//7BFZoRy6qr4//+8f7n0SPVwVIx1cur07U66mHu59P//IZqveXLqT4bdZf//VNW8f///SPVX9XKKjqtI9VTVmHtOuv//V/VCgAAAqvhU1a95IZr07Vf1ZoSwRfTtVNWMdXBUqvhX9XKKjqtI9azomHtOuv//TqK8f///SPWs6E+G3WX//06iZoSwRfTtrOiMdXBUqvhOoq95IZr07azoQoAAAKr4TqJyio6rSPVV3UKAAACq+FXdT4bdZf//Vd1mhLBF9O1V3bx///9I9VXdjHVwVKr4Vd2Ye066//9V3a95IZr07VXdChLdZa95ufRUB///QoBZ2lQHjquMdbn0ChJOumaEWdq2CgAAvH+59AAAIZpPhlnaAACwRZh7ufS2CnBUcopZ2lQHjquMdf//ChJOumaE/79UB///QoD//woS3WWvef+/AACwRZh7//+2CnBUcor/vwAAIZpPhv//tgoAALx//79UB46rjHVZ2rYKAAC8f/qtChLdZa95WdoAALBFmHv6rVQH//9CgFnatgpwVHKK+q0KEk66ZoRZ2gAAIZpPhvqtr3ndZQAAYcFCgP//tgpU1Yx1jqu2CmHBZoROugAAVNW8fwAAVAdhwU+GIZoKElTVmHuwRQoSYcFyinBUVAdU1Yx1jqu2CqzoZoROugAA3vhCgP//tgqs6K953WUAAN74mHuwRQoSrOhyinBUVAfe+E+GIZoKEqzovH8AAFQH3viMdY6rtgod7rx/AABUB8q2r3ndZQAAHe6Ye7BFChLKtkKA//+2Ch3ucopwVFQHyrZmhE66AAAd7k+GIZoKEsq2Zlgdaw/YtUtmWB1rD9i1S2ZYHWsP2LVLZlgdaw/YtUvfuf9/zlHN0d+5/3/OUc3R37n/f85RzdHfuf9/zlHN0XFqwaRZjEk0cWrBpFmMSTRxasGkWYxJNHFqwaRZjEk0lYzgPD1awaWVjOA8PVrBpZWM4Dw9WsGllYzgPD1awaUZ29FjkkgkkRnb0WOSSCSRGdvRY5JIJJEZ29FjkkgkkWOluJPiRpvaY6W4k+JGm9pjpbiT4kab2mOluJPiRpvar0U82y6O4pqvRTzbLo7imq9FPNsujuKar0U82y6O4prB4Y41/3//M8HhjjX/f/8zweGONf9//zPB4Y41/3//M+zW0HF7PJen7NbQcXs8l6fs1tBxezyXp+zW0HF7PJenYEeduB7DaHNgR524HsNoc2BHnbgew2hzYEeduB7DaHNIdy2cdZjsMEh3LZx1mOwwSHctnHWY7DBIdy2cdZjsMCPfST5IZVpNI99JPkhlWk0j30k+SGVaTSPfST5IZVpN")
 }]
 
-[node name="GemEmerald" type="Area3D" unique_id=1126470477]
+[node name="GemEmerald" type="Area3D" unique_id=2091572385]
 script = ExtResource("1_bwk4q")
 def = ExtResource("2_0pxmo")
 
-[node name="Shape" type="CollisionShape3D" parent="." unique_id=1082441696]
+[node name="Shape" type="CollisionShape3D" parent="." unique_id=491370253]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.7, 0)
 shape = SubResource("SphereShape3D_juemr")
 
-[node name="Visual" type="Node3D" parent="." unique_id=741662883]
+[node name="Visual" type="Node3D" parent="." unique_id=666709230]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.7, 0)
 
-[node name="Table" type="MeshInstance3D" parent="Visual" unique_id=1666085860]
+[node name="Table" type="MeshInstance3D" parent="Visual" unique_id=720170839]
 material_override = ExtResource("3_hlfnu")
 visibility_range_end = 110.0
 visibility_range_end_margin = 16.5
 visibility_range_fade_mode = 1
 mesh = SubResource("ArrayMesh_3wbo1")
 
-[node name="Skin" type="Node3D" parent="Visual" unique_id=244120953]
+[node name="Skin" type="Node3D" parent="Visual" unique_id=1660950625]
 script = ExtResource("4_tullb")
 model_id = "gem_emerald"
 fit_size = Vector3(1, 1.3, 1)
 hide_paths = Array[NodePath]([NodePath("../Table")])
 
-[node name="Glow" type="OmniLight3D" parent="Visual" unique_id=548235869]
+[node name="Glow" type="OmniLight3D" parent="Visual" unique_id=315172655]
 light_color = Color(0.15, 0.9, 0.45, 1)
 light_energy = 1.2
 distance_fade_enabled = true
 distance_fade_begin = 88.0
 distance_fade_length = 22.0
 
-[node name="Sparkles" type="Node3D" parent="Visual" unique_id=463185941]
+[node name="Sparkles" type="Node3D" parent="Visual" unique_id=174946089]
 
-[node name="Sparkle" type="MeshInstance3D" parent="Visual/Sparkles" unique_id=360654313]
+[node name="Sparkle" type="MeshInstance3D" parent="Visual/Sparkles" unique_id=1429329523]
 material_override = ExtResource("5_turd5")
 cast_shadow = 0
 visibility_range_end = 110.0

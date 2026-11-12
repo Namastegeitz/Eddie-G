@@ -1,0 +1,18 @@
+{
+  "fridge_groceries": {
+    "bytes": 5970912,
+    "done": true,
+    "preview_id": "01a1cd62-31d2-708b-9c36-da919ceaeb3e",
+    "prompt": "A small row of everyday groceries standing close together on a fridge shelf: a milk carton, an open carton of brown eggs, a wedge of yellow cheese, a glass jar of green pickles, a bottle of orange juice and a red apple, side by side, front facing forward. Stylized realistic 3D game asset, clean readable silhouette, single isolated object, centered, no base, no ground plane, no background, no text.",
+    "refine_id": "01a1cd63-6ea8-730c-876d-5dac242f4192",
+    "textured": true
+  },
+  "kitchen_fridge": {
+    "bytes": 4517984,
+    "done": true,
+    "preview_id": "01a1cd62-3052-7631-9048-b4648e731eb5",
+    "prompt": "A tall white single-door kitchen refrigerator with its front door taken off, so the whole front is open and shows the bright white interior: three clear glass shelves, a small freezer compartment at the top and two clear crisper drawers at the bottom. Rounded white cabinet, small feet, open front facing forward. Stylized realistic 3D game asset, clean readable silhouette, single isolated object, centered, no base, no ground plane, no background, no text.",
+    "refine_id": "01a1cd63-6f7b-778d-aaf5-9cdd65ad6c22",
+    "textured": true
+  }
+}

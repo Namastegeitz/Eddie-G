@@ -32,6 +32,12 @@ static func build(tree: SceneTree) -> void:
 	for i in 3:
 		g.prop("cereal_box", Vector3(-14 + i * 4.0, 42.6, -26), Vector3(0, PI * 0.5, 0))
 	g.lure("Spoon", LureProp.Kind.SPOON, Vector3(-46, 38.3, -27), Vector3(1.2, 0.4, 7), "metal", 2.6, "lure_spoon")
+	# Things to knock off the edge: a crash makes everyone look (and a glass
+	# or the plant pot breaks).
+	g.prop("glass", Vector3(-38, 39.85, -20.6))
+	g.prop("potted_plant", Vector3(-56, 39.65, -21.2))
+	g.prop("teacup", Vector3(-20, 32.35, 1.6))
+	g.prop("glass", Vector3(44, 31.85, 24.4))
 
 	# --- Stove with a hanging pan, and a metal pot on the floor ---
 	g.box("Stove", Vector3(13, 18, -33), Vector3(26, 36, 24), "dark_metal", &"metal")
@@ -165,7 +171,22 @@ static func build(tree: SceneTree) -> void:
 	g.cover_block("FlourSack", Vector3(30, 0, 72), Vector3(12, 6, 8), "paper", "flour sack", "cover_flour_sack", &"cloth")
 
 	# --- Model slots for the furniture ---
-	g.skin_region("Fridge", "kitchen_fridge", Vector3(43, 36, -30), Vector3(28, 72, 26), ["Fridge"])
+	# The fridge model is open at the front (its door is the swinging one) and
+	# stretched to fill the fridge's box exactly (things sit on top of it).
+	var fridge_skin := g.skin_region("Fridge", "kitchen_fridge", Vector3(43, 36, -30), Vector3(28, 72, 26), ["Fridge"], 0.0)
+	fridge_skin.stretch = true
+	# Food on the shelves, seen whenever the door swings open.
+	var food := Node3D.new()
+	food.name = "FridgeFood"
+	g.skins.add_child(food)
+	for shelf: Array in [[30.0, 0.0, -1.0, 7.6], [38.9, 180.0, 0.5, 7.4], [47.4, 15.0, -0.5, 6.8]]:
+		var hgt: float = shelf[3]
+		var f := g.skin("FridgeFood", "fridge_groceries", Vector3(42.6 + float(shelf[2]), float(shelf[0]) + hgt * 0.5, -26.5),
+			Vector3(hgt * 2.6, hgt, hgt * 1.9), [], float(shelf[1]))
+		g.skins.remove_child(f)
+		food.add_child(f)
+	var fridge_door := g.geo.get_node("FridgeDoor") as SwingDoor
+	fridge_door.reveal_path = fridge_door.get_path_to(food)
 	g.skin_region("Stove", "kitchen_stove", Vector3(13, 18.2, -33), Vector3(26, 36.4, 24), ["Stove", "Burner"])
 	g.skin_region("Pan", "frying_pan", Vector3(13, 58, -35), Vector3(12, 2, 24), ["Pan"])
 	g.skin_region("Pot", "cooking_pot", Vector3(14, 5, -11), Vector3(9, 10, 9), ["Pot"])

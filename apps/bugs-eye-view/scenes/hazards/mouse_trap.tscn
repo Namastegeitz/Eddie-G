@@ -63,18 +63,18 @@ _surfaces = [{
 [sub_resource type="BoxShape3D" id="BoxShape3D_y2g7v"]
 size = Vector3(3.4, 1.6, 4)
 
-[node name="MouseTrap" type="Node3D" unique_id=1993092803]
+[node name="MouseTrap" type="Node3D" unique_id=1237456345]
 script = ExtResource("1_fhb28")
 
-[node name="Base" type="StaticBody3D" parent="." unique_id=1603543842]
+[node name="Base" type="StaticBody3D" parent="." unique_id=1040088617]
 collision_mask = 0
 metadata/surface = &"wood"
 
-[node name="Shape" type="CollisionShape3D" parent="Base" unique_id=1901497644]
+[node name="Shape" type="CollisionShape3D" parent="Base" unique_id=330436391]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.175, 0)
 shape = SubResource("BoxShape3D_l7ppr")
 
-[node name="Plank" type="MeshInstance3D" parent="Base" unique_id=787987116]
+[node name="Plank" type="MeshInstance3D" parent="Base" unique_id=1257433536]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.175, 0)
 material_override = ExtResource("2_2fsmi")
 visibility_range_end = 80.0
@@ -82,14 +82,14 @@ visibility_range_end_margin = 12.0
 visibility_range_fade_mode = 1
 mesh = SubResource("ArrayMesh_caoc3")
 
-[node name="Plate" type="MeshInstance3D" parent="Base" unique_id=1042995439]
+[node name="Plate" type="MeshInstance3D" parent="Base" unique_id=1201701901]
 material_override = ExtResource("3_352rl")
 visibility_range_end = 80.0
 visibility_range_end_margin = 12.0
 visibility_range_fade_mode = 1
 mesh = SubResource("ArrayMesh_tmjui")
 
-[node name="Bait" type="MeshInstance3D" parent="Base" unique_id=2110012021]
+[node name="Bait" type="MeshInstance3D" parent="Base" unique_id=31772588]
 transform = Transform3D(0.921061, 0, 0.38941833, 0, 1, 0, -0.38941833, 0, 0.921061, 0, 0.62, 1.4)
 material_override = ExtResource("4_67or7")
 visibility_range_end = 80.0
@@ -97,18 +97,18 @@ visibility_range_end_margin = 12.0
 visibility_range_fade_mode = 1
 mesh = SubResource("ArrayMesh_ndp7j")
 
-[node name="Bar" type="Node3D" parent="." unique_id=1181469081]
+[node name="Bar" type="Node3D" parent="." unique_id=906721659]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.45, -0.4)
 
-[node name="Side" type="MeshInstance3D" parent="Bar" unique_id=2111829495]
+[node name="Side" type="MeshInstance3D" parent="Bar" unique_id=1730436815]
 material_override = ExtResource("3_352rl")
 visibility_range_end = 80.0
 visibility_range_end_margin = 12.0
 visibility_range_fade_mode = 1
 mesh = SubResource("ArrayMesh_nfr8g")
 
-[node name="Trigger" type="Area3D" parent="." unique_id=756953227]
+[node name="Trigger" type="Area3D" parent="." unique_id=1325936219]
 
-[node name="Shape" type="CollisionShape3D" parent="Trigger" unique_id=1866102309]
+[node name="Shape" type="CollisionShape3D" parent="Trigger" unique_id=1914637106]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 1.4)
 shape = SubResource("BoxShape3D_y2g7v")

@@ -21,6 +21,7 @@
 [ext_resource type="AudioStream" path="res://assets/sfx/door.wav" id="13_vyxqs"]
 [ext_resource type="AudioStream" path="res://assets/sfx/gem.wav" id="14_7eseq"]
 [ext_resource type="AudioStream" path="res://assets/sfx/growl.wav" id="14_do3ae"]
+[ext_resource type="AudioStream" path="res://assets/sfx/domino.wav" id="14_yvme6"]
 [ext_resource type="AudioStream" path="res://assets/sfx/gurgle.wav" id="15_j8yba"]
 [ext_resource type="AudioStream" path="res://assets/sfx/heartbeat.wav" id="16_q25ob"]
 [ext_resource type="AudioStream" path="res://assets/sfx/hiss.wav" id="17_vyxqs"]
@@ -44,6 +45,7 @@
 [ext_resource type="AudioStream" path="res://assets/sfx/squish.wav" id="31_dkav3"]
 [ext_resource type="AudioStream" path="res://assets/sfx/stun.wav" id="32_uowyk"]
 [ext_resource type="AudioStream" path="res://assets/sfx/swoosh.wav" id="33_5fyfp"]
+[ext_resource type="AudioStream" path="res://assets/sfx/pot_crash.wav" id="33_xfmrt"]
 [ext_resource type="AudioStream" path="res://assets/sfx/shake.wav" id="34_0h7ie"]
 [ext_resource type="AudioStream" path="res://assets/sfx/snore.wav" id="34_18mw2"]
 [ext_resource type="AudioStream" path="res://assets/sfx/sniff.wav" id="34_ewecc"]
@@ -57,6 +59,7 @@
 [ext_resource type="AudioStream" path="res://assets/sfx/vacuum.wav" id="38_rc8cy"]
 [ext_resource type="AudioStream" path="res://assets/sfx/voice_call.wav" id="39_1onq0"]
 [ext_resource type="AudioStream" path="res://assets/sfx/voice_huh.wav" id="40_05f6h"]
+[ext_resource type="AudioStream" path="res://assets/sfx/shatter.wav" id="41_0r01i"]
 [ext_resource type="AudioStream" path="res://assets/sfx/voice_ow.wav" id="41_di1ih"]
 [ext_resource type="AudioStream" path="res://assets/sfx/voice_shout.wav" id="42_21utm"]
 [ext_resource type="AudioStream" path="res://assets/sfx/voice_spray.wav" id="43_spmsd"]
@@ -86,6 +89,7 @@ sounds = {
 &"dash": ExtResource("8_18mw2"),
 &"dig": ExtResource("11_q25ob"),
 &"dishwasher": ExtResource("9_ewecc"),
+&"domino": ExtResource("14_yvme6"),
 &"door": ExtResource("13_vyxqs"),
 &"fan": ExtResource("10_7eseq"),
 &"freeze": ExtResource("12_ewecc"),
@@ -104,6 +108,7 @@ sounds = {
 &"munch": ExtResource("24_g8ctr"),
 &"music_ambient": ExtResource("21_2bok5"),
 &"phone_buzz": ExtResource("22_2afe2"),
+&"pot_crash": ExtResource("33_xfmrt"),
 &"powerup": ExtResource("27_emf2l"),
 &"push": ExtResource("23_o6h5b"),
 &"revolver_click": ExtResource("34_o6h5b"),
@@ -111,6 +116,7 @@ sounds = {
 &"revolver_spin": ExtResource("36_0adl8"),
 &"sense_on": ExtResource("24_xrcpg"),
 &"shake": ExtResource("34_0h7ie"),
+&"shatter": ExtResource("41_0r01i"),
 &"shield": ExtResource("30_52wrj"),
 &"skitter": ExtResource("25_0adl8"),
 &"slowmo": ExtResource("26_yvme6"),

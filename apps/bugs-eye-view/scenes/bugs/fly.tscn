@@ -267,179 +267,179 @@ _surfaces = [{
 "vertex_data": PackedByteArray("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")
 }]
 
-[node name="Fly" type="CharacterBody3D" unique_id=542327784]
+[node name="Fly" type="CharacterBody3D" unique_id=1106574571]
 script = ExtResource("1_rmrqp")
 stats = ExtResource("2_o120r")
 
-[node name="Shape" type="CollisionShape3D" parent="." unique_id=984360534]
+[node name="Shape" type="CollisionShape3D" parent="." unique_id=1949589868]
 shape = SubResource("SphereShape3D_qxgav")
 
-[node name="Visual" type="Node3D" parent="." unique_id=254327726]
+[node name="Visual" type="Node3D" parent="." unique_id=334086630]
 
-[node name="Thorax" type="MeshInstance3D" parent="Visual" unique_id=341928915]
+[node name="Thorax" type="MeshInstance3D" parent="Visual" unique_id=1874240580]
 material_override = ExtResource("3_ypak7")
 mesh = SubResource("ArrayMesh_fwwto")
 
-[node name="Stripe" type="MeshInstance3D" parent="Visual" unique_id=1928146091]
+[node name="Stripe" type="MeshInstance3D" parent="Visual" unique_id=1339881331]
 material_override = ExtResource("4_wdem3")
 mesh = SubResource("ArrayMesh_v7lmw")
 
-[node name="Abdomen" type="MeshInstance3D" parent="Visual" unique_id=80992870]
+[node name="Abdomen" type="MeshInstance3D" parent="Visual" unique_id=223063045]
 transform = Transform3D(0.95, 0, 0, 0, 0.78, 0, 0, 0, 1.15, 0, 0, 0.36)
 material_override = ExtResource("5_xxgyh")
 mesh = SubResource("SphereMesh_716wk")
 
-[node name="Eye" type="MeshInstance3D" parent="Visual" unique_id=14319208]
+[node name="Eye" type="MeshInstance3D" parent="Visual" unique_id=862348006]
 material_override = ExtResource("6_b1eto")
 mesh = SubResource("ArrayMesh_b0k7p")
 
-[node name="WingL" type="Node3D" parent="Visual" unique_id=713712152]
+[node name="WingL" type="Node3D" parent="Visual" unique_id=156839082]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.2, 0.3, 0.05)
 
-[node name="Wing" type="MeshInstance3D" parent="Visual/WingL" unique_id=325275975]
+[node name="Wing" type="MeshInstance3D" parent="Visual/WingL" unique_id=1641492571]
 transform = Transform3D(0.93106323, 0, -0.083441116, 0, 0.04, 0, 0.18873586, 0, 0.41162795, -0.45, 0, 0.12)
 material_override = ExtResource("7_tw7hk")
 mesh = SubResource("ArrayMesh_bnt0q")
 
-[node name="Vein" type="MeshInstance3D" parent="Visual/WingL" unique_id=704072929]
+[node name="Vein" type="MeshInstance3D" parent="Visual/WingL" unique_id=69149635]
 material_override = ExtResource("8_hk3pj")
 mesh = SubResource("ArrayMesh_l1o3j")
 
-[node name="WingR" type="Node3D" parent="Visual" unique_id=28594467]
+[node name="WingR" type="Node3D" parent="Visual" unique_id=2018269522]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.2, 0.3, 0.05)
 
-[node name="Wing" type="MeshInstance3D" parent="Visual/WingR" unique_id=1866353769]
+[node name="Wing" type="MeshInstance3D" parent="Visual/WingR" unique_id=904592990]
 transform = Transform3D(0.93106323, 0, 0.083441116, 0, 0.04, 0, -0.18873586, 0, 0.41162795, 0.45, 0, 0.12)
 material_override = ExtResource("7_tw7hk")
 mesh = SubResource("ArrayMesh_0k71c")
 
-[node name="Vein" type="MeshInstance3D" parent="Visual/WingR" unique_id=1289001522]
+[node name="Vein" type="MeshInstance3D" parent="Visual/WingR" unique_id=2009578285]
 material_override = ExtResource("8_hk3pj")
 mesh = SubResource("ArrayMesh_l4uj4")
 
-[node name="LegL1" type="Node3D" parent="Visual" unique_id=400803953]
+[node name="LegL1" type="Node3D" parent="Visual" unique_id=1881163935]
 transform = Transform3D(0.8355308, 0.16937047, -0.52268726, -0.19866933, 0.9800666, 0, 0.5122683, 0.10384192, 0.8525245, -0.14, -0.2, -0.25)
 metadata/side = -1.0
 metadata/group = 0
 metadata/base_yaw = -0.55
 metadata/base_z = -0.2
 
-[node name="Femur" type="MeshInstance3D" parent="Visual/LegL1" unique_id=1001991458]
+[node name="Femur" type="MeshInstance3D" parent="Visual/LegL1" unique_id=1282263403]
 transform = Transform3D(0, -1, 0, -1, 0, 0, 0, 0, -1, -0.135, 0, 0)
 material_override = ExtResource("3_ypak7")
 mesh = SubResource("ArrayMesh_c1s8d")
 
-[node name="Knee" type="Node3D" parent="Visual/LegL1" unique_id=874059665]
+[node name="Knee" type="Node3D" parent="Visual/LegL1" unique_id=1040525672]
 transform = Transform3D(0.26749888, -0.9635582, 0, 0.9635582, 0.26749888, 0, 0, 0, 1, -0.27, 0, 0)
 
-[node name="Joint" type="MeshInstance3D" parent="Visual/LegL1/Knee" unique_id=1724744419]
+[node name="Joint" type="MeshInstance3D" parent="Visual/LegL1/Knee" unique_id=627769461]
 material_override = ExtResource("3_ypak7")
 mesh = SubResource("ArrayMesh_2mtwf")
 
-[node name="LegR1" type="Node3D" parent="Visual" unique_id=2072603777]
+[node name="LegR1" type="Node3D" parent="Visual" unique_id=32205646]
 transform = Transform3D(0.8355308, -0.16937047, 0.52268726, 0.19866933, 0.9800666, 0, -0.5122683, 0.10384192, 0.8525245, 0.14, -0.2, -0.25)
 metadata/side = 1.0
 metadata/group = 1
 metadata/base_yaw = 0.55
 metadata/base_z = 0.2
 
-[node name="Femur" type="MeshInstance3D" parent="Visual/LegR1" unique_id=826585506]
+[node name="Femur" type="MeshInstance3D" parent="Visual/LegR1" unique_id=532528170]
 transform = Transform3D(0, 1, 0, 1, 0, 0, 0, 0, -1, 0.135, 0, 0)
 material_override = ExtResource("3_ypak7")
 mesh = SubResource("ArrayMesh_t4bgh")
 
-[node name="Knee" type="Node3D" parent="Visual/LegR1" unique_id=1893596309]
+[node name="Knee" type="Node3D" parent="Visual/LegR1" unique_id=1098335440]
 transform = Transform3D(0.26749888, 0.9635582, 0, -0.9635582, 0.26749888, 0, 0, 0, 1, 0.27, 0, 0)
 
-[node name="Joint" type="MeshInstance3D" parent="Visual/LegR1/Knee" unique_id=1907838294]
+[node name="Joint" type="MeshInstance3D" parent="Visual/LegR1/Knee" unique_id=2021671805]
 material_override = ExtResource("3_ypak7")
 mesh = SubResource("ArrayMesh_ft1g4")
 
-[node name="LegL2" type="Node3D" parent="Visual" unique_id=1774820317]
+[node name="LegL2" type="Node3D" parent="Visual" unique_id=226230528]
 transform = Transform3D(0.9800666, 0.19866933, 0, -0.19866933, 0.9800666, 0, 0, 0, 1, -0.14, -0.2, -0.08)
 metadata/side = -1.0
 metadata/group = 1
 metadata/base_yaw = 0.0
 metadata/base_z = -0.2
 
-[node name="Femur" type="MeshInstance3D" parent="Visual/LegL2" unique_id=1121296174]
+[node name="Femur" type="MeshInstance3D" parent="Visual/LegL2" unique_id=1566655186]
 transform = Transform3D(0, -1, 0, -1, 0, 0, 0, 0, -1, -0.135, 0, 0)
 material_override = ExtResource("3_ypak7")
 mesh = SubResource("ArrayMesh_aqubm")
 
-[node name="Knee" type="Node3D" parent="Visual/LegL2" unique_id=1233422490]
+[node name="Knee" type="Node3D" parent="Visual/LegL2" unique_id=1885079430]
 transform = Transform3D(0.26749888, -0.9635582, 0, 0.9635582, 0.26749888, 0, 0, 0, 1, -0.27, 0, 0)
 
-[node name="Joint" type="MeshInstance3D" parent="Visual/LegL2/Knee" unique_id=1826325022]
+[node name="Joint" type="MeshInstance3D" parent="Visual/LegL2/Knee" unique_id=117202024]
 material_override = ExtResource("3_ypak7")
 mesh = SubResource("ArrayMesh_80c5n")
 
-[node name="LegR2" type="Node3D" parent="Visual" unique_id=699508608]
+[node name="LegR2" type="Node3D" parent="Visual" unique_id=535712103]
 transform = Transform3D(0.9800666, -0.19866933, 0, 0.19866933, 0.9800666, 0, 0, 0, 1, 0.14, -0.2, -0.08)
 metadata/side = 1.0
 metadata/group = 0
 metadata/base_yaw = 0.0
 metadata/base_z = 0.2
 
-[node name="Femur" type="MeshInstance3D" parent="Visual/LegR2" unique_id=997535011]
+[node name="Femur" type="MeshInstance3D" parent="Visual/LegR2" unique_id=291410707]
 transform = Transform3D(0, 1, 0, 1, 0, 0, 0, 0, -1, 0.135, 0, 0)
 material_override = ExtResource("3_ypak7")
 mesh = SubResource("ArrayMesh_ll5p8")
 
-[node name="Knee" type="Node3D" parent="Visual/LegR2" unique_id=1981155063]
+[node name="Knee" type="Node3D" parent="Visual/LegR2" unique_id=1131844275]
 transform = Transform3D(0.26749888, 0.9635582, 0, -0.9635582, 0.26749888, 0, 0, 0, 1, 0.27, 0, 0)
 
-[node name="Joint" type="MeshInstance3D" parent="Visual/LegR2/Knee" unique_id=1627745006]
+[node name="Joint" type="MeshInstance3D" parent="Visual/LegR2/Knee" unique_id=2011169999]
 material_override = ExtResource("3_ypak7")
 mesh = SubResource("ArrayMesh_j5ay3")
 
-[node name="LegL3" type="Node3D" parent="Visual" unique_id=742487769]
+[node name="LegL3" type="Node3D" parent="Visual" unique_id=141890447]
 transform = Transform3D(0.8355308, 0.16937047, 0.52268726, -0.19866933, 0.9800666, 0, -0.5122683, -0.10384192, 0.8525245, -0.14, -0.2, 0.09)
 metadata/side = -1.0
 metadata/group = 0
 metadata/base_yaw = 0.55
 metadata/base_z = -0.2
 
-[node name="Femur" type="MeshInstance3D" parent="Visual/LegL3" unique_id=613283877]
+[node name="Femur" type="MeshInstance3D" parent="Visual/LegL3" unique_id=653340010]
 transform = Transform3D(0, -1, 0, -1, 0, 0, 0, 0, -1, -0.135, 0, 0)
 material_override = ExtResource("3_ypak7")
 mesh = SubResource("ArrayMesh_bqc6l")
 
-[node name="Knee" type="Node3D" parent="Visual/LegL3" unique_id=85519080]
+[node name="Knee" type="Node3D" parent="Visual/LegL3" unique_id=1570826701]
 transform = Transform3D(0.26749888, -0.9635582, 0, 0.9635582, 0.26749888, 0, 0, 0, 1, -0.27, 0, 0)
 
-[node name="Joint" type="MeshInstance3D" parent="Visual/LegL3/Knee" unique_id=1808124580]
+[node name="Joint" type="MeshInstance3D" parent="Visual/LegL3/Knee" unique_id=300941175]
 material_override = ExtResource("3_ypak7")
 mesh = SubResource("ArrayMesh_kdxra")
 
-[node name="LegR3" type="Node3D" parent="Visual" unique_id=1943464497]
+[node name="LegR3" type="Node3D" parent="Visual" unique_id=1089040261]
 transform = Transform3D(0.8355308, -0.16937047, -0.52268726, 0.19866933, 0.9800666, 0, 0.5122683, -0.10384192, 0.8525245, 0.14, -0.2, 0.09)
 metadata/side = 1.0
 metadata/group = 1
 metadata/base_yaw = -0.55
 metadata/base_z = 0.2
 
-[node name="Femur" type="MeshInstance3D" parent="Visual/LegR3" unique_id=1138196506]
+[node name="Femur" type="MeshInstance3D" parent="Visual/LegR3" unique_id=2091489178]
 transform = Transform3D(0, 1, 0, 1, 0, 0, 0, 0, -1, 0.135, 0, 0)
 material_override = ExtResource("3_ypak7")
 mesh = SubResource("ArrayMesh_nxr6n")
 
-[node name="Knee" type="Node3D" parent="Visual/LegR3" unique_id=1399361925]
+[node name="Knee" type="Node3D" parent="Visual/LegR3" unique_id=2059380242]
 transform = Transform3D(0.26749888, 0.9635582, 0, -0.9635582, 0.26749888, 0, 0, 0, 1, 0.27, 0, 0)
 
-[node name="Joint" type="MeshInstance3D" parent="Visual/LegR3/Knee" unique_id=1778259637]
+[node name="Joint" type="MeshInstance3D" parent="Visual/LegR3/Knee" unique_id=2142049823]
 material_override = ExtResource("3_ypak7")
 mesh = SubResource("ArrayMesh_fra6n")
 
-[node name="Skin" type="Node3D" parent="Visual" unique_id=25428720]
+[node name="Skin" type="Node3D" parent="Visual" unique_id=850717322]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.05, -0.05)
 script = ExtResource("9_cwobb")
 model_id = "bug_fly"
 fit_size = Vector3(0.9, 0.7, 1.3)
 hide_paths = Array[NodePath]([NodePath("../Thorax"), NodePath("../Stripe"), NodePath("../Abdomen"), NodePath("../Eye"), NodePath("../LegL1"), NodePath("../LegR1"), NodePath("../LegL2"), NodePath("../LegR2"), NodePath("../LegL3"), NodePath("../LegR3")])
 
-[node name="EyePoint" type="Marker3D" parent="Visual" unique_id=2116933358]
+[node name="EyePoint" type="Marker3D" parent="Visual" unique_id=435271055]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.08, -0.73)
 
-[node name="Rig" type="Node" parent="." unique_id=378717906]
+[node name="Rig" type="Node" parent="." unique_id=1892990444]
 script = ExtResource("10_8vi66")

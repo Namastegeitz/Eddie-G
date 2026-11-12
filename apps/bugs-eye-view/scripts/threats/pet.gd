@@ -199,7 +199,16 @@ func effective_awareness() -> float:
 
 
 func perception_mult() -> float:
-	return PLAY_SEE_MULT if is_distracted() else 1.0
+	return (PLAY_SEE_MULT if is_distracted() else 1.0) * super()
+
+
+## A crash wakes a sleeping animal and stops its game: it looks, then goes
+## to sniff at the mess.
+func _on_distracted(_pos: Vector3) -> void:
+	if sleeping:
+		wake_up()
+	if play != &"":
+		stop_playing()
 
 
 ## Busy playing (not snapping at a fly, which is very much paying attention).

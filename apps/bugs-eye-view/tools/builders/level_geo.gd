@@ -822,6 +822,41 @@ func prop(kind: String, pos: Vector3, rot: Vector3 = Vector3.ZERO) -> RigidBody3
 	return p
 
 
+## A row of toy dominoes standing on a surface: the first at `start` (on the
+## surface), the rest along `dir`. Push the first over and the row goes down
+## and everyone turns to look (DominoRun). Drawn as one multimesh.
+func domino_run(n: String, start: Vector3, dir: Vector3, count: int = 8, spacing: float = 2.3) -> DominoRun:
+	var run := DominoRun.new()
+	run.name = uniq(n)
+	run.position = start
+	props.add_child(run)
+	var d := Vector3(dir.x, 0, dir.z).normalized()
+	var yaw := atan2(d.x, d.z)
+	var scene := load("res://scenes/props/domino.tscn") as PackedScene
+	var mm := MultiMesh.new()
+	mm.transform_format = MultiMesh.TRANSFORM_3D
+	mm.use_colors = true
+	var bm := BoxMesh.new()
+	bm.size = Vector3(2.0, 4.0, 0.7)
+	mm.mesh = bm
+	mm.instance_count = count
+	for i in count:
+		var xf := Transform3D(Basis(Vector3.UP, yaw), d * spacing * i + Vector3.UP * 2.02)
+		var dm := scene.instantiate() as RigidBody3D
+		dm.name = "Domino%d" % (i + 1)
+		dm.transform = xf
+		run.add_child(dm)
+		mm.set_instance_transform(i, xf)
+	var mmi := MultiMeshInstance3D.new()
+	mmi.name = "Pieces"
+	mmi.multimesh = mm
+	mmi.material_override = mat("plastic_white")
+	mmi.visibility_range_end = 90.0
+	mmi.visibility_range_end_margin = 12.0
+	run.add_child(mmi)
+	return run
+
+
 func passage(n: String, entry: Vector3, exit: Vector3, allowed: Array, label: String,
 		exit_up: Vector3 = Vector3.UP, size: Vector3 = Vector3(4, 4, 4)) -> Passage:
 	var p := Passage.new()

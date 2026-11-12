@@ -35,25 +35,25 @@ _surfaces = [{
 "vertex_data": PackedByteArray("KVyPvTMz8z4K1yM+KVyPPTMz8z4K1yO+KVyPPTMz8z4K1yM+KVyPvTMz8z4K1yO+KVyPvTMz874K1yM+KVyPPTMz874K1yO+KVyPPTMz874K1yM+KVyPvTMz874K1yO+KVyPPTMz8z4K1yM+KVyPvTMz8z4K1yO+KVyPPTMz8z4K1yO+KVyPvTMz8z4K1yM+KVyPPTMz874K1yM+KVyPvTMz874K1yO+KVyPPTMz874K1yO+KVyPvTMz874K1yM+KVyPPTMz8z4K1yM+KVyPvTMz874K1yM+KVyPvTMz8z4K1yM+KVyPPTMz874K1yM+KVyPPTMz8z4K1yO+KVyPvTMz874K1yO+KVyPvTMz8z4K1yO+KVyPPTMz874K1yO+/3//fwCAAID//////38AgP9//38AgACA//////9/AID/f/9/AIAAgP//////fwCA/3//fwCAAID//////38AgP//AIAAgP+/AAAAgP9//7///wCAAID/vwAAAID/f/+///8AgACA/78AAACA/3//v///AIAAgP+/AAAAgP9//78AgP//AAD/vwCAAAAAAP+/AID//wAA/78AgAAAAAD/vwCA//8AAP+/AIAAAAAA/78AgP//AAD/vwCAAAAAAP+/")
 }]
 
-[node name="TreasureMarble" type="Area3D" unique_id=90902405]
+[node name="TreasureMarble" type="Area3D" unique_id=1799923481]
 script = ExtResource("1_bcqdb")
 def = ExtResource("2_1lihf")
 
-[node name="Shape" type="CollisionShape3D" parent="." unique_id=111827565]
+[node name="Shape" type="CollisionShape3D" parent="." unique_id=1867881950]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 0)
 shape = SubResource("SphereShape3D_3xlrp")
 
-[node name="Visual" type="Node3D" parent="." unique_id=1608779528]
+[node name="Visual" type="Node3D" parent="." unique_id=716871114]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 0)
 
-[node name="Glass" type="MeshInstance3D" parent="Visual" unique_id=737191565]
+[node name="Glass" type="MeshInstance3D" parent="Visual" unique_id=1617331150]
 material_override = ExtResource("3_rht7l")
 visibility_range_end = 50.0
 visibility_range_end_margin = 7.5
 visibility_range_fade_mode = 1
 mesh = SubResource("ArrayMesh_foj68")
 
-[node name="Swirl" type="MeshInstance3D" parent="Visual" unique_id=476058068]
+[node name="Swirl" type="MeshInstance3D" parent="Visual" unique_id=1615364853]
 transform = Transform3D(0.8634798, -0.21125089, 0.45801273, 0.37202555, 0.87992316, -0.29552022, -0.3405871, 0.42556816, 0.83838665, 0, 0, 0)
 material_override = ExtResource("4_1k6yk")
 visibility_range_end = 50.0
@@ -61,7 +61,7 @@ visibility_range_end_margin = 7.5
 visibility_range_fade_mode = 1
 mesh = SubResource("ArrayMesh_2gmqs")
 
-[node name="Skin" type="Node3D" parent="Visual" unique_id=442888264]
+[node name="Skin" type="Node3D" parent="Visual" unique_id=1230251604]
 script = ExtResource("5_ovd45")
 model_id = "treasure_marble"
 fit_size = Vector3(1.6, 1.6, 1.6)

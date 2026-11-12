@@ -6,6 +6,10 @@ extends AnimatableBody3D
 
 @export var open_angle: float = -1.9
 @export var light_zone_path: NodePath
+## Shown only while the door is open (the food on the fridge shelves): hidden
+## behind a shut door it would cost drawing for nothing.
+@export var reveal_path: NodePath
+var _reveal: Node3D
 var angle := 0.0
 var _target := 0.0
 var _open_time := 0.0
@@ -17,6 +21,9 @@ func _ready() -> void:
 	sync_to_physics = true
 	physics_interpolation_mode = Node.PHYSICS_INTERPOLATION_MODE_OFF
 	set_meta(&"surface", &"metal")
+	_reveal = get_node_or_null(reveal_path) as Node3D
+	if _reveal:
+		_reveal.visible = false
 
 
 func is_open() -> bool:
@@ -51,3 +58,7 @@ func _physics_process(delta: float) -> void:
 			close()
 	angle = move_toward(angle, _target, 2.4 * delta)
 	rotation.y = angle
+	if _reveal:
+		var ajar := absf(angle) > 0.03
+		if _reveal.visible != ajar:
+			_reveal.visible = ajar

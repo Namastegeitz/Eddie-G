@@ -12,9 +12,16 @@ signal threat_stunned(threat: Node)
 signal alarm_raised
 ## The gauge drained back down: the alarm is called off.
 signal alarm_cleared
+## Something crashed and everyone turned to look (see commotion()).
+signal commotion_started(position: Vector3, seconds: float)
 
 const CONFIG_PATH := "res://resources/config/stealth_config.tres"
 
+## Crashes so far (for tests), and the last one (crashes close together
+## count as one).
+var commotions := 0
+var _last_commotion_ms := -100000
+var _last_commotion_at := Vector3.INF
 var config: StealthConfig
 var player: BugBase = null
 var threats: Array[Threat] = []
@@ -179,6 +186,22 @@ func emit_world_noise(pos: Vector3, loudness: float) -> void:
 	noise_emitted.emit(pos, loudness, false)
 	for t in threats:
 		t.hear(pos, loudness, false)
+
+
+## Something crashed (knocked off a counter, a glass smashed, the dominoes
+## went over): every person and pet in the room stops and looks at it for a
+## moment, then goes to check (Threat.distract). Crashes close together in
+## time and place count as one.
+func commotion(pos: Vector3, seconds: float) -> void:
+	var now := Time.get_ticks_msec()
+	if now - _last_commotion_ms < 600 and pos.distance_to(_last_commotion_at) < 30.0:
+		return
+	_last_commotion_ms = now
+	_last_commotion_at = pos
+	commotions += 1
+	for t in threats:
+		t.distract(pos, seconds)
+	commotion_started.emit(pos, seconds)
 
 
 func warn_strike(pos: Vector3, time_to_impact: float, radius: float) -> void:

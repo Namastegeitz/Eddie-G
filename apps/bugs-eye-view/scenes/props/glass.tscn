@@ -1,0 +1,36 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/stealth/physics_prop.gd" id="1_m141l"]
+[ext_resource type="Material" path="res://assets/materials/glass.tres" id="2_ipdgr"]
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_8g0dm"]
+height = 3.6
+radius = 1.1
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_acmaj"]
+top_radius = 0.9
+bottom_radius = 1.1
+height = 3.6
+radial_segments = 20
+rings = 1
+
+[node name="Glass" type="RigidBody3D" unique_id=1118102873]
+mass = 0.4
+script = ExtResource("1_m141l")
+noise_on_impact = 1.4
+commotion = 3.5
+crash_speed = 12.0
+crash_sound = &"shatter"
+fragile = true
+
+[node name="Shape" type="CollisionShape3D" parent="." unique_id=1477423690]
+shape = SubResource("CylinderShape3D_8g0dm")
+
+[node name="Visual" type="Node3D" parent="." unique_id=1247057111]
+
+[node name="Mesh" type="MeshInstance3D" parent="Visual" unique_id=1508234577]
+material_override = ExtResource("2_ipdgr")
+visibility_range_end = 70.0
+visibility_range_end_margin = 10.5
+visibility_range_fade_mode = 1
+mesh = SubResource("CylinderMesh_acmaj")

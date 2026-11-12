@@ -19,16 +19,16 @@ _surfaces = [{
 "vertex_data": PackedByteArray("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")
 }]
 
-[node name="GemShard" type="Area3D" unique_id=1708964334]
+[node name="GemShard" type="Area3D" unique_id=311710770]
 script = ExtResource("1_ky54x")
 
-[node name="Shape" type="CollisionShape3D" parent="." unique_id=588363460]
+[node name="Shape" type="CollisionShape3D" parent="." unique_id=875384736]
 shape = SubResource("SphereShape3D_hbxrx")
 
-[node name="Visual" type="Node3D" parent="." unique_id=1459161994]
+[node name="Visual" type="Node3D" parent="." unique_id=1714458575]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 0)
 
-[node name="Top" type="MeshInstance3D" parent="Visual" unique_id=411787930]
+[node name="Top" type="MeshInstance3D" parent="Visual" unique_id=752720944]
 material_override = ExtResource("2_8tx6e")
 visibility_range_end = 70.0
 visibility_range_end_margin = 10.5

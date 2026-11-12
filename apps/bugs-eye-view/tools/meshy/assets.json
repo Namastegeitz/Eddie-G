@@ -230,8 +230,8 @@
     {
       "id": "kitchen_fridge",
       "tier": 3,
-      "target_polycount": 6000,
-      "prompt": "A tall white two-door refrigerator with a freezer on top, vertical handles, small feet, front facing forward."
+      "target_polycount": 8000,
+      "prompt": "A tall white single-door kitchen refrigerator with its front door taken off, so the whole front is open and shows the bright white interior: three clear glass shelves, a small freezer compartment at the top and two clear crisper drawers at the bottom. Rounded white cabinet, small feet, open front facing forward."
     },
     {
       "id": "kitchen_stove",
@@ -688,6 +688,13 @@
       "tier": 2,
       "target_polycount": 1500,
       "prompt": "A solid gold acorn with a textured cap and a little stem, shining, legendary game collectible."
+    },
+    {
+      "id": "fridge_groceries",
+      "tier": 3,
+      "target_polycount": 4000,
+      "ai_model": "meshy-6-lite",
+      "prompt": "A small row of everyday groceries standing close together on a fridge shelf: a milk carton, an open carton of brown eggs, a wedge of yellow cheese, a glass jar of green pickles, a bottle of orange juice and a red apple, side by side, front facing forward."
     }
   ]
 }

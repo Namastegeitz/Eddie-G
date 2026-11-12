@@ -55,6 +55,8 @@ func _ready() -> void:
 		await _phase19()
 	if only in [0, 20]:
 		await _phase20()
+	if only in [0, 21]:
+		await _phase21()
 	finish("phase audit")
 
 
@@ -4251,3 +4253,125 @@ func _phase20() -> void:
 	await unload(lv)
 	check(kitchen_kind == ThrownObject.Kind.SPONGE and living_kind == ThrownObject.Kind.SLIPPER,
 		"what they grab fits the room: a sponge in the kitchen, a slipper in the living room")
+
+
+func _phase21() -> void:
+	print("-- Update: crashes that make everyone look (dominoes, glasses, plants) and the new fridge")
+	SaveSystem.data = SaveSystem.default_data()
+
+	# A row of dominoes on the coffee table: push the first and they go down
+	# one into the next; everyone in the room turns to look.
+	var lv := await load_level(&"living_room", &"cockroach")
+	HouseClock.set_hour(10.0)
+	var p := lv.player
+	p.invuln = 1000.0
+	p.global_position = Vector3(-90, 0.5, -60)
+	var watchers: Array[Threat] = []
+	for t in PerceptionSystem.threats:
+		if lv.is_ancestor_of(t) and t._notices_commotion():
+			t.force_present(true)
+			t.alert.reset()
+			watchers.append(t)
+	var run := lv.find_child("Dominoes", true, false) as DominoRun
+	var c0 := PerceptionSystem.commotions
+	await frames(10)
+	var first := run.get_child(0) as PhysicsProp
+	for i in 8:
+		first.push_by_bug(Vector3.RIGHT * 0.25)
+		await get_tree().physics_frame
+	for i in 300:
+		await get_tree().physics_frame
+		if run.done:
+			break
+	check(run.done and run.fallen >= run.needed and PerceptionSystem.commotions > c0,
+		"push the first domino and the row goes down (%d fell), making a commotion" % run.fallen)
+	await get_tree().physics_frame
+	var looking := 0
+	var all_searching := true
+	for t in watchers:
+		if t.present and t.distracted > 0.0:
+			looking += 1
+			all_searching = all_searching and t.alert.state >= AlertState.SEARCHING
+	check(looking == watchers.size() and looking >= 2 and all_searching,
+		"everyone in the room is distracted by it (%d of %d) and goes to check" % [looking, watchers.size()])
+	var reader: Human = null
+	for t in watchers:
+		if t is Human:
+			reader = t
+	var see := reader.perception_mult() if reader else 1.0
+	await frames(70)
+	var to := run.global_position - reader.global_position if reader else Vector3.ZERO
+	to.y = 0.0
+	var facing := (-reader.global_basis.z).dot(to.normalized()) if reader else 0.0
+	check(reader != null and see <= Threat.DISTRACT_SEE + 0.01 and facing > 0.6,
+		"while it has their attention they barely see anything else (x%.2f) and turn to stare at it (%.2f)" % [see, facing])
+	await unload(lv)
+
+	# A glass knocked off the kitchen counter shatters and makes everyone look.
+	lv = await load_level(&"kitchen", &"cockroach")
+	HouseClock.set_hour(13.5)
+	p = lv.player
+	p.invuln = 1000.0
+	# On the counter near the glass (far-off props sleep until a bug comes by).
+	p.global_position = Vector3(-33, 39.2, -26)
+	var glass: PhysicsProp = null
+	for n in get_tree().get_nodes_in_group(Phys.GROUP_PROP):
+		if lv.is_ancestor_of(n) and String((n as Node).name).begins_with("Glass"):
+			if glass == null or (n as Node3D).global_position.x < glass.global_position.x:
+				glass = n
+	c0 = PerceptionSystem.commotions
+	await frames(5)
+	# Pushed along like a bug walking into it, over the counter's edge.
+	var broke := false
+	for i in 300:
+		# A bug walking into it only keeps pushing while it moves at walking pace.
+		if is_instance_valid(glass) and not glass.broken and glass.global_position.y > 37.0 and glass.linear_velocity.length() < 5.0:
+			glass.push_by_bug(Vector3(0, 0, p.stats.push_force))
+		await get_tree().physics_frame
+		if not is_instance_valid(glass) or glass.broken:
+			broke = true
+			break
+	var shards := lv.find_child("Shards", true, false) != null
+	check(broke and shards and PerceptionSystem.commotions > c0, "a glass knocked off the counter shatters into pieces and everyone looks")
+
+	# The fridge: the generated model fills the fridge's box, and the food on
+	# its shelves only shows while the door is open.
+	var skin := lv.find_child("FridgeSkin", true, false) as SkinAnchor
+	var food := lv.find_child("FridgeFood", true, false) as Node3D
+	var door := lv.find_child("FridgeDoor", true, false) as SwingDoor
+	var fits := false
+	if skin and skin.model:
+		var box := SkinAnchor.mesh_bounds(skin.model, skin)
+		fits = absf(box.size.y - 72.0) < 1.0 and absf(box.size.x - 28.0) < 1.0
+	var hidden_shut := food != null and not food.visible
+	door.open_for(3.0)
+	await frames(30)
+	var shown_open := food.visible
+	var groceries := 0
+	for c in food.get_children():
+		if c is SkinAnchor and (c as SkinAnchor).model != null:
+			groceries += 1
+	check(fits and hidden_shut and shown_open and groceries == 3,
+		"the new fridge fills its space; its shelves of food (%d) show when the door opens" % groceries)
+	await unload(lv)
+
+	# A potted plant pushed off the bench breaks and spills.
+	lv = await load_level(&"backyard", &"cockroach")
+	lv.player.invuln = 1000.0
+	lv.player.global_position = Vector3(-24, 15.4, 27)
+	var plant: PhysicsProp = null
+	for n in get_tree().get_nodes_in_group(Phys.GROUP_PROP):
+		if lv.is_ancestor_of(n) and String((n as Node).name).begins_with("PottedPlant"):
+			plant = n
+	c0 = PerceptionSystem.commotions
+	await frames(5)
+	var pot_broke := false
+	for i in 300:
+		if is_instance_valid(plant) and not plant.broken and plant.global_position.y > 14.0 and plant.linear_velocity.length() < 5.0:
+			plant.push_by_bug(Vector3(0, 0, -lv.player.stats.push_force))
+		await get_tree().physics_frame
+		if not is_instance_valid(plant) or plant.broken:
+			pot_broke = true
+			break
+	check(pot_broke and PerceptionSystem.commotions > c0, "a plant pushed off the bench breaks its pot, and everyone looks")
+	await unload(lv)

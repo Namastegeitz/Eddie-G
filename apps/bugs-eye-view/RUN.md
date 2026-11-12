@@ -322,6 +322,26 @@ On their rounds people also stop now and then to **check their phone**
 glance at their watch, and they **crouch to pet a calm pet** (it sits, wags
 and stops watching for a bit). Their feet knock small things out of the way.
 
+**Crashes make everyone look.** Push something off a table, a counter or a
+shelf and when it crashes every person and pet in the room stops, turns and
+stares at it for a moment - while they do they barely notice anything else -
+then goes over to check (THREAT shows SEARCHING; sleeping pets wake up and
+playing ones stop). It's a distraction you make yourself:
+
+| Thing | Where | What happens |
+|---|---|---|
+| Drinking glass | Kitchen counter and island, living-room side table, picnic table | Shatters into glinting pieces |
+| Teacup | Kitchen table, coffee table | Shatters |
+| Potted plant | Kitchen counter, top of the bookshelf, picnic bench | The clay pot breaks; the biggest commotion |
+| Toy dominoes | A row across the coffee table | Push the first: they go down one into the next, and once a few have fallen everyone looks |
+| Mug, cereal boxes | Kitchen table and counter, living-room side table | A clang or a thud when they land |
+
+A crash while they're already chasing you only buys a moment. Heavier
+things (the plant) need a strong bug to push them along.
+
+**The fridge** (a Meshy model) is open at the front behind its swinging
+door: when the cook opens it you see its glass shelves of groceries.
+
 **Up on the furniture nobody stomps.** A person's feet stay on the floor, and
 they won't walk under a table to get at you. If you're up on a table, a
 counter, a shelf or a seat within arm's reach, they lean over and **slap** at
@@ -458,7 +478,8 @@ All of these open in the Godot inspector.
 ### Generated 3D models (Meshy)
 
 Every bug, threat, pickup, hiding spot and big piece of furniture has a model
-slot. Drop `assets/models/<model_id>.glb` into the project and it replaces the
+slot. The kitchen fridge and the groceries on its shelves are already in
+(`assets/models/kitchen_fridge.glb`, `fridge_groceries.glb`). Drop `assets/models/<model_id>.glb` into the project and it replaces the
 placeholder automatically, fitted to the same space. `tools/meshy/generate.py`
 makes all 84 with Meshy's text-to-3D API from the prompts in
 `tools/meshy/assets.json`; see [tools/meshy/README.md](tools/meshy/README.md).

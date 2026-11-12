@@ -728,8 +728,8 @@ func _pose_head(delta: float) -> void:
 	var yaw_t := 0.0
 	var pitch_t := -0.12
 	var calm := alert.state == AlertState.UNAWARE and activity == &"" and flustered <= 0.0 and stun_time <= 0.0
-	if alert.state > AlertState.UNAWARE and alert.has_target:
-		var local := global_transform.affine_inverse() * alert.last_known
+	if (alert.state > AlertState.UNAWARE and alert.has_target) or is_staring():
+		var local := global_transform.affine_inverse() * (distract_at if is_staring() else alert.last_known)
 		var from_head := local - Vector3(0, 70, BODY_Z) - _torso.position
 		yaw_t = clampf(atan2(-from_head.x, -from_head.z), -0.9, 0.9)
 		pitch_t = clampf(atan2(from_head.y, Vector2(from_head.x, from_head.z).length()), -0.8, 0.3)

@@ -271,6 +271,7 @@ func bind(lvl: Level) -> void:
 	lvl.item_picked.connect(func(_d: ItemDef) -> void: _update_powers())
 	lvl.close_call.connect(func() -> void: toast("CLOSE CALL!"))
 	PerceptionSystem.alarm_raised.connect(_on_alarm_raised)
+	PerceptionSystem.commotion_started.connect(_on_commotion)
 	PerceptionSystem.alarm_cleared.connect(_on_alarm_cleared)
 	player.hit_taken.connect(func(_l: int) -> void:
 		_update_lives()
@@ -323,6 +324,10 @@ func _process(_delta: float) -> void:
 		text = "  ".join(parts)
 	if text != _effects.text:
 		_effects.text = text
+
+
+func _on_commotion(_pos: Vector3, _seconds: float) -> void:
+	toast("CRASH! Everyone's looking over there")
 
 
 func _on_alarm_raised() -> void:

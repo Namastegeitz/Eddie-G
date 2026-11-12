@@ -1,0 +1,18 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/stealth/physics_prop.gd" id="1_fbvkm"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_k5exu"]
+size = Vector3(2, 4, 0.7)
+
+[node name="Domino" type="RigidBody3D" unique_id=1900017849]
+mass = 0.15
+script = ExtResource("1_fbvkm")
+noise_on_impact = 0.5
+impact_speed = 2.0
+stuns_threats = false
+impact_sound = &"domino"
+tip_height = 1.4
+
+[node name="Shape" type="CollisionShape3D" parent="." unique_id=1232526073]
+shape = SubResource("BoxShape3D_k5exu")

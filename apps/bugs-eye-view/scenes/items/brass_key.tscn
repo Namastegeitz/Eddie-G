@@ -20,25 +20,25 @@ _surfaces = [{
 "vertex_data": PackedByteArray("J32N4/9/VNUnfbfngdpA3Cd9xvH/////J33U+4HaP9wnff///39U1Sd91Pt9JZbxJ33G8QAA//8nfbfnfSWW8Sd9jeP/f1TVDmjh4f9/r9V7Zdflgdqa4URfaO//////DVn4+IHaGOR6Vu78/3/G5Q1Z+Ph9JSj9RF9o7wAA//97ZdflfSUK7A5o4eH/f6/VB1UI3f9/zdchUGfggdqG5k9Eiuj/////fDis8IHauO6XMwv0/3/u+Xw4rPB9JRn3T0SK6AAA//8hUGfgfSUP6AdVCN3/f83X7EV71f9/zNovP+7Xgdo/6eku193/////pB7A44Har/vmFzPm/3+S8KQewON9JTjt6S7X3QAA//8vP+7XfSVI5exFe9X/f8zaOjz3y/9/iNpONEHNgdqk6S0hXND+////DA5404HaD/YgBsHU/3+q3wwOeNN9JQjmLSFc0AAA//9ONEHNfSVG4zo898v/f4ja4zhrwf9/VNWOMGvBgdri6HEca8H+////VAhrwYHa4+gAAGvB/39U1VQIa8F9JZPhcRxrwQAA//+OMGvBfSWT4eM4a8H/f1TVOjzftv9/W8xONJW1gdqs6S0herL+////DA5er4HaHN8gBhSu/3990AwOXq99JQDgLSF6sgAA//9ONJW1fSVC4Do837b/f1vM7EVbrf9/48IvP+iqgdpG9uku/6T+////pB4Wn4HacNnmF6Oc/39C0KQeFp99JRPk6S7/pAAA//8vP+iqfSU24OxFW63/f+PCB1XOpf9/csAhUG+igdpj409ETJr+////fDgpkoHab9eXM8uO/3/x0nw4KZJ9JVv4T0RMmgAA//8hUG+ifSWj4gdVzqX/f3LADmj1oP9/NMh7Zf6cgdrh2ERfbpP+////DVndiYHahth6VueF/3/61A1Z3Yl9JYL5RF9ukwAA//97Zf6cfSVl6A5o9aD/fzTIJ31Jn/9/VNUnfR6bgdo/3Cd9EJH+////J30Ch4HaQNwnfdeC/39U1Sd9Aod9JZbxJ30QkQAA//8nfR6bfSWV8Sd9SZ//f1TVP5L1oP9/xuXSlP6cgdoY5AmbbpP+////QKHdiYHamuHUo+eF/3+v1UCh3Yl9JQrsCZtukwAA///SlP6cfSUo/T+S9aD/f8blR6XOpf9/7/ktqm+igdq47v+1TJr+////0cEpkoHahua3xsuO/3/N19HBKZJ9JQ/o/7VMmgAA//8tqm+ifSUZ90elzqX/f+/5YbRbrf9/kfAfu+iqgdqv+2TL/6T+////qtsWn4HaP+ln4qOc/3/M2qrbFp99JUjlZMv/pAAA//8fu+iqfSU47WG0W63/f5HwE77ftv9/qd8AxpW1gdoP9iHZerL+////Quxer4HapOku9BSu/3+I2kLsXq99JUbjIdl6sgAA//8AxpW1fSUI5hO+37b/f6nfa8Frwf9/VNXAyWvBgdrj6N3da8H+////+fFrwYHa4uhO+mvB/39U1fnxa8F9JZPh3d1rwQAA///AyWvBfSWT4WvBa8H/f1TVE773y/9/fdAAxkHNgdoc3yHZXND+////Qux404HarOku9MHU/39bzELseNN9JULgIdlc0AAA//8AxkHNfSUA4BO+98v/f33QYbR71f9/QtAfu+7Xgdpw2WTL193/////qtvA44HaRvZn4jPm/3/iwqrbwON9JTbgZMvX3QAA//8fu+7XfSUT5GG0e9X/f0LQR6UI3f9/8dItqmfggdpv1/+1iuj/////0cGs8IHaY+O3xgv0/39ywNHBrPB9JaPi/7WK6AAA//8tqmfgfSVb+EelCN3/f/HSP5Lh4f9/+tTSlNflgdqG2AmbaO//////QKH4+IHa4djUo+78/380yECh+Ph9JWXoCZto7wAA///SlNflfSWC+T+S4eH/f/rUJ32N4/9/VNUnfbfngdpA3Cd9xvH/////J33U+4HaP9wnff///39U1Sd91Pt9JZbxJ33G8QAA//8nfbfnfSWW8Sd9jeP/f1TVH2SqqqLw/78vlqqqXA///y+Wqqqi8P+/H2SqqlwP//8fZAAAovD/vy+WAABcD///L5YAAKLw/78fZAAAXA///y+Wqqqi8P//H2SqqlwP/78vlqqqXA///x9kqqqi8P+/L5YAAKLw//8fZAAAXA//vy+WAABcD///H2QAAKLw/78vlqqqovD//x9kAACi8P//H2SqqqLw//8vlgAAovD//y+WqqpcD///H2QAAFwP//8fZKqqXA///y+WAABcD///14KUHWXm/7///5QdmRn/////lB1l5v+/14KUHZkZ///Xgo0EZeb/v///jQSZGf////+NBGXm/7/Xgo0EmRn/////lB1l5v//14KUHZkZ/7///5QdmRn//9eClB1l5v+///+NBGXm///Xgo0EmRn/v///jQSZGf//14KNBGXm/7///5QdZeb//9eCjQRl5v//14KUHWXm/////40EZeb/////lB2ZGf//14KNBJkZ///XgpQdmRn/////jQSZGf//tIFERGXm/7+53EREmRn//7ncRERl5v+/tIFERJkZ//+0gYItZeb/v7ncgi2ZGf//udyCLWXm/7+0gYItmRn//7ncRERl5v//tIFERJkZ/7+53EREmRn//7SBRERl5v+/udyCLWXm//+0gYItmRn/v7ncgi2ZGf//tIGCLWXm/7+53EREZeb//7SBgi1l5v//tIFERGXm//+53IItZeb//7ncRESZGf//tIGCLZkZ//+0gUREmRn//7ncgi2ZGf//VFVVVSVvcF//////ct/aEFTVqiq8vUsi/3/+/7NdvT1UVVVVH2RDSHZ8bVn/////6eQtFn/Y6CbYuzsd/3/+/zJjMDYfZENIsHjoOluKIl3/////v+m/GYDYmyOGZiXI/3/+/zJsWCuweOg67ZCrQp+UQ2T/////wu1mHFFeParpZxHN/3/+/0J6IRztkKtCWaBuTk6cIWz/////BGHTjjJcaqzCZkjS/3/+//KMhh5ZoG5OqqpUVUuiF3X/////sl3kilVVqaruY03Y/3/+/xCcsCeqqlRVCLPdVnympoD/////iFnShLZKx6JxYSfi/3/+/12nJCwIs91W4LtDUPadU5D/////U1iCe249YZJBYH7z/3/+/wKxyCzgu0NQg8ekPuojDgn/////E11CcQw4ZHgxugLk/3/+/4+4HiuDx6Q+vc/8MMrZHAj/////rmSgZ/hH+2PdW2hB/3/+/7m8Pye9z/wwVNWqKnHf2hD/////JW9wX1RVVVWzXb09/3/+/729SiJU1aoqf9joJunkLRb/////dnxtWR9kQ0gyYzA2/3/+/9i7Ox1/2OgmgdibI7/pvxn/////W4oiXbB46DoybFgr/3/+/4ZmJciB2JsjUV4+qsLtZhz/////n5RDZO2Qq0JCeiEc/3/+/+lnEc1RXj6qMlxrrARh047/////TpwhbFmgbk7yjIYe/3/+/8JmSNIyXGusVVWpqrJd5Ir/////S6IXdaqqVFUQnLAn/3/+/+5jTdhVVamqtkrHoohZ0oT/////fKamgAiz3FZdpyQs/3/+/3FhJ+K2Sseibj1hklNYgnv/////9p1TkOC7QVACscgs/3/+/0FgfvNuPWGSDDhkeBNdQnH/////6iMOCYTHpD6PuB4r/3/+/zG6AuQMOGR4+Ef7Y65koGf/////ytkcCL3P+zC5vD8n/3/+/91baEH4R/tjVFVVVSVvcF//////ct/aEFTVqiq8vUsi/3/+/7NdvT1UVVVV/38AgP9/////fwCA/3////9/AID/f////38AgP9/////v/9//3/+//+//3//f/7//7//f/9//v//v/9//3/+//+/AAD/f/8//78AAP9//z//vwAA/3//P/+/AAD/f/8//38AgP9/////fwCA/3////9/AID/f////38AgP9/////v/9//3/+//+//3//f/7//7//f/9//v//v/9//3/+//+/AAD/f/8//78AAP9//z//vwAA/3//P/+/AAD/f/8//38AgP9/////fwCA/3////9/AID/f////38AgP9/////v/9//3/+//+//3//f/7//7//f/9//v//v/9//3/+//+/AAD/f/8//78AAP9//z//vwAA/3//P/+/AAD/f/8/")
 }]
 
-[node name="BrassKey" type="Area3D" unique_id=1102493494]
+[node name="BrassKey" type="Area3D" unique_id=873901564]
 script = ExtResource("1_vd4np")
 def = ExtResource("2_55ny8")
 
-[node name="Shape" type="CollisionShape3D" parent="." unique_id=296335630]
+[node name="Shape" type="CollisionShape3D" parent="." unique_id=575155856]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 0)
 shape = SubResource("SphereShape3D_dkb3f")
 
-[node name="Visual" type="Node3D" parent="." unique_id=262411168]
+[node name="Visual" type="Node3D" parent="." unique_id=1877752069]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 0)
 
-[node name="Bow" type="MeshInstance3D" parent="Visual" unique_id=1687952120]
+[node name="Bow" type="MeshInstance3D" parent="Visual" unique_id=1602390496]
 material_override = ExtResource("3_gy0pd")
 visibility_range_end = 120.0
 visibility_range_end_margin = 18.0
 visibility_range_fade_mode = 1
 mesh = SubResource("ArrayMesh_i3b46")
 
-[node name="Glow" type="OmniLight3D" parent="Visual" unique_id=1854872159]
+[node name="Glow" type="OmniLight3D" parent="Visual" unique_id=1007263546]
 light_color = Color(1, 0.8, 0.35, 1)
 light_energy = 1.4
 distance_fade_enabled = true

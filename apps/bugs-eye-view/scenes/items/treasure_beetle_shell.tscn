@@ -35,18 +35,18 @@ _surfaces = [{
 "vertex_data": PackedByteArray("zczMvFK4nj4zMzM/zczMPFK4nj4zMzO/zczMPFK4nj4zMzM/zczMvFK4nj4zMzO/zczMvFK4nr4zMzM/zczMPFK4nr4zMzO/zczMPFK4nr4zMzM/zczMvFK4nr4zMzO/zczMPFK4nj4zMzM/zczMvFK4nj4zMzO/zczMPFK4nj4zMzO/zczMvFK4nj4zMzM/zczMPFK4nr4zMzM/zczMvFK4nr4zMzO/zczMPFK4nr4zMzO/zczMvFK4nr4zMzM/zczMPFK4nj4zMzM/zczMvFK4nr4zMzM/zczMvFK4nj4zMzM/zczMPFK4nr4zMzM/zczMPFK4nj4zMzO/zczMvFK4nr4zMzO/zczMvFK4nj4zMzO/zczMPFK4nr4zMzO//3//fwCAAID//////38AgP9//38AgACA//////9/AID/f/9/AIAAgP//////fwCA/3//fwCAAID//////38AgP//AIAAgP+/AAAAgP9//7///wCAAID/vwAAAID/f/+///8AgACA/78AAACA/3//v///AIAAgP+/AAAAgP9//78AgP//AAD/vwCAAAAAAP+/AID//wAA/78AgAAAAAD/vwCA//8AAP+/AIAAAAAA/78AgP//AAD/vwCAAAAAAP+/")
 }]
 
-[node name="TreasureBeetleShell" type="Area3D" unique_id=1742435721]
+[node name="TreasureBeetleShell" type="Area3D" unique_id=781319091]
 script = ExtResource("1_f8npr")
 def = ExtResource("2_0tu4q")
 
-[node name="Shape" type="CollisionShape3D" parent="." unique_id=1732377700]
+[node name="Shape" type="CollisionShape3D" parent="." unique_id=1969490282]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 0)
 shape = SubResource("SphereShape3D_h4leb")
 
-[node name="Visual" type="Node3D" parent="." unique_id=1805256436]
+[node name="Visual" type="Node3D" parent="." unique_id=1356114211]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 0)
 
-[node name="Shell" type="MeshInstance3D" parent="Visual" unique_id=1185119097]
+[node name="Shell" type="MeshInstance3D" parent="Visual" unique_id=2137456127]
 transform = Transform3D(0.8, 0, 0, 0, 0.55, 0, 0, 0, 1.25, 0, 0, 0)
 material_override = ExtResource("3_ie82s")
 visibility_range_end = 50.0
@@ -54,7 +54,7 @@ visibility_range_end_margin = 7.5
 visibility_range_fade_mode = 1
 mesh = SubResource("ArrayMesh_426hu")
 
-[node name="Seam" type="MeshInstance3D" parent="Visual" unique_id=1679421085]
+[node name="Seam" type="MeshInstance3D" parent="Visual" unique_id=1490979517]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.02, 0)
 material_override = ExtResource("4_a0olx")
 visibility_range_end = 50.0
@@ -62,13 +62,13 @@ visibility_range_end_margin = 7.5
 visibility_range_fade_mode = 1
 mesh = SubResource("ArrayMesh_oynq0")
 
-[node name="Skin" type="Node3D" parent="Visual" unique_id=1143035815]
+[node name="Skin" type="Node3D" parent="Visual" unique_id=1436507783]
 script = ExtResource("5_ks1o7")
 model_id = "treasure_beetle_shell"
 fit_size = Vector3(1.6, 1.6, 1.6)
 hide_paths = Array[NodePath]([NodePath("../Shell"), NodePath("../Seam")])
 
-[node name="Glow" type="OmniLight3D" parent="Visual" unique_id=91679267]
+[node name="Glow" type="OmniLight3D" parent="Visual" unique_id=616019798]
 light_color = Color(0.35, 0.65, 1, 1)
 light_energy = 1.15
 distance_fade_enabled = true

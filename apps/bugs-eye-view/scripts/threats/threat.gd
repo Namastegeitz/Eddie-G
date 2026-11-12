@@ -89,6 +89,14 @@ func _physics_process(delta: float) -> void:
 		_sense_timer = config.sense_interval
 		_sense(config.sense_interval)
 	alert.tick(delta)
+	if distracted > 0.0:
+		distracted = maxf(distracted - delta, 0.0)
+	if _stare > 0.0:
+		# Something just crashed: stand and stare at it.
+		_stare -= delta
+		_stare_tick(delta)
+		_update_icon()
+		return
 	_think(delta)
 	_update_icon()
 
@@ -207,8 +215,56 @@ func effective_awareness() -> float:
 
 
 ## Sight multiplier for moods (a playing pet, a flustered person): 1 = normal.
+## Staring at a crash (or going to look at it) they notice much less.
 func perception_mult() -> float:
-	return 1.0
+	return DISTRACT_SEE if distracted > 0.0 else 1.0
+
+
+# --- A crash somewhere ------------------------------------------------------
+
+## How long they stand and stare at a crash before going to check it.
+const STARE_TIME := 1.6
+## How much they see of anything else while it has their attention.
+const DISTRACT_SEE := 0.2
+## Seconds the crash still has their attention, and where it was.
+var distracted := 0.0
+var distract_at := Vector3.ZERO
+var _stare := 0.0
+
+
+## Something crashed (knocked off the counter, a glass smashed, a row of
+## dominoes went over): they stop, turn and stare at it for a moment, barely
+## noticing anything else, then go over to check. Mid-chase it only buys you
+## a moment.
+func distract(pos: Vector3, seconds: float) -> void:
+	if not present or stun_time > 0.0 or not _notices_commotion():
+		return
+	var chasing := alert.state == AlertState.ALERT
+	distracted = maxf(distracted, seconds * (0.45 if chasing else 1.0))
+	_stare = minf(STARE_TIME * (0.6 if chasing else 1.0), distracted)
+	distract_at = pos
+	if not chasing:
+		alert.force(AlertState.SEARCHING, pos)
+		alert.target_is_lure = true
+	_on_distracted(pos)
+
+
+## Staring at the crash right now.
+func is_staring() -> bool:
+	return _stare > 0.0
+
+
+func _notices_commotion() -> bool:
+	return true
+
+
+func _on_distracted(_pos: Vector3) -> void:
+	pass
+
+
+## Standing and staring at a crash (subclasses turn their head too).
+func _stare_tick(delta: float) -> void:
+	face_towards(distract_at, delta)
 
 
 # --- Reactions --------------------------------------------------------------

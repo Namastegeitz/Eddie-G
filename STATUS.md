@@ -277,6 +277,12 @@
   stomps/swats still cost a whole hit; crumbs +6, gems +12, food +20, power-ups +40. Snap traps
   trigger on anyone standing or landing on the plate, knock you out for 3 s under the bar and
   take 65 health; one snap never kills, two back to back do (HUD shows DAZED meanwhile).
+- Crashes make everyone look: glasses and teacups that shatter, potted plants whose pots break,
+  mugs and cereal boxes, and a row of toy dominoes on the coffee table (one multimesh). A crash
+  makes every person and pet stop, stare (seeing x0.2) and go check; a crash mid-chase buys a
+  moment. New Meshy fridge (door cut off the model, stretched to the box) with Meshy groceries on
+  its shelves, shown only while the door is open; models made phone-sized (gltf-transform WebP,
+  Basis textures; raw downloads kept in tools/meshy/raw).
 - Up on the furniture: people no longer step up onto tables to stomp (feet stay on the floor,
   and they won't walk under furniture). Within reach they lean over and slap with their own hand
   (arm IK, lean and crouch; swatter/newspaper too); out of reach they throw a sponge, slipper or

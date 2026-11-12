@@ -113,3 +113,8 @@ func _suck(delta: float) -> void:
 func apply_web(seconds: float) -> void:
 	super.apply_web(seconds)
 	stun(seconds)
+
+
+## A robot doesn't look up when something smashes.
+func _notices_commotion() -> bool:
+	return false

@@ -1357,18 +1357,87 @@ static func _item_visual(v: Node3D, id: String) -> Vector3:
 
 
 static func _prop(force: bool, name: String, m: Mesh, s: Shape3D, material: String, mass: float,
-		trip: bool, noise: float, sound: String, offset: Vector3 = Vector3.ZERO) -> void:
+		trip: bool, noise: float, sound: String, offset: Vector3 = Vector3.ZERO, extra: Dictionary = {}) -> void:
 	var p := scripted(RigidBody3D.new(), "res://scripts/stealth/physics_prop.gd", name.capitalize().replace(" ", ""))
 	p.set("mass", mass)
 	p.set("trip_hazard", trip)
 	p.set("noise_on_impact", noise)
 	p.set("impact_sound", StringName(sound))
+	for k: String in extra:
+		p.set(k, extra[k])
 	shape(p, s, offset)
 	var v := node3d(p, "Visual")
 	mesh(v, "Mesh", m, material, offset)
 	add_skin(v, "prop_" + name, m.get_aabb().size, offset + m.get_aabb().get_center())
 	_cull_far(p, 100.0)
 	pack(p, "res://scenes/props/%s.tscn" % name, force)
+
+
+static func _set_all(n: Object, values: Dictionary) -> void:
+	for k: String in values:
+		n.set(k, values[k])
+
+
+## Things that crash when they're knocked off a table or a counter and make
+## everyone look (PhysicsProp.commotion): a drinking glass and a teacup that
+## shatter, a clay-potted plant that breaks and spills, and the domino (its
+## row draws all of them as one multimesh: see LevelGeo.domino_run).
+static func _crash_props(force: bool) -> void:
+	var fragile := {"commotion": 3.5, "fragile": true, "crash_sound": &"shatter", "crash_speed": 12.0}
+	var glass_shape := CylinderShape3D.new()
+	glass_shape.radius = 1.1
+	glass_shape.height = 3.6
+	var g := scripted(RigidBody3D.new(), "res://scripts/stealth/physics_prop.gd", "Glass")
+	_set_all(g, {"mass": 0.4, "noise_on_impact": 1.4, "impact_sound": &"clatter"}.merged(fragile))
+	shape(g, glass_shape)
+	var gv := node3d(g, "Visual")
+	mesh(gv, "Mesh", cyl(1.1, 3.6, 0.9), "glass")
+	_cull_far(g, 70.0)
+	pack(g, "res://scenes/props/glass.tscn", force)
+
+	var cup_shape := CylinderShape3D.new()
+	cup_shape.radius = 1.3
+	cup_shape.height = 1.6
+	var c := scripted(RigidBody3D.new(), "res://scripts/stealth/physics_prop.gd", "Teacup")
+	_set_all(c, {"mass": 0.3, "noise_on_impact": 1.3, "impact_sound": &"clang"}.merged(fragile))
+	shape(c, cup_shape)
+	var cv := node3d(c, "Visual")
+	mesh(cv, "Cup", cyl(1.35, 1.6, 0.95), "plastic_white")
+	var handle := TorusMesh.new()
+	handle.inner_radius = 0.3
+	handle.outer_radius = 0.55
+	mesh(cv, "Handle", handle, "plastic_white", Vector3(1.45, 0.05, 0), Vector3(PI * 0.5, 0, 0))
+	merge_meshes(cv)
+	_cull_far(c, 70.0)
+	pack(c, "res://scenes/props/teacup.tscn", force)
+
+	var pot_shape := CylinderShape3D.new()
+	pot_shape.radius = 1.9
+	pot_shape.height = 3.2
+	var pl := scripted(RigidBody3D.new(), "res://scripts/stealth/physics_prop.gd", "PottedPlant")
+	_set_all(pl, {"mass": 1.0, "noise_on_impact": 1.8, "impact_sound": &"thud", "commotion": 4.5, "fragile": true,
+		"crash_sound": &"pot_crash", "crash_speed": 12.0})
+	shape(pl, pot_shape)
+	var pv := node3d(pl, "Visual")
+	mesh(pv, "Pot", cyl(2.0, 3.2, 1.5), "terracotta")
+	mesh(pv, "Rim", cyl(2.15, 0.5), "terracotta", Vector3(0, 1.45, 0))
+	for i in 5:
+		# Five leaves fanning out of the pot.
+		var a := TAU * i / 5.0
+		mesh(pv, "Leaf", sphere(0.75), "leaf_green", Vector3(cos(a) * 0.9, 3.4, sin(a) * 0.9),
+			Vector3(sin(a) * 0.45, 0, -cos(a) * 0.45), Vector3(0.8, 2.6, 0.35))
+	mesh(pv, "Stem", cyl(0.18, 2.6), "leaf_green", Vector3(0, 2.8, 0))
+	# Two materials, two meshes (pot, leaves): small on a phone past 60.
+	merge_meshes(pv)
+	_cull_far(pl, 60.0)
+	pack(pl, "res://scenes/props/potted_plant.tscn", force)
+
+	# A domino: just the body (its row draws them all at once).
+	var d := scripted(RigidBody3D.new(), "res://scripts/stealth/physics_prop.gd", "Domino")
+	_set_all(d, {"mass": 0.15, "noise_on_impact": 0.5, "impact_sound": &"domino", "stuns_threats": false,
+		"tip_height": 1.4, "impact_speed": 2.0})
+	shape(d, box_shape(Vector3(2.0, 4.0, 0.7)))
+	pack(d, "res://scenes/props/domino.tscn", force)
 
 
 static func props(force: bool) -> void:
@@ -1381,7 +1450,10 @@ static func props(force: bool) -> void:
 	var mug_shape := CylinderShape3D.new()
 	mug_shape.radius = 2.0
 	mug_shape.height = 4.0
-	_prop(force, "mug", cyl(2.0, 4.0), mug_shape, "plastic_white", 3.0, false, 2.5, "clang")
-	_prop(force, "cereal_box", box(Vector3(5, 9, 2)), box_shape(Vector3(5, 9, 2)), "chip_bag", 1.2, false, 1.6, "thud")
+	_prop(force, "mug", cyl(2.0, 4.0), mug_shape, "plastic_white", 3.0, false, 2.5, "clang", Vector3.ZERO,
+		{"commotion": 3.0})
+	_prop(force, "cereal_box", box(Vector3(5, 9, 2)), box_shape(Vector3(5, 9, 2)), "chip_bag", 1.2, false, 1.6, "thud",
+		Vector3.ZERO, {"commotion": 2.5})
+	_crash_props(force)
 	_prop(force, "ball", sphere(1.6), sphere_shape(1.6), "ball", 0.6, true, 1.0, "thud")
 	_prop(force, "acorn", sphere(0.7, 1.0), sphere_shape(0.6), "dark_wood", 0.2, false, 1.2, "clatter")

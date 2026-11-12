@@ -157,6 +157,17 @@ lantern; they clean their antennae when left idle.
   garden gnome block sight lines; tall grass keeps you in shade.
 - Escalation chain: a human who spots you shouts, grabs the swatter, calls the
   pet, then brings out the bug spray.
+- **Crashes grab everyone's attention**: knock something off a table, a
+  counter or a shelf and the crash makes every person and pet in the room
+  stop, turn and stare at it for a moment (they barely see anything else),
+  then go over to check - your chance to slip past. A drinking glass or a
+  teacup shatters into glinting pieces, a potted plant's clay pot breaks,
+  a mug or a cereal box lands with a clang or a thud, and a row of toy
+  dominoes on the living-room coffee table goes down one into the next when
+  you push the first. Mid-chase it only buys you a moment.
+- **A new fridge** (generated with Meshy): open at the front behind its
+  swinging door, with glass shelves of groceries - milk, eggs, cheese,
+  juice, pickles, apples - you can see whenever the cook opens it.
 - **Up on the furniture nobody stomps**: a person's feet stay on the floor.
   Within arm's reach they lean over the table, counter or shelf and slap at
   you with an open hand (their own arm reaches over and the palm smacks down

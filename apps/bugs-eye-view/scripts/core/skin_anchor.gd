@@ -14,6 +14,10 @@ extends Node3D
 @export var hide_paths: Array[NodePath] = []
 ## glTF models face +Z; the game's "forward" is -Z, hence 180 by default.
 @export var yaw_offset_deg: float = 180.0
+## Fill the box exactly, each axis on its own, instead of keeping the
+## model's proportions: for furniture whose collision box it has to match
+## (things sit on top of the fridge).
+@export var stretch: bool = false
 @export var model_dir: String = "res://assets/models/"
 
 var model: Node3D = null
@@ -78,7 +82,10 @@ func _fit() -> void:
 	if box.size.x <= 0.0001 or box.size.y <= 0.0001 or box.size.z <= 0.0001:
 		return
 	var s := minf(minf(fit_size.x / box.size.x, fit_size.y / box.size.y), fit_size.z / box.size.z)
-	model.transform = Transform3D(model.transform.basis.scaled(Vector3.ONE * s), Vector3.ZERO)
+	var sv := Vector3.ONE * s
+	if stretch:
+		sv = Vector3(fit_size.x / box.size.x, fit_size.y / box.size.y, fit_size.z / box.size.z)
+	model.transform = Transform3D(model.transform.basis.scaled(sv), Vector3.ZERO)
 	box = mesh_bounds(model, self)
 	var centre := box.get_center()
 	model.position = Vector3(-centre.x, -fit_size.y * 0.5 - box.position.y, -centre.z)

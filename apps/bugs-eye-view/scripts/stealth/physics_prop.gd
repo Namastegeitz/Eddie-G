@@ -1,8 +1,12 @@
 class_name PhysicsProp
 extends RigidBody3D
-## Pushable / knockable household object (pea, grape, mug, cereal box, ball).
+## Pushable / knockable household object (pea, grape, mug, cereal box, ball,
+## a glass, a teacup, a potted plant, a domino).
 ## Lands with a clatter that threats investigate, stuns any threat it hits
-## hard, and (trip hazard) trips a human who steps on it.
+## hard, and (trip hazard) trips a human who steps on it. Knocked off a table
+## or counter it crashes (commotion): everyone in the room stops to look at
+## it for a moment and then goes to check; glass and china shatter and a
+## clay pot breaks and spills its soil (fragile).
 
 @export var noise_on_impact: float = 1.6
 @export var impact_speed: float = 5.0
@@ -10,6 +14,20 @@ extends RigidBody3D
 @export var trip_hazard: bool = false
 @export var impact_sound: StringName = &"clatter"
 @export var nudge_strength: float = 4.0
+## Seconds everyone in the room stares when it crashes down from a height
+## (0 = it only clatters). See PerceptionSystem.commotion.
+@export var commotion: float = 0.0
+## How hard it has to land to count as a crash (gravity is 30: falling off a
+## coffee table lands at ~30, off a counter at ~48; knocked over on the
+## floor it's well under 10).
+@export var crash_speed: float = 14.0
+@export var crash_sound: StringName = &""
+## Breaks when it crashes (glass, china, a clay pot).
+@export var fragile: bool = false
+## Tall and thin (a domino): a push lands this high above its middle, so it
+## topples over instead of sliding.
+@export var tip_height: float = 0.0
+var broken := false
 
 var _last_speed := 0.0
 var _cd := 0.0
@@ -84,16 +102,35 @@ func is_in_play() -> bool:
 	return _played > 0.0
 
 
+## Pushed by a bug walking into it (BugBase._push_props).
+func push_by_bug(impulse: Vector3) -> void:
+	freeze = false
+	sleeping = false
+	if tip_height > 0.0:
+		apply_impulse(impulse, Vector3.UP * tip_height)
+	else:
+		apply_central_impulse(impulse)
+	mark_touched()
+
+
 func _on_body_entered(body: Node) -> void:
-	if _last_speed < impact_speed or _cd > 0.0:
+	if broken or _last_speed < impact_speed or _cd > 0.0:
 		return
 	_cd = 0.6
-	if _played > 0.0:
+	var crash := commotion > 0.0 and _last_speed >= crash_speed
+	if _played > 0.0 and not crash:
 		AudioManager.play_at(impact_sound, global_position, -8.0, randf_range(1.0, 1.2))
 		PerceptionSystem.emit_world_noise(global_position, noise_on_impact * 0.4)
 		return
-	AudioManager.play_at(impact_sound, global_position, 0.0, randf_range(0.9, 1.15))
-	PerceptionSystem.emit_world_noise(global_position, noise_on_impact)
+	if crash:
+		AudioManager.play_at(crash_sound if crash_sound != &"" else impact_sound, global_position, 3.0, randf_range(0.92, 1.08))
+		PerceptionSystem.emit_world_noise(global_position, noise_on_impact * 1.5)
+		PerceptionSystem.commotion(global_position, commotion)
+	else:
+		AudioManager.play_at(impact_sound, global_position, 0.0, randf_range(0.9, 1.15))
+		PerceptionSystem.emit_world_noise(global_position, noise_on_impact)
+	if crash and fragile:
+		_shatter.call_deferred()
 	if _touched_by_player > 0.0 and Level.current:
 		Level.current.note_lure_used()
 	if not stuns_threats:
@@ -112,3 +149,27 @@ func on_stepped_on(by: Threat) -> void:
 		AudioManager.play_at(&"squish", global_position)
 		by.stun()
 		apply_central_impulse(Vector3(randf_range(-1, 1), 0.5, randf_range(-1, 1)) * 3.0 * mass)
+
+
+## Breaks: the pieces scatter, glint and fade, and the thing itself is gone.
+func _shatter() -> void:
+	if broken or not is_inside_tree():
+		return
+	broken = true
+	var mats: Array[Material] = []
+	for n in find_children("*", "MeshInstance3D", true, false):
+		var mi := n as MeshInstance3D
+		if mi.material_override:
+			mats.append(mi.material_override)
+		elif mi.mesh:
+			for i in mi.mesh.get_surface_count():
+				var m := mi.get_active_material(i)
+				if m:
+					mats.append(m)
+	var parent: Node = Level.current if Level.current else get_parent()
+	Shards.burst(parent, global_position, mats, 9)
+	visible = false
+	freeze = true
+	collision_layer = 0
+	collision_mask = 0
+	queue_free.call_deferred()

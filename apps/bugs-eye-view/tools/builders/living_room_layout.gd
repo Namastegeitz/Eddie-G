@@ -53,6 +53,12 @@ static func build(tree: SceneTree) -> void:
 	g.deco("LampShade", _cyl(5.0, 8.0, 3.0), "lamp", Vector3(104, 34, -40))
 	g.light_zone("LampLight", Vector3(98, 5, -26), Vector3(40, 10, 34), 2, 2, ["lamp_on"], [], true, 2.0)
 	g.prop("mug", Vector3(100, 26.1, -28.8))
+	# Knock-over things: a row of toy dominoes across the coffee table, a
+	# glass and a teacup near the edges, a plant on top of the bookshelf.
+	g.domino_run("Dominoes", Vector3(-22, 16.75, -9), Vector3.RIGHT, 9, 2.3)
+	g.prop("glass", Vector3(95, 25.85, -29.0))
+	g.prop("teacup", Vector3(4, 17.6, -16.0))
+	g.prop("potted_plant", Vector3(-61.5, 71.65, 6))
 	g.prop("bottle_cap", Vector3(95, 24.3, -30))
 	g.perch("SideTablePerch", Vector3(100, 0, -22), Vector3(0, 24.6, -12), 9.0)
 
