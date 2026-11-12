@@ -1,0 +1,397 @@
+<!doctype html>
+<html lang="en" data-root="../" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#000000">
+<meta name="description" content="Leave a trip plan with someone who will raise the alarm, estimate walking time with Naismith's rule, and set a turnaround time before dark — all offline.">
+<title>Trip Plan — Off-Grid Survival Kit</title>
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="icon" href="../assets/icons/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../assets/icons/apple-touch-icon.png">
+<link rel="stylesheet" href="../assets/css/app.css">
+<script src="../assets/js/theme.js"></script>
+<script src="../assets/js/common.js" defer></script>
+<script src="../assets/vendor/suncalc.js" defer></script>
+<script src="../assets/vendor/qrcode.js" defer></script>
+<script src="../assets/vendor/mgrs.min.js" defer></script>
+<script src="../assets/js/store.js" defer></script>
+<script src="../assets/js/geo.js" defer></script>
+<script src="plan.js" defer></script>
+<style>
+/* ---------------------------------------------------------------------
+   Trip plan page extras. Colours come only from the theme variables.
+   --------------------------------------------------------------------- */
+[hidden] { display: none !important; }   /* .btn's display would otherwise beat the hidden attribute */
+.btn.big { min-height: 64px; font-size: 1.15rem; padding: 0 20px; }
+.hint { font-size: .95rem; color: var(--muted); margin: .3em 0 .8em; }
+.err { color: var(--danger); font-weight: 600; }
+.seg { display: flex; flex-wrap: wrap; gap: 8px; margin: 6px 0 10px; }
+.seg .btn { flex: 1 1 0; min-width: 0; line-height: 1.2; padding: 6px 10px; }
+.seg.two-up .btn { flex: 1 1 40%; }
+.grp-label { font-weight: 600; margin: 12px 0 2px; }
+.saved-ind { color: var(--muted); font-weight: 600; min-height: 48px; display: inline-flex; align-items: center; }
+.saved-ind.ok { color: var(--ok); }
+.saved-ind.bad { color: var(--danger); }
+.pair { display: grid; grid-template-columns: 1fr; gap: 0 12px; }
+@media (min-width: 560px) { .pair { grid-template-columns: 1fr 1fr; } }
+
+/* party rows */
+.person { border: 1px solid var(--border); border-radius: 12px; padding: 2px 12px 4px; margin: 10px 0; background: var(--surface-2); }
+.person-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.person-head h4 { margin: .6em 0 .2em; }
+.person .field { margin: 6px 0 10px; }
+
+/* gear chips: toggle buttons, with a tick so "on" doesn't rely on colour alone */
+.gear-chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0 12px; }
+.gear-chips .btn { border-radius: 999px; font-size: .95rem; padding: 0 14px; }
+.gear-chips .btn::before { content: "+"; font-weight: 800; }
+.gear-chips .btn[aria-pressed="true"]::before { content: "✓"; }
+
+/* waypoint picker */
+ul.wp-pick { list-style: none; padding: 0; margin: 6px 0; }
+ul.wp-pick li { border-bottom: 1px solid var(--border); margin: 0; }
+ul.wp-pick .check { padding: 4px 0; }
+ul.wp-pick .sub { display: block; font-size: .85rem; color: var(--muted); font-weight: 400; }
+
+/* the plain-text plan */
+.tp-text {
+  white-space: pre-wrap; overflow-wrap: anywhere; margin: 10px 0;
+  font: inherit; font-size: .95rem; line-height: 1.45;
+  background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 12px 14px;
+}
+.qr-note { font-size: .95rem; }
+
+/* planner results */
+.res-big { font-size: 1.9rem; font-weight: 800; font-variant-numeric: tabular-nums; line-height: 1.2; margin: .2em 0; }
+.turn-box { border: 3px solid var(--accent); border-radius: 14px; padding: 8px 14px; margin: 12px 0; background: var(--surface-2); }
+.turn-box.bad { border-color: var(--danger); }
+.turn-box h3 { margin: .4em 0 .1em; }
+dl.kv { display: grid; grid-template-columns: max-content 1fr; gap: 4px 14px; margin: 10px 0; }
+dl.kv dt { color: var(--muted); font-weight: 700; }
+dl.kv dd { margin: 0; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.margin-chip { margin: 6px 0; }
+
+/* turnaround alarm */
+.clock { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-weight: 800; font-size: 2.6rem; line-height: 1.15; text-align: center; font-variant-numeric: tabular-nums; padding: 8px 0; }
+.clock-sub { text-align: center; color: var(--muted); min-height: 1.5em; margin: 0 0 8px; }
+.alarm-ring {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 4500;
+  background: var(--danger-bg); color: var(--danger); border-top: 4px solid var(--danger);
+  padding: 14px max(16px, env(safe-area-inset-right)) calc(16px + env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
+  text-align: center; box-shadow: var(--shadow);
+}
+.alarm-ring .ring-title { display: block; font-size: 1.7rem; font-weight: 900; letter-spacing: .03em; }
+.alarm-ring p { margin: .3em 0 .7em; color: var(--text); }
+
+@media print {
+  /* Print = the plan only (text + QR). */
+  :root, :root[data-theme] { color-scheme: light; }
+  main > :not(#share) { display: none !important; }
+  #share .no-print, .alarm-ring { display: none !important; }
+  .tp-text { border: 0; padding: 0; margin: 0 0 8pt; font-size: 10.5pt; line-height: 1.35; }
+  .qr-box { justify-content: flex-start; padding: 0; break-inside: avoid; }
+  .qr-box svg { width: 60mm; }
+  .qr-note { font-size: 9pt; }
+}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="app-header">
+  <a class="hdr-btn" href="../index.html" aria-label="Back to hub"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg><span>Hub</span></a>
+  <h1>Trip Plan &amp; Turnaround</h1>
+  <span class="net-dot" role="img"></span>
+  <button class="hdr-btn" type="button" data-theme-toggle></button>
+</header>
+<main id="main" class="page">
+  <p class="lead">Before you go, leave a trip plan with <strong>two people</strong> who will notice if you don't come back: where you're going, when you expect to be back, and the time they must call for help. Most lost people are found quickly when someone knows the plan and they stay put.</p>
+  <div class="disclaimer">Everything stays on this phone until you copy, share or print it. Time estimates are rough minimums — terrain, weather, load and fitness all slow you down. In an emergency with any signal, call 911 (US/Canada) or 112 (Europe).</div>
+  <noscript><div class="callout danger"><strong class="callout-title">JavaScript needed</strong><p>This page needs JavaScript turned on.</p></div></noscript>
+  <nav class="toc" aria-label="On this page"><ul>
+    <li><a href="#trip">Trip plan</a></li>
+    <li><a href="#share">Send the plan</a></li>
+    <li><a href="#planner">Time &amp; turnaround</a></li>
+    <li><a href="#alarm">Turnaround alarm</a></li>
+    <li><a href="#rules">Golden rules</a></li>
+  </ul></nav>
+
+  <!-- =============================================================== -->
+  <section id="trip">
+    <h2>Leave a trip plan</h2>
+    <ol class="steps">
+      <li>Fill this in before you leave. It saves on this phone as you type.</li>
+      <li>Send or give it to <strong>two people</strong> who are not on the trip and will notice if you're not back.</li>
+      <li>Agree the <strong>call-for-help time</strong>. If you're not back by then, they call — they don't wait.</li>
+      <li>Stick to the plan. If it changes, tell them. When you're back, tell them straight away.</li>
+    </ol>
+    <div class="row"><span class="saved-ind" id="tp-saved" role="status" aria-live="polite">Loading…</span></div>
+
+    <div class="card">
+      <h3>Who is going</h3>
+      <p class="hint">Medical notes help rescuers: conditions, medicines, allergies (e.g. bee stings, penicillin).</p>
+      <div id="party"></div>
+      <button class="btn block" type="button" id="party-add">+ Add a person</button>
+    </div>
+
+    <div class="card">
+      <h3>Where</h3>
+      <div class="field">
+        <label for="tp-activity">Activity</label>
+        <select id="tp-activity" data-k="activity">
+          <option value="hike">Day hike</option>
+          <option value="backpack">Backpacking (overnight)</option>
+          <option value="hunt">Hunting</option>
+          <option value="paddle">Paddling (canoe / kayak / raft)</option>
+          <option value="drive">Drive / overland</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+      <div class="field" id="tp-activity-other-f">
+        <label for="tp-activity-other">Describe the activity</label>
+        <input type="text" id="tp-activity-other" data-k="activityOther" maxlength="80" placeholder="e.g. Climbing, ski touring, fishing">
+      </div>
+      <div class="field">
+        <label for="tp-dest">Destination / area</label>
+        <input type="text" id="tp-dest" data-k="destination" maxlength="160" placeholder="e.g. Mt Tammany via Red Dot trail, Worthington State Forest">
+      </div>
+      <div class="field">
+        <label for="tp-trailhead">Trailhead / put-in (where you start)</label>
+        <input type="text" id="tp-trailhead" data-k="trailhead" maxlength="160" placeholder="e.g. Dunnfield Creek lot, off I-80 exit 1">
+      </div>
+      <div class="field">
+        <label for="tp-route">Route: start, planned route, alternates, camp spots</label>
+        <textarea id="tp-route" data-k="route" rows="5" maxlength="2000" placeholder="e.g. Red Dot trail to summit, Blue Dot down, back to lot. If the river is high: same way back. No camping."></textarea>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>When</h3>
+      <div class="pair">
+        <div class="field">
+          <label for="tp-start">Start</label>
+          <input type="datetime-local" id="tp-start" data-k="start">
+        </div>
+        <div class="field">
+          <label for="tp-ret">Expected back</label>
+          <input type="datetime-local" id="tp-ret" data-k="ret">
+        </div>
+      </div>
+      <div class="field">
+        <label for="tp-overdue">If not back by … call for help</label>
+        <input type="datetime-local" id="tp-overdue" data-k="overdue" aria-describedby="tp-overdue-hint">
+        <p class="hint" id="tp-overdue-hint">Set automatically to <strong>expected back + 3 hours</strong> — change it if you need more slack (e.g. long drives, slow river trips).</p>
+        <button class="btn" type="button" id="tp-overdue-reset">Reset to expected back + 3 h</button>
+      </div>
+      <p class="err" id="tp-time-err" role="alert" hidden></p>
+      <div class="field">
+        <label for="tp-callwho">Who should they call?</label>
+        <input type="text" id="tp-callwho" data-k="callWho" maxlength="120">
+      </div>
+      <div class="field">
+        <label for="tp-ranger">Local ranger / sheriff / SAR number (optional)</label>
+        <input type="text" id="tp-ranger" data-k="ranger" maxlength="120" inputmode="tel" placeholder="e.g. Park ranger station +1 555 0100">
+      </div>
+      <p class="hint">Times are in this phone's time zone (<span class="tz-name">local time</span>).</p>
+    </div>
+
+    <div class="card">
+      <h3>Vehicle</h3>
+      <div class="pair">
+        <div class="field"><label for="tp-v-make">Make / model</label><input type="text" id="tp-v-make" data-k="vehicle.make" maxlength="80" placeholder="e.g. Subaru Outback"></div>
+        <div class="field"><label for="tp-v-colour">Colour</label><input type="text" id="tp-v-colour" data-k="vehicle.colour" maxlength="40" placeholder="e.g. Dark green"></div>
+        <div class="field"><label for="tp-v-plate">Plate</label><input type="text" id="tp-v-plate" data-k="vehicle.plate" maxlength="40" autocapitalize="characters" placeholder="e.g. NJ ABC-123"></div>
+        <div class="field"><label for="tp-v-parked">Where parked</label><input type="text" id="tp-v-parked" data-k="vehicle.parked" maxlength="160" placeholder="e.g. Dunnfield Creek lot"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Gear carried</h3>
+      <p class="hint">Tap everything you're taking. Rescuers use this to judge how long you can last.</p>
+      <div class="gear-chips" id="gear" role="group" aria-label="Gear carried"></div>
+      <div class="field" id="gear-radio-f">
+        <label for="tp-radio-g">Radio channel</label>
+        <input type="text" id="tp-radio-g" data-k="radio" maxlength="80" placeholder="e.g. FRS ch 3 (US) / PMR446 ch 1 (EU)">
+      </div>
+      <div class="field">
+        <label for="tp-gear-other">Other gear</label>
+        <input type="text" id="tp-gear-other" data-k="gearOther" maxlength="300" placeholder="e.g. Ice axe, crampons, 3 L water each, packraft">
+      </div>
+      <div class="field">
+        <label for="tp-colours">Clothing, pack and tent colours</label>
+        <input type="text" id="tp-colours" data-k="colours" maxlength="200" placeholder="e.g. Red jacket, blue pack, orange tent">
+        <p class="hint">Helps searchers spot you from the ground or the air.</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Communications</h3>
+      <div class="field"><label for="tp-phones">Phone numbers in the party</label><input type="text" id="tp-phones" data-k="phones" maxlength="200" inputmode="tel" placeholder="e.g. Sam +1 555 0101, Alex +1 555 0102"></div>
+      <div class="field"><label for="tp-sat">Satellite messenger / PLB ID</label><input type="text" id="tp-sat" data-k="satId" maxlength="120" placeholder="e.g. inReach — share page/ID, PLB UIN"></div>
+      <div class="field"><label for="tp-radio">Radio channel</label><input type="text" id="tp-radio" data-k="radio" maxlength="80" placeholder="e.g. FRS ch 3 (US) / PMR446 ch 1 (EU)"></div>
+      <div class="field"><label for="tp-checkins">Planned check-in times</label><input type="text" id="tp-checkins" data-k="checkins" maxlength="200" placeholder="e.g. Text from the summit ~12:00 and from the car"></div>
+      <p class="hint">Expect no phone signal in many valleys and forests. A missed check-in alone is not an emergency — the call-for-help time is.</p>
+    </div>
+
+    <div class="card">
+      <h3>Map points to include (optional)</h3>
+      <p class="hint">Tick saved map waypoints — camps, rally points, the car — to add their coordinates and MGRS grid to the plan.</p>
+      <ul class="wp-pick" id="wp-pick"></ul>
+      <p class="hint" id="wp-none" hidden>No waypoints saved yet. Add camp spots or rally points on the <a href="../map/index.html">Map</a>, then come back.</p>
+    </div>
+  </section>
+
+  <!-- =============================================================== -->
+  <section id="share">
+    <h2 class="no-print">Send the plan</h2>
+    <div class="callout ok no-print" id="tp-done" hidden>
+      <strong class="callout-title">Back safely</strong>
+      <p id="tp-done-text"></p>
+      <div class="row">
+        <button class="btn primary" type="button" id="tp-back-copy">Copy “we're back” message</button>
+        <button class="btn" type="button" id="tp-back-share" hidden>Share “we're back”…</button>
+        <button class="btn" type="button" id="tp-new">Plan another trip</button>
+      </div>
+    </div>
+    <div class="callout danger no-print" id="tp-overdue-now" hidden role="alert">
+      <strong class="callout-title">Call-for-help time has passed</strong>
+      <p>If you're back, tap <strong>We're back safely</strong> below and tell your contacts now — they may already be calling for a search.</p>
+    </div>
+    <div class="callout warn no-print" id="tp-missing" hidden><strong class="callout-title">Still missing</strong><ul id="tp-missing-list"></ul></div>
+    <div class="row no-print">
+      <button class="btn primary" type="button" id="tp-copy">Copy text</button>
+      <button class="btn" type="button" id="tp-share" hidden>Share…</button>
+      <button class="btn" type="button" id="tp-print">Print</button>
+    </div>
+    <p class="hint no-print" id="tp-share-hint">Share works with no internet on many phones (Bluetooth / Nearby Share / AirDrop) as well as by text message.</p>
+    <pre class="tp-text" id="tp-text" aria-label="Trip plan text"></pre>
+    <p class="qr-note" id="tp-qr-note"></p>
+    <div class="qr-box" id="tp-qr"></div>
+
+    <div class="card no-print">
+      <h3>Back safely?</h3>
+      <p>Tap this when the whole party is out. It clears the call-for-help time, cancels the turnaround alarm and keeps a copy of the plan.</p>
+      <button class="btn primary big block" type="button" id="tp-back">We're back safely</button>
+    </div>
+    <details class="item no-print" id="tp-hist" hidden>
+      <summary>Previous plans <span class="sub">Copies kept when you marked “back safely”</span></summary>
+      <div class="body" id="tp-hist-body"></div>
+    </details>
+  </section>
+
+  <!-- =============================================================== -->
+  <section id="planner">
+    <h2>Time &amp; turnaround planner</h2>
+    <p>How long will it take, when will you finish, and when must you turn back to be out before dark?</p>
+    <div class="card">
+      <p class="grp-label" id="pl-units-l">Units</p>
+      <div class="seg" role="group" aria-labelledby="pl-units-l">
+        <button class="btn" type="button" data-units="metric" aria-pressed="false">km / m</button>
+        <button class="btn" type="button" data-units="imperial" aria-pressed="false">mi / ft</button>
+      </div>
+      <div class="field">
+        <label for="pl-track">Use a saved track (optional)</label>
+        <select id="pl-track"><option value="">— type the numbers below —</option></select>
+        <p class="hint" id="pl-track-note">Tracks you recorded on the Map appear here.</p>
+      </div>
+      <div class="pair">
+        <div class="field">
+          <label for="pl-dist">Total distance (<span class="u-dist">km</span>)</label>
+          <input type="number" id="pl-dist" min="0" max="500" step="0.1" inputmode="decimal" placeholder="e.g. 12">
+        </div>
+        <div class="field">
+          <label for="pl-asc">Total ascent (<span class="u-asc">m</span>)</label>
+          <input type="number" id="pl-asc" min="0" max="20000" step="10" inputmode="numeric" placeholder="e.g. 800">
+        </div>
+      </div>
+      <p class="hint">The whole trip: for out-and-back, count the way there <em>and</em> back. Ascent = all the uphill added together.</p>
+
+      <p class="grp-label" id="pl-route-l">Route type</p>
+      <div class="seg" role="group" aria-labelledby="pl-route-l">
+        <button class="btn" type="button" data-route="oab" aria-pressed="false">Out-and-back</button>
+        <button class="btn" type="button" data-route="loop" aria-pressed="false">Loop</button>
+        <button class="btn" type="button" data-route="oneway" aria-pressed="false">One-way</button>
+      </div>
+
+      <p class="grp-label" id="pl-pace-l">Pace</p>
+      <div class="seg two-up" role="group" aria-labelledby="pl-pace-l">
+        <button class="btn" type="button" data-pace="0.8" aria-pressed="false">Fast ×0.8</button>
+        <button class="btn" type="button" data-pace="1" aria-pressed="false">Average ×1.0</button>
+        <button class="btn" type="button" data-pace="1.3" aria-pressed="false">Slow / heavy pack ×1.3</button>
+        <button class="btn" type="button" data-pace="1.5" aria-pressed="false">Group with kids ×1.5</button>
+      </div>
+
+      <div class="field">
+        <label for="pl-breaks">Breaks (minutes per hour of walking)</label>
+        <input type="number" id="pl-breaks" min="0" max="60" step="1" value="10" inputmode="numeric">
+      </div>
+      <div class="pair">
+        <div class="field"><label for="pl-date">Start date</label><input type="date" id="pl-date"></div>
+        <div class="field"><label for="pl-time">Start time</label><input type="time" id="pl-time"></div>
+      </div>
+      <button class="btn" type="button" id="pl-from-trip">Use start time from the trip plan</button>
+
+      <div class="field" style="margin-top:14px">
+        <label for="pl-loc">Location for sunset</label>
+        <select id="pl-loc"></select>
+        <p class="hint" id="pl-loc-info"></p>
+        <button class="btn" type="button" id="pl-gps">Use my GPS position now</button>
+      </div>
+    </div>
+
+    <div class="card" id="pl-out" aria-live="polite"></div>
+
+    <div class="callout warn"><strong class="callout-title">Naismith's rule is a minimum</strong>
+      <p>It assumes a fit walker on a good path in good weather with a light pack and no rests. Rough or steep ground, snow, river crossings, heat, a heavy pack, tired or injured people and getting lost all add time. Add breaks, and plan to finish well before dark.</p></div>
+  </section>
+
+  <!-- =============================================================== -->
+  <section id="alarm">
+    <h2>Turnaround alarm</h2>
+    <div class="callout danger"><strong class="callout-title">Also set your phone's own alarm</strong>
+      <p>A web app <strong>cannot ring when it is closed, in the background or when the phone is asleep</strong>. This alarm only works while this page stays open on screen — it keeps the screen on, which uses battery. Set the same time in your phone's Clock app too.</p></div>
+    <div class="card">
+      <div class="field">
+        <label for="al-time">Alarm time</label>
+        <input type="datetime-local" id="al-time">
+      </div>
+      <button class="btn" type="button" id="al-use" disabled>Use the planned turnaround time</button>
+      <div class="grid-2" style="margin-top:12px">
+        <button class="btn primary big" type="button" id="al-set">Set turnaround alarm</button>
+        <button class="btn big" type="button" id="al-cancel" disabled>Cancel alarm</button>
+      </div>
+      <div class="clock" id="al-clock" aria-live="off">--:--:--</div>
+      <p class="clock-sub" id="al-sub" role="status" aria-live="polite">No alarm set.</p>
+      <button class="btn block" type="button" id="al-test">Test alarm sound (2 seconds)</button>
+      <p class="hint">Volume up, and on iPhone set the Ring/Silent switch to Ring. Notifications (if you allow them) can still show when you switch to another app, but may be delayed or blocked by battery saving.</p>
+    </div>
+  </section>
+
+  <!-- =============================================================== -->
+  <section id="rules">
+    <h2>Golden rules</h2>
+    <div class="callout danger"><strong class="callout-title">Turn around on time</strong>
+      <p>When your turnaround time comes, turn around — <strong>no matter how close the goal is</strong>. Getting back is the only part of the trip that isn't optional. Turn back early for bad weather, an injury, someone struggling, or if you're behind at a checkpoint.</p></div>
+    <div class="callout ok"><strong class="callout-title">Lost? Stay put</strong>
+      <ol class="steps">
+        <li><strong>Stop.</strong> Sit down, drink, eat something. Don't keep walking to “find the trail”.</li>
+        <li><strong>Stay where you are</strong> — “hug a tree”. Searchers start from your trip plan; moving makes you harder to find.</li>
+        <li><strong>Get warm and dry.</strong> Shelter from wind and wet, insulate yourself from the ground.</li>
+        <li><strong>Be seen and heard.</strong> Bright clothing in the open, 3 whistle blasts, a mirror or light at aircraft. See <a href="../tools/index.html#whistle">Whistle</a> and <a href="../tools/index.html#sos">SOS light</a>.</li>
+      </ol>
+      <p>Move only if you must for safety (fire, flood, no shelter) — and then leave a note or mark showing which way you went.</p></div>
+    <div class="callout info"><strong class="callout-title">Plans change</strong>
+      <p>If you change route or will be late, tell your contacts if you can. If you can't reach them, stick to the plan you left.</p></div>
+  </section>
+
+  <footer class="page-foot">Time estimates use Naismith's rule (W. W. Naismith, 1892): 1 hour per 5 km (3 mi) on the flat plus 1 hour per 600 m (2,000 ft) of ascent. Sunset and civil dusk (“last light”, sun 6° below the horizon) are calculated on this phone for the chosen location; valleys, forest and cloud make it dark earlier. Trip-plan advice follows common search-and-rescue guidance. Nothing on this page is sent anywhere.</footer>
+</main>
+
+<!-- Ringing alarm banner (shown by plan.js over everything) -->
+<div class="alarm-ring" id="al-ring" role="alertdialog" aria-modal="false" aria-labelledby="al-ring-title" hidden>
+  <span class="ring-title" id="al-ring-title">TURN AROUND NOW</span>
+  <p id="al-ring-text"></p>
+  <button class="btn danger big block" type="button" id="al-stop">Stop alarm</button>
+</div>
+</body>
+</html>
