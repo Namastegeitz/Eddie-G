@@ -9,7 +9,9 @@
   MGRS/UTM grid, triangulation, elevation/slope + contours, QR share, SOS beacon, NJ/Algarve presets.
 - Content: foraging, water, first aid, fire/shelter/knots (SVG knot steps), food, electricity, tools
   (strobe/Morse/tones/checklists/rendezvous), emergency PDF (18 pages, reportlab) + HTML version.
-- Tests: `tests/acceptance.js` (Playwright, mock tile server) — 28 checks online→offline all pass;
+- Tests: `tests/acceptance.js` (Playwright, mock tile server) — 30 checks online→offline all pass;
+  `tests/a11y.js` (axe WCAG 2.1 AA: 0 violations, 13 pages × Night/Day/Red); `tests/devices.js`
+  (iPhone SE/15 Pro Max, iPad, Galaxy Tab portrait+landscape, Pixel 7, XL text: no sideways scroll);
   `tests/wmm.test.js` magnetic model check passes;
   Chrome reports no PWA installability errors; print preview checked.
 - Not verified on real hardware yet: install + offline launch on a phone, real GPS/compass, torch,
@@ -25,6 +27,10 @@
   saver + battery prompt, Trip Plan page (leave-a-note + Naismith time + turnaround vs last light +
   alarm), lightning flash-to-bang with NWS 30-30 timer, offline search across all guides (350 sections).
 - Zip: `apps/off-grid-survival-kit/dist/off-grid-survival-kit.zip`.
+- Nov 12 (later): 3D terrain view (WebGL, offline from saved elevation + map/satellite tiles, sun-lit),
+  Live sky (GOES/Meteosat/Himawari pictures every 10–15 min, RainViewer radar, NASA daily photo),
+  satellite (Sentinel-2) and USGS aerial base maps, relief shading; shareable link previews, QR share
+  card, text-size setting, accessibility fixes; session environment eddie-g allows the imagery hosts.
 - Next: open the live link on a phone, install, save NJ/Algarve map areas, field test GPS/compass/backtrack.
 
 ## Canopy Crossing (`apps/canopy-crossing`)

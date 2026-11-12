@@ -186,7 +186,8 @@ assets/
   js/compass.js       compass engine (sensor, iOS permission, tilt modes, smoothing, declination)
   js/compass-ui.js    full compass interface (standalone page + map overlay)
   js/map/*.js         map modules: core, tiles, grid, dem, gps, waypoints, tracks,
-                      backtrack, measure, sunmoon, triangulate, share, data, main
+                      backtrack, terrain3d (WebGL 3D view), live (satellite/radar),
+                      measure, sunmoon, triangulate, share, data, main
   vendor/             leaflet 1.9.4, suncalc 1.9.0, qrcode-generator 1.4.4, mgrs 2.1.0 (+ licences)
   icons/              app icons (SVG + PNG + maskable)
 scripts/
@@ -199,6 +200,8 @@ tests/
   acceptance.js       Playwright end-to-end test (online prime → offline checks)
   mocktiles.py        local mock tile + elevation server used by the test
   wmm.test.js         checks wmm.js against the 100 official WMM2025 test values
+  a11y.js             axe-core WCAG 2.1 AA audit of every page in all three themes
+  devices.js          layout checks on emulated iPhones, iPads and Android phones/tablets
   wmm2025_test_values.csv
 ```
 
@@ -218,6 +221,8 @@ python3 -m http.server 8765 --bind 127.0.0.1 &   # from this folder
 python3 tests/mocktiles.py 8790 &                  # needs Pillow
 node tests/acceptance.js                           # needs Playwright + Chromium
 node tests/wmm.test.js                             # magnetic model check (Node only)
+node tests/a11y.js                                 # accessibility (needs: npm i axe-core)
+node tests/devices.js                              # phone/tablet layouts
 ```
 
 The test:
