@@ -33,7 +33,12 @@
   card, text-size setting, accessibility fixes; session environment eddie-g allows the imagery hosts.
 - Next: open the live link on a phone, install, save NJ/Algarve map areas, field test GPS/compass/backtrack.
 
-## Canopy Crossing (`apps/canopy-crossing`)
+## Canopy Crossing (`apps/CANOPY-CROSSING`)
+- **Store launch** (2026-11-17): `BUILDS/<platform>/` holds each platform's build (Windows, macOS, Linux, web, iOS Xcode
+  project; Android from `.github/workflows/canopy-crossing-release.yml`). `LAUNCH/` holds a 90-step, 10-phase
+  checklist (`LAUNCH/README.md`), researched requirements per store (Apple, Google, Amazon + Samsung, Steam, GOG,
+  itch.io, Epic + Microsoft) and drafts (store text, privacy policy, 36 in-app products, rating answers). Live
+  checklist + bug log: https://claude.ai/artifact/W8GbYN7jifz6X6fRE4QSNR (13 setup steps done by Claude).
 - Built from `prompts/claude/canopy-crossing.md` (copied from the Claude doc brief): all 8 phases,
   Godot 4.7.2, portrait 720x1280, GL Compatibility.
 - 220 maps: 22 real rainforest scenes x 10 levels (El Yunque and the Cardamom Mountains added). Clearing a
@@ -113,7 +118,7 @@
   screen (pips + what the next level adds); runs use the level. Rules per ability parameter in
   `content/skills.json` (`scripts/sim/skills.gd`): shorter cooldowns, longer effects, more distance /
   charges / swings, quicker hops for animals with nothing else to scale.
-- Meshy models (`apps/canopy-crossing/tools/meshy/`, budget-capped pipeline; 480 credits fauna + 690 scenery of the
+- Meshy models (`apps/CANOPY-CROSSING/tools/meshy/`, budget-capped pipeline; 480 credits fauna + 690 scenery of the
   account's 1,255; 55 left, shared with another project): 16 creatures/starter animals and 23 scenery pieces,
   mapped by `content/models.json`. First person uses them for movers (tinted per species, stride bounce), caiman
   backs, surfacing crocs, striking snakes/tigers, swooping eagles, logs/lily pads/stones/trucks/jeeps/boats, canopy
@@ -147,13 +152,21 @@
   levels (tools/level_sweep.tscn, ~2 min) and the first 50 Endless rows on every scene with the free Poison Dart Frog.
   Frame cost 0.9 ms (sim + view + draw recording) on the cloud CPU.
 - Playable web build (private artifact): https://claude.ai/artifact/NHzAQ2w4jCjWjLkoxLSdB3
-  Gameplay clip: `apps/canopy-crossing/docs/gameplay.mp4`.
+  Gameplay clip: `apps/CANOPY-CROSSING/docs/gameplay.mp4`.
 - Not done here: signed Android/iOS builds (need Android SDK + keystore, Mac/Xcode), real store
   sandbox purchases, real ads, on-device 60 fps check (Settings > Show FPS counter), playtesting.
 - Next: playtest difficulty with people, real art pass (sprites drop in via `"sprite"` in files),
   Android AAB + Play internal track with GodotGooglePlayBilling, iOS via a Mac or Codemagic.
 
-## Cosmic Saucer Drift (`apps/cosmic-saucer-drift`)
+## Cosmic Saucer Drift (`COSMIC-SAUCER-DRIFT/`: game in `game/`, builds in `builds/`, store kits in `stores/`)
+- Launch workspace (17 Nov 2026):
+  - Everything for the game moved into `COSMIC-SAUCER-DRIFT/`, with each build in its own folder:
+    web, debug APK, Play AAB (blocked: dl.google.com and the upload key), iOS Xcode project (2 zip parts),
+    Windows, macOS (unsigned) and Linux.
+  - 9 store kits researched 17 Nov 2026: Play, Apple, Steam, GOG, itch.io, Epic, Microsoft, other Android stores, web portals.
+  - Fixes: Play target SDK 36; an opaque 1024 icon for Apple; a 32-bit Play icon; a multi-platform privacy policy.
+  - Live checklist page with saved ticks, notes, bug reports and playtest logs:
+    https://claude.ai/artifact/4MPCACGK7XTCzwTcBbqN1m (65 steps, 12 done by Claude).
 - Upgrade pass (docs/UPGRADE_AUDIT.md): four audits of every system; verified bugs fixed (atomic save + backup,
   Android Back, ghost, finished AI, pause during load, dynamic resolution at 30 fps, EMP pool leak, leech/comet/
   repulsor rules, split-screen sound, road surface bands, skyway lip/wall, billboards, rock normals, touch after
@@ -175,7 +188,7 @@
   - The other 9 are waiting for credits (about 60 each) and stay hidden until baked.
   - Meshy spend for craft: 75 credits.
   - The account is shared with the Canopy Crossing session, which was generating animals at the same time.
-- v1 built from `prompts/claude/cosmic-saucer-drift.md` (concept + every add-on: extra weapons, pro
+- v1 built from `COSMIC-SAUCER-DRIFT/prompts/cosmic-saucer-drift.md` (concept + every add-on: extra weapons, pro
   moves, living tracks + secrets, rivals + boss races, cups, time trial + ghost, daily, 2P split-screen,
   cosmetics, reverse/mirror, achievements; free/no ads with an ads layer switched off).
 - v2 (same prompt file, "v2" section): real places. 14 tracks in 4 real systems + a Grand Prix: Mars,
@@ -208,7 +221,7 @@
   before: `docs/ADS_PLAN.md`. v1 listing stays "no ads, no purchases, no data collected".
 - Tests: `tools/run_tests.sh` - parse check, smoke test (667 checks incl. live power-up tests, perks,
   store flow, save migration, v3 graphics) and the AI race sim on all 42 layouts.
-- Builds: debug APK in `dist/android/` (signed with `tools/android/apksigner`, a small APK Signature
+- Builds: every build in its own folder under `COSMIC-SAUCER-DRIFT/builds/`; debug APK in `builds/android-apk-debug/` (signed with `tools/android/apksigner`, a small APK Signature
   Scheme v2 signer, because Google's build-tools download is blocked here); web build published as a
   private artifact: https://claude.ai/artifact/Wjris6Pjst5K54bF6z8MUY
 - Store kit: `docs/STORE_LISTING.md`, feature graphic, icon and screenshots in `docs/store/`,
@@ -229,7 +242,7 @@
   A racer that stops making progress (pinned on a wall or hazard) now gets the rescue beam.
 - Not done here: Play Store AAB (needs the real Android SDK + Gradle on the PC), testing on a real
   phone (especially the graphics tiers and frame rate), music. Next prompts:
-  `prompts/claude/cosmic-saucer-drift-next.md`.
+  `COSMIC-SAUCER-DRIFT/prompts/cosmic-saucer-drift-next.md`.
 
 ## Bug's-Eye View (`apps/bugs-eye-view`)
 - Built end to end from `prompts/claude/bugs-eye-view.md` (all 6 phases, all 16 add-ons).
@@ -402,7 +415,7 @@
 - Next: push the source to a private GitHub repo so cloud/phone sessions can read it.
 
 ## Prompts
-- `prompts/claude/cosmic-saucer-drift.md` - the concept + all chosen add-ons + ads-ready layer, then
+- `COSMIC-SAUCER-DRIFT/prompts/cosmic-saucer-drift.md` - the concept + all chosen add-ons + ads-ready layer, then
   the v2 section (real systems, alien/premium craft, power-up lineups); `cosmic-saucer-drift-next.md` -
   10 next-build prompts (phone playtest, tutorial race, 3D models, music, online leaderboards, more
   real worlds, rewarded ads, real-money purchases, online multiplayer, accessibility).

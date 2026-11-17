@@ -38,7 +38,7 @@ env:
 
 defaults:
   run:
-    working-directory: apps/canopy-crossing
+    working-directory: apps/CANOPY-CROSSING
 
 jobs:
   build:
@@ -158,19 +158,19 @@ jobs:
         if: always()
         with:
           name: canopy-crossing-android-apk
-          path: apps/canopy-crossing/build/android/canopycrossing.apk
+          path: apps/CANOPY-CROSSING/build/android/canopycrossing.apk
           if-no-files-found: ignore
 
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: canopy-crossing-phone-test-screens
-          path: apps/canopy-crossing/build/web_smoke
+          path: apps/CANOPY-CROSSING/build/web_smoke
           if-no-files-found: ignore
 
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: apps/canopy-crossing/build/site
+          path: apps/CANOPY-CROSSING/build/site
 
   deploy:
     needs: build

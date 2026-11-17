@@ -1,0 +1,1717 @@
+{
+ "schema": "csd.launch/1",
+ "project": "COSMIC SAUCER DRIFT",
+ "researched": "2026-11-17",
+ "stores": {
+  "play": "Google Play",
+  "apple": "App Store",
+  "steam": "Steam",
+  "itch": "itch.io",
+  "gog": "GOG",
+  "epic": "Epic",
+  "ms": "Microsoft Store",
+  "android": "Galaxy / Amazon",
+  "web": "Web portals"
+ },
+ "phases": [
+  {
+   "id": "workspace",
+   "name": "Workspace and builds",
+   "goal": "Everything for the launch in one place, every build in its own folder."
+  },
+  {
+   "id": "decide",
+   "name": "Decisions",
+   "goal": "The few choices only you can make. They shape every store form."
+  },
+  {
+   "id": "accounts",
+   "name": "Store accounts",
+   "goal": "Open the accounts early: identity checks and Steam's 30-day clock take the longest."
+  },
+  {
+   "id": "ready",
+   "name": "Release-ready game",
+   "goal": "The fixes and signed builds each store checks for."
+  },
+  {
+   "id": "assets",
+   "name": "Store pages and art",
+   "goal": "Text, screenshots, art and rating answers at each store's exact sizes."
+  },
+  {
+   "id": "test",
+   "name": "Testing",
+   "goal": "Real people on real devices. Google requires 12 testers for 14 days."
+  },
+  {
+   "id": "launch",
+   "name": "Submit and launch",
+   "goal": "One store at a time, cheapest and fastest first."
+  },
+  {
+   "id": "after",
+   "name": "After launch",
+   "goal": "Keep players happy: crashes, reviews and updates."
+  }
+ ],
+ "steps": [
+  {
+   "id": "ws-folder",
+   "phase": "workspace",
+   "title": "Project folder COSMIC-SAUCER-DRIFT with game, builds, stores and checklist",
+   "who": "claude",
+   "stores": [
+    "play",
+    "apple",
+    "steam",
+    "itch",
+    "gog",
+    "epic",
+    "ms",
+    "android",
+    "web"
+   ],
+   "how": [
+    "The game moved from apps/cosmic-saucer-drift to COSMIC-SAUCER-DRIFT/game (history kept).",
+    "builds/, stores/, checklist/ and prompts/ sit beside it."
+   ],
+   "why": "One folder holds everything for this game.",
+   "tip": "",
+   "done": "Everything lives in one folder now, so nothing gets lost between stores.",
+   "needs": [],
+   "cost": "",
+   "time": "",
+   "link": "https://github.com/namastegeitz/eddie-g/blob/claude/nifty-lamport-bfm2ub/COSMIC-SAUCER-DRIFT/",
+   "initial": "done",
+   "evidence": "437 files moved as renames; references in README, STATUS, RUN and tools updated."
+  },
+  {
+   "id": "ws-builds",
+   "phase": "workspace",
+   "title": "Every build in its own folder",
+   "who": "claude",
+   "stores": [
+    "play",
+    "apple",
+    "steam",
+    "itch",
+    "gog",
+    "epic",
+    "ms",
+    "android",
+    "web"
+   ],
+   "how": [
+    "web, android-apk-debug, android-aab-release, ios-xcode, windows, macos, linux, desktop-shortcuts.",
+    "builds/build_all.sh rebuilds any of them."
+   ],
+   "why": "Each store takes a different build. One folder each makes uploads obvious.",
+   "tip": "",
+   "done": "Builds sorted. The Play bundle folder stays empty until your upload key exists.",
+   "needs": [],
+   "cost": "",
+   "time": "",
+   "link": "https://github.com/namastegeitz/eddie-g/blob/claude/nifty-lamport-bfm2ub/COSMIC-SAUCER-DRIFT/builds/README.md",
+   "initial": "done",
+   "evidence": "Exported 17 Nov with Godot 4.7.2: Windows 42 MB, Linux 33 MB (started and quit cleanly), macOS 64 MB, iOS Xcode project 100 MB (2 zip parts, tested), web 46 MB, test APK 61 MB (signature verified)."
+  },
+  {
+   "id": "ws-research",
+   "phase": "workspace",
+   "title": "Current store rules researched (17 Nov 2026) and a kit per store",
+   "who": "claude",
+   "stores": [
+    "play",
+    "apple",
+    "steam",
+    "itch",
+    "gog",
+    "epic",
+    "ms",
+    "android",
+    "web"
+   ],
+   "how": [
+    "stores/<store>/README.md: cost, time, exact sizes, what we have, what's missing, steps, sources."
+   ],
+   "why": "Store rules change every year (Google's API 36 rule started 31 Aug 2026).",
+   "tip": "",
+   "done": "Each store has its own kit with sources. Claude re-checks them before each submission.",
+   "needs": [],
+   "cost": "",
+   "time": "",
+   "link": "https://github.com/namastegeitz/eddie-g/blob/claude/nifty-lamport-bfm2ub/COSMIC-SAUCER-DRIFT/stores/",
+   "initial": "done",
+   "evidence": "9 store kits written from official pages."
+  },
+  {
+   "id": "ws-live",
+   "phase": "workspace",
+   "title": "This live checklist, bug collector and playtest log",
+   "who": "claude",
+   "stores": [
+    "play",
+    "apple",
+    "steam",
+    "itch",
+    "gog",
+    "epic",
+    "ms",
+    "android",
+    "web"
+   ],
+   "how": [
+    "Tick steps here; ticks, notes, bug reports and playtest notes are saved and Claude can read them."
+   ],
+   "why": "",
+   "tip": "",
+   "done": "You're using it now. Everything you enter here reaches Claude.",
+   "needs": [],
+   "cost": "",
+   "time": "",
+   "link": "",
+   "initial": "done",
+   "evidence": "Published as a private page in your COSMIC SAUCER DRIFT folder."
+  },
+  {
+   "id": "ws-folder-screen",
+   "phase": "workspace",
+   "title": "COSMIC SAUCER DRIFT folder on your Artifacts page",
+   "who": "claude",
+   "stores": [
+    "play",
+    "apple",
+    "steam",
+    "itch",
+    "gog",
+    "epic",
+    "ms",
+    "android",
+    "web"
+   ],
+   "how": [
+    "Holds the playable game, this checklist and the privacy policy page.",
+    "Game: https://claude.ai/artifact/Wjris6Pjst5K54bF6z8MUY",
+    "Privacy policy: https://claude.ai/artifact/12KFSui6FLptDfppK9aVCp"
+   ],
+   "why": "",
+   "tip": "",
+   "done": "Open claude.ai > Artifacts to find the folder.",
+   "needs": [],
+   "cost": "",
+   "time": "",
+   "link": "",
+   "initial": "done",
+   "evidence": ""
+  },
+  {
+   "id": "dec-publisher",
+   "phase": "decide",
+   "title": "Choose the developer name players will see",
+   "who": "you",
+   "stores": [
+    "play",
+    "apple",
+    "steam",
+    "itch",
+    "gog",
+    "epic",
+    "ms",
+    "android",
+    "web"
+   ],
+   "how": [
+    "The bundle id already uses \"aethertek\" (com.aethertek.cosmicsaucerdrift).",
+    "Use the same name everywhere: Play, Apple, Steam, itch.",
+    "Write it in the note below so Claude can fill it into every form."
+   ],
+   "why": "Stores show it on the page. Google and Apple check it against your ID for personal accounts.",
+   "tip": "On a personal Play or Apple account your legal name is shown. A brand name needs an organization account, and that needs a D-U-N-S number (free, up to ~30 days).",
+   "done": "Claude will use this name on every store page and in the privacy policy.",
+   "needs": [],
+   "cost": "",
+   "time": "5 min",
+   "link": "",
+   "initial": "todo",
+   "evidence": ""
+  },
+  {
+   "id": "dec-email",
+   "phase": "decide",
+   "title": "Create a support email for the game",
+   "who": "you",
+   "stores": [
+    "play",
+    "apple",
+    "steam",
+    "itch",
+    "gog",
+    "epic",
+    "ms",
+    "android",
+    "web"
+   ],
+   "how": [
+    "A fresh address just for the game, e.g. cosmicsaucerdrift.support@\u2026",
+    "Write it in the note so Claude can add it to the privacy policy and store pages."
+   ],
+   "why": "Google and Apple show it publicly; Apple also needs a support page.",
+   "tip": "Don't use your personal inbox: it will get spam once the game is public.",
+   "done": "Claude can now finish the privacy policy and support page.",
+   "needs": [],
+   "cost": "",
+   "time": "10 min",
+   "link": "",
+   "initial": "todo",
+   "evidence": ""
+  },
+  {
+   "id": "dec-price",
+   "phase": "decide",
+   "title": "Free or paid on each store",
+   "who": "you",
+   "stores": [
+    "play",
+    "apple",
+    "steam",
+    "itch",
+    "gog",
+    "epic",
+    "ms",
+    "android",
+    "web"
+   ],
+   "how": [
+    "The game is built free with no ads or purchases on every platform.",
+    "Choose per store: phones free, PC maybe paid (e.g. $4.99)."
+   ],
+   "why": "Price changes the forms: paid needs tax and bank details everywhere.",
+   "tip": "On Steam a free game generally can't become paid later. A paid one can go free with a week's notice.",
+   "done": "Noted. Claude will set up the store pages to match.",
+   "needs": [],
+   "cost": "",
+   "time": "5 min",
+   "link": "",
+   "initial": "todo",
+   "evidence": ""
+  },
+  {
+   "id": "dec-order",
+   "phase": "decide",
+   "title": "Agree the launch order",
+   "who": "both",
+   "stores": [
+    "play",
+    "apple",
+    "steam",
+    "itch",
+    "gog",
+    "epic",
+    "ms",
+    "android",
+    "web"
+   ],
+   "how": [
+    "Suggested order:",
+    "1. itch.io (free, same day) for feedback.",
+    "2. Google Play (14-day test).",
+    "3. Steam (30-day wait).",
+    "4. App Store (needs a Mac).",
+    "5. Microsoft Store, Epic, Galaxy Store.",
+    "6. GOG (curated, apply once released)."
+   ],
+   "why": "The slow clocks (Play test, Steam wait) run in parallel if they start early.",
+   "tip": "",
+   "done": "Great. Start the Play account and pay the Steam fee early; both clocks run while everything else gets done.",
+   "needs": [],
+   "cost": "",
+   "time": "5 min",
+   "link": "",
+   "initial": "todo",
+   "evidence": ""
+  },
+  {
+   "id": "dec-privacy-url",
+   "phase": "decide",
+   "title": "Make the privacy policy public",
+   "who": "both",
+   "stores": [
+    "play",
+    "apple",
+    "ms",
+    "epic",
+    "android"
+   ],
+   "how": [
+    "Claude made the page: https://claude.ai/artifact/12KFSui6FLptDfppK9aVCp (in your COSMIC SAUCER DRIFT folder).",
+    "Open it, choose Share, make it viewable by anyone with the link, then paste that public link in the note.",
+    "Or host game/docs/privacy-policy.html on GitHub Pages."
+   ],
+   "why": "Google and Apple refuse apps without a working privacy policy link, even apps that collect nothing.",
+   "tip": "Open the link in a private browser window to check it works without signing in.",
+   "done": "Paste this link into Play's App content and Apple's App Privacy forms.",
+   "needs": [
+    "dec-email"
+   ],
+   "cost": "",
+   "time": "5 min",
+   "link": "",
+   "initial": "todo",
+   "evidence": ""
+  },
+  {
+   "id": "dec-dsa",
+   "phase": "decide",
+   "title": "EU trader status for the App Store",
+   "who": "you",
+   "stores": [
+    "apple"
+   ],
+   "how": [
+    "App Store Connect asks if you are a \"trader\" under the EU Digital Services Act.",
+    "Trader: your address, phone and email are shown publicly in the EU.",
+    "Non-trader (a free, ad-free hobby game plausibly qualifies): nothing is published."
+   ],
+   "why": "Apple won't distribute in the EU until you answer.",
+   "tip": "It's your own assessment. If you later sell the game or add ads, you're likely a trader.",
+   "done": "Noted. Claude will mention it when you reach App Store Connect.",
+   "needs": [],
+   "cost": "",
+   "time": "5 min",
+   "link": "",
+   "initial": "todo",
+   "evidence": ""
+  },
+  {
+   "id": "dec-support-page",
+   "phase": "decide",
+   "title": "Support page (Apple requires a support URL)",
+   "who": "both",
+   "stores": [
+    "apple",
+    "steam",
+    "gog"
+   ],
+   "how": [
+    "Claude can build a one-page support site from the store text.",
+    "You share it publicly the same way as the privacy policy."
+   ],
+   "why": "App Store Connect won't save the listing without a support URL.",
+   "tip": "",
+   "done": "Use this link as Apple's Support URL and Steam's website link.",
+   "needs": [
+    "dec-email"
+   ],
+   "cost": "",
+   "time": "15 min",
+   "link": "",
+   "initial": "todo",
+   "evidence": ""
+  },
+  {
+   "id": "acc-play",
+   "phase": "accounts",
+   "title": "Open a Google Play Console account",
+   "who": "you",
+   "stores": [
+    "play"
+   ],
+   "how": [
+    "play.google.com/console, choose Personal.",
+    "Pay $25 and verify your legal name, address and ID.",
+    "Confirm your email and phone with codes.",
+    "Install the Play Console app on an Android 10+ phone to verify the device."
+   ],
+   "why": "Nothing on Google Play can start without it, including the 14-day test.",
+   "tip": "Verification can take hours to days, so start today.",
+   "done": "Next: create the upload key (Release-ready phase) so the signed bundle can be built.",
+   "needs": [],
+   "cost": "$25 once",
+   "time": "30 min + review",
+   "link": "https://github.com/namastegeitz/eddie-g/blob/claude/nifty-lamport-bfm2ub/COSMIC-SAUCER-DRIFT/stores/google-play/README.md",
+   "initial": "todo",
+   "evidence": ""
+  },
+  {
+   "id": "acc-apple",
+   "phase": "accounts",
+   "title": "Join the Apple Developer Program",
+   "who": "you",
+   "stores": [
+    "apple"
+   ],
+   "how": [
+    "Easiest on an iPhone: the Apple Developer app (2-factor sign-in, photo of your ID).",
+    "Enroll as an individual: $99 a year. Your legal name is shown as the seller.",
+    "Paste your Team ID in the note (Membership page) so Claude can put it in the iOS export."
+   ],
+   "why": "Needed for the App Store, TestFlight, and signing and notarizing the Mac build for Steam and GOG.",
+   "tip": "Apple gives no approval time; 2026 reports range from days to weeks. A team name with accents breaks App Store signing, so ask Apple for a plain-letter name if yours has them.",
+   "done": "Next: Claude puts your Team ID in the iOS preset; then the Mac build can be signed and notarized.",
+   "needs": [],
+   "cost": "$99 / year",
+   "time": "20 min + approval",
+   "link": "https://github.com/namastegeitz/eddie-g/blob/claude/nifty-lamport-bfm2ub/COSMIC-SAUCER-DRIFT/stores/apple-app-store/README.md",
+   "initial": "todo",
+   "evidence": ""
+  },
+  {
+   "id": "acc-steam",
+   "phase": "accounts",
+   "title": "Join Steamworks and pay the Steam Direct fee",
+   "who": "you",
+   "stores": [
+    "steam"
+   ],
+   "how": [
+    "partner.steamgames.com: sign up, pay $100.",
+    "Do the identity, tax interview and bank steps (15\u201330 days in total).",
+    "The 30-day release wait starts when the fee is paid."
+   ],
+   "why": "The longest fixed wait of any store. Starting now means it's over by the time the page is ready.",
+   "tip": "The tax interview takes 5\u201310 minutes and can't be saved halfway. Have your tax ID ready.",
+   "done": "The 30-day clock is running. Claude can start Steam's capsule art and screenshots.",
+   "needs": [],
+   "cost": "$100 per game",
+   "time": "1 h + 15\u201330 days",
+   "link": "https://github.com/namastegeitz/eddie-g/blob/claude/nifty-lamport-bfm2ub/COSMIC-SAUCER-DRIFT/stores/steam/README.md",
+   "initial": "todo",
+   "evidence": ""
+  },
+  {
+   "id": "acc-itch",
+   "phase": "accounts",
+   "title": "Create an itch.io account",
+   "who": "you",
+   "stores": [
+    "itch"
+   ],
+   "how": [
+    "itch.io/register is free.",
+    "For a free game no tax or payout setup is needed."
+   ],
+   "why": "The fastest way to get the game in front of players this week.",
+   "tip": "",
+   "done": "Next: upload the web build (Launch phase); it can be live today.",
+   "needs": [],
+   "cost": "Free",
+   "time": "5 min",
+   "link": "https://github.com/namastegeitz/eddie-g/blob/claude/nifty-lamport-bfm2ub/COSMIC-SAUCER-DRIFT/stores/itch-io/README.md",
+   "initial": "todo",
+   "evidence": ""
+  },
+  {
+   "id": "acc-ms",
+   "phase": "accounts",
+   "title": "Microsoft Store developer account (optional)",
+   "who": "you",
+   "stores": [
+    "ms"
+   ],
+   "how": [
+    "storedeveloper.microsoft.com: free for individuals since Sept 2025 (ID + selfie)."
+   ],
+   "why": "A free extra PC store. Packaging needs a Windows PC.",
+   "tip": "",
+   "done": "Next: MSIX packaging on a Windows PC.",
+   "needs": [],
+   "cost": "Free",
+   "time": "20 min",
+   "link": "https://github.com/namastegeitz/eddie-g/blob/claude/nifty-lamport-bfm2ub/COSMIC-SAUCER-DRIFT/stores/microsoft-store/README.md",
+   "initial": "todo",
+   "evidence": ""
+  },
+  {
+   "id": "acc-epic",
+   "phase": "accounts",
+   "title": "Epic Games Store developer account (optional)",
+   "who": "you",
+   "stores": [
+    "epic"
+   ],
+   "how": [
+    "dev.epicgames.com: organization, trader check, tax form, payout, then $100 per game."
+   ],
+   "why": "Windows and Mac only. You keep 100% of the first $1M.",
+   "tip": "",
+   "done": "Next: IARC age rating in Epic's portal.",
+   "needs": [],
+   "cost": "$100 per game",
+   "time": "up to 2+ weeks",
+   "link": "https://github.com/namastegeitz/eddie-g/blob/claude/nifty-lamport-bfm2ub/COSMIC-SAUCER-DRIFT/stores/epic-games-store/README.md",
+   "initial": "todo",
+   "evidence": ""
+  },
+  {
+   "id": "acc-samsung",
+   "phase": "accounts",
+   "title": "Samsung Galaxy Store seller account (optional)",
+   "who": "you",
+   "stores": [
+    "android"
+   ],
+   "how": [
+    "seller.samsungapps.com: needs commercial seller status even for free games."
+   ],
+   "why": "Reaches Samsung phones with the same bundle as Google Play.",
+   "tip": "",
+   "done": "Upload the same AAB as Play.",
+   "needs": [],
+   "cost": "Free",
+   "time": "1 h + review",
+   "link": "https://github.com/namastegeitz/eddie-g/blob/claude/nifty-lamport-bfm2ub/COSMIC-SAUCER-DRIFT/stores/other-android-stores/README.md",
+   "initial": "todo",
+   "evidence": ""
+  },
+  {
+   "id": "gr-target36",
+   "phase": "ready",
+   "title": "Play bundle targets Android 16 (API 36)",
+   "who": "claude",
+   "stores": [
+    "play",
+    "android"
+   ],
+   "how": [
+    "Google's rule since 31 Aug 2026 for new apps and updates."
+   ],
+   "why": "",
+   "tip": "",
+   "done": "Done in the \"Android AAB\" export preset.",
+   "needs": [],
+   "cost": "",
+   "time": "",
+   "link": "",
+   "initial": "done",
+   "evidence": "export_presets.cfg: gradle_build/target_sdk=\"36\" (was 35); min SDK 24; arm64-v8a on; category Game; no internet permission."
+  },
+  {
+   "id": "gr-icons",
+   "phase": "ready",
+   "title": "Store icons fixed for Apple and Google",
+   "who": "claude",
+   "stores": [
+    "apple",
+    "play"
+   ],
+   "how": [
+    "Apple: opaque 1024 px icon (Apple rejects transparency).",
+    "Google Play: 512 px icon saved as a 32-bit PNG."
+   ],
+   "why": "",
+   "tip": "",
+   "done": "Both icons meet the stores' rules.",
+   "needs": [],
+   "cost": "",
+   "time": "",
+   "link": "",
+   "initial": "done",
+   "evidence": "assets/icons/icon_1024_opaque.png used by the iOS preset; docs/store/play_icon_512.png is RGBA."
+  },
+  {
+   "id": "gr-tests",
+   "phase": "ready",
+   "title": "Automated game tests pass",
+   "who": "claude",
+   "stores": [
+    "play",
+    "apple",
+    "steam",
+    "itch",
+    "gog",
+    "epic",
+    "ms",
+    "android",
+    "web"
+   ],
+   "how": [
+    "1,125 smoke checks plus AI race simulations on all 42 track layouts."
+   ],
+   "why": "",
+   "tip": "",
+   "done": "A clean baseline. Claude reruns them before every build.",
+   "needs": [],
+   "cost": "",
+   "time": "",
+   "link": "",
+   "initial": "done",
+   "evidence": "Last full run: 1125 passed, 0 failed."
+  },
+  {
+   "id": "gr-version",
+   "phase": "ready",
+   "title": "Version 1.0.0 (build 1) in every export",
+   "who": "claude",
+   "stores": [
+    "play",
+    "apple",
+    "steam",
+    "itch",
+    "gog",
+    "epic",
+    "ms",
+    "android",
+    "web"
+   ],
+   "how": [
+    "Android version code 1 / name 1.0.0; iOS 1.0.0 (1)."
+   ],
+   "why": "",
+   "tip": "Every new upload to Google or Apple needs a higher build number. Claude bumps it.",
+   "done": "Ready for the first upload.",
+   "needs": [],
+   "cost": "",
+   "time": "",
+   "link": "",
+   "initial": "done",
+   "evidence": "Checked in export_presets.cfg."
+  },
+  {
+   "id": "gr-safearea",
+   "phase": "ready",
+   "title": "Keep the HUD clear of notches and rounded corners",
+   "who": "claude",
+   "stores": [
+    "play",
+    "apple",
+    "android"
+   ],
+   "how": [
+    "Android 16 forces edge-to-edge and iPhones have the Dynamic Island.",
+    "Move the HUD inside the display's safe area."
+   ],
+   "why": "Buttons under a notch are unusable, and reviewers notice.",
+   "tip": "",
+   "done": "Check it on your phone during testing; report anything hidden with the bug form.",
+   "needs": [],
+   "cost": "",
+   "time": "1 h",
+   "link": "",
+   "initial": "todo",
+   "evidence": ""
+  },
+  {
+   "id": "gr-back16",
+   "phase": "ready",
+   "title": "Back button and pause on Android 16",
+   "who": "both",
+   "stores": [
+    "play",
+    "android"
+   ],
+   "how": [
+    "Targeting API 36 turns on predictive back.",
+    "On an Android 16 phone, press Back in a race and in menus; it should pause or go back."
+   ],
+   "why": "If Back does nothing, players get stuck and leave 1-star reviews.",
+   "tip": "",
+   "done": "Back works. If not, report it and Claude will add the fallback.",
+   "needs": [
+    "t-phone"
+   ],
+   "cost": "",
+   "time": "5 min",
+   "link": "",
+   "initial": "todo",
+   "evidence": ""
+  },
+  {
+   "id": "gr-uploadkey",
+   "phase": "ready",
+   "title": "Create the Android upload key and back it up twice",
+   "who": "you",
+   "stores": [
+    "play",
+    "android"
+   ],
+   "how": [
+    "On your PC: keytool -genkeypair -v -keystore cosmicsaucerdrift-upload.jks -alias upload -keyalg RSA -keysize 2048 -validity 10000",
+    "Use the same password for the keystore and the key.",
+    "Keep two backups (USB stick and a password manager). Never put it in git or chat."
+   ],
+   "why": "Every Play update must be signed with this key.",
+   "tip": "Google can reset a lost upload key through support, but it takes days. Back it up now.",
+   "done": "Next: build the signed AAB.",
+   "needs": [
+    "acc-play"
+   ],
+   "cost": "",
+   "time": "10 min",
+   "link": "https://github.com/namastegeitz/eddie-g/blob/claude/nifty-lamport-bfm2ub/COSMIC-SAUCER-DRIFT/builds/android-aab-release/README.md",
+   "initial": "todo",
+   "evidence": ""
+  },
+  {
+   "id": "gr-aab",
+   "phase": "ready",
+   "title": "Build the signed Play bundle (AAB)",
+   "who": "both",
+   "stores": [
+    "play",
+    "android"
+   ],
+   "how": [
+    "Option A: on your PC with Godot 4.7.2, JDK 17 and the Android SDK, run builds/build_all.sh aab.",
+    "Option B: allow dl.google.com in this cloud session's network settings and Claude builds it here (you'd still supply the key)."
+   ],
+   "why": "Google Play only accepts a signed AAB.",
+   "tip": "Leave the GODOT_ANDROID_KEYSTORE_DEBUG_* variables unset; they can break release exports.",
+   "done": "Upload it to Play's internal test track first.",
+   "needs": [
+    "gr-uploadkey"
+   ],
+   "cost": "",
+   "time": "30 min",
+   "link": "https://github.com/namastegeitz/eddie-g/blob/claude/nifty-lamport-bfm2ub/COSMIC-SAUCER-DRIFT/builds/android-aab-release/README.md",
+   "initial": "todo",
+   "evidence": ""
+  },
+  {
+   "id": "gr-teamid",
+   "phase": "ready",
+   "title": "Put your Apple Team ID in the iOS export",
+   "who": "claude",
+   "stores": [
+    "apple"
+   ],
+   "how": [
+    "The iOS preset still has the placeholder ABCDE12345.",
+    "Claude swaps in your Team ID from the Apple account step and re-exports."
+   ],
+   "why": "",
+   "tip": "",
+   "done": "The Xcode project now signs with your team.",
+   "needs": [
+    "acc-apple"
+   ],
+   "cost": "",
+   "time": "5 min",
+   "link": "",
+   "initial": "todo",
+   "evidence": ""
+  },
+  {
+   "id": "gr-ios-build",
+   "phase": "ready",
+   "title": "Archive and upload the iOS build from a Mac",
+   "who": "you",
+   "stores": [
+    "apple"
+   ],
+   "how": [
+    "Since 28 Apr 2026 uploads must be built with Xcode 26 or later (macOS 15.6+).",
+    "Your Mac, or a cloud Mac: Codemagic (500 free Mac minutes a month), GitHub Actions macOS runners, MacinCloud.",
+    "Join the zip parts, open in Xcode, Archive, then Distribute to App Store Connect."
+   ],
+   "why": "Godot on Linux can only make the Xcode project; the signed app needs Xcode.",
+   "tip": "No Mac? Ask Claude to set up the cloud build with an App Store Connect API key (.p8 file).",
+   "done": "The build appears in TestFlight in about 15\u201330 minutes.",
+   "needs": [
+    "gr-teamid"
+   ],
+   "cost": "",
+   "time": "1 h",
+   "link": "https://github.com/namastegeitz/eddie-g/blob/claude/nifty-lamport-bfm2ub/COSMIC-SAUCER-DRIFT/builds/ios-xcode/README.md",
+   "initial": "todo",
+   "evidence": ""
+  },
+  {
+   "id": "gr-macsign",
+   "phase": "ready",
+   "title": "Sign and notarize the Mac build",
+   "who": "both",
+   "stores": [
+    "steam",
+    "gog",
+    "itch",
+    "epic"
+   ],
+   "how": [
+    "Needs the Apple Developer Program (Developer ID certificate + App Store Connect API key).",
+    "Godot 4.7 can sign and notarize from Linux with rcodesign (its download is blocked on this computer; works on your PC).",
+    "Or on a Mac: codesign, notarytool, stapler."
+   ],
+   "why": "Steam requires new Mac games to be notarized, and macOS blocks unsigned apps for most players.",
+   "tip": "",
+   "done": "Replace builds/macos with the notarized zip.",
+   "needs": [
+    "acc-apple"
+   ],
+   "cost": "",
+   "time": "1 h",
+   "link": "https://github.com/namastegeitz/eddie-g/blob/claude/nifty-lamport-bfm2ub/COSMIC-SAUCER-DRIFT/builds/macos/README.md",
+   "initial": "todo",
+   "evidence": ""
+  },
+  {
+   "id": "gr-winsign",
+   "phase": "ready",
+   "title": "Sign the Windows build for direct downloads (optional)",
+   "who": "you",
+   "stores": [
+    "itch",
+    "ms"
+   ],
+   "how": [
+    "Only for itch.io or website downloads. Steam, GOG, Epic and MSIX don't need it.",
+    "Options: Azure Artifact Signing ($9.99/month, US/Canada individuals) or an OV certificate."
+   ],
+   "why": "Unsigned .exe files show \"Windows protected your PC\".",
+   "tip": "",
+   "done": "Re-zip the signed exe into builds/windows.",
+   "needs": [],
+   "cost": "$10/month or ~$65\u2013440/year",
+   "time": "",
+   "link": "https://github.com/namastegeitz/eddie-g/blob/claude/nifty-lamport-bfm2ub/COSMIC-SAUCER-DRIFT/builds/windows/README.md",
+   "initial": "todo",
+   "evidence": ""
+  },
+  {
+   "id": "gr-privacy-link",
+   "phase": "ready",
+   "title": "Privacy policy button inside the game",
+   "who": "claude",
+   "stores": [
+    "apple",
+    "play"
+   ],
+   "how": [
+    "Apple's guideline 5.1.1(i) wants the policy reachable inside the app, not only on the store page.",
+    "Settings gets a \"Privacy policy\" button that opens the public link."
+   ],
+   "why": "A missing in-app link is a common App Store rejection.",
+   "tip": "",
+   "done": "Checked by the next test run; included in the next builds.",
+   "needs": [
+    "dec-privacy-url"
+   ],
+   "cost": "",
+   "time": "20 min",
+   "link": "",
+   "initial": "todo",
+   "evidence": ""
+  },
+  {
+   "id": "gr-ai-note",
+   "phase": "ready",
+   "title": "Write the AI-content disclosure",
+   "who": "claude",
+   "stores": [
+    "steam",
+    "itch"
+   ],
+   "how": [
+    "The HD craft, cockpit and volcanic rock models were generated with Meshy (AI).",
+    "Steam's content survey asks about AI content players see."
+   ],
+   "why": "Steam requires the disclosure; itch.io has an AI-generated tag.",
+   "tip": "",
+   "done": "Paste it into Steam's content survey.",
+   "needs": [],
+   "cost": "",
+   "time": "15 min",
+   "link": "",
+   "initial": "todo",
+   "evidence": ""
+  },
+  {
+   "id": "gr-hd-fleet",
+   "phase": "ready",
+   "title": "Finish the other 9 HD craft (optional before launch)",
+   "who": "both",
+   "stores": [
+    "play",
+    "apple",
+    "steam",
+    "itch",
+    "gog",
+    "epic",
+    "ms",
+    "android",
+    "web"
+   ],
+   "how": [
+    "Needs about 540 Meshy credits (the account had 55).",
+    "Top up, say go, and Claude makes them one at a time."
+   ],
+   "why": "More realistic craft to choose from; not required by any store.",
+   "tip": "",
+   "done": "",
+   "needs": [],
+   "cost": "~540 Meshy credits",
+   "time": "",
+   "link": "",
+   "initial": "todo",
+   "evidence": ""
+  },
+  {
+   "id": "as-play-text",
+   "phase": "assets",
+   "title": "Google Play text, tags and content answers",
+   "who": "claude",
+   "stores": [
+    "play"
+   ],
+   "how": [
+    "Name, short and full description, tags, data safety, content rating and target-audience answers."
+   ],
+   "why": "",
+   "tip": "",
+   "done": "Copy from STORE_LISTING.md into Play Console.",
+   "needs": [],
+   "cost": "",
+   "time": "",
+   "link": "https://github.com/namastegeitz/eddie-g/blob/claude/nifty-lamport-bfm2ub/COSMIC-SAUCER-DRIFT/game/docs/STORE_LISTING.md",
+   "initial": "done",
+   "evidence": "game/docs/STORE_LISTING.md (short description 73/80 characters)."
+  },
+  {
+   "id": "as-play-art",
+   "phase": "assets",
+   "title": "Google Play icon, feature graphic and screenshots",
+   "who": "claude",
+   "stores": [
+    "play"
+   ],
+   "how": [
+    "512 icon, 1024\u00d7500 feature graphic, 14 screenshots at 1280\u00d7720."
+   ],
+   "why": "",
+   "tip": "",
+   "done": "Enough to publish.",
+   "needs": [],
+   "cost": "",
+   "time": "",
+   "link": "",
+   "initial": "done",
+   "evidence": "game/docs/store/: icon, feature graphic, 6 worlds and 8 menus."
+  },
+  {
+   "id": "as-1080",
+   "phase": "assets",
+   "title": "1920\u00d71080 gameplay screenshots",
+   "who": "claude",
+   "stores": [
+    "play",
+    "steam",
+    "gog",
+    "epic",
+    "ms",
+    "itch"
+   ],
+   "how": [
+    "At least 5 real gameplay shots at 1080p.",
+    "Steam requires them; Google Play needs them for game promotion slots."
+   ],
+   "why": "Shared by Steam, GOG, Epic, Microsoft and Play's promotions.",
+   "tip": "",
+   "done": "Saved in stores/screenshots-1080p/.",
+   "needs": [],
+   "cost": "",
+   "time": "30 min",
+   "link": "",
+   "initial": "todo",
+   "evidence": ""
+  },
+  {
+   "id": "as-apple-shots",
+   "phase": "assets",
+   "title": "App Store screenshots (iPhone and iPad sizes)",
+   "who": "claude",
+   "stores": [
+    "apple"
+   ],
+   "how": [
+    "Landscape iPhone 2622\u00d71206 (required), large iPhone 2868\u00d71320, iPad 13\" 2752\u00d72064 (the game runs on iPad).",
+    "1\u201310 each, real gameplay, no transparency."
+   ],
+   "why": "App Store Connect won't submit without the largest sizes.",
+   "tip": "",
+   "done": "",
+   "needs": [],
+   "cost": "",
+   "time": "30 min",
+   "link": "",
+   "initial": "todo",
+   "evidence": ""
+  },
+  {
+   "id": "as-apple-text",
+   "phase": "assets",
+   "title": "App Store text and keywords",
+   "who": "claude",
+   "stores": [
+    "apple"
+   ],
+   "how": [
+    "Subtitle (30), promotional text (170), description (4000), keywords (100), category Games > Racing."
+   ],
+   "why": "",
+   "tip": "",
+   "done": "Paste into App Store Connect.",
+   "needs": [],
+   "cost": "",
+   "time": "20 min",
+   "link": "",
+   "initial": "todo",
+   "evidence": ""
+  },
+  {
+   "id": "as-steam-art",
+   "phase": "assets",
+   "title": "Steam capsules and library art",
+   "who": "claude",
+   "stores": [
+    "steam"
+   ],
+   "how": [
+    "Header 920\u00d7430, small 462\u00d7174, main 1232\u00d7706, vertical 748\u00d7896.",
+    "Library capsule 600\u00d7900, hero 3840\u00d71240, logo 1280\u00d7720."
+   ],
+   "why": "Steam's review refuses missing or wrong-size art.",
+   "tip": "",
+   "done": "",
+   "needs": [
+    "acc-steam"
+   ],
+   "cost": "",
+   "time": "1 h",
+   "link": "",
+   "initial": "todo",
+   "evidence": ""
+  },
+  {
+   "id": "as-apple-notes",
+   "phase": "assets",
+   "title": "App Review notes",
+   "who": "claude",
+   "stores": [
+    "apple"
+   ],
+   "how": [
+    "Single player works fully with touch.",
+    "Split-screen needs two game controllers.",
+    "No account or login; nothing collected."
+   ],
+   "why": "The reviewer may not have a controller. Saying so avoids a rejection.",
+   "tip": "",
+   "done": "Paste into App Store Connect > App Review Information.",
+   "needs": [],
+   "cost": "",
+   "time": "10 min",
+   "link": "",
+   "initial": "todo",
+   "evidence": ""
+  },
+  {
+   "id": "as-trailer",
+   "phase": "assets",
+   "title": "Gameplay trailer (30\u201360 s)",
+   "who": "claude",
+   "stores": [
+    "steam",
+    "play",
+    "apple",
+    "gog",
+    "itch"
+   ],
+   "how": [
+    "Captured from the real game, 1920\u00d71080 .mp4 at 60 fps.",
+    "Steam expects one; Play shows a YouTube trailer; Apple has short app previews."
+   ],
+   "why": "",
+   "tip": "Show racing in the first 3 seconds, not logos.",
+   "done": "",
+   "needs": [],
+   "cost": "",
+   "time": "2 h",
+   "link": "",
+   "initial": "todo",
+   "evidence": ""
+  },
+  {
+   "id": "as-itch-page",
+   "phase": "assets",
+   "title": "itch.io cover (630\u00d7500) and page text",
+   "who": "claude",
+   "stores": [
+    "itch"
+   ],
+   "how": [
+    "Cover image, short tagline and the store text."
+   ],
+   "why": "",
+   "tip": "",
+   "done": "",
+   "needs": [
+    "acc-itch"
+   ],
+   "cost": "",
+   "time": "20 min",
+   "link": "",
+   "initial": "todo",
+   "evidence": ""
+  },
+  {
+   "id": "as-ratings",
+   "phase": "assets",
+   "title": "Age-rating answers for every store",
+   "who": "claude",
+   "stores": [
+    "play",
+    "apple",
+    "steam",
+    "epic",
+    "ms"
+   ],
+   "how": [
+    "IARC (Play, Epic, Microsoft): cartoon fantasy violence, no blood, nothing else.",
+    "Apple's age-rating questionnaire and Steam's content survey use the same facts."
+   ],
+   "why": "",
+   "tip": "",
+   "done": "Expect roughly PEGI 3\u20137, ESRB E\u2013E10+; Apple's new tiers give 4+ (none) or 9+ (cartoon violence).",
+   "needs": [],
+   "cost": "",
+   "time": "20 min",
+   "link": "",
+   "initial": "todo",
+   "evidence": ""
+  },
+  {
+   "id": "as-privacy-labels",
+   "phase": "assets",
+   "title": "\"Data not collected\" answers for Play and Apple",
+   "who": "claude",
+   "stores": [
+    "play",
+    "apple"
+   ],
+   "how": [
+    "The game sends nothing anywhere: saves stay on the device, no ads, no analytics.",
+    "Play Data safety says No data collected; Apple App Privacy says Data Not Collected."
+   ],
+   "why": "",
+   "tip": "",
+   "done": "Copy the answers into both consoles.",
+   "needs": [],
+   "cost": "",
+   "time": "",
+   "link": "",
+   "initial": "done",
+   "evidence": "Play answers in STORE_LISTING.md; Apple answers in stores/apple-app-store."
+  },
+  {
+   "id": "t-phone",
+   "phase": "test",
+   "title": "Play a full cup on your own phone",
+   "who": "you",
+   "stores": [
+    "play",
+    "android",
+    "apple"
+   ],
+   "how": [
+    "Install builds/android-apk-debug on your phone.",
+    "Play one cup with touch controls, then try the cockpit view and the Hangar.",
+    "Log it in Playtests below, and report anything odd as a bug."
+   ],
+   "why": "The first real-device check before strangers see it.",
+   "tip": "",
+   "done": "Thanks! Claude reads your playtest notes and bug reports and fixes what comes up.",
+   "needs": [],
+   "cost": "",
+   "time": "20 min",
+   "link": "https://github.com/namastegeitz/eddie-g/blob/claude/nifty-lamport-bfm2ub/COSMIC-SAUCER-DRIFT/builds/android-apk-debug/README.md",
+   "initial": "todo",
+   "evidence": ""
+  },
+  {
+   "id": "t-bugs",
+   "phase": "test",
+   "title": "Report every glitch in the bug form",
+   "who": "you",
+   "stores": [
+    "play",
+    "apple",
+    "steam",
+    "itch",
+    "gog",
+    "epic",
+    "ms",
+    "android",
+    "web"
+   ],
+   "how": [
+    "Use the Bugs tab: what happened, what you expected, which build and device."
+   ],
+   "why": "Small bugs found now are cheap. In reviews they cost stars.",
+   "tip": "",
+   "done": "Reports are saved for Claude, who fixes them and marks them Fixed.",
+   "needs": [
+    "t-phone"
+   ],
+   "cost": "",
+   "time": "",
+   "link": "",
+   "initial": "todo",
+   "evidence": ""
+  },
+  {
+   "id": "t-play-closed",
+   "phase": "test",
+   "title": "Google Play closed test: 12+ testers for 14 days",
+   "who": "you",
+   "stores": [
+    "play"
+   ],
+   "how": [
+    "Upload the AAB to a closed track and invite 15\u201320 people (emails or a Google Group).",
+    "At least 12 must stay opted in for 14 days in a row."
+   ],
+   "why": "New personal Play accounts can't publish until this is done.",
+   "tip": "Ask testers to really play: a few races every few days. Google is said to check engagement.",
+   "done": "After 14 days, apply for production in Play Console.",
+   "needs": [
+    "gr-aab"
+   ],
+   "cost": "",
+   "time": "14 days",
+   "link": "",
+   "initial": "todo",
+   "evidence": ""
+  },
+  {
+   "id": "t-testflight",
+   "phase": "test",
+   "title": "TestFlight on an iPhone or iPad",
+   "who": "you",
+   "stores": [
+    "apple"
+   ],
+   "how": [
+    "Internal testers (your team) need no review; external testers need a short beta review."
+   ],
+   "why": "",
+   "tip": "",
+   "done": "Fix anything found, then submit for App Review.",
+   "needs": [
+    "gr-ios-build"
+   ],
+   "cost": "",
+   "time": "1\u20133 days",
+   "link": "",
+   "initial": "todo",
+   "evidence": ""
+  },
+  {
+   "id": "t-lowend",
+   "phase": "test",
+   "title": "Check speed on a cheap or older phone",
+   "who": "you",
+   "stores": [
+    "play",
+    "android"
+   ],
+   "how": [
+    "Graphics on Auto should hold about 30 fps or better.",
+    "Note the phone model and fps in Playtests."
+   ],
+   "why": "Most Play users have mid or low-end phones.",
+   "tip": "",
+   "done": "",
+   "needs": [
+    "t-phone"
+   ],
+   "cost": "",
+   "time": "",
+   "link": "",
+   "initial": "todo",
+   "evidence": ""
+  },
+  {
+   "id": "t-deck",
+   "phase": "test",
+   "title": "Steam Deck / gamepad check (optional)",
+   "who": "you",
+   "stores": [
+    "steam"
+   ],
+   "how": [
+    "Play with only a gamepad at 1280\u00d7800: menus, races, the Hangar."
+   ],
+   "why": "",
+   "tip": "",
+   "done": "",
+   "needs": [
+    "acc-steam"
+   ],
+   "cost": "",
+   "time": "",
+   "link": "",
+   "initial": "todo",
+   "evidence": ""
+  },
+  {
+   "id": "l-itch",
+   "phase": "launch",
+   "title": "Publish on itch.io",
+   "who": "both",
+   "stores": [
+    "itch"
+   ],
+   "how": [
+    "Upload the web zip (play in browser) and the Windows, Linux and Mac downloads (and the APK).",
+    "Set price, cover and screenshots, then Publish."
+   ],
+   "why": "Live the same day. A link to share for feedback while the Play test runs.",
+   "tip": "",
+   "done": "Live! Share the link and collect feedback in Playtests.",
+   "needs": [
+    "acc-itch",
+    "as-itch-page"
+   ],
+   "cost": "",
+   "time": "1 h",
+   "link": "https://github.com/namastegeitz/eddie-g/blob/claude/nifty-lamport-bfm2ub/COSMIC-SAUCER-DRIFT/stores/itch-io/README.md",
+   "initial": "todo",
+   "evidence": ""
+  },
+  {
+   "id": "l-play",
+   "phase": "launch",
+   "title": "Apply for production and release on Google Play",
+   "who": "you",
+   "stores": [
+    "play"
+   ],
+   "how": [
+    "After the 14-day test: Play Console > Apply for production (about 7 days).",
+    "Then send the release for review (hours to 7 days)."
+   ],
+   "why": "",
+   "tip": "",
+   "done": "Live on Google Play!",
+   "needs": [
+    "t-play-closed",
+    "dec-privacy-url"
+   ],
+   "cost": "",
+   "time": "1\u20132 weeks",
+   "link": "",
+   "initial": "todo",
+   "evidence": ""
+  },
+  {
+   "id": "l-steam-page",
+   "phase": "launch",
+   "title": "Steam Coming Soon page live (14+ days before release)",
+   "who": "you",
+   "stores": [
+    "steam"
+   ],
+   "how": [
+    "Submit the store page for review (plan 7 business days), then make it public.",
+    "Wishlists start counting."
+   ],
+   "why": "",
+   "tip": "",
+   "done": "",
+   "needs": [
+    "as-steam-art",
+    "as-1080",
+    "as-trailer"
+   ],
+   "cost": "",
+   "time": "7\u201310 days",
+   "link": "",
+   "initial": "todo",
+   "evidence": ""
+  },
+  {
+   "id": "l-steam",
+   "phase": "launch",
+   "title": "Upload builds and release on Steam",
+   "who": "both",
+   "stores": [
+    "steam"
+   ],
+   "how": [
+    "Upload the Windows, Linux and Mac depots with steamcmd (from a PC; blocked here).",
+    "Build review (plan 7 business days), then release once 30 days have passed since the fee."
+   ],
+   "why": "",
+   "tip": "",
+   "done": "Live on Steam!",
+   "needs": [
+    "l-steam-page",
+    "gr-macsign"
+   ],
+   "cost": "",
+   "time": "1\u20132 weeks",
+   "link": "",
+   "initial": "todo",
+   "evidence": ""
+  },
+  {
+   "id": "l-apple",
+   "phase": "launch",
+   "title": "Submit for App Review and release",
+   "who": "you",
+   "stores": [
+    "apple"
+   ],
+   "how": [
+    "App Store Connect: screenshots, text, age rating, App Privacy, support URL, then Submit."
+   ],
+   "why": "",
+   "tip": "",
+   "done": "Live on the App Store! The iPad version also appears for Apple-silicon Macs unless you opt out.",
+   "needs": [
+    "t-testflight",
+    "as-apple-shots",
+    "as-apple-text",
+    "dec-support-page",
+    "dec-dsa",
+    "gr-privacy-link",
+    "as-apple-notes"
+   ],
+   "cost": "",
+   "time": "1\u20133 days",
+   "link": "",
+   "initial": "todo",
+   "evidence": ""
+  },
+  {
+   "id": "l-ms",
+   "phase": "launch",
+   "title": "Microsoft Store release (optional)",
+   "who": "you",
+   "stores": [
+    "ms"
+   ],
+   "how": [
+    "Package as MSIX on a Windows PC, IARC rating, listing, certification (\u22643 business days)."
+   ],
+   "why": "",
+   "tip": "",
+   "done": "",
+   "needs": [
+    "acc-ms"
+   ],
+   "cost": "",
+   "time": "",
+   "link": "",
+   "initial": "todo",
+   "evidence": ""
+  },
+  {
+   "id": "l-android-other",
+   "phase": "launch",
+   "title": "Galaxy Store / Amazon Fire release (optional)",
+   "who": "you",
+   "stores": [
+    "android"
+   ],
+   "how": [
+    "Upload the same AAB as Play."
+   ],
+   "why": "",
+   "tip": "",
+   "done": "",
+   "needs": [
+    "acc-samsung",
+    "gr-aab"
+   ],
+   "cost": "",
+   "time": "",
+   "link": "",
+   "initial": "todo",
+   "evidence": ""
+  },
+  {
+   "id": "l-epic",
+   "phase": "launch",
+   "title": "Epic Games Store release (optional)",
+   "who": "you",
+   "stores": [
+    "epic"
+   ],
+   "how": [
+    "IARC rating, product page review, BuildPatch upload, final review."
+   ],
+   "why": "",
+   "tip": "",
+   "done": "",
+   "needs": [
+    "acc-epic",
+    "gr-macsign"
+   ],
+   "cost": "",
+   "time": "",
+   "link": "",
+   "initial": "todo",
+   "evidence": ""
+  },
+  {
+   "id": "l-portals",
+   "phase": "launch",
+   "title": "Newgrounds and Game Jolt (optional)",
+   "who": "you",
+   "stores": [
+    "web"
+   ],
+   "how": [
+    "Upload the same web zip as itch.io. Free, same day."
+   ],
+   "why": "",
+   "tip": "",
+   "done": "",
+   "needs": [
+    "l-itch"
+   ],
+   "cost": "",
+   "time": "30 min",
+   "link": "https://github.com/namastegeitz/eddie-g/blob/claude/nifty-lamport-bfm2ub/COSMIC-SAUCER-DRIFT/stores/web-portals/README.md",
+   "initial": "todo",
+   "evidence": ""
+  },
+  {
+   "id": "l-gog",
+   "phase": "launch",
+   "title": "Apply to GOG",
+   "who": "you",
+   "stores": [
+    "gog"
+   ],
+   "how": [
+    "Once it's out on Steam or itch: lp.gog.com/submit-your-game.",
+    "GOG curates; no reply time is published."
+   ],
+   "why": "",
+   "tip": "Mention reviews and player numbers from the other stores.",
+   "done": "",
+   "needs": [
+    "l-steam"
+   ],
+   "cost": "",
+   "time": "",
+   "link": "https://github.com/namastegeitz/eddie-g/blob/claude/nifty-lamport-bfm2ub/COSMIC-SAUCER-DRIFT/stores/gog/README.md",
+   "initial": "todo",
+   "evidence": ""
+  },
+  {
+   "id": "post-crashes",
+   "phase": "after",
+   "title": "Check crash reports weekly",
+   "who": "both",
+   "stores": [
+    "play",
+    "apple",
+    "steam"
+   ],
+   "how": [
+    "Play Console Android vitals, App Store Connect crashes, Steam reviews.",
+    "Paste anything odd into the bug form."
+   ],
+   "why": "",
+   "tip": "",
+   "done": "",
+   "needs": [
+    "l-play"
+   ],
+   "cost": "",
+   "time": "",
+   "link": "",
+   "initial": "todo",
+   "evidence": ""
+  },
+  {
+   "id": "post-reviews",
+   "phase": "after",
+   "title": "Reply to reviews",
+   "who": "you",
+   "stores": [
+    "play",
+    "apple",
+    "steam",
+    "itch"
+   ],
+   "how": [
+    "A short, friendly reply. Fixed bugs can be mentioned in the reply."
+   ],
+   "why": "",
+   "tip": "",
+   "done": "",
+   "needs": [
+    "l-play"
+   ],
+   "cost": "",
+   "time": "",
+   "link": "",
+   "initial": "todo",
+   "evidence": ""
+  },
+  {
+   "id": "post-update",
+   "phase": "after",
+   "title": "Ship the first update",
+   "who": "claude",
+   "stores": [
+    "play",
+    "apple",
+    "steam",
+    "itch",
+    "gog",
+    "epic",
+    "ms",
+    "android",
+    "web"
+   ],
+   "how": [
+    "Fixes from bug reports, with a higher build number, to every store."
+   ],
+   "why": "",
+   "tip": "",
+   "done": "Updates keep stores recommending the game.",
+   "needs": [
+    "l-play"
+   ],
+   "cost": "",
+   "time": "",
+   "link": "",
+   "initial": "todo",
+   "evidence": ""
+  },
+  {
+   "id": "post-feedback",
+   "phase": "after",
+   "title": "Review the bug and playtest data together monthly",
+   "who": "both",
+   "stores": [
+    "play",
+    "apple",
+    "steam",
+    "itch",
+    "gog",
+    "epic",
+    "ms",
+    "android",
+    "web"
+   ],
+   "how": [
+    "Ask Claude to read this page's reports and plan the next update."
+   ],
+   "why": "",
+   "tip": "",
+   "done": "",
+   "needs": [],
+   "cost": "",
+   "time": "",
+   "link": "",
+   "initial": "todo",
+   "evidence": ""
+  }
+ ]
+}

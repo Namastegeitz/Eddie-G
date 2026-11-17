@@ -1,0 +1,1745 @@
+{
+ "researched": "17 Nov 2026, from Apple, Google, Amazon, Samsung, Valve, GOG, itch.io, Epic and Microsoft pages, checked against the project as it is today",
+ "stores": [
+  {
+   "key": "apple",
+   "folder": "apple-app-store",
+   "label": "Apple App Store"
+  },
+  {
+   "key": "google",
+   "folder": "google-play",
+   "label": "Google Play"
+  },
+  {
+   "key": "amazon",
+   "folder": "amazon-samsung",
+   "label": "Amazon Appstore + Samsung Galaxy Store"
+  },
+  {
+   "key": "steam",
+   "folder": "steam",
+   "label": "Steam"
+  },
+  {
+   "key": "gog",
+   "folder": "gog",
+   "label": "GOG"
+  },
+  {
+   "key": "itch",
+   "folder": "itch-io",
+   "label": "itch.io"
+  },
+  {
+   "key": "epic",
+   "folder": "epic",
+   "label": "Epic Games Store + Microsoft Store"
+  }
+ ],
+ "phases": [
+  {
+   "id": "p0",
+   "name": "Phase 0: Set up the project for launch",
+   "goal": "One folder for everything, builds for every platform, the research and the paperwork drafts. Claude did these today.",
+   "tasks": [
+    {
+     "id": "c-folder",
+     "title": "Put all of Canopy Crossing in one folder: CANOPY-CROSSING",
+     "owner": "claude",
+     "stores": [
+      "all"
+     ],
+     "why": "Everything for the game (source, builds, store paperwork) lives in one place you can find and hand over.",
+     "how": [
+      "Moved apps/canopy-crossing to apps/CANOPY-CROSSING and updated every link and workflow.",
+      "Added BUILDS/ (one folder per platform) and LAUNCH/ (one folder per store)."
+     ],
+     "done_when": "apps/CANOPY-CROSSING opens in Godot and every test passes from there.",
+     "next": "Builds next."
+    },
+    {
+     "id": "c-builds",
+     "title": "Build Windows, macOS, Linux and web, each into its own folder",
+     "owner": "claude",
+     "stores": [
+      "steam",
+      "gog",
+      "itch",
+      "epic"
+     ],
+     "why": "Each store takes a different file; one folder per platform keeps them apart and shows what's ready.",
+     "how": [
+      "tools/build_all.sh exports each platform into BUILDS/<platform>/ with a BUILD_INFO.json (version, commit, size, checksum).",
+      "Checked: the Linux build starts and reaches the home screen; the web build passes phone, tablet, mouse and X-key tests in a real browser."
+     ],
+     "done_when": "BUILDS/windows, macos, linux and web each hold a zip and a BUILD_INFO.json.",
+     "next": "The builds aren't signed yet: Phase 5."
+    },
+    {
+     "id": "c-ios-project",
+     "title": "Export the iOS Xcode project into BUILDS/ios",
+     "owner": "claude",
+     "stores": [
+      "apple"
+     ],
+     "why": "Godot on Linux can make the Xcode project; turning it into an App Store upload needs a Mac (or a Mac in GitHub Actions).",
+     "how": [
+      "Exported with Godot 4.7.2: iPhone + iPad, iOS 15.0 and newer, privacy manifest included."
+     ],
+     "done_when": "BUILDS/ios/CanopyCrossing-iOS-XcodeProject.zip exists.",
+     "next": "Phase 5 turns it into a TestFlight build."
+    },
+    {
+     "id": "c-release-workflow",
+     "title": "Set up GitHub Actions to build all six platforms (Android too)",
+     "owner": "claude",
+     "stores": [
+      "all"
+     ],
+     "why": "This machine can't download Google's Android tools, and store builds should come from one repeatable place.",
+     "how": [
+      ".github/workflows/canopy-crossing-release.yml builds web, Windows, macOS, Linux, iOS project, Android APK and the Play Store .aab.",
+      "Each platform is its own download; a canopy-release-v* tag also makes a draft GitHub Release."
+     ],
+     "done_when": "The workflow file is in the repo.",
+     "next": "You run it once your Android upload key is in GitHub (Phase 5)."
+    },
+    {
+     "id": "c-version",
+     "title": "Use one version number everywhere",
+     "owner": "claude",
+     "stores": [
+      "all"
+     ],
+     "why": "Android, iOS, Windows and macOS each read the version from a different setting; they disagreed (0.9.0 vs 1.0.0).",
+     "how": [
+      "tools/set_version.py sets it everywhere at once; now 0.9.0, build 1."
+     ],
+     "done_when": "python3 tools/set_version.py shows the same version for every platform.",
+     "next": "Set 1.0.0 before the first store upload (Phase 4)."
+    },
+    {
+     "id": "c-research",
+     "title": "Research every store's current rules (November 2026)",
+     "owner": "claude",
+     "stores": [
+      "all"
+     ],
+     "why": "Store rules change every year; several changed in 2026 (Android target API 36, Steam review times, Apple age ratings, Epic revenue share).",
+     "how": [
+      "Read each store's official pages and the Godot 4.7.2 source; saved per store in LAUNCH/<store>/requirements.md with sources, marking anything unverified."
+     ],
+     "done_when": "Every store folder has a requirements.md.",
+     "next": "Each step below links the official page to re-check on the day you do it."
+    },
+    {
+     "id": "c-listing",
+     "title": "Write the store text for every listing",
+     "owner": "claude",
+     "stores": [
+      "all"
+     ],
+     "why": "Every store asks for a name, short and long description and keywords, each with its own length limit.",
+     "how": [
+      "LAUNCH/shared/store-listing.md: name, Apple subtitle (29/30), Play short description (73/80), promotional text, keywords (96/100), Steam short description (283/300), full description (1822/4000)."
+     ],
+     "done_when": "Every field fits its limit.",
+     "next": "Read it once and change anything that doesn't sound like you."
+    },
+    {
+     "id": "c-iap-list",
+     "title": "List the 36 in-app products for App Store Connect and Play Console",
+     "owner": "claude",
+     "stores": [
+      "apple",
+      "google"
+     ],
+     "why": "Both consoles need each product created by hand with the right id, type and price.",
+     "how": [
+      "LAUNCH/shared/in-app-products.csv: ids, types, prices, and Apple's 45-character descriptions.",
+      "The season pass gets a new product id each season (Apple never lets an id be reused)."
+     ],
+     "done_when": "The CSV has every product with a description that fits.",
+     "next": "You'll enter these after the paid-apps agreements are signed."
+    },
+    {
+     "id": "c-privacy-draft",
+     "title": "Draft the privacy policy from what the game really does",
+     "owner": "claude",
+     "stores": [
+      "all"
+     ],
+     "why": "Apple, Google, Amazon, Samsung, Steam and Epic all need a privacy policy link.",
+     "how": [
+      "Checked the code: saves and gameplay events stay on the device; purchases go through the store; ads are still a sandbox.",
+      "LAUNCH/shared/privacy-policy.md, with [FILL IN] for your name, email and the ads section."
+     ],
+     "done_when": "The draft exists.",
+     "next": "Fill it in and host it (Phase 3)."
+    },
+    {
+     "id": "c-rating-draft",
+     "title": "Draft the age-rating answers",
+     "owner": "claude",
+     "stores": [
+      "all"
+     ],
+     "why": "Every store asks a rating questionnaire; wrong answers mean a wrong rating or a rejection.",
+     "how": [
+      "LAUNCH/shared/content-rating-answers.md, from the game's content: cartoon peril, no blood, no loot boxes, purchases yes.",
+      "Likely Apple 9+ (13+ if failing a run counts as frequent violence); ESRB Everyone."
+     ],
+     "done_when": "The draft exists.",
+     "next": "You answer the real questionnaires in Phase 3."
+    },
+    {
+     "id": "c-target-api",
+     "title": "Target Android API 36 for Google Play",
+     "owner": "claude",
+     "stores": [
+      "google"
+     ],
+     "why": "Since 31 Aug 2026 Google Play only accepts new apps and updates that target API 36; the Play Store build was set to 35.",
+     "how": [
+      "Set the Android AAB preset's target SDK to 36 (Godot 4.7.2 builds with SDK 36)."
+     ],
+     "done_when": "export_presets.cfg says target_sdk 36.",
+     "next": "Google will raise it again around August 2027."
+    },
+    {
+     "id": "c-ios-icon",
+     "title": "Make the App Store icon opaque",
+     "owner": "claude",
+     "stores": [
+      "apple"
+     ],
+     "why": "The 1024 px icon had see-through corners; App Store uploads are rejected for icons with transparency.",
+     "how": [
+      "assets/icons/icon_ios_1024.png: the same frog icon on the jungle green, no alpha channel; the iOS preset now uses it."
+     ],
+     "done_when": "The iOS export's icons have no transparency.",
+     "next": "Claude checks it again on the first real archive."
+    },
+    {
+     "id": "c-live-page",
+     "title": "Make this live checklist and bug log",
+     "owner": "claude",
+     "stores": [
+      "all"
+     ],
+     "why": "So you can see where things stand, tick steps off, and collect bug reports in one place.",
+     "how": [
+      "Progress, notes and bug reports are saved for everyone who opens the page; LAUNCH/README.md is the same checklist as a file."
+     ],
+     "done_when": "You can tick a step and see it turn green.",
+     "next": "Next is yours: Phase 1 decisions."
+    }
+   ]
+  },
+  {
+   "id": "p1",
+   "name": "Phase 1: Decide",
+   "goal": "A few choices that change everything after them. Decide these first; Claude can explain any of them.",
+   "tasks": [
+    {
+     "id": "d-publisher",
+     "title": "Decide who publishes: you as a person, or a company (e.g. Aethertek)",
+     "owner": "you",
+     "stores": [
+      "all"
+     ],
+     "why": "It decides the seller name on every store, the paperwork, and whether your home address is shown.",
+     "how": [
+      "Company: Apple needs a D-U-N-S number and a website; Google skips the 12-tester rule and shows the business address.",
+      "Individual: faster to start, but Google requires 12 testers for 14 days and shows a personal trader's address in the EU.",
+      "The builds currently say Aethertek (bundle id com.aethertek.canopycrossing)."
+     ],
+     "done_when": "You've picked one and written the legal name in this step's notes.",
+     "pitfall": "The bundle/package id can't change after the first upload: confirm com.aethertek.canopycrossing now.",
+     "next": "If it's a company, get the D-U-N-S number next; it can take weeks.",
+     "links": [
+      {
+       "label": "Apple enrollment",
+       "url": "https://developer.apple.com/programs/enroll/"
+      },
+      {
+       "label": "Google account types",
+       "url": "https://support.google.com/googleplay/android-developer/answer/13628312"
+      }
+     ]
+    },
+    {
+     "id": "d-duns",
+     "title": "Get a free D-U-N-S number (company only)",
+     "owner": "you",
+     "stores": [
+      "apple",
+      "google",
+      "amazon"
+     ],
+     "time": "up to 30 days",
+     "why": "Apple and Google both require it for organization accounts.",
+     "how": [
+      "Request it free from Dun & Bradstreet (Apple has a lookup tool on its site).",
+      "Make the legal name match exactly everywhere."
+     ],
+     "done_when": "You have the 9-digit number.",
+     "pitfall": "Don't pay a third-party 'D-U-N-S service'; it's free.",
+     "next": "Start the website while you wait.",
+     "links": [
+      {
+       "label": "Apple D-U-N-S lookup",
+       "url": "https://developer.apple.com/enroll/duns-lookup/"
+      }
+     ]
+    },
+    {
+     "id": "d-website",
+     "title": "Set up a small website and a support email",
+     "owner": "both",
+     "stores": [
+      "all"
+     ],
+     "why": "Needed for the support URL, the privacy policy and terms pages, Google organization verification, and AdMob's app-ads.txt.",
+     "how": [
+      "A one-page site is enough: about the game, support email, privacy policy, terms.",
+      "Claude can make the pages; you own the domain and email."
+     ],
+     "done_when": "The site is live on its own domain with a working support email.",
+     "pitfall": "Google verifies the site in Search Console: the URL must match exactly.",
+     "next": "Then host the privacy policy there (Phase 3)."
+    },
+    {
+     "id": "d-audience",
+     "title": "Decide the audience: everyone (incl. children) or 13 and older",
+     "owner": "you",
+     "stores": [
+      "apple",
+      "google"
+     ],
+     "why": "The game looks kid-friendly. Including under-13s brings Google's Families policy and US COPPA rules; choosing 13+ means the listing can't look like it's mainly for children.",
+     "how": [
+      "Read LAUNCH/shared/content-rating-answers.md, Audience section.",
+      "Recommendation: mixed audience with a neutral age question, and no personalised ads for children."
+     ],
+     "done_when": "You've chosen, and noted it here.",
+     "pitfall": "Never write 'for kids' in the listing unless you choose the Kids/Families route on purpose.",
+     "next": "This decides how ads work (next step)."
+    },
+    {
+     "id": "d-money-mobile",
+     "title": "Decide how the phone version makes money: purchases only, or purchases + ads",
+     "owner": "you",
+     "stores": [
+      "apple",
+      "google"
+     ],
+     "why": "Ads add the most paperwork: consent screens, Apple's tracking prompt, Data safety answers, ad-report links, and stricter rules for children.",
+     "how": [
+      "Purchases only: simplest, fastest approval.",
+      "Purchases + ads: Claude adds AdMob with Google's consent screen; you create an AdMob account."
+     ],
+     "done_when": "Chosen and noted here.",
+     "next": "Then decide the PC edition."
+    },
+    {
+     "id": "d-pc-edition",
+     "title": "Decide the PC edition: one price, no ads, no purchases (and its price)",
+     "owner": "you",
+     "stores": [
+      "steam",
+      "gog",
+      "itch",
+      "epic"
+     ],
+     "why": "Steam bans ads (even reward videos); real-money purchases on Steam must use Steam's own system; GOG expects DRM-free premium games.",
+     "how": [
+      "Recommended: a premium PC edition where everything is earnable by playing.",
+      "Pick a price (Valve suggests regional prices)."
+     ],
+     "done_when": "Price chosen and noted here.",
+     "next": "Claude then builds the PC edition (Phase 4)."
+    },
+    {
+     "id": "d-stores",
+     "title": "Pick your stores and the order",
+     "owner": "you",
+     "stores": [
+      "all"
+     ],
+     "why": "Each store costs time and sometimes money; some have long waiting periods that should start early.",
+     "how": [
+      "Suggested: Google Play + Apple first; itch.io any time (instant); Steam early because of its 30-day and 2-week waits; GOG when nearly finished (curated); Epic optional (2+ weeks verification); Amazon and Samsung last (each needs its own payment plugin)."
+     ],
+     "done_when": "Your list is in this step's notes.",
+     "next": "Then open the accounts (Phase 2)."
+    },
+    {
+     "id": "d-meshy",
+     "title": "Check which Meshy plan made the 3D models",
+     "owner": "you",
+     "stores": [
+      "all"
+     ],
+     "why": "Models made on Meshy's free plan are CC BY 4.0 (free to sell, but you must credit Meshy); paid-plan models are yours outright. The plan at the time each model was made is what counts.",
+     "how": [
+      "Check your Meshy account history for the date of the subscription vs the models (made on 10-12 Nov 2026).",
+      "Tell Claude: credit Meshy in the credits screen, or nothing needed."
+     ],
+     "done_when": "You know which, noted here.",
+     "next": "Claude adds the credits screen (Phase 3).",
+     "links": [
+      {
+       "label": "Meshy commercial use",
+       "url": "https://help.meshy.ai/en/articles/9992001-can-i-use-my-generated-assets-for-commercial-projects"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "p2",
+   "name": "Phase 2: Accounts, contracts and money",
+   "goal": "Open each store account, sign the paid agreements, and add tax and bank details. Only you can do these.",
+   "tasks": [
+    {
+     "id": "a-enroll",
+     "title": "Join the Apple Developer Program",
+     "owner": "you",
+     "stores": [
+      "apple",
+      "mac"
+     ],
+     "cost": "US$99/year",
+     "why": "Needed to publish on iPhone and iPad, and to notarize the Mac build for Steam, GOG and itch.io.",
+     "how": [
+      "Sign in with an Apple Account that has two-factor authentication, in your legal name.",
+      "Enroll as an individual, or as an organization with the D-U-N-S number and website.",
+      "No Mac needed for this step."
+     ],
+     "done_when": "You can sign in to App Store Connect.",
+     "pitfall": "Aliases and P.O. boxes delay approval.",
+     "next": "Sign the Paid Apps Agreement next.",
+     "links": [
+      {
+       "label": "Enroll",
+       "url": "https://developer.apple.com/programs/enroll/"
+      }
+     ]
+    },
+    {
+     "id": "a-agreements",
+     "title": "Sign Apple's Paid Apps Agreement, add tax forms and bank",
+     "owner": "you",
+     "stores": [
+      "apple"
+     ],
+     "why": "In-app purchases can't be created until the Account Holder signs it.",
+     "how": [
+      "App Store Connect > Business: Paid Apps Agreement, then bank, then the US tax form (W-9 in the US, W-8BEN or W-8BEN-E elsewhere)."
+     ],
+     "done_when": "Business shows the agreement as Active.",
+     "pitfall": "When Apple publishes a new agreement version you can't add apps or products until you accept it.",
+     "next": "Apply for the Small Business Program right after.",
+     "links": [
+      {
+       "label": "Agreements",
+       "url": "https://developer.apple.com/help/app-store-connect/manage-agreements/sign-and-update-agreements/"
+      }
+     ]
+    },
+    {
+     "id": "a-small-business",
+     "title": "Join Apple's Small Business Program (15% instead of 30%)",
+     "owner": "you",
+     "stores": [
+      "apple"
+     ],
+     "why": "Halves Apple's commission while you earn under US$1M a year.",
+     "how": [
+      "Apply after the Paid Apps Agreement is signed."
+     ],
+     "done_when": "Approval email received.",
+     "next": "Then the EU trader status.",
+     "links": [
+      {
+       "label": "Small Business Program",
+       "url": "https://developer.apple.com/app-store/small-business-program/"
+      }
+     ]
+    },
+    {
+     "id": "a-dsa",
+     "title": "Declare EU trader status in App Store Connect",
+     "owner": "you",
+     "stores": [
+      "apple"
+     ],
+     "why": "Mandatory since Feb 2025, or the game is removed from all 27 EU storefronts. Selling purchases makes you a trader.",
+     "how": [
+      "Business > Agreements > Compliance > Digital Services Act: address, phone and email shown on the EU page, verified by Apple."
+     ],
+     "done_when": "Status shows Verified.",
+     "next": "Then create the app record.",
+     "links": [
+      {
+       "label": "DSA trader requirements",
+       "url": "https://developer.apple.com/help/app-store-connect/manage-compliance-information/manage-european-union-digital-services-act-trader-requirements/"
+      }
+     ]
+    },
+    {
+     "id": "a-app-record",
+     "title": "Register the bundle id and create the app in App Store Connect",
+     "owner": "you",
+     "stores": [
+      "apple"
+     ],
+     "why": "Builds, products and the listing all hang off this record.",
+     "how": [
+      "Certificates, Identifiers & Profiles: explicit App ID com.aethertek.canopycrossing.",
+      "App Store Connect > Apps > New App: iOS, name Canopy Crossing, the bundle id, a SKU (permanent)."
+     ],
+     "done_when": "The app appears in App Store Connect.",
+     "pitfall": "The bundle id and SKU can never change after the first build.",
+     "next": "Make a CI key next so GitHub can upload builds.",
+     "links": [
+      {
+       "label": "Add a new app",
+       "url": "https://developer.apple.com/help/app-store-connect/create-an-app-record/add-a-new-app/"
+      }
+     ]
+    },
+    {
+     "id": "a-api-key",
+     "title": "Create an App Store Connect API team key for automatic uploads",
+     "owner": "you",
+     "stores": [
+      "apple"
+     ],
+     "why": "Lets GitHub Actions sign, build and upload iOS builds without you owning a Mac.",
+     "how": [
+      "Users and Access > Integrations > App Store Connect API > Team Keys (Admin role).",
+      "Download the .p8 (only once!), note the Key ID and Issuer ID; add them as GitHub secrets (Claude will say the names)."
+     ],
+     "done_when": "The three values are saved as GitHub secrets.",
+     "pitfall": "Use a Team key: individual keys can't create certificates and profiles.",
+     "next": "Claude then adds the iOS upload job (Phase 5).",
+     "links": [
+      {
+       "label": "API keys",
+       "url": "https://developer.apple.com/documentation/appstoreconnectapi/creating-api-keys-for-app-store-connect-api"
+      }
+     ]
+    },
+    {
+     "id": "g-account",
+     "title": "Open a Google Play developer account",
+     "owner": "you",
+     "stores": [
+      "google"
+     ],
+     "cost": "US$25 once",
+     "why": "Needed to publish on Google Play (and to register the package for Android developer verification).",
+     "how": [
+      "Personal (ID check, verify an Android phone) or Organization (D-U-N-S, website verified in Search Console).",
+      "The names on the account, payments profile and ID must match exactly."
+     ],
+     "done_when": "Play Console opens and the account is verified.",
+     "pitfall": "Personal accounts must run a closed test with 12 testers for 14 days before going public.",
+     "next": "Set up the payments profile next.",
+     "links": [
+      {
+       "label": "Sign up",
+       "url": "https://support.google.com/googleplay/android-developer/answer/6112435"
+      }
+     ]
+    },
+    {
+     "id": "g-payments",
+     "title": "Set up Google's payments profile (merchant account)",
+     "owner": "you",
+     "stores": [
+      "google"
+     ],
+     "why": "You can't create in-app products without it.",
+     "how": [
+      "Play Console > Monetize with Play > Products: legal name, address (no P.O. box), bank in the same country, tax info."
+     ],
+     "done_when": "The products page lets you create an in-app product.",
+     "next": "Then the trader declaration.",
+     "links": [
+      {
+       "label": "Payments profile",
+       "url": "https://support.google.com/googleplay/android-developer/answer/7161426"
+      }
+     ]
+    },
+    {
+     "id": "g-trader",
+     "title": "Declare trader status in Play Console (deadline 1 Feb 2027)",
+     "owner": "you",
+     "stores": [
+      "google"
+     ],
+     "why": "Every account must declare it by 1 Feb 2027 or updates get blocked; a game that sells purchases is a trader.",
+     "how": [
+      "Account details > About you, then per app under App content; traders add contact details and a terms-of-service link per app."
+     ],
+     "done_when": "Declared.",
+     "pitfall": "Declaring 'non-trader' to skip verification can get the account suspended.",
+     "next": "Create the app record.",
+     "links": [
+      {
+       "label": "Trader status",
+       "url": "https://support.google.com/googleplay/android-developer/answer/17594752"
+      }
+     ]
+    },
+    {
+     "id": "g-create-app",
+     "title": "Create the app in Play Console",
+     "owner": "you",
+     "stores": [
+      "google"
+     ],
+     "why": "Registers com.aethertek.canopycrossing to you (Android developer verification) and opens all the App content forms.",
+     "how": [
+      "Create app: name, default language, Game, Free.",
+      "Check the package shows as registered on the developer verification page."
+     ],
+     "done_when": "The app's dashboard opens.",
+     "next": "Steam's account next if Steam is on your list.",
+     "links": [
+      {
+       "label": "Developer verification",
+       "url": "https://developer.android.com/developer-verification"
+      }
+     ]
+    },
+    {
+     "id": "s-account",
+     "title": "Open a Steamworks account and pay the app fee",
+     "owner": "you",
+     "stores": [
+      "steam"
+     ],
+     "cost": "US$100 per game",
+     "time": "15-30 days paperwork",
+     "why": "The fee starts Steam's waiting clock (about 30 days before you can release), so start early.",
+     "how": [
+      "partner.steamgames.com with a Steam account that has Steam Guard and a phone number.",
+      "Pay the Steam Direct fee; it's paid back after US$1,000 in sales."
+     ],
+     "done_when": "You have an app id.",
+     "pitfall": "Without a phone on the account you can't set builds live later.",
+     "next": "Fill in Steam's tax and bank forms right away.",
+     "links": [
+      {
+       "label": "Steam Direct fee",
+       "url": "https://partner.steamgames.com/doc/gettingstarted/appfee"
+      }
+     ]
+    },
+    {
+     "id": "s-tax",
+     "title": "Complete Steam's tax and bank forms",
+     "owner": "you",
+     "stores": [
+      "steam"
+     ],
+     "why": "Steam won't release a game or pay you until these are verified.",
+     "how": [
+      "Legal details, bank (holder name must match), tax questionnaire (W-9 or W-8BEN)."
+     ],
+     "done_when": "Steamworks shows onboarding complete.",
+     "next": "Steam's store page comes in Phase 6/8.",
+     "links": [
+      {
+       "label": "Onboarding",
+       "url": "https://partner.steamgames.com/doc/gettingstarted/onboarding"
+      }
+     ]
+    },
+    {
+     "id": "i-account",
+     "title": "Open an itch.io account and do the tax interview",
+     "owner": "you",
+     "stores": [
+      "itch"
+     ],
+     "cost": "free",
+     "why": "itch.io is the quickest place to publish (no review for free pages), good for an early version or demo.",
+     "how": [
+      "Payouts: choose 'collected by itch.io, paid later' (PayPal or Payoneer, minimum US$5); do the tax interview."
+     ],
+     "done_when": "The tax interview shows Validated.",
+     "next": "Create an API key for butler later (Phase 5).",
+     "links": [
+      {
+       "label": "Payments",
+       "url": "https://itch.io/docs/creators/payments"
+      }
+     ]
+    },
+    {
+     "id": "e-account",
+     "title": "Open an Epic Games Store publisher account",
+     "owner": "you",
+     "stores": [
+      "epic"
+     ],
+     "cost": "US$100 per game",
+     "time": "verification 2+ weeks",
+     "why": "Epic pays 100% of the first US$1M each year, but verification takes weeks and blocks final review.",
+     "how": [
+      "Developer Portal: organization, Distribution Agreement, tax interview, Hyperwallet payouts."
+     ],
+     "done_when": "Organization verified.",
+     "pitfall": "Epic needs every patch no later than other stores.",
+     "next": "Optional: skip if Epic isn't on your list.",
+     "links": [
+      {
+       "label": "Onboarding",
+       "url": "https://dev.epicgames.com/docs/epic-games-store/get-started/get-started-steps/onboarding"
+      }
+     ]
+    },
+    {
+     "id": "gog-submit",
+     "title": "Submit Canopy Crossing to GOG for consideration (when nearly finished)",
+     "owner": "you",
+     "stores": [
+      "gog"
+     ],
+     "why": "GOG is curated: they decide whether to sign the game, and want to see it close to finished.",
+     "how": [
+      "Fill in the form at gog.com/indie (about 15 questions, free).",
+      "If accepted, agree the revenue split in writing (70/30 is their starting point)."
+     ],
+     "done_when": "GOG replies with a Product Manager and contract.",
+     "next": "If accepted, GOG builds go through Pipeline Builder (Phase 5).",
+     "links": [
+      {
+       "label": "Submit your game",
+       "url": "https://www.gog.com/indie"
+      }
+     ]
+    },
+    {
+     "id": "as-accounts",
+     "title": "Optional: Amazon Appstore and Samsung Galaxy Store accounts",
+     "owner": "you",
+     "stores": [
+      "amazon"
+     ],
+     "why": "Amazon now only reaches existing Fire tablets (new Alexa tablets use Google Play); Samsung reaches Galaxy phones. Each needs its own payment system in the game.",
+     "how": [
+      "Amazon: free account, tax interview, bank.",
+      "Samsung Seller Portal: commercial seller status (bank verification up to 10 business days)."
+     ],
+     "done_when": "Accounts open, or you've decided to skip them.",
+     "pitfall": "Both need a custom payment plugin; leave them until Google and Apple are live.",
+     "next": "Lowest priority."
+    }
+   ]
+  },
+  {
+   "id": "p3",
+   "name": "Phase 3: Legal and privacy",
+   "goal": "The pages, answers and in-game links every store checks before approving.",
+   "tasks": [
+    {
+     "id": "l-privacy-host",
+     "title": "Finish the privacy policy and put it on your website",
+     "owner": "both",
+     "stores": [
+      "all"
+     ],
+     "why": "Every store needs a public link; Google rejects PDFs, logins and pages blocked by country.",
+     "how": [
+      "Fill in the [FILL IN] parts of LAUNCH/shared/privacy-policy.md (Claude can fill what it knows).",
+      "Keep or delete the ads section to match Phase 1.",
+      "Publish it as a normal web page on your site."
+     ],
+     "done_when": "The policy opens at a public https:// address.",
+     "pitfall": "Update it before the game ever sends data anywhere (ads, analytics, crash reports).",
+     "next": "Claude adds the link inside the game next."
+    },
+    {
+     "id": "l-privacy-link",
+     "title": "Add a privacy policy link inside the game",
+     "owner": "claude",
+     "stores": [
+      "apple",
+      "google"
+     ],
+     "why": "Apple (guideline 5.1.1) and Google both require the policy to be reachable inside the app, not only on the store page.",
+     "how": [
+      "Settings gets 'Privacy policy' and 'Terms of use' buttons that open the pages."
+     ],
+     "done_when": "Tapping the button in Settings opens your policy.",
+     "next": "Terms of use next."
+    },
+    {
+     "id": "l-terms",
+     "title": "Write terms of use",
+     "owner": "both",
+     "stores": [
+      "google",
+      "apple"
+     ],
+     "why": "Google traders need a terms link per app; Apple needs one for any subscription.",
+     "how": [
+      "Claude drafts them; you check them and host them next to the privacy policy."
+     ],
+     "done_when": "Terms are live on your site.",
+     "next": "Credits screen next."
+    },
+    {
+     "id": "l-credits",
+     "title": "Add a credits and licences screen",
+     "owner": "claude",
+     "stores": [
+      "all"
+     ],
+     "why": "Godot's MIT licence and the fonts' licences require a notice; free-plan Meshy models need credit.",
+     "how": [
+      "Settings > Credits: Godot notice, font licences, music credit, Meshy credit if the models were free-plan."
+     ],
+     "done_when": "Credits open from Settings.",
+     "next": "Then the privacy questionnaires."
+    },
+    {
+     "id": "l-app-privacy",
+     "title": "Answer Apple's App Privacy questions",
+     "owner": "you",
+     "stores": [
+      "apple"
+     ],
+     "why": "Required for every submission; shown as the privacy label on the store page.",
+     "how": [
+      "Without ads: Data Not Collected (everything stays on the device).",
+      "With AdMob: Device ID, Advertising Data, Product Interaction, Coarse Location, Diagnostics."
+     ],
+     "done_when": "App Privacy shows Published.",
+     "pitfall": "Saying you track without ever showing Apple's tracking prompt is a common rejection.",
+     "next": "Google's Data safety form next.",
+     "links": [
+      {
+       "label": "App privacy details",
+       "url": "https://developer.apple.com/app-store/app-privacy-details/"
+      }
+     ]
+    },
+    {
+     "id": "l-data-safety",
+     "title": "Fill in Google's Data safety form",
+     "owner": "you",
+     "stores": [
+      "google"
+     ],
+     "why": "Mandatory even if nothing is collected; it must match the privacy policy and every SDK.",
+     "how": [
+      "Use the table in LAUNCH/google-play/requirements.md, section 2.2."
+     ],
+     "done_when": "Data safety shows Completed.",
+     "pitfall": "A mismatch with AdMob's real data collection is a classic rejection.",
+     "next": "Rating questionnaires next.",
+     "links": [
+      {
+       "label": "Data safety",
+       "url": "https://support.google.com/googleplay/android-developer/answer/10787469"
+      }
+     ]
+    },
+    {
+     "id": "l-ratings",
+     "title": "Answer the age-rating questionnaires (Apple and IARC)",
+     "owner": "you",
+     "stores": [
+      "all"
+     ],
+     "why": "Unrated games aren't allowed on Google Play or the App Store; IARC also covers Amazon, Samsung, Microsoft and Epic.",
+     "how": [
+      "Use LAUNCH/shared/content-rating-answers.md.",
+      "Apple: also answer the new Shared Location, Dating and social-media questions (all No)."
+     ],
+     "done_when": "Both show a rating.",
+     "pitfall": "Answer honestly about purchases and ads; wrong answers can pull the game later.",
+     "next": "Export compliance next.",
+     "links": [
+      {
+       "label": "Apple age ratings",
+       "url": "https://developer.apple.com/help/app-store-connect/reference/age-ratings-values-and-definitions/"
+      },
+      {
+       "label": "Google content ratings",
+       "url": "https://support.google.com/googleplay/android-developer/answer/9859655"
+      }
+     ]
+    },
+    {
+     "id": "l-export",
+     "title": "Answer Apple's export compliance question",
+     "owner": "you",
+     "stores": [
+      "apple"
+     ],
+     "why": "Apple asks every build whether it uses encryption.",
+     "how": [
+      "Answer that it uses no non-exempt encryption (the game only uses the system's HTTPS). Godot already sets this in the build."
+     ],
+     "done_when": "Answered once; later builds remember it.",
+     "next": "Children's rules next, if you chose a mixed audience."
+    },
+    {
+     "id": "l-coppa",
+     "title": "If children may play: age question, child-safe ads, legal check",
+     "owner": "both",
+     "stores": [
+      "apple",
+      "google"
+     ],
+     "why": "Google's Families policy and the amended US COPPA rule apply to games children play.",
+     "how": [
+      "Claude adds a neutral age question and child-directed ad settings (G-rated, no personalised ads) if you use ads.",
+      "Get legal advice before turning ads on."
+     ],
+     "done_when": "Done, or not needed because you chose 13+ or no ads.",
+     "next": "AI disclosures next."
+    },
+    {
+     "id": "l-ai-disclosure",
+     "title": "Declare the AI-made 3D models where stores ask",
+     "owner": "you",
+     "stores": [
+      "steam",
+      "itch",
+      "google"
+     ],
+     "why": "Steam requires it (Content Survey); itch.io has a disclosure field; Google has a per-picture AI label for store art.",
+     "how": [
+      "Steam: 'Some 3D models were first generated with an AI text-to-3D tool and then adjusted; all other art, audio, code and text were made by people.' (make it accurate)",
+      "itch.io: Yes, Graphics.",
+      "Epic and Apple don't ask; GOG: tell your Product Manager."
+     ],
+     "done_when": "Each store you use has it declared.",
+     "next": "Phase 4: the game changes."
+    }
+   ]
+  },
+  {
+   "id": "p4",
+   "name": "Phase 4: Game changes the stores require",
+   "goal": "Things the stores check inside the game. Claude does these once you've made the Phase 1 decisions.",
+   "tasks": [
+    {
+     "id": "t-play-billing",
+     "title": "Real Google Play purchases instead of the sandbox",
+     "owner": "claude",
+     "stores": [
+      "google"
+     ],
+     "why": "Today purchases open a sandbox sheet; Google rejects games whose purchases don't work, and needs Play Billing Library 8 or newer.",
+     "how": [
+      "Add GodotGooglePlayBilling 3.3.0 (Play Billing 9.1) to the Android build.",
+      "Grant items only when paid, confirm each purchase within 3 days, restore on start.",
+      "Test with license testers (Phase 7)."
+     ],
+     "done_when": "A license tester buys a map pack, reinstalls, and Restore brings it back.",
+     "pitfall": "Unconfirmed purchases are refunded automatically after 3 days.",
+     "next": "Apple purchases next.",
+     "links": [
+      {
+       "label": "Billing plugin",
+       "url": "https://github.com/godot-sdk-integrations/godot-google-play-billing"
+      }
+     ]
+    },
+    {
+     "id": "t-storekit",
+     "title": "Real Apple purchases (StoreKit 2) instead of the sandbox",
+     "owner": "claude",
+     "stores": [
+      "apple"
+     ],
+     "why": "Apple rejects games whose purchases don't work, and requires a Restore button and currency that never expires.",
+     "how": [
+      "Add a StoreKit 2 plugin to the iOS build (test it first: Godot plugins vary).",
+      "Restore purchases already exists in Settings."
+     ],
+     "done_when": "A TestFlight sandbox purchase works and restores.",
+     "next": "Ads next, if you chose them."
+    },
+    {
+     "id": "t-ads",
+     "title": "Ads: real AdMob with consent screens, or turn ads off",
+     "owner": "claude",
+     "stores": [
+      "apple",
+      "google"
+     ],
+     "why": "Ads are a sandbox today. Real ads need Google's consent screen in Europe, Apple's tracking prompt if personalised, and a way to report a bad ad.",
+     "how": [
+      "If ads: AdMob plugin (poingstudios 5.1.0) with UMP consent, your ad unit ids, a 'Report an ad' link, app-ads.txt on your site.",
+      "If no ads: remove the ad code paths and the Remove Ads product."
+     ],
+     "done_when": "Matches your Phase 1 choice and the privacy answers.",
+     "pitfall": "Interstitials must have a clear close button; rewarded videos must be opt-in.",
+     "next": "Season pass ids next."
+    },
+    {
+     "id": "t-pass-ids",
+     "title": "Give the season pass a new product id each season",
+     "owner": "claude",
+     "stores": [
+      "apple",
+      "google"
+     ],
+     "why": "The game uses one id for every season, but Apple never allows an id to be reused and a one-time purchase is owned forever.",
+     "how": [
+      "Product ids like expedition_pass.expedition_amazon, one per season, in the store catalog."
+     ],
+     "done_when": "Buying the pass in season 2 is a different product from season 1.",
+     "next": "The PC edition next."
+    },
+    {
+     "id": "t-pc-edition",
+     "title": "Build the PC premium edition: no ads, no purchases",
+     "owner": "claude",
+     "stores": [
+      "steam",
+      "gog",
+      "itch",
+      "epic"
+     ],
+     "why": "Steam bans ads (even reward videos) and real-money purchases outside its own system.",
+     "how": [
+      "A desktop setting that hides the store's money items and all ads; everything earnable by playing.",
+      "Separate from the phone builds."
+     ],
+     "done_when": "The Windows, Mac and Linux builds have no ads and no real-money buttons.",
+     "next": "Then the wide-screen and Steam Deck layout."
+    },
+    {
+     "id": "t-pc-layout",
+     "title": "Make it look and play right on monitors and Steam Deck",
+     "owner": "claude",
+     "stores": [
+      "steam",
+      "gog",
+      "itch",
+      "epic"
+     ],
+     "why": "The game is portrait; on a 16:9 screen it needs side art, and Steam Deck needs text at least 9 px tall at 1280x800 and full controller control.",
+     "how": [
+      "Side panels or art beside the portrait play area; a sensible default window size.",
+      "Fonts at least 20 px on the 720x1280 layout; every menu navigable with a gamepad; Xbox/Deck button icons when a controller is used."
+     ],
+     "done_when": "Playable at 1280x800 with only a controller.",
+     "next": "Stable save folder next.",
+     "links": [
+      {
+       "label": "Steam Deck compatibility",
+       "url": "https://partner.steamgames.com/doc/steamhardware/compat"
+      }
+     ]
+    },
+    {
+     "id": "t-saves",
+     "title": "Use a stable save folder (for Steam and GOG cloud saves)",
+     "owner": "claude",
+     "stores": [
+      "steam",
+      "gog"
+     ],
+     "why": "Cloud saves work without code if saves sit in their own fixed folder.",
+     "how": [
+      "Turn on Godot's custom user directory (e.g. CanopyCrossing)."
+     ],
+     "done_when": "Saves land in the same named folder on Windows, Mac and Linux.",
+     "next": "Android 16 checks next."
+    },
+    {
+     "id": "t-android16",
+     "title": "Check Android 16 behaviour and 16 KB pages",
+     "owner": "both",
+     "stores": [
+      "google",
+      "amazon"
+     ],
+     "why": "Android 16 changed the back gesture and edge-to-edge drawing; Google blocks updates without 16 KB page support from 1 Feb 2027.",
+     "how": [
+      "Claude verifies the .aab's 16 KB alignment in CI.",
+      "You test the back gesture and screen edges on an Android 16 phone."
+     ],
+     "done_when": "Back exits/pauses correctly; nothing is hidden under the screen edges; alignment check passes.",
+     "next": "iPad checks next."
+    },
+    {
+     "id": "t-ipad",
+     "title": "Check iPad windows and the new iPhone Duo",
+     "owner": "both",
+     "stores": [
+      "apple"
+     ],
+     "why": "iPadOS 26 lets apps run in windows (Godot's full-screen flag is deprecated); iPhone Duo screenshots become required in April 2027.",
+     "how": [
+      "Test on an iPad in Stage Manager / windowed mode.",
+      "Before April 2027, test in Xcode 27's iPhone Duo simulator."
+     ],
+     "done_when": "The game stays usable in an iPad window.",
+     "next": "Set version 1.0.0 when ready."
+    },
+    {
+     "id": "t-version-1",
+     "title": "Set version 1.0.0 before the first store upload",
+     "owner": "claude",
+     "stores": [
+      "all"
+     ],
+     "why": "The stores show this version; the build number must go up with every upload.",
+     "how": [
+      "python3 tools/set_version.py 1.0.0 1"
+     ],
+     "done_when": "Every platform shows 1.0.0 (build 1).",
+     "next": "Phase 5: signing."
+    },
+    {
+     "id": "t-store-builds",
+     "title": "Optional: separate Android builds for Amazon and Samsung",
+     "owner": "claude",
+     "stores": [
+      "amazon"
+     ],
+     "why": "Each Android store needs its own payment system (one per APK); neither has a Godot plugin.",
+     "how": [
+      "Write small Android plugins for Amazon IAP and Samsung IAP; a build per store."
+     ],
+     "done_when": "Only if you chose those stores.",
+     "next": "Lowest priority."
+    }
+   ]
+  },
+  {
+   "id": "p5",
+   "name": "Phase 5: Signing and store builds",
+   "goal": "Turn the builds into ones each store accepts: signed, notarized, uploaded.",
+   "tasks": [
+    {
+     "id": "b-upload-key",
+     "title": "Create the Android upload key and give it to GitHub",
+     "owner": "you",
+     "stores": [
+      "google",
+      "amazon"
+     ],
+     "why": "Google Play remembers the key of your first upload forever; it must be yours and backed up.",
+     "how": [
+      "Run the keytool command in BUILDS/android/README.md.",
+      "Back the .keystore and password up somewhere safe (not in git).",
+      "Add CANOPY_ANDROID_KEYSTORE_BASE64, CANOPY_ANDROID_KEY_ALIAS, CANOPY_ANDROID_KEY_PASSWORD as GitHub secrets."
+     ],
+     "done_when": "The three secrets exist.",
+     "pitfall": "Make it valid for 25+ years (past 22 Oct 2033 at least).",
+     "next": "Then run the release builds.",
+     "links": [
+      {
+       "label": "App signing",
+       "url": "https://developer.android.com/studio/publish/app-signing"
+      }
+     ]
+    },
+    {
+     "id": "b-run-ci",
+     "title": "Run 'Canopy Crossing release builds' on GitHub",
+     "owner": "you",
+     "stores": [
+      "all"
+     ],
+     "why": "Makes all six platforms (including the Play Store .aab) on GitHub's machines.",
+     "how": [
+      "GitHub > Actions > Canopy Crossing release builds > Run workflow.",
+      "Download each platform from the run page; tell Claude if anything fails."
+     ],
+     "done_when": "The run is green and has six downloads.",
+     "next": "Upload the .aab to internal testing (Phase 7)."
+    },
+    {
+     "id": "b-ios-ci",
+     "title": "Build and upload iOS from GitHub (no Mac needed)",
+     "owner": "both",
+     "stores": [
+      "apple"
+     ],
+     "needs": "Apple account",
+     "why": "The .ipa must be built and signed on macOS; GitHub's Mac machines can do it.",
+     "how": [
+      "You: create an Apple Distribution certificate and App Store provisioning profile (or let the CI create them with the API key); add the secrets.",
+      "Claude: a macOS job that exports with Godot, archives with Xcode 26, and uploads to TestFlight."
+     ],
+     "done_when": "A build appears in TestFlight.",
+     "pitfall": "Uploads must be built with Xcode 26 now and Xcode 27 from April 2027.",
+     "next": "TestFlight testing (Phase 7)."
+    },
+    {
+     "id": "b-notarize",
+     "title": "Sign and notarize the Mac build",
+     "owner": "both",
+     "stores": [
+      "steam",
+      "gog",
+      "itch",
+      "epic",
+      "mac"
+     ],
+     "needs": "Apple account",
+     "why": "Steam requires notarized Mac apps, and since macOS 15 people can't easily open un-notarized downloads.",
+     "how": [
+      "You: a Developer ID Application certificate (.p12) and the API key.",
+      "Claude: rcodesign signing and notarization in the release workflow."
+     ],
+     "done_when": "The Mac zip opens on a Mac with no warning.",
+     "next": "Windows signing is optional.",
+     "links": [
+      {
+       "label": "Notarizing",
+       "url": "https://developer.apple.com/documentation/security/notarizing-macos-software-before-distribution"
+      }
+     ]
+    },
+    {
+     "id": "b-windows-sign",
+     "title": "Optional: code-sign the Windows build",
+     "owner": "both",
+     "stores": [
+      "itch"
+     ],
+     "why": "Unsigned downloads from itch.io or your site show 'Windows protected your PC'; Steam, GOG and Epic don't require signing.",
+     "how": [
+      "A code-signing certificate (max 460 days since Mar 2026) or Azure Artifact Signing; Claude signs with osslsigncode (and stops embedding the game data in the .exe)."
+     ],
+     "done_when": "Only if you sell direct downloads.",
+     "next": "Store upload tools next."
+    },
+    {
+     "id": "b-steampipe",
+     "title": "Upload builds to Steam (SteamPipe)",
+     "owner": "both",
+     "stores": [
+      "steam"
+     ],
+     "why": "Steam takes builds through steamcmd depots.",
+     "how": [
+      "Claude writes the app/depot scripts (Windows, Mac, Linux) and a CI step.",
+      "You add a builder account's login as a secret, and set builds live in Steamworks (needs SMS)."
+     ],
+     "done_when": "A build shows in Steamworks on a test branch.",
+     "next": "itch.io next.",
+     "links": [
+      {
+       "label": "Uploading",
+       "url": "https://partner.steamgames.com/doc/sdk/uploading"
+      }
+     ]
+    },
+    {
+     "id": "b-butler",
+     "title": "Upload builds to itch.io (butler)",
+     "owner": "both",
+     "stores": [
+      "itch"
+     ],
+     "why": "butler uploads only what changed and tags the platforms by channel name.",
+     "how": [
+      "You: create an itch.io API key, add it as the BUTLER_API_KEY secret.",
+      "Claude: push windows, mac, linux and html5 channels from the release workflow."
+     ],
+     "done_when": "The itch.io page lists all four.",
+     "next": "GOG and Epic after acceptance/onboarding.",
+     "links": [
+      {
+       "label": "butler",
+       "url": "https://itch.io/docs/butler/pushing.html"
+      }
+     ]
+    },
+    {
+     "id": "b-gog-epic",
+     "title": "Upload to GOG (Pipeline Builder) and Epic (BuildPatch Tool)",
+     "owner": "both",
+     "stores": [
+      "gog",
+      "epic"
+     ],
+     "why": "Each has its own upload tool; Epic takes Windows and Mac only.",
+     "how": [
+      "GOG: after acceptance, Pipeline Builder to a private branch.",
+      "Epic: BuildPatch Tool with a unique BuildVersion per upload."
+     ],
+     "done_when": "Builds show in each portal.",
+     "next": "Phase 6: store pictures."
+    }
+   ]
+  },
+  {
+   "id": "p6",
+   "name": "Phase 6: Store pictures and video",
+   "goal": "Screenshots, icons, capsules and trailers at each store's exact sizes. Claude can render most of them from the game; you approve.",
+   "tasks": [
+    {
+     "id": "as-apple-shots",
+     "title": "App Store screenshots: iPhone and iPad",
+     "owner": "claude",
+     "stores": [
+      "apple"
+     ],
+     "why": "Required; they're most of what people see before installing.",
+     "how": [
+      "iPhone 6.9-inch 1320x2868 and 6.3-inch 1206x2622 (6.5-inch 1284x2778 if no 6.9-inch).",
+      "iPad 13-inch 2064x2752.",
+      "Up to 10 per size; real gameplay; no Android status bars; no prices."
+     ],
+     "done_when": "Uploaded for each size.",
+     "next": "App preview video next.",
+     "links": [
+      {
+       "label": "Screenshot sizes",
+       "url": "https://developer.apple.com/help/app-store-connect/reference/app-information/screenshot-specifications/"
+      }
+     ]
+    },
+    {
+     "id": "as-apple-preview",
+     "title": "App Store preview video (optional, recommended)",
+     "owner": "claude",
+     "stores": [
+      "apple"
+     ],
+     "why": "Previews autoplay before the screenshots.",
+     "how": [
+      "15-30 seconds of real gameplay capture, 886x1920 (iPhone) and 1200x1600 (iPad), H.264, up to 30 fps."
+     ],
+     "done_when": "Uploaded and processed.",
+     "pitfall": "Only captures of the app itself: no cinematic made outside it.",
+     "next": "Google's pictures next."
+    },
+    {
+     "id": "as-play-art",
+     "title": "Google Play icon, feature graphic and screenshots",
+     "owner": "claude",
+     "stores": [
+      "google"
+     ],
+     "why": "The 1024x500 feature graphic is required; 3+ portrait screenshots at 1080x1920 make games eligible for promotion.",
+     "how": [
+      "Icon 512x512 PNG (no rounded corners: Play adds them).",
+      "Feature graphic 1024x500, no transparency.",
+      "Phone screenshots 1080x1920 (3-8); 7- and 10-inch tablet screenshots."
+     ],
+     "done_when": "The store listing page shows no missing items.",
+     "next": "Steam art next.",
+     "links": [
+      {
+       "label": "Preview assets",
+       "url": "https://support.google.com/googleplay/android-developer/answer/9866151"
+      }
+     ]
+    },
+    {
+     "id": "as-steam-art",
+     "title": "Steam capsules, library art and 5+ screenshots",
+     "owner": "claude",
+     "stores": [
+      "steam"
+     ],
+     "why": "Steam requires the full set before the store page review.",
+     "how": [
+      "Header 920x430, small 462x174, main 1232x706, vertical 748x896, library 600x900, library header 920x430, hero 3840x1240 (no text), logo PNG 1280 wide, icons 256x256 and 184x184.",
+      "At least 5 gameplay screenshots at 1920x1080 showing the real wide-screen layout."
+     ],
+     "done_when": "Steamworks shows every graphic uploaded.",
+     "pitfall": "No review scores, awards or discount text on capsules.",
+     "next": "Trailer next.",
+     "links": [
+      {
+       "label": "Store graphics",
+       "url": "https://partner.steamgames.com/doc/store/assets"
+      }
+     ]
+    },
+    {
+     "id": "as-trailer",
+     "title": "A 16:9 trailer for Steam, Epic and GOG",
+     "owner": "claude",
+     "stores": [
+      "steam",
+      "epic",
+      "gog"
+     ],
+     "why": "Trailers sell PC games; Epic wants at least one video; GOG wants its logo on the end card.",
+     "how": [
+      "1920x1080, H.264 + AAC, 30 or 60 fps: gameplay first, plus moments from 'The Bee and the Giraffe'.",
+      "A GOG version with the GOG.com logo at the end."
+     ],
+     "done_when": "Uploaded where needed.",
+     "next": "Epic, itch.io and GOG art next."
+    },
+    {
+     "id": "as-other-art",
+     "title": "Epic, itch.io and GOG pictures",
+     "owner": "claude",
+     "stores": [
+      "epic",
+      "itch",
+      "gog"
+     ],
+     "why": "Each store has its own required images.",
+     "how": [
+      "Epic: 2560x1440 landscape, 1200x1600 portrait, logo 960x540 PNG, 1920x1080 carousel.",
+      "itch.io: cover 630x500.",
+      "GOG: key art and logo at least 1920x1080 as layered PSD."
+     ],
+     "done_when": "Uploaded where you're publishing.",
+     "next": "Phase 7: testing."
+    }
+   ]
+  },
+  {
+   "id": "p7",
+   "name": "Phase 7: Test with real people",
+   "goal": "Catch problems before the reviewers do, and meet Google's testing rule.",
+   "tasks": [
+    {
+     "id": "q-play-internal",
+     "title": "Google Play internal testing with license testers",
+     "owner": "both",
+     "stores": [
+      "google"
+     ],
+     "why": "The only way to test real Play purchases with test cards, before strangers see the game.",
+     "how": [
+      "Upload the .aab to Internal testing; add up to 100 testers.",
+      "Setup > License testing: add testers so purchases use test cards."
+     ],
+     "done_when": "A tester buys and restores something.",
+     "next": "Closed test next."
+    },
+    {
+     "id": "q-play-closed",
+     "title": "Google Play closed test: 12 testers for 14 days (personal accounts)",
+     "owner": "you",
+     "stores": [
+      "google"
+     ],
+     "time": "14 days minimum",
+     "why": "New personal accounts can't go public until 12 testers have stayed opted in for 14 days straight.",
+     "how": [
+      "Closed testing track with an email list or Google Group; recruit at least 12 (aim for 15+ in case some drop).",
+      "Ask them to play a few times and log feedback on this page.",
+      "Then Apply for production (questions about your testing)."
+     ],
+     "done_when": "Production access granted.",
+     "pitfall": "A tester dropping out restarts the count.",
+     "next": "TestFlight next.",
+     "links": [
+      {
+       "label": "Testing requirement",
+       "url": "https://support.google.com/googleplay/android-developer/answer/14151465"
+      }
+     ]
+    },
+    {
+     "id": "q-testflight",
+     "title": "TestFlight on iPhone and iPad",
+     "owner": "both",
+     "stores": [
+      "apple"
+     ],
+     "why": "Testers install the real App Store build; the first external build needs a quick Apple review.",
+     "how": [
+      "Internal group first (up to 100), then external testers by email or public link (up to 10,000).",
+      "Purchases in TestFlight are free sandbox purchases."
+     ],
+     "done_when": "External testers are playing.",
+     "next": "Device checks next.",
+     "links": [
+      {
+       "label": "TestFlight",
+       "url": "https://developer.apple.com/help/app-store-connect/test-a-beta-version/testflight-overview/"
+      }
+     ]
+    },
+    {
+     "id": "q-devices",
+     "title": "Test on a spread of real devices",
+     "owner": "both",
+     "stores": [
+      "apple",
+      "google"
+     ],
+     "why": "Crashes on one popular phone are enough for a bad review or a rejection.",
+     "how": [
+      "A small and a large iPhone, an iPad; a cheap and a recent Android phone, an Android 16 phone, a tablet.",
+      "Buy, restore, interrupt a purchase, play offline, switch views, rotate, lock the screen mid-run."
+     ],
+     "done_when": "No crashes or blockers left in the bug list.",
+     "next": "PC checks next."
+    },
+    {
+     "id": "q-pc",
+     "title": "Test the PC builds: clean Windows PC, a Mac, Steam Deck size",
+     "owner": "both",
+     "stores": [
+      "steam",
+      "gog",
+      "itch",
+      "epic"
+     ],
+     "why": "Steam's review now needs 5 minutes of play through Steam and tests on a non-developer PC.",
+     "how": [
+      "Windows PC without dev tools; a Mac after notarizing; 1280x800 with only a gamepad.",
+      "Play 5+ minutes launched from Steam before each build review."
+     ],
+     "done_when": "Works on all three with nothing missing.",
+     "next": "Keep logging what testers say."
+    },
+    {
+     "id": "q-bugs",
+     "title": "Collect bugs and feedback here; Claude fixes them",
+     "owner": "both",
+     "stores": [
+      "all"
+     ],
+     "why": "Small bugs found now don't become 1-star reviews later.",
+     "how": [
+      "Log each report on the Bugs & feedback tab (or forward testers' messages to log).",
+      "Claude reads the list, fixes, and you set reports to Fixed after checking."
+     ],
+     "done_when": "No open Crash or Blocks-play reports.",
+     "next": "Phase 8: submit."
+    }
+   ]
+  },
+  {
+   "id": "p8",
+   "name": "Phase 8: Submit and get approved",
+   "goal": "Send each store the finished listing and build, and answer their reviewers.",
+   "tasks": [
+    {
+     "id": "sub-play",
+     "title": "Google Play: send for review and go live",
+     "owner": "you",
+     "stores": [
+      "google"
+     ],
+     "time": "up to 7 days",
+     "why": "Reviews are usually hours to days, up to 7+ for new accounts.",
+     "how": [
+      "All App content forms done, store listing done, countries chosen, products active, .aab on the production track.",
+      "Turn on managed publishing to choose the exact go-live moment."
+     ],
+     "done_when": "Status: Published.",
+     "next": "Apple next.",
+     "links": [
+      {
+       "label": "Publishing overview",
+       "url": "https://support.google.com/googleplay/android-developer/answer/9859751"
+      }
+     ]
+    },
+    {
+     "id": "sub-apple",
+     "title": "App Store: submit the app and its first in-app purchases",
+     "owner": "you",
+     "stores": [
+      "apple"
+     ],
+     "time": "usually 24-48 h",
+     "why": "The first purchase of each type must go in the same submission as the app.",
+     "how": [
+      "Version page complete; add the in-app products (each needs a review screenshot).",
+      "Review notes: how to reach the store, what each purchase unlocks, that Amber never expires, how Restore works, no loot boxes."
+     ],
+     "done_when": "Status: Ready for Distribution.",
+     "pitfall": "Common rejections: purchases not working, no in-app privacy link, metadata naming other games.",
+     "next": "Steam's two reviews next.",
+     "links": [
+      {
+       "label": "App Review",
+       "url": "https://developer.apple.com/distribute/app-review/"
+      }
+     ]
+    },
+    {
+     "id": "sub-steam-page",
+     "title": "Steam: store page review, then Coming Soon for 2+ weeks",
+     "owner": "you",
+     "stores": [
+      "steam"
+     ],
+     "time": "up to 12 business days + 2 weeks",
+     "why": "Steam reviews the page first, and it must be public as Coming Soon for at least 2 weeks before release.",
+     "how": [
+      "Submit the page (description, tags, languages, system requirements, Content Survey, price, art).",
+      "Once approved, publish it as Coming Soon; optionally open a Playtest."
+     ],
+     "done_when": "The Coming Soon page is live.",
+     "next": "Build review next.",
+     "links": [
+      {
+       "label": "Review process",
+       "url": "https://partner.steamgames.com/doc/store/review_process"
+      }
+     ]
+    },
+    {
+     "id": "sub-steam-build",
+     "title": "Steam: build review and release",
+     "owner": "you",
+     "stores": [
+      "steam"
+     ],
+     "time": "up to 12 business days",
+     "why": "Valve checks the build starts on every listed system and that everything on the page exists.",
+     "how": [
+      "Play at least 5 minutes launched from Steam within 7 days before submitting.",
+      "After approval and the waiting periods, press Release (optional launch discount 10-40%)."
+     ],
+     "done_when": "Released on Steam.",
+     "next": "GOG, itch.io and Epic next."
+    },
+    {
+     "id": "sub-gog",
+     "title": "GOG: deliver the release candidate 3-5 days before launch",
+     "owner": "you",
+     "stores": [
+      "gog"
+     ],
+     "why": "GOG's QA tests every build, including without the Galaxy client.",
+     "how": [
+      "Upload the release candidate and tell your Product Manager; agree the date together."
+     ],
+     "done_when": "Live on GOG with offline installers.",
+     "next": "itch.io next."
+    },
+    {
+     "id": "sub-itch",
+     "title": "itch.io: publish the page",
+     "owner": "you",
+     "stores": [
+      "itch"
+     ],
+     "why": "No review for publishing, but a new seller's first paid game waits in a queue before it shows in search.",
+     "how": [
+      "Cover image, screenshots, files pushed with butler, price, AI disclosure; set the page Public."
+     ],
+     "done_when": "The page is public and appears in search.",
+     "next": "Epic next."
+    },
+    {
+     "id": "sub-epic",
+     "title": "Epic: product page, then final review",
+     "owner": "you",
+     "stores": [
+      "epic"
+     ],
+     "why": "Epic needs the page reviewed first and a build attached at least a week before the release date.",
+     "how": [
+      "Publish the product home page (about a week); set up the offer and binaries; submit for final review."
+     ],
+     "done_when": "Released on Epic.",
+     "next": "Amazon and Samsung if chosen."
+    },
+    {
+     "id": "sub-amazon-samsung",
+     "title": "Optional: Amazon and Samsung submissions",
+     "owner": "you",
+     "stores": [
+      "amazon"
+     ],
+     "why": "Only after their payment plugins are built.",
+     "how": [
+      "Amazon: APK upload, 3-10 screenshots, rating questionnaire.",
+      "Samsung: Seller Portal, exclude Vietnam, age rating."
+     ],
+     "done_when": "Live, or skipped.",
+     "next": "Phase 9: launch."
+    }
+   ]
+  },
+  {
+   "id": "p9",
+   "name": "Phase 9: Launch and keep it running",
+   "goal": "Launch day, then the recurring deadlines that keep the game on sale.",
+   "tasks": [
+    {
+     "id": "launch-day",
+     "title": "Pick launch day and line the stores up",
+     "owner": "you",
+     "stores": [
+      "all"
+     ],
+     "why": "Steam and GOG dates are hard to move late; launching everywhere at once concentrates attention.",
+     "how": [
+      "Phones: managed publishing (Google) and manual release (Apple) let you press go on the same day.",
+      "Steam: date set 2+ weeks ahead; GOG: agreed with your Product Manager."
+     ],
+     "done_when": "Live everywhere you chose.",
+     "next": "Watch the numbers and reviews."
+    },
+    {
+     "id": "watch",
+     "title": "Watch crashes, reviews and store messages for the first two weeks",
+     "owner": "both",
+     "stores": [
+      "all"
+     ],
+     "why": "Google ranks games down when crash rates pass 1.09% overall; fast replies to reviews help ratings.",
+     "how": [
+      "Play Console vitals, App Store Connect, Steam reviews; log anything new as a bug here."
+     ],
+     "done_when": "Two weeks with no open crash reports.",
+     "next": "Then the yearly deadlines."
+    },
+    {
+     "id": "deadlines-2027",
+     "title": "Meet the 2027 deadlines",
+     "owner": "both",
+     "stores": [
+      "apple",
+      "google",
+      "mac"
+     ],
+     "why": "Missing these blocks updates or removes the game.",
+     "how": [
+      "12 Jan 2027: Apple's new age-rating questions answered.",
+      "1 Feb 2027: Google trader declaration; Google 16 KB rule for updates; Mac Developer ID builds re-signed under Apple's new certificate.",
+      "April 2027: Xcode 27 / iOS 27 SDK, iOS 15+ minimum, iPhone Duo screenshots.",
+      "Aug 2027: Google's next target API (likely 37) and Play Billing 8 minimum."
+     ],
+     "done_when": "Each date passed with nothing blocked.",
+     "next": "Yearly upkeep."
+    },
+    {
+     "id": "upkeep",
+     "title": "Yearly upkeep",
+     "owner": "you",
+     "stores": [
+      "all"
+     ],
+     "why": "Accounts and agreements lapse quietly.",
+     "how": [
+      "Renew Apple's membership; accept new agreements when stores publish them.",
+      "Ship patches to Epic no later than other stores.",
+      "Update the privacy policy and Data safety before any new data leaves the device."
+     ],
+     "done_when": "A full year with nothing lapsed.",
+     "next": "Keep going."
+    }
+   ]
+  }
+ ]
+}

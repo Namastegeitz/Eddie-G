@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Canopy Crossing Launch</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;900&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  /* Canopy green ink on a pale leaf-tinted page, amber (the game's own premium
+     currency) as the one accent; done = a clear semantic green.
+     Layout: a folder tree on the left, the working checklist on the right. */
+  --bg: #f3f6f1;
+  --panel: #ffffff;
+  --ink: #15291c;
+  --muted: #5b6e60;
+  --line: #d8e2d6;
+  --accent: #c47a0b;
+  --accent-soft: #fbefd9;
+  --forest: #1d4a2f;
+  --done: #1f9d48;
+  --done-soft: #e1f4e6;
+  --warn: #b8410e;
+  --warn-soft: #fbe6dc;
+  --font-display: "Archivo", "Arial Black", system-ui, sans-serif;
+  --font-body: "Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI", sans-serif;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0e1712; --panel: #15221a; --ink: #e5efe6; --muted: #9db3a2; --line: #2a3d31;
+    --accent: #f0a93a; --accent-soft: #3a2c13; --forest: #9fd8ad; --done: #3fcf6c; --done-soft: #173523;
+    --warn: #ff8a5c; --warn-soft: #3d2016; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0e1712; --panel: #15221a; --ink: #e5efe6; --muted: #9db3a2; --line: #2a3d31;
+  --accent: #f0a93a; --accent-soft: #3a2c13; --forest: #9fd8ad; --done: #3fcf6c; --done-soft: #173523;
+  --warn: #ff8a5c; --warn-soft: #3d2016; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { background: var(--bg); color: var(--ink); font: 16px/1.5 var(--font-body); }
+a { color: var(--forest); }
+button, input, select, textarea { font: inherit; color: inherit; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.wrap { max-width: 1180px; margin: 0 auto; padding: 20px 16px 48px; display: grid; gap: 20px; }
+
+/* the folder header, in bold letters */
+.folder-head { display: grid; grid-template-columns: auto 1fr; gap: 16px; align-items: center; }
+.folder-icon { width: 64px; height: 52px; position: relative; }
+.folder-icon::before { content: ""; position: absolute; left: 0; top: 0; width: 28px; height: 12px; background: var(--accent); border-radius: 4px 6px 0 0; }
+.folder-icon::after { content: ""; position: absolute; left: 0; top: 8px; right: 0; bottom: 0; background: var(--accent); border-radius: 4px 8px 8px 8px; box-shadow: inset 0 -10px 0 rgba(0,0,0,.12); }
+h1 { font: 900 clamp(30px, 6vw, 54px)/1 var(--font-display); letter-spacing: .02em; margin: 0; text-wrap: balance; }
+.sub { margin: 6px 0 0; color: var(--muted); }
+.summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
+.tile { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; }
+.tile b { display: block; font: 900 28px/1.1 var(--font-display); font-variant-numeric: tabular-nums; }
+.tile span { color: var(--muted); font-size: 14px; }
+.bar { height: 10px; border-radius: 6px; background: var(--line); overflow: hidden; }
+.bar > i { display: block; height: 100%; width: 0; background: var(--done); transition: width .4s; }
+.next { background: var(--accent-soft); border: 1px solid var(--accent); border-radius: 12px; padding: 14px 16px; display: grid; gap: 4px; }
+.next .label { font: 700 13px/1 var(--font-display); text-transform: uppercase; letter-spacing: .08em; color: var(--accent); }
+.next h2 { margin: 0; font: 700 20px/1.25 var(--font-display); }
+.note-bar { border-radius: 10px; padding: 10px 14px; background: var(--warn-soft); color: var(--warn); border: 1px solid var(--warn); }
+
+.layout { display: grid; grid-template-columns: 290px 1fr; gap: 20px; align-items: start; }
+@media (max-width: 860px) { .layout { grid-template-columns: 1fr; } }
+
+/* folder tree */
+.tree { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 12px; position: sticky; top: 12px; }
+@media (max-width: 860px) { .tree { position: static; } }
+.tree h3 { margin: 4px 6px 8px; font: 900 15px/1.2 var(--font-display); letter-spacing: .04em; }
+.tree ul { list-style: none; margin: 0; padding: 0 0 0 14px; border-left: 1px dashed var(--line); }
+.tree li { margin: 2px 0; }
+.tree button { width: 100%; text-align: left; background: none; border: 0; padding: 6px 8px; border-radius: 8px; cursor: pointer; display: flex; gap: 8px; align-items: center; justify-content: space-between; }
+.tree button:hover { background: var(--bg); }
+.tree button[aria-pressed="true"] { background: var(--accent-soft); font-weight: 700; }
+.tree .fname { display: flex; gap: 8px; align-items: center; min-width: 0; }
+.tree .fname::before { content: ""; flex: none; width: 16px; height: 12px; border-radius: 2px 3px 3px 3px; background: var(--accent); opacity: .85; }
+.tree .root > button .fname { font: 900 15px/1.2 var(--font-display); }
+.chip { font-size: 12px; line-height: 1; padding: 4px 7px; border-radius: 999px; background: var(--bg); border: 1px solid var(--line); color: var(--muted); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.chip.ok { background: var(--done-soft); color: var(--done); border-color: var(--done); }
+.chip.wait { background: var(--accent-soft); color: var(--accent); border-color: var(--accent); }
+.chip.bad { background: var(--warn-soft); color: var(--warn); border-color: var(--warn); }
+
+/* tabs */
+.tabs { display: flex; gap: 6px; flex-wrap: wrap; border-bottom: 2px solid var(--line); }
+.tabs button { background: none; border: 0; padding: 10px 14px; cursor: pointer; font: 700 15px/1 var(--font-display); color: var(--muted); border-bottom: 3px solid transparent; margin-bottom: -2px; }
+.tabs button[aria-selected="true"] { color: var(--ink); border-color: var(--accent); }
+.main { display: grid; gap: 14px; min-width: 0; }
+.filter-line { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; color: var(--muted); font-size: 14px; }
+.linkish { background: none; border: 0; padding: 0; color: var(--forest); text-decoration: underline; cursor: pointer; }
+
+/* phases and tasks */
+.phase { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+.phase > summary { list-style: none; cursor: pointer; padding: 14px 16px; display: grid; grid-template-columns: 1fr auto; gap: 6px 12px; align-items: center; }
+.phase > summary::-webkit-details-marker { display: none; }
+.phase h2 { margin: 0; font: 900 18px/1.25 var(--font-display); text-wrap: balance; }
+.phase .goal { grid-column: 1 / -1; color: var(--muted); font-size: 14px; margin: 0; }
+.phase .bar { grid-column: 1 / -1; }
+.tasks { border-top: 1px solid var(--line); }
+.task { display: grid; grid-template-columns: 44px 1fr; gap: 4px 12px; padding: 14px 16px; border-bottom: 1px solid var(--line); }
+.task:last-child { border-bottom: 0; }
+.task.done { background: linear-gradient(90deg, var(--done-soft), transparent 60%); }
+.check { width: 36px; height: 36px; border-radius: 10px; border: 2px solid var(--line); background: var(--panel); cursor: pointer; display: grid; place-items: center; padding: 0; }
+.check svg { width: 22px; height: 22px; opacity: 0; transform: scale(.6); transition: opacity .15s, transform .2s; }
+.task.done .check { background: var(--done); border-color: var(--done); }
+.task.done .check svg { opacity: 1; transform: scale(1); }
+.check:disabled { cursor: not-allowed; }
+.t-head { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: baseline; }
+.t-title { font-weight: 700; font-size: 17px; }
+.task.done .t-title { color: var(--done); }
+.meta { display: flex; flex-wrap: wrap; gap: 6px; }
+.t-body { grid-column: 2; display: grid; gap: 6px; font-size: 15px; }
+.t-body p { margin: 0; max-width: 72ch; }
+.t-body ol { margin: 0; padding-left: 20px; max-width: 72ch; }
+.t-body .k { font-weight: 700; color: var(--forest); }
+.praise { border-left: 4px solid var(--done); padding: 6px 10px; background: var(--done-soft); border-radius: 0 8px 8px 0; }
+.pitfall { border-left: 4px solid var(--warn); padding: 6px 10px; background: var(--warn-soft); border-radius: 0 8px 8px 0; }
+.t-note textarea { width: 100%; min-height: 40px; border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; background: var(--bg); resize: vertical; }
+.who { font-size: 13px; color: var(--muted); }
+details.more > summary { cursor: pointer; color: var(--forest); font-size: 14px; }
+
+/* builds */
+.grid-builds { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 12px; }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 14px; display: grid; gap: 8px; align-content: start; }
+.card h3 { margin: 0; font: 900 17px/1.2 var(--font-display); display: flex; justify-content: space-between; gap: 8px; align-items: center; }
+.card .files { font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.card.sel { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-soft); }
+
+/* feedback */
+form.fb { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 14px; display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); }
+form.fb .wide { grid-column: 1 / -1; }
+form.fb label { display: grid; gap: 4px; font-size: 14px; font-weight: 700; }
+form.fb input, form.fb select, form.fb textarea { border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; background: var(--bg); font-weight: 400; }
+form.fb textarea { min-height: 70px; resize: vertical; }
+.btn { background: var(--forest); color: var(--bg); border: 0; border-radius: 10px; padding: 10px 16px; font: 700 15px/1 var(--font-display); cursor: pointer; }
+.btn:disabled { opacity: .5; cursor: not-allowed; }
+.fb-list { display: grid; gap: 10px; }
+.report { background: var(--panel); border: 1px solid var(--line); border-left: 6px solid var(--line); border-radius: 10px; padding: 12px 14px; display: grid; gap: 6px; }
+.report[data-sev="minor"] { border-left-color: var(--accent); }
+.report[data-sev="annoying"] { border-left-color: #d58b1d; }
+.report[data-sev="blocks"], .report[data-sev="crash"] { border-left-color: var(--warn); }
+.report.closed { opacity: .7; }
+.report h4 { margin: 0; font-size: 16px; }
+.report p { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; }
+.report .row { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.report select { border: 1px solid var(--line); border-radius: 8px; padding: 4px 8px; background: var(--bg); font-size: 14px; }
+.log { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 4px 14px; }
+.log div { padding: 8px 0; border-bottom: 1px solid var(--line); font-size: 14px; display: flex; gap: 10px; }
+.log div:last-child { border-bottom: 0; }
+.log time { color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.empty { color: var(--muted); padding: 10px 0; }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="folder-head">
+    <div class="folder-icon" aria-hidden="true"></div>
+    <div>
+      <h1>CANOPY CROSSING</h1>
+      <p class="sub">Store launch control: every step to the App Store, Google Play, Steam, GOG, itch.io and more. Tick a step and it turns green for everyone who opens this page.</p>
+    </div>
+  </header>
+
+  <section class="summary" aria-label="Progress">
+    <div class="tile"><b id="sum-pct">0%</b><span>of all steps done</span><div class="bar" style="margin-top:8px"><i id="sum-bar"></i></div></div>
+    <div class="tile"><b id="sum-done">0</b><span id="sum-done-label">steps done</span></div>
+    <div class="tile"><b id="sum-builds">0 / 6</b><span>platform builds made</span></div>
+    <div class="tile"><b id="sum-bugs">0</b><span>open bug reports</span></div>
+  </section>
+
+  <section class="next" id="next" aria-live="polite"></section>
+  <div class="note-bar" id="store-note" hidden></div>
+
+  <div class="layout">
+    <nav class="tree" aria-label="Project folders">
+      <h3>Folders</h3>
+      <div id="tree"></div>
+    </nav>
+    <main class="main">
+      <div class="tabs" role="tablist">
+        <button role="tab" id="tab-checklist" aria-selected="true">Checklist</button>
+        <button role="tab" id="tab-builds" aria-selected="false">Builds</button>
+        <button role="tab" id="tab-feedback" aria-selected="false">Bugs &amp; feedback</button>
+        <button role="tab" id="tab-activity" aria-selected="false">Activity</button>
+      </div>
+      <section id="view-checklist"></section>
+      <section id="view-builds" hidden></section>
+      <section id="view-feedback" hidden></section>
+      <section id="view-activity" hidden></section>
+    </main>
+  </div>
+</div>
+
+<script>
+"use strict";
+const CHECK_SVG = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.2 4.2L19 7" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const STORE_NAMES = { all: "All stores", apple: "Apple App Store", google: "Google Play", amazon: "Amazon Appstore", samsung: "Samsung Galaxy Store", steam: "Steam", gog: "GOG", itch: "itch.io", epic: "Epic Games Store", mac: "Mac distribution", web: "Web" };
+const OWNER_NAMES = { you: "You", claude: "Claude", both: "You + Claude" };
+const SEV = { minor: "Minor", annoying: "Annoying", blocks: "Blocks play", crash: "Crash" };
+const STATUS = { new: "New", seen: "Seen", fixing: "Being fixed", fixed: "Fixed", wont: "Won't fix" };
+
+const S = { openMore: new Set(), list: null, builds: null, progress: {}, feedback: [], activity: [], db: null, user: null, me: null, canWrite: null, store: "all", plat: "", tab: "checklist", names: {} };
+
+function el(tag, attrs, ...kids) {
+  const e = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs || {})) {
+    if (v === null || v === undefined || v === false) continue;
+    if (k === "class") e.className = v; else if (k === "text") e.textContent = v;
+    else if (k.startsWith("on")) e.addEventListener(k.slice(2), v); else e.setAttribute(k, v === true ? "" : v);
+  }
+  for (const k of kids.flat()) if (k !== null && k !== undefined && k !== false) e.append(k instanceof Node ? k : document.createTextNode(String(k)));
+  return e;
+}
+const allTasks = () => S.list ? S.list.phases.flatMap(p => p.tasks.map(t => Object.assign({ phase: p }, t))) : [];
+const isDone = id => !!(S.progress[id] && S.progress[id].done);
+const inStore = t => S.store === "all" || (t.stores || ["all"]).includes(S.store) || (t.stores || []).includes("all");
+const when = iso => { try { return new Date(iso).toLocaleString(undefined, { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" }); } catch (e) { return iso; } };
+const who = id => (id && S.names[id]) || (id ? "Someone" : "");
+
+async function loadData() {
+  try {
+    const [a, b] = await Promise.all([fetch("checklist.json").then(r => r.json()), fetch("builds.json").then(r => r.json())]);
+    S.list = a; S.builds = b;
+  } catch (e) {
+    document.getElementById("view-checklist").replaceChildren(el("p", { class: "note-bar", text: "The checklist file didn't load. Reload the page; if it keeps happening, ask Claude to republish it." }));
+    return;
+  }
+  render();
+}
+
+/* ---------------- the store (shared, saved) ---------------- */
+async function connect() {
+  const timer = setTimeout(() => showStoreNote("Saved progress hasn't loaded yet. Ticks you make may not be kept until it does."), 10000);
+  let db = null, user = null;
+  try { db = await claude.use("db"); user = await claude.use("user"); } catch (e) { db = null; }
+  if (!db) {
+    clearTimeout(timer);
+    showStoreNote("This copy of the page can't save. Open it on claude.ai while signed in to tick steps and log bugs.");
+    S.canWrite = false; render(); return;
+  }
+  S.db = db; S.user = user;
+  try { S.me = user ? await user.id() : null; } catch (e) { S.me = null; }
+  try { S.canWrite = user ? await user.can("data.write") : null; } catch (e) { S.canWrite = null; }
+  if (S.canWrite === false) showStoreNote("You can read this page but not change it. Ask the owner to share it with you as a Contributor to tick steps and log bugs.");
+  db.collection("progress").onSnapshot(snap => {
+    clearTimeout(timer); hideStoreNoteIfLoading();
+    const p = {}; snap.docs.forEach(d => { p[d.id] = d.data(); }); S.progress = p; resolveNames(); render();
+  }, err => { clearTimeout(timer); showStoreNote("Saved progress can't be reached right now (" + err.code + ")."); });
+  db.collection("feedback").orderBy("at", "desc").limit(500).onSnapshot(snap => {
+    S.feedback = snap.docs.map(d => Object.assign({ id: d.id }, d.data())); resolveNames(); render();
+  }, () => {});
+  db.collection("activity").orderBy("at", "desc").limit(150).onSnapshot(snap => {
+    S.activity = snap.docs.map(d => Object.assign({ id: d.id }, d.data())); resolveNames(); render();
+  }, () => {});
+}
+let loadingNote = false;
+function showStoreNote(t) { const n = document.getElementById("store-note"); n.textContent = t; n.hidden = false; loadingNote = t.startsWith("Saved progress hasn't"); }
+function hideStoreNoteIfLoading() { if (loadingNote) { document.getElementById("store-note").hidden = true; loadingNote = false; } }
+async function resolveNames() {
+  if (!S.user || !S.user.profiles) return;
+  const ids = new Set();
+  Object.values(S.progress).forEach(p => p.by && ids.add(p.by));
+  S.feedback.forEach(f => f.by && ids.add(f.by));
+  S.activity.forEach(a => a.by && ids.add(a.by));
+  const missing = [...ids].filter(i => !(i in S.names));
+  if (!missing.length) return;
+  try { const ps = await S.user.profiles(missing); missing.forEach(i => { S.names[i] = (ps[i] && ps[i].name) || (i === "claude" ? "Claude" : "Someone"); }); render(); } catch (e) {}
+}
+async function logActivity(what, extra) {
+  if (!S.db) return;
+  try { await S.db.collection("activity").add(Object.assign({ at: new Date().toISOString(), by: S.me || "", what }, extra || {})); } catch (e) {}
+}
+async function writeProgress(t, fields) {
+  if (!S.db) return;
+  const prev = S.progress[t.id] || {};
+  const body = Object.assign({}, prev, fields, { by: S.me || prev.by || "", at: new Date().toISOString() });
+  S.progress[t.id] = body; render();
+  try { await S.db.doc("progress/" + t.id).set(body); }
+  catch (e) {
+    if (e && e.code === "invalid_argument") { S.canWrite = false; showStoreNote("This page didn't let you save that change. Ask the owner to share it with you as a Contributor."); }
+    else showStoreNote("That change didn't save (" + ((e && e.code) || "error") + "). Try again in a moment.");
+  }
+}
+
+/* ---------------- rendering ---------------- */
+function render() {
+  if (!S.list) return;
+  const a = document.activeElement;
+  const keep = a && a.id && /^(TEXTAREA|INPUT|SELECT)$/.test(a.tagName) ? { id: a.id, v: a.value, s: a.selectionStart, e: a.selectionEnd } : null;
+  renderSummary(); renderNext(); renderTree();
+  if (S.tab === "checklist") renderChecklist();
+  if (S.tab === "builds") renderBuilds();
+  if (S.tab === "feedback") renderFeedback();
+  if (S.tab === "activity") renderActivity();
+  if (keep) {
+    const n = document.getElementById(keep.id);
+    if (n && n !== document.activeElement) {
+      if (n.tagName !== "SELECT") n.value = keep.v;
+      n.focus({ preventScroll: true });
+      try { if (keep.s !== null) n.setSelectionRange(keep.s, keep.e); } catch (e) {}
+    }
+  }
+}
+function renderSummary() {
+  const ts = allTasks(), done = ts.filter(t => isDone(t.id)).length, pct = ts.length ? Math.round(done / ts.length * 100) : 0;
+  document.getElementById("sum-pct").textContent = pct + "%";
+  document.getElementById("sum-bar").style.width = pct + "%";
+  document.getElementById("sum-done").textContent = done + " / " + ts.length;
+  const built = S.builds ? S.builds.platforms.filter(p => p.status === "built" || p.status === "project").length : 0;
+  document.getElementById("sum-builds").textContent = built + " / " + (S.builds ? S.builds.platforms.length : 6);
+  document.getElementById("sum-bugs").textContent = S.feedback.filter(f => !["fixed", "wont"].includes(f.status)).length;
+}
+function renderNext() {
+  const box = document.getElementById("next");
+  const t = allTasks().find(x => !isDone(x.id) && inStore(x));
+  if (!t) { box.replaceChildren(el("span", { class: "label", text: "All done" }), el("h2", { text: S.store === "all" ? "Every step is checked off. Time to launch." : "Every step for " + STORE_NAMES[S.store] + " is checked off." })); return; }
+  box.replaceChildren(
+    el("span", { class: "label", text: "Next step · " + t.phase.name }),
+    el("h2", { text: t.title }),
+    el("p", { style: "margin:0;max-width:72ch", text: t.why || "" }),
+    el("div", {}, el("button", { class: "linkish", text: "Show me how", onclick: () => { setTab("checklist"); requestAnimationFrame(() => { const n = document.getElementById("task-" + t.id); if (n) { n.scrollIntoView({ behavior: "smooth", block: "center" }); S.openMore.add(t.id); const d = n.querySelector("details.more"); if (d) d.open = true; } }); } }))
+  );
+}
+function folderButton(label, chip, pressed, onclick, root) {
+  return el("li", { class: root ? "root" : "" }, el("button", { "aria-pressed": pressed ? "true" : "false", onclick }, el("span", { class: "fname", text: label }), chip));
+}
+function renderTree() {
+  const tree = document.getElementById("tree");
+  const stores = S.list.stores || [];
+  const storeChip = key => { const ts = allTasks().filter(t => (t.stores || []).includes(key) || (t.stores || []).includes("all")); const d = ts.filter(t => isDone(t.id)).length; return el("span", { class: "chip" + (ts.length && d === ts.length ? " ok" : ""), text: d + "/" + ts.length }); };
+  const buildChip = p => el("span", { class: "chip " + (p.status === "built" ? "ok" : p.status === "project" || p.status === "needs-sdk" ? "wait" : "bad"), text: p.status === "built" ? "built" : p.status === "project" ? "Xcode project" : p.status === "needs-sdk" ? "on GitHub" : p.status });
+  const top = el("ul", { style: "border:0;padding:0" });
+  const root = folderButton("CANOPY-CROSSING", null, S.store === "all" && !S.plat, () => { S.store = "all"; S.plat = ""; setTab("checklist"); }, true);
+  const inner = el("ul", {});
+  const builds = el("li", {}, el("button", { "aria-pressed": S.tab === "builds" && !S.plat ? "true" : "false", onclick: () => { S.plat = ""; setTab("builds"); } }, el("span", { class: "fname", text: "BUILDS" })));
+  const bl = el("ul", {});
+  (S.builds ? S.builds.platforms : []).forEach(p => bl.append(folderButton(p.id, buildChip(p), S.tab === "builds" && S.plat === p.id, () => { S.plat = p.id; setTab("builds"); })));
+  builds.append(bl);
+  const launch = el("li", {}, el("button", { "aria-pressed": "false", onclick: () => { S.store = "all"; setTab("checklist"); } }, el("span", { class: "fname", text: "LAUNCH" })));
+  const ll = el("ul", {});
+  stores.forEach(s => ll.append(folderButton(s.folder, storeChip(s.key), S.tab === "checklist" && S.store === s.key, () => { S.store = s.key; S.plat = ""; setTab("checklist"); })));
+  launch.append(ll);
+  inner.append(builds, launch);
+  root.append(inner); top.append(root); tree.replaceChildren(top);
+}
+function taskNode(t) {
+  const done = isDone(t.id), p = S.progress[t.id] || {};
+  const canTick = S.db && S.canWrite !== false;
+  const check = el("button", { class: "check", "aria-pressed": done ? "true" : "false", "aria-label": (done ? "Mark not done: " : "Mark done: ") + t.title, disabled: !canTick, onclick: async () => {
+    const now = !isDone(t.id);
+    await writeProgress(t, { done: now });
+    logActivity(now ? "done" : "undone", { task: t.id, title: t.title });
+  } });
+  check.innerHTML = CHECK_SVG;
+  const meta = el("div", { class: "meta" },
+    el("span", { class: "chip " + (t.owner === "claude" ? "ok" : t.owner === "you" ? "wait" : ""), text: OWNER_NAMES[t.owner] || "You" }),
+    (t.stores || []).filter(s => s !== "all").map(s => el("span", { class: "chip", text: STORE_NAMES[s] || s })),
+    t.cost ? el("span", { class: "chip", text: t.cost }) : null,
+    t.time ? el("span", { class: "chip", text: t.time }) : null,
+    t.needs ? el("span", { class: "chip bad", text: "Needs " + t.needs }) : null);
+  const body = el("div", { class: "t-body" });
+  if (t.why) body.append(el("p", {}, el("span", { class: "k", text: "Why: " }), t.why));
+  const more = el("details", { class: "more", open: S.openMore.has(t.id) }, el("summary", { text: done ? "How it was done" : "How to do it" }));
+  more.addEventListener("toggle", () => { if (more.open) S.openMore.add(t.id); else S.openMore.delete(t.id); });
+  if (t.how && t.how.length) more.append(el("ol", {}, t.how.map(h => el("li", { text: h }))));
+  if (t.done_when) more.append(el("p", {}, el("span", { class: "k", text: "Done when: " }), t.done_when));
+  if (t.links && t.links.length) more.append(el("p", {}, el("span", { class: "k", text: "Official pages: " }), t.links.map((l, i) => [i ? " · " : "", el("a", { href: l.url, target: "_blank", rel: "noopener", text: l.label })])));
+  body.append(more);
+  if (t.pitfall && !done) body.append(el("p", { class: "pitfall" }, el("span", { class: "k", text: "Watch out: " }), t.pitfall));
+  if (done) body.append(el("p", { class: "praise" }, el("span", { class: "k", text: "Done. " }), t.next || "On to the next step."));
+  if (done && p.at) body.append(el("span", { class: "who", text: "Checked " + when(p.at) + (p.by ? " by " + who(p.by) : "") }));
+  const note = el("textarea", { id: "note-" + t.id, "aria-label": "Notes for " + t.title, placeholder: canTick ? "Notes (saved for everyone): account emails, links, what's left..." : "Notes", disabled: !canTick });
+  note.value = p.note || "";
+  note.addEventListener("change", () => { if ((S.progress[t.id] || {}).note !== note.value) writeProgress(t, { note: note.value }); });
+  body.append(el("div", { class: "t-note" }, note));
+  return el("article", { class: "task" + (done ? " done" : ""), id: "task-" + t.id }, check, el("div", { class: "t-head" }, el("span", { class: "t-title", text: t.title }), meta), body);
+}
+function renderChecklist() {
+  const v = document.getElementById("view-checklist");
+  const frag = [];
+  if (S.store !== "all") frag.push(el("div", { class: "filter-line" }, "Showing steps for ", el("b", { text: STORE_NAMES[S.store] || S.store }), " and steps every store needs. ", el("button", { class: "linkish", text: "Show all stores", onclick: () => { S.store = "all"; render(); } })));
+  S.list.phases.forEach((ph, i) => {
+    const ts = ph.tasks.filter(inStore);
+    if (!ts.length) return;
+    const d = ts.filter(t => isDone(t.id)).length, pct = Math.round(d / ts.length * 100);
+    const firstOpen = S.list.phases.findIndex(p => p.tasks.filter(inStore).some(t => !isDone(t.id)));
+    const det = el("details", { class: "phase", open: (i === firstOpen || ph._open) ? true : false });
+    det.addEventListener("toggle", () => { ph._open = det.open; });
+    det.append(el("summary", {}, el("h2", { text: ph.name }), el("span", { class: "chip" + (d === ts.length ? " ok" : ""), text: d + " / " + ts.length }), el("p", { class: "goal", text: ph.goal }), el("div", { class: "bar" }, el("i", { style: "width:" + pct + "%" }))));
+    det.append(el("div", { class: "tasks" }, ts.map(taskNode)));
+    frag.push(det);
+  });
+  v.replaceChildren(...frag);
+}
+function renderBuilds() {
+  const v = document.getElementById("view-builds");
+  if (!S.builds) { v.replaceChildren(el("p", { class: "empty", text: "No build information yet." })); return; }
+  const cards = S.builds.platforms.map(p => {
+    const st = p.status === "built" ? ["ok", "Built"] : p.status === "project" ? ["wait", "Xcode project: finish on a Mac"] : p.status === "needs-sdk" ? ["wait", "Built on GitHub Actions"] : ["bad", p.status];
+    return el("article", { class: "card" + (S.plat === p.id ? " sel" : "") },
+      el("h3", {}, el("span", { text: "BUILDS/" + p.id }), el("span", { class: "chip " + st[0], text: st[1] })),
+      el("p", { style: "margin:0", text: p.stores }),
+      el("div", { class: "files" }, (p.files || []).length ? p.files.map(f => el("div", { text: f.file + " · " + (f.bytes / 1e6).toFixed(1) + " MB" })) : el("div", { text: "No file on this machine yet." })),
+      el("p", { style: "margin:0;font-size:14px", text: p.notes || "" }),
+      p.version ? el("span", { class: "who", text: "Version " + p.version + " (build " + p.build + ") · " + when(p.built_at) + " · commit " + p.commit }) : null);
+  });
+  v.replaceChildren(el("p", { style: "margin:0;color:var(--muted);max-width:72ch", text: S.builds.note || "" }), el("div", { class: "grid-builds" }, cards));
+}
+const opt = (o, sel) => Object.entries(o).map(([k, l]) => el("option", { value: k, selected: k === sel, text: l }));
+function feedbackForm() {
+  if (S.fbForm) return S.fbForm;
+  const platforms = ["iPhone", "iPad", "Android phone", "Android tablet", "Web (phone)", "Web (computer)", "Windows", "Mac", "Linux / Steam Deck"];
+  const form = el("form", { class: "fb", id: "fb-form" },
+    el("label", { class: "wide" }, "What happened", el("input", { id: "fb-title", required: true, maxlength: "140", placeholder: "e.g. The kangaroo walked through a log on Daintree level 4" })),
+    el("label", {}, "Kind", el("select", { id: "fb-kind" }, opt({ bug: "Bug", usecase: "How it feels to play", idea: "Idea" }, "bug"))),
+    el("label", {}, "How bad", el("select", { id: "fb-sev" }, opt(SEV, "minor"))),
+    el("label", {}, "Device", el("select", { id: "fb-plat" }, platforms.map(p => el("option", { value: p, text: p })))),
+    el("label", {}, "View", el("select", { id: "fb-view" }, opt({ bird: "Bird's-eye", fpv: "First person", menu: "Menus / store" }, "bird"))),
+    el("label", {}, "Where", el("input", { id: "fb-where", maxlength: "80", placeholder: "Jungle and level, or screen" })),
+    el("label", { class: "wide" }, "Steps to see it again (optional)", el("textarea", { id: "fb-steps", maxlength: "2000", placeholder: "1. Start Daintree level 4  2. Switch to first person  3. ..." })),
+    el("div", { class: "wide" }, el("button", { class: "btn", type: "submit", text: "Log it" }), el("span", { class: "who", id: "fb-why", style: "margin-left:10px", text: "Logging needs the page open on claude.ai with Contributor access." })));
+  form.addEventListener("submit", async e => {
+    e.preventDefault();
+    const title = document.getElementById("fb-title").value.trim();
+    if (!title || !S.db) return;
+    const body = { title, kind: document.getElementById("fb-kind").value, severity: document.getElementById("fb-sev").value, platform: document.getElementById("fb-plat").value,
+      view: document.getElementById("fb-view").value, where: document.getElementById("fb-where").value.trim(), steps: document.getElementById("fb-steps").value.trim(),
+      status: "new", by: S.me || "", at: new Date().toISOString() };
+    const btn = form.querySelector("button[type=submit]"); btn.disabled = true;
+    try { await S.db.collection("feedback").add(body); form.reset(); logActivity("feedback", { title }); }
+    catch (err) {
+      if (err && err.code === "invalid_argument") { S.canWrite = false; showStoreNote("This page didn't let you log that. Ask the owner to share it with you as a Contributor."); }
+      else showStoreNote(err && err.code === "quota_exceeded" ? "The bug list is full. Close or delete old reports to log new ones." : "That report didn't save (" + ((err && err.code) || "error") + "). Try again.");
+    }
+    btn.disabled = false; render();
+  });
+  S.fbForm = form;
+  return form;
+}
+function renderFeedback() {
+  const v = document.getElementById("view-feedback");
+  const canWrite = S.db && S.canWrite !== false;
+  const form = feedbackForm();
+  form.querySelector("button[type=submit]").disabled = !canWrite;
+  form.querySelector("#fb-why").hidden = !!canWrite;
+  const open = S.feedback.filter(f => !["fixed", "wont"].includes(f.status)).length;
+  const list = S.feedback.length ? S.feedback.map(f => {
+    const sel = el("select", { "aria-label": "Status of " + (f.title || "report"), disabled: !canWrite }, opt(STATUS, f.status || "new"));
+    sel.addEventListener("change", async () => { try { await S.db.doc("feedback/" + f.id).update({ status: sel.value, updated: new Date().toISOString() }); logActivity("feedback-status", { title: f.title, status: sel.value }); } catch (e) { showStoreNote("That status didn't save. Try again."); } });
+    return el("article", { class: "report" + (["fixed", "wont"].includes(f.status) ? " closed" : ""), "data-sev": f.severity || "minor" },
+      el("div", { class: "row" }, el("h4", { text: f.title || "(no title)" })),
+      el("div", { class: "row" }, el("span", { class: "chip " + (f.severity === "crash" || f.severity === "blocks" ? "bad" : "wait"), text: SEV[f.severity] || "Minor" }),
+        el("span", { class: "chip", text: { bug: "Bug", usecase: "How it feels", idea: "Idea" }[f.kind] || "Bug" }), f.platform ? el("span", { class: "chip", text: f.platform }) : null,
+        f.view ? el("span", { class: "chip", text: { bird: "Bird's-eye", fpv: "First person", menu: "Menus" }[f.view] || f.view }) : null, f.where ? el("span", { class: "chip", text: f.where }) : null, sel),
+      f.steps ? el("p", { text: f.steps }) : null,
+      el("span", { class: "who", text: when(f.at) + (f.by ? " · " + who(f.by) : "") }));
+  }) : [el("p", { class: "empty", text: "No reports yet. Log the first thing a tester mentions: small things count." })];
+  v.replaceChildren(
+    el("p", { style: "margin:0;max-width:72ch;color:var(--muted)", text: "Log bugs and how the game feels to play, from you or your testers. Claude reads this list and fixes them; set a report to Fixed once you've checked it." }),
+    form, el("h3", { style: "margin:6px 0 0;font:900 17px/1 var(--font-display)", text: S.feedback.length + " reports · " + open + " open" }), el("div", { class: "fb-list" }, list));
+}
+function renderActivity() {
+  const v = document.getElementById("view-activity");
+  const words = a => a.what === "done" ? ["Checked off ", el("b", { text: a.title || a.task })] : a.what === "undone" ? ["Unchecked ", el("b", { text: a.title || a.task })]
+    : a.what === "feedback" ? ["Logged a report: ", el("b", { text: a.title })] : a.what === "feedback-status" ? ["Set ", el("b", { text: a.title }), " to " + (STATUS[a.status] || a.status)] : [a.what || ""];
+  v.replaceChildren(S.activity.length ? el("div", { class: "log" }, S.activity.map(a => el("div", {}, el("time", { text: when(a.at) }), el("span", {}, (a.by ? who(a.by) + ": " : ""), words(a)))))
+    : el("p", { class: "empty", text: "Every tick, report and status change shows up here." }));
+}
+function setTab(name) {
+  S.tab = name;
+  ["checklist", "builds", "feedback", "activity"].forEach(n => {
+    document.getElementById("tab-" + n).setAttribute("aria-selected", n === name ? "true" : "false");
+    document.getElementById("view-" + n).hidden = n !== name;
+  });
+  render();
+}
+["checklist", "builds", "feedback", "activity"].forEach(n => document.getElementById("tab-" + n).addEventListener("click", () => setTab(n)));
+loadData();
+if (window.claude && typeof window.claude.use === "function") connect();
+else { S.canWrite = false; showStoreNote("This copy of the page can't save. Open it on claude.ai while signed in to tick steps and log bugs."); }
+</script>
+</body>
+</html>

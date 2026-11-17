@@ -1,0 +1,17 @@
+{
+  "platform": "web",
+  "status": "built",
+  "version": "0.9.0",
+  "build": 1,
+  "commit": "4412280",
+  "built_at": "2026-11-17T01:26:10Z",
+  "godot": "4.7.2",
+  "files": [
+    {
+      "file": "CanopyCrossing-Web.zip",
+      "bytes": 47736521,
+      "sha256": "0b06ca3659482f30d716ece75e8b1e956fbb448677b468cee53341a753796fd5"
+    }
+  ],
+  "notes": "Open canopy-crossing.html through a web server (the testers' link serves it). Same files as the live beta link."
+}

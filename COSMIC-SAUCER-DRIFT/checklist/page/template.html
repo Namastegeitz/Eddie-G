@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cosmic Saucer Drift Launch Checklist</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+/* Layout: a mission-control checklist. Summary (progress, next steps, store readiness) on top,
+   phases as stacked panels below, tabs for bugs, playtests and activity. */
+:root {
+  --bg: #eef2f9;
+  --surface: #ffffff;
+  --sunk: #f5f7fc;
+  --ink: #111832;
+  --muted: #56607d;
+  --line: #d9dfec;
+  --accent: #0b7fa6;
+  --gold: #a86f00;
+  --done: #178a4a;
+  --doing: #1d6fd1;
+  --blocked: #c0440f;
+  --danger: #c22a3a;
+  --on-accent: #ffffff;
+  --display: "Chakra Petch", "Segoe UI", system-ui, sans-serif;
+  --body: "Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #090c1a; --surface: #121834; --sunk: #0d1229; --ink: #e9edff; --muted: #9aa4cc;
+    --line: #262e58; --accent: #4fd8ff; --gold: #f2c14e; --done: #3ddc84; --doing: #6cb4ff;
+    --blocked: #ff9a4d; --danger: #ff6b7d; --on-accent: #06101f; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #090c1a; --surface: #121834; --sunk: #0d1229; --ink: #e9edff; --muted: #9aa4cc;
+  --line: #262e58; --accent: #4fd8ff; --gold: #f2c14e; --done: #3ddc84; --doing: #6cb4ff;
+  --blocked: #ff9a4d; --danger: #ff6b7d; --on-accent: #06101f; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { background: var(--bg); color: var(--ink); font: 16px/1.5 var(--body); }
+a { color: var(--accent); }
+button, input, select, textarea { font: inherit; color: inherit; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; border-radius: 6px; }
+.wrap { max-width: 1060px; margin: 0 auto; padding: 20px 16px 64px; display: grid; gap: 18px; }
+
+/* Header */
+header.top { display: grid; gap: 14px; padding: 22px 22px 18px; background: var(--surface); border: 1px solid var(--line); border-radius: 16px; }
+.title-row { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px 16px; }
+h1 { margin: 0; font: 700 clamp(28px, 6vw, 44px)/1.05 var(--display); letter-spacing: 0.06em; text-wrap: balance; }
+h1 b { font-weight: 700; }
+.sub { color: var(--muted); margin: 2px 0 0; }
+.live { display: inline-flex; align-items: center; gap: 8px; font: 600 13px/1 var(--mono); padding: 7px 10px; border-radius: 999px; border: 1px solid var(--line); background: var(--sunk); white-space: nowrap; }
+.live i { width: 9px; height: 9px; border-radius: 50%; background: var(--muted); display: inline-block; }
+.live.on i { background: var(--done); box-shadow: 0 0 0 4px color-mix(in srgb, var(--done) 25%, transparent); }
+.live.warn i { background: var(--blocked); }
+.progress { display: grid; gap: 8px; }
+.prog-nums { display: flex; flex-wrap: wrap; gap: 6px 22px; align-items: baseline; font-variant-numeric: tabular-nums; }
+.prog-nums strong { font: 700 30px/1 var(--display); }
+.prog-nums span { color: var(--muted); }
+.bar { height: 12px; border-radius: 999px; background: var(--sunk); border: 1px solid var(--line); overflow: hidden; }
+.bar > i { display: block; height: 100%; background: var(--done); border-radius: 999px; transition: width .4s ease; }
+.bar.small { height: 7px; }
+
+/* Tabs */
+nav.tabs { display: flex; gap: 6px; flex-wrap: wrap; }
+nav.tabs a { text-decoration: none; color: var(--ink); padding: 9px 14px; border-radius: 10px; border: 1px solid var(--line); background: var(--surface); font-weight: 700; }
+nav.tabs a[aria-current="page"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+nav.tabs a .count { font: 600 12px var(--mono); margin-left: 6px; opacity: .8; }
+section.view { display: none; gap: 18px; }
+section.view.active { display: grid; }
+
+/* Cards */
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 16px 18px; }
+.card h2 { margin: 0 0 10px; font: 700 18px/1.2 var(--display); letter-spacing: .03em; text-transform: uppercase; }
+.grid2 { display: grid; gap: 18px; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+
+/* Up next */
+.next-list { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
+.next-list li { display: grid; grid-template-columns: auto 1fr; gap: 10px; align-items: start; }
+.next-list .why { color: var(--muted); font-size: 14px; }
+.next-list button.go { grid-column: 2; justify-self: start; }
+
+/* Stores */
+.stores { display: grid; gap: 10px; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+.store { border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; background: var(--sunk); display: grid; gap: 6px; }
+.store b { font-size: 15px; }
+.store span { color: var(--muted); font: 13px var(--mono); font-variant-numeric: tabular-nums; }
+.store.pick { outline: 2px solid var(--accent); }
+.store button { all: unset; cursor: pointer; display: grid; gap: 6px; }
+
+/* Filters */
+.filters { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; }
+.filters label { display: inline-flex; gap: 6px; align-items: center; color: var(--muted); font-size: 14px; }
+select, input[type="text"], input[type="number"], textarea { background: var(--sunk); border: 1px solid var(--line); border-radius: 8px; padding: 7px 9px; min-width: 0; }
+textarea { width: 100%; min-height: 70px; resize: vertical; }
+
+/* Phases and steps */
+.phase { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
+.phase-head { display: grid; grid-template-columns: auto 1fr auto; gap: 4px 14px; align-items: center; padding: 14px 18px; border-bottom: 1px solid var(--line); background: var(--sunk); }
+.phase-no { font: 700 13px var(--mono); color: var(--muted); }
+.phase-head h3 { margin: 0; font: 700 19px/1.2 var(--display); letter-spacing: .03em; text-transform: uppercase; }
+.phase-head p { grid-column: 2 / 4; margin: 0; color: var(--muted); font-size: 14px; }
+.phase-head .pcount { font: 600 14px var(--mono); font-variant-numeric: tabular-nums; }
+.phase-head .bar { grid-column: 1 / 4; }
+.phase.complete .phase-head { background: color-mix(in srgb, var(--done) 10%, var(--sunk)); }
+ul.steps { list-style: none; margin: 0; padding: 0; }
+li.step { border-top: 1px solid var(--line); padding: 12px 18px; display: grid; grid-template-columns: 44px 1fr; gap: 4px 14px; }
+li.step:first-child { border-top: 0; }
+li.step.hidden { display: none; }
+.check { width: 40px; height: 40px; border-radius: 50%; border: 2px solid var(--line); background: var(--surface); display: grid; place-items: center; cursor: pointer; padding: 0; }
+.check svg { width: 22px; height: 22px; opacity: 0; }
+.check:hover { border-color: var(--done); }
+.check[aria-pressed="true"] { background: var(--done); border-color: var(--done); }
+.check[aria-pressed="true"] svg { opacity: 1; }
+.check[disabled] { cursor: default; opacity: .7; }
+.step.pop .check { animation: pop .35s ease; }
+@keyframes pop { 50% { transform: scale(1.18); } }
+.step-main { display: grid; gap: 6px; min-width: 0; }
+.step-title { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: baseline; }
+.step-title strong { font-size: 16.5px; }
+.step.is-done .step-title strong { color: var(--muted); }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { font: 600 12px/1 var(--mono); padding: 5px 7px; border-radius: 6px; border: 1px solid var(--line); color: var(--muted); background: var(--sunk); white-space: nowrap; }
+.chip.you { color: var(--gold); border-color: color-mix(in srgb, var(--gold) 45%, var(--line)); }
+.chip.claude { color: var(--accent); border-color: color-mix(in srgb, var(--accent) 45%, var(--line)); }
+.chip.both { color: var(--ink); }
+.status { font: 700 12px/1 var(--mono); padding: 5px 8px; border-radius: 999px; text-transform: uppercase; letter-spacing: .04em; }
+.status.todo { color: var(--muted); background: var(--sunk); border: 1px solid var(--line); }
+.status.doing { color: var(--on-accent); background: var(--doing); }
+.status.blocked { color: var(--on-accent); background: var(--blocked); }
+.status.done { color: var(--on-accent); background: var(--done); }
+.coach { border-left: 4px solid var(--accent); background: var(--sunk); padding: 8px 12px; border-radius: 0 8px 8px 0; font-size: 14.5px; }
+.coach.done { border-color: var(--done); }
+.coach.blocked { border-color: var(--blocked); }
+.coach.warn { border-color: var(--gold); }
+details.more summary { cursor: pointer; color: var(--accent); font-weight: 700; font-size: 14px; width: fit-content; }
+details.more[open] summary { margin-bottom: 8px; }
+.more-body { display: grid; gap: 10px; font-size: 15px; }
+.more-body h4 { margin: 0; font: 700 13px var(--mono); text-transform: uppercase; letter-spacing: .05em; color: var(--muted); }
+.more-body ol { margin: 0; padding-left: 20px; display: grid; gap: 3px; }
+.evidence { font: 13px/1.5 var(--mono); background: var(--sunk); border: 1px dashed var(--line); padding: 8px 10px; border-radius: 8px; overflow-wrap: anywhere; }
+.status-row { display: flex; flex-wrap: wrap; gap: 6px; }
+.btn { border: 1px solid var(--line); background: var(--surface); padding: 7px 12px; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 14px; }
+.btn:hover { border-color: var(--accent); }
+.btn.primary { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
+.btn.sel { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.btn[disabled] { opacity: .5; cursor: default; }
+.meta { color: var(--muted); font-size: 13px; }
+.needs a { text-decoration: none; }
+
+/* Forms and lists (bugs, playtests) */
+form.grid { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+form.grid .full { grid-column: 1 / -1; }
+form.grid label { display: grid; gap: 4px; font-weight: 700; font-size: 14px; }
+form.grid label small { font-weight: 400; color: var(--muted); }
+.hint { font-size: 14px; color: var(--muted); }
+.hint.ok { color: var(--done); }
+.items { display: grid; gap: 10px; }
+.item { border: 1px solid var(--line); border-left-width: 6px; border-radius: 10px; padding: 12px 14px; background: var(--surface); display: grid; gap: 6px; }
+.item.sev-crash { border-left-color: var(--danger); }
+.item.sev-major { border-left-color: var(--blocked); }
+.item.sev-annoying { border-left-color: var(--gold); }
+.item.sev-minor { border-left-color: var(--accent); }
+.item.st-fixed, .item.st-wontfix { opacity: .7; }
+.item h3 { margin: 0; font-size: 16px; }
+.item p { margin: 0; white-space: pre-wrap; }
+.item .claude-note { border-left: 3px solid var(--accent); padding-left: 10px; font-size: 14px; }
+.stars { display: inline-flex; gap: 4px; }
+.stars button { width: 36px; height: 36px; border-radius: 8px; border: 1px solid var(--line); background: var(--sunk); cursor: pointer; font: 700 15px var(--mono); }
+.stars button[aria-pressed="true"] { background: var(--gold); color: var(--on-accent); border-color: var(--gold); }
+.tiles { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); }
+.tile { background: var(--sunk); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; }
+.tile b { display: block; font: 700 24px/1.1 var(--display); font-variant-numeric: tabular-nums; }
+.tile span { color: var(--muted); font-size: 13px; }
+.feed { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.feed li { display: grid; grid-template-columns: 110px 1fr; gap: 10px; font-size: 15px; }
+.feed time { font: 12px var(--mono); color: var(--muted); padding-top: 3px; }
+.toast { position: fixed; left: 50%; bottom: 18px; transform: translateX(-50%); max-width: min(560px, calc(100% - 32px)); background: var(--ink); color: var(--bg); padding: 12px 16px; border-radius: 12px; box-shadow: 0 8px 30px rgba(0,0,0,.25); font-size: 15px; display: none; z-index: 5; }
+.toast.show { display: block; }
+.empty { color: var(--muted); font-style: italic; }
+@media (max-width: 520px) {
+  li.step { grid-template-columns: 40px 1fr; padding: 12px 12px; }
+  .feed li { grid-template-columns: 1fr; gap: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; transition: none !important; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="title-row">
+      <div>
+        <h1><b>COSMIC SAUCER DRIFT</b></h1>
+        <p class="sub">Store launch checklist · Apple, Google Play, Steam, GOG, itch.io and more · rules researched <span id="researched"></span></p>
+      </div>
+      <span class="live" id="live"><i></i><span>Connecting…</span></span>
+    </div>
+    <div class="progress">
+      <div class="prog-nums">
+        <div><strong id="p-done">0</strong> <span>of <span id="p-total">0</span> steps done</span></div>
+        <div><span>You</span> <b id="p-you"></b></div>
+        <div><span>Claude</span> <b id="p-claude"></b></div>
+        <div><span>Together</span> <b id="p-both"></b></div>
+      </div>
+      <div class="bar" role="progressbar" aria-label="Overall progress" id="p-bar-wrap"><i id="p-bar" style="width:0"></i></div>
+    </div>
+    <nav class="tabs" aria-label="Sections">
+      <a href="#checklist" data-view="checklist">Checklist</a>
+      <a href="#bugs" data-view="bugs">Bugs<span class="count" id="c-bugs"></span></a>
+      <a href="#playtests" data-view="playtests">Playtests<span class="count" id="c-play"></span></a>
+      <a href="#activity" data-view="activity">Activity</a>
+    </nav>
+  </header>
+
+  <section class="view" id="view-checklist">
+    <div class="grid2">
+      <div class="card">
+        <h2>Up next for you</h2>
+        <ul class="next-list" id="next-you"></ul>
+      </div>
+      <div class="card">
+        <h2>Up next for Claude</h2>
+        <ul class="next-list" id="next-claude"></ul>
+        <p class="meta">Say “work on the checklist” in the chat and Claude picks these up, ticks them here, and writes what it did in the note.</p>
+      </div>
+    </div>
+    <div class="card">
+      <h2>Store readiness</h2>
+      <div class="stores" id="stores"></div>
+    </div>
+    <div class="filters card" aria-label="Filters">
+      <label for="f-who">Who <select id="f-who"><option value="all">Everyone</option><option value="you">You</option><option value="claude">Claude</option><option value="both">Together</option></select></label>
+      <label for="f-store">Store <select id="f-store"><option value="all">All stores</option></select></label>
+      <label for="f-hide"><input type="checkbox" id="f-hide"> Hide finished steps</label>
+    </div>
+    <div id="phases" style="display:grid;gap:18px"></div>
+  </section>
+
+  <section class="view" id="view-bugs">
+    <div class="card">
+      <h2>Report a bug</h2>
+      <form class="grid" id="bug-form" novalidate>
+        <label class="full" for="b-title">What went wrong, in a few words <small>e.g. “Pause button hidden under the notch”</small><input type="text" id="b-title" maxlength="120" required></label>
+        <label class="full" for="b-what">What happened <small>What you saw or heard</small><textarea id="b-what" maxlength="2000"></textarea></label>
+        <label class="full" for="b-repro">Steps to make it happen again <small>One per line: where you were and what you pressed</small><textarea id="b-repro" maxlength="2000"></textarea></label>
+        <label class="full" for="b-expected">What you expected instead<textarea id="b-expected" maxlength="1000"></textarea></label>
+        <label for="b-platform">Platform<select id="b-platform"></select></label>
+        <label for="b-device">Device <small>e.g. Pixel 7, iPhone 15, Steam Deck</small><input type="text" id="b-device" maxlength="80"></label>
+        <label for="b-build">Build<input type="text" id="b-build" maxlength="40" value="1.0.0 (1)"></label>
+        <label for="b-area">Area<select id="b-area"></select></label>
+        <label for="b-sev">How bad<select id="b-sev">
+          <option value="minor">Minor: looks off, play goes on</option>
+          <option value="annoying">Annoying: gets in the way</option>
+          <option value="major">Major: can't finish something</option>
+          <option value="crash">Crash or freeze</option>
+        </select></label>
+        <div class="full" style="display:flex;flex-wrap:wrap;gap:10px;align-items:center">
+          <button class="btn primary" type="submit" id="b-submit">Save bug report</button>
+          <span class="hint" id="b-hint" aria-live="polite">Steps to repeat it are the most useful part for fixing it.</span>
+        </div>
+      </form>
+    </div>
+    <div class="card">
+      <div style="display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;align-items:center;margin-bottom:10px">
+        <h2 style="margin:0">Reported bugs</h2>
+        <div class="filters">
+          <label for="bf-status">Show <select id="bf-status"><option value="open">Open</option><option value="all">All</option><option value="fixed">Fixed</option></select></label>
+          <button class="btn" type="button" id="b-copy">Copy all as text</button>
+        </div>
+      </div>
+      <div class="items" id="bug-list"></div>
+    </div>
+  </section>
+
+  <section class="view" id="view-playtests">
+    <div class="card">
+      <h2>Log a play session</h2>
+      <form class="grid" id="pt-form" novalidate>
+        <label for="pt-platform">Platform<select id="pt-platform"></select></label>
+        <label for="pt-device">Device<input type="text" id="pt-device" maxlength="80"></label>
+        <label for="pt-mode">What you played<select id="pt-mode">
+          <option>Quick race</option><option>Galactic cup</option><option>Time trial</option><option>Boss race</option>
+          <option>Daily challenge</option><option>2-player split screen</option><option>Hangar and upgrades</option><option>Cockpit view</option>
+        </select></label>
+        <label for="pt-min">Minutes played<input type="number" id="pt-min" min="1" max="600" value="15"></label>
+        <div class="full" style="display:grid;gap:6px">
+          <span style="font-weight:700;font-size:14px" id="pt-fun-label">How fun was it?</span>
+          <div class="stars" id="pt-fun" role="group" aria-labelledby="pt-fun-label"></div>
+        </div>
+        <label class="full" for="pt-good">What felt great<textarea id="pt-good" maxlength="1500"></textarea></label>
+        <label class="full" for="pt-off">What felt off or confusing<textarea id="pt-off" maxlength="1500"></textarea></label>
+        <label for="pt-again">Play again tomorrow?<select id="pt-again"><option value="yes">Yes</option><option value="maybe">Maybe</option><option value="no">No</option></select></label>
+        <label for="pt-fps">Smoothness<select id="pt-fps"><option value="smooth">Smooth</option><option value="ok">Mostly fine</option><option value="choppy">Choppy</option></select></label>
+        <div class="full" style="display:flex;flex-wrap:wrap;gap:10px;align-items:center">
+          <button class="btn primary" type="submit">Save play session</button>
+          <span class="hint" id="pt-hint" aria-live="polite">Short notes are fine. Patterns across sessions matter most.</span>
+        </div>
+      </form>
+    </div>
+    <div class="card">
+      <h2>What players say</h2>
+      <div class="tiles" id="pt-tiles"></div>
+      <div class="items" id="pt-list" style="margin-top:12px"></div>
+    </div>
+  </section>
+
+  <section class="view" id="view-activity">
+    <div class="card">
+      <h2>Recent activity</h2>
+      <ul class="feed" id="feed"></ul>
+    </div>
+  </section>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script id="data" type="application/json">__CHECKLIST_JSON__</script>
+<script id="snapshot" type="application/json">__PROGRESS_JSON__</script>
+<script>
+"use strict";
+const DATA = JSON.parse(document.getElementById("data").textContent);
+const SNAP = JSON.parse(document.getElementById("snapshot").textContent);
+const STEPS = DATA.steps, PHASES = DATA.phases, STORES = DATA.stores;
+const BY_ID = Object.fromEntries(STEPS.map(s => [s.id, s]));
+const PLATFORMS = ["Android phone", "Android tablet", "iPhone", "iPad", "Windows", "Mac", "Linux", "Steam Deck", "Web browser"];
+const AREAS = ["Controls", "Race / driving", "Power-ups", "Cockpit view", "Hangar / upgrades", "Menus", "Graphics", "Sound", "Speed / smoothness", "Saving", "Other"];
+const BUG_STATUS = { new: "New", seen: "Seen by Claude", fixing: "Being fixed", fixed: "Fixed", wontfix: "Won't fix" };
+const STATUS_LABEL = { todo: "To do", doing: "Doing", blocked: "Blocked", done: "Done" };
+
+// ---------- state
+let db = null, user = null, canWrite = false, live = false;
+let state = {};         // stepId -> {status, note, by, at, history}
+let bugs = [], plays = [];
+let funPick = 4;
+
+// Until the database answers, show the snapshot saved with this version.
+for (const [id, v] of Object.entries(SNAP)) state[id] = v;
+
+// ---------- helpers
+function h(tag, attrs, ...kids) {
+  const el = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs || {})) {
+    if (v === null || v === undefined || v === false) continue;
+    if (k === "class") el.className = v;
+    else if (k === "text") el.textContent = v;
+    else if (k.startsWith("on")) el.addEventListener(k.slice(2), v);
+    else el.setAttribute(k, v === true ? "" : v);
+  }
+  for (const k of kids.flat()) if (k !== null && k !== undefined && k !== false) el.append(k instanceof Node ? k : document.createTextNode(String(k)));
+  return el;
+}
+const $ = id => document.getElementById(id);
+const statusOf = id => (state[id] && state[id].status) || "todo";
+const isDone = id => statusOf(id) === "done";
+const fmtWhen = ms => {
+  if (!ms) return "";
+  const d = new Date(ms), now = Date.now(), m = Math.round((now - ms) / 60000);
+  if (m < 1) return "just now";
+  if (m < 60) return m + " min ago";
+  if (m < 60 * 24) return Math.round(m / 60) + " h ago";
+  return d.toLocaleDateString(undefined, { day: "numeric", month: "short" });
+};
+const WHO = { you: "You", claude: "Claude", both: "Together" };
+function toast(msg) {
+  const t = $("toast"); t.textContent = msg; t.classList.add("show");
+  clearTimeout(toast._t); toast._t = setTimeout(() => t.classList.remove("show"), 5200);
+}
+function setLive(kind, text) {
+  const l = $("live"); l.className = "live " + kind; l.lastElementChild.textContent = text;
+}
+const checkSvg = () => {
+  const s = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  s.setAttribute("viewBox", "0 0 24 24"); s.setAttribute("aria-hidden", "true");
+  const p = document.createElementNS("http://www.w3.org/2000/svg", "path");
+  p.setAttribute("d", "M5 12.5l4.2 4.2L19 7"); p.setAttribute("fill", "none");
+  p.setAttribute("stroke", "white"); p.setAttribute("stroke-width", "3"); p.setAttribute("stroke-linecap", "round"); p.setAttribute("stroke-linejoin", "round");
+  s.append(p); return s;
+};
+
+// ---------- coaching: what to say about a step right now
+function openNeeds(s) { return s.needs.filter(n => !isDone(n)); }
+function actionable(s) { return !isDone(s.id) && statusOf(s.id) !== "blocked" && openNeeds(s).length === 0; }
+function nextAfter(s) {
+  // The first actionable step that needed this one, or else the first actionable step for the same people.
+  const unlocked = STEPS.find(x => x.needs.includes(s.id) && actionable(x));
+  return unlocked || STEPS.find(x => x.id !== s.id && actionable(x) && (x.who === s.who || x.who === "both"));
+}
+function coach(s) {
+  const st = statusOf(s.id), open = openNeeds(s);
+  if (st === "done") {
+    const n = nextAfter(s);
+    return { kind: "done", text: (s.done || "Done.") + (n ? " Next up: " + n.title + "." : "") };
+  }
+  if (st === "blocked") return { kind: "blocked", text: "Blocked. Write what's in the way in the note: Claude reads it and looks for another route." };
+  if (open.length) return { kind: "warn", text: "Comes after: " + open.map(n => BY_ID[n].title).join(" · ") + ". You can still start it if you're ready." };
+  if (st === "doing") return { kind: "", text: s.tip ? "Watch out: " + s.tip : "In progress. Tick the circle when it's finished." };
+  return { kind: "", text: s.who === "claude" ? "Ready for Claude to do. Ask in the chat." : (s.why ? "Ready to start. " + s.why : "Ready to start.") };
+}
+
+// ---------- writes
+async function saveStep(id, patch, msg) {
+  const prev = state[id] || { status: "todo", note: "", history: [] };
+  const next = Object.assign({}, prev, patch, { by: "you", at: Date.now() });
+  if (patch.status && patch.status !== prev.status) {
+    next.history = (prev.history || []).concat([{ status: patch.status, by: "you", at: next.at }]).slice(-20);
+  } else next.history = prev.history || [];
+  state[id] = next;
+  render();
+  if (msg) toast(msg);
+  if (!db || !canWrite) { toast("Not saved: this view can't save changes. Open the page signed in as its owner."); return; }
+  try { await db.doc("steps/" + id).set(next); }
+  catch (e) { state[id] = prev; render(); toast("Couldn't save (" + (e && e.code || "error") + "). Try again in a moment."); }
+}
+function toggleDone(s) {
+  const done = isDone(s.id);
+  const status = done ? "todo" : "done";
+  const open = openNeeds(s);
+  let msg;
+  if (status === "done") {
+    const n = nextAfter(s);
+    msg = "✓ " + s.title + ". " + (s.done || "") + (open.length ? " (Heads up: " + BY_ID[open[0]].title + " is still open.)" : "") + (n && !s.done ? " Next: " + n.title : "");
+  } else msg = "Moved back to To do.";
+  const row = document.querySelector('[data-step="' + s.id + '"]');
+  if (row && status === "done") { row.classList.remove("pop"); void row.offsetWidth; row.classList.add("pop"); }
+  saveStep(s.id, { status }, msg);
+}
+
+// ---------- render: header, next, stores, phases
+function render() {
+  const total = STEPS.length, done = STEPS.filter(s => isDone(s.id)).length;
+  $("p-done").textContent = done; $("p-total").textContent = total;
+  const pct = Math.round(done * 100 / total);
+  $("p-bar").style.width = pct + "%"; $("p-bar-wrap").setAttribute("aria-valuenow", pct);
+  for (const w of ["you", "claude", "both"]) {
+    const list = STEPS.filter(s => s.who === w);
+    $("p-" + w).textContent = list.filter(s => isDone(s.id)).length + "/" + list.length;
+  }
+  renderNext(); renderStores(); renderPhases(); renderFeed();
+}
+
+function nextItem(s) {
+  return h("li", {},
+    h("span", { class: "chip " + s.who, text: WHO[s.who] }),
+    h("div", {}, h("strong", { text: s.title }), s.why ? h("div", { class: "why", text: s.why }) : null),
+    h("button", { class: "btn go", type: "button", onclick: () => jumpTo(s.id) }, "Open step"));
+}
+function renderNext() {
+  const you = STEPS.filter(s => (s.who === "you" || s.who === "both") && actionable(s)).slice(0, 3);
+  const cl = STEPS.filter(s => (s.who === "claude" || s.who === "both") && actionable(s)).slice(0, 3);
+  $("next-you").replaceChildren(...(you.length ? you.map(nextItem) : [h("li", { class: "empty", text: "Nothing waiting on you right now." })]));
+  $("next-claude").replaceChildren(...(cl.length ? cl.map(nextItem) : [h("li", { class: "empty", text: "Nothing waiting on Claude right now." })]));
+}
+
+let storeFilter = "all";
+function renderStores() {
+  const out = [];
+  for (const [key, name] of Object.entries(STORES)) {
+    const list = STEPS.filter(s => s.stores.includes(key));
+    const d = list.filter(s => isDone(s.id)).length;
+    const pct = list.length ? Math.round(d * 100 / list.length) : 0;
+    out.push(h("div", { class: "store" + (storeFilter === key ? " pick" : "") },
+      h("button", { type: "button", "aria-pressed": storeFilter === key ? "true" : "false", onclick: () => { storeFilter = storeFilter === key ? "all" : key; $("f-store").value = storeFilter; render(); } },
+        h("b", { text: name }), h("span", { text: d + "/" + list.length + " · " + pct + "%" }),
+        h("div", { class: "bar small" }, h("i", { style: "width:" + pct + "%" })))));
+  }
+  $("stores").replaceChildren(...out);
+}
+
+function stepRow(s) {
+  const st = statusOf(s.id), rec = state[s.id] || {};
+  const c = coach(s);
+  const who = $("f-who").value, hide = $("f-hide").checked;
+  const visible = (who === "all" || s.who === who) && (storeFilter === "all" || s.stores.includes(storeFilter)) && !(hide && st === "done");
+  const note = h("textarea", { id: "note-" + s.id, maxlength: "2000", placeholder: "Notes, links, what's in the way… (Claude reads these)" });
+  note.value = rec.note || "";
+  const statusBtns = Object.entries(STATUS_LABEL).map(([k, label]) =>
+    h("button", { type: "button", class: "btn" + (st === k ? " sel" : ""), "aria-pressed": st === k ? "true" : "false", disabled: !canWrite,
+      onclick: () => saveStep(s.id, { status: k }, k === "done" ? "✓ " + s.title + ". " + (s.done || "") : "Marked " + label.toLowerCase() + ".") }, label));
+  const needs = s.needs.length ? h("div", { class: "needs" }, h("h4", { text: "Comes after" }),
+    h("div", { class: "chips" }, s.needs.map(n => h("a", { href: "#step-" + n, class: "chip", onclick: (e) => { e.preventDefault(); jumpTo(n); } },
+      (isDone(n) ? "✓ " : "○ ") + BY_ID[n].title)))) : null;
+  const meta = [];
+  if (rec.at) meta.push((STATUS_LABEL[st] || st) + " · " + (rec.by === "claude" ? "Claude" : "you") + " · " + fmtWhen(rec.at));
+  return h("li", { class: "step" + (st === "done" ? " is-done" : "") + (visible ? "" : " hidden"), id: "step-" + s.id, "data-step": s.id },
+    h("button", { class: "check", type: "button", "aria-pressed": st === "done" ? "true" : "false", "aria-label": (st === "done" ? "Mark not done: " : "Mark done: ") + s.title, disabled: !canWrite, onclick: () => toggleDone(s) }, checkSvg()),
+    h("div", { class: "step-main" },
+      h("div", { class: "step-title" }, h("strong", { text: s.title }), h("span", { class: "status " + st, text: STATUS_LABEL[st] })),
+      h("div", { class: "chips" },
+        h("span", { class: "chip " + s.who, text: WHO[s.who] }),
+        s.cost ? h("span", { class: "chip", text: s.cost }) : null,
+        s.time ? h("span", { class: "chip", text: "⏱ " + s.time }) : null,
+        s.stores.length >= Object.keys(STORES).length ? h("span", { class: "chip", text: "All stores" }) : s.stores.map(k => h("span", { class: "chip", text: STORES[k] }))),
+      h("div", { class: "coach " + c.kind, text: c.text }),
+      h("details", { class: "more" },
+        h("summary", {}, "How to do it"),
+        h("div", { class: "more-body" },
+          h("ol", {}, s.how.map(x => h("li", { text: x }))),
+          s.why ? h("div", {}, h("h4", { text: "Why it matters" }), h("div", { text: s.why })) : null,
+          s.tip ? h("div", {}, h("h4", { text: "Watch out" }), h("div", { text: s.tip })) : null,
+          needs,
+          s.evidence ? h("div", {}, h("h4", { text: "On the computer" }), h("div", { class: "evidence", text: s.evidence })) : null,
+          s.link ? h("div", {}, h("a", { href: s.link, target: "_blank", rel: "noopener" }, "Open the kit for this step")) : null,
+          h("div", {}, h("h4", { text: "Status" }), h("div", { class: "status-row" }, statusBtns)),
+          h("div", {}, h("h4", { text: "Your note" }), note,
+            h("div", { style: "display:flex;gap:10px;align-items:center;margin-top:6px;flex-wrap:wrap" },
+              h("button", { class: "btn", type: "button", disabled: !canWrite, onclick: () => saveStep(s.id, { note: note.value.trim() }, "Note saved. Claude will see it.") }, "Save note"),
+              meta.length ? h("span", { class: "meta", text: meta.join(" · ") }) : null))))));
+}
+
+const openDetails = new Set();
+function renderPhases() {
+  document.querySelectorAll("li.step details[open]").forEach(d => openDetails.add(d.closest("li.step").dataset.step));
+  document.querySelectorAll("li.step details:not([open])").forEach(d => openDetails.delete(d.closest("li.step").dataset.step));
+  const focused = document.activeElement && document.activeElement.id && document.activeElement.id.startsWith("note-") ? document.activeElement.id : null;
+  const out = PHASES.map((p, i) => {
+    const list = STEPS.filter(s => s.phase === p.id);
+    const d = list.filter(s => isDone(s.id)).length, pct = Math.round(d * 100 / list.length);
+    return h("section", { class: "phase" + (d === list.length ? " complete" : ""), "aria-labelledby": "ph-" + p.id },
+      h("div", { class: "phase-head" },
+        h("span", { class: "phase-no", text: "PHASE " + (i + 1) }),
+        h("h3", { id: "ph-" + p.id, text: (d === list.length ? "✓ " : "") + p.name }),
+        h("span", { class: "pcount", text: d + "/" + list.length }),
+        h("p", { text: p.goal }),
+        h("div", { class: "bar small" }, h("i", { style: "width:" + pct + "%" }))),
+      h("ul", { class: "steps" }, list.map(stepRow)));
+  });
+  if (focused) return; // don't rebuild under someone typing a note
+  $("phases").replaceChildren(...out);
+  openDetails.forEach(id => { const d = document.querySelector('[data-step="' + id + '"] details'); if (d) d.open = true; });
+}
+function jumpTo(id) {
+  if (location.hash !== "#checklist") { location.hash = "checklist"; showView("checklist"); }
+  $("f-hide").checked = false; $("f-who").value = "all"; storeFilter = "all"; $("f-store").value = "all";
+  renderPhases();
+  const row = $("step-" + id);
+  if (row) { row.querySelector("details").open = true; row.scrollIntoView({ behavior: "smooth", block: "center" }); row.querySelector(".check").focus({ preventScroll: true }); }
+}
+
+// ---------- bugs
+function bugText(b) {
+  return [`[${(b.severity || "").toUpperCase()}] ${b.title}`, `Status: ${BUG_STATUS[b.status] || b.status} · ${b.platform || ""} · ${b.device || ""} · build ${b.build || ""} · ${b.area || ""}`,
+    b.what ? "What happened: " + b.what : "", b.repro ? "Steps: " + b.repro : "", b.expected ? "Expected: " + b.expected : "",
+    b.claudeNote ? "Claude: " + b.claudeNote : ""].filter(Boolean).join("\n");
+}
+function renderBugs() {
+  const f = $("bf-status").value;
+  const list = bugs.filter(b => f === "all" || (f === "open" ? !["fixed", "wontfix"].includes(b.status) : b.status === "fixed"));
+  const open = bugs.filter(b => !["fixed", "wontfix"].includes(b.status)).length;
+  $("c-bugs").textContent = bugs.length ? String(open) : "";
+  $("bug-list").replaceChildren(...(list.length ? list.map(b => {
+    const sel = h("select", { "aria-label": "Status of " + b.title, disabled: !canWrite, onchange: async (e) => {
+      try { await db.doc("bugs/" + b.id).update({ status: e.target.value, statusAt: Date.now() }); toast("Bug marked " + BUG_STATUS[e.target.value] + "."); }
+      catch (err) { toast("Couldn't save the status."); } } },
+      Object.entries(BUG_STATUS).map(([k, v]) => h("option", { value: k, selected: b.status === k }, v)));
+    return h("article", { class: "item sev-" + (b.severity || "minor") + " st-" + (b.status || "new") },
+      h("div", { style: "display:flex;flex-wrap:wrap;gap:8px;justify-content:space-between;align-items:center" },
+        h("h3", { text: b.title }), sel),
+      h("div", { class: "chips" }, [b.severity, b.platform, b.device, b.build && "build " + b.build, b.area, fmtWhen(b.at)].filter(Boolean).map(x => h("span", { class: "chip", text: x }))),
+      b.what ? h("p", { text: b.what }) : null,
+      b.repro ? h("p", {}, h("b", { text: "Steps: " }), b.repro) : null,
+      b.expected ? h("p", {}, h("b", { text: "Expected: " }), b.expected) : null,
+      b.claudeNote ? h("p", { class: "claude-note", text: "Claude: " + b.claudeNote }) : null);
+  }) : [h("p", { class: "empty", text: f === "open" ? "No open bugs. Play a race and report anything odd." : "Nothing here yet." })]));
+  renderFeed();
+}
+function bugHint() {
+  const t = $("b-title").value.trim(), r = $("b-repro").value.trim(), w = $("b-what").value.trim();
+  const hint = $("b-hint");
+  if (!t) { hint.textContent = "Start with a short title, like a headline."; hint.className = "hint"; }
+  else if (!r) { hint.textContent = "Add the steps to make it happen again; that's what lets Claude fix it quickly."; hint.className = "hint"; }
+  else if (!w) { hint.textContent = "Good steps. A line about what you saw helps too."; hint.className = "hint"; }
+  else { hint.textContent = "Great report: clear title, what happened and how to repeat it."; hint.className = "hint ok"; }
+}
+async function submitBug(e) {
+  e.preventDefault();
+  const b = { title: $("b-title").value.trim(), what: $("b-what").value.trim(), repro: $("b-repro").value.trim(), expected: $("b-expected").value.trim(),
+    platform: $("b-platform").value, device: $("b-device").value.trim(), build: $("b-build").value.trim(), area: $("b-area").value,
+    severity: $("b-sev").value, status: "new", at: Date.now(), by: "you" };
+  if (!b.title) { $("b-title").focus(); bugHint(); return; }
+  if (!db || !canWrite) { toast("Not saved: this view can't save. Open the page signed in as its owner."); return; }
+  try {
+    await db.collection("bugs").add(b);
+    $("bug-form").reset(); $("b-build").value = "1.0.0 (1)"; bugHint();
+    toast(b.severity === "crash" ? "Saved. Crashes go to the top of Claude's list." : "Saved. Thanks: Claude reads these and marks them when fixed.");
+  } catch (err) { toast(err && err.code === "quota_exceeded" ? "The report store is full; ask Claude to archive old reports." : "Couldn't save the report. Try again."); }
+}
+
+// ---------- playtests
+function renderPlays() {
+  $("c-play").textContent = plays.length ? String(plays.length) : "";
+  const mins = plays.reduce((a, p) => a + (Number(p.minutes) || 0), 0);
+  const avg = plays.length ? (plays.reduce((a, p) => a + (Number(p.fun) || 0), 0) / plays.length) : 0;
+  const again = plays.filter(p => p.again === "yes").length;
+  const choppy = plays.filter(p => p.fps === "choppy").length;
+  $("pt-tiles").replaceChildren(
+    h("div", { class: "tile" }, h("b", { text: String(plays.length) }), h("span", { text: "sessions" })),
+    h("div", { class: "tile" }, h("b", { text: String(mins) }), h("span", { text: "minutes played" })),
+    h("div", { class: "tile" }, h("b", { text: plays.length ? avg.toFixed(1) + " / 5" : "–" }), h("span", { text: "average fun" })),
+    h("div", { class: "tile" }, h("b", { text: plays.length ? Math.round(again * 100 / plays.length) + "%" : "–" }), h("span", { text: "would play again" })),
+    h("div", { class: "tile" }, h("b", { text: String(choppy) }), h("span", { text: "choppy sessions" })));
+  $("pt-list").replaceChildren(...(plays.length ? plays.map(p => h("article", { class: "item sev-minor" },
+    h("h3", { text: p.mode + " · " + "★".repeat(Number(p.fun) || 0) + "☆".repeat(5 - (Number(p.fun) || 0)) }),
+    h("div", { class: "chips" }, [p.platform, p.device, (p.minutes || "?") + " min", { smooth: "smooth", ok: "mostly smooth", choppy: "choppy" }[p.fps], "again: " + p.again, fmtWhen(p.at)].filter(Boolean).map(x => h("span", { class: "chip", text: x }))),
+    p.good ? h("p", {}, h("b", { text: "Great: " }), p.good) : null,
+    p.off ? h("p", {}, h("b", { text: "Off: " }), p.off) : null)) : [h("p", { class: "empty", text: "No sessions yet. Play one race and log it: two minutes of notes help a lot." })]));
+  renderFeed();
+}
+function renderStars() {
+  $("pt-fun").replaceChildren(...[1, 2, 3, 4, 5].map(n => h("button", { type: "button", "aria-pressed": n <= funPick ? "true" : "false", "aria-label": n + " out of 5", onclick: () => { funPick = n; renderStars(); } }, String(n))));
+}
+async function submitPlay(e) {
+  e.preventDefault();
+  const p = { platform: $("pt-platform").value, device: $("pt-device").value.trim(), mode: $("pt-mode").value, minutes: Math.max(1, Math.min(600, Number($("pt-min").value) || 0)),
+    fun: funPick, good: $("pt-good").value.trim(), off: $("pt-off").value.trim(), again: $("pt-again").value, fps: $("pt-fps").value, at: Date.now(), by: "you" };
+  if (!db || !canWrite) { toast("Not saved: this view can't save. Open the page signed in as its owner."); return; }
+  try {
+    await db.collection("playtests").add(p);
+    $("pt-good").value = ""; $("pt-off").value = "";
+    toast(p.fps === "choppy" ? "Saved. Choppy sessions help Claude tune the graphics settings for that device." : p.fun <= 2 ? "Saved. Low scores are the most useful: Claude looks at what felt off." : "Saved. Thanks for playing!");
+  } catch (err) { toast("Couldn't save the session. Try again."); }
+}
+
+// ---------- activity feed
+function renderFeed() {
+  const ev = [];
+  for (const s of STEPS) for (const hst of ((state[s.id] || {}).history || [])) ev.push({ at: hst.at, text: (hst.by === "claude" ? "Claude" : "You") + " set “" + s.title + "” to " + (STATUS_LABEL[hst.status] || hst.status) });
+  for (const b of bugs) ev.push({ at: b.at, text: "Bug reported: " + b.title + " (" + b.severity + ")" });
+  for (const b of bugs) if (b.statusAt) ev.push({ at: b.statusAt, text: "Bug “" + b.title + "” is now " + (BUG_STATUS[b.status] || b.status) });
+  for (const p of plays) ev.push({ at: p.at, text: "Play session: " + p.mode + " on " + p.platform + ", fun " + p.fun + "/5" });
+  ev.sort((a, b) => b.at - a.at);
+  $("feed").replaceChildren(...(ev.length ? ev.slice(0, 60).map(e => h("li", {}, h("time", { text: fmtWhen(e.at) }), h("span", { text: e.text })))
+    : [h("li", { class: "empty" }, h("span", { text: "Nothing yet." }))]));
+}
+
+// ---------- views
+function showView(v) {
+  if (!["checklist", "bugs", "playtests", "activity"].includes(v)) v = "checklist";
+  document.querySelectorAll("section.view").forEach(s => s.classList.toggle("active", s.id === "view-" + v));
+  document.querySelectorAll("nav.tabs a").forEach(a => a.setAttribute("aria-current", a.dataset.view === v ? "page" : "false"));
+}
+window.addEventListener("hashchange", () => showView(location.hash.slice(1)));
+
+// ---------- start
+$("researched").textContent = new Date(DATA.researched + "T12:00:00").toLocaleDateString(undefined, { day: "numeric", month: "long", year: "numeric" });
+for (const [k, v] of Object.entries(STORES)) $("f-store").append(h("option", { value: k }, v));
+for (const p of PLATFORMS) { $("b-platform").append(h("option", {}, p)); $("pt-platform").append(h("option", {}, p)); }
+for (const a of AREAS) $("b-area").append(h("option", {}, a));
+$("f-who").addEventListener("change", renderPhases);
+$("f-store").addEventListener("change", e => { storeFilter = e.target.value; render(); });
+$("f-hide").addEventListener("change", renderPhases);
+$("bf-status").addEventListener("change", renderBugs);
+["b-title", "b-what", "b-repro"].forEach(id => $(id).addEventListener("input", bugHint));
+$("bug-form").addEventListener("submit", submitBug);
+$("pt-form").addEventListener("submit", submitPlay);
+$("b-copy").addEventListener("click", async () => {
+  try { await navigator.clipboard.writeText(bugs.map(bugText).join("\n\n") || "No bugs reported."); toast("Copied " + bugs.length + " bug reports."); }
+  catch (e) { toast("Copy was blocked by the browser."); }
+});
+renderStars();
+showView(location.hash.slice(1) || "checklist");
+render(); renderBugs(); renderPlays();
+setLive("", "Saved snapshot");
+
+async function waitForClaude() {
+  for (let i = 0; i < 30; i++) {
+    if (window.claude && typeof window.claude.use === "function") return window.claude;
+    await new Promise(r => setTimeout(r, 100));
+  }
+  return null;
+}
+(async () => {
+  const claude = await waitForClaude();
+  if (!claude) { setLive("warn", "Read-only copy"); return; }
+  const timer = setTimeout(() => setLive("warn", "Can't reach saved data yet"), 10000);
+  try { user = await claude.use("user"); } catch (e) { user = null; }
+  try { db = await claude.use("db"); } catch (e) { db = null; }
+  if (!db) { clearTimeout(timer); setLive("warn", "Read-only copy"); return; }
+  let w = null;
+  try { w = user ? await user.can("data.write") : null; } catch (e) { w = null; }
+  canWrite = w !== false;
+  const gotFirst = () => { clearTimeout(timer); live = true; setLive("on", canWrite ? "Live · saved for Claude" : "Live · view only"); };
+  db.collection("steps").onSnapshot(snap => {
+    const fresh = {};
+    snap.docs.forEach(d => { fresh[d.id] = d.data(); });
+    state = fresh;
+    if (!snap.metadata.fromCache) gotFirst();
+    render();
+  }, err => { clearTimeout(timer); setLive("warn", "Saved data unavailable (" + err.code + ")"); });
+  db.collection("bugs").orderBy("at", "desc").limit(300).onSnapshot(snap => {
+    bugs = snap.docs.map(d => Object.assign({ id: d.id }, d.data()));
+    renderBugs();
+  }, () => {});
+  db.collection("playtests").orderBy("at", "desc").limit(300).onSnapshot(snap => {
+    plays = snap.docs.map(d => Object.assign({ id: d.id }, d.data()));
+    renderPlays();
+  }, () => {});
+})();
+</script>
+</body>
+</html>

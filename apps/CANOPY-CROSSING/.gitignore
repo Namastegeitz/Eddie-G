@@ -1,0 +1,14 @@
+# Godot cache / build output
+.godot/
+build/
+*.tmp
+
+# Builds live in BUILDS/<platform>/ (each platform its own folder). The game
+# files are too big for git: only each folder's README.md and BUILD_INFO.json
+# are kept; GitHub Actions (canopy-crossing-release.yml) rebuilds them all.
+BUILDS/*/*
+!BUILDS/*/README.md
+!BUILDS/*/BUILD_INFO.json
+
+# Godot installs its Android Gradle build template here when building the Play Store .aab
+/android/
