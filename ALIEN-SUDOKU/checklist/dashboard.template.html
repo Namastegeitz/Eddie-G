@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Alien Sudoku Launch Control</title>
+<meta name="color-scheme" content="dark">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* One visual world: the game's own deep space and neon. Done = the game's neon green. */
+:root {
+  --void: #06020f;
+  --panel: #110a24;
+  --panel-2: #1a1036;
+  --ink: #efe9ff;
+  --dim: #ada3cf;
+  --line: rgba(180, 150, 255, 0.18);
+  --done: #39ff9c;
+  --accent: #ff5cd6;
+  --info: #5ff0ff;
+  --warn: #ffb547;
+  --bad: #ff4d6d;
+  --display: 'Orbitron', 'Eurostile', 'Arial Narrow', sans-serif;
+  --body: 'Space Grotesk', 'Avenir Next', 'Segoe UI', system-ui, sans-serif;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { margin: 0; }
+body {
+  background: var(--void);
+  background-image: radial-gradient(70rem 40rem at 90% -10%, rgba(120, 70, 255, 0.2), transparent 60%),
+    radial-gradient(50rem 30rem at -10% 20%, rgba(57, 255, 156, 0.07), transparent 60%);
+  background-attachment: fixed;
+  color: var(--ink);
+  font: 400 15px/1.5 var(--body);
+}
+button, input, select, textarea { font: inherit; color: inherit; }
+a { color: var(--info); }
+.wrap { max-width: 1040px; margin: 0 auto; padding: 24px 16px 80px; display: grid; gap: 20px; }
+
+/* ---------- header ---------- */
+.top { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px; }
+.brand h1 { margin: 0; font: 900 clamp(2rem, 7vw, 3.4rem)/1 var(--display); letter-spacing: 0.04em; }
+.brand h1 .a { color: var(--done); text-shadow: 0 0 18px rgba(57, 255, 156, 0.45); }
+.brand h1 .b { color: var(--accent); text-shadow: 0 0 18px rgba(255, 92, 214, 0.45); }
+.brand p { margin: 8px 0 0; color: var(--dim); }
+.brand p b { color: var(--ink); font-family: var(--display); font-weight: 800; letter-spacing: 0.12em; font-size: 0.82rem; text-transform: uppercase; }
+.live { display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 999px; border: 1px solid var(--line); color: var(--dim); font-size: 0.82rem; white-space: nowrap; }
+.live i { width: 8px; height: 8px; border-radius: 50%; background: var(--dim); }
+.live.on { color: var(--done); border-color: rgba(57, 255, 156, 0.4); }
+.live.on i { background: var(--done); box-shadow: 0 0 8px var(--done); animation: blink 2s ease-in-out infinite; }
+@keyframes blink { 50% { opacity: 0.35; } }
+
+/* ---------- summary ---------- */
+.summary { display: grid; grid-template-columns: auto 1fr; gap: 18px; align-items: center; padding: 18px; border-radius: 20px; background: linear-gradient(160deg, var(--panel-2), var(--panel)); border: 1px solid var(--line); }
+.ring { width: 128px; height: 128px; position: relative; }
+.ring svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+.ring .pct { position: absolute; inset: 0; display: grid; place-items: center; text-align: center; }
+.ring .pct b { display: block; font: 900 1.7rem/1 var(--display); color: var(--done); }
+.ring .pct small { color: var(--dim); font-size: 0.72rem; }
+.stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+.stat { padding: 10px 12px; border-radius: 14px; background: rgba(255, 255, 255, 0.03); border: 1px solid var(--line); }
+.stat b { display: block; font: 800 1.35rem/1.1 var(--display); font-variant-numeric: tabular-nums; }
+.stat small { color: var(--dim); font-size: 0.76rem; }
+.stat.you b { color: var(--accent); } .stat.claude b { color: var(--info); } .stat.blocked b { color: var(--bad); }
+.next { grid-column: 1 / -1; display: grid; gap: 8px; }
+.next h2 { margin: 0; font: 800 0.72rem/1 var(--display); letter-spacing: 0.2em; text-transform: uppercase; color: var(--dim); }
+.next-list { display: grid; gap: 6px; }
+.next-item { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-radius: 12px; border: 1px solid var(--line); background: rgba(255, 255, 255, 0.02); cursor: pointer; text-align: left; width: 100%; }
+.next-item:hover { border-color: rgba(255, 92, 214, 0.5); }
+.next-item .ph { color: var(--dim); font-size: 0.74rem; white-space: nowrap; }
+.next-item .tt { flex: 1; min-width: 0; }
+@media (max-width: 640px) {
+  .summary { grid-template-columns: 1fr; justify-items: center; }
+  .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); width: 100%; }
+}
+
+/* ---------- tabs and filters ---------- */
+.tabs { display: flex; gap: 8px; border-bottom: 1px solid var(--line); overflow-x: auto; }
+.tab { padding: 10px 14px; border: 0; border-bottom: 2px solid transparent; background: none; cursor: pointer; color: var(--dim); font-weight: 600; white-space: nowrap; }
+.tab[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--done); }
+.tab .n { margin-left: 6px; padding: 1px 7px; border-radius: 999px; background: rgba(255, 255, 255, 0.08); font-size: 0.74rem; }
+.filters { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.chip { padding: 6px 12px; border-radius: 999px; border: 1px solid var(--line); background: transparent; cursor: pointer; font-size: 0.82rem; color: var(--dim); }
+.chip[aria-pressed="true"] { color: var(--ink); border-color: var(--done); background: rgba(57, 255, 156, 0.1); }
+.filters .sep { width: 1px; height: 22px; background: var(--line); margin: 0 4px; }
+.filters label { display: inline-flex; align-items: center; gap: 6px; color: var(--dim); font-size: 0.82rem; cursor: pointer; }
+
+/* ---------- phases and tasks ---------- */
+.phase { display: grid; gap: 10px; }
+.phase-head { display: grid; grid-template-columns: auto 1fr auto; gap: 12px; align-items: center; }
+.phase-num { width: 34px; height: 34px; border-radius: 10px; display: grid; place-items: center; font: 900 0.9rem/1 var(--display); background: rgba(255, 255, 255, 0.05); border: 1px solid var(--line); }
+.phase.complete .phase-num { background: var(--done); color: #06240f; border-color: var(--done); }
+.phase-head h2 { margin: 0; font: 800 1rem/1.2 var(--display); letter-spacing: 0.06em; }
+.phase-head p { margin: 2px 0 0; color: var(--dim); font-size: 0.84rem; }
+.phase-count { font-variant-numeric: tabular-nums; color: var(--dim); font-size: 0.82rem; text-align: right; white-space: nowrap; }
+.bar { height: 6px; border-radius: 4px; background: rgba(255, 255, 255, 0.06); overflow: hidden; grid-column: 1 / -1; }
+.bar b { display: block; height: 100%; background: var(--done); box-shadow: 0 0 8px rgba(57, 255, 156, 0.6); transition: width 0.5s ease; }
+.tasks { display: grid; gap: 8px; }
+.task { display: grid; grid-template-columns: auto 1fr; gap: 12px; padding: 12px 14px; border-radius: 16px; background: var(--panel); border: 1px solid var(--line); }
+.task.done { border-color: rgba(57, 255, 156, 0.35); background: linear-gradient(90deg, rgba(57, 255, 156, 0.07), var(--panel) 40%); }
+.task.blocked:not(.done) { box-shadow: inset 3px 0 0 var(--bad); }
+.task.flash { animation: flash 1.2s ease-out; }
+@keyframes flash { from { box-shadow: 0 0 0 2px var(--done), 0 0 24px rgba(57, 255, 156, 0.5); } }
+.check { width: 34px; height: 34px; border-radius: 50%; border: 2px solid rgba(255, 255, 255, 0.28); background: transparent; cursor: pointer; display: grid; place-items: center; padding: 0; transition: transform 0.12s, background 0.2s, border-color 0.2s; }
+.check svg { width: 20px; height: 20px; opacity: 0; transform: scale(0.5); transition: opacity 0.2s, transform 0.25s cubic-bezier(0.2, 1.6, 0.4, 1); }
+.check:hover:not(:disabled) { border-color: var(--done); }
+.check:active:not(:disabled) { transform: scale(0.92); }
+.check[aria-checked="true"] { background: var(--done); border-color: var(--done); box-shadow: 0 0 14px rgba(57, 255, 156, 0.6); }
+.check[aria-checked="true"] svg { opacity: 1; transform: scale(1); }
+.check:disabled { cursor: default; opacity: 0.7; }
+.task-main { min-width: 0; display: grid; gap: 6px; }
+.task-head { display: grid; gap: 4px; padding: 0; border: 0; background: none; text-align: left; cursor: pointer; }
+.task-title { font-weight: 600; font-size: 1rem; }
+.task.done .task-title { color: var(--done); }
+.meta { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; font-size: 0.76rem; color: var(--dim); }
+.tag { padding: 1px 8px; border-radius: 999px; border: 1px solid var(--line); white-space: nowrap; }
+.tag.you { color: var(--accent); border-color: rgba(255, 92, 214, 0.4); }
+.tag.claude { color: var(--info); border-color: rgba(95, 240, 255, 0.4); }
+.tag.both { color: var(--warn); border-color: rgba(255, 181, 71, 0.4); }
+.tag.blocked { color: var(--bad); border-color: rgba(255, 77, 109, 0.5); }
+.tag.store { color: var(--ink); }
+.done-by { color: var(--done); }
+.task-body { display: grid; gap: 10px; padding-top: 6px; font-size: 0.9rem; }
+.task-body[hidden] { display: none; }
+.note-line { margin: 0; color: var(--dim); }
+.note-line.blocked { color: #ffc2cd; }
+.task-body h3 { margin: 4px 0 0; font: 800 0.66rem/1 var(--display); letter-spacing: 0.18em; text-transform: uppercase; color: var(--dim); }
+.task-body ol, .task-body ul { margin: 0; padding-left: 20px; display: grid; gap: 4px; }
+.tips { padding: 10px 12px; border-radius: 12px; background: rgba(255, 181, 71, 0.07); border: 1px solid rgba(255, 181, 71, 0.25); }
+.tips li::marker { color: var(--warn); }
+.links { display: flex; flex-wrap: wrap; gap: 8px; }
+.links a { font-size: 0.84rem; }
+.deps { display: flex; flex-wrap: wrap; gap: 6px; font-size: 0.8rem; }
+.dep { padding: 2px 8px; border-radius: 8px; border: 1px solid var(--line); cursor: pointer; background: none; color: var(--dim); }
+.dep.ok { color: var(--done); border-color: rgba(57, 255, 156, 0.35); }
+.notes textarea { width: 100%; min-height: 64px; padding: 8px 10px; border-radius: 10px; border: 1px solid var(--line); background: rgba(0, 0, 0, 0.25); resize: vertical; }
+.notes small { color: var(--dim); font-size: 0.74rem; }
+:focus-visible { outline: 2px solid var(--done); outline-offset: 3px; }
+
+/* ---------- feedback ---------- */
+.fb-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: 18px; align-items: start; }
+@media (max-width: 820px) { .fb-grid { grid-template-columns: 1fr; } }
+.card { padding: 16px; border-radius: 18px; background: var(--panel); border: 1px solid var(--line); display: grid; gap: 12px; }
+.card h2 { margin: 0; font: 800 0.9rem/1.2 var(--display); letter-spacing: 0.08em; }
+.card p { margin: 0; color: var(--dim); font-size: 0.86rem; }
+.field { display: grid; gap: 4px; }
+.field label { font-size: 0.8rem; color: var(--dim); }
+.field input, .field select, .field textarea { width: 100%; padding: 9px 10px; border-radius: 10px; border: 1px solid var(--line); background: rgba(0, 0, 0, 0.25); }
+.field textarea { min-height: 72px; resize: vertical; }
+.row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+@media (max-width: 480px) { .row { grid-template-columns: 1fr 1fr; } }
+.btn { padding: 11px 16px; border-radius: 12px; border: 0; cursor: pointer; font-weight: 700; background: var(--done); color: #06240f; }
+.btn:disabled { opacity: 0.45; cursor: default; }
+.fb-counts { display: flex; flex-wrap: wrap; gap: 8px; }
+.fb-list { display: grid; gap: 8px; }
+.fb { padding: 12px 14px; border-radius: 14px; border: 1px solid var(--line); background: rgba(255, 255, 255, 0.02); display: grid; gap: 6px; }
+.fb-top { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.fb-title { font-weight: 600; flex: 1; min-width: 12ch; }
+.sev-minor { color: var(--info); } .sev-major { color: var(--warn); } .sev-blocker { color: var(--bad); }
+.st { padding: 1px 8px; border-radius: 999px; font-size: 0.74rem; border: 1px solid var(--line); }
+.st-new { color: var(--accent); } .st-confirmed { color: var(--warn); } .st-fixed { color: var(--done); } .st-wontfix { color: var(--dim); }
+.fb p { margin: 0; color: var(--dim); font-size: 0.86rem; white-space: pre-wrap; }
+.fb select { padding: 3px 6px; border-radius: 8px; border: 1px solid var(--line); background: var(--panel-2); font-size: 0.78rem; }
+.empty { color: var(--dim); text-align: center; padding: 18px; border: 1px dashed var(--line); border-radius: 14px; }
+
+/* ---------- activity ---------- */
+.act { display: grid; gap: 6px; }
+.act-item { display: grid; grid-template-columns: auto 1fr auto; gap: 10px; align-items: center; padding: 8px 12px; border-radius: 12px; background: rgba(255, 255, 255, 0.02); border: 1px solid var(--line); font-size: 0.88rem; }
+.act-item .when { color: var(--dim); font-size: 0.76rem; white-space: nowrap; }
+.dot { width: 10px; height: 10px; border-radius: 50%; background: var(--done); }
+.dot.fb { background: var(--accent); } .dot.undo { background: var(--dim); }
+
+/* ---------- toast ---------- */
+.toast { position: fixed; left: 50%; bottom: 18px; transform: translate(-50%, calc(100% + 40px)); opacity: 0; pointer-events: none; width: min(560px, calc(100% - 32px)); padding: 14px 16px; border-radius: 16px; background: #0d2a1c; border: 1px solid rgba(57, 255, 156, 0.6); box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5), 0 0 24px rgba(57, 255, 156, 0.25); transition: transform 0.35s cubic-bezier(0.2, 1.3, 0.4, 1); z-index: 20; display: grid; gap: 4px; }
+.toast.show { transform: translate(-50%, 0); opacity: 1; pointer-events: auto; }
+.toast b { color: var(--done); }
+.toast small { color: #c9f7dd; }
+.toast.neutral { background: var(--panel-2); border-color: var(--line); }
+.toast.neutral b { color: var(--ink); }
+.foot { color: var(--dim); font-size: 0.8rem; }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="brand">
+      <h1><span class="a">ALIEN</span> <span class="b">SUDOKU</span></h1>
+      <p><b>Launch Control</b> · every step from finished game to live in every store</p>
+    </div>
+    <span class="live" id="live" role="status"><i></i><span>Saved copy</span></span>
+  </header>
+
+  <section class="summary" aria-label="Progress">
+    <div class="ring" aria-hidden="true">
+      <svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="52" fill="none" stroke="rgba(255,255,255,0.07)" stroke-width="12"/><circle id="ring-arc" cx="60" cy="60" r="52" fill="none" stroke="#39ff9c" stroke-width="12" stroke-linecap="round" stroke-dasharray="326.7" stroke-dashoffset="326.7" style="filter: drop-shadow(0 0 6px rgba(57,255,156,0.6)); transition: stroke-dashoffset 0.6s ease"/></svg>
+      <div class="pct"><span><b id="pct">0%</b><small>done</small></span></div>
+    </div>
+    <div class="stats">
+      <div class="stat"><b id="st-done">0</b><small id="st-done-l">of 0 tasks done</small></div>
+      <div class="stat you"><b id="st-you">0</b><small>left for you</small></div>
+      <div class="stat claude"><b id="st-claude">0</b><small>left for Claude</small></div>
+      <div class="stat blocked"><b id="st-blocked">0</b><small>blocked</small></div>
+    </div>
+    <div class="next">
+      <h2>Next up</h2>
+      <div class="next-list" id="next"></div>
+    </div>
+  </section>
+
+  <nav class="tabs" role="tablist" aria-label="Sections">
+    <button class="tab" role="tab" id="tab-btn-checklist" aria-selected="true" aria-controls="tab-checklist">Checklist</button>
+    <button class="tab" role="tab" id="tab-btn-feedback" aria-selected="false" aria-controls="tab-feedback">Bugs &amp; feedback <span class="n" id="fb-n">0</span></button>
+    <button class="tab" role="tab" id="tab-btn-activity" aria-selected="false" aria-controls="tab-activity">Activity</button>
+  </nav>
+
+  <section id="tab-checklist" role="tabpanel" aria-labelledby="tab-btn-checklist" style="display:grid;gap:22px">
+    <div class="filters" id="filters"></div>
+    <div id="phases" style="display:grid;gap:26px"></div>
+  </section>
+
+  <section id="tab-feedback" role="tabpanel" aria-labelledby="tab-btn-feedback" hidden>
+    <div class="fb-grid">
+      <form class="card" id="fb-form" autocomplete="off">
+        <h2>Report a bug or share feedback</h2>
+        <p>Small things count too. Claude reads these and fixes them.</p>
+        <div class="row">
+          <div class="field"><label for="fb-kind">Type</label><select id="fb-kind"><option value="bug">Bug</option><option value="idea">Idea</option><option value="use">How I played</option></select></div>
+          <div class="field"><label for="fb-sev">How bad</label><select id="fb-sev"><option value="minor">Minor</option><option value="major">Major</option><option value="blocker">Blocker</option></select></div>
+          <div class="field"><label for="fb-platform">Played on</label><select id="fb-platform"><option>Web</option><option>iPhone</option><option>iPad</option><option>Android phone</option><option>Android tablet</option><option>Windows</option><option>Mac</option><option>Linux</option></select></div>
+        </div>
+        <div class="field"><label for="fb-area">Part of the game</label><select id="fb-area"><option>Board &amp; glyphs</option><option>Alien Duel</option><option>Campaign</option><option>Daily</option><option>Zen</option><option>Music &amp; sound</option><option>Visitors encounter</option><option>Menus &amp; settings</option><option>Ads</option><option>Store page</option><option>Other</option></select></div>
+        <div class="field"><label for="fb-title">Short title</label><input id="fb-title" maxlength="90" required placeholder="e.g. Rival bubble text is cut off on small phones"></div>
+        <div class="field"><label for="fb-details">What happened (and what you expected)</label><textarea id="fb-details" maxlength="2000" placeholder="What you saw, what you expected to see"></textarea></div>
+        <div class="field"><label for="fb-steps">Steps to make it happen again</label><textarea id="fb-steps" maxlength="1200" placeholder="1. Open Alien Duel&#10;2. Pick The Maw&#10;3. ..."></textarea></div>
+        <button class="btn" type="submit" id="fb-send">Send report</button>
+        <small class="foot" id="fb-hint"></small>
+      </form>
+      <div class="card">
+        <h2>Reports</h2>
+        <div class="fb-counts filters" id="fb-filters"></div>
+        <div class="fb-list" id="fb-list"></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="tab-activity" role="tabpanel" aria-labelledby="tab-btn-activity" hidden>
+    <div class="card"><h2>Recent activity</h2><p>Every task checked off and every report, newest first. Updates live.</p><div class="act" id="act"></div></div>
+  </section>
+
+  <p class="foot" id="foot"></p>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+const DATA = /*__DATA__*/null;
+const STATUS_LABEL = { new: 'New', confirmed: 'Confirmed', fixed: 'Fixed', wontfix: "Won't fix" };
+const OWNER_LABEL = { you: 'You', claude: 'Claude', both: 'You + Claude' };
+const CHECK_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="#06240f" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+
+const tasks = DATA.tasks;
+const byId = Object.fromEntries(tasks.map((t) => [t.id, t]));
+// Live state: task id -> { done, by, at, note }. Starts from the snapshot built into the page.
+let progress = { ...(DATA.snapshot || {}) };
+let feedback = [];
+let db = null;
+let user = null;
+let canWrite = false;   // may send bug reports (Contributor and up)
+let canTick = false;    // may check tasks off and edit notes (the owner and Editors)
+let canTriage = false;
+let names = {};
+const ui = { store: 'all', owner: 'all', hideDone: false, open: new Set() };
+try { Object.assign(ui, JSON.parse(localStorage.getItem('launch-ui') || '{}'), { open: new Set() }); } catch (e) { /* storage blocked */ }
+const saveUi = () => { try { localStorage.setItem('launch-ui', JSON.stringify({ store: ui.store, owner: ui.owner, hideDone: ui.hideDone })); } catch (e) { /* ignore */ } };
+
+const $ = (s) => document.querySelector(s);
+const el = (tag, attrs = {}, ...kids) => {
+  const n = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs)) {
+    if (v == null || v === false) continue;
+    if (k === 'class') n.className = v;
+    else if (k.startsWith('on')) n.addEventListener(k.slice(2), v);
+    else if (k === 'html') n.innerHTML = v;
+    else n.setAttribute(k, v === true ? '' : v);
+  }
+  for (const c of kids.flat()) if (c != null && c !== false) n.append(c instanceof Node ? c : document.createTextNode(String(c)));
+  return n;
+};
+const isDone = (t) => (progress[t.id] ? !!progress[t.id].done : t.status === 'done');
+const fmtDate = (ms) => ms ? new Date(ms).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) : '';
+const whoName = (by) => by === 'claude' ? 'Claude' : by ? (names[by] || 'You') : '';
+const visible = (t) => (ui.store === 'all' || t.store === ui.store || t.store === 'all') && (ui.owner === 'all' || t.owner === ui.owner || t.owner === 'both') && !(ui.hideDone && isDone(t));
+
+/** The next tasks worth doing: not done, every dependency done; the owner's own first. */
+function nextUp(n = 4) {
+  return tasks.filter((t) => !isDone(t) && (t.depends || []).every((d) => !byId[d] || isDone(byId[d])) && t.status !== 'blocked')
+    .sort((a, b) => (a.owner === 'claude') - (b.owner === 'claude')).slice(0, n);
+}
+
+// ---------- rendering ----------
+function renderSummary() {
+  const done = tasks.filter(isDone).length;
+  const pct = tasks.length ? Math.round((done / tasks.length) * 100) : 0;
+  $('#pct').textContent = `${pct}%`;
+  $('#ring-arc').style.strokeDashoffset = String(326.7 * (1 - pct / 100));
+  $('#st-done').textContent = done;
+  $('#st-done-l').textContent = `of ${tasks.length} tasks done`;
+  $('#st-you').textContent = tasks.filter((t) => !isDone(t) && t.owner !== 'claude').length;
+  $('#st-claude').textContent = tasks.filter((t) => !isDone(t) && t.owner === 'claude').length;
+  $('#st-blocked').textContent = tasks.filter((t) => !isDone(t) && t.status === 'blocked').length;
+  const next = nextUp();
+  $('#next').replaceChildren(...(next.length ? next.map((t) => el('button', { class: 'next-item', type: 'button', onclick: () => reveal(t.id) },
+    el('span', { class: `tag ${t.owner}` }, OWNER_LABEL[t.owner]),
+    el('span', { class: 'tt' }, t.title),
+    el('span', { class: 'ph' }, `${DATA.stores[t.store]?.name || ''}`))) : [el('p', { class: 'note-line' }, 'Everything available is done. 🚀')]));
+}
+
+function renderFilters() {
+  const storeKeys = ['all', ...Object.keys(DATA.stores).filter((k) => k !== 'all' && tasks.some((t) => t.store === k))];
+  const chip = (label, pressed, onclick) => el('button', { class: 'chip', type: 'button', 'aria-pressed': String(pressed), onclick }, label);
+  $('#filters').replaceChildren(
+    ...storeKeys.map((k) => chip(k === 'all' ? 'All stores' : DATA.stores[k].name, ui.store === k, () => { ui.store = k; saveUi(); renderAll(); })),
+    el('span', { class: 'sep' }),
+    ...['all', 'you', 'claude'].map((o) => chip(o === 'all' ? 'Everyone' : o === 'you' ? 'My tasks' : "Claude's tasks", ui.owner === o, () => { ui.owner = o; saveUi(); renderAll(); })),
+    el('span', { class: 'sep' }),
+    el('label', {}, el('input', { type: 'checkbox', id: 'hide-done', checked: ui.hideDone, onchange: (e) => { ui.hideDone = e.target.checked; saveUi(); renderAll(); } }), 'Hide done'));
+}
+
+function renderPhases() {
+  const box = $('#phases');
+  box.replaceChildren(...DATA.phases.map((ph, k) => {
+    const all = tasks.filter((t) => t.phase === ph.id && (ui.store === 'all' || t.store === ui.store || t.store === 'all'));
+    if (!all.length) return null;
+    const done = all.filter(isDone).length;
+    const shown = all.filter(visible);
+    return el('section', { class: `phase${done === all.length ? ' complete' : ''}`, 'aria-label': ph.name },
+      el('div', { class: 'phase-head' },
+        el('span', { class: 'phase-num' }, done === all.length ? '✓' : String(k + 1)),
+        el('div', {}, el('h2', {}, ph.name), el('p', {}, ph.blurb)),
+        el('span', { class: 'phase-count' }, `${done} / ${all.length}`),
+        el('div', { class: 'bar' }, el('b', { style: `width:${all.length ? (done / all.length) * 100 : 0}%` }))),
+      el('div', { class: 'tasks' }, shown.length ? shown.map(taskCard) : el('p', { class: 'note-line' }, 'All done here.')));
+  }).filter(Boolean));
+}
+
+function taskCard(t) {
+  const done = isDone(t);
+  const p = progress[t.id];
+  const open = ui.open.has(t.id);
+  const blocked = t.status === 'blocked' && !done;
+  const body = el('div', { class: 'task-body', id: `body-${t.id}`, hidden: !open },
+    t.statusNote ? el('p', { class: `note-line${blocked ? ' blocked' : ''}` }, blocked ? `Blocked: ${t.statusNote}` : t.statusNote) : null,
+    t.steps?.length ? [el('h3', {}, 'Steps'), el('ol', {}, t.steps.map((s) => el('li', {}, s)))] : null,
+    t.feedback?.length ? el('div', { class: 'tips' }, el('h3', {}, 'Tips & watch-outs'), el('ul', {}, t.feedback.map((s) => el('li', {}, s)))) : null,
+    t.depends?.length ? [el('h3', {}, 'Do these first'), el('div', { class: 'deps' }, t.depends.filter((d) => byId[d]).map((d) => el('button', { class: `dep${isDone(byId[d]) ? ' ok' : ''}`, type: 'button', onclick: () => reveal(d) }, `${isDone(byId[d]) ? '✓' : '○'} ${byId[d].title}`)))] : null,
+    t.links?.length ? el('div', { class: 'links' }, t.links.map((l) => el('a', { href: l.url, target: '_blank', rel: 'noopener' }, `${l.label} ↗`))) : null,
+    notesBox(t));
+  return el('article', { class: `task${done ? ' done' : ''}${blocked ? ' blocked' : ''}`, id: `t-${t.id}` },
+    el('button', {
+      class: 'check', type: 'button', role: 'checkbox', 'aria-checked': String(done), 'aria-label': `${t.title}: ${done ? 'done' : 'not done'}`,
+      disabled: !canTick, title: canTick ? (done ? 'Mark as not done' : 'Mark as done') : 'Only the board\'s owner and Editors can check tasks off',
+      onclick: () => toggleTask(t), html: CHECK_SVG,
+    }),
+    el('div', { class: 'task-main' },
+      el('button', { class: 'task-head', type: 'button', 'aria-expanded': String(open), 'aria-controls': `body-${t.id}`, onclick: () => { open ? ui.open.delete(t.id) : ui.open.add(t.id); renderPhases(); } },
+        el('span', { class: 'task-title' }, t.title),
+        el('span', { class: 'meta' },
+          el('span', { class: `tag ${t.owner}` }, OWNER_LABEL[t.owner]),
+          t.store !== 'all' ? el('span', { class: 'tag store' }, DATA.stores[t.store]?.name || t.store) : null,
+          blocked ? el('span', { class: 'tag blocked' }, 'Blocked') : null,
+          t.cost ? el('span', {}, t.cost) : null,
+          t.time && !done ? el('span', {}, `· ${t.time}`) : null,
+          done && p?.at ? el('span', { class: 'done-by' }, `✓ ${whoName(p.by)} · ${fmtDate(p.at)}`) : done ? el('span', { class: 'done-by' }, '✓ Done') : null)),
+      body));
+}
+
+function notesBox(t) {
+  if (!canTick) return progress[t.id]?.note ? el('p', { class: 'note-line' }, `Note: ${progress[t.id].note}`) : null;
+  let timer = null;
+  const ta = el('textarea', { id: `note-${t.id}`, maxlength: '600', placeholder: 'Your notes for this step (saved for everyone on this page)' });
+  ta.value = progress[t.id]?.note || '';
+  const status = el('small', {}, '');
+  ta.addEventListener('input', () => {
+    clearTimeout(timer);
+    status.textContent = 'Saving…';
+    timer = setTimeout(async () => {
+      try { await writeProgress(t.id, { note: ta.value.trim() }); status.textContent = 'Saved'; } catch (e) { status.textContent = 'Could not save'; }
+    }, 900);
+  });
+  return el('div', { class: 'notes' }, el('h3', {}, 'Notes'), ta, status);
+}
+
+function renderFeedback() {
+  const counts = { all: feedback.length, open: feedback.filter((f) => f.status !== 'fixed' && f.status !== 'wontfix').length, fixed: feedback.filter((f) => f.status === 'fixed').length };
+  $('#fb-n').textContent = counts.open;
+  const f = ui.fbFilter || 'open';
+  const chip = (k, label) => el('button', { class: 'chip', type: 'button', 'aria-pressed': String(f === k), onclick: () => { ui.fbFilter = k; renderFeedback(); } }, `${label} (${counts[k]})`);
+  $('#fb-filters').replaceChildren(chip('open', 'Open'), chip('fixed', 'Fixed'), chip('all', 'All'));
+  const list = feedback.filter((x) => f === 'all' || (f === 'fixed' ? x.status === 'fixed' : x.status !== 'fixed' && x.status !== 'wontfix'));
+  $('#fb-list').replaceChildren(...(list.length ? list.map((x) => el('div', { class: 'fb' },
+    el('div', { class: 'fb-top' },
+      el('span', { class: `tag sev-${x.severity}` }, x.kind === 'bug' ? (x.severity === 'blocker' ? 'Blocker' : x.severity === 'major' ? 'Major bug' : 'Minor bug') : x.kind === 'idea' ? 'Idea' : 'How I played'),
+      el('span', { class: 'fb-title' }, x.title),
+      canTriage ? el('select', { 'aria-label': 'Status', onchange: (e) => setStatus(x, e.target.value) },
+        Object.entries(STATUS_LABEL).map(([k, v]) => el('option', { value: k, selected: x.status === k }, v))) : el('span', { class: `st st-${x.status}` }, STATUS_LABEL[x.status] || 'New')),
+    el('div', { class: 'meta' }, el('span', {}, x.platform), el('span', {}, `· ${x.area}`), el('span', {}, `· ${whoName(x.by) || 'Someone'} · ${fmtDate(x.at)}`)),
+    x.details ? el('p', {}, x.details) : null,
+    x.steps ? el('p', {}, `Steps:\n${x.steps}`) : null)) : [el('div', { class: 'empty' }, f === 'fixed' ? 'Nothing fixed yet.' : 'No open reports. Play a few rounds and tell us what you notice.')]));
+}
+
+function renderActivity() {
+  const items = [
+    ...Object.entries(progress).filter(([id, p]) => p.at && byId[id]).map(([id, p]) => ({ at: p.at, kind: p.done ? 'done' : 'undo', text: `${p.done ? 'Checked off' : 'Unchecked'}: ${byId[id].title}`, who: whoName(p.by) })),
+    ...feedback.map((x) => ({ at: x.at, kind: 'fb', text: `${x.kind === 'bug' ? 'Bug' : x.kind === 'idea' ? 'Idea' : 'Feedback'}: ${x.title}`, who: whoName(x.by) })),
+  ].sort((a, b) => b.at - a.at).slice(0, 40);
+  $('#act').replaceChildren(...(items.length ? items.map((i) => el('div', { class: 'act-item' },
+    el('span', { class: `dot${i.kind === 'fb' ? ' fb' : i.kind === 'undo' ? ' undo' : ''}` }), el('span', {}, i.text, i.who ? el('span', { class: 'meta' }, ` · ${i.who}`) : null), el('span', { class: 'when' }, fmtDate(i.at)))) : [el('div', { class: 'empty' }, 'Nothing yet.')]));
+}
+
+function renderAll() { renderSummary(); renderFilters(); renderPhases(); renderFeedback(); renderActivity(); }
+
+function reveal(id) {
+  const t = byId[id];
+  if (!t) return;
+  if (!visible(t)) { ui.store = 'all'; ui.owner = 'all'; ui.hideDone = false; }
+  ui.open.add(id);
+  showTab('checklist');
+  renderAll();
+  const n = document.getElementById(`t-${id}`);
+  if (n) { n.scrollIntoView({ behavior: 'smooth', block: 'center' }); n.classList.add('flash'); setTimeout(() => n.classList.remove('flash'), 1300); }
+}
+
+// ---------- writes ----------
+async function writeProgress(id, patch) {
+  const prev = progress[id] || { done: byId[id].status === 'done' };
+  const next = { ...prev, ...patch };
+  progress = { ...progress, [id]: next };
+  if (!db) return;
+  await db.doc(`progress/${id}`).set(next);
+}
+
+let toastTimer = null;
+function toast(title, body, neutral = false) {
+  const t = $('#toast');
+  t.className = `toast show${neutral ? ' neutral' : ''}`;
+  t.replaceChildren(el('b', {}, title), body ? el('small', {}, body) : null);
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 6000);
+}
+
+async function toggleTask(t) {
+  if (!canTick) return;
+  const nowDone = !isDone(t);
+  const me = user ? await user.id().catch(() => null) : null;
+  try {
+    await writeProgress(t.id, { done: nowDone, by: me || 'you', at: Date.now() });
+  } catch (e) {
+    toast('Could not save that', 'Check your connection and try again.', true);
+    return;
+  }
+  renderAll();
+  if (!nowDone) { toast('Marked as not done', t.title, true); return; }
+  // Constructive feedback: what this unlocks, what is next, and any skipped prerequisite.
+  const missing = (t.depends || []).filter((d) => byId[d] && !isDone(byId[d]));
+  const phaseTasks = tasks.filter((x) => x.phase === t.phase);
+  const phaseDone = phaseTasks.every(isDone);
+  const next = nextUp(1)[0];
+  const parts = [t.doneMessage || 'Nice work.'];
+  if (missing.length) parts.push(`Heads up: "${byId[missing[0]].title}" isn't checked off yet.`);
+  if (phaseDone) parts.push(`That completes the "${DATA.phases.find((p) => p.id === t.phase).name}" phase!`);
+  if (next) parts.push(`Next up: ${next.title}.`);
+  toast(`✓ ${t.title}`, parts.join(' '));
+  const n = document.getElementById(`t-${t.id}`);
+  if (n) n.classList.add('flash');
+}
+
+async function setStatus(x, status) {
+  try { await db.doc(`feedback/${x.id}`).update({ status }); } catch (e) { toast('Could not change the status', '', true); }
+}
+
+$('#fb-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  if (!db || !canWrite) return;
+  const title = $('#fb-title').value.trim();
+  if (!title) { $('#fb-title').focus(); return; }
+  const btn = $('#fb-send');
+  btn.disabled = true;
+  try {
+    const me = user ? await user.id().catch(() => null) : null;
+    await db.collection('feedback').add({
+      kind: $('#fb-kind').value, severity: $('#fb-sev').value, platform: $('#fb-platform').value, area: $('#fb-area').value,
+      title, details: $('#fb-details').value.trim(), steps: $('#fb-steps').value.trim(), status: 'new', by: me || '', at: Date.now(),
+    });
+    e.target.reset();
+    toast('✓ Report sent', 'Thanks! Claude picks these up the next time you ask it to check the launch board.');
+  } catch (err) {
+    toast('Could not send the report', err && err.code === 'quota_exceeded' ? 'The report store is full; ask Claude to archive old reports.' : 'Check your connection and try again.', true);
+  } finally { btn.disabled = false; }
+});
+
+// ---------- tabs ----------
+function showTab(name) {
+  for (const k of ['checklist', 'feedback', 'activity']) {
+    $(`#tab-btn-${k}`).setAttribute('aria-selected', String(k === name));
+    $(`#tab-${k}`).hidden = k !== name;
+  }
+}
+for (const k of ['checklist', 'feedback', 'activity']) $(`#tab-btn-${k}`).addEventListener('click', () => showTab(k));
+
+// ---------- start: render the saved copy, then go live ----------
+$('#foot').textContent = `Plan researched ${DATA.researchedOn}. ${tasks.length} tasks across ${DATA.phases.length} phases. Project files: ALIEN-SUDOKU/ in the Eddie-G repository.`;
+$('#fb-hint').textContent = 'Reports are saved on this page for everyone who can open it.';
+renderAll();
+
+(async () => {
+  const live = $('#live');
+  const setLive = (on, text) => { live.classList.toggle('on', on); live.lastChild.textContent = text; };
+  try {
+    [db, user] = await Promise.all([window.claude?.use?.('db') ?? null, window.claude?.use?.('user') ?? null]);
+  } catch (e) { db = null; }
+  if (!db) {
+    setLive(false, 'Saved copy (read-only)');
+    $('#fb-send').disabled = true;
+    $('#fb-hint').textContent = 'Open this page on claude.ai while signed in to send reports and check tasks off.';
+    return;
+  }
+  const w = user ? await user.can('data.write').catch(() => null) : null;
+  canWrite = w !== false;
+  canTriage = user ? !!(await user.canEdit().catch(() => false)) : false;
+  // Without the user capability the platform says nothing; let the write itself decide.
+  canTick = user ? canTriage : true;
+  if (!canWrite) { $('#fb-send').disabled = true; $('#fb-hint').textContent = 'You can read this board. Ask its owner for Contributor access to send reports.'; }
+  let loaded = false;
+  const slow = setTimeout(() => { if (!loaded) setLive(false, 'Connecting…'); }, 10000);
+  const resolveNames = async (ids) => {
+    if (!user?.profiles) return;
+    const want = [...new Set(ids.filter((i) => i && i !== 'claude' && i !== 'you' && !(i in names)))];
+    if (!want.length) return;
+    try { const ps = await user.profiles(want); for (const id of want) names[id] = ps?.[id]?.name || ''; renderAll(); } catch (e) { /* names are optional */ }
+  };
+  db.collection('progress').onSnapshot((snap) => {
+    const next = {};
+    for (const d of snap.docs) next[d.id] = d.data();
+    progress = { ...(DATA.snapshot || {}), ...next };
+    if (!snap.metadata.fromCache) { loaded = true; clearTimeout(slow); setLive(true, 'Live'); }
+    renderAll();
+    resolveNames(Object.values(next).map((p) => p.by));
+  }, () => setLive(false, 'Saved copy (offline)'));
+  db.collection('feedback').orderBy('at', 'desc').limit(300).onSnapshot((snap) => {
+    feedback = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+    renderAll();
+    resolveNames(feedback.map((f) => f.by));
+  }, () => {});
+  renderAll();
+})();
+</script>
+</body>
+</html>

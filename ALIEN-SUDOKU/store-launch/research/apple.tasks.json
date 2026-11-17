@@ -1,0 +1,831 @@
+[
+  {
+    "id": "apple-ios-baseline",
+    "phase": "ready",
+    "store": "apple",
+    "title": "iOS project baseline is in place",
+    "owner": "claude",
+    "status": "done",
+    "statusNote": "game/ios already has bundle id com.eddieg.aliensudoku, iOS 15.0 target, iPhone+iPad, scene life cycle, launch storyboard, 1024 px icon without alpha, ATT text and the encryption flag.",
+    "cost": null,
+    "time": "0",
+    "steps": [
+      "Nothing to do: keep IPHONEOS_DEPLOYMENT_TARGET 15.0 (Apple's minimum is iOS 13).",
+      "Keep SceneDelegate: the UIScene life cycle is required when building with the iOS 27 SDK.",
+      "Keep ITSAppUsesNonExemptEncryption = false (the app only uses HTTPS through iOS)."
+    ],
+    "feedback": [
+      "Bundle id can't change after the first upload, so it is final now.",
+      "A layered Icon Composer icon is optional and needs a Mac with macOS Tahoe 26.4+."
+    ],
+    "doneMessage": "The Xcode project already meets Apple's baseline, so the work left is accounts, privacy and ads.",
+    "links": [
+      {"label": "Upcoming requirements", "url": "https://developer.apple.com/news/upcoming-requirements/"},
+      {"label": "TN3187 UIScene life cycle", "url": "https://developer.apple.com/documentation/technotes/tn3187-migrating-to-the-uikit-scene-based-life-cycle"}
+    ],
+    "depends": []
+  },
+  {
+    "id": "apple-choose-entity",
+    "phase": "accounts",
+    "store": "apple",
+    "title": "Decide: enroll as individual or organization",
+    "owner": "you",
+    "status": "todo",
+    "statusNote": "No Apple account exists yet; the choice decides the seller name and paperwork.",
+    "cost": null,
+    "time": "15 min (org: +up to 7 business days for D-U-N-S)",
+    "steps": [
+      "Individual: seller name on the App Store is your personal legal name.",
+      "Organization: needs a legal entity (LLC), a free D-U-N-S number, a website on its own domain and a work email on that domain.",
+      "Sole proprietors must enroll as individuals.",
+      "Pick individual unless you already have, or want, an LLC."
+    ],
+    "feedback": [
+      "DBAs and trade names are not accepted for organizations.",
+      "Converting individual to organization later means contacting Apple; no timeline is promised.",
+      "As an EU 'trader' your address/P.O. box, phone and email are shown to EU users either way."
+    ],
+    "doneMessage": "Choice made; you can enroll right away.",
+    "links": [
+      {"label": "Enrollment requirements", "url": "https://developer.apple.com/programs/enroll/"},
+      {"label": "D-U-N-S for Apple", "url": "https://developer.apple.com/support/D-U-N-S/"}
+    ],
+    "depends": []
+  },
+  {
+    "id": "apple-enroll",
+    "phase": "accounts",
+    "store": "apple",
+    "title": "Enroll in the Apple Developer Program",
+    "owner": "you",
+    "status": "todo",
+    "statusNote": "The owner has no Apple Developer membership yet.",
+    "cost": "$99/year",
+    "time": "30 min + 2 days to 3 weeks approval",
+    "steps": [
+      "Make sure your Apple Account uses your legal first and last name and has two-factor authentication on.",
+      "Enroll at developer.apple.com/programs/enroll or in the Apple Developer app on iPhone.",
+      "Pay with a card in your own name.",
+      "Accept the Apple Developer Program License Agreement.",
+      "Write down your 10-character Team ID from the Membership page."
+    ],
+    "feedback": [
+      "Nicknames or aliases in the name fields delay approval.",
+      "Paying with someone else's card triggers a photo ID request.",
+      "Apple gives no approval time; 2026 forum reports range from 48 hours to 3 weeks.",
+      "If the membership lapses, the app is pulled from the App Store until you renew."
+    ],
+    "doneMessage": "You're in: App Store Connect, TestFlight and Mac signing are unlocked.",
+    "links": [
+      {"label": "Enroll", "url": "https://developer.apple.com/programs/enroll/"},
+      {"label": "Enrollment help", "url": "https://developer.apple.com/support/enrollment/"},
+      {"label": "Renewal and expiry", "url": "https://developer.apple.com/support/renewal/"}
+    ],
+    "depends": ["apple-choose-entity"]
+  },
+  {
+    "id": "apple-agreements",
+    "phase": "accounts",
+    "store": "apple",
+    "title": "Accept agreements (no Paid Apps needed)",
+    "owner": "you",
+    "status": "todo",
+    "statusNote": "No account yet; a free app with AdMob ads needs only the developer agreement.",
+    "cost": null,
+    "time": "10 min",
+    "steps": [
+      "In App Store Connect > Business, accept any pending agreement updates (the DPLA changed on Oct 13, 2026).",
+      "Skip the Paid Apps Agreement, banking and tax forms: the app is free with no In-App Purchases.",
+      "Set up AdMob payments and tax info with Google instead; ad income comes from Google."
+    ],
+    "feedback": [
+      "Unaccepted agreement updates block submissions; check the Business page before each submission.",
+      "You'll need the Paid Apps Agreement only for a paid Mac App Store version or IAP like 'remove ads'."
+    ],
+    "doneMessage": "Agreements done; nothing else financial is needed on the Apple side for a free app.",
+    "links": [
+      {"label": "Sign and update agreements", "url": "https://developer.apple.com/help/app-store-connect/manage-agreements/sign-and-update-agreements"}
+    ],
+    "depends": ["apple-enroll"]
+  },
+  {
+    "id": "apple-dsa-trader",
+    "phase": "accounts",
+    "store": "apple",
+    "title": "Declare EU Digital Services Act trader status",
+    "owner": "you",
+    "status": "todo",
+    "statusNote": "No account yet; without a status the app isn't offered in the EU.",
+    "cost": "P.O. box optional",
+    "time": "30 min + verification days",
+    "steps": [
+      "Decide: an ad-sponsored app is a listed trader factor, so declare yourself a trader.",
+      "Optionally get a P.O. box and a dedicated email/phone for public display.",
+      "In App Store Connect, enter the address (or P.O. box), phone and email.",
+      "Confirm the email and phone with the codes Apple sends.",
+      "Upload a document proving the name and address (for a P.O. box, a bill or receipt).",
+      "Certify that you follow EU law."
+    ],
+    "feedback": [
+      "These details are shown publicly on the EU product page.",
+      "Declaring 'not a trader' tells EU users consumer rights don't apply; ask a lawyer if unsure.",
+      "Apple removes apps without a trader status from the EU storefronts."
+    ],
+    "doneMessage": "EU storefronts are open to Alien Sudoku.",
+    "links": [
+      {"label": "DSA trader requirements", "url": "https://developer.apple.com/help/app-store-connect/manage-compliance-information/manage-european-union-digital-services-act-trader-requirements"}
+    ],
+    "depends": ["apple-enroll"]
+  },
+  {
+    "id": "apple-legal-checks",
+    "phase": "accounts",
+    "store": "apple",
+    "title": "Check age-assurance, COPPA and image rights",
+    "owner": "you",
+    "status": "todo",
+    "statusNote": "Texas SB 2420 applies since Jun 4, 2026, the art looks cute, and space photo licenses are unverified.",
+    "cost": null,
+    "time": "1-3 hours (+ lawyer if wanted)",
+    "steps": [
+      "Read Apple's age assurance Q&A and decide with a lawyer whether you must check age ranges (Texas, Utah, Louisiana).",
+      "Keep all marketing aimed at teens and adults; never say 'for kids'.",
+      "If many players may be under 13, ask Claude to add a neutral age question and child-directed ad requests.",
+      "Find the source and license of each space photo in game/public/space and add credits in About."
+    ],
+    "feedback": [
+      "App Review doesn't test the state laws today, but liability is yours.",
+      "ESA images are often CC BY-SA 3.0 IGO: credit and share-alike apply.",
+      "App Store Connect asks you to confirm rights to third-party content."
+    ],
+    "doneMessage": "Legal loose ends are known and the content rights answer is honest.",
+    "links": [
+      {"label": "Age assurance Q&A", "url": "https://developer.apple.com/support/age-assurance/"},
+      {"label": "Texas update (Jun 2026)", "url": "https://developer.apple.com/news/?id=sg176nne"}
+    ],
+    "depends": []
+  },
+  {
+    "id": "apple-website",
+    "phase": "listing",
+    "store": "apple",
+    "title": "Publish privacy, support pages and app-ads.txt",
+    "owner": "both",
+    "status": "todo",
+    "statusNote": "docs/PRIVACY.md still has [Your name]/[email] placeholders and no site hosts it yet.",
+    "cost": "free (GitHub Pages) or domain ~$12/year",
+    "time": "1-2 hours",
+    "steps": [
+      "Claude: finish docs/PRIVACY.md (name, email, retention, deletion, how to revoke consent).",
+      "Claude: create privacy, support (with contact email) and marketing pages.",
+      "You: host them on a domain root you control (user.github.io or a custom domain).",
+      "Put app-ads.txt with your AdMob publisher line at the domain root.",
+      "Use that site as the Marketing URL in App Store Connect."
+    ],
+    "feedback": [
+      "app-ads.txt only works at the domain root; a GitHub Pages project path won't verify.",
+      "Apple requires the support URL to show real contact info.",
+      "Broken or placeholder URLs are a 2.1 rejection."
+    ],
+    "doneMessage": "You have the three URLs App Store Connect asks for, and AdMob can verify app-ads.txt.",
+    "links": [
+      {"label": "Field rules", "url": "https://developer.apple.com/help/app-store-connect/reference/app-information/platform-version-information"},
+      {"label": "AdMob app-ads.txt", "url": "https://support.google.com/admob/answer/9363762"}
+    ],
+    "depends": []
+  },
+  {
+    "id": "apple-privacy-manifest",
+    "phase": "builds",
+    "store": "apple",
+    "title": "Add PrivacyInfo.xcprivacy to the iOS app",
+    "owner": "claude",
+    "status": "todo",
+    "statusNote": "No privacy manifest in the App target, but @capacitor/preferences uses UserDefaults, so uploads get rejected (ITMS-91053).",
+    "cost": null,
+    "time": "30 min",
+    "steps": [
+      "Create game/ios/App/App/PrivacyInfo.xcprivacy.",
+      "Declare NSPrivacyAccessedAPICategoryUserDefaults with reason CA92.1.",
+      "Set NSPrivacyTracking false and leave tracking domains and collected data empty (Google's SDK ships its own).",
+      "Add the file to the App target's Resources in project.pbxproj.",
+      "After the first archive, check Xcode's privacy report and the upload email."
+    ],
+    "feedback": [
+      "The file name must be exactly PrivacyInfo.xcprivacy.",
+      "Capacitor and Cordova are on Apple's SDK list; Capacitor 8 ships its own manifests.",
+      "Re-check when adding any plugin that touches files, disk space, boot time or keyboards."
+    ],
+    "doneMessage": "The biggest upload blocker is gone.",
+    "links": [
+      {"label": "Privacy manifest files", "url": "https://developer.apple.com/documentation/bundleresources/privacy-manifest-files"},
+      {"label": "Required reason APIs", "url": "https://developer.apple.com/documentation/bundleresources/describing-use-of-required-reason-api"},
+      {"label": "Third-party SDK list", "url": "https://developer.apple.com/support/third-party-SDK-requirements/"}
+    ],
+    "depends": []
+  },
+  {
+    "id": "apple-in-app-links",
+    "phase": "builds",
+    "store": "apple",
+    "title": "Add privacy policy and Report-an-ad links in app",
+    "owner": "claude",
+    "status": "todo",
+    "statusNote": "Settings has no privacy policy link (5.1.1(i)) and no way to report ads (2.5.18).",
+    "cost": null,
+    "time": "1-2 hours",
+    "steps": [
+      "Add a 'Privacy policy' button in Settings > Privacy & data that opens the hosted policy.",
+      "Add 'Report an inappropriate ad' that opens an email or form (include time and screen).",
+      "Show both only where ads exist, or always for the policy.",
+      "Mention both in the App Review notes."
+    ],
+    "feedback": [
+      "Guideline 2.5.18 now requires a way to report inappropriate or age-inappropriate ads.",
+      "Missing in-app privacy links are a common 5.1.1 rejection."
+    ],
+    "doneMessage": "Two likely rejection reasons are fixed.",
+    "links": [
+      {"label": "App Review Guidelines 2.5.18, 5.1.1", "url": "https://developer.apple.com/app-store/review/guidelines/"}
+    ],
+    "depends": ["apple-website"]
+  },
+  {
+    "id": "apple-ads-config",
+    "phase": "builds",
+    "store": "apple",
+    "title": "Switch to real AdMob ids, SKAdNetworks, ad rating",
+    "owner": "both",
+    "status": "todo",
+    "statusNote": "Info.plist and ads.js use Google test ids, only 1 SKAdNetwork id, and no maxAdContentRating.",
+    "cost": null,
+    "time": "1 hour after AdMob is set up",
+    "steps": [
+      "You: create the iOS app and banner, interstitial and rewarded units in AdMob; publish the GDPR and IDFA explainer messages.",
+      "You: set AdMob blocking controls to max ad content rating G or PG and block sensitive categories.",
+      "Claude: run tools/set-admob-ids.mjs and set the VITE_ADMOB_IOS_* values or secrets.",
+      "Claude: add Google's full SKAdNetwork list to Info.plist.",
+      "Claude: pass maxAdContentRating 'ParentalGuidance' (or 'General') to AdMob.initialize()."
+    ],
+    "feedback": [
+      "Ads must fit the 9+ age rating (2.5.18).",
+      "Register your phone as a test device; never tap your own live ads.",
+      "developers.google.com was unreachable here; fetch the SKAdNetwork list where it is reachable."
+    ],
+    "doneMessage": "Builds now earn money and show age-appropriate ads.",
+    "links": [
+      {"label": "AdMob iOS quick start", "url": "https://developers.google.com/admob/ios/quick-start"},
+      {"label": "App Review Guidelines 2.5.18", "url": "https://developer.apple.com/app-store/review/guidelines/"}
+    ],
+    "depends": []
+  },
+  {
+    "id": "apple-ipad-layout",
+    "phase": "builds",
+    "store": "apple",
+    "title": "Check iPad, landscape and resizable window layouts",
+    "owner": "claude",
+    "status": "todo",
+    "statusNote": "The app is universal with all iPad orientations, and iPadOS 26 lets users resize windows freely.",
+    "cost": null,
+    "time": "2-4 hours",
+    "steps": [
+      "Use Playwright on the web build at iPad 13\", 11\" and small window sizes, portrait and landscape.",
+      "Check iPhone landscape; if it looks poor, drop landscape from the iPhone orientations.",
+      "Check the iPhone Duo inner screen ratio (about 2007x2853).",
+      "Fix any overflow, tiny board or overlapping banner."
+    ],
+    "feedback": [
+      "App Review tests universal apps on iPad; a stretched phone layout gets rejected under 4.0/2.4.1.",
+      "UIRequiresFullScreen is ignored from iPadOS 26."
+    ],
+    "doneMessage": "The game looks right on every screen App Review might use.",
+    "links": [
+      {"label": "TN3192 UIRequiresFullScreen", "url": "https://developer.apple.com/documentation/technotes/tn3192-migrating-your-app-from-the-deprecated-uirequiresfullscreen-key"}
+    ],
+    "depends": []
+  },
+  {
+    "id": "apple-build-path",
+    "phase": "builds",
+    "store": "apple",
+    "title": "Get a Mac build path working",
+    "owner": "you",
+    "status": "blocked",
+    "statusNote": "There is no Mac, and GitHub Actions jobs fail in ~2 seconds without a runner on this account.",
+    "cost": "free to ~$1/hour",
+    "time": "30 min to a few hours",
+    "steps": [
+      "First try: fix GitHub billing/spending limit or account flag, then re-run the workflow (the repo is public).",
+      "Fallback: Codemagic personal account (500 free macOS minutes/month) with a codemagic.yaml.",
+      "Or rent a Mac (MacinCloud pay-as-you-go) or borrow one for a manual archive.",
+      "Xcode Cloud only after one Mac session, since Apple requires Xcode for the first workflow."
+    ],
+    "feedback": [
+      "macos-latest runs macOS 26 with Xcode 26.6, which meets today's rule.",
+      "From April 2027 builds need Xcode 27 (GitHub label xcode-27 is in preview).",
+      "Pricing for Codemagic, MacinCloud and GitHub was not re-verified here."
+    ],
+    "doneMessage": "You can produce signed iOS builds without owning a Mac.",
+    "links": [
+      {"label": "GitHub runner images", "url": "https://github.com/actions/runner-images"},
+      {"label": "Xcode Cloud", "url": "https://developer.apple.com/xcode-cloud/"},
+      {"label": "Codemagic pricing", "url": "https://codemagic.io/pricing"}
+    ],
+    "depends": []
+  },
+  {
+    "id": "apple-register-bundle-id",
+    "phase": "builds",
+    "store": "apple",
+    "title": "Register bundle id com.eddieg.aliensudoku",
+    "owner": "you",
+    "status": "todo",
+    "statusNote": "Needs the developer account; the id already matches the Xcode project.",
+    "cost": null,
+    "time": "5 min",
+    "steps": [
+      "developer.apple.com > Certificates, Identifiers & Profiles > Identifiers > +.",
+      "Choose App IDs > App, explicit id com.eddieg.aliensudoku, description Alien Sudoku.",
+      "Leave all capabilities off (no push, no Game Center)."
+    ],
+    "feedback": [
+      "The id must match Xcode exactly and is permanent after the first upload."
+    ],
+    "doneMessage": "The bundle id now appears in App Store Connect's New App form.",
+    "links": [
+      {"label": "Certificates, Identifiers & Profiles", "url": "https://developer.apple.com/account/resources/identifiers/list"}
+    ],
+    "depends": ["apple-enroll"]
+  },
+  {
+    "id": "apple-create-app-record",
+    "phase": "builds",
+    "store": "apple",
+    "title": "Create the app in App Store Connect",
+    "owner": "you",
+    "status": "todo",
+    "statusNote": "No App Store Connect account or app record exists yet.",
+    "cost": null,
+    "time": "10 min",
+    "steps": [
+      "App Store Connect > Apps > + > New App.",
+      "Platform iOS, name Alien Sudoku, language English (U.S.).",
+      "Bundle id com.eddieg.aliensudoku, SKU alien-sudoku-ios, Full Access.",
+      "Create it now to reserve the name."
+    ],
+    "feedback": [
+      "Names are 2-30 characters and must be unique on the App Store.",
+      "SKU can't be changed later."
+    ],
+    "doneMessage": "The app exists in App Store Connect; builds can be uploaded to it.",
+    "links": [
+      {"label": "App information fields", "url": "https://developer.apple.com/help/app-store-connect/reference/app-information/app-information"}
+    ],
+    "depends": ["apple-register-bundle-id"]
+  },
+  {
+    "id": "apple-asc-api-key",
+    "phase": "builds",
+    "store": "apple",
+    "title": "Create an Admin App Store Connect API key",
+    "owner": "you",
+    "status": "todo",
+    "statusNote": "Repo docs say 'App Manager', but cloud signing via xcodebuild with an API key only works with an Admin key.",
+    "cost": null,
+    "time": "15 min",
+    "steps": [
+      "Users and Access > Integrations > App Store Connect API (request access first if asked).",
+      "Team Keys > + > name 'CI', role Admin.",
+      "Download the .p8 (only once) and note the Key ID and Issuer ID.",
+      "Store it in a password manager, never in git."
+    ],
+    "feedback": [
+      "With an App Manager key the build fails with 'Cloud signing permission error'.",
+      "Revoke the key right away if it leaks."
+    ],
+    "doneMessage": "CI can now sign and upload builds for you.",
+    "links": [
+      {"label": "Creating API keys", "url": "https://developer.apple.com/documentation/appstoreconnectapi/creating-api-keys-for-app-store-connect-api"},
+      {"label": "Forum: Admin needed for cloud signing", "url": "https://developer.apple.com/forums/thread/698117"}
+    ],
+    "depends": ["apple-enroll"]
+  },
+  {
+    "id": "apple-ci-signing",
+    "phase": "builds",
+    "store": "apple",
+    "title": "Add Apple secrets and fix CI signing docs",
+    "owner": "both",
+    "status": "blocked",
+    "statusNote": "The iOS job exists but GitHub Actions doesn't start, and docs name the wrong key role.",
+    "cost": null,
+    "time": "30 min",
+    "steps": [
+      "You: add APPLE_TEAM_ID, ASC_KEY_ID, ASC_ISSUER_ID and ASC_KEY_P8_BASE64 as secrets.",
+      "Claude: change 'App Manager' to 'Admin' in docs/STORE_CHECKLIST.md and the iOS prompt.",
+      "Claude: pin runs-on to macos-26 now and plan xcode-27 before April 2027.",
+      "Claude: if Codemagic is chosen, add codemagic.yaml with the same steps."
+    ],
+    "feedback": [
+      "Build numbers come from the run number; never reuse one.",
+      "If manual signing is preferred, store a distribution .p12 and profile instead."
+    ],
+    "doneMessage": "Every push can produce a TestFlight build.",
+    "links": [
+      {"label": "GitHub runner images", "url": "https://github.com/actions/runner-images"}
+    ],
+    "depends": ["apple-build-path", "apple-asc-api-key"]
+  },
+  {
+    "id": "apple-first-upload",
+    "phase": "builds",
+    "store": "apple",
+    "title": "Archive and upload the first build",
+    "owner": "both",
+    "status": "blocked",
+    "statusNote": "Needs a working Mac/CI path, the privacy manifest and the app record.",
+    "cost": null,
+    "time": "1 hour + 15-30 min processing",
+    "steps": [
+      "Run the iOS job (or archive on a Mac: npm ci, npm run cap:sync, Xcode > Product > Archive).",
+      "Upload to App Store Connect.",
+      "Read the processing email for ITMS warnings (privacy, SDK signatures).",
+      "Confirm the build shows in TestFlight with no 'Missing Compliance'."
+    ],
+    "feedback": [
+      "Uploads must use Xcode 26+ now and Xcode 27 from April 2027.",
+      "Fix every ITMS warning before submitting for review."
+    ],
+    "doneMessage": "Your first iOS build is in App Store Connect.",
+    "links": [
+      {"label": "Upcoming requirements", "url": "https://developer.apple.com/news/upcoming-requirements/"}
+    ],
+    "depends": ["apple-privacy-manifest", "apple-ci-signing", "apple-create-app-record"]
+  },
+  {
+    "id": "apple-testflight",
+    "phase": "testing",
+    "store": "apple",
+    "title": "Test on iPhone and iPad with TestFlight",
+    "owner": "you",
+    "status": "todo",
+    "statusNote": "No build has been uploaded yet.",
+    "cost": null,
+    "time": "1-3 days",
+    "steps": [
+      "Add yourself as an internal tester (up to 100, no review needed).",
+      "Install TestFlight from the App Store and accept the invite.",
+      "Fresh install: check the consent message, then the ATT system prompt.",
+      "Check banner, interstitials (close button), rewarded hint and second chance.",
+      "Check Settings links, offline play, iPad portrait/landscape, resume after background.",
+      "Optional: external group (up to 10,000) after Beta App Review."
+    ],
+    "feedback": [
+      "Builds expire after 90 days.",
+      "If the ATT prompt doesn't appear, App Review will reject under 5.1.2/2.1.",
+      "Use test-device mode so your own taps don't count as invalid traffic."
+    ],
+    "doneMessage": "You know the release build works on real hardware.",
+    "links": [
+      {"label": "TestFlight overview", "url": "https://developer.apple.com/help/app-store-connect/test-a-beta-version/testflight-overview"}
+    ],
+    "depends": ["apple-first-upload", "apple-ads-config", "apple-in-app-links"]
+  },
+  {
+    "id": "apple-age-rating",
+    "phase": "listing",
+    "store": "apple",
+    "title": "Answer the age rating questionnaire (9+)",
+    "owner": "you",
+    "status": "todo",
+    "statusNote": "Needs the app record; answers are known from the game's content.",
+    "cost": null,
+    "time": "15 min",
+    "steps": [
+      "App Information > Age Ratings > Set Up.",
+      "In-app controls: none. Capabilities: Advertising Yes; web, UGC, chat, social media No.",
+      "Shared Location No; Dating and Relationships No.",
+      "Horror/Fear Themes: Infrequent/Mild. Everything else None/No.",
+      "Age Categories and Override: Not Applicable. Never pick Made for Kids."
+    ],
+    "feedback": [
+      "Expected result: 9+. 'Frequent' horror would make it 13+.",
+      "Made for Kids can't be undone after approval and bans AdMob behavioral ads.",
+      "New descriptors must be answered by Jan 12, 2027."
+    ],
+    "doneMessage": "The rating matches the game, and the ad settings can match the rating.",
+    "links": [
+      {"label": "Age rating values", "url": "https://developer.apple.com/help/app-store-connect/reference/app-information/age-ratings-values-and-definitions"},
+      {"label": "Set an age rating", "url": "https://developer.apple.com/help/app-store-connect/manage-app-information/set-an-app-age-rating"}
+    ],
+    "depends": ["apple-create-app-record"]
+  },
+  {
+    "id": "apple-app-privacy",
+    "phase": "listing",
+    "store": "apple",
+    "title": "Fill in App Privacy for AdMob",
+    "owner": "you",
+    "status": "todo",
+    "statusNote": "Needs the app record and the hosted privacy policy URL.",
+    "cost": null,
+    "time": "20 min",
+    "steps": [
+      "Enter the privacy policy URL.",
+      "Data collected: Yes.",
+      "Coarse Location, Device ID, Product Interaction, Advertising Data: Third-Party Advertising + Analytics, linked, used for tracking.",
+      "Crash, Performance, Other Diagnostic Data: Analytics, not linked, not tracking.",
+      "Nothing else: progress and the typed name never leave the device.",
+      "Publish."
+    ],
+    "feedback": [
+      "Apple treats personal data under privacy laws (IDFA, IP) as linked; 'linked' is the safe answer.",
+      "Labels must match the ATT prompt and the privacy policy.",
+      "Re-check against Google's data-disclosure page when SDK versions change."
+    ],
+    "doneMessage": "Your privacy label is honest and consistent with the ATT prompt.",
+    "links": [
+      {"label": "App privacy details", "url": "https://developer.apple.com/app-store/app-privacy-details/"},
+      {"label": "Google data disclosure", "url": "https://developers.google.com/admob/ios/privacy/data-disclosure"}
+    ],
+    "depends": ["apple-create-app-record", "apple-website"]
+  },
+  {
+    "id": "apple-screenshots",
+    "phase": "listing",
+    "store": "apple",
+    "title": "Make iPhone and iPad screenshots",
+    "owner": "claude",
+    "status": "todo",
+    "statusNote": "Only three web screenshots exist in docs/; none are at App Store sizes.",
+    "cost": null,
+    "time": "2-3 hours",
+    "steps": [
+      "Render 6-8 shots with Playwright, ad banner hidden.",
+      "iPhone 6.9\": 1320x2868. iPhone 6.3\": 1206x2622 (required).",
+      "iPad 13\": 2064x2752 (required).",
+      "Optional now, required April 2027: iPhone Duo 2007x2853 and 1398x2034.",
+      "Export PNG without alpha; check a few against a real device."
+    ],
+    "feedback": [
+      "Show gameplay, not just title art (2.3.3).",
+      "Keep images 4+ friendly: avoid the gnarliest monsters (2.3.8).",
+      "No prices, other platforms or 'for kids'."
+    ],
+    "doneMessage": "All required screenshot slots can be filled.",
+    "links": [
+      {"label": "Screenshot specifications", "url": "https://developer.apple.com/help/app-store-connect/reference/app-information/screenshot-specifications"},
+      {"label": "App preview specifications", "url": "https://developer.apple.com/help/app-store-connect/reference/app-information/app-preview-specifications"}
+    ],
+    "depends": ["apple-ipad-layout"]
+  },
+  {
+    "id": "apple-metadata",
+    "phase": "listing",
+    "store": "apple",
+    "title": "Enter name, subtitle, keywords and description",
+    "owner": "both",
+    "status": "todo",
+    "statusNote": "Draft text exists in docs/STORE_CHECKLIST.md, but its keywords repeat the app name.",
+    "cost": null,
+    "time": "30 min",
+    "steps": [
+      "Subtitle (max 30): Decode glyph logic puzzles.",
+      "Keywords (max 100 bytes): puzzle,logic,brain,daily,space,ufo,glyph,number,zen,offline,classic,grid,cosmic,mind,streak,duel.",
+      "Description (max 4000): reuse the checklist text.",
+      "Promotional text (max 170), support, marketing and privacy URLs.",
+      "Copyright: 2026 + your legal name. Category: Games > Puzzle, Board."
+    ],
+    "feedback": [
+      "Don't put other apps' names or 'sudoku app' brand names in keywords (2.3.7).",
+      "Don't mention Android, Google Play or the web version (2.3.10)."
+    ],
+    "doneMessage": "The product page reads well and is searchable.",
+    "links": [
+      {"label": "Version field limits", "url": "https://developer.apple.com/help/app-store-connect/reference/app-information/platform-version-information"}
+    ],
+    "depends": ["apple-create-app-record", "apple-website"]
+  },
+  {
+    "id": "apple-pricing-availability",
+    "phase": "listing",
+    "store": "apple",
+    "title": "Set price Free and choose countries",
+    "owner": "you",
+    "status": "todo",
+    "statusNote": "Needs the app record.",
+    "cost": null,
+    "time": "10 min",
+    "steps": [
+      "Pricing and Availability: Free.",
+      "Select all countries except China mainland and Vietnam (licensing).",
+      "Turn off 'iPhone and iPad Apps on Apple Silicon Mac' availability.",
+      "Check the Apple Vision Pro availability setting too."
+    ],
+    "feedback": [
+      "China mainland needs an ICP filing and likely a game approval number.",
+      "Vietnam requires games to be licensed or notified.",
+      "Keeping the iOS app off Macs avoids competing with the paid desktop build."
+    ],
+    "doneMessage": "The app will launch where you can legally sell it.",
+    "links": [
+      {"label": "iOS apps on Apple silicon Macs", "url": "https://developer.apple.com/help/app-store-connect/manage-your-apps-availability/manage-availability-of-iphone-and-ipad-apps-on-macs-with-apple-silicon"},
+      {"label": "Vietnam games notice", "url": "https://developer.apple.com/news/?id=06h4gf33"}
+    ],
+    "depends": ["apple-create-app-record"]
+  },
+  {
+    "id": "apple-accessibility-labels",
+    "phase": "listing",
+    "store": "apple",
+    "title": "Fill in Accessibility Nutrition Labels",
+    "owner": "you",
+    "status": "todo",
+    "statusNote": "Voluntary today, but one report says an empty section delayed availability.",
+    "cost": null,
+    "time": "20 min",
+    "steps": [
+      "App Store Connect > App Accessibility.",
+      "Claim only features tested end to end (e.g., Dark Interface).",
+      "Save even if you claim none."
+    ],
+    "feedback": [
+      "Apple says labels become mandatory over time; no date yet.",
+      "Over-claiming VoiceOver support invites complaints."
+    ],
+    "doneMessage": "No surprises when the version goes live.",
+    "links": [
+      {"label": "Accessibility Nutrition Labels", "url": "https://developer.apple.com/help/app-store-connect/manage-app-accessibility/overview-of-accessibility-nutrition-labels"}
+    ],
+    "depends": ["apple-create-app-record"]
+  },
+  {
+    "id": "apple-submit",
+    "phase": "review",
+    "store": "apple",
+    "title": "Write review notes and submit for App Review",
+    "owner": "both",
+    "status": "todo",
+    "statusNote": "Nothing is uploaded or filled in yet.",
+    "cost": null,
+    "time": "30 min + 1-2 days review",
+    "steps": [
+      "Claude: draft review notes (no login, ad formats, consent then ATT, where the links are, 9+).",
+      "Select the TestFlight-tested build on the 1.0 version page.",
+      "Content rights: Yes, you have rights. Sign-in required: No.",
+      "Version release: Manual.",
+      "Add for Review > Submit."
+    ],
+    "feedback": [
+      "Apple reviews 50% of submissions in under 24 h and 90% in under 48 h.",
+      "Top risks: 2.1 crash or test ads, 5.1.1 policy link, 5.1.2 ATT, 2.5.18 ads, 4.2/4.3.",
+      "Never select Made for Kids."
+    ],
+    "doneMessage": "Alien Sudoku is in Apple's review queue.",
+    "links": [
+      {"label": "App Review", "url": "https://developer.apple.com/distribute/app-review/"},
+      {"label": "Review Guidelines", "url": "https://developer.apple.com/app-store/review/guidelines/"}
+    ],
+    "depends": ["apple-testflight", "apple-age-rating", "apple-app-privacy", "apple-screenshots", "apple-metadata", "apple-pricing-availability", "apple-dsa-trader", "apple-agreements"]
+  },
+  {
+    "id": "apple-handle-review",
+    "phase": "review",
+    "store": "apple",
+    "title": "Respond to App Review if rejected",
+    "owner": "both",
+    "status": "todo",
+    "statusNote": "Not submitted yet.",
+    "cost": null,
+    "time": "hours to 2 days per round",
+    "steps": [
+      "Read the message in the app's App Review section; note the guideline number.",
+      "Metadata issue: fix in App Store Connect and resubmit.",
+      "Binary issue: Claude fixes, new build number, upload, resubmit.",
+      "Reply politely with specifics if the reviewer misunderstood.",
+      "Last resort: one appeal to the App Review Board."
+    ],
+    "feedback": [
+      "Screenshots or a short video of the ATT prompt often settle 5.1.2 questions.",
+      "Stay factual; arguments about other apps don't help."
+    ],
+    "doneMessage": "Approved, or you know exactly what to change.",
+    "links": [
+      {"label": "App Review", "url": "https://developer.apple.com/distribute/app-review/"}
+    ],
+    "depends": ["apple-submit"]
+  },
+  {
+    "id": "apple-release",
+    "phase": "launch",
+    "store": "apple",
+    "title": "Release and link the app in AdMob",
+    "owner": "you",
+    "status": "todo",
+    "statusNote": "Waits for approval.",
+    "cost": null,
+    "time": "30 min + up to ~7 days app-ads.txt check",
+    "steps": [
+      "Press Release This Version.",
+      "In AdMob, link the iOS app to its App Store listing.",
+      "Check that app-ads.txt shows as verified.",
+      "Set promotional text and reply to early reviews."
+    ],
+    "feedback": [
+      "Ad fill can be limited until AdMob verifies the app.",
+      "If the app stays 'Processing' for hours, check the accessibility section."
+    ],
+    "doneMessage": "Alien Sudoku is live on the App Store and earning from ads.",
+    "links": [
+      {"label": "AdMob app-ads.txt", "url": "https://support.google.com/admob/answer/9363762"}
+    ],
+    "depends": ["apple-handle-review"]
+  },
+  {
+    "id": "apple-2027-deadlines",
+    "phase": "launch",
+    "store": "apple",
+    "title": "Prepare for Jan-Apr 2027 Apple deadlines",
+    "owner": "both",
+    "status": "todo",
+    "statusNote": "CI uses Xcode 26.6; no Duo screenshots; new age questions not answered.",
+    "cost": null,
+    "time": "half a day",
+    "steps": [
+      "By Jan 12, 2027: answer Shared Location and Dating (No/No) in the age rating.",
+      "Before April 2027: build with Xcode 27 / iOS 27 SDK (CI label xcode-27 or macOS 27).",
+      "Test on iPhone Duo in Device Hub and add Duo screenshots.",
+      "Renew membership and keep TestFlight builds fresh (90 days)."
+    ],
+    "feedback": [
+      "Updates built with the iOS 27.1 SDK or later need iPhone Duo screenshots from April 2027.",
+      "Watch developer.apple.com/news for new requirements."
+    ],
+    "doneMessage": "Updates keep flowing after Apple's 2027 changes.",
+    "links": [
+      {"label": "iOS 27 SDK requirement", "url": "https://developer.apple.com/news/?id=k1mtkt1k"},
+      {"label": "iPhone Duo", "url": "https://developer.apple.com/news/?id=kkphp5qo"},
+      {"label": "New age descriptors", "url": "https://developer.apple.com/news/?id=yxkh08us"}
+    ],
+    "depends": ["apple-release"]
+  },
+  {
+    "id": "apple-mac-developer-id",
+    "phase": "builds",
+    "store": "apple",
+    "title": "Sign and notarize the Mac desktop build",
+    "owner": "both",
+    "status": "blocked",
+    "statusNote": "desktop/package.json has identity null, there's no Developer ID cert, and signing needs macOS.",
+    "cost": "included in $99/year",
+    "time": "2-3 hours",
+    "steps": [
+      "You (Account Holder): create a Developer ID Application cert from the G2 Sub-CA; export .p12.",
+      "Add CSC_LINK, CSC_KEY_PASSWORD and APPLE_API_KEY, APPLE_API_KEY_ID, APPLE_API_ISSUER secrets.",
+      "Claude: remove \"identity\": null and enable notarization in the mac build job.",
+      "Run on a macOS runner; check with spctl and stapler validate.",
+      "Claude: update RUN.md and the desktop prompt (right-click Open is outdated)."
+    ],
+    "feedback": [
+      "The old Developer ID Sub-CA expires Feb 1, 2027; only use G2 certificates.",
+      "Keep the universal build: macOS 27 is the last with Rosetta.",
+      "rcodesign can sign/notarize from Linux if no Mac runner works (untested here)."
+    ],
+    "doneMessage": "Mac players on Steam, GOG and itch can open the game without warnings.",
+    "links": [
+      {"label": "Developer ID", "url": "https://developer.apple.com/developer-id/"},
+      {"label": "Sub-CA expiry notice", "url": "https://developer.apple.com/news/?id=w4atic4c"}
+    ],
+    "depends": ["apple-enroll", "apple-build-path"]
+  },
+  {
+    "id": "apple-mac-app-store-decision",
+    "phase": "launch",
+    "store": "apple",
+    "title": "Decide later on a Mac App Store version",
+    "owner": "you",
+    "status": "todo",
+    "statusNote": "PC price is undecided and no MAS build target exists.",
+    "cost": "15% commission (Small Business Program)",
+    "time": "decision 15 min; build 1-2 days",
+    "steps": [
+      "Wait until the iOS launch and desktop price are settled.",
+      "If yes: new macOS app record with its own bundle id (e.g., com.eddieg.aliensudoku.mac).",
+      "Claude adds an electron-builder mas target with sandbox entitlements.",
+      "Sign the Paid Apps Agreement, tax and banking; join the Small Business Program.",
+      "Mac screenshots at 2880x1800 (16:10)."
+    ],
+    "feedback": [
+      "Mac App Store apps must be sandboxed and update only through the store (2.4.5).",
+      "Using the iOS bundle id would make it a free universal purchase."
+    ],
+    "doneMessage": "You've made a deliberate call on the Mac App Store.",
+    "links": [
+      {"label": "Small Business Program", "url": "https://developer.apple.com/app-store/small-business-program/"},
+      {"label": "Review Guidelines 2.4.5", "url": "https://developer.apple.com/app-store/review/guidelines/"}
+    ],
+    "depends": ["apple-mac-developer-id", "apple-release"]
+  }
+]

@@ -1,0 +1,1227 @@
+[
+  {
+    "id": "steam-decide-pc-model",
+    "phase": "ready",
+    "store": "steam",
+    "title": "Decide the PC price and what stays free on the web",
+    "owner": "you",
+    "status": "todo",
+    "statusNote": "No PC price is set, and the full game is free on the web build, the single-file HTML and the phone apps.",
+    "cost": null,
+    "time": "1 hour",
+    "steps": [
+      "Pick one base price for all PC stores; $3.99 fits the $2.99-$4.99 band of Steam sudoku games.",
+      "Decide if the web version stays full and free, becomes a demo (e.g. Sector 1 + Daily), or goes offline.",
+      "Decide if you want Steam achievements (it makes Epic achievements mandatory too).",
+      "Decide if you want a free, ad-funded web version on portals at all.",
+      "Write the decisions into docs/STORE_CHECKLIST.md so every store page matches."
+    ],
+    "feedback": [
+      "A complete free web game undercuts a paid PC version; sell the PC edition as complete and ad-free.",
+      "Steam launch discounts max out at 40%, then no discounts for 30 days.",
+      "Free-to-play on PC can't recoup Steam's $100 fee: there are no PC ads or purchases."
+    ],
+    "doneMessage": "Price and free/paid split are settled, so every store page can be filled in the same way.",
+    "links": [
+      {"label": "Steam pricing", "url": "https://partner.steamgames.com/doc/store/pricing"},
+      {"label": "Steam discount rules", "url": "https://partner.steamgames.com/doc/marketing/discounts"}
+    ],
+    "depends": []
+  },
+  {
+    "id": "steam-verify-image-licenses",
+    "phase": "ready",
+    "store": "steam",
+    "title": "Verify space photo licenses and add a credits screen",
+    "owner": "both",
+    "status": "todo",
+    "statusNote": "The 6 photos in game/public/space came with the prototype, sources are unknown, and the game has no credits or licenses screen.",
+    "cost": null,
+    "time": "2-4 hours",
+    "steps": [
+      "Trace each image in public/space to its source page (reverse image search).",
+      "NASA-made: public domain. ESA/Webb or ESA/Hubble: CC BY 4.0, visible credit required.",
+      "Replace any image you can't trace or license.",
+      "Add Settings > Credits: photo credits, fonts, 'made with AI assistance'.",
+      "Ship the SIL OFL license text with the fonts (e.g. a licenses/ folder in every build)."
+    ],
+    "feedback": [
+      "Every store agreement and Steam's content survey make you confirm you own or license all content.",
+      "Copy the ESA credit line exactly; don't use NASA/ESA logos or imply endorsement.",
+      "This applies to all PC stores, the web build and the phone apps."
+    ],
+    "doneMessage": "Your content is safe to sell anywhere, removing the biggest legal risk.",
+    "links": [
+      {"label": "ESA/Webb image use", "url": "https://esawebb.org/copyright"},
+      {"label": "ESA/Hubble image use", "url": "https://esahubble.org/copyright/"},
+      {"label": "SIL Open Font License", "url": "https://openfontlicense.org/"}
+    ],
+    "depends": []
+  },
+  {
+    "id": "web-portals-public-site",
+    "phase": "ready",
+    "store": "web-portals",
+    "title": "Publish a site: privacy, support, press and play",
+    "owner": "both",
+    "status": "todo",
+    "statusNote": "docs/PRIVACY.md is an unfilled template and nothing is hosted publicly yet.",
+    "cost": "$0 hosting; ~$10-20/year for an optional domain",
+    "time": "2-3 hours",
+    "steps": [
+      "Fill in docs/PRIVACY.md (your name, contact email); keep 'desktop and web send no data'.",
+      "Pick a host: Netlify, Cloudflare Pages, or GitHub Pages (free only for public repos).",
+      "Serve from a domain root you control (custom domain or <user>.github.io), not a sub-path.",
+      "Publish /privacy, a support email, /press and /play (web build or demo).",
+      "Add /app-ads.txt at the root once AdMob gives you the line (for the phone apps)."
+    ],
+    "feedback": [
+      "AdMob reads app-ads.txt from the root of the developer-website host; a github.io/Eddie-G/ path won't work.",
+      "Use a dedicated support address, not your personal email.",
+      "MS Store, Epic and portals all ask for a privacy policy URL."
+    ],
+    "doneMessage": "Every store form asking for a website, privacy URL or support contact can now be answered.",
+    "links": [
+      {"label": "GitHub Pages docs", "url": "https://docs.github.com/en/pages"},
+      {"label": "AdMob app-ads.txt help", "url": "https://support.google.com/admob/answer/9363762"}
+    ],
+    "depends": []
+  },
+  {
+    "id": "steam-business-setup",
+    "phase": "accounts",
+    "store": "steam",
+    "title": "Prepare legal name, bank account and tax ID",
+    "owner": "you",
+    "status": "todo",
+    "statusNote": "No store accounts or payout details exist yet; every PC store asks for the same data.",
+    "cost": "$0 (an EIN is free from the IRS)",
+    "time": "1-2 hours",
+    "steps": [
+      "Choose: sell as an individual (SSN) or sole proprietor/LLC (EIN).",
+      "Optional: get a free EIN at irs.gov so your SSN isn't on store tax forms.",
+      "Have a bank account in exactly your legal name (or the LLC's).",
+      "Get a business address and phone you're OK showing EU buyers (DSA trader info).",
+      "Keep W-9 details ready; each store runs its own tax interview."
+    ],
+    "feedback": [
+      "Steam rejects aliases and DBAs: legal name, tax name and bank name must match.",
+      "A newly issued EIN can take up to 30 days to validate in Steam's tax check.",
+      "A PO box or virtual office keeps your home address off EU store pages."
+    ],
+    "doneMessage": "You have everything every store's payout and tax forms will ask for.",
+    "links": [
+      {"label": "IRS: get an EIN", "url": "https://www.irs.gov/businesses/small-businesses-self-employed/get-an-employer-identification-number"},
+      {"label": "Steam onboarding FAQ", "url": "https://partner.steamgames.com/doc/gettingstarted/faq"}
+    ],
+    "depends": []
+  },
+  {
+    "id": "steam-partner-signup",
+    "phase": "accounts",
+    "store": "steam",
+    "title": "Join Steamworks and pay the $100 Steam Direct fee",
+    "owner": "you",
+    "status": "todo",
+    "statusNote": "No Steamworks account yet; the 21-day release wait starts only when the fee is paid.",
+    "cost": "$100 per game (paid back after $1,000 revenue)",
+    "time": "30 min, then 15-30 days of verification",
+    "steps": [
+      "Use a Steam account with Steam Guard mobile authenticator on.",
+      "Go to partner.steamgames.com/steamdirect; enter your legal name and address.",
+      "Sign the Steam distribution agreement.",
+      "Pay the $100 Steam Direct fee to get the App ID.",
+      "Add a phone number: SMS codes are needed to set builds live after release."
+    ],
+    "feedback": [
+      "Pay early: the 21-day wait (30 in an older doc revision) counts from payment.",
+      "Only an admin of the partner account can pay the fee.",
+      "Demos are separate App IDs tied to this game; no extra fee was found in the docs."
+    ],
+    "doneMessage": "You have an App ID; build the store page and depots while verification runs.",
+    "links": [
+      {"label": "Steam Direct", "url": "https://partner.steamgames.com/steamdirect"},
+      {"label": "Steam Direct fee", "url": "https://partner.steamgames.com/doc/gettingstarted/appfee"},
+      {"label": "Onboarding", "url": "https://partner.steamgames.com/doc/gettingstarted/onboarding"}
+    ],
+    "depends": ["steam-business-setup"]
+  },
+  {
+    "id": "steam-tax-bank",
+    "phase": "accounts",
+    "store": "steam",
+    "title": "Finish Steam tax interview, bank and identity checks",
+    "owner": "you",
+    "status": "todo",
+    "statusNote": "Needs the Steamworks account first.",
+    "cost": null,
+    "time": "10 min interview; 15-30 days verification",
+    "steps": [
+      "Do the tax interview (TaxIdentity by Lilaham) in one sitting; W-9 data for US.",
+      "Enter bank routing number, account number and bank address.",
+      "Answer any document requests from Valve quickly.",
+      "Watch the Steamworks dashboard until it shows verified."
+    ],
+    "feedback": [
+      "The interview can't be saved halfway; have your SSN or EIN at hand.",
+      "Name mismatches between tax, bank and legal name cause most delays."
+    ],
+    "doneMessage": "Valve can pay you, and release becomes possible once the wait and reviews are done.",
+    "links": [
+      {"label": "Onboarding FAQ", "url": "https://partner.steamgames.com/doc/gettingstarted/faq"}
+    ],
+    "depends": ["steam-partner-signup"]
+  },
+  {
+    "id": "itch-account",
+    "phase": "accounts",
+    "store": "itch",
+    "title": "Create an itch.io account and set up payouts",
+    "owner": "you",
+    "status": "todo",
+    "statusNote": "No itch.io account yet.",
+    "cost": null,
+    "time": "30 min",
+    "steps": [
+      "Sign up at itch.io and verify your email.",
+      "Payment settings: pick 'Collected by itch.io, paid later' (handles VAT) or 'Direct to you'.",
+      "Complete the tax interview (W-9) to avoid 30% withholding.",
+      "Set your revenue share (default 10% to itch; any 0-100%)."
+    ],
+    "feedback": [
+      "Payment-processor fees (about 2.9% + $0.30) come on top of itch's share.",
+      "Payouts can be held for review; don't plan cash flow around launch day."
+    ],
+    "doneMessage": "You can create the itch.io page and take payments.",
+    "links": [
+      {"label": "itch.io payments", "url": "https://itch.io/docs/creators/payments"},
+      {"label": "Your first itch.io page", "url": "https://itch.io/docs/creators/getting-started"}
+    ],
+    "depends": ["steam-business-setup"]
+  },
+  {
+    "id": "microsoft-partner-account",
+    "phase": "accounts",
+    "store": "microsoft",
+    "title": "Register a free Microsoft Store individual account",
+    "owner": "you",
+    "status": "todo",
+    "statusNote": "No Partner Center account yet.",
+    "cost": "Free for individuals ($99 one-time for companies)",
+    "time": "30 min + ID check",
+    "steps": [
+      "Sign in to Partner Center with a personal Microsoft account.",
+      "Choose Individual developer; verify with government ID and a selfie.",
+      "Fill in the tax profile (W-9) and payout account.",
+      "Apps and games > New product > MSIX or PWA app; reserve 'Alien Sudoku'.",
+      "Copy Package/Identity/Name, Publisher (CN=...) and display name from Product identity."
+    ],
+    "feedback": [
+      "Choose MSIX, not EXE/MSI: Microsoft signs MSIX for free and sells it for you.",
+      "Use the same publisher name ('Eddie G') as on your other stores."
+    ],
+    "doneMessage": "The name is reserved and you have the identity values the MSIX build needs.",
+    "links": [
+      {"label": "Free individual registration", "url": "https://blogs.windows.com/windowsdeveloper/2025/09/10/free-developer-registration-for-individual-developers-on-microsoft-store/"},
+      {"label": "Get started with Microsoft Store", "url": "https://learn.microsoft.com/en-us/windows/apps/publish/get-started"}
+    ],
+    "depends": ["steam-business-setup"]
+  },
+  {
+    "id": "epic-dev-portal",
+    "phase": "accounts",
+    "store": "epic",
+    "title": "Optional: open an Epic Developer Portal org, pay $100",
+    "owner": "you",
+    "status": "todo",
+    "statusNote": "No Epic account; lower priority than Steam, itch and Microsoft Store.",
+    "cost": "$100 per product (paid back after $1,000 revenue)",
+    "time": "1 hour + 2 or more weeks verification",
+    "steps": [
+      "Create an Epic account (18+) and an organization of type Individual.",
+      "Accept the Epic Games Store Distribution Agreement.",
+      "Complete trader verification, the tax interview (W-9) and Hyperwallet payout.",
+      "Pay the $100 submission fee for the product."
+    ],
+    "feedback": [
+      "You keep 100% of the first $1M net per product per year, then 88%.",
+      "Epic First Run (6 months at 100%) needs PC exclusivity; skip it.",
+      "Skip Epic for now if time is short; small puzzle games get little traffic there."
+    ],
+    "doneMessage": "You can create the Epic product page and upload builds.",
+    "links": [
+      {"label": "Manage your organization", "url": "https://dev.epicgames.com/docs/epic-games-store/publishing-tools/organization-management/manage-org"},
+      {"label": "Trader, tax and payout", "url": "https://dev.epicgames.com/docs/epic-games-store/publishing-tools/organization-management/manage-finance"},
+      {"label": "Revenue share update", "url": "https://store.epicgames.com/en-US/news/epic-games-store-updates-revenue-share-keep-100-of-the-first-1m-per-product-per-year"}
+    ],
+    "depends": ["steam-business-setup"]
+  },
+  {
+    "id": "steam-build-windows",
+    "phase": "builds",
+    "store": "steam",
+    "title": "Windows x64 Electron build (win-unpacked)",
+    "owner": "claude",
+    "status": "done",
+    "statusNote": "game/desktop/out has win-unpacked, the NSIS installer and the portable exe for 1.0.0 (unsigned).",
+    "cost": null,
+    "time": "10 min to rebuild",
+    "steps": [
+      "cd game/desktop && npm run dist:win",
+      "Use out/win-unpacked as the Steam, Epic and GOG content folder.",
+      "Run npm run smoke, and rebuild after every game change before uploading."
+    ],
+    "feedback": [
+      "Stores install the unpacked folder; never upload the NSIS installer to Steam, Epic or GOG.",
+      "Bump the version in desktop/package.json for each store build."
+    ],
+    "doneMessage": "The Windows build every PC store needs already exists.",
+    "links": [
+      {"label": "electron-builder Windows", "url": "https://www.electron.build/configuration/win"}
+    ],
+    "depends": []
+  },
+  {
+    "id": "steam-desktop-polish",
+    "phase": "builds",
+    "store": "steam",
+    "title": "Add gamepad input, fullscreen flag and Deck fixes",
+    "owner": "claude",
+    "status": "todo",
+    "statusNote": "Input is mouse, touch and keyboard only, and the window opens at 1280x860, taller than a Deck's 800 px screen.",
+    "cost": null,
+    "time": "1-2 days",
+    "steps": [
+      "Add Gamepad API input: D-pad moves; face buttons, bumpers and a picker place glyphs.",
+      "Map notes, undo, hint, pause and back to controller buttons.",
+      "Show controller button prompts while a pad is used; hide keyboard hints.",
+      "Add a --fullscreen switch; start fullscreen when SteamDeck=1 is set.",
+      "Check all text is at least 9 px tall at 1280x800; make the name prompt skippable."
+    ],
+    "feedback": [
+      "Without controller support the best Deck badge is Playable, likely Unsupported.",
+      "Verified needs full controller access, controller glyphs and readable text at 1280x800.",
+      "Only tick 'controller support' on the store page once this ships."
+    ],
+    "doneMessage": "The game can earn a Steam Deck badge and plays from the couch.",
+    "links": [
+      {"label": "Deck/Steam Machine compatibility", "url": "https://partner.steamgames.com/doc/steamhardware/compat"}
+    ],
+    "depends": ["steam-build-windows"]
+  },
+  {
+    "id": "steam-build-linux",
+    "phase": "builds",
+    "store": "steam",
+    "title": "Build a Linux folder build for Steam and itch",
+    "owner": "claude",
+    "status": "todo",
+    "statusNote": "Linux targets are AppImage and deb only and haven't been built yet; Steam needs a plain folder (dir target).",
+    "cost": null,
+    "time": "1-2 hours",
+    "steps": [
+      "Add a 'dir' Linux target and set linux.executableName to 'alien-sudoku'.",
+      "Run npm run dist:linux in this workspace, then npm run smoke.",
+      "Plan the Steam Linux launch option with the --no-sandbox argument.",
+      "Test under Steam (Linux PC or Steam Deck) before listing Linux on the store."
+    ],
+    "feedback": [
+      "Electron's setuid sandbox fails inside Steam's Linux container; pass --no-sandbox as a launch argument, not in code.",
+      "Every OS listed on the page must launch, or build review fails.",
+      "Windows-only plus Proton is an acceptable first release."
+    ],
+    "doneMessage": "You have a native Linux build ready for a Steam depot and itch.",
+    "links": [
+      {"label": "Steam: SteamOS and Linux", "url": "https://partner.steamgames.com/doc/store/application/platforms/linux"},
+      {"label": "Electron no-sandbox issue", "url": "https://github.com/electron/electron/issues/18265"}
+    ],
+    "depends": ["steam-build-windows"]
+  },
+  {
+    "id": "steam-steampipe-scripts",
+    "phase": "builds",
+    "store": "steam",
+    "title": "Write SteamPipe depot scripts and upload steps",
+    "owner": "claude",
+    "status": "todo",
+    "statusNote": "No Steam App ID or depot IDs exist yet.",
+    "cost": null,
+    "time": "1-2 hours",
+    "steps": [
+      "Create game/desktop/steam/app_build.vdf with one depot per OS.",
+      "Windows content: out/win-unpacked; Linux: out/linux-unpacked.",
+      "Set SetLive to a password-protected beta branch, never default.",
+      "Document: steamcmd +login <user> +run_app_build <path>/app_build.vdf +quit.",
+      "Set launch options: 'Alien Sudoku.exe' (Windows), 'alien-sudoku --no-sandbox' (Linux)."
+    ],
+    "feedback": [
+      "This workspace can't reach Steam's servers; run steamcmd on your own PC.",
+      "'status = 6' usually means a wrong App/depot ID, permissions or ContentRoot.",
+      "The default branch is set live in Steamworks (SMS code after release)."
+    ],
+    "doneMessage": "Uploading a new Steam build is now one command.",
+    "links": [
+      {"label": "Uploading to Steam", "url": "https://partner.steamgames.com/doc/sdk/uploading"}
+    ],
+    "depends": ["steam-partner-signup", "steam-build-windows"]
+  },
+  {
+    "id": "steam-mac-build",
+    "phase": "builds",
+    "store": "steam",
+    "title": "macOS: sign and notarize a universal build",
+    "owner": "both",
+    "status": "blocked",
+    "statusNote": "The mac target has identity null; there's no Mac here and GitHub Actions jobs don't start.",
+    "cost": "$99/year Apple Developer Program (same account as iOS)",
+    "time": "Half a day on a Mac",
+    "steps": [
+      "Join the Apple Developer Program (same account as the iOS app).",
+      "Create a Developer ID Application certificate.",
+      "Remove identity: null; set APPLE_ID, APPLE_APP_SPECIFIC_PASSWORD, APPLE_TEAM_ID.",
+      "Run npm run dist:mac on a Mac and confirm notarization passed.",
+      "In Steamworks tick '64 Bit Binaries Included' and 'App Bundles Are Notarized'."
+    ],
+    "feedback": [
+      "Steam requires new macOS apps to be 64-bit and notarized.",
+      "Launch without macOS if no Mac is available; add it later as a free update.",
+      "Unsigned Mac zips on itch need 'Open Anyway' in Privacy & Security."
+    ],
+    "doneMessage": "Mac players on Steam, itch and GOG can now buy and run the game.",
+    "links": [
+      {"label": "Steam platforms (macOS)", "url": "https://partner.steamgames.com/doc/store/application/platforms"}
+    ],
+    "depends": ["steam-build-windows"]
+  },
+  {
+    "id": "itch-web-build",
+    "phase": "builds",
+    "store": "itch",
+    "title": "Make an embed web zip without the service worker",
+    "owner": "claude",
+    "status": "todo",
+    "statusNote": "game/dist (56 files, 2.4 MB) exists, but the web build registers a PWA service worker.",
+    "cost": null,
+    "time": "1 hour",
+    "steps": [
+      "Add a build flag (e.g. VITE_TARGET=embed) that skips the service worker and install prompt.",
+      "Build, then zip the contents of dist/ so index.html is at the zip root.",
+      "Check: at most 1,000 files, 500 MB unpacked, 200 MB per file, 240-char paths.",
+      "If the web stays a demo, build a demo variant (e.g. Sector 1 + Daily)."
+    ],
+    "feedback": [
+      "Saves use the 'alien-sudoku:' localStorage prefix, which avoids clashes on itch's shared game domain.",
+      "Keep base './': itch and portals serve games from a sub-folder.",
+      "The same zip is the starting point for CrazyGames."
+    ],
+    "doneMessage": "The web build drops cleanly into itch.io and web portals.",
+    "links": [
+      {"label": "itch.io HTML5 rules", "url": "https://itch.io/docs/creators/html5"}
+    ],
+    "depends": ["steam-decide-pc-model"]
+  },
+  {
+    "id": "microsoft-msix-build",
+    "phase": "builds",
+    "store": "microsoft",
+    "title": "Build a Store MSIX package with electron-builder",
+    "owner": "both",
+    "status": "todo",
+    "statusNote": "There is no appx target, and electron-builder can't build MSIX on Linux, so it needs a Windows 10/11 PC.",
+    "cost": null,
+    "time": "Half a day",
+    "steps": [
+      "Add an 'appx' target with identityName, publisher (CN=...), publisherDisplayName from Partner Center.",
+      "Set applicationId 'AlienSudoku', displayName 'Alien Sudoku', languages en-US.",
+      "Add tile PNGs in desktop/build/appx (StoreLogo, Square44x44Logo, Square150x150Logo, Wide310x150Logo).",
+      "On Windows with the Windows SDK: npm run dist:win.",
+      "Install the package locally (Developer Mode) and play a full game."
+    ],
+    "feedback": [
+      "Without your own tile images you get placeholder art.",
+      "Publisher must match Partner Center exactly or the upload is rejected.",
+      "The Store re-signs MSIX, so no code-signing certificate is needed."
+    ],
+    "doneMessage": "You have a Store-ready package that Microsoft signs and updates for you.",
+    "links": [
+      {"label": "electron-builder AppX", "url": "https://www.electron.build/docs/appx"},
+      {"label": "Choose a distribution path", "url": "https://learn.microsoft.com/en-us/windows/apps/package-and-deploy/choose-distribution-path"}
+    ],
+    "depends": ["microsoft-partner-account", "steam-build-windows"]
+  },
+  {
+    "id": "itch-windows-signing",
+    "phase": "builds",
+    "store": "itch",
+    "title": "Optional: code-sign Windows downloads",
+    "owner": "you",
+    "status": "todo",
+    "statusNote": "The NSIS and portable exes are unsigned, so direct downloads trigger SmartScreen.",
+    "cost": "$9.99/month (Azure Artifact Signing) or ~$150-500/year (OV cert)",
+    "time": "1-3 days incl. identity validation",
+    "steps": [
+      "Only needed for itch/website downloads or the Store EXE path; Steam, Epic, GOG and MSIX don't need it.",
+      "US individual: sign up for Azure Artifact Signing Basic ($9.99/mo) and pass identity validation.",
+      "Configure electron-builder's Azure signing (runs on Windows) or use jsign.",
+      "Sign and timestamp the exe and installer; test a download on a clean PC."
+    ],
+    "feedback": [
+      "EV certificates no longer skip SmartScreen (since 2024); don't pay extra for EV.",
+      "Reputation builds with downloads; early users may still see a warning.",
+      "Certificates issued after March 1, 2026 last at most 460 days."
+    ],
+    "doneMessage": "Direct downloads now carry your verified name and earn SmartScreen reputation.",
+    "links": [
+      {"label": "Code signing options", "url": "https://learn.microsoft.com/en-us/windows/apps/package-and-deploy/code-signing-options"},
+      {"label": "SmartScreen reputation", "url": "https://learn.microsoft.com/en-us/windows/apps/package-and-deploy/smartscreen-reputation"}
+    ],
+    "depends": ["steam-business-setup"]
+  },
+  {
+    "id": "steam-store-art",
+    "phase": "listing",
+    "store": "steam",
+    "title": "Make key art, Steam capsules, library art and icons",
+    "owner": "both",
+    "status": "todo",
+    "statusNote": "Only a 1024 px app icon and a 2732 px splash exist in game/assets; no key art or logo lockup.",
+    "cost": null,
+    "time": "1-2 days",
+    "steps": [
+      "Make layered key art: aliens, glyph grid, 'Alien Sudoku' logo.",
+      "Store: header 920x430, small 462x174, main 1232x706, vertical 748x896.",
+      "Library: capsule 600x900, header 920x430, hero 3840x1240 (no text, key art in central 860x380).",
+      "Library logo PNG 1280 wide and/or 720 tall, transparent background.",
+      "Icons: app icon 184x184 JPG; shortcut icon 256 or 512 PNG/ICO; optional background 1438x810."
+    ],
+    "feedback": [
+      "Capsules may only show art, the name and an official subtitle: no review quotes, awards, 'on sale' or calls to action.",
+      "The small capsule must read at 120x45: make the logo nearly fill it.",
+      "AI-assisted store art belongs in your AI disclosure."
+    ],
+    "doneMessage": "One art set now covers Steam and resizes for itch, Microsoft and Epic.",
+    "links": [
+      {"label": "Store graphical assets", "url": "https://partner.steamgames.com/doc/store/assets/standard"},
+      {"label": "Library assets", "url": "https://partner.steamgames.com/doc/store/assets/libraryassets"},
+      {"label": "Asset rules", "url": "https://partner.steamgames.com/doc/store/assets/rules"}
+    ],
+    "depends": ["steam-verify-image-licenses"]
+  },
+  {
+    "id": "steam-screenshots-trailer",
+    "phase": "listing",
+    "store": "steam",
+    "title": "Capture 1920x1080 screenshots and a short trailer",
+    "owner": "both",
+    "status": "todo",
+    "statusNote": "docs/ has 3 images at 1990x664 and 1590x1338; none are 16:9 at 1920x1080.",
+    "cost": null,
+    "time": "1 day",
+    "steps": [
+      "Capture at least 5 gameplay shots at 1920x1080 from the Electron build: campaign, daily, duel, zen, themes.",
+      "Mark at least 4 as suitable for all ages in Steamworks.",
+      "Record a 30-60 s trailer: 1920x1080, 30 or 60 fps, H.264 + AAC MP4, 5,000+ kbps.",
+      "Pick a 1920x1080 frame of the video as the thumbnail."
+    ],
+    "feedback": [
+      "Screenshots must be real gameplay, not concept art or marketing text.",
+      "Lead with the hook: alien glyphs instead of digits, then the Duel race.",
+      "Reuse them for itch, Microsoft (1366x768 or larger), Epic and the press kit."
+    ],
+    "doneMessage": "Your media set is ready for every store page and the press kit.",
+    "links": [
+      {"label": "Store graphical assets", "url": "https://partner.steamgames.com/doc/store/assets/standard"},
+      {"label": "Trailers", "url": "https://partner.steamgames.com/doc/store/trailer"}
+    ],
+    "depends": ["steam-build-windows"]
+  },
+  {
+    "id": "steam-store-page",
+    "phase": "listing",
+    "store": "steam",
+    "title": "Fill in the Steam store page",
+    "owner": "both",
+    "status": "todo",
+    "statusNote": "Listing text drafts exist in docs/STORE_CHECKLIST.md but describe the phone version.",
+    "cost": null,
+    "time": "2-3 hours",
+    "steps": [
+      "Short description (300 chars max) and long text from STORE_CHECKLIST.md, minus phone and ad wording.",
+      "Call the Duel opponent a 'computer rival', not 'AI', to avoid confusion with the AI disclosure.",
+      "Genres Casual, Indie; tags Puzzle, Logic, Casual, Relaxing, Sci-fi, Aliens, Space, Singleplayer, Cute.",
+      "Language English; features Single-player; Family Sharing on.",
+      "System requirements: Windows 10/11 64-bit, 4 GB RAM, 500 MB disk; Linux/macOS only once tested.",
+      "Upload capsules, library art, screenshots and the trailer."
+    ],
+    "feedback": [
+      "Every listed feature (controller, achievements, Cloud) must exist in the build or review fails.",
+      "Don't claim Steam Deck Verified; Valve assigns badges."
+    ],
+    "doneMessage": "The page is ready to send to Valve for review.",
+    "links": [
+      {"label": "Release process", "url": "https://partner.steamgames.com/doc/store/releasing"}
+    ],
+    "depends": ["steam-partner-signup", "steam-store-art", "steam-screenshots-trailer"]
+  },
+  {
+    "id": "steam-content-survey",
+    "phase": "listing",
+    "store": "steam",
+    "title": "Answer Steam's content survey and AI disclosure",
+    "owner": "you",
+    "status": "todo",
+    "statusNote": "Not started; art, themes, music code and probably some text were AI-assisted, so the AI section applies.",
+    "cost": null,
+    "time": "30 min",
+    "steps": [
+      "Mature content: No to violence/gore, nudity, sexual content and general mature content.",
+      "AI section, Pre-Generated: Yes; paste the disclosure text from pc.md section 2.5.",
+      "Live-Generated: No (pre-built puzzles; the Duel rival is a scripted algorithm).",
+      "Add store art and in-game text to the disclosure if AI helped make them.",
+      "Confirm you hold rights to all content (licensed photos, OFL fonts)."
+    ],
+    "feedback": [
+      "The disclosure is printed on the store page; plain, specific wording reads best.",
+      "The January 2026 survey focuses on player-facing content, not coding tools.",
+      "Under-disclosing is a policy risk; over-explaining is not."
+    ],
+    "doneMessage": "Your content survey is complete and honest, one less review blocker.",
+    "links": [
+      {"label": "Content survey", "url": "https://partner.steamgames.com/doc/gettingstarted/contentsurvey"}
+    ],
+    "depends": ["steam-partner-signup", "steam-verify-image-licenses"]
+  },
+  {
+    "id": "steam-pricing",
+    "phase": "listing",
+    "store": "steam",
+    "title": "Set Steam price, regional prices and launch discount",
+    "owner": "you",
+    "status": "todo",
+    "statusNote": "No PC price decided yet.",
+    "cost": null,
+    "time": "30 min",
+    "steps": [
+      "Enter the USD base price (e.g. $3.99).",
+      "Accept Steam's recommended regional prices.",
+      "Optionally set a launch discount (10-20%; max 40%, 7-14 days) before release.",
+      "Leave Family Sharing on."
+    ],
+    "feedback": [
+      "After launch no discounts for 30 days except the launch discount.",
+      "Raising the price later blocks discounts for 30 days."
+    ],
+    "doneMessage": "Pricing is set for every Steam region.",
+    "links": [
+      {"label": "Pricing", "url": "https://partner.steamgames.com/doc/store/pricing"},
+      {"label": "Discounting", "url": "https://partner.steamgames.com/doc/marketing/discounts"}
+    ],
+    "depends": ["steam-decide-pc-model", "steam-tax-bank"]
+  },
+  {
+    "id": "steam-press-kit",
+    "phase": "listing",
+    "store": "steam",
+    "title": "Build a press kit page",
+    "owner": "both",
+    "status": "todo",
+    "statusNote": "No press page; screenshots and texts are spread across docs/.",
+    "cost": null,
+    "time": "2-3 hours",
+    "steps": [
+      "Fact sheet: developer, release date, platforms, price, website, contact.",
+      "Description, features, trailer, 6-10 screenshots, logo, key art, icon.",
+      "Credits (photos, fonts) and a one-line honest AI-assistance note.",
+      "One zip with everything; host at /press and link it from Steam and itch."
+    ],
+    "feedback": [
+      "Press and curators want one-click downloads and a clear contact.",
+      "Send Steam keys to sudoku/puzzle creators along with the press link."
+    ],
+    "doneMessage": "Press, YouTubers and curators can cover the game without asking you for files.",
+    "links": [
+      {"label": "Steam visibility", "url": "https://partner.steamgames.com/doc/marketing/visibility"}
+    ],
+    "depends": ["web-portals-public-site", "steam-screenshots-trailer"]
+  },
+  {
+    "id": "itch-project-page",
+    "phase": "listing",
+    "store": "itch",
+    "title": "Create the itch.io page, cover and AI disclosure",
+    "owner": "both",
+    "status": "todo",
+    "statusNote": "No itch.io project yet.",
+    "cost": null,
+    "time": "1-2 hours",
+    "steps": [
+      "New project: Kind 'HTML' if the web version plays on the page, else 'Downloadable'.",
+      "Cover image 630x500 (315:250 ratio; minimum 315x250).",
+      "Add 3-5 screenshots, trailer link, description, genre Puzzle, up to 10 tags.",
+      "Generative AI disclosure: Yes; tick Graphics, Sound, Code, plus Text if AI drafted it.",
+      "Pricing: Paid with pay-more allowed (same price as Steam), or $0/donate for a demo; keep it Draft."
+    ],
+    "feedback": [
+      "The AI tag hides the page from the 'No AI' filter; honest tagging still beats delisting risk.",
+      "Say on the page that Windows may show SmartScreen for unsigned downloads."
+    ],
+    "doneMessage": "The itch.io page is ready for builds.",
+    "links": [
+      {"label": "Your first itch.io page", "url": "https://itch.io/docs/creators/getting-started"},
+      {"label": "Quality guidelines (AI)", "url": "https://itch.io/docs/creators/quality-guidelines"}
+    ],
+    "depends": ["itch-account", "itch-web-build", "steam-screenshots-trailer"]
+  },
+  {
+    "id": "microsoft-store-listing",
+    "phase": "listing",
+    "store": "microsoft",
+    "title": "Fill the Microsoft Store listing and IARC rating",
+    "owner": "you",
+    "status": "todo",
+    "statusNote": "No Partner Center product yet.",
+    "cost": null,
+    "time": "2 hours",
+    "steps": [
+      "Properties: Games > Puzzle & trivia; privacy policy URL; support contact.",
+      "Age ratings: complete the IARC questionnaire with the answers in pc.md 2.4.",
+      "Pricing and availability: same base price, all markets, manual release.",
+      "Listing: description; 4+ screenshots at 1366x768 or larger (1920x1080 is fine).",
+      "Art: 2:3 poster 720x1080 or 1440x2160, 1:1 box 1080x1080 or 2160x2160, 300x300 tile icon."
+    ],
+    "feedback": [
+      "Images must be real PNG files, not renamed JPGs.",
+      "Keep the IARC certificate ID; other IARC stores can reuse it.",
+      "Screenshots must fit the rating you get."
+    ],
+    "doneMessage": "The Microsoft listing is ready for a package.",
+    "links": [
+      {"label": "MSIX screenshots and images", "url": "https://learn.microsoft.com/en-us/windows/apps/publish/publish-your-app/msix/screenshots-and-images"},
+      {"label": "IARC age ratings", "url": "https://devdocs.xbox.com/publishing/game-publishing/concepts/age-ratings"}
+    ],
+    "depends": ["microsoft-partner-account", "web-portals-public-site", "steam-screenshots-trailer"]
+  },
+  {
+    "id": "epic-store-page",
+    "phase": "listing",
+    "store": "epic",
+    "title": "Optional: Epic product page and IARC rating",
+    "owner": "you",
+    "status": "todo",
+    "statusNote": "No Epic organization yet.",
+    "cost": null,
+    "time": "2-3 hours",
+    "steps": [
+      "Create the product and its offer in the Developer Portal.",
+      "Get an IARC rating in the publishing tools (unrated = highest maturity).",
+      "Upload key art, logo and screenshots per the portal's media guide.",
+      "Write the description and About blocks (up to 12); set the price.",
+      "Optionally publish the product home page early for awareness."
+    ],
+    "feedback": [
+      "Exact image sizes are shown in the portal; third-party guides list 2560x1440 and 1200x1600 key art (unverified).",
+      "If Steam has achievements, Epic requires Epic achievements too."
+    ],
+    "doneMessage": "The Epic page is ready for a build.",
+    "links": [
+      {"label": "Storefront media guide", "url": "https://dev.epicgames.com/docs/epic-games-store/sales-and-marketing/marketing/storefront-media-guide"},
+      {"label": "EGS requirements", "url": "https://dev.epicgames.com/docs/epic-games-store/requirements-guidelines/distribution-requirements/requirements-overview"}
+    ],
+    "depends": ["epic-dev-portal", "steam-store-art"]
+  },
+  {
+    "id": "itch-upload-test",
+    "phase": "testing",
+    "store": "itch",
+    "title": "Upload builds with butler and test the itch page",
+    "owner": "both",
+    "status": "todo",
+    "statusNote": "No itch project; this workspace can't reach itch.io, so butler runs on your PC.",
+    "cost": null,
+    "time": "1-2 hours",
+    "steps": [
+      "Install butler and run butler login on your PC.",
+      "butler push <web zip folder> <user>/alien-sudoku:html5 --userversion 1.0.0",
+      "butler push game/desktop/out/win-unpacked <user>/alien-sudoku:windows",
+      "Mark the HTML5 upload as played in browser; embed 1024x720, Fullscreen button, Mobile friendly.",
+      "Test on desktop and phone: finish a level, reload, confirm the save; download the Windows build."
+    ],
+    "feedback": [
+      "On phones itch always uses click-to-launch fullscreen.",
+      "Push Linux (and Mac) channels only after testing them."
+    ],
+    "doneMessage": "The page works end to end and is ready to go public.",
+    "links": [
+      {"label": "butler: pushing builds", "url": "https://itch.io/docs/butler/pushing.html"},
+      {"label": "itch.io HTML5 rules", "url": "https://itch.io/docs/creators/html5"}
+    ],
+    "depends": ["itch-project-page"]
+  },
+  {
+    "id": "steam-beta-test",
+    "phase": "testing",
+    "store": "steam",
+    "title": "Upload to a Steam beta branch and test installs",
+    "owner": "you",
+    "status": "todo",
+    "statusNote": "No Steam app or depots yet.",
+    "cost": null,
+    "time": "Half a day",
+    "steps": [
+      "Create a password-protected beta branch in Steamworks.",
+      "Run the SteamPipe upload on your PC; set the build live on the beta branch.",
+      "Install via Steam on Windows; play campaign, daily, duel, zen; relaunch to check saves.",
+      "Test the Windows build via Proton on a Steam Deck or Linux PC (and the Linux depot).",
+      "Request a few Steam keys for friends to test."
+    ],
+    "feedback": [
+      "'Invalid content configuration' means no build is live on that branch or the launch option is wrong.",
+      "Saves live in %APPDATA%/Alien Sudoku and survive updates."
+    ],
+    "doneMessage": "You've seen the real Steam install work, so build review is a formality.",
+    "links": [
+      {"label": "Uploading to Steam", "url": "https://partner.steamgames.com/doc/sdk/uploading"}
+    ],
+    "depends": ["steam-steampipe-scripts"]
+  },
+  {
+    "id": "microsoft-wack-test",
+    "phase": "testing",
+    "store": "microsoft",
+    "title": "Run the Windows App Certification Kit on the MSIX",
+    "owner": "you",
+    "status": "todo",
+    "statusNote": "No MSIX package exists yet.",
+    "cost": null,
+    "time": "1 hour",
+    "steps": [
+      "Install the Windows SDK's App Certification Kit.",
+      "Run it against the .appx/.msix and fix any failures.",
+      "Install, launch, play and uninstall on a clean Windows 10/11 user."
+    ],
+    "feedback": [
+      "WACK flags missing or invalid images before Microsoft does."
+    ],
+    "doneMessage": "The package passes the same checks certification runs.",
+    "links": [
+      {"label": "Store readiness checklist", "url": "https://learn.microsoft.com/en-us/windows/apps/publish/store-readiness-checklist"}
+    ],
+    "depends": ["microsoft-msix-build"]
+  },
+  {
+    "id": "steam-store-review",
+    "phase": "review",
+    "store": "steam",
+    "title": "Submit the Steam page for review, go Coming Soon",
+    "owner": "you",
+    "status": "todo",
+    "statusNote": "No store page yet.",
+    "cost": null,
+    "time": "3-5 business days review; then 2+ weeks live",
+    "steps": [
+      "Complete the store page items in the Steamworks release checklist.",
+      "Submit for review at least 7 business days before you want it public.",
+      "Once approved, publish as Coming Soon with a date.",
+      "Keep it public at least 2 weeks before release."
+    ],
+    "feedback": [
+      "Within 14 days of release the date is locked unless Valve changes it.",
+      "Common fixes: text in capsules, features the build lacks, non-gameplay screenshots."
+    ],
+    "doneMessage": "The page is public and collecting wishlists.",
+    "links": [
+      {"label": "Coming Soon", "url": "https://partner.steamgames.com/doc/store/coming_soon"},
+      {"label": "Review process", "url": "https://partner.steamgames.com/doc/store/review_process"}
+    ],
+    "depends": ["steam-store-page", "steam-content-survey", "steam-pricing"]
+  },
+  {
+    "id": "steam-build-review",
+    "phase": "review",
+    "store": "steam",
+    "title": "Submit the build for Steam review",
+    "owner": "you",
+    "status": "todo",
+    "statusNote": "No build uploaded yet.",
+    "cost": null,
+    "time": "1-5 days (plan 7 business days)",
+    "steps": [
+      "Mark the release-candidate build ready in the release checklist.",
+      "Submit for build review.",
+      "If it fails, fix, upload and resubmit."
+    ],
+    "feedback": [
+      "Valve checks it launches on every listed OS and that listed features exist; it is not QA."
+    ],
+    "doneMessage": "The build is approved; you can release once the wait and Coming Soon time are done.",
+    "links": [
+      {"label": "Review process", "url": "https://partner.steamgames.com/doc/store/review_process"}
+    ],
+    "depends": ["steam-beta-test", "steam-store-review"]
+  },
+  {
+    "id": "steam-deck-review",
+    "phase": "review",
+    "store": "steam",
+    "title": "Request a Steam Deck compatibility review",
+    "owner": "you",
+    "status": "todo",
+    "statusNote": "Needs a passed build review; no controller support yet.",
+    "cost": null,
+    "time": "About 1 week",
+    "steps": [
+      "After build review passes, open Technical Tools > Steam Hardware Compatibility Review.",
+      "Request the review.",
+      "Read the result in the week before it goes public; fix and re-request if needed."
+    ],
+    "feedback": [
+      "A missing badge doesn't block release.",
+      "Without gamepad support expect Playable or Unsupported."
+    ],
+    "doneMessage": "Deck and Steam Machine owners can see how well the game runs.",
+    "links": [
+      {"label": "Compatibility review", "url": "https://partner.steamgames.com/doc/steamhardware/compat"}
+    ],
+    "depends": ["steam-build-review", "steam-desktop-polish"]
+  },
+  {
+    "id": "microsoft-submit",
+    "phase": "review",
+    "store": "microsoft",
+    "title": "Submit to Microsoft Store certification",
+    "owner": "you",
+    "status": "todo",
+    "statusNote": "No package or listing yet.",
+    "cost": null,
+    "time": "Up to 3 business days (first app can be longer)",
+    "steps": [
+      "Upload the .appx/.msix under Packages.",
+      "Check every section is complete and submit.",
+      "Choose manual publish so you control the release moment."
+    ],
+    "feedback": [
+      "Stuck past 3 business days? Open a free Partner Center support ticket.",
+      "Content, screenshots and age rating must match."
+    ],
+    "doneMessage": "Certification passed; publish whenever you're ready.",
+    "links": [
+      {"label": "Certification process", "url": "https://learn.microsoft.com/en-us/windows/apps/publish/publish-your-app/msix/app-certification-process"}
+    ],
+    "depends": ["microsoft-store-listing", "microsoft-wack-test"]
+  },
+  {
+    "id": "epic-submit",
+    "phase": "review",
+    "store": "epic",
+    "title": "Optional: upload with BuildPatchTool, submit to Epic",
+    "owner": "you",
+    "status": "todo",
+    "statusNote": "No Epic organization or product yet.",
+    "cost": null,
+    "time": "Half a day + review (duration not published)",
+    "steps": [
+      "Get the BuildPatchTool client ID and secret from Product Settings.",
+      "Upload out/win-unpacked with -mode=UploadBinary; app launch 'Alien Sudoku.exe'.",
+      "Set the binary active and add the Windows platform in Artifacts.",
+      "Submit the offer and binary for review."
+    ],
+    "feedback": [
+      "The build must match the store description.",
+      "Use the newest BuildPatchTool version Epic's docs list."
+    ],
+    "doneMessage": "Epic has your build; release follows approval.",
+    "links": [
+      {"label": "Upload with BuildPatchTool", "url": "https://dev.epicgames.com/docs/epic-games-store/publishing-tools/uploading-binaries"}
+    ],
+    "depends": ["epic-store-page", "steam-build-windows"]
+  },
+  {
+    "id": "itch-publish",
+    "phase": "launch",
+    "store": "itch",
+    "title": "Publish the itch.io page",
+    "owner": "you",
+    "status": "todo",
+    "statusNote": "No itch project yet.",
+    "cost": null,
+    "time": "15 min",
+    "steps": [
+      "Switch visibility from Draft/Restricted to Public.",
+      "Post a launch devlog with a link to the Steam page.",
+      "Push updates with butler; post a devlog for each."
+    ],
+    "feedback": [
+      "itch is a good soft launch: fix early feedback before Steam."
+    ],
+    "doneMessage": "Alien Sudoku is live and playable on itch.io.",
+    "links": [
+      {"label": "itch.io creator docs", "url": "https://itch.io/docs/creators/getting-started"}
+    ],
+    "depends": ["itch-upload-test"]
+  },
+  {
+    "id": "steam-next-fest",
+    "phase": "launch",
+    "store": "steam",
+    "title": "Optional: enter Steam Next Fest with a demo",
+    "owner": "both",
+    "status": "todo",
+    "statusNote": "Feb 2027 fest (Feb 22-Mar 1): register by Jan 10, 2027; next one June 14-21, 2027.",
+    "cost": null,
+    "time": "2-3 days for the demo + review",
+    "steps": [
+      "Build a demo (e.g. Sector 1 + Daily) as a separate demo app; pass its build review.",
+      "With the base game page public, register before the deadline.",
+      "Submit demo + page for review by Valve's date (Jan 18 for press preview).",
+      "Release the full game after the fest ends."
+    ],
+    "feedback": [
+      "A game gets only one Next Fest; enter when the demo is polished.",
+      "February is tight from today; June 2027 is the realistic fest."
+    ],
+    "doneMessage": "Your demo is in front of fest players and wishlists can grow.",
+    "links": [
+      {"label": "Next Fest Feb 2027", "url": "https://partner.steamgames.com/doc/marketing/upcoming_events/nextfest/feb_2027"},
+      {"label": "Demos", "url": "https://partner.steamgames.com/doc/store/application/demos"}
+    ],
+    "depends": ["steam-store-review"]
+  },
+  {
+    "id": "steam-release",
+    "phase": "launch",
+    "store": "steam",
+    "title": "Release on Steam",
+    "owner": "you",
+    "status": "todo",
+    "statusNote": "Nothing on Steam yet.",
+    "cost": null,
+    "time": "1 hour",
+    "steps": [
+      "Confirm: 21 days since paying, 2+ weeks Coming Soon, build reviewed, account verified.",
+      "Set the reviewed build live on the default branch.",
+      "Press Release in Steamworks at your chosen time.",
+      "Post a launch announcement and answer early reviews."
+    ],
+    "feedback": [
+      "Approved games never release automatically; you press the button.",
+      "Avoid launching in the middle of a big seasonal sale."
+    ],
+    "doneMessage": "Alien Sudoku is on Steam. Watch reviews and patch quickly in week one.",
+    "links": [
+      {"label": "Release process", "url": "https://partner.steamgames.com/doc/store/releasing"}
+    ],
+    "depends": ["steam-build-review", "steam-store-review", "steam-tax-bank"]
+  },
+  {
+    "id": "microsoft-release",
+    "phase": "launch",
+    "store": "microsoft",
+    "title": "Publish on the Microsoft Store",
+    "owner": "you",
+    "status": "todo",
+    "statusNote": "Not submitted yet.",
+    "cost": null,
+    "time": "15 min",
+    "steps": [
+      "After certification, press Publish now.",
+      "Check the live listing, rating and price.",
+      "Ship updates as new MSIX submissions with higher versions."
+    ],
+    "feedback": [
+      "The listing usually appears within about 15 minutes of publishing."
+    ],
+    "doneMessage": "Windows users can buy the game straight from the Microsoft Store.",
+    "links": [
+      {"label": "Get started", "url": "https://learn.microsoft.com/en-us/windows/apps/publish/get-started"}
+    ],
+    "depends": ["microsoft-submit"]
+  },
+  {
+    "id": "epic-release",
+    "phase": "launch",
+    "store": "epic",
+    "title": "Optional: release on the Epic Games Store",
+    "owner": "you",
+    "status": "todo",
+    "statusNote": "Not submitted yet.",
+    "cost": null,
+    "time": "30 min",
+    "steps": [
+      "After approval, set the release date and publish.",
+      "Write patch notes for any major update."
+    ],
+    "feedback": [
+      "Revenue is 100% to you until $1M per year, so keep the Epic price equal to Steam."
+    ],
+    "doneMessage": "The game is on Epic too.",
+    "links": [
+      {"label": "Release your product", "url": "https://dev.epicgames.com/docs/epic-games-store/get-started/get-started-steps/release-your-product"}
+    ],
+    "depends": ["epic-submit"]
+  },
+  {
+    "id": "steam-post-launch",
+    "phase": "launch",
+    "store": "steam",
+    "title": "After launch: patches, reviews and sales",
+    "owner": "both",
+    "status": "todo",
+    "statusNote": "Starts after release.",
+    "cost": null,
+    "time": "Ongoing",
+    "steps": [
+      "Read reviews and bug reports daily for 2 weeks; patch via beta then default.",
+      "Re-request the Deck review after input fixes.",
+      "Join seasonal sales once 30 days have passed since launch.",
+      "Post an update event with every patch."
+    ],
+    "feedback": [
+      "Discounts need a 30-day cooldown, except seasonal sales.",
+      "Reply calmly to reviews about AI or price; point to the disclosure."
+    ],
+    "doneMessage": "The game keeps improving and shows up in sales.",
+    "links": [
+      {"label": "Discounting", "url": "https://partner.steamgames.com/doc/marketing/discounts"}
+    ],
+    "depends": ["steam-release"]
+  },
+  {
+    "id": "gog-submit",
+    "phase": "launch",
+    "store": "gog",
+    "title": "Submit Alien Sudoku to GOG after the Steam launch",
+    "owner": "you",
+    "status": "todo",
+    "statusNote": "Nothing submitted; GOG only reviews near-final or released games.",
+    "cost": null,
+    "time": "30 min form; reply in weeks or never",
+    "steps": [
+      "Wait until it's out on Steam with some reviews.",
+      "Fill in the ~15-question form at gog.com/submit-your-game.",
+      "Link the Steam page, trailer and a build or key.",
+      "State DRM-free, offline play, Windows build ready; be open about AI-assisted art."
+    ],
+    "feedback": [
+      "GOG is highly curated; odds for a small sudoku game are low.",
+      "GOG's audience pushed back hard on generative AI in 2026."
+    ],
+    "doneMessage": "Your submission is in; carry on and treat a GOG yes as a bonus.",
+    "links": [
+      {"label": "Submit your game", "url": "https://lp.gog.com/submit-your-game/en"},
+      {"label": "Releasing on GOG FAQ", "url": "https://support.gog.com/hc/en-us/articles/11382878039197-Releasing-your-game-on-GOG-FAQ"}
+    ],
+    "depends": ["steam-release"]
+  },
+  {
+    "id": "gog-deliver-build",
+    "phase": "launch",
+    "store": "gog",
+    "title": "If accepted: deliver GOG builds and assets",
+    "owner": "both",
+    "status": "blocked",
+    "statusNote": "Blocked until GOG accepts the game and sends a contract.",
+    "cost": null,
+    "time": "1-2 days",
+    "steps": [
+      "Sign the distribution agreement; check the revenue share (commonly 70/30).",
+      "Upload win-unpacked (and Linux/Mac if wanted) via Build Creator or Pipeline Builder.",
+      "Confirm it runs offline without GOG Galaxy (DRM-free).",
+      "Deliver key art, logo, layered PSD, screenshots and a trailer with GOG's end slate.",
+      "Send the release candidate at least 3-5 days before launch."
+    ],
+    "feedback": [
+      "GOG builds the offline installers on its servers.",
+      "The Galaxy SDK (achievements, cloud) is optional."
+    ],
+    "doneMessage": "GOG has everything it needs to sell the game DRM-free.",
+    "links": [
+      {"label": "Build delivery", "url": "https://docs.gog.com/build-delivery/"},
+      {"label": "Release flow", "url": "https://docs.gog.com/release-flow/"},
+      {"label": "Essentials checklist", "url": "https://docs.gog.com/basic-game-assets/"}
+    ],
+    "depends": ["gog-submit"]
+  },
+  {
+    "id": "web-portals-crazygames",
+    "phase": "launch",
+    "store": "web-portals",
+    "title": "Optional: try a CrazyGames Basic Launch",
+    "owner": "both",
+    "status": "todo",
+    "statusNote": "The web build fits the limits (2.4 MB) but there's no portal account and a free web version may clash with PC pricing.",
+    "cost": null,
+    "time": "2 hours + 7-21 day test",
+    "steps": [
+      "Confirm a free web version fits your PC plan.",
+      "Create a CrazyGames developer account; upload the web zip (no SDK for Basic Launch).",
+      "Remove links to app stores, Steam or other web versions from that build.",
+      "Basic Launch runs 7-21 days (needs 500+ plays); watch the stats.",
+      "For Full Launch add the CrazyGames SDK (ads, account-linked saves)."
+    ],
+    "feedback": [
+      "No app-store links or cross-promotion in game; community links only in the menu.",
+      "Content must fit PEGI 12; the gnarly aliens are fine.",
+      "The revenue split isn't published; ask before SDK work."
+    ],
+    "doneMessage": "You'll know if web players like the game before investing in portal ads.",
+    "links": [
+      {"label": "CrazyGames requirements", "url": "https://docs.crazygames.com/requirements/intro/"},
+      {"label": "CrazyGames technical", "url": "https://docs.crazygames.com/requirements/technical/"}
+    ],
+    "depends": ["itch-web-build", "steam-decide-pc-model"]
+  },
+  {
+    "id": "web-portals-sdk-build",
+    "phase": "launch",
+    "store": "web-portals",
+    "title": "Optional: add a portal ads adapter (CrazyGames/Poki)",
+    "owner": "claude",
+    "status": "todo",
+    "statusNote": "src/platform/ads.js only drives AdMob on phones; web and desktop have no ads.",
+    "cost": null,
+    "time": "1 day",
+    "steps": [
+      "Add a portal adapter behind a build flag.",
+      "Map interstitial to midgame/commercial break, rewarded to rewarded break.",
+      "Mute music and pause input during ads; send gameplay start/stop events.",
+      "Use the portal's save/data API if required; keep PC and itch ad-free."
+    ],
+    "feedback": [
+      "Portals allow only their own SDK ads.",
+      "Reuse the existing 'between games' and 'extra hint/second chance' moments."
+    ],
+    "doneMessage": "A portal build can earn ad revenue without touching the PC version.",
+    "links": [
+      {"label": "CrazyGames docs", "url": "https://docs.crazygames.com/"},
+      {"label": "Poki SDK", "url": "https://sdk.poki.com/"}
+    ],
+    "depends": ["web-portals-crazygames"]
+  },
+  {
+    "id": "web-portals-poki",
+    "phase": "launch",
+    "store": "web-portals",
+    "title": "Optional: apply to Poki (web-exclusive deal)",
+    "owner": "you",
+    "status": "todo",
+    "statusNote": "Not applied; Poki's program is closed beta and prefers web exclusivity.",
+    "cost": null,
+    "time": "1 hour to apply; weeks to hear back",
+    "steps": [
+      "Read Poki's deal types; Web Exclusive is the default.",
+      "If you accept, plan to remove the web build from itch and your site.",
+      "Apply through Poki's submission form with a playable link.",
+      "If accepted, integrate the Poki SDK."
+    ],
+    "feedback": [
+      "Exclusivity covers only the open web; Steam and mobile stay fine.",
+      "Term length is reported as 5 or 7 years; read the contract."
+    ],
+    "doneMessage": "Poki reviews the game; a deal could fund the web version.",
+    "links": [
+      {"label": "Working with Poki", "url": "https://sdk.poki.com/"},
+      {"label": "Poki deal types", "url": "https://sdk.poki.com/deals.html"}
+    ],
+    "depends": ["steam-decide-pc-model", "web-portals-public-site"]
+  }
+]

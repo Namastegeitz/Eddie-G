@@ -1,0 +1,3898 @@
+[
+ {
+  "id": "ready-game",
+  "phase": "ready",
+  "store": "all",
+  "owner": "claude",
+  "status": "done",
+  "title": "Finish the game: every mode playable",
+  "statusNote": "Campaign (54 levels), Daily, Quick Play, Zen, Alien Duel, achievements, stats, music, settings.",
+  "cost": null,
+  "time": "done",
+  "steps": [
+   "Play each mode once on a phone and on a computer",
+   "Report anything odd in the Bugs & feedback tab"
+  ],
+  "feedback": [
+   "Stores reject apps that crash or have broken buttons. A 10-minute play of each mode on a real phone catches most of it."
+  ],
+  "doneMessage": "The game is complete. Everything from here is getting it into stores.",
+  "links": [],
+  "depends": []
+ },
+ {
+  "id": "ready-tests",
+  "phase": "ready",
+  "store": "all",
+  "owner": "claude",
+  "status": "done",
+  "title": "Pass the automated tests",
+  "statusNote": "107 unit tests and 28 end-to-end tests (phone and desktop) pass.",
+  "cost": null,
+  "time": "done",
+  "steps": [
+   "Run `npm test` and `npm run test:e2e` in game/ after every change"
+  ],
+  "feedback": [
+   "Keep tests green before every store build; a failed test is much cheaper than a rejected build."
+  ],
+  "doneMessage": "Safety net in place.",
+  "links": [],
+  "depends": []
+ },
+ {
+  "id": "ready-folder",
+  "phase": "ready",
+  "store": "all",
+  "owner": "claude",
+  "status": "done",
+  "title": "Put everything in the ALIEN-SUDOKU folder",
+  "statusNote": "game/, builds/ (one folder per platform), store-launch/, checklist/, feedback/, prompts/ in the repo; the ALIEN SUDOKU folder on your Artifacts page.",
+  "cost": null,
+  "time": "done",
+  "steps": [
+   "Open ALIEN-SUDOKU/README.md on GitHub for the map of the folder"
+  ],
+  "feedback": [],
+  "doneMessage": "One place for everything.",
+  "links": [],
+  "depends": []
+ },
+ {
+  "id": "ready-listing",
+  "phase": "ready",
+  "store": "all",
+  "owner": "claude",
+  "status": "done",
+  "title": "Write the store listing text",
+  "statusNote": "Name, subtitle, keywords, short and full descriptions checked against every store's limit (store-launch/listing/).",
+  "cost": null,
+  "time": "done",
+  "steps": [
+   "Read store-launch/listing/listing.md and change anything you want in listing.json",
+   "Run `node check-listing.mjs` to re-check the limits"
+  ],
+  "feedback": [
+   "Keep the first two lines of the description strong: most people never tap 'more'.",
+   "Don't promise features the game doesn't have (reviewers check)."
+  ],
+  "doneMessage": "Copy is ready to paste into each store.",
+  "links": [],
+  "depends": []
+ },
+ {
+  "id": "ready-names",
+  "phase": "ready",
+  "store": "all",
+  "owner": "you",
+  "status": "todo",
+  "title": "Fill in support email, support URL, privacy URL",
+  "statusNote": "listing.json has three TODO fields only you can fill.",
+  "cost": null,
+  "time": "15 min",
+  "steps": [
+   "Pick a support email you will check (a new Gmail is fine)",
+   "Decide the developer name shown in stores (e.g. Eddie G)",
+   "Use the site from 'Publish a site: privacy, support, press and play' for the support and privacy policy URLs",
+   "Put them in store-launch/listing/listing.json, or tell Claude"
+  ],
+  "feedback": [
+   "Google Play shows the support email publicly. Use an address made for the game, not your personal one.",
+   "The developer name should match your account's legal name or business name in each store."
+  ],
+  "doneMessage": "Your contact details are set for every store.",
+  "links": [],
+  "depends": []
+ },
+ {
+  "id": "ready-screenshots",
+  "phase": "ready",
+  "store": "all",
+  "owner": "claude",
+  "status": "done",
+  "title": "Make screenshots for every store size",
+  "statusNote": "6 scenes for iPhone 6.9\", iPad 13\", Android phone, Android 10\" tablet and 1920x1080 PC (store-launch/assets/screenshots).",
+  "cost": null,
+  "time": "done",
+  "steps": [
+   "Look through store-launch/assets/screenshots",
+   "Ask Claude for different scenes or captions if you want them",
+   "Re-make them after any visual change: `node tools/store-assets.mjs` in game/"
+  ],
+  "feedback": [
+   "The first 2-3 screenshots matter most; lead with gameplay, not the menu.",
+   "Captions on screenshots ('Race an alien rival') usually lift installs; they are allowed on Apple and Google."
+  ],
+  "doneMessage": "Screenshots ready to upload.",
+  "links": [],
+  "depends": []
+ },
+ {
+  "id": "ready-art",
+  "phase": "ready",
+  "store": "all",
+  "owner": "claude",
+  "status": "done",
+  "title": "Make store art (feature graphic, capsules, covers)",
+  "statusNote": "Google feature graphic, Steam capsules and library art, itch.io cover, Microsoft and Epic art, press key art (store-launch/assets/graphics).",
+  "cost": null,
+  "time": "done",
+  "steps": [
+   "Check each image in store-launch/assets/graphics",
+   "Steam reviews capsule art: the game name must be readable on the main capsules"
+  ],
+  "feedback": [
+   "Art drawn from the game's own glyphs keeps the store page honest about what the game looks like."
+  ],
+  "doneMessage": "Store art ready.",
+  "links": [],
+  "depends": []
+ },
+ {
+  "id": "ready-ipad-layout",
+  "phase": "ready",
+  "store": "apple",
+  "owner": "claude",
+  "status": "done",
+  "title": "Use the full iPad screen",
+  "statusNote": "The board was limited to about 600 px wide; on iPads it now grows to fill the screen.",
+  "cost": null,
+  "time": "done",
+  "steps": [
+   "Check the iPad screenshots in store-launch/assets/screenshots/apple-ipad-13in"
+  ],
+  "feedback": [
+   "Apple requires iPad screenshots for an iPad-capable app, and reviewers do test on iPad."
+  ],
+  "doneMessage": "iPad layout ready for review.",
+  "links": [],
+  "depends": []
+ },
+ {
+  "id": "apple-ios-baseline",
+  "phase": "ready",
+  "store": "apple",
+  "title": "iOS project baseline is in place",
+  "owner": "claude",
+  "status": "done",
+  "statusNote": "game/ios already has bundle id com.eddieg.aliensudoku, iOS 15.0 target, iPhone+iPad, scene life cycle, launch storyboard, 1024 px icon without alpha, ATT text and the encryption flag.",
+  "cost": null,
+  "time": "0",
+  "steps": [
+   "Nothing to do: keep IPHONEOS_DEPLOYMENT_TARGET 15.0 (Apple's minimum is iOS 13).",
+   "Keep SceneDelegate: the UIScene life cycle is required when building with the iOS 27 SDK.",
+   "Keep ITSAppUsesNonExemptEncryption = false (the app only uses HTTPS through iOS)."
+  ],
+  "feedback": [
+   "Bundle id can't change after the first upload, so it is final now.",
+   "A layered Icon Composer icon is optional and needs a Mac with macOS Tahoe 26.4+."
+  ],
+  "doneMessage": "The Xcode project already meets Apple's baseline, so the work left is accounts, privacy and ads.",
+  "links": [
+   {
+    "label": "Upcoming requirements",
+    "url": "https://developer.apple.com/news/upcoming-requirements/"
+   },
+   {
+    "label": "TN3187 UIScene life cycle",
+    "url": "https://developer.apple.com/documentation/technotes/tn3187-migrating-to-the-uikit-scene-based-life-cycle"
+   }
+  ],
+  "depends": []
+ },
+ {
+  "id": "google-target-sdk-check",
+  "phase": "ready",
+  "store": "google",
+  "title": "Confirm Android SDK levels meet Play rules",
+  "owner": "claude",
+  "status": "done",
+  "statusNote": "game/android/variables.gradle has targetSdk 36, compileSdk 36, minSdk 24, which meets the 31 Aug 2026 rule.",
+  "cost": null,
+  "time": "Done",
+  "steps": [
+   "Keep targetSdkVersion = 36 and compileSdkVersion = 36",
+   "Keep minSdkVersion = 24 (ads SDK 25.5+ needs 24)",
+   "Re-check each August when Google raises the target"
+  ],
+  "feedback": [
+   "New apps and updates must target API 36 since 31 Aug 2026.",
+   "The next bump (likely API 37, Aug 2027) is not announced yet."
+  ],
+  "doneMessage": "The build already meets Play's API level rule, so no SDK bump stands between you and launch.",
+  "links": [
+   {
+    "label": "Target API level requirements",
+    "url": "https://developer.android.com/google/play/requirements/target-sdk"
+   }
+  ],
+  "depends": []
+ },
+ {
+  "id": "admob-consent-wiring",
+  "phase": "ready",
+  "store": "admob",
+  "title": "Wire UMP consent and ad frequency caps in the app",
+  "owner": "claude",
+  "status": "done",
+  "statusNote": "game/src/platform/ads.js runs UMP consent before ads, shows Ad privacy choices, caps interstitials and makes rewarded opt-in.",
+  "cost": null,
+  "time": "Done",
+  "steps": [
+   "Consent form shown when UMP says it is required",
+   "Ads requested only when canRequestAds is true",
+   "Interstitial every 2 games, 3+ minutes apart, never at launch",
+   "Rewarded video only after the player taps Watch video"
+  ],
+  "feedback": [
+   "Messages still have to be created and published in AdMob (admob-privacy-messaging).",
+   "Keep interstitials at natural breaks; never show one on app open or exit."
+  ],
+  "doneMessage": "Consent and ad pacing are in place; once AdMob messages are published the flow works end to end.",
+  "links": [
+   {
+    "label": "AdMob interstitial guidance",
+    "url": "https://support.google.com/admob/answer/6201362"
+   },
+   {
+    "label": "UMP US states support",
+    "url": "https://developers.google.com/admob/android/privacy/us-states"
+   }
+  ],
+  "depends": []
+ },
+ {
+  "id": "google-account-type",
+  "phase": "ready",
+  "store": "google",
+  "title": "Decide personal vs organization Play account",
+  "owner": "you",
+  "status": "todo",
+  "statusNote": "No store accounts exist yet and the developer is an individual without a registered company.",
+  "cost": null,
+  "time": "15 min decision (D-U-N-S would add up to ~30 days)",
+  "steps": [
+   "Pick Personal unless you already have an LLC",
+   "If Organization: get a free D-U-N-S number first",
+   "Decide which Google account will own everything",
+   "Turn on 2-Step Verification on that account"
+  ],
+  "feedback": [
+   "Personal accounts must pass the 12-tester / 14-day closed test.",
+   "Personal accounts show your legal name and country on Play.",
+   "Switching later means transferring the app to a new account."
+  ],
+  "doneMessage": "With the account type chosen you can sign up for Play Console right away.",
+  "links": [
+   {
+    "label": "Required info to create an account",
+    "url": "https://support.google.com/googleplay/android-developer/answer/13628312"
+   },
+   {
+    "label": "Get a free D-U-N-S number",
+    "url": "https://www.dnb.com/en-us/smb/duns/get-a-duns.html"
+   }
+  ],
+  "depends": []
+ },
+ {
+  "id": "google-android-phone",
+  "phase": "ready",
+  "store": "google",
+  "title": "Get a physical Android 10+ phone for verification",
+  "owner": "you",
+  "status": "todo",
+  "statusNote": "New personal accounts must verify with the Play Console app on a real phone; we don't know if you have one.",
+  "cost": null,
+  "time": "Varies (borrowing one is fine)",
+  "steps": [
+   "Find a non-rooted Android phone on Android 10 or newer",
+   "Install the Google Play Console app",
+   "Keep it handy for testing ads, consent and gestures too"
+  ],
+  "feedback": [
+   "Emulators don't count for device verification.",
+   "The same phone may verify several accounts."
+  ],
+  "doneMessage": "With a phone in hand you can finish Play Console verification and test real installs.",
+  "links": [
+   {
+    "label": "Verify access to an Android device",
+    "url": "https://support.google.com/googleplay/android-developer/answer/14316361"
+   }
+  ],
+  "depends": []
+ },
+ {
+  "id": "steam-decide-pc-model",
+  "phase": "ready",
+  "store": "all",
+  "title": "Decide the PC price and what stays free on the web",
+  "owner": "you",
+  "status": "todo",
+  "statusNote": "No PC price is set, and the full game is free on the web build, the single-file HTML and the phone apps.",
+  "cost": null,
+  "time": "1 hour",
+  "steps": [
+   "Pick one base price for all PC stores; $3.99 fits the $2.99-$4.99 band of Steam sudoku games.",
+   "Decide if the web version stays full and free, becomes a demo (e.g. Sector 1 + Daily), or goes offline.",
+   "Decide if you want Steam achievements (it makes Epic achievements mandatory too).",
+   "Decide if you want a free, ad-funded web version on portals at all.",
+   "Write the decisions into docs/STORE_CHECKLIST.md so every store page matches."
+  ],
+  "feedback": [
+   "A complete free web game undercuts a paid PC version; sell the PC edition as complete and ad-free.",
+   "Steam launch discounts max out at 40%, then no discounts for 30 days.",
+   "Free-to-play on PC can't recoup Steam's $100 fee: there are no PC ads or purchases."
+  ],
+  "doneMessage": "Price and free/paid split are settled, so every store page can be filled in the same way.",
+  "links": [
+   {
+    "label": "Steam pricing",
+    "url": "https://partner.steamgames.com/doc/store/pricing"
+   },
+   {
+    "label": "Steam discount rules",
+    "url": "https://partner.steamgames.com/doc/marketing/discounts"
+   }
+  ],
+  "depends": []
+ },
+ {
+  "id": "steam-verify-image-licenses",
+  "phase": "ready",
+  "store": "all",
+  "title": "Verify space photo licenses and add a credits screen",
+  "owner": "both",
+  "status": "todo",
+  "statusNote": "The 6 photos in game/public/space came with the prototype, sources are unknown, and the game has no credits or licenses screen.",
+  "cost": null,
+  "time": "2-4 hours",
+  "steps": [
+   "Trace each image in public/space to its source page (reverse image search).",
+   "NASA-made: public domain. ESA/Webb or ESA/Hubble: CC BY 4.0, visible credit required.",
+   "Replace any image you can't trace or license.",
+   "Add Settings > Credits: photo credits, fonts, 'made with AI assistance'.",
+   "Ship the SIL OFL license text with the fonts (e.g. a licenses/ folder in every build)."
+  ],
+  "feedback": [
+   "Every store agreement and Steam's content survey make you confirm you own or license all content.",
+   "Copy the ESA credit line exactly; don't use NASA/ESA logos or imply endorsement.",
+   "This applies to all PC stores, the web build and the phone apps."
+  ],
+  "doneMessage": "Your content is safe to sell anywhere, removing the biggest legal risk.",
+  "links": [
+   {
+    "label": "ESA/Webb image use",
+    "url": "https://esawebb.org/copyright"
+   },
+   {
+    "label": "ESA/Hubble image use",
+    "url": "https://esahubble.org/copyright/"
+   },
+   {
+    "label": "SIL Open Font License",
+    "url": "https://openfontlicense.org/"
+   }
+  ],
+  "depends": []
+ },
+ {
+  "id": "web-portals-public-site",
+  "phase": "ready",
+  "store": "all",
+  "title": "Publish a site: privacy, support, press and play",
+  "owner": "both",
+  "status": "todo",
+  "statusNote": "docs/PRIVACY.md is an unfilled template and nothing is hosted publicly yet.",
+  "cost": "$0 hosting; ~$10-20/year for an optional domain",
+  "time": "2-3 hours",
+  "steps": [
+   "Fill in docs/PRIVACY.md (your name, contact email); keep 'desktop and web send no data'.",
+   "Pick a host: Netlify, Cloudflare Pages, or GitHub Pages (free only for public repos).",
+   "Serve from a domain root you control (custom domain or <user>.github.io), not a sub-path.",
+   "Publish /privacy, a support email, /press and /play (web build or demo).",
+   "Add /app-ads.txt at the root once AdMob gives you the line (for the phone apps)."
+  ],
+  "feedback": [
+   "AdMob reads app-ads.txt from the root of the developer-website host; a github.io/Eddie-G/ path won't work.",
+   "Use a dedicated support address, not your personal email.",
+   "MS Store, Epic and portals all ask for a privacy policy URL."
+  ],
+  "doneMessage": "Every store form asking for a website, privacy URL or support contact can now be answered.",
+  "links": [
+   {
+    "label": "GitHub Pages docs",
+    "url": "https://docs.github.com/en/pages"
+   },
+   {
+    "label": "AdMob app-ads.txt help",
+    "url": "https://support.google.com/admob/answer/9363762"
+   }
+  ],
+  "depends": []
+ },
+ {
+  "id": "apple-choose-entity",
+  "phase": "accounts",
+  "store": "apple",
+  "title": "Decide: enroll as individual or organization",
+  "owner": "you",
+  "status": "todo",
+  "statusNote": "No Apple account exists yet; the choice decides the seller name and paperwork.",
+  "cost": null,
+  "time": "15 min (org: +up to 7 business days for D-U-N-S)",
+  "steps": [
+   "Individual: seller name on the App Store is your personal legal name.",
+   "Organization: needs a legal entity (LLC), a free D-U-N-S number, a website on its own domain and a work email on that domain.",
+   "Sole proprietors must enroll as individuals.",
+   "Pick individual unless you already have, or want, an LLC."
+  ],
+  "feedback": [
+   "DBAs and trade names are not accepted for organizations.",
+   "Converting individual to organization later means contacting Apple; no timeline is promised.",
+   "As an EU 'trader' your address/P.O. box, phone and email are shown to EU users either way."
+  ],
+  "doneMessage": "Choice made; you can enroll right away.",
+  "links": [
+   {
+    "label": "Enrollment requirements",
+    "url": "https://developer.apple.com/programs/enroll/"
+   },
+   {
+    "label": "D-U-N-S for Apple",
+    "url": "https://developer.apple.com/support/D-U-N-S/"
+   }
+  ],
+  "depends": []
+ },
+ {
+  "id": "apple-enroll",
+  "phase": "accounts",
+  "store": "apple",
+  "title": "Enroll in the Apple Developer Program",
+  "owner": "you",
+  "status": "todo",
+  "statusNote": "The owner has no Apple Developer membership yet.",
+  "cost": "$99/year",
+  "time": "30 min + 2 days to 3 weeks approval",
+  "steps": [
+   "Make sure your Apple Account uses your legal first and last name and has two-factor authentication on.",
+   "Enroll at developer.apple.com/programs/enroll or in the Apple Developer app on iPhone.",
+   "Pay with a card in your own name.",
+   "Accept the Apple Developer Program License Agreement.",
+   "Write down your 10-character Team ID from the Membership page."
+  ],
+  "feedback": [
+   "Nicknames or aliases in the name fields delay approval.",
+   "Paying with someone else's card triggers a photo ID request.",
+   "Apple gives no approval time; 2026 forum reports range from 48 hours to 3 weeks.",
+   "If the membership lapses, the app is pulled from the App Store until you renew."
+  ],
+  "doneMessage": "You're in: App Store Connect, TestFlight and Mac signing are unlocked.",
+  "links": [
+   {
+    "label": "Enroll",
+    "url": "https://developer.apple.com/programs/enroll/"
+   },
+   {
+    "label": "Enrollment help",
+    "url": "https://developer.apple.com/support/enrollment/"
+   },
+   {
+    "label": "Renewal and expiry",
+    "url": "https://developer.apple.com/support/renewal/"
+   }
+  ],
+  "depends": [
+   "apple-choose-entity"
+  ]
+ },
+ {
+  "id": "apple-agreements",
+  "phase": "accounts",
+  "store": "apple",
+  "title": "Accept agreements (no Paid Apps needed)",
+  "owner": "you",
+  "status": "todo",
+  "statusNote": "No account yet; a free app with AdMob ads needs only the developer agreement.",
+  "cost": null,
+  "time": "10 min",
+  "steps": [
+   "In App Store Connect > Business, accept any pending agreement updates (the DPLA changed on Oct 13, 2026).",
+   "Skip the Paid Apps Agreement, banking and tax forms: the app is free with no In-App Purchases.",
+   "Set up AdMob payments and tax info with Google instead; ad income comes from Google."
+  ],
+  "feedback": [
+   "Unaccepted agreement updates block submissions; check the Business page before each submission.",
+   "You'll need the Paid Apps Agreement only for a paid Mac App Store version or IAP like 'remove ads'."
+  ],
+  "doneMessage": "Agreements done; nothing else financial is needed on the Apple side for a free app.",
+  "links": [
+   {
+    "label": "Sign and update agreements",
+    "url": "https://developer.apple.com/help/app-store-connect/manage-agreements/sign-and-update-agreements"
+   }
+  ],
+  "depends": [
+   "apple-enroll"
+  ]
+ },
+ {
+  "id": "apple-dsa-trader",
+  "phase": "accounts",
+  "store": "apple",
+  "title": "Declare EU Digital Services Act trader status",
+  "owner": "you",
+  "status": "todo",
+  "statusNote": "No account yet; without a status the app isn't offered in the EU.",
+  "cost": "P.O. box optional",
+  "time": "30 min + verification days",
+  "steps": [
+   "Decide: an ad-sponsored app is a listed trader factor, so declare yourself a trader.",
+   "Optionally get a P.O. box and a dedicated email/phone for public display.",
+   "In App Store Connect, enter the address (or P.O. box), phone and email.",
+   "Confirm the email and phone with the codes Apple sends.",
+   "Upload a document proving the name and address (for a P.O. box, a bill or receipt).",
+   "Certify that you follow EU law."
+  ],
+  "feedback": [
+   "These details are shown publicly on the EU product page.",
+   "Declaring 'not a trader' tells EU users consumer rights don't apply; ask a lawyer if unsure.",
+   "Apple removes apps without a trader status from the EU storefronts."
+  ],
+  "doneMessage": "EU storefronts are open to Alien Sudoku.",
+  "links": [
+   {
+    "label": "DSA trader requirements",
+    "url": "https://developer.apple.com/help/app-store-connect/manage-compliance-information/manage-european-union-digital-services-act-trader-requirements"
+   }
+  ],
+  "depends": [
+   "apple-enroll"
+  ]
+ },
+ {
+  "id": "apple-legal-checks",
+  "phase": "accounts",
+  "store": "apple",
+  "title": "Check age-assurance, COPPA and image rights",
+  "owner": "you",
+  "status": "todo",
+  "statusNote": "Texas SB 2420 applies since Jun 4, 2026, the art looks cute, and space photo licenses are unverified.",
+  "cost": null,
+  "time": "1-3 hours (+ lawyer if wanted)",
+  "steps": [
+   "Read Apple's age assurance Q&A and decide with a lawyer whether you must check age ranges (Texas, Utah, Louisiana).",
+   "Keep all marketing aimed at teens and adults; never say 'for kids'.",
+   "If many players may be under 13, ask Claude to add a neutral age question and child-directed ad requests.",
+   "Find the source and license of each space photo in game/public/space and add credits in About."
+  ],
+  "feedback": [
+   "App Review doesn't test the state laws today, but liability is yours.",
+   "ESA images are often CC BY-SA 3.0 IGO: credit and share-alike apply.",
+   "App Store Connect asks you to confirm rights to third-party content."
+  ],
+  "doneMessage": "Legal loose ends are known and the content rights answer is honest.",
+  "links": [
+   {
+    "label": "Age assurance Q&A",
+    "url": "https://developer.apple.com/support/age-assurance/"
+   },
+   {
+    "label": "Texas update (Jun 2026)",
+    "url": "https://developer.apple.com/news/?id=sg176nne"
+   }
+  ],
+  "depends": []
+ },
+ {
+  "id": "google-play-console-account",
+  "phase": "accounts",
+  "store": "google",
+  "title": "Create Play Console account and verify identity",
+  "owner": "you",
+  "status": "todo",
+  "statusNote": "No Play Console account exists yet.",
+  "cost": "$25 one time",
+  "time": "30 min + 1-3 days ID review",
+  "steps": [
+   "Go to play.google.com/console/signup and choose Personal",
+   "Enter developer name (e.g. Eddie G) and public developer email",
+   "Create or pick the Google payments profile (legal name, address)",
+   "Verify contact email and phone with the one-time codes",
+   "Pay the $25 fee with a card in your name",
+   "Upload your government ID when asked",
+   "Verify with the Play Console app on your Android phone"
+  ],
+  "feedback": [
+   "Legal name must match your ID and payments profile exactly.",
+   "Keep the contact email and phone working for the account's lifetime.",
+   "The fee is not refunded if verification fails on bad info."
+  ],
+  "doneMessage": "Your developer account is live, so you can create the app and claim com.eddieg.aliensudoku.",
+  "links": [
+   {
+    "label": "Play Console sign-up",
+    "url": "https://play.google.com/console/signup"
+   },
+   {
+    "label": "Verify developer identity",
+    "url": "https://support.google.com/googleplay/android-developer/answer/10841920"
+   },
+   {
+    "label": "Contact info verification",
+    "url": "https://support.google.com/googleplay/android-developer/answer/14177239"
+   }
+  ],
+  "depends": [
+   "google-account-type",
+   "google-android-phone"
+  ]
+ },
+ {
+  "id": "google-trader-status",
+  "phase": "accounts",
+  "store": "google",
+  "title": "Declare EU trader status (due 1 Feb 2027)",
+  "owner": "you",
+  "status": "todo",
+  "statusNote": "Required of every Play account from Nov 2026 (reported); no account exists yet.",
+  "cost": "Optional PO box / second phone line",
+  "time": "15 min (+ setting up a business address if wanted)",
+  "steps": [
+   "Open Play Console > Account details > Declare status",
+   "Ad-funded app in the EU/UK: answer Trader",
+   "Enter and verify a public phone number and address",
+   "Or exclude EEA/UK countries if you won't disclose them"
+  ],
+  "feedback": [
+   "Trader details show to EU/UK users from 1 Mar 2027 (reported).",
+   "Choosing non-trader just to hide details risks suspension.",
+   "Could not verify on a Google page; follow the Console banner."
+  ],
+  "doneMessage": "Trader status is settled, so updates won't be blocked and EU users can keep installing.",
+  "links": [
+   {
+    "label": "Play Console",
+    "url": "https://play.google.com/console"
+   }
+  ],
+  "depends": [
+   "google-play-console-account"
+  ]
+ },
+ {
+  "id": "google-create-app",
+  "phase": "accounts",
+  "store": "google",
+  "title": "Create the app and claim the package name",
+  "owner": "you",
+  "status": "todo",
+  "statusNote": "No Play Console app exists; com.eddieg.aliensudoku is not yet registered.",
+  "cost": null,
+  "time": "15 min",
+  "steps": [
+   "Play Console > Create app",
+   "Name: Alien Sudoku; language English (US)",
+   "Type: Game; Free",
+   "Enter package name com.eddieg.aliensudoku if asked",
+   "Accept the policy and export law declarations",
+   "Check Android developer verification shows Registered"
+  ],
+  "feedback": [
+   "Creating the app auto-registers the package for developer verification.",
+   "A free app can never become paid later."
+  ],
+  "doneMessage": "The package name is yours; you can now fill in App content while builds get sorted out.",
+  "links": [
+   {
+    "label": "Developer verification for Play",
+    "url": "https://developer.android.com/developer-verification/guides/google-play-console"
+   }
+  ],
+  "depends": [
+   "google-play-console-account"
+  ]
+ },
+ {
+  "id": "admob-account",
+  "phase": "accounts",
+  "store": "admob",
+  "title": "Create and verify the AdMob account",
+  "owner": "you",
+  "status": "todo",
+  "statusNote": "No AdMob account exists; the app uses Google's test ids.",
+  "cost": null,
+  "time": "20 min + up to 24 h review (rarely 2 weeks)",
+  "steps": [
+   "Sign in at admob.google.com with your long-term Google account",
+   "Choose Individual account type",
+   "Accept the AdMob terms",
+   "Enter payment details so the account can be verified",
+   "Wait for the approval email"
+  ],
+  "feedback": [
+   "One AdMob account per person; close any old one first.",
+   "Account type can't be changed later."
+  ],
+  "doneMessage": "AdMob is approved, so you can create the real app id and ad units.",
+  "links": [
+   {
+    "label": "AdMob getting started",
+    "url": "https://support.google.com/admob/answer/15948559"
+   },
+   {
+    "label": "AdMob",
+    "url": "https://admob.google.com"
+   }
+  ],
+  "depends": []
+ },
+ {
+  "id": "admob-add-app-units",
+  "phase": "accounts",
+  "store": "admob",
+  "title": "Add the Android app and three ad units in AdMob",
+  "owner": "both",
+  "status": "todo",
+  "statusNote": "game/android/.../strings.xml and ads.js still use Google test ids.",
+  "cost": null,
+  "time": "20 min",
+  "steps": [
+   "Apps > Add app > Android > Not listed on a store yet",
+   "Copy the app id (ca-app-pub-...~...)",
+   "Create units: Banner (adaptive), Interstitial, Rewarded",
+   "Rewarded: amount 1, item hint",
+   "Send Claude the app id, 3 unit ids and your pub- id"
+  ],
+  "feedback": [
+   "Ad unit ids aren't secret, but keep test and live builds separate.",
+   "New units can take up to an hour to serve."
+  ],
+  "doneMessage": "Real ids are ready; Claude can wire them into the production build.",
+  "links": [
+   {
+    "label": "AdMob getting started",
+    "url": "https://support.google.com/admob/answer/15948559"
+   }
+  ],
+  "depends": [
+   "admob-account"
+  ]
+ },
+ {
+  "id": "admob-privacy-messaging",
+  "phase": "accounts",
+  "store": "admob",
+  "title": "Publish GDPR and US state consent messages",
+  "owner": "you",
+  "status": "todo",
+  "statusNote": "The app calls UMP, but no messages exist until you create them in AdMob.",
+  "cost": null,
+  "time": "30 min",
+  "steps": [
+   "AdMob > Privacy & messaging > European regulations: create message",
+   "Add your privacy policy URL; choose Consent + Manage options",
+   "Pick the Android app; publish",
+   "Create a US states regulations message; publish",
+   "Test with UMP debug geography on your phone"
+  ],
+  "feedback": [
+   "Without a published GDPR message, EEA/UK users get no consent form and fewer ads.",
+   "The in-app Ad privacy choices button reopens these forms."
+  ],
+  "doneMessage": "Consent is compliant in the EU, UK and regulated US states.",
+  "links": [
+   {
+    "label": "UMP US states",
+    "url": "https://developers.google.com/admob/android/privacy/us-states"
+   }
+  ],
+  "depends": [
+   "admob-add-app-units",
+   "web-portals-public-site"
+  ]
+ },
+ {
+  "id": "admob-blocking-controls",
+  "phase": "accounts",
+  "store": "admob",
+  "title": "Set max ad content rating to PG or G",
+  "owner": "you",
+  "status": "todo",
+  "statusNote": "The app already requests PG-max ads in code; also set it in the AdMob console so it applies everywhere.",
+  "cost": null,
+  "time": "10 min",
+  "steps": [
+   "AdMob > Blocking controls > Ad content rating",
+   "Choose PG (or G for maximum safety) for the app",
+   "Optionally block sensitive categories (dating, gambling)"
+  ],
+  "feedback": [
+   "Play requires ads to suit the app's content rating (likely 3+/7+).",
+   "G/PG also lowers risk given the cute art."
+  ],
+  "doneMessage": "Ads will match a family-friendly rating, protecting your listing and target audience answers.",
+  "links": [
+   {
+    "label": "AdMob max ad content rating",
+    "url": "https://support.google.com/admob/answer/7562142"
+   }
+  ],
+  "depends": [
+   "admob-add-app-units"
+  ]
+ },
+ {
+  "id": "steam-business-setup",
+  "phase": "accounts",
+  "store": "steam",
+  "title": "Prepare legal name, bank account and tax ID",
+  "owner": "you",
+  "status": "todo",
+  "statusNote": "No store accounts or payout details exist yet; every PC store asks for the same data.",
+  "cost": "$0 (an EIN is free from the IRS)",
+  "time": "1-2 hours",
+  "steps": [
+   "Choose: sell as an individual (SSN) or sole proprietor/LLC (EIN).",
+   "Optional: get a free EIN at irs.gov so your SSN isn't on store tax forms.",
+   "Have a bank account in exactly your legal name (or the LLC's).",
+   "Get a business address and phone you're OK showing EU buyers (DSA trader info).",
+   "Keep W-9 details ready; each store runs its own tax interview."
+  ],
+  "feedback": [
+   "Steam rejects aliases and DBAs: legal name, tax name and bank name must match.",
+   "A newly issued EIN can take up to 30 days to validate in Steam's tax check.",
+   "A PO box or virtual office keeps your home address off EU store pages."
+  ],
+  "doneMessage": "You have everything every store's payout and tax forms will ask for.",
+  "links": [
+   {
+    "label": "IRS: get an EIN",
+    "url": "https://www.irs.gov/businesses/small-businesses-self-employed/get-an-employer-identification-number"
+   },
+   {
+    "label": "Steam onboarding FAQ",
+    "url": "https://partner.steamgames.com/doc/gettingstarted/faq"
+   }
+  ],
+  "depends": []
+ },
+ {
+  "id": "steam-partner-signup",
+  "phase": "accounts",
+  "store": "steam",
+  "title": "Join Steamworks and pay the $100 Steam Direct fee",
+  "owner": "you",
+  "status": "todo",
+  "statusNote": "No Steamworks account yet; the 21-day release wait starts only when the fee is paid.",
+  "cost": "$100 per game (paid back after $1,000 revenue)",
+  "time": "30 min, then 15-30 days of verification",
+  "steps": [
+   "Use a Steam account with Steam Guard mobile authenticator on.",
+   "Go to partner.steamgames.com/steamdirect; enter your legal name and address.",
+   "Sign the Steam distribution agreement.",
+   "Pay the $100 Steam Direct fee to get the App ID.",
+   "Add a phone number: SMS codes are needed to set builds live after release."
+  ],
+  "feedback": [
+   "Pay early: the 21-day wait (30 in an older doc revision) counts from payment.",
+   "Only an admin of the partner account can pay the fee.",
+   "Demos are separate App IDs tied to this game; no extra fee was found in the docs."
+  ],
+  "doneMessage": "You have an App ID; build the store page and depots while verification runs.",
+  "links": [
+   {
+    "label": "Steam Direct",
+    "url": "https://partner.steamgames.com/steamdirect"
+   },
+   {
+    "label": "Steam Direct fee",
+    "url": "https://partner.steamgames.com/doc/gettingstarted/appfee"
+   },
+   {
+    "label": "Onboarding",
+    "url": "https://partner.steamgames.com/doc/gettingstarted/onboarding"
+   }
+  ],
+  "depends": [
+   "steam-business-setup"
+  ]
+ },
+ {
+  "id": "steam-tax-bank",
+  "phase": "accounts",
+  "store": "steam",
+  "title": "Finish Steam tax interview, bank and identity checks",
+  "owner": "you",
+  "status": "todo",
+  "statusNote": "Needs the Steamworks account first.",
+  "cost": null,
+  "time": "10 min interview; 15-30 days verification",
+  "steps": [
+   "Do the tax interview (TaxIdentity by Lilaham) in one sitting; W-9 data for US.",
+   "Enter bank routing number, account number and bank address.",
+   "Answer any document requests from Valve quickly.",
+   "Watch the Steamworks dashboard until it shows verified."
+  ],
+  "feedback": [
+   "The interview can't be saved halfway; have your SSN or EIN at hand.",
+   "Name mismatches between tax, bank and legal name cause most delays."
+  ],
+  "doneMessage": "Valve can pay you, and release becomes possible once the wait and reviews are done.",
+  "links": [
+   {
+    "label": "Onboarding FAQ",
+    "url": "https://partner.steamgames.com/doc/gettingstarted/faq"
+   }
+  ],
+  "depends": [
+   "steam-partner-signup"
+  ]
+ },
+ {
+  "id": "itch-account",
+  "phase": "accounts",
+  "store": "itch",
+  "title": "Create an itch.io account and set up payouts",
+  "owner": "you",
+  "status": "todo",
+  "statusNote": "No itch.io account yet.",
+  "cost": null,
+  "time": "30 min",
+  "steps": [
+   "Sign up at itch.io and verify your email.",
+   "Payment settings: pick 'Collected by itch.io, paid later' (handles VAT) or 'Direct to you'.",
+   "Complete the tax interview (W-9) to avoid 30% withholding.",
+   "Set your revenue share (default 10% to itch; any 0-100%)."
+  ],
+  "feedback": [
+   "Payment-processor fees (about 2.9% + $0.30) come on top of itch's share.",
+   "Payouts can be held for review; don't plan cash flow around launch day."
+  ],
+  "doneMessage": "You can create the itch.io page and take payments.",
+  "links": [
+   {
+    "label": "itch.io payments",
+    "url": "https://itch.io/docs/creators/payments"
+   },
+   {
+    "label": "Your first itch.io page",
+    "url": "https://itch.io/docs/creators/getting-started"
+   }
+  ],
+  "depends": [
+   "steam-business-setup"
+  ]
+ },
+ {
+  "id": "microsoft-partner-account",
+  "phase": "accounts",
+  "store": "microsoft",
+  "title": "Register a free Microsoft Store individual account",
+  "owner": "you",
+  "status": "todo",
+  "statusNote": "No Partner Center account yet.",
+  "cost": "Free for individuals ($99 one-time for companies)",
+  "time": "30 min + ID check",
+  "steps": [
+   "Sign in to Partner Center with a personal Microsoft account.",
+   "Choose Individual developer; verify with government ID and a selfie.",
+   "Fill in the tax profile (W-9) and payout account.",
+   "Apps and games > New product > MSIX or PWA app; reserve 'Alien Sudoku'.",
+   "Copy Package/Identity/Name, Publisher (CN=...) and display name from Product identity."
+  ],
+  "feedback": [
+   "Choose MSIX, not EXE/MSI: Microsoft signs MSIX for free and sells it for you.",
+   "Use the same publisher name ('Eddie G') as on your other stores."
+  ],
+  "doneMessage": "The name is reserved and you have the identity values the MSIX build needs.",
+  "links": [
+   {
+    "label": "Free individual registration",
+    "url": "https://blogs.windows.com/windowsdeveloper/2025/09/10/free-developer-registration-for-individual-developers-on-microsoft-store/"
+   },
+   {
+    "label": "Get started with Microsoft Store",
+    "url": "https://learn.microsoft.com/en-us/windows/apps/publish/get-started"
+   }
+  ],
+  "depends": [
+   "steam-business-setup"
+  ]
+ },
+ {
+  "id": "epic-dev-portal",
+  "phase": "accounts",
+  "store": "epic",
+  "title": "Optional: open an Epic Developer Portal org, pay $100",
+  "owner": "you",
+  "status": "todo",
+  "statusNote": "No Epic account; lower priority than Steam, itch and Microsoft Store.",
+  "cost": "$100 per product (paid back after $1,000 revenue)",
+  "time": "1 hour + 2 or more weeks verification",
+  "steps": [
+   "Create an Epic account (18+) and an organization of type Individual.",
+   "Accept the Epic Games Store Distribution Agreement.",
+   "Complete trader verification, the tax interview (W-9) and Hyperwallet payout.",
+   "Pay the $100 submission fee for the product."
+  ],
+  "feedback": [
+   "You keep 100% of the first $1M net per product per year, then 88%.",
+   "Epic First Run (6 months at 100%) needs PC exclusivity; skip it.",
+   "Skip Epic for now if time is short; small puzzle games get little traffic there."
+  ],
+  "doneMessage": "You can create the Epic product page and upload builds.",
+  "links": [
+   {
+    "label": "Manage your organization",
+    "url": "https://dev.epicgames.com/docs/epic-games-store/publishing-tools/organization-management/manage-org"
+   },
+   {
+    "label": "Trader, tax and payout",
+    "url": "https://dev.epicgames.com/docs/epic-games-store/publishing-tools/organization-management/manage-finance"
+   },
+   {
+    "label": "Revenue share update",
+    "url": "https://store.epicgames.com/en-US/news/epic-games-store-updates-revenue-share-keep-100-of-the-first-1m-per-product-per-year"
+   }
+  ],
+  "depends": [
+   "steam-business-setup"
+  ]
+ },
+ {
+  "id": "ready-web-build",
+  "phase": "builds",
+  "store": "web-portals",
+  "owner": "claude",
+  "status": "done",
+  "title": "Build the playable web version",
+  "statusNote": "builds/web/AlienSudoku.html plays offline in any browser; also published in the ALIEN SUDOKU folder on claude.ai.",
+  "cost": null,
+  "time": "done",
+  "steps": [
+   "Open builds/web/AlienSudoku.html in a browser to play",
+   "Rebuild with `node tools/package-artifact.mjs` in game/"
+  ],
+  "feedback": [],
+  "doneMessage": "Anyone can play it in a browser.",
+  "links": [],
+  "depends": []
+ },
+ {
+  "id": "ready-desktop-builds",
+  "phase": "builds",
+  "store": "all",
+  "owner": "claude",
+  "status": "done",
+  "title": "Build Windows, Linux and macOS apps",
+  "statusNote": "Built Nov 17 from the current game: Windows installer + portable, Linux AppImage + deb, macOS Intel + Apple Silicon zips (unsigned). About 100 MB each, so not in git; see builds/<platform>/README.md.",
+  "cost": null,
+  "time": "done",
+  "steps": [
+   "Ask Claude to send you the files, or rebuild them with the commands in each builds/<platform>/README.md"
+  ],
+  "feedback": [
+   "Unsigned Windows installers show a SmartScreen warning; unsigned Mac apps won't open without right-click > Open. Fine for testing, not for stores (see the signing tasks)."
+  ],
+  "doneMessage": "Desktop builds exist for every PC store.",
+  "links": [],
+  "depends": []
+ },
+ {
+  "id": "apple-privacy-manifest",
+  "phase": "builds",
+  "store": "apple",
+  "title": "Add PrivacyInfo.xcprivacy to the iOS app",
+  "owner": "claude",
+  "status": "done",
+  "statusNote": "Done: game/ios/App/App/PrivacyInfo.xcprivacy (UserDefaults, reason CA92.1) added to the app target.",
+  "cost": null,
+  "time": "30 min",
+  "steps": [
+   "Create game/ios/App/App/PrivacyInfo.xcprivacy.",
+   "Declare NSPrivacyAccessedAPICategoryUserDefaults with reason CA92.1.",
+   "Set NSPrivacyTracking false and leave tracking domains and collected data empty (Google's SDK ships its own).",
+   "Add the file to the App target's Resources in project.pbxproj.",
+   "After the first archive, check Xcode's privacy report and the upload email."
+  ],
+  "feedback": [
+   "The file name must be exactly PrivacyInfo.xcprivacy.",
+   "Capacitor and Cordova are on Apple's SDK list; Capacitor 8 ships its own manifests.",
+   "Re-check when adding any plugin that touches files, disk space, boot time or keyboards."
+  ],
+  "doneMessage": "The biggest upload blocker is gone.",
+  "links": [
+   {
+    "label": "Privacy manifest files",
+    "url": "https://developer.apple.com/documentation/bundleresources/privacy-manifest-files"
+   },
+   {
+    "label": "Required reason APIs",
+    "url": "https://developer.apple.com/documentation/bundleresources/describing-use-of-required-reason-api"
+   },
+   {
+    "label": "Third-party SDK list",
+    "url": "https://developer.apple.com/support/third-party-SDK-requirements/"
+   }
+  ],
+  "depends": []
+ },
+ {
+  "id": "apple-in-app-links",
+  "phase": "builds",
+  "store": "apple",
+  "title": "Add privacy policy and Report-an-ad links in app",
+  "owner": "claude",
+  "status": "done",
+  "statusNote": "Done: Settings has \"Privacy policy\" and, on phones, \"Report an ad\" (guideline 2.5.18).",
+  "cost": null,
+  "time": "1-2 hours",
+  "steps": [
+   "Add a 'Privacy policy' button in Settings > Privacy & data that opens the hosted policy.",
+   "Add 'Report an inappropriate ad' that opens an email or form (include time and screen).",
+   "Show both only where ads exist, or always for the policy.",
+   "Mention both in the App Review notes."
+  ],
+  "feedback": [
+   "Guideline 2.5.18 now requires a way to report inappropriate or age-inappropriate ads.",
+   "Missing in-app privacy links are a common 5.1.1 rejection."
+  ],
+  "doneMessage": "Two likely rejection reasons are fixed.",
+  "links": [
+   {
+    "label": "App Review Guidelines 2.5.18, 5.1.1",
+    "url": "https://developer.apple.com/app-store/review/guidelines/"
+   }
+  ],
+  "depends": [
+   "web-portals-public-site"
+  ]
+ },
+ {
+  "id": "apple-ads-config",
+  "phase": "builds",
+  "store": "apple",
+  "title": "Switch to real AdMob ids, SKAdNetworks, ad rating",
+  "owner": "both",
+  "status": "todo",
+  "statusNote": "The app now caps ads at PG (maxAdContentRating). Still to do: real AdMob ids and Google's full SKAdNetwork list.",
+  "cost": null,
+  "time": "1 hour after AdMob is set up",
+  "steps": [
+   "You: create the iOS app and banner, interstitial and rewarded units in AdMob; publish the GDPR and IDFA explainer messages.",
+   "You: set AdMob blocking controls to max ad content rating G or PG and block sensitive categories.",
+   "Claude: run tools/set-admob-ids.mjs and set the VITE_ADMOB_IOS_* values or secrets.",
+   "Claude: add Google's full SKAdNetwork list to Info.plist.",
+   "Claude: pass maxAdContentRating 'ParentalGuidance' (or 'General') to AdMob.initialize()."
+  ],
+  "feedback": [
+   "Ads must fit the 9+ age rating (2.5.18).",
+   "Register your phone as a test device; never tap your own live ads.",
+   "developers.google.com was unreachable here; fetch the SKAdNetwork list where it is reachable."
+  ],
+  "doneMessage": "Builds now earn money and show age-appropriate ads.",
+  "links": [
+   {
+    "label": "AdMob iOS quick start",
+    "url": "https://developers.google.com/admob/ios/quick-start"
+   },
+   {
+    "label": "App Review Guidelines 2.5.18",
+    "url": "https://developer.apple.com/app-store/review/guidelines/"
+   }
+  ],
+  "depends": []
+ },
+ {
+  "id": "apple-build-path",
+  "phase": "builds",
+  "store": "apple",
+  "title": "Get a Mac build path working",
+  "owner": "you",
+  "status": "blocked",
+  "statusNote": "There is no Mac, and GitHub Actions jobs fail in ~2 seconds without a runner on this account.",
+  "cost": "free to ~$1/hour",
+  "time": "30 min to a few hours",
+  "steps": [
+   "First try: fix GitHub billing/spending limit or account flag, then re-run the workflow (the repo is public).",
+   "Fallback: Codemagic personal account (500 free macOS minutes/month) with a codemagic.yaml.",
+   "Or rent a Mac (MacinCloud pay-as-you-go) or borrow one for a manual archive.",
+   "Xcode Cloud only after one Mac session, since Apple requires Xcode for the first workflow."
+  ],
+  "feedback": [
+   "macos-latest runs macOS 26 with Xcode 26.6, which meets today's rule.",
+   "From April 2027 builds need Xcode 27 (GitHub label xcode-27 is in preview).",
+   "Pricing for Codemagic, MacinCloud and GitHub was not re-verified here."
+  ],
+  "doneMessage": "You can produce signed iOS builds without owning a Mac.",
+  "links": [
+   {
+    "label": "GitHub runner images",
+    "url": "https://github.com/actions/runner-images"
+   },
+   {
+    "label": "Xcode Cloud",
+    "url": "https://developer.apple.com/xcode-cloud/"
+   },
+   {
+    "label": "Codemagic pricing",
+    "url": "https://codemagic.io/pricing"
+   }
+  ],
+  "depends": []
+ },
+ {
+  "id": "apple-register-bundle-id",
+  "phase": "builds",
+  "store": "apple",
+  "title": "Register bundle id com.eddieg.aliensudoku",
+  "owner": "you",
+  "status": "todo",
+  "statusNote": "Needs the developer account; the id already matches the Xcode project.",
+  "cost": null,
+  "time": "5 min",
+  "steps": [
+   "developer.apple.com > Certificates, Identifiers & Profiles > Identifiers > +.",
+   "Choose App IDs > App, explicit id com.eddieg.aliensudoku, description Alien Sudoku.",
+   "Leave all capabilities off (no push, no Game Center)."
+  ],
+  "feedback": [
+   "The id must match Xcode exactly and is permanent after the first upload."
+  ],
+  "doneMessage": "The bundle id now appears in App Store Connect's New App form.",
+  "links": [
+   {
+    "label": "Certificates, Identifiers & Profiles",
+    "url": "https://developer.apple.com/account/resources/identifiers/list"
+   }
+  ],
+  "depends": [
+   "apple-enroll"
+  ]
+ },
+ {
+  "id": "apple-create-app-record",
+  "phase": "builds",
+  "store": "apple",
+  "title": "Create the app in App Store Connect",
+  "owner": "you",
+  "status": "todo",
+  "statusNote": "No App Store Connect account or app record exists yet.",
+  "cost": null,
+  "time": "10 min",
+  "steps": [
+   "App Store Connect > Apps > + > New App.",
+   "Platform iOS, name Alien Sudoku, language English (U.S.).",
+   "Bundle id com.eddieg.aliensudoku, SKU alien-sudoku-ios, Full Access.",
+   "Create it now to reserve the name."
+  ],
+  "feedback": [
+   "Names are 2-30 characters and must be unique on the App Store.",
+   "SKU can't be changed later."
+  ],
+  "doneMessage": "The app exists in App Store Connect; builds can be uploaded to it.",
+  "links": [
+   {
+    "label": "App information fields",
+    "url": "https://developer.apple.com/help/app-store-connect/reference/app-information/app-information"
+   }
+  ],
+  "depends": [
+   "apple-register-bundle-id"
+  ]
+ },
+ {
+  "id": "apple-asc-api-key",
+  "phase": "builds",
+  "store": "apple",
+  "title": "Create an Admin App Store Connect API key",
+  "owner": "you",
+  "status": "todo",
+  "statusNote": "Repo docs say 'App Manager', but cloud signing via xcodebuild with an API key only works with an Admin key.",
+  "cost": null,
+  "time": "15 min",
+  "steps": [
+   "Users and Access > Integrations > App Store Connect API (request access first if asked).",
+   "Team Keys > + > name 'CI', role Admin.",
+   "Download the .p8 (only once) and note the Key ID and Issuer ID.",
+   "Store it in a password manager, never in git."
+  ],
+  "feedback": [
+   "With an App Manager key the build fails with 'Cloud signing permission error'.",
+   "Revoke the key right away if it leaks."
+  ],
+  "doneMessage": "CI can now sign and upload builds for you.",
+  "links": [
+   {
+    "label": "Creating API keys",
+    "url": "https://developer.apple.com/documentation/appstoreconnectapi/creating-api-keys-for-app-store-connect-api"
+   },
+   {
+    "label": "Forum: Admin needed for cloud signing",
+    "url": "https://developer.apple.com/forums/thread/698117"
+   }
+  ],
+  "depends": [
+   "apple-enroll"
+  ]
+ },
+ {
+  "id": "apple-ci-signing",
+  "phase": "builds",
+  "store": "apple",
+  "title": "Add Apple secrets and fix CI signing docs",
+  "owner": "both",
+  "status": "blocked",
+  "statusNote": "The iOS job exists but GitHub Actions doesn't start, and docs name the wrong key role.",
+  "cost": null,
+  "time": "30 min",
+  "steps": [
+   "You: add APPLE_TEAM_ID, ASC_KEY_ID, ASC_ISSUER_ID and ASC_KEY_P8_BASE64 as secrets.",
+   "Claude: change 'App Manager' to 'Admin' in docs/STORE_CHECKLIST.md and the iOS prompt.",
+   "Claude: pin runs-on to macos-26 now and plan xcode-27 before April 2027.",
+   "Claude: if Codemagic is chosen, add codemagic.yaml with the same steps."
+  ],
+  "feedback": [
+   "Build numbers come from the run number; never reuse one.",
+   "If manual signing is preferred, store a distribution .p12 and profile instead."
+  ],
+  "doneMessage": "Every push can produce a TestFlight build.",
+  "links": [
+   {
+    "label": "GitHub runner images",
+    "url": "https://github.com/actions/runner-images"
+   }
+  ],
+  "depends": [
+   "apple-build-path",
+   "apple-asc-api-key"
+  ]
+ },
+ {
+  "id": "apple-first-upload",
+  "phase": "builds",
+  "store": "apple",
+  "title": "Archive and upload the first build",
+  "owner": "both",
+  "status": "blocked",
+  "statusNote": "Needs a working Mac/CI path, the privacy manifest and the app record.",
+  "cost": null,
+  "time": "1 hour + 15-30 min processing",
+  "steps": [
+   "Run the iOS job (or archive on a Mac: npm ci, npm run cap:sync, Xcode > Product > Archive).",
+   "Upload to App Store Connect.",
+   "Read the processing email for ITMS warnings (privacy, SDK signatures).",
+   "Confirm the build shows in TestFlight with no 'Missing Compliance'."
+  ],
+  "feedback": [
+   "Uploads must use Xcode 26+ now and Xcode 27 from April 2027.",
+   "Fix every ITMS warning before submitting for review."
+  ],
+  "doneMessage": "Your first iOS build is in App Store Connect.",
+  "links": [
+   {
+    "label": "Upcoming requirements",
+    "url": "https://developer.apple.com/news/upcoming-requirements/"
+   }
+  ],
+  "depends": [
+   "apple-privacy-manifest",
+   "apple-ci-signing",
+   "apple-create-app-record"
+  ]
+ },
+ {
+  "id": "apple-mac-developer-id",
+  "phase": "builds",
+  "store": "apple",
+  "title": "Sign and notarize the Mac desktop build",
+  "owner": "both",
+  "status": "blocked",
+  "statusNote": "desktop/package.json has identity null, there's no Developer ID cert, and signing needs macOS.",
+  "cost": "included in $99/year",
+  "time": "2-3 hours",
+  "steps": [
+   "You (Account Holder): create a Developer ID Application cert from the G2 Sub-CA; export .p12.",
+   "Add CSC_LINK, CSC_KEY_PASSWORD and APPLE_API_KEY, APPLE_API_KEY_ID, APPLE_API_ISSUER secrets.",
+   "Claude: remove \"identity\": null and enable notarization in the mac build job.",
+   "Run on a macOS runner; check with spctl and stapler validate.",
+   "Claude: update RUN.md and the desktop prompt (right-click Open is outdated)."
+  ],
+  "feedback": [
+   "The old Developer ID Sub-CA expires Feb 1, 2027; only use G2 certificates.",
+   "Keep the universal build: macOS 27 is the last with Rosetta.",
+   "rcodesign can sign/notarize from Linux if no Mac runner works (untested here)."
+  ],
+  "doneMessage": "Mac players on Steam, GOG and itch can open the game without warnings.",
+  "links": [
+   {
+    "label": "Developer ID",
+    "url": "https://developer.apple.com/developer-id/"
+   },
+   {
+    "label": "Sub-CA expiry notice",
+    "url": "https://developer.apple.com/news/?id=w4atic4c"
+   }
+  ],
+  "depends": [
+   "apple-enroll",
+   "apple-build-path"
+  ]
+ },
+ {
+  "id": "google-in-app-privacy-link",
+  "phase": "builds",
+  "store": "google",
+  "title": "Add a privacy policy link inside the app",
+  "owner": "claude",
+  "status": "done",
+  "statusNote": "Done: Settings > Privacy & data > Privacy policy shows the full policy inside the app (game/src/data/privacy-policy.md).",
+  "cost": null,
+  "time": "30 min",
+  "steps": [
+   "Add a Privacy policy button in Settings > Privacy & data",
+   "Open the hosted URL in the system browser",
+   "Add photo/font credits to the About line",
+   "Rebuild and test on device"
+  ],
+  "feedback": [
+   "Play's User Data policy needs the link in Play Console AND in the app."
+  ],
+  "doneMessage": "The app meets Play's in-app privacy policy rule.",
+  "links": [
+   {
+    "label": "Play User Data policy",
+    "url": "https://support.google.com/googleplay/android-developer/answer/10144311"
+   }
+  ],
+  "depends": [
+   "web-portals-public-site"
+  ]
+ },
+ {
+  "id": "google-ads-ux-tweaks",
+  "phase": "builds",
+  "store": "google",
+  "title": "Move the banner away from the keypad during play",
+  "owner": "claude",
+  "status": "done",
+  "statusNote": "Done: no banner while playing; banners only on menus, so nothing sits next to the glyph keypad.",
+  "cost": null,
+  "time": "1-2 hours",
+  "steps": [
+   "Add a 16dp+ gap between keypad and banner, or hide it in play",
+   "Add optional test device ids to AdMob.initialize",
+   "Optionally set maxAdContentRating in initialize",
+   "Check layouts on small phones and tablets"
+  ],
+  "feedback": [
+   "'Layout encourages accidental clicks' is a top AdMob violation.",
+   "Never place ads where a tap meant for the game can land."
+  ],
+  "doneMessage": "Ad placement is now policy-safe, reducing the risk of limited serving or suspension.",
+  "links": [
+   {
+    "label": "AdMob interstitial guidance",
+    "url": "https://support.google.com/admob/answer/6201362"
+   },
+   {
+    "label": "AdMob test devices",
+    "url": "https://support.google.com/admob/answer/9691433"
+   }
+  ],
+  "depends": []
+ },
+ {
+  "id": "google-android-hardening",
+  "phase": "builds",
+  "store": "google",
+  "title": "Enable R8 shrinking and mark the app as a game",
+  "owner": "claude",
+  "status": "todo",
+  "statusNote": "game/android/app/build.gradle has minifyEnabled false; the manifest lacks android:appCategory=game.",
+  "cost": null,
+  "time": "1-3 hours incl. testing",
+  "steps": [
+   "Set minifyEnabled true and shrinkResources true for release",
+   "Use proguard-android-optimize.txt; add keep rules if needed",
+   "Add android:appCategory=\"game\" to <application>",
+   "Test ads, consent, haptics, preferences on a release build"
+  ],
+  "feedback": [
+   "From Feb 2027 Play wants at least 25% R8 optimization coverage.",
+   "Capacitor ships consumer ProGuard rules; plugin crashes mean a missing keep rule.",
+   "appCategory=game keeps orientation handling on large screens."
+  ],
+  "doneMessage": "The release build is smaller and ready for Play's 2027 quality thresholds.",
+  "links": [
+   {
+    "label": "Play quality thresholds (Aug 2026)",
+    "url": "https://developer.android.com/blog/posts/elevating-app-quality-reducing-memory-usage-and-improving-device-migration"
+   },
+   {
+    "label": "Enable app optimization (R8)",
+    "url": "https://developer.android.com/topic/performance/app-optimization/enable-app-optimization"
+   },
+   {
+    "label": "Android 16 behavior changes",
+    "url": "https://developer.android.com/about/versions/16/behavior-changes-16"
+   }
+  ],
+  "depends": []
+ },
+ {
+  "id": "google-upload-key",
+  "phase": "builds",
+  "store": "google",
+  "title": "Create and back up the upload key",
+  "owner": "both",
+  "status": "todo",
+  "statusNote": "No keystore or android/keystore.properties exists; the Gradle signing config is ready for one.",
+  "cost": null,
+  "time": "20 min",
+  "steps": [
+   "keytool -genkeypair -v -keystore alien-sudoku-upload.jks -alias upload -keyalg RSA -keysize 2048 -validity 10000",
+   "Save the .jks and both passwords in a password manager",
+   "Keep an offline backup copy",
+   "Add ANDROID_KEYSTORE_* GitHub secrets or keystore.properties",
+   "Never commit the keystore"
+  ],
+  "feedback": [
+   "Validity must run past 22 Oct 2033; 25+ years is recommended.",
+   "Let Play generate the app signing key; this is only the upload key.",
+   "A lost upload key can be reset, but it takes days."
+  ],
+  "doneMessage": "Builds can now be signed for upload to Play.",
+  "links": [
+   {
+    "label": "Sign your app",
+    "url": "https://developer.android.com/studio/publish/app-signing"
+   }
+  ],
+  "depends": []
+ },
+ {
+  "id": "google-build-pipeline",
+  "phase": "builds",
+  "store": "google",
+  "title": "Unblock Android release builds",
+  "owner": "both",
+  "status": "blocked",
+  "statusNote": "dl.google.com is blocked in this workspace (no Android SDK) and GitHub Actions jobs don't start.",
+  "cost": "Free (Actions may need billing fixed)",
+  "time": "30 min to half a day",
+  "steps": [
+   "Option A: fix Actions billing/spending limit so jobs run",
+   "Option B: install Android Studio on your computer",
+   "Option C: allow dl.google.com and maven.google.com in this environment",
+   "Run one debug build to prove the pipeline works"
+  ],
+  "feedback": [
+   "Without a working build nothing can reach Play Console.",
+   "Public repos get standard Actions runners free."
+  ],
+  "doneMessage": "You have a working way to produce AABs, which unlocks every testing step.",
+  "links": [
+   {
+    "label": "Build from the command line",
+    "url": "https://developer.android.com/build/building-cmdline"
+   }
+  ],
+  "depends": []
+ },
+ {
+  "id": "google-real-ad-ids",
+  "phase": "builds",
+  "store": "google",
+  "title": "Wire real AdMob ids into the production build",
+  "owner": "claude",
+  "status": "todo",
+  "statusNote": "tools/set-admob-ids.mjs and VITE_ADMOB_ANDROID_* support real ids; none exist yet.",
+  "cost": null,
+  "time": "30 min",
+  "steps": [
+   "Run set-admob-ids.mjs with the real Android app id",
+   "Set VITE_ADMOB_ANDROID_BANNER/INTERSTITIAL/REWARDED secrets",
+   "Keep test ids for internal/closed builds if preferred",
+   "Check USING_TEST_ADS is false in the production build"
+  ],
+  "feedback": [
+   "Never click live ads on your own phone; register it as a test device.",
+   "A mismatched app id in the manifest crashes the ads SDK at start."
+  ],
+  "doneMessage": "The production build will earn real ad revenue once AdMob approves the app.",
+  "links": [
+   {
+    "label": "AdMob test ads",
+    "url": "https://developers.google.com/admob/android/test-ads"
+   }
+  ],
+  "depends": [
+   "admob-add-app-units"
+  ]
+ },
+ {
+  "id": "google-build-aab",
+  "phase": "builds",
+  "store": "google",
+  "title": "Build the signed release AAB",
+  "owner": "both",
+  "status": "blocked",
+  "statusNote": "No AAB can be built until google-build-pipeline and google-upload-key are done.",
+  "cost": null,
+  "time": "15 min per build once unblocked",
+  "steps": [
+   "npm run build && npx cap sync android",
+   "./gradlew bundleRelease -PversionCode=N -PversionName=1.0.0",
+   "Raise versionCode for every upload",
+   "Check the bundle has no unaligned lib/*.so (16 KB)",
+   "Check the merged manifest includes AD_ID"
+  ],
+  "feedback": [
+   "Don't mix local builds (versionCode 1) with CI run numbers.",
+   "Updates must support 16 KB pages from 1 Feb 2027; this app has no native code."
+  ],
+  "doneMessage": "You have an uploadable AAB; head to internal testing.",
+  "links": [
+   {
+    "label": "Android App Bundles",
+    "url": "https://developer.android.com/guide/app-bundle"
+   },
+   {
+    "label": "16 KB page sizes",
+    "url": "https://developer.android.com/guide/practices/page-sizes"
+   }
+  ],
+  "depends": [
+   "google-build-pipeline",
+   "google-upload-key",
+   "google-android-hardening",
+   "google-in-app-privacy-link",
+   "google-ads-ux-tweaks"
+  ]
+ },
+ {
+  "id": "steam-desktop-polish",
+  "phase": "builds",
+  "store": "steam",
+  "title": "Add gamepad input, fullscreen flag and Deck fixes",
+  "owner": "claude",
+  "status": "todo",
+  "statusNote": "Input is mouse, touch and keyboard only, and the window opens at 1280x860, taller than a Deck's 800 px screen.",
+  "cost": null,
+  "time": "1-2 days",
+  "steps": [
+   "Add Gamepad API input: D-pad moves; face buttons, bumpers and a picker place glyphs.",
+   "Map notes, undo, hint, pause and back to controller buttons.",
+   "Show controller button prompts while a pad is used; hide keyboard hints.",
+   "Add a --fullscreen switch; start fullscreen when SteamDeck=1 is set.",
+   "Check all text is at least 9 px tall at 1280x800; make the name prompt skippable."
+  ],
+  "feedback": [
+   "Without controller support the best Deck badge is Playable, likely Unsupported.",
+   "Verified needs full controller access, controller glyphs and readable text at 1280x800.",
+   "Only tick 'controller support' on the store page once this ships."
+  ],
+  "doneMessage": "The game can earn a Steam Deck badge and plays from the couch.",
+  "links": [
+   {
+    "label": "Deck/Steam Machine compatibility",
+    "url": "https://partner.steamgames.com/doc/steamhardware/compat"
+   }
+  ],
+  "depends": [
+   "ready-desktop-builds"
+  ]
+ },
+ {
+  "id": "steam-build-linux",
+  "phase": "builds",
+  "store": "steam",
+  "title": "Build a Linux folder build for Steam and itch",
+  "owner": "claude",
+  "status": "todo",
+  "statusNote": "Linux targets are AppImage and deb only and haven't been built yet; Steam needs a plain folder (dir target).",
+  "cost": null,
+  "time": "1-2 hours",
+  "steps": [
+   "Add a 'dir' Linux target and set linux.executableName to 'alien-sudoku'.",
+   "Run npm run dist:linux in this workspace, then npm run smoke.",
+   "Plan the Steam Linux launch option with the --no-sandbox argument.",
+   "Test under Steam (Linux PC or Steam Deck) before listing Linux on the store."
+  ],
+  "feedback": [
+   "Electron's setuid sandbox fails inside Steam's Linux container; pass --no-sandbox as a launch argument, not in code.",
+   "Every OS listed on the page must launch, or build review fails.",
+   "Windows-only plus Proton is an acceptable first release."
+  ],
+  "doneMessage": "You have a native Linux build ready for a Steam depot and itch.",
+  "links": [
+   {
+    "label": "Steam: SteamOS and Linux",
+    "url": "https://partner.steamgames.com/doc/store/application/platforms/linux"
+   },
+   {
+    "label": "Electron no-sandbox issue",
+    "url": "https://github.com/electron/electron/issues/18265"
+   }
+  ],
+  "depends": [
+   "ready-desktop-builds"
+  ]
+ },
+ {
+  "id": "steam-steampipe-scripts",
+  "phase": "builds",
+  "store": "steam",
+  "title": "Write SteamPipe depot scripts and upload steps",
+  "owner": "claude",
+  "status": "todo",
+  "statusNote": "No Steam App ID or depot IDs exist yet.",
+  "cost": null,
+  "time": "1-2 hours",
+  "steps": [
+   "Create game/desktop/steam/app_build.vdf with one depot per OS.",
+   "Windows content: out/win-unpacked; Linux: out/linux-unpacked.",
+   "Set SetLive to a password-protected beta branch, never default.",
+   "Document: steamcmd +login <user> +run_app_build <path>/app_build.vdf +quit.",
+   "Set launch options: 'Alien Sudoku.exe' (Windows), 'alien-sudoku --no-sandbox' (Linux)."
+  ],
+  "feedback": [
+   "This workspace can't reach Steam's servers; run steamcmd on your own PC.",
+   "'status = 6' usually means a wrong App/depot ID, permissions or ContentRoot.",
+   "The default branch is set live in Steamworks (SMS code after release)."
+  ],
+  "doneMessage": "Uploading a new Steam build is now one command.",
+  "links": [
+   {
+    "label": "Uploading to Steam",
+    "url": "https://partner.steamgames.com/doc/sdk/uploading"
+   }
+  ],
+  "depends": [
+   "steam-partner-signup",
+   "ready-desktop-builds"
+  ]
+ },
+ {
+  "id": "steam-mac-build",
+  "phase": "builds",
+  "store": "steam",
+  "title": "macOS: sign and notarize a universal build",
+  "owner": "both",
+  "status": "blocked",
+  "statusNote": "The mac target has identity null; there's no Mac here and GitHub Actions jobs don't start.",
+  "cost": "$99/year Apple Developer Program (same account as iOS)",
+  "time": "Half a day on a Mac",
+  "steps": [
+   "Join the Apple Developer Program (same account as the iOS app).",
+   "Create a Developer ID Application certificate.",
+   "Remove identity: null; set APPLE_ID, APPLE_APP_SPECIFIC_PASSWORD, APPLE_TEAM_ID.",
+   "Run npm run dist:mac on a Mac and confirm notarization passed.",
+   "In Steamworks tick '64 Bit Binaries Included' and 'App Bundles Are Notarized'."
+  ],
+  "feedback": [
+   "Steam requires new macOS apps to be 64-bit and notarized.",
+   "Launch without macOS if no Mac is available; add it later as a free update.",
+   "Unsigned Mac zips on itch need 'Open Anyway' in Privacy & Security."
+  ],
+  "doneMessage": "Mac players on Steam, itch and GOG can now buy and run the game.",
+  "links": [
+   {
+    "label": "Steam platforms (macOS)",
+    "url": "https://partner.steamgames.com/doc/store/application/platforms"
+   }
+  ],
+  "depends": [
+   "ready-desktop-builds"
+  ]
+ },
+ {
+  "id": "itch-web-build",
+  "phase": "builds",
+  "store": "itch",
+  "title": "Make an embed web zip without the service worker",
+  "owner": "claude",
+  "status": "done",
+  "statusNote": "Done: builds/itch-io/alien-sudoku-html5.zip (one index.html, no service worker).",
+  "cost": null,
+  "time": "1 hour",
+  "steps": [
+   "Add a build flag (e.g. VITE_TARGET=embed) that skips the service worker and install prompt.",
+   "Build, then zip the contents of dist/ so index.html is at the zip root.",
+   "Check: at most 1,000 files, 500 MB unpacked, 200 MB per file, 240-char paths.",
+   "If the web stays a demo, build a demo variant (e.g. Sector 1 + Daily)."
+  ],
+  "feedback": [
+   "Saves use the 'alien-sudoku:' localStorage prefix, which avoids clashes on itch's shared game domain.",
+   "Keep base './': itch and portals serve games from a sub-folder.",
+   "The same zip is the starting point for CrazyGames."
+  ],
+  "doneMessage": "The web build drops cleanly into itch.io and web portals.",
+  "links": [
+   {
+    "label": "itch.io HTML5 rules",
+    "url": "https://itch.io/docs/creators/html5"
+   }
+  ],
+  "depends": [
+   "steam-decide-pc-model"
+  ]
+ },
+ {
+  "id": "microsoft-msix-build",
+  "phase": "builds",
+  "store": "microsoft",
+  "title": "Build a Store MSIX package with electron-builder",
+  "owner": "both",
+  "status": "todo",
+  "statusNote": "There is no appx target, and electron-builder can't build MSIX on Linux, so it needs a Windows 10/11 PC.",
+  "cost": null,
+  "time": "Half a day",
+  "steps": [
+   "Add an 'appx' target with identityName, publisher (CN=...), publisherDisplayName from Partner Center.",
+   "Set applicationId 'AlienSudoku', displayName 'Alien Sudoku', languages en-US.",
+   "Add tile PNGs in desktop/build/appx (StoreLogo, Square44x44Logo, Square150x150Logo, Wide310x150Logo).",
+   "On Windows with the Windows SDK: npm run dist:win.",
+   "Install the package locally (Developer Mode) and play a full game."
+  ],
+  "feedback": [
+   "Without your own tile images you get placeholder art.",
+   "Publisher must match Partner Center exactly or the upload is rejected.",
+   "The Store re-signs MSIX, so no code-signing certificate is needed."
+  ],
+  "doneMessage": "You have a Store-ready package that Microsoft signs and updates for you.",
+  "links": [
+   {
+    "label": "electron-builder AppX",
+    "url": "https://www.electron.build/docs/appx"
+   },
+   {
+    "label": "Choose a distribution path",
+    "url": "https://learn.microsoft.com/en-us/windows/apps/package-and-deploy/choose-distribution-path"
+   }
+  ],
+  "depends": [
+   "microsoft-partner-account",
+   "ready-desktop-builds"
+  ]
+ },
+ {
+  "id": "itch-windows-signing",
+  "phase": "builds",
+  "store": "itch",
+  "title": "Optional: code-sign Windows downloads",
+  "owner": "you",
+  "status": "todo",
+  "statusNote": "The NSIS and portable exes are unsigned, so direct downloads trigger SmartScreen.",
+  "cost": "$9.99/month (Azure Artifact Signing) or ~$150-500/year (OV cert)",
+  "time": "1-3 days incl. identity validation",
+  "steps": [
+   "Only needed for itch/website downloads or the Store EXE path; Steam, Epic, GOG and MSIX don't need it.",
+   "US individual: sign up for Azure Artifact Signing Basic ($9.99/mo) and pass identity validation.",
+   "Configure electron-builder's Azure signing (runs on Windows) or use jsign.",
+   "Sign and timestamp the exe and installer; test a download on a clean PC."
+  ],
+  "feedback": [
+   "EV certificates no longer skip SmartScreen (since 2024); don't pay extra for EV.",
+   "Reputation builds with downloads; early users may still see a warning.",
+   "Certificates issued after March 1, 2026 last at most 460 days."
+  ],
+  "doneMessage": "Direct downloads now carry your verified name and earn SmartScreen reputation.",
+  "links": [
+   {
+    "label": "Code signing options",
+    "url": "https://learn.microsoft.com/en-us/windows/apps/package-and-deploy/code-signing-options"
+   },
+   {
+    "label": "SmartScreen reputation",
+    "url": "https://learn.microsoft.com/en-us/windows/apps/package-and-deploy/smartscreen-reputation"
+   }
+  ],
+  "depends": [
+   "steam-business-setup"
+  ]
+ },
+ {
+  "id": "apple-age-rating",
+  "phase": "listing",
+  "store": "apple",
+  "title": "Answer the age rating questionnaire (9+)",
+  "owner": "you",
+  "status": "todo",
+  "statusNote": "Needs the app record; answers are known from the game's content.",
+  "cost": null,
+  "time": "15 min",
+  "steps": [
+   "App Information > Age Ratings > Set Up.",
+   "In-app controls: none. Capabilities: Advertising Yes; web, UGC, chat, social media No.",
+   "Shared Location No; Dating and Relationships No.",
+   "Horror/Fear Themes: Infrequent/Mild. Everything else None/No.",
+   "Age Categories and Override: Not Applicable. Never pick Made for Kids."
+  ],
+  "feedback": [
+   "Expected result: 9+. 'Frequent' horror would make it 13+.",
+   "Made for Kids can't be undone after approval and bans AdMob behavioral ads.",
+   "New descriptors must be answered by Jan 12, 2027."
+  ],
+  "doneMessage": "The rating matches the game, and the ad settings can match the rating.",
+  "links": [
+   {
+    "label": "Age rating values",
+    "url": "https://developer.apple.com/help/app-store-connect/reference/app-information/age-ratings-values-and-definitions"
+   },
+   {
+    "label": "Set an age rating",
+    "url": "https://developer.apple.com/help/app-store-connect/manage-app-information/set-an-app-age-rating"
+   }
+  ],
+  "depends": [
+   "apple-create-app-record"
+  ]
+ },
+ {
+  "id": "apple-app-privacy",
+  "phase": "listing",
+  "store": "apple",
+  "title": "Fill in App Privacy for AdMob",
+  "owner": "you",
+  "status": "todo",
+  "statusNote": "Needs the app record and the hosted privacy policy URL.",
+  "cost": null,
+  "time": "20 min",
+  "steps": [
+   "Enter the privacy policy URL.",
+   "Data collected: Yes.",
+   "Coarse Location, Device ID, Product Interaction, Advertising Data: Third-Party Advertising + Analytics, linked, used for tracking.",
+   "Crash, Performance, Other Diagnostic Data: Analytics, not linked, not tracking.",
+   "Nothing else: progress and the typed name never leave the device.",
+   "Publish."
+  ],
+  "feedback": [
+   "Apple treats personal data under privacy laws (IDFA, IP) as linked; 'linked' is the safe answer.",
+   "Labels must match the ATT prompt and the privacy policy.",
+   "Re-check against Google's data-disclosure page when SDK versions change."
+  ],
+  "doneMessage": "Your privacy label is honest and consistent with the ATT prompt.",
+  "links": [
+   {
+    "label": "App privacy details",
+    "url": "https://developer.apple.com/app-store/app-privacy-details/"
+   },
+   {
+    "label": "Google data disclosure",
+    "url": "https://developers.google.com/admob/ios/privacy/data-disclosure"
+   }
+  ],
+  "depends": [
+   "apple-create-app-record",
+   "web-portals-public-site"
+  ]
+ },
+ {
+  "id": "apple-metadata",
+  "phase": "listing",
+  "store": "apple",
+  "title": "Enter name, subtitle, keywords and description",
+  "owner": "both",
+  "status": "todo",
+  "statusNote": "Draft text exists in docs/STORE_CHECKLIST.md, but its keywords repeat the app name.",
+  "cost": null,
+  "time": "30 min",
+  "steps": [
+   "Subtitle (max 30): Decode glyph logic puzzles.",
+   "Keywords (max 100 bytes): puzzle,logic,brain,daily,space,ufo,glyph,number,zen,offline,classic,grid,cosmic,mind,streak,duel.",
+   "Description (max 4000): reuse the checklist text.",
+   "Promotional text (max 170), support, marketing and privacy URLs.",
+   "Copyright: 2026 + your legal name. Category: Games > Puzzle, Board."
+  ],
+  "feedback": [
+   "Don't put other apps' names or 'sudoku app' brand names in keywords (2.3.7).",
+   "Don't mention Android, Google Play or the web version (2.3.10)."
+  ],
+  "doneMessage": "The product page reads well and is searchable.",
+  "links": [
+   {
+    "label": "Version field limits",
+    "url": "https://developer.apple.com/help/app-store-connect/reference/app-information/platform-version-information"
+   }
+  ],
+  "depends": [
+   "apple-create-app-record",
+   "web-portals-public-site"
+  ]
+ },
+ {
+  "id": "apple-pricing-availability",
+  "phase": "listing",
+  "store": "apple",
+  "title": "Set price Free and choose countries",
+  "owner": "you",
+  "status": "todo",
+  "statusNote": "Needs the app record.",
+  "cost": null,
+  "time": "10 min",
+  "steps": [
+   "Pricing and Availability: Free.",
+   "Select all countries except China mainland and Vietnam (licensing).",
+   "Turn off 'iPhone and iPad Apps on Apple Silicon Mac' availability.",
+   "Check the Apple Vision Pro availability setting too."
+  ],
+  "feedback": [
+   "China mainland needs an ICP filing and likely a game approval number.",
+   "Vietnam requires games to be licensed or notified.",
+   "Keeping the iOS app off Macs avoids competing with the paid desktop build."
+  ],
+  "doneMessage": "The app will launch where you can legally sell it.",
+  "links": [
+   {
+    "label": "iOS apps on Apple silicon Macs",
+    "url": "https://developer.apple.com/help/app-store-connect/manage-your-apps-availability/manage-availability-of-iphone-and-ipad-apps-on-macs-with-apple-silicon"
+   },
+   {
+    "label": "Vietnam games notice",
+    "url": "https://developer.apple.com/news/?id=06h4gf33"
+   }
+  ],
+  "depends": [
+   "apple-create-app-record"
+  ]
+ },
+ {
+  "id": "apple-accessibility-labels",
+  "phase": "listing",
+  "store": "apple",
+  "title": "Fill in Accessibility Nutrition Labels",
+  "owner": "you",
+  "status": "todo",
+  "statusNote": "Voluntary today, but one report says an empty section delayed availability.",
+  "cost": null,
+  "time": "20 min",
+  "steps": [
+   "App Store Connect > App Accessibility.",
+   "Claim only features tested end to end (e.g., Dark Interface).",
+   "Save even if you claim none."
+  ],
+  "feedback": [
+   "Apple says labels become mandatory over time; no date yet.",
+   "Over-claiming VoiceOver support invites complaints."
+  ],
+  "doneMessage": "No surprises when the version goes live.",
+  "links": [
+   {
+    "label": "Accessibility Nutrition Labels",
+    "url": "https://developer.apple.com/help/app-store-connect/manage-app-accessibility/overview-of-accessibility-nutrition-labels"
+   }
+  ],
+  "depends": [
+   "apple-create-app-record"
+  ]
+ },
+ {
+  "id": "google-store-listing",
+  "phase": "listing",
+  "store": "google",
+  "title": "Fill in the main store listing",
+  "owner": "both",
+  "status": "todo",
+  "statusNote": "Text drafts exist in store-launch/listing/listing.json; support email/URL are still TODO.",
+  "cost": null,
+  "time": "1 hour",
+  "steps": [
+   "Name: Alien Sudoku (30 max)",
+   "Short description (80 max) and full description (4000 max)",
+   "Append the mobile ads line to the full description",
+   "Upload icon, feature graphic, phone and tablet shots",
+   "Category Game > Puzzle; add up to 5 tags",
+   "Contact: email, website (for app-ads.txt)"
+  ],
+  "feedback": [
+   "Reword 'cuddly' and 'Baby Blip' to reduce child appeal.",
+   "No 'best', '#1', emoji or keyword stuffing.",
+   "The website must be the host that serves app-ads.txt."
+  ],
+  "doneMessage": "The store page is complete and ready for review.",
+  "links": [
+   {
+    "label": "Metadata policy",
+    "url": "https://support.google.com/googleplay/android-developer/answer/9898842"
+   },
+   {
+    "label": "Store listing best practices",
+    "url": "https://support.google.com/googleplay/android-developer/answer/13393723"
+   }
+  ],
+  "depends": [
+   "google-create-app",
+   "ready-screenshots",
+   "web-portals-public-site"
+  ]
+ },
+ {
+  "id": "google-app-content-basics",
+  "phase": "listing",
+  "store": "google",
+  "title": "Answer privacy, ads, access and other declarations",
+  "owner": "you",
+  "status": "todo",
+  "statusNote": "No Play app exists yet, so no App content forms are filled.",
+  "cost": null,
+  "time": "20 min",
+  "steps": [
+   "Privacy policy: paste the hosted URL",
+   "App access: all functionality available without restrictions",
+   "Ads: Yes, my app contains ads",
+   "Government app: No; Financial features: none",
+   "Health: none; News app: No"
+  ],
+  "feedback": [
+   "Misstating ads can get the app suspended.",
+   "No sensitive permissions, so no permission forms apply."
+  ],
+  "doneMessage": "The simple declarations are done; on to rating, audience and data safety.",
+  "links": [
+   {
+    "label": "Ads declaration",
+    "url": "https://support.google.com/googleplay/android-developer/answer/9859455"
+   }
+  ],
+  "depends": [
+   "google-create-app",
+   "web-portals-public-site"
+  ]
+ },
+ {
+  "id": "google-content-rating",
+  "phase": "listing",
+  "store": "google",
+  "title": "Complete the IARC content rating questionnaire",
+  "owner": "you",
+  "status": "todo",
+  "statusNote": "Not started; needs the Play app to exist.",
+  "cost": null,
+  "time": "15 min",
+  "steps": [
+   "Category: Game",
+   "Violence, sex, language, drugs, gambling: No",
+   "Scary content: Yes, mild cartoon monsters (Gnarly Horde)",
+   "User interaction, location sharing, purchases: No",
+   "Unrestricted internet: No",
+   "Expect about ESRB Everyone, PEGI 3 or 7 (Fear)"
+  ],
+  "feedback": [
+   "Answer honestly; a wrong rating can be overridden and the app removed.",
+   "The typed name stays on the device, so it isn't user interaction.",
+   "Redo the questionnaire if you add scarier content."
+  ],
+  "doneMessage": "The game has its official age ratings for every region.",
+  "links": [
+   {
+    "label": "Content ratings",
+    "url": "https://support.google.com/googleplay/android-developer/answer/9898843"
+   }
+  ],
+  "depends": [
+   "google-create-app"
+  ]
+ },
+ {
+  "id": "google-target-audience",
+  "phase": "listing",
+  "store": "google",
+  "title": "Set target audience to 13+ and answer child appeal",
+  "owner": "you",
+  "status": "todo",
+  "statusNote": "Not started; PRIVACY.md already says the game is not for under-13s.",
+  "cost": null,
+  "time": "15 min",
+  "steps": [
+   "Tick 13-15, 16-17 and 18+ only",
+   "Answer the 'appeal to children' question honestly",
+   "Neutralize the listing first (section 4 of the guide)",
+   "Keep AdMob max rating at PG or G"
+  ],
+  "feedback": [
+   "Ticking any under-13 group brings in the Families policy.",
+   "Families needs a neutral age screen and child-directed ad tagging.",
+   "Google may add a 'Not designed for children' label."
+  ],
+  "doneMessage": "Your audience is set, which decides which ad rules apply.",
+  "links": [
+   {
+    "label": "Target audience settings",
+    "url": "https://support.google.com/googleplay/android-developer/answer/9867159"
+   },
+   {
+    "label": "Families policies",
+    "url": "https://support.google.com/googleplay/android-developer/answer/9893335"
+   }
+  ],
+  "depends": [
+   "google-create-app",
+   "admob-blocking-controls"
+  ]
+ },
+ {
+  "id": "google-data-safety",
+  "phase": "listing",
+  "store": "google",
+  "title": "Complete Data safety and Advertising ID forms",
+  "owner": "you",
+  "status": "todo",
+  "statusNote": "Not started; answers are in section 5.6 of google.md.",
+  "cost": null,
+  "time": "30 min",
+  "steps": [
+   "Collects or shares data: Yes; encrypted in transit: Yes",
+   "No account creation; deletion requests: No",
+   "Approximate location, App interactions, Diagnostics, Device IDs",
+   "Each: collected + shared, required; ads, analytics, fraud",
+   "Advertising ID: Yes, same purposes",
+   "Check Google's current AdMob data disclosure table"
+  ],
+  "feedback": [
+   "The typed name never leaves the device, so don't declare it.",
+   "Update the form if you add analytics or mediation."
+  ],
+  "doneMessage": "Your privacy labels match the ads SDK, a common rejection reason avoided.",
+  "links": [
+   {
+    "label": "Data safety help",
+    "url": "https://support.google.com/googleplay/android-developer/answer/10787469"
+   },
+   {
+    "label": "AdMob Play data disclosure",
+    "url": "https://developers.google.com/admob/android/privacy/play-data-disclosure"
+   },
+   {
+    "label": "Advertising ID",
+    "url": "https://support.google.com/googleplay/android-developer/answer/6048248"
+   }
+  ],
+  "depends": [
+   "google-create-app"
+  ]
+ },
+ {
+  "id": "steam-store-art",
+  "phase": "listing",
+  "store": "steam",
+  "title": "Make key art, Steam capsules, library art and icons",
+  "owner": "both",
+  "status": "done",
+  "statusNote": "Done: every Steam capsule, library image and icon size in store-launch/assets/graphics (made from the game's own glyphs). Replace with hand-made key art later if you like.",
+  "cost": null,
+  "time": "1-2 days",
+  "steps": [
+   "Make layered key art: aliens, glyph grid, 'Alien Sudoku' logo.",
+   "Store: header 920x430, small 462x174, main 1232x706, vertical 748x896.",
+   "Library: capsule 600x900, header 920x430, hero 3840x1240 (no text, key art in central 860x380).",
+   "Library logo PNG 1280 wide and/or 720 tall, transparent background.",
+   "Icons: app icon 184x184 JPG; shortcut icon 256 or 512 PNG/ICO; optional background 1438x810."
+  ],
+  "feedback": [
+   "Capsules may only show art, the name and an official subtitle: no review quotes, awards, 'on sale' or calls to action.",
+   "The small capsule must read at 120x45: make the logo nearly fill it.",
+   "AI-assisted store art belongs in your AI disclosure."
+  ],
+  "doneMessage": "One art set now covers Steam and resizes for itch, Microsoft and Epic.",
+  "links": [
+   {
+    "label": "Store graphical assets",
+    "url": "https://partner.steamgames.com/doc/store/assets/standard"
+   },
+   {
+    "label": "Library assets",
+    "url": "https://partner.steamgames.com/doc/store/assets/libraryassets"
+   },
+   {
+    "label": "Asset rules",
+    "url": "https://partner.steamgames.com/doc/store/assets/rules"
+   }
+  ],
+  "depends": [
+   "steam-verify-image-licenses"
+  ]
+ },
+ {
+  "id": "steam-screenshots-trailer",
+  "phase": "listing",
+  "store": "steam",
+  "title": "Capture 1920x1080 screenshots and a short trailer",
+  "owner": "both",
+  "status": "todo",
+  "statusNote": "Screenshots done (store-launch/assets/screenshots/pc-1920x1080). The trailer is still to make.",
+  "cost": null,
+  "time": "1 day",
+  "steps": [
+   "Capture at least 5 gameplay shots at 1920x1080 from the Electron build: campaign, daily, duel, zen, themes.",
+   "Mark at least 4 as suitable for all ages in Steamworks.",
+   "Record a 30-60 s trailer: 1920x1080, 30 or 60 fps, H.264 + AAC MP4, 5,000+ kbps.",
+   "Pick a 1920x1080 frame of the video as the thumbnail."
+  ],
+  "feedback": [
+   "Screenshots must be real gameplay, not concept art or marketing text.",
+   "Lead with the hook: alien glyphs instead of digits, then the Duel race.",
+   "Reuse them for itch, Microsoft (1366x768 or larger), Epic and the press kit."
+  ],
+  "doneMessage": "Your media set is ready for every store page and the press kit.",
+  "links": [
+   {
+    "label": "Store graphical assets",
+    "url": "https://partner.steamgames.com/doc/store/assets/standard"
+   },
+   {
+    "label": "Trailers",
+    "url": "https://partner.steamgames.com/doc/store/trailer"
+   }
+  ],
+  "depends": [
+   "ready-desktop-builds"
+  ]
+ },
+ {
+  "id": "steam-store-page",
+  "phase": "listing",
+  "store": "steam",
+  "title": "Fill in the Steam store page",
+  "owner": "both",
+  "status": "todo",
+  "statusNote": "Listing text drafts exist in docs/STORE_CHECKLIST.md but describe the phone version.",
+  "cost": null,
+  "time": "2-3 hours",
+  "steps": [
+   "Short description (300 chars max) and long text from STORE_CHECKLIST.md, minus phone and ad wording.",
+   "Call the Duel opponent a 'computer rival', not 'AI', to avoid confusion with the AI disclosure.",
+   "Genres Casual, Indie; tags Puzzle, Logic, Casual, Relaxing, Sci-fi, Aliens, Space, Singleplayer, Cute.",
+   "Language English; features Single-player; Family Sharing on.",
+   "System requirements: Windows 10/11 64-bit, 4 GB RAM, 500 MB disk; Linux/macOS only once tested.",
+   "Upload capsules, library art, screenshots and the trailer."
+  ],
+  "feedback": [
+   "Every listed feature (controller, achievements, Cloud) must exist in the build or review fails.",
+   "Don't claim Steam Deck Verified; Valve assigns badges."
+  ],
+  "doneMessage": "The page is ready to send to Valve for review.",
+  "links": [
+   {
+    "label": "Release process",
+    "url": "https://partner.steamgames.com/doc/store/releasing"
+   }
+  ],
+  "depends": [
+   "steam-partner-signup",
+   "steam-store-art",
+   "steam-screenshots-trailer"
+  ]
+ },
+ {
+  "id": "steam-content-survey",
+  "phase": "listing",
+  "store": "steam",
+  "title": "Answer Steam's content survey and AI disclosure",
+  "owner": "you",
+  "status": "todo",
+  "statusNote": "Not started; art, themes, music code and probably some text were AI-assisted, so the AI section applies.",
+  "cost": null,
+  "time": "30 min",
+  "steps": [
+   "Mature content: No to violence/gore, nudity, sexual content and general mature content.",
+   "AI section, Pre-Generated: Yes; paste the disclosure text from pc.md section 2.5.",
+   "Live-Generated: No (pre-built puzzles; the Duel rival is a scripted algorithm).",
+   "Add store art and in-game text to the disclosure if AI helped make them.",
+   "Confirm you hold rights to all content (licensed photos, OFL fonts)."
+  ],
+  "feedback": [
+   "The disclosure is printed on the store page; plain, specific wording reads best.",
+   "The January 2026 survey focuses on player-facing content, not coding tools.",
+   "Under-disclosing is a policy risk; over-explaining is not."
+  ],
+  "doneMessage": "Your content survey is complete and honest, one less review blocker.",
+  "links": [
+   {
+    "label": "Content survey",
+    "url": "https://partner.steamgames.com/doc/gettingstarted/contentsurvey"
+   }
+  ],
+  "depends": [
+   "steam-partner-signup",
+   "steam-verify-image-licenses"
+  ]
+ },
+ {
+  "id": "steam-pricing",
+  "phase": "listing",
+  "store": "steam",
+  "title": "Set Steam price, regional prices and launch discount",
+  "owner": "you",
+  "status": "todo",
+  "statusNote": "No PC price decided yet.",
+  "cost": null,
+  "time": "30 min",
+  "steps": [
+   "Enter the USD base price (e.g. $3.99).",
+   "Accept Steam's recommended regional prices.",
+   "Optionally set a launch discount (10-20%; max 40%, 7-14 days) before release.",
+   "Leave Family Sharing on."
+  ],
+  "feedback": [
+   "After launch no discounts for 30 days except the launch discount.",
+   "Raising the price later blocks discounts for 30 days."
+  ],
+  "doneMessage": "Pricing is set for every Steam region.",
+  "links": [
+   {
+    "label": "Pricing",
+    "url": "https://partner.steamgames.com/doc/store/pricing"
+   },
+   {
+    "label": "Discounting",
+    "url": "https://partner.steamgames.com/doc/marketing/discounts"
+   }
+  ],
+  "depends": [
+   "steam-decide-pc-model",
+   "steam-tax-bank"
+  ]
+ },
+ {
+  "id": "steam-press-kit",
+  "phase": "listing",
+  "store": "steam",
+  "title": "Build a press kit page",
+  "owner": "both",
+  "status": "todo",
+  "statusNote": "No press page; screenshots and texts are spread across docs/.",
+  "cost": null,
+  "time": "2-3 hours",
+  "steps": [
+   "Fact sheet: developer, release date, platforms, price, website, contact.",
+   "Description, features, trailer, 6-10 screenshots, logo, key art, icon.",
+   "Credits (photos, fonts) and a one-line honest AI-assistance note.",
+   "One zip with everything; host at /press and link it from Steam and itch."
+  ],
+  "feedback": [
+   "Press and curators want one-click downloads and a clear contact.",
+   "Send Steam keys to sudoku/puzzle creators along with the press link."
+  ],
+  "doneMessage": "Press, YouTubers and curators can cover the game without asking you for files.",
+  "links": [
+   {
+    "label": "Steam visibility",
+    "url": "https://partner.steamgames.com/doc/marketing/visibility"
+   }
+  ],
+  "depends": [
+   "web-portals-public-site",
+   "steam-screenshots-trailer"
+  ]
+ },
+ {
+  "id": "itch-project-page",
+  "phase": "listing",
+  "store": "itch",
+  "title": "Create the itch.io page, cover and AI disclosure",
+  "owner": "both",
+  "status": "todo",
+  "statusNote": "No itch.io project yet.",
+  "cost": null,
+  "time": "1-2 hours",
+  "steps": [
+   "New project: Kind 'HTML' if the web version plays on the page, else 'Downloadable'.",
+   "Cover image 630x500 (315:250 ratio; minimum 315x250).",
+   "Add 3-5 screenshots, trailer link, description, genre Puzzle, up to 10 tags.",
+   "Generative AI disclosure: Yes; tick Graphics, Sound, Code, plus Text if AI drafted it.",
+   "Pricing: Paid with pay-more allowed (same price as Steam), or $0/donate for a demo; keep it Draft."
+  ],
+  "feedback": [
+   "The AI tag hides the page from the 'No AI' filter; honest tagging still beats delisting risk.",
+   "Say on the page that Windows may show SmartScreen for unsigned downloads."
+  ],
+  "doneMessage": "The itch.io page is ready for builds.",
+  "links": [
+   {
+    "label": "Your first itch.io page",
+    "url": "https://itch.io/docs/creators/getting-started"
+   },
+   {
+    "label": "Quality guidelines (AI)",
+    "url": "https://itch.io/docs/creators/quality-guidelines"
+   }
+  ],
+  "depends": [
+   "itch-account",
+   "itch-web-build",
+   "steam-screenshots-trailer"
+  ]
+ },
+ {
+  "id": "microsoft-store-listing",
+  "phase": "listing",
+  "store": "microsoft",
+  "title": "Fill the Microsoft Store listing and IARC rating",
+  "owner": "you",
+  "status": "todo",
+  "statusNote": "No Partner Center product yet.",
+  "cost": null,
+  "time": "2 hours",
+  "steps": [
+   "Properties: Games > Puzzle & trivia; privacy policy URL; support contact.",
+   "Age ratings: complete the IARC questionnaire with the answers in pc.md 2.4.",
+   "Pricing and availability: same base price, all markets, manual release.",
+   "Listing: description; 4+ screenshots at 1366x768 or larger (1920x1080 is fine).",
+   "Art: 2:3 poster 720x1080 or 1440x2160, 1:1 box 1080x1080 or 2160x2160, 300x300 tile icon."
+  ],
+  "feedback": [
+   "Images must be real PNG files, not renamed JPGs.",
+   "Keep the IARC certificate ID; other IARC stores can reuse it.",
+   "Screenshots must fit the rating you get."
+  ],
+  "doneMessage": "The Microsoft listing is ready for a package.",
+  "links": [
+   {
+    "label": "MSIX screenshots and images",
+    "url": "https://learn.microsoft.com/en-us/windows/apps/publish/publish-your-app/msix/screenshots-and-images"
+   },
+   {
+    "label": "IARC age ratings",
+    "url": "https://devdocs.xbox.com/publishing/game-publishing/concepts/age-ratings"
+   }
+  ],
+  "depends": [
+   "microsoft-partner-account",
+   "web-portals-public-site",
+   "steam-screenshots-trailer"
+  ]
+ },
+ {
+  "id": "epic-store-page",
+  "phase": "listing",
+  "store": "epic",
+  "title": "Optional: Epic product page and IARC rating",
+  "owner": "you",
+  "status": "todo",
+  "statusNote": "No Epic organization yet.",
+  "cost": null,
+  "time": "2-3 hours",
+  "steps": [
+   "Create the product and its offer in the Developer Portal.",
+   "Get an IARC rating in the publishing tools (unrated = highest maturity).",
+   "Upload key art, logo and screenshots per the portal's media guide.",
+   "Write the description and About blocks (up to 12); set the price.",
+   "Optionally publish the product home page early for awareness."
+  ],
+  "feedback": [
+   "Exact image sizes are shown in the portal; third-party guides list 2560x1440 and 1200x1600 key art (unverified).",
+   "If Steam has achievements, Epic requires Epic achievements too."
+  ],
+  "doneMessage": "The Epic page is ready for a build.",
+  "links": [
+   {
+    "label": "Storefront media guide",
+    "url": "https://dev.epicgames.com/docs/epic-games-store/sales-and-marketing/marketing/storefront-media-guide"
+   },
+   {
+    "label": "EGS requirements",
+    "url": "https://dev.epicgames.com/docs/epic-games-store/requirements-guidelines/distribution-requirements/requirements-overview"
+   }
+  ],
+  "depends": [
+   "epic-dev-portal",
+   "steam-store-art"
+  ]
+ },
+ {
+  "id": "feedback-testers",
+  "phase": "testing",
+  "store": "all",
+  "owner": "you",
+  "status": "todo",
+  "title": "Share this page with testers and collect bugs",
+  "statusNote": "The Bugs & feedback tab stores reports here; Claude reads them and fixes them.",
+  "cost": null,
+  "time": "ongoing",
+  "steps": [
+   "Share this page from claude.ai (Share > add people as Contributor so they can report)",
+   "Send testers the web build link to play",
+   "Ask Claude to 'check the launch board for new bugs' whenever you want them fixed"
+  ],
+  "feedback": [
+   "Ask testers for steps to reproduce; 'it froze' alone is hard to fix.",
+   "Minor bugs are fine to ship with; blockers and crashes are not."
+  ],
+  "doneMessage": "Feedback is flowing in.",
+  "links": [],
+  "depends": [
+   "ready-game"
+  ]
+ },
+ {
+  "id": "apple-testflight",
+  "phase": "testing",
+  "store": "apple",
+  "title": "Test on iPhone and iPad with TestFlight",
+  "owner": "you",
+  "status": "todo",
+  "statusNote": "No build has been uploaded yet.",
+  "cost": null,
+  "time": "1-3 days",
+  "steps": [
+   "Add yourself as an internal tester (up to 100, no review needed).",
+   "Install TestFlight from the App Store and accept the invite.",
+   "Fresh install: check the consent message, then the ATT system prompt.",
+   "Check banner, interstitials (close button), rewarded hint and second chance.",
+   "Check Settings links, offline play, iPad portrait/landscape, resume after background.",
+   "Optional: external group (up to 10,000) after Beta App Review."
+  ],
+  "feedback": [
+   "Builds expire after 90 days.",
+   "If the ATT prompt doesn't appear, App Review will reject under 5.1.2/2.1.",
+   "Use test-device mode so your own taps don't count as invalid traffic."
+  ],
+  "doneMessage": "You know the release build works on real hardware.",
+  "links": [
+   {
+    "label": "TestFlight overview",
+    "url": "https://developer.apple.com/help/app-store-connect/test-a-beta-version/testflight-overview"
+   }
+  ],
+  "depends": [
+   "apple-first-upload",
+   "apple-ads-config",
+   "apple-in-app-links"
+  ]
+ },
+ {
+  "id": "google-recruit-testers",
+  "phase": "testing",
+  "store": "google",
+  "title": "Recruit 15-20 Android testers in a Google Group",
+  "owner": "you",
+  "status": "todo",
+  "statusNote": "No testers or group exist yet; 12 must stay opted in for 14 days.",
+  "cost": null,
+  "time": "Start now; 1-2 weeks of asking",
+  "steps": [
+   "Create a Google Group, e.g. alien-sudoku-testers",
+   "Invite friends, family, puzzle communities",
+   "Collect Gmail addresses of Android users",
+   "Explain they must join, opt in and stay 14 days"
+  ],
+  "feedback": [
+   "Recruit more than 12; people drop out.",
+   "Engaged testers make the production application easier."
+  ],
+  "doneMessage": "You have enough testers to start the 14-day clock as soon as a build is approved.",
+  "links": [
+   {
+    "label": "Set up testing tracks",
+    "url": "https://support.google.com/googleplay/android-developer/answer/9845334"
+   }
+  ],
+  "depends": []
+ },
+ {
+  "id": "google-internal-test",
+  "phase": "testing",
+  "store": "google",
+  "title": "Upload to internal testing and test on your phone",
+  "owner": "you",
+  "status": "todo",
+  "statusNote": "No AAB exists to upload yet.",
+  "cost": null,
+  "time": "1-2 hours",
+  "steps": [
+   "Testing > Internal testing > Create release",
+   "Accept Play App Signing (Google-generated key)",
+   "Upload the AAB; add yourself as tester",
+   "Install from the Play link; test consent, ads, back, offline",
+   "Read the pre-launch report and fix crashes"
+  ],
+  "feedback": [
+   "Internal testing doesn't count toward the 12-tester rule.",
+   "Test on Android 15 and 16 for edge-to-edge and back gestures."
+  ],
+  "doneMessage": "The first Play build works on a real phone; promote it to closed testing.",
+  "links": [
+   {
+    "label": "Play App Signing",
+    "url": "https://developer.android.com/studio/publish/app-signing"
+   }
+  ],
+  "depends": [
+   "google-build-aab",
+   "google-store-listing",
+   "google-app-content-basics",
+   "google-content-rating",
+   "google-target-audience",
+   "google-data-safety"
+  ]
+ },
+ {
+  "id": "google-closed-test",
+  "phase": "testing",
+  "store": "google",
+  "title": "Run the 14-day closed test with 12+ testers",
+  "owner": "you",
+  "status": "todo",
+  "statusNote": "Required for personal accounts created after 13 Nov 2023; not started.",
+  "cost": null,
+  "time": "14+ days",
+  "steps": [
+   "Testing > Closed testing > create track, add the Group",
+   "Promote the build; wait for review",
+   "Share the opt-in link with testers",
+   "Keep 12+ opted in for 14 straight days",
+   "Collect feedback; ship 1-2 updates"
+  ],
+  "feedback": [
+   "Testers who leave early don't count.",
+   "Keep notes on feedback for the production application."
+  ],
+  "doneMessage": "The closed test is complete; you can apply for production access.",
+  "links": [
+   {
+    "label": "Testing requirements (new accounts)",
+    "url": "https://support.google.com/googleplay/android-developer/answer/14151465"
+   }
+  ],
+  "depends": [
+   "google-internal-test",
+   "google-recruit-testers"
+  ]
+ },
+ {
+  "id": "itch-upload-test",
+  "phase": "testing",
+  "store": "itch",
+  "title": "Upload builds with butler and test the itch page",
+  "owner": "both",
+  "status": "todo",
+  "statusNote": "No itch project; this workspace can't reach itch.io, so butler runs on your PC.",
+  "cost": null,
+  "time": "1-2 hours",
+  "steps": [
+   "Install butler and run butler login on your PC.",
+   "butler push <web zip folder> <user>/alien-sudoku:html5 --userversion 1.0.0",
+   "butler push game/desktop/out/win-unpacked <user>/alien-sudoku:windows",
+   "Mark the HTML5 upload as played in browser; embed 1024x720, Fullscreen button, Mobile friendly.",
+   "Test on desktop and phone: finish a level, reload, confirm the save; download the Windows build."
+  ],
+  "feedback": [
+   "On phones itch always uses click-to-launch fullscreen.",
+   "Push Linux (and Mac) channels only after testing them."
+  ],
+  "doneMessage": "The page works end to end and is ready to go public.",
+  "links": [
+   {
+    "label": "butler: pushing builds",
+    "url": "https://itch.io/docs/butler/pushing.html"
+   },
+   {
+    "label": "itch.io HTML5 rules",
+    "url": "https://itch.io/docs/creators/html5"
+   }
+  ],
+  "depends": [
+   "itch-project-page"
+  ]
+ },
+ {
+  "id": "steam-beta-test",
+  "phase": "testing",
+  "store": "steam",
+  "title": "Upload to a Steam beta branch and test installs",
+  "owner": "you",
+  "status": "todo",
+  "statusNote": "No Steam app or depots yet.",
+  "cost": null,
+  "time": "Half a day",
+  "steps": [
+   "Create a password-protected beta branch in Steamworks.",
+   "Run the SteamPipe upload on your PC; set the build live on the beta branch.",
+   "Install via Steam on Windows; play campaign, daily, duel, zen; relaunch to check saves.",
+   "Test the Windows build via Proton on a Steam Deck or Linux PC (and the Linux depot).",
+   "Request a few Steam keys for friends to test."
+  ],
+  "feedback": [
+   "'Invalid content configuration' means no build is live on that branch or the launch option is wrong.",
+   "Saves live in %APPDATA%/Alien Sudoku and survive updates."
+  ],
+  "doneMessage": "You've seen the real Steam install work, so build review is a formality.",
+  "links": [
+   {
+    "label": "Uploading to Steam",
+    "url": "https://partner.steamgames.com/doc/sdk/uploading"
+   }
+  ],
+  "depends": [
+   "steam-steampipe-scripts"
+  ]
+ },
+ {
+  "id": "microsoft-wack-test",
+  "phase": "testing",
+  "store": "microsoft",
+  "title": "Run the Windows App Certification Kit on the MSIX",
+  "owner": "you",
+  "status": "todo",
+  "statusNote": "No MSIX package exists yet.",
+  "cost": null,
+  "time": "1 hour",
+  "steps": [
+   "Install the Windows SDK's App Certification Kit.",
+   "Run it against the .appx/.msix and fix any failures.",
+   "Install, launch, play and uninstall on a clean Windows 10/11 user."
+  ],
+  "feedback": [
+   "WACK flags missing or invalid images before Microsoft does."
+  ],
+  "doneMessage": "The package passes the same checks certification runs.",
+  "links": [
+   {
+    "label": "Store readiness checklist",
+    "url": "https://learn.microsoft.com/en-us/windows/apps/publish/store-readiness-checklist"
+   }
+  ],
+  "depends": [
+   "microsoft-msix-build"
+  ]
+ },
+ {
+  "id": "apple-submit",
+  "phase": "review",
+  "store": "apple",
+  "title": "Write review notes and submit for App Review",
+  "owner": "both",
+  "status": "todo",
+  "statusNote": "Nothing is uploaded or filled in yet.",
+  "cost": null,
+  "time": "30 min + 1-2 days review",
+  "steps": [
+   "Claude: draft review notes (no login, ad formats, consent then ATT, where the links are, 9+).",
+   "Select the TestFlight-tested build on the 1.0 version page.",
+   "Content rights: Yes, you have rights. Sign-in required: No.",
+   "Version release: Manual.",
+   "Add for Review > Submit."
+  ],
+  "feedback": [
+   "Apple reviews 50% of submissions in under 24 h and 90% in under 48 h.",
+   "Top risks: 2.1 crash or test ads, 5.1.1 policy link, 5.1.2 ATT, 2.5.18 ads, 4.2/4.3.",
+   "Never select Made for Kids."
+  ],
+  "doneMessage": "Alien Sudoku is in Apple's review queue.",
+  "links": [
+   {
+    "label": "App Review",
+    "url": "https://developer.apple.com/distribute/app-review/"
+   },
+   {
+    "label": "Review Guidelines",
+    "url": "https://developer.apple.com/app-store/review/guidelines/"
+   }
+  ],
+  "depends": [
+   "apple-testflight",
+   "apple-age-rating",
+   "apple-app-privacy",
+   "ready-screenshots",
+   "apple-metadata",
+   "apple-pricing-availability",
+   "apple-dsa-trader",
+   "apple-agreements"
+  ]
+ },
+ {
+  "id": "apple-handle-review",
+  "phase": "review",
+  "store": "apple",
+  "title": "Respond to App Review if rejected",
+  "owner": "both",
+  "status": "todo",
+  "statusNote": "Not submitted yet.",
+  "cost": null,
+  "time": "hours to 2 days per round",
+  "steps": [
+   "Read the message in the app's App Review section; note the guideline number.",
+   "Metadata issue: fix in App Store Connect and resubmit.",
+   "Binary issue: Claude fixes, new build number, upload, resubmit.",
+   "Reply politely with specifics if the reviewer misunderstood.",
+   "Last resort: one appeal to the App Review Board."
+  ],
+  "feedback": [
+   "Screenshots or a short video of the ATT prompt often settle 5.1.2 questions.",
+   "Stay factual; arguments about other apps don't help."
+  ],
+  "doneMessage": "Approved, or you know exactly what to change.",
+  "links": [
+   {
+    "label": "App Review",
+    "url": "https://developer.apple.com/distribute/app-review/"
+   }
+  ],
+  "depends": [
+   "apple-submit"
+  ]
+ },
+ {
+  "id": "google-age-signals-check",
+  "phase": "review",
+  "store": "google",
+  "title": "Check US age-verification law duties",
+  "owner": "you",
+  "status": "todo",
+  "statusNote": "Texas SB 2420 is enforceable since July 2026; impact on a no-account game is unverified.",
+  "cost": null,
+  "time": "30 min reading (legal advice optional)",
+  "steps": [
+   "Read Play's Age Signals help page",
+   "Confirm the IARC rating is accurate",
+   "Note: report significant changes in Play Console > Age signals",
+   "Decide if Age Signals API is needed (likely not for v1)"
+  ],
+  "feedback": [
+   "Never use age signal data for ads or analytics.",
+   "Re-check before adding purchases or accounts."
+  ],
+  "doneMessage": "You know your US age-law obligations before going public.",
+  "links": [
+   {
+    "label": "Play Age Signals",
+    "url": "https://support.google.com/googleplay/android-developer/answer/16569691"
+   }
+  ],
+  "depends": [
+   "google-content-rating"
+  ]
+ },
+ {
+  "id": "google-apply-production",
+  "phase": "review",
+  "store": "google",
+  "title": "Apply for production access",
+  "owner": "you",
+  "status": "todo",
+  "statusNote": "Unlocks only after the closed test completes.",
+  "cost": null,
+  "time": "30 min + about 7 days review",
+  "steps": [
+   "Dashboard > Apply for production",
+   "Describe recruitment, engagement and feedback",
+   "Explain what you changed and why it's ready",
+   "Submit and wait for the email"
+  ],
+  "feedback": [
+   "Vague answers get rejected; be specific.",
+   "If rejected, fix what Google names and reapply."
+  ],
+  "doneMessage": "Production (and open testing) is unlocked for your account.",
+  "links": [
+   {
+    "label": "Testing requirements (new accounts)",
+    "url": "https://support.google.com/googleplay/android-developer/answer/14151465"
+   }
+  ],
+  "depends": [
+   "google-closed-test"
+  ]
+ },
+ {
+  "id": "google-production-release",
+  "phase": "review",
+  "store": "google",
+  "title": "Release to production with real ads",
+  "owner": "you",
+  "status": "todo",
+  "statusNote": "Needs production access and a build with real AdMob ids.",
+  "cost": null,
+  "time": "1 hour + hours to ~7 days review",
+  "steps": [
+   "Upload the AAB with real ids and a higher versionCode",
+   "Choose countries (consider trader status for EEA/UK)",
+   "Use a staged rollout, e.g. 20% then 100%",
+   "Optionally turn on Managed publishing",
+   "Submit for review"
+  ],
+  "feedback": [
+   "Make sure the store listing matches the build.",
+   "Fix any pre-launch report crashes before submitting."
+  ],
+  "doneMessage": "Alien Sudoku is live on Google Play!",
+  "links": [
+   {
+    "label": "Play Console",
+    "url": "https://play.google.com/console"
+   }
+  ],
+  "depends": [
+   "google-apply-production",
+   "google-real-ad-ids",
+   "google-trader-status",
+   "google-age-signals-check"
+  ]
+ },
+ {
+  "id": "steam-store-review",
+  "phase": "review",
+  "store": "steam",
+  "title": "Submit the Steam page for review, go Coming Soon",
+  "owner": "you",
+  "status": "todo",
+  "statusNote": "No store page yet.",
+  "cost": null,
+  "time": "3-5 business days review; then 2+ weeks live",
+  "steps": [
+   "Complete the store page items in the Steamworks release checklist.",
+   "Submit for review at least 7 business days before you want it public.",
+   "Once approved, publish as Coming Soon with a date.",
+   "Keep it public at least 2 weeks before release."
+  ],
+  "feedback": [
+   "Within 14 days of release the date is locked unless Valve changes it.",
+   "Common fixes: text in capsules, features the build lacks, non-gameplay screenshots."
+  ],
+  "doneMessage": "The page is public and collecting wishlists.",
+  "links": [
+   {
+    "label": "Coming Soon",
+    "url": "https://partner.steamgames.com/doc/store/coming_soon"
+   },
+   {
+    "label": "Review process",
+    "url": "https://partner.steamgames.com/doc/store/review_process"
+   }
+  ],
+  "depends": [
+   "steam-store-page",
+   "steam-content-survey",
+   "steam-pricing"
+  ]
+ },
+ {
+  "id": "steam-build-review",
+  "phase": "review",
+  "store": "steam",
+  "title": "Submit the build for Steam review",
+  "owner": "you",
+  "status": "todo",
+  "statusNote": "No build uploaded yet.",
+  "cost": null,
+  "time": "1-5 days (plan 7 business days)",
+  "steps": [
+   "Mark the release-candidate build ready in the release checklist.",
+   "Submit for build review.",
+   "If it fails, fix, upload and resubmit."
+  ],
+  "feedback": [
+   "Valve checks it launches on every listed OS and that listed features exist; it is not QA."
+  ],
+  "doneMessage": "The build is approved; you can release once the wait and Coming Soon time are done.",
+  "links": [
+   {
+    "label": "Review process",
+    "url": "https://partner.steamgames.com/doc/store/review_process"
+   }
+  ],
+  "depends": [
+   "steam-beta-test",
+   "steam-store-review"
+  ]
+ },
+ {
+  "id": "steam-deck-review",
+  "phase": "review",
+  "store": "steam",
+  "title": "Request a Steam Deck compatibility review",
+  "owner": "you",
+  "status": "todo",
+  "statusNote": "Needs a passed build review; no controller support yet.",
+  "cost": null,
+  "time": "About 1 week",
+  "steps": [
+   "After build review passes, open Technical Tools > Steam Hardware Compatibility Review.",
+   "Request the review.",
+   "Read the result in the week before it goes public; fix and re-request if needed."
+  ],
+  "feedback": [
+   "A missing badge doesn't block release.",
+   "Without gamepad support expect Playable or Unsupported."
+  ],
+  "doneMessage": "Deck and Steam Machine owners can see how well the game runs.",
+  "links": [
+   {
+    "label": "Compatibility review",
+    "url": "https://partner.steamgames.com/doc/steamhardware/compat"
+   }
+  ],
+  "depends": [
+   "steam-build-review",
+   "steam-desktop-polish"
+  ]
+ },
+ {
+  "id": "microsoft-submit",
+  "phase": "review",
+  "store": "microsoft",
+  "title": "Submit to Microsoft Store certification",
+  "owner": "you",
+  "status": "todo",
+  "statusNote": "No package or listing yet.",
+  "cost": null,
+  "time": "Up to 3 business days (first app can be longer)",
+  "steps": [
+   "Upload the .appx/.msix under Packages.",
+   "Check every section is complete and submit.",
+   "Choose manual publish so you control the release moment."
+  ],
+  "feedback": [
+   "Stuck past 3 business days? Open a free Partner Center support ticket.",
+   "Content, screenshots and age rating must match."
+  ],
+  "doneMessage": "Certification passed; publish whenever you're ready.",
+  "links": [
+   {
+    "label": "Certification process",
+    "url": "https://learn.microsoft.com/en-us/windows/apps/publish/publish-your-app/msix/app-certification-process"
+   }
+  ],
+  "depends": [
+   "microsoft-store-listing",
+   "microsoft-wack-test"
+  ]
+ },
+ {
+  "id": "epic-submit",
+  "phase": "review",
+  "store": "epic",
+  "title": "Optional: upload with BuildPatchTool, submit to Epic",
+  "owner": "you",
+  "status": "todo",
+  "statusNote": "No Epic organization or product yet.",
+  "cost": null,
+  "time": "Half a day + review (duration not published)",
+  "steps": [
+   "Get the BuildPatchTool client ID and secret from Product Settings.",
+   "Upload out/win-unpacked with -mode=UploadBinary; app launch 'Alien Sudoku.exe'.",
+   "Set the binary active and add the Windows platform in Artifacts.",
+   "Submit the offer and binary for review."
+  ],
+  "feedback": [
+   "The build must match the store description.",
+   "Use the newest BuildPatchTool version Epic's docs list."
+  ],
+  "doneMessage": "Epic has your build; release follows approval.",
+  "links": [
+   {
+    "label": "Upload with BuildPatchTool",
+    "url": "https://dev.epicgames.com/docs/epic-games-store/publishing-tools/uploading-binaries"
+   }
+  ],
+  "depends": [
+   "epic-store-page",
+   "ready-desktop-builds"
+  ]
+ },
+ {
+  "id": "apple-release",
+  "phase": "launch",
+  "store": "apple",
+  "title": "Release and link the app in AdMob",
+  "owner": "you",
+  "status": "todo",
+  "statusNote": "Waits for approval.",
+  "cost": null,
+  "time": "30 min + up to ~7 days app-ads.txt check",
+  "steps": [
+   "Press Release This Version.",
+   "In AdMob, link the iOS app to its App Store listing.",
+   "Check that app-ads.txt shows as verified.",
+   "Set promotional text and reply to early reviews."
+  ],
+  "feedback": [
+   "Ad fill can be limited until AdMob verifies the app.",
+   "If the app stays 'Processing' for hours, check the accessibility section."
+  ],
+  "doneMessage": "Alien Sudoku is live on the App Store and earning from ads.",
+  "links": [
+   {
+    "label": "AdMob app-ads.txt",
+    "url": "https://support.google.com/admob/answer/9363762"
+   }
+  ],
+  "depends": [
+   "apple-handle-review"
+  ]
+ },
+ {
+  "id": "apple-2027-deadlines",
+  "phase": "launch",
+  "store": "apple",
+  "title": "Prepare for Jan-Apr 2027 Apple deadlines",
+  "owner": "both",
+  "status": "todo",
+  "statusNote": "CI uses Xcode 26.6; no Duo screenshots; new age questions not answered.",
+  "cost": null,
+  "time": "half a day",
+  "steps": [
+   "By Jan 12, 2027: answer Shared Location and Dating (No/No) in the age rating.",
+   "Before April 2027: build with Xcode 27 / iOS 27 SDK (CI label xcode-27 or macOS 27).",
+   "Test on iPhone Duo in Device Hub and add Duo screenshots.",
+   "Renew membership and keep TestFlight builds fresh (90 days)."
+  ],
+  "feedback": [
+   "Updates built with the iOS 27.1 SDK or later need iPhone Duo screenshots from April 2027.",
+   "Watch developer.apple.com/news for new requirements."
+  ],
+  "doneMessage": "Updates keep flowing after Apple's 2027 changes.",
+  "links": [
+   {
+    "label": "iOS 27 SDK requirement",
+    "url": "https://developer.apple.com/news/?id=k1mtkt1k"
+   },
+   {
+    "label": "iPhone Duo",
+    "url": "https://developer.apple.com/news/?id=kkphp5qo"
+   },
+   {
+    "label": "New age descriptors",
+    "url": "https://developer.apple.com/news/?id=yxkh08us"
+   }
+  ],
+  "depends": [
+   "apple-release"
+  ]
+ },
+ {
+  "id": "apple-mac-app-store-decision",
+  "phase": "launch",
+  "store": "apple",
+  "title": "Decide later on a Mac App Store version",
+  "owner": "you",
+  "status": "todo",
+  "statusNote": "PC price is undecided and no MAS build target exists.",
+  "cost": "15% commission (Small Business Program)",
+  "time": "decision 15 min; build 1-2 days",
+  "steps": [
+   "Wait until the iOS launch and desktop price are settled.",
+   "If yes: new macOS app record with its own bundle id (e.g., com.eddieg.aliensudoku.mac).",
+   "Claude adds an electron-builder mas target with sandbox entitlements.",
+   "Sign the Paid Apps Agreement, tax and banking; join the Small Business Program.",
+   "Mac screenshots at 2880x1800 (16:10)."
+  ],
+  "feedback": [
+   "Mac App Store apps must be sandboxed and update only through the store (2.4.5).",
+   "Using the iOS bundle id would make it a free universal purchase."
+  ],
+  "doneMessage": "You've made a deliberate call on the Mac App Store.",
+  "links": [
+   {
+    "label": "Small Business Program",
+    "url": "https://developer.apple.com/app-store/small-business-program/"
+   },
+   {
+    "label": "Review Guidelines 2.4.5",
+    "url": "https://developer.apple.com/app-store/review/guidelines/"
+   }
+  ],
+  "depends": [
+   "apple-mac-developer-id",
+   "apple-release"
+  ]
+ },
+ {
+  "id": "admob-link-store",
+  "phase": "launch",
+  "store": "admob",
+  "title": "Link the AdMob app to the live Play listing",
+  "owner": "you",
+  "status": "todo",
+  "statusNote": "AdMob can only link after the app is public on Play.",
+  "cost": null,
+  "time": "10 min + 2-3 days review",
+  "steps": [
+   "AdMob > Apps > Alien Sudoku > App settings",
+   "Add app store details; search the Play listing",
+   "Wait for the app readiness review email"
+  ],
+  "feedback": [
+   "Ads are limited until the review and app-ads.txt pass.",
+   "Closed-test apps can't be found in store search."
+  ],
+  "doneMessage": "AdMob has verified the app, so ads can serve fully.",
+  "links": [
+   {
+    "label": "AdMob getting started",
+    "url": "https://support.google.com/admob/answer/15948559"
+   }
+  ],
+  "depends": [
+   "google-production-release"
+  ]
+ },
+ {
+  "id": "admob-app-ads-txt",
+  "phase": "launch",
+  "store": "admob",
+  "title": "Publish and verify app-ads.txt",
+  "owner": "both",
+  "status": "todo",
+  "statusNote": "No developer website or app-ads.txt exists yet.",
+  "cost": null,
+  "time": "15 min + 24 h crawl",
+  "steps": [
+   "Copy the line from AdMob > Apps > app-ads.txt",
+   "google.com, pub-XXXX, DIRECT, f08c47fec0942fa0",
+   "Serve it at https://<website-host>/app-ads.txt",
+   "Make sure the Play listing website is that same host",
+   "AdMob > app-ads.txt tab > Check for updates"
+  ],
+  "feedback": [
+   "Must be at the root of the host, not a sub-folder.",
+   "Status can take 24 hours or more to update."
+  ],
+  "doneMessage": "Advertisers can verify your inventory, which lifts limited serving.",
+  "links": [
+   {
+    "label": "Set up app-ads.txt",
+    "url": "https://support.google.com/admob/answer/9363762"
+   }
+  ],
+  "depends": [
+   "web-portals-public-site",
+   "admob-add-app-units",
+   "google-store-listing"
+  ]
+ },
+ {
+  "id": "admob-payments-tax",
+  "phase": "launch",
+  "store": "admob",
+  "title": "Add tax info, bank details and verify the PIN",
+  "owner": "you",
+  "status": "todo",
+  "statusNote": "No AdMob payments profile or tax info yet.",
+  "cost": null,
+  "time": "30 min + ~3 weeks for the PIN letter",
+  "steps": [
+   "AdMob > Payments > Manage settings",
+   "Add US tax info (W-9, individual)",
+   "Add a bank account for EFT",
+   "Enter the mailed PIN when it arrives (within 4 months)"
+  ],
+  "feedback": [
+   "Payments go out around the 21st once over $100.",
+   "Tax info must be in by the 20th to be paid that month."
+  ],
+  "doneMessage": "Your ad earnings can be paid out each month.",
+  "links": [
+   {
+    "label": "AdMob help center",
+    "url": "https://support.google.com/admob"
+   }
+  ],
+  "depends": [
+   "admob-account"
+  ]
+ },
+ {
+  "id": "google-post-launch",
+  "phase": "launch",
+  "store": "google",
+  "title": "Monitor vitals, policy and 2027 deadlines",
+  "owner": "both",
+  "status": "todo",
+  "statusNote": "Nothing is live yet to monitor.",
+  "cost": null,
+  "time": "15 min/week",
+  "steps": [
+   "Check Android vitals: crashes, ANRs, memory",
+   "Check Play policy inbox and AdMob policy center",
+   "Reply to reviews",
+   "Calendar: 1 Feb 2027 trader + 16 KB; Feb 2027 memory/DEX"
+  ],
+  "feedback": [
+   "Crash rate above 1.09% hurts visibility.",
+   "Respond to policy emails before the deadline."
+  ],
+  "doneMessage": "You'll catch problems before they cost installs or ad revenue.",
+  "links": [
+   {
+    "label": "Play quality thresholds",
+    "url": "https://developer.android.com/blog/posts/elevating-app-quality-reducing-memory-usage-and-improving-device-migration"
+   }
+  ],
+  "depends": [
+   "google-production-release"
+  ]
+ },
+ {
+  "id": "google-sdk-roadmap",
+  "phase": "launch",
+  "store": "google",
+  "title": "Plan the 2027 ads SDK and target API upgrade",
+  "owner": "claude",
+  "status": "todo",
+  "statusNote": "@capacitor-community/admob 8.3 uses legacy ads SDK 25.4.x, deprecated 30 Jun 2027.",
+  "cost": null,
+  "time": "Half a day in spring 2027",
+  "steps": [
+   "Track the plugin's Next-Gen SDK support",
+   "Upgrade before 30 Jun 2027 (sunset 30 Jun 2028)",
+   "Bump targetSdk when Play announces the 2027 level",
+   "Re-run consent and ad tests after upgrading"
+  ],
+  "feedback": [
+   "After sunset, ads may stop serving entirely.",
+   "Android 17 target removes the large-screen opt-out."
+  ],
+  "doneMessage": "Ads and API levels stay current, so revenue doesn't stop in 2028.",
+  "links": [
+   {
+    "label": "Ads SDK deprecation schedule",
+    "url": "https://developers.google.com/admob/android/deprecation"
+   }
+  ],
+  "depends": [
+   "google-production-release"
+  ]
+ },
+ {
+  "id": "android-other-galaxy-store",
+  "phase": "launch",
+  "store": "android-other",
+  "title": "Optional: publish on Samsung Galaxy Store",
+  "owner": "you",
+  "status": "todo",
+  "statusNote": "No Samsung seller account; optional after Play launch.",
+  "cost": "Free",
+  "time": "2 hours + 2-5 business days review (often longer)",
+  "steps": [
+   "Create a Samsung account and Seller Portal registration",
+   "Request commercial seller status (needed even for free apps)",
+   "Download the Play-signed universal APK from App bundle explorer",
+   "Import the listing from Play; upload the APK",
+   "Or register your own signing key in Play's developer verification page"
+  ],
+  "feedback": [
+   "Galaxy Store enforces Android developer verification.",
+   "AdMob works on Samsung phones (they have Google Play services)."
+  ],
+  "doneMessage": "Samsung phone owners can find the game in their default store too.",
+  "links": [
+   {
+    "label": "Galaxy Store: how to distribute",
+    "url": "https://developer.samsung.com/galaxy-store/how-to-distribute.html"
+   },
+   {
+    "label": "Developer verification guide",
+    "url": "https://developer.android.com/developer-verification/guides"
+   }
+  ],
+  "depends": [
+   "google-production-release"
+  ]
+ },
+ {
+  "id": "android-other-skip",
+  "phase": "launch",
+  "store": "android-other",
+  "title": "Skip Amazon Appstore and Huawei AppGallery for now",
+  "owner": "you",
+  "status": "todo",
+  "statusNote": "Amazon closed its Android phone store on 20 Aug 2025; Huawei phones lack Google ads services.",
+  "cost": null,
+  "time": "5 min decision",
+  "steps": [
+   "Note Amazon only serves Fire tablets/TV now",
+   "Note HUAWEI Ads doesn't accept individuals",
+   "Revisit only if you add another ad network"
+  ],
+  "feedback": [
+   "AdMob depends on Google Play services, missing on Fire and new Huawei devices."
+  ],
+  "doneMessage": "You can focus on Google Play, where the audience and ad revenue are.",
+  "links": [
+   {
+    "label": "Amazon Appstore submission",
+    "url": "https://developer.amazon.com/docs/app-submission/submitting-apps-to-amazon-appstore.html"
+   },
+   {
+    "label": "Huawei AppGallery",
+    "url": "https://developer.huawei.com/consumer/en/appgallery"
+   }
+  ],
+  "depends": []
+ },
+ {
+  "id": "itch-publish",
+  "phase": "launch",
+  "store": "itch",
+  "title": "Publish the itch.io page",
+  "owner": "you",
+  "status": "todo",
+  "statusNote": "No itch project yet.",
+  "cost": null,
+  "time": "15 min",
+  "steps": [
+   "Switch visibility from Draft/Restricted to Public.",
+   "Post a launch devlog with a link to the Steam page.",
+   "Push updates with butler; post a devlog for each."
+  ],
+  "feedback": [
+   "itch is a good soft launch: fix early feedback before Steam."
+  ],
+  "doneMessage": "Alien Sudoku is live and playable on itch.io.",
+  "links": [
+   {
+    "label": "itch.io creator docs",
+    "url": "https://itch.io/docs/creators/getting-started"
+   }
+  ],
+  "depends": [
+   "itch-upload-test"
+  ]
+ },
+ {
+  "id": "steam-next-fest",
+  "phase": "launch",
+  "store": "steam",
+  "title": "Optional: enter Steam Next Fest with a demo",
+  "owner": "both",
+  "status": "todo",
+  "statusNote": "Feb 2027 fest (Feb 22-Mar 1): register by Jan 10, 2027; next one June 14-21, 2027.",
+  "cost": null,
+  "time": "2-3 days for the demo + review",
+  "steps": [
+   "Build a demo (e.g. Sector 1 + Daily) as a separate demo app; pass its build review.",
+   "With the base game page public, register before the deadline.",
+   "Submit demo + page for review by Valve's date (Jan 18 for press preview).",
+   "Release the full game after the fest ends."
+  ],
+  "feedback": [
+   "A game gets only one Next Fest; enter when the demo is polished.",
+   "February is tight from today; June 2027 is the realistic fest."
+  ],
+  "doneMessage": "Your demo is in front of fest players and wishlists can grow.",
+  "links": [
+   {
+    "label": "Next Fest Feb 2027",
+    "url": "https://partner.steamgames.com/doc/marketing/upcoming_events/nextfest/feb_2027"
+   },
+   {
+    "label": "Demos",
+    "url": "https://partner.steamgames.com/doc/store/application/demos"
+   }
+  ],
+  "depends": [
+   "steam-store-review"
+  ]
+ },
+ {
+  "id": "steam-release",
+  "phase": "launch",
+  "store": "steam",
+  "title": "Release on Steam",
+  "owner": "you",
+  "status": "todo",
+  "statusNote": "Nothing on Steam yet.",
+  "cost": null,
+  "time": "1 hour",
+  "steps": [
+   "Confirm: 21 days since paying, 2+ weeks Coming Soon, build reviewed, account verified.",
+   "Set the reviewed build live on the default branch.",
+   "Press Release in Steamworks at your chosen time.",
+   "Post a launch announcement and answer early reviews."
+  ],
+  "feedback": [
+   "Approved games never release automatically; you press the button.",
+   "Avoid launching in the middle of a big seasonal sale."
+  ],
+  "doneMessage": "Alien Sudoku is on Steam. Watch reviews and patch quickly in week one.",
+  "links": [
+   {
+    "label": "Release process",
+    "url": "https://partner.steamgames.com/doc/store/releasing"
+   }
+  ],
+  "depends": [
+   "steam-build-review",
+   "steam-store-review",
+   "steam-tax-bank"
+  ]
+ },
+ {
+  "id": "microsoft-release",
+  "phase": "launch",
+  "store": "microsoft",
+  "title": "Publish on the Microsoft Store",
+  "owner": "you",
+  "status": "todo",
+  "statusNote": "Not submitted yet.",
+  "cost": null,
+  "time": "15 min",
+  "steps": [
+   "After certification, press Publish now.",
+   "Check the live listing, rating and price.",
+   "Ship updates as new MSIX submissions with higher versions."
+  ],
+  "feedback": [
+   "The listing usually appears within about 15 minutes of publishing."
+  ],
+  "doneMessage": "Windows users can buy the game straight from the Microsoft Store.",
+  "links": [
+   {
+    "label": "Get started",
+    "url": "https://learn.microsoft.com/en-us/windows/apps/publish/get-started"
+   }
+  ],
+  "depends": [
+   "microsoft-submit"
+  ]
+ },
+ {
+  "id": "epic-release",
+  "phase": "launch",
+  "store": "epic",
+  "title": "Optional: release on the Epic Games Store",
+  "owner": "you",
+  "status": "todo",
+  "statusNote": "Not submitted yet.",
+  "cost": null,
+  "time": "30 min",
+  "steps": [
+   "After approval, set the release date and publish.",
+   "Write patch notes for any major update."
+  ],
+  "feedback": [
+   "Revenue is 100% to you until $1M per year, so keep the Epic price equal to Steam."
+  ],
+  "doneMessage": "The game is on Epic too.",
+  "links": [
+   {
+    "label": "Release your product",
+    "url": "https://dev.epicgames.com/docs/epic-games-store/get-started/get-started-steps/release-your-product"
+   }
+  ],
+  "depends": [
+   "epic-submit"
+  ]
+ },
+ {
+  "id": "steam-post-launch",
+  "phase": "launch",
+  "store": "steam",
+  "title": "After launch: patches, reviews and sales",
+  "owner": "both",
+  "status": "todo",
+  "statusNote": "Starts after release.",
+  "cost": null,
+  "time": "Ongoing",
+  "steps": [
+   "Read reviews and bug reports daily for 2 weeks; patch via beta then default.",
+   "Re-request the Deck review after input fixes.",
+   "Join seasonal sales once 30 days have passed since launch.",
+   "Post an update event with every patch."
+  ],
+  "feedback": [
+   "Discounts need a 30-day cooldown, except seasonal sales.",
+   "Reply calmly to reviews about AI or price; point to the disclosure."
+  ],
+  "doneMessage": "The game keeps improving and shows up in sales.",
+  "links": [
+   {
+    "label": "Discounting",
+    "url": "https://partner.steamgames.com/doc/marketing/discounts"
+   }
+  ],
+  "depends": [
+   "steam-release"
+  ]
+ },
+ {
+  "id": "gog-submit",
+  "phase": "launch",
+  "store": "gog",
+  "title": "Submit Alien Sudoku to GOG after the Steam launch",
+  "owner": "you",
+  "status": "todo",
+  "statusNote": "Nothing submitted; GOG only reviews near-final or released games.",
+  "cost": null,
+  "time": "30 min form; reply in weeks or never",
+  "steps": [
+   "Wait until it's out on Steam with some reviews.",
+   "Fill in the ~15-question form at gog.com/submit-your-game.",
+   "Link the Steam page, trailer and a build or key.",
+   "State DRM-free, offline play, Windows build ready; be open about AI-assisted art."
+  ],
+  "feedback": [
+   "GOG is highly curated; odds for a small sudoku game are low.",
+   "GOG's audience pushed back hard on generative AI in 2026."
+  ],
+  "doneMessage": "Your submission is in; carry on and treat a GOG yes as a bonus.",
+  "links": [
+   {
+    "label": "Submit your game",
+    "url": "https://lp.gog.com/submit-your-game/en"
+   },
+   {
+    "label": "Releasing on GOG FAQ",
+    "url": "https://support.gog.com/hc/en-us/articles/11382878039197-Releasing-your-game-on-GOG-FAQ"
+   }
+  ],
+  "depends": [
+   "steam-release"
+  ]
+ },
+ {
+  "id": "gog-deliver-build",
+  "phase": "launch",
+  "store": "gog",
+  "title": "If accepted: deliver GOG builds and assets",
+  "owner": "both",
+  "status": "blocked",
+  "statusNote": "Blocked until GOG accepts the game and sends a contract.",
+  "cost": null,
+  "time": "1-2 days",
+  "steps": [
+   "Sign the distribution agreement; check the revenue share (commonly 70/30).",
+   "Upload win-unpacked (and Linux/Mac if wanted) via Build Creator or Pipeline Builder.",
+   "Confirm it runs offline without GOG Galaxy (DRM-free).",
+   "Deliver key art, logo, layered PSD, screenshots and a trailer with GOG's end slate.",
+   "Send the release candidate at least 3-5 days before launch."
+  ],
+  "feedback": [
+   "GOG builds the offline installers on its servers.",
+   "The Galaxy SDK (achievements, cloud) is optional."
+  ],
+  "doneMessage": "GOG has everything it needs to sell the game DRM-free.",
+  "links": [
+   {
+    "label": "Build delivery",
+    "url": "https://docs.gog.com/build-delivery/"
+   },
+   {
+    "label": "Release flow",
+    "url": "https://docs.gog.com/release-flow/"
+   },
+   {
+    "label": "Essentials checklist",
+    "url": "https://docs.gog.com/basic-game-assets/"
+   }
+  ],
+  "depends": [
+   "gog-submit"
+  ]
+ },
+ {
+  "id": "web-portals-crazygames",
+  "phase": "launch",
+  "store": "web-portals",
+  "title": "Optional: try a CrazyGames Basic Launch",
+  "owner": "both",
+  "status": "todo",
+  "statusNote": "The web build fits the limits (2.4 MB) but there's no portal account and a free web version may clash with PC pricing.",
+  "cost": null,
+  "time": "2 hours + 7-21 day test",
+  "steps": [
+   "Confirm a free web version fits your PC plan.",
+   "Create a CrazyGames developer account; upload the web zip (no SDK for Basic Launch).",
+   "Remove links to app stores, Steam or other web versions from that build.",
+   "Basic Launch runs 7-21 days (needs 500+ plays); watch the stats.",
+   "For Full Launch add the CrazyGames SDK (ads, account-linked saves)."
+  ],
+  "feedback": [
+   "No app-store links or cross-promotion in game; community links only in the menu.",
+   "Content must fit PEGI 12; the gnarly aliens are fine.",
+   "The revenue split isn't published; ask before SDK work."
+  ],
+  "doneMessage": "You'll know if web players like the game before investing in portal ads.",
+  "links": [
+   {
+    "label": "CrazyGames requirements",
+    "url": "https://docs.crazygames.com/requirements/intro/"
+   },
+   {
+    "label": "CrazyGames technical",
+    "url": "https://docs.crazygames.com/requirements/technical/"
+   }
+  ],
+  "depends": [
+   "itch-web-build",
+   "steam-decide-pc-model"
+  ]
+ },
+ {
+  "id": "web-portals-sdk-build",
+  "phase": "launch",
+  "store": "web-portals",
+  "title": "Optional: add a portal ads adapter (CrazyGames/Poki)",
+  "owner": "claude",
+  "status": "todo",
+  "statusNote": "src/platform/ads.js only drives AdMob on phones; web and desktop have no ads.",
+  "cost": null,
+  "time": "1 day",
+  "steps": [
+   "Add a portal adapter behind a build flag.",
+   "Map interstitial to midgame/commercial break, rewarded to rewarded break.",
+   "Mute music and pause input during ads; send gameplay start/stop events.",
+   "Use the portal's save/data API if required; keep PC and itch ad-free."
+  ],
+  "feedback": [
+   "Portals allow only their own SDK ads.",
+   "Reuse the existing 'between games' and 'extra hint/second chance' moments."
+  ],
+  "doneMessage": "A portal build can earn ad revenue without touching the PC version.",
+  "links": [
+   {
+    "label": "CrazyGames docs",
+    "url": "https://docs.crazygames.com/"
+   },
+   {
+    "label": "Poki SDK",
+    "url": "https://sdk.poki.com/"
+   }
+  ],
+  "depends": [
+   "web-portals-crazygames"
+  ]
+ },
+ {
+  "id": "web-portals-poki",
+  "phase": "launch",
+  "store": "web-portals",
+  "title": "Optional: apply to Poki (web-exclusive deal)",
+  "owner": "you",
+  "status": "todo",
+  "statusNote": "Not applied; Poki's program is closed beta and prefers web exclusivity.",
+  "cost": null,
+  "time": "1 hour to apply; weeks to hear back",
+  "steps": [
+   "Read Poki's deal types; Web Exclusive is the default.",
+   "If you accept, plan to remove the web build from itch and your site.",
+   "Apply through Poki's submission form with a playable link.",
+   "If accepted, integrate the Poki SDK."
+  ],
+  "feedback": [
+   "Exclusivity covers only the open web; Steam and mobile stay fine.",
+   "Term length is reported as 5 or 7 years; read the contract."
+  ],
+  "doneMessage": "Poki reviews the game; a deal could fund the web version.",
+  "links": [
+   {
+    "label": "Working with Poki",
+    "url": "https://sdk.poki.com/"
+   },
+   {
+    "label": "Poki deal types",
+    "url": "https://sdk.poki.com/deals.html"
+   }
+  ],
+  "depends": [
+   "steam-decide-pc-model",
+   "web-portals-public-site"
+  ]
+ }
+]

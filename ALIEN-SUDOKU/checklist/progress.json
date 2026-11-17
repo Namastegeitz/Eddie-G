@@ -1,0 +1,92 @@
+{
+ "ready-game": {
+  "done": true,
+  "by": "claude",
+  "at": 1794924633072
+ },
+ "ready-tests": {
+  "done": true,
+  "by": "claude",
+  "at": 1794924633072
+ },
+ "ready-folder": {
+  "done": true,
+  "by": "claude",
+  "at": 1794924633072
+ },
+ "ready-listing": {
+  "done": true,
+  "by": "claude",
+  "at": 1794924633072
+ },
+ "ready-screenshots": {
+  "done": true,
+  "by": "claude",
+  "at": 1794924633072
+ },
+ "ready-art": {
+  "done": true,
+  "by": "claude",
+  "at": 1794924633072
+ },
+ "ready-ipad-layout": {
+  "done": true,
+  "by": "claude",
+  "at": 1794924633072
+ },
+ "apple-ios-baseline": {
+  "done": true,
+  "by": "claude",
+  "at": 1794924633072
+ },
+ "google-target-sdk-check": {
+  "done": true,
+  "by": "claude",
+  "at": 1794924633072
+ },
+ "admob-consent-wiring": {
+  "done": true,
+  "by": "claude",
+  "at": 1794924633072
+ },
+ "ready-web-build": {
+  "done": true,
+  "by": "claude",
+  "at": 1794924633072
+ },
+ "ready-desktop-builds": {
+  "done": true,
+  "by": "claude",
+  "at": 1794924633072
+ },
+ "apple-privacy-manifest": {
+  "done": true,
+  "by": "claude",
+  "at": 1794924633072
+ },
+ "apple-in-app-links": {
+  "done": true,
+  "by": "claude",
+  "at": 1794924633072
+ },
+ "google-in-app-privacy-link": {
+  "done": true,
+  "by": "claude",
+  "at": 1794924633072
+ },
+ "google-ads-ux-tweaks": {
+  "done": true,
+  "by": "claude",
+  "at": 1794924633072
+ },
+ "itch-web-build": {
+  "done": true,
+  "by": "claude",
+  "at": 1794924633072
+ },
+ "steam-store-art": {
+  "done": true,
+  "by": "claude",
+  "at": 1794924633072
+ }
+}

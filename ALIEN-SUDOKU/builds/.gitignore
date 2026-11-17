@@ -1,0 +1,3 @@
+# Desktop and native builds are 100+ MB each: they live in each platform's files/ folder
+# on the machine that built them, never in git. The web builds are small and committed.
+*/files/

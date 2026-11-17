@@ -1,0 +1,25 @@
+{
+  "researchedOn": "November 17, 2026",
+  "phases": [
+    { "id": "ready", "name": "Get the game ready", "blurb": "Fixes, decisions and store material that live in the project." },
+    { "id": "accounts", "name": "Open the accounts", "blurb": "Developer accounts, payments, tax and identity checks. Only you can do these." },
+    { "id": "builds", "name": "Build for each store", "blurb": "Signed, store-ready builds for every platform." },
+    { "id": "listing", "name": "Fill in the store pages", "blurb": "Listings, ratings, privacy answers, art and screenshots in each store." },
+    { "id": "testing", "name": "Test with real players", "blurb": "Test tracks, testers and bug fixing." },
+    { "id": "review", "name": "Submit for review", "blurb": "Send each build and page to the store for approval." },
+    { "id": "launch", "name": "Launch and keep it healthy", "blurb": "Release, then watch reviews, crashes and ads." }
+  ],
+  "stores": {
+    "all": { "name": "Every store" },
+    "apple": { "name": "App Store" },
+    "google": { "name": "Google Play" },
+    "admob": { "name": "AdMob" },
+    "android-other": { "name": "Other Android" },
+    "steam": { "name": "Steam" },
+    "gog": { "name": "GOG" },
+    "itch": { "name": "itch.io" },
+    "epic": { "name": "Epic" },
+    "microsoft": { "name": "Microsoft Store" },
+    "web-portals": { "name": "Web" }
+  }
+}

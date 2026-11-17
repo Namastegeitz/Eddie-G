@@ -1,0 +1,95 @@
+{
+  "_about": "Store listing text for Alien Sudoku (English, US). One source for every store. Run `node check-listing.mjs` to check every field against each store's limit and to write listing.md.",
+  "appName": {
+    "value": "Alien Sudoku",
+    "limits": {
+      "apple": 30,
+      "google": 30
+    },
+    "alternates": [
+      "Alien Glyph Sudoku",
+      "Alien Sudoku: Glyph Decoder"
+    ],
+    "note": "App Store names must be unique. If 'Alien Sudoku' is taken, use 'Alien Glyph Sudoku' (the original project's name)."
+  },
+  "appleSubtitle": {
+    "value": "Decode the UFO glyph puzzles",
+    "limits": {
+      "apple": 30
+    }
+  },
+  "applePromoText": {
+    "value": "New: Alien Duel! Race a computer rival you can customize on the same puzzle. Plus a theme song for every difficulty, from cozy lo-fi to legendary war drums.",
+    "limits": {
+      "apple": 170
+    },
+    "note": "Can be changed any time without a new build."
+  },
+  "appleKeywords": {
+    "value": "sudoku,puzzle,logic,brain,ufo,space,glyph,daily,offline,zen,duel,casual,mind,classic,number,game",
+    "limits": {
+      "apple": 100
+    },
+    "note": "Comma-separated, no spaces. Do not repeat words already in the name or subtitle (alien, decode)."
+  },
+  "googleShortDescription": {
+    "value": "Sudoku with alien glyphs: 54-level campaign, daily puzzles and rival duels.",
+    "limits": {
+      "google": 80
+    }
+  },
+  "steamShortDescription": {
+    "value": "Sudoku with alien glyphs instead of numbers. Clear a 54-level campaign, keep a daily streak, and race a customizable computer rival in Alien Duel, with a theme song for every difficulty from cozy lo-fi to legendary war drums.",
+    "limits": {
+      "steam": 300
+    }
+  },
+  "fullDescription": {
+    "value": "Decode the hieroglyphs of the lost UFO archive.\n\nAlien Sudoku is classic sudoku with a cosmic twist. Instead of digits you place nine alien glyphs, and each one must appear exactly once in every row, every column and every 3×3 box. The rules you know, with a whole new look.\n\nFEATURES\n• 54-level campaign across 6 sectors, from the Lunar Outpost to the Cluster Core, with stars to earn and new glyph lineups to unlock\n• Daily Transmission: a new puzzle every day, with a streak calendar\n• Alien Duel: race a computer rival on the same puzzle. Choose from four rivals, from a sleepy rookie to the relentless Maw, then rename it and tune its speed, accuracy and play style\n• Quick Play, plus a relaxing Zen mode with no lives, no clock and unlimited hints\n• 1,000 puzzles in four difficulties, each with exactly one solution\n• Every difficulty brings its own aliens, from friendly Soft Visitors on Easy to the fearsome Gnarly Horde on Alien\n• A theme song for every difficulty, from cozy lo-fi to legendary war drums\n• Smart hints that explain why a glyph goes where it does\n• Notes, auto-notes, undo, combos and score bonuses\n• 33 achievements and detailed stats\n• Run out of tries and the visitors arrive. Their ship rises from the horizon and asks who you are...\n• Plays offline. No account needed.\n\nEasy to learn, hard to master, and out of this world.",
+    "limits": {
+      "apple": 4000,
+      "google": 4000,
+      "steam": 8000,
+      "microsoft": 10000,
+      "itch": 10000
+    },
+    "note": "Wording is kept neutral (no 'cuddly', 'baby'): Google Play's Families policy looks at whether a listing appeals to children, and this game is rated 13+ with ads."
+  },
+  "mobileAdsLine": {
+    "value": "Free to play with ads. Watching a short video for an extra hint or a second chance is always optional.",
+    "note": "Add to the end of the description on Google Play and the App Store only."
+  },
+  "pcLine": {
+    "value": "No ads, no microtransactions. Plays offline on Windows, macOS and Linux.",
+    "note": "Add to the end of the description on Steam, GOG, itch.io, Epic and Microsoft Store."
+  },
+  "whatsNew": {
+    "value": "First release. The lost UFO archive is open: decode it!",
+    "limits": {
+      "apple": 4000,
+      "google": 500
+    }
+  },
+  "categories": {
+    "apple": "Games > Puzzle (secondary: Games > Board)",
+    "google": "Game > Puzzle",
+    "steam": "Tags: Puzzle, Sudoku, Casual, Logic, Relaxing, Singleplayer, Cute, Aliens, Space, 2D",
+    "microsoft": "Games > Puzzle & trivia",
+    "itch": "Genre: Puzzle. Tags: sudoku, logic, aliens, space, relaxing"
+  },
+  "copyright": {
+    "value": "© 2026 Eddie G"
+  },
+  "supportEmail": {
+    "value": "TODO: your support email",
+    "note": "Required by Google Play and shown publicly. Use an address you check."
+  },
+  "supportUrl": {
+    "value": "TODO: public support page",
+    "note": "Required by Apple. The GitHub Pages site from prompt 06 works."
+  },
+  "privacyPolicyUrl": {
+    "value": "TODO: public privacy policy URL",
+    "note": "Required by Apple and Google (ads). Host store-launch/privacy-policy.md publicly."
+  }
+}

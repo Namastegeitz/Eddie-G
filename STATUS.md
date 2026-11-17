@@ -16,36 +16,24 @@
 - Next: real art/audio, Google Play AAB (needs Android SDK locally), iOS signing via a
   Mac or Codemagic (`docs/ci/codemagic.yaml`), playtesting and tuning.
 
-## Alien Sudoku (`apps/alien-sudoku`)
-- Built from the uploaded `alien-sudoku-export.zip` (original single-page game kept in spirit:
-  glyph sets, space art, synthesized music, reject-on-wrong rule).
-- Full game: campaign (6 sectors x 9), daily transmission + streak calendar, quick play, zen,
-  24 achievements, stats, settings, how-to, autosave/resume, notes/undo/explained hints.
-- Puzzle engine: 1,000 graded unique-solution puzzles + transforms; logical hint engine.
-- Nov 5: graphics + gameplay upgrade: 7 themed glyph lineups of detailed full-color art
-  (Close Encounters, Space Fleet, Planets, Deep Cosmos, Alien Creatures, Ancient Mysteries,
-  Cosmic Mix), each with its own colors/font/board style; score + x10 combos; particles,
-  animated starfield; new app icon. Contact sheets: `node tools/glyph-sheet.mjs <lineup>`.
-- Nov 5 (later): 25 tries per puzzle by default (3/5/10/25 in Settings) with a tries meter; when they
-  run out, "the visitors" encounter: a ship rises from the horizon, asks "Who are you?"
-  telepathically, remembers the player's name and can gift more tries.
-- Nov 6: each difficulty has its own alien lineup + theme, soft to gnarly: Easy Soft Visitors
-  (light pastel), Medium Alien Creatures, Hard Hostile Visitors, Alien Gnarly Horde; the
-  visitors encounter matches the tier. Share link: rawcdn.githack.com (see RUN.md).
-- Platforms: Vite web/PWA, Capacitor 8 Android + iOS (SPM), Electron desktop. App id
-  `com.eddieg.aliensudoku`. Free with AdMob on phones (Google TEST ids until real ones are set).
-- Tests: 96 unit (`npm test`) + 19 Playwright end-to-end on phone and desktop (`npm run test:e2e`).
-- Playable private web build: https://claude.ai/artifact/NdYUzQJYiAGjCra9nF7MHn
-- CI (`.github/workflows/alien-sudoku.yml`) builds APK, iOS simulator app, Windows/macOS/Linux
-  installers and publishes the `alien-sudoku-latest` release. BLOCKED: GitHub would not start
-  any Actions job on this account (likely billing/spending limit). Fix it, then re-run.
-- Desktop apps built in the cloud session (Electron, smoke-tested) and sent as files:
-  Windows installer + portable, Mac Intel zip, Linux AppImage/deb. Too big to commit (100+ MB).
-- Not built yet: the Android APK (dl.google.com is blocked by the session's network policy,
-  and Actions can't start jobs).
-- Next steps are written as approve-when-ready prompts with their prerequisites:
-  `prompts/claude/alien-sudoku/README.md` (Android APK, Actions, AdMob, Google Play,
-  TestFlight, public website, desktop signing).
+## ALIEN SUDOKU (`ALIEN-SUDOKU/`)
+- Everything for the game now lives in `ALIEN-SUDOKU/`: `game/` (source), `builds/<platform>/`,
+  `store-launch/` (store guides, listing text, screenshots and art, privacy policy), `checklist/`,
+  `feedback/`, `prompts/`. On claude.ai, the **ALIEN SUDOKU** artifacts folder holds the game,
+  the Music Lab and Launch Control.
+- Game: campaign (6 x 9), Daily, Quick Play, Zen, Alien Duel (computer rival you can customize),
+  33 achievements, a theme song per difficulty, 10 glyph lineups. 107 unit + 30 end-to-end tests.
+- Nov 17: store launch kit. In-depth research (Apple, Google Play + AdMob, Steam, GOG, itch.io,
+  Epic, Microsoft Store, web portals) turned into a 118-task live checklist in 7 phases:
+  **Launch Control** https://claude.ai/artifact/LzbsCTPkTUsxyLLCUWCgRM (tick tasks, green checks,
+  bug and feedback reports stored on the page). README checklist: `ALIEN-SUDOKU/README.md`.
+- Store-readiness fixes made Nov 17: in-app privacy policy, Report an ad, iOS privacy manifest,
+  no banner during play, ads capped at PG, wider iPad layout, "computer rival" wording.
+- Builds made Nov 17: web single file, itch.io HTML5 zip (committed); Windows installer + portable,
+  Linux AppImage + deb, macOS Intel + Apple Silicon zips (unsigned; in `builds/<platform>/files/`,
+  not in git).
+- Blocked here: Android (dl.google.com), iOS (no Mac), GitHub Actions (jobs don't start).
+- Next: the owner's tasks in Launch Control (accounts, support email, PC price, licenses).
 
 ## NeuroForge (not in this repo)
 - Source on the Windows PC: `C:\Users\edwar\Desktop\AI and ALL\Aethertek\content poster\neuroforge`

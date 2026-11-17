@@ -1,0 +1,1032 @@
+[
+  {
+    "id": "google-target-sdk-check",
+    "phase": "ready",
+    "store": "google",
+    "title": "Confirm Android SDK levels meet Play rules",
+    "owner": "claude",
+    "status": "done",
+    "statusNote": "game/android/variables.gradle has targetSdk 36, compileSdk 36, minSdk 24, which meets the 31 Aug 2026 rule.",
+    "cost": null,
+    "time": "Done",
+    "steps": [
+      "Keep targetSdkVersion = 36 and compileSdkVersion = 36",
+      "Keep minSdkVersion = 24 (ads SDK 25.5+ needs 24)",
+      "Re-check each August when Google raises the target"
+    ],
+    "feedback": [
+      "New apps and updates must target API 36 since 31 Aug 2026.",
+      "The next bump (likely API 37, Aug 2027) is not announced yet."
+    ],
+    "doneMessage": "The build already meets Play's API level rule, so no SDK bump stands between you and launch.",
+    "links": [
+      {"label": "Target API level requirements", "url": "https://developer.android.com/google/play/requirements/target-sdk"}
+    ],
+    "depends": []
+  },
+  {
+    "id": "admob-consent-wiring",
+    "phase": "ready",
+    "store": "admob",
+    "title": "Wire UMP consent and ad frequency caps in the app",
+    "owner": "claude",
+    "status": "done",
+    "statusNote": "game/src/platform/ads.js runs UMP consent before ads, shows Ad privacy choices, caps interstitials and makes rewarded opt-in.",
+    "cost": null,
+    "time": "Done",
+    "steps": [
+      "Consent form shown when UMP says it is required",
+      "Ads requested only when canRequestAds is true",
+      "Interstitial every 2 games, 3+ minutes apart, never at launch",
+      "Rewarded video only after the player taps Watch video"
+    ],
+    "feedback": [
+      "Messages still have to be created and published in AdMob (admob-privacy-messaging).",
+      "Keep interstitials at natural breaks; never show one on app open or exit."
+    ],
+    "doneMessage": "Consent and ad pacing are in place; once AdMob messages are published the flow works end to end.",
+    "links": [
+      {"label": "AdMob interstitial guidance", "url": "https://support.google.com/admob/answer/6201362"},
+      {"label": "UMP US states support", "url": "https://developers.google.com/admob/android/privacy/us-states"}
+    ],
+    "depends": []
+  },
+  {
+    "id": "google-account-type",
+    "phase": "ready",
+    "store": "google",
+    "title": "Decide personal vs organization Play account",
+    "owner": "you",
+    "status": "todo",
+    "statusNote": "No store accounts exist yet and the developer is an individual without a registered company.",
+    "cost": null,
+    "time": "15 min decision (D-U-N-S would add up to ~30 days)",
+    "steps": [
+      "Pick Personal unless you already have an LLC",
+      "If Organization: get a free D-U-N-S number first",
+      "Decide which Google account will own everything",
+      "Turn on 2-Step Verification on that account"
+    ],
+    "feedback": [
+      "Personal accounts must pass the 12-tester / 14-day closed test.",
+      "Personal accounts show your legal name and country on Play.",
+      "Switching later means transferring the app to a new account."
+    ],
+    "doneMessage": "With the account type chosen you can sign up for Play Console right away.",
+    "links": [
+      {"label": "Required info to create an account", "url": "https://support.google.com/googleplay/android-developer/answer/13628312"},
+      {"label": "Get a free D-U-N-S number", "url": "https://www.dnb.com/en-us/smb/duns/get-a-duns.html"}
+    ],
+    "depends": []
+  },
+  {
+    "id": "google-android-phone",
+    "phase": "ready",
+    "store": "google",
+    "title": "Get a physical Android 10+ phone for verification",
+    "owner": "you",
+    "status": "todo",
+    "statusNote": "New personal accounts must verify with the Play Console app on a real phone; we don't know if you have one.",
+    "cost": null,
+    "time": "Varies (borrowing one is fine)",
+    "steps": [
+      "Find a non-rooted Android phone on Android 10 or newer",
+      "Install the Google Play Console app",
+      "Keep it handy for testing ads, consent and gestures too"
+    ],
+    "feedback": [
+      "Emulators don't count for device verification.",
+      "The same phone may verify several accounts."
+    ],
+    "doneMessage": "With a phone in hand you can finish Play Console verification and test real installs.",
+    "links": [
+      {"label": "Verify access to an Android device", "url": "https://support.google.com/googleplay/android-developer/answer/14316361"}
+    ],
+    "depends": []
+  },
+  {
+    "id": "google-privacy-policy",
+    "phase": "ready",
+    "store": "google",
+    "title": "Host privacy policy, support email and website",
+    "owner": "both",
+    "status": "todo",
+    "statusNote": "game/docs/PRIVACY.md is a template with blank name/email; listing.json has TODO support email and URL.",
+    "cost": "Free (custom domain optional, ~$10-15/yr)",
+    "time": "1-2 hours",
+    "steps": [
+      "Pick a host whose ROOT you control (user github.io, surge.sh, Firebase, own domain)",
+      "Give Claude your public name and support email",
+      "Claude builds privacy.html from PRIVACY.md and a small site",
+      "Publish it and note the URLs",
+      "Put email and URLs in store-launch/listing/listing.json"
+    ],
+    "feedback": [
+      "Policy must be a public HTML page, not a PDF, titled Privacy Policy.",
+      "Name the developer exactly as on the Play listing.",
+      "A project site (user.github.io/repo/) can't host app-ads.txt at the root."
+    ],
+    "doneMessage": "Your policy URL and developer website are ready for Play App content and AdMob app-ads.txt.",
+    "links": [
+      {"label": "Play User Data policy", "url": "https://support.google.com/googleplay/android-developer/answer/10144311"},
+      {"label": "AdMob app-ads.txt", "url": "https://support.google.com/admob/answer/9363762"}
+    ],
+    "depends": []
+  },
+  {
+    "id": "google-play-console-account",
+    "phase": "accounts",
+    "store": "google",
+    "title": "Create Play Console account and verify identity",
+    "owner": "you",
+    "status": "todo",
+    "statusNote": "No Play Console account exists yet.",
+    "cost": "$25 one time",
+    "time": "30 min + 1-3 days ID review",
+    "steps": [
+      "Go to play.google.com/console/signup and choose Personal",
+      "Enter developer name (e.g. Eddie G) and public developer email",
+      "Create or pick the Google payments profile (legal name, address)",
+      "Verify contact email and phone with the one-time codes",
+      "Pay the $25 fee with a card in your name",
+      "Upload your government ID when asked",
+      "Verify with the Play Console app on your Android phone"
+    ],
+    "feedback": [
+      "Legal name must match your ID and payments profile exactly.",
+      "Keep the contact email and phone working for the account's lifetime.",
+      "The fee is not refunded if verification fails on bad info."
+    ],
+    "doneMessage": "Your developer account is live, so you can create the app and claim com.eddieg.aliensudoku.",
+    "links": [
+      {"label": "Play Console sign-up", "url": "https://play.google.com/console/signup"},
+      {"label": "Verify developer identity", "url": "https://support.google.com/googleplay/android-developer/answer/10841920"},
+      {"label": "Contact info verification", "url": "https://support.google.com/googleplay/android-developer/answer/14177239"}
+    ],
+    "depends": ["google-account-type", "google-android-phone"]
+  },
+  {
+    "id": "google-trader-status",
+    "phase": "accounts",
+    "store": "google",
+    "title": "Declare EU trader status (due 1 Feb 2027)",
+    "owner": "you",
+    "status": "todo",
+    "statusNote": "Required of every Play account from Nov 2026 (reported); no account exists yet.",
+    "cost": "Optional PO box / second phone line",
+    "time": "15 min (+ setting up a business address if wanted)",
+    "steps": [
+      "Open Play Console > Account details > Declare status",
+      "Ad-funded app in the EU/UK: answer Trader",
+      "Enter and verify a public phone number and address",
+      "Or exclude EEA/UK countries if you won't disclose them"
+    ],
+    "feedback": [
+      "Trader details show to EU/UK users from 1 Mar 2027 (reported).",
+      "Choosing non-trader just to hide details risks suspension.",
+      "Could not verify on a Google page; follow the Console banner."
+    ],
+    "doneMessage": "Trader status is settled, so updates won't be blocked and EU users can keep installing.",
+    "links": [
+      {"label": "Play Console", "url": "https://play.google.com/console"}
+    ],
+    "depends": ["google-play-console-account"]
+  },
+  {
+    "id": "google-create-app",
+    "phase": "accounts",
+    "store": "google",
+    "title": "Create the app and claim the package name",
+    "owner": "you",
+    "status": "todo",
+    "statusNote": "No Play Console app exists; com.eddieg.aliensudoku is not yet registered.",
+    "cost": null,
+    "time": "15 min",
+    "steps": [
+      "Play Console > Create app",
+      "Name: Alien Sudoku; language English (US)",
+      "Type: Game; Free",
+      "Enter package name com.eddieg.aliensudoku if asked",
+      "Accept the policy and export law declarations",
+      "Check Android developer verification shows Registered"
+    ],
+    "feedback": [
+      "Creating the app auto-registers the package for developer verification.",
+      "A free app can never become paid later."
+    ],
+    "doneMessage": "The package name is yours; you can now fill in App content while builds get sorted out.",
+    "links": [
+      {"label": "Developer verification for Play", "url": "https://developer.android.com/developer-verification/guides/google-play-console"}
+    ],
+    "depends": ["google-play-console-account"]
+  },
+  {
+    "id": "admob-account",
+    "phase": "accounts",
+    "store": "admob",
+    "title": "Create and verify the AdMob account",
+    "owner": "you",
+    "status": "todo",
+    "statusNote": "No AdMob account exists; the app uses Google's test ids.",
+    "cost": null,
+    "time": "20 min + up to 24 h review (rarely 2 weeks)",
+    "steps": [
+      "Sign in at admob.google.com with your long-term Google account",
+      "Choose Individual account type",
+      "Accept the AdMob terms",
+      "Enter payment details so the account can be verified",
+      "Wait for the approval email"
+    ],
+    "feedback": [
+      "One AdMob account per person; close any old one first.",
+      "Account type can't be changed later."
+    ],
+    "doneMessage": "AdMob is approved, so you can create the real app id and ad units.",
+    "links": [
+      {"label": "AdMob getting started", "url": "https://support.google.com/admob/answer/15948559"},
+      {"label": "AdMob", "url": "https://admob.google.com"}
+    ],
+    "depends": []
+  },
+  {
+    "id": "admob-add-app-units",
+    "phase": "accounts",
+    "store": "admob",
+    "title": "Add the Android app and three ad units in AdMob",
+    "owner": "both",
+    "status": "todo",
+    "statusNote": "game/android/.../strings.xml and ads.js still use Google test ids.",
+    "cost": null,
+    "time": "20 min",
+    "steps": [
+      "Apps > Add app > Android > Not listed on a store yet",
+      "Copy the app id (ca-app-pub-...~...)",
+      "Create units: Banner (adaptive), Interstitial, Rewarded",
+      "Rewarded: amount 1, item hint",
+      "Send Claude the app id, 3 unit ids and your pub- id"
+    ],
+    "feedback": [
+      "Ad unit ids aren't secret, but keep test and live builds separate.",
+      "New units can take up to an hour to serve."
+    ],
+    "doneMessage": "Real ids are ready; Claude can wire them into the production build.",
+    "links": [
+      {"label": "AdMob getting started", "url": "https://support.google.com/admob/answer/15948559"}
+    ],
+    "depends": ["admob-account"]
+  },
+  {
+    "id": "admob-privacy-messaging",
+    "phase": "accounts",
+    "store": "admob",
+    "title": "Publish GDPR and US state consent messages",
+    "owner": "you",
+    "status": "todo",
+    "statusNote": "The app calls UMP, but no messages exist until you create them in AdMob.",
+    "cost": null,
+    "time": "30 min",
+    "steps": [
+      "AdMob > Privacy & messaging > European regulations: create message",
+      "Add your privacy policy URL; choose Consent + Manage options",
+      "Pick the Android app; publish",
+      "Create a US states regulations message; publish",
+      "Test with UMP debug geography on your phone"
+    ],
+    "feedback": [
+      "Without a published GDPR message, EEA/UK users get no consent form and fewer ads.",
+      "The in-app Ad privacy choices button reopens these forms."
+    ],
+    "doneMessage": "Consent is compliant in the EU, UK and regulated US states.",
+    "links": [
+      {"label": "UMP US states", "url": "https://developers.google.com/admob/android/privacy/us-states"}
+    ],
+    "depends": ["admob-add-app-units", "google-privacy-policy"]
+  },
+  {
+    "id": "admob-blocking-controls",
+    "phase": "accounts",
+    "store": "admob",
+    "title": "Set max ad content rating to PG or G",
+    "owner": "you",
+    "status": "todo",
+    "statusNote": "No ad content rating is set in AdMob or in AdMob.initialize().",
+    "cost": null,
+    "time": "10 min",
+    "steps": [
+      "AdMob > Blocking controls > Ad content rating",
+      "Choose PG (or G for maximum safety) for the app",
+      "Optionally block sensitive categories (dating, gambling)"
+    ],
+    "feedback": [
+      "Play requires ads to suit the app's content rating (likely 3+/7+).",
+      "G/PG also lowers risk given the cute art."
+    ],
+    "doneMessage": "Ads will match a family-friendly rating, protecting your listing and target audience answers.",
+    "links": [
+      {"label": "AdMob max ad content rating", "url": "https://support.google.com/admob/answer/7562142"}
+    ],
+    "depends": ["admob-add-app-units"]
+  },
+  {
+    "id": "google-in-app-privacy-link",
+    "phase": "builds",
+    "store": "google",
+    "title": "Add a privacy policy link inside the app",
+    "owner": "claude",
+    "status": "todo",
+    "statusNote": "Settings > Privacy & data in game/src/ui/screens/settings.js has no policy link, which Play requires.",
+    "cost": null,
+    "time": "30 min",
+    "steps": [
+      "Add a Privacy policy button in Settings > Privacy & data",
+      "Open the hosted URL in the system browser",
+      "Add photo/font credits to the About line",
+      "Rebuild and test on device"
+    ],
+    "feedback": [
+      "Play's User Data policy needs the link in Play Console AND in the app."
+    ],
+    "doneMessage": "The app meets Play's in-app privacy policy rule.",
+    "links": [
+      {"label": "Play User Data policy", "url": "https://support.google.com/googleplay/android-developer/answer/10144311"}
+    ],
+    "depends": ["google-privacy-policy"]
+  },
+  {
+    "id": "google-ads-ux-tweaks",
+    "phase": "builds",
+    "store": "google",
+    "title": "Move the banner away from the keypad during play",
+    "owner": "claude",
+    "status": "todo",
+    "statusNote": "ads.js shows the banner during play directly under the glyph keypad, an accidental-click risk.",
+    "cost": null,
+    "time": "1-2 hours",
+    "steps": [
+      "Add a 16dp+ gap between keypad and banner, or hide it in play",
+      "Add optional test device ids to AdMob.initialize",
+      "Optionally set maxAdContentRating in initialize",
+      "Check layouts on small phones and tablets"
+    ],
+    "feedback": [
+      "'Layout encourages accidental clicks' is a top AdMob violation.",
+      "Never place ads where a tap meant for the game can land."
+    ],
+    "doneMessage": "Ad placement is now policy-safe, reducing the risk of limited serving or suspension.",
+    "links": [
+      {"label": "AdMob interstitial guidance", "url": "https://support.google.com/admob/answer/6201362"},
+      {"label": "AdMob test devices", "url": "https://support.google.com/admob/answer/9691433"}
+    ],
+    "depends": []
+  },
+  {
+    "id": "google-android-hardening",
+    "phase": "builds",
+    "store": "google",
+    "title": "Enable R8 shrinking and mark the app as a game",
+    "owner": "claude",
+    "status": "todo",
+    "statusNote": "game/android/app/build.gradle has minifyEnabled false; the manifest lacks android:appCategory=game.",
+    "cost": null,
+    "time": "1-3 hours incl. testing",
+    "steps": [
+      "Set minifyEnabled true and shrinkResources true for release",
+      "Use proguard-android-optimize.txt; add keep rules if needed",
+      "Add android:appCategory=\"game\" to <application>",
+      "Test ads, consent, haptics, preferences on a release build"
+    ],
+    "feedback": [
+      "From Feb 2027 Play wants at least 25% R8 optimization coverage.",
+      "Capacitor ships consumer ProGuard rules; plugin crashes mean a missing keep rule.",
+      "appCategory=game keeps orientation handling on large screens."
+    ],
+    "doneMessage": "The release build is smaller and ready for Play's 2027 quality thresholds.",
+    "links": [
+      {"label": "Play quality thresholds (Aug 2026)", "url": "https://developer.android.com/blog/posts/elevating-app-quality-reducing-memory-usage-and-improving-device-migration"},
+      {"label": "Enable app optimization (R8)", "url": "https://developer.android.com/topic/performance/app-optimization/enable-app-optimization"},
+      {"label": "Android 16 behavior changes", "url": "https://developer.android.com/about/versions/16/behavior-changes-16"}
+    ],
+    "depends": []
+  },
+  {
+    "id": "google-upload-key",
+    "phase": "builds",
+    "store": "google",
+    "title": "Create and back up the upload key",
+    "owner": "both",
+    "status": "todo",
+    "statusNote": "No keystore or android/keystore.properties exists; the Gradle signing config is ready for one.",
+    "cost": null,
+    "time": "20 min",
+    "steps": [
+      "keytool -genkeypair -v -keystore alien-sudoku-upload.jks -alias upload -keyalg RSA -keysize 2048 -validity 10000",
+      "Save the .jks and both passwords in a password manager",
+      "Keep an offline backup copy",
+      "Add ANDROID_KEYSTORE_* GitHub secrets or keystore.properties",
+      "Never commit the keystore"
+    ],
+    "feedback": [
+      "Validity must run past 22 Oct 2033; 25+ years is recommended.",
+      "Let Play generate the app signing key; this is only the upload key.",
+      "A lost upload key can be reset, but it takes days."
+    ],
+    "doneMessage": "Builds can now be signed for upload to Play.",
+    "links": [
+      {"label": "Sign your app", "url": "https://developer.android.com/studio/publish/app-signing"}
+    ],
+    "depends": []
+  },
+  {
+    "id": "google-build-pipeline",
+    "phase": "builds",
+    "store": "google",
+    "title": "Unblock Android release builds",
+    "owner": "both",
+    "status": "blocked",
+    "statusNote": "dl.google.com is blocked in this workspace (no Android SDK) and GitHub Actions jobs don't start.",
+    "cost": "Free (Actions may need billing fixed)",
+    "time": "30 min to half a day",
+    "steps": [
+      "Option A: fix Actions billing/spending limit so jobs run",
+      "Option B: install Android Studio on your computer",
+      "Option C: allow dl.google.com and maven.google.com in this environment",
+      "Run one debug build to prove the pipeline works"
+    ],
+    "feedback": [
+      "Without a working build nothing can reach Play Console.",
+      "Public repos get standard Actions runners free."
+    ],
+    "doneMessage": "You have a working way to produce AABs, which unlocks every testing step.",
+    "links": [
+      {"label": "Build from the command line", "url": "https://developer.android.com/build/building-cmdline"}
+    ],
+    "depends": []
+  },
+  {
+    "id": "google-real-ad-ids",
+    "phase": "builds",
+    "store": "google",
+    "title": "Wire real AdMob ids into the production build",
+    "owner": "claude",
+    "status": "todo",
+    "statusNote": "tools/set-admob-ids.mjs and VITE_ADMOB_ANDROID_* support real ids; none exist yet.",
+    "cost": null,
+    "time": "30 min",
+    "steps": [
+      "Run set-admob-ids.mjs with the real Android app id",
+      "Set VITE_ADMOB_ANDROID_BANNER/INTERSTITIAL/REWARDED secrets",
+      "Keep test ids for internal/closed builds if preferred",
+      "Check USING_TEST_ADS is false in the production build"
+    ],
+    "feedback": [
+      "Never click live ads on your own phone; register it as a test device.",
+      "A mismatched app id in the manifest crashes the ads SDK at start."
+    ],
+    "doneMessage": "The production build will earn real ad revenue once AdMob approves the app.",
+    "links": [
+      {"label": "AdMob test ads", "url": "https://developers.google.com/admob/android/test-ads"}
+    ],
+    "depends": ["admob-add-app-units"]
+  },
+  {
+    "id": "google-build-aab",
+    "phase": "builds",
+    "store": "google",
+    "title": "Build the signed release AAB",
+    "owner": "both",
+    "status": "blocked",
+    "statusNote": "No AAB can be built until google-build-pipeline and google-upload-key are done.",
+    "cost": null,
+    "time": "15 min per build once unblocked",
+    "steps": [
+      "npm run build && npx cap sync android",
+      "./gradlew bundleRelease -PversionCode=N -PversionName=1.0.0",
+      "Raise versionCode for every upload",
+      "Check the bundle has no unaligned lib/*.so (16 KB)",
+      "Check the merged manifest includes AD_ID"
+    ],
+    "feedback": [
+      "Don't mix local builds (versionCode 1) with CI run numbers.",
+      "Updates must support 16 KB pages from 1 Feb 2027; this app has no native code."
+    ],
+    "doneMessage": "You have an uploadable AAB; head to internal testing.",
+    "links": [
+      {"label": "Android App Bundles", "url": "https://developer.android.com/guide/app-bundle"},
+      {"label": "16 KB page sizes", "url": "https://developer.android.com/guide/practices/page-sizes"}
+    ],
+    "depends": ["google-build-pipeline", "google-upload-key", "google-android-hardening", "google-in-app-privacy-link", "google-ads-ux-tweaks"]
+  },
+  {
+    "id": "google-graphics",
+    "phase": "listing",
+    "store": "google",
+    "title": "Generate icon, feature graphic and screenshots",
+    "owner": "claude",
+    "status": "todo",
+    "statusNote": "game/tools/store-assets.mjs can render them, but no Play images have been produced yet.",
+    "cost": null,
+    "time": "1-2 hours",
+    "steps": [
+      "npm run build, then node tools/store-assets.mjs <out>",
+      "Icon 512x512 32-bit PNG under 1 MB",
+      "Feature graphic 1024x500 JPEG or 24-bit PNG, no alpha",
+      "4-8 phone shots 1080x1920 of real gameplay",
+      "7-inch and 10-inch tablet shots (e.g. 1200x1920, 1600x2560)"
+    ],
+    "feedback": [
+      "No test-ad banners, fake reviews or ranking claims in images.",
+      "Lead with the puzzle and sci-fi look, not the cutest aliens."
+    ],
+    "doneMessage": "Your listing has every required graphic at the exact sizes Play accepts.",
+    "links": [
+      {"label": "Preview assets help", "url": "https://support.google.com/googleplay/android-developer/answer/9866151"}
+    ],
+    "depends": []
+  },
+  {
+    "id": "google-store-listing",
+    "phase": "listing",
+    "store": "google",
+    "title": "Fill in the main store listing",
+    "owner": "both",
+    "status": "todo",
+    "statusNote": "Text drafts exist in store-launch/listing/listing.json; support email/URL are still TODO.",
+    "cost": null,
+    "time": "1 hour",
+    "steps": [
+      "Name: Alien Sudoku (30 max)",
+      "Short description (80 max) and full description (4000 max)",
+      "Append the mobile ads line to the full description",
+      "Upload icon, feature graphic, phone and tablet shots",
+      "Category Game > Puzzle; add up to 5 tags",
+      "Contact: email, website (for app-ads.txt)"
+    ],
+    "feedback": [
+      "Reword 'cuddly' and 'Baby Blip' to reduce child appeal.",
+      "No 'best', '#1', emoji or keyword stuffing.",
+      "The website must be the host that serves app-ads.txt."
+    ],
+    "doneMessage": "The store page is complete and ready for review.",
+    "links": [
+      {"label": "Metadata policy", "url": "https://support.google.com/googleplay/android-developer/answer/9898842"},
+      {"label": "Store listing best practices", "url": "https://support.google.com/googleplay/android-developer/answer/13393723"}
+    ],
+    "depends": ["google-create-app", "google-graphics", "google-privacy-policy"]
+  },
+  {
+    "id": "google-app-content-basics",
+    "phase": "listing",
+    "store": "google",
+    "title": "Answer privacy, ads, access and other declarations",
+    "owner": "you",
+    "status": "todo",
+    "statusNote": "No Play app exists yet, so no App content forms are filled.",
+    "cost": null,
+    "time": "20 min",
+    "steps": [
+      "Privacy policy: paste the hosted URL",
+      "App access: all functionality available without restrictions",
+      "Ads: Yes, my app contains ads",
+      "Government app: No; Financial features: none",
+      "Health: none; News app: No"
+    ],
+    "feedback": [
+      "Misstating ads can get the app suspended.",
+      "No sensitive permissions, so no permission forms apply."
+    ],
+    "doneMessage": "The simple declarations are done; on to rating, audience and data safety.",
+    "links": [
+      {"label": "Ads declaration", "url": "https://support.google.com/googleplay/android-developer/answer/9859455"}
+    ],
+    "depends": ["google-create-app", "google-privacy-policy"]
+  },
+  {
+    "id": "google-content-rating",
+    "phase": "listing",
+    "store": "google",
+    "title": "Complete the IARC content rating questionnaire",
+    "owner": "you",
+    "status": "todo",
+    "statusNote": "Not started; needs the Play app to exist.",
+    "cost": null,
+    "time": "15 min",
+    "steps": [
+      "Category: Game",
+      "Violence, sex, language, drugs, gambling: No",
+      "Scary content: Yes, mild cartoon monsters (Gnarly Horde)",
+      "User interaction, location sharing, purchases: No",
+      "Unrestricted internet: No",
+      "Expect about ESRB Everyone, PEGI 3 or 7 (Fear)"
+    ],
+    "feedback": [
+      "Answer honestly; a wrong rating can be overridden and the app removed.",
+      "The typed name stays on the device, so it isn't user interaction.",
+      "Redo the questionnaire if you add scarier content."
+    ],
+    "doneMessage": "The game has its official age ratings for every region.",
+    "links": [
+      {"label": "Content ratings", "url": "https://support.google.com/googleplay/android-developer/answer/9898843"}
+    ],
+    "depends": ["google-create-app"]
+  },
+  {
+    "id": "google-target-audience",
+    "phase": "listing",
+    "store": "google",
+    "title": "Set target audience to 13+ and answer child appeal",
+    "owner": "you",
+    "status": "todo",
+    "statusNote": "Not started; PRIVACY.md already says the game is not for under-13s.",
+    "cost": null,
+    "time": "15 min",
+    "steps": [
+      "Tick 13-15, 16-17 and 18+ only",
+      "Answer the 'appeal to children' question honestly",
+      "Neutralize the listing first (section 4 of the guide)",
+      "Keep AdMob max rating at PG or G"
+    ],
+    "feedback": [
+      "Ticking any under-13 group brings in the Families policy.",
+      "Families needs a neutral age screen and child-directed ad tagging.",
+      "Google may add a 'Not designed for children' label."
+    ],
+    "doneMessage": "Your audience is set, which decides which ad rules apply.",
+    "links": [
+      {"label": "Target audience settings", "url": "https://support.google.com/googleplay/android-developer/answer/9867159"},
+      {"label": "Families policies", "url": "https://support.google.com/googleplay/android-developer/answer/9893335"}
+    ],
+    "depends": ["google-create-app", "admob-blocking-controls"]
+  },
+  {
+    "id": "google-data-safety",
+    "phase": "listing",
+    "store": "google",
+    "title": "Complete Data safety and Advertising ID forms",
+    "owner": "you",
+    "status": "todo",
+    "statusNote": "Not started; answers are in section 5.6 of google.md.",
+    "cost": null,
+    "time": "30 min",
+    "steps": [
+      "Collects or shares data: Yes; encrypted in transit: Yes",
+      "No account creation; deletion requests: No",
+      "Approximate location, App interactions, Diagnostics, Device IDs",
+      "Each: collected + shared, required; ads, analytics, fraud",
+      "Advertising ID: Yes, same purposes",
+      "Check Google's current AdMob data disclosure table"
+    ],
+    "feedback": [
+      "The typed name never leaves the device, so don't declare it.",
+      "Update the form if you add analytics or mediation."
+    ],
+    "doneMessage": "Your privacy labels match the ads SDK, a common rejection reason avoided.",
+    "links": [
+      {"label": "Data safety help", "url": "https://support.google.com/googleplay/android-developer/answer/10787469"},
+      {"label": "AdMob Play data disclosure", "url": "https://developers.google.com/admob/android/privacy/play-data-disclosure"},
+      {"label": "Advertising ID", "url": "https://support.google.com/googleplay/android-developer/answer/6048248"}
+    ],
+    "depends": ["google-create-app"]
+  },
+  {
+    "id": "google-recruit-testers",
+    "phase": "testing",
+    "store": "google",
+    "title": "Recruit 15-20 Android testers in a Google Group",
+    "owner": "you",
+    "status": "todo",
+    "statusNote": "No testers or group exist yet; 12 must stay opted in for 14 days.",
+    "cost": null,
+    "time": "Start now; 1-2 weeks of asking",
+    "steps": [
+      "Create a Google Group, e.g. alien-sudoku-testers",
+      "Invite friends, family, puzzle communities",
+      "Collect Gmail addresses of Android users",
+      "Explain they must join, opt in and stay 14 days"
+    ],
+    "feedback": [
+      "Recruit more than 12; people drop out.",
+      "Engaged testers make the production application easier."
+    ],
+    "doneMessage": "You have enough testers to start the 14-day clock as soon as a build is approved.",
+    "links": [
+      {"label": "Set up testing tracks", "url": "https://support.google.com/googleplay/android-developer/answer/9845334"}
+    ],
+    "depends": []
+  },
+  {
+    "id": "google-internal-test",
+    "phase": "testing",
+    "store": "google",
+    "title": "Upload to internal testing and test on your phone",
+    "owner": "you",
+    "status": "todo",
+    "statusNote": "No AAB exists to upload yet.",
+    "cost": null,
+    "time": "1-2 hours",
+    "steps": [
+      "Testing > Internal testing > Create release",
+      "Accept Play App Signing (Google-generated key)",
+      "Upload the AAB; add yourself as tester",
+      "Install from the Play link; test consent, ads, back, offline",
+      "Read the pre-launch report and fix crashes"
+    ],
+    "feedback": [
+      "Internal testing doesn't count toward the 12-tester rule.",
+      "Test on Android 15 and 16 for edge-to-edge and back gestures."
+    ],
+    "doneMessage": "The first Play build works on a real phone; promote it to closed testing.",
+    "links": [
+      {"label": "Play App Signing", "url": "https://developer.android.com/studio/publish/app-signing"}
+    ],
+    "depends": ["google-build-aab", "google-store-listing", "google-app-content-basics", "google-content-rating", "google-target-audience", "google-data-safety"]
+  },
+  {
+    "id": "google-closed-test",
+    "phase": "testing",
+    "store": "google",
+    "title": "Run the 14-day closed test with 12+ testers",
+    "owner": "you",
+    "status": "todo",
+    "statusNote": "Required for personal accounts created after 13 Nov 2023; not started.",
+    "cost": null,
+    "time": "14+ days",
+    "steps": [
+      "Testing > Closed testing > create track, add the Group",
+      "Promote the build; wait for review",
+      "Share the opt-in link with testers",
+      "Keep 12+ opted in for 14 straight days",
+      "Collect feedback; ship 1-2 updates"
+    ],
+    "feedback": [
+      "Testers who leave early don't count.",
+      "Keep notes on feedback for the production application."
+    ],
+    "doneMessage": "The closed test is complete; you can apply for production access.",
+    "links": [
+      {"label": "Testing requirements (new accounts)", "url": "https://support.google.com/googleplay/android-developer/answer/14151465"}
+    ],
+    "depends": ["google-internal-test", "google-recruit-testers"]
+  },
+  {
+    "id": "google-age-signals-check",
+    "phase": "review",
+    "store": "google",
+    "title": "Check US age-verification law duties",
+    "owner": "you",
+    "status": "todo",
+    "statusNote": "Texas SB 2420 is enforceable since July 2026; impact on a no-account game is unverified.",
+    "cost": null,
+    "time": "30 min reading (legal advice optional)",
+    "steps": [
+      "Read Play's Age Signals help page",
+      "Confirm the IARC rating is accurate",
+      "Note: report significant changes in Play Console > Age signals",
+      "Decide if Age Signals API is needed (likely not for v1)"
+    ],
+    "feedback": [
+      "Never use age signal data for ads or analytics.",
+      "Re-check before adding purchases or accounts."
+    ],
+    "doneMessage": "You know your US age-law obligations before going public.",
+    "links": [
+      {"label": "Play Age Signals", "url": "https://support.google.com/googleplay/android-developer/answer/16569691"}
+    ],
+    "depends": ["google-content-rating"]
+  },
+  {
+    "id": "google-apply-production",
+    "phase": "review",
+    "store": "google",
+    "title": "Apply for production access",
+    "owner": "you",
+    "status": "todo",
+    "statusNote": "Unlocks only after the closed test completes.",
+    "cost": null,
+    "time": "30 min + about 7 days review",
+    "steps": [
+      "Dashboard > Apply for production",
+      "Describe recruitment, engagement and feedback",
+      "Explain what you changed and why it's ready",
+      "Submit and wait for the email"
+    ],
+    "feedback": [
+      "Vague answers get rejected; be specific.",
+      "If rejected, fix what Google names and reapply."
+    ],
+    "doneMessage": "Production (and open testing) is unlocked for your account.",
+    "links": [
+      {"label": "Testing requirements (new accounts)", "url": "https://support.google.com/googleplay/android-developer/answer/14151465"}
+    ],
+    "depends": ["google-closed-test"]
+  },
+  {
+    "id": "google-production-release",
+    "phase": "review",
+    "store": "google",
+    "title": "Release to production with real ads",
+    "owner": "you",
+    "status": "todo",
+    "statusNote": "Needs production access and a build with real AdMob ids.",
+    "cost": null,
+    "time": "1 hour + hours to ~7 days review",
+    "steps": [
+      "Upload the AAB with real ids and a higher versionCode",
+      "Choose countries (consider trader status for EEA/UK)",
+      "Use a staged rollout, e.g. 20% then 100%",
+      "Optionally turn on Managed publishing",
+      "Submit for review"
+    ],
+    "feedback": [
+      "Make sure the store listing matches the build.",
+      "Fix any pre-launch report crashes before submitting."
+    ],
+    "doneMessage": "Alien Sudoku is live on Google Play!",
+    "links": [
+      {"label": "Play Console", "url": "https://play.google.com/console"}
+    ],
+    "depends": ["google-apply-production", "google-real-ad-ids", "google-trader-status", "google-age-signals-check"]
+  },
+  {
+    "id": "admob-link-store",
+    "phase": "launch",
+    "store": "admob",
+    "title": "Link the AdMob app to the live Play listing",
+    "owner": "you",
+    "status": "todo",
+    "statusNote": "AdMob can only link after the app is public on Play.",
+    "cost": null,
+    "time": "10 min + 2-3 days review",
+    "steps": [
+      "AdMob > Apps > Alien Sudoku > App settings",
+      "Add app store details; search the Play listing",
+      "Wait for the app readiness review email"
+    ],
+    "feedback": [
+      "Ads are limited until the review and app-ads.txt pass.",
+      "Closed-test apps can't be found in store search."
+    ],
+    "doneMessage": "AdMob has verified the app, so ads can serve fully.",
+    "links": [
+      {"label": "AdMob getting started", "url": "https://support.google.com/admob/answer/15948559"}
+    ],
+    "depends": ["google-production-release"]
+  },
+  {
+    "id": "admob-app-ads-txt",
+    "phase": "launch",
+    "store": "admob",
+    "title": "Publish and verify app-ads.txt",
+    "owner": "both",
+    "status": "todo",
+    "statusNote": "No developer website or app-ads.txt exists yet.",
+    "cost": null,
+    "time": "15 min + 24 h crawl",
+    "steps": [
+      "Copy the line from AdMob > Apps > app-ads.txt",
+      "google.com, pub-XXXX, DIRECT, f08c47fec0942fa0",
+      "Serve it at https://<website-host>/app-ads.txt",
+      "Make sure the Play listing website is that same host",
+      "AdMob > app-ads.txt tab > Check for updates"
+    ],
+    "feedback": [
+      "Must be at the root of the host, not a sub-folder.",
+      "Status can take 24 hours or more to update."
+    ],
+    "doneMessage": "Advertisers can verify your inventory, which lifts limited serving.",
+    "links": [
+      {"label": "Set up app-ads.txt", "url": "https://support.google.com/admob/answer/9363762"}
+    ],
+    "depends": ["google-privacy-policy", "admob-add-app-units", "google-store-listing"]
+  },
+  {
+    "id": "admob-payments-tax",
+    "phase": "launch",
+    "store": "admob",
+    "title": "Add tax info, bank details and verify the PIN",
+    "owner": "you",
+    "status": "todo",
+    "statusNote": "No AdMob payments profile or tax info yet.",
+    "cost": null,
+    "time": "30 min + ~3 weeks for the PIN letter",
+    "steps": [
+      "AdMob > Payments > Manage settings",
+      "Add US tax info (W-9, individual)",
+      "Add a bank account for EFT",
+      "Enter the mailed PIN when it arrives (within 4 months)"
+    ],
+    "feedback": [
+      "Payments go out around the 21st once over $100.",
+      "Tax info must be in by the 20th to be paid that month."
+    ],
+    "doneMessage": "Your ad earnings can be paid out each month.",
+    "links": [
+      {"label": "AdMob help center", "url": "https://support.google.com/admob"}
+    ],
+    "depends": ["admob-account"]
+  },
+  {
+    "id": "google-post-launch",
+    "phase": "launch",
+    "store": "google",
+    "title": "Monitor vitals, policy and 2027 deadlines",
+    "owner": "both",
+    "status": "todo",
+    "statusNote": "Nothing is live yet to monitor.",
+    "cost": null,
+    "time": "15 min/week",
+    "steps": [
+      "Check Android vitals: crashes, ANRs, memory",
+      "Check Play policy inbox and AdMob policy center",
+      "Reply to reviews",
+      "Calendar: 1 Feb 2027 trader + 16 KB; Feb 2027 memory/DEX"
+    ],
+    "feedback": [
+      "Crash rate above 1.09% hurts visibility.",
+      "Respond to policy emails before the deadline."
+    ],
+    "doneMessage": "You'll catch problems before they cost installs or ad revenue.",
+    "links": [
+      {"label": "Play quality thresholds", "url": "https://developer.android.com/blog/posts/elevating-app-quality-reducing-memory-usage-and-improving-device-migration"}
+    ],
+    "depends": ["google-production-release"]
+  },
+  {
+    "id": "google-sdk-roadmap",
+    "phase": "launch",
+    "store": "google",
+    "title": "Plan the 2027 ads SDK and target API upgrade",
+    "owner": "claude",
+    "status": "todo",
+    "statusNote": "@capacitor-community/admob 8.3 uses legacy ads SDK 25.4.x, deprecated 30 Jun 2027.",
+    "cost": null,
+    "time": "Half a day in spring 2027",
+    "steps": [
+      "Track the plugin's Next-Gen SDK support",
+      "Upgrade before 30 Jun 2027 (sunset 30 Jun 2028)",
+      "Bump targetSdk when Play announces the 2027 level",
+      "Re-run consent and ad tests after upgrading"
+    ],
+    "feedback": [
+      "After sunset, ads may stop serving entirely.",
+      "Android 17 target removes the large-screen opt-out."
+    ],
+    "doneMessage": "Ads and API levels stay current, so revenue doesn't stop in 2028.",
+    "links": [
+      {"label": "Ads SDK deprecation schedule", "url": "https://developers.google.com/admob/android/deprecation"}
+    ],
+    "depends": ["google-production-release"]
+  },
+  {
+    "id": "android-other-galaxy-store",
+    "phase": "launch",
+    "store": "android-other",
+    "title": "Optional: publish on Samsung Galaxy Store",
+    "owner": "you",
+    "status": "todo",
+    "statusNote": "No Samsung seller account; optional after Play launch.",
+    "cost": "Free",
+    "time": "2 hours + 2-5 business days review (often longer)",
+    "steps": [
+      "Create a Samsung account and Seller Portal registration",
+      "Request commercial seller status (needed even for free apps)",
+      "Download the Play-signed universal APK from App bundle explorer",
+      "Import the listing from Play; upload the APK",
+      "Or register your own signing key in Play's developer verification page"
+    ],
+    "feedback": [
+      "Galaxy Store enforces Android developer verification.",
+      "AdMob works on Samsung phones (they have Google Play services)."
+    ],
+    "doneMessage": "Samsung phone owners can find the game in their default store too.",
+    "links": [
+      {"label": "Galaxy Store: how to distribute", "url": "https://developer.samsung.com/galaxy-store/how-to-distribute.html"},
+      {"label": "Developer verification guide", "url": "https://developer.android.com/developer-verification/guides"}
+    ],
+    "depends": ["google-production-release"]
+  },
+  {
+    "id": "android-other-skip",
+    "phase": "launch",
+    "store": "android-other",
+    "title": "Skip Amazon Appstore and Huawei AppGallery for now",
+    "owner": "you",
+    "status": "todo",
+    "statusNote": "Amazon closed its Android phone store on 20 Aug 2025; Huawei phones lack Google ads services.",
+    "cost": null,
+    "time": "5 min decision",
+    "steps": [
+      "Note Amazon only serves Fire tablets/TV now",
+      "Note HUAWEI Ads doesn't accept individuals",
+      "Revisit only if you add another ad network"
+    ],
+    "feedback": [
+      "AdMob depends on Google Play services, missing on Fire and new Huawei devices."
+    ],
+    "doneMessage": "You can focus on Google Play, where the audience and ad revenue are.",
+    "links": [
+      {"label": "Amazon Appstore submission", "url": "https://developer.amazon.com/docs/app-submission/submitting-apps-to-amazon-appstore.html"},
+      {"label": "Huawei AppGallery", "url": "https://developer.huawei.com/consumer/en/appgallery"}
+    ],
+    "depends": []
+  }
+]
