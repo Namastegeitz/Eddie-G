@@ -10,6 +10,7 @@ Real gameplay, rendered by the game at each store's exact size on High graphics 
 | `ipad-2752x2064/` | 2752×2064 | App Store: iPad 13-inch (required: the game runs on iPad) |
 
 The iPhone and iPad shots show the touch controls; the 1080p ones show the keyboard/gamepad HUD.
+Counts: 7 at 1920×1080, 6 for each iPhone size, 5 for iPad (Apple takes 1–10 per size).
 
 Shots, in suggested order:
 1. Saturn's Rings
