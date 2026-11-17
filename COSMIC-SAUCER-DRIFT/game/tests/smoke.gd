@@ -993,6 +993,31 @@ func _items_tests() -> void:
 		hud.size = old_size if old_size.x > 0.0 else Vector2(1280, 720)
 		hud._process(0.016)
 		check("landscape: energy label at the bottom", hud._energy_lbl.anchor_top == 1.0 and is_zero_approx(hud.bottom_pad()))
+		# Notches and rounded corners: a pretend safe area moves the HUD and the
+		# touch buttons in from the edges, while speed lines still fill the screen.
+		UiKit.debug_insets = Vector4(90, 30, 60, 20)
+		var ins := UiKit.safe_insets(hud.get_viewport())
+		check("safe area read in viewport units", ins.left > 0.0 and ins.top > 0.0 and ins.right > 0.0 and ins.bottom > 0.0)
+		hud._apply_safe()
+		check("HUD sits inside the safe area", is_equal_approx(hud.offset_left, ins.left) and is_equal_approx(hud.offset_right, -ins.right))
+		check("speed lines still reach the screen edges", is_equal_approx(hud._lines.offset_left, -ins.left))
+		var tc := TouchControls.new()
+		race.ui_layer.add_child(tc)
+		await get_tree().process_frame
+		tc._update_insets()
+		tc._layout()
+		var inside := true
+		var vsz := tc.size
+		for n in tc._buttons:
+			var r: Rect2 = tc._buttons[n]
+			inside = inside and r.position.x >= ins.left - 0.5 and r.end.x <= vsz.x - ins.right + 0.5 and r.end.y <= vsz.y - ins.bottom + 0.5
+		check("touch buttons clear the notch and corners", inside and not tc._buttons.is_empty())
+		check("touch stick zone starts past the notch", tc.stick_zone().position.x >= ins.left - 0.5)
+		check("resting stick clears the notch", tc.stick_home().x - tc.stick_radius() >= ins.left - 0.5)
+		tc.queue_free()
+		UiKit.debug_insets = Vector4.ZERO
+		hud._apply_safe()
+		check("no safe area on desktop", is_zero_approx(hud.offset_left) and is_zero_approx(hud.offset_top))
 		InputRouter.touch_seen = false
 		var rc := race.cams[0]
 		rc._fit_orientation()
@@ -1021,6 +1046,8 @@ func _menus() -> void:
 	await get_tree().process_frame
 	var menu: Control = get_tree().current_scene
 	check("menu loaded", menu != null and menu.has_method("show_screen"))
+	menu.show_screen("settings")
+	check("Settings has a privacy policy button", menu.privacy_btn != null and is_instance_valid(menu.privacy_btn) and UiKit.PRIVACY_URL.begins_with("https://"))
 	for s in ["home", "play", "cups", "quick", "tt", "bosses", "daily", "garage", "pilots", "achievements", "stats", "settings", "howto", "versus", "store", "title"]:
 		menu.show_screen(s)
 		await get_tree().process_frame

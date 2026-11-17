@@ -5,6 +5,7 @@ extends Node
 ## Transcendent Wonder (--oc=0..3 overclock) and fires it 25 frames before
 ## each shot. --biome=eerie|divine|off forces the scenery. --craft=<id>
 ## flies that craft (e.g. an HD one); --cockpit shoots from the seat.
+## --size=WxH renders at an exact store size; --notch fakes a phone notch.
 
 func _ready() -> void:
 	Save.disabled = true
@@ -26,10 +27,17 @@ func _ready() -> void:
 		Save.data.garage.saucer = craft
 		Upgrades.st().tiers[craft] = 3
 		Upgrades.set_overclock(craft, int(args.get("oc", "1")))
+	if args.has("notch"):   # pretend phone notch on the left and home bar at the bottom
+		UiKit.debug_insets = Vector4(110, 0, 40, 40)
 	if args.has("craft"):   # fly any craft, e.g. an HD one (--craft=aurora)
 		Save.unlock_saucer(String(args.craft))
 		Save.data.garage.saucer = String(args.craft)
-	DisplayServer.window_set_size(Vector2i(720, 1280) if args.has("portrait") else Vector2i(1280, 720))
+	var win := Vector2i(720, 1280) if args.has("portrait") else Vector2i(1280, 720)
+	if args.has("size"):   # exact store sizes, e.g. --size=2868x1320 (run xvfb with a big enough screen)
+		var wh := String(args.size).split("x")
+		win = Vector2i(int(wh[0]), int(wh[1]))
+	if not args.has("size"):   # with --size, start Godot with --resolution WxH as well
+		DisplayServer.window_set_size(win)
 	await get_tree().process_frame
 	Game.fit_orientation()
 	for t in tracks:
@@ -73,7 +81,7 @@ func _ready() -> void:
 					race.racers[0].wonder.activate()
 			await RenderingServer.frame_post_draw
 			var img := get_viewport().get_texture().get_image()
-			var path := "%s/%s%s_v%d_f%s%s%s%s%s%s.png" % [out, t, ("_" + str(args.wonder)) if args.has("wonder") else (("_" + str(args.craft)) if args.has("craft") else ""), variant, target, ("_" + str(args.quality)) if args.has("quality") else "", "_ck" if args.has("cockpit") else "", "_portrait" if args.has("portrait") else "", "_touch" if args.has("touch") else "", ("_mouse" if args.has("mouse") else "_keys") if args.has("hints") else ""]
+			var path := "%s/%s%s%s_v%d_f%s%s%s%s%s%s.png" % [out, (String(args.size) + "_") if args.has("size") else "", t, ("_" + str(args.wonder)) if args.has("wonder") else (("_" + str(args.craft)) if args.has("craft") else ""), variant, target, ("_" + str(args.quality)) if args.has("quality") else "", "_ck" if args.has("cockpit") else "", "_portrait" if args.has("portrait") else "", "_touch" if args.has("touch") else "", ("_mouse" if args.has("mouse") else "_keys") if args.has("hints") else ""]
 			img.save_png(ProjectSettings.globalize_path("res://" + path) if not path.begins_with("/") else path)
 			print("saved ", path)
 		race.queue_free()

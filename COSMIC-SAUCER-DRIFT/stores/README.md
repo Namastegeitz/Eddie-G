@@ -18,4 +18,9 @@ have on this computer, what's missing, the steps, and sources. Researched **17 N
 **Suggested order:** itch.io this week → open the Play account and pay the Steam fee
 (both clocks start) → App Store → the optional stores → GOG.
 
+Shared by several stores:
+- [`screenshots/`](screenshots/): real gameplay at 1920×1080, iPhone and iPad sizes
+- [`trailer/`](trailer/): the gameplay trailer plus Apple's app previews
+- [`AGE_RATINGS.md`](AGE_RATINGS.md): the same rating answers for every questionnaire
+
 The live checklist (link in [`../README.md`](../README.md)) tracks every step and collects bug reports.

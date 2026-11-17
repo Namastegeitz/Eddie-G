@@ -144,6 +144,13 @@ godot --headless --path . res://tools/meshy/bake_craft.tscn -- --only=lancer
 xvfb-run -a godot --path . res://tests/shots.tscn --rendering-driver opengl3 -- --tracks=ceres --frames=520 --craft=lancer --cockpit
 # Raw craft GLBs are not in git: download them again for free by task id
 MESHY_API_KEY=proxy-injected python3 tools/meshy/generate.py --source craft --refetch
+# Store screenshots at exact sizes (High graphics; a big virtual screen for the large ones),
+# then flatten and name them: COSMIC-SAUCER-DRIFT/stores/screenshots/finish.py
+xvfb-run -a -s "-screen 0 3000x2200x24" godot --path . --resolution 2868x1320 res://tests/shots.tscn --rendering-driver opengl3 -- --size=2868x1320 --quality=high --touch --tracks=saturn_rings --frames=420 --out=../stores/screenshots/iphone-2868x1320
+# Pretend phone notch (checks the safe area): add --notch to any shots run
+# Trailer: record frames at a fixed 30 fps, then cut them with titles, captions and music
+xvfb-run -a -s "-screen 0 2000x1200x24" godot --path . --resolution 1920x1080 --fixed-fps 30 res://tests/trailer.tscn --rendering-driver opengl3 -- --out=/tmp/frames
+bash tools/make_trailer.sh /tmp/frames ../stores/trailer
 # Meshy pipeline against a local mock (no network, no key)
 python3 tools/meshy/test_pipeline.py
 # Regenerate the import-slot test fixture (a game-made GLB, not a Meshy asset)

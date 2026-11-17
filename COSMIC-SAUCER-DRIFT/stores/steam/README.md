@@ -8,14 +8,13 @@ everything else.
 - Windows, Linux and macOS builds → [`../../builds/`](../../builds/) (macOS still unsigned)
 - Full gamepad, keyboard and mouse support; runs at 1280×800 (Steam Deck size)
 - Store text to adapt → `game/docs/STORE_LISTING.md`
+- 7 screenshots at 1920×1080 → [`../screenshots/1920x1080/`](../screenshots/1920x1080/)
+- Trailer, 1920×1080, 30 fps, with music → [`../trailer/`](../trailer/)
 
 ## Missing
 - [ ] Steamworks account: identity, tax interview, bank (15–30 days in total)
 - [ ] Store assets at Steam's sizes (Claude can render them from the game)
-- [ ] At least 5 screenshots at **1920×1080** (Claude can render)
-- [ ] Trailer (.mp4, up to 1920×1080, 30/60 fps): Claude can capture gameplay and cut one
-- [ ] Content survey (incl. AI disclosure: the 3D craft and rock models come from Meshy, so
-      declare AI-generated art that players see)
+- [ ] Content survey: answers in [`../AGE_RATINGS.md`](../AGE_RATINGS.md), AI disclosure ready in [`AI_DISCLOSURE.md`](AI_DISCLOSURE.md)
 - [ ] steamcmd upload: blocked on this computer (download host not allowed); works from
       any PC with the Steamworks SDK
 

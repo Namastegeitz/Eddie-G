@@ -33,9 +33,14 @@ var _sig_h := 0            # hash of what was drawn last frame; redraw only on c
 var blockers: Array[Control] = []   # e.g. the COCKPIT tab: touches there aren't the joystick
 
 
+var _ins := {"left": 0.0, "top": 0.0, "right": 0.0, "bottom": 0.0}   # screen safe area (cached)
+
+
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	_update_insets()
+	get_viewport().size_changed.connect(_update_insets)
 	InputRouter.touch.active = true
 	_pedal_box = StyleBoxFlat.new()
 	_pedal_box.set_corner_radius_all(22)
@@ -79,16 +84,31 @@ func stick_radius() -> float:
 ## Where the stick rests when no thumb is on it.
 func stick_home() -> Vector2:
 	var r := stick_radius()
-	return Vector2(r + 60.0 * _unit(), size.y - r - 50.0 * _unit())
+	return Vector2(_ins.left + r + 60.0 * _unit(), size.y - _ins.bottom - r - 50.0 * _unit())
 
 
 ## Touches that start here grab the joystick.
+func _update_insets() -> void:
+	_ins = UiKit.safe_insets(get_viewport())
+	queue_redraw()
+
+
 func stick_zone() -> Rect2:
-	return Rect2(0, size.y * 0.32, size.x * 0.45, size.y * 0.68)
+	return Rect2(_ins.left, size.y * 0.32, size.x * 0.45, size.y * 0.68)
 
 
 func _layout() -> void:
-	var s := size
+	# Work inside the safe area, then shift every button by its top-left.
+	var o := Vector2(_ins.left, _ins.top)
+	var s := size - Vector2(_ins.left + _ins.right, _ins.top + _ins.bottom)
+	_layout_in(s)
+	if o != Vector2.ZERO:
+		for n in _buttons:
+			var r: Rect2 = _buttons[n]
+			_buttons[n] = Rect2(r.position + o, r.size)
+
+
+func _layout_in(s: Vector2) -> void:
 	var u := _unit()
 	var b := 150.0 * u
 	var m := 24.0 * u
@@ -115,7 +135,7 @@ func _input(e: InputEvent) -> void:
 			if _mode() == "joystick" and _stick_id < 0 and stick_zone().has_point(e.position) and not _on_button(e.position) and not _blocked(e.position):
 				_stick_id = e.index
 				var r := stick_radius()
-				_stick_base = Vector2(clampf(e.position.x, r, size.x - r), clampf(e.position.y, r, size.y - r))
+				_stick_base = Vector2(clampf(e.position.x, _ins.left + r, size.x - _ins.right - r), clampf(e.position.y, _ins.top + r, size.y - _ins.bottom - r))
 				_stick_knob = e.position
 		else:
 			_touches.erase(e.index)

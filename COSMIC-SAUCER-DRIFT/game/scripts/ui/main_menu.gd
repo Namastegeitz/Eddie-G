@@ -24,6 +24,19 @@ var _portrait_wait := {}   # pilot id -> TextureRects waiting for their portrait
 var _rx := {}              # Racers / Pilots page widgets updated in place
 
 
+var _menu_margin: MarginContainer = null
+var privacy_btn: Button = null   # Settings > Privacy policy (opens the public page)
+
+
+## 22 px of breathing room plus the screen's safe area (notches, corners).
+func _apply_safe_margin() -> void:
+	if _menu_margin == null:
+		return
+	var ins := UiKit.safe_insets(get_viewport()) if is_inside_tree() else {"left": 0.0, "top": 0.0, "right": 0.0, "bottom": 0.0}
+	for side in ["left", "right", "top", "bottom"]:
+		_menu_margin.add_theme_constant_override("margin_" + side, 22 + int(ins[side]))
+
+
 func _ready() -> void:
 	theme = UiKit.theme()
 	physics_interpolation_mode = Node.PHYSICS_INTERPOLATION_MODE_OFF
@@ -47,9 +60,10 @@ func _ready() -> void:
 	# Layout: header + content.
 	var margin := MarginContainer.new()
 	margin.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	for side in ["left", "right", "top", "bottom"]:
-		margin.add_theme_constant_override("margin_" + side, 22)
+	_menu_margin = margin
+	_apply_safe_margin()
 	add_child(margin)
+	get_viewport().size_changed.connect(_apply_safe_margin)
 	var col := UiKit.vbox(14)
 	margin.add_child(col)
 	var header := UiKit.hbox(14)
@@ -1463,6 +1477,8 @@ func _settings() -> Control:
 	ts.value_changed.connect(func(x: float) -> void: Save.set_setting("tilt_sensitivity", x))
 	srow.add_child(ts)
 	v.add_child(_wrap("Privacy: Cosmic Saucer Drift collects no personal data. Progress is saved only on this device. No ads in this version.", 16))
+	privacy_btn = UiKit.button("Privacy policy ↗", func() -> void: OS.shell_open(UiKit.PRIVACY_URL), 20)
+	v.add_child(privacy_btn)
 	var reset := UiKit.button("Reset all progress…", func() -> void: pass, 20)
 	reset.pressed.connect(func() -> void:
 		if reset.text.begins_with("Tap again"):

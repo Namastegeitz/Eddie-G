@@ -44,18 +44,22 @@ collected). Graphics are in `docs/store/`.
 > Stasis Fields, Phase Cloaks and Repulsor Pulses. The further back you
 > are, the better your comeback tools; leaders get the traps and decoys.
 >
-> **Fly alien spacecraft.** 14 detailed craft, from classic saucers to a
-> living Bio-Ship, a Crystal Shard and premium showpieces like the Solar Sail
-> Yacht and the Quasar Dragon, each with its own perk. Earn Race Credits to
-> unlock and upgrade them, and customise paint, decals, domes and trails.
+> **Fly alien spacecraft.** 15 craft, from classic saucers to a living
+> Bio-Ship, a Crystal Shard, premium showpieces like the Solar Sail Yacht and
+> the Quasar Dragon with their own Technical Wonders, and the realistic HD
+> Aurora Interceptor. Earn Race Credits to unlock and upgrade them, and
+> customise paint, decals, domes and trails.
 >
-> **Pilots with personality.** Eight alien pilots who blink, look where
-> you steer, grin when they boost, see stars when they're hit and cheer
-> when they win.
+> **Race from the cockpit.** Switch to first person and race from a
+> detailed 3D cockpit, with the track rushing past the canopy.
+>
+> **Pilots with personality.** 16 pilots, aliens and mystical creatures,
+> who blink, look where you steer, grin when they boost, see stars when
+> they're hit and cheer when they win.
 >
 > **Plenty to do.** Galactic Cups across four star systems and a Grand Prix
 > finale, Quick Races, Time Trials against your own ghost, boss races to
-> recruit eight alien pilots, a new Daily Challenge every day,
+> recruit boss pilots, a new Daily Challenge every day,
 > achievements, and 2-player split-screen.
 >
 > - Plays offline

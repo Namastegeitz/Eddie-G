@@ -12,6 +12,11 @@ const RED := Color(1.0, 0.3, 0.3)
 const DIM := Color(0.62, 0.6, 0.78)
 
 static var _theme: Theme = null
+## Pretend screen insets for tests and screenshots (window pixels:
+## x = left, y = top, z = right, w = bottom). Zero means "ask the device".
+static var debug_insets := Vector4.ZERO
+## Link to the public privacy policy (Settings > Privacy policy).
+const PRIVACY_URL := "https://claude.ai/artifact/12KFSui6FLptDfppK9aVCp"
 static var _bold: FontVariation = null
 
 
@@ -85,6 +90,32 @@ static func _dot(sz: int, c: Color) -> ImageTexture:
 
 ## Pin a control to an anchor point of its parent (0..1 each axis) with an
 ## offset and size in pixels. Works for free-floating HUD controls.
+## The screen's safe area as insets in this viewport's units
+## ({left, top, right, bottom}): room for notches, camera holes and rounded
+## corners on phones (Android 16 always draws edge to edge). Zero on desktop.
+static func safe_insets(vp: Viewport) -> Dictionary:
+	var out := {"left": 0.0, "top": 0.0, "right": 0.0, "bottom": 0.0}
+	if vp == null:
+		return out
+	var win := Vector2(DisplayServer.window_get_size())
+	if win.x < 1.0 or win.y < 1.0:
+		return out
+	var px := debug_insets
+	if px == Vector4.ZERO:
+		if not (OS.has_feature("mobile") and OS.get_name() in ["Android", "iOS"]):
+			return out
+		var safe := Rect2(DisplayServer.get_display_safe_area())
+		var wp := Vector2(DisplayServer.window_get_position())
+		px = Vector4(safe.position.x - wp.x, safe.position.y - wp.y,
+			wp.x + win.x - safe.end.x, wp.y + win.y - safe.end.y)
+	var k := vp.get_visible_rect().size / win
+	out.left = clampf(px.x, 0.0, win.x * 0.2) * k.x
+	out.top = clampf(px.y, 0.0, win.y * 0.2) * k.y
+	out.right = clampf(px.z, 0.0, win.x * 0.2) * k.x
+	out.bottom = clampf(px.w, 0.0, win.y * 0.2) * k.y
+	return out
+
+
 static func place(c: Control, anchor: Vector2, offset: Vector2, sz: Vector2) -> void:
 	c.anchor_left = anchor.x
 	c.anchor_right = anchor.x

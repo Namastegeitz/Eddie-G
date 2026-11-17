@@ -13,12 +13,15 @@ new personal accounts must run a 14-day closed test first.
 - Export preset "Android AAB": Gradle build, **target SDK 36** (raised 17 Nov), min SDK 24,
   arm64-v8a + armeabi-v7a, category Game, no internet permission, back button handled
 - Test APK for your phone → [`../../builds/android-apk-debug/`](../../builds/android-apk-debug/)
+- 1920×1080 screenshots for Play's game promotion slots → [`../screenshots/1920x1080/`](../screenshots/1920x1080/)
+- Trailer for the listing's YouTube video → [`../trailer/`](../trailer/) (upload to YouTube; unlisted is fine)
+- HUD, touch controls and menus stay inside the screen's safe area (Android 16 edge-to-edge)
+- Privacy policy button in Settings
 
 ## Missing
 - [ ] The signed **AAB**: needs your upload key + Android SDK platform 36 → [`../../builds/android-aab-release/`](../../builds/android-aab-release/)
 - [ ] A public URL for the privacy policy
-- [ ] 1920×1080 screenshots (needed only for Play's game promotion slots; Claude can render them)
-- [ ] Safe-area check on notched phones (Android 16 forces edge-to-edge)
+- [ ] Check on a real Android 16 phone: Back button, and the HUD clear of the camera hole
 
 ## Requirements today
 | Item | Rule | For this game |

@@ -78,6 +78,8 @@ func setup(p_race: Node, p_racer: Racer, is_compact: bool) -> void:
 	_lines_mat.set_shader_parameter("amount", 0.0)
 	_lines.visible = true   # drawn invisible for a moment so its shader compiles before the first boost
 	add_child(_lines)
+	if not compact:
+		_apply_safe.call_deferred()
 	get_tree().create_timer(0.5).timeout.connect(func() -> void:
 		if is_instance_valid(_lines) and _lines_amt <= 0.01:
 			_lines.visible = false)
@@ -178,6 +180,26 @@ func _place_bottom() -> void:
 
 
 ## The pause button (made by the race) is laid out with the HUD.
+## Keep the HUD inside the screen's safe area (notches, rounded corners);
+## the speed lines still run to the screen's edges.
+func _apply_safe() -> void:
+	if not is_inside_tree():
+		return
+	var vp := get_viewport()
+	if not vp.size_changed.is_connected(_apply_safe):
+		vp.size_changed.connect(_apply_safe)
+	var ins := UiKit.safe_insets(vp)
+	offset_left = ins.left
+	offset_top = ins.top
+	offset_right = -ins.right
+	offset_bottom = -ins.bottom
+	if _lines:
+		_lines.offset_left = -ins.left
+		_lines.offset_top = -ins.top
+		_lines.offset_right = ins.right
+		_lines.offset_bottom = ins.bottom
+
+
 func add_pause(btn: Control) -> void:
 	pause_btn = btn
 	add_child(btn)

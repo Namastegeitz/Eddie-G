@@ -16,14 +16,16 @@ A cloud Mac also works for that step.
   - launch storyboard
 - Touch controls for the whole single-player game; gamepad support too
 - Privacy answers: the game collects nothing → **"Data Not Collected"**
-- Store text to adapt → `game/docs/STORE_LISTING.md`
+- **App Store text, keywords, review notes, age-rating and privacy answers** → [`LISTING.md`](LISTING.md)
+- **Screenshots** at Apple's sizes (iPhone 2622×1206 and 2868×1320, iPad 2752×2064) → [`../screenshots/`](../screenshots/)
+- **App previews** (30 s, 1920×886 iPhone and 1600×1200 iPad) → [`../trailer/`](../trailer/)
+- **Privacy policy button inside the game** (Settings), for guideline 5.1.1(i)
+- HUD and touch controls keep clear of the notch / Dynamic Island (safe area)
 
 ## Missing
 - [ ] Apple Developer Program membership, then your **Team ID** in the Godot iOS preset (placeholder `ABCDE12345`)
 - [ ] A Mac or cloud Mac to archive and upload (Xcode 26 or later)
-- [ ] **Privacy policy button inside the game** (guideline 5.1.1(i))
-- [ ] Public privacy policy URL and support URL
-- [ ] Screenshots at Apple's sizes (Claude can render them)
+- [ ] Public privacy policy URL (make the Claude page public) and a support URL
 - [ ] EU trader-status answer (you)
 
 ## Requirements today
