@@ -12,6 +12,8 @@ done = 0
 for folder in ("1920x1080", "iphone-2868x1320", "ipad-2752x2064"):
     for f in sorted(glob.glob(os.path.join(HERE, folder, "*.png"))):
         base = os.path.basename(f)
+        if "_" not in base:
+            continue   # already finished (plain name)
         track = next((t for t in NAMES if "_" + t + "_" in "_" + base.split("_", 1)[1]), None)
         if track is None:
             continue   # already finished (plain name)
