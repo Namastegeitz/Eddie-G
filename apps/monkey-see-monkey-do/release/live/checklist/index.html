@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Monkey Do Launch Checklist</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Nunito:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+  /* One visual world: the game's jungle at night. Layout: summary, up-next strip, then one card per phase. */
+  :root {
+    --bg: #0c2c21;
+    --panel: #12392b;
+    --panel-2: #184736;
+    --line: rgba(232, 246, 230, 0.13);
+    --text: #f3f6ee;
+    --dim: #b6cbbd;
+    --accent: #ffd23f;
+    --done: #36d17a;
+    --doing: #59b6ff;
+    --warn: #ff9b54;
+    --display: 'Lilita One', 'Arial Rounded MT Bold', system-ui, sans-serif;
+    --body: 'Nunito', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body { background: var(--bg); color: var(--text); font: 16px/1.5 var(--body); padding: 20px 16px 48px; }
+  main { max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; gap: 16px; }
+  h1, h2, h3 { font-family: var(--display); font-weight: 400; letter-spacing: 0.01em; margin: 0; text-wrap: balance; }
+  a { color: var(--accent); }
+  button { font: inherit; color: inherit; }
+  :focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; border-radius: 6px; }
+
+  header.top { display: grid; grid-template-columns: 1fr auto; gap: 16px; align-items: center; }
+  .project { font-size: clamp(30px, 7vw, 46px); line-height: 1; text-transform: uppercase; }
+  .sub { color: var(--dim); margin-top: 6px; }
+  .ring { width: 112px; height: 112px; position: relative; }
+  .ring svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+  .ring .num { position: absolute; inset: 0; display: grid; place-items: center; text-align: center; font-family: var(--display); font-size: 28px; line-height: 1; }
+  .ring .num small { display: block; font-family: var(--body); font-size: 12px; color: var(--dim); font-weight: 700; }
+
+  .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
+  .tile { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 10px 14px; }
+  .tile b { font-family: var(--display); font-size: 26px; font-weight: 400; font-variant-numeric: tabular-nums; }
+  .tile span { display: block; color: var(--dim); font-size: 14px; }
+
+  .status-line { font-size: 14px; color: var(--dim); min-height: 21px; }
+  .status-line.warn { color: var(--warn); }
+
+  nav.tabs { display: flex; gap: 8px; flex-wrap: wrap; }
+  nav.tabs button { background: var(--panel); border: 1px solid var(--line); border-radius: 999px; padding: 6px 14px; cursor: pointer; font-weight: 800; color: var(--dim); }
+  nav.tabs button[aria-pressed="true"] { background: var(--accent); color: #23160c; border-color: var(--accent); }
+
+  .next { background: linear-gradient(135deg, #1f5a43, var(--panel)); border: 1px solid var(--line); border-radius: 18px; padding: 14px 16px; display: grid; gap: 10px; }
+  .next h2 { font-size: 22px; }
+  .next-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 10px; }
+  .next-item { background: rgba(0, 0, 0, 0.18); border-radius: 12px; padding: 10px 12px; cursor: pointer; border: 1px solid transparent; text-align: left; }
+  .next-item:hover { border-color: var(--accent); }
+  .next-item .who { font-size: 12px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent); }
+
+  .phase { background: var(--panel); border: 1px solid var(--line); border-radius: 18px; overflow: hidden; }
+  .phase-head { display: grid; grid-template-columns: 1fr auto; gap: 6px 12px; padding: 14px 16px 12px; border-bottom: 1px solid var(--line); }
+  .phase-head h2 { font-size: 22px; }
+  .phase-head .meta { color: var(--dim); font-size: 14px; grid-column: 1 / -1; }
+  .phase-head .count { font-family: var(--display); font-size: 20px; font-variant-numeric: tabular-nums; align-self: start; }
+  .bar { grid-column: 1 / -1; height: 8px; background: rgba(0, 0, 0, 0.3); border-radius: 99px; overflow: hidden; }
+  .bar i { display: block; height: 100%; background: var(--done); border-radius: 99px; transition: width 0.4s; }
+  .phase.complete .phase-head h2::after { content: '  ✓ complete'; color: var(--done); font-family: var(--body); font-size: 15px; font-weight: 800; }
+
+  ol.steps { list-style: none; margin: 0; padding: 0; }
+  li.step { border-top: 1px solid var(--line); }
+  li.step:first-child { border-top: 0; }
+  .row { display: grid; grid-template-columns: auto 1fr auto; gap: 12px; align-items: start; padding: 12px 16px; }
+  .check { width: 34px; height: 34px; border-radius: 50%; border: 2.5px solid var(--dim); background: transparent; cursor: pointer; display: grid; place-items: center; padding: 0; flex: none; transition: background 0.2s, border-color 0.2s, transform 0.15s; }
+  .check svg { width: 20px; height: 20px; opacity: 0; transition: opacity 0.2s; }
+  .check:hover { border-color: var(--done); }
+  .check:disabled { cursor: default; opacity: 0.65; }
+  .step.done .check { background: var(--done); border-color: var(--done); }
+  .step.done .check svg { opacity: 1; }
+  .step.doing .check { border-color: var(--doing); border-style: dashed; }
+  .step.skip .check { border-style: dotted; }
+  .step.pop .check { transform: scale(1.18); }
+  .title-btn { background: none; border: 0; text-align: left; padding: 4px 0 0; cursor: pointer; font-weight: 800; font-size: 17px; line-height: 1.3; }
+  .step.done .title-btn { color: var(--dim); }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 5px; }
+  .chip { font-size: 12px; font-weight: 800; border-radius: 999px; padding: 1px 9px; background: rgba(255, 255, 255, 0.08); color: var(--dim); }
+  .chip.you { background: rgba(255, 210, 63, 0.16); color: var(--accent); }
+  .chip.claude { background: rgba(89, 182, 255, 0.16); color: #9fd2ff; }
+  .chip.both { background: rgba(255, 255, 255, 0.12); color: var(--text); }
+  .chip.state-done { background: rgba(54, 209, 122, 0.18); color: #7ff0ae; }
+  .chip.state-doing { background: rgba(89, 182, 255, 0.18); color: #9fd2ff; }
+  .chip.wait { background: rgba(255, 155, 84, 0.16); color: #ffc08f; }
+  .when { color: var(--dim); font-size: 13px; margin-top: 4px; }
+  .toggle { background: none; border: 0; color: var(--dim); cursor: pointer; padding: 6px; font-size: 20px; line-height: 1; }
+  .details { padding: 0 16px 16px 62px; display: grid; gap: 10px; }
+  .details[hidden] { display: none; }
+  .details h3 { font-family: var(--body); font-size: 13px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: var(--dim); }
+  .details p, .details ol { margin: 2px 0 0; }
+  .details ol { padding-left: 20px; }
+  .tip { background: rgba(255, 210, 63, 0.1); border-left: 4px solid var(--accent); border-radius: 8px; padding: 8px 12px; }
+  .feedback { background: rgba(54, 209, 122, 0.12); border-left: 4px solid var(--done); border-radius: 8px; padding: 8px 12px; }
+  .actions { display: flex; flex-wrap: wrap; gap: 8px; }
+  .btn { background: var(--panel-2); border: 1px solid var(--line); border-radius: 10px; padding: 7px 12px; cursor: pointer; font-weight: 800; }
+  .btn.primary { background: var(--done); color: #08291a; border-color: var(--done); }
+  .btn:disabled { opacity: 0.5; cursor: default; }
+  textarea { width: 100%; min-height: 64px; background: rgba(0, 0, 0, 0.22); color: var(--text); border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px; font: inherit; resize: vertical; }
+  .note-state { font-size: 13px; color: var(--dim); }
+
+  .toast { position: fixed; left: 50%; bottom: 20px; transform: translate(-50%, 140%); background: #0a2219; border: 1px solid var(--done); border-radius: 14px; padding: 12px 16px; width: min(560px, calc(100% - 32px)); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45); transition: transform 0.3s; z-index: 10; }
+  .toast.show { transform: translate(-50%, 0); }
+  .toast b { color: #7ff0ae; }
+
+  .activity { background: var(--panel); border: 1px solid var(--line); border-radius: 18px; padding: 14px 16px; display: grid; gap: 12px; }
+  .activity ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+  .activity li { display: grid; grid-template-columns: auto 1fr; gap: 10px; font-size: 15px; }
+  .activity time { color: var(--dim); font-size: 13px; font-variant-numeric: tabular-nums; min-width: 92px; }
+  canvas#chart { width: 100%; height: 160px; display: block; }
+  .empty { color: var(--dim); }
+  footer { color: var(--dim); font-size: 13px; text-align: center; }
+  @media (max-width: 520px) {
+    header.top { grid-template-columns: 1fr; }
+    .ring { width: 92px; height: 92px; }
+    .details { padding-left: 16px; }
+  }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+<main>
+  <header class="top">
+    <div>
+      <h1 class="project">Monkey See, Monkey Do</h1>
+      <div class="sub">Launch checklist: from beta to the App Store, Google Play, Steam, GOG, itch.io and more. Tick a step when it's done; Claude ticks its own.</div>
+    </div>
+    <div class="ring" aria-label="Overall progress">
+      <svg viewBox="0 0 36 36" aria-hidden="true"><circle cx="18" cy="18" r="15.5" fill="none" stroke="rgba(255,255,255,.12)" stroke-width="4"/><circle id="ring-arc" cx="18" cy="18" r="15.5" fill="none" stroke="#36d17a" stroke-width="4" stroke-linecap="round" stroke-dasharray="0 100" pathLength="100"/></svg>
+      <div class="num"><span id="pct">0%</span><small>done</small></div>
+    </div>
+  </header>
+
+  <section class="tiles" aria-label="Summary">
+    <div class="tile"><b id="t-done">0</b><span>steps done</span></div>
+    <div class="tile"><b id="t-you">0</b><span>waiting on you</span></div>
+    <div class="tile"><b id="t-claude">0</b><span>Claude's queue</span></div>
+    <div class="tile"><b id="t-phase">-</b><span>current phase</span></div>
+  </section>
+  <div class="status-line" id="status" role="status">Loading the checklist...</div>
+
+  <section class="next" aria-labelledby="next-h">
+    <h2 id="next-h">Up next</h2>
+    <div class="next-list" id="next"></div>
+  </section>
+
+  <nav class="tabs" aria-label="Filter steps">
+    <button type="button" data-f="all" aria-pressed="true">All steps</button>
+    <button type="button" data-f="you" aria-pressed="false">Yours</button>
+    <button type="button" data-f="claude" aria-pressed="false">Claude's</button>
+    <button type="button" data-f="open" aria-pressed="false">Not done</button>
+    <button type="button" data-f="activity" aria-pressed="false">Progress log</button>
+  </nav>
+
+  <div id="phases"></div>
+
+  <section class="activity" id="activity-view" hidden aria-labelledby="act-h">
+    <h2 id="act-h">Progress log</h2>
+    <canvas id="chart" width="860" height="160" aria-label="Steps done over time"></canvas>
+    <ul id="log"></ul>
+  </section>
+
+  <footer>The same checklist lives in the repository as apps/monkey-see-monkey-do/release/README.md. Steps and tips come from release/checklist.json.</footer>
+</main>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function () {
+  'use strict';
+  const CHECK = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="#08291a" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  const OWNER = { you: 'You', claude: 'Claude', both: 'You + Claude' };
+  let data = null;               // checklist.json
+  let status = {};               // stepId -> { state, by, at, note }
+  let log = [];                  // activity entries
+  let db = null, user = null, myId = null, canWrite = false;
+  let filter = 'all';
+  const open = new Set();
+  const $ = (s, r = document) => r.querySelector(s);
+  const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const steps = () => data.phases.flatMap((p) => p.steps.map((s) => ({ ...s, phase: p })));
+  const stateOf = (id) => (status[id] && status[id].state) || 'todo';
+  const isDone = (id) => stateOf(id) === 'done' || stateOf(id) === 'skip';
+  const ready = (s) => (s.needs || []).every(isDone);
+  const byName = (by) => (by === 'claude' ? 'Claude' : by && by === myId ? 'you' : by ? 'an editor' : 'someone');
+  const ago = (iso) => {
+    if (!iso) return '';
+    const s = (Date.now() - new Date(iso).getTime()) / 1000;
+    if (s < 60) return 'just now';
+    if (s < 3600) return Math.round(s / 60) + ' min ago';
+    if (s < 86400) return Math.round(s / 3600) + ' h ago';
+    return new Date(iso).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+  };
+  function setStatus(msg, warn) { const el = $('#status'); el.textContent = msg || ''; el.classList.toggle('warn', !!warn); }
+  function toast(html) {
+    const t = $('#toast');
+    t.innerHTML = html;
+    t.classList.add('show');
+    clearTimeout(toast.h);
+    toast.h = setTimeout(() => t.classList.remove('show'), 5200);
+  }
+
+  // ---------------------------------------------------------------- render
+  function render() {
+    if (!data) return;
+    const all = steps();
+    const required = all.filter((s) => !s.optional);
+    const doneReq = required.filter((s) => isDone(s.id)).length;
+    const pct = Math.round((doneReq / required.length) * 100);
+    $('#pct').textContent = pct + '%';
+    $('#ring-arc').setAttribute('stroke-dasharray', pct + ' 100');
+    $('#t-done').textContent = `${all.filter((s) => isDone(s.id)).length} / ${all.length}`;
+    $('#t-you').textContent = all.filter((s) => !isDone(s.id) && s.owner !== 'claude' && ready(s)).length;
+    $('#t-claude').textContent = all.filter((s) => !isDone(s.id) && s.owner !== 'you' && ready(s)).length;
+    const cur = data.phases.find((p) => p.steps.some((s) => !s.optional && !isDone(s.id)));
+    $('#t-phase').textContent = cur ? cur.name.replace(/ \(.*\)$/, '') : 'All done!';
+
+    // up next: the first few open steps whose prerequisites are done, yours first
+    const nexts = all.filter((s) => !isDone(s.id) && !s.optional && ready(s));
+    const pick = [...nexts.filter((s) => s.owner !== 'claude').slice(0, 2), ...nexts.filter((s) => s.owner === 'claude').slice(0, 1)];
+    $('#next').innerHTML = pick.length ? pick.map((s) => `<button type="button" class="next-item" data-go="${s.id}"><div class="who">${s.owner === 'claude' ? "Claude's next" : 'Your next'} · ${esc(s.phase.name)}</div><div><b>${esc(s.title)}</b></div><div class="when">${esc(s.tip)}</div></button>`).join('') : '<p class="empty">Nothing waiting. Everything that can be done is done.</p>';
+
+    const showAct = filter === 'activity';
+    $('#activity-view').hidden = !showAct;
+    $('#phases').hidden = showAct;
+    if (showAct) return renderActivity();
+
+    $('#phases').innerHTML = data.phases.map((p) => {
+      const list = p.steps.filter((s) => filter === 'all' || (filter === 'you' && s.owner !== 'claude') || (filter === 'claude' && s.owner !== 'you') || (filter === 'open' && !isDone(s.id)));
+      if (!list.length) return '';
+      const req0 = p.steps.filter((s) => !s.optional);
+      const req = req0.length ? req0 : p.steps; // an all-optional phase counts every step
+      const d = req.filter((s) => isDone(s.id)).length;
+      const complete = req0.length > 0 && d === req.length;
+      return `<section class="phase${complete ? ' complete' : ''}" id="phase-${p.id}" aria-labelledby="h-${p.id}">
+        <div class="phase-head"><h2 id="h-${p.id}">${esc(p.name)}</h2><span class="count">${d}/${req.length}${req0.length ? '' : ' optional'}</span>
+          <div class="bar" aria-hidden="true"><i style="width:${Math.round((d / req.length) * 100)}%"></i></div>
+          <div class="meta">${esc(p.goal)} · Cost: ${esc(p.cost)} · Folder: ${esc(p.folder)}</div></div>
+        <ol class="steps">${list.map(stepHtml).join('')}</ol></section>`;
+    }).join('');
+  }
+
+  function stepHtml(s) {
+    const st = status[s.id] || {};
+    const state = st.state || 'todo';
+    const waiting = (s.needs || []).filter((n) => !isDone(n));
+    const needTitles = waiting.map((n) => (steps().find((x) => x.id === n) || { title: n }).title);
+    const chips = [`<span class="chip ${s.owner}">${OWNER[s.owner]}</span>`];
+    if (s.optional) chips.push('<span class="chip">Optional</span>');
+    if (state === 'doing') chips.push('<span class="chip state-doing">In progress</span>');
+    if (state === 'skip') chips.push('<span class="chip">Skipped</span>');
+    if (waiting.length && !isDone(s.id)) chips.push(`<span class="chip wait">After: ${esc(needTitles.join(', '))}</span>`);
+    const when = state === 'done' ? `<div class="when">Done by ${esc(byName(st.by))} · ${esc(ago(st.at))}</div>` : st.at && state !== 'todo' ? `<div class="when">Updated ${esc(ago(st.at))}</div>` : '';
+    const isOpen = open.has(s.id);
+    const unlocks = steps().filter((x) => (x.needs || []).includes(s.id));
+    const fb = state === 'done'
+      ? `<div class="feedback"><b>Done.</b> ${unlocks.length ? 'This unlocks: ' + esc(unlocks.map((u) => u.title).join('; ')) + '.' : 'Nothing else was waiting on this one.'}</div>`
+      : waiting.length ? `<div class="tip"><b>Do these first:</b> ${esc(needTitles.join('; '))}. You can still tick this if it's already done.</div>` : '';
+    return `<li class="step ${state}" id="step-${s.id}">
+      <div class="row">
+        <button type="button" class="check" data-check="${s.id}" aria-pressed="${state === 'done'}" aria-label="${state === 'done' ? 'Mark not done' : 'Mark done'}: ${esc(s.title)}" ${canWrite ? '' : 'disabled'}>${CHECK}</button>
+        <div><button type="button" class="title-btn" data-open="${s.id}" aria-expanded="${isOpen}">${esc(s.title)}</button>
+          <div class="chips">${chips.join('')}</div>${when}</div>
+        <button type="button" class="toggle" data-open="${s.id}" aria-label="${isOpen ? 'Hide' : 'Show'} details">${isOpen ? '−' : '+'}</button>
+      </div>
+      <div class="details" ${isOpen ? '' : 'hidden'}>
+        ${fb}
+        <div><h3>Why</h3><p>${esc(s.why)}</p></div>
+        <div><h3>How</h3><ol>${(s.how || []).map((h) => `<li>${linkify(h)}</li>`).join('')}</ol></div>
+        <div class="tip"><b>Tip:</b> ${linkify(s.tip)}</div>
+        <div><h3>Done when</h3><p>${esc(s.done_when)}</p></div>
+        ${(s.links || []).length ? `<div><h3>Links</h3><p>${s.links.map((l) => `<a href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.label)}</a>`).join(' · ')}</p></div>` : ''}
+        <div><h3>Notes</h3><textarea id="note-${s.id}" data-note="${s.id}" placeholder="Anything to remember about this step" ${canWrite ? '' : 'disabled'}>${esc(st.note || '')}</textarea><div class="note-state" id="ns-${s.id}"></div></div>
+        <div class="actions">
+          <button type="button" class="btn primary" data-set="${s.id}:done" ${canWrite && state !== 'done' ? '' : 'disabled'}>Mark done</button>
+          <button type="button" class="btn" data-set="${s.id}:doing" ${canWrite && state !== 'doing' ? '' : 'disabled'}>Working on it</button>
+          ${s.optional ? `<button type="button" class="btn" data-set="${s.id}:skip" ${canWrite && state !== 'skip' ? '' : 'disabled'}>Skip</button>` : ''}
+          <button type="button" class="btn" data-set="${s.id}:todo" ${canWrite && state !== 'todo' ? '' : 'disabled'}>Back to to-do</button>
+        </div>
+      </div></li>`;
+  }
+
+  function linkify(text) {
+    return esc(text).replace(/https?:\/\/[^\s<]+[^\s<.,)]/g, (u) => `<a href="${u}" target="_blank" rel="noopener">${u}</a>`);
+  }
+
+  function renderActivity() {
+    const items = [...log].sort((a, b) => (a.at < b.at ? 1 : -1));
+    const title = (id) => (steps().find((s) => s.id === id) || { title: id }).title;
+    const verb = { done: 'ticked', todo: 'moved back to to-do', doing: 'started', skip: 'skipped' };
+    $('#log').innerHTML = items.length ? items.slice(0, 80).map((a) => `<li><time datetime="${esc(a.at)}">${esc(new Date(a.at).toLocaleString(undefined, { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }))}</time><span>${esc(byName(a.by) === 'you' ? 'You' : byName(a.by))} ${esc(verb[a.state] || a.state)} <b>${esc(title(a.step))}</b></span></li>`).join('') : '<li class="empty">No activity yet.</li>';
+    drawChart();
+  }
+
+  // cumulative steps done per day
+  function drawChart() {
+    const cv = $('#chart');
+    const dpr = window.devicePixelRatio || 1;
+    const w = cv.clientWidth || 860, h = 160;
+    cv.width = w * dpr; cv.height = h * dpr;
+    const g = cv.getContext('2d');
+    g.scale(dpr, dpr);
+    g.clearRect(0, 0, w, h);
+    const done = Object.entries(status).filter(([, v]) => v.state === 'done' && v.at).map(([, v]) => v.at.slice(0, 10)).sort();
+    const total = steps().length;
+    if (!done.length) { g.fillStyle = '#b6cbbd'; g.font = '14px Nunito, sans-serif'; g.fillText('The line starts with the first ticked step.', 8, 80); return; }
+    const days = [];
+    const start = new Date(done[0]);
+    const end = new Date();
+    for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) days.push(d.toISOString().slice(0, 10));
+    if (days.length < 2) days.unshift(new Date(start.getTime() - 86400000).toISOString().slice(0, 10));
+    const pts = days.map((d) => done.filter((x) => x <= d).length);
+    const L = 34, R = 10, T = 12, B = 24;
+    const x = (i) => L + (i / (days.length - 1)) * (w - L - R);
+    const y = (v) => T + (1 - v / total) * (h - T - B);
+    g.strokeStyle = 'rgba(232,246,230,.12)'; g.lineWidth = 1; g.fillStyle = '#b6cbbd'; g.font = '12px Nunito, sans-serif';
+    for (const v of [0, Math.round(total / 2), total]) { g.beginPath(); g.moveTo(L, y(v)); g.lineTo(w - R, y(v)); g.stroke(); g.fillText(String(v), 4, y(v) + 4); }
+    g.fillText(days[0].slice(5), L, h - 6);
+    g.fillText(days[days.length - 1].slice(5), w - R - 34, h - 6);
+    g.beginPath(); pts.forEach((v, i) => (i ? g.lineTo(x(i), y(v)) : g.moveTo(x(i), y(v))));
+    g.lineTo(x(pts.length - 1), y(0)); g.lineTo(x(0), y(0)); g.closePath();
+    g.fillStyle = 'rgba(54,209,122,.18)'; g.fill();
+    g.beginPath(); pts.forEach((v, i) => (i ? g.lineTo(x(i), y(v)) : g.moveTo(x(i), y(v))));
+    g.strokeStyle = '#36d17a'; g.lineWidth = 2.5; g.stroke();
+    const lv = pts[pts.length - 1];
+    g.fillStyle = '#36d17a'; g.beginPath(); g.arc(x(pts.length - 1), y(lv), 4.5, 0, Math.PI * 2); g.fill();
+    g.fillStyle = '#f3f6ee'; g.fillText(`${lv} of ${total}`, Math.min(x(pts.length - 1) - 40, w - 70), y(lv) - 10);
+  }
+
+  // ---------------------------------------------------------------- writes
+  async function setState(id, state) {
+    if (!db || !canWrite) return;
+    const prev = status[id] || {};
+    if (prev.state === state || (!prev.state && state === 'todo')) return;
+    const at = new Date().toISOString();
+    const next = { ...prev, state, by: myId || 'owner', at };
+    status = { ...status, [id]: next };
+    render();
+    try {
+      await db.doc('status/' + id).set(next);
+      await db.collection('activity').add({ step: id, state, by: myId || 'owner', at });
+      const s = steps().find((x) => x.id === id);
+      if (state === 'done') {
+        const el = document.getElementById('step-' + id);
+        if (el) { el.classList.add('pop'); setTimeout(() => el.classList.remove('pop'), 300); }
+        const unlocks = steps().filter((x) => (x.needs || []).includes(id) && ready(x) && !isDone(x.id));
+        const ph = s.phase;
+        const phaseDone = ph.steps.filter((x) => !x.optional).every((x) => isDone(x.id));
+        toast(`<b>✓ ${esc(s.title)}</b><br>${phaseDone ? `That completes <b>${esc(ph.name)}</b>! ` : ''}${unlocks.length ? `Now ready: ${esc(unlocks.map((u) => u.title).join('; '))}.` : 'Nice work.'}`);
+      } else if (state === 'doing') {
+        toast(`Started <b>${esc(s.title)}</b>. Tip: ${esc(s.tip)}`);
+      }
+    } catch (e) {
+      status = { ...status, [id]: prev };
+      render();
+      setStatus(e && e.code === 'quota_exceeded' ? 'Saving failed: the checklist database is full.' : 'Saving failed. You may be signed out or have view-only access.', true);
+    }
+  }
+
+  const noteTimers = {};
+  async function saveNote(id, text) {
+    if (!db || !canWrite) return;
+    const prev = status[id] || { state: 'todo' };
+    if ((prev.note || '') === text) return;
+    const next = { ...prev, note: text, state: prev.state || 'todo' };
+    $('#ns-' + id) && ($('#ns-' + id).textContent = 'Saving...');
+    try {
+      await db.doc('status/' + id).set(next);
+      status = { ...status, [id]: next };
+      const ns = $('#ns-' + id); if (ns) ns.textContent = 'Saved';
+    } catch (e) {
+      const ns = $('#ns-' + id); if (ns) ns.textContent = 'Not saved: view-only access?';
+    }
+  }
+
+  // ---------------------------------------------------------------- events
+  document.addEventListener('click', (e) => {
+    const t = e.target.closest('button');
+    if (!t) return;
+    if (t.dataset.check) { const id = t.dataset.check; setState(id, stateOf(id) === 'done' ? 'todo' : 'done'); return; }
+    if (t.dataset.set) { const [id, st] = t.dataset.set.split(':'); setState(id, st); return; }
+    if (t.dataset.open) { const id = t.dataset.open; open.has(id) ? open.delete(id) : open.add(id); render(); return; }
+    if (t.dataset.go) {
+      const id = t.dataset.go;
+      open.add(id);
+      if (filter === 'activity' || filter === 'claude' && steps().find((s) => s.id === id).owner === 'you') filter = 'all';
+      document.querySelectorAll('nav.tabs button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.f === filter)));
+      render();
+      const el = document.getElementById('step-' + id);
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+    if (t.dataset.f) {
+      filter = t.dataset.f;
+      document.querySelectorAll('nav.tabs button').forEach((b) => b.setAttribute('aria-pressed', String(b === t)));
+      render();
+    }
+  });
+  document.addEventListener('input', (e) => {
+    const id = e.target.dataset && e.target.dataset.note;
+    if (!id) return;
+    clearTimeout(noteTimers[id]);
+    const text = e.target.value;
+    const ns = $('#ns-' + id); if (ns) ns.textContent = 'Typing...';
+    noteTimers[id] = setTimeout(() => saveNote(id, text), 900);
+  });
+
+  // ---------------------------------------------------------------- start
+  async function start() {
+    try {
+      const r = await fetch('checklist.json');
+      data = await r.json();
+    } catch (e) {
+      setStatus('The checklist file could not be loaded. Reload the page.', true);
+      return;
+    }
+    render();
+    const rt = window.claude;
+    if (!rt || typeof rt.use !== 'function') { setStatus('Progress can only be saved when this page is open on claude.ai.', true); return; }
+    try { [db, user] = await Promise.all([rt.use('db'), rt.use('user')]); } catch (e) { db = null; }
+    if (!db) { setStatus('Sign in to claude.ai to see and save progress.', true); return; }
+    try { myId = user ? await user.id() : null; } catch (e) { myId = null; }
+    let can = null;
+    try { can = user ? await user.canEdit() : null; } catch (e) { can = null; }
+    canWrite = can !== false;
+    let first = true;
+    const timer = setTimeout(() => setStatus('Progress is taking a while to load; it may be out of date.', true), 10000);
+    db.collection('status').onSnapshot((snap) => {
+      const next = {};
+      snap.docs.forEach((d) => { if (d.exists) next[d.id] = d.data(); });
+      status = next;
+      if (!snap.metadata.fromCache) { clearTimeout(timer); setStatus(canWrite ? 'Saved for you on every device. Tick a step when it is done.' : 'View only: ask the owner to make you an editor to tick steps.'); }
+      if (first || !document.activeElement || !document.activeElement.dataset || !document.activeElement.dataset.note) render();
+      first = false;
+    }, () => { clearTimeout(timer); setStatus('Progress could not be loaded right now.', true); });
+    db.collection('activity').orderBy('at', 'desc').limit(200).onSnapshot((snap) => {
+      log = snap.docs.filter((d) => d.exists).map((d) => d.data());
+      if (filter === 'activity') renderActivity();
+    }, () => {});
+  }
+  start();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,10 @@
+{
+  "supportEmail": "",
+  "betaUrl": "https://namastegeitz.github.io/Eddie-G/",
+  "gameUrl": "https://namastegeitz.github.io/Eddie-G/monkey-see-monkey-do/",
+  "privacyUrl": "https://namastegeitz.github.io/Eddie-G/privacy.html",
+  "supportUrl": "https://namastegeitz.github.io/Eddie-G/support.html",
+  "bundleId": "com.namastegeitz.monkeydo",
+  "version": "1.0.0",
+  "_note": "Set supportEmail to the address players should write to; scripts/build_web.mjs then shows it on the support page."
+}

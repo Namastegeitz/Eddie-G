@@ -21,6 +21,13 @@ cpSync(www, game, { recursive: true });
 const version = (readFileSync(join(root, 'js/main.js'), 'utf8').match(/const VERSION = '([^']+)'/) || [])[1] || '';
 const stamp = `${version} · ${new Date().toISOString().slice(0, 10)}`;
 writeFileSync(join(docs, 'index.html'), readFileSync(join(root, 'beta/index.html'), 'utf8').replaceAll('__BUILD__', stamp));
+const cfg = JSON.parse(readFileSync(join(root, 'release/config.json'), 'utf8'));
+const contact = cfg.supportEmail
+  ? `Email <a href="mailto:${cfg.supportEmail}">${cfg.supportEmail}</a> with what happened and your device (phone model or computer). We usually reply within two days.`
+  : 'Tell the person who shared the game with you, or use the review or support link of the store you got it from.';
+writeFileSync(join(docs, 'support.html'), readFileSync(join(root, 'beta/support.html'), 'utf8').replaceAll('__SUPPORT_CONTACT__', contact));
+cpSync(join(root, 'beta/privacy.html'), join(docs, 'privacy.html'));
+cpSync(join(root, 'beta/site.css'), join(docs, 'site.css'));
 cpSync(join(root, 'beta/qr.svg'), join(docs, 'qr.svg'));
 cpSync(join(root, 'beta/qr.png'), join(docs, 'qr.png'));
 writeFileSync(join(docs, '.nojekyll'), ''); // serve files as they are

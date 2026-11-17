@@ -5,7 +5,7 @@
 'use strict';
 
 // PRECACHE-START (generated, do not edit by hand)
-const VERSION = "c6fb2861741f";
+const VERSION = "222cf8440c36";
 const PRECACHE = [
   "./",
   "manifest.webmanifest",

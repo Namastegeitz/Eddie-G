@@ -13,6 +13,9 @@ import { Billing } from './billing.js';
 import { purchaseDone } from './storeui.js';
 
 const VERSION = '1.0.0';
+// PC edition (desktop stores): no real-money Shop; everything is earned by playing.
+const EDITION = (typeof window !== 'undefined' && (window.MSMD_EDITION === 'pc' || /[?&]edition=pc\b/.test(location.search))) ? 'pc' : 'standard';
+if (EDITION === 'pc') document.documentElement.classList.add('edition-pc');
 
 function setLoading(pct, text) {
   const f = document.getElementById('loading-fill');
@@ -46,7 +49,7 @@ async function boot() {
   const monkey = new Monkey({ outlines: true });
   stage.scene.add(monkey.root);
   const audio = new AudioEngine();
-  const app = { version: VERSION, stage, monkey, audio, THREE };
+  const app = { version: VERSION, edition: EDITION, stage, monkey, audio, THREE };
   const ui = new UI(app);
   app.ui = ui;
   const game = new Game({ audio, monkey, stage, ui });
@@ -142,8 +145,8 @@ async function boot() {
   } catch { /* fine */ }
   ui.show('title');
   setLoading(100, 'Ready!');
-  // Payments (apps only; test mode with ?billing=test or #store-test)
-  app.billing.init({
+  // Payments (apps only; test mode with ?billing=test or #store-test). The PC edition has none.
+  if (EDITION !== 'pc') app.billing.init({
     onDeliver: (product, tx, price) => {
       const got = Save.deliverPurchase(product, tx, price);
       if (got) purchaseDone(ui, product, got);

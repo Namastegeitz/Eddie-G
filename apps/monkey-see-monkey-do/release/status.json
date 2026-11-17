@@ -1,0 +1,108 @@
+{
+  "_note": "Claude's copy of the live checklist's progress (claude.ai > MONKEY SEE, MONKEY DO > Monkey Do Launch Checklist). Ask Claude to 'sync the checklist' to refresh it, then node scripts/release_readme.mjs rewrites release/README.md.",
+  "synced": "2026-11-17T15:40:00Z",
+  "status": {
+    "p0-folder": {
+      "state": "done",
+      "by": "claude",
+      "at": "2026-11-17T14:58:00Z"
+    },
+    "p0-game": {
+      "state": "done",
+      "by": "claude",
+      "at": "2026-11-06T01:37:00Z"
+    },
+    "p0-beta-build": {
+      "state": "done",
+      "by": "claude",
+      "at": "2026-11-07T20:00:00Z"
+    },
+    "p2-privacy-url": {
+      "state": "done",
+      "by": "claude",
+      "at": "2026-11-17T14:20:00Z"
+    },
+    "p2-icons": {
+      "state": "done",
+      "by": "claude",
+      "at": "2026-11-17T14:24:00Z"
+    },
+    "p2-feature-graphic": {
+      "state": "done",
+      "by": "claude",
+      "at": "2026-11-17T14:27:00Z"
+    },
+    "p3-target-api": {
+      "state": "done",
+      "by": "claude",
+      "at": "2026-11-17T14:10:00Z"
+    },
+    "p5-zip": {
+      "state": "done",
+      "by": "claude",
+      "at": "2026-11-17T14:28:00Z"
+    },
+    "p6-wrapper": {
+      "state": "done",
+      "by": "claude",
+      "at": "2026-11-17T14:30:00Z"
+    },
+    "p6-pc-edition": {
+      "state": "done",
+      "by": "claude",
+      "at": "2026-11-17T14:31:00Z"
+    },
+    "p7-capsules": {
+      "state": "done",
+      "by": "claude",
+      "at": "2026-11-17T14:33:00Z"
+    },
+    "p8-offline": {
+      "state": "done",
+      "by": "claude",
+      "at": "2026-11-17T14:31:00Z"
+    },
+    "p2-listing-text": {
+      "state": "doing",
+      "by": "claude",
+      "at": "2026-11-17T14:18:00Z",
+      "note": "Claude drafted release/00-shared/store-text.md; all 14 fields fit their limits. Read it and tick when you're happy."
+    },
+    "p2-support-url": {
+      "state": "doing",
+      "by": "claude",
+      "at": "2026-11-17T14:20:00Z",
+      "note": "Support page built (docs/support.html). Choose a contact email (release/config.json)."
+    },
+    "p2-age-rating": {
+      "state": "doing",
+      "by": "claude",
+      "at": "2026-11-17T14:19:00Z",
+      "note": "Answers ready in release/00-shared/age-rating.md. Tick once submitted."
+    },
+    "p8-pitch": {
+      "state": "doing",
+      "by": "claude",
+      "at": "2026-11-17T14:21:00Z",
+      "note": "Draft in release/07-gog/pitch.md; fill in price, release plan and links."
+    },
+    "p2-screens-phone": {
+      "state": "done",
+      "by": "claude",
+      "at": "2026-11-17T15:40:00Z",
+      "note": "iPhone 6.9\" x6, Android x5, Shop review shot"
+    },
+    "p2-screens-tablet": {
+      "state": "done",
+      "by": "claude",
+      "at": "2026-11-17T15:40:00Z",
+      "note": "iPad 13\" x4"
+    },
+    "p2-screens-desktop": {
+      "state": "done",
+      "by": "claude",
+      "at": "2026-11-17T15:40:00Z",
+      "note": "Desktop 1080p x6"
+    }
+  }
+}

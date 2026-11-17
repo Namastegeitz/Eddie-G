@@ -1040,7 +1040,7 @@ export class UI {
       if (it.type === 'action') return `<div class="row">${label}<button class="btn small" id="act-${it.action}">${esc(it.button)}</button></div>`;
       return '';
     };
-    const groups = SETTINGS.map((g) => `<div class="group"><h3>${esc(g.group)}</h3>${g.items.map(rowHtml).join('')}</div>`).join('');
+    const groups = SETTINGS.filter((g) => !(this.app.edition === 'pc' && g.group === 'Purchases')).map((g) => `<div class="group"><h3>${esc(g.group)}</h3>${g.items.map(rowHtml).join('')}</div>`).join('');
     const d = Save.data;
     const dataGroup = `<div class="group"><h3>Your data</h3>
       <p class="note" style="margin:0 0 8px;color:var(--cream-dim);font-size:14px;line-height:1.45">Everything is saved on this device only${Save.storageOk ? '' : ' (this browser is blocking storage, so progress will be lost when you close it)'}. Nothing is sent anywhere: no account, no ads, no tracking. Saved: ${Object.keys(d.levels).length} levels played, ${d.bananas} bananas, ${Object.values(d.owned).reduce((n, a) => n + a.length, 0)} wardrobe items, your settings and stats.</p>
@@ -1261,7 +1261,7 @@ export class UI {
         <li>Levels: ${RULES.bananasPerStep} banana per move in each round you clear (added right away), plus ${RULES.bananasPerStar} per star when you clear the level, plus ${RULES.firstClearBananas} the first time you clear it. Replaying a level earns bananas again.</li>
         <li>Endless: ${RULES.endlessPerRound} per round, ${RULES.endlessMilestoneBananas} extra for every ${RULES.endlessMilestoneEvery} rounds, and ${RULES.endlessBestBonus} for a new best.</li>
         <li>Spend them in the Wardrobe, on "Watch again" during your turn (${RULES.replayCost}, free in Assist mode), or to continue a level with 1 life after running out (${RULES.continueCost}, once per try).</li>
-        <li>You never need to pay. Every banana, golden banana, skin and item can be earned by playing. The iPhone and Android apps also sell packs in the Shop (see Shop below); the web version sells nothing. There are no ads.</li>
+        <li>${this.app.edition === 'pc' ? 'You never need to pay. Every banana, golden banana, skin and item is earned by playing. This edition has no purchases and no ads.' : 'You never need to pay. Every banana, golden banana, skin and item can be earned by playing. The iPhone and Android apps also sell packs in the Shop (see Shop below); the web version sells nothing. There are no ads.'}</li>
       </ul>
       <p class="note">Every banana you earn or spend is listed under Stats > Banana history.</p>
 
@@ -1287,7 +1287,7 @@ export class UI {
       <p class="note">Looks are just for fun: nothing in the wardrobe changes scores, timers or difficulty.</p>
 
       ${skinsHelp(this)}
-      ${storeHelp()}
+      ${this.app.edition === 'pc' ? '' : storeHelp()}
 
       <h3>Graphics</h3>
       <p class="note">Right now: ${esc({ low: 'Low', medium: 'Medium', high: 'High', ultra: 'Ultra' }[this.app.stage.level] || 'High')}${Save.settings.quality === 'auto' ? ' (picked by Auto)' : ''}.</p>
@@ -1302,7 +1302,7 @@ export class UI {
 
       <h3>Your privacy</h3>
       <p>The game runs entirely on your device. Progress is saved in this browser's storage. No account, no ads, no analytics, no data sent anywhere. Settings > Your data shows exactly what is saved, and lets you copy it or delete it.</p>
-      <p>In the iPhone and Android apps, purchases are made and paid for in the App Store or Google Play. The game never sees your card or account details; it keeps only a list of what was bought, on this device (Stats > Purchases).</p>`;
+      ${this.app.edition === 'pc' ? '' : '<p>In the iPhone and Android apps, purchases are made and paid for in the App Store or Google Play. The game never sees your card or account details; it keeps only a list of what was bought, on this device (Stats > Purchases).</p>'}`;
     lazyPortraits($('#help-body'));
   }
 
@@ -1340,7 +1340,7 @@ export class UI {
       <div class="tiles">${tiles.map(([v, l]) => `<div class="tile"><b>${v}</b><span>${esc(l)}</span></div>`).join('')}</div>
       <div class="group"><h3>Moves you get right</h3>${moveBars}</div>
       <div class="group"><h3>Most common mix-ups</h3>${mixHtml}</div>
-      <div class="group"><h3>Purchases</h3>${purchasesHtml(d)}</div>
+      ${this.app.edition === 'pc' ? '' : `<div class="group"><h3>Purchases</h3>${purchasesHtml(d)}</div>`}
       <div class="group"><h3>Banana history</h3><p class="note" style="margin:0 0 6px;color:var(--cream-dim);font-size:13px">The last ${d.ledger.length} changes. Earned in total: ${d.earned}. Spent: ${d.spent}.</p>${ledger}</div>`;
   }
 }

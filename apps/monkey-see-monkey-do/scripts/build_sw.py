@@ -6,7 +6,7 @@
 import hashlib, json, os, re, sys
 
 ROOT = os.path.abspath(sys.argv[1]) if len(sys.argv) > 1 else os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-SKIP_DIRS = {'tests', 'scripts', 'docs', 'dist', 'node_modules', '.git', 'mobile'}
+SKIP_DIRS = {'tests', 'scripts', 'docs', 'dist', 'node_modules', '.git', 'mobile', 'release', 'beta'}
 SKIP_FILES = {'sw.js', 'README.md', 'RUN.md'}
 EXTS = {'.html', '.css', '.js', '.svg', '.png', '.woff2', '.webmanifest', '.txt'}
 

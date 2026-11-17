@@ -1,0 +1,31 @@
+{
+  "name": "monkey-see-monkey-do",
+  "productName": "Monkey See, Monkey Do",
+  "version": "1.0.0",
+  "description": "Watch the monkey dance, then copy the moves on the beat. PC edition: no purchases, plays offline.",
+  "main": "main.js",
+  "private": true,
+  "scripts": {
+    "prepare-app": "node scripts/copy-app.mjs",
+    "start": "npm run prepare-app && electron .",
+    "build:win": "npm run prepare-app && electron-builder --win",
+    "build:mac": "npm run prepare-app && electron-builder --mac",
+    "build:linux": "npm run prepare-app && electron-builder --linux",
+    "build:steam": "npm run prepare-app && electron-builder --dir"
+  },
+  "devDependencies": {
+    "electron": "36.9.5",
+    "electron-builder": "25.1.8"
+  },
+  "build": {
+    "appId": "com.namastegeitz.monkeydo",
+    "productName": "Monkey See, Monkey Do",
+    "copyright": "Monkey See, Monkey Do",
+    "directories": { "output": "dist", "buildResources": "build" },
+    "files": ["main.js", "app/**", "build/icon.png"],
+    "win": { "target": ["nsis", "zip"], "icon": "build/icon.png" },
+    "nsis": { "oneClick": false, "allowToChangeInstallationDirectory": true, "shortcutName": "Monkey See, Monkey Do" },
+    "mac": { "target": ["dmg", "zip"], "category": "public.app-category.music-games", "icon": "build/icon.png" },
+    "linux": { "target": ["AppImage", "tar.gz"], "category": "Game", "icon": "build/icon.png" }
+  }
+}

@@ -537,6 +537,23 @@ let passes = 0;
     expect(r.hands === 'relax,open,fist,point', 'hand poses ' + r.hands);
   });
 
+  await step('PC edition (desktop stores): no Shop, no purchase settings, help says so', async () => {
+    const pc = await browser.newPage({ viewport: { width: 1280, height: 800 } });
+    await pc.goto(BASE + '?edition=pc');
+    await pc.waitForSelector('html[data-ready="1"]', { timeout: 90000 });
+    const r = await pc.evaluate(() => {
+      document.querySelectorAll('.overlay.open,.overlay.show').forEach((o) => o.classList.remove('open', 'show'));
+      const shop = getComputedStyle(document.querySelector('#scr-title .mini[data-go="store"]')).display;
+      MSMD.ui.show('settings');
+      const settings = document.getElementById('settings-body') ? document.getElementById('settings-body').textContent : document.body.textContent;
+      MSMD.ui.show('help');
+      const help = document.getElementById('help-body').textContent;
+      return { edition: MSMD.app.edition, shop, purchases: settings.includes('Monthly limit'), help: help.includes('This edition has no purchases'), billing: MSMD.app.billing.mode };
+    });
+    await pc.close();
+    expect(r.edition === 'pc' && r.shop === 'none' && !r.purchases && r.help && r.billing === 'none', JSON.stringify(r));
+  });
+
   await step('no errors in the console', async () => {
     const real = errors.filter((e) => !/favicon|net::ERR_INTERNET_DISCONNECTED/.test(e));
     expect(real.length === 0, real.join(' | '));

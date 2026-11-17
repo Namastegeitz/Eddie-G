@@ -154,6 +154,26 @@ Optional real-money packs, sold only through the App Store and Google Play:
 - **Music:** generated live per stage (marimba jungle groove, steel-drum beach,
   four-on-the-floor disco, echoey moon). No audio files.
 
+## Launching in the stores
+
+**[release/README.md](release/README.md)** is the launch checklist: 11 phases,
+72 steps, from beta testing to the App Store, Google Play, itch.io, Steam, GOG,
+Microsoft, Epic, Samsung and Amazon, with ✅ green checks, a tip and full
+instructions for every step. Each store has its own folder under `release/`
+with its build (or how to make it), store text, age-rating answers and images
+at the exact sizes it wants (rendered from the real game).
+
+Live versions in the **MONKEY SEE, MONKEY DO** folder on claude.ai:
+- Launch checklist (tick steps, see what each unlocks, progress log):
+  https://claude.ai/artifact/Kz4xL5JoZfgC9bDzBAtQ1Y
+- Bug & feedback reports from testers (with device details, fun rating and
+  status replies): https://claude.ai/artifact/NiybkudZiDL75qvRyHvHuC
+
+The **PC edition** (`?edition=pc`, used by the desktop app and the itch.io
+build) has no Shop or purchases; everything is earned by playing. Steam
+requires its own payment system for in-game purchases, so PC stores get a
+one-time price instead.
+
 ## On phones
 
 **Public beta link:** https://namastegeitz.github.io/Eddie-G/ (landing page

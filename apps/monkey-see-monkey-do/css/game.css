@@ -92,6 +92,9 @@ svg { display: block; }
 .logo .l2 { font-size: clamp(46px, 13vw, 76px); color: #fff3c2; transform: rotate(2deg); }
 .tagline { margin: 10px 0 0; text-align: center; font-weight: 700; font-size: 18px; color: var(--cream); text-shadow: 0 2px 0 rgba(0, 0, 0, 0.45); }
 .title-actions { display: flex; flex-direction: column; gap: 14px; width: 100%; max-width: 440px; margin: 0 auto; }
+/* PC edition: no Shop */
+.edition-pc .shop-only { display: none !important; }
+.edition-pc .mini-row { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 .mini-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
 .mini { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 8px 2px; border: 0; border-radius: 14px; background: rgba(9, 36, 27, 0.78); color: var(--cream); font-size: 13px; font-weight: 700; line-height: 1.1; box-shadow: inset 0 0 0 2px var(--line); }
 .mini svg { width: 26px; height: 26px; }

@@ -286,7 +286,7 @@ export function skinsHelp(ui) {
       <li>+1 for every ${RULES.goldEndlessEvery} rounds you clear in one Endless run.</li>
       <li>+${RULES.goldSetComplete} for each completed skin set.</li>
       <li>Swap ${RULES.exchangeRate} bananas for 1 golden banana in the Wardrobe (tap the golden chip).</li>
-      <li>In the iPhone and Android apps the Shop also sells golden banana packs. You never need them: every premium skin keeps its free play goal. Every golden banana earned, bought or spent is in Stats > Banana history.</li>
+      ${ui.app.edition === 'pc' ? '<li>Every premium skin also has a free play goal. Every golden banana earned or spent is in Stats > Banana history.</li>' : '<li>In the iPhone and Android apps the Shop also sells golden banana packs. You never need them: every premium skin keeps its free play goal. Every golden banana earned, bought or spent is in Stats > Banana history.</li>'}
     </ul>
     <h3>All premium skins</h3>
     <div class="table-wrap"><table><thead><tr><th>Skin</th><th>Rarity</th><th>Free when you...</th><th>Or golden</th></tr></thead><tbody>${rows}</tbody></table></div>`;

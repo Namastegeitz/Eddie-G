@@ -1,6 +1,6 @@
 # Privacy policy: Monkey See, Monkey Do
 
-Last updated: 4 November 2026
+Last updated: 17 November 2026
 
 Monkey See, Monkey Do is a game that runs entirely on your device.
 
@@ -25,6 +25,7 @@ Monkey See, Monkey Do is a game that runs entirely on your device.
   record on your device. Nothing can only be had by paying: everything can be
   earned by playing. A grown-up question comes before every purchase (on by
   default), and Settings > Purchases has an optional monthly limit. The web
-  version sells nothing.
+  version and the PC edition sell nothing.
 
 If this policy changes, the new version will be posted here with a new date.
+Online copy: https://namastegeitz.github.io/Eddie-G/privacy.html

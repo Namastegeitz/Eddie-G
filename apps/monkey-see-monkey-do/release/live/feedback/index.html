@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Monkey Do Bug Reports</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Nunito:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+  /* Same jungle-night world as the game and the launch checklist. Layout: summary tiles, report form, report list. */
+  :root {
+    --bg: #0c2c21;
+    --panel: #12392b;
+    --panel-2: #184736;
+    --line: rgba(232, 246, 230, 0.13);
+    --text: #f3f6ee;
+    --dim: #b6cbbd;
+    --accent: #ffd23f;
+    --ok: #36d17a;
+    --crash: #ff5c6c;
+    --major: #ff9b54;
+    --minor: #ffd23f;
+    --idea: #59b6ff;
+    --display: 'Lilita One', 'Arial Rounded MT Bold', system-ui, sans-serif;
+    --body: 'Nunito', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body { background: var(--bg); color: var(--text); font: 16px/1.5 var(--body); padding: 20px 16px 48px; }
+  main { max-width: 860px; margin: 0 auto; display: flex; flex-direction: column; gap: 16px; }
+  h1, h2 { font-family: var(--display); font-weight: 400; margin: 0; letter-spacing: 0.01em; text-wrap: balance; }
+  .project { font-size: clamp(30px, 7vw, 44px); line-height: 1; text-transform: uppercase; }
+  .sub { color: var(--dim); margin-top: 6px; }
+  button, input, select, textarea { font: inherit; color: inherit; }
+  :focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; border-radius: 6px; }
+  .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; }
+  .tile { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 10px 14px; border-top: 4px solid var(--c, var(--line)); }
+  .tile b { font-family: var(--display); font-size: 26px; font-weight: 400; font-variant-numeric: tabular-nums; }
+  .tile span { display: block; color: var(--dim); font-size: 14px; }
+  .status-line { font-size: 14px; color: var(--dim); min-height: 21px; }
+  .status-line.warn { color: var(--major); }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 18px; padding: 16px; display: grid; gap: 12px; }
+  form { display: grid; gap: 12px; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  label { font-weight: 800; font-size: 14px; display: grid; gap: 4px; }
+  label small { font-weight: 600; color: var(--dim); }
+  input[type="text"], select, textarea { width: 100%; background: rgba(0, 0, 0, 0.22); border: 1px solid var(--line); border-radius: 10px; padding: 9px 10px; }
+  textarea { min-height: 84px; resize: vertical; }
+  fieldset { border: 0; padding: 0; margin: 0; display: grid; gap: 6px; }
+  legend { font-weight: 800; font-size: 14px; padding: 0; margin-bottom: 4px; }
+  .pills { display: flex; flex-wrap: wrap; gap: 6px; }
+  .pills label { font-size: 15px; font-weight: 700; display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 0, 0, 0.2); border: 1px solid var(--line); border-radius: 999px; padding: 5px 12px; cursor: pointer; }
+  .pills input { accent-color: var(--accent); }
+  .stars { display: flex; gap: 4px; }
+  .stars button { background: none; border: 0; font-size: 30px; line-height: 1; cursor: pointer; color: rgba(255, 255, 255, 0.25); padding: 0 2px; }
+  .stars button.on { color: var(--accent); }
+  .btn { background: var(--panel-2); border: 1px solid var(--line); border-radius: 10px; padding: 9px 14px; cursor: pointer; font-weight: 800; }
+  .btn.primary { background: var(--accent); color: #23160c; border-color: var(--accent); }
+  .btn:disabled { opacity: 0.5; cursor: default; }
+  .filters { display: flex; flex-wrap: wrap; gap: 8px; }
+  .filters button { background: var(--panel); border: 1px solid var(--line); border-radius: 999px; padding: 5px 13px; cursor: pointer; font-weight: 800; color: var(--dim); }
+  .filters button[aria-pressed="true"] { background: var(--accent); color: #23160c; border-color: var(--accent); }
+  .reports { display: grid; gap: 10px; }
+  .report { background: var(--panel); border: 1px solid var(--line); border-left: 6px solid var(--sev, var(--line)); border-radius: 14px; padding: 12px 14px; display: grid; gap: 6px; }
+  .report .top { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+  .chip { font-size: 12px; font-weight: 800; border-radius: 999px; padding: 1px 9px; background: rgba(255, 255, 255, 0.09); color: var(--dim); }
+  .chip.st-new { background: rgba(255, 210, 63, 0.16); color: var(--accent); }
+  .chip.st-confirmed { background: rgba(255, 155, 84, 0.18); color: #ffc08f; }
+  .chip.st-fixed { background: rgba(54, 209, 122, 0.18); color: #7ff0ae; }
+  .chip.st-wontfix { background: rgba(255, 255, 255, 0.1); }
+  .report p { margin: 0; white-space: pre-wrap; }
+  .meta { color: var(--dim); font-size: 13px; }
+  .reply { background: rgba(54, 209, 122, 0.1); border-left: 3px solid var(--ok); border-radius: 8px; padding: 6px 10px; font-size: 15px; }
+  .triage { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+  .triage select, .triage input { width: auto; padding: 5px 8px; font-size: 14px; }
+  .triage input { flex: 1; min-width: 160px; }
+  .empty { color: var(--dim); }
+  .thanks { background: rgba(54, 209, 122, 0.12); border-left: 4px solid var(--ok); border-radius: 8px; padding: 8px 12px; }
+  @media (max-width: 560px) { .grid2 { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <h1 class="project">Monkey See, Monkey Do</h1>
+    <div class="sub">Beta bug and feedback reports. Found something odd, confusing or fun? Tell us here: it goes straight to the developer and Claude, who fix the small stuff.</div>
+  </header>
+
+  <section class="tiles" aria-label="Summary">
+    <div class="tile" style="--c:var(--accent)"><b id="t-open">0</b><span>open reports</span></div>
+    <div class="tile" style="--c:var(--crash)"><b id="t-crash">0</b><span>crashes</span></div>
+    <div class="tile" style="--c:var(--major)"><b id="t-major">0</b><span>major bugs</span></div>
+    <div class="tile" style="--c:var(--minor)"><b id="t-minor">0</b><span>minor bugs</span></div>
+    <div class="tile" style="--c:var(--ok)"><b id="t-fixed">0</b><span>fixed</span></div>
+    <div class="tile" style="--c:var(--idea)"><b id="t-fun">-</b><span>average fun (of 5)</span></div>
+  </section>
+  <div class="status-line" id="status" role="status">Loading reports...</div>
+
+  <section class="card" aria-labelledby="form-h">
+    <h2 id="form-h">Report something</h2>
+    <form id="form">
+      <fieldset>
+        <legend>What kind?</legend>
+        <div class="pills" id="kind">
+          <label><input type="radio" name="kind" value="bug" checked> Bug</label>
+          <label><input type="radio" name="kind" value="confusing"> Confusing</label>
+          <label><input type="radio" name="kind" value="idea"> Idea</label>
+          <label><input type="radio" name="kind" value="praise"> Something I liked</label>
+        </div>
+      </fieldset>
+      <div class="grid2">
+        <label for="sev">How bad? <small>(bugs)</small>
+          <select id="sev"><option value="minor">Minor: looks or feels a bit off</option><option value="major">Major: something doesn't work</option><option value="crash">Crash: the game froze or closed</option></select>
+        </label>
+        <label for="where">Where?
+          <select id="where"><option>A level</option><option>Take-turns level (2 or 3)</option><option>Endless</option><option>Free Dance</option><option>Wardrobe</option><option>Shop</option><option>Settings</option><option>Menus</option><option>Installing / home screen</option><option>Other</option></select>
+        </label>
+      </div>
+      <label for="what">What happened? <small>(required)</small>
+        <textarea id="what" required placeholder="e.g. On level 6 the Right Leg button didn't light up when I tapped it"></textarea>
+      </label>
+      <label for="steps">How can we see it too? <small>(optional: what you tapped, in order)</small>
+        <textarea id="steps" placeholder="1. Opened level 6  2. ..." style="min-height:60px"></textarea>
+      </label>
+      <div class="grid2">
+        <label for="device">Device <small>(filled in for you; fix it if wrong)</small>
+          <input type="text" id="device" autocomplete="off">
+        </label>
+        <label for="reporter">Reporting for someone else? <small>(their first name)</small>
+          <input type="text" id="reporter" placeholder="Leave empty if it's you" autocomplete="off">
+        </label>
+      </div>
+      <fieldset>
+        <legend>What did you play?</legend>
+        <div class="pills" id="played">
+          <label><input type="checkbox" value="levels"> Levels</label>
+          <label><input type="checkbox" value="take-turns"> Take turns</label>
+          <label><input type="checkbox" value="endless"> Endless</label>
+          <label><input type="checkbox" value="free-dance"> Free Dance</label>
+          <label><input type="checkbox" value="wardrobe"> Wardrobe</label>
+          <label><input type="checkbox" value="shop-test"> Shop (test mode)</label>
+        </div>
+      </fieldset>
+      <fieldset>
+        <legend>How fun is it so far?</legend>
+        <div class="stars" id="stars" role="radiogroup" aria-label="Fun rating">
+          <button type="button" data-v="1" aria-label="1 star">★</button><button type="button" data-v="2" aria-label="2 stars">★</button><button type="button" data-v="3" aria-label="3 stars">★</button><button type="button" data-v="4" aria-label="4 stars">★</button><button type="button" data-v="5" aria-label="5 stars">★</button>
+        </div>
+      </fieldset>
+      <div><button class="btn primary" type="submit" id="send">Send report</button></div>
+      <div id="thanks" class="thanks" hidden></div>
+    </form>
+  </section>
+
+  <section aria-labelledby="list-h" style="display:grid;gap:10px">
+    <h2 id="list-h">Reports</h2>
+    <div class="filters" id="filters">
+      <button type="button" data-f="open" aria-pressed="true">Open</button>
+      <button type="button" data-f="all" aria-pressed="false">All</button>
+      <button type="button" data-f="fixed" aria-pressed="false">Fixed</button>
+      <button type="button" data-f="ideas" aria-pressed="false">Ideas and praise</button>
+    </div>
+    <div class="reports" id="reports"><p class="empty">No reports yet. The first one is always the most useful!</p></div>
+  </section>
+</main>
+
+<script>
+(function () {
+  'use strict';
+  const $ = (s) => document.querySelector(s);
+  const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const SEV = { crash: 'var(--crash)', major: 'var(--major)', minor: 'var(--minor)' };
+  const KIND = { bug: 'Bug', confusing: 'Confusing', idea: 'Idea', praise: 'Liked' };
+  const STATUS = { new: 'New', confirmed: 'Confirmed', fixed: 'Fixed', wontfix: "Won't fix" };
+  let db = null, user = null, myId = null, isOwner = false;
+  let byTester = {};   // testerId -> { items: [...] }
+  let triage = {};     // reportId -> { status, reply, at }
+  let names = {};
+  let fun = 0;
+  let filter = 'open';
+
+  function setStatus(msg, warn) { const el = $('#status'); el.textContent = msg || ''; el.classList.toggle('warn', !!warn); }
+
+  // device details, filled in automatically
+  (function device() {
+    const ua = navigator.userAgent;
+    let d = /iPhone/.test(ua) ? 'iPhone' : /iPad|Macintosh.*Mobile/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1) ? 'iPad' : /Android/.test(ua) ? 'Android' : /Windows/.test(ua) ? 'Windows PC' : /Mac/.test(ua) ? 'Mac' : /Linux/.test(ua) ? 'Linux PC' : 'Unknown device';
+    const os = (ua.match(/OS (\d+)[_.](\d+)/) || ua.match(/Android (\d+(\.\d+)?)/) || [])[0] || '';
+    const br = /CriOS|Chrome/.test(ua) ? 'Chrome' : /FxiOS|Firefox/.test(ua) ? 'Firefox' : /Safari/.test(ua) ? 'Safari' : 'browser';
+    $('#device').value = `${d}${os ? ' (' + os.replace('_', '.') + ')' : ''}, ${br}, screen ${screen.width}x${screen.height}`;
+  })();
+
+  $('#stars').addEventListener('click', (e) => {
+    const b = e.target.closest('button');
+    if (!b) return;
+    fun = Number(b.dataset.v);
+    [...$('#stars').children].forEach((x) => { x.classList.toggle('on', Number(x.dataset.v) <= fun); x.setAttribute('aria-pressed', String(Number(x.dataset.v) === fun)); });
+  });
+  $('#form').addEventListener('change', () => {
+    const kind = new FormData($('#form')).get('kind');
+    $('#sev').disabled = kind !== 'bug';
+  });
+
+  function allReports() {
+    const out = [];
+    for (const [tid, doc] of Object.entries(byTester)) for (const r of doc.items || []) out.push({ ...r, tester: tid, tri: triage[r.id] || {} });
+    return out.sort((a, b) => (a.at < b.at ? 1 : -1));
+  }
+
+  async function resolveNames(ids) {
+    if (!user || typeof user.profiles !== 'function' || !ids.length) return;
+    try { const ps = await user.profiles(ids); for (const id of ids) names[id] = (ps[id] && ps[id].name) || ''; } catch (e) { /* names are optional */ }
+  }
+
+  function render() {
+    const all = allReports();
+    const st = (r) => r.tri.status || 'new';
+    const bugs = all.filter((r) => r.kind === 'bug' && !['fixed', 'wontfix'].includes(st(r)));
+    $('#t-open').textContent = all.filter((r) => !['fixed', 'wontfix'].includes(st(r)) && ['bug', 'confusing'].includes(r.kind)).length;
+    $('#t-crash').textContent = bugs.filter((r) => r.severity === 'crash').length;
+    $('#t-major').textContent = bugs.filter((r) => r.severity === 'major').length;
+    $('#t-minor').textContent = bugs.filter((r) => r.severity === 'minor').length;
+    $('#t-fixed').textContent = all.filter((r) => st(r) === 'fixed').length;
+    const rated = all.filter((r) => r.fun > 0);
+    $('#t-fun').textContent = rated.length ? (rated.reduce((s, r) => s + r.fun, 0) / rated.length).toFixed(1) : '-';
+    const list = all.filter((r) => filter === 'all' || (filter === 'open' && ['bug', 'confusing'].includes(r.kind) && !['fixed', 'wontfix'].includes(st(r))) || (filter === 'fixed' && st(r) === 'fixed') || (filter === 'ideas' && ['idea', 'praise'].includes(r.kind)));
+    $('#reports').innerHTML = list.length ? list.map((r) => {
+      const who = r.reporter ? `${r.reporter} (via ${names[r.tester] || (r.tester === myId ? 'you' : 'a tester')})` : names[r.tester] || (r.tester === myId ? 'You' : 'A tester');
+      const s = st(r);
+      return `<article class="report" style="--sev:${r.kind === 'bug' ? SEV[r.severity] : r.kind === 'confusing' ? 'var(--major)' : 'var(--idea)'}">
+        <div class="top"><span class="chip st-${s}">${STATUS[s]}</span><span class="chip">${KIND[r.kind] || r.kind}${r.kind === 'bug' ? ' · ' + esc(r.severity) : ''}</span><span class="chip">${esc(r.where)}</span>${r.fun ? `<span class="chip">Fun ${'★'.repeat(r.fun)}</span>` : ''}</div>
+        <p>${esc(r.what)}</p>
+        ${r.steps ? `<p class="meta">Steps: ${esc(r.steps)}</p>` : ''}
+        <div class="meta">${esc(who)} · ${esc(r.device)} · ${esc(new Date(r.at).toLocaleString(undefined, { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }))}${(r.played || []).length ? ' · played: ' + esc(r.played.join(', ')) : ''}</div>
+        ${r.tri.reply ? `<div class="reply">${esc(r.tri.reply)}</div>` : ''}
+        ${isOwner ? `<div class="triage"><select data-tri="${esc(r.id)}" aria-label="Status">${Object.entries(STATUS).map(([k, v]) => `<option value="${k}"${k === s ? ' selected' : ''}>${v}</option>`).join('')}</select><input type="text" data-reply="${esc(r.id)}" value="${esc(r.tri.reply || '')}" placeholder="Reply to the tester (e.g. Fixed in 1.0.1)"><button type="button" class="btn" data-save="${esc(r.id)}">Save</button></div>` : ''}
+      </article>`;
+    }).join('') : `<p class="empty">${filter === 'open' ? 'No open bugs. Nice!' : 'Nothing here yet.'}</p>`;
+  }
+
+  document.addEventListener('click', async (e) => {
+    const b = e.target.closest('button');
+    if (!b) return;
+    if (b.dataset.f) { filter = b.dataset.f; document.querySelectorAll('#filters button').forEach((x) => x.setAttribute('aria-pressed', String(x === b))); render(); }
+    if (b.dataset.save && db && isOwner) {
+      const id = b.dataset.save;
+      const status = document.querySelector(`[data-tri="${CSS.escape(id)}"]`).value;
+      const reply = document.querySelector(`[data-reply="${CSS.escape(id)}"]`).value.trim();
+      b.disabled = true;
+      try { await db.doc('triage/' + id).set({ status, reply, at: new Date().toISOString() }); b.textContent = 'Saved'; }
+      catch (err) { b.textContent = 'Not saved'; }
+      setTimeout(() => { b.disabled = false; b.textContent = 'Save'; }, 1500);
+    }
+  });
+
+  $('#form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (!db || !myId) { setStatus('Sign in to claude.ai to send a report (or tell the person who invited you).', true); return; }
+    const what = $('#what').value.trim();
+    if (!what) { $('#what').focus(); return; }
+    const kind = new FormData($('#form')).get('kind');
+    const report = {
+      id: `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 7)}`,
+      kind, severity: kind === 'bug' ? $('#sev').value : '',
+      where: $('#where').value, what: what.slice(0, 2000), steps: $('#steps').value.trim().slice(0, 2000),
+      device: $('#device').value.trim().slice(0, 200), reporter: $('#reporter').value.trim().slice(0, 40),
+      played: [...document.querySelectorAll('#played input:checked')].map((x) => x.value), fun,
+      at: new Date().toISOString(),
+    };
+    const mine = byTester[myId] || { items: [] };
+    const next = { items: [...(mine.items || []), report].slice(-300) };
+    $('#send').disabled = true;
+    try {
+      await db.doc('reports/' + myId).set(next);
+      byTester = { ...byTester, [myId]: next };
+      render();
+      $('#what').value = ''; $('#steps').value = ''; $('#reporter').value = '';
+      const t = $('#thanks');
+      t.hidden = false;
+      t.innerHTML = kind === 'bug' ? '<b>Thanks!</b> Your report is in. Bugs get a status (Confirmed, Fixed) and a reply here, so check back.' : '<b>Thanks!</b> Ideas and kind words help decide what comes next.';
+    } catch (err) {
+      setStatus(err && err.code === 'quota_exceeded' ? 'The report list is full; tell the developer.' : "Couldn't send: you may need to be invited as an editor. Ask the person who shared this page.", true);
+    } finally { $('#send').disabled = false; }
+  });
+
+  async function start() {
+    const rt = window.claude;
+    render();
+    if (!rt || typeof rt.use !== 'function') { setStatus('Open this page on claude.ai to send and read reports.', true); return; }
+    try { [db, user] = await Promise.all([rt.use('db'), rt.use('user')]); } catch (e) { db = null; }
+    if (!db) { setStatus('Sign in to claude.ai to send and read reports.', true); return; }
+    try { myId = user ? await user.id() : null; } catch (e) { myId = null; }
+    try { isOwner = user ? !!(await user.isOwner()) : false; } catch (e) { isOwner = false; }
+    const timer = setTimeout(() => setStatus('Reports are taking a while to load; the list may be out of date.', true), 10000);
+    db.collection('reports').onSnapshot(async (snap) => {
+      const next = {};
+      snap.docs.forEach((d) => { if (d.exists) next[d.id] = d.data(); });
+      byTester = next;
+      if (!snap.metadata.fromCache) { clearTimeout(timer); setStatus(isOwner ? 'You see every report. Set a status and reply; testers see your replies.' : 'Your reports are saved here. Thanks for testing!'); }
+      const unknown = Object.keys(next).filter((id) => !(id in names));
+      if (unknown.length) await resolveNames(unknown);
+      render();
+    }, () => { clearTimeout(timer); setStatus('Reports could not be loaded right now.', true); });
+    db.collection('triage').onSnapshot((snap) => {
+      const next = {};
+      snap.docs.forEach((d) => { if (d.exists) next[d.id] = d.data(); });
+      triage = next;
+      render();
+    }, () => {});
+  }
+  start();
+})();
+</script>
+</body>
+</html>
