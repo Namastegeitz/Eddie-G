@@ -11,7 +11,7 @@ import { canvas, rng, WIND, mergeGeometries } from './gfx.js';
 
 const TAU = Math.PI * 2;
 const UP = new THREE.Vector3(0, 1, 0);
-export const LEAF_FRACTION = { low: 0.4, medium: 0.7, high: 1, ultra: 1 };
+export const LEAF_FRACTION = { low: 0.35, medium: 0.6, high: 1, ultra: 1 };
 
 // ---------------------------------------------------------------- textures
 
@@ -414,6 +414,7 @@ export class Forest {
     if (this.wood.length) {
       const bark = barkTexture();
       const mat = new THREE.MeshLambertMaterial({ map: bark, bumpMap: bark, bumpScale: 1.6, vertexColors: true });
+      mat.userData.bump = bark; // bark relief only on High and Ultra (setLeafDetail)
       const m = new THREE.Mesh(mergeGeometries(this.wood), mat);
       m.name = 'trunks';
       g.add(m);
@@ -446,10 +447,16 @@ export class Forest {
   }
 }
 
-/** Show fewer leaf cards on lower graphics levels. */
+/** Fewer leaf cards, and flat bark, on lower graphics levels. */
 export function setLeafDetail(root, level) {
   const f = LEAF_FRACTION[level] ?? 1;
+  const relief = level === 'high' || level === 'ultra';
   root.traverse((o) => {
     if (o.isInstancedMesh && o.userData.leafFull) o.count = Math.max(1, Math.round(o.userData.leafFull * f));
+    const m = o.material;
+    if (m && m.userData && m.userData.bump) {
+      const want = relief ? m.userData.bump : null;
+      if (m.bumpMap !== want) { m.bumpMap = want; m.needsUpdate = true; }
+    }
   });
 }

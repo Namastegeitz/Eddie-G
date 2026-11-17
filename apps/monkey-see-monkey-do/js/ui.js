@@ -1301,7 +1301,7 @@ export class UI {
       <p class="note">Right now: ${esc({ low: 'Low', medium: 'Medium', high: 'High', ultra: 'Ultra' }[this.app.stage.level] || 'High')}${Save.settings.quality === 'auto' ? ' (picked by Auto)' : ''}.</p>
       <ul>
         <li>Auto starts at High and watches your frame rate for a few seconds. If it averages under 38 frames a second it steps down to Medium, then Low, and tells you when it switches to Low. If a lower level doesn't speed things up (a browser in battery-saver mode can cap the frame rate), it goes back up and stays there.</li>
-        <li>Low: no outlines, shadows, grass or move trails, and fewer leaves on the trees; normal resolution. Easiest on older phones and batteries.</li>
+        <li>Low: no outlines, shadows, grass or move trails, and fewer leaves and flat bark on the trees; normal resolution. Easiest on older phones and batteries.</li>
         <li>Medium (Auto only): outlines, grass, flowers and move trails; no shadows; up to ${QUALITY.medium.dpr}x resolution.</li>
         <li>High: adds soft shadows, light rays and butterflies; up to ${QUALITY.high.dpr}x resolution.</li>
         <li>Ultra: up to ${QUALITY.ultra.dpr}x (a phone's full sharpness) and finer shadows. Uses the most battery.</li>

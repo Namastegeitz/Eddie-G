@@ -194,7 +194,7 @@ async function boot() {
         if (probe.t >= 3) {
           // average frame rate over the window (frames can arrive in bursts, so count them, don't time each one)
           probe.fps = probe.n / probe.t;
-          if (probe.prev && probe.fps < probe.prev.fps * 1.15) {
+          if (probe.prev && probe.prev.fps >= 20 && probe.fps < probe.prev.fps * 1.05) {
             // a lower level didn't help: the browser is capping the frame rate
             // (battery saver, a 30 Hz screen), not the graphics. Go back up and stay.
             app.autoLevel = probe.prev.level;
@@ -205,7 +205,7 @@ async function boot() {
             probe.prev = { level: app.autoLevel, fps: probe.fps };
             app.autoLevel = app.autoLevel === 'high' ? 'medium' : 'low';
             app.setLevel(app.autoLevel);
-            probe.skip = 0.5;
+            probe.skip = 1.2; // let the new level's shaders compile before measuring
           } else {
             probe.done = true;
             if (app.autoLevel === 'low') ui.toast('Graphics set to Low for smoother play. Change it in Settings.');
