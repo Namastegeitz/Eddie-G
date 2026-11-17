@@ -153,7 +153,15 @@
 - Next: playtest difficulty with people, real art pass (sprites drop in via `"sprite"` in files),
   Android AAB + Play internal track with GodotGooglePlayBilling, iOS via a Mac or Codemagic.
 
-## Cosmic Saucer Drift (`apps/cosmic-saucer-drift`)
+## Cosmic Saucer Drift (`COSMIC-SAUCER-DRIFT/`: game in `game/`, builds in `builds/`, store kits in `stores/`)
+- Launch workspace (17 Nov 2026):
+  - Everything for the game moved into `COSMIC-SAUCER-DRIFT/`, with each build in its own folder:
+    web, debug APK, Play AAB (blocked: dl.google.com and the upload key), iOS Xcode project (2 zip parts),
+    Windows, macOS (unsigned) and Linux.
+  - 9 store kits researched 17 Nov 2026: Play, Apple, Steam, GOG, itch.io, Epic, Microsoft, other Android stores, web portals.
+  - Fixes: Play target SDK 36; an opaque 1024 icon for Apple; a 32-bit Play icon; a multi-platform privacy policy.
+  - Live checklist page with saved ticks, notes, bug reports and playtest logs:
+    https://claude.ai/artifact/4MPCACGK7XTCzwTcBbqN1m (65 steps, 12 done by Claude).
 - Upgrade pass (docs/UPGRADE_AUDIT.md): four audits of every system; verified bugs fixed (atomic save + backup,
   Android Back, ghost, finished AI, pause during load, dynamic resolution at 30 fps, EMP pool leak, leech/comet/
   repulsor rules, split-screen sound, road surface bands, skyway lip/wall, billboards, rock normals, touch after
@@ -175,7 +183,7 @@
   - The other 9 are waiting for credits (about 60 each) and stay hidden until baked.
   - Meshy spend for craft: 75 credits.
   - The account is shared with the Canopy Crossing session, which was generating animals at the same time.
-- v1 built from `prompts/claude/cosmic-saucer-drift.md` (concept + every add-on: extra weapons, pro
+- v1 built from `COSMIC-SAUCER-DRIFT/prompts/cosmic-saucer-drift.md` (concept + every add-on: extra weapons, pro
   moves, living tracks + secrets, rivals + boss races, cups, time trial + ghost, daily, 2P split-screen,
   cosmetics, reverse/mirror, achievements; free/no ads with an ads layer switched off).
 - v2 (same prompt file, "v2" section): real places. 14 tracks in 4 real systems + a Grand Prix: Mars,
@@ -208,7 +216,7 @@
   before: `docs/ADS_PLAN.md`. v1 listing stays "no ads, no purchases, no data collected".
 - Tests: `tools/run_tests.sh` - parse check, smoke test (667 checks incl. live power-up tests, perks,
   store flow, save migration, v3 graphics) and the AI race sim on all 42 layouts.
-- Builds: debug APK in `dist/android/` (signed with `tools/android/apksigner`, a small APK Signature
+- Builds: every build in its own folder under `COSMIC-SAUCER-DRIFT/builds/`; debug APK in `builds/android-apk-debug/` (signed with `tools/android/apksigner`, a small APK Signature
   Scheme v2 signer, because Google's build-tools download is blocked here); web build published as a
   private artifact: https://claude.ai/artifact/Wjris6Pjst5K54bF6z8MUY
 - Store kit: `docs/STORE_LISTING.md`, feature graphic, icon and screenshots in `docs/store/`,
@@ -229,7 +237,7 @@
   A racer that stops making progress (pinned on a wall or hazard) now gets the rescue beam.
 - Not done here: Play Store AAB (needs the real Android SDK + Gradle on the PC), testing on a real
   phone (especially the graphics tiers and frame rate), music. Next prompts:
-  `prompts/claude/cosmic-saucer-drift-next.md`.
+  `COSMIC-SAUCER-DRIFT/prompts/cosmic-saucer-drift-next.md`.
 
 ## Bug's-Eye View (`apps/bugs-eye-view`)
 - Built end to end from `prompts/claude/bugs-eye-view.md` (all 6 phases, all 16 add-ons).
@@ -402,7 +410,7 @@
 - Next: push the source to a private GitHub repo so cloud/phone sessions can read it.
 
 ## Prompts
-- `prompts/claude/cosmic-saucer-drift.md` - the concept + all chosen add-ons + ads-ready layer, then
+- `COSMIC-SAUCER-DRIFT/prompts/cosmic-saucer-drift.md` - the concept + all chosen add-ons + ads-ready layer, then
   the v2 section (real systems, alien/premium craft, power-up lineups); `cosmic-saucer-drift-next.md` -
   10 next-build prompts (phone playtest, tutorial race, 3D models, music, online leaderboards, more
   real worlds, rewarded ads, real-money purchases, online multiplayer, accessibility).
