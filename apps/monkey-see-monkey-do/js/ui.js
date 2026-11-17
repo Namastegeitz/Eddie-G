@@ -1076,7 +1076,8 @@ export class UI {
       this.click();
     }));
     $('#act-calibrate').addEventListener('click', () => { this.audio.unlock(); this.showCalibrate(); });
-    $('#act-restore').addEventListener('click', async () => {
+    // (the PC edition has no Purchases group, so no Restore button)
+    if ($('#act-restore')) $('#act-restore').addEventListener('click', async () => {
       this.click();
       const r = await this.app.billing.restore();
       this.toast(r.ok ? (r.test ? 'Test mode: nothing to restore.' : 'Asked the store to restore your purchases.') : r.error);

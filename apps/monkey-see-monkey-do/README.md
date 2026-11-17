@@ -1,4 +1,4 @@
-# Monkey See, Monkey Do
+# **MONKEY SEE, MONKEY DO**
 
 A casual rhythm-memory game for phones (and anything with a browser). A
 cartoon 3D monkey dances a routine on the beat; you copy it, move for move,
