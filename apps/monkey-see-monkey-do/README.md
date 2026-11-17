@@ -176,13 +176,12 @@ one-time price instead.
 
 ## On phones
 
-**Public beta link:** https://namastegeitz.github.io/Eddie-G/ (landing page
+**Public beta link:** https://namastegeitz.github.io/Eddie-G/monkey-see-monkey-do/ (landing page
 with a Play button, QR code and tester notes; the game itself is at
-https://namastegeitz.github.io/Eddie-G/monkey-see-monkey-do/). It is served by
-GitHub Pages from this branch's `/docs` folder, which `scripts/build_web.mjs`
-refreshes on every build (`scripts/publish_beta.mjs`). One-time setup in
-GitHub: Settings > Pages > Deploy from a branch > `claude/nifty-lamport-bfm2ub`,
-folder `/docs`.
+https://namastegeitz.github.io/Eddie-G/monkey-see-monkey-do/play/). GitHub Pages serves it from the
+`monkey-see-monkey-do/` folder of the `gh-pages` branch (the rest of that branch
+is the Off-Grid Survival Kit). `node scripts/build_web.mjs` builds the site in
+`dist/site` and `bash scripts/deploy_beta.sh` publishes it.
 
 Plays on every current iPhone, iPad and Android phone, three ways (details
 in [mobile/README.md](mobile/README.md)):

@@ -16,8 +16,8 @@ Everything more than one store uses. Made once, pasted everywhere.
 | iPad 13" screenshots 2064x2752 | screenshots/ipad-13/ | Apple (iPad), Google Play (tablet) |
 | Desktop screenshots 1920x1080 (PC edition, JPEG) | screenshots/desktop-1080p/ | Steam, GOG, itch.io, Microsoft, Epic |
 | Shop screenshot for Apple's purchase review | screenshots/shop-review/ | Apple in-app purchases |
-| Privacy policy page | https://namastegeitz.github.io/Eddie-G/privacy.html | all |
-| Support page | https://namastegeitz.github.io/Eddie-G/support.html | all |
+| Privacy policy page | https://namastegeitz.github.io/Eddie-G/monkey-see-monkey-do/privacy.html | all |
+| Support page | https://namastegeitz.github.io/Eddie-G/monkey-see-monkey-do/support.html | all |
 | In-app product list (26) | ../../docs/STORE_PRODUCTS.md | Apple, Google Play |
 
 ## Remake the images

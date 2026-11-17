@@ -100,7 +100,7 @@ md += `## What's in each folder
 | Folder | What's inside |
 |---|---|
 | [00-shared](00-shared/) | Store text, age-rating answers, icons, banner art, screenshots for every store |
-| [01-web-beta](01-web-beta/) | Beta link, QR code, web build zip (served from \`/docs\` by GitHub Pages) |
+| [01-web-beta](01-web-beta/) | Beta link, QR code, web build zip (published to GitHub Pages by \`scripts/deploy_beta.sh\`) |
 | [02-itch-io](02-itch-io/) | HTML5 upload zip (PC edition) and upload steps |
 | [03-google-play](03-google-play/) | Android build steps, signing key steps, data-safety answers, \`build/\` for the .aab |
 | [04-apple-app-store](04-apple-app-store/) | iPhone/iPad build steps, reviewer notes, \`build/\` log |
@@ -125,7 +125,8 @@ md += `## What's in each folder
 
 \`\`\`
 cd apps/monkey-see-monkey-do
-node scripts/build_web.mjs            # game + public beta site (/docs)
+node scripts/build_web.mjs            # game + public beta site (dist/site)
+bash scripts/deploy_beta.sh           # publish the beta site to GitHub Pages
 node scripts/build_release.mjs        # web zip, itch.io zip, desktop app folder
 node scripts/make_store_art.cjs all   # icons, banners, Steam art, screenshots
 node scripts/check_store_text.mjs     # store text lengths

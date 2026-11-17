@@ -11,8 +11,8 @@ the check.
 - Title: **Monkey See, Monkey Do** (home-screen name: Monkey Do)
 - Genre: rhythm, memory, music. Players: 1. Ages: everyone (4+).
 - Mobile: free with optional packs. PC: one-time price, no in-game purchases.
-- Privacy policy: https://namastegeitz.github.io/Eddie-G/privacy.html
-- Support: https://namastegeitz.github.io/Eddie-G/support.html
+- Privacy policy: https://namastegeitz.github.io/Eddie-G/monkey-see-monkey-do/privacy.html
+- Support: https://namastegeitz.github.io/Eddie-G/monkey-see-monkey-do/support.html
 
 ---
 

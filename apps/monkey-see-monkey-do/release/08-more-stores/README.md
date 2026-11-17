@@ -10,7 +10,7 @@
 ## Microsoft Store, the quick way
 
 1. Switch on GitHub Pages so the beta link is live.
-2. Open pwabuilder.com, enter https://namastegeitz.github.io/Eddie-G/monkey-see-monkey-do/
+2. Open pwabuilder.com, enter https://namastegeitz.github.io/Eddie-G/monkey-see-monkey-do/play/
 3. Package for Windows (MSIX); upload in Partner Center.
 
 The PWA package uses the standard web edition. For a Shop-free Windows version,

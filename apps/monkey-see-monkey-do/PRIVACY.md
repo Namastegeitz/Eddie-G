@@ -28,4 +28,4 @@ Monkey See, Monkey Do is a game that runs entirely on your device.
   version and the PC edition sell nothing.
 
 If this policy changes, the new version will be posted here with a new date.
-Online copy: https://namastegeitz.github.io/Eddie-G/privacy.html
+Online copy: https://namastegeitz.github.io/Eddie-G/monkey-see-monkey-do/privacy.html

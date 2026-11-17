@@ -6,20 +6,20 @@
 <title>Monkey See, Monkey Do · Beta</title>
 <meta name="description" content="Beta test of Monkey See, Monkey Do: watch the monkey dance, then copy the moves. Plays in any phone, tablet or computer browser.">
 <meta name="theme-color" content="#0e3527">
-<link rel="icon" href="monkey-see-monkey-do/assets/icons/icon.svg" type="image/svg+xml">
-<link rel="apple-touch-icon" href="monkey-see-monkey-do/assets/icons/apple-touch-icon.png">
+<link rel="icon" href="play/assets/icons/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="play/assets/icons/apple-touch-icon.png">
 <link rel="stylesheet" href="site.css">
 </head>
 <body>
 <main>
   <header>
-    <img src="monkey-see-monkey-do/assets/icons/icon.svg" alt="">
+    <img src="play/assets/icons/icon.svg" alt="">
     <h1>Monkey See, Monkey Do</h1>
     <span class="tag">BETA</span>
     <p class="lead">Watch the monkey dance, then copy the moves in the same order. Plays right in the browser on any phone, tablet or computer. Nothing to install.</p>
   </header>
 
-  <a class="play" href="monkey-see-monkey-do/">Play now</a>
+  <a class="play" href="play/">Play now</a>
   <p class="small">Works offline after the first visit.</p>
 
   <section class="qr" aria-label="Open on your phone">
@@ -45,7 +45,7 @@
       <li>Levels 1-3 teach the moves. Levels 2 and 3 are <b>take turns</b>: copy the monkey, add a move of your own, and the monkey copies you.</li>
       <li>From level 4 every level is on a new map: beach, disco, moon, jungle.</li>
       <li>The Wardrobe (skins and gear), Endless, Free Dance, and Settings &gt; Graphics.</li>
-      <li>The Shop only sells in the phone apps. To try it here with pretend purchases (no money), use <a href="monkey-see-monkey-do/?billing=test">this test-mode link</a>.</li>
+      <li>The Shop only sells in the phone apps. To try it here with pretend purchases (no money), use <a href="play/?billing=test">this test-mode link</a>.</li>
     </ul>
   </section>
 
@@ -70,6 +70,7 @@
   <footer>Beta build __BUILD__ · <a href="privacy.html">Privacy</a> · <a href="support.html">Support</a></footer>
 </main>
 <script>
+  if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) navigator.serviceWorker.register('sw.js').catch(function () { /* fine without it */ });
   (function () {
     function info() {
       var gl = 'none';

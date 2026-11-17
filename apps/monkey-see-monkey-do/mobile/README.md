@@ -12,12 +12,11 @@ There are three ways to put the game on a phone. They all run the same code
 ## 1. Browser (fastest; any phone)
 
 1. Host `dist/www` on any HTTPS static host. The public beta already does
-   this: `node scripts/build_web.mjs` copies the build to the repository's
-   `/docs` folder, and GitHub Pages serves it at
-   https://namastegeitz.github.io/Eddie-G/monkey-see-monkey-do/ once Pages is
-   switched on (Settings > Pages > Deploy from a branch >
-   `claude/nifty-lamport-bfm2ub`, folder `/docs`). Netlify, Cloudflare Pages
-   or surge work too: upload `dist/www`.
+   this: `node scripts/build_web.mjs` then `bash scripts/deploy_beta.sh`
+   publish it with GitHub Pages at
+   https://namastegeitz.github.io/Eddie-G/monkey-see-monkey-do/play/
+   (landing page: https://namastegeitz.github.io/Eddie-G/monkey-see-monkey-do/).
+   Netlify, Cloudflare Pages or surge work too: upload `dist/www`.
 2. On the phone, open the link once.
    - **iPhone (Safari):** Share > **Add to Home Screen**.
    - **Android (Chrome):** menu > **Install app** (or Add to Home screen).

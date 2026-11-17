@@ -1,6 +1,6 @@
 {
   "_note": "Claude's copy of the live checklist's progress (claude.ai > MONKEY SEE, MONKEY DO > Monkey Do Launch Checklist). Ask Claude to 'sync the checklist' to refresh it, then node scripts/release_readme.mjs rewrites release/README.md.",
-  "synced": "2026-11-17T15:40:00Z",
+  "synced": "2026-11-17T20:55:00Z",
   "status": {
     "p0-folder": {
       "state": "done",
@@ -15,7 +15,8 @@
     "p0-beta-build": {
       "state": "done",
       "by": "claude",
-      "at": "2026-11-07T20:00:00Z"
+      "at": "2026-11-17T20:50:00Z",
+      "note": "Rebuilt for its own folder on the GitHub Pages site; 13 checks pass on iPhone, Android and desktop."
     },
     "p2-privacy-url": {
       "state": "done",
@@ -72,7 +73,7 @@
       "state": "doing",
       "by": "claude",
       "at": "2026-11-17T14:20:00Z",
-      "note": "Support page built (docs/support.html). Choose a contact email (release/config.json)."
+      "note": "Support page built (support.html on the beta site). Choose a contact email (release/config.json)."
     },
     "p2-age-rating": {
       "state": "doing",
@@ -103,6 +104,12 @@
       "by": "claude",
       "at": "2026-11-17T15:40:00Z",
       "note": "Desktop 1080p x6"
+    },
+    "p0-pages": {
+      "state": "doing",
+      "by": "claude",
+      "at": "2026-11-17T20:55:00Z",
+      "note": "GitHub Pages is already on (it serves the Off-Grid Survival Kit). The game's folder is built and tested; it goes live once you OK publishing it to the gh-pages branch."
     }
   }
 }

@@ -7,7 +7,7 @@ From beta to the App Store, Google Play, Steam, GOG, itch.io and more.
 | **Live checklist** (tick steps, see tips, progress log) | https://claude.ai/artifact/Kz4xL5JoZfgC9bDzBAtQ1Y |
 | **Bug & feedback reports** (testers write here) | https://claude.ai/artifact/NiybkudZiDL75qvRyHvHuC |
 | **Playable game** (private) | https://claude.ai/artifact/6ARndyKdPDcqbRxZ7ohyMY |
-| **Public beta link** (after GitHub Pages is on) | https://namastegeitz.github.io/Eddie-G/ |
+| **Public beta link** (after GitHub Pages is on) | https://namastegeitz.github.io/Eddie-G/monkey-see-monkey-do/ |
 
 All three pages are in the **MONKEY SEE, MONKEY DO** folder on your claude.ai Artifacts screen.
 
@@ -18,7 +18,7 @@ All three pages are in the **MONKEY SEE, MONKEY DO** folder on your claude.ai Ar
 ## Progress
 
 **23% done** 🟩🟩⬜⬜⬜⬜⬜⬜⬜⬜ · 15 of 72 steps
-(65 required, 7 optional) · waiting on you: **22** · Claude's queue: **9**
+(65 required, 7 optional) · waiting on you: **21** · Claude's queue: **10**
 
 | Phase | Progress | Cost | Folder |
 |---|---|---|---|
@@ -39,15 +39,15 @@ Legend: ✅ done · 🔄 working on it · ⬜ to do · ⏭️ skipped. Owner: **
 ## Up next
 
 **Your next steps**
-- ⬜ **Switch on GitHub Pages** (Project home). If nothing appears after 5 minutes, open the Actions tab: GitHub publishes Pages with Actions, and earlier Actions runs on this account were being refused (check Settings > Billing).
 - ⬜ **Recruit 12 or more testers** (Beta test). Ask 15-16 people: some always drop out, and Google counts only testers who stay opted in for all 14 days.
 - ⬜ **Invite testers to the Bug & Feedback page** (Beta test). If a tester has no Claude account, ask them to text you instead and type their report in yourself: it takes 30 seconds.
 - ⬜ **Real-device pass: iPhone, Android, tablet, computer** (Beta test). On older phones, check Settings > Graphics: Auto should drop to Medium or Low by itself within a few seconds.
+- ⬜ **Check the name is free to use** (Store kit (used by every store)). Store titles can add a short tag that also helps search, e.g. 'Monkey See, Monkey Do: Dance' (30 characters max on both mobile stores).
 
 **Claude's next steps**
+- 🔄 **Put the beta website on GitHub Pages** (Project home)
 - 🔄 **Support page and contact** (Store kit (used by every store))
 - 🔄 **Store text: names, descriptions, keywords** (Store kit (used by every store))
-- 🔄 **Age-rating answers** (Store kit (used by every store))
 
 ## Project home
 
@@ -81,38 +81,38 @@ Everything for the game in one place, and a link anyone can play.
   **Done when:** The page opens and plays.
   </details>
 
-- [x] ✅ **Public beta website built** · Claude · done by Claude 2026-11-07
+- [x] ✅ **Public beta website built** · Claude · done by Claude 2026-11-17
+  - Note: Rebuilt for its own folder on the GitHub Pages site; 13 checks pass on iPhone, Android and desktop.
   <details><summary>How to do it</summary>
 
   **Why:** Testers need a normal web link: no account, works on every phone and computer, plays offline, can be added to the home screen.
 
-  1. Every web build copies the game into the repository's /docs folder.
-  2. A landing page with a Play button, QR code and tester notes sits in front of it.
+  1. Every web build makes the beta website in dist/site: the game in play/, with a landing page (Play button, QR code, tester notes) in front of it.
+  2. Privacy and support pages come with it.
 
   **Tip:** Nothing to do here: it updates itself whenever the game is rebuilt.
 
-  **Done when:** /docs holds the landing page and the game, tested offline.
+  **Done when:** dist/site holds the landing page and the game, tested offline.
   </details>
 
-- [ ] ⬜ **Switch on GitHub Pages** · You
+- [ ] 🔄 **Put the beta website on GitHub Pages** · Claude · in progress
+  - Note: GitHub Pages is already on (it serves the Off-Grid Survival Kit). The game's folder is built and tested; it goes live once you OK publishing it to the gh-pages branch.
   <details><summary>How to do it</summary>
 
-  **Why:** This is the one switch that puts the beta website online. Only the repository owner can flip it.
+  **Why:** A free public web address that works on every phone and computer.
 
-  1. Open https://github.com/Namastegeitz/Eddie-G/settings/pages
-  2. Source: Deploy from a branch.
-  3. Branch: claude/nifty-lamport-bfm2ub, folder: /docs. Save.
-  4. Wait 1-2 minutes.
+  1. GitHub Pages was already on for this repository: it serves the gh-pages branch, home of the Off-Grid Survival Kit.
+  2. The game gets its own monkey-see-monkey-do/ folder there. bash scripts/deploy_beta.sh publishes it and never touches the Off-Grid files.
 
-  **Tip:** If nothing appears after 5 minutes, open the Actions tab: GitHub publishes Pages with Actions, and earlier Actions runs on this account were being refused (check Settings > Billing).
+  **Tip:** Nothing to switch on. (GitHub's Pages settings page shows a 404 unless you are signed in as the repository owner.)
 
-  **Done when:** https://namastegeitz.github.io/Eddie-G/ shows the landing page.
+  **Done when:** https://namastegeitz.github.io/Eddie-G/monkey-see-monkey-do/ shows the landing page.
 
-  **Links:** [Pages settings](https://github.com/Namastegeitz/Eddie-G/settings/pages)
+  **Links:** [Beta link](https://namastegeitz.github.io/Eddie-G/monkey-see-monkey-do/)
   </details>
 
 - [ ] ⬜ **Claude checks the live beta link** · Claude
-  - After: Switch on GitHub Pages
+  - After: Put the beta website on GitHub Pages
   <details><summary>How to do it</summary>
 
   **Why:** So you never send testers a broken link.
@@ -120,7 +120,7 @@ Everything for the game in one place, and a link anyone can play.
   1. Claude opens the link as an iPhone, an Android phone and a desktop browser.
   2. Checks the game starts, a level plays and it reopens offline.
 
-  **Tip:** Tell Claude once Pages is on; it can reach your github.io site from this project's environment.
+  **Tip:** Claude re-checks the link after each new beta build.
 
   **Done when:** All three pass.
   </details>
@@ -146,12 +146,12 @@ Real people on real phones find the small bugs before any store reviewer does.
   </details>
 
 - [ ] ⬜ **Send testers the beta link** · You
-  - After: Switch on GitHub Pages; Claude checks the live beta link
+  - After: Put the beta website on GitHub Pages; Claude checks the live beta link
   <details><summary>How to do it</summary>
 
   **Why:** One link works on every device, no install.
 
-  1. Send https://namastegeitz.github.io/Eddie-G/ (or the QR code in release/01-web-beta/qr.png).
+  1. Send https://namastegeitz.github.io/Eddie-G/monkey-see-monkey-do/ (or the QR code in release/01-web-beta/qr.png).
   2. Ask them to play for 15 minutes on two different days.
 
   **Tip:** Give them three concrete asks: finish levels 1-5, try a take-turns level (2 or 3), open the Wardrobe.
@@ -242,15 +242,15 @@ Write it once, paste it everywhere: icons, screenshots, text, policies, ratings.
 
   **Why:** Apple, Google, Steam and Microsoft all ask for a privacy policy link.
 
-  1. Published with the beta site at /privacy.html (from PRIVACY.md).
+  1. Published with the beta site (from PRIVACY.md).
 
-  **Tip:** Goes live with GitHub Pages: https://namastegeitz.github.io/Eddie-G/privacy.html
+  **Tip:** Live: https://namastegeitz.github.io/Eddie-G/monkey-see-monkey-do/privacy.html
 
-  **Done when:** The page exists in /docs.
+  **Done when:** The page is online.
   </details>
 
 - [ ] 🔄 **Support page and contact** · You + Claude · in progress
-  - Note: Support page built (docs/support.html). Choose a contact email (release/config.json).
+  - Note: Support page built (support.html on the beta site). Choose a contact email (release/config.json).
   <details><summary>How to do it</summary>
 
   **Why:** Apple requires a support URL; every store shows a contact.
@@ -1094,7 +1094,7 @@ Launch smoothly, then keep players happy.
 | Folder | What's inside |
 |---|---|
 | [00-shared](00-shared/) | Store text, age-rating answers, icons, banner art, screenshots for every store |
-| [01-web-beta](01-web-beta/) | Beta link, QR code, web build zip (served from `/docs` by GitHub Pages) |
+| [01-web-beta](01-web-beta/) | Beta link, QR code, web build zip (published to GitHub Pages by `scripts/deploy_beta.sh`) |
 | [02-itch-io](02-itch-io/) | HTML5 upload zip (PC edition) and upload steps |
 | [03-google-play](03-google-play/) | Android build steps, signing key steps, data-safety answers, `build/` for the .aab |
 | [04-apple-app-store](04-apple-app-store/) | iPhone/iPad build steps, reviewer notes, `build/` log |
@@ -1119,7 +1119,8 @@ Launch smoothly, then keep players happy.
 
 ```
 cd apps/monkey-see-monkey-do
-node scripts/build_web.mjs            # game + public beta site (/docs)
+node scripts/build_web.mjs            # game + public beta site (dist/site)
+bash scripts/deploy_beta.sh           # publish the beta site to GitHub Pages
 node scripts/build_release.mjs        # web zip, itch.io zip, desktop app folder
 node scripts/make_store_art.cjs all   # icons, banners, Steam art, screenshots
 node scripts/check_store_text.mjs     # store text lengths
