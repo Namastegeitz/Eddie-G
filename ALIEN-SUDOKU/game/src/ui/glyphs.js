@@ -2,16 +2,15 @@
 import { SYMBOL_SETS } from '../data/symbols.js';
 import { SECTORS } from '../data/sectors.js';
 import { settings } from '../core/profile.js';
-import { DIFFICULTY_LINEUP } from '../data/themes.js';
+import { lineupFor } from '../data/themes.js';
 import { campaignDifficulty } from '../engine/pool.js';
 
 /** Which symbol set a session should draw with right now. */
 export function setKeyFor(session) {
   const s = settings();
-  // Each difficulty brings its own aliens, soft to gnarly, in every mode (campaign included).
-  if (session && s.difficultyAliens !== false && DIFFICULTY_LINEUP[session.difficulty]) {
-    return DIFFICULTY_LINEUP[session.difficulty];
-  }
+  // Each difficulty brings its own aliens; which ones depends on the mode (lineupFor).
+  const byDifficulty = session && s.difficultyAliens !== false ? lineupFor(session.mode, session.difficulty) : null;
+  if (byDifficulty) return byDifficulty;
   if (session?.mode === 'campaign' && s.sectorSymbols && session.sector != null) {
     return SECTORS[session.sector]?.symbolSet || s.symbolSet;
   }
@@ -21,7 +20,7 @@ export function setKeyFor(session) {
 /** The lineup a campaign level is played with. */
 export function lineupForLevel(sector, level) {
   const s = settings();
-  if (s.difficultyAliens !== false) return DIFFICULTY_LINEUP[campaignDifficulty(sector, level)];
+  if (s.difficultyAliens !== false) return lineupFor('campaign', campaignDifficulty(sector, level));
   return s.sectorSymbols ? SECTORS[sector]?.symbolSet || s.symbolSet : s.symbolSet;
 }
 

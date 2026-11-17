@@ -6,9 +6,16 @@ import { SECTORS } from '../../data/sectors.js';
 import { THEMES, EASY_PALETTES, EASY_PALETTE_ORDER } from '../../data/themes.js';
 import { topbar } from './campaign.js';
 import { confirmModal, toast } from '../modal.js';
-import { sfx, music, TIER_SONG, onMusicChange, audioStatus, testSound } from '../../audio/audio.js';
+import { sfx, music, TIER_SONG, STORY_SONG, onMusicChange, audioStatus, testSound } from '../../audio/audio.js';
 
-const TIERS = [['easy', 'Easy'], ['medium', 'Medium'], ['hard', 'Hard'], ['alien', 'Alien']];
+/** [label, song id] for the theme song list. Medium has two: the Star Cadets' song and the Zen/Duel one. */
+const SONG_ROWS = [
+  ['Easy', TIER_SONG.easy],
+  ['Medium', STORY_SONG.medium],
+  ['Medium · Zen & Duel', TIER_SONG.medium],
+  ['Hard', TIER_SONG.hard],
+  ['Alien', TIER_SONG.alien],
+];
 import { appVersion, isNative, isElectron } from '../../platform/native.js';
 import { privacyOptionsAvailable, showPrivacyOptions, adsSupported } from '../../platform/ads.js';
 import { openPrivacyPolicy } from '../privacy.js';
@@ -97,8 +104,7 @@ export const settingsScreen = {
     const musicToggle = toggle('music', 'Theme music', 'A theme song for each difficulty');
     const songList = h('div', { class: 'song-list', role: 'group', 'aria-label': 'Theme songs' });
     function renderSongs(playing = music.current) {
-      songList.replaceChildren(...TIERS.map(([tier, label]) => {
-        const id = TIER_SONG[tier];
+      songList.replaceChildren(...SONG_ROWS.map(([label, id]) => {
         const on = playing === id;
         return h('button', {
           class: `song-row${on ? ' on' : ''}`, type: 'button', 'aria-pressed': String(on),
@@ -146,9 +152,9 @@ export const settingsScreen = {
         group('Glyph lineup & theme', [
           setGrid,
           h('div', { class: 'set-row easy-row' },
-            h('span', { class: 'set-text' }, h('span', {}, 'Easy colors'), h('small', {}, 'The board and screens for Easy puzzles and the first campaign sector')),
+            h('span', { class: 'set-text' }, h('span', {}, 'Easy colors'), h('small', {}, 'The board and screens for Easy puzzles in Zen Mode')),
             easyRow),
-          toggle('difficultyAliens', 'Each difficulty brings its own aliens', 'Easy: Soft Visitors · Medium: Alien Creatures · Hard: Hostile Visitors · Alien: Gnarly Horde. In every mode, campaign included.'),
+          toggle('difficultyAliens', 'Each difficulty brings its own aliens', 'Campaign, Daily & Quick Play: Easy Alien Creatures · Medium Star Cadets · Hard Hostile Visitors · Alien Gnarly Horde. Zen & Alien Duel: Easy Soft Visitors, the rest the same.'),
           toggle('sectorSymbols', 'Otherwise, campaign uses each sector\'s lineup', 'Only when difficulty aliens are off. Off = always use your lineup.'),
         ]),
         group('Sound', [

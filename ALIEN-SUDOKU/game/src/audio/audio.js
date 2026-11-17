@@ -6,9 +6,9 @@
    because browsers and mobile webviews block audio before that.
    ============================================================ */
 
-import { playStyle, STYLE_BY_ID, TIER_SONG, MENU_SONG } from './music-engine.js';
+import { playStyle, STYLE_BY_ID, TIER_SONG, STORY_SONG, MENU_SONG, songFor } from './music-engine.js';
 
-export { TIER_SONG, MENU_SONG };
+export { TIER_SONG, STORY_SONG, MENU_SONG, songFor };
 /** Music is mastered hot; this sets it under the sound effects at the default volume. */
 const MUSIC_TRIM = 2.5;
 

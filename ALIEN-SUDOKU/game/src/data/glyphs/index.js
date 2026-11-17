@@ -20,9 +20,10 @@ import ancient from './ancient.js';
 import softies from './softies.js';
 import hostile from './hostile.js';
 import gnarly from './gnarly.js';
+import cadets from './cadets.js';
 import { THEMES } from '../themes.js';
 
-export const LINEUPS = { encounters, fleet, planets, cosmos, creatures, ancient, softies, hostile, gnarly };
+export const LINEUPS = { encounters, fleet, planets, cosmos, creatures, ancient, softies, hostile, gnarly, cadets };
 
 /** Cosmic Mix borrows the most iconic glyph of each lineup: [lineup, 1-based index]. */
 export const MIXED_REFS = [
@@ -30,7 +31,10 @@ export const MIXED_REFS = [
   ['cosmos', 5], ['creatures', 3], ['encounters', 3], ['planets', 3],
 ];
 
+/** The lineups a player can pick in Settings (and that count toward "Symbol sets x / y"). */
 export const SYMBOL_SET_ORDER = ['encounters', 'softies', 'creatures', 'hostile', 'gnarly', 'fleet', 'planets', 'cosmos', 'ancient', 'mixed'];
+/** Lineups that only appear through the difficulty lineup (never in the picker, the stats count or Duel looks). */
+export const DIFFICULTY_ONLY_SETS = ['cadets'];
 
 const useSvg = (id, label) =>
   `<svg class="gsvg" viewBox="0 0 64 64" role="img" aria-label="${label}"><use href="#${id}"/></svg>`;
@@ -55,7 +59,7 @@ function makeSet(key) {
   };
 }
 
-export const SYMBOL_SETS = Object.fromEntries(SYMBOL_SET_ORDER.map((k) => [k, makeSet(k)]));
+export const SYMBOL_SETS = Object.fromEntries([...SYMBOL_SET_ORDER, ...DIFFICULTY_ONLY_SETS].map((k) => [k, makeSet(k)]));
 
 /** One hidden <svg> holding every gradient and glyph symbol. */
 export function spriteMarkup() {

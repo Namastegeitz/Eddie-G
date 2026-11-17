@@ -16,7 +16,7 @@ import { createRivalPanel, rivalAvatar } from '../rival-panel.js';
 import { SECTORS, LEVELS_PER_SECTOR, starsFor } from '../../data/sectors.js';
 import { SYMBOL_SETS } from '../../data/symbols.js';
 import { formatTime, prettyDate } from '../../core/time.js';
-import { sfx, TIER_SONG, MENU_SONG } from '../../audio/audio.js';
+import { sfx, songFor } from '../../audio/audio.js';
 import { haptic } from '../../platform/native.js';
 import { adsSupported, showRewarded, noteGameFinished, maybeShowInterstitial } from '../../platform/ads.js';
 import { openModal, confirmModal, toast } from '../modal.js';
@@ -90,7 +90,7 @@ export const playScreen = {
   banner: false,
   bg: (params, inst) => inst?.session?.bg || null,
   theme: (params, inst) => (inst?.session ? setKeyFor(inst.session) : null),
-  song: (params, inst) => TIER_SONG[inst?.session?.difficulty] || MENU_SONG,
+  song: (params, inst) => songFor(inst?.session?.mode, inst?.session?.difficulty),
 
   create(params, nav) {
     // ---------- Session ----------
@@ -917,7 +917,7 @@ export const playScreen = {
         giftTries,
         giftNeedsAd: adsSupported,
         allowNew: session.mode === 'quick' || session.mode === 'duel',
-        tone: { softies: 'soft', hostile: 'hostile', gnarly: 'gnarly' }[setKeyFor(session)] || 'normal',
+        tone: { softies: 'soft', cadets: 'cadet', hostile: 'hostile', gnarly: 'gnarly' }[setKeyFor(session)] || 'normal',
         beforeChoice: async (choice) => {
           if (choice !== 'gift') return true;
           const res = await showRewarded();

@@ -115,7 +115,7 @@ export const sectorScreen = {
       h('div', { class: 'page-body' },
         h('p', { class: 'sector-blurb' }, s.blurb),
         h('div', { class: 'level-grid' }, nodes),
-        h('p', { class: 'page-note' }, `${settings().difficultyAliens !== false ? 'Each transmission brings the aliens of its difficulty, from Soft Visitors to the Gnarly Horde.' : `Symbols: ${set.name}.`} Stars: 3 for a clean solve, 2 for one slip (mistake or hint), 1 otherwise.`)));
+        h('p', { class: 'page-note' }, `${settings().difficultyAliens !== false ? 'Each transmission brings the aliens of its difficulty, from the Alien Creatures to the Gnarly Horde.' : `Symbols: ${set.name}.`} Stars: 3 for a clean solve, 2 for one slip (mistake or hint), 1 otherwise.`)));
     return { el };
   },
 };

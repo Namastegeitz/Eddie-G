@@ -39,6 +39,18 @@ const VOICE = {
     gift: 'Here, a little gift. Keep going!',
     noGift: 'We already gave you a gift. Try again!',
   },
+  // Star Cadets (Medium in Campaign, Daily and Quick Play): polite, raised on Earth's '80s and '90s broadcasts.
+  cadet: {
+    question: 'Who are you?',
+    thought: 'You ponder in wonder…',
+    known: (n) => `${n}! The Cadet Corps salutes you. Welcome back.`,
+    named: (n) => `${n}. Excellent name. Logging it in the academy files.`,
+    friend: 'A friend from Earth! Just like on the broadcasts.',
+    decoder: 'A fellow decoder! Totally radical.',
+    unknown: 'No sweat. Our instructors say nobody knows at first.',
+    gift: 'Regulation says we can share a few tries. Here you go.',
+    noGift: 'We already shared our tries. Rewind and try again.',
+  },
   normal: {
     question: 'Who are you?',
     thought: 'You ponder in wonder…',
@@ -117,6 +129,10 @@ const SHIP_SVG = `<svg class="enc-ship-svg" viewBox="0 0 480 300" aria-hidden="t
     <radialGradient id="encs-skin-soft" cx="40%" cy="35%" r="70%"><stop offset="0%" stop-color="#ffe3f1"/><stop offset="100%" stop-color="#ff9cc9"/></radialGradient>
     <linearGradient id="encs-skin-hostile" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#b8c0cc"/><stop offset="100%" stop-color="#5d6676"/></linearGradient>
     <linearGradient id="encs-skin-gnarly" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#8fae5a"/><stop offset="100%" stop-color="#3c4f22"/></linearGradient>
+    <radialGradient id="encs-skin-cadet" cx="40%" cy="32%" r="72%"><stop offset="0%" stop-color="#ffd0ea"/><stop offset="55%" stop-color="#ff6fbb"/><stop offset="100%" stop-color="#d42a86"/></radialGradient>
+    <linearGradient id="encs-hull-cadet" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#e8fdff"/><stop offset="40%" stop-color="#7fe9f5"/><stop offset="100%" stop-color="#2a3a8a"/>
+    </linearGradient>
   </defs>
   <ellipse cx="240" cy="168" rx="230" ry="110" fill="url(#encs-glow)"/>
   <path d="M152 132 Q156 46 240 40 Q324 46 328 132 Z" fill="url(#encs-dome)" stroke="#d9fbff" stroke-opacity="0.7" stroke-width="3"/>
@@ -136,6 +152,16 @@ const SHIP_SVG = `<svg class="enc-ship-svg" viewBox="0 0 480 300" aria-hidden="t
     <path d="M232 116 Q240 124 248 116" fill="none" stroke="#7a2d55" stroke-width="3" stroke-linecap="round"/>
     <path d="M226 66 Q220 52 212 50 M254 66 Q260 52 268 50" fill="none" stroke="#c45a8f" stroke-width="3" stroke-linecap="round"/>
     <circle cx="211" cy="49" r="5" fill="#ff8fc8"/><circle cx="269" cy="49" r="5" fill="#ff8fc8"/>
+  </g>
+  <g class="enc-visitor v v-cadet">
+    <path d="M200 138 Q240 124 280 138 L276 146 Q240 136 204 146 Z" fill="#1e2a5a" stroke="#0c1236" stroke-width="2.5"/>
+    <path d="M214 74 Q208 58 200 54 M266 74 Q272 58 280 54" fill="none" stroke="#a31f66" stroke-width="3.5" stroke-linecap="round"/>
+    <circle cx="199" cy="53" r="5.5" fill="#22e1ff" stroke="#0c6e85" stroke-width="2"/><circle cx="281" cy="53" r="5.5" fill="#22e1ff" stroke="#0c6e85" stroke-width="2"/>
+    <path d="M240 64 C214 64 202 82 203 102 C204 122 220 134 240 136 C260 134 276 122 277 102 C278 82 266 64 240 64 Z" fill="url(#encs-skin-cadet)" stroke="#a31f66" stroke-width="3"/>
+    <ellipse cx="225" cy="100" rx="9" ry="11" fill="#1b0b2e"/><ellipse cx="255" cy="100" rx="9" ry="11" fill="#1b0b2e"/>
+    <circle cx="228" cy="95" r="3.6" fill="#fff"/><circle cx="258" cy="95" r="3.6" fill="#fff"/>
+    <path d="M228 119 Q240 129 252 119" fill="none" stroke="#6b0f3e" stroke-width="3" stroke-linecap="round"/>
+    <path d="M240 133 l2.4 4.9 5.4.8-3.9 3.8.9 5.4-4.8-2.6-4.8 2.6.9-5.4-3.9-3.8 5.4-.8z" fill="#ffd23f" stroke="#a87a00" stroke-width="1.2" transform="translate(16 -1) scale(.85)"/>
   </g>
   <g class="enc-visitor v v-hostile">
     <path d="M240 62 C212 62 198 84 200 106 C202 124 222 136 240 142 C258 136 278 124 280 106 C282 84 268 62 240 62 Z" fill="url(#encs-skin-hostile)" stroke="#20242c" stroke-width="3"/>
@@ -206,7 +232,7 @@ async function speak(el, text, { fast = false } = {}) {
  * @param {number} o.giftTries   how many tries the gift restores
  * @param {boolean} o.giftNeedsAd  gift is a rewarded video (mobile)
  * @param {boolean} o.allowNew   offer "New signal"
- * @param {string} [o.tone]      'soft' | 'normal' | 'hostile' | 'gnarly' (follows the difficulty's lineup)
+ * @param {string} [o.tone]      'soft' | 'normal' | 'cadet' | 'hostile' | 'gnarly' (follows the game's lineup)
  * @param {(choice) => Promise<boolean>} [o.beforeChoice]  e.g. play the rewarded ad; false keeps the panel open
  */
 export function playEncounter(o) {

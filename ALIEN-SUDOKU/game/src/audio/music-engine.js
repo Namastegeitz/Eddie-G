@@ -516,6 +516,41 @@ export function snare(M, ch, t, { vol = 0.4, tone = 190, decay = 0.16, bright = 
   kick(M, ch, t, { vol: vol * 0.5, from: tone * 1.4, to: tone, pitchTime: 0.03, decay: 0.08, click: 0 });
   noiseHit(M, ch, t, { type: 'highpass', freq: bright, q: 0.7, decay, vol });
 }
+/** '80s gated snare: a short body tone plus bright noise held flat and cut off hard. */
+export function gatedSnare(M, ch, t, { vol = 0.3, hold = 0.17 } = {}) {
+  if (later(M, t, gatedSnare, arguments)) return;
+  const { ctx } = M;
+  kick(M, ch, t, { vol: vol * 0.55, from: 260, to: 180, pitchTime: 0.03, decay: 0.09, click: 0 });
+  const f = ctx.createBiquadFilter();
+  f.type = 'bandpass';
+  f.frequency.value = 2200;
+  f.Q.value = 0.5;
+  const g = ctx.createGain();
+  g.gain.setValueAtTime(0, t);
+  g.gain.linearRampToValueAtTime(vol, t + 0.003);
+  g.gain.setValueAtTime(vol * 0.8, t + hold);
+  g.gain.linearRampToValueAtTime(0.0001, t + hold + 0.02);
+  noiseSrc(M, t, hold + 0.05).connect(f);
+  f.connect(g);
+  g.connect(ch);
+}
+/** A flat bed of filtered noise: cassette hiss, room tone. */
+export function noiseBed(M, ch, t, dur, { type = 'highpass', freq = 6000, q = 0.7, vol = 0.01 } = {}) {
+  if (later(M, t, noiseBed, arguments)) return;
+  const { ctx } = M;
+  const f = ctx.createBiquadFilter();
+  f.type = type;
+  f.frequency.value = freq;
+  f.Q.value = q;
+  const g = ctx.createGain();
+  g.gain.setValueAtTime(0, t);
+  g.gain.linearRampToValueAtTime(vol, t + 0.3);
+  g.gain.setValueAtTime(vol, t + Math.max(0.3, dur - 0.3));
+  g.gain.linearRampToValueAtTime(0, t + dur);
+  noiseSrc(M, t, dur).connect(f);
+  f.connect(g);
+  g.connect(ch);
+}
 export const hat = (M, ch, t, { vol = 0.08, decay = 0.04, open = false } = {}) =>
   noiseHit(M, ch, t, { type: 'highpass', freq: 7500, q: 0.7, decay: open ? 0.3 : decay, vol });
 
@@ -583,6 +618,17 @@ const SYNTHWAVE = [
 ];
 const SYNTHWAVE_LEAD = line('E5:1.5 D5:.5 C5:1 B4:1 | A4:2 C5:1 D5:1 | E5:1.5 G5:.5 E5:1 D5:1 | D5:3 B4:1');
 const SYNTHWAVE_LEAD_B = line('A5:1 G5:.5 E5:.5 G5:2 | F5:1 E5:.5 C5:.5 A4:2 | G5:1 E5:.5 C5:.5 E5:1 G5:1 | B5:2 A5:1 G5:1');
+
+// Cadet Mixtape (Star Cadets): bright F major, Fmaj7 - Am7 - Bbmaj7 - C7.
+const CADET_CHORDS = [
+  { bass: 'F2', keys: 'A3 C4 E4 F4' }, { bass: 'A2', keys: 'G3 C4 E4 A4' },
+  { bass: 'Bb2', keys: 'A3 D4 F4 Bb4' }, { bass: 'C3', keys: 'G3 Bb3 E4 C5' },
+];
+const CADET_LEAD = [
+  line('C5:.5 A4:.5 C5:1 F5:1 E5:1 | E5:1.5 D5:.5 C5:1 A4:1 | D5:.5 F5:.5 D5:1 C5:1 A4:1 | G4:1 A4:.5 C5:.5 E5:2'),
+  line('F5:1 G5:.5 A5:.5 G5:1 F5:1 | E5:1 C5:1 E5:1.5 r:.5 | D5:1 F5:1 A5:1 G5:1 | E5:2 G5:2'),
+];
+const CADET_BASS = [[0, 0.5, 0], [0.75, 0.5, 0], [1.5, 0.5, 12], [2, 0.5, 0], [2.75, 0.5, 7], [3.5, 0.5, 10]];
 
 const LOFI = [
   { bass: 'F2', keys: 'A3 C4 E4 G4' }, { bass: 'E2', keys: 'G3 B3 D4 F#4' },
@@ -1082,12 +1128,67 @@ export const STYLES = [
       if (part === 6) glideLine(M, c.lead, t, LOFI_MELODY[0], B, { wave: 'triangle', vol: 0.05, cutoff: 3000, vibRate: 5.5, vibCents: 22, vibDelay: 0.2, glide: 0.14, attack: 0.05, release: 0.5 });
     },
   },
+  {
+    id: 'cadet', name: 'Cadet Mixtape', family: 'Alien', tier: 'medium',
+    mood: 'Upbeat, nostalgic, bright',
+    blurb: "Late-night '80s synth-pop on a '90s swing beat. Gated snare, chorus bass, synth brass stabs, a little cassette hiss.",
+    instruments: 'Electric piano, chorus bass, gated snare, synth brass, square lead, cassette hiss',
+    bpm: 104, beats: 16, level: 1.75,
+    mix: { reverb: 2.4, decay: 3, dark: 0.55, delayBeats: 0.75, feedback: 0.3, delayTone: 3000 },
+    setup: (M) => ({
+      keys: M.channel({ rev: 0.25, dly: 0.1, pan: -0.2, tremolo: { rate: 5.5, depth: 0.2 } }),
+      pad: M.channel({ rev: 0.45, pan: 0.15 }),
+      bass: M.channel({ rev: 0.03, lowpass: 2200 }),
+      drums: M.channel({ rev: 0.06 }),
+      snare: M.channel({ rev: 0.5 }),
+      hats: M.channel({ rev: 0.05, pan: 0.2 }),
+      brass: M.channel({ rev: 0.3, dly: 0.12, pan: -0.1 }),
+      lead: M.channel({ rev: 0.35, dly: 0.22, pan: 0.05 }),
+      hiss: M.channel({ rev: 0 }),
+    }),
+    seg(M, c, t, i, r, B) {
+      const swing = (b) => b + (Math.round(b * 4) % 2 ? 0.07 : 0); // '90s swing on the 16ths
+      // Intro once, then every 8 segments: verse, verse, chorus A, chorus A, breakdown, verse, chorus B, chorus B.
+      const part = i % 8;
+      const intro = i === 0;
+      const brk = part === 4;
+      const chorus = part === 2 || part === 3 || part >= 6;
+      noiseBed(M, c.hiss, t, 16 * B, { freq: 6000, vol: 0.012 });
+      CADET_CHORDS.forEach((cd, k) => {
+        const tb = t + k * 4 * B;
+        const keys = notes(cd.keys);
+        const root = midi(cd.bass);
+        for (const at of [0.5, 1.75, 2.5, 3.5]) keys.forEach((m, j) => bell(M, c.keys, tb + swing(at) * B + j * 0.012, hz(m), { ratio: 1, index: 1.8, modDecay: 0.12, dur: 0.9, vol: 0.03 }));
+        pad(M, c.pad, tb, keys.map((m) => hz(m + 12)), 4 * B, { type: 'sawtooth', voices: 2, spread: 12, vol: 0.03, attack: 0.4, release: 0.8, cutoff: 1800 });
+        if (intro) return;
+        CADET_BASS.forEach(([at, len, o]) => synth(M, c.bass, tb + swing(at) * B, hz(root + o), len * B, { voices: 2, spread: 14, vol: 0.12, cutoff: 600, cutoffPeak: 1600, filterDecay: 0.12, decay: 0.15, sustain: 0.5, release: 0.06 }));
+        if (brk) return;
+        for (const at of [0, 0.75, 2.5]) kick(M, c.drums, tb + swing(at) * B, { vol: 0.85, from: 150, to: 50, decay: 0.28, click: 0.15 });
+        if (k % 2) kick(M, c.drums, tb + swing(3.25) * B, { vol: 0.6, from: 150, to: 50, decay: 0.25 });
+        for (const at of [1, 3]) gatedSnare(M, c.snare, tb + at * B, { vol: 0.32 });
+        for (let j = 0; j < 16; j++) hat(M, c.hats, tb + swing(j / 4) * B, { vol: j % 4 === 0 ? 0.045 : j % 2 ? 0.02 : 0.032 });
+        if (chorus) for (const at of k % 2 ? [1.5, 3.75] : [0.5, 2.75]) keys.forEach((m) => synth(M, c.brass, tb + swing(at) * B, hz(m), 0.3 * B, { voices: 3, spread: 12, vol: 0.03, cutoff: 1400, cutoffPeak: 4500, filterDecay: 0.12, decay: 0.12, sustain: 0.4, release: 0.12 }));
+      });
+      if (intro) return;
+      const tape = { vibRate: 5, vibCents: 14, vibDelay: 0.2, glide: 0.04, attack: 0.02, release: 0.3 };
+      if (part === 2 || part === 3) glideLine(M, c.lead, t, CADET_LEAD[0], B, { wave: 'square', vol: 0.055, cutoff: 2600, ...tape });
+      if (part >= 6) glideLine(M, c.lead, t, CADET_LEAD[1], B, { wave: 'square', vol: 0.055, cutoff: 2800, ...tape });
+      if (brk) glideLine(M, c.lead, t, CADET_LEAD[1], B, { wave: 'triangle', vol: 0.05, cutoff: 3000, ...tape });
+    },
+  },
 ];
 
 export const STYLE_BY_ID = Object.fromEntries(STYLES.map((s) => [s.id, s]));
 
 /** The theme song for each difficulty tier, and for the menus. */
 export const TIER_SONG = { easy: 'lofi', medium: 'oracle', hard: 'synthwave', alien: 'wardrums' };
+/** Campaign, Daily and Quick Play: the Star Cadets bring their own song to Medium. */
+export const STORY_SONG = { ...TIER_SONG, medium: 'cadet' };
+/** The theme song for a game, by mode and difficulty (Zen and Duel keep TIER_SONG). */
+export function songFor(mode, difficulty) {
+  const map = ['campaign', 'daily', 'quick'].includes(mode) ? STORY_SONG : TIER_SONG;
+  return map[difficulty] || MENU_SONG;
+}
 export const MENU_SONG = 'lofi';
 export const segSeconds = (style) => (style.beats * 60) / style.bpm;
 

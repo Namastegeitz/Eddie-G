@@ -275,8 +275,23 @@
 
 /* ---------- Moods: soft (Easy) → hostile (Hard) → gnarly (Alien) ---------- */
 .encounter .v { display: none; }
-.encounter.tone-normal .v-normal, .encounter.tone-soft .v-soft,
+.encounter.tone-normal .v-normal, .encounter.tone-soft .v-soft, .encounter.tone-cadet .v-cadet,
 .encounter.tone-hostile .v-hostile, .encounter.tone-gnarly .v-gnarly { display: inline; }
+
+/* Star Cadets: pink and teal, '80s broadcast glow. */
+.encounter.tone-cadet .enc-sky {
+  background:
+    radial-gradient(ellipse 80% 45% at 50% 100%, rgba(255, 63, 164, 0.4), transparent 70%),
+    linear-gradient(0deg, rgba(34, 225, 255, 0.12), transparent 30%),
+    radial-gradient(ellipse at 50% 20%, #2a0f4a 0%, #160830 55%, #0a0418 100%);
+}
+.encounter.tone-cadet .hull { fill: url(#encs-hull-cadet); }
+.encounter.tone-cadet .enc-lights circle:nth-child(odd) { fill: #ff3fa4; }
+.encounter.tone-cadet .enc-lights circle:nth-child(even) { fill: #22e1ff; }
+.encounter.tone-cadet .enc-question { font-family: 'Bungee', 'Audiowide', sans-serif; letter-spacing: 0.04em; color: #fff4fb; text-shadow: 0 0 12px rgba(255, 63, 164, 0.9), 0 0 30px rgba(34, 225, 255, 0.55); }
+.encounter.tone-cadet .enc-reply { text-shadow: 0 0 10px rgba(255, 63, 164, 0.8); }
+.encounter.tone-cadet .enc-offer { color: #22e1ff; text-shadow: 0 0 10px rgba(34, 225, 255, 0.75); }
+.encounter.tone-cadet .enc-beam { background: linear-gradient(rgba(34, 225, 255, 0.5), rgba(255, 63, 164, 0.16) 45%, transparent 85%); }
 
 .encounter.tone-soft .enc-sky {
   background:

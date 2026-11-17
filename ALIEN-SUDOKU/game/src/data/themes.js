@@ -182,6 +182,28 @@ export const THEMES = {
     stars: ['#ff3b3b', '#9cff3b', '#ffe23b', '#ff8a8a'],
     hero: 2,
   },
+  // Medium in Campaign, Daily and Quick Play (see lineupFor). Not in the Settings lineup picker.
+  cadets: {
+    name: 'Star Cadets',
+    tagline: "Academy recruits raised on Earth's '80s and '90s broadcasts",
+    style: 'retro',
+    font: "'Bungee', 'Audiowide', system-ui, sans-serif",
+    rgb: { c1: '255, 63, 164', c2: '34, 225, 255', c3: '255, 229, 61', c4: '168, 107, 255', panel: '20, 10, 40', deep: '10, 4, 24' },
+    bg: '#0a0418',
+    text: '#fff4fb',
+    textDim: '#c2b6dc',
+    cellBg: '#1a0c36',
+    cellFixed: '#100624',
+    cellUser: '#26124c',
+    line: 'rgba(34, 225, 255, 0.25)',
+    lineStrong: 'rgba(255, 63, 164, 0.75)',
+    radius: { board: '12px', btn: '10px' },
+    glow: 0.8,
+    backdrop: 'space/ringed-planet.webp',
+    overlay: 'linear-gradient(180deg, rgba(255, 63, 164, 0.18) 0%, rgba(10, 4, 24, 0.55) 45%, rgba(10, 4, 24, 0.85) 100%)',
+    stars: ['#ffffff', '#ff9ad0', '#9ff3ff', '#fff3a0'],
+    hero: 1,
+  },
   mixed: {
     name: 'Cosmic Mix',
     tagline: 'The best of every lineup',
@@ -209,6 +231,17 @@ export const DEFAULT_THEME = 'encounters';
 
 /** Each difficulty has its own alien lineup, from super soft to gnarly. */
 export const DIFFICULTY_LINEUP = { easy: 'softies', medium: 'creatures', hard: 'hostile', alien: 'gnarly' };
+/** Campaign, Daily and Quick Play: Alien Creatures move down to Easy and the Star Cadets take Medium. */
+export const STORY_LINEUP = { easy: 'creatures', medium: 'cadets', hard: 'hostile', alien: 'gnarly' };
+export const STORY_MODES = ['campaign', 'daily', 'quick'];
+export const isStoryMode = (mode) => STORY_MODES.includes(mode);
+/**
+ * The alien lineup for a game, by its mode and difficulty. Zen Mode and Alien Duel
+ * (and anything else) keep the original map, with Soft Visitors on Easy.
+ */
+export function lineupFor(mode, difficulty) {
+  return (isStoryMode(mode) ? STORY_LINEUP : DIFFICULTY_LINEUP)[difficulty];
+}
 
 // ------------------------------------------------------------
 // Easy difficulty: neutral color schemes the player can switch

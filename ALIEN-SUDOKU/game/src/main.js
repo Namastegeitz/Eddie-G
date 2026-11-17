@@ -16,6 +16,7 @@ import '@fontsource/cinzel/latin-700.css';
 import '@fontsource/quicksand/latin-700.css';
 import '@fontsource/black-ops-one/latin-400.css';
 import '@fontsource/creepster/latin-400.css';
+import '@fontsource/bungee/latin-400.css';
 import './styles/base.css';
 import './styles/play.css';
 import './styles/screens.css';

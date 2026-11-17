@@ -18,6 +18,19 @@ async function startQuick(page, diff = 'easy') {
   await expect(page.locator('.screen-play')).toBeVisible();
 }
 
+async function startZen(page, diff = 'easy') {
+  await page.locator('.menu-zen').click();
+  await page.locator(`.diff-option.diff-${diff}`).click();
+  await expect(page.locator('.screen-play')).toBeVisible();
+}
+
+/** Glyph set (lineup key) drawn in the first given cell. */
+async function boardLineup(page) {
+  const i = await page.evaluate(() => window.__alienSession.board.findIndex((v) => v !== 0));
+  const href = await page.locator(`.cell[data-i="${i}"] use`).getAttribute('href');
+  return /^#gl-([a-z]+)-/.exec(href)[1];
+}
+
 /** Fill every empty cell with the right glyph through the UI. */
 async function solveAll(page, { leave = 0 } = {}) {
   const { board, solution } = await page.evaluate(() => ({ board: window.__alienSession.board.slice(), solution: window.__alienSession.solution.slice() }));
@@ -61,10 +74,13 @@ test('out of tries: the visitors ask who you are, remember the name, and give mo
   await page.locator(`.cell[data-i="${i}"]`).dispatchEvent('pointerdown');
   for (let k = 0; k < 25; k++) await page.locator(`.glyph-btn[data-v="${wrong}"]`).click();
   await expect(page.locator('.encounter')).toBeVisible({ timeout: 5000 });
+  // Medium in Quick Play brings the Star Cadets, and their own lines.
+  await expect(page.locator('.encounter')).toHaveClass(/tone-cadet/);
   await expect(page.locator('.enc-question')).toHaveAttribute('aria-label', 'Who are you?', { timeout: 15000 });
   await page.locator('.enc-input').fill('Eddie');
   await page.getByRole('button', { name: 'Answer', exact: true }).click();
-  await expect(page.locator('.enc-reply')).toHaveAttribute('aria-label', /Eddie/, { timeout: 10000 });
+  await expect(page.locator('.enc-reply')).toHaveAttribute('aria-label', 'Eddie. Excellent name. Logging it in the academy files.', { timeout: 10000 });
+  await expect(page.locator('.enc-offer')).toHaveText(/Regulation says we can share a few tries/, { timeout: 15000 });
   await page.getByRole('button', { name: /Accept the gift/ }).click({ timeout: 15000 });
   await expect(page.locator('.encounter')).toHaveCount(0, { timeout: 5000 });
   await expect(page.locator('.tries-num')).toHaveText('5');
@@ -208,7 +224,7 @@ test('alien duel: the rival finishes first, you can keep solving, and a duel res
   expect(errors).toEqual([]);
 });
 
-test('easy colors: six neutral schemes, saved, applied to Easy puzzles', async ({ page }) => {
+test('easy colors: six neutral schemes, saved, applied to Zen Easy puzzles', async ({ page }) => {
   const errors = errorsOf(page);
   await openMenu(page);
   await page.locator('.icon-tile', { hasText: 'Settings' }).click();
@@ -217,12 +233,105 @@ test('easy colors: six neutral schemes, saved, applied to Easy puzzles', async (
   await page.locator('.easy-swatch', { hasText: 'Sand' }).click();
   await expect(page.locator('.easy-swatch[aria-checked="true"]')).toContainText('Sand');
   await page.locator('.topbar .icon-btn[aria-label="Back"]').click();
-  await startQuick(page, 'easy');
+  await startZen(page, 'easy');
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'softies');
   await expect(page.locator('html')).toHaveAttribute('data-tone', 'light');
   expect(await page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue('--c1-rgb').trim())).toBe('150, 112, 62');
   // No trace of the old pastel pink.
   expect(await page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue('--bg-deep').trim())).not.toBe('#f6eaff');
+  expect(errors).toEqual([]);
+});
+
+test('star cadets: tapping a glyph names it, and Zen and Duel keep their lineups', async ({ page }) => {
+  const errors = errorsOf(page);
+  await openMenu(page);
+  await startQuick(page, 'medium');
+  const i = await page.evaluate(() => window.__alienSession.board.findIndex((v) => v !== 0));
+  await page.locator(`.cell[data-i="${i}"]`).dispatchEvent('pointerdown');
+  await expect(page.locator('.status-line')).toContainText(/(Boombox|High-Top|Scrunchie|Mixtape|Aviator|Puzzle-Cube|Aerobics|Handheld|Grunge) Cadet/);
+  await page.locator('.topbar .icon-btn[aria-label="Back to menu"]').click();
+  // Zen keeps the original map: Soft Visitors on Easy, Alien Creatures on Medium.
+  await startZen(page, 'easy');
+  expect(await boardLineup(page)).toBe('softies');
+  await page.locator('.topbar .icon-btn[aria-label="Back to menu"]').click();
+  await page.evaluate(() => localStorage.removeItem('alien-sudoku:saved-game'));
+  await startZen(page, 'medium');
+  expect(await boardLineup(page)).toBe('creatures');
+  await page.locator('.topbar .icon-btn[aria-label="Back to menu"]').click();
+  await page.evaluate(() => localStorage.removeItem('alien-sudoku:saved-game'));
+  // Alien Duel is untouched: four rivals, five look families, Medium still Alien Creatures.
+  await page.locator('.menu-duel').click();
+  await expect(page.locator('.rival-card')).toHaveCount(4);
+  await page.locator('.look-current').click();
+  await expect(page.locator('.look-tab')).toHaveText(['Classic', 'Soft', 'Creature', 'Hostile', 'Gnarly']);
+  await page.locator('.duel-diff.diff-medium').click();
+  await page.locator('.duel-start').click();
+  await expect(page.locator('.screen-play .rival')).toBeVisible();
+  expect(await boardLineup(page)).toBe('creatures');
+  expect(errors).toEqual([]);
+});
+
+test('daily: a Monday (Easy) brings Creatures, a Tuesday (Medium) brings Star Cadets', async ({ page }) => {
+  const errors = errorsOf(page);
+  await page.clock.setFixedTime(new Date('2026-11-18T12:00:00'));
+  await openMenu(page);
+  await page.locator('.menu-daily').click();
+  await page.getByRole('button', { name: /Monday, November 16/ }).click();
+  await expect(page.locator('.screen-play')).toBeVisible();
+  expect(await boardLineup(page)).toBe('creatures');
+  await page.locator('.topbar .icon-btn[aria-label="Back to menu"]').click();
+  await page.locator('.menu-daily').click();
+  await page.getByRole('button', { name: /Tuesday, November 17/ }).click();
+  await expect(page.locator('.screen-play')).toBeVisible();
+  expect(await boardLineup(page)).toBe('cadets');
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'cadets');
+  expect(errors).toEqual([]);
+});
+
+test('campaign: Ring Belt, Pink Nebula and Emerald Pillars show Creatures and Star Cadets as planned', async ({ page }) => {
+  const errors = errorsOf(page);
+  // A returning player who has cleared the first three sectors.
+  await page.addInitScript(() => {
+    if (localStorage.getItem('alien-sudoku:profile')) return;
+    const levels = {};
+    for (let s = 0; s < 3; s++) for (let l = 0; l < 9; l++) levels[`${s}-${l}`] = { stars: 3, bestMs: 200000 };
+    localStorage.setItem('alien-sudoku:profile', JSON.stringify({ settings: { seenTutorial: true }, campaign: { levels } }));
+  });
+  await openMenu(page);
+  await page.locator('.menu-campaign').click();
+  const sectorLineups = async (n) => {
+    await page.locator('.sector-card').nth(n).click();
+    await expect(page.locator('.level-node')).toHaveCount(9);
+    const titles = await page.locator('.level-node').evaluateAll((els) => els.map((e) => e.getAttribute('title')));
+    await page.locator('.topbar .icon-btn[aria-label="Back"]').click();
+    return titles.map((t) => (t.includes('Star Cadets') ? 'cadets' : t.includes('Alien Creatures') ? 'creatures' : t.split(' · ')[1]));
+  };
+  expect(await sectorLineups(1)).toEqual([...Array(4).fill('creatures'), ...Array(5).fill('cadets')]);
+  expect(await sectorLineups(2)).toEqual(Array(9).fill('cadets'));
+  expect((await sectorLineups(3)).slice(0, 4)).toEqual(Array(4).fill('cadets'));
+  // A Ring Belt level 5 board draws the cadets.
+  await page.locator('.sector-card').nth(1).click();
+  await page.locator('.level-node').nth(4).click();
+  expect(await boardLineup(page)).toBe('cadets');
+  expect(errors).toEqual([]);
+});
+
+test('continue: a game saved before the update resumes with the new lineup', async ({ page }) => {
+  const errors = errorsOf(page);
+  await openMenu(page);
+  await startQuick(page, 'medium');
+  await page.locator('.topbar .icon-btn[aria-label="Back to menu"]').click();
+  // Make the save look like one from version 1.0 (no duel field), then reload.
+  await page.evaluate(() => {
+    const snap = JSON.parse(localStorage.getItem('alien-sudoku:saved-game'));
+    delete snap.duel;
+    localStorage.setItem('alien-sudoku:saved-game', JSON.stringify(snap));
+  });
+  await page.reload();
+  await page.locator('.menu-continue').click();
+  await expect(page.locator('.screen-play')).toBeVisible();
+  expect(await boardLineup(page)).toBe('cadets');
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'cadets');
   expect(errors).toEqual([]);
 });
 
@@ -244,10 +353,11 @@ test('settings: every theme song plays from the song list', async ({ page }) => 
   await page.locator('.icon-tile', { hasText: 'Settings' }).click();
   const playing = () => page.evaluate(() => window.__alienMusic.current);
   await expect.poll(playing).toBe('lofi');
-  for (const [tier, song] of [['Medium', 'oracle'], ['Hard', 'synthwave'], ['Alien', 'wardrums'], ['Easy', 'lofi']]) {
-    await page.locator('.song-row', { hasText: tier }).click();
+  const row = (label) => page.locator('.song-row').filter({ has: page.locator('small', { hasText: new RegExp(`^${label}$`) }) });
+  for (const [label, song] of [['Medium', 'cadet'], ['Medium · Zen & Duel', 'oracle'], ['Hard', 'synthwave'], ['Alien', 'wardrums'], ['Easy', 'lofi']]) {
+    await row(label).click();
     await expect.poll(playing).toBe(song);
-    await expect(page.locator('.song-row', { hasText: tier })).toHaveAttribute('aria-pressed', 'true');
+    await expect(row(label)).toHaveAttribute('aria-pressed', 'true');
   }
   // Let a song run so its notes are built and played without errors.
   await page.waitForTimeout(2500);
@@ -262,11 +372,10 @@ test('campaign levels bring the aliens of their difficulty', async ({ page }) =>
   await page.locator('.menu-campaign').click();
   await page.locator('.sector-card').first().click();
   await expect(page.locator('.level-node').first().locator('.level-diff')).toHaveText('Easy');
-  await expect(page.locator('.level-node').first().locator('use')).toHaveAttribute('href', /^#gl-softies-/);
+  await expect(page.locator('.level-node').first().locator('use')).toHaveAttribute('href', /^#gl-creatures-/);
   await page.locator('.level-node').first().click();
-  await expect(page.locator('html')).toHaveAttribute('data-theme', 'softies');
-  const i = await page.evaluate(() => window.__alienSession.board.findIndex((v) => v !== 0));
-  await expect(page.locator(`.cell[data-i="${i}"] use`)).toHaveAttribute('href', /^#gl-softies-/);
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'creatures');
+  expect(await boardLineup(page)).toBe('creatures');
   expect(errors).toEqual([]);
 });
 
@@ -342,22 +451,22 @@ test('lineups: themes switch, every glyph exists, correct moves score points', a
   expect(errors).toEqual([]);
 });
 
-test('each difficulty brings its own aliens and theme, soft to gnarly', async ({ page }) => {
+test('quick play lineup: Creatures, Star Cadets, Hostile, Gnarly, each playing to a win', async ({ page }) => {
   const errors = errorsOf(page);
+  test.setTimeout(240_000); // four full solves
   await openMenu(page);
-  const expected = { easy: 'softies', medium: 'creatures', hard: 'hostile', alien: 'gnarly' };
-  const songs = { easy: 'lofi', medium: 'oracle', hard: 'synthwave', alien: 'wardrums' };
+  const expected = { easy: 'creatures', medium: 'cadets', hard: 'hostile', alien: 'gnarly' };
+  const songs = { easy: 'lofi', medium: 'cadet', hard: 'synthwave', alien: 'wardrums' };
   const playing = () => page.evaluate(() => window.__alienMusic.current);
   for (const [diff, lineup] of Object.entries(expected)) {
     await startQuick(page, diff);
     await expect(page.locator('html')).toHaveAttribute('data-theme', lineup);
     await expect.poll(playing).toBe(songs[diff]);
-    const i = await page.evaluate(() => window.__alienSession.board.findIndex((v) => v !== 0));
-    await expect(page.locator(`.cell[data-i="${i}"] use`)).toHaveAttribute('href', new RegExp(`^#gl-${lineup}-`));
-    await page.locator('.topbar .icon-btn[aria-label="Back to menu"]').click();
+    expect(await boardLineup(page)).toBe(lineup);
+    await solveAll(page);
+    await expect(page.locator('.win-modal')).toBeVisible({ timeout: 5000 });
+    await page.getByRole('button', { name: 'Menu', exact: true }).click();
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'encounters');
-    await page.evaluate(() => localStorage.removeItem('alien-sudoku:saved-game'));
-    await page.reload();
   }
   // Turning the setting off uses the player's own lineup again.
   await page.locator('.icon-tile', { hasText: 'Settings' }).click();

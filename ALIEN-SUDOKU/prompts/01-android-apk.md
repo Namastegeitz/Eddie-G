@@ -22,8 +22,8 @@ and GitHub Actions (which could build it instead) can't start jobs yet (step 2).
 Build the Alien Sudoku Android app (ALIEN-SUDOKU/game) now that dl.google.com is allowed.
 Install the Android command-line tools, platform 36 and build-tools with sdkmanager, then:
 npm ci, npm run build, npx cap sync android, and ./gradlew assembleDebug in android/
-(-PversionName=1.0.0). Check the APK with aapt2/apksigner, copy it to
-ALIEN-SUDOKU/game/dist/android/AlienSudoku-1.0.0-debug.apk (commit it if under 100 MB),
+(-PversionName=1.1.0). Check the APK with aapt2/apksigner, copy it to
+ALIEN-SUDOKU/game/dist/android/AlienSudoku-1.1.0-debug.apk (commit it if under 100 MB),
 send me the file, and update RUN.md and STATUS.md. Work on my Claude branch and push.
 ```
 

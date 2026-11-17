@@ -13,7 +13,7 @@ import { appVersion, isElectron, isNative } from '../../platform/native.js';
 import { sessionTitle } from './play.js';
 import { GameSession } from '../../game/session.js';
 import { SYMBOL_SETS } from '../../data/symbols.js';
-import { THEMES, DIFFICULTY_LINEUP } from '../../data/themes.js';
+import { THEMES, lineupFor, isStoryMode } from '../../data/themes.js';
 
 const DIFFS = [
   { key: 'easy', label: 'Easy', clues: '≈38 clues', blurb: 'Warm up. Every move can be found by looking.' },
@@ -23,6 +23,8 @@ const DIFFS = [
 ];
 /** Who you meet at each difficulty, from super soft to gnarly. */
 const DIFF_MOOD = { easy: 'Friendly and calm', medium: 'Playful troublemakers', hard: 'They mean business', alien: 'Fangs. Eyes. Slime.' };
+/** Quick Play (and Campaign, Daily): Alien Creatures on Easy, Star Cadets on Medium. */
+const STORY_MOOD = { ...DIFF_MOOD, easy: 'Playful and friendly', medium: 'Polite cadets, raised on Earth reruns' };
 
 /** Ask before replacing an in-progress game. Resolves true to continue. */
 export async function confirmAbandon() {
@@ -48,7 +50,7 @@ export function pickDifficulty({ mode, nav }) {
     title: 'Signal strength',
     className: 'diff-modal',
     body: h('div', { class: 'diff-list' }, DIFFS.map((d) => {
-      const lineupKey = settings().difficultyAliens !== false ? DIFFICULTY_LINEUP[d.key] : settings().symbolSet;
+      const lineupKey = settings().difficultyAliens !== false ? lineupFor(mode, d.key) : settings().symbolSet;
       const t = THEMES[lineupKey];
       const set = SYMBOL_SETS[lineupKey];
       return h('button', {
@@ -71,7 +73,7 @@ export function pickDifficulty({ mode, nav }) {
       },
       h('span', { class: 'diff-name', style: { fontFamily: t.font } }, d.label, h('small', {}, d.clues)),
       h('span', { class: 'diff-blurb' }, d.blurb),
-      h('span', { class: 'diff-lineup' }, `${t.name} · ${settings().difficultyAliens !== false ? DIFF_MOOD[d.key] : 'your lineup'}`),
+      h('span', { class: 'diff-lineup' }, `${t.name} · ${settings().difficultyAliens !== false ? (isStoryMode(mode) ? STORY_MOOD : DIFF_MOOD)[d.key] : 'your lineup'}`),
       h('span', { class: 'diff-glyphs', html: [0, 1, 2].map((k) => set.svgs[(t.hero - 1 + k * 3) % 9]).join('') }),
       mode !== 'zen' && best[d.key]?.bestMs != null ? h('span', { class: 'diff-best' }, `Best ${formatTime(best[d.key].bestMs)}`) : null);
     })),

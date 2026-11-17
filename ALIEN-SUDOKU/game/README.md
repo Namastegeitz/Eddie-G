@@ -41,13 +41,19 @@ have no ads. Until real AdMob ids are set, Google's **test** ads are shown.
   - Haptics.
   - Keyboard controls on the computer.
 - **Difficulty aliens**: each difficulty has its own lineup and theme, getting
-  rougher as it gets harder:
-  - Easy: *Soft Visitors*, super soft and cute, on a light pastel theme.
-  - Medium: *Alien Creatures*, playful troublemakers, on a neon green theme.
+  rougher as it gets harder. In the Campaign, the Daily Transmission and Quick Play:
+  - Easy: *Alien Creatures*, playful troublemakers, on a neon green theme.
+  - Medium: *Star Cadets* (new in 1.1), polite academy recruits raised on Earth's
+    '80s and '90s broadcasts, on a retro pink-and-teal theme with a faint synthwave
+    grid, and their own song, *Cadet Mixtape*.
   - Hard: *Hostile Visitors*, menacing, on dark crimson with chiseled corners and
     hazard stripes.
   - Alien: *Gnarly Horde*, fanged, many-eyed and slimy, on near-black with a
     heartbeat-pulsing board.
+
+  In Zen Mode and Alien Duel, Easy keeps the *Soft Visitors* (in six neutral color
+  schemes, Settings > Easy colors) and Medium the *Alien Creatures*; Hard and Alien
+  are the same everywhere.
 
   The visitors who come when you run out of tries match the difficulty too:
   sweet, neutral, hostile or gnarly. This applies to Quick Play, Zen and Daily

@@ -169,6 +169,27 @@
   "depends": []
  },
  {
+  "id": "ready-v110",
+  "phase": "ready",
+  "store": "all",
+  "owner": "claude",
+  "status": "done",
+  "title": "Release version 1.1.0: the Star Cadets",
+  "statusNote": "New Medium lineup (Star Cadets) and song (Cadet Mixtape) in Campaign, Daily and Quick Play; Alien Creatures move to Easy there; Zen and Duel unchanged. Version 1.1.0 (Android versionCode 2, iOS build 2).",
+  "cost": null,
+  "time": "done",
+  "steps": [
+   "Play a Medium Quick Play puzzle to meet the cadets",
+   "Use the updated What's new text in store-launch/listing when you submit"
+  ],
+  "feedback": [
+   "Each store upload needs a higher build number than the last: Android versionCode and iOS build number are both 2 now."
+  ],
+  "doneMessage": "Version 1.1.0 is built and published.",
+  "links": [],
+  "depends": []
+ },
+ {
   "id": "apple-ios-baseline",
   "phase": "ready",
   "store": "apple",
@@ -1646,7 +1667,7 @@
   "time": "15 min per build once unblocked",
   "steps": [
    "npm run build && npx cap sync android",
-   "./gradlew bundleRelease -PversionCode=N -PversionName=1.0.0",
+   "./gradlew bundleRelease -PversionCode=N -PversionName=1.1.0",
    "Raise versionCode for every upload",
    "Check the bundle has no unaligned lib/*.so (16 KB)",
    "Check the merged manifest includes AD_ID"
@@ -2776,7 +2797,7 @@
   "time": "1-2 hours",
   "steps": [
    "Install butler and run butler login on your PC.",
-   "butler push <web zip folder> <user>/alien-sudoku:html5 --userversion 1.0.0",
+   "butler push <web zip folder> <user>/alien-sudoku:html5 --userversion 1.1.0",
    "butler push game/desktop/out/win-unpacked <user>/alien-sudoku:windows",
    "Mark the HTML5 upload as played in browser; embed 1024x720, Fullscreen button, Mobile friendly.",
    "Test on desktop and phone: finish a level, reload, confirm the save; download the Windows build."

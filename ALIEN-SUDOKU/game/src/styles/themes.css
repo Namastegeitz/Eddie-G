@@ -139,6 +139,31 @@ body, .board, .cell, .glyph-btn, .menu-btn, .tool-btn { transition-property: bac
 [data-theme='softies'][data-tone='light'] .board { box-shadow: 0 8px 24px rgba(var(--c2-rgb), 0.22); }
 [data-theme='softies'] .game-title { letter-spacing: 0.06em; }
 
+/* ---------- Star Cadets (Medium in Campaign, Daily, Quick Play): retro broadcast neon ---------- */
+[data-theme='cadets'] .board {
+  border-width: 2px;
+  box-shadow: 0 0 18px rgba(255, 63, 164, 0.4), 0 0 42px rgba(34, 225, 255, 0.18);
+}
+[data-theme='cadets'] .game-title, [data-theme='cadets'] .topbar-h1 { letter-spacing: 0.04em; }
+/* A faint synthwave grid running to the horizon. */
+[data-theme='cadets'] .starfield::after {
+  content: '';
+  position: absolute;
+  left: -50%;
+  right: -50%;
+  bottom: 0;
+  height: 38%;
+  background:
+    linear-gradient(rgba(255, 63, 164, 0.4) 1px, transparent 1px) 0 0 / 100% 28px,
+    linear-gradient(90deg, rgba(34, 225, 255, 0.35) 1px, transparent 1px) 0 0 / 48px 100%;
+  transform: perspective(300px) rotateX(62deg);
+  transform-origin: 50% 100%;
+  -webkit-mask-image: linear-gradient(transparent, #000 65%);
+  mask-image: linear-gradient(transparent, #000 65%);
+  opacity: 0.3;
+  pointer-events: none;
+}
+
 /* ---------- Hostile Visitors (Hard): chiseled, armored, hazard stripes ---------- */
 [data-theme='hostile'] .board {
   border: 3px solid rgb(var(--c1-rgb));

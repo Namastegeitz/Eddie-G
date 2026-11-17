@@ -20,9 +20,9 @@ _App Store names must be unique. If 'Alien Sudoku' is taken, use 'Alien Glyph Su
 
 ## Promotional text (App Store)
 
-> New: Alien Duel! Race a computer rival you can customize on the same puzzle. Plus a theme song for every difficulty, from cozy lo-fi to legendary war drums.
+> New in 1.1: the Star Cadets! Retro academy recruits take over Medium puzzles with their own synth-pop theme song. Plus Alien Duel against a rival you can customize.
 
-✅ apple 156/170
+✅ apple 164/170
 
 _Can be changed any time without a new build._
 
@@ -59,7 +59,7 @@ FEATURES
 • Alien Duel: race a computer rival on the same puzzle. Choose from four rivals, from a sleepy rookie to the relentless Maw, then rename it and tune its speed, accuracy and play style
 • Quick Play, plus a relaxing Zen mode with no lives, no clock and unlimited hints
 • 1,000 puzzles in four difficulties, each with exactly one solution
-• Every difficulty brings its own aliens, from friendly Soft Visitors on Easy to the fearsome Gnarly Horde on Alien
+• Every difficulty brings its own aliens: playful Alien Creatures on Easy, the retro Star Cadets on Medium, Hostile Visitors on Hard and the fearsome Gnarly Horde on Alien
 • A theme song for every difficulty, from cozy lo-fi to legendary war drums
 • Smart hints that explain why a glyph goes where it does
 • Notes, auto-notes, undo, combos and score bonuses
@@ -70,7 +70,7 @@ FEATURES
 Easy to learn, hard to master, and out of this world.
 ```
 
-✅ apple 1354/4000 · ✅ google 1354/4000 · ✅ steam 1354/8000 · ✅ microsoft 1354/10000 · ✅ itch 1354/10000
+✅ apple 1410/4000 · ✅ google 1410/4000 · ✅ steam 1410/8000 · ✅ microsoft 1410/10000 · ✅ itch 1410/10000
 
 _Wording is kept neutral (no 'cuddly', 'baby'): Google Play's Families policy looks at whether a listing appeals to children, and this game is rated 13+ with ads._
 
@@ -88,9 +88,9 @@ _Add to the end of the description on Steam, GOG, itch.io, Epic and Microsoft St
 
 ## What's new
 
-> First release. The lost UFO archive is open: decode it!
+> Version 1.1: meet the Star Cadets! Polite academy recruits raised on Earth's '80s and '90s broadcasts now bring Medium puzzles in the Campaign, Daily and Quick Play, with their own theme song, Cadet Mixtape. Alien Creatures move to Easy.
 
-✅ apple 55/4000 · ✅ google 55/500
+✅ apple 237/4000 · ✅ google 237/500
 
 ## Categories
 

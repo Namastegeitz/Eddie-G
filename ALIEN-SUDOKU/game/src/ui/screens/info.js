@@ -4,7 +4,7 @@ import { getProfile, totalStars, currentStreak, DIFFS } from '../../core/profile
 import { RIVALS, RIVAL_ORDER } from '../../game/rival.js';
 import { ACHIEVEMENTS } from '../../data/achievements.js';
 import { MAX_STARS } from '../../data/sectors.js';
-import { SYMBOL_SETS } from '../../data/symbols.js';
+import { SYMBOL_SETS, SYMBOL_SET_ORDER } from '../../data/symbols.js';
 import { formatTime, formatDuration } from '../../core/time.js';
 import { topbar } from './campaign.js';
 import { sfx } from '../../audio/audio.js';
@@ -54,7 +54,7 @@ export const statsScreen = {
           ['Notes pencilled', t.notes],
           ['Hints used', t.hints],
           ['Glyphs rejected', t.mistakes],
-          ['Symbol sets', `${p.unlockedSets.length} / ${Object.keys(SYMBOL_SETS).length}`],
+          ['Symbol sets', `${p.unlockedSets.filter((k) => SYMBOL_SET_ORDER.includes(k)).length} / ${SYMBOL_SET_ORDER.length}`],
         ]));
       } else if (tab === 'duel') {
         const d = p.stats.duel;
@@ -173,7 +173,7 @@ export const howtoScreen = {
       ]],
       ['Lineups & themes', [
         h('p', {}, 'Each lineup is a set of 9 glyphs with its own colors, font and board style: Close Encounters, Space Fleet, Planets, Deep Cosmos, Alien Creatures, Ancient Mysteries and the Cosmic Mix. Every glyph has its own color, so you can spot it at a glance. Tap a placed glyph to see its name.'),
-        h('p', {}, 'Each difficulty brings its own aliens: Easy has the friendly Soft Visitors in calm, neutral colors (pick from six in Settings > Easy colors), Medium the playful Alien Creatures, Hard the Hostile Visitors, and Alien the Gnarly Horde. You can turn this off in Settings.'),
+        h('p', {}, 'Each difficulty brings its own aliens. In the Campaign, the Daily Transmission and Quick Play: Easy has the playful Alien Creatures, Medium the Star Cadets (polite academy recruits raised on Earth\'s \'80s and \'90s broadcasts), Hard the Hostile Visitors, and Alien the Gnarly Horde. In Zen Mode and Alien Duel, Easy has the friendly Soft Visitors (in calm colors you can pick in Settings > Easy colors) and the rest are the same. You can turn this off in Settings.'),
         h('p', {}, 'Change lineup in Settings. Each campaign sector is played with its own lineup; Alien Creatures, Ancient Mysteries and the Cosmic Mix are unlocked in the campaign.'),
       ]],
       ['Modes', [

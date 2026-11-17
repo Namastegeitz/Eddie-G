@@ -1,8 +1,8 @@
 # Linux: ✅ Built
 
 ## What's here
-- `files/AlienSudoku-1.0.0-linux-x86_64.AppImage`: runs on most distributions.
-- `files/AlienSudoku-1.0.0-linux-amd64.deb`: installer for Debian and Ubuntu.
+- `files/AlienSudoku-1.1.0-linux-x86_64.AppImage`: runs on most distributions.
+- `files/AlienSudoku-1.1.0-linux-amd64.deb`: installer for Debian and Ubuntu.
 
 ## How to build it
 ```bash
