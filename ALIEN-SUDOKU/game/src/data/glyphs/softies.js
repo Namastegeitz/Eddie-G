@@ -12,7 +12,7 @@ const INK = '#4A3366';
 
 export default {
   key: 'softies',
-  names: ['Baby Blip', 'Jelly Puff', 'Sleepy Moon', 'Marshmallow Bot', 'Cloud Kitten', 'Plush Octo', 'Pocket Saucer', 'Bubble Sprite', 'Star Pup'],
+  names: ['Blip', 'Jelly Puff', 'Sleepy Moon', 'Marshmallow Bot', 'Cloud Kitten', 'Plush Octo', 'Pocket Saucer', 'Bubble Sprite', 'Star Pup'],
   colors: ['#7EE8B8', '#FF9CC9', '#FFE27A', '#8EC8FF', '#C7B2FF', '#FFB38A', '#7FE3E8', '#E7A6FF', '#FF8F8F'],
   defs: `<linearGradient id="sft-eye" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2A1B3E"/><stop offset=".55" stop-color="#3D2B5C"/><stop offset="1" stop-color="#7A62B0"/></linearGradient>`
     + rg('mint', '#F0FFF8', '#8EEDC2', '#55CC9C')
@@ -32,7 +32,7 @@ export default {
     + `<linearGradient id="sft-wing" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#F0D2FF"/></linearGradient>`
     + `<linearGradient id="sft-iri" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#B06FDB"/><stop offset=".5" stop-color="#D774B6"/><stop offset="1" stop-color="#8A86E0"/></linearGradient>`,
   symbols: [
-    // 1. Baby Blip: chubby baby head, heart-tipped antennae, a little curl
+    // 1. Blip: chubby baby head, heart-tipped antennae, a little curl
     `<path d="M25 21Q22.5 15.5 18.5 12.5M39 21Q41.5 15.5 45.5 12.5" fill="none" stroke="#3A9476" stroke-width="4.6" stroke-linecap="round"/>`
     + `<path d="M25 21Q22.5 15.5 18.5 12.5M39 21Q41.5 15.5 45.5 12.5" fill="none" stroke="#9DEFC9" stroke-width="2.2" stroke-linecap="round"/>`
     + `<path d="${HEART}" transform="translate(17.5 11.5) rotate(-18) scale(1.08)" fill="url(#sft-heart)" stroke="#C4507F" stroke-width="1.5" stroke-linejoin="round"/>`

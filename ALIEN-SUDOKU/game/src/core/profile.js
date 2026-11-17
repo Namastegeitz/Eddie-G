@@ -24,6 +24,7 @@ export const DEFAULT_SETTINGS = {
   symbolSet: 'encounters',
   sectorSymbols: true,     // campaign uses each sector's own symbol set
   difficultyAliens: true,  // quick/zen/daily use each difficulty's lineup (soft -> gnarly)
+  easyPalette: 'moonstone', // Easy difficulty colors (data/themes.js EASY_PALETTES)
   highlightPeers: true,
   highlightSame: true,
   constellation: true,

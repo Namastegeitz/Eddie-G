@@ -120,46 +120,24 @@ body, .board, .cell, .glyph-btn, .menu-btn, .tool-btn { transition-property: bac
    Difficulty lineups: super soft (Easy) → gnarly (Alien)
    ============================================================ */
 
-/* ---------- Soft Visitors (Easy): light pastel, squishy ---------- */
-[data-theme='softies'] .board {
-  border-width: 3px;
-  box-shadow: 0 10px 30px rgba(150, 120, 255, 0.25), 0 0 0 6px rgba(255, 255, 255, 0.55);
-}
-[data-theme='softies'] .cell { border-color: rgba(150, 120, 220, 0.14); }
-[data-theme='softies'] .cell.pop .cell-glyph { animation: squish 0.65s ease-out; }
-@keyframes squish {
-  0% { transform: scale(0.3); opacity: 0; }
-  40% { transform: scale(1.25, 0.82); opacity: 1; }
-  60% { transform: scale(0.9, 1.12); }
-  80% { transform: scale(1.05, 0.96); }
+/* ---------- Soft Visitors (Easy): neutral and calm; colors follow Settings > Easy colors ---------- */
+[data-theme='softies'] .board { border-width: 2px; }
+[data-theme='softies'] .cell.pop .cell-glyph { animation: softPop 0.45s ease-out; }
+@keyframes softPop {
+  0% { transform: scale(0.5); opacity: 0; }
+  60% { transform: scale(1.08); opacity: 1; }
   100% { transform: none; }
 }
-[data-theme='softies'] .cell.same .cell-glyph { animation: softBob 1.6s ease-in-out infinite; }
-@keyframes softBob { 50% { transform: translateY(-5%) rotate(-3deg); } }
 [data-theme='softies'] .menu-btn, [data-theme='softies'] .icon-tile, [data-theme='softies'] .modal-card,
 [data-theme='softies'] .set-rows, [data-theme='softies'] .daily-card, [data-theme='softies'] .calendar {
-  border-radius: 26px;
-  box-shadow: 0 6px 18px rgba(150, 120, 255, 0.16);
+  border-radius: 18px;
 }
-[data-theme='softies'] .menu-btn-ico { border-radius: 50%; }
-[data-theme='softies'] .title-glow, [data-theme='softies'] .title-accent { text-shadow: 0 3px 0 rgba(255, 255, 255, 0.9), 0 6px 18px rgba(var(--c1-rgb), 0.35); }
-[data-theme='softies'] .game-title { letter-spacing: 0.05em; font-weight: 700; }
-[data-theme='softies'] .btn { letter-spacing: 0.06em; }
-/* Slow floating bubbles instead of stars. */
-[data-theme='softies'] .starfield::after {
-  content: '';
-  position: absolute;
-  inset: -20% 0 0 0;
-  background:
-    radial-gradient(circle at 15% 80%, rgba(255, 255, 255, 0.7) 0 10px, transparent 11px),
-    radial-gradient(circle at 70% 60%, rgba(255, 190, 225, 0.6) 0 16px, transparent 17px),
-    radial-gradient(circle at 40% 30%, rgba(200, 185, 255, 0.55) 0 8px, transparent 9px),
-    radial-gradient(circle at 88% 20%, rgba(170, 235, 255, 0.6) 0 12px, transparent 13px);
-  background-size: 100% 60%;
-  animation: bubblesUp 26s linear infinite;
-  opacity: 0.8;
+[data-theme='softies'][data-tone='light'] .menu-btn, [data-theme='softies'][data-tone='light'] .icon-tile,
+[data-theme='softies'][data-tone='light'] .modal-card, [data-theme='softies'][data-tone='light'] .set-rows {
+  box-shadow: 0 4px 14px rgba(var(--c2-rgb), 0.18);
 }
-@keyframes bubblesUp { from { transform: translateY(0); } to { transform: translateY(-60%); } }
+[data-theme='softies'][data-tone='light'] .board { box-shadow: 0 8px 24px rgba(var(--c2-rgb), 0.22); }
+[data-theme='softies'] .game-title { letter-spacing: 0.06em; }
 
 /* ---------- Hostile Visitors (Hard): chiseled, armored, hazard stripes ---------- */
 [data-theme='hostile'] .board {
@@ -234,7 +212,7 @@ body, .board, .cell, .glyph-btn, .menu-btn, .tool-btn { transition-property: bac
 @keyframes vignettePulse { 50% { opacity: 0.6; } }
 
 @media (prefers-reduced-motion: reduce) {
-  [data-theme='gnarly'] .board, [data-theme='gnarly'] .game-title, [data-theme='softies'] .starfield::after { animation: none; }
+  [data-theme='gnarly'] .board, [data-theme='gnarly'] .game-title { animation: none; }
 }
 
 /* Gnarly: the drippy horror face is for big titles only; small text stays readable. */

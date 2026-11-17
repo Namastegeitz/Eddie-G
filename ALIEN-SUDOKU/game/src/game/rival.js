@@ -51,8 +51,8 @@ const TECHNIQUE_PACE = { 'full-house': 0.55, 'naked-single': 0.95, 'hidden-singl
  */
 export const RIVALS = {
   blip: {
-    id: 'blip', name: 'Baby Blip', look: { set: 'softies', n: 1 }, tone: 'soft',
-    tagline: 'A sleepy rookie. Slow, and fumbles a lot.',
+    id: 'blip', name: 'Cadet Xel', look: { set: 'encounters', n: 1 }, tone: 'soft',
+    tagline: 'A rookie scout. Slow, and fumbles a lot.',
     speed: 1, accuracy: 2, style: 'steady',
   },
   zorp: {
@@ -72,8 +72,8 @@ export const RIVALS = {
   },
 };
 export const RIVAL_ORDER = ['blip', 'zorp', 'vex', 'maw'];
-const TONE_BY_SET = { softies: 'soft', creatures: 'playful', hostile: 'hostile', gnarly: 'gnarly' };
-export const LOOK_SETS = ['softies', 'creatures', 'hostile', 'gnarly'];
+const TONE_BY_SET = { encounters: 'soft', softies: 'soft', creatures: 'playful', hostile: 'hostile', gnarly: 'gnarly' };
+export const LOOK_SETS = ['encounters', 'softies', 'creatures', 'hostile', 'gnarly'];
 
 export const DUEL_DEFAULTS = {
   rival: 'zorp',
@@ -257,16 +257,17 @@ export class Rival {
 // What the rival says. One short line at a time.
 // ------------------------------------------------------------
 export const RIVAL_LINES = {
+  // Calm and friendly: the rookie scout, and any rival given a Classic or Soft look.
   soft: {
-    start: ['Hi! Shall we play?', 'Ooh, a puzzle. Yay!', 'Good luck, friend!'],
-    ahead: ['I found one! Did you?', 'Am I winning? Oh my!', 'Wheee, this is fun!'],
-    behind: ['Wait for me, please!', 'You are so fast!', 'Wow, you are good at this.'],
-    playerSlip: ['Oopsie! It happens.', 'Aw, try again!', 'I do that all the time.'],
-    fumble: ['Oops, wrong one.', 'Hee hee, silly me.', 'That was not it.'],
-    closing: ['Almost done, I think!', 'Just a few more!'],
-    playerClosing: ['You are nearly there!', 'So close! Go, go!'],
-    won: ['I did it! Good game!', 'Yay! Thank you for playing!'],
-    lost: ['You won! Hooray for you!', 'That was amazing. Again?'],
+    start: ['Greetings. Shall we begin?', 'A new signal. Let us decode it.', 'Good luck, Earthling.'],
+    ahead: ['I have found another one.', 'My board is filling up.', 'Interesting. I am ahead.'],
+    behind: ['You are quick, Earthling.', 'I must study your methods.', 'Impressive progress.'],
+    playerSlip: ['A small error. It happens.', 'Try another glyph.', 'Even we make mistakes.'],
+    fumble: ['Hm. Not that one.', 'A miscalculation.', 'Recalibrating.'],
+    closing: ['Only a few cells left.', 'Nearly decoded.'],
+    playerClosing: ['You are almost there.', 'So close, Earthling.'],
+    won: ['Decoded. Good game, Earthling.', 'Finished. Well played.'],
+    lost: ['You win. Well decoded.', 'Impressive. Again?'],
   },
   playful: {
     start: ['Race you, earthling!', 'Ready? Too late, go!', 'Bet I finish first.'],

@@ -1,13 +1,21 @@
 /* Applies a lineup theme (data/themes.js) to the whole page as CSS custom
    properties plus <html data-theme="...">. */
 
-import { THEMES, DEFAULT_THEME } from '../data/themes.js';
+import { THEMES, DEFAULT_THEME, easyTheme } from '../data/themes.js';
 import { emit } from '../core/events.js';
 
 let current = null;
 
 export const themeFor = (key) => THEMES[key] || THEMES[DEFAULT_THEME];
 export const currentTheme = () => current;
+
+/** Switch the Easy difficulty's color scheme. Every screen that reads THEMES sees it. */
+export function setEasyPalette(paletteKey) {
+  const next = easyTheme(paletteKey);
+  if (THEMES.softies?.palette === next.palette) return;
+  THEMES.softies = next;
+  if (current === 'softies') { current = null; applyTheme('softies'); }
+}
 
 export function applyTheme(key) {
   if (!THEMES[key]) key = DEFAULT_THEME;

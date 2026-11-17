@@ -18,7 +18,7 @@ import { confirmAbandon } from './menu.js';
 import { rivalAvatar } from '../rival-panel.js';
 
 const DIFFS = [['easy', 'Easy'], ['medium', 'Medium'], ['hard', 'Hard'], ['alien', 'Alien']];
-const LOOK_LABEL = { softies: 'Soft', creatures: 'Creature', hostile: 'Hostile', gnarly: 'Gnarly' };
+const LOOK_LABEL = { encounters: 'Classic', softies: 'Soft', creatures: 'Creature', hostile: 'Hostile', gnarly: 'Gnarly' };
 
 /** Duel settings as stored, with every field present. */
 export function duelSettings() { return { ...DUEL_DEFAULTS, ...(settings().duel || {}) }; }

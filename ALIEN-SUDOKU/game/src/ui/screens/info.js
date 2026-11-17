@@ -173,7 +173,7 @@ export const howtoScreen = {
       ]],
       ['Lineups & themes', [
         h('p', {}, 'Each lineup is a set of 9 glyphs with its own colors, font and board style: Close Encounters, Space Fleet, Planets, Deep Cosmos, Alien Creatures, Ancient Mysteries and the Cosmic Mix. Every glyph has its own color, so you can spot it at a glance. Tap a placed glyph to see its name.'),
-        h('p', {}, 'Each difficulty brings its own aliens: Easy has the super soft Soft Visitors, Medium the playful Alien Creatures, Hard the Hostile Visitors, and Alien the Gnarly Horde. You can turn this off in Settings.'),
+        h('p', {}, 'Each difficulty brings its own aliens: Easy has the friendly Soft Visitors in calm, neutral colors (pick from six in Settings > Easy colors), Medium the playful Alien Creatures, Hard the Hostile Visitors, and Alien the Gnarly Horde. You can turn this off in Settings.'),
         h('p', {}, 'Change lineup in Settings. Each campaign sector is played with its own lineup; Alien Creatures, Ancient Mysteries and the Cosmic Mix are unlocked in the campaign.'),
       ]],
       ['Modes', [
@@ -187,7 +187,7 @@ export const howtoScreen = {
       ]],
       ['Alien Duel', [
         h('ul', {},
-          h('li', {}, 'Pick a rival, from the sleepy Baby Blip to The Maw, then make it yours: rename it, change its look, and set its speed, accuracy and play style.'),
+          h('li', {}, 'Pick a rival, from the rookie Cadet Xel to The Maw, then make it yours: rename it, change its look, and set its speed, accuracy and play style.'),
           h('li', {}, 'Your rival solves the same puzzle on its own board. The bars show who is ahead; tap the rival or its small board to see where it has been.'),
           h('li', {}, 'Too hard? Give yourself a head start, slow your rival down, or let it keep pace with you so every race is close.'),
           h('li', {}, 'If your rival finishes first you can still finish the puzzle, or ask for a rematch. Your record against each rival is in Stats, under Duel.'),

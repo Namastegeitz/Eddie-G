@@ -374,3 +374,21 @@ kbd { font-family: var(--font-display); font-size: 0.66rem; padding: 4px 8px; bo
 .policy-text p { margin: 0 0 8px; }
 .policy-text ul { margin: 0 0 8px; padding-left: 20px; }
 .policy-text a { color: rgb(var(--c3-rgb)); word-break: break-all; }
+
+/* Easy colors picker */
+.easy-row { flex-wrap: wrap; }
+.easy-palettes { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 8px; width: 100%; }
+@media (max-width: 460px) { .easy-palettes { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.easy-swatch {
+  display: grid; justify-items: center; gap: 4px; padding: 6px 4px; border-radius: 12px; cursor: pointer;
+  border: 1.5px solid rgba(var(--c2-rgb), 0.3); background: transparent; color: var(--text); font: inherit;
+}
+.easy-swatch.on { border-color: rgb(var(--c1-rgb)); box-shadow: 0 0 0 1px rgb(var(--c1-rgb)); }
+.easy-swatch:focus-visible { outline: 2px solid rgb(var(--c1-rgb)); outline-offset: 2px; }
+.easy-swatch small { font-size: 0.7rem; }
+.easy-swatch-art {
+  display: grid; grid-template-columns: repeat(2, 1fr); gap: 3px; width: 40px; height: 40px; padding: 4px;
+  border-radius: 9px; background: var(--sw-bg); border: 1.5px solid var(--sw-accent);
+}
+.easy-swatch-art i { border-radius: 3px; background: var(--sw-cell); }
+.easy-swatch-art i:nth-child(2), .easy-swatch-art i:nth-child(3) { background: var(--sw-accent); opacity: 0.85; }

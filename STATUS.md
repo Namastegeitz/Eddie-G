@@ -29,6 +29,9 @@
   bug and feedback reports stored on the page). README checklist: `ALIEN-SUDOKU/README.md`.
 - Store-readiness fixes made Nov 17: in-app privacy policy, Report an ad, iOS privacy manifest,
   no banner during play, ads capped at PG, wider iPad layout, "computer rival" wording.
+- Nov 17 (later): Easy difficulty is now neutral instead of pastel pink, with six color schemes in
+  Settings > Easy colors (Moonstone default, Graphite, Sage, Ocean, Sand, Paper). The Alien Duel
+  rookie "Baby Blip" is now "Cadet Xel" (classic alien head, calm lines).
 - Builds made Nov 17: web single file, itch.io HTML5 zip (committed); Windows installer + portable,
   Linux AppImage + deb, macOS Intel + Apple Silicon zips (unsigned; in `builds/<platform>/files/`,
   not in git).

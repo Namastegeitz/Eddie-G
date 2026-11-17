@@ -138,30 +138,8 @@ export const THEMES = {
     hero: 1,
   },
   // ---- Difficulty lineups: from super soft (Easy) to gnarly (Alien) ----
-  softies: {
-    name: 'Soft Visitors',
-    tagline: 'Sleepy, squishy and very friendly',
-    style: 'soft-light',
-    light: true,
-    font: "'Quicksand', 'Fredoka', system-ui, sans-serif",
-    rgb: { c1: '255, 110, 175', c2: '150, 120, 255', c3: '70, 185, 215', c4: '255, 160, 80', panel: '255, 255, 255', deep: '244, 233, 255' },
-    bg: '#f6eaff',
-    text: '#3a2858',
-    textDim: '#7a6898',
-    onAccent: '#ffffff',
-    cellBg: '#ffffff',
-    cellFixed: '#f3e9ff',
-    cellUser: '#ffeef7',
-    line: 'rgba(150, 120, 220, 0.22)',
-    lineStrong: 'rgba(255, 110, 175, 0.75)',
-    boxLine: 'rgba(84, 52, 150, 0.72)',
-    radius: { board: '28px', btn: '22px' },
-    glow: 0.35,
-    backdrop: 'space/nebula-pink.webp',
-    overlay: 'linear-gradient(180deg, rgba(255, 244, 252, 0.78), rgba(244, 233, 255, 0.86))',
-    stars: ['#ffffff', '#ffb8dc', '#cbb8ff', '#a8eaff'],
-    hero: 1,
-  },
+  // Easy. Neutral by design; its colors come from EASY_PALETTES (Settings > Easy colors).
+  softies: null,
   hostile: {
     name: 'Hostile Visitors',
     tagline: 'They did not come in peace',
@@ -231,3 +209,88 @@ export const DEFAULT_THEME = 'encounters';
 
 /** Each difficulty has its own alien lineup, from super soft to gnarly. */
 export const DIFFICULTY_LINEUP = { easy: 'softies', medium: 'creatures', hard: 'hostile', alien: 'gnarly' };
+
+// ------------------------------------------------------------
+// Easy difficulty: neutral color schemes the player can switch
+// between. None of them brings back the old pastel pink look.
+// ------------------------------------------------------------
+const neutralDark = (o) => ({
+  light: false,
+  text: '#e8ecf1',
+  textDim: '#9aa4b2',
+  onAccent: '#0b0e13',
+  ...o,
+  line: `rgba(${o.rgb.c2}, 0.2)`,
+  lineStrong: `rgba(${o.rgb.c1}, 0.7)`,
+  boxLine: `rgba(${o.rgb.c1}, 0.85)`,
+  overlay: `linear-gradient(180deg, ${o.bg}cc, ${o.bg}ee)`,
+});
+const neutralLight = (o) => ({
+  light: true,
+  onAccent: '#ffffff',
+  ...o,
+  line: `rgba(${o.rgb.c2}, 0.28)`,
+  lineStrong: `rgba(${o.rgb.c1}, 0.75)`,
+  boxLine: `rgba(${o.rgb.c1}, 0.9)`,
+  overlay: `linear-gradient(180deg, ${o.bg}e0, ${o.bg}f2)`,
+});
+
+export const EASY_PALETTES = {
+  moonstone: neutralDark({
+    name: 'Moonstone', blurb: 'Cool grey with a soft teal',
+    rgb: { c1: '125, 211, 196', c2: '148, 163, 184', c3: '147, 197, 253', c4: '232, 190, 120', panel: '24, 29, 37', deep: '15, 18, 24' },
+    bg: '#0f1218', cellBg: '#1b212b', cellFixed: '#141922', cellUser: '#222b37',
+    stars: ['#ffffff', '#cfe9e4', '#c9d3e0', '#bcd7f5'],
+  }),
+  graphite: neutralDark({
+    name: 'Graphite', blurb: 'Charcoal and soft white',
+    rgb: { c1: '226, 232, 240', c2: '120, 128, 140', c3: '160, 200, 230', c4: '240, 200, 120', panel: '30, 31, 34', deep: '18, 19, 21' },
+    bg: '#121315', cellBg: '#1f2023', cellFixed: '#18191b', cellUser: '#2a2c30',
+    stars: ['#ffffff', '#e5e7eb', '#cbd5e1', '#d6d3d1'],
+  }),
+  sage: neutralDark({
+    name: 'Sage', blurb: 'Muted green-grey',
+    rgb: { c1: '163, 201, 168', c2: '132, 150, 136', c3: '170, 205, 220', c4: '222, 196, 130', panel: '25, 31, 27', deep: '15, 19, 16' },
+    bg: '#101411', cellBg: '#1b221d', cellFixed: '#151b17', cellUser: '#233026',
+    stars: ['#ffffff', '#dce8dd', '#c9d6cc', '#e6e2cf'],
+  }),
+  ocean: neutralDark({
+    name: 'Ocean', blurb: 'Deep blue-grey',
+    rgb: { c1: '125, 182, 255', c2: '120, 140, 170', c3: '140, 220, 230', c4: '235, 195, 125', panel: '20, 28, 42', deep: '11, 16, 26' },
+    bg: '#0b111c', cellBg: '#16202f', cellFixed: '#111926', cellUser: '#1d2a3d',
+    stars: ['#ffffff', '#cfe0f7', '#b8c7dd', '#c7eef2'],
+  }),
+  sand: neutralLight({
+    name: 'Sand', blurb: 'Light warm grey',
+    rgb: { c1: '150, 112, 62', c2: '150, 140, 125', c3: '70, 125, 150', c4: '200, 120, 60', panel: '252, 250, 246', deep: '238, 234, 226' },
+    bg: '#efebe4', text: '#2f2a24', textDim: '#6e665b', cellBg: '#fbf9f5', cellFixed: '#efe9df', cellUser: '#f6efe2',
+    stars: ['#ffffff', '#e8dfd0', '#d9d2c5', '#d6e2e8'],
+  }),
+  paper: neutralLight({
+    name: 'Paper', blurb: 'Light cool grey',
+    rgb: { c1: '61, 82, 112', c2: '130, 142, 158', c3: '40, 130, 150', c4: '200, 140, 60', panel: '250, 251, 252', deep: '232, 236, 241' },
+    bg: '#eceff3', text: '#1f2933', textDim: '#5f6b7a', cellBg: '#fbfcfd', cellFixed: '#e9edf2', cellUser: '#eef3f8',
+    stars: ['#ffffff', '#dfe5ec', '#cdd5df', '#d3e6ea'],
+  }),
+};
+export const EASY_PALETTE_ORDER = ['moonstone', 'graphite', 'sage', 'ocean', 'sand', 'paper'];
+export const DEFAULT_EASY_PALETTE = 'moonstone';
+
+/** The full Easy theme for one color scheme. */
+export function easyTheme(paletteKey) {
+  const p = EASY_PALETTES[paletteKey] || EASY_PALETTES[DEFAULT_EASY_PALETTE];
+  const { name: paletteName, blurb, ...colors } = p;
+  return {
+    name: 'Soft Visitors',
+    tagline: `Friendly visitors · ${paletteName}`,
+    style: 'neutral',
+    font: "'Exo 2', 'Space Grotesk', system-ui, sans-serif",
+    radius: { board: '18px', btn: '14px' },
+    glow: 0.3,
+    backdrop: 'space/moon-planet.webp',
+    hero: 1,
+    palette: paletteKey in EASY_PALETTES ? paletteKey : DEFAULT_EASY_PALETTE,
+    ...colors,
+  };
+}
+THEMES.softies = easyTheme(DEFAULT_EASY_PALETTE);

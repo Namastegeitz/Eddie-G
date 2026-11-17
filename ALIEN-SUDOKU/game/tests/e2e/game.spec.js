@@ -185,7 +185,7 @@ test('alien duel: the rival finishes first, you can keep solving, and a duel res
   const errors = errorsOf(page);
   await openMenu(page);
   await page.locator('.menu-duel').click();
-  await page.locator('.rival-card', { hasText: 'Baby Blip' }).click();
+  await page.locator('.rival-card', { hasText: 'Cadet Xel' }).click();
   await page.locator('.duel-start').click();
   await expect(page.locator('.screen-play .rival')).toBeVisible();
   // Some rival progress survives a reload.
@@ -198,13 +198,31 @@ test('alien duel: the rival finishes first, you can keep solving, and a duel res
   expect(await page.evaluate(() => window.__alienRival.filled)).toBe(before);
   // Fast-forward to the end of the rival's game.
   await page.evaluate(() => window.__alienDuelAdvance(60 * 60_000));
-  await expect(page.locator('.duel-modal .modal-title')).toHaveText('Baby Blip finished first');
+  await expect(page.locator('.duel-modal .modal-title')).toHaveText('Cadet Xel finished first');
   await page.getByRole('button', { name: 'Keep solving' }).click();
   await solveAll(page);
   await expect(page.locator('.duel-modal .modal-title')).toHaveText('Puzzle decoded');
   await page.getByRole('button', { name: 'Rematch' }).click();
   await expect(page.locator('.screen-play .rival')).toBeVisible();
   expect(await page.evaluate(() => window.__alienRival.filled)).toBe(0);
+  expect(errors).toEqual([]);
+});
+
+test('easy colors: six neutral schemes, saved, applied to Easy puzzles', async ({ page }) => {
+  const errors = errorsOf(page);
+  await openMenu(page);
+  await page.locator('.icon-tile', { hasText: 'Settings' }).click();
+  await expect(page.locator('.easy-swatch')).toHaveCount(6);
+  await expect(page.locator('.easy-swatch[aria-checked="true"]')).toContainText('Moonstone');
+  await page.locator('.easy-swatch', { hasText: 'Sand' }).click();
+  await expect(page.locator('.easy-swatch[aria-checked="true"]')).toContainText('Sand');
+  await page.locator('.topbar .icon-btn[aria-label="Back"]').click();
+  await startQuick(page, 'easy');
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'softies');
+  await expect(page.locator('html')).toHaveAttribute('data-tone', 'light');
+  expect(await page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue('--c1-rgb').trim())).toBe('150, 112, 62');
+  // No trace of the old pastel pink.
+  expect(await page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue('--bg-deep').trim())).not.toBe('#f6eaff');
   expect(errors).toEqual([]);
 });
 

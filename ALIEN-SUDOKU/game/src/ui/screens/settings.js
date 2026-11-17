@@ -3,7 +3,7 @@ import { h, icon } from '../dom.js';
 import { settings, setSetting, isSetUnlocked, resetEverything } from '../../core/profile.js';
 import { SYMBOL_SETS, SYMBOL_SET_ORDER } from '../../data/symbols.js';
 import { SECTORS } from '../../data/sectors.js';
-import { THEMES } from '../../data/themes.js';
+import { THEMES, EASY_PALETTES, EASY_PALETTE_ORDER } from '../../data/themes.js';
 import { topbar } from './campaign.js';
 import { confirmModal, toast } from '../modal.js';
 import { sfx, music, TIER_SONG, onMusicChange, audioStatus, testSound } from '../../audio/audio.js';
@@ -70,6 +70,25 @@ export const settingsScreen = {
     }
     renderSets();
 
+    // Easy difficulty colors: neutral schemes only.
+    const easyRow = h('div', { class: 'easy-palettes', role: 'radiogroup', 'aria-label': 'Easy difficulty colors' });
+    function renderEasy() {
+      const cur = settings().easyPalette;
+      easyRow.replaceChildren(...EASY_PALETTE_ORDER.map((k) => {
+        const p = EASY_PALETTES[k];
+        const on = cur === k;
+        return h('button', {
+          class: `easy-swatch${on ? ' on' : ''}`, type: 'button', role: 'radio', 'aria-checked': String(on),
+          'aria-label': `${p.name}: ${p.blurb}`, title: `${p.name}: ${p.blurb}`,
+          style: { '--sw-bg': p.bg, '--sw-cell': p.cellBg, '--sw-accent': `rgb(${p.rgb.c1})`, '--sw-text': p.text },
+          onclick: () => { setSetting('easyPalette', k); sfx.select(); renderEasy(); renderSets(); },
+        },
+        h('span', { class: 'easy-swatch-art', 'aria-hidden': 'true' }, h('i'), h('i'), h('i'), h('i')),
+        h('small', {}, p.name));
+      }));
+    }
+    renderEasy();
+
     const triesSel = h('select', { class: 'select', 'aria-label': 'Tries per puzzle', onchange: (e) => setSetting('tries', Number(e.target.value)) },
       [[25, '25 · Explorer'], [10, '10 · Relaxed'], [5, '5 · Focused'], [3, '3 · Classic']].map(([v, label]) =>
         h('option', { value: String(v), selected: (s.tries || 25) === v }, label)));
@@ -126,6 +145,9 @@ export const settingsScreen = {
       h('div', { class: 'page-body settings' },
         group('Glyph lineup & theme', [
           setGrid,
+          h('div', { class: 'set-row easy-row' },
+            h('span', { class: 'set-text' }, h('span', {}, 'Easy colors'), h('small', {}, 'The board and screens for Easy puzzles and the first campaign sector')),
+            easyRow),
           toggle('difficultyAliens', 'Each difficulty brings its own aliens', 'Easy: Soft Visitors · Medium: Alien Creatures · Hard: Hostile Visitors · Alien: Gnarly Horde. In every mode, campaign included.'),
           toggle('sectorSymbols', 'Otherwise, campaign uses each sector\'s lineup', 'Only when difficulty aliens are off. Off = always use your lineup.'),
         ]),

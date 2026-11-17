@@ -33,7 +33,7 @@ import { initBackground } from './ui/background.js';
 import { initModals, toast } from './ui/modal.js';
 import { initRouter, registerScreen, reset, handleBack, refreshTheme } from './ui/router.js';
 import { installGlyphSprite } from './data/symbols.js';
-import { applyTheme } from './ui/theme.js';
+import { applyTheme, setEasyPalette } from './ui/theme.js';
 import { initStarfield, setReducedMotion } from './ui/starfield.js';
 import { menuScreen } from './ui/screens/menu.js';
 import { playScreen } from './ui/screens/play.js';
@@ -57,10 +57,13 @@ async function boot() {
   initProfile();
   applySettings();
   installGlyphSprite();
+  setEasyPalette(settings().easyPalette);
   applyTheme(settings().symbolSet);
   initStarfield(document.querySelector('.starfield'));
   on('settings', applySettings);
   on('settings', ({ key }) => { if (key === 'symbolSet' || key === 'sectorSymbols') refreshTheme(); });
+  on('settings', ({ key }) => { if (key === 'easyPalette') { setEasyPalette(settings().easyPalette); refreshTheme(); } });
+  on('profile-reset', () => setEasyPalette(settings().easyPalette));
   on('profile-reset', applySettings);
 
   initBackground();

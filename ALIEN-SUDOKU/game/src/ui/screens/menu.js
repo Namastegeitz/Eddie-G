@@ -22,7 +22,7 @@ const DIFFS = [
   { key: 'alien', label: 'Alien', clues: '≈22 clues', blurb: 'Advanced patterns. For fluent decoders.' },
 ];
 /** Who you meet at each difficulty, from super soft to gnarly. */
-const DIFF_MOOD = { easy: 'Cuddly and harmless', medium: 'Playful troublemakers', hard: 'They mean business', alien: 'Fangs. Eyes. Slime.' };
+const DIFF_MOOD = { easy: 'Friendly and calm', medium: 'Playful troublemakers', hard: 'They mean business', alien: 'Fangs. Eyes. Slime.' };
 
 /** Ask before replacing an in-progress game. Resolves true to continue. */
 export async function confirmAbandon() {
