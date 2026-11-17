@@ -146,8 +146,10 @@ let passes = 0;
     const m = await page.textContent('#mistake');
     expect(m.includes('Oops') && m.includes('You tapped'), 'mistake card text');
     await shot('07-mistake');
-    await page.click('#mistake-go');
-    await waitPhase('respond');
+    // the card continues by itself after a few seconds; on a slow machine the
+    // screenshot can outlast it, so only click if it is still there
+    if (await page.isVisible('#mistake-go')) await page.click('#mistake-go', { timeout: 2000 }).catch(() => {});
+    await waitPhase('respond', 25000);
     const again = await ev(() => JSON.stringify(MSMD.game.run.steps));
     expect(first === again, 'same routine after a mistake');
     const mix = await ev(() => MSMD.Save.data.stats.mixups);
