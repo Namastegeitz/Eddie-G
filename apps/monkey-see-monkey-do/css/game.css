@@ -360,9 +360,9 @@ kbd { display: inline-block; min-width: 22px; padding: 1px 6px; border-radius: 6
 @media (min-aspect-ratio: 13/10) and (min-width: 820px) and (min-height: 460px) {
   #hud { --side: clamp(150px, 14vw, 220px); }
   #hud .pad-wrap { position: absolute; left: var(--gut-l); right: var(--gut-r); bottom: calc(var(--safe-b) + 10px); pointer-events: none; }
-  #hud .pad { grid-template-columns: var(--side) 1fr var(--side); grid-template-areas: "hb . fl" "la . ra" "ll . rl"; gap: 10px 0; }
+  #hud .pad { grid-template-columns: var(--side) 1fr var(--side); grid-template-areas: "hd . fl" "la . ra" "ll . rl"; gap: 10px 0; }
   #hud .pad-btn { pointer-events: auto; height: clamp(60px, 11.5vh, 92px); }
-  #hud .pad-btn[data-move="HB"] { grid-area: hb; }
+  #hud .pad-btn[data-move="HD"] { grid-area: hd; }
   #hud .pad-btn[data-move="FL"] { grid-area: fl; }
   #hud .pad-btn[data-move="LA"] { grid-area: la; }
   #hud .pad-btn[data-move="RA"] { grid-area: ra; }

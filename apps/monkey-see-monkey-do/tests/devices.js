@@ -7,6 +7,7 @@
 //
 //   (cd dist/www && python3 -m http.server 8766 --bind 127.0.0.1) &
 //   node tests/devices.js          (screenshots in tests/output/devices/)
+//   ONLY=wide node tests/devices.js   (just the checks whose name matches)
 const { chromium, devices } = require('playwright');
 const path = require('path');
 const fs = require('fs');
@@ -33,7 +34,9 @@ const FAKE_BRIDGE = (platform) => `
 
 (async () => {
   const browser = await chromium.launch({ args: ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader'] });
+  const ONLY = process.env.ONLY ? new RegExp(process.env.ONLY, 'i') : null; // e.g. ONLY=wide
   const run = async (name, fn) => {
+    if (ONLY && !ONLY.test(name)) return;
     try { await fn(); pass++; console.log('✓', name); } catch (e) { fail++; console.log('✗', name, '-', e.message.split('\n')[0]); }
   };
   const open = async (ctxOpts, url = BASE, init = null) => {
@@ -140,7 +143,7 @@ const FAKE_BRIDGE = (platform) => `
     ['iPhone 15 Pro Max', devices['iPhone 15 Pro Max'] || devices['iPhone 14 Pro Max']],
     ['iPad Mini', devices['iPad Mini']],
     ['iPad Air sideways', { viewport: { width: 1180, height: 820 }, hasTouch: true, isMobile: true }],
-    ['wide laptop window', { viewport: { width: 1588, height: 724 } }],
+    ['wide laptop window', { viewport: { width: 1588, height: 724 }, hasTouch: true }],
   ];
   for (const [name, dev] of sizes) {
     await run(`fits on ${name}`, async () => {
@@ -173,28 +176,26 @@ const FAKE_BRIDGE = (platform) => `
   }
 
   await run('wide screen: buttons on both sides like the body, monkey bigger', async () => {
-    const p = await open({ viewport: { width: 900, height: 724 } });
-    const start = async () => {
+    const measure = async (width) => {
+      const p = await open({ viewport: { width, height: 724 } });
       await p.evaluate(() => { MSMD.Save.data.tutorialDone = true; MSMD.Save.data.levels[4] = { stars: 1, best: 1, clears: 1 }; MSMD.game.openLevel(5); });
+      await p.waitForSelector('#ov-intro.show');
       await p.evaluate(() => document.querySelector('#intro-go').click());
-      await p.waitForFunction(() => MSMD.game.phase === 'respond', null, { timeout: 25000 });
-      await p.waitForTimeout(600); // camera eases in
+      await p.waitForFunction(() => MSMD.game.phase === 'respond', null, { timeout: 40000 });
+      const r = await p.evaluate(() => {
+        const box = (m) => { const b = document.querySelector(`#pad [data-move="${m}"]`).getBoundingClientRect(); return { left: b.left, right: b.right, top: b.top }; };
+        return { W: innerWidth, la: box('LA'), ra: box('RA'), ll: box('LL'), hd: box('HD'), fl: box('FL'), d: MSMD.stage.camGoal.pos.z };
+      });
+      if (width > 1000) await p.screenshot({ path: path.join(OUT, `wide-${width}x724.png`) });
+      expect(p.errors.length === 0, p.errors.join(' | '));
+      await p.context().close();
+      return r;
     };
-    await start();
-    const narrow = await p.evaluate(() => MSMD.stage.camGoal.pos.z);
-    await p.evaluate(() => MSMD.game.quit && MSMD.game.quit());
-    await p.setViewportSize({ width: 1588, height: 724 });
-    await start();
-    const r = await p.evaluate(() => {
-      const box = (m) => document.querySelector(`#pad [data-move="${m}"]`).getBoundingClientRect();
-      return { W: innerWidth, la: box('LA'), ra: box('RA'), ll: box('LL'), hb: box('HB'), fl: box('FL'), d: MSMD.stage.camGoal.pos.z };
-    });
+    const narrow = await measure(900);
+    const r = await measure(1588);
     expect(r.la.right < r.W * 0.25 && r.ra.left > r.W * 0.75, `buttons at the sides: ${Math.round(r.la.right)} / ${Math.round(r.ra.left)} of ${r.W}`);
-    expect(r.hb.top < r.la.top && r.la.top < r.ll.top && r.fl.top < r.ra.top, 'head at the top, arm, leg at the bottom');
-    expect(r.d < narrow * 0.9, `monkey closer (bigger): ${r.d.toFixed(2)} vs ${narrow.toFixed(2)}`);
-    await p.screenshot({ path: path.join(OUT, 'wide-1588x724.png') });
-    expect(p.errors.length === 0, p.errors.join(' | '));
-    await p.context().close();
+    expect(r.hd.top < r.la.top && r.la.top < r.ll.top && r.fl.top < r.ra.top, 'head at the top, arm, leg at the bottom');
+    expect(r.d < narrow.d * 0.9, `monkey closer (bigger): ${r.d.toFixed(2)} vs ${narrow.d.toFixed(2)}`);
   });
 
   await run('phone held sideways in a browser shows "turn upright" and pauses', async () => {
