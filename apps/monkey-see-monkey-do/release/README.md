@@ -17,12 +17,12 @@ All three pages are in the **MONKEY SEE, MONKEY DO** folder on your claude.ai Ar
 
 ## Progress
 
-**23% done** 🟩🟩⬜⬜⬜⬜⬜⬜⬜⬜ · 15 of 72 steps
-(65 required, 7 optional) · waiting on you: **21** · Claude's queue: **10**
+**26% done** 🟩🟩🟩⬜⬜⬜⬜⬜⬜⬜ · 17 of 72 steps
+(65 required, 7 optional) · waiting on you: **22** · Claude's queue: **9**
 
 | Phase | Progress | Cost | Folder |
 |---|---|---|---|
-| [Project home](#project-home) | 3/5 | Free | `release/01-web-beta` |
+| [Project home](#project-home) | ✅ 5/5 | Free | `release/01-web-beta` |
 | [Beta test](#beta-test) | 0/6 | Free | `release/01-web-beta` |
 | [Store kit (used by every store)](#store-kit-used-by-every-store) | 6/11 | Free | `release/00-shared` |
 | [Google Play (Android)](#google-play-android) | 1/11 | $25 once | `release/03-google-play` |
@@ -40,20 +40,20 @@ Legend: ✅ done · 🔄 working on it · ⬜ to do · ⏭️ skipped. Owner: **
 
 **Your next steps**
 - ⬜ **Recruit 12 or more testers** (Beta test). Ask 15-16 people: some always drop out, and Google counts only testers who stay opted in for all 14 days.
+- ⬜ **Send testers the beta link** (Beta test). Give them three concrete asks: finish levels 1-5, try a take-turns level (2 or 3), open the Wardrobe.
 - ⬜ **Invite testers to the Bug & Feedback page** (Beta test). If a tester has no Claude account, ask them to text you instead and type their report in yourself: it takes 30 seconds.
 - ⬜ **Real-device pass: iPhone, Android, tablet, computer** (Beta test). On older phones, check Settings > Graphics: Auto should drop to Medium or Low by itself within a few seconds.
-- ⬜ **Check the name is free to use** (Store kit (used by every store)). Store titles can add a short tag that also helps search, e.g. 'Monkey See, Monkey Do: Dance' (30 characters max on both mobile stores).
 
 **Claude's next steps**
-- 🔄 **Put the beta website on GitHub Pages** (Project home)
 - 🔄 **Support page and contact** (Store kit (used by every store))
 - 🔄 **Store text: names, descriptions, keywords** (Store kit (used by every store))
+- 🔄 **Age-rating answers** (Store kit (used by every store))
 
 ## Project home
 
 Everything for the game in one place, and a link anyone can play.
 
-**3/5** 🟩🟩🟩🟩🟩🟩⬜⬜⬜⬜ · Cost: Free · Folder: [`release/01-web-beta`](./01-web-beta)
+**5/5** 🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩 · Cost: Free · Folder: [`release/01-web-beta`](./01-web-beta)
 
 - [x] ✅ **Project folder on your Artifacts screen** · Claude · done by Claude 2026-11-17
   <details><summary>How to do it</summary>
@@ -95,8 +95,8 @@ Everything for the game in one place, and a link anyone can play.
   **Done when:** dist/site holds the landing page and the game, tested offline.
   </details>
 
-- [ ] 🔄 **Put the beta website on GitHub Pages** · Claude · in progress
-  - Note: GitHub Pages is already on (it serves the Off-Grid Survival Kit). The game's folder is built and tested; it goes live once you OK publishing it to the gh-pages branch.
+- [x] ✅ **Put the beta website on GitHub Pages** · Claude · done by Claude 2026-11-17
+  - Note: Live at https://namastegeitz.github.io/Eddie-G/monkey-see-monkey-do/ (its own folder on the GitHub Pages site; the Off-Grid Survival Kit is unchanged).
   <details><summary>How to do it</summary>
 
   **Why:** A free public web address that works on every phone and computer.
@@ -111,8 +111,8 @@ Everything for the game in one place, and a link anyone can play.
   **Links:** [Beta link](https://namastegeitz.github.io/Eddie-G/monkey-see-monkey-do/)
   </details>
 
-- [ ] ⬜ **Claude checks the live beta link** · Claude
-  - After: Put the beta website on GitHub Pages
+- [x] ✅ **Claude checks the live beta link** · Claude · done by Claude 2026-11-17
+  - Note: 13/13 on the live link as iPhone, Android and desktop: landing, QR, Play, a round of level 1, privacy, support, reopens offline; Off-Grid still works.
   <details><summary>How to do it</summary>
 
   **Why:** So you never send testers a broken link.
@@ -146,7 +146,6 @@ Real people on real phones find the small bugs before any store reviewer does.
   </details>
 
 - [ ] ⬜ **Send testers the beta link** · You
-  - After: Put the beta website on GitHub Pages; Claude checks the live beta link
   <details><summary>How to do it</summary>
 
   **Why:** One link works on every device, no install.

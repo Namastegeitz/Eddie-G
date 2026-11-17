@@ -1,6 +1,6 @@
 {
   "_note": "Claude's copy of the live checklist's progress (claude.ai > MONKEY SEE, MONKEY DO > Monkey Do Launch Checklist). Ask Claude to 'sync the checklist' to refresh it, then node scripts/release_readme.mjs rewrites release/README.md.",
-  "synced": "2026-11-17T20:55:00Z",
+  "synced": "2026-11-17T21:12:00Z",
   "status": {
     "p0-folder": {
       "state": "done",
@@ -106,10 +106,16 @@
       "note": "Desktop 1080p x6"
     },
     "p0-pages": {
-      "state": "doing",
+      "state": "done",
       "by": "claude",
-      "at": "2026-11-17T20:55:00Z",
-      "note": "GitHub Pages is already on (it serves the Off-Grid Survival Kit). The game's folder is built and tested; it goes live once you OK publishing it to the gh-pages branch."
+      "at": "2026-11-17T21:10:00Z",
+      "note": "Live at https://namastegeitz.github.io/Eddie-G/monkey-see-monkey-do/ (its own folder on the GitHub Pages site; the Off-Grid Survival Kit is unchanged)."
+    },
+    "p0-verify-link": {
+      "state": "done",
+      "by": "claude",
+      "at": "2026-11-17T21:12:00Z",
+      "note": "13/13 on the live link as iPhone, Android and desktop: landing, QR, Play, a round of level 1, privacy, support, reopens offline; Off-Grid still works."
     }
   }
 }

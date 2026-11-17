@@ -3,7 +3,7 @@
 **Link for testers:** https://namastegeitz.github.io/Eddie-G/monkey-see-monkey-do/
 (the game itself: https://namastegeitz.github.io/Eddie-G/monkey-see-monkey-do/play/)
 
-It is live. GitHub Pages serves the `gh-pages` branch: its root is the Off-Grid
+It is live (checked on iPhone, Android and desktop with `SITE=https://namastegeitz.github.io/Eddie-G/ node tests/beta_site.js`). GitHub Pages serves the `gh-pages` branch: its root is the Off-Grid
 Survival Kit, and this game has its own `monkey-see-monkey-do/` folder there.
 Nothing to switch on.
 
