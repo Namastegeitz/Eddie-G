@@ -1,4 +1,11 @@
-# Canopy Crossing
+# **CANOPY CROSSING**
+
+> **[STORE LAUNCH CHECKLIST →](LAUNCH/README.md)** every step to the App Store,
+> Google Play, Amazon, Samsung, Steam, GOG, itch.io and Epic.
+> **[LIVE CHECKLIST + BUG LOG →](https://claude.ai/artifact/W8GbYN7jifz6X6fRE4QSNR)**
+> tick steps off (they turn green for everyone) and log bugs and feedback.
+> **[BUILDS →](BUILDS/README.md)** one folder per platform: android, ios,
+> windows, macos, linux, web (`tools/build_all.sh`).
 
 A mobile-first arcade crosser (Godot 4.7, portrait). Guide a real jungle
 animal across rivers, logging trails, swamps and ant highways, one hop at a

@@ -42,7 +42,8 @@ grep -E "FAIL|phase audit" /tmp/cc_audit.log
 if bad_lines /tmp/cc_audit.log; then fail=1; fi
 echo "== phase audit (exported pack)"
 cp export_presets.cfg /tmp/cc_presets.cfg
-sed -i 's|exclude_filter="tools/\*, tests/\*, docs/\*, override.cfg, build/\*"|exclude_filter="tools/*, docs/*, override.cfg, build/*"|' export_presets.cfg
+# include the tests in this one pack (whatever else the presets exclude)
+sed -i '/^exclude_filter=/s|tests/\*, ||' export_presets.cfg
 timeout 300 "$GODOT" --headless --path . --export-pack "Linux" /tmp/cc_test.pck > /tmp/cc_pack.log 2>&1
 cp /tmp/cc_presets.cfg export_presets.cfg
 (cd /tmp && timeout 1800 "$GODOT" --headless --main-pack /tmp/cc_test.pck res://tests/phase_audit.tscn -- --no-boot --fast > /tmp/cc_audit_pck.log 2>&1) || fail=1

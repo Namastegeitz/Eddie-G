@@ -1,0 +1,113 @@
+{
+ "platforms": [
+  {
+   "platform": "android",
+   "status": "needs-sdk",
+   "version": "0.9.0",
+   "build": 1,
+   "commit": "4412280",
+   "built_at": "2026-11-17T01:20:22Z",
+   "godot": "4.7.2",
+   "files": [],
+   "notes": "This machine has no Android SDK (its network can't reach Google's download server). GitHub Actions builds the APK and the Play Store .aab: run 'Canopy Crossing release builds'.",
+   "id": "android",
+   "stores": "Google Play (.aab), Amazon Appstore, Samsung Galaxy Store (.apk)"
+  },
+  {
+   "platform": "ios",
+   "status": "project",
+   "version": "0.9.0",
+   "build": 1,
+   "commit": "4412280",
+   "built_at": "2026-11-17T01:20:18Z",
+   "godot": "4.7.2",
+   "files": [
+    {
+     "file": "CanopyCrossing-iOS-XcodeProject.zip",
+     "bytes": 135147425,
+     "sha256": "936e736cb4dc92efa7ac2f9f05b6abf4b11f855bdb79a082f301e31b3ba18425"
+    }
+   ],
+   "notes": "Xcode project (built on Linux). Finish on a Mac or a cloud Mac: open CanopyCrossing.xcodeproj, set your Team, Product > Archive, upload to App Store Connect.",
+   "id": "ios",
+   "stores": "Apple App Store (TestFlight first)"
+  },
+  {
+   "platform": "windows",
+   "status": "built",
+   "version": "0.9.0",
+   "build": 1,
+   "commit": "4412280",
+   "built_at": "2026-11-17T01:19:32Z",
+   "godot": "4.7.2",
+   "files": [
+    {
+     "file": "CanopyCrossing-Windows-x86_64.zip",
+     "bytes": 75562084,
+     "sha256": "491832148c57bbbac3bef61eefed5cb4588f5d830ae0efbf5fc77a7bf3707035"
+    }
+   ],
+   "notes": "One file, the game data is inside the .exe. Not code-signed yet (Windows SmartScreen will warn until it is).",
+   "id": "windows",
+   "stores": "Steam, GOG, itch.io, Epic, Microsoft Store"
+  },
+  {
+   "platform": "macos",
+   "status": "built",
+   "version": "0.9.0",
+   "build": 1,
+   "commit": "4412280",
+   "built_at": "2026-11-17T01:19:46Z",
+   "godot": "4.7.2",
+   "files": [
+    {
+     "file": "CanopyCrossing-macOS.zip",
+     "bytes": 97254192,
+     "sha256": "1eba60e6c3b197bead32aa338c92aca022b501a00f87d601063b58ba960cf3e4"
+    }
+   ],
+   "notes": "Universal (Apple silicon + Intel) .app in a zip. Not signed or notarized: macOS will refuse to open it normally until it is (needs an Apple Developer account).",
+   "id": "macos",
+   "stores": "Steam, GOG, itch.io, Epic (after signing + notarizing)"
+  },
+  {
+   "platform": "linux",
+   "status": "built",
+   "version": "0.9.0",
+   "build": 1,
+   "commit": "4412280",
+   "built_at": "2026-11-17T01:19:55Z",
+   "godot": "4.7.2",
+   "files": [
+    {
+     "file": "CanopyCrossing-Linux-x86_64.zip",
+     "bytes": 65913715,
+     "sha256": "568dd08516ae18aced138744cddd89ec544dc19a962a9e96ea5233162115038f"
+    }
+   ],
+   "notes": "One file, the game data is inside. Runs on 64-bit Linux with OpenGL 3.3 (and Steam Deck).",
+   "id": "linux",
+   "stores": "Steam (and Steam Deck), GOG, itch.io"
+  },
+  {
+   "platform": "web",
+   "status": "built",
+   "version": "0.9.0",
+   "build": 1,
+   "commit": "4412280",
+   "built_at": "2026-11-17T01:26:10Z",
+   "godot": "4.7.2",
+   "files": [
+    {
+     "file": "CanopyCrossing-Web.zip",
+     "bytes": 47736521,
+     "sha256": "0b06ca3659482f30d716ece75e8b1e956fbb448677b468cee53341a753796fd5"
+    }
+   ],
+   "notes": "Open canopy-crossing.html through a web server (the testers' link serves it). Same files as the live beta link.",
+   "id": "web",
+   "stores": "Beta testers' link, itch.io (playable in browser)"
+  }
+ ],
+ "note": "Each platform has its own folder in apps/CANOPY-CROSSING/BUILDS/. The game files are rebuilt from the source (tools/build_all.sh, or the GitHub Actions workflow 'Canopy Crossing release builds', which also makes Android); they're too big to keep in git."
+}

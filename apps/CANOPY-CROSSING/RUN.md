@@ -1,12 +1,12 @@
 # Running Canopy Crossing
 
 Godot **4.7.2** (standard build, not .NET). Commands run from this folder
-(`apps/canopy-crossing`).
+(`apps/CANOPY-CROSSING`).
 
 ## 1. Open and play
 
 1. Download Godot 4.7.2 from <https://godotengine.org/download>.
-2. **Import** `apps/canopy-crossing/project.godot`, then press **F5**.
+2. **Import** `apps/CANOPY-CROSSING/project.godot`, then press **F5**.
 
 A first launch starts the tutorial. The desktop window is portrait
 (450x800); drag it bigger, the playfield stays centred with jungle on the

@@ -1,0 +1,11 @@
+{
+  "platform": "android",
+  "status": "needs-sdk",
+  "version": "0.9.0",
+  "build": 1,
+  "commit": "4412280",
+  "built_at": "2026-11-17T01:20:22Z",
+  "godot": "4.7.2",
+  "files": [],
+  "notes": "This machine has no Android SDK (its network can't reach Google's download server). GitHub Actions builds the APK and the Play Store .aab: run 'Canopy Crossing release builds'."
+}

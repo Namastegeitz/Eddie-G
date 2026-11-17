@@ -33,7 +33,12 @@
   card, text-size setting, accessibility fixes; session environment eddie-g allows the imagery hosts.
 - Next: open the live link on a phone, install, save NJ/Algarve map areas, field test GPS/compass/backtrack.
 
-## Canopy Crossing (`apps/canopy-crossing`)
+## Canopy Crossing (`apps/CANOPY-CROSSING`)
+- **Store launch** (2026-11-17): `BUILDS/<platform>/` holds each platform's build (Windows, macOS, Linux, web, iOS Xcode
+  project; Android from `.github/workflows/canopy-crossing-release.yml`). `LAUNCH/` holds a 90-step, 10-phase
+  checklist (`LAUNCH/README.md`), researched requirements per store (Apple, Google, Amazon + Samsung, Steam, GOG,
+  itch.io, Epic + Microsoft) and drafts (store text, privacy policy, 36 in-app products, rating answers). Live
+  checklist + bug log: https://claude.ai/artifact/W8GbYN7jifz6X6fRE4QSNR (13 setup steps done by Claude).
 - Built from `prompts/claude/canopy-crossing.md` (copied from the Claude doc brief): all 8 phases,
   Godot 4.7.2, portrait 720x1280, GL Compatibility.
 - 220 maps: 22 real rainforest scenes x 10 levels (El Yunque and the Cardamom Mountains added). Clearing a
@@ -113,7 +118,7 @@
   screen (pips + what the next level adds); runs use the level. Rules per ability parameter in
   `content/skills.json` (`scripts/sim/skills.gd`): shorter cooldowns, longer effects, more distance /
   charges / swings, quicker hops for animals with nothing else to scale.
-- Meshy models (`apps/canopy-crossing/tools/meshy/`, budget-capped pipeline; 480 credits fauna + 690 scenery of the
+- Meshy models (`apps/CANOPY-CROSSING/tools/meshy/`, budget-capped pipeline; 480 credits fauna + 690 scenery of the
   account's 1,255; 55 left, shared with another project): 16 creatures/starter animals and 23 scenery pieces,
   mapped by `content/models.json`. First person uses them for movers (tinted per species, stride bounce), caiman
   backs, surfacing crocs, striking snakes/tigers, swooping eagles, logs/lily pads/stones/trucks/jeeps/boats, canopy
@@ -147,7 +152,7 @@
   levels (tools/level_sweep.tscn, ~2 min) and the first 50 Endless rows on every scene with the free Poison Dart Frog.
   Frame cost 0.9 ms (sim + view + draw recording) on the cloud CPU.
 - Playable web build (private artifact): https://claude.ai/artifact/NHzAQ2w4jCjWjLkoxLSdB3
-  Gameplay clip: `apps/canopy-crossing/docs/gameplay.mp4`.
+  Gameplay clip: `apps/CANOPY-CROSSING/docs/gameplay.mp4`.
 - Not done here: signed Android/iOS builds (need Android SDK + keystore, Mac/Xcode), real store
   sandbox purchases, real ads, on-device 60 fps check (Settings > Show FPS counter), playtesting.
 - Next: playtest difficulty with people, real art pass (sprites drop in via `"sprite"` in files),
