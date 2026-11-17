@@ -13,9 +13,9 @@ and the launch checklist. Store rules researched **2026-11-17**.
 | ✅ [`checklist/`](checklist/) | The checklist data and the page it builds |
 | 📝 [`prompts/`](prompts/) | The original game brief and the next-feature prompts |
 
-## Progress: 12 of 65 steps done
+## Progress: 21 of 65 steps done
 
-`████░░░░░░░░░░░░░░░░` 18%
+`██████░░░░░░░░░░░░░░` 32%
 
 ✅ done · 🔄 doing · ⛔ blocked · ⬜ to do. Ticks you make on the live page are copied here when Claude syncs.
 Snapshot: 2026-11-17.
@@ -54,7 +54,7 @@ _Open the accounts early: identity checks and Steam's 30-day clock take the long
 - ⬜ **You**: [Epic Games Store developer account (optional)](stores/epic-games-store/README.md) · Epic · $100 per game · up to 2+ weeks
 - ⬜ **You**: [Samsung Galaxy Store seller account (optional)](stores/other-android-stores/README.md) · Galaxy / Amazon · Free · 1 h + review
 
-### Phase 4 · Release-ready game (4/15)
+### Phase 4 · Release-ready game (7/15)
 
 _The fixes and signed builds each store checks for._
 
@@ -62,7 +62,7 @@ _The fixes and signed builds each store checks for._
 - ✅ **Claude**: Store icons fixed for Apple and Google · App Store, Google Play
 - ✅ **Claude**: Automated game tests pass · all stores
 - ✅ **Claude**: Version 1.0.0 (build 1) in every export · all stores
-- ⬜ **Claude**: Keep the HUD clear of notches and rounded corners · Google Play, App Store, Galaxy / Amazon · 1 h
+- ✅ **Claude**: Keep the HUD clear of notches and rounded corners · Google Play, App Store, Galaxy / Amazon · 1 h
 - ⬜ **Together**: Back button and pause on Android 16 · Google Play, Galaxy / Amazon · 5 min
 - ⬜ **You**: [Create the Android upload key and back it up twice](builds/android-aab-release/README.md) · Google Play, Galaxy / Amazon · 10 min
 - ⬜ **Together**: [Build the signed Play bundle (AAB)](builds/android-aab-release/README.md) · Google Play, Galaxy / Amazon · 30 min
@@ -70,24 +70,24 @@ _The fixes and signed builds each store checks for._
 - ⬜ **You**: [Archive and upload the iOS build from a Mac](builds/ios-xcode/README.md) · App Store · 1 h
 - ⬜ **Together**: [Sign and notarize the Mac build](builds/macos/README.md) · Steam, GOG, itch.io, Epic · 1 h
 - ⬜ **You**: [Sign the Windows build for direct downloads (optional)](builds/windows/README.md) · itch.io, Microsoft Store · $10/month or ~$65–440/year
-- ⬜ **Claude**: Privacy policy button inside the game · App Store, Google Play · 20 min
-- ⬜ **Claude**: Write the AI-content disclosure · Steam, itch.io · 15 min
+- ✅ **Claude**: Privacy policy button inside the game · App Store, Google Play · 20 min
+- ✅ **Claude**: Write the AI-content disclosure · Steam, itch.io · 15 min
 - ⬜ **Together**: Finish the other 9 HD craft (optional before launch) · all stores · ~540 Meshy credits
 
-### Phase 5 · Store pages and art (3/11)
+### Phase 5 · Store pages and art (9/11)
 
 _Text, screenshots, art and rating answers at each store's exact sizes._
 
 - ✅ **Claude**: [Google Play text, tags and content answers](game/docs/STORE_LISTING.md) · Google Play
 - ✅ **Claude**: Google Play icon, feature graphic and screenshots · Google Play
-- ⬜ **Claude**: 1920×1080 gameplay screenshots · Google Play, Steam, GOG, Epic, Microsoft Store, itch.io · 30 min
-- ⬜ **Claude**: App Store screenshots (iPhone and iPad sizes) · App Store · 30 min
-- ⬜ **Claude**: App Store text and keywords · App Store · 20 min
+- ✅ **Claude**: 1920×1080 gameplay screenshots · Google Play, Steam, GOG, Epic, Microsoft Store, itch.io · 30 min
+- ✅ **Claude**: App Store screenshots (iPhone and iPad sizes) · App Store · 30 min
+- ✅ **Claude**: App Store text and keywords · App Store · 20 min
 - ⬜ **Claude**: Steam capsules and library art · Steam · 1 h
-- ⬜ **Claude**: App Review notes · App Store · 10 min
-- ⬜ **Claude**: Gameplay trailer (30–60 s) · Steam, Google Play, App Store, GOG, itch.io · 2 h
+- ✅ **Claude**: App Review notes · App Store · 10 min
+- ✅ **Claude**: Gameplay trailer (30–60 s) · Steam, Google Play, App Store, GOG, itch.io · 2 h
 - ⬜ **Claude**: itch.io cover (630×500) and page text · itch.io · 20 min
-- ⬜ **Claude**: Age-rating answers for every store · Google Play, App Store, Steam, Epic, Microsoft Store · 20 min
+- ✅ **Claude**: Age-rating answers for every store · Google Play, App Store, Steam, Epic, Microsoft Store · 20 min
 - ✅ **Claude**: "Data not collected" answers for Play and Apple · Google Play, App Store
 
 ### Phase 6 · Testing (0/6)

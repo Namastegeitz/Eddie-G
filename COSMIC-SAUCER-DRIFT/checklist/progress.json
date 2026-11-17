@@ -1,86 +1,254 @@
 {
- "ws-folder": {
+ "as-1080": {
   "status": "done",
   "by": "claude",
-  "note": "437 files moved as renames; references in README, STATUS, RUN and tools updated.",
-  "at": 0,
-  "history": []
+  "at": 1794990000000,
+  "history": [
+   {
+    "status": "done",
+    "by": "claude",
+    "at": 1794990000000
+   }
+  ]
  },
- "ws-builds": {
+ "as-apple-notes": {
   "status": "done",
   "by": "claude",
-  "note": "Exported 17 Nov with Godot 4.7.2: Windows 42 MB, Linux 33 MB (started and quit cleanly), macOS 64 MB, iOS Xcode project 100 MB (2 zip parts, tested), web 46 MB, test APK 61 MB (signature verified).",
-  "at": 0,
-  "history": []
+  "at": 1794960000000,
+  "history": [
+   {
+    "status": "done",
+    "by": "claude",
+    "at": 1794960000000
+   }
+  ]
  },
- "ws-research": {
+ "as-apple-shots": {
   "status": "done",
   "by": "claude",
-  "note": "9 store kits written from official pages.",
-  "at": 0,
-  "history": []
+  "at": 1794990000000,
+  "history": [
+   {
+    "status": "done",
+    "by": "claude",
+    "at": 1794990000000
+   }
+  ]
  },
- "ws-live": {
+ "as-apple-text": {
   "status": "done",
   "by": "claude",
-  "note": "Published as a private page in your COSMIC SAUCER DRIFT folder.",
-  "at": 0,
-  "history": []
- },
- "ws-folder-screen": {
-  "status": "done",
-  "by": "claude",
-  "note": "",
-  "at": 0,
-  "history": []
- },
- "gr-target36": {
-  "status": "done",
-  "by": "claude",
-  "note": "export_presets.cfg: gradle_build/target_sdk=\"36\" (was 35); min SDK 24; arm64-v8a on; category Game; no internet permission.",
-  "at": 0,
-  "history": []
- },
- "gr-icons": {
-  "status": "done",
-  "by": "claude",
-  "note": "assets/icons/icon_1024_opaque.png used by the iOS preset; docs/store/play_icon_512.png is RGBA.",
-  "at": 0,
-  "history": []
- },
- "gr-tests": {
-  "status": "done",
-  "by": "claude",
-  "note": "Last full run: 1125 passed, 0 failed.",
-  "at": 0,
-  "history": []
- },
- "gr-version": {
-  "status": "done",
-  "by": "claude",
-  "note": "Checked in export_presets.cfg.",
-  "at": 0,
-  "history": []
- },
- "as-play-text": {
-  "status": "done",
-  "by": "claude",
-  "note": "game/docs/STORE_LISTING.md (short description 73/80 characters).",
-  "at": 0,
-  "history": []
+  "at": 1794960000000,
+  "history": [
+   {
+    "status": "done",
+    "by": "claude",
+    "at": 1794960000000
+   }
+  ]
  },
  "as-play-art": {
   "status": "done",
   "by": "claude",
-  "note": "game/docs/store/: icon, feature graphic, 6 worlds and 8 menus.",
-  "at": 0,
-  "history": []
+  "at": 1794924795393,
+  "history": [
+   {
+    "status": "done",
+    "by": "claude",
+    "at": 1794924795393
+   }
+  ]
+ },
+ "as-play-text": {
+  "status": "done",
+  "by": "claude",
+  "at": 1794924795393,
+  "history": [
+   {
+    "status": "done",
+    "by": "claude",
+    "at": 1794924795393
+   }
+  ]
  },
  "as-privacy-labels": {
   "status": "done",
   "by": "claude",
-  "note": "Play answers in STORE_LISTING.md; Apple answers in stores/apple-app-store.",
-  "at": 0,
-  "history": []
+  "at": 1794924795393,
+  "history": [
+   {
+    "status": "done",
+    "by": "claude",
+    "at": 1794924795393
+   }
+  ]
+ },
+ "as-ratings": {
+  "status": "done",
+  "by": "claude",
+  "at": 1794960000000,
+  "history": [
+   {
+    "status": "done",
+    "by": "claude",
+    "at": 1794960000000
+   }
+  ]
+ },
+ "as-trailer": {
+  "status": "done",
+  "by": "claude",
+  "at": 1795000000000,
+  "history": [
+   {
+    "status": "done",
+    "by": "claude",
+    "at": 1795000000000
+   }
+  ]
+ },
+ "gr-ai-note": {
+  "status": "done",
+  "by": "claude",
+  "at": 1794960000000,
+  "history": [
+   {
+    "status": "done",
+    "by": "claude",
+    "at": 1794960000000
+   }
+  ]
+ },
+ "gr-icons": {
+  "status": "done",
+  "by": "claude",
+  "at": 1794924795393,
+  "history": [
+   {
+    "status": "done",
+    "by": "claude",
+    "at": 1794924795393
+   }
+  ]
+ },
+ "gr-privacy-link": {
+  "status": "done",
+  "by": "claude",
+  "at": 1794960000000,
+  "history": [
+   {
+    "status": "done",
+    "by": "claude",
+    "at": 1794960000000
+   }
+  ]
+ },
+ "gr-safearea": {
+  "status": "done",
+  "by": "claude",
+  "at": 1794960000000,
+  "history": [
+   {
+    "status": "done",
+    "by": "claude",
+    "at": 1794960000000
+   }
+  ]
+ },
+ "gr-target36": {
+  "status": "done",
+  "by": "claude",
+  "at": 1794924795393,
+  "history": [
+   {
+    "status": "done",
+    "by": "claude",
+    "at": 1794924795393
+   }
+  ]
+ },
+ "gr-tests": {
+  "status": "done",
+  "by": "claude",
+  "at": 1795001000000,
+  "history": [
+   {
+    "status": "done",
+    "by": "claude",
+    "at": 1795001000000
+   }
+  ]
+ },
+ "gr-version": {
+  "status": "done",
+  "by": "claude",
+  "at": 1794924795393,
+  "history": [
+   {
+    "status": "done",
+    "by": "claude",
+    "at": 1794924795393
+   }
+  ]
+ },
+ "ws-builds": {
+  "status": "done",
+  "by": "claude",
+  "at": 1795001000000,
+  "history": [
+   {
+    "status": "done",
+    "by": "claude",
+    "at": 1795001000000
+   }
+  ]
+ },
+ "ws-folder": {
+  "status": "done",
+  "by": "claude",
+  "at": 1794924795393,
+  "history": [
+   {
+    "status": "done",
+    "by": "claude",
+    "at": 1794924795393
+   }
+  ]
+ },
+ "ws-folder-screen": {
+  "status": "done",
+  "by": "claude",
+  "at": 1794924795393,
+  "history": [
+   {
+    "status": "done",
+    "by": "claude",
+    "at": 1794924795393
+   }
+  ]
+ },
+ "ws-live": {
+  "status": "done",
+  "by": "claude",
+  "at": 1794924795393,
+  "history": [
+   {
+    "status": "done",
+    "by": "claude",
+    "at": 1794924795393
+   }
+  ]
+ },
+ "ws-research": {
+  "status": "done",
+  "by": "claude",
+  "at": 1794924795393,
+  "history": [
+   {
+    "status": "done",
+    "by": "claude",
+    "at": 1794924795393
+   }
+  ]
  }
 }
