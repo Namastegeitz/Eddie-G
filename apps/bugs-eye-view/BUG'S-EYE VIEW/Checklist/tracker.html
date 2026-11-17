@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Bug's-Eye View - Release checklist</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+:root {
+  color-scheme: light dark;
+  --bg: #f8f2e6;
+  --surface: #fffdf8;
+  --surface-2: #f2e9d8;
+  --ink: #26180a;
+  --muted: #76624b;
+  --line: #e4d7bf;
+  --gold: #f2b705;
+  --gold-ink: #8a5a00;
+  --gold-soft: #fbe7a6;
+  --done: #178a4c;
+  --done-soft: #d7f2e1;
+  --warn: #b5470b;
+  --warn-soft: #fde2cf;
+  --you: #2c5fa8;
+  --you-soft: #dde8f8;
+  --claude: #a0522d;
+  --claude-soft: #f6e0d2;
+  --shadow: 0 1px 2px rgba(60,40,10,.08), 0 6px 20px rgba(60,40,10,.06);
+  --radius: 14px;
+  --display: "Bricolage Grotesque", "Arial Black", system-ui, sans-serif;
+  --body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #15100a;
+    --surface: #1f170e;
+    --surface-2: #2a1f13;
+    --ink: #f7ecdb;
+    --muted: #b9a68b;
+    --line: #3a2d1d;
+    --gold: #ffc83d;
+    --gold-ink: #ffd36b;
+    --gold-soft: #4a3610;
+    --done: #3fd68b;
+    --done-soft: #123b26;
+    --warn: #ff9a5c;
+    --warn-soft: #43230f;
+    --you: #8db7ff;
+    --you-soft: #1b2b45;
+    --claude: #f0a57a;
+    --claude-soft: #3d2416;
+    --shadow: 0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.25);
+  }
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font: 15px/1.55 var(--body);
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+  -webkit-font-smoothing: antialiased;
+}
+a { color: var(--gold-ink); }
+button, input, select, textarea { font: inherit; color: inherit; }
+.wrap { max-width: 980px; margin: 0 auto; padding: 28px 20px 80px; }
+
+/* Masthead */
+.mast { display: grid; grid-template-columns: 1fr auto; gap: 24px; align-items: end; }
+.eyebrow { font: 600 12px/1 var(--body); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+h1.brand {
+  font: 800 clamp(40px, 8vw, 76px)/.92 var(--display);
+  letter-spacing: -.02em; margin: 10px 0 8px; text-transform: uppercase;
+}
+h1.brand span { background: linear-gradient(transparent 62%, var(--gold-soft) 62%); padding: 0 .04em; }
+.sub { color: var(--muted); max-width: 52ch; margin: 0; }
+.ring { width: 132px; height: 132px; position: relative; }
+.ring svg { transform: rotate(-90deg); }
+.ring .num { position: absolute; inset: 0; display: grid; place-items: center; text-align: center; }
+.ring .num b { font: 800 30px/1 var(--display); display: block; }
+.ring .num small { color: var(--muted); font-size: 12px; }
+
+.phasebar { display: flex; gap: 3px; margin: 22px 0 6px; height: 10px; }
+.phasebar i { flex: 1; border-radius: 3px; background: var(--surface-2); overflow: hidden; position: relative; }
+.phasebar i::after { content: ""; position: absolute; inset: 0; width: var(--p, 0%); background: var(--done); transition: width .4s; }
+.phasebar-legend { display: flex; justify-content: space-between; color: var(--muted); font-size: 12px; }
+
+.status-line { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; margin-top: 14px; font-size: 13px; color: var(--muted); }
+.dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; background: var(--muted); margin-right: 6px; vertical-align: 1px; }
+.dot.live { background: var(--done); box-shadow: 0 0 0 3px var(--done-soft); }
+.dot.wait { background: var(--gold); }
+.dot.off { background: var(--warn); }
+
+/* Next up */
+.next {
+  margin: 22px 0 8px; padding: 18px 20px; border-radius: var(--radius);
+  background: var(--surface); border: 1px solid var(--line); box-shadow: var(--shadow);
+  display: grid; grid-template-columns: 1fr auto; gap: 12px 18px; align-items: center;
+  border-left: 6px solid var(--gold);
+}
+.next .k { font: 600 12px/1 var(--body); letter-spacing: .12em; text-transform: uppercase; color: var(--gold-ink); }
+.next h2 { font: 700 21px/1.2 var(--display); margin: 6px 0 4px; }
+.next p { margin: 0; color: var(--muted); }
+.btn {
+  border: 1px solid var(--line); background: var(--surface-2); border-radius: 999px;
+  padding: 8px 16px; font-weight: 600; cursor: pointer; white-space: nowrap;
+}
+.btn:hover { border-color: var(--gold); }
+.btn.primary { background: var(--gold); border-color: var(--gold); color: #26180a; }
+.btn:disabled { opacity: .5; cursor: default; }
+
+/* Tabs */
+.tabs { display: flex; gap: 6px; margin: 26px 0 14px; border-bottom: 1px solid var(--line); }
+.tab {
+  border: 0; background: none; padding: 10px 14px; cursor: pointer; font-weight: 600; color: var(--muted);
+  border-bottom: 3px solid transparent; margin-bottom: -1px;
+}
+.tab[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--gold); }
+.tab .count { font-size: 12px; background: var(--surface-2); border-radius: 999px; padding: 1px 8px; margin-left: 6px; }
+.toolbar { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 12px; }
+.toolbar .spacer { flex: 1; }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 999px; overflow: hidden; }
+.seg button { border: 0; background: none; padding: 6px 12px; cursor: pointer; font-size: 13px; font-weight: 600; color: var(--muted); }
+.seg button[aria-pressed="true"] { background: var(--surface-2); color: var(--ink); }
+
+/* Phases */
+.phase { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); margin: 14px 0; box-shadow: var(--shadow); overflow: hidden; }
+.phase > header {
+  display: grid; grid-template-columns: auto 1fr auto; gap: 14px; align-items: center;
+  padding: 16px 18px; cursor: pointer; user-select: none;
+}
+.pnum {
+  width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center;
+  font: 800 18px/1 var(--display); background: var(--surface-2);
+}
+.phase.complete .pnum { background: var(--done); color: #fff; }
+.phase h3 { font: 700 19px/1.2 var(--display); margin: 0; }
+.phase .goal { color: var(--muted); font-size: 13.5px; margin-top: 2px; }
+.pmeter { text-align: right; min-width: 92px; }
+.pmeter b { font: 700 15px/1 var(--display); }
+.pmeter .bar { height: 6px; background: var(--surface-2); border-radius: 3px; margin-top: 6px; overflow: hidden; }
+.pmeter .bar i { display: block; height: 100%; background: var(--done); transition: width .4s; }
+.badge-done { display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--done); margin-left: 8px; vertical-align: 2px; }
+.phase .steps { border-top: 1px solid var(--line); }
+.phase.collapsed .steps { display: none; }
+
+.step { border-bottom: 1px solid var(--line); }
+.step:last-child { border-bottom: 0; }
+.row { display: grid; grid-template-columns: auto 1fr auto; gap: 12px; align-items: start; padding: 12px 18px; }
+.check {
+  width: 30px; height: 30px; border-radius: 50%; border: 2px solid var(--line); background: var(--surface);
+  display: grid; place-items: center; cursor: pointer; padding: 0; margin-top: 1px; transition: background .15s, border-color .15s, transform .15s;
+}
+.check svg { width: 16px; height: 16px; opacity: 0; transition: opacity .15s; }
+.check:hover:not(:disabled) { border-color: var(--done); }
+.check[aria-checked="true"] { background: var(--done); border-color: var(--done); }
+.check[aria-checked="true"] svg { opacity: 1; }
+.check:disabled { cursor: default; }
+.check.pop { transform: scale(1.18); }
+.title-btn { all: unset; cursor: pointer; display: block; }
+.title-btn:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; border-radius: 4px; }
+.st { font-weight: 600; }
+.step.done .st { color: var(--muted); }
+.meta { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 5px; }
+.chip { font-size: 12px; padding: 1px 9px; border-radius: 999px; background: var(--surface-2); color: var(--muted); white-space: nowrap; }
+.chip.you { background: var(--you-soft); color: var(--you); }
+.chip.claude { background: var(--claude-soft); color: var(--claude); }
+.chip.both { background: var(--gold-soft); color: var(--gold-ink); }
+.chip.ok { background: var(--done-soft); color: var(--done); }
+.chip.wait { background: var(--warn-soft); color: var(--warn); }
+.chip.note { background: var(--gold-soft); color: var(--gold-ink); }
+.chev { color: var(--muted); padding: 4px; border: 0; background: none; cursor: pointer; transition: transform .2s; }
+.step.open .chev { transform: rotate(90deg); }
+.detail { display: none; padding: 0 18px 16px 60px; }
+.step.open .detail { display: block; }
+.detail ol { margin: 4px 0 10px; padding-left: 20px; }
+.detail li { margin: 3px 0; }
+.callout { border-radius: 10px; padding: 10px 12px; margin: 10px 0; font-size: 14px; }
+.callout b { display: block; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; margin-bottom: 2px; }
+.callout.tip { background: var(--gold-soft); }
+.callout.tip b { color: var(--gold-ink); }
+.callout.coach { background: var(--claude-soft); }
+.callout.coach b { color: var(--claude); }
+.callout.blocked { background: var(--warn-soft); }
+.callout.blocked b { color: var(--warn); }
+.files, .links { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; }
+.files a { font: 12.5px/1.4 var(--mono); padding: 3px 8px; border-radius: 6px; background: var(--surface-2); color: var(--ink); text-decoration: none; }
+.files a:hover { text-decoration: underline; }
+.links a { font-size: 13.5px; font-weight: 600; }
+.notes label { display: block; font-size: 12px; font-weight: 600; color: var(--muted); margin: 10px 0 4px; }
+textarea, input[type=text], select {
+  width: 100%; border: 1px solid var(--line); background: var(--bg); border-radius: 10px; padding: 9px 11px;
+}
+textarea { min-height: 70px; resize: vertical; }
+textarea:focus, input:focus, select:focus { outline: 2px solid var(--gold); outline-offset: 0; border-color: transparent; }
+.saved { font-size: 12px; color: var(--muted); margin-top: 4px; min-height: 16px; }
+.donewhen { font-size: 12.5px; color: var(--done); margin-top: 8px; font-weight: 600; }
+
+/* Feedback */
+.fb-grid { display: grid; grid-template-columns: minmax(0, 380px) minmax(0, 1fr); gap: 18px; align-items: start; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 18px; box-shadow: var(--shadow); }
+.card h3 { font: 700 18px/1.2 var(--display); margin: 0 0 4px; }
+.card p.hint { color: var(--muted); font-size: 13.5px; margin: 0 0 12px; }
+.form-row { margin-bottom: 10px; }
+.form-row label { display: block; font-size: 12.5px; font-weight: 600; margin-bottom: 4px; }
+.pair { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.pills { display: flex; flex-wrap: wrap; gap: 6px; }
+.pills button { border: 1px solid var(--line); background: var(--bg); border-radius: 999px; padding: 5px 11px; cursor: pointer; font-size: 13px; }
+.pills button[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.fb-item { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; margin-bottom: 10px; }
+.fb-head { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.fb-head .when { margin-left: auto; font-size: 12px; color: var(--muted); }
+.fb-text { margin: 8px 0 0; white-space: pre-wrap; }
+.fb-exp { margin: 6px 0 0; color: var(--muted); white-space: pre-wrap; font-size: 14px; }
+.fb-reply { margin-top: 10px; }
+.fb-foot { display: flex; gap: 8px; align-items: center; margin-top: 10px; font-size: 12.5px; color: var(--muted); }
+.fb-foot select { width: auto; padding: 4px 8px; font-size: 12.5px; }
+.st-new { background: var(--you-soft); color: var(--you); }
+.st-seen { background: var(--surface-2); color: var(--muted); }
+.st-fixing { background: var(--gold-soft); color: var(--gold-ink); }
+.st-fixed { background: var(--done-soft); color: var(--done); }
+.st-wontfix { background: var(--surface-2); color: var(--muted); text-decoration: line-through; }
+.sev-blocks { background: var(--warn-soft); color: var(--warn); }
+.empty { color: var(--muted); text-align: center; padding: 30px 10px; border: 1px dashed var(--line); border-radius: 12px; }
+.banner { border-radius: 12px; padding: 10px 14px; margin: 12px 0; font-size: 14px; background: var(--warn-soft); color: var(--ink); }
+.banner[hidden] { display: none; }
+
+.toast {
+  position: fixed; left: 50%; bottom: calc(18px + env(safe-area-inset-bottom)); transform: translate(-50%, 140%);
+  background: var(--ink); color: var(--bg); border-radius: 14px; padding: 12px 16px; max-width: min(560px, 92vw);
+  box-shadow: 0 10px 30px rgba(0,0,0,.25); transition: transform .3s; z-index: 10; font-size: 14px;
+}
+.toast.show { transform: translate(-50%, 0); }
+.toast b { color: var(--gold); }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+footer { margin-top: 40px; color: var(--muted); font-size: 13px; }
+
+@media (max-width: 720px) {
+  .mast { grid-template-columns: 1fr; }
+  .ring { width: 104px; height: 104px; }
+  .ring svg { width: 104px; height: 104px; }
+  .fb-grid { grid-template-columns: 1fr; }
+  .detail { padding-left: 18px; }
+  .next { grid-template-columns: 1fr; }
+  .pmeter { min-width: 64px; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="mast">
+    <div>
+      <div class="eyebrow">Release checklist · live</div>
+      <h1 class="brand"><span>Bug's-Eye View</span></h1>
+      <p class="sub">Every step from the finished game to live store pages on Google Play, the App Store, Steam, GOG, itch.io, Epic and Microsoft. Tick a step and it turns green everywhere; report bugs in Feedback and Claude picks them up.</p>
+    </div>
+    <div class="ring" aria-hidden="true">
+      <svg width="132" height="132" viewBox="0 0 132 132">
+        <circle cx="66" cy="66" r="56" fill="none" stroke="var(--surface-2)" stroke-width="12"/>
+        <circle id="ringArc" cx="66" cy="66" r="56" fill="none" stroke="var(--done)" stroke-width="12" stroke-linecap="round" stroke-dasharray="351.86" stroke-dashoffset="351.86" style="transition: stroke-dashoffset .5s"/>
+      </svg>
+      <div class="num"><div><b id="pct">0%</b><small id="pctSub">0 of 0</small></div></div>
+    </div>
+  </div>
+
+  <div class="phasebar" id="phasebar" aria-hidden="true"></div>
+  <div class="phasebar-legend"><span>Groundwork</span><span>Stores</span><span>Launch</span></div>
+
+  <div class="status-line">
+    <span id="liveState"><span class="dot wait"></span>Connecting to saved progress…</span>
+    <span id="claudeNote"></span>
+  </div>
+  <div class="banner" id="banner" hidden></div>
+
+  <section class="next" id="next" aria-live="polite"></section>
+
+  <div class="tabs" role="tablist">
+    <button class="tab" role="tab" id="tab-checklist" aria-controls="view-checklist">Checklist</button>
+    <button class="tab" role="tab" id="tab-feedback" aria-controls="view-feedback">Feedback &amp; bugs<span class="count" id="fbCount">0</span></button>
+  </div>
+
+  <section id="view-checklist" role="tabpanel" aria-labelledby="tab-checklist">
+    <div class="toolbar">
+      <div class="seg" role="group" aria-label="Show steps">
+        <button data-filter="all" aria-pressed="true">All</button>
+        <button data-filter="todo" aria-pressed="false">To do</button>
+        <button data-filter="you" aria-pressed="false">Yours</button>
+        <button data-filter="done" aria-pressed="false">Done</button>
+      </div>
+      <span class="spacer"></span>
+      <button class="btn" id="expandAll">Expand all</button>
+    </div>
+    <div id="phases"></div>
+  </section>
+
+  <section id="view-feedback" role="tabpanel" aria-labelledby="tab-feedback" hidden>
+    <div class="fb-grid">
+      <form class="card" id="fbForm" novalidate>
+        <h3>Report a bug or idea</h3>
+        <p class="hint">Small things count. Say where you were and what happened; Claude reads every report, replies here and marks it fixed when the fix ships.</p>
+        <div class="form-row">
+          <label>Type</label>
+          <div class="pills" data-field="kind">
+            <button type="button" data-v="bug" aria-pressed="true">Bug</button>
+            <button type="button" data-v="idea" aria-pressed="false">Idea</button>
+            <button type="button" data-v="store" aria-pressed="false">Store / account</button>
+            <button type="button" data-v="question" aria-pressed="false">Question</button>
+          </div>
+        </div>
+        <div class="form-row" id="sevRow">
+          <label>How bad?</label>
+          <div class="pills" data-field="severity">
+            <button type="button" data-v="minor" aria-pressed="true">Minor</button>
+            <button type="button" data-v="annoying" aria-pressed="false">Annoying</button>
+            <button type="button" data-v="blocks" aria-pressed="false">Blocks play</button>
+          </div>
+        </div>
+        <div class="pair">
+          <div class="form-row">
+            <label for="fbPlatform">Played on</label>
+            <select id="fbPlatform">
+              <option>Web (browser)</option><option>Windows</option><option>macOS</option><option>Linux</option>
+              <option>Android</option><option>iPhone / iPad</option><option>Not about a build</option>
+            </select>
+          </div>
+          <div class="form-row">
+            <label for="fbWhere">Where in the game</label>
+            <input type="text" id="fbWhere" placeholder="Kitchen, as the ant…" maxlength="120">
+          </div>
+        </div>
+        <div class="form-row">
+          <label for="fbText">What happened</label>
+          <textarea id="fbText" required maxlength="2000" placeholder="I pushed the teacup and it fell through the counter."></textarea>
+        </div>
+        <div class="form-row">
+          <label for="fbExpected">What you expected <span style="font-weight:400;color:var(--muted)">(optional)</span></label>
+          <textarea id="fbExpected" maxlength="1000" style="min-height:52px" placeholder="It should land on the floor and break."></textarea>
+        </div>
+        <div class="form-row">
+          <label for="fbStep">About a checklist step <span style="font-weight:400;color:var(--muted)">(optional)</span></label>
+          <select id="fbStep"><option value="">None</option></select>
+        </div>
+        <button class="btn primary" type="submit" id="fbSubmit">Send report</button>
+        <div class="saved" id="fbMsg" role="status"></div>
+      </form>
+      <div>
+        <div class="toolbar">
+          <div class="seg" role="group" aria-label="Show reports">
+            <button data-fb="open" aria-pressed="true">Open</button>
+            <button data-fb="fixed" aria-pressed="false">Fixed</button>
+            <button data-fb="all" aria-pressed="false">All</button>
+          </div>
+        </div>
+        <div id="fbList"></div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    Play the web build: <a href="https://claude.ai/artifact/Gmpx6M1Qb9WmCn1BY1Qbh4">Bug's-Eye View</a> ·
+    Files: <a href="https://github.com/Namastegeitz/Eddie-G/tree/claude/nifty-lamport-bfm2ub/apps/bugs-eye-view/BUG%27S-EYE%20VIEW">BUG'S-EYE VIEW folder on GitHub</a> ·
+    The same checklist is in the folder's README.md.
+  </footer>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+const DATA = {"title":"Bug's-Eye View - release checklist","updated":"2026-11-17","phases":[{"id":"p0","name":"Groundwork","goal":"Everything that could be done in the cloud before you touch a store account.","who":"Claude","steps":[{"id":"p0-plants","t":"Lighter bugs can push the potted plants","who":"Claude","cost":"","time":"","how":["Plants, glasses and teacups slide on a low-friction material; the plant weighs 0.6.","An automated test pushes a plant off the bench with the ant, the weakest pusher."],"tip":"Try it in the backyard with the ant: walk into the plant on the bench edge."},{"id":"p0-folder","t":"Release folder BUG'S-EYE VIEW made","who":"Claude","cost":"","time":"","how":["One folder holds everything for the release: Builds, Store Assets, Store pages, Listing Text, Legal, Research and this Checklist.","Godot ignores it (.gdignore), so it never ends up inside the game."],"files":["BUG'S-EYE VIEW/"]},{"id":"p0-research","t":"Store requirements researched (Apple, Google Play, Steam, GOG, itch.io, Epic, Microsoft)","who":"Claude","cost":"","time":"","how":["Fees, account checks, review times, image sizes, forms and technical rules, checked against each store's own pages on 17 Nov 2026."],"files":["BUG'S-EYE VIEW/Research/"]},{"id":"p0-audit","t":"Machine audit: what the build computer has and lacks","who":"Claude","cost":"","time":"","how":["Has: Godot 4.7.2 with export templates, Android SDK (platform 36, build-tools 36.1.0), Java 21, Python with Pillow, a virtual display for rendering.","Lacks: a Mac and Xcode (needed to sign iPhone builds), your signing keys (on purpose: they stay with you)."],"tip":"The iPhone build is the only one that needs extra hardware or a cloud Mac - see phase 4."},{"id":"p0-api36","t":"Android build targets API 36 (Google Play's rule since 31 Aug 2026)","who":"Claude","cost":"","time":"","how":["The Android App Bundle preset now targets SDK 36; a debug bundle was built to prove it."]},{"id":"p0-listing","t":"Store listing text written, checked against every length limit","who":"Claude","cost":"","time":"","how":["Name, subtitle, short descriptions, the 2,251-character full description, keywords, tags and system requirements."],"files":["BUG'S-EYE VIEW/Listing Text/store-listing.md"]},{"id":"p0-privacy","t":"Privacy policy drafted (the game collects no data)","who":"Claude","cost":"","time":"","how":["Every store needs one, even for a game that collects nothing. The draft says exactly that: saves stay on the device; no ads, analytics or accounts."],"files":["BUG'S-EYE VIEW/Legal/privacy-policy.md"]},{"id":"p0-forms","t":"Answers for the stores' privacy, data and age-rating forms","who":"Claude","cost":"","time":"","how":["Google Play data safety and content rating, Apple privacy labels, age rating and encryption, Steam's content survey, EU trader status."],"files":["BUG'S-EYE VIEW/Legal/store-questionnaire-answers.md"]},{"id":"p0-art","t":"Store art rendered from the real game","who":"Claude","cost":"","time":"","how":["App icons, key art, logo, 1920x1080 screenshots, iPhone 6.9\" and 6.3\" and iPad 13\" screenshots, Steam capsules, Google Play feature graphic, Epic, Microsoft, itch.io and GOG images.","Re-make them any time with tools/release/make_store_assets.sh."],"files":["BUG'S-EYE VIEW/Store Assets/"]},{"id":"p0-ingame-privacy","t":"Privacy & about section inside the game","who":"Claude","cost":"","time":"","how":["Google Play wants the policy reachable inside the app too. Settings now shows what the game keeps, the policy link, the version and the developer."]},{"id":"p0-builds","t":"Every build in its own folder","who":"Claude","cost":"","time":"","how":["Builds/Windows, macOS, Linux, Web and Android each hold a fresh build and a README; Builds/iOS holds the plan for the iPhone build."],"files":["BUG'S-EYE VIEW/Builds/"]},{"id":"p0-tracker","t":"This live checklist and the feedback collector","who":"Claude","cost":"","time":"","how":["Tick steps here; the green checks are saved and show on every device. Report bugs in the Feedback tab - Claude reads them and replies."]}]},{"id":"p1","name":"Your decisions and setup","goal":"A few choices only you can make. Each one unblocks several stores.","who":"You","steps":[{"id":"p1-desktop","t":"Put the BUG'S-EYE VIEW folder on your Desktop","who":"You","cost":"Free","time":"5 min","how":["Pull the latest code from GitHub (or download the repo as a zip).","Open apps/bugs-eye-view/BUG'S-EYE VIEW and double-click \"Make Desktop Folder.bat\".","A BUG'S-EYE VIEW folder appears on your Desktop with everything in it. Run it again after each update."],"tip":"Windows may ask before running a .bat from the internet: choose More info > Run anyway, or right-click the file > Properties > Unblock.","files":["BUG'S-EYE VIEW/Make Desktop Folder.bat"]},{"id":"p1-seller","t":"Decide who sells the game: you personally, or a company","who":"You","cost":"Free (a company costs money to set up)","time":"15 min to decide","how":["As an individual, Apple shows your legal name as the seller and Google shows your developer name. That's normal for solo developers.","A company (an LLC, for example) lets stores show \"Aethertek\", but Apple then needs a D-U-N-S number and Microsoft needs a Company account.","Microsoft's Individual account is meant for non-commercial apps: if you plan to sell there, choose Company."],"tip":"If you're unsure, start as an individual on itch.io and Google Play; you can form a company before the paid stores."},{"id":"p1-price","t":"Decide the price: free or paid","who":"You","cost":"Free","time":"10 min","how":["Free: no tax or bank forms on most stores, and you're usually a non-trader in the EU.","Paid: you'll fill in tax forms (W-9 in the US, W-8BEN elsewhere), add a bank account, and in the EU your address and phone are shown as a trader.","A common route: free web demo on itch.io, paid full game on Steam."],"tip":"Tell Claude the price and Claude updates the listing text and forms to match."},{"id":"p1-email","t":"Create a support email address for players and stores","who":"You","cost":"Free","time":"10 min","how":["Make a separate address for the game (for example a new Gmail or Outlook address). Every store shows it publicly.","Tell Claude the address; Claude puts it in the privacy policy and listing and republishes them."],"tip":"Don't use your personal inbox: store pages are public and get spam."},{"id":"p1-privacy-url","t":"Make the privacy policy page public and save its link","who":"You","cost":"Free","time":"5 min","how":["Open the privacy policy page Claude published, choose Share, and turn on the public link.","Paste the link into the step's notes here. Every store asks for it.","Any public web page works too (GitHub Pages, your own site): tell Claude the link and it updates the game and listings."],"tip":"Do this after the support email step, so the public page shows the real address."},{"id":"p1-keystore","t":"Make your Android upload key (on your own computer)","who":"You","cost":"Free","time":"15 min","how":["Install Java (Temurin 17 or newer) or use the one that comes with Android Studio.","In a terminal run: keytool -genkeypair -v -keystore bugseyeview-upload.keystore -alias upload -keyalg RSA -keysize 2048 -validity 10000","Use the same password for the store and the key (letters and numbers only - Godot needs that).","Back the file and password up somewhere safe and offline. Never commit it to GitHub."],"tip":"Lose it and Google can reset it, but that takes days. Two backups (a USB stick and a password manager) are enough."},{"id":"p1-playtest","t":"Play the current builds and report anything odd","who":"You","cost":"Free","time":"30 min","how":["Play the web build and the Windows build from Builds/.","Use the Feedback tab for every bug, however small: where you were, what happened, what you expected."],"tip":"Five minutes per bug and room is plenty. Small things count: a clipping chair, a confusing hint, a menu that's hard to tap."}]},{"id":"p2","name":"itch.io - first live page","goal":"Free and live the same day. Real players, real feedback, a link to share.","who":"You + Claude","steps":[{"id":"p2-account","t":"Create an itch.io account","who":"You","cost":"Free","time":"5 min","how":["Sign up at itch.io and verify your email."],"links":[["itch.io","https://itch.io/register"]]},{"id":"p2-project","t":"Create the project and upload the builds","who":"You","cost":"Free","time":"30 min","how":["Dashboard > Create new project. Kind: HTML. Title: Bug's-Eye View.","Upload Builds/Web/BugsEyeView-web.zip and tick \"This file will be played in the browser\". Viewport 1280 x 720, tick fullscreen button and mobile friendly.","Also upload the Windows, macOS and Linux zips as downloads.","Cover image: Store Assets/itch.io/cover_630x500.jpg. Screenshots: Store Assets/Screenshots/1920x1080 folder.","Paste the short and full descriptions from Listing Text. Genre Action, tags from the listing file."],"tip":"Set it to Restricted first and play it from the itch page yourself before going Public.","files":["BUG'S-EYE VIEW/Store pages/itch.io/README.md"],"links":[["itch.io creator docs","https://itch.io/docs/creators/html5"]]},{"id":"p2-public","t":"Make it public and share the link","who":"You","cost":"Free","time":"5 min","how":["Visibility: Public. Pricing: free or \"No payments\" for now.","Paste the itch.io link into this step's notes and share it with friends for feedback."]}]},{"id":"p3","name":"Google Play","goal":"About 3-5 weeks, mostly waiting: identity checks, a required 14-day closed test, then review.","who":"You + Claude","steps":[{"id":"p3-account","t":"Create a Google Play developer account (Personal)","who":"You","cost":"US$25 once","time":"20 min, then 1-3 days for checks","how":["Go to play.google.com/console/signup with the Google account you'll keep for the game.","Choose Personal (unless you made a company in phase 1), pay the $25, upload a government ID.","Your legal name, country and the developer email are shown on the store."],"tip":"Use the exact name on your ID - a mismatch is the most common reason for a failed check, and the fee isn't refunded.","links":[["Play Console sign-up","https://play.google.com/console/signup"],["What's required","https://support.google.com/googleplay/android-developer/answer/13628312"]]},{"id":"p3-verify","t":"Verify your phone and email, and an Android device","who":"You","cost":"Free","time":"15 min","how":["Enter the codes Google sends.","Install the Play Console app on an Android 10+ phone and sign in - that finishes the device check."]},{"id":"p3-app","t":"Create the app in Play Console","who":"You","cost":"Free","time":"10 min","how":["Create app: name Bug's-Eye View, language English, Game, Free (or Paid).","The package name com.aethertek.bugseyeview is fixed forever once the first bundle is uploaded.","Accept Play App Signing (Google keeps the app signing key; you keep the upload key)."]},{"id":"p3-listing","t":"Fill in the store listing","who":"You","cost":"Free","time":"30 min","how":["Short and full description: Listing Text/store-listing.md.","Icon: Store Assets/Google Play/icon_512.png. Feature graphic: Store Assets/Google Play/feature_graphic_1024x500.jpg.","Phone screenshots: 4-8 from the Store Assets/Screenshots/1920x1080 folder (landscape 16:9 makes the game eligible for recommendations).","Category Action, contact email (phase 1), privacy policy link (phase 1)."],"files":["BUG'S-EYE VIEW/Store pages/Google Play/README.md"]},{"id":"p3-content","t":"Complete the App content forms","who":"You","cost":"Free","time":"30 min","how":["Use Legal/store-questionnaire-answers.md for every form: privacy policy, ads (No), app access, content rating (cartoon violence), target audience 13+, data safety (no data collected)."],"tip":"Choose 13+ for target audience. Picking under-13 brings in the Families policy and slower reviews."},{"id":"p3-release-build","t":"Build the signed release bundle (.aab)","who":"You + Claude","cost":"Free","time":"15 min","how":["Option A (your PC): install Godot 4.7.2 + export templates + Android SDK, open the project, Project > Export > Android AAB, set the release keystore, Export Project.","Option B (cloud): add the keystore as a GitHub Actions secret and Claude sets up a workflow that builds the signed bundle.","Every new upload needs a higher version code - Claude bumps it for each release."],"tip":"Option B means you never need Android tools on your PC.","files":["BUG'S-EYE VIEW/Builds/Android/README.md"]},{"id":"p3-closed-test","t":"Run the closed test: 12 testers for 14 days in a row","who":"You","cost":"Free","time":"14+ days","how":["Testing > Closed testing > create a track, upload the .aab, add testers by email list or Google Group.","At least 12 testers must opt in and stay opted in for 14 days in a row.","Collect what they say - the production application asks what you learned and what you changed. Log it in the Feedback tab here."],"tip":"Ask 15-20 people so a few dropping out doesn't reset the clock. Friends, family, a Discord or Reddit playtest thread all work.","links":[["Testing requirements","https://support.google.com/googleplay/android-developer/answer/14151465"]]},{"id":"p3-apply","t":"Apply for production access","who":"You","cost":"Free","time":"Up to 7 days","how":["Dashboard > Apply for production. Answer the questions about your test (Claude can draft answers from the Feedback tab)."]},{"id":"p3-launch","t":"Release to production","who":"You","cost":"Free","time":"1-7 days review","how":["Production > Create release, upload the .aab, release notes, choose countries, send for review."],"tip":"A staged rollout (20% first) lets you catch a crash before everyone gets it."}]},{"id":"p4","name":"Apple App Store (iPhone and iPad)","goal":"Needs a paid Apple account and a Mac to sign the build - a cloud Mac works.","who":"You + Claude","steps":[{"id":"p4-account","t":"Join the Apple Developer Program","who":"You","cost":"US$99 a year","time":"30 min, then 1-2 days","how":["Use an Apple Account with two-factor authentication, in your legal name.","Enroll as an Individual (or as an Organization with a D-U-N-S number if you made a company).","When it's approved, find your Team ID under Membership details and paste it in this step's notes."],"links":[["Enroll","https://developer.apple.com/programs/enroll/"]]},{"id":"p4-mac","t":"Choose how to build for iPhone: Mac, cloud Mac or GitHub Actions","who":"You + Claude","cost":"Free to ~US$50/month","time":"1 hour","how":["Apple only accepts iPhone builds made with Xcode 26 or newer on macOS. The Xcode project itself is ready: Claude exported it here and it passes Apple's current rules.","Codemagic (free tier with macOS minutes) or GitHub Actions macOS runners can build it from this repo - Claude writes the workflow.","Or borrow or rent a Mac (MacinCloud) for the day of the build."],"tip":"GitHub Actions is the cheapest if the repo stays private and builds are rare."},{"id":"p4-ids","t":"Register the bundle ID and certificates","who":"You + Claude","cost":"Free","time":"20 min","how":["Certificates, Identifiers & Profiles: register the App ID com.aethertek.bugseyeview.","Create an App Store Connect API key (for automated signing and uploads) and store it as a CI secret."]},{"id":"p4-record","t":"Create the app in App Store Connect","who":"You","cost":"Free","time":"20 min","how":["My Apps > + > New App: iOS, name Bug's-Eye View, bundle ID, SKU bugseyeview.","Subtitle, keywords, promotional text and description: Listing Text.","App Privacy: Data Not Collected. Age rating: Cartoon violence Frequent (13+). Export compliance: no non-exempt encryption."],"files":["BUG'S-EYE VIEW/Store pages/Apple App Store/README.md"]},{"id":"p4-media","t":"Upload the icon and screenshots","who":"You","cost":"Free","time":"20 min","how":["iPhone: Store Assets/Screenshots/iPhone 6.9 inch and iPhone 6.3 inch folders. iPad: the iPad 13 inch folder.","The app icon comes from the build itself (1024 x 1024, no transparency)."]},{"id":"p4-build","t":"Build, sign and upload the iPhone build","who":"You + Claude","cost":"Free","time":"1-2 hours the first time","how":["Godot exports an Xcode project; Xcode (local or cloud) archives, signs and uploads it to App Store Connect.","Claude fills in the Team ID and checks the export preset first."],"files":["BUG'S-EYE VIEW/Builds/iOS/README.md"]},{"id":"p4-testflight","t":"Test on your own iPhone with TestFlight","who":"You","cost":"Free","time":"1-3 days","how":["Install TestFlight, add yourself as an internal tester, play the build.","Check touch controls, the notch area, and that the game resumes after a phone call."]},{"id":"p4-submit","t":"Submit for review and release","who":"You","cost":"Free","time":"1-3 days review","how":["Choose the build, add review notes (\"No login needed; tutorial on first launch\"), submit.","If it's rejected, paste Apple's message in this step's notes - Claude fixes what's needed."]}]},{"id":"p5","name":"Steam","goal":"The biggest PC store. Start early: a page must be up 2 weeks before launch, and 21 days must pass after paying.","who":"You + Claude","steps":[{"id":"p5-account","t":"Join Steamworks (Steam Direct)","who":"You","cost":"US$100 per game (refunded after $1,000 in sales)","time":"1 hour, then up to 30 days of checks","how":["partner.steamgames.com: sign the agreements, pay the fee, enter bank details and the tax interview, and verify your identity.","As an individual, the company name is your legal name with \"Sole Proprietorship\"."],"tip":"Do this first of all the PC stores: the tax check can take up to 30 days.","links":[["Onboarding","https://partner.steamgames.com/doc/gettingstarted/onboarding"]]},{"id":"p5-page","t":"Build the store page","who":"You","cost":"Free","time":"1-2 hours","how":["Capsules and library images: Store Assets/Steam (every size is ready).","5+ screenshots from Store Assets/Screenshots/1920x1080. Descriptions and system requirements from Listing Text.","Content survey: cartoon violence only."],"files":["BUG'S-EYE VIEW/Store pages/Steam/README.md"]},{"id":"p5-trailer","t":"Make a short trailer (30-60 seconds)","who":"You + Claude","cost":"Free","time":"2-4 hours","how":["Record gameplay (Windows: Win+Alt+R or OBS). Show the bug's-eye view, a crash distraction, a slap and an escape in the first 5 seconds.","Claude can plan the shot list."],"tip":"Steam trailers autoplay muted: put the action first, text big and short."},{"id":"p5-coming-soon","t":"Submit the page and go \"Coming Soon\"","who":"You","cost":"Free","time":"3-5 business days review","how":["Submit for review at least 7 business days before you want it live.","Once approved, press Publish as Coming Soon. Wishlists start counting."],"tip":"The longer the page is up before launch, the more wishlists - a month or more helps."},{"id":"p5-build","t":"Upload the builds with SteamPipe and pass the build review","who":"You + Claude","cost":"Free","time":"3-5 business days review","how":["Upload Builds/Windows and Builds/Linux as depots (steamcmd or SteamPipe GUI).","Only list macOS once the Mac build is notarized by Apple (needs the Apple account from phase 4)."]},{"id":"p5-launch","t":"Press Release","who":"You","cost":"Free","time":"Launch day","how":["After 2 weeks of Coming Soon and 21 days since paying, the Release button unlocks."]}]},{"id":"p6","name":"GOG (curated - by invitation)","goal":"GOG picks the games it sells. Pitch once the Steam page and a trailer are up.","who":"You","steps":[{"id":"p6-pitch","t":"Send the pitch form","who":"You","cost":"Free","time":"30 min, reply in days or weeks","how":["gog.com/submit-your-game: developer, title, description, platforms, status, price, links to the Steam page and trailer.","Claude can draft the answers."],"links":[["Submit your game","https://www.gog.com/submit-your-game"]],"files":["BUG'S-EYE VIEW/Store pages/GOG/README.md"]},{"id":"p6-onboard","t":"If accepted: contract, Developer Portal and builds","who":"You + Claude","cost":"Free","time":"1-3 weeks","how":["Fill GOG's Essentials Checklist (key art and logo from Store Assets/GOG, description, screenshots, trailer).","Upload builds with GOG's Build Creator; they must run offline and contain no links to other stores."]}]},{"id":"p7","name":"Epic Games Store","goal":"Windows and Mac only. You keep 100% of the first $1M each year.","who":"You","steps":[{"id":"p7-account","t":"Join the Epic Developer Portal and pay the submission fee","who":"You","cost":"US$100 per game","time":"1 hour, then up to 2 weeks","how":["dev.epicgames.com/portal: sign the Distribution Agreement, pay the fee, complete trader, tax and payout details."]},{"id":"p7-page","t":"Store page, rating and build","who":"You","cost":"Free","time":"2-3 hours, 3-5 days review","how":["Images in Store Assets/Epic Games Store. IARC rating inside the portal (same answers as Google Play).","Upload the Windows build with the BuildPatch Tool, then submit for review."],"files":["BUG'S-EYE VIEW/Store pages/Epic Games Store/README.md"]}]},{"id":"p8","name":"Microsoft Store","goal":"No fee. Decide Individual or Company first: it can't be changed later.","who":"You + Claude","steps":[{"id":"p8-account","t":"Create the Microsoft Store developer account","who":"You","cost":"Free","time":"30 min, then a few days","how":["storedeveloper.microsoft.com. Individual: government ID and a selfie. Company: business documents or a D-U-N-S number.","Selling as a business needs a Company account."]},{"id":"p8-reserve","t":"Reserve the name and fill the submission","who":"You","cost":"Free","time":"1 hour","how":["Reserve \"Bug's-Eye View\". Pricing, Games category, IARC questionnaire, listing text and images from Store Assets/Microsoft Store."],"files":["BUG'S-EYE VIEW/Store pages/Microsoft Store/README.md"]},{"id":"p8-msix","t":"Package the Windows build as MSIX and submit","who":"You + Claude","cost":"Free","time":"1-2 hours, 3 days certification","how":["The Partner Center gives you the identity values; Claude puts them in the package manifest.","Wrap the Windows build with the MSIX Packaging Tool (on Windows) and upload. Microsoft signs it."]}]},{"id":"p9","name":"Launch and after","goal":"Keep players happy: fix what they report, ship small updates.","who":"You + Claude","steps":[{"id":"p9-igdb","t":"Add the game to IGDB and press kit pages","who":"You","cost":"Free","time":"30 min","how":["IGDB (used by GOG and many sites): add the game with the key art and description.","Optional: a one-page press kit with the key art, logo, screenshots and trailer."]},{"id":"p9-launch-day","t":"Launch day","who":"You","cost":"Free","time":"1 day","how":["Release on the stores that are ready; post the links where your players are (Reddit, Discord, TikTok, friends).","Watch the Feedback tab and the store reviews."]},{"id":"p9-patch","t":"First update from player feedback","who":"You + Claude","cost":"Free","time":"Ongoing","how":["Claude fixes reported bugs, bumps the version numbers and rebuilds every platform into Builds/.","Upload the new builds to each store."],"tip":"Small, frequent updates with clear notes (\"Fixed: chair legs blocked the camera\") earn better reviews than one big one."}]}]};
+const REPO = "https://github.com/Namastegeitz/Eddie-G/tree/claude/nifty-lamport-bfm2ub/apps/bugs-eye-view/BUG%27S-EYE%20VIEW";
+const PHASES = DATA.phases;
+const STEPS = PHASES.flatMap((p, pi) => p.steps.map((s, si) => ({ ...s, phase: p.id, pi, si })));
+const BY_ID = Object.fromEntries(STEPS.map(s => [s.id, s]));
+// Steps inside a store phase follow one another; a few also wait on another phase.
+const EXTRA_AFTER = {
+  "p1-privacy-url": ["p1-email"], "p3-listing": ["p1-privacy-url"], "p3-release-build": ["p1-keystore"],
+  "p4-record": ["p1-privacy-url"], "p6-pitch": ["p5-coming-soon", "p5-trailer"], "p9-launch-day": ["p2-public"]
+};
+function prereqs(s) {
+  const out = [...(EXTRA_AFTER[s.id] || [])];
+  if (s.pi >= 2 && s.si > 0) out.unshift(PHASES[s.pi].steps[s.si - 1].id);
+  return out;
+}
+
+const state = { steps: {}, feedback: [], meta: null, canSteps: false, canFeedback: false, db: null, user: null, live: false };
+const ui = { filter: "all", fbFilter: "open", open: new Set(), collapsed: new Set(), kind: "bug", severity: "minor" };
+const $ = (s, el = document) => el.querySelector(s);
+const esc = t => String(t ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const isDone = id => !!(state.steps[id] && state.steps[id].done);
+const whoClass = w => w === "You" ? "you" : w === "Claude" ? "claude" : "both";
+const fileUrl = f => REPO + "/" + f.replace(/^BUG'S-EYE VIEW\/?/, "").split("/").map(encodeURIComponent).join("/");
+const fmtDate = iso => { try { return new Date(iso).toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" }); } catch { return ""; } };
+const CHECK = '<svg viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5l3.2 3L13 4.5"/></svg>';
+
+function nextStep() {
+  for (const s of STEPS) if (!isDone(s.id) && prereqs(s).every(isDone)) return s;
+  return null;
+}
+
+function renderSummary() {
+  const total = STEPS.length, done = STEPS.filter(s => isDone(s.id)).length;
+  const pct = total ? Math.round(done * 100 / total) : 0;
+  $("#pct").textContent = pct + "%";
+  $("#pctSub").textContent = done + " of " + total + " steps";
+  $("#ringArc").style.strokeDashoffset = String(351.86 * (1 - done / Math.max(total, 1)));
+  $("#phasebar").innerHTML = PHASES.map(p => {
+    const d = p.steps.filter(s => isDone(s.id)).length;
+    return `<i style="--p:${(d * 100 / p.steps.length).toFixed(1)}%" title="${esc(p.name)}: ${d}/${p.steps.length}"></i>`;
+  }).join("");
+  const n = nextStep(), box = $("#next");
+  if (!n) {
+    box.innerHTML = `<div><div class="k">All done</div><h2>Every step is green.</h2><p>Bug's-Eye View is live. Keep the Feedback tab open for player reports.</p></div>`;
+    return;
+  }
+  const yours = STEPS.filter(s => !isDone(s.id) && s.who !== "Claude").length;
+  box.innerHTML = `<div><div class="k">Next up · Phase ${n.pi}: ${esc(PHASES[n.pi].name)}</div>
+    <h2>${esc(n.t)}</h2>
+    <p>${esc(n.how[0])}</p>
+    <div class="meta">${chips(n)}<span class="chip">${yours} step${yours === 1 ? "" : "s"} left for you</span></div></div>
+    <button class="btn primary" id="goNext">Show me how</button>`;
+  $("#goNext").onclick = () => { setTab("checklist"); ui.open.add(n.id); ui.collapsed.delete(n.phase); renderPhases(); document.getElementById("s-" + n.id)?.scrollIntoView({ behavior: "smooth", block: "center" }); };
+}
+
+function chips(s) {
+  const out = [`<span class="chip ${whoClass(s.who)}">${esc(s.who)}</span>`];
+  if (s.time) out.push(`<span class="chip">${esc(s.time)}</span>`);
+  if (s.cost) out.push(`<span class="chip">${esc(s.cost)}</span>`);
+  return out.join("");
+}
+
+function stepVisible(s) {
+  if (ui.filter === "todo") return !isDone(s.id);
+  if (ui.filter === "done") return isDone(s.id);
+  if (ui.filter === "you") return s.who !== "Claude" && !isDone(s.id);
+  return true;
+}
+
+function renderPhases() {
+  const host = $("#phases");
+  const focused = document.activeElement && document.activeElement.id;
+  host.innerHTML = PHASES.map((p, pi) => {
+    const d = p.steps.filter(s => isDone(s.id)).length, total = p.steps.length, complete = d === total;
+    const vis = p.steps.filter(stepVisible);
+    if (!vis.length && ui.filter !== "all") return "";
+    const collapsed = ui.collapsed.has(p.id);
+    return `<section class="phase ${complete ? "complete" : ""} ${collapsed ? "collapsed" : ""}" id="ph-${p.id}">
+      <header data-phase="${p.id}" role="button" tabindex="0" aria-expanded="${!collapsed}">
+        <div class="pnum">${complete ? CHECK : pi}</div>
+        <div><h3>${esc(p.name)}${complete ? '<span class="badge-done">Complete</span>' : ""}</h3><div class="goal">${esc(p.goal)}</div></div>
+        <div class="pmeter"><b>${d}/${total}</b><div class="bar"><i style="width:${(d * 100 / total).toFixed(1)}%"></i></div></div>
+      </header>
+      <div class="steps">${vis.map(stepHtml).join("")}</div>
+    </section>`;
+  }).join("");
+  if (focused) document.getElementById(focused)?.focus();
+}
+
+function stepHtml(s) {
+  const st = state.steps[s.id] || {}, done = !!st.done, open = ui.open.has(s.id);
+  const pre = prereqs(s).filter(id => !isDone(id));
+  const flags = [];
+  if (done) flags.push(`<span class="chip ok">Done${st.doneAt ? " " + esc(fmtDate(st.doneAt)) : ""}</span>`);
+  else if (pre.length) flags.push(`<span class="chip wait">After: ${esc(BY_ID[pre[0]].t.split(":")[0].slice(0, 42))}${pre.length > 1 ? " +" + (pre.length - 1) : ""}</span>`);
+  if (st.coach) flags.push(`<span class="chip claude">Note from Claude</span>`);
+  if (st.note) flags.push(`<span class="chip note">Your note</span>`);
+  const reports = state.feedback.filter(f => f.step === s.id && f.status !== "fixed" && f.status !== "wontfix").length;
+  if (reports) flags.push(`<span class="chip wait">${reports} open report${reports > 1 ? "s" : ""}</span>`);
+  const canTick = state.canSteps;
+  return `<div class="step ${done ? "done" : ""} ${open ? "open" : ""}" id="s-${s.id}">
+    <div class="row">
+      <button class="check" role="checkbox" aria-checked="${done}" data-check="${s.id}" ${canTick ? "" : "disabled"}
+        aria-label="${esc(s.t)}${canTick ? "" : " (only the owner can tick)"}" title="${canTick ? (done ? "Mark not done" : "Mark done") : "Only the owner can tick steps"}">${CHECK}</button>
+      <button class="title-btn" data-toggle="${s.id}" aria-expanded="${open}"><div class="st">${esc(s.t)}</div>
+        <div class="meta">${chips(s)}${flags.join("")}</div></button>
+      <button class="chev" data-toggle="${s.id}" aria-label="Details">▸</button>
+    </div>
+    <div class="detail">${open ? detailHtml(s, st, pre) : ""}</div>
+  </div>`;
+}
+
+function detailHtml(s, st, pre) {
+  let h = "";
+  if (pre.length && !st.done) h += `<div class="callout blocked"><b>Best done after</b>${pre.map(id => esc(BY_ID[id].t)).join("<br>")}</div>`;
+  h += `<ol>${s.how.map(x => `<li>${esc(x)}</li>`).join("")}</ol>`;
+  if (s.tip) h += `<div class="callout tip"><b>Tip</b>${esc(s.tip)}</div>`;
+  if (st.coach) h += `<div class="callout coach"><b>Claude</b>${esc(st.coach)}</div>`;
+  if (s.files && s.files.length) h += `<div class="files">${s.files.map(f => `<a href="${esc(fileUrl(f))}" target="_blank" rel="noopener">${esc(f)}</a>`).join("")}</div>`;
+  if (s.links && s.links.length) h += `<div class="links">${s.links.map(([l, u]) => `<a href="${esc(u)}" target="_blank" rel="noopener">${esc(l)} ↗</a>`).join(" · ")}</div>`;
+  if (state.canSteps) {
+    h += `<div class="notes"><label for="note-${s.id}">Your notes (links, IDs, questions for Claude - no passwords)</label>
+      <textarea id="note-${s.id}" data-note="${s.id}" maxlength="4000">${esc(st.note || "")}</textarea><div class="saved" id="ns-${s.id}"></div></div>`;
+  } else if (st.note) {
+    h += `<div class="callout tip"><b>Owner's note</b>${esc(st.note)}</div>`;
+  }
+  if (st.done) h += `<div class="donewhen">✓ Done${st.doneAt ? " on " + esc(fmtDate(st.doneAt)) : ""}${st.by ? " by " + esc(st.by === "claude" ? "Claude" : "you") : ""}</div>`;
+  return h;
+}
+
+// ---- writes: one at a time per document ----
+const queues = {};
+function queueWrite(path, fn) {
+  queues[path] = (queues[path] || Promise.resolve()).then(fn, fn);
+  return queues[path];
+}
+
+async function toggleStep(id) {
+  if (!state.db || !state.canSteps) return;
+  const cur = { ...(state.steps[id] || {}) };
+  const done = !cur.done;
+  const body = { ...cur, done, doneAt: done ? new Date().toISOString() : null, by: done ? "you" : null };
+  const before = nextStep();
+  state.steps[id] = body;
+  renderAll();
+  const btn = document.querySelector(`[data-check="${id}"]`);
+  if (btn) { btn.classList.add("pop"); setTimeout(() => btn.classList.remove("pop"), 180); btn.focus(); }
+  if (done) celebrate(id, before);
+  try { await queueWrite("steps/" + id, () => state.db.doc("steps/" + id).set(body)); }
+  catch (e) { state.steps[id] = cur; renderAll(); toast("Couldn't save that tick (" + esc(e && e.code || "error") + "). Try again in a moment."); }
+}
+
+function celebrate(id, before) {
+  const s = BY_ID[id], p = PHASES[s.pi];
+  const phaseDone = p.steps.every(x => isDone(x.id));
+  const n = nextStep();
+  let msg;
+  if (phaseDone) msg = `<b>Phase complete: ${esc(p.name)}.</b> `;
+  else msg = `<b>✓ ${esc(s.t)}</b><br>`;
+  if (n) msg += `Next: ${esc(n.t)}${n.time ? " (" + esc(n.time) + ")" : ""}.`;
+  else msg += "That was the last step!";
+  toast(msg);
+}
+
+let toastTimer;
+function toast(html) {
+  const t = $("#toast"); t.innerHTML = html; t.classList.add("show");
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove("show"), 5200);
+}
+
+async function saveNote(id, text) {
+  if (!state.db || !state.canSteps) return;
+  const cur = state.steps[id] || {};
+  if ((cur.note || "") === text) return;
+  const body = { ...cur, note: text, noteAt: new Date().toISOString() };
+  state.steps[id] = body;
+  const msg = document.getElementById("ns-" + id);
+  if (msg) msg.textContent = "Saving…";
+  try {
+    await queueWrite("steps/" + id, () => state.db.doc("steps/" + id).set(body));
+    if (msg) msg.textContent = "Saved. Claude sees this next time you ask it to check the tracker.";
+  } catch (e) { if (msg) msg.textContent = "Not saved (" + (e && e.code || "error") + ")."; }
+}
+
+// ---- feedback ----
+const STATUS = { new: "New", seen: "Seen", fixing: "Fixing", fixed: "Fixed", wontfix: "Won't fix" };
+const KIND = { bug: "Bug", idea: "Idea", store: "Store / account", question: "Question" };
+const SEV = { minor: "Minor", annoying: "Annoying", blocks: "Blocks play" };
+async function renderFeedback() {
+  const open = state.feedback.filter(f => f.status !== "fixed" && f.status !== "wontfix");
+  $("#fbCount").textContent = open.length;
+  const list = state.feedback.filter(f => ui.fbFilter === "all" ? true : ui.fbFilter === "fixed" ? (f.status === "fixed" || f.status === "wontfix") : (f.status !== "fixed" && f.status !== "wontfix"))
+    .sort((a, b) => String(b.createdAt).localeCompare(String(a.createdAt)));
+  const host = $("#fbList");
+  if (!list.length) {
+    host.innerHTML = `<div class="empty">${state.db ? (ui.fbFilter === "fixed" ? "Nothing fixed yet." : "No open reports. Play a build and tell Claude what you find.") : "Reports appear here once the page can reach saved data."}</div>`;
+    return;
+  }
+  host.innerHTML = list.map(f => `<article class="fb-item" data-fb-id="${esc(f.id)}">
+    <div class="fb-head">
+      <span class="chip st-${esc(f.status || "new")}">${esc(STATUS[f.status] || "New")}</span>
+      <span class="chip">${esc(KIND[f.kind] || "Report")}</span>
+      ${f.kind === "bug" && f.severity ? `<span class="chip ${f.severity === "blocks" ? "sev-blocks" : ""}">${esc(SEV[f.severity] || f.severity)}</span>` : ""}
+      ${f.platform ? `<span class="chip">${esc(f.platform)}</span>` : ""}
+      ${f.where ? `<span class="chip">${esc(f.where)}</span>` : ""}
+      <span class="when">${esc(fmtDate(f.createdAt))}<span class="who" data-author="${esc(f.author || "")}"></span></span>
+    </div>
+    <p class="fb-text">${esc(f.text)}</p>
+    ${f.expected ? `<p class="fb-exp">Expected: ${esc(f.expected)}</p>` : ""}
+    ${f.step && BY_ID[f.step] ? `<div class="meta"><span class="chip both">Step: ${esc(BY_ID[f.step].t)}</span></div>` : ""}
+    ${f.reply ? `<div class="callout coach fb-reply"><b>Claude${f.fixedIn ? " · fixed in " + esc(f.fixedIn) : ""}</b>${esc(f.reply)}</div>` : ""}
+    ${state.canSteps ? `<div class="fb-foot"><label for="fs-${esc(f.id)}">Status</label><select id="fs-${esc(f.id)}" data-fb-status="${esc(f.id)}">${Object.entries(STATUS).map(([k, v]) => `<option value="${k}" ${k === (f.status || "new") ? "selected" : ""}>${v}</option>`).join("")}</select></div>` : ""}
+  </article>`).join("");
+  if (state.user) {
+    const ids = [...new Set(list.map(f => f.author).filter(Boolean))];
+    if (ids.length) {
+      const ps = await state.user.profiles(ids);
+      host.querySelectorAll("[data-author]").forEach(el => { const id = el.dataset.author; if (id && ps[id]) el.textContent = " · " + (ps[id].isMe ? "you" : (ps[id].name || "someone")); });
+    }
+  }
+}
+
+async function submitFeedback(ev) {
+  ev.preventDefault();
+  const text = $("#fbText").value.trim(), msg = $("#fbMsg");
+  if (!text) { msg.textContent = "Say what happened first."; $("#fbText").focus(); return; }
+  if (!state.db) { msg.textContent = "Can't send from here: open this page on claude.ai while signed in."; return; }
+  const body = {
+    kind: ui.kind, severity: ui.kind === "bug" ? ui.severity : null, platform: $("#fbPlatform").value,
+    where: $("#fbWhere").value.trim(), text, expected: $("#fbExpected").value.trim(), step: $("#fbStep").value || null,
+    status: "new", createdAt: new Date().toISOString(), author: state.userId || null
+  };
+  $("#fbSubmit").disabled = true; msg.textContent = "Sending…";
+  try {
+    await state.db.collection("feedback").add(body);
+    $("#fbText").value = ""; $("#fbExpected").value = ""; $("#fbWhere").value = "";
+    msg.textContent = "Thanks - sent. Claude will reply here.";
+    ui.fbFilter = "open"; syncSeg("[data-fb]", "fb", "open");
+  } catch (e) {
+    msg.textContent = e && e.code === "invalid_argument" ? "Your access level can't send reports here - ask the owner to make you a Contributor." :
+      e && e.code === "quota_exceeded" ? "The report box is full - tell the owner." : "Not sent (" + (e && e.code || "error") + "). Try again.";
+  } finally { $("#fbSubmit").disabled = false; }
+}
+
+async function setFbStatus(id, status) {
+  const f = state.feedback.find(x => x.id === id);
+  if (!f || !state.db) return;
+  const { id: _omit, ...rest } = f;
+  try { await queueWrite("feedback/" + id, () => state.db.doc("feedback/" + id).set({ ...rest, status })); }
+  catch (e) { toast("Status not saved (" + esc(e && e.code || "error") + ")."); }
+}
+
+// ---- tabs & filters ----
+function setTab(name) {
+  const fb = name === "feedback";
+  $("#tab-checklist").setAttribute("aria-selected", String(!fb));
+  $("#tab-feedback").setAttribute("aria-selected", String(fb));
+  $("#view-checklist").hidden = fb; $("#view-feedback").hidden = !fb;
+  const want = fb ? "#feedback" : "#checklist";
+  if (location.hash !== want && (location.hash || fb)) history.replaceState(null, "", want);
+}
+function syncSeg(sel, key, val) { document.querySelectorAll(sel).forEach(b => b.setAttribute("aria-pressed", String(b.dataset[key] === val))); }
+
+function renderAll() { renderSummary(); renderPhases(); renderFeedback(); }
+
+document.addEventListener("click", e => {
+  const t = e.target.closest("[data-check],[data-toggle],[data-filter],[data-fb],.pills button,#expandAll,.phase > header");
+  if (!t) return;
+  if (t.dataset.check) return toggleStep(t.dataset.check);
+  if (t.dataset.toggle) { const id = t.dataset.toggle; ui.open.has(id) ? ui.open.delete(id) : ui.open.add(id); return renderPhases(); }
+  if (t.dataset.filter) { ui.filter = t.dataset.filter; syncSeg("[data-filter]", "filter", ui.filter); return renderPhases(); }
+  if (t.dataset.fb) { ui.fbFilter = t.dataset.fb; syncSeg("[data-fb]", "fb", ui.fbFilter); return renderFeedback(); }
+  if (t.id === "expandAll") {
+    const all = ui.open.size < STEPS.length / 2;
+    ui.open = new Set(all ? STEPS.map(s => s.id) : []); ui.collapsed.clear();
+    t.textContent = all ? "Collapse all" : "Expand all"; return renderPhases();
+  }
+  if (t.matches(".pills button")) {
+    const group = t.parentElement, field = group.dataset.field;
+    group.querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", String(b === t)));
+    ui[field] = t.dataset.v;
+    if (field === "kind") $("#sevRow").style.display = ui.kind === "bug" ? "" : "none";
+    return;
+  }
+  if (t.matches(".phase > header")) { const id = t.dataset.phase; ui.collapsed.has(id) ? ui.collapsed.delete(id) : ui.collapsed.add(id); return renderPhases(); }
+});
+document.addEventListener("keydown", e => {
+  if ((e.key === "Enter" || e.key === " ") && e.target.matches(".phase > header")) { e.preventDefault(); e.target.click(); }
+});
+document.addEventListener("focusout", e => { if (e.target.dataset && e.target.dataset.note) saveNote(e.target.dataset.note, e.target.value); });
+document.addEventListener("change", e => { if (e.target.dataset && e.target.dataset.fbStatus) setFbStatus(e.target.dataset.fbStatus, e.target.value); });
+$("#tab-checklist").onclick = () => setTab("checklist");
+$("#tab-feedback").onclick = () => setTab("feedback");
+$("#fbForm").addEventListener("submit", submitFeedback);
+window.addEventListener("hashchange", () => setTab(location.hash === "#feedback" ? "feedback" : "checklist"));
+$("#fbStep").innerHTML = '<option value="">None</option>' + STEPS.map(s => `<option value="${esc(s.id)}">${esc("P" + s.pi + " · " + s.t)}</option>`).join("");
+
+// Collapse finished phases by default.
+setTab(location.hash === "#feedback" ? "feedback" : "checklist");
+renderAll();
+
+// ---- live data ----
+function setLive(kind, text) { $("#liveState").innerHTML = `<span class="dot ${kind}"></span>${esc(text)}`; }
+(async () => {
+  if (!window.claude || !window.claude.use) { setLive("off", "Open this page on claude.ai to see saved progress."); return; }
+  const [db, user] = await Promise.all([window.claude.use("db"), window.claude.use("user")]);
+  state.user = user;
+  if (!db) {
+    setLive("off", "Saved progress isn't available in this view");
+    const b = $("#banner"); b.hidden = false; b.textContent = "Sign in on claude.ai to see the green checks and send feedback. The steps below are still readable.";
+    return;
+  }
+  state.db = db;
+  if (user) {
+    const [canEdit, id] = await Promise.all([user.canEdit(), user.id()]);
+    state.canSteps = !!canEdit; state.userId = id;
+  }
+  state.canFeedback = true;
+  let firstSteps = true, gotSteps = false;
+  const timer = setTimeout(() => { if (!gotSteps) setLive("off", "Can't reach saved progress yet - showing the steps without checks."); }, 10000);
+  db.collection("steps").onSnapshot(snap => {
+    const next = {};
+    snap.docs.forEach(d => { if (d.exists) next[d.id] = d.data(); });
+    // Phases that were already complete when the page opened start folded.
+    if (firstSteps && !snap.metadata.fromCache) {
+      firstSteps = false;
+      PHASES.forEach(p => { if (p.steps.every(s => next[s.id] && next[s.id].done)) ui.collapsed.add(p.id); });
+    }
+    state.steps = next;
+    if (!snap.metadata.fromCache) { gotSteps = true; clearTimeout(timer); setLive("live", "Live · saved for you and Claude"); }
+    renderSummary(); renderPhases();
+  }, err => { clearTimeout(timer); setLive("off", "Saved progress stopped updating (" + (err && err.code) + "). Reload to reconnect."); });
+  db.collection("feedback").onSnapshot(snap => {
+    state.feedback = snap.docs.filter(d => d.exists).map(d => ({ id: d.id, ...d.data() }));
+    renderFeedback(); renderPhases();
+  }, () => {});
+  db.doc("meta/status").onSnapshot(d => {
+    const m = d.exists ? d.data() : null;
+    $("#claudeNote").innerHTML = m && m.message ? `<span class="chip claude">Claude · ${esc(fmtDate(m.updatedAt))}</span> ${esc(m.message)}` : "";
+  }, () => {});
+})();
+</script>
+</body>
+</html>

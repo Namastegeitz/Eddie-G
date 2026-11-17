@@ -6,6 +6,9 @@ extends Control
 var overlay := false
 var _waiting_action := ""
 var _bind_buttons: Dictionary = {}
+const PRIVACY_URL := "https://claude.ai/artifact/FTpfni4mRM5NiUvRAvZyoT"
+const PRIVACY_SUMMARY := "Bug's-Eye View collects no personal data: no accounts, ads, analytics or tracking, and it doesn't go online while you play. Your progress and settings are saved only on this device, and Reset all progress erases them."
+
 var _confirm_reset := false
 var _reset_button: Button
 
@@ -40,7 +43,19 @@ func _ready() -> void:
 	col.add_child(_section("Progress"))
 	_reset_button = UIKit.button("Reset all progress", _on_reset)
 	col.add_child(_reset_button)
+	_add_privacy(col)
 	col.add_child(UIKit.button("Back", _back))
+
+
+## Privacy & about: the stores want the privacy policy reachable inside the
+## game as well as on the store page.
+func _add_privacy(col: VBoxContainer) -> void:
+	col.add_child(_section("Privacy & about"))
+	col.add_child(UIKit.label(PRIVACY_SUMMARY, 18, UIKit.TEXT, HORIZONTAL_ALIGNMENT_LEFT))
+	col.add_child(UIKit.button("Read the privacy policy", func() -> void:
+		OS.shell_open(PRIVACY_URL), 52.0))
+	var version := str(ProjectSettings.get_setting("application/config/version", "1.0.0"))
+	col.add_child(UIKit.label("Bug's-Eye View %s  ·  © 2026 Aethertek" % version, 16, UIKit.TEXT.darkened(0.25)))
 
 
 func _section(text: String) -> Label:

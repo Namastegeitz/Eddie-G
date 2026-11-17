@@ -1,5 +1,9 @@
 # Store export checklist
 
+> **The full release plan now lives in [`BUG'S-EYE VIEW/`](../BUG'S-EYE%20VIEW/README.md)**: builds per platform,
+> store art, listing text, privacy policy, research and a live checklist with green checks.
+> This page stays as the install notes for exporting on your own computer.
+
 What you need to install or provide before each platform's export works on
 your machine. The presets are already configured; nothing below blocks a
 normal build or test run.
@@ -13,8 +17,8 @@ can't change afterwards).
 Install:
 - [ ] **JDK 17 or newer** (e.g. Eclipse Temurin).
 - [ ] **Android SDK**: install Android Studio, then in SDK Manager add
-      *Android SDK Platform-Tools*, *Android SDK Build-Tools 35*,
-      *Android SDK Platform 35* and *Android SDK Command-line Tools*.
+      *Android SDK Platform-Tools*, *Android SDK Build-Tools 36.1*,
+      *Android SDK Platform 36* and *Android SDK Command-line Tools*.
 - [ ] In Godot: **Editor > Editor Settings > Export > Android**: set
       *Android SDK Path* (usually `C:\Users\<you>\AppData\Local\Android\Sdk`)
       and *Java SDK Path*. Godot creates a debug keystore by itself.
@@ -26,7 +30,7 @@ Test build:
 
 Google Play:
 - [ ] **Project > Install Android Build Template** (once). The *Android AAB*
-      preset uses a Gradle build with min SDK 24 and target SDK 35.
+      preset uses a Gradle build with min SDK 24 and target SDK 36 (Google Play's rule since 31 Aug 2026).
 - [ ] Create an upload keystore (keep it safe; you need it for every update):
       `keytool -genkeypair -v -keystore bugseyeview-upload.jks -alias upload -keyalg RSA -keysize 2048 -validity 10000`
 - [ ] Put it in the *Android AAB* preset (Keystore > Release, user, password),

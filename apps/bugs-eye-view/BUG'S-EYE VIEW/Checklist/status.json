@@ -1,0 +1,74 @@
+{
+ "synced": "17 Nov 2026",
+ "tracker_url": "https://claude.ai/artifact/MKiRiENoEXksyyoVYmNkxw",
+ "steps": {
+  "p0-plants": {
+   "done": true,
+   "doneAt": "2026-11-17",
+   "by": "claude"
+  },
+  "p0-folder": {
+   "done": true,
+   "doneAt": "2026-11-17",
+   "by": "claude"
+  },
+  "p0-research": {
+   "done": true,
+   "doneAt": "2026-11-17",
+   "by": "claude"
+  },
+  "p0-audit": {
+   "done": true,
+   "doneAt": "2026-11-17",
+   "by": "claude"
+  },
+  "p0-api36": {
+   "done": true,
+   "doneAt": "2026-11-17",
+   "by": "claude"
+  },
+  "p0-listing": {
+   "done": true,
+   "doneAt": "2026-11-17",
+   "by": "claude"
+  },
+  "p0-privacy": {
+   "done": true,
+   "doneAt": "2026-11-17",
+   "by": "claude"
+  },
+  "p0-forms": {
+   "done": true,
+   "doneAt": "2026-11-17",
+   "by": "claude"
+  },
+  "p0-art": {
+   "done": true,
+   "doneAt": "2026-11-17",
+   "by": "claude"
+  },
+  "p0-ingame-privacy": {
+   "done": true,
+   "doneAt": "2026-11-17",
+   "by": "claude"
+  },
+  "p0-builds": {
+   "done": true,
+   "doneAt": "2026-11-17",
+   "by": "claude"
+  },
+  "p0-tracker": {
+   "done": true,
+   "doneAt": "2026-11-17",
+   "by": "claude"
+  },
+  "p1-privacy-url": {
+   "done": false,
+   "coach": "Your page is https://claude.ai/artifact/FTpfni4mRM5NiUvRAvZyoT. Open it, choose Share and turn on the public link. The game's Settings > Privacy & about button already opens this address."
+  },
+  "p1-desktop": {
+   "done": false,
+   "coach": "The folder is on GitHub on branch claude/nifty-lamport-bfm2ub. On GitHub switch to that branch, choose Code > Download ZIP, unzip it, then run 'Make Desktop Folder.bat' inside apps/bugs-eye-view/BUG'S-EYE VIEW."
+  }
+ }
+}

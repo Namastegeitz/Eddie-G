@@ -7,3 +7,9 @@ export_credentials.cfg
 *.jks
 __pycache__/
 *.part
+
+# Android gradle build template (reinstalled by the export: --install-android-build-template)
+android/
+
+# Raw store-art renders (tools/release/make_store_assets.sh remakes them)
+BUG'S-EYE VIEW/Store Assets/_renders/

@@ -380,7 +380,7 @@ three times faster.
 ## 3. Test it
 
 All checks: import, boot, warnings-as-errors, an offline test of the Meshy
-client, then the 165-check smoke test and the 463-check phase audit
+client, then the 165-check smoke test and the 464-check phase audit
 (`tests/phase_audit.tscn`, one section per build phase plus one per update),
 each run in the project **and** against an exported pack. Any script or
 engine error fails the run:
@@ -443,7 +443,7 @@ into parts and adds a page that stitches them back together.
 ### Android test app
 
 A debug-signed APK of the current build is in
-`dist/android/bugseyeview-debug.apk`. On an Android phone, download it from
+`BUG'S-EYE VIEW/Builds/Android/BugsEyeView-test.apk`. On an Android phone, download it from
 GitHub, open it, and allow installs from that source. For Google Play you
 need the AAB from the *Android AAB* preset instead (see the checklist).
 

@@ -4,6 +4,9 @@ func _ready() -> void:
 	var stack := ["res://"]
 	while not stack.is_empty():
 		var d: String = stack.pop_back()
+		# Godot skips folders marked .gdignore (the Android build template).
+		if FileAccess.file_exists(d.path_join(".gdignore")):
+			continue
 		for sub in DirAccess.get_directories_at(d):
 			if not sub.begins_with("."):
 				stack.append(d.path_join(sub))

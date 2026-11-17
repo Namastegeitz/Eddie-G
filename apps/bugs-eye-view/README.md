@@ -202,7 +202,7 @@ for a generated 3D model (84 in all); `tools/meshy/generate.py` makes them with 
 (needs your Meshy API key; see [tools/meshy/README.md](tools/meshy/README.md)).
 
 - Two headless test suites pass in the project and in an exported build
-  (`tools/run_tests.sh`): a 165-check smoke test and a 463-check phase audit
+  (`tools/run_tests.sh`): a 165-check smoke test and a 464-check phase audit
   that walks the spec phase by phase, plus every update since (alarm gauge,
   fly moves, hiding spots, model slots, bigger rooms, people, bug detail, food
   and gems, flying, animals and people's activities). Zero GDScript warnings, zero engine errors.
@@ -210,12 +210,16 @@ for a generated 3D model (84 in all); `tools/meshy/generate.py` makes them with 
   [docs/TOOL_IDEAS.md](docs/TOOL_IDEAS.md),
   [../../prompts/claude/bugs-eye-view-next.md](../../prompts/claude/bugs-eye-view-next.md),
   [../../prompts/codex/bugs-eye-view-tasks.md](../../prompts/codex/bugs-eye-view-tasks.md).
-- Android test app (debug-signed): [dist/android/bugseyeview-debug.apk](dist/android/bugseyeview-debug.apk).
+- Android test app (debug-signed): [BUG'S-EYE VIEW/Builds/Android/BugsEyeView-test.apk](BUG'S-EYE%20VIEW/Builds/Android/BugsEyeView-test.apk).
+- **Release folder [`BUG'S-EYE VIEW/`](BUG'S-EYE%20VIEW/README.md)**: every platform's build in its own folder,
+  store art in every size, listing text, privacy policy, store research, and a
+  live checklist (https://claude.ai/artifact/MKiRiENoEXksyyoVYmNkxw) with green
+  checks and a bug-report box.
 - Builds produced and checked: Android debug APK (signed), Windows, macOS,
   Linux, Web, and the iOS Xcode project. The web build was played in a
   browser at desktop and phone sizes.
-- Not done here: the Google Play AAB (needs the Android SDK on your machine)
-  and the signed iOS build (needs a Mac or a cloud Mac). See the checklist.
+- Not done here: the signed Google Play AAB (needs your upload key) and the
+  signed iOS build (needs a Mac or a cloud Mac). See the live checklist.
 
 | | |
 |---|---|
