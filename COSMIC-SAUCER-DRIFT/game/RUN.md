@@ -151,6 +151,9 @@ xvfb-run -a -s "-screen 0 3000x2200x24" godot --path . --resolution 2868x1320 re
 # Trailer: record frames at a fixed 30 fps, then cut them with titles, captions and music
 xvfb-run -a -s "-screen 0 2000x1200x24" godot --path . --resolution 1920x1080 --fixed-fps 30 res://tests/trailer.tscn --rendering-driver opengl3 -- --out=/tmp/frames
 bash tools/make_trailer.sh /tmp/frames ../stores/trailer
+# Drive a lap as a human holding only the gas key (plus a mouse nudge back) and report any
+# time spent in reverse; must print reverse_s=0.00
+xvfb-run -a godot --path . res://tests/drive_check.tscn --rendering-driver opengl3 -- --track=mars
 # Meshy pipeline against a local mock (no network, no key)
 python3 tools/meshy/test_pipeline.py
 # Regenerate the import-slot test fixture (a game-made GLB, not a Meshy asset)

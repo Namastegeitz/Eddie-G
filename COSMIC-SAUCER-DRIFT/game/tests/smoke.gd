@@ -174,6 +174,8 @@ func _save_tests() -> void:
 
 # ---------------------------------------------------------------- game logic
 func _game_logic() -> void:
+	await _stuck_reverse_tests()
+
 	var q := Game.quick_request("ceres", 0, 1)
 	check("quick has 8 racers", q.racers.size() == 8)
 	var pilots := {}
@@ -226,16 +228,16 @@ func _ads() -> void:
 	Ads.show_rewarded("double_credits", func(g: bool) -> void:
 		got.granted = g
 		got.done = true)
-	for i in 400:
-		if got.done:
-			break
+	# The test ad runs 2.5 s of real time; wait on the clock, not a frame
+	# count (uncapped frames on a fast machine ran out early).
+	var t0 := Time.get_ticks_msec()
+	while not got.done and Time.get_ticks_msec() - t0 < 8000:
 		await get_tree().process_frame
 	check("rewarded granted", got.granted)
 	var inter := {"done": false}
 	Ads.maybe_interstitial("cup_interstitial", func() -> void: inter.done = true)
-	for i in 400:
-		if inter.done:
-			break
+	var t_inter := Time.get_ticks_msec()
+	while not inter.done and Time.get_ticks_msec() - t_inter < 8000:   # real-time test cards
 		await get_tree().process_frame
 	check("interstitial shown then continues", inter.done)
 	Ads.set_removed(true)
@@ -258,9 +260,8 @@ func _ads() -> void:
 	Store.buy("craft_sail", func(ok: bool) -> void:
 		bought.ok = ok
 		bought.done = true)
-	for i in 400:
-		if bought.done:
-			break
+	var t_bought := Time.get_ticks_msec()
+	while not bought.done and Time.get_ticks_msec() - t_bought < 8000:   # real-time test cards
 		await get_tree().process_frame
 	check("store purchase granted craft", bought.ok and Save.has_saucer("sail"))
 	check("owned craft not buyable again", not Store.can_buy("craft_sail"))
@@ -269,9 +270,8 @@ func _ads() -> void:
 	Store.buy("credits_5k", func(ok: bool) -> void:
 		bought.ok = ok
 		bought.done = true)
-	for i in 400:
-		if bought.done:
-			break
+	t_bought = Time.get_ticks_msec()
+	while not bought.done and Time.get_ticks_msec() - t_bought < 8000:   # real-time test cards
 		await get_tree().process_frame
 	check("credit pack adds credits", Save.credits() == cr0 + 5000)
 	Save.data = Save.defaults()
@@ -1660,6 +1660,51 @@ func _drive_free(race: Race, r: Racer, s_m: float) -> void:
 	r.in_steer = 0.0
 	r.in_wonder = false
 	r.reset_physics_interpolation()
+
+
+## "Stuck in reverse": brake beats gas, so any brake signal that never lets go
+## parks the craft and then reverses it. Two ways that happened.
+func _stuck_reverse_tests() -> void:
+	var keep_mouse = Save.setting("mouse_controls")
+	Save.data.settings.mouse_controls = true
+	var keep_touch: bool = InputRouter.touch.active
+	InputRouter.touch.active = false
+	InputRouter.two_player = false
+	# 1. Mouse flight stick: a nudge back leaves the lever in brake...
+	InputRouter._keys_at = -100000
+	InputRouter.mouse_active = true
+	InputRouter.mouse_stick = Vector2(0.0, -0.8)
+	var c: InputRouter.Controls = InputRouter.controls(0)
+	check("mouse lever pulled back brakes (mouse-only play)", c.brake > 0.5)
+	# ...but pressing W (gas on the keyboard) puts it back to neutral.
+	var w := InputEventKey.new()
+	w.physical_keycode = KEY_W
+	w.keycode = KEY_W
+	w.pressed = true
+	Input.parse_input_event(w)
+	await get_tree().process_frame
+	c = InputRouter.controls(0)
+	check("W beats a mouse lever left in brake", c.throttle >= 0.99 and is_zero_approx(c.brake), "thr %.2f brake %.2f" % [c.throttle, c.brake])
+	check("mouse lever back to neutral", is_zero_approx(InputRouter.mouse_stick.y))
+	# While driving with keys, pulling the mouse back no longer brakes, but it still steers.
+	var mm := InputEventMouseMotion.new()
+	mm.relative = Vector2(40, 60)
+	InputRouter._input(mm)
+	check("mouse can't pull the lever into brake while keys drive", is_zero_approx(InputRouter.mouse_stick.y))
+	check("mouse still steers alongside the keys", InputRouter.mouse_stick.x > 0.1)
+	w.pressed = false
+	Input.parse_input_event(w)
+	await get_tree().process_frame
+	InputRouter.mouse_active = false
+	InputRouter.mouse_stick = Vector2.ZERO
+	# 2. Gamepad axes count only once seen at rest (stuck triggers and
+	# phantom "gamepads" on some phones and browsers).
+	check("stuck trigger ignored", is_zero_approx(InputRouter.calibrated_axis(9001, 0.7)))
+	check("trigger trusted after resting", is_equal_approx(InputRouter.calibrated_axis(9001, 0.02), 0.02))
+	check("then a real squeeze brakes", is_equal_approx(InputRouter.calibrated_axis(9001, 0.8), 0.8))
+	InputRouter._axis_rest.erase(9001)
+	Save.data.settings.mouse_controls = keep_mouse
+	InputRouter.touch.active = keep_touch
 
 
 func _hd_tests() -> void:

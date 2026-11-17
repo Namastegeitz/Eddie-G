@@ -43,6 +43,16 @@ const MOUSE_CENTRE_DELAY := 0.35       # seconds the mouse rests before the stic
 const MOUSE_CENTRE_RATE := 1.6         # how fast it straightens (stick units per second)
 var _mouse_rest := 0.0                 # seconds since the mouse last moved
 var mouse_capture_wanted := false     # set by the race while racing with mouse controls
+## Keys or a gamepad driving player one: the mouse's throttle lever goes back
+## to neutral and ignores the mouse for KEYS_HOLD_MS after, so a nudged mouse
+## or a palm on a touchpad can't leave it in brake (brake beats gas, so the
+## craft sat braking and then reversed). Mouse steering keeps working.
+const KEYS_HOLD_MS := 1500
+var _keys_at := -100000
+## Gamepad axes are trusted only once seen at rest: some browsers and phones
+## report a trigger (or a phantom "gamepad", like a fingerprint reader) stuck
+## half or fully pressed, which held the brake on and the craft in reverse.
+var _axis_rest := {}
 
 const DEAD := 0.15
 
@@ -69,6 +79,7 @@ func mouse_steer() -> float:
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	touch_seen = DisplayServer.is_touchscreen_available()
+	Input.joy_connection_changed.connect(_on_joy_changed)
 
 
 func _input(e: InputEvent) -> void:
@@ -81,7 +92,8 @@ func _input(e: InputEvent) -> void:
 			mouse_active = true
 			_mouse_rest = 0.0
 			mouse_stick.x = clampf(mouse_stick.x + r.x / MOUSE_RANGE, -1.0, 1.0)
-			mouse_stick.y = clampf(mouse_stick.y - r.y / MOUSE_RANGE, -1.0, 1.0)
+			if Time.get_ticks_msec() - _keys_at >= KEYS_HOLD_MS:
+				mouse_stick.y = clampf(mouse_stick.y - r.y / MOUSE_RANGE, -1.0, 1.0)
 	elif e is InputEventMouseButton and e.pressed and e.button_index == MOUSE_BUTTON_LEFT and mouse_capture_wanted and mouse_on():
 		if Input.mouse_mode != Input.MOUSE_MODE_CAPTURED:
 			Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
@@ -106,6 +118,26 @@ func release_mouse() -> void:
 
 func pads() -> Array[int]:
 	return Input.get_connected_joypads()
+
+
+## A gamepad axis, or 0 until that axis has once been seen at rest (|v| <=
+## rest_max) since the pad connected.
+func pad_axis(device: int, axis: int, rest_max := 0.1) -> float:
+	return calibrated_axis(device * 32 + axis, Input.get_joy_axis(device, axis), rest_max)
+
+
+func calibrated_axis(key: int, v: float, rest_max := 0.1) -> float:
+	if not _axis_rest.has(key):
+		if absf(v) > rest_max:
+			return 0.0
+		_axis_rest[key] = true
+	return v
+
+
+func _on_joy_changed(device: int, _connected: bool) -> void:
+	for k in _axis_rest.keys():
+		if int(k) / 32 == device:
+			_axis_rest.erase(k)
 
 
 func _pad_for(slot: int) -> Array[int]:
@@ -158,13 +190,13 @@ func controls(slot: int) -> Controls:
 		if _k(KEY_SEMICOLON) or _k(KEY_KP_1): wonder = true
 	# Gamepads.
 	for d in _pad_for(slot):
-		var x := Input.get_joy_axis(d, JOY_AXIS_LEFT_X)
+		var x := pad_axis(d, JOY_AXIS_LEFT_X, DEAD)
 		if absf(x) > DEAD:
 			steer += signf(x) * (absf(x) - DEAD) / (1.0 - DEAD)
 		if Input.is_joy_button_pressed(d, JOY_BUTTON_DPAD_LEFT): steer -= 1.0
 		if Input.is_joy_button_pressed(d, JOY_BUTTON_DPAD_RIGHT): steer += 1.0
-		var rt := Input.get_joy_axis(d, JOY_AXIS_TRIGGER_RIGHT)
-		var lt := Input.get_joy_axis(d, JOY_AXIS_TRIGGER_LEFT)
+		var rt := pad_axis(d, JOY_AXIS_TRIGGER_RIGHT)
+		var lt := pad_axis(d, JOY_AXIS_TRIGGER_LEFT)
 		thr = maxf(thr, rt)
 		if Input.is_joy_button_pressed(d, JOY_BUTTON_A): thr = 1.0
 		brk = maxf(brk, lt)
@@ -174,6 +206,11 @@ func controls(slot: int) -> Controls:
 		if Input.is_joy_button_pressed(d, JOY_BUTTON_Y): look = true
 		if Input.is_joy_button_pressed(d, JOY_BUTTON_DPAD_UP) or Input.is_joy_button_pressed(d, JOY_BUTTON_LEFT_STICK): glide = true
 		if Input.is_joy_button_pressed(d, JOY_BUTTON_DPAD_DOWN) or Input.is_joy_button_pressed(d, JOY_BUTTON_RIGHT_STICK): wonder = true
+	# Gas or brake on keys or a pad for player one: the mouse's throttle
+	# lever goes back to neutral (steering from the mouse still works).
+	if p1 and not two_player and (thr > 0.0 or brk > 0.0):
+		_keys_at = Time.get_ticks_msec()
+		mouse_stick.y = 0.0
 	# Mouse flight stick (player one only).
 	if p1 and mouse_on() and mouse_active:
 		steer += mouse_steer()
