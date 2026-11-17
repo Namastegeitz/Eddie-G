@@ -7,6 +7,7 @@
 import * as THREE from './vendor/three.module.min.js';
 import { MOVES } from './moves.js';
 import { makeGradient } from './monkey.js';
+import { Forest, setLeafDetail } from './foliage.js';
 import {
   RIM, WIND, addRim, windy, bakeStatic, groundTexture, skyTexture, glowTexture, sparkTexture,
   beamTexture, tuftGeometry, canvas as makeCanvas, tex, rng,
@@ -31,7 +32,7 @@ const ENVS = {
     sky: [[0, '#0f5a52'], [0.45, '#3f9a72'], [0.78, '#bfe0a0'], [1, '#f3e8a6']],
     skyExtra: { clouds: { color: '#fffbe6', y0: 0.38, y1: 0.6, n: 8, alpha: 0.42 }, haze: '#f6f0c0', seed: 3 },
     fog: '#86bf8e', fogNear: 26, fogFar: 85,
-    hemi: ['#fff6d8', '#2d5a2a', 1.5], key: ['#fff1cf', 2.5], rim: ['#c8ffe8', 1.3], rimShader: '#e6ffd0', ground: '#4f9a3d', music: 'jungle',
+    hemi: ['#fff6d8', '#2d5a2a', 1.5], key: ['#fff1cf', 2.5], rim: ['#c8ffe8', 1.3], rimShader: '#e6ffd0', ground: '#3f8432', music: 'jungle',
   },
   beach: {
     sky: [[0, '#4a5fcf'], [0.35, '#a36fc8'], [0.58, '#ff8f7a'], [0.8, '#ffc27a'], [1, '#ffe6b0']],
@@ -296,6 +297,7 @@ export class Stage {
     const lvl = (QUALITY[this.level] || QUALITY.high).detail;
     for (const g of Object.values(this.envs)) {
       g.traverse((o) => { if (o.userData.detailLevel) o.visible = lvl >= o.userData.detailLevel; });
+      setLeafDetail(g, this.level);
     }
   }
 
@@ -426,64 +428,35 @@ export class Stage {
   build_jungle() {
     const g = new THREE.Group();
     const e = ENVS.jungle;
-    g.add(this.ground(e.ground, 'grass'));
+    g.add(this.ground(e.ground, 'jungle'));
     const more = this.detail(new THREE.Group(), 1); // extra scenery, hidden on Low
     g.add(more);
     const r = rng(7);
-    const bark = this.toon(0xffffff, { map: groundTexture('bark', '#6b4423', 256, 1, 2) });
-    const leafTex = [groundTexture('leaves', '#2d7a3a', 256, 2, 3), groundTexture('leaves', '#3f9446', 256, 2, 4), groundTexture('leaves', '#246638', 256, 2, 5)];
-    const leaf = leafTex.map((t) => this.toon(0xffffff, { map: t }));
-    // far canopy layers (fog paints them blue-green)
-    for (const [z, y, c, n] of [[-34, 7, 0x2a6a48, 18], [-25, 5.5, 0x2f7a46, 14]]) {
-      const m = this.toon(c);
+    // lush trees: painted bark, buttress roots, thousands of leaf cards
+    const a2c = !!(this.renderer.getContext().getContextAttributes() || {}).antialias;
+    const forest = new Forest({ seed: 17, a2c });
+    // far treeline (the fog turns it blue-green)
+    for (const [z0, n] of [[-34, 14], [-26, 12]]) {
       for (let k = 0; k < n; k++) {
-        const x = -44 + (k / (n - 1)) * 88 + (r() - 0.5) * 3;
-        const s = new THREE.Mesh(new THREE.IcosahedronGeometry(3.4 + r() * 2.4, 2), m);
-        s.position.set(x, y + r() * 3, z + (r() - 0.5) * 4);
-        s.scale.y = 0.8;
-        more.add(s);
-        const t = new THREE.Mesh(new THREE.CylinderGeometry(0.35, 0.55, y, 8), this.toon(0x3a2a1a));
-        t.position.set(x, y / 2 - 0.27, z);
-        more.add(t);
+        const x = -46 + (k / (n - 1)) * 92 + (r() - 0.5) * 4;
+        forest.tree(x, z0 + (r() - 0.5) * 5, 8 + r() * 4, { far: true });
       }
     }
     // trees around the clearing
     const trees = [[-6.5, -6], [-9, -2], [6, -7], [9.5, -3], [-3, -11], [3.5, -12], [0, -16], [-12, -9], [12, -10], [-15, -4], [15, -5]];
-    for (const [x, z] of trees) {
-      const h = 4.4 + r() * 3;
-      const t = new THREE.Mesh(new THREE.CylinderGeometry(0.24, 0.42, h, 14, 4), bark);
-      t.position.set(x, h / 2 - 0.27, z);
-      t.rotation.z = (r() - 0.5) * 0.08;
-      t.castShadow = false;
-      g.add(t);
-      // root flares
-      for (let k = 0; k < 4; k++) {
-        const a = (k / 4) * TAU + r();
-        const root = new THREE.Mesh(new THREE.ConeGeometry(0.2, 1.1, 8), bark);
-        root.position.set(x + Math.cos(a) * 0.38, 0.05, z + Math.sin(a) * 0.38);
-        root.rotation.set(Math.sin(a) * 1.0, 0, -Math.cos(a) * 1.0);
-        more.add(root);
-      }
-      // a branch
-      const br = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.12, 1.6, 8), bark);
-      const side = x < 0 ? 1 : -1;
-      br.position.set(x + side * 0.6, h * 0.7, z + 0.2);
-      br.rotation.z = side * -0.9;
-      more.add(br);
-      this.canopy(g, x, h + 0.2, z, 1.5 + r() * 0.6, leaf, r);
-      this.canopy(more, x + side * 1.2, h * 0.78, z + 0.3, 0.9, leaf, r);
-    }
-    // bushes with leaf texture, close to the clearing
+    trees.forEach(([x, z], i) => forest.tree(x, z, 6.2 + r() * 3, { kinds: i % 2 ? ['broad', 'small'] : ['small', 'broad'] }));
+    // bushes and ferns around the clearing
     for (let k = 0; k < 16; k++) {
       const side = k % 2 ? 1 : -1;
-      const bx = side * (3.4 + r() * 4.5), bz = -0.8 - r() * 7.5;
-      for (let j = 0; j < 3; j++) {
-        const b = new THREE.Mesh(new THREE.IcosahedronGeometry(0.5 + r() * 0.45, 2), leaf[(k + j) % 3]);
-        b.position.set(bx + (j - 1) * 0.5, 0.05 + r() * 0.15, bz + (r() - 0.5) * 0.4);
-        b.scale.y = 0.72;
-        (j === 1 ? g : more).add(b);
-      }
+      forest.bush(side * (3.4 + r() * 4.5), -0.8 - r() * 7.5, 0.7 + r() * 0.5);
     }
+    for (let k = 0; k < 12; k++) {
+      const side = k % 2 ? 1 : -1;
+      forest.fern(side * (2.6 + r() * 6), 0.6 - r() * 8, 1.0 + r() * 0.6);
+    }
+    const woods = forest.build();
+    woods.userData.dynamic = true; // already merged / instanced
+    g.add(woods);
     // big fan leaves at the clearing's edges
     const leafGeo = this.leafGeometry(1.0, 0.24, 0.4);
     const bigLeaf = this.toon(0x3aa24a, { side: THREE.DoubleSide });
@@ -565,7 +538,7 @@ export class Stage {
     stalk.position.set(-5.85, 3.95, -5.4);
     g.add(stalk);
     // detail: grass, flowers, light rays, butterflies, fireflies
-    g.add(this.detail(this.grass(520, ['#2f6e2a', '#8fd65a'], { w: 30, z0: -14, z1: 6 }, 3), 1));
+    g.add(this.detail(this.grass(520, ['#24581f', '#74bf4a'], { w: 30, z0: -14, z1: 6 }, 3), 1));
     g.add(this.detail(this.flowers(56, ['#ff6fae', '#ffd23f', '#ffffff', '#ff8a3a', '#b98aff'], { w: 18, z0: -9, z1: 3 }, 8), 1));
     const rays = this.detail(new THREE.Group(), 2);
     rays.userData.dynamic = true;
@@ -1416,8 +1389,8 @@ export class Stage {
   // ------------------------------------------------------------ camera
 
   /** Fit the monkey into the band of the screen between `top` and `bottom` px insets. */
-  setFrame(top, bottom, instant = false) {
-    this.frame = { top, bottom };
+  setFrame(top, bottom, instant = false, side = 0) {
+    this.frame = { top, bottom, side };
     this.computeCamera();
     if (instant) {
       this.camPos.copy(this.camGoal.pos);
@@ -1434,7 +1407,8 @@ export class Stage {
     const monkeyH = 4.5; // floor to raised hands, plus a hat
     const monkeyW = 4.4; // arms out, plus the pad
     const dV = (monkeyH * H) / (0.94 * band * 2 * tan);
-    const dH = (monkeyW * H) / (0.96 * W * 2 * tan);
+    const avail = Math.max(W * 0.4, W - 2 * (this.frame.side || 0)); // width between side buttons
+    const dH = (monkeyW * H) / (0.96 * avail * 2 * tan);
     const d = Math.max(dV, dH, 6);
     const centerY = 1.95;
     this.camGoal.target.set(0, centerY, 0);

@@ -92,17 +92,26 @@ names to the monkey's own sides; the buttons never move.
   pointing), feet with an inner big toe, fluffy cheek and head tufts, eyes
   with painted irises, highlights and eyelids that blink, a curling tail, and
   springy ears, tuft and tail that bounce with the dance.
-- **Four detailed stages:** jungle (leafy trees, grass that sways, flowers,
-  mushrooms, vines, light rays, butterflies, fireflies), beach (animated
+- **Four detailed stages:** jungle (tall trees with painted bark, buttress
+  roots and thousands of leaves that flutter in the wind, ferns, leaf litter,
+  grass that sways, flowers, mushrooms, vines, light rays, butterflies,
+  fireflies; `js/foliage.js`), beach (animated
   waves and foam, sunset, palms, umbrella, sandcastle, gulls), temple disco
   (light-up floor, fluted pillars with fire bowls, speakers that thump, a
   mirror ball throwing light specks, coloured beams) and moon (craters,
   rocks, Earth with clouds, a ringed planet, twinkling stars, shooting stars).
+- **Wide screens** (computers, tablets sideways): the move buttons sit on
+  both sides, laid out like the body (head, arms, legs), so the monkey gets
+  the middle of the screen and appears bigger.
+- **Dancing:** the monkey grooves on every beat (weight shifts, knee bounce,
+  loose arms) and every move blends in and out of that groove.
 - **Play feedback:** sparkles burst from the limb on every correct move
   (bigger for Perfect, with a tiny camera kick), a coloured trail follows
   the limb that moves, and the pad lights glow warmer as your streak grows.
 - **Graphics levels** (Settings > Graphics): Auto, Low, High, Ultra. Auto
-  starts at High and steps down to Medium, then Low, if frames are slow.
+  starts at High and steps down to Medium, then Low, if frames are slow, and
+  steps back up if a lower level doesn't help (a browser capping the frame
+  rate in battery-saver mode).
   Real soft shadows on High and Ultra; Ultra renders at up to 3x for the
   sharpest phone screens. How it works lists what each level includes.
 - Scenery is merged into a few meshes per stage (`js/gfx.js`), so phones

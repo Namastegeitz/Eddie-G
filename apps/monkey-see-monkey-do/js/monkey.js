@@ -1101,19 +1101,28 @@ export class Monkey {
     const p = this.pose;
     resetPose(p);
 
-    // idle groove on the beat
+    // groove on the beat: the monkey keeps dancing between moves, and the
+    // moves are layered on top of it, so the dance flows like a video
     const amp = this.danceAmp;
     const bf = beat - Math.floor(beat);
     const bob = (1 - Math.cos(bf * TAU)) / 2;
-    p.hipsY += -0.045 * bob * amp;
-    p.j.head[0] += 0.05 * bob * amp;
-    p.j.knL[0] += 0.12 * bob * amp; p.j.knR[0] += 0.12 * bob * amp;
-    p.j.hipL[0] += -0.06 * bob * amp; p.j.hipR[0] += -0.06 * bob * amp;
+    p.hipsY += -0.055 * bob * amp;
+    p.j.head[0] += 0.06 * bob * amp;
+    p.j.knL[0] += 0.16 * bob * amp; p.j.knR[0] += 0.16 * bob * amp;
+    p.j.hipL[0] += -0.08 * bob * amp; p.j.hipR[0] += -0.08 * bob * amp;
+    // weight shifts from foot to foot over two beats: hips one way, chest the other
     const sway = Math.sin((beat / 2) * TAU);
-    p.j.torso[2] += 0.04 * sway * amp;
-    p.j.head[2] += -0.05 * sway * amp;
-    p.j.shL[2] += -0.06 * (sway * 0.5 + 0.5) * amp;
-    p.j.shR[2] += 0.06 * (0.5 - sway * 0.5) * amp;
+    const sway2 = Math.sin((beat / 2) * TAU - 0.6); // the upper body follows a moment later
+    p.j.hips[2] += 0.05 * sway * amp;
+    p.j.torso[2] += -0.08 * sway2 * amp;
+    p.j.torso[1] += 0.06 * sway2 * amp;
+    p.j.head[2] += 0.06 * sway2 * amp;
+    p.j.knL[0] += 0.07 * Math.max(0, sway) * amp; p.j.knR[0] += 0.07 * Math.max(0, -sway) * amp;
+    // arms swing loosely with the sway, elbows bending on the beat
+    p.j.shL[2] += -0.08 * (sway2 * 0.5 + 0.5) * amp;
+    p.j.shR[2] += 0.08 * (0.5 - sway2 * 0.5) * amp;
+    p.j.shL[0] += -0.1 * sway2 * amp; p.j.shR[0] += 0.1 * sway2 * amp;
+    p.j.elL[0] += 0.16 * bob * amp; p.j.elR[0] += 0.16 * bob * amp;
     // fingers sway a touch with the arms
     p.j.haL[0] += 0.06 * sway * amp; p.j.haR[0] += -0.06 * sway * amp;
     // breathing
@@ -1143,6 +1152,7 @@ export class Monkey {
       a.fn(p, t, el, a.ctx);
     }
 
+    this.smoothPose(p, dt);
     this.applySprings(p, dt);
     this.applyPose(p, time, dt);
     this.updateHands(p);
@@ -1159,6 +1169,30 @@ export class Monkey {
     updateSkinFx(this, time, dt, Math.min(1, this.anims.length * 0.5));
     const energy = Math.min(1, this.anims.length * 0.5);
     for (const list of Object.values(this.gearFx)) if (list && list.length) updateGearFx(list, time, dt, energy, beat);
+  }
+
+  /**
+   * Blend every joint towards its target over a few hundredths of a second, so
+   * moves flow into each other (and into the groove) without any snap.
+   */
+  smoothPose(p, dt) {
+    const k = dt > 0 ? 1 - Math.exp(-dt / 0.035) : 1;
+    let sm = this.smoothed;
+    if (!sm) {
+      sm = this.smoothed = { j: {}, hipsY: p.hipsY, ry: p.ry, squash: p.squash };
+      for (const n of JOINTS) sm.j[n] = p.j[n].slice();
+    }
+    for (const n of JOINTS) {
+      const a = sm.j[n], b = p.j[n];
+      for (let i = 0; i < 3; i++) { a[i] += (b[i] - a[i]) * k; b[i] = a[i]; }
+    }
+    sm.hipsY += (p.hipsY - sm.hipsY) * k; p.hipsY = sm.hipsY;
+    sm.squash += (p.squash - sm.squash) * k; p.squash = sm.squash;
+    // turning: take the short way round, so a full spin still reads as a spin
+    let d = p.ry - sm.ry;
+    d -= Math.round(d / TAU) * TAU;
+    sm.ry += d * Math.min(1, k * 1.6);
+    p.ry = sm.ry;
   }
 
   /** Ears, the head tuft and the tail lag behind bounces like soft springs. */

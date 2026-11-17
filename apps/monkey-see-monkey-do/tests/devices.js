@@ -139,6 +139,8 @@ const FAKE_BRIDGE = (platform) => `
     ['Pixel 7', devices['Pixel 7']],
     ['iPhone 15 Pro Max', devices['iPhone 15 Pro Max'] || devices['iPhone 14 Pro Max']],
     ['iPad Mini', devices['iPad Mini']],
+    ['iPad Air sideways', { viewport: { width: 1180, height: 820 }, hasTouch: true, isMobile: true }],
+    ['wide laptop window', { viewport: { width: 1588, height: 724 } }],
   ];
   for (const [name, dev] of sizes) {
     await run(`fits on ${name}`, async () => {
@@ -169,6 +171,31 @@ const FAKE_BRIDGE = (platform) => `
       await p.context().close();
     });
   }
+
+  await run('wide screen: buttons on both sides like the body, monkey bigger', async () => {
+    const p = await open({ viewport: { width: 900, height: 724 } });
+    const start = async () => {
+      await p.evaluate(() => { MSMD.Save.data.tutorialDone = true; MSMD.Save.data.levels[4] = { stars: 1, best: 1, clears: 1 }; MSMD.game.openLevel(5); });
+      await p.evaluate(() => document.querySelector('#intro-go').click());
+      await p.waitForFunction(() => MSMD.game.phase === 'respond', null, { timeout: 25000 });
+      await p.waitForTimeout(600); // camera eases in
+    };
+    await start();
+    const narrow = await p.evaluate(() => MSMD.stage.camGoal.pos.z);
+    await p.evaluate(() => MSMD.game.quit && MSMD.game.quit());
+    await p.setViewportSize({ width: 1588, height: 724 });
+    await start();
+    const r = await p.evaluate(() => {
+      const box = (m) => document.querySelector(`#pad [data-move="${m}"]`).getBoundingClientRect();
+      return { W: innerWidth, la: box('LA'), ra: box('RA'), ll: box('LL'), hb: box('HB'), fl: box('FL'), d: MSMD.stage.camGoal.pos.z };
+    });
+    expect(r.la.right < r.W * 0.25 && r.ra.left > r.W * 0.75, `buttons at the sides: ${Math.round(r.la.right)} / ${Math.round(r.ra.left)} of ${r.W}`);
+    expect(r.hb.top < r.la.top && r.la.top < r.ll.top && r.fl.top < r.ra.top, 'head at the top, arm, leg at the bottom');
+    expect(r.d < narrow * 0.9, `monkey closer (bigger): ${r.d.toFixed(2)} vs ${narrow.toFixed(2)}`);
+    await p.screenshot({ path: path.join(OUT, 'wide-1588x724.png') });
+    expect(p.errors.length === 0, p.errors.join(' | '));
+    await p.context().close();
+  });
 
   await run('phone held sideways in a browser shows "turn upright" and pauses', async () => {
     const p = await open({ viewport: { width: 844, height: 390 }, hasTouch: true, isMobile: true });

@@ -180,7 +180,8 @@ async function boot() {
     }
     monkey.update(now, dt, beat);
     stage.update(now, dt, beat, monkey);
-    // Auto graphics: if a 3-second window averages under 38 frames a second, step down High -> Medium -> Low
+    // Auto graphics: if a 3-second window averages under 38 frames a second, step down High -> Medium -> Low,
+    // but only while stepping down actually speeds things up
     const wall = performance.now();
     const raw = (wall - probe.wall) / 1000;
     probe.wall = wall;
@@ -193,12 +194,22 @@ async function boot() {
         if (probe.t >= 3) {
           // average frame rate over the window (frames can arrive in bursts, so count them, don't time each one)
           probe.fps = probe.n / probe.t;
-          if (probe.fps < 38 && app.autoLevel !== 'low') {
+          if (probe.prev && probe.fps < probe.prev.fps * 1.15) {
+            // a lower level didn't help: the browser is capping the frame rate
+            // (battery saver, a 30 Hz screen), not the graphics. Go back up and stay.
+            app.autoLevel = probe.prev.level;
+            app.setLevel(app.autoLevel);
+            probe.capped = true;
+            probe.done = true;
+          } else if (probe.fps < 38 && app.autoLevel !== 'low') {
+            probe.prev = { level: app.autoLevel, fps: probe.fps };
             app.autoLevel = app.autoLevel === 'high' ? 'medium' : 'low';
             app.setLevel(app.autoLevel);
-            if (app.autoLevel === 'low') ui.toast('Graphics set to Low for smoother play. Change it in Settings.');
             probe.skip = 0.5;
-          } else probe.done = true;
+          } else {
+            probe.done = true;
+            if (app.autoLevel === 'low') ui.toast('Graphics set to Low for smoother play. Change it in Settings.');
+          }
           probe.t = 0; probe.n = 0; probe.slow = 0;
         }
       }

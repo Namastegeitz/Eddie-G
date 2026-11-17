@@ -117,7 +117,7 @@ const SETTINGS = [
   { group: 'Display', items: [
     { key: 'captions', type: 'toggle', label: 'Move names during Watch', help: 'Shows the name of each move as the monkey does it.' },
     { key: 'reduceMotion', type: 'toggle', label: 'Reduce motion', help: 'No camera shake, less confetti, calmer menus.' },
-    { key: 'quality', type: 'seg', label: 'Graphics', options: [['auto', 'Auto'], ['low', 'Low'], ['high', 'High'], ['ultra', 'Ultra']], help: 'Auto starts at High and steps down (Medium, then Low) if your phone struggles. Low: no outlines or shadows, plain scenery. High: sharp, soft shadows, full scenery. Ultra: full phone resolution and finer shadows (uses the most battery).' },
+    { key: 'quality', type: 'seg', label: 'Graphics', options: [['auto', 'Auto'], ['low', 'Low'], ['high', 'High'], ['ultra', 'Ultra']], help: 'Auto starts at High and steps down (Medium, then Low) if your device struggles. Low: no outlines or shadows, plain scenery. High: sharp, soft shadows, full scenery. Ultra: full phone resolution and finer shadows (uses the most battery).' },
   ] },
 ];
 
@@ -314,7 +314,14 @@ export class UI {
         top = Math.min(top, hudTop + 8);
         bottom = Math.max(bottom, H - ov.getBoundingClientRect().top + 6);
       }
-      this.app.stage.setFrame(top, bottom, !this.framedOnce);
+      // wide screens put the buttons on both sides: keep the monkey between them
+      let side = 0;
+      const wrap = $('#hud .pad-wrap');
+      if (this.current === 'hud' && wrap && getComputedStyle(wrap).position === 'absolute') {
+        const la = $('#pad [data-move="LA"]');
+        if (la) side = la.getBoundingClientRect().right + 8;
+      }
+      this.app.stage.setFrame(top, bottom, !this.framedOnce, side);
       this.framedOnce = true;
     });
   }
@@ -1227,7 +1234,7 @@ export class UI {
       <p><b>Take turns</b> (levels ${LEVELS.filter((l) => l.twist === 'trade').map((l) => l.id).join(', ')}): the monkey does a move; copy it, then tap any move to add your own (+${RULES.tradeAddPoints} points; there is no wrong move to add). The monkey copies you and adds another. When the dance reaches the round's length and you copy all of it, the round is cleared. If the add timer runs out, the monkey picks a move for you and you lose no life. A mistake while copying costs a life as usual, and you try the same dance again.</p>
 
       <h3>The moves</h3>
-      <p class="note">Left and right are ${n === 'monkey' ? "the monkey's own sides (Settings > Name sides by)" : 'the sides of your screen, like a mirror (change in Settings > Name sides by)'}. Buttons never move.</p>
+      <p class="note">Left and right are ${n === 'monkey' ? "the monkey's own sides (Settings > Name sides by)" : 'the sides of your screen, like a mirror (change in Settings > Name sides by)'}. Buttons never move during a game. On a wide screen (a computer, or a tablet held sideways) they sit on both sides of the monkey: head moves at the top, arms in the middle, legs at the bottom.</p>
       <div class="table-wrap"><table><thead><tr><th>Move</th><th>What it does</th><th>Keys</th><th>Swipe</th><th>Note</th></tr></thead><tbody>${moveRows}</tbody></table></div>
       <p class="note">You can also tap the monkey itself: a hand for an arm, a foot for a leg, the head, or the belly for Flair.</p>
 
@@ -1293,8 +1300,8 @@ export class UI {
       <h3>Graphics</h3>
       <p class="note">Right now: ${esc({ low: 'Low', medium: 'Medium', high: 'High', ultra: 'Ultra' }[this.app.stage.level] || 'High')}${Save.settings.quality === 'auto' ? ' (picked by Auto)' : ''}.</p>
       <ul>
-        <li>Auto starts at High and watches your frame rate for a few seconds. If it averages under 38 frames a second it steps down to Medium, then Low, and tells you when it switches to Low.</li>
-        <li>Low: no outlines, shadows, grass or move trails; normal resolution. Easiest on older phones and batteries.</li>
+        <li>Auto starts at High and watches your frame rate for a few seconds. If it averages under 38 frames a second it steps down to Medium, then Low, and tells you when it switches to Low. If a lower level doesn't speed things up (a browser in battery-saver mode can cap the frame rate), it goes back up and stays there.</li>
+        <li>Low: no outlines, shadows, grass or move trails, and fewer leaves on the trees; normal resolution. Easiest on older phones and batteries.</li>
         <li>Medium (Auto only): outlines, grass, flowers and move trails; no shadows; up to ${QUALITY.medium.dpr}x resolution.</li>
         <li>High: adds soft shadows, light rays and butterflies; up to ${QUALITY.high.dpr}x resolution.</li>
         <li>Ultra: up to ${QUALITY.ultra.dpr}x (a phone's full sharpness) and finer shadows. Uses the most battery.</li>

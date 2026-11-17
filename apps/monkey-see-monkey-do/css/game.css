@@ -354,6 +354,23 @@ kbd { display: inline-block; min-width: 22px; padding: 1px 6px; border-radius: 6
   .pad { gap: 8px; }
   .hud-bottom { max-width: 500px; }
 }
+/* wide screens (computers, tablets sideways): the buttons move to the two
+   sides, laid out like the body (head, arm, leg), so the monkey gets the
+   whole middle of the screen */
+@media (min-aspect-ratio: 13/10) and (min-width: 820px) and (min-height: 460px) {
+  #hud { --side: clamp(150px, 14vw, 220px); }
+  #hud .pad-wrap { position: absolute; left: var(--gut-l); right: var(--gut-r); bottom: calc(var(--safe-b) + 10px); pointer-events: none; }
+  #hud .pad { grid-template-columns: var(--side) 1fr var(--side); grid-template-areas: "hb . fl" "la . ra" "ll . rl"; gap: 10px 0; }
+  #hud .pad-btn { pointer-events: auto; height: clamp(60px, 11.5vh, 92px); }
+  #hud .pad-btn[data-move="HB"] { grid-area: hb; }
+  #hud .pad-btn[data-move="FL"] { grid-area: fl; }
+  #hud .pad-btn[data-move="LA"] { grid-area: la; }
+  #hud .pad-btn[data-move="RA"] { grid-area: ra; }
+  #hud .pad-btn[data-move="LL"] { grid-area: ll; }
+  #hud .pad-btn[data-move="RL"] { grid-area: rl; }
+  #hud .hud-bottom { max-width: min(520px, calc(100% - 2 * var(--side) - 40px)); }
+  #hud .mistake { inset: auto; left: 50%; bottom: 0; width: min(460px, calc(100% - 2 * var(--side) - 40px)); transform: translateX(-50%); pointer-events: auto; }
+}
 @media (max-height: 640px) {
   .pad-btn { height: 64px; }
   .pad-btn .mv-icon { width: 30px; }

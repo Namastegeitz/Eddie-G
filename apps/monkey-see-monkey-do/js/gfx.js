@@ -278,6 +278,8 @@ export function groundTexture(kind, base, S = 512, repeat = 10, seed = 5) {
     }
     return tex(cv, { repeat });
   }
+  const litter = kind === 'jungle';
+  if (litter) kind = 'grass';
   if (kind === 'grass') {
     // big soft patches, then thousands of short strokes
     for (let i = 0; i < 26; i++) {
@@ -303,6 +305,36 @@ export function groundTexture(kind, base, S = 512, repeat = 10, seed = 5) {
       g.moveTo(x, y);
       g.lineTo(x + Math.cos(a) * len, y + Math.sin(a) * len);
       g.stroke();
+    }
+    if (litter) {
+      // jungle floor: drifts of fallen leaves and dark damp earth between the grass
+      for (let i = 0; i < 18; i++) {
+        const x = r() * S, y = r() * S, rad = S * (0.05 + r() * 0.09);
+        wrapDraw(S, x, y, rad, (px, py) => {
+          const grd = g.createRadialGradient(px, py, 0, px, py, rad);
+          grd.addColorStop(0, 'rgba(52,40,22,0.55)');
+          grd.addColorStop(1, 'rgba(52,40,22,0)');
+          g.fillStyle = grd;
+          g.fillRect(px - rad, py - rad, rad * 2, rad * 2);
+        });
+        for (let k = 0; k < 70; k++) {
+          const a = r() * TAU, d = Math.sqrt(r()) * rad;
+          const lx = x + Math.cos(a) * d, ly = y + Math.sin(a) * d;
+          const len = (4 + r() * 6) * (S / 512);
+          const hue = 30 + r() * 50;
+          g.fillStyle = `hsla(${hue},${35 + r() * 30}%,${18 + r() * 22}%,${0.55 + r() * 0.4})`;
+          const ang = r() * TAU;
+          wrapDraw(S, lx, ly, len, (px, py) => {
+            g.save();
+            g.translate(px, py);
+            g.rotate(ang);
+            g.beginPath();
+            g.ellipse(0, 0, len, len * 0.45, 0, 0, TAU);
+            g.fill();
+            g.restore();
+          });
+        }
+      }
     }
   } else if (kind === 'sand') {
     for (let i = 0; i < 20; i++) {
