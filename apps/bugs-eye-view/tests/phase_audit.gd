@@ -4375,3 +4375,25 @@ func _phase21() -> void:
 			break
 	check(pot_broke and PerceptionSystem.commotions > c0, "a plant pushed off the bench breaks its pot, and everyone looks")
 	await unload(lv)
+
+	# Even the lightest bug (the ant, the weakest pusher) can shove a potted
+	# plant along and off the edge.
+	lv = await load_level(&"backyard", &"ant")
+	var ant := lv.player
+	ant.invuln = 1000.0
+	ant.global_position = Vector3(-24, 15.4, 27)
+	plant = null
+	for n in get_tree().get_nodes_in_group(Phys.GROUP_PROP):
+		if lv.is_ancestor_of(n) and String((n as Node).name).begins_with("PottedPlant"):
+			plant = n
+	await frames(5)
+	var ant_broke := false
+	for i in 400:
+		if is_instance_valid(plant) and not plant.broken and plant.global_position.y > 14.0 and plant.linear_velocity.length() < 5.0:
+			plant.push_by_bug(Vector3(0, 0, -ant.stats.push_force))
+		await get_tree().physics_frame
+		if not is_instance_valid(plant) or plant.broken:
+			ant_broke = true
+			break
+	check(ant_broke, "even the ant (push %.1f) can push a potted plant off the bench" % ant.stats.push_force)
+	await unload(lv)

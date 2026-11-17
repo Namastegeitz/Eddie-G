@@ -1384,11 +1384,15 @@ static func _set_all(n: Object, values: Dictionary) -> void:
 ## row draws all of them as one multimesh: see LevelGeo.domino_run).
 static func _crash_props(force: bool) -> void:
 	var fragile := {"commotion": 3.5, "fragile": true, "crash_sound": &"shatter", "crash_speed": 12.0}
+	# Glazed china, glass and a clay pot slide easily on a counter or a
+	# bench: even the lightest bug (the ant) can push them along.
+	var slick := PhysicsMaterial.new()
+	slick.friction = 0.25
 	var glass_shape := CylinderShape3D.new()
 	glass_shape.radius = 1.1
 	glass_shape.height = 3.6
 	var g := scripted(RigidBody3D.new(), "res://scripts/stealth/physics_prop.gd", "Glass")
-	_set_all(g, {"mass": 0.4, "noise_on_impact": 1.4, "impact_sound": &"clatter"}.merged(fragile))
+	_set_all(g, {"mass": 0.4, "noise_on_impact": 1.4, "impact_sound": &"clatter", "physics_material_override": slick}.merged(fragile))
 	shape(g, glass_shape)
 	var gv := node3d(g, "Visual")
 	mesh(gv, "Mesh", cyl(1.1, 3.6, 0.9), "glass")
@@ -1399,7 +1403,7 @@ static func _crash_props(force: bool) -> void:
 	cup_shape.radius = 1.3
 	cup_shape.height = 1.6
 	var c := scripted(RigidBody3D.new(), "res://scripts/stealth/physics_prop.gd", "Teacup")
-	_set_all(c, {"mass": 0.3, "noise_on_impact": 1.3, "impact_sound": &"clang"}.merged(fragile))
+	_set_all(c, {"mass": 0.3, "noise_on_impact": 1.3, "impact_sound": &"clang", "physics_material_override": slick}.merged(fragile))
 	shape(c, cup_shape)
 	var cv := node3d(c, "Visual")
 	mesh(cv, "Cup", cyl(1.35, 1.6, 0.95), "plastic_white")
@@ -1415,8 +1419,8 @@ static func _crash_props(force: bool) -> void:
 	pot_shape.radius = 1.9
 	pot_shape.height = 3.2
 	var pl := scripted(RigidBody3D.new(), "res://scripts/stealth/physics_prop.gd", "PottedPlant")
-	_set_all(pl, {"mass": 1.0, "noise_on_impact": 1.8, "impact_sound": &"thud", "commotion": 4.5, "fragile": true,
-		"crash_sound": &"pot_crash", "crash_speed": 12.0})
+	_set_all(pl, {"mass": 0.6, "noise_on_impact": 1.8, "impact_sound": &"thud", "commotion": 4.5, "fragile": true,
+		"crash_sound": &"pot_crash", "crash_speed": 12.0, "physics_material_override": slick})
 	shape(pl, pot_shape)
 	var pv := node3d(pl, "Visual")
 	mesh(pv, "Pot", cyl(2.0, 3.2, 1.5), "terracotta")
