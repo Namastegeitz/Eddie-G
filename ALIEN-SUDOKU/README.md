@@ -8,6 +8,7 @@
 |---|---|
 | 🛰️ **Launch Control** (live checklist: tick a task and it turns green) | https://claude.ai/artifact/LzbsCTPkTUsxyLLCUWCgRM |
 | 🎮 **Play now** (in Claude) | https://claude.ai/artifact/NdYUzQJYiAGjCra9nF7MHn |
+| 🌐 **Play now** (shareable link, any browser, version 1.1.0) | https://rawcdn.githack.com/Namastegeitz/Eddie-G/cff49a00f7e25606123decf9bb2d81e2a99e7a61/ALIEN-SUDOKU/builds/web/AlienSudoku.html |
 | 🎵 **Music Lab** (the four theme songs) | https://claude.ai/artifact/6H8faAoJhQgu3UYEiDGX83 |
 | 📁 **On claude.ai** | The **ALIEN SUDOKU** folder on your Artifacts page holds all three |
 

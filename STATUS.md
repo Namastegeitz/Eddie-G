@@ -34,6 +34,7 @@
   '80s and '90s broadcasts; retro theme, Bungee font, synthwave grid), Hard Hostile, Alien Gnarly.
   Zen and Alien Duel keep the original lineup. New visitor tone "cadet", new song "Cadet Mixtape".
   Android versionCode 2, iOS build 2.
+  Shareable web link (1.1.0): https://rawcdn.githack.com/Namastegeitz/Eddie-G/cff49a00f7e25606123decf9bb2d81e2a99e7a61/ALIEN-SUDOKU/builds/web/AlienSudoku.html
 - Nov 17 (later): Easy difficulty is now neutral instead of pastel pink, with six color schemes in
   Settings > Easy colors (Moonstone default, Graphite, Sage, Ocean, Sand, Paper). The Alien Duel
   rookie "Baby Blip" is now "Cadet Xel" (classic alien head, calm lines).
