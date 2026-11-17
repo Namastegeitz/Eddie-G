@@ -279,6 +279,8 @@ func _build_hud() -> void:
 	eyebox.add_child(canopy_tip)
 	eye_btn = Widgets.EyeButton.new(124)
 	eye_btn.fpv = view == "fpv"
+	# where there's no touchscreen there's a keyboard: show the X key on it
+	eye_btn.key_hint = not DisplayServer.is_touchscreen_available()
 	eye_btn.pressed.connect(toggle_view)
 	eye_btn.size_flags_horizontal = Control.SIZE_SHRINK_END if left_handed else Control.SIZE_SHRINK_BEGIN
 	eyebox.add_child(eye_btn)
@@ -459,6 +461,8 @@ func _update_views(dt: float) -> void:
 		var tips: Dictionary = Content.onboarding.get("store_prompts", {}).get("canopy_tip", {})
 		if not sc.is_empty() and tips.has("scene_text"):
 			canopy_tip.text = String(tips.scene_text).replace("{scene}", String(sc.get("name", "")))
+		if eye_btn.key_hint and not canopy_tip.text.ends_with("(or press X)"):
+			canopy_tip.text += " (or press X)"
 		canopy_tip.visible = ahead and view == "bird" and not finished and not tut_bubble.visible
 		eye_btn.pulse = ahead and view == "bird" and not finished
 
@@ -701,13 +705,16 @@ func _autoplay_tick() -> void:
 
 func _over_hud(pos: Vector2) -> bool:
 	for c in hud_buttons:
-		if is_instance_valid(c) and c.is_visible_in_tree() and c.get_global_rect().grow(8).has_point(pos):
+		var pad := Widgets.EyeButton.TOUCH_PAD + 4.0 if c is Widgets.EyeButton else 8.0
+		if is_instance_valid(c) and c.is_visible_in_tree() and c.get_global_rect().grow(pad).has_point(pos):
 			return true
 	return false
 
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventKey and event.pressed and not event.echo:
+		if eye_btn and not eye_btn.key_hint:
+			eye_btn.key_hint = true
 		match event.keycode:
 			KEY_ESCAPE, KEY_P:
 				if not finished and not blocking:
@@ -717,6 +724,17 @@ func _unhandled_input(event: InputEvent) -> void:
 				if not blocking:
 					Game.restart_run()
 				return
+			KEY_X, KEY_V:
+				# switch view back and forth, like the eye button (any time
+				# the button itself could be tapped)
+				if not paused and not blocking:
+					toggle_view()
+					get_viewport().set_input_as_handled()
+				return
+	if event is InputEventJoypadButton and event.pressed and event.button_index == JOY_BUTTON_Y:
+		if not paused and not blocking:
+			toggle_view()
+		return
 	if not started or paused or blocking or finished or autoplay:
 		return
 	if event is InputEventKey and event.pressed and not event.echo:
@@ -729,8 +747,6 @@ func _unhandled_input(event: InputEvent) -> void:
 				sim.hop(Vector2i(-1, 0))
 			KEY_RIGHT, KEY_D:
 				sim.hop(Vector2i(1, 0))
-			KEY_V:
-				toggle_view()
 			KEY_SPACE, KEY_SHIFT:
 				sim.use_ability()
 			KEY_Q:
@@ -753,8 +769,6 @@ func _unhandled_input(event: InputEvent) -> void:
 				sim.hop(Vector2i(0, 1))
 			JOY_BUTTON_X, JOY_BUTTON_B:
 				sim.use_ability()
-			JOY_BUTTON_Y:
-				toggle_view()
 			JOY_BUTTON_START:
 				_pause()
 		return

@@ -558,16 +558,38 @@ class Globe extends Control:
 class EyeButton extends Control:
 	## Switches between bird's-eye and first-person view. Shows what you
 	## switch TO: an eye for first person, a bird for bird's-eye. Pulses when
-	## dense canopy is ahead.
+	## dense canopy is ahead. A tap (phone, tablet) or a click works, and so
+	## does the X key (key_hint shows an "X" keycap where there's a keyboard).
+	## Its touch area reaches a little past its edge (TOUCH_PAD), so a
+	## thumb that lands just outside still counts.
 	signal pressed
 
-	var fpv := false
+	const TOUCH_PAD := 18.0
+	var fpv := false:
+		set(v):
+			fpv = v
+			_describe()
+	var key_hint := false:
+		set(v):
+			key_hint = v
+			_describe()
 	var pulse := false
 	var t := 0.0
 
 	func _init(s := 124.0) -> void:
 		custom_minimum_size = Vector2(s, s)
 		mouse_filter = Control.MOUSE_FILTER_STOP
+		mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+		_describe()
+
+	## What a screen reader says, and the tooltip on hover.
+	func _describe() -> void:
+		var what := "Switch to first person" if not fpv else "Switch to bird's-eye view"
+		accessibility_name = what + " (X)"
+		tooltip_text = what + "  [X]"
+
+	func _has_point(point: Vector2) -> bool:
+		return Rect2(Vector2.ZERO, size).grow(TOUCH_PAD).has_point(point)
 
 	func _process(dt: float) -> void:
 		t += dt
@@ -603,6 +625,17 @@ class EyeButton extends Control:
 			draw_colored_polygon(PackedVector2Array([c + Vector2(-r * 0.75, -r * 0.05), c + Vector2(-r * 0.2, -r * 0.3), c + Vector2(0, -r * 0.08),
 				c + Vector2(r * 0.2, -r * 0.3), c + Vector2(r * 0.75, -r * 0.05), c + Vector2(0, r * 0.22)]), wing)
 		var font := UI.font(true)
+		if key_hint:
+			# a little "X" keyboard key (bottom right, with a key's raised
+			# edge, so it doesn't read as a close button): the key that does the same
+			var kc := c + Vector2(r * 0.86, r * 0.62)
+			var ks := r * 0.3
+			Draw.rrect(self, Rect2(kc - Vector2(ks, ks) + Vector2(0, ks * 0.28), Vector2(ks, ks) * 2.0), ks * 0.35, Color(0, 0, 0, 0.5))
+			Draw.rrect(self, Rect2(kc - Vector2(ks, ks), Vector2(ks, ks) * 2.0), ks * 0.35, Color("9a9686"))
+			Draw.rrect(self, Rect2(kc - Vector2(ks, ks) * 0.86 - Vector2(0, ks * 0.1), Vector2(ks, ks) * 1.72), ks * 0.3, Color("f4f1e6"))
+			var kfs := int(ks * 1.3)
+			var kw := font.get_string_size("X", HORIZONTAL_ALIGNMENT_LEFT, -1, kfs).x
+			draw_string(font, kc + Vector2(-kw * 0.5, kfs * 0.3), "X", HORIZONTAL_ALIGNMENT_LEFT, -1, kfs, Color("1a2a1a"))
 		var label := "First person" if not fpv else "Bird's-eye"
 		var fs := int(size.y * 0.15)
 		var w := font.get_string_size(label, HORIZONTAL_ALIGNMENT_LEFT, -1, fs).x

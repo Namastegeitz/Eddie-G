@@ -1358,6 +1358,35 @@ func _first_person() -> void:
 	for i in 3:
 		await get_tree().process_frame
 	check("a mouse click on the eye button switches back (once, no hop)", gs.view == "bird" and gs.sim.row == row_before and not gs.sim.hopping, "%s row %d" % [gs.view, gs.sim.row])
+	# X switches view back and forth too, even before the first hop; not while paused
+	var keyx := func():
+		var kx := InputEventKey.new()
+		kx.keycode = KEY_X
+		kx.pressed = true
+		get_viewport().push_input(kx, true)
+	gs.started = false
+	keyx.call()
+	var x1: String = gs.view
+	keyx.call()
+	var x2: String = gs.view
+	gs.started = true
+	check("X switches to first person and back (before the first hop too), no hop", x1 == "fpv" and x2 == "bird" and gs.sim.row == row_before, "%s %s" % [x1, x2])
+	gs.paused = true
+	keyx.call()
+	check("X does nothing while paused", gs.view == "bird")
+	gs.paused = false
+	# a thumb landing just past the button's edge still counts (tablets, phones)
+	await get_tree().create_timer(0.35).timeout
+	var er: Rect2 = gs.eye_btn.get_global_rect()
+	_tap(Vector2(er.end.x + Widgets.EyeButton.TOUCH_PAD * 0.6, er.get_center().y), true)
+	for i in 3:
+		await get_tree().process_frame
+	check("a tap just past the eye button's edge still switches view (no hop)", gs.view == "fpv" and gs.sim.row == row_before and not gs.sim.hopping, gs.view)
+	await get_tree().create_timer(0.35).timeout
+	_tap(eye_c, true)
+	for i in 3:
+		await get_tree().process_frame
+	check("where there's a keyboard the eye button shows its X key; screen readers hear what it does", gs.eye_btn.key_hint and "(X)" in gs.eye_btn.accessibility_name and "Switch to" in gs.eye_btn.accessibility_name, gs.eye_btn.accessibility_name)
 	gs.set_view("fpv")
 	gs.sim.row = 0
 	for i in 60:

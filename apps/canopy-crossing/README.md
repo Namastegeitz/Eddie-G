@@ -40,7 +40,8 @@ time, in ten real rainforests. Built from
   animal's eyes; a wide view that sees more to the left and right, above
   and further ahead, fitted to the screen's shape: about 93° x 124° on a
   phone, 112° x 80° on a wide screen. Settings > First-person view: Wide,
-  Extra wide or Classic). Switch any time with the eye button (or V). Every level
+  Extra wide or Classic). Switch back and forth any time: tap the eye button
+  (phone, tablet), click it, or press X (or V; gamepad Y). Every level
   has 1 to 3 dense-canopy stretches (1 in levels 1-3, 2 in 4-6, 3 in 7-10)
   that hide the ground from above, so you need first person to see the
   traffic, logs and predators under the leaves.
@@ -170,8 +171,10 @@ A new animal or region is a new JSON file. See [docs/CONTENT.md](docs/CONTENT.md
 
 See [RUN.md](RUN.md): open in Godot 4.7.2, press F5. Controls: tap to hop
 forward, swipe to hop any direction, the round button uses the ability, the
-eye button switches view. Keyboard: arrows/WASD, Space (ability), V (view),
-Q/E (power-ups), R (restart), Esc.
+eye button (tap or click) switches view. Keyboard: arrows/WASD, Space
+(ability), X or V (view), Q/E (power-ups), R (restart), Esc. Gamepad: Y
+switches view. Where there's a keyboard the eye button shows its X key, and
+screen readers announce what it does.
 
 ## Tests
 
@@ -180,7 +183,7 @@ tools/run_tests.sh          # compile check + phase audit (project and exported 
 FAST=1 tools/run_tests.sh   # levels 1 and 10 of each scene instead of all 220
 ```
 
-The phase audit (`tests/phase_audit.gd`, 403 checks) turns each phase's
+The phase audit (`tests/phase_audit.gd`, 407 checks) turns each phase's
 checkpoint from the brief into checks: grid hops, every hazard kind, every
 ability, all 50 animals, every region generating 200 rows, a path-finding bot
 beating **all 220 levels with the free Poison Dart Frog**, adding a map
@@ -192,7 +195,9 @@ frame cost.
 First person is checked on every run: the audit taps the eye button the
 way a real finger does, `tools/fpv_check.tscn` renders every scene with
 the real renderer and fails on a blank frame, and `tools/build_web.sh`
-tap-tests each web build in a phone-sized browser.
+tests each web build in a real browser: finger taps on a phone and a tablet,
+a mouse click on a desktop window, and the X key all switch the view (and
+never hop the animal).
 
 ## Layout
 

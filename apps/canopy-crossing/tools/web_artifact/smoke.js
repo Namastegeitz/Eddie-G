@@ -4,6 +4,8 @@
 // the eye button the way a finger does, and checks that first person really
 // shows (the game reports its view, and the picture changes to a 3D scene),
 // that the tap did not also hop the animal, and that a second tap goes back.
+// Then the X key switches back and forth, a tablet's finger taps do too,
+// and so does a mouse click on a desktop-sized window.
 //   node tools/web_artifact/smoke.js build/web_artifact canopy-crossing.html [shots-dir]
 const http = require('http');
 const fs = require('fs');
@@ -28,6 +30,22 @@ function serve() {
 }
 
 function fail(msg) { console.error('WEB SMOKE FAILED: ' + msg); process.exitCode = 1; }
+
+// Does `act` (a tap, click or key press), then waits for the game to report
+// a different view and lets it settle; returns the game's state.
+async function switched(page, act) {
+  const g = await page.evaluate(() => window.__canopy.game);
+  await act();
+  const t0 = Date.now();
+  let now = g;
+  while (Date.now() - t0 < 6000) {
+    now = await page.evaluate(() => window.__canopy.game);
+    if (now.view !== g.view) break;
+    await page.waitForTimeout(40);
+  }
+  await page.waitForTimeout(600);
+  return await page.evaluate(() => window.__canopy.game);
+}
 
 (async () => {
   const srv = await serve();
@@ -107,6 +125,41 @@ function fail(msg) { console.error('WEB SMOKE FAILED: ' + msg); process.exitCode
     if (diff.mean < 0.03 || diff.mean > 0.97 || diff.contrast < 0.03) fail('the first-person picture is blank or flat');
     const g2 = await tap();
     if (g2.view !== 'bird') fail('a second tap did not switch back to bird\'s-eye: ' + JSON.stringify(g2));
+    // the X key switches back and forth too
+    for (const want of ['fpv', 'bird']) {
+      const g = await switched(page, () => page.keyboard.press('x'));
+      console.log(`key X: -> ${g.view}`);
+      if (g.view !== want) fail(`pressing X did not switch to ${want}: ` + JSON.stringify(g));
+      if (g.row !== g0.row) fail(`pressing X also hopped the animal (row ${g0.row} -> ${g.row})`);
+    }
+    // a tablet (finger) and a desktop window (mouse click)
+    for (const dev of [
+      { name: 'tablet tap', opts: { viewport: { width: 820, height: 1180 }, isMobile: true, hasTouch: true, deviceScaleFactor: 2 }, how: 'tap' },
+      { name: 'desktop click', opts: { viewport: { width: 1280, height: 800 }, deviceScaleFactor: 1 }, how: 'click' },
+    ]) {
+      const c2 = await browser.newContext(dev.opts);
+      const p2 = await c2.newPage();
+      p2.on('pageerror', e => errors.push(e.message));
+      await p2.goto(url);
+      await p2.waitForFunction(() => window.__canopy && window.__canopy.done, null, { timeout: 180000 });
+      await p2.waitForFunction(() => window.__canopy.game && window.__canopy.game.eye[0] > 0 && window.__canopy.game.warm, null, { timeout: 90000 });
+      await p2.keyboard.press('F2');
+      await p2.waitForTimeout(1500);
+      const b2 = await p2.locator('#canvas').boundingBox();
+      const start = await p2.evaluate(() => window.__canopy.game);
+      for (const want of [start.view === 'bird' ? 'fpv' : 'bird', start.view]) {
+        const g = await switched(p2, async () => {
+          const e = (await p2.evaluate(() => window.__canopy.game)).eye;
+          const x = b2.x + e[0] * b2.width, y = b2.y + e[1] * b2.height;
+          if (dev.how === 'tap') await p2.touchscreen.tap(x, y); else await p2.mouse.click(x, y);
+        });
+        console.log(`${dev.name}: -> ${g.view}`);
+        if (g.view !== want) fail(`${dev.name} on the eye button did not switch to ${want}: ` + JSON.stringify(g));
+        if (g.row !== start.row) fail(`${dev.name} also hopped the animal`);
+        await p2.waitForTimeout(400);
+      }
+      await c2.close();
+    }
     const fatal = errors.filter(e => /abort|RuntimeError|out of memory|unreachable|SCRIPT ERROR/i.test(e));
     if (fatal.length) fail('errors in the page: ' + fatal.slice(0, 5).join(' | '));
   } catch (e) {
@@ -115,5 +168,5 @@ function fail(msg) { console.error('WEB SMOKE FAILED: ' + msg); process.exitCode
     await browser.close();
     srv.close();
   }
-  if (!process.exitCode) console.log('web smoke: first person works by touch in a phone browser');
+  if (!process.exitCode) console.log('web smoke: the view switches by touch on a phone and a tablet, by mouse click, and with the X key');
 })();

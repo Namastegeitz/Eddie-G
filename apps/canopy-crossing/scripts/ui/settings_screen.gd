@@ -32,7 +32,7 @@ func _ready() -> void:
 	box.add_child(_toggle("Mini-map", "mini_map", "A live map of the rows around you, and where you are in the level. Tap it to resize."))
 	box.add_child(_toggle("Show FPS counter", "show_fps", "For checking smoothness on your device."))
 	box.add_child(UI.label("Controls", 30, UI.ACCENT, true))
-	box.add_child(UI.wrap_label("Tap anywhere to hop forward. Swipe up, down, left or right to hop that way. The round button uses your animal's ability. Keyboard: arrows/WASD, Space for the ability, Q/E for power-ups, R to restart, Esc to pause.", 24, UI.TEXT))
+	box.add_child(UI.wrap_label("Tap anywhere to hop forward. Swipe up, down, left or right to hop that way. The round button uses your animal's ability; the eye button (tap or click) switches between bird's-eye and first person. Keyboard: arrows/WASD, Space for the ability, X to switch view, Q/E for power-ups, R to restart, Esc to pause. Gamepad: Y switches view.", 24, UI.TEXT))
 	box.add_child(UI.button("Replay the tutorial", func(): Game.start_tutorial(), UI.PANEL_3, 26, 80))
 	box.add_child(UI.button("Restore purchases", func():
 		Store.restore()
