@@ -110,6 +110,15 @@ const SCENES = [
     },
   },
   {
+    id: 'play-cadets', run: async (page) => {
+      await page.locator('.menu-quick').click();
+      await page.locator('.diff-option.diff-medium').click();
+      await page.waitForSelector('.screen-play');
+      await setClock(page, 4 * 60_000 + 51_000);
+      await partSolve(page, 0.5);
+    },
+  },
+  {
     id: 'duel', run: async (page) => {
       await page.locator('.menu-duel').click();
       await page.locator('.rival-card', { hasText: 'Commander Vex' }).click();

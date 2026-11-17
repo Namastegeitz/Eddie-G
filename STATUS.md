@@ -29,6 +29,11 @@
   bug and feedback reports stored on the page). README checklist: `ALIEN-SUDOKU/README.md`.
 - Store-readiness fixes made Nov 17: in-app privacy policy, Report an ad, iOS privacy manifest,
   no banner during play, ads capped at PG, wider iPad layout, "computer rival" wording.
+- Version 1.1.0 (Nov 18): **Star Cadets**. New mode-aware difficulty lineup in Campaign, Daily and
+  Quick Play: Easy Alien Creatures, Medium Star Cadets (new set: academy recruits raised on Earth's
+  '80s and '90s broadcasts; retro theme, Bungee font, synthwave grid), Hard Hostile, Alien Gnarly.
+  Zen and Alien Duel keep the original lineup. New visitor tone "cadet", new song "Cadet Mixtape".
+  Android versionCode 2, iOS build 2.
 - Nov 17 (later): Easy difficulty is now neutral instead of pastel pink, with six color schemes in
   Settings > Easy colors (Moonstone default, Graphite, Sage, Ocean, Sand, Paper). The Alien Duel
   rookie "Baby Blip" is now "Cadet Xel" (classic alien head, calm lines).
