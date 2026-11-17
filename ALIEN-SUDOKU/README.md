@@ -151,7 +151,7 @@ listing.json has three TODO fields only you can fill.
 
 <details><summary>✅ <b>Make screenshots for every store size</b> · 🤖 Claude · Every store</summary>
 
-6 scenes for iPhone 6.9", iPad 13", Android phone, Android 10" tablet and 1920x1080 PC (store-launch/assets/screenshots).
+7 scenes (including the Star Cadets board) for iPhone 6.9", iPad 13", Android phone, Android 10" tablet and 1920x1080 PC (store-launch/assets/screenshots), re-made for version 1.1.0.
 
 **Steps**
 

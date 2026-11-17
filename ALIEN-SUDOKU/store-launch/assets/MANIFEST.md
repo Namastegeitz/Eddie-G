@@ -10,7 +10,7 @@ Made by `game/tools/store-assets.mjs` from the current build. Run it again after
 - `screenshots/google-tablet-10in/`: Google Play 10" tablet (1600x2560)
 - `screenshots/pc-1920x1080/`: Steam, GOG, itch.io, Epic, Microsoft Store (1920x1080)
 
-Scenes (JPEG, quality 92): 1. menu · 2. play-easy · 3. duel · 4. play-alien · 5. campaign · 6. win
+Scenes (JPEG, quality 92): 1. menu · 2. play-easy · 3. play-cadets · 4. duel · 5. play-alien · 6. campaign · 7. win
 
 ## Graphics
 
