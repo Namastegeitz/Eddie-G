@@ -150,7 +150,9 @@ class Kit:
 			quad(a, b, cc, d)
 
 	## A leaf blade along local +Z, pointed at both ends, bending down.
-	func blade(xf: Transform3D, length: float, width: float, col0: Color, col1: Color, bend := 0.3, segs := 3) -> void:
+	## `nup` turns the shading normal towards straight up (0..1), so standing
+	## blades of grass are lit like the turf they grow from.
+	func blade(xf: Transform3D, length: float, width: float, col0: Color, col1: Color, bend := 0.3, segs := 3, nup := 0.0) -> void:
 		var base := v.size()
 		for i in segs + 1:
 			var k := float(i) / segs
@@ -158,6 +160,8 @@ class Kit:
 			var y := -bend * length * k * k
 			var col := col0.lerp(col1, k)
 			var nn := (xf.basis * Vector3(0, 1, 2.0 * bend * k)).normalized()
+			if nup > 0.0:
+				nn = nn.lerp(Vector3.UP, nup).normalized()
 			_add(xf * Vector3(-w, y, k * length), nn, col)
 			_add(xf * Vector3(w, y + w * 0.25, k * length), nn, col.lightened(0.06))
 		for i in segs:
@@ -423,7 +427,7 @@ static func build_lane(lane: Lane, sc: Dictionary, pal: Dictionary, detail: int,
 
 ## Builds (and caches) one row's meshes ahead of time, without making nodes.
 ## True if it did any work, so callers can do one per frame.
-static func warm_row(lane: Lane, sc: Dictionary, pal: Dictionary, detail: int, zone_rows: Vector2i, trees: Array = [], plants: Array = []) -> bool:
+static func warm_row(lane: Lane, sc: Dictionary, pal: Dictionary, detail: int, zone_rows: Vector2i, trees: Array = [], plants: Array = [], banks := 0) -> bool:
 	if lane.covered:
 		var mid := (zone_rows.x + zone_rows.y) / 2
 		var key := _row_key(lane, sc, pal, detail, mid)
@@ -432,10 +436,10 @@ static func warm_row(lane: Lane, sc: Dictionary, pal: Dictionary, detail: int, z
 		_cache_put(key, _row_meshes(lane, sc, pal, detail, mid))
 		return true
 	if lane.type == "safe" and not lane.goal:
-		var key2 := _open_key(lane, pal, detail, trees, plants)
+		var key2 := _open_key(lane, pal, detail, trees, plants, banks)
 		if _row_cache.has(key2):
 			return false
-		_cache_put(key2, _open_entry(lane, pal, detail, trees, plants))
+		_cache_put(key2, _open_entry(lane, pal, detail, trees, plants, banks))
 		return true
 	return false
 
@@ -524,11 +528,13 @@ static func _row_meshes(lane: Lane, sc: Dictionary, pal: Dictionary, detail: int
 ## An open row's dressing: grass and flowers (one mesh), and, with detailed
 ## models, the jungle's own trees on both sides every third row and plants
 ## and mossy rocks along the edges. `trees` / `plants`: prop kinds to use.
-static func open_lane(lane: Lane, pal: Dictionary, detail: int, trees: Array = [], plants: Array = []) -> Node3D:
-	var key := _open_key(lane, pal, detail, trees, plants)
+## `banks`: 1 when the row beyond is water, 2 when the nearer row is (reeds
+## and shore stones grow along that edge).
+static func open_lane(lane: Lane, pal: Dictionary, detail: int, trees: Array = [], plants: Array = [], banks := 0) -> Node3D:
+	var key := _open_key(lane, pal, detail, trees, plants, banks)
 	var entry: Array = _row_cache.get(key, [])
 	if entry.is_empty():
-		entry = _open_entry(lane, pal, detail, trees, plants)
+		entry = _open_entry(lane, pal, detail, trees, plants, banks)
 		_cache_put(key, entry)
 	if entry[0] == null and (entry[1] as Array).is_empty():
 		return null
@@ -544,19 +550,19 @@ static func open_lane(lane: Lane, pal: Dictionary, detail: int, trees: Array = [
 	return root
 
 
-static func _open_key(lane: Lane, pal: Dictionary, detail: int, trees: Array, plants: Array) -> String:
+static func _open_key(lane: Lane, pal: Dictionary, detail: int, trees: Array, plants: Array, banks := 0) -> String:
 	# row % 6 covers both the trees (every 3rd row) and the two grass colours
-	return "open|%s|%s|%s|%d|%d|%s|%s|%s" % [String(pal.get("safe", "")), String(pal.get("canopy", "")), lane.type, detail, lane.row % 6, str(lane.tiles.keys()), ",".join(trees), ",".join(plants)]
+	return "open|%s|%s|%s|%d|%d|%s|%s|%s|%d" % [String(pal.get("safe", "")), String(pal.get("canopy", "")), lane.type, detail, lane.row % 6, str(lane.tiles.keys()), ",".join(trees), ",".join(plants), banks]
 
 
-static func _open_entry(lane: Lane, pal: Dictionary, detail: int, trees: Array, plants: Array) -> Array:
+static func _open_entry(lane: Lane, pal: Dictionary, detail: int, trees: Array, plants: Array, banks := 0) -> Array:
 	var variant := lane.row % 6
 	var specs := _open_models(lane, detail, variant, trees, plants)
 	var has_trees := false
 	for sp in specs:
 		if float(sp.height) > 2.0:
 			has_trees = true
-	return [_open_mesh(lane, pal, detail, variant, has_trees), specs]
+	return [_open_mesh(lane, pal, detail, variant, has_trees, banks), specs]
 
 
 static func _open_models(lane: Lane, detail: int, variant: int, trees: Array, plants: Array) -> Array:
@@ -593,7 +599,7 @@ static func _open_models(lane: Lane, detail: int, variant: int, trees: Array, pl
 	return out
 
 
-static func _open_mesh(lane: Lane, pal: Dictionary, detail: int, variant: int, model_trees := false) -> Mesh:
+static func _open_mesh(lane: Lane, pal: Dictionary, detail: int, variant: int, model_trees := false, banks := 0) -> Mesh:
 	var k := Kit.new()
 	var rng := RandomNumberGenerator.new()
 	rng.seed = variant * 977 + 5
@@ -608,22 +614,101 @@ static func _open_mesh(lane: Lane, pal: Dictionary, detail: int, variant: int, m
 			for j in 4:
 				var c := leaf.lightened(0.05 * j).darkened(rng.randf_range(0.0, 0.15))
 				k.blob(xf(p + Vector3(rng.randf_range(-0.35, 0.35), 2.45 + j * 0.25, rng.randf_range(-0.25, 0.25))), Vector3(0.75 - j * 0.1, 0.42, 0.62 - j * 0.08), c, seg, 0.3)
-	var n := 0 if lane.type != "safe" or detail <= 0 else (16 if detail > 1 else 8)
-	for i in n:
-		var x := rng.randf_range(-1.2, 10.2)
-		if lane.tiles.has(int(floorf(x))):
-			continue
-		var p := Vector3(x, 0.0, rng.randf_range(-0.45, 0.45))
-		for b in 5:
-			var a := TAU * b / 5.0 + rng.randf() * 0.5
-			k.blade(xf(p, a, -1.2 + rng.randf_range(-0.2, 0.2)), rng.randf_range(0.12, 0.2), 0.035, g.darkened(0.25), g.lightened(0.18), -0.3, 2)
-		if rng.randf() < 0.25:
-			var fp := p + Vector3(0.06, 0.12, 0.0)
-			k.cylinder(xf(p + Vector3(0.06, 0, 0)), 0.006, 0.006, 0.12, g.darkened(0.2), g, 3)
-			for j in 5:
-				var a2 := TAU * j / 5.0
-				k.blob(xf(fp + Vector3(cos(a2) * 0.025, 0, sin(a2) * 0.025)), Vector3(0.022, 0.008, 0.022), accent.lerp(Color.WHITE, 0.3 * (i % 2)), 4)
+	if lane.type == "safe" and detail > 0:
+		_ground_cover(k, lane, rng, g, accent, leaf, detail, banks)
 	return k.mesh() if not k.empty() else null
+
+
+## Ground cover for an open grassy row, all in the row's one mesh: dense
+## tufts of grass, flowers, small leafy plants, pebbles and fallen leaves,
+## and reeds, cattails and stones along a riverbank. Inside the nine play
+## columns everything stays ankle-high, so it never hides what is coming;
+## the tall reeds grow only beyond the edges. Nothing grows on a tile that
+## holds an obstacle.
+static func _ground_cover(k: Kit, lane: Lane, rng: RandomNumberGenerator, g: Color, accent: Color, leaf: Color, detail: int, banks: int) -> void:
+	var hi := detail > 1
+	var blooms := [accent.lerp(Color.WHITE, 0.15), Color("fbf7ee"), accent.lerp(Color("e8443a"), 0.6), Color("c88ae8")]
+	var free := func(x: float) -> bool:
+		var c := int(floorf(x))
+		return not (c >= 0 and c < Lane.COLS and lane.tiles.has(c))
+	# tufts of grass: fine blades in the turf's own green, sunlit at the tips
+	var turf := g.lerp(Color("5a7a3a"), 0.32).darkened(0.16)
+	for i in (84 if hi else 30):
+		var x := rng.randf_range(-1.4, 10.4)
+		if not free.call(x):
+			continue
+		var p := Vector3(x, 0.0, rng.randf_range(-0.47, 0.47))
+		var gc := turf.lerp(Color("9ab040"), rng.randf_range(0.0, 0.3)).lightened(rng.randf_range(-0.04, 0.08))
+		var nb := (9 + rng.randi() % 5) if hi else 6
+		var tall := 1.0 if x > -0.2 and x < 9.2 else 1.6
+		var lean := rng.randf() * TAU
+		for b in nb:
+			var a := TAU * b / nb + rng.randf() * 0.7
+			var droop := -1.32 + rng.randf_range(-0.25, 0.15) + 0.12 * cos(a - lean)
+			k.blade(xf(p + Vector3(cos(a), 0, sin(a)) * 0.014, a, droop), rng.randf_range(0.08, 0.19) * tall, 0.018, gc.darkened(0.12), gc.lightened(rng.randf_range(0.18, 0.36)), -0.4, 2, 0.85)
+		if rng.randf() < 0.2:
+			# a flower on a thin stem
+			var fc: Color = blooms[rng.randi() % blooms.size()]
+			var sh := rng.randf_range(0.1, 0.17)
+			var fp := p + Vector3(0.03, sh, 0.0)
+			k.cylinder(xf(p + Vector3(0.03, 0, 0)), 0.006, 0.005, sh, gc.darkened(0.2), gc, 3)
+			for j in 5:
+				var a2 := TAU * j / 5.0 + rng.randf() * 0.3
+				k.blob(xf(fp + Vector3(cos(a2) * 0.026, 0.002, sin(a2) * 0.026), a2), Vector3(0.026, 0.008, 0.016), fc, 5, 0.0, 0.15)
+			k.blob(xf(fp + Vector3(0, 0.006, 0)), Vector3.ONE * 0.012, Color("f6c21a"), 5)
+	if not hi:
+		return
+	# small leafy plants: a rosette of broad leaves
+	for i in 6:
+		var x2 := rng.randf_range(-1.2, 10.2)
+		if not free.call(x2):
+			continue
+		var p2 := Vector3(x2, 0.0, rng.randf_range(-0.4, 0.4))
+		var lc := leaf.lerp(g, rng.randf_range(0.45, 0.75)).lightened(0.12)
+		var nl := 4 + rng.randi() % 3
+		for j in nl:
+			var a3 := TAU * j / nl + rng.randf() * 0.4
+			k.blade(xf(p2, a3, -0.7 + rng.randf_range(-0.1, 0.15)), rng.randf_range(0.11, 0.16), 0.085, lc, lc.lightened(0.24), 0.6, 3, 0.85)
+	# pebbles and a few bigger stones
+	for i in 8:
+		var x3 := rng.randf_range(-1.3, 10.3)
+		if not free.call(x3):
+			continue
+		var r := rng.randf_range(0.018, 0.045) * (2.2 if rng.randf() < 0.15 else 1.0)
+		var sc := Color("8a877e").lerp(Color("b0a890"), rng.randf()).darkened(rng.randf_range(0.0, 0.2))
+		k.blob(xf(Vector3(x3, r * 0.25, rng.randf_range(-0.46, 0.46)), rng.randf() * TAU), Vector3(r * 1.3, r * 0.7, r), sc, 6, 0.25, 0.45)
+	# fallen leaves lying flat
+	var litter := [Color("b08a3a"), Color("8a5a2a"), Color("c4a24a"), leaf.lerp(Color("9a7a2a"), 0.5)]
+	for i in 7:
+		var x4 := rng.randf_range(-1.2, 10.2)
+		if not free.call(x4):
+			continue
+		k.blade(xf(Vector3(x4, 0.004 + i * 0.0003, rng.randf_range(-0.46, 0.46)), rng.randf() * TAU), rng.randf_range(0.09, 0.15), rng.randf_range(0.05, 0.08), litter[i % 4], Color(litter[(i + 1) % 4]).darkened(0.1), 0.0, 1)
+	# a riverbank: reeds and cattails beyond the play columns, sedge and
+	# half-sunk stones along the waterline inside them
+	for edge in [1, 2]:
+		if banks & edge == 0:
+			continue
+		var ez := -0.47 if edge == 1 else 0.47
+		var rc := leaf.lerp(Color("6a8a3a"), 0.4)
+		for i in 9:
+			var outside := i < 5
+			var x5 := (rng.randf_range(-1.5, -0.3) if i % 2 == 0 else rng.randf_range(9.3, 10.5)) if outside else rng.randf_range(0.0, 9.0)
+			if not free.call(x5):
+				continue
+			var p5 := Vector3(x5, 0.0, ez + rng.randf_range(-0.04, 0.04))
+			var nr := 5 + rng.randi() % 3
+			for j in nr:
+				var a5 := TAU * j / nr + rng.randf() * 0.5
+				var ln := rng.randf_range(0.32, 0.55) if outside else rng.randf_range(0.11, 0.17)
+				k.blade(xf(p5 + Vector3(cos(a5), 0, sin(a5)) * 0.02, a5, -1.42 + rng.randf_range(-0.08, 0.08)), ln, 0.026, rc.darkened(0.2), rc.lightened(rng.randf_range(0.08, 0.24)), -0.12, 3, 0.75)
+			if outside and rng.randf() < 0.6:
+				var ch := rng.randf_range(0.45, 0.6)
+				k.cylinder(xf(p5), 0.006, 0.005, ch, rc.darkened(0.2), rc, 3)
+				k.blob(xf(p5 + Vector3(0, ch, 0)), Vector3(0.022, 0.06, 0.022), Color("6a4326"), 6, 0.0, 0.3)
+			if not outside:
+				var sr := rng.randf_range(0.04, 0.07)
+				k.blob(xf(Vector3(x5 + 0.12, -0.01, ez), rng.randf() * TAU), Vector3(sr * 1.3, sr * 0.6, sr), Color("6a6a60").lerp(Color("4f8a3a"), rng.randf_range(0.0, 0.4)), 7, 0.2, 0.4)
 
 
 static func _pick(props: Dictionary, rng: RandomNumberGenerator, lane_type: String, second: bool) -> String:

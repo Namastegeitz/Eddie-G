@@ -10,6 +10,9 @@ var atm: Dictionary = {}
 var fpv := false                 # first-person: no 2D frame or mist
 var t := 0.0
 var _gust := []
+var _frame := {}                 # side -> foliage mesh (High / Medium), rebuilt when the size changes
+var _frame_key := Vector3.ZERO
+const FRAME_PERIOD := 180.0
 
 
 func setup(world_view: WorldView) -> void:
@@ -79,7 +82,18 @@ func _draw() -> void:
 	if fpv:
 		return
 	# canopy frame: solid foliage beyond the play field, leaves reaching in
-	for side: int in [-1, 1]:
+	if Draw.detail > 0:
+		var key := Vector3(vp.x, vp.y, fx)
+		if key != _frame_key:
+			_frame_key = key
+			for sd: float in [-1.0, 1.0]:
+				_frame[sd] = Terrain.side_foliage(sd, fx if sd < 0.0 else fx + fw, vp.x, vp.y, FRAME_PERIOD, canopy, dark)
+		var off := fposmod(scroll * 0.9, FRAME_PERIOD)
+		for sd2: float in [-1.0, 1.0]:
+			draw_set_transform(Vector2(sin(t * 1.1 + sd2) * 2.0, off))
+			draw_mesh(_frame[sd2], null)
+		draw_set_transform(Vector2.ZERO)
+	for side: int in ([] if Draw.detail > 0 else [-1, 1]):
 		var edge := fx if side < 0 else fx + fw
 		var inward := -float(side)
 		var solid_from := 0.0 if side < 0 else edge + 30.0

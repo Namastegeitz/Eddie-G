@@ -61,6 +61,8 @@ func _ready() -> void:
 				await _trade_roads()
 			"silly":
 				await _silly_faces()
+			"terrain":
+				await _hd_terrain()
 		print("phase audit (%s): %d passed, %d failed" % [only, passed, failed])
 		Save.wipe()
 		Save.path = real_save
@@ -80,6 +82,7 @@ func _ready() -> void:
 	_models()
 	await _trade_roads()
 	await _silly_faces()
+	await _hd_terrain()
 	_phase8()
 	Save.wipe()
 	Save.path = real_save
@@ -1960,6 +1963,151 @@ func _silly_faces() -> void:
 ## starts and ends harder than the one before; the first five jungles bring
 ## their hazards in level by level; and generated levels really are gentler
 ## early on (slower movers, fewer kinds of hazard).
+## High-definition terrain on every map, in both views.
+func _hd_terrain() -> void:
+	begin("High-definition maps: ground, water, plants, canopy")
+	var shaders_ok := true
+	for path in ["res://assets/shaders/ground.gdshader", "res://assets/shaders/water.gdshader", "res://assets/shaders/ground3d.gdshader", "res://assets/shaders/water3d.gdshader"]:
+		var sh: Shader = load(path)
+		shaders_ok = shaders_ok and sh != null and sh.get_shader_uniform_list().size() >= 8
+	check("the four terrain shaders (ground and water, bird's-eye and first person) load and compile", shaders_ok)
+	check("terrain noise textures are 256 px with mipmaps", Terrain.soft().get_width() == 256 and Terrain.fine().get_image().has_mipmaps())
+	# each jungle's floor has its own character, read from its atmosphere
+	var st_ok := true
+	for m in Content.playable_maps():
+		var st := Terrain.style(Content.map(String(m)))
+		for k in ["wet", "moss", "dry", "dapple"]:
+			st_ok = st_ok and float(st[k]) >= 0.0 and float(st[k]) <= 1.0
+	check("every jungle has a ground style (wet, moss, dry, dapple between 0 and 1)", st_ok)
+	check("the Chocó is wet, Monteverde mossy, Masoala dry", float(Terrain.style(Content.map("choco")).wet) > 0.5 and float(Terrain.style(Content.map("monteverde")).moss) > 0.5 and float(Terrain.style(Content.map("masoala")).dry) > 0.5)
+	# bird's-eye dressing: hundreds of shapes in one mesh, never on an obstacle
+	var T := WorldView.T
+	var grassy := Lane.new()
+	grassy.row = 6
+	grassy.type = "safe"
+	grassy.deco = 1234
+	grassy.tiles = {3: {"kind": "brush", "hazard": "fallen_tree"}, 4: {"kind": "brush", "hazard": "fallen_tree"}}
+	var tris_all := 0
+	var on_tiles := 0
+	for m in Content.playable_maps():
+		var mesh := Terrain.lane_decor(grassy, "water", "ground", Content.map(String(m)), 2, -220.0, 1160.0, T)
+		if mesh == null:
+			tris_all = -100000
+			continue
+		var arr := mesh.surface_get_arrays(0)
+		tris_all += (arr[Mesh.ARRAY_INDEX] as PackedInt32Array).size() / 3
+		for v in (arr[Mesh.ARRAY_VERTEX] as PackedVector2Array):
+			if v.x > 3.0 * T + 22.0 and v.x < 5.0 * T - 22.0:
+				on_tiles += 1
+	var per := tris_all / maxi(1, Content.playable_maps().size())
+	check("every map's grassy rows carry a detailed dressing mesh (> 1000 triangles each on High)", per > 1000, "%d a row" % per)
+	check("no plant, stone or leaf grows on a tile that holds an obstacle", on_tiles == 0, str(on_tiles))
+	var river := Lane.new()
+	river.row = 7
+	river.type = "water"
+	var rm := Terrain.lane_decor(river, "safe", "safe", Content.map("choco"), 2, -220.0, 1160.0, T)
+	check("rivers get reeds, cattails and shore stones along both banks", rm != null and (rm.surface_get_arrays(0)[Mesh.ARRAY_INDEX] as PackedInt32Array).size() / 3 > 400)
+	var cr := Terrain.canopy_roof(9, -220.0, 1160.0, T, Color("2a7a3a"), Color("0b3a1a"), true, false)
+	check("the canopy roof is layered, shaded crowns of leaves", (cr.surface_get_arrays(0)[Mesh.ARRAY_INDEX] as PackedInt32Array).size() / 3 > 2000)
+	# in a real run, on High: shaded ground and water, decoration, no seams of flat colour
+	Save.wipe()
+	Save.data.seen_intro = Content.playable_maps()
+	Save.set_setting("graphics", "high")
+	Gfx.apply(get_tree())
+	var main: Control = load("res://scenes/main.tscn").instantiate()
+	add_child(main)
+	await get_tree().process_frame
+	Game.start_run({"mode": "journey", "map": "choco", "stage": 3, "seed": 7, "animal": "poison_dart_frog"})
+	await get_tree().process_frame
+	var gs = Game.current
+	gs.started = true
+	gs.blocking = false
+	for i in 3:
+		gs._update_views(1.0 / 60.0)
+	var shaded := 0
+	var water_ok := 0
+	var waters := 0
+	var dressed := 0
+	var open_rows := 0
+	for row in gs.wv._lanes:
+		var lv = gs.wv._lanes[row]
+		if lv.lane.covered:
+			continue
+		if lv.surface != null and lv.surface.material is ShaderMaterial:
+			shaded += 1
+		if lv.lane.type == "water":
+			waters += 1
+			var wm: ShaderMaterial = lv.water_mat
+			if wm and int(wm.get_shader_parameter("up")) == (1 if gs.world.lane(row + 1).type == "water" else 0):
+				water_ok += 1
+		if lv.lane.type == "safe" and lv.lane.layout == "":
+			open_rows += 1
+			if lv.decor != null:
+				dressed += 1
+	var open_cnt: int = gs.wv._lanes.keys().filter(func(r): return not gs.wv._lanes[r].lane.covered).size()
+	check("bird's-eye: every open row is shaded per pixel (High)", shaded == open_cnt and shaded > 5, "%d of %d" % [shaded, open_cnt])
+	check("bird's-eye: rivers know which banks they have (no foam between two water rows)", waters == 0 or water_ok == waters, "%d of %d" % [water_ok, waters])
+	check("bird's-eye: every grassy row is dressed with plants and stones", dressed == open_rows and open_rows > 0, "%d of %d" % [dressed, open_rows])
+	gs.toggle_view()
+	for i in 3:
+		gs._update_views(1.0 / 60.0)
+	var g3 := 0
+	var w3 := 0
+	var rows3 := 0
+	var tall_inside := 0.0
+	var reeds_outside := 0.0
+	for r in gs.wv3._lanes:
+		var node: Node3D = gs.wv3._lanes[r]
+		var l: Lane = gs.world.lane(r)
+		var ground := node.get_child(0) as MeshInstance3D
+		if ground == null or l.goal:
+			continue
+		rows3 += 1
+		var sm := ground.material_override as ShaderMaterial
+		if sm != null:
+			var path := String(sm.shader.resource_path)
+			if path.ends_with("water3d.gdshader") and l.type == "water":
+				w3 += 1
+			elif path.ends_with("ground3d.gdshader") and l.type != "water":
+				g3 += 1
+		var open := node.get_node_or_null("Open")
+		if open and open.get_child_count() > 0 and l.type == "safe" and (gs.world.lane(r + 1).type == "water" or gs.world.lane(r - 1).type == "water"):
+			var om := (open.get_child(0) as MeshInstance3D).mesh
+			if om:
+				for v in (om.surface_get_arrays(0)[Mesh.ARRAY_VERTEX] as PackedVector3Array):
+					if v.x > 0.0 and v.x < 9.0:
+						tall_inside = maxf(tall_inside, v.y)
+					elif v.x < -0.3 or v.x > 9.3:
+						reeds_outside = maxf(reeds_outside, v.y)
+	check("first person: every row's ground and water are shaded per pixel (High)", g3 + w3 == rows3 and rows3 > 10, "%d + %d of %d" % [g3, w3, rows3])
+	check("first person: banks grow tall reeds beyond the play columns", reeds_outside > 0.4, "%.2f" % reeds_outside)
+	check("first person: ground cover in the play columns stays ankle-high (never hides a hazard)", tall_inside > 0.05 and tall_inside < 0.26, "%.2f" % tall_inside)
+	var meshes: int = gs.wv3.world3.find_children("*", "MeshInstance3D", true, false).size()
+	check("first person stays light with the detail added (< 350 meshes)", meshes < 350, str(meshes))
+	main.queue_free()
+	await get_tree().process_frame
+	# Low keeps the old flat drawing (no shaders) for slow phones
+	Save.set_setting("graphics", "low")
+	Gfx.apply(get_tree())
+	var main2: Control = load("res://scenes/main.tscn").instantiate()
+	add_child(main2)
+	await get_tree().process_frame
+	Game.start_run({"mode": "journey", "map": "choco", "stage": 3, "seed": 7, "animal": "poison_dart_frog"})
+	await get_tree().process_frame
+	var gs2 = Game.current
+	gs2._update_views(1.0 / 60.0)
+	var any_shader := false
+	for row in gs2.wv._lanes:
+		if gs2.wv._lanes[row].surface != null or gs2.wv._lanes[row].decor != null:
+			any_shader = true
+	check("Low graphics draws flat ground with no shaders or dressing", not any_shader)
+	main2.queue_free()
+	await get_tree().process_frame
+	Save.set_setting("graphics", "auto")
+	Gfx.apply(get_tree())
+	Save.wipe()
+
+
 func _difficulty_curve(playable: Array) -> void:
 	var want := {"amazon": "easy", "congo": "easy", "borneo": "medium", "daintree": "medium", "masoala": "medium",
 		"monteverde": "hard", "new_guinea": "hard", "atlantic_forest": "expert", "khao_sok": "expert"}

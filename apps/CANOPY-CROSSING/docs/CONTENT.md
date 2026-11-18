@@ -81,6 +81,12 @@ Copy an existing map and change:
   (add the product to `content/store/catalog.json`)
 - `flag` (pennant colours + 3-letter code), `palette` (lane, water, canopy
   and UI colours), `atmosphere` (`mist`, `light_shafts`, `rain`, `fog_color`)
+- `terrain` (optional): how the high-definition ground looks, each 0 to 1:
+  `wet` (puddles, darker soil, murky water), `moss` (mossy stones, clover),
+  `dry` (cracked, paler soil, straw in the grass), `dapple` (canopy light
+  and shade on the floor). Left out, they come from `atmosphere` (rain and
+  steam make it wet, mist mossy, dust dry) and the `wetlands` generator
+  (see `Terrain.style` in `scripts/view/terrain.gd`).
 - `music`: `file` (the classic song) plus synth settings (`tempo`, `root`,
   `scale`, `lead`, `drums`, `drone`), `calm_file` (the calm song, played by
   default) and `hz`: the tone the calm song is tuned to, `528` or `963`

@@ -218,25 +218,83 @@ class LaneView extends Node2D:
 	var row := 0
 	var dyn: Node2D
 
-	var surface: Node2D
+	var surface: Node2D             # the shaded ground or water (not on Low, not under the canopy)
 	var water_mat: ShaderMaterial
+	var decor: ArrayMesh            # plants, stones, fallen leaves, reeds: one mesh
+
+	## What a neighbouring row is to the ground shader: 1 water, 2 dirt, 3 grass.
+	static func _code(l: Lane) -> int:
+		return 1 if l.type == "water" else (2 if l.type == "ground" else 3)
+
+	func _tone(l: Lane) -> Color:
+		var even := l.row % 2 == 0
+		if l.type == "ground":
+			return wv.color("ground_alt" if even else "ground")
+		return wv.color("safe_alt" if even else "safe")
 
 	func _ready() -> void:
-		if lane.type == "water" and Draw.detail > 0:
-			# shader water under everything else in the lane
+		var T := WorldView.T
+		if Draw.detail > 0 and not lane.covered:
+			var up := wv.sim.world.lane(row + 1)
+			var down := wv.sim.world.lane(row - 1)
+			var st := Terrain.style(wv.map)
+			var fine := 1.0 if Draw.detail > 1 else 0.7
+			var m := ShaderMaterial.new()
+			m.set_shader_parameter("n_soft", Terrain.soft())
+			m.set_shader_parameter("n_fine", Terrain.fine())
+			m.set_shader_parameter("row", float(row))
+			m.set_shader_parameter("tile", T)
+			m.set_shader_parameter("fine", fine)
+			if lane.type == "water":
+				m.shader = WorldView.water_shader()
+				m.set_shader_parameter("base", wv.color("water"))
+				m.set_shader_parameter("deep", wv.color("water_deep"))
+				m.set_shader_parameter("foam", wv.color("foam"))
+				m.set_shader_parameter("bed", wv.color("ground"))
+				m.set_shader_parameter("flow", (lane.speed if lane.speed != 0.0 else 0.4) * (1.6 if lane.fast else 1.0) * 0.5)
+				m.set_shader_parameter("glints", 1.0 if Draw.detail > 1 else 0.6)
+				m.set_shader_parameter("up", 1 if up.type == "water" else 0)
+				m.set_shader_parameter("down", 1 if down.type == "water" else 0)
+				m.set_shader_parameter("murk", clampf(float(st.wet) * 0.8, 0.0, 1.0))
+				m.set_shader_parameter("rapids", 1.0 if lane.fast else 0.0)
+				water_mat = m
+			else:
+				m.shader = Terrain.ground_shader()
+				var c := _tone(lane)
+				var kind := 0
+				if lane.type == "ground":
+					kind = 1
+					m.set_shader_parameter("base", c.darkened(0.04))
+					m.set_shader_parameter("alt", c.lightened(0.1))
+				elif lane.layout == "falls":
+					kind = 2
+					var fh := Content.hazard(String(lane.tiles.values()[0].hazard)) if not lane.tiles.is_empty() else {}
+					var rock := Color(String(fh.get("art", {}).get("colors", {}).get("rock", "#6a6e60")))
+					m.set_shader_parameter("base", rock.darkened(0.3))
+					m.set_shader_parameter("alt", rock.darkened(0.12))
+				else:
+					m.set_shader_parameter("base", c.darkened(0.05))
+					m.set_shader_parameter("alt", c.lightened(0.09).lerp(Color(0.62, 0.72, 0.2), 0.08))
+				m.set_shader_parameter("kind", kind)
+				m.set_shader_parameter("soil", wv.color("ground"))
+				m.set_shader_parameter("accent", wv.color("accent", "#f6d43a"))
+				m.set_shader_parameter("up", _code(up))
+				m.set_shader_parameter("down", _code(down) if row > 0 else 3)
+				m.set_shader_parameter("col_up", _tone(up))
+				m.set_shader_parameter("col_down", _tone(down))
+				m.set_shader_parameter("wet", float(st.wet))
+				m.set_shader_parameter("moss", float(st.moss))
+				m.set_shader_parameter("dry", float(st.dry))
+				m.set_shader_parameter("dapple", float(st.dapple) * (1.0 if Draw.detail > 1 else 0.8))
+				m.set_shader_parameter("sway", 0.0 if Save.setting("reduce_motion", false) else 1.0)
+				m.set_shader_parameter("tone", 0.86 if lane.layout == "ridge" else 1.0)
 			surface = Node2D.new()
-			water_mat = ShaderMaterial.new()
-			water_mat.shader = WorldView.water_shader()
-			water_mat.set_shader_parameter("base", wv.color("water"))
-			water_mat.set_shader_parameter("deep", wv.color("water_deep"))
-			water_mat.set_shader_parameter("foam", wv.color("foam"))
-			water_mat.set_shader_parameter("flow", (lane.speed if lane.speed != 0.0 else 0.4) * (1.6 if lane.fast else 1.0) * 0.5)
-			water_mat.set_shader_parameter("tile", WorldView.T)
-			water_mat.set_shader_parameter("glints", 1.0 if Draw.detail > 1 else 0.6)
-			surface.material = water_mat
+			surface.show_behind_parent = true
+			surface.material = m
 			surface.draw.connect(func():
 				surface.draw_rect(Rect2(-wv.field_x - 40.0, -WorldView.T * 0.5, wv.vp.x + 80.0, WorldView.T), Color.WHITE))
 			add_child(surface)
+			decor = Terrain.lane_decor(lane, up.type, down.type if row > 0 else "safe", wv.map, Draw.detail, -wv.field_x - 40.0, wv.vp.x + 80.0, T)
 		dyn = Node2D.new()
 		dyn.draw.connect(_draw_dyn)
 		add_child(dyn)
@@ -255,65 +313,74 @@ class LaneView extends Node2D:
 		var rng := RandomNumberGenerator.new()
 		rng.seed = lane.deco + row * 7
 		var alt := row % 2 == 0
+		var flat := surface == null      # Low graphics, or a row hidden under the canopy
 		match lane.type:
 			"water":
-				var deep := wv.color("water_deep")
-				var base := wv.color("water")
-				draw_rect(Rect2(x0, -T * 0.5, w, T), base)
-				draw_rect(Rect2(x0, -T * 0.5, w, T * 0.12), deep)
-				draw_rect(Rect2(x0, T * 0.38, w, T * 0.12), base.lightened(0.06))
+				if flat:
+					var deep := wv.color("water_deep")
+					var base := wv.color("water")
+					draw_rect(Rect2(x0, -T * 0.5, w, T), base)
+					draw_rect(Rect2(x0, -T * 0.5, w, T * 0.12), deep)
+					draw_rect(Rect2(x0, T * 0.38, w, T * 0.12), base.lightened(0.06))
 			"ground":
-				var g := wv.color("ground_alt" if alt else "ground")
-				draw_rect(Rect2(x0, -T * 0.5, w, T), g)
-				var x := x0
-				while x < x0 + w:
-					var len := rng.randf_range(20, 60)
-					draw_line(Vector2(x, -T * 0.22), Vector2(x + len, -T * 0.22), g.darkened(0.12), 3)
-					draw_line(Vector2(x + 30, T * 0.22), Vector2(x + 30 + len, T * 0.22), g.darkened(0.12), 3)
-					x += len + rng.randf_range(30, 90)
-				for i in int(w / 70.0):
-					Draw.ellipse(self, Vector2(x0 + rng.randf() * w, rng.randf_range(-T * 0.4, T * 0.4)), rng.randf_range(2, 5), rng.randf_range(2, 4), g.lightened(0.15))
+				if flat:
+					var g := wv.color("ground_alt" if alt else "ground")
+					draw_rect(Rect2(x0, -T * 0.5, w, T), g)
+					var x := x0
+					while x < x0 + w:
+						var len := rng.randf_range(20, 60)
+						draw_line(Vector2(x, -T * 0.22), Vector2(x + len, -T * 0.22), g.darkened(0.12), 3)
+						draw_line(Vector2(x + 30, T * 0.22), Vector2(x + 30 + len, T * 0.22), g.darkened(0.12), 3)
+						x += len + rng.randf_range(30, 90)
+					for i in int(w / 70.0):
+						Draw.ellipse(self, Vector2(x0 + rng.randf() * w, rng.randf_range(-T * 0.4, T * 0.4)), rng.randf_range(2, 5), rng.randf_range(2, 4), g.lightened(0.15))
 			_:
 				var s := wv.color("safe_alt" if alt else "safe")
-				draw_rect(Rect2(x0, -T * 0.5, w, T), s)
-				if lane.layout == "ridge":
-					draw_rect(Rect2(x0, -T * 0.5, w, T), s.darkened(0.12))
-				elif lane.layout == "falls":
+				if flat:
+					draw_rect(Rect2(x0, -T * 0.5, w, T), s)
+					if lane.layout == "ridge":
+						draw_rect(Rect2(x0, -T * 0.5, w, T), s.darkened(0.12))
+				if lane.layout == "falls":
 					# a rocky lip; the river pours over all but the dry stones
 					var fh := Content.hazard(String(lane.tiles.values()[0].hazard)) if not lane.tiles.is_empty() else {}
 					var fc: Dictionary = fh.get("art", {}).get("colors", {})
 					var rock := Color(String(fc.get("rock", "#6a6e60")))
 					var moss := Color(String(fc.get("moss", "#4f8a3a")))
-					draw_rect(Rect2(x0, -T * 0.5, w, T), rock.darkened(0.25))
+					if flat:
+						draw_rect(Rect2(x0, -T * 0.5, w, T), rock.darkened(0.25))
 					for cc in Lane.COLS:
 						if lane.tiles.has(cc):
 							continue
 						var sp := Vector2(cc * T + T * 0.5, 0)
 						Draw.shaded(self, sp, T * 0.42, T * 0.36, rock)
 						Draw.ellipse(self, sp + Vector2(-T * 0.08, -T * 0.16), T * 0.26, T * 0.12, moss)
-				for i in int(w / 55.0):
-					var p := Vector2(x0 + rng.randf() * w, rng.randf_range(-T * 0.42, T * 0.42))
-					var k := rng.randi() % 7
-					if k < 4:
-						for j in 3:
-							draw_line(p, p + Vector2((j - 1) * 4, -9 - j % 2 * 4), s.lightened(0.18), 2, true)
-					elif k == 4:
-						Draw.star(self, p, 5, wv.color("accent", "#f6d43a").lerp(Color.WHITE, 0.3), 5, 0.5)
-					elif k == 5:
-						Draw.ellipse(self, p, 6, 4, s.darkened(0.15))
+				if flat:
+					for i in int(w / 55.0):
+						var p := Vector2(x0 + rng.randf() * w, rng.randf_range(-T * 0.42, T * 0.42))
+						var k := rng.randi() % 7
+						if k < 4:
+							for j in 3:
+								draw_line(p, p + Vector2((j - 1) * 4, -9 - j % 2 * 4), s.lightened(0.18), 2, true)
+						elif k == 4:
+							Draw.star(self, p, 5, wv.color("accent", "#f6d43a").lerp(Color.WHITE, 0.3), 5, 0.5)
+						elif k == 5:
+							Draw.ellipse(self, p, 6, 4, s.darkened(0.15))
 				if lane.goal:
 					draw_rect(Rect2(x0, -T * 0.5, w, T), Color(wv.color("goal"), 0.35))
-		if Draw.detail > 0 and lane.type != "water":
+		if flat and Draw.detail > 0 and lane.type != "water":
 			# soil / turf grain, then a soft lip so each row reads as raised
 			draw_set_transform(Vector2(0, 0), 0.0, Vector2(2, 2))
 			var ox := fposmod(float(row) * 37.0, 128.0)
 			draw_texture_rect(Draw.grain(), Rect2((x0 - ox) * 0.5, -T * 0.25, w * 0.5 + 128.0, T * 0.5), true)
 			draw_set_transform(Vector2.ZERO)
+		if flat and Draw.detail > 0 and lane.type != "water":
 			if lane.type != "ground":
 				draw_rect(Rect2(x0, T * 0.42, w, T * 0.08), Color(0, 0, 0, 0.1))
 				draw_rect(Rect2(x0, -T * 0.5, w, T * 0.05), Color(1, 1, 1, 0.07))
 			else:
 				draw_rect(Rect2(x0, -T * 0.5, w, T * 0.06), Color(0, 0, 0, 0.1))
+		if decor:
+			draw_mesh(decor, null)
 		for col in lane.tiles:
 			var tile: Dictionary = lane.tiles[col]
 			if tile.kind == "quicksand" or lane.layout == "falls":
@@ -331,12 +398,12 @@ class LaneView extends Node2D:
 		var t := wv.sim.vt
 		var x0 := -wv.field_x - 40.0
 		var w := wv.vp.x + 80.0
-		if lane.type == "water":
+		if lane.type == "water" and water_mat == null:
 			var lt := wv.sim.world.lane_time(lane, t)
 			var sp := lane.speed if lane.speed != 0.0 else 0.4
 			var foam := wv.color("foam")
 			var n := int(w / 90.0) + 2
-			for i in (n if water_mat == null else n / 2):
+			for i in n:
 				var y := -T * 0.32 + (i % 4) * T * 0.2
 				var x := fposmod(i * 97.0 + lt * sp * T * (1.6 if lane.fast else 1.0), w) + x0
 				var len := 26.0 if not lane.fast else 44.0

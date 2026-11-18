@@ -36,6 +36,7 @@ func _process(dt: float) -> void:
 class RoofRow extends Node2D:
 	var roof: CanopyRoof
 	var row := 0
+	var leaves: ArrayMesh           # kept here: a drawn mesh must outlive the draw call
 
 	func _draw() -> void:
 		var wv := roof.wv
@@ -53,19 +54,28 @@ class RoofRow extends Node2D:
 		var y := -r * T
 		var below := wv.sim.world.lane(r - 1).covered
 		var above := wv.sim.world.lane(r + 1).covered
-		draw_rect(Rect2(x0 - 8.0, y - T * 0.5 - (0.0 if above else 10.0), w + 16.0, T + (0.0 if above else 10.0) + (0.0 if below else 10.0)), dark)
 		var rng := RandomNumberGenerator.new()
 		rng.seed = r * 7919 + 3
 		var n := int(w / 46.0) + 2
-		for i in n:
-			var cx := x0 + i * 46.0 + rng.randf_range(-10, 10)
-			var cy := y + rng.randf_range(-T * 0.35, T * 0.35)
-			Draw.ellipse(self, Vector2(cx, cy), rng.randf_range(26, 38), rng.randf_range(20, 30), canopy_l.darkened(rng.randf_range(0.0, 0.3)))
-			Draw.leaf(self, Vector2(cx, cy), Vector2(rng.randf_range(-1, 1), rng.randf_range(-1, 1)), 34, 12, canopy_l.lightened(rng.randf_range(0.0, 0.18)))
+		if Draw.detail > 0:
+			# layered, shaded crowns of leaves (one mesh, built once per row)
+			draw_set_transform(Vector2(0, y))
+			if leaves == null:
+				leaves = Terrain.canopy_roof(r, x0, w, T, canopy_l, dark, not below, not above)
+			draw_mesh(leaves, null)
+			draw_set_transform(Vector2.ZERO)
+		else:
+			draw_rect(Rect2(x0 - 8.0, y - T * 0.5 - (0.0 if above else 10.0), w + 16.0, T + (0.0 if above else 10.0) + (0.0 if below else 10.0)), dark)
+			for i in n:
+				var cx := x0 + i * 46.0 + rng.randf_range(-10, 10)
+				var cy := y + rng.randf_range(-T * 0.35, T * 0.35)
+				Draw.ellipse(self, Vector2(cx, cy), rng.randf_range(26, 38), rng.randf_range(20, 30), canopy_l.darkened(rng.randf_range(0.0, 0.3)))
+				Draw.leaf(self, Vector2(cx, cy), Vector2(rng.randf_range(-1, 1), rng.randf_range(-1, 1)), 34, 12, canopy_l.lightened(rng.randf_range(0.0, 0.18)))
 		if not below:
 			# scalloped edge and a sign pointing to first-person view
-			for i in n:
-				Draw.ellipse(self, Vector2(x0 + i * 46.0 + 23.0, y + T * 0.5 + 6.0), 26, 16, canopy_l.darkened(0.15))
+			if Draw.detail <= 0:
+				for i in n:
+					Draw.ellipse(self, Vector2(x0 + i * 46.0 + 23.0, y + T * 0.5 + 6.0), 26, 16, canopy_l.darkened(0.15))
 			var text := "Too thick to see from above"
 			var fs := 22
 			var name := String(sc.get("name", ""))

@@ -34,6 +34,13 @@
 - Next: open the live link on a phone, install, save NJ/Algarve map areas, field test GPS/compass/backtrack.
 
 ## Canopy Crossing (`apps/CANOPY-CROSSING`)
+- **High-definition maps** (2026-11-18): every jungle's ground and water are shaded per pixel in both views
+  (turf with blades and flowers, rutted roads with pebbles, rivers with a visible stony bed, caustics and
+  foam at the banks, ragged row edges, drifting canopy shade); every grassy row carries hundreds of
+  plants, stones and leaves in one mesh; reeds on riverbanks; layered leafy canopy roof and side jungle;
+  in first person, bumpy ground, dense lit grass, a forest floor of fallen leaves and moss, water that
+  mirrors the sky. Each jungle's floor follows its weather (`Terrain.style`). Low keeps flat drawing.
+  Audit 423 checks; 220 levels pass; first person stays under 350 meshes (326).
 - **Store launch** (2026-11-17): `BUILDS/<platform>/` holds each platform's build (Windows, macOS, Linux, web, iOS Xcode
   project; Android from `.github/workflows/canopy-crossing-release.yml`). `LAUNCH/` holds a 90-step, 10-phase
   checklist (`LAUNCH/README.md`), researched requirements per store (Apple, Google, Amazon + Samsung, Steam, GOG,

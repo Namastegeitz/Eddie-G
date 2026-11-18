@@ -54,7 +54,10 @@ var _meshes := {}
 var _sky := Color("9ad0e8")
 var _walls: Array[Node3D] = []
 var _grain: NoiseTexture2D       # shared surface grain for ground, water, walls
-var _water_mats: Array[StandardMaterial3D] = []
+var _water_mats: Array[Material] = []
+var _style := {}                  # this jungle's floor: wet, moss, dry (Terrain.style)
+static var _ground3d: Shader
+static var _water3d: Shader
 var _fit_key := Vector2.ZERO
 var _warm_row := 0                # next row to pre-build scenery for (see warm_step)
 var built_this_frame := 0         # rows built by the last update_view
@@ -95,6 +98,7 @@ func setup(run: RunSim, animal_def: Dictionary) -> void:
 		_open_trees = Content.models.get("open_trees", []).slice(0, 2)
 	_open_plants = Content.models.get("open_plants", [])
 	_seg = 18 if Gfx.level() == "high" else (12 if Gfx.level() == "medium" else 8)
+	_style = Terrain.style(map)
 	if SillyFaces.enabled(map, sim.mode, "fpv") and Gfx.level() != "low":
 		silly = SillyFaces.new()
 	if Gfx.level() != "low":
@@ -235,7 +239,10 @@ func update_view(dt: float) -> void:
 	_fit()
 	t += dt
 	for wm in _water_mats:
-		wm.uv1_offset = Vector3(t * 0.04, t * 0.11, 0.0)
+		if wm is ShaderMaterial:
+			(wm as ShaderMaterial).set_shader_parameter("lt", t)
+		else:
+			(wm as StandardMaterial3D).uv1_offset = Vector3(t * 0.04, t * 0.11, 0.0)
 	var dp := sim.display_pos()
 	var lift := sim.hop_height()
 	var y := eye_h + lift * 0.7 + sin(t * 2.2) * 0.008
@@ -556,7 +563,7 @@ func warm_step() -> void:
 		if l.zone >= 0 and l.zone < sim.world.gen.cover.size():
 			zr = sim.world.gen.cover[l.zone]
 		var sc := Scenery3D.scene_def(map, l.scene) if l.covered else {}
-		if Scenery3D.warm_row(l, sc, pal, Draw.detail, zr, _open_trees, _open_plants):
+		if Scenery3D.warm_row(l, sc, pal, Draw.detail, zr, _open_trees, _open_plants, _banks(l)):
 			return
 
 
@@ -638,6 +645,69 @@ func mat(c: Color, emissive := false) -> StandardMaterial3D:
 		m.emission = c
 		m.emission_energy_multiplier = 0.8
 	_mats[key] = m
+	return m
+
+
+## High-definition ground (not on Low): turf, a rutted road, the litter of the
+## forest floor or wet rock, shaded per pixel (assets/shaders/ground3d).
+## kind: 0 grass, 1 dirt, 2 forest floor, 3 rock.
+func ground_mat(kind: int, a: Color, b: Color) -> Material:
+	if _grain == null:
+		return surface(a, [0.5, 0.35, 0.8, 0.6][kind])
+	var key := "g3d%d%s%s" % [kind, a.to_html(), b.to_html()]
+	if _mats.has(key):
+		return _mats[key]
+	if _ground3d == null:
+		_ground3d = load("res://assets/shaders/ground3d.gdshader")
+	var m := ShaderMaterial.new()
+	m.shader = _ground3d
+	m.set_shader_parameter("n_soft", Terrain.soft())
+	m.set_shader_parameter("n_fine", Terrain.fine())
+	m.set_shader_parameter("kind", kind)
+	m.set_shader_parameter("base", a)
+	m.set_shader_parameter("alt", b)
+	m.set_shader_parameter("soil", color("ground").darkened(0.15))
+	m.set_shader_parameter("accent", color("accent", "#f6d43a"))
+	m.set_shader_parameter("leaf", color("canopy", "#1e5a2a"))
+	m.set_shader_parameter("wet", float(_style.get("wet", 0.0)))
+	m.set_shader_parameter("moss", float(_style.get("moss", 0.0)))
+	m.set_shader_parameter("dry", float(_style.get("dry", 0.0)))
+	m.set_shader_parameter("hq", 1.0 if Gfx.level() == "high" else 0.0)
+	_mats[key] = m
+	return m
+
+
+## High-definition water for one row (not on Low): swells and chop drifting
+## with this row's current, the sky mirrored at low angles, the bed through
+## the shallows and foam at the banks (assets/shaders/water3d).
+func water_mat(l: Lane) -> Material:
+	if _grain == null:
+		return surface(color("water"), 0.22, true)
+	var up := 1 if sim.world.lane(l.row + 1).type == "water" else 0
+	var down := 1 if l.row > 0 and sim.world.lane(l.row - 1).type == "water" else 0
+	var flow := snappedf((l.speed if l.speed != 0.0 else 0.4) * (1.6 if l.fast else 1.0) * 0.5, 0.05)
+	var key := "w3d%d%d%.2f%s" % [up, down, flow, l.fast]
+	if _mats.has(key):
+		return _mats[key]
+	if _water3d == null:
+		_water3d = load("res://assets/shaders/water3d.gdshader")
+	var m := ShaderMaterial.new()
+	m.shader = _water3d
+	m.set_shader_parameter("n_soft", Terrain.soft())
+	m.set_shader_parameter("n_fine", Terrain.fine())
+	m.set_shader_parameter("base", color("water"))
+	m.set_shader_parameter("deep", color("water_deep"))
+	m.set_shader_parameter("foam", color("foam"))
+	m.set_shader_parameter("bed", color("ground"))
+	m.set_shader_parameter("sky", _sky.lightened(0.2))
+	m.set_shader_parameter("flow", flow)
+	m.set_shader_parameter("up", up)
+	m.set_shader_parameter("down", down)
+	m.set_shader_parameter("murk", clampf(float(_style.get("wet", 0.0)) * 0.8, 0.0, 1.0))
+	m.set_shader_parameter("rapids", 1.0 if l.fast else 0.0)
+	m.set_shader_parameter("hq", 1.0 if Gfx.level() == "high" else 0.0)
+	_mats[key] = m
+	_water_mats.append(m)
 	return m
 
 
@@ -741,9 +811,10 @@ func _build_lane(l: Lane, r: int) -> Node3D:
 	rng.seed = l.deco + r * 13
 	match l.type:
 		"water":
-			box(Vector3(26, 0.3, 1.0), color("water"), Vector3(MID, -0.27, 0), n).material_override = surface(color("water"), 0.22, true)
+			box(Vector3(26, 0.3, 1.0), color("water"), Vector3(MID, -0.27, 0), n).material_override = water_mat(l)
 		"ground":
-			box(Vector3(26, 0.3, 1.0), color("ground_alt" if alt else "ground"), Vector3(MID, -0.15, 0), n).material_override = surface(color("ground_alt" if alt else "ground"))
+			var dc := color("ground_alt" if alt else "ground")
+			box(Vector3(26, 0.3, 1.0), dc, Vector3(MID, -0.15, 0), n).material_override = ground_mat(1, dc.darkened(0.08), dc.lightened(0.08))
 			_trade_road(n, rng)
 		_:
 			var g := color("safe_alt" if alt else "safe")
@@ -754,7 +825,7 @@ func _build_lane(l: Lane, r: int) -> Node3D:
 				var fh := Content.hazard(String(l.tiles.values()[0].hazard)) if not l.tiles.is_empty() else {}
 				var fc: Dictionary = fh.get("art", {}).get("colors", {})
 				var rock := hc(fc, "rock", "#6a6e60")
-				box(Vector3(26, 0.3, 1.0), rock.darkened(0.3), Vector3(MID, -0.2, 0), n).material_override = surface(rock.darkened(0.3), 0.6)
+				box(Vector3(26, 0.3, 1.0), rock.darkened(0.3), Vector3(MID, -0.2, 0), n).material_override = ground_mat(3, rock.darkened(0.36), rock.darkened(0.16))
 				for cc in Lane.COLS:
 					if not l.tiles.has(cc):
 						sph(0.47, rock, Vector3(cc + 0.5, -0.12, 0), n, Vector3(1.0, 0.42, 0.95))
@@ -762,9 +833,11 @@ func _build_lane(l: Lane, r: int) -> Node3D:
 			elif l.covered:
 				# forest floor under the canopy: darker, browner, leaf litter
 				var floor_c := g.darkened(0.3).lerp(Color("2e4a22"), 0.35)
-				box(Vector3(26, 0.3, 1.0), floor_c, Vector3(MID, -0.15, 0), n).material_override = surface(floor_c, 0.8)
+				var litter_c := floor_c.lerp(Color("4a3a24"), 0.35)
+				box(Vector3(26, 0.3, 1.0), floor_c, Vector3(MID, -0.15, 0), n).material_override = ground_mat(2, litter_c.darkened(0.1), litter_c.lerp(Color("5a4428"), 0.5))
 			else:
-				box(Vector3(26, 0.3, 1.0), g, Vector3(MID, -0.15, 0), n).material_override = surface(g.lerp(Color("5a7a3a"), 0.3).darkened(0.16), 0.5)
+				var turf := g.lerp(Color("5a7a3a"), 0.32).darkened(0.22)
+				box(Vector3(26, 0.3, 1.0), g, Vector3(MID, -0.15, 0), n).material_override = ground_mat(0, turf.darkened(0.05), turf.lightened(0.08).lerp(Color(0.62, 0.72, 0.2), 0.08))
 	for col in l.tiles:
 		var tile: Dictionary = l.tiles[col]
 		var hz := Content.hazard(String(tile.hazard))
@@ -817,7 +890,7 @@ func _build_lane(l: Lane, r: int) -> Node3D:
 		n.add_child(Scenery3D.build_lane(l, Scenery3D.scene_def(map, l.scene), pal, Draw.detail, zr))
 	else:
 		# grass tufts, flowers and the trees along the sides: one mesh a row
-		var open := Scenery3D.open_lane(l, pal, Draw.detail, _open_trees, _open_plants)
+		var open := Scenery3D.open_lane(l, pal, Draw.detail, _open_trees, _open_plants, _banks(l))
 		if open:
 			n.add_child(open)
 	if not l.effect.is_empty():
@@ -825,6 +898,16 @@ func _build_lane(l: Lane, r: int) -> Node3D:
 	_critters(l, n)
 	_roadside(l, n, rng)
 	return n
+
+
+## Which edges of an open row meet water (1 the far edge, 2 the near one).
+func _banks(l: Lane) -> int:
+	var b := 0
+	if sim.world.lane(l.row + 1).type == "water":
+		b |= 1
+	if l.row > 0 and sim.world.lane(l.row - 1).type == "water":
+		b |= 2
+	return b
 
 
 ## A trade road: two worn wheel ruts with a grassy hump between, gravel

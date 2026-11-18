@@ -64,11 +64,28 @@ time, in ten real rainforests. Built from
   with a real fact as you enter it ("Canopy 2 of 3").
 - **Graphics:** inked outlines, soft shading and glossy eyes on every
   animal (fur strokes, feathers, real rosettes up close), outlined hazards
-  with headlights, eyes and wood grain, turf and soil grain on every lane,
-  shader water that ripples and glints with the current, and a textured,
-  anti-aliased 3D first-person view with shadows. Settings > Graphics:
-  Auto / High / Medium / Low (Auto: High on desktop, Medium on phones and
-  the web player).
+  with headlights, eyes and wood grain, and an anti-aliased 3D first-person
+  view with shadows. Settings > Graphics: Auto / High / Medium / Low (Auto:
+  High on desktop, Medium on phones and the web player).
+- **High-definition maps (all 22 jungles, every level):** the ground and
+  water are shaded per pixel, so they stay sharp at any screen size
+  (`assets/shaders/ground.gdshader`, `water.gdshader`, `ground3d.gdshader`,
+  `water3d.gdshader`; `scripts/view/terrain.gd`). Turf has patchy tones,
+  lit blades, clover and flowers; trade roads have grit, wheel ruts with
+  tread marks and pebbles; rivers show their stony bed through the
+  shallows, light rippling over it, drifting foam and foam lapping at each
+  bank; rows meet along ragged, natural edges and the canopy's light and
+  shade drift over the floor. Every grassy row carries hundreds of tufts,
+  flowers, small plants, stones, twigs and fallen leaves (one mesh a row),
+  and rivers have reeds, cattails and shore stones. The canopy roof and the
+  jungle down the sides are layered, shaded crowns of leaves. In first
+  person: real bumps on the ground, dense grass lit like the turf, a forest
+  floor of fallen leaves and moss under the canopy, water that mirrors the
+  sky at low angles, reeds on the banks. Each jungle's floor has its own
+  character from its weather: puddles in the Chocó, moss in Monteverde,
+  cracked red earth in Masoala (an optional `"terrain"` block in a map file
+  overrides it). Ground cover in the play columns stays ankle-high, so it
+  never hides a hazard. Low graphics keeps the light flat drawing.
 - **World map:** a digital globe built from Natural Earth coastlines: LED
   dots light up the land, coasts glow, country borders and a lat/long grid
   show faintly, a scan sweeps round, and region beacons pulse (gold with
@@ -190,7 +207,7 @@ tools/run_tests.sh          # compile check + phase audit (project and exported 
 FAST=1 tools/run_tests.sh   # levels 1 and 10 of each scene instead of all 220
 ```
 
-The phase audit (`tests/phase_audit.gd`, 407 checks) turns each phase's
+The phase audit (`tests/phase_audit.gd`, 423 checks) turns each phase's
 checkpoint from the brief into checks: grid hops, every hazard kind, every
 ability, all 50 animals, every region generating 200 rows, a path-finding bot
 beating **all 220 levels with the free Poison Dart Frog**, adding a map
