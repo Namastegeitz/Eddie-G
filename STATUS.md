@@ -35,6 +35,13 @@
   Zen and Alien Duel keep the original lineup. New visitor tone "cadet", new song "Cadet Mixtape".
   Android versionCode 2, iOS build 2.
   Shareable web link (1.1.0): https://rawcdn.githack.com/Namastegeitz/Eddie-G/cff49a00f7e25606123decf9bb2d81e2a99e7a61/ALIEN-SUDOKU/builds/web/AlienSudoku.html
+- Version 1.2.0 (Nov 18): **maps and levels in high definition**. The six space backdrops are
+  remade at 4x detail (Real-ESRGAN upscale, 2816x1536) with tall cuts for upright phones and strip
+  cuts for the sector cards. The campaign list is a star chart (sector art, nine progress marks per
+  sector, flight path between sectors); each sector is a route map with nine stops along a snaking
+  path over the sector's artwork. Boards gain fine detail (shaded tiles, alternating box tint, a
+  weave on given cells, studs where box lines cross); the starfield draws at full device
+  resolution with fine dust and tapered flares. Android versionCode 3, iOS build 3.
 - Nov 17 (later): Easy difficulty is now neutral instead of pastel pink, with six color schemes in
   Settings > Easy colors (Moonstone default, Graphite, Sage, Ocean, Sand, Paper). The Alien Duel
   rookie "Baby Blip" is now "Cadet Xel" (classic alien head, calm lines).

@@ -190,6 +190,27 @@
   "depends": []
  },
  {
+  "id": "ready-v120",
+  "phase": "ready",
+  "store": "all",
+  "owner": "claude",
+  "status": "done",
+  "title": "Release version 1.2.0: maps and levels in high definition",
+  "statusNote": "Six space backdrops remade at 4x detail (2816x1536, plus tall cuts for upright phones and strip cuts for the sector cards). The campaign is a star chart; each sector is a route map with nine stops. Finer board detail and a sharper starfield. Version 1.2.0 (Android versionCode 3, iOS build 3).",
+  "cost": null,
+  "time": "done",
+  "steps": [
+   "Open the Campaign and a sector to see the new maps",
+   "Use the updated What's new text in store-launch/listing when you submit"
+  ],
+  "feedback": [
+   "Each store upload needs a higher build number than the last: Android versionCode and iOS build number are both 3 now."
+  ],
+  "doneMessage": "Version 1.2.0 is built and published.",
+  "links": [],
+  "depends": []
+ },
+ {
   "id": "apple-ios-baseline",
   "phase": "ready",
   "store": "apple",

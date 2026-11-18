@@ -476,3 +476,62 @@ test('quick play lineup: Creatures, Star Cadets, Hostile, Gnarly, each playing t
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'encounters');
   expect(errors).toEqual([]);
 });
+
+test('HD maps: the star chart, the route map and the backdrop cut for the screen shape', async ({ page }, testInfo) => {
+  const errors = errorsOf(page);
+  const missing = [];
+  page.on('response', (r) => { if (r.status() >= 400) missing.push(r.url()); });
+  // Sector 1 fully decoded, sector 2 three levels in.
+  await page.addInitScript(() => {
+    if (localStorage.getItem('alien-sudoku:profile')) return;
+    const levels = {};
+    for (let l = 0; l < 9; l++) levels[`0-${l}`] = { stars: 1 + (l % 3), bestMs: 200000 };
+    for (let l = 0; l < 3; l++) levels[`1-${l}`] = { stars: 3, bestMs: 200000 };
+    localStorage.setItem('alien-sudoku:profile', JSON.stringify({ settings: { seenTutorial: true }, campaign: { levels } }));
+  });
+  await openMenu(page);
+  // The page backdrop is the cut made for this screen's shape.
+  const portrait = testInfo.project.name === 'phone';
+  await expect(page.locator('.cosmic-bg.loaded')).toHaveCount(1);
+  const bg = await page.locator('.cosmic-bg.loaded').evaluate((e) => e.style.backgroundImage);
+  expect(bg).toMatch(portrait ? /\.tall\.webp/ : /space\/[a-z-]+\.webp/);
+  if (!portrait) expect(bg).not.toMatch(/\.tall\.webp/);
+
+  await page.locator('.menu-campaign').click();
+  const cards = page.locator('.sector-card');
+  await expect(cards).toHaveCount(6);
+  // Each card has its art, nine progress marks, and a decoded count.
+  await expect(cards.nth(0).locator('.sector-pips .pip.done')).toHaveCount(9);
+  await expect(cards.nth(1).locator('.sector-pips .pip.done')).toHaveCount(3);
+  await expect(cards.nth(1).locator('.sector-pips .pip.open')).toHaveCount(1);
+  await expect(cards.nth(1)).toContainText('3 / 9 decoded');
+  await expect(cards.nth(0)).toHaveClass(/cleared/);
+  await expect(cards.nth(0)).toHaveClass(/linked/);
+  const art = await cards.nth(0).locator('.sector-art').evaluate((e) => e.style.backgroundImage);
+  expect(art).toMatch(/moon-planet\.card\.webp/);
+
+  // The route map: nine stops along a snaking route with eight legs, the first three lit.
+  await cards.nth(1).click();
+  await expect(page.locator('.level-node')).toHaveCount(9);
+  await expect(page.locator('.route .route-leg')).toHaveCount(8);
+  await expect(page.locator('.route .route-leg.on')).toHaveCount(3);
+  await expect(page.locator('.sector-progress')).toContainText('3 / 9 decoded');
+  const at = (n) => page.locator('.level-node').nth(n).locator('.level-disc').boundingBox();
+  const [b1, b3, b4, b6, b7] = await Promise.all([at(0), at(2), at(3), at(5), at(6)]);
+  expect(b3.x).toBeGreaterThan(b1.x + 50);                  // 1 → 3 runs left to right
+  expect(Math.abs(b4.x - b3.x)).toBeLessThan(4);            // 4 sits under 3
+  expect(b6.x).toBeLessThan(b4.x - 50);                     // 4 → 6 runs right to left
+  expect(Math.abs(b7.x - b6.x)).toBeLessThan(4);            // 7 sits under 6
+  // The route passes through the middle of each stop.
+  const leg = await page.locator('.route .route-leg').first().boundingBox();
+  expect(Math.abs(leg.y + leg.height / 2 - (b1.y + b1.height / 2))).toBeLessThan(10);
+  await expect(page.locator('.level-node.next')).toHaveCount(1);
+  await expect(page.locator('.level-node').nth(3)).toHaveClass(/next/);
+  await expect(page.locator('.level-map-art')).toHaveAttribute('style', /ringed-planet/);
+  // A level still starts from its stop.
+  await page.locator('.level-node').nth(3).click();
+  await expect(page.locator('.screen-play')).toBeVisible();
+  await expect(page.locator('.cell.alt')).toHaveCount(36);
+  expect(missing).toEqual([]);
+  expect(errors).toEqual([]);
+});

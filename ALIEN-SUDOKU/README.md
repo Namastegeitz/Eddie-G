@@ -1,6 +1,6 @@
 # **ALIEN SUDOKU**
 
-> **Decode the hieroglyphs of the lost UFO archive.** Sudoku with alien glyphs: a 54-level campaign, daily puzzles, Zen mode, Alien Duel against a computer rival, the retro Star Cadets, and a theme song for every difficulty. **Version 1.1.0.** For iPhone, iPad, Android, Windows, macOS, Linux and the web.
+> **Decode the hieroglyphs of the lost UFO archive.** Sudoku with alien glyphs: a 54-level campaign, daily puzzles, Zen mode, Alien Duel against a computer rival, the retro Star Cadets, a theme song for every difficulty, and high-definition space maps. **Version 1.2.0.** For iPhone, iPad, Android, Windows, macOS, Linux and the web.
 
 ## Start here
 
@@ -2702,7 +2702,7 @@ No reports yet. Testers report in the **Bugs & feedback** tab of the live page; 
 ## Where the project stands today
 
 - **Done:**
-  - the game at **version 1.1.0** (the Star Cadets update), with every mode, and 154 automated tests (114 unit, 40 end-to-end) passing;
+  - the game at **version 1.2.0** (maps and levels in high definition), with every mode, and 154 automated tests (114 unit, 40 end-to-end) passing;
   - store text, screenshots and art for every store;
   - an in-app privacy policy and **Report an ad** button;
   - the iOS privacy manifest;

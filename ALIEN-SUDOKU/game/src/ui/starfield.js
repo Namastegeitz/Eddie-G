@@ -46,31 +46,42 @@ function palette() { return themeFor(currentTheme()).stars; }
 
 function resize() {
   if (!canvas) return;
-  dpr = Math.min(window.devicePixelRatio || 1, 2);
   w = window.innerWidth;
   h = window.innerHeight;
+  // Full device resolution (up to 3x on phones) so stars are pin-sharp,
+  // capped at about 8.5 megapixels to keep big 4K screens smooth.
+  dpr = Math.max(1, Math.min(window.devicePixelRatio || 1, 3, Math.sqrt(8_500_000 / Math.max(1, w * h))));
   canvas.width = Math.round(w * dpr);
   canvas.height = Math.round(h * dpr);
   canvas.style.width = `${w}px`;
   canvas.style.height = `${h}px`;
-  const count = Math.min(240, Math.round((w * h) / 7000));
   const colors = palette();
-  stars = Array.from({ length: count }, () => ({
-    x: Math.random() * w,
-    y: Math.random() * h,
-    r: Math.random() < 0.08 ? rand(1.3, 2.1) : rand(0.4, 1.2),
-    a: rand(0.35, 0.95),
-    tw: rand(0.6, 2.4),
-    ph: rand(0, Math.PI * 2),
-    depth: rand(0.2, 1),
-    c: colors[Math.floor(Math.random() * colors.length)],
-  }));
+  const pick = () => colors[Math.floor(Math.random() * colors.length)];
+  // Three sizes: fine dust (most of them), ordinary stars, and a few bright ones with flares.
+  const count = Math.min(240, Math.round((w * h) / 7000));
+  const dust = Math.min(320, Math.round((w * h) / 4200));
+  stars = [
+    ...Array.from({ length: dust }, () => ({
+      x: Math.random() * w, y: Math.random() * h, r: rand(0.22, 0.5), a: rand(0.25, 0.7),
+      tw: rand(0.4, 1.6), ph: rand(0, Math.PI * 2), depth: rand(0.08, 0.3), c: Math.random() < 0.7 ? '#ffffff' : pick(), dust: true,
+    })),
+    ...Array.from({ length: count }, () => ({
+      x: Math.random() * w,
+      y: Math.random() * h,
+      r: Math.random() < 0.08 ? rand(1.3, 2.1) : rand(0.4, 1.2),
+      a: rand(0.35, 0.95),
+      tw: rand(0.6, 2.4),
+      ph: rand(0, Math.PI * 2),
+      depth: rand(0.2, 1),
+      c: pick(),
+    })),
+  ];
   if (!running) drawFrame(0);
 }
 
 function recolor() {
   const colors = palette();
-  for (const s of stars) s.c = colors[Math.floor(Math.random() * colors.length)];
+  for (const s of stars) if (!s.dust || s.c !== '#ffffff') s.c = colors[Math.floor(Math.random() * colors.length)];
 }
 
 function start() {
@@ -150,14 +161,24 @@ function drawFrame(t) {
     const tw = reduced ? 1 : 0.65 + 0.35 * Math.sin(t * s.tw + s.ph);
     ctx.globalAlpha = s.a * tw;
     ctx.fillStyle = s.c;
+    if (s.dust) { ctx.fillRect(s.x - s.r, s.y - s.r, s.r * 2, s.r * 2); continue; }
     ctx.beginPath();
     ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
     ctx.fill();
     if (s.r > 1.3) {
-      // little cross sparkle on the brightest stars
-      ctx.globalAlpha = s.a * tw * 0.5;
-      ctx.fillRect(s.x - s.r * 3, s.y - 0.4, s.r * 6, 0.8);
-      ctx.fillRect(s.x - 0.4, s.y - s.r * 3, 0.8, s.r * 6);
+      // The brightest stars: a soft halo and a fine four-point flare that tapers to nothing.
+      ctx.globalAlpha = s.a * tw * 0.16;
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r * 3.2, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.globalAlpha = s.a * tw * 0.6;
+      const len = s.r * 5.5, wid = 0.45;
+      ctx.beginPath();
+      ctx.moveTo(s.x - len, s.y); ctx.lineTo(s.x, s.y - wid); ctx.lineTo(s.x + len, s.y); ctx.lineTo(s.x, s.y + wid);
+      ctx.closePath();
+      ctx.moveTo(s.x, s.y - len); ctx.lineTo(s.x + wid, s.y); ctx.lineTo(s.x, s.y + len); ctx.lineTo(s.x - wid, s.y);
+      ctx.closePath();
+      ctx.fill();
     }
   }
   ctx.globalAlpha = 1;

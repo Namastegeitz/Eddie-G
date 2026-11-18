@@ -66,3 +66,24 @@ describe('Star Cadets set', () => {
     expect(markup).not.toMatch(/<\/script/i);
   });
 });
+
+describe('HD backdrops', async () => {
+  const { variantPath, backdropVariant, BACKGROUNDS } = await import('../../src/ui/background.js');
+  const { existsSync } = await import('node:fs');
+  const { fileURLToPath } = await import('node:url');
+  const pub = (p) => fileURLToPath(new URL(`../../public/${p}`, import.meta.url));
+
+  it('picks the tall cut for upright screens and the wide one otherwise', () => {
+    expect(backdropVariant(412, 915)).toBe('tall');
+    expect(backdropVariant(1280, 800)).toBe(null);
+    expect(backdropVariant(800, 800)).toBe(null);
+    expect(variantPath('space/nebula-pink.webp', 'tall')).toBe('space/nebula-pink.tall.webp');
+    expect(variantPath('space/nebula-pink.webp', 'card')).toBe('space/nebula-pink.card.webp');
+    expect(variantPath('space/nebula-pink.webp', null)).toBe('space/nebula-pink.webp');
+    expect(variantPath('icons/icon-192.png', 'tall')).toBe('icons/icon-192.png');
+  });
+
+  it('every scene ships in all three cuts', () => {
+    for (const path of BACKGROUNDS) for (const v of [null, 'tall', 'card']) expect(existsSync(pub(variantPath(path, v))), variantPath(path, v)).toBe(true);
+  });
+});

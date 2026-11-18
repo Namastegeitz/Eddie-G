@@ -30,7 +30,7 @@ body, .board, .cell, .glyph-btn, .menu-btn, .tool-btn { transition-property: bac
 [data-theme='fleet'] .board-wrap::before { top: -7px; left: -7px; border-right: 0; border-bottom: 0; }
 [data-theme='fleet'] .board-wrap::after { bottom: -7px; right: -7px; border-left: 0; border-top: 0; }
 [data-theme='fleet'] .menu-btn, [data-theme='fleet'] .icon-tile, [data-theme='fleet'] .sector-card,
-[data-theme='fleet'] .level-node, [data-theme='fleet'] .modal-card, [data-theme='fleet'] .set-rows,
+[data-theme='fleet'] .level-map, [data-theme='fleet'] .modal-card, [data-theme='fleet'] .set-rows,
 [data-theme='fleet'] .daily-card, [data-theme='fleet'] .calendar { border-radius: 8px; }
 [data-theme='fleet'] .btn { border-radius: 6px; letter-spacing: 0.16em; }
 [data-theme='fleet'] .hud-row, [data-theme='fleet'] .eyebrow { letter-spacing: 0.24em; }
@@ -85,7 +85,7 @@ body, .board, .cell, .glyph-btn, .menu-btn, .tool-btn { transition-property: bac
 [data-theme='ancient'] .cell { background-image: linear-gradient(150deg, rgba(255, 228, 170, 0.08), rgba(0, 0, 0, 0.22)); }
 [data-theme='ancient'] .cell.fixed { background-image: linear-gradient(150deg, rgba(255, 228, 170, 0.04), rgba(0, 0, 0, 0.35)); }
 [data-theme='ancient'] .menu-btn, [data-theme='ancient'] .icon-tile, [data-theme='ancient'] .sector-card,
-[data-theme='ancient'] .level-node, [data-theme='ancient'] .modal-card, [data-theme='ancient'] .set-rows,
+[data-theme='ancient'] .level-map, [data-theme='ancient'] .modal-card, [data-theme='ancient'] .set-rows,
 [data-theme='ancient'] .daily-card, [data-theme='ancient'] .calendar, [data-theme='ancient'] .tool-btn { border-radius: 4px; }
 [data-theme='ancient'] .menu-btn, [data-theme='ancient'] .modal-card { border-color: rgba(var(--c1-rgb), 0.55); box-shadow: inset 0 0 0 3px rgba(var(--deep-rgb), 0.8), inset 0 0 0 4px rgba(var(--c1-rgb), 0.25); }
 [data-theme='ancient'] .btn { border-radius: 3px; }
@@ -182,7 +182,7 @@ body, .board, .cell, .glyph-btn, .menu-btn, .tool-btn { transition-property: bac
 [data-theme='hostile'] .board-wrap::before { top: -9px; }
 [data-theme='hostile'] .board-wrap::after { bottom: -9px; }
 [data-theme='hostile'] .menu-btn, [data-theme='hostile'] .tool-btn, [data-theme='hostile'] .icon-tile,
-[data-theme='hostile'] .btn, [data-theme='hostile'] .sector-card, [data-theme='hostile'] .level-node,
+[data-theme='hostile'] .btn, [data-theme='hostile'] .sector-card, [data-theme='hostile'] .level-map,
 [data-theme='hostile'] .diff-option {
   border-radius: 0;
   clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
@@ -244,6 +244,6 @@ body, .board, .cell, .glyph-btn, .menu-btn, .tool-btn { transition-property: bac
 [data-theme='gnarly'] .btn, [data-theme='gnarly'] .tool-label, [data-theme='gnarly'] .menu-btn-label,
 [data-theme='gnarly'] .hud-row, [data-theme='gnarly'] .eyebrow, [data-theme='gnarly'] .diff-chip,
 [data-theme='gnarly'] .glyph-count, [data-theme='gnarly'] .tab, [data-theme='gnarly'] .status-line,
-[data-theme='gnarly'] .sector-name, [data-theme='gnarly'] .pause-cover {
+[data-theme='gnarly'] .sector-name, [data-theme='gnarly'] .pause-cover, [data-theme='gnarly'] .level-map-label {
   font-family: 'Black Ops One', 'Orbitron', system-ui, sans-serif;
 }

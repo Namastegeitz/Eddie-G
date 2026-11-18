@@ -155,67 +155,250 @@
 .diff-glyphs .gsvg { width: 34px; height: 34px; }
 .diff-best { grid-area: best; font-size: 0.72rem; color: var(--gold); align-self: center; justify-self: end; }
 
-/* ---------- Campaign ---------- */
-.sector-list { display: flex; flex-direction: column; gap: 10px; }
+/* ---------- Campaign: the star chart (sector list) ---------- */
+.sector-list { display: flex; flex-direction: column; gap: 14px; }
 .sector-card {
   --accent: var(--neon-green);
+  position: relative;
+  isolation: isolate;
   display: flex;
   align-items: center;
   gap: 14px;
   width: 100%;
-  min-height: 84px;
+  min-height: 108px;
   padding: 12px 14px;
   border-radius: 18px;
   border: 1px solid color-mix(in srgb, var(--accent) 60%, transparent);
-  background-size: cover;
-  background-position: center;
+  background: rgb(var(--deep-rgb));
   text-align: left;
   cursor: pointer;
-  box-shadow: 0 0 14px color-mix(in srgb, var(--accent) 25%, transparent);
+  box-shadow: 0 0 14px color-mix(in srgb, var(--accent) 25%, transparent), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  transition: transform 0.12s, box-shadow 0.2s;
 }
-.sector-card.locked { filter: grayscale(0.85) brightness(0.6); border-color: var(--line); box-shadow: none; }
-.sector-num { font-family: var(--font-display); font-weight: 900; font-size: 1.5rem; color: var(--accent); text-shadow: 0 0 10px var(--accent); }
-.sector-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
-.sector-name { font-family: var(--font-display); font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; font-size: 0.92rem; }
-.sector-info small { color: var(--text-dim); font-size: 0.74rem; }
-.sector-stars { display: inline-flex; align-items: center; gap: 2px; color: var(--gold); font-size: 0.78rem; }
+.sector-card:active { transform: scale(0.985); }
+/* The sector's own artwork: sharp on the right, melting into the card on the left. */
+.sector-art {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  border-radius: inherit;
+  background-size: cover;
+  background-position: 50% 50%;
+}
+/* Over the art: a reading shade on the left and fine chart lines. */
+.sector-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, rgba(var(--deep-rgb), 0.94) 0%, rgba(var(--deep-rgb), 0.72) 42%, rgba(var(--deep-rgb), 0.12) 78%, rgba(var(--deep-rgb), 0.3) 100%),
+    repeating-linear-gradient(90deg, transparent 0 35px, rgba(255, 255, 255, 0.055) 35px 36px),
+    repeating-linear-gradient(0deg, transparent 0 35px, rgba(255, 255, 255, 0.055) 35px 36px);
+}
+/* The flight path from one sector to the next. */
+.sector-card:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  left: 33px;
+  top: calc(100% + 2px);
+  width: 2px;
+  height: 11px;
+  border-radius: 1px;
+  background: repeating-linear-gradient(180deg, rgba(255, 255, 255, 0.3) 0 2px, transparent 2px 5px);
+  pointer-events: none;
+}
+.sector-card.linked::after { background: var(--accent); box-shadow: 0 0 8px var(--accent); }
+.sector-card.cleared { border-color: color-mix(in srgb, var(--gold) 70%, var(--accent)); }
+.sector-card.locked { filter: grayscale(0.85) brightness(0.62); border-color: var(--line); box-shadow: none; }
+.sector-num {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1.5px solid color-mix(in srgb, var(--accent) 80%, transparent);
+  background: radial-gradient(circle at 35% 28%, rgba(255, 255, 255, 0.2), transparent 45%), rgba(var(--deep-rgb), 0.8);
+  box-shadow: 0 0 0 3px rgba(var(--deep-rgb), 0.55), 0 0 12px color-mix(in srgb, var(--accent) 45%, transparent);
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 0.95rem;
+  color: var(--accent);
+  text-shadow: 0 0 8px var(--accent);
+}
+.sector-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+.sector-name { font-family: var(--font-display); font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; font-size: 0.95rem; text-shadow: 0 1px 6px rgba(0, 0, 0, 0.9); }
+.sector-info small { color: var(--text-dim); font-size: 0.74rem; text-shadow: 0 1px 4px rgba(0, 0, 0, 0.9); }
+.sector-pips { display: flex; gap: 3px; margin: 2px 0 1px; }
+.pip { flex: 0 1 15px; height: 5px; border-radius: 2px; background: rgba(255, 255, 255, 0.1); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.14); }
+.pip.open { box-shadow: inset 0 0 0 1px var(--pc), 0 0 6px var(--pc); animation: pipBlink 1.6s ease-in-out infinite; }
+.pip.done { background: var(--pc); box-shadow: 0 0 6px color-mix(in srgb, var(--pc) 70%, transparent); }
+.pip.done.s1 { opacity: 0.5; }
+.pip.done.s2 { opacity: 0.75; }
+@keyframes pipBlink { 50% { background: color-mix(in srgb, var(--pc) 55%, transparent); } }
+.sector-stars { display: inline-flex; align-items: center; gap: 2px; color: var(--gold); font-size: 0.78rem; text-shadow: 0 1px 4px rgba(0, 0, 0, 0.9); }
 .sector-stars .ico { width: 14px; height: 14px; }
-.sector-glyphs { display: flex; gap: 4px; color: var(--accent); }
-.sector-glyphs svg { width: 24px; height: 24px; filter: drop-shadow(0 0 4px var(--accent)); }
-.sector-lock { width: 26px; height: 26px; color: var(--text-dim); }
+.sector-count { margin-left: 8px; color: var(--text-dim); font-size: 0.7rem; letter-spacing: 0.02em; }
+.sector-glyphs { flex: none; display: flex; gap: 2px; padding: 5px 7px; border-radius: 14px; background: rgba(var(--deep-rgb), 0.55); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1); color: var(--accent); }
+.sector-glyphs svg { width: 26px; height: 26px; filter: drop-shadow(0 0 4px color-mix(in srgb, var(--accent) 60%, transparent)); }
+.sector-lock { flex: none; width: 26px; height: 26px; color: var(--text-dim); }
 
+/* ---------- Campaign: one sector's route map ---------- */
 .sector-blurb { margin: 0; text-align: center; color: var(--text-dim); line-height: 1.5; font-size: 0.9rem; }
-.level-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; width: 100%; max-width: 420px; margin: 0 auto; }
+.sector-progress { display: flex; align-items: center; gap: 10px; width: 100%; max-width: 460px; margin: 0 auto; }
+.sector-progress .sector-count { margin-left: 0; }
+.progress-bar { flex: 1; height: 6px; border-radius: 3px; background: rgba(255, 255, 255, 0.1); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1); overflow: hidden; }
+.progress-bar i { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, color-mix(in srgb, var(--accent) 55%, transparent), var(--accent)); box-shadow: 0 0 8px var(--accent); transition: width 0.4s; }
+
+/* The map: the sector's artwork at full strength, chart lines, and the route across it. */
+.level-map {
+  --accent: var(--neon-green);
+  position: relative;
+  isolation: isolate;
+  width: 100%;
+  max-width: 460px;
+  margin: 0 auto;
+  padding: 26px 6px 10px;
+  border-radius: 22px;
+  border: 1px solid color-mix(in srgb, var(--accent) 65%, transparent);
+  background: rgb(var(--deep-rgb));
+  box-shadow: 0 0 22px color-mix(in srgb, var(--accent) 28%, transparent), inset 0 0 0 1px rgba(255, 255, 255, 0.07);
+  overflow: hidden;
+}
+.level-map-art { position: absolute; inset: 0; z-index: -3; background-size: cover; background-position: center; filter: saturate(1.12) contrast(1.06); }
+.level-map-chart {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  background:
+    radial-gradient(ellipse at 50% 50%, transparent 40%, rgba(var(--deep-rgb), 0.62) 100%),
+    linear-gradient(rgba(var(--deep-rgb), 0.16), rgba(var(--deep-rgb), 0.16)),
+    repeating-linear-gradient(90deg, transparent 0 31px, rgba(255, 255, 255, 0.075) 31px 32px),
+    repeating-linear-gradient(0deg, transparent 0 31px, rgba(255, 255, 255, 0.075) 31px 32px);
+}
+/* Survey brackets in two corners. */
+.level-map::before, .level-map::after {
+  content: '';
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--accent);
+  opacity: 0.9;
+  pointer-events: none;
+}
+.level-map::before { top: 8px; right: 8px; border-left: 0; border-bottom: 0; border-top-right-radius: 12px; }
+.level-map::after { bottom: 8px; left: 8px; border-right: 0; border-top: 0; border-bottom-left-radius: 12px; }
+.level-map-label { position: absolute; top: 9px; left: 16px; font-family: var(--font-display); font-size: 0.56rem; letter-spacing: 0.24em; text-transform: uppercase; color: var(--accent); text-shadow: 0 1px 4px rgba(0, 0, 0, 0.9); opacity: 0.9; }
+
+.level-grid { position: relative; display: grid; grid-template-columns: repeat(3, 1fr); width: 100%; }
+/* The route is drawn in a 300x300 chart stretched over the grid. Every node is
+   1.14 times as tall as it is wide with its disc centered 33% of a width down,
+   so the disc centers sit at x = 50, 150, 250 and y = 29, 129, 229. */
+.route { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+.route-leg { fill: none; stroke: rgba(255, 255, 255, 0.42); stroke-width: 2; stroke-dasharray: 1.5 7; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+.route-leg.on { stroke: var(--accent); stroke-width: 3; stroke-dasharray: none; filter: drop-shadow(0 0 3px var(--accent)); }
+
 .level-node {
   --accent: var(--neon-green);
   position: relative;
-  aspect-ratio: 1;
+  aspect-ratio: 1 / 1.14;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  gap: 4px;
-  border-radius: 20px;
-  border: 1px solid var(--line);
-  background: var(--panel-strong);
+  min-width: 0;
+  border: 0;
+  background: none;
   cursor: pointer;
   transition: transform 0.12s;
 }
-.level-node:active { transform: scale(0.96); }
-.level-node.done { border-color: color-mix(in srgb, var(--accent) 70%, transparent); }
-.level-node.next { border: 2px solid var(--accent); box-shadow: 0 0 18px color-mix(in srgb, var(--accent) 60%, transparent); animation: nodePulse 2s ease-in-out infinite; }
-@keyframes nodePulse { 50% { box-shadow: 0 0 30px color-mix(in srgb, var(--accent) 80%, transparent); } }
-.level-node.locked { opacity: 0.45; }
-.level-glyph { display: flex; width: 38%; aspect-ratio: 1; color: var(--accent); filter: drop-shadow(0 0 5px var(--accent)); }
+.level-node:active { transform: scale(0.95); }
+.level-disc {
+  position: relative;
+  flex: none;
+  width: 54%;
+  aspect-ratio: 1;
+  margin-top: 6%;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  border: 2px solid color-mix(in srgb, var(--accent) 55%, rgba(255, 255, 255, 0.25));
+  background:
+    radial-gradient(circle at 34% 26%, rgba(255, 255, 255, 0.26), transparent 44%),
+    radial-gradient(circle, color-mix(in srgb, var(--accent) 26%, rgb(var(--deep-rgb))) 0 56%, rgba(var(--deep-rgb), 0.94) 58%);
+  box-shadow:
+    0 0 0 4px rgba(var(--deep-rgb), 0.6),
+    0 0 0 5px color-mix(in srgb, var(--accent) 38%, transparent),
+    0 6px 16px rgba(0, 0, 0, 0.65),
+    inset 0 0 12px color-mix(in srgb, var(--accent) 35%, transparent);
+}
+/* A fine orbit ring around each stop; it turns on the stop you play next. */
+.level-disc::before {
+  content: '';
+  position: absolute;
+  inset: -11px;
+  border-radius: 50%;
+  border: 1px dashed color-mix(in srgb, var(--accent) 45%, transparent);
+  pointer-events: none;
+}
+.level-node.done .level-disc { border-color: var(--accent); }
+.level-node.next .level-disc { border-color: var(--accent); animation: nodePulse 2s ease-in-out infinite; }
+.level-node.next .level-disc::before { border-color: var(--accent); animation: orbitSpin 14s linear infinite; }
+@keyframes nodePulse {
+  50% { box-shadow: 0 0 0 4px rgba(var(--deep-rgb), 0.6), 0 0 0 5px var(--accent), 0 0 26px var(--accent), inset 0 0 16px color-mix(in srgb, var(--accent) 55%, transparent); }
+}
+.level-node.locked .level-disc { border-color: rgba(255, 255, 255, 0.22); background: rgba(var(--deep-rgb), 0.82); box-shadow: 0 0 0 4px rgba(var(--deep-rgb), 0.5), 0 4px 12px rgba(0, 0, 0, 0.6); }
+.level-node.locked .level-disc::before { border-color: rgba(255, 255, 255, 0.14); }
+.level-glyph { display: flex; width: 64%; aspect-ratio: 1; color: var(--accent); filter: drop-shadow(0 0 5px color-mix(in srgb, var(--accent) 65%, transparent)); }
 .level-glyph svg, .level-glyph .ico { width: 100%; height: 100%; }
-.level-node.locked .level-glyph { color: var(--text-dim); filter: none; }
-.level-num { position: absolute; top: 8px; left: 10px; font-family: var(--font-display); font-size: 0.72rem; color: var(--text-dim); }
+.level-node.locked .level-glyph { width: 40%; color: var(--text-dim); filter: none; }
+.level-num {
+  position: absolute;
+  top: -7%;
+  left: -7%;
+  display: grid;
+  place-items: center;
+  min-width: 21px;
+  height: 21px;
+  padding: 0 4px;
+  border-radius: 11px;
+  background: var(--accent);
+  box-shadow: 0 0 0 2px rgba(var(--deep-rgb), 0.92), 0 0 8px color-mix(in srgb, var(--accent) 60%, transparent);
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 0.66rem;
+  line-height: 1;
+  color: #05010f;
+}
+.level-node.locked .level-num { background: #4b4860; color: #cfcbe0; box-shadow: 0 0 0 2px rgba(var(--deep-rgb), 0.92); }
+.level-tag {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  margin-top: 9px;
+  padding: 3px 8px 4px;
+  border-radius: 10px;
+  background: rgba(var(--deep-rgb), 0.74);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+.level-node.locked .level-tag { opacity: 0.6; }
 .level-stars { display: flex; gap: 2px; }
-.mini-star { display: inline-flex; width: 16px; height: 16px; color: rgba(185, 179, 212, 0.28); }
+.mini-star { display: inline-flex; width: 14px; height: 14px; color: rgba(185, 179, 212, 0.3); }
 .mini-star .ico { width: 100%; height: 100%; }
 .mini-star.on { color: var(--gold); filter: drop-shadow(0 0 4px rgba(255, 211, 107, 0.7)); }
-.level-time { font-size: 0.66rem; color: var(--text-dim); }
-.level-diff { position: absolute; top: 8px; right: 10px; font-size: 0.58rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); opacity: 0.85; }
+.level-time { font-size: 0.64rem; line-height: 1.1; color: var(--text-dim); font-variant-numeric: tabular-nums; }
+.level-diff { font-size: 0.55rem; line-height: 1.2; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); }
+@media (min-width: 420px) {
+  .mini-star { width: 16px; height: 16px; }
+  .level-time { font-size: 0.68rem; }
+  .level-diff { font-size: 0.58rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pip.open, .level-node.next .level-disc, .level-node.next .level-disc::before { animation: none; }
+}
 
 /* ---------- Daily ---------- */
 .daily-card { display: flex; flex-direction: column; gap: 12px; padding: 16px; border-radius: 20px; border: 1px solid var(--neon-cyan); background: var(--panel); box-shadow: 0 0 18px rgba(var(--c3-rgb), 0.2); }

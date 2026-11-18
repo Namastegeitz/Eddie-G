@@ -1,7 +1,7 @@
 # Web (browser): ✅ Built
 
 ## What's here
-- `AlienSudoku.html`: the whole game in one file (1.7 MB). Double-click to play offline in any browser; this is also what the claude.ai artifact and the shareable githack link serve.
+- `AlienSudoku.html`: the whole game in one file (4.4 MB, with the high-definition backdrops). Double-click to play offline in any browser; this is also what the claude.ai artifact and the shareable githack link serve.
 - `music-lab/`: the Music Lab page and its MP3 samples (the theme songs, Cadet Mixtape included).
 
 Shareable link for version 1.1.0 (pinned to its commit): https://rawcdn.githack.com/Namastegeitz/Eddie-G/cff49a00f7e25606123decf9bb2d81e2a99e7a61/ALIEN-SUDOKU/builds/web/AlienSudoku.html

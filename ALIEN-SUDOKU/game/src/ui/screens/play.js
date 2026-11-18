@@ -157,7 +157,7 @@ export const playScreen = {
     for (let i = 0; i < 81; i++) {
       const r = rowOf(i), c = colOf(i);
       const cell = h('div', {
-        class: `cell${r % 3 === 0 ? ' bt' : ''}${c % 3 === 0 ? ' bl' : ''}${c === 8 ? ' br' : ''}${r === 8 ? ' bb' : ''}`,
+        class: `cell${r % 3 === 0 ? ' bt' : ''}${c % 3 === 0 ? ' bl' : ''}${c === 8 ? ' br' : ''}${r === 8 ? ' bb' : ''}${(Math.floor(r / 3) + Math.floor(c / 3)) % 2 ? ' alt' : ''}`,
         role: 'gridcell',
         dataset: { i },
       });
@@ -263,7 +263,7 @@ export const playScreen = {
         cellCache[i] = key;
 
         const cell = cells[i];
-        cell.className = cell.className.split(' ').filter((c) => c === 'cell' || c === 'bt' || c === 'bl' || c === 'br' || c === 'bb').concat(cls).join(' ');
+        cell.className = cell.className.split(' ').filter((c) => c === 'cell' || c === 'bt' || c === 'bl' || c === 'br' || c === 'bb' || c === 'alt').concat(cls).join(' ');
         if (v) {
           cell.style.setProperty('--gc', glyphColor(setKey, v));
           cell.innerHTML = `<span class="cell-glyph">${glyphSvg(setKey, v)}</span>`;

@@ -106,6 +106,8 @@
   border-radius: var(--r-board);
   padding: 4px;
   box-shadow: var(--shadow-board);
+  outline: 1px solid rgba(255, 255, 255, 0.1);
+  outline-offset: -5px;
   touch-action: none;
   overflow: hidden;
   position: relative;
@@ -120,6 +122,9 @@
   z-index: 1;
   pointer-events: none;
   background:
+    /* a bright stud where the box lines cross, and a pin-point at every cell corner */
+    radial-gradient(circle, rgba(255, 255, 255, 0.9) 0 1px, var(--box-line) 1.6px calc(var(--bw) + 0.5px), transparent calc(var(--bw) + 1.5px)) 25% 25% / calc(100% / 3) calc(100% / 3),
+    radial-gradient(circle, var(--grid-dot, var(--grid-line-strong)) 0 0.8px, transparent 1.4px) 6.25% 6.25% / calc(100% / 9) calc(100% / 9),
     linear-gradient(to right,
       transparent calc(100% / 3 - var(--bw) / 2), var(--box-line) calc(100% / 3 - var(--bw) / 2),
       var(--box-line) calc(100% / 3 + var(--bw) / 2), transparent calc(100% / 3 + var(--bw) / 2),
@@ -152,6 +157,29 @@
 /* One thin line between neighbours; none along the board's own edge. */
 .cell.br { border-right-width: 0; }
 .cell.bb { border-bottom-width: 0; }
+/* Fine detail under the glyph: every cell is a shallow tile lit from the top left,
+   the four side boxes carry a faint tint so the nine boxes read as a checker,
+   and the cells you were given have a hairline weave. */
+.cell { --tint: transparent; --weave: transparent; }
+.cell.alt { --tint: rgba(var(--c2-rgb), 0.085); }
+.cell.fixed { --weave: rgba(var(--c1-rgb), 0.075); }
+.cell::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    repeating-linear-gradient(135deg, var(--weave) 0 1px, transparent 1px 5px),
+    linear-gradient(145deg, rgba(255, 255, 255, 0.075), transparent 36%, transparent 64%, rgba(0, 0, 0, 0.17)),
+    linear-gradient(var(--tint), var(--tint));
+}
+[data-tone='light'] .cell::before {
+  background:
+    repeating-linear-gradient(135deg, var(--weave) 0 1px, transparent 1px 5px),
+    linear-gradient(145deg, rgba(255, 255, 255, 0.5), transparent 36%, transparent 64%, rgba(0, 0, 0, 0.05)),
+    linear-gradient(var(--tint), var(--tint));
+}
+.cell-glyph, .notes-grid { position: relative; }
 .cell-glyph { display: flex; width: 84%; height: 84%; pointer-events: none; }
 .cell-glyph .gsvg { width: 100%; height: 100%; overflow: visible; }
 

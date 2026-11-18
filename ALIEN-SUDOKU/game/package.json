@@ -1,7 +1,7 @@
 {
   "name": "alien-sudoku",
   "private": true,
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Alien Sudoku - decode the glyphs of the lost UFO archive. Web, iOS, Android and desktop.",
   "type": "module",
   "scripts": {
