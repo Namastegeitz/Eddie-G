@@ -1,8 +1,8 @@
 # Windows: ✅ Built (unsigned)
 
 ## What's here
-- `files/AlienSudoku-1.1.0-win-x64.exe`: installer (NSIS).
-- `files/AlienSudoku-1.1.0-win-portable.exe`: runs without installing.
+- `files/AlienSudoku-1.2.0-win-x64.exe`: installer (NSIS).
+- `files/AlienSudoku-1.2.0-win-portable.exe`: runs without installing.
 - `files/` is not in git (about 100 MB each). It exists on the machine that built it; ask Claude to send the files.
 
 ## How to build it

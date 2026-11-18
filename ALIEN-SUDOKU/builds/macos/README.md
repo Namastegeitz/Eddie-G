@@ -1,7 +1,7 @@
 # macOS: ✅ Built (unsigned)
 
 ## What's here
-- `files/AlienSudoku-1.1.0-mac-x64.zip` (Intel) and `files/AlienSudoku-1.1.0-mac-arm64.zip` (Apple Silicon).
+- `files/AlienSudoku-1.2.0-mac-x64.zip` (Intel) and `files/AlienSudoku-1.2.0-mac-arm64.zip` (Apple Silicon).
 - Not signed or notarized, so macOS blocks them until you right-click > Open. Fine for testing, not for stores.
 
 ## How to build it
