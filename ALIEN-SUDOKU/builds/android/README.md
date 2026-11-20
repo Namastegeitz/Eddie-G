@@ -1,18 +1,33 @@
-# Android (Google Play): ⛔ Blocked here
+# Android (Google Play): ✅ Built (version 1.2.0, versionCode 3)
 
 ## What's here
-- Nothing yet. The Android project is `game/android` (Capacitor 8, target API 36, id `com.eddieg.aliensudoku`).
+- `files/AlienSudoku-1.2.0-play.aab`: the upload for Google Play (signed with the upload key; Google re-signs it with Play App Signing). Upload it in step G3 of `store-launch/STEP-BY-STEP.md`.
+- `files/AlienSudoku-1.2.0.apk`: installs directly on an Android phone for a quick try (same build). Uninstall it before installing from Google Play, because Play's copy is signed with Google's key.
+- `files/AlienSudoku-1.2.0-mapping.txt`: R8 map for readable crash reports (also inside the AAB, so Play gets it automatically).
+- `files/` is not in git. It exists on the machine that built it; ask Claude to send the files.
+- Ads: Google's **test** ads until the real AdMob ids are set (step G6).
+
+## The upload key
+- `alien-sudoku-upload.jks` (alias `upload`), certificate `CN=Alien Sudoku, O=Eddie G`,
+  SHA-256 `C3:9A:0C:31:14:D3:72:F5:75:E1:5F:60:4B:82:52:47:1C:87:15:47:12:EA:E0:3E:2C:1D:1F:80:CB:6A:E7:77`.
+- The owner keeps the `.jks` and its password; they are **never** committed. To build an update,
+  give Claude the `.jks` and password (or put them in `game/android/keystore.properties`, which git ignores).
+- If the key is ever lost: Play Console → Test and release → App integrity → request an upload key reset.
 
 ## How to build it
 ```bash
 cd ALIEN-SUDOKU/game
-npm run cap:sync
-cd android && ./gradlew bundleRelease     # signed AAB for Google Play (needs the upload key, see RUN.md)
-./gradlew assembleDebug                    # debug APK for your own phone
+npm run build && npx cap sync android
+cd android && ./gradlew bundleRelease assembleRelease
+# outputs: app/build/outputs/bundle/release/app-release.aab, app/build/outputs/apk/release/app-release.apk
 ```
-This cloud workspace can't reach `dl.google.com`, so the Android SDK can't be installed here. Build on your own computer with Android Studio, fix GitHub Actions (prompt `02-github-actions.md`), or allow `dl.google.com` and `maven.google.com` (prompt `01-android-apk.md`).
+Needs the Android SDK (platform 36, build-tools 36) and `android/keystore.properties`
+(storeFile, storePassword, keyAlias=upload, keyPassword). In a Claude session, the "eddie-g"
+cloud environment allows the SDK download. Release builds use R8 shrinking
+(`app/proguard-rules.pro` keeps the Capacitor plugins).
 
 ## What the store needs
-- Upload key (keep a backup), Play Console account, real AdMob ids. See **Google Play** in the checklist and `store-launch/google-play-and-admob.md`.
+- Play Console account, the 14-day closed test, real AdMob ids. Follow **Google Play** in
+  `store-launch/STEP-BY-STEP.md`.
 
 Live status: the **Launch checklist** in [`../../README.md`](../../README.md) and the Launch Control page.

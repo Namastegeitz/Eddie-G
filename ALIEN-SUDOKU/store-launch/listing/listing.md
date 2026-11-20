@@ -88,9 +88,9 @@ _Add to the end of the description on Steam, GOG, itch.io, Epic and Microsoft St
 
 ## What's new
 
-> Version 1.1: meet the Star Cadets! Polite academy recruits raised on Earth's '80s and '90s broadcasts now bring Medium puzzles in the Campaign, Daily and Quick Play, with their own theme song, Cadet Mixtape. Alien Creatures move to Easy.
+> Version 1.2: space in high definition. Every backdrop is redrawn at four times the detail, with framings made for phones held upright. The campaign is now a star chart, and each sector has its own route map. Boards gain finer detail. Also new: the Star Cadets, polite recruits raised on Earth's '80s and '90s broadcasts, bring Medium puzzles with their own song, Cadet Mixtape.
 
-✅ apple 237/4000 · ✅ google 237/500
+✅ apple 377/4000 · ✅ google 377/500
 
 ## Categories
 
@@ -106,7 +106,7 @@ _Add to the end of the description on Steam, GOG, itch.io, Epic and Microsoft St
 
 ## Support email
 
-> TODO: your support email
+> TODO: the new Gmail for Alien Sudoku (step 1)
 
 ⬜ to fill in
 
@@ -114,17 +114,19 @@ _Required by Google Play and shown publicly. Use an address you check._
 
 ## Support URL
 
-> TODO: public support page
-
-⬜ to fill in
+> https://namastegeitz.github.io/Eddie-G/alien-sudoku/support.html
 
 _Required by Apple. The GitHub Pages site from prompt 06 works._
 
 ## Privacy policy URL
 
-> TODO: public privacy policy URL
-
-⬜ to fill in
+> https://namastegeitz.github.io/Eddie-G/alien-sudoku/privacy.html
 
 _Required by Apple and Google (ads). Host store-launch/privacy-policy.md publicly._
+
+## website
+
+> https://namastegeitz.github.io/Eddie-G/alien-sudoku/
+
+_Developer website / marketing URL (optional for both stores)._
 

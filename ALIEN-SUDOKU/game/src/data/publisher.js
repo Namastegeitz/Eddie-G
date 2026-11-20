@@ -3,6 +3,6 @@
 export const PUBLISHER = {
   name: 'Eddie G',
   supportEmail: '',        // e.g. aliensudoku.support@gmail.com
-  website: '',             // e.g. https://your-site.example (app-ads.txt lives at its root)
-  privacyPolicyUrl: '',    // the public copy of this policy
+  website: 'https://namastegeitz.github.io/Eddie-G/alien-sudoku/',
+  privacyPolicyUrl: 'https://namastegeitz.github.io/Eddie-G/alien-sudoku/privacy.html',
 };

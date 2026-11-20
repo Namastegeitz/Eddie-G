@@ -81,15 +81,19 @@
     "value": "© 2026 Eddie G"
   },
   "supportEmail": {
-    "value": "TODO: your support email",
+    "value": "TODO: the new Gmail for Alien Sudoku (step 1)",
     "note": "Required by Google Play and shown publicly. Use an address you check."
   },
   "supportUrl": {
-    "value": "TODO: public support page",
+    "value": "https://namastegeitz.github.io/Eddie-G/alien-sudoku/support.html",
     "note": "Required by Apple. The GitHub Pages site from prompt 06 works."
   },
   "privacyPolicyUrl": {
-    "value": "TODO: public privacy policy URL",
+    "value": "https://namastegeitz.github.io/Eddie-G/alien-sudoku/privacy.html",
     "note": "Required by Apple and Google (ads). Host store-launch/privacy-policy.md publicly."
+  },
+  "website": {
+    "value": "https://namastegeitz.github.io/Eddie-G/alien-sudoku/",
+    "note": "Developer website / marketing URL (optional for both stores)."
   }
 }

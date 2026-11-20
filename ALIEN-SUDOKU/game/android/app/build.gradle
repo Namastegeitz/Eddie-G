@@ -36,8 +36,10 @@ android {
     buildTypes {
         release {
             if (releaseStoreFile) signingConfig signingConfigs.release
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            // R8 shrinks and optimizes the Java side (Capacitor, AdMob, plugins); the game itself is web code.
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
 }

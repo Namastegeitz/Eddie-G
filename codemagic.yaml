@@ -1,0 +1,63 @@
+# Codemagic: builds the Alien Sudoku iOS app on a cloud Mac and uploads it to TestFlight.
+# For publishing without your own Mac. Codemagic's free plan includes 500 macOS minutes
+# a month; one build takes about 10-15 minutes.
+#
+# One-time setup (ALIEN-SUDOKU/store-launch/STEP-BY-STEP.md, Apple steps):
+#   1. Sign in at codemagic.io with GitHub and add the Eddie-G repository.
+#   2. Team settings > Integrations > Developer Portal: add your App Store Connect
+#      API key (Admin role) and name it exactly: Alien Sudoku ASC key
+#   3. Later, once AdMob gives you the iOS app id: in the app's Environment variables,
+#      add ADMOB_IOS_APP_ID=ca-app-pub-...~... in a group named "admob", then turn on
+#      the two "groups" lines below (until then the app shows Google's test ads).
+#   4. Start the "Alien Sudoku iOS (TestFlight)" workflow on your branch.
+# Codemagic creates the signing certificate and App Store profile by itself through
+# the API key, so no Mac or Xcode is needed at any point.
+
+workflows:
+  alien-sudoku-ios:
+    name: Alien Sudoku iOS (TestFlight)
+    instance_type: mac_mini_m2
+    max_build_duration: 60
+    integrations:
+      app_store_connect: Alien Sudoku ASC key
+    environment:
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: com.eddieg.aliensudoku
+      # groups:
+      #   - admob
+      node: 22
+      xcode: latest
+      vars:
+        APP_DIR: ALIEN-SUDOKU/game
+        # Builds 1-99 were reserved for earlier pipelines; Codemagic's counter is added on top.
+        BUILD_OFFSET: 100
+    triggering:
+      events: []   # start builds by hand from the Codemagic dashboard
+    scripts:
+      - name: Install packages
+        script: cd "$APP_DIR" && npm ci
+      - name: AdMob app id (test ads until it is set)
+        script: |
+          cd "$APP_DIR"
+          if [ -n "$ADMOB_IOS_APP_ID" ]; then node tools/set-admob-ids.mjs; else echo "No ADMOB_IOS_APP_ID: using Google's test ads"; fi
+      - name: Build the game and copy it into the iOS app
+        script: cd "$APP_DIR" && npm run build && npx cap sync ios
+      - name: Apply signing files
+        script: xcode-project use-profiles
+      - name: Build the .ipa
+        script: |
+          cd "$APP_DIR/ios/App"
+          BUILD=$((BUILD_NUMBER + BUILD_OFFSET))
+          echo "Build number $BUILD"
+          xcode-project build-ipa \
+            --project App.xcodeproj \
+            --scheme App \
+            --archive-xcargs "CURRENT_PROJECT_VERSION=$BUILD"
+    artifacts:
+      - ALIEN-SUDOKU/game/ios/App/build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+    publishing:
+      app_store_connect:
+        auth: integration
+        submit_to_testflight: true
