@@ -1,5 +1,22 @@
 # Status
 
+## App Store readiness pass (2026-11-20, branch `claude/app-store-readiness`)
+- Checked every iOS game here against Apple's rules as of Nov 2026 (Xcode 26+/iOS 26 SDK now;
+  Xcode 27/iOS 27 SDK + iOS 15 minimum from April 2027; UIScene needed for Xcode 27 builds;
+  new age-rating answers Shared Location / Dating and Relationships due by Jan 12, 2027).
+- Godot games (Bug's-Eye View, Cosmic Saucer Drift, Canopy Crossing): iOS presets now carry camera,
+  microphone and photo-library purpose strings (the engine links those APIs, and an upload without
+  the strings is marked invalid with ITMS-90683). Bug's-Eye View's App Store icon is now an RGB PNG
+  with no alpha channel (`assets/icons/icon_ios_1024.png`). All three exported from Godot 4.7.2 and
+  checked: purpose strings, RGB 1024 icon, PrivacyInfo.xcprivacy, scene manifest, iOS 15 minimum.
+- Monkey Do: app privacy manifest added to the Xcode target (no tracking, nothing collected);
+  `UIRequiredDeviceCapabilities` armv7 -> arm64 (the app is iOS 15+, 64-bit only).
+- New root `codemagic.yaml`: one TestFlight workflow per game (the three Godot games + Monkey Do),
+  Xcode 26.6 pinned, Team ID injected from Codemagic, build number from Codemagic's counter + 100.
+- Still needs Eddie: Apple Developer account, App Store Connect API key (Admin) in Codemagic,
+  APPLE_TEAM_ID variable, an app record per bundle id, screenshots, privacy policy URLs,
+  age-rating and App Privacy answers, and a real-device TestFlight check.
+
 ## Off-Grid Survival Kit (`apps/off-grid-survival-kit`)
 - Built from `prompts/claude/off-grid-survival-kit.md`: hub + map + 8 module folders, PWA (manifest,
   service worker precaching 53 files), everything on-device (IndexedDB/localStorage), no CDN.

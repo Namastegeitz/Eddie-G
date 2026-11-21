@@ -1,0 +1,208 @@
+# Codemagic: build the Eddie-G games for iPhone/iPad on a cloud Mac and send
+# each one to TestFlight. No Mac of your own is needed.
+#
+# Codemagic only reads codemagic.yaml from the repository ROOT, so this file
+# replaces the "copy me to the root" templates in
+#   apps/bugs-eye-view/docs/ci/codemagic.yaml
+#   apps/monkey-see-monkey-do/mobile/ci/codemagic.yaml
+# (Alien Sudoku has its own root codemagic.yaml on the claude/peaceful-carson
+#  branch; if the branches are merged, put its workflow under `workflows:` here.)
+#
+# ONE-TIME SETUP (codemagic.io, free tier = 500 Mac minutes a month)
+#   1. Apple Developer Program membership ($99/yr).
+#   2. App Store Connect > Users and Access > Integrations > Keys: create an API
+#      key with the ADMIN role (cloud signing fails with App Manager keys).
+#   3. Codemagic > Teams > Integrations > Developer Portal: add that key and
+#      name it exactly:  Eddie-G ASC key
+#   4. Codemagic > the app > Environment variables: group "apple" with
+#      APPLE_TEAM_ID = your 10-character Team ID (Membership page). The Godot
+#      export presets keep the placeholder ABCDE12345 on purpose; CI swaps it.
+#   5. In App Store Connect create one app record per game with the bundle id
+#      listed in that workflow (Certificates, Identifiers & Profiles first).
+#   6. Start a workflow by hand from the Codemagic dashboard.
+#
+# XCODE: pinned to 26.6. Apple accepts Xcode 26+ builds today; from April 2027
+# uploads must be built with Xcode 27 (iOS 27 SDK) and target iOS 15+.
+# Godot 4.7.2 and Capacitor 8.5+ both use the UIScene life cycle that Xcode 27
+# requires, so the switch is just changing every `xcode:` line to 27.x
+# (then test on a device: Xcode 27 builds also get iPad resizing and iPhone Duo).
+#
+# BUILD NUMBERS: every upload needs a higher build number. Each workflow uses
+# Codemagic's own counter ($BUILD_NUMBER) plus 100, so it never collides with
+# a build 1 made by hand.
+
+definitions:
+  godot_env: &godot_env
+    GODOT_VERSION: "4.7.2"
+  install_godot: &install_godot
+    name: Install Godot 4.7.2 and its export templates
+    script: |
+      set -e
+      curl -sSL -o godot.zip "https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_macos.universal.zip"
+      unzip -q godot.zip
+      curl -sSL -o templates.tpz "https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_export_templates.tpz"
+      TPL="$HOME/Library/Application Support/Godot/export_templates/${GODOT_VERSION}.stable"
+      mkdir -p "$TPL"
+      unzip -q templates.tpz -d tpl
+      mv tpl/templates/* "$TPL/"
+      echo "GODOT=$PWD/Godot.app/Contents/MacOS/Godot" >> "$CM_ENV"
+  godot_export: &godot_export
+    name: Export the Xcode project from Godot
+    script: |
+      set -e
+      [ -n "$APPLE_TEAM_ID" ] || { echo "Set APPLE_TEAM_ID in the 'apple' environment group"; exit 1; }
+      cd "$GAME_DIR"
+      # Real Team ID and a fresh build number go into the iOS preset for this build only.
+      sed -i '' "s|application/app_store_team_id=\"ABCDE12345\"|application/app_store_team_id=\"$APPLE_TEAM_ID\"|" export_presets.cfg
+      sed -i '' -E "s|^application/version=\"[0-9]+\"|application/version=\"$((BUILD_NUMBER + 100))\"|" export_presets.cfg
+      mkdir -p build/ios
+      "$GODOT" --headless --path . --import
+      "$GODOT" --headless --path . --export-release "iOS" "build/ios/$IOS_NAME.ipa"
+      ls "build/ios/$IOS_NAME.xcodeproj"
+
+workflows:
+  bugs-eye-view-ios:
+    name: Bug's-Eye View iOS -> TestFlight
+    instance_type: mac_mini_m2
+    max_build_duration: 60
+    integrations:
+      app_store_connect: Eddie-G ASC key
+    environment:
+      xcode: 26.6
+      groups:
+        - apple
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: com.aethertek.bugseyeview
+      vars:
+        <<: *godot_env
+        GAME_DIR: apps/bugs-eye-view
+        IOS_NAME: BugsEyeView
+    triggering:
+      events: []
+    scripts:
+      - *install_godot
+      - *godot_export
+      - name: Signing
+        script: xcode-project use-profiles --project "$GAME_DIR/build/ios/$IOS_NAME.xcodeproj"
+      - name: Build the .ipa
+        script: xcode-project build-ipa --project "$GAME_DIR/build/ios/$IOS_NAME.xcodeproj" --scheme "$IOS_NAME"
+    artifacts:
+      - build/ios/ipa/*.ipa
+    publishing:
+      app_store_connect:
+        auth: integration
+        submit_to_testflight: true
+
+  cosmic-saucer-drift-ios:
+    name: Cosmic Saucer Drift iOS -> TestFlight
+    instance_type: mac_mini_m2
+    max_build_duration: 60
+    integrations:
+      app_store_connect: Eddie-G ASC key
+    environment:
+      xcode: 26.6
+      groups:
+        - apple
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: com.aethertek.cosmicsaucerdrift
+      vars:
+        <<: *godot_env
+        GAME_DIR: COSMIC-SAUCER-DRIFT/game
+        IOS_NAME: CosmicSaucerDrift
+    triggering:
+      events: []
+    scripts:
+      - *install_godot
+      - *godot_export
+      - name: Signing
+        script: xcode-project use-profiles --project "$GAME_DIR/build/ios/$IOS_NAME.xcodeproj"
+      - name: Build the .ipa
+        script: xcode-project build-ipa --project "$GAME_DIR/build/ios/$IOS_NAME.xcodeproj" --scheme "$IOS_NAME"
+    artifacts:
+      - build/ios/ipa/*.ipa
+    publishing:
+      app_store_connect:
+        auth: integration
+        submit_to_testflight: true
+
+  canopy-crossing-ios:
+    name: Canopy Crossing iOS -> TestFlight
+    instance_type: mac_mini_m2
+    max_build_duration: 60
+    integrations:
+      app_store_connect: Eddie-G ASC key
+    environment:
+      xcode: 26.6
+      groups:
+        - apple
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: com.aethertek.canopycrossing
+      vars:
+        <<: *godot_env
+        GAME_DIR: apps/CANOPY-CROSSING
+        IOS_NAME: CanopyCrossing
+    triggering:
+      events: []
+    scripts:
+      - *install_godot
+      - *godot_export
+      - name: Signing
+        script: xcode-project use-profiles --project "$GAME_DIR/build/ios/$IOS_NAME.xcodeproj"
+      - name: Build the .ipa
+        script: xcode-project build-ipa --project "$GAME_DIR/build/ios/$IOS_NAME.xcodeproj" --scheme "$IOS_NAME"
+    artifacts:
+      - build/ios/ipa/*.ipa
+    publishing:
+      app_store_connect:
+        auth: integration
+        submit_to_testflight: true
+
+  monkey-do-ios:
+    name: Monkey Do iOS -> TestFlight
+    instance_type: mac_mini_m2
+    max_build_duration: 45
+    integrations:
+      app_store_connect: Eddie-G ASC key
+    environment:
+      xcode: 26.6
+      node: 22
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: com.namastegeitz.monkeydo
+      vars:
+        APP_DIR: apps/monkey-see-monkey-do
+    triggering:
+      events: []
+    scripts:
+      - name: Tests and web bundle
+        script: |
+          set -e
+          cd "$APP_DIR"
+          node tests/unit.mjs
+          node scripts/build_web.mjs
+      - name: Capacitor sync
+        script: |
+          set -e
+          cd "$APP_DIR/mobile"
+          npm ci --no-audit --no-fund
+          npx cap sync ios
+      - name: Signing
+        script: xcode-project use-profiles --project "$APP_DIR/mobile/ios/App/App.xcodeproj"
+      - name: Build number
+        script: |
+          # Info.plist reads $(CURRENT_PROJECT_VERSION); the project has no
+          # VERSIONING_SYSTEM, so agvtool can't be used. Set it directly.
+          cd "$APP_DIR/mobile/ios/App"
+          sed -i '' -E "s/CURRENT_PROJECT_VERSION = [0-9]+;/CURRENT_PROJECT_VERSION = $((BUILD_NUMBER + 100));/g" App.xcodeproj/project.pbxproj
+          grep -m1 'CURRENT_PROJECT_VERSION' App.xcodeproj/project.pbxproj
+      - name: Build the .ipa
+        script: xcode-project build-ipa --project "$APP_DIR/mobile/ios/App/App.xcodeproj" --scheme App
+    artifacts:
+      - build/ios/ipa/*.ipa
+    publishing:
+      app_store_connect:
+        auth: integration
+        submit_to_testflight: true

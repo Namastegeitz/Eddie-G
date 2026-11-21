@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  App privacy manifest for Monkey Do (App Store requirement for apps that ship
+  privacy-relevant code; Xcode merges it with the SDK manifests into the
+  privacy report).
+
+  Matches what the game does today:
+  - No tracking, no ad SDK, no analytics: saves stay in the web view on the
+    device, and the game makes no network requests (js/ has no fetch/XHR).
+  - Purchases go through Apple (StoreKit via cordova-plugin-purchase) with no
+    receipt server, so the developer collects no purchase data.
+  - The app's own code calls no "required reason" API. Capacitor and its
+    plugins ship their own manifests.
+  If ads, analytics, accounts or a receipt server are ever added, update this
+  file AND the App Privacy answers in App Store Connect in the same release.
+-->
+<plist version="1.0">
+<dict>
+	<key>NSPrivacyTracking</key>
+	<false/>
+	<key>NSPrivacyTrackingDomains</key>
+	<array/>
+	<key>NSPrivacyCollectedDataTypes</key>
+	<array/>
+	<key>NSPrivacyAccessedAPITypes</key>
+	<array/>
+</dict>
+</plist>
