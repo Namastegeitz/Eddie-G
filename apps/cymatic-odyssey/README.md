@@ -8,6 +8,7 @@ A sealed, low-voltage water chamber that turns sound into geometric light on any
 
 | | |
 |---|---|
+| [docs/CYMATIC_ODYSSEY_Sourcing_Guide.pdf](docs/CYMATIC_ODYSSEY_Sourcing_Guide.pdf) | Designed PDF: geometric glass to buy, custom glass makers (precision, art studios, 3D crystal engraving), transparent/translucent and effect filaments |
 | [docs/SHOPPING_LIST.md](docs/SHOPPING_LIST.md) | Parts list with links, plus glass stores in South Jersey and the Philadelphia area |
 | [docs/BUILD_SPECS.md](docs/BUILD_SPECS.md) | How it works, what your EZ-100 Tesla coil can and can't do, specs, parts list (about $300-450), print settings, assembly, calibration |
 | [docs/SAFETY.md](docs/SAFETY.md) | **Read first.** Tesla coil + water, low-voltage rules, flicker and photosensitivity, health claims |
