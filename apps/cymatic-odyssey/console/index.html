@@ -280,6 +280,7 @@ function drawAtlas(){ $('atlas').querySelector('tbody').innerHTML=atlas.slice().
 $('logBtn').onclick=()=>{ atlas.push({f:st.f.toFixed(2), b: st.ratio?(st.f*st.ratio).toFixed(2):'', mode:st.mode, depth:st.depth, look:$('seen').value, at:new Date().toISOString()}); save(); drawAtlas(); };
 const atlasCSV=()=>'freq_hz,second_hz,mode,depth_mm,label,logged\n'+atlas.map(r=>[r.f,r.b,r.mode,r.depth,r.look,r.at].join(',')).join('\n');
 $('expBtn').onclick=()=>{ try{ const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([atlasCSV()],{type:'text/csv'})); a.download='pattern_atlas.csv'; a.click(); }catch(e){} };
+try{ if(window.top!==window.self) $('expBtn').style.display='none'; }catch(e){ $('expBtn').style.display='none'; }
 $('cpyBtn').onclick=async()=>{ try{ await navigator.clipboard.writeText(atlasCSV()); $('cpyBtn').textContent='Copied'; }catch(e){ $('cpyBtn').textContent='Copy blocked'; } setTimeout(()=>$('cpyBtn').textContent='Copy CSV',1500); };
 $('impFile').onchange=async e=>{ const txt=await e.target.files[0].text(); const [hd,...ls]=txt.trim().split(/\r?\n/); const H=hd.split(',');
   ls.forEach(l=>{ const c=l.split(','), o={}; H.forEach((h,i)=>o[h]=c[i]); if(o.label && !/no clear|disordered/.test(o.label)) atlas.push({f:o.freq_hz, b:o.second_hz||'', mode:'faraday', look:o.label, at:'mode_mapper'}); });

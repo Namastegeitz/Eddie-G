@@ -16,7 +16,7 @@ A sealed, low-voltage water chamber that turns sound into geometric light on any
 | [docs/VOYAGES.md](docs/VOYAGES.md) | 11 "space odyssey" and introspective shows (frequency programs) |
 | [docs/THEMES.md](docs/THEMES.md) | 40 holiday and observance themes: colours, voyage, gobos, insert, pitch |
 | [docs/MARKET.md](docs/MARKET.md) | Market section: positioning, product tiers, home and business uses, health claims you can and can't make, compliance |
-| [console/index.html](console/index.html) | **Voyage console**: open in any browser. Tone generator (one or two tones, pulse, breathe, sweep), live caustic preview, voyages, themes, pattern atlas |
+| [console/index.html](console/index.html) | **Voyage console** ([live page](https://claude.ai/artifact/STJTYLCynV5XHA1uNHifMX)): open in any browser. Tone generator (one or two tones, pulse, breathe, sweep), live caustic preview, voyages, themes, pattern atlas |
 
 ## The printable parts
 
