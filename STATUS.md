@@ -17,6 +17,12 @@
   shows that chain (bridge = next opening, guest from 6 ahead; `docs/SHOWS.md`), console upgraded (style gallery with
   real gobo textures, shows, Continuous mode, split L/R wiring for automatic mode switching, phone layout), 37-page manual
   `docs/CYMATIC_ODYSSEY_Manual.pdf` (`docs/manual/build_manual.py`), sourcing guide PDF. Tests 9/9.
+- 2026-11-25 (latest): 15 marketing videos (`marketing/videos/`, 30.5 s vertical 1080x1920 + soundtrack from each show's
+  tones, labelled as simulations; captions in `marketing/VIDEOS.md`; `tools/make_videos.py`). Bambu Studio: `tools/bambu_ready.py`
+  checked all 436 STLs (0 problems) and wrote 65 3MF plates via lib3mf, re-read in strict mode (0 problems) incl. two-colour
+  AMS gobos and an A1-mini 4-quarter platform (`docs/BAMBU_STUDIO.md`). Blender: `tools/blender/cymatic_blender.py` add-on + CLI
+  (bevel, self-checking engrave, remesh, decimate, chamber assembly + Cycles render), run with bpy 5.3: 81 enhanced parts all
+  watertight, renders for all 30 styles in `marketing/renders/`. Not tested inside the Bambu Studio app (no desktop here).
 - Next: print platform + one insert + one gobo, measure the real dish ID (regenerate with --dish-id), check exciter ring size
   against the DAEX32EP-4 datasheet, run the console on the real rig and log an atlas; Gordon-Webb-Wolpert isospectral pair
   (needs verified coordinates); music-to-mode quantiser.
