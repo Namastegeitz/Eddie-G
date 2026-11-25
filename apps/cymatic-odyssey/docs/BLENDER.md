@@ -45,5 +45,5 @@ Avoid bevels on gobos: their lines are only 0.8 mm wide. The batch command engra
 
 - `blender_enhanced/<style>/..._plus.stl`: every style kit part, enhanced and checked watertight
 - `blender_enhanced/hardware/..._plus.stl`: every hardware part, bevelled
-- `marketing/renders/chamber_S##.png`: an assembled-chamber render per style; `chamber_exploded.png`: the exploded hero shot
+- `marketing/renders/chamber_S##.jpg`: an assembled-chamber render per style; `chamber_exploded.jpg`: the exploded hero shot
 - `marketing/renders/chamber_S05.blend`: an editable Blender scene
