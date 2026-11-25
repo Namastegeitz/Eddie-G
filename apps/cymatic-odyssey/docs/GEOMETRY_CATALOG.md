@@ -697,5 +697,7 @@ Previews: `previews/<family>.png` (contact sheets) and `previews/items/`.
 | [stl/hardware/mirror_holder_45.stl](../stl/hardware/mirror_holder_45.stl) | Holds a 100 x 100 mm first-surface mirror at 45 degrees to throw the pattern onto a wall. |
 | [stl/hardware/gobo_carrier.stl](../stl/hardware/gobo_carrier.stl) | Ring that sits under the dish and holds a 110 mm gobo or printed film. |
 | [stl/hardware/lens_ring_80mm.stl](../stl/hardware/lens_ring_80mm.stl) | Holds an 80 mm, ~100 mm focal-length lens on three M5 rods above the dish; it images the caustics onto the wall (focus with the nuts). |
+| [stl/hardware/platform_quarter_a1mini.stl](../stl/hardware/platform_quarter_a1mini.stl) | A1 mini version of the platform: print this quarter 4 times (it is symmetric), join with 4 splice plates and 16 x M3x12 + nuts. |
+| [stl/hardware/platform_splice_plate.stl](../stl/hardware/platform_splice_plate.stl) | Splice plate for the A1-mini platform quarters (print 4). |
 | [stl/hardware/panel_corner.stl](../stl/hardware/panel_corner.stl) | L-bracket for 3-5 mm acrylic enclosure panels (M3 screws). Print 8-12. |
 | [stl/hardware/coil_bay_base.stl](../stl/hardware/coil_bay_base.stl) | Separate dry bay base for the EZ-100 Tesla coil (default 130 x 130 mm: measure yours). |

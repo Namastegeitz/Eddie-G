@@ -11,6 +11,9 @@ A sealed, low-voltage water chamber that turns sound into geometric light on any
 | [docs/CYMATIC_ODYSSEY_Manual.pdf](docs/CYMATIC_ODYSSEY_Manual.pdf) | **The complete illustrated manual (37 pages):** how it works, 5 build models, parts, printing, assembly and wiring, phone setup, all 30 styles with wall previews and STL kits, all 15 shows with timelines |
 | [downloads/CYMATIC_ODYSSEY_30_style_kits.zip](downloads/CYMATIC_ODYSSEY_30_style_kits.zip) | 30 style kits (gobo STL+SVG, insert STL, dipper STL, previews) + all hardware STLs |
 | [docs/SHOWS.md](docs/SHOWS.md) | 15 ten-minute light shows that chain into one 150-minute loop |
+| [marketing/videos/](marketing/videos/) + [marketing/VIDEOS.md](marketing/VIDEOS.md) | **15 marketing videos** (one per show, 30 s vertical 1080x1920 with soundtrack) + ready-to-post captions |
+| [docs/BAMBU_STUDIO.md](docs/BAMBU_STUDIO.md) + `downloads/CYMATIC_ODYSSEY_Bambu_Studio.zip` | **Bambu Studio:** every STL checked/repaired, 3MF plates per style (incl. two-colour AMS gobos), hardware plates, A1-mini platform; all verified with lib3mf |
+| [docs/BLENDER.md](docs/BLENDER.md) + [tools/blender/cymatic_blender.py](tools/blender/cymatic_blender.py) | **Blender add-on + CLI:** bevel/engrave/remesh/decimate any STL, assemble and render the full chamber; `downloads/CYMATIC_ODYSSEY_Blender_enhanced.zip`, renders in `marketing/renders/` |
 | [docs/CYMATIC_ODYSSEY_Sourcing_Guide.pdf](docs/CYMATIC_ODYSSEY_Sourcing_Guide.pdf) | Designed PDF: geometric glass to buy, custom glass makers (precision, art studios, 3D crystal engraving), transparent/translucent and effect filaments |
 | [docs/SHOPPING_LIST.md](docs/SHOPPING_LIST.md) | Parts list with links, plus glass stores in South Jersey and the Philadelphia area |
 | [docs/BUILD_SPECS.md](docs/BUILD_SPECS.md) | How it works, what your EZ-100 Tesla coil can and can't do, specs, parts list (about $300-450), print settings, assembly, calibration |

@@ -57,6 +57,9 @@ def extrude(geom, h, z0=0.0):
 
 
 def save_stl(man, path: Path):
+    # merge features closer than 10 micrometres so float32 STL rounding can't create
+    # non-manifold edges (keeps every file watertight in Bambu Studio / any slicer)
+    man = man.simplify(0.01)
     mesh = man.to_mesh()
     V = np.asarray(mesh.vert_properties)[:, :3].astype(np.float32)
     F = np.asarray(mesh.tri_verts)
@@ -139,6 +142,15 @@ def gobo(design, spec: Spec):
     cs = mf.CrossSection([r.astype(float) for r in rings], mf.FillRule.EvenOdd)
     top = cs.extrude(spec.gobo_height - spec.gobo_base).translate((0, 0, spec.gobo_base))
     return base + top, rings
+
+
+def gobo_parts(design, spec: Spec):
+    """Two-colour gobo for an AMS printer: (translucent base disc, opaque lines + rim)."""
+    _, rings = gobo(design, spec)
+    base = extrude(Point(0, 0).buffer(spec.gobo_d / 2, 128), spec.gobo_base)
+    cs = mf.CrossSection([r.astype(float) for r in rings], mf.FillRule.EvenOdd)
+    top = cs.extrude(spec.gobo_height - spec.gobo_base).translate((0, 0, spec.gobo_base))
+    return base, top
 
 
 def insert(design, spec: Spec):
@@ -302,6 +314,28 @@ def coil_bay_base(w=130.0, d=130.0, margin=12.0, t=4.0, stop_h=8.0):
     return man
 
 
+def platform_quarter(qx=1, qy=1, size=200.0, hole=3.4):
+    """A1 mini (180 mm bed): one quarter of the platform (100 x 100 mm). Four quarters + four
+    splice plates (8 x M3x12 + nuts... 16 total) rebuild the 200 mm platform."""
+    full = platform(size=size)
+    q = mf.Manifold.cube((size / 2 + 2, size / 2 + 2, 20)).translate((0 if qx > 0 else -size / 2 - 2, 0 if qy > 0 else -size / 2 - 2, -5))
+    part = full ^ q
+    for (cx, cy) in ((0.0, 82.0), (0.0, -82.0), (82.0, 0.0), (-82.0, 0.0)):
+        for dx in (-8.0, 8.0):
+            for dy in (-8.0, 8.0):
+                part = part - mf.Manifold.cylinder(20, hole / 2, hole / 2).translate((cx + dx, cy + dy, -6))
+    return part
+
+
+def splice_plate(t=4.0, hole=3.4):
+    """Bolts two A1-mini platform quarters together under a seam (print 4)."""
+    man = extrude(box(-15, -15, 15, 15), t)
+    for x in (-8.0, 8.0):
+        for y in (-8.0, 8.0):
+            man = man - mf.Manifold.cylinder(t + 2, hole / 2, hole / 2).translate((x, y, -1))
+    return man
+
+
 HARDWARE = {
     "platform_4x_exciter": (platform, "Square vibration platform: 4 x Dayton DAEX32EP-4 exciters bond to the rings underneath; 128 mm light aperture; 152 mm recess for the glass dish."),
     "platform_foot_cup": (foot_cup, "Cup for a 25 mm Sorbothane hemisphere; print 4. Lets the platform float so it can move."),
@@ -310,6 +344,8 @@ HARDWARE = {
     "mirror_holder_45": (mirror_holder, "Holds a 100 x 100 mm first-surface mirror at 45 degrees to throw the pattern onto a wall."),
     "gobo_carrier": (gobo_carrier, "Ring that sits under the dish and holds a 110 mm gobo or printed film."),
     "lens_ring_80mm": (lens_ring, "Holds an 80 mm, ~100 mm focal-length lens on three M5 rods above the dish; it images the caustics onto the wall (focus with the nuts)."),
+    "platform_quarter_a1mini": (platform_quarter, "A1 mini version of the platform: print this quarter 4 times (it is symmetric), join with 4 splice plates and 16 x M3x12 + nuts."),
+    "platform_splice_plate": (splice_plate, "Splice plate for the A1-mini platform quarters (print 4)."),
     "panel_corner": (panel_corner, "L-bracket for 3-5 mm acrylic enclosure panels (M3 screws). Print 8-12."),
     "coil_bay_base": (coil_bay_base, "Separate dry bay base for the EZ-100 Tesla coil (default 130 x 130 mm: measure yours)."),
 }

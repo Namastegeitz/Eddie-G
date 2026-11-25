@@ -92,6 +92,31 @@ def test_styles_and_shows():
     assert len(set(seen)) == 15 and cur == shows[0]["id"]
 
 
+
+def test_bambu_report():
+    """tools/bambu_ready.py must have passed every STL and every 3MF (lib3mf strict re-read)."""
+    import json
+    rep = Path(__file__).resolve().parent.parent / "bambu/REPORT.json"
+    if not rep.exists():
+        return
+    r = json.loads(rep.read_text())
+    assert r["stl"] and all(x["ok"] for x in r["stl"]), [x["file"] for x in r["stl"] if not x["ok"]]
+    assert r["3mf"] and all(x["ok"] for x in r["3mf"]), [x["file"] for x in r["3mf"] if not x["ok"]]
+    assert all(x["fits"] for x in r["stl"])          # every part fits at least one Bambu bed
+
+
+def test_video_soundtrack_shape():
+    import json
+    import make_videos as MV
+    from styles import STYLES
+    root = Path(__file__).resolve().parent.parent
+    show = json.loads((root / "catalog/content.json").read_text())["shows"][0]
+    dur = MV.TITLE + MV.SEG * len(show["steps"]) + MV.END
+    a = MV.soundtrack(show, {s["id"]: s for s in STYLES}, dur, sr=8000)
+    assert a.shape == (int(8000 * dur), 2) and a.dtype.name == "int16"
+    assert 0 < abs(a).max() < 32767
+
+
 if __name__ == "__main__":
     for k, f in list(globals().items()):
         if k.startswith("test_"):

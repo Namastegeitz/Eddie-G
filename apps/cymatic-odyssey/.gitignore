@@ -9,3 +9,6 @@ docs/manual/manual.html
 docs/sourcing/sourcing_guide.html
 __pycache__/
 *.pyc
+blender_enhanced/**/*.stl
+bambu/styles/
+bambu/hardware/
