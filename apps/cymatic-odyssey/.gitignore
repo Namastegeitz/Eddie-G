@@ -1,0 +1,6 @@
+# loose gobo meshes/vectors are packed per family in downloads/*.zip
+stl/gobos/
+svg/
+previews/items/
+__pycache__/
+*.pyc

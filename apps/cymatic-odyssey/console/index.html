@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CYMATIC ODYSSEY - Voyage Console</title>
+<style>
+:root{--bg:#05060d;--panel:#0d1020;--line:#232842;--ink:#e8ebff;--dim:#9aa3c7;--acc:#7fd4ff;--warn:#ffb347;--bad:#ff5f6d}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+header{display:flex;align-items:center;gap:12px;padding:10px 16px;border-bottom:1px solid var(--line)}
+header h1{font-size:16px;letter-spacing:.18em;margin:0;font-weight:700}
+header .sub{color:var(--dim);font-size:12px}
+.grow{flex:1}
+main{display:grid;grid-template-columns:320px minmax(0,1fr) 340px;gap:12px;padding:12px;min-height:calc(100vh - 50px)}
+@media (max-width:1100px){main{grid-template-columns:1fr}}
+section{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px}
+h2{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);margin:4px 0 10px}
+label{display:block;color:var(--dim);font-size:12px;margin:8px 0 2px}
+input[type=range]{width:100%}
+select{max-width:100%}
+select,input[type=number],button{font:inherit;color:var(--ink);background:#151a31;border:1px solid var(--line);border-radius:8px;padding:6px 8px}
+button{cursor:pointer}
+button.primary{background:#1d5fa8;border-color:#2b7bd6}
+button.stop{background:#5a1820;border-color:#a33}
+button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.val{font-variant-numeric:tabular-nums;color:var(--acc)}
+#stage{position:relative;aspect-ratio:1/1;max-height:calc(100vh - 140px);margin:0 auto;width:100%}
+#sim{width:100%;height:100%;border-radius:50%;background:#000;display:block}
+#narr{min-height:42px;color:#fff;font-size:15px;text-align:center;margin:10px 0 0}
+.read{display:grid;grid-template-columns:1fr auto;gap:2px 10px;font-size:13px}
+.read span:nth-child(odd){color:var(--dim)}
+.banner{background:#2a1a08;border:1px solid #6b4a12;color:#ffd9a0;border-radius:10px;padding:8px 10px;font-size:12px;margin-bottom:10px}
+.steps{list-style:none;padding:0;margin:8px 0;max-height:180px;overflow:auto;font-size:12px}
+.steps li{padding:4px 6px;border-radius:6px;color:var(--dim)}
+.steps li.on{background:#16305a;color:#fff}
+.sw{display:inline-block;width:16px;height:16px;border-radius:4px;vertical-align:middle;border:1px solid #fff3}
+table{width:100%;border-collapse:collapse;font-size:12px}
+td,th{padding:3px 4px;border-bottom:1px solid var(--line);text-align:left}
+tr.click{cursor:pointer}
+#scope{width:100%;height:110px;background:#03040a;border-radius:8px}
+.prog{height:4px;background:#1a1f38;border-radius:2px;overflow:hidden}
+.prog i{display:block;height:100%;width:0;background:var(--acc)}
+.small{font-size:12px;color:var(--dim)}
+.fs #stage{max-height:100vh}
+</style>
+</head>
+<body>
+<header>
+  <h1>CYMATIC&nbsp;ODYSSEY</h1><span class="sub">Voyage Console - drive the water, preview the light</span>
+  <span class="grow"></span>
+  <button id="fsBtn" title="Full-screen projector mode">Projector mode</button>
+  <button id="startBtn" class="primary">Start audio</button>
+  <button id="panicBtn" class="stop">Stop</button>
+</header>
+<main>
+<!-- LEFT: signal -->
+<section aria-label="Signal">
+  <div class="banner">Audio out goes to a low-voltage amplifier and exciters only. Never wire this to the Tesla coil, and keep the coil away from water. Start with the volume low.</div>
+  <h2>Signal</h2>
+  <label>Drive mode</label>
+  <select id="mode" style="width:100%"><option value="faraday">Faraday - whole dish shakes (standing patterns, water at f/2)</option><option value="dipper">Dipper - a foot taps the surface (rings, water at f)</option></select>
+  <label>Drive frequency <span class="val" id="fVal"></span></label>
+  <input id="f" type="range" min="8" max="200" step="0.1" value="40">
+  <div class="row"><button data-nudge="-1">-1</button><button data-nudge="-0.1">-0.1</button><button data-nudge="0.1">+0.1</button><button data-nudge="1">+1</button></div>
+  <label>Second tone ratio (B : A)</label>
+  <select id="ratio">
+    <option value="">off - single tone</option><option value="5/4">5:4 - 12-fold quasipattern</option><option value="7/6">7:6 - superlattice</option>
+    <option value="3/2">3:2 - hexagons</option><option value="2/1">2:1 - hexagons/triangles</option><option value="5/3">5:3 - rhombic</option><option value="1.618034">phi - never repeats</option>
+  </select>
+  <label>Tone B mix <span class="val" id="mixVal"></span></label>
+  <input id="mix" type="range" min="0" max="1" step="0.01" value="0.5">
+  <label>Waveform</label>
+  <select id="wave"><option>sine</option><option>triangle</option><option>square</option></select>
+  <label>Pulse (tone bursts per second, 0 = steady) <span class="val" id="pulseVal"></span></label>
+  <input id="pulse" type="range" min="0" max="4" step="0.05" value="0">
+  <label>Breathe (slow swell, Hz; 0.1 = 6 breaths/min) <span class="val" id="brVal"></span></label>
+  <input id="breathe" type="range" min="0" max="0.25" step="0.005" value="0">
+  <label>Volume <span class="val" id="volVal"></span></label>
+  <input id="vol" type="range" min="0" max="0.8" step="0.01" value="0.15">
+  <h2 style="margin-top:14px">Sweep</h2>
+  <div class="row"><input id="swA" type="number" value="20" min="8" max="200" style="width:70px" aria-label="sweep start Hz"> to <input id="swB" type="number" value="80" min="8" max="200" style="width:70px" aria-label="sweep end Hz"> Hz in <input id="swT" type="number" value="60" min="5" max="600" style="width:64px" aria-label="sweep seconds"> s <button id="swGo">Sweep</button></div>
+  <h2 style="margin-top:14px">Water</h2>
+  <label>Depth <span class="val" id="depVal"></span></label>
+  <input id="depth" type="range" min="2" max="12" step="0.5" value="5">
+  <label>Wetted diameter (dish or insert cavity, mm) <span class="val" id="diaVal"></span></label>
+  <input id="dia" type="range" min="60" max="200" step="1" value="112">
+</section>
+
+<!-- CENTRE: preview -->
+<section aria-label="Preview">
+  <div id="stage"><canvas id="sim" width="900" height="900" aria-label="Simulated light pattern on the wall"></canvas></div>
+  <p id="narr">Press <b>Start audio</b>, then pick a voyage or move the frequency.</p>
+  <div class="prog" aria-hidden="true"><i id="progBar"></i></div>
+  <div class="row" style="margin-top:10px">
+    <label style="margin:0">Gobo</label>
+    <select id="gobo"><option value="none">none</option><option value="rings">concentric rings</option><option value="radial">sunburst</option><option value="hex">hex grid</option><option value="flower">Flower of Life</option><option value="ngon:3">triangle nest</option><option value="ngon:5">pentagon nest</option><option value="ngon:6">hexagon nest</option><option value="star:5">pentagram</option><option value="star:6">hexagram</option><option value="star:8">octagram</option><option value="star:12">dodecagram</option></select>
+    <label style="margin:0">Spectrum split</label><input id="chroma" type="range" min="0" max="0.6" step="0.01" value="0.18" style="width:110px">
+    <label style="margin:0">Motion</label><input id="speed" type="range" min="0" max="1" step="0.01" value="0.35" style="width:90px">
+  </div>
+  <p class="small">The preview is a model (linear waves + ray-traced caustics), not a camera. It slows the water's motion down so the light never flickers faster than about 1 Hz.</p>
+</section>
+
+<!-- RIGHT: voyages, themes, readouts, atlas -->
+<section aria-label="Voyages and themes">
+  <h2>Readout</h2>
+  <div class="read" id="read"></div>
+  <canvas id="scope" width="600" height="220" aria-label="Lissajous scope of tone A against tone B"></canvas>
+  <h2 style="margin-top:14px">Voyage</h2>
+  <div class="row"><select id="voy" style="flex:1"></select><button id="voyGo" class="primary">Launch</button><button id="voyStop">Halt</button></div>
+  <ul class="steps" id="steps"></ul>
+  <h2>Theme (holiday / observance)</h2>
+  <select id="theme" style="width:100%"></select>
+  <div id="themeInfo" class="small" style="margin-top:6px"></div>
+  <h2 style="margin-top:14px">Pattern atlas</h2>
+  <div class="row"><select id="seen"><option>rings</option><option>stripes</option><option>squares</option><option>hexagons/triangles</option><option>8-fold quasipattern</option><option>12-fold quasipattern</option><option>wall-shape mode</option><option>chaos</option><option>nothing</option></select><button id="logBtn">Log what I see</button></div>
+  <div class="row" style="margin-top:6px"><button id="expBtn">Export CSV</button><button id="cpyBtn">Copy CSV</button><label class="small" style="margin:0">Import mode_mapper CSV <input id="impFile" type="file" accept=".csv"></label></div>
+  <table id="atlas"><thead><tr><th>Hz</th><th>2nd</th><th>mode</th><th>look</th></tr></thead><tbody></tbody></table>
+</section>
+</main>
+
+<script>
+const CONTENT = /*CONTENT*/{"voyages": [{"id": "departure", "name": "Departure: Earth Orbit", "mood": "calm opening, 6 min", "steps": [{"t": 60, "f": 18, "ratio": null, "mix": 0.0, "pulse": 0.5, "breathe": 0.1, "mode": "dipper", "gobo": "none", "pal": ["#2b6cff", "#7fd4ff", "#b48cff"], "text": "Single drops of sound. Rings leave the centre like a launch countdown."}, {"t": 60, "f": 24, "ratio": null, "mix": 0.0, "pulse": 1.0, "breathe": 0.0, "mode": "dipper", "gobo": "rings", "pal": ["#2b6cff", "#7fd4ff", "#b48cff"], "text": "Pulse quickens; concentric rings stack into an orbit map."}, {"t": 90, "f": 36, "ratio": null, "mix": 0.0, "pulse": 0.0, "breathe": 0.0, "mode": "faraday", "gobo": "none", "pal": ["#2b6cff", "#7fd4ff", "#b48cff"], "text": "Whole-dish drive: the first standing squares lock in."}, {"t": 90, "f": 30, "ratio": null, "mix": 0.0, "pulse": 0.0, "breathe": 0.1, "mode": "faraday", "gobo": "none", "pal": ["#36ffb0", "#2bd1ff", "#9b6bff"], "text": "Breathe with the swell - 6 breaths a minute."}, {"t": 60, "f": 20, "ratio": null, "mix": 0.0, "pulse": 0.25, "breathe": 0.0, "mode": "dipper", "gobo": "none", "pal": ["#2b6cff", "#7fd4ff", "#b48cff"], "text": "Leaving orbit."}]}, {"id": "saturn", "name": "Saturn's Hexagon", "mood": "bold, geometric, 5 min", "steps": [{"t": 60, "f": 40, "ratio": [3, 2], "mix": 0.5, "pulse": 0.0, "breathe": 0.0, "mode": "faraday", "gobo": "ngon:6", "pal": ["#ffd27a", "#ff9f43", "#fff3d6"], "text": "Two tones in 2:3 - the water prefers hexagons."}, {"t": 90, "f": 48, "ratio": [3, 2], "mix": 0.6, "pulse": 0.0, "breathe": 0.0, "mode": "faraday", "gobo": "hex", "pal": ["#ffd27a", "#ff9f43", "#fff3d6"], "text": "A hexagonal jet stream, like the one Cassini filmed at Saturn's pole."}, {"t": 60, "f": 56, "ratio": [3, 2], "mix": 0.4, "pulse": 0.0, "breathe": 0.05, "mode": "faraday", "gobo": "none", "pal": ["#ff6b3d", "#ffb347", "#ffe3a3"], "text": "Storm bands tighten."}, {"t": 90, "f": 44, "ratio": [2, 1], "mix": 0.5, "pulse": 0.0, "breathe": 0.0, "mode": "faraday", "gobo": "star:6", "pal": ["#ffd27a", "#ff9f43", "#fff3d6"], "text": "Octave pair: triangles appear inside the hexagons."}]}, {"id": "quasicrystal", "name": "Quasicrystal Nebula", "mood": "mysterious, 7 min", "steps": [{"t": 90, "f": 40, "ratio": [5, 4], "mix": 0.6, "pulse": 0.0, "breathe": 0.0, "mode": "faraday", "gobo": "none", "pal": ["#ff5fa2", "#7a5cff", "#36e2ff"], "text": "4:5 forcing - the 12-fold quasipattern Edwards & Fauve found in 1993. Order without repetition."}, {"t": 90, "f": 42, "ratio": [7, 6], "mix": 0.55, "pulse": 0.0, "breathe": 0.0, "mode": "faraday", "gobo": "flower", "pal": ["#ff5fa2", "#7a5cff", "#36e2ff"], "text": "6:7 - superlattices: hexagons nested in hexagons."}, {"t": 90, "f": 52, "ratio": [5, 4], "mix": 0.7, "pulse": 0.0, "breathe": 0.07, "mode": "faraday", "gobo": "none", "pal": ["#36ffb0", "#2bd1ff", "#9b6bff"], "text": "The nebula drifts; phase slips make the pattern rotate."}, {"t": 60, "f": 60, "ratio": null, "mix": 0.0, "pulse": 0.0, "breathe": 0.0, "mode": "faraday", "gobo": "none", "pal": ["#ff5fa2", "#7a5cff", "#36e2ff"], "text": "Single tone again: back to squares, the ground state of water."}, {"t": 90, "f": 45, "ratio": [5, 4], "mix": 0.6, "pulse": 0.0, "breathe": 0.0, "mode": "faraday", "gobo": "star:12", "pal": ["#ff5fa2", "#7a5cff", "#36e2ff"], "text": "Return to twelve-fold."}]}, {"id": "pulsar", "name": "Pulsar", "mood": "energetic, 4 min", "steps": [{"t": 40, "f": 30, "ratio": null, "mix": 0.0, "pulse": 1.4, "breathe": 0.0, "mode": "dipper", "gobo": "none", "pal": ["#ffffff", "#7fd4ff", "#ff5fa2"], "text": "A spinning neutron star: one ring per beat."}, {"t": 60, "f": 40, "ratio": null, "mix": 0.0, "pulse": 2.0, "breathe": 0.0, "mode": "dipper", "gobo": "radial", "pal": ["#ffffff", "#36e2ff", "#7a5cff"], "text": "Two beats a second - rings collide with their echoes off the wall."}, {"t": 60, "f": 50, "ratio": null, "mix": 0.0, "pulse": 2.5, "breathe": 0.0, "mode": "dipper", "gobo": "none", "pal": ["#ff5fa2", "#7a5cff", "#36e2ff"], "text": "Faster - interference lace."}, {"t": 80, "f": 34, "ratio": null, "mix": 0.0, "pulse": 0.8, "breathe": 0.1, "mode": "dipper", "gobo": "none", "pal": ["#2b6cff", "#7fd4ff", "#b48cff"], "text": "Spin down."}]}, {"id": "venus", "name": "Venus Pentagram", "mood": "romantic, 5 min", "steps": [{"t": 90, "f": 22, "ratio": null, "mix": 0.0, "pulse": 0.6, "breathe": 0.0, "mode": "dipper", "gobo": "star:5", "pal": ["#ff7aa8", "#ffd1dc", "#ffb347"], "text": "Earth and Venus line up five times in eight years, tracing a five-petalled rose. Use the pentagon insert."}, {"t": 90, "f": 32, "ratio": null, "mix": 0.0, "pulse": 0.0, "breathe": 0.0, "mode": "faraday", "gobo": "ngon:5", "pal": ["#ff7aa8", "#ffd1dc", "#b48cff"], "text": "Faraday drive inside a pentagon: the wall shape bends the squares into five-fold arcs."}, {"t": 90, "f": 26, "ratio": null, "mix": 0.0, "pulse": 0.0, "breathe": 0.08, "mode": "faraday", "gobo": "none", "pal": ["#ff7aa8", "#ffe9b0", "#ff9f43"], "text": "Slow swell."}]}, {"id": "hyperbolic", "name": "Hyperbolic Drift", "mood": "trippy, 6 min", "steps": [{"t": 60, "f": 70, "ratio": null, "mix": 0.0, "pulse": 0.0, "breathe": 0.0, "mode": "faraday", "gobo": "hex", "pal": ["#36ffb0", "#2bd1ff", "#9b6bff"], "text": "High drive: fine squares, tiles shrinking to the edge like an Escher circle."}, {"t": 120, "f": 70, "ratio": [7, 6], "mix": 0.3, "pulse": 0.0, "breathe": 0.05, "mode": "faraday", "gobo": "none", "pal": ["#36ffb0", "#2bd1ff", "#9b6bff"], "text": "Slow beating between tones makes the lattice breathe in and out."}, {"t": 90, "f": 90, "ratio": null, "mix": 0.0, "pulse": 0.0, "breathe": 0.0, "mode": "faraday", "gobo": "none", "pal": ["#ff5fa2", "#7a5cff", "#36e2ff"], "text": "Finer still."}, {"t": 90, "f": 55, "ratio": [5, 4], "mix": 0.5, "pulse": 0.0, "breathe": 0.0, "mode": "faraday", "gobo": "none", "pal": ["#36ffb0", "#2bd1ff", "#9b6bff"], "text": "Fold into twelve."}]}, {"id": "mandala", "name": "Inner Mandala", "mood": "introspective, 10 min", "steps": [{"t": 120, "f": 20, "ratio": null, "mix": 0.0, "pulse": 0.1, "breathe": 0.1, "mode": "dipper", "gobo": "flower", "pal": ["#ffd27a", "#ff9f43", "#fff3d6"], "text": "Breathe in as the swell rises, out as it falls (6 per minute)."}, {"t": 120, "f": 26, "ratio": null, "mix": 0.0, "pulse": 0.0, "breathe": 0.1, "mode": "faraday", "gobo": "flower", "pal": ["#ffd27a", "#ff9f43", "#fff3d6"], "text": "Squares under the Flower of Life."}, {"t": 120, "f": 33, "ratio": [3, 2], "mix": 0.35, "pulse": 0.0, "breathe": 0.1, "mode": "faraday", "gobo": "star:8", "pal": ["#ff6b3d", "#ffb347", "#ffe3a3"], "text": "Hexagons under an eight-point star."}, {"t": 120, "f": 24, "ratio": null, "mix": 0.0, "pulse": 0.1, "breathe": 0.083, "mode": "dipper", "gobo": "rings", "pal": ["#ffd27a", "#ff9f43", "#fff3d6"], "text": "Slower: 5 breaths a minute."}, {"t": 120, "f": 18, "ratio": null, "mix": 0.0, "pulse": 0.05, "breathe": 0.083, "mode": "dipper", "gobo": "none", "pal": ["#ffe9b0", "#ffd27a", "#ffffff"], "text": "Stillness. Let the last ring reach the wall."}]}, {"id": "golden", "name": "Golden Spiral Descent", "mood": "flowing, 5 min", "steps": [{"t": 45, "f": 89, "ratio": null, "mix": 0.0, "pulse": 0.0, "breathe": 0.0, "mode": "faraday", "gobo": "none", "pal": ["#ffd27a", "#ff9f43", "#fff3d6"], "text": "Frequencies fall by the golden ratio: 89..."}, {"t": 45, "f": 55, "ratio": null, "mix": 0.0, "pulse": 0.0, "breathe": 0.0, "mode": "faraday", "gobo": "none", "pal": ["#ffd27a", "#ff9f43", "#fff3d6"], "text": "55..."}, {"t": 45, "f": 34, "ratio": null, "mix": 0.0, "pulse": 0.0, "breathe": 0.0, "mode": "faraday", "gobo": "none", "pal": ["#ff6b3d", "#ffb347", "#ffe3a3"], "text": "34..."}, {"t": 45, "f": 21, "ratio": null, "mix": 0.0, "pulse": 0.618, "breathe": 0.0, "mode": "dipper", "gobo": "none", "pal": ["#ff6b3d", "#ffb347", "#ffe3a3"], "text": "21, pulsing at 0.618 Hz..."}, {"t": 60, "f": 13, "ratio": null, "mix": 0.0, "pulse": 0.382, "breathe": 0.1, "mode": "dipper", "gobo": "star:5", "pal": ["#ffd27a", "#ff9f43", "#fff3d6"], "text": "13. Fibonacci all the way down."}]}, {"id": "e8", "name": "E8 Singularity", "mood": "intense build, 5 min", "steps": [{"t": 40, "f": 30, "ratio": null, "mix": 0.0, "pulse": 0.0, "breathe": 0.0, "mode": "faraday", "gobo": "none", "pal": ["#2b6cff", "#7fd4ff", "#b48cff"], "text": "Low and wide."}, {"t": 40, "f": 45, "ratio": [5, 4], "mix": 0.4, "pulse": 0.0, "breathe": 0.0, "mode": "faraday", "gobo": "none", "pal": ["#2b6cff", "#7fd4ff", "#b48cff"], "text": "Second tone enters."}, {"t": 40, "f": 60, "ratio": [5, 4], "mix": 0.6, "pulse": 0.0, "breathe": 0.0, "mode": "faraday", "gobo": "star:12", "pal": ["#ff5fa2", "#7a5cff", "#36e2ff"], "text": "Density rises."}, {"t": 40, "f": 80, "ratio": [7, 6], "mix": 0.6, "pulse": 0.0, "breathe": 0.0, "mode": "faraday", "gobo": "radial", "pal": ["#ff5fa2", "#7a5cff", "#36e2ff"], "text": "Thirty-fold E8 shadow on the gobo."}, {"t": 60, "f": 100, "ratio": [5, 4], "mix": 0.7, "pulse": 0.0, "breathe": 0.0, "mode": "faraday", "gobo": "none", "pal": ["#ffffff", "#ff5fa2", "#36e2ff"], "text": "Peak: finest lattice the water can hold."}, {"t": 60, "f": 24, "ratio": null, "mix": 0.0, "pulse": 0.3, "breathe": 0.1, "mode": "dipper", "gobo": "none", "pal": ["#2b6cff", "#7fd4ff", "#b48cff"], "text": "Release."}]}, {"id": "aurora", "name": "Aurora Ribbons", "mood": "dreamy, 6 min", "steps": [{"t": 90, "f": 16, "ratio": null, "mix": 0.0, "pulse": 0.0, "breathe": 0.06, "mode": "faraday", "gobo": "none", "pal": ["#36ffb0", "#2bd1ff", "#9b6bff"], "text": "Long slow waves - ribbons of green light."}, {"t": 90, "f": 19, "ratio": [2, 1], "mix": 0.3, "pulse": 0.0, "breathe": 0.06, "mode": "faraday", "gobo": "none", "pal": ["#36ffb0", "#2bd1ff", "#9b6bff"], "text": "Ribbons fold."}, {"t": 90, "f": 24, "ratio": null, "mix": 0.0, "pulse": 0.0, "breathe": 0.0, "mode": "faraday", "gobo": "none", "pal": ["#36ffb0", "#ff5fa2", "#2bd1ff"], "text": "A pink curtain appears."}, {"t": 90, "f": 14, "ratio": null, "mix": 0.0, "pulse": 0.2, "breathe": 0.0, "mode": "dipper", "gobo": "none", "pal": ["#36ffb0", "#2bd1ff", "#9b6bff"], "text": "Fade to night."}]}, {"id": "home", "name": "Return Home", "mood": "closing, 3 min", "steps": [{"t": 60, "f": 28, "ratio": null, "mix": 0.0, "pulse": 0.0, "breathe": 0.0, "mode": "faraday", "gobo": "none", "pal": ["#2b6cff", "#7fd4ff", "#b48cff"], "text": "Squares - the simplest standing wave."}, {"t": 60, "f": 20, "ratio": null, "mix": 0.0, "pulse": 0.5, "breathe": 0.0, "mode": "dipper", "gobo": "rings", "pal": ["#ffd27a", "#ff9f43", "#fff3d6"], "text": "Rings."}, {"t": 60, "f": 12, "ratio": null, "mix": 0.0, "pulse": 0.2, "breathe": 0.1, "mode": "dipper", "gobo": "none", "pal": ["#fff3d6", "#ffd27a", "#ffffff"], "text": "Splashdown."}]}], "themes": [{"id": "newyear", "name": "New Year's Day", "when": "Jan 1", "palette": ["#ffd27a", "#ffffff", "#b48cff"], "voyage": "departure", "gobos": ["Sunburst 36", "Golden spiral & Fibonacci squares"], "insert": "Insert circle (reference)", "mood": "fresh start, countdown rings", "venues": "bars, hotels, homes", "line": "Ring in the year with light that ripples from the centre."}, {"id": "mlk", "name": "Martin Luther King Jr. Day", "when": "3rd Mon Jan", "palette": ["#ffffff", "#ffd27a", "#7fd4ff"], "voyage": "mandala", "gobos": ["Borromean rings", "Seed of Life"], "insert": "Insert circle (reference)", "mood": "reflection, unity", "venues": "schools, libraries, lobbies", "line": "Unity made visible: three rings that only hold together as one."}, {"id": "lunar", "name": "Lunar New Year", "when": "late Jan-Feb (lunar)", "palette": ["#ff3d3d", "#ffd27a", "#ff9f43"], "voyage": "saturn", "gobos": ["Hankin 4.8.8 at 67.5 deg", "Petal mandala 12"], "insert": "Insert octagon", "mood": "prosperity, lanterns", "venues": "restaurants, retail windows", "line": "Red and gold lattices that bloom like lanterns."}, {"id": "blackhistory", "name": "Black History Month (US)", "when": "February", "palette": ["#ffd27a", "#36ffb0", "#ff3d3d"], "voyage": "mandala", "gobos": ["Hankin 3.6.3.6 at 60 deg", "Sierpinski triangle"], "insert": "Insert hexagon", "mood": "heritage, pattern traditions", "venues": "museums, schools, offices", "line": "Celebrates mathematical pattern traditions such as fractal design in African architecture (Eglash, 'African Fractals', 1999)."}, {"id": "valentine", "name": "Valentine's Day", "when": "Feb 14", "palette": ["#ff7aa8", "#ffd1dc", "#ff3d6b"], "voyage": "venus", "gobos": ["Cardioid", "Cardioid from circles", "Times table x2"], "insert": "Insert heart", "mood": "romance", "venues": "restaurants, date nights, spas", "line": "Light-drawn hearts: the cardioid appears out of pure arithmetic."}, {"id": "pi", "name": "Pi Day", "when": "Mar 14", "palette": ["#7fd4ff", "#ffe9b0", "#ffffff"], "voyage": "golden", "gobos": ["Mystic rose K24", "Ford circles", "Apollonian gasket"], "insert": "Insert circle (reference)", "mood": "math joy", "venues": "schools, science centres, cafes", "line": "3.14 reasons to love circles."}, {"id": "stpatrick", "name": "St. Patrick's Day", "when": "Mar 17", "palette": ["#36ff6b", "#ffd27a", "#ffffff"], "voyage": "aurora", "gobos": ["Superformula Clover 3", "Borromean rings"], "insert": "Insert superformula starfish", "mood": "festive green", "venues": "pubs, bars", "line": "Shamrock-green ripples on every wall."}, {"id": "equinox_spring", "name": "Spring Equinox / Nowruz", "when": "~Mar 20", "palette": ["#36ffb0", "#ffd1dc", "#ffe9b0"], "voyage": "golden", "gobos": ["Sunflower phyllotaxis", "Petal mandala 16", "Fractal plant (L-system)"], "insert": "Insert wavy 8", "mood": "renewal, growth", "venues": "spas, garden centres, homes", "line": "Day and night in balance; growth spirals in light."}, {"id": "holi", "name": "Holi", "when": "Phalguna full moon (Mar)", "palette": ["#ff3dd2", "#36e2ff", "#ffd23d"], "voyage": "pulsar", "gobos": ["Petal mandala 12", "Rose 7/1"], "insert": "Insert circle (reference)", "mood": "colour play", "venues": "community halls, events", "line": "Three coloured lights, overlapping into every colour at once."}, {"id": "yuri", "name": "Yuri's Night / Int'l Day of Human Space Flight", "when": "Apr 12", "palette": ["#2b6cff", "#ffffff", "#ff5fa2"], "voyage": "departure", "gobos": ["Geocentric Mars", "Cosmic dance Earth-Mars"], "insert": "Insert circle (reference)", "mood": "space party", "venues": "planetariums, bars, schools", "line": "Celebrate the first human in space with real orbital art."}, {"id": "earth", "name": "Earth Day", "when": "Apr 22", "palette": ["#36ffb0", "#2b6cff", "#ffe9b0"], "voyage": "aurora", "gobos": ["Sunflower phyllotaxis", "Water mode J6 ring 3"], "insert": "Insert circle (reference)", "mood": "nature, water", "venues": "offices, schools, retail", "line": "Water and light only - a show with nothing to throw away."}, {"id": "easter", "name": "Easter", "when": "spring (varies)", "palette": ["#ffd1dc", "#c8f7c5", "#fff3b0"], "voyage": "mandala", "gobos": ["Vesica Piscis", "Flower of Life"], "insert": "Insert ellipse 1.5:1", "mood": "renewal, pastel", "venues": "churches, homes, brunch venues", "line": "Soft pastel light, egg-shaped ripples."}, {"id": "passover", "name": "Passover", "when": "Nisan 15 (Mar-Apr)", "palette": ["#7fd4ff", "#ffffff", "#ffd27a"], "voyage": "mandala", "gobos": ["Hexagram (Star of David)", "Hankin 6.6.6 at 60 deg"], "insert": "Insert hexagon", "mood": "reflection, freedom", "venues": "homes, community centres", "line": "Six-pointed geometry in calm blue and gold."}, {"id": "ramadan", "name": "Ramadan / Eid al-Fitr", "when": "lunar (varies)", "palette": ["#36e2ff", "#ffd27a", "#7a5cff"], "voyage": "mandala", "gobos": ["Hankin 4.6.12 at 60 deg", "Quasicrystal girih 5-fold at 72 deg", "Octagram {8/3}"], "insert": "Insert octagon", "mood": "night, lanterns, star patterns", "venues": "mosques' community halls, restaurants, homes", "line": "Girih star patterns, the art tradition that anticipated quasicrystals by 500 years (Lu & Steinhardt, Science 2007)."}, {"id": "mayday", "name": "Cinco de Mayo", "when": "May 5", "palette": ["#36ff6b", "#ffffff", "#ff3d3d"], "voyage": "pulsar", "gobos": ["Petal mandala 16", "Sunburst 36"], "insert": "Insert wavy 12", "mood": "fiesta", "venues": "restaurants, bars", "line": "Papel-picado colours, pulsing to the music."}, {"id": "mentalhealth", "name": "Mental Health Awareness Month (US)", "when": "May", "palette": ["#36ffb0", "#7fd4ff", "#ffffff"], "voyage": "mandala", "gobos": ["Seed of Life", "Pulse rings (J0)"], "insert": "Insert circle (reference)", "mood": "calm, breathing", "venues": "clinics' waiting rooms, offices, schools", "line": "A breathing guide on the wall: swell in, swell out, 6 breaths a minute."}, {"id": "mothers", "name": "Mother's Day (US)", "when": "2nd Sun May", "palette": ["#ff7aa8", "#ffe9b0", "#b48cff"], "voyage": "venus", "gobos": ["Rose 5/1", "Petal mandala 8"], "insert": "Insert wavy 5", "mood": "gentle, floral", "venues": "restaurants, spas, homes", "line": "Flowers drawn in light that never wilt."}, {"id": "memorial", "name": "Memorial Day (US)", "when": "last Mon May", "palette": ["#ffffff", "#2b6cff", "#ff3d3d"], "voyage": "home", "gobos": ["Pentagram", "Concentric rings"], "insert": "Insert pentagon", "mood": "remembrance, quiet", "venues": "civic spaces", "line": "Quiet rings of remembrance."}, {"id": "pride", "name": "Pride Month", "when": "June", "palette": ["#ff3d3d", "#ffd23d", "#2b6cff"], "voyage": "pulsar", "gobos": ["Rose 7/1", "Petal mandala 12", "Times table x21"], "insert": "Insert circle (reference)", "mood": "joy, spectrum", "venues": "bars, retail, offices", "line": "The whole spectrum, split by water and a diffraction film."}, {"id": "juneteenth", "name": "Juneteenth", "when": "Jun 19", "palette": ["#ff3d3d", "#36ff6b", "#ffd27a"], "voyage": "departure", "gobos": ["Sunburst 36", "Pentagram"], "insert": "Insert star {5/2}", "mood": "freedom, celebration", "venues": "community centres, museums", "line": "A star of freedom rising out of rippling light."}, {"id": "fathers", "name": "Father's Day (US)", "when": "3rd Sun Jun", "palette": ["#2b6cff", "#ffe9b0", "#36e2ff"], "voyage": "saturn", "gobos": ["Truncated icosahedron", "Tiling 4.8.8"], "insert": "Insert square", "mood": "bold, playful", "venues": "bars, homes", "line": "Geometry for the dad who has everything (except a hexagon storm)."}, {"id": "solstice_summer", "name": "Summer Solstice / Int'l Day of Yoga", "when": "~Jun 21", "palette": ["#ffd27a", "#ff9f43", "#fff3d6"], "voyage": "golden", "gobos": ["Sunburst 36", "Golden spiral & Fibonacci squares"], "insert": "Insert wavy 12", "mood": "sun, energy", "venues": "yoga studios, spas, rooftops", "line": "Longest day: a sun of light on the studio wall."}, {"id": "july4", "name": "Independence Day (US)", "when": "Jul 4", "palette": ["#ff3d3d", "#ffffff", "#2b6cff"], "voyage": "pulsar", "gobos": ["Pentagram", "Sunburst 36", "Two-source interference"], "insert": "Insert star {5/2}", "mood": "fireworks", "venues": "bars, backyards, events", "line": "Indoor fireworks: rings bursting in red, white and blue."}, {"id": "moon", "name": "Moon Landing Day", "when": "Jul 20", "palette": ["#ffffff", "#7fd4ff", "#b0b0c0"], "voyage": "departure", "gobos": ["Geocentric Venus", "Concentric rings"], "insert": "Insert circle (reference)", "mood": "space history", "venues": "planetariums, schools", "line": "One small step, one ring at a time."}, {"id": "perseids", "name": "Perseid Meteor Shower", "when": "~Aug 12", "palette": ["#7a5cff", "#36e2ff", "#ffffff"], "voyage": "aurora", "gobos": ["Galaxy arms", "Archimedean spiral x3"], "insert": "Insert circle (reference)", "mood": "night sky", "venues": "rooftops, camps, bars", "line": "Streaks of light across a midnight-blue wall."}, {"id": "labor", "name": "Labor Day (US)", "when": "1st Mon Sep", "palette": ["#2b6cff", "#ffd27a", "#ffffff"], "voyage": "home", "gobos": ["Tiling 6.6.6", "Hankin 6.6.6 at 60 deg"], "insert": "Insert hexagon", "mood": "honeycomb, teamwork", "venues": "offices, union halls", "line": "The honeycomb: the strongest shape is built by many."}, {"id": "midautumn", "name": "Mid-Autumn Festival", "when": "Aug 15 lunar (Sep-Oct)", "palette": ["#ffd27a", "#ff9f43", "#ffffff"], "voyage": "venus", "gobos": ["Concentric rings", "Water mode J0 ring 4"], "insert": "Insert circle (reference)", "mood": "full moon, family", "venues": "restaurants, homes", "line": "A full moon on the water, rippling."}, {"id": "diwali", "name": "Diwali", "when": "Kartika new moon (Oct-Nov)", "palette": ["#ffd27a", "#ff6b3d", "#ff3dd2"], "voyage": "mandala", "gobos": ["Nine-triangle yantra (simplified)", "Petal mandala 16", "Rose 8/1"], "insert": "Insert wavy 8", "mood": "festival of lights", "venues": "homes, restaurants, temples' halls", "line": "Rangoli-inspired light mandalas."}, {"id": "spaceweek", "name": "World Space Week", "when": "Oct 4-10", "palette": ["#2b6cff", "#ff5fa2", "#36e2ff"], "voyage": "quasicrystal", "gobos": ["Cosmic dance Venus-Earth", "600-cell", "E8 root polytope"], "insert": "Insert circle (reference)", "mood": "science", "venues": "schools, museums, planetariums", "line": "A week-long voyage through real orbits and higher dimensions."}, {"id": "halloween", "name": "Halloween", "when": "Oct 31", "palette": ["#ff7a00", "#7a5cff", "#36ff6b"], "voyage": "hyperbolic", "gobos": ["Hyperbolic {7,3}", "Julia set - Douady rabbit", "Heighway dragon"], "insert": "Insert Bunimovich stadium", "mood": "spooky, chaotic", "venues": "bars, haunted houses, homes", "line": "Chaotic billiards and Julia sets: geometry that refuses to sit still."}, {"id": "diadelosmuertos", "name": "Dia de los Muertos", "when": "Nov 1-2", "palette": ["#ff7a00", "#ff3dd2", "#ffd23d"], "voyage": "venus", "gobos": ["Petal mandala 12", "Rose 5/2"], "insert": "Insert wavy 6", "mood": "marigolds, memory", "venues": "restaurants, community centres", "line": "Marigold rosettes in light."}, {"id": "veterans", "name": "Veterans Day / Remembrance Day", "when": "Nov 11", "palette": ["#ff3d3d", "#ffffff", "#2b6cff"], "voyage": "home", "gobos": ["Pentagram", "Concentric rings"], "insert": "Insert pentagon", "mood": "honour, quiet", "venues": "civic spaces, offices", "line": "Steady light, slow rings, a minute of stillness."}, {"id": "thanksgiving", "name": "Thanksgiving (US)", "when": "4th Thu Nov", "palette": ["#ff9f43", "#ffd27a", "#b5651d"], "voyage": "golden", "gobos": ["Sunflower phyllotaxis", "Golden spiral & Fibonacci squares"], "insert": "Insert wavy 8", "mood": "harvest, gratitude", "venues": "restaurants, homes", "line": "Harvest spirals - the sunflower's golden angle."}, {"id": "hanukkah", "name": "Hanukkah", "when": "Kislev 25 (Nov-Dec)", "palette": ["#2b6cff", "#ffffff", "#7fd4ff"], "voyage": "mandala", "gobos": ["Hexagram (Star of David)", "Hankin 3.12.12 at 60 deg"], "insert": "Insert hexagon", "mood": "light, eight nights", "venues": "homes, community centres", "line": "Eight nights, eight voyages, blue and white light."}, {"id": "solstice_winter", "name": "Winter Solstice / World Meditation Day", "when": "~Dec 21", "palette": ["#7fd4ff", "#ffffff", "#b48cff"], "voyage": "mandala", "gobos": ["Koch snowflake L5", "Water mode J6 ring 3"], "insert": "Insert Koch snowflake", "mood": "stillness, snow", "venues": "spas, yoga studios, homes", "line": "Longest night: a slow snowflake meditation."}, {"id": "christmas", "name": "Christmas", "when": "Dec 25", "palette": ["#ff3d3d", "#36ff6b", "#ffd27a"], "voyage": "aurora", "gobos": ["Koch snowflake L3", "Octagram {8/3}", "Fractal plant (L-system)"], "insert": "Insert Koch snowflake", "mood": "festive, warm", "venues": "retail windows, restaurants, homes", "line": "Snowflakes and stars that dance to carols."}, {"id": "kwanzaa", "name": "Kwanzaa", "when": "Dec 26-Jan 1", "palette": ["#ff3d3d", "#36ff6b", "#ffd27a"], "voyage": "mandala", "gobos": ["Heptagram {7/2}", "Heptagon nest"], "insert": "Insert heptagon", "mood": "seven principles", "venues": "community centres, homes", "line": "Seven-fold geometry for seven principles."}, {"id": "nye", "name": "New Year's Eve", "when": "Dec 31", "palette": ["#ffd27a", "#ffffff", "#ff5fa2"], "voyage": "e8", "gobos": ["E8 root polytope", "Sunburst 36"], "insert": "Insert circle (reference)", "mood": "countdown, peak", "venues": "bars, clubs, events", "line": "Count down with E8: 240 points of light at midnight."}, {"id": "birthday", "name": "Birthdays (any day)", "when": "any", "palette": ["#ff5fa2", "#ffd27a", "#36e2ff"], "voyage": "pulsar", "gobos": ["Rose 6/1", "Spirograph R7 r3 d2"], "insert": "Insert circle (reference)", "mood": "party", "venues": "homes, party venues", "line": "A light show named after the guest of honour."}, {"id": "wedding", "name": "Weddings & anniversaries", "when": "any", "palette": ["#ffffff", "#ffd27a", "#ffd1dc"], "voyage": "venus", "gobos": ["Vesica Piscis", "Torus knot (2,3)"], "insert": "Insert ellipse 1.5:1", "mood": "union", "venues": "venues, hotels", "line": "Two circles becoming one: the vesica piscis."}]}/*END*/;
+const $ = id => document.getElementById(id);
+const G = 9.81, SIG = 0.072, RHO = 1000, NU = 1e-6;
+
+// ---------------------------------------------------------------- physics
+function omega(k, h){ return Math.sqrt((G*k + SIG/RHO*k*k*k) * Math.tanh(k*h)); }
+function kOf(f, h){ let lo=1e-3, hi=1e6, w=2*Math.PI*f; for(let i=0;i<200;i++){ const m=Math.sqrt(lo*hi); if(omega(m,h)<w) lo=m; else hi=m; } return Math.sqrt(lo*hi); }
+function predict(st){
+  const r = st.ratio;
+  if(st.mode==='dipper') return {look: st.pulse>0 ? 'rings pulsing outward' : 'rings / interference', N:0};
+  if(!r) return {look:'squares (single frequency)', N:2};
+  const near=(a,b)=>Math.abs(a-b)<0.02;
+  if(near(r,1.25)) return {look:'12-fold quasipattern', N:6};
+  if(near(r,7/6)) return {look:'superlattice (hex in hex)', N:6};
+  if(near(r,1.5)||near(r,2)) return {look:'hexagons / triangles', N:3};
+  if(near(r,5/3)) return {look:'rhombic / mixed', N:4};
+  return {look:'quasi-periodic, drifting', N:5};
+}
+
+// ---------------------------------------------------------------- state
+const st = {mode:'faraday', f:40, ratio:null, mix:0.5, wave:'sine', pulse:0, breathe:0, vol:0.15, depth:5, dia:112,
+            gobo:'none', chroma:0.18, speed:0.35, pal:['#7fd4ff','#ffe9b0','#b48cff']};
+const pulses = []; // sim times of tone bursts
+function newPhases(){ for(let i=0;i<8;i++) phases[i]=Math.random()*6.283; }
+let phases=new Float32Array(8), targetN=2, targetK=40, curK=40, simT=0, last=performance.now();
+
+// ---------------------------------------------------------------- audio
+let ac=null, oA, oB, gA, gB, burst, swell, lfo, lfoAmt, master, comp, analA, analB, pulseTimer=null;
+function audioStart(){
+  if(ac) { ac.resume(); return; }
+  ac = new (window.AudioContext||window.webkitAudioContext)();
+  oA = ac.createOscillator(); oB = ac.createOscillator();
+  gA = ac.createGain(); gB = ac.createGain();
+  burst = ac.createGain(); swell = ac.createGain(); master = ac.createGain();
+  comp = ac.createDynamicsCompressor(); comp.threshold.value=-6; comp.ratio.value=20; comp.attack.value=0.003; comp.release.value=0.2;
+  lfo = ac.createOscillator(); lfoAmt = ac.createGain();
+  analA = ac.createAnalyser(); analB = ac.createAnalyser(); analA.fftSize=analB.fftSize=2048;
+  oA.connect(gA); oB.connect(gB); gA.connect(burst); gB.connect(burst);
+  oA.connect(analA); oB.connect(analB);
+  burst.connect(swell); swell.connect(master); master.connect(comp); comp.connect(ac.destination);
+  lfo.connect(lfoAmt); lfoAmt.connect(swell.gain);
+  master.gain.value = 0; oA.start(); oB.start(); lfo.start();
+  applyAudio(true);
+  master.gain.setTargetAtTime(st.vol, ac.currentTime, 0.4);
+  schedulePulses();
+}
+function applyAudio(now){
+  if(!ac) return;
+  const t = ac.currentTime, tc = now ? 0.01 : 0.6;
+  oA.type = oB.type = st.wave;
+  oA.frequency.setTargetAtTime(st.f, t, tc);
+  oB.frequency.setTargetAtTime(st.ratio ? st.f*st.ratio : st.f, t, tc);
+  const mb = st.ratio ? st.mix : 0;
+  gA.gain.setTargetAtTime(1-0.5*mb, t, 0.1); gB.gain.setTargetAtTime(mb, t, 0.1);
+  lfo.frequency.setTargetAtTime(Math.max(st.breathe, 0.0001), t, 0.2);
+  const depth = st.breathe>0 ? 0.33 : 0; lfoAmt.gain.setTargetAtTime(depth, t, 0.3); swell.gain.setTargetAtTime(1-depth, t, 0.3);
+  master.gain.setTargetAtTime(st.vol, t, 0.2);
+  if(st.pulse<=0) burst.gain.setTargetAtTime(1, t, 0.05);
+}
+function schedulePulses(){
+  if(pulseTimer) clearInterval(pulseTimer);
+  let next = ac.currentTime + 0.1;
+  pulseTimer = setInterval(()=>{
+    if(!ac || st.pulse<=0){ next = ac ? ac.currentTime+0.1 : 0; return; }
+    while(next < ac.currentTime + 0.2){
+      const p = burst.gain; const len = Math.min(0.12, 0.45/st.pulse);
+      p.setValueAtTime(0.0, next); p.linearRampToValueAtTime(1, next+0.01); p.setValueAtTime(1, next+len); p.linearRampToValueAtTime(0, next+len+0.03);
+      const delay = (next - ac.currentTime)*1000;
+      setTimeout(()=>pulses.push(simT), Math.max(0, delay));
+      next += 1/st.pulse;
+    }
+  }, 50);
+}
+function panic(){ if(!ac) return; master.gain.cancelScheduledValues(ac.currentTime); master.gain.setTargetAtTime(0, ac.currentTime, 0.05); stopVoyage(); }
+
+// ---------------------------------------------------------------- UI binding
+function bind(id, key, fmt, parse=parseFloat){
+  const el=$(id), out=$(id+'Val')||$(key+'Val');
+  const upd=()=>{ st[key]=parse(el.value); if(out) out.textContent=fmt(st[key]); applyAudio(); refresh(); };
+  el.addEventListener('input', upd); upd();
+}
+bind('f','f',v=>v.toFixed(1)+' Hz');
+bind('mix','mix',v=>Math.round(v*100)+'%');
+bind('pulse','pulse',v=>v? v.toFixed(2)+' /s':'steady');
+bind('breathe','breathe',v=>v? v.toFixed(3)+' Hz ('+(v*60).toFixed(1)+'/min)':'off');
+bind('vol','vol',v=>Math.round(v*100)+'%');
+$('depth').addEventListener('input',()=>{st.depth=+$('depth').value; $('depVal').textContent=st.depth+' mm'; refresh();});
+$('dia').addEventListener('input',()=>{st.dia=+$('dia').value; $('diaVal').textContent=st.dia+' mm'; refresh();});
+$('depVal').textContent=st.depth+' mm'; $('diaVal').textContent=st.dia+' mm';
+$('mode').onchange=e=>{st.mode=e.target.value; newPhases(); refresh();};
+$('ratio').onchange=e=>{st.ratio=e.target.value? eval(e.target.value):null; newPhases(); applyAudio(); refresh();};
+$('wave').onchange=e=>{st.wave=e.target.value; applyAudio();};
+$('gobo').onchange=e=>{st.gobo=e.target.value;};
+$('chroma').oninput=e=>st.chroma=+e.target.value;
+$('speed').oninput=e=>st.speed=+e.target.value;
+document.querySelectorAll('[data-nudge]').forEach(b=>b.onclick=()=>{ $('f').value=(+$('f').value + +b.dataset.nudge).toFixed(1); $('f').dispatchEvent(new Event('input')); });
+$('startBtn').onclick=audioStart; $('panicBtn').onclick=panic;
+$('swGo').onclick=()=>{ audioStart(); const a=+$('swA').value,b=+$('swB').value,T=+$('swT').value, t0=performance.now();
+  stopVoyage(); const tick=()=>{ const u=Math.min(1,(performance.now()-t0)/1000/T); setF(a+(b-a)*u); $('progBar').style.width=(u*100)+'%'; if(u<1 && !voyStopFlag) sweepRAF=requestAnimationFrame(tick); }; voyStopFlag=false; tick(); };
+let sweepRAF=null;
+function setF(v){ $('f').value=v; st.f=v; $('fVal').textContent=v.toFixed(1)+' Hz'; applyAudio(); refresh(); }
+$('fsBtn').onclick=()=>{ const s=$('stage'); try{ const r=(s.requestFullscreen||s.webkitRequestFullscreen).call(s); if(r&&r.catch) r.catch(()=>{}); }catch(e){} };
+
+// ---------------------------------------------------------------- readout
+function refresh(){
+  const h=st.depth/1000, fw = st.mode==='faraday'? st.f/2 : st.f;
+  const k=kOf(fw,h), lam=2*Math.PI/k*1000;
+  const w0=2*Math.PI*fw, gam=2*NU*k*k*3, ac_=4*gam*w0/(k*Math.tanh(k*h));
+  const pr=predict(st);
+  const rows=[['drive (tone A)', st.f.toFixed(1)+' Hz'], ['tone B', st.ratio? (st.f*st.ratio).toFixed(1)+' Hz':'-'],
+    ['water answers at', fw.toFixed(2)+' Hz'], ['wavelength on water', lam.toFixed(1)+' mm'],
+    ['waves across the dish', (st.dia/lam).toFixed(1)], ['expected look', pr.look]];
+  if(st.mode==='faraday') rows.push(['onset shake (est.)', (ac_/G).toFixed(3)+' g, '+(ac_/(2*Math.PI*st.f)**2*1e6).toFixed(0)+' um']);
+  $('read').innerHTML=rows.map(r=>`<span>${r[0]}</span><span class="val">${r[1]}</span>`).join('');
+  targetN = pr.N; targetK = 2*Math.PI/lam * (st.dia/2) / 1.0; // canvas radius = 1 = half the wetted diameter
+}
+
+// ---------------------------------------------------------------- voyages & themes
+let themePal=null, voy=null, voyIdx=0, voyT0=0, voyStopFlag=false, voyTimer=null;
+const vsel=$('voy'); CONTENT.voyages.forEach(v=>vsel.add(new Option(v.name+' - '+v.mood, v.id)));
+function showSteps(v){ $('steps').innerHTML=v.steps.map((s,i)=>`<li id="st${i}">${i+1}. ${s.mode}, ${s.f} Hz${s.ratio?' + '+s.ratio[0]+':'+s.ratio[1]:''}${s.pulse?', pulse '+s.pulse:''} - ${s.t}s</li>`).join(''); }
+vsel.onchange=()=>showSteps(CONTENT.voyages.find(v=>v.id===vsel.value)); showSteps(CONTENT.voyages[0]);
+function applyStep(s){
+  st.mode=s.mode; $('mode').value=s.mode;
+  st.ratio=s.ratio? s.ratio[0]/s.ratio[1]:null; $('ratio').value = s.ratio? [...$('ratio').options].map(o=>o.value).find(v=>v && Math.abs(eval(v)-st.ratio)<1e-3)||'' : '';
+  st.mix=s.mix; $('mix').value=s.mix; st.pulse=s.pulse; $('pulse').value=s.pulse; st.breathe=s.breathe; $('breathe').value=s.breathe;
+  st.gobo=s.gobo; $('gobo').value=s.gobo; st.pal=themePal||s.pal;
+  ['mix','pulse','breathe'].forEach(id=>$(id).dispatchEvent(new Event('input')));
+  setF(s.f); newPhases(); $('narr').textContent=s.text;
+}
+function runVoyage(v){
+  audioStart(); stopVoyage(); voyStopFlag=false; voy=v; voyIdx=0; showSteps(v);
+  const total=v.steps.reduce((a,s)=>a+s.t,0); const t0=performance.now();
+  const go=i=>{ if(voyStopFlag) return; if(i>=v.steps.length){ $('narr').textContent='Voyage complete.'; return; }
+    document.querySelectorAll('.steps li').forEach((li,j)=>li.classList.toggle('on',j===i));
+    applyStep(v.steps[i]); voyTimer=setTimeout(()=>go(i+1), v.steps[i].t*1000); };
+  go(0);
+  const prog=()=>{ if(voyStopFlag) return; const u=Math.min(1,(performance.now()-t0)/1000/total); $('progBar').style.width=(u*100)+'%'; if(u<1) requestAnimationFrame(prog); }; prog();
+}
+function stopVoyage(){ voyStopFlag=true; if(voyTimer) clearTimeout(voyTimer); if(sweepRAF) cancelAnimationFrame(sweepRAF); }
+$('voyGo').onclick=()=>{ themePal=null; runVoyage(CONTENT.voyages.find(v=>v.id===vsel.value)); };
+$('voyStop').onclick=stopVoyage;
+const tsel=$('theme'); tsel.add(new Option('- choose a theme -',''));
+CONTENT.themes.forEach(t=>tsel.add(new Option(t.when+' - '+t.name, t.id)));
+tsel.onchange=()=>{ const t=CONTENT.themes.find(x=>x.id===tsel.value); if(!t){ $('themeInfo').innerHTML=''; return; }
+  st.pal=t.palette; vsel.value=t.voyage; showSteps(CONTENT.voyages.find(v=>v.id===t.voyage));
+  $('themeInfo').innerHTML=`<p>${t.palette.map(c=>`<span class="sw" style="background:${c}"></span>`).join(' ')} <b>${t.mood}</b></p><p>${t.line}</p><p>Gobos: ${t.gobos.join('; ')}<br>Insert: ${t.insert}<br>Venues: ${t.venues}</p><button id="themeGo" class="primary">Play this theme</button>`;
+  $('themeGo').onclick=()=>{ themePal=t.palette; runVoyage(CONTENT.voyages.find(v=>v.id===t.voyage)); };
+};
+
+// ---------------------------------------------------------------- atlas
+const ATL='cymatic-odyssey-atlas';
+let atlas=[]; try{ atlas=JSON.parse(localStorage.getItem(ATL)||'[]'); }catch(e){ atlas=[]; }
+const save=()=>{ try{ localStorage.setItem(ATL, JSON.stringify(atlas)); }catch(e){} };
+function drawAtlas(){ $('atlas').querySelector('tbody').innerHTML=atlas.slice().sort((a,b)=>a.f-b.f).map((r,i)=>`<tr class="click" data-f="${r.f}"><td>${(+r.f).toFixed(1)}</td><td>${r.b||'-'}</td><td>${r.mode||''}</td><td>${r.look}</td></tr>`).join('');
+  document.querySelectorAll('#atlas tr.click').forEach(tr=>tr.onclick=()=>setF(+tr.dataset.f)); }
+$('logBtn').onclick=()=>{ atlas.push({f:st.f.toFixed(2), b: st.ratio?(st.f*st.ratio).toFixed(2):'', mode:st.mode, depth:st.depth, look:$('seen').value, at:new Date().toISOString()}); save(); drawAtlas(); };
+const atlasCSV=()=>'freq_hz,second_hz,mode,depth_mm,label,logged\n'+atlas.map(r=>[r.f,r.b,r.mode,r.depth,r.look,r.at].join(',')).join('\n');
+$('expBtn').onclick=()=>{ try{ const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([atlasCSV()],{type:'text/csv'})); a.download='pattern_atlas.csv'; a.click(); }catch(e){} };
+$('cpyBtn').onclick=async()=>{ try{ await navigator.clipboard.writeText(atlasCSV()); $('cpyBtn').textContent='Copied'; }catch(e){ $('cpyBtn').textContent='Copy blocked'; } setTimeout(()=>$('cpyBtn').textContent='Copy CSV',1500); };
+$('impFile').onchange=async e=>{ const txt=await e.target.files[0].text(); const [hd,...ls]=txt.trim().split(/\r?\n/); const H=hd.split(',');
+  ls.forEach(l=>{ const c=l.split(','), o={}; H.forEach((h,i)=>o[h]=c[i]); if(o.label && !/no clear|disordered/.test(o.label)) atlas.push({f:o.freq_hz, b:o.second_hz||'', mode:'faraday', look:o.label, at:'mode_mapper'}); });
+  save(); drawAtlas(); };
+drawAtlas();
+
+// ---------------------------------------------------------------- scope
+const sc=$('scope').getContext('2d'); const bufA=new Float32Array(2048), bufB=new Float32Array(2048);
+function drawScope(){
+  sc.fillStyle='#03040a'; sc.fillRect(0,0,600,220); sc.strokeStyle='#7fd4ff'; sc.lineWidth=1.5; sc.beginPath();
+  if(analA){ analA.getFloatTimeDomainData(bufA); analB.getFloatTimeDomainData(bufB);
+    for(let i=0;i<2048;i++){ const x=300+ (st.ratio? bufB[i]:bufA[(i+256)%2048])*100, y=110-bufA[i]*95; i?sc.lineTo(x,y):sc.moveTo(x,y);} }
+  else { for(let i=0;i<400;i++){ const t=i/400*2*Math.PI; const x=300+Math.sin((st.ratio||1)*t*3+Math.PI/2)*100, y=110-Math.sin(3*t)*95; i?sc.lineTo(x,y):sc.moveTo(x,y);} }
+  sc.stroke();
+}
+
+// ---------------------------------------------------------------- WebGL preview
+const cv=$('sim'); const gl=cv.getContext('webgl',{antialias:false,preserveDrawingBuffer:true});
+const VS=`attribute vec2 p; varying vec2 uv; void main(){ uv=p; gl_Position=vec4(p,0.,1.); }`;
+const FS=`precision highp float; varying vec2 uv;
+uniform float T,K,KR,A,D,CH,BR,MODE,GOB,GN; uniform float PH[8]; uniform int N; uniform float PT[8]; uniform vec3 C0,C1,C2;
+const float PI=3.14159265;
+float height(vec2 p){
+  float h=0.;
+  if(MODE<0.5){
+    for(int j=0;j<8;j++){ if(j>=N) break; float a=PI*float(j)/float(N); h+=cos(K*dot(p,vec2(cos(a),sin(a)))+PH[j]); }
+    h*=(0.4+0.6*cos(T*1.3))*A*1.6/sqrt(float(N));
+  } else {
+    float r=length(p);
+    h=0.35*A*sin(KR*r-T*2.2)/sqrt(r+0.08)*(1.-smoothstep(0.85,1.0,r));
+    for(int i=0;i<8;i++){ float age=T-PT[i]; if(age<0.||age>6.) continue; float front=age*0.32; h+=A*1.2*exp(-age*0.45)*exp(-pow((r-front)*7.,2.))*cos(KR*(r-front)); }
+  }
+  // the wall of the dish reflects: fade near the rim
+  return h*(1.-smoothstep(0.92,1.0,length(p)));
+}
+float lineMask(float d,float w){ return smoothstep(w,0.,abs(d)); }
+float gobo(vec2 q){
+  if(GOB<0.5) return 0.;
+  float r=length(q), a=atan(q.y,q.x), m=0.;
+  if(GOB<1.5){ m=lineMask(fract(r*7.)-.5,0.04*7.); }                                   // rings
+  else if(GOB<2.5){ m=lineMask(mod(a+PI,2.*PI/36.)-PI/36.,0.012/(r+0.05)) ; }           // radial
+  else if(GOB<3.5){ vec2 s=q*6.; vec2 h1=vec2(1.,1.7320508); vec2 a1=mod(s,h1)-h1*.5, b1=mod(s-h1*.5,h1)-h1*.5; vec2 g=dot(a1,a1)<dot(b1,b1)?a1:b1; g=abs(g); float d=max(dot(g,normalize(h1)),g.x); m=lineMask(d-.5,.05); }
+  else if(GOB<4.5){ float s=0.28; for(int i=-2;i<=2;i++) for(int j=-2;j<=2;j++){ vec2 c=s*(vec2(float(i)+.5*float(j),float(j)*.8660254)); if(length(c)>2.01*s) continue; m=max(m,lineMask(length(q-c)-s,.024)); } m=max(m,lineMask(r-3.*s,.024)); }
+  else if(GOB<5.5){ float sec=2.*PI/GN; float aa=mod(a-PI/2.+sec*.5,sec)-sec*.5; for(int i=0;i<6;i++){ float R=0.9-float(i)*0.14; float rot=mod(float(i),2.)*PI/GN; float aa2=mod(a-PI/2.-rot+sec*.5,sec)-sec*.5; m=max(m,lineMask(r*cos(aa2)-R*cos(PI/GN),.02)); } m*=step(r,.92); }
+  else { float k=floor(GN/2.-0.5); if(GN==6.) k=2.; if(GN==8.) k=3.; if(GN==12.) k=5.; float d=0.88*cos(PI*k/GN);
+    for(int i=0;i<12;i++){ if(float(i)>=GN) break; float th=PI/2.+(2.*float(i)+k)*PI/GN; m=max(m,lineMask(dot(q,vec2(cos(th),sin(th)))-d,.02)); } m*=step(r,.9); m=max(m,lineMask(r-.9,.008)); }
+  return m;
+}
+float caustic(vec2 p,float dd){
+  float e=0.004; float h0=height(p);
+  float hx1=height(p+vec2(e,0.)),hx0=height(p-vec2(e,0.)),hy1=height(p+vec2(0.,e)),hy0=height(p-vec2(0.,e));
+  float hxy=(height(p+vec2(e,e))-height(p+vec2(e,-e))-height(p+vec2(-e,e))+height(p+vec2(-e,-e)))/(4.*e*e);
+  float hxx=(hx1-2.*h0+hx0)/(e*e), hyy=(hy1-2.*h0+hy0)/(e*e);
+  float j11=1.+dd*hxx, j22=1.+dd*hyy, j12=dd*hxy;
+  float I=1./max(abs(j11*j22-j12*j12),0.05);
+  vec2 grad=vec2(hx1-hx0,hy1-hy0)/(2.*e);
+  float g=gobo(p+dd*grad*0.8);
+  return min(I,9.)*(1.-0.92*g)+0.;
+}
+void main(){
+  vec2 p=uv; float r=length(p); if(r>1.){ gl_FragColor=vec4(0.,0.,0.,1.); return; }
+  float base=D*(0.75+0.25*BR);
+  vec3 col=C0*caustic(p,base*(1.-CH))+C1*caustic(p,base)+C2*caustic(p,base*(1.+CH));
+  col=col/(1.+col)*1.25;           // tone map
+  col*=smoothstep(1.,0.96,r);
+  gl_FragColor=vec4(pow(col,vec3(0.85)),1.);
+}`;
+function sh(t,s){ const o=gl.createShader(t); gl.shaderSource(o,s); gl.compileShader(o); if(!gl.getShaderParameter(o,gl.COMPILE_STATUS)) throw gl.getShaderInfoLog(o); return o; }
+let prog=null;
+if(gl){ prog=gl.createProgram(); gl.attachShader(prog,sh(gl.VERTEX_SHADER,VS)); gl.attachShader(prog,sh(gl.FRAGMENT_SHADER,FS)); gl.linkProgram(prog); gl.useProgram(prog);
+  const b=gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER,b); gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,1,1]),gl.STATIC_DRAW);
+  const loc=gl.getAttribLocation(prog,'p'); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc,2,gl.FLOAT,false,0,0); }
+const U=n=>gl.getUniformLocation(prog,n);
+newPhases();
+const hex=c=>[parseInt(c.slice(1,3),16)/255,parseInt(c.slice(3,5),16)/255,parseInt(c.slice(5,7),16)/255];
+let pal=[hex(st.pal[0]),hex(st.pal[1]),hex(st.pal[2])];
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+function frame(now){
+  const dt=Math.min(0.1,(now-last)/1000); last=now;
+  const sp = (reduce? 0.15 : 1) * st.speed;
+  simT += dt*sp*1.0;
+  curK += (Math.min(targetK,160)-curK)*Math.min(1,dt*1.5);
+  const tp=[hex(st.pal[0]),hex(st.pal[1]),hex(st.pal[2])]; for(let i=0;i<3;i++) for(let j=0;j<3;j++) pal[i][j]+= (tp[i][j]-pal[i][j])*Math.min(1,dt*0.8);
+  for(let i=0;i<8;i++) phases[i]+=dt*sp*0.02*(i%2?1:-1);
+  while(pulses.length>8) pulses.shift();
+  if(gl){
+    gl.viewport(0,0,cv.width,cv.height);
+    const amp = ac? Math.min(1, 0.25+st.vol*2.5) : 0.6;
+    const br = st.breathe>0 ? 0.5+0.5*Math.sin(simT/Math.max(sp,0.01)*2*Math.PI*st.breathe) : 1;
+    gl.uniform1f(U('T'),simT*3); gl.uniform1f(U('K'),curK); gl.uniform1f(U('KR'),curK); gl.uniform1f(U('A'),0.012*amp*(0.6+0.4*br)*40/Math.max(curK,20));
+    gl.uniform1f(U('D'),2.2); gl.uniform1f(U('CH'),st.chroma); gl.uniform1f(U('BR'),br); gl.uniform1f(U('MODE'),st.mode==='dipper'?1:0);
+    const g=st.gobo, gi = g==='none'?0: g==='rings'?1: g==='radial'?2: g==='hex'?3: g==='flower'?4: g.startsWith('ngon')?5:6;
+    gl.uniform1f(U('GOB'),gi); gl.uniform1f(U('GN'), g.includes(':')? +g.split(':')[1] : 6);
+    gl.uniform1i(U('N'),targetN||2); gl.uniform1fv(U('PH'),phases);
+    const pt=new Float32Array(8).fill(-100); pulses.forEach((t,i)=>pt[i]=t*3); gl.uniform1fv(U('PT'),pt);
+    gl.uniform3fv(U('C0'),pal[0]); gl.uniform3fv(U('C1'),pal[1]); gl.uniform3fv(U('C2'),pal[2]);
+    gl.drawArrays(gl.TRIANGLE_STRIP,0,4);
+  }
+  drawScope();
+  requestAnimationFrame(frame);
+}
+refresh(); requestAnimationFrame(frame);
+window.__odyssey = {st, runVoyage, setF, CONTENT};
+</script>
+</body>
+</html>
