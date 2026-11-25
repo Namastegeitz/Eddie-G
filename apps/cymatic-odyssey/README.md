@@ -8,6 +8,7 @@ A sealed, low-voltage water chamber that turns sound into geometric light on any
 
 | | |
 |---|---|
+| [docs/SHOPPING_LIST.md](docs/SHOPPING_LIST.md) | Parts list with links, plus glass stores in South Jersey and the Philadelphia area |
 | [docs/BUILD_SPECS.md](docs/BUILD_SPECS.md) | How it works, what your EZ-100 Tesla coil can and can't do, specs, parts list (about $300-450), print settings, assembly, calibration |
 | [docs/SAFETY.md](docs/SAFETY.md) | **Read first.** Tesla coil + water, low-voltage rules, flicker and photosensitivity, health claims |
 | [docs/GEOMETRY_CATALOG.md](docs/GEOMETRY_CATALOG.md) | The research log: 355 printable looks in 26 families, each with its maths, symmetry and source |
