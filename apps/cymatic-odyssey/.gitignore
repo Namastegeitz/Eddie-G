@@ -2,5 +2,10 @@
 stl/gobos/
 svg/
 previews/items/
+# style kit STLs are packed in downloads/CYMATIC_ODYSSEY_30_style_kits.zip (previews stay)
+styles/**/*.stl
+styles/**/*.svg
+docs/manual/manual.html
+docs/sourcing/sourcing_guide.html
 __pycache__/
 *.pyc

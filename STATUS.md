@@ -12,6 +12,11 @@
 - `tools/pattern_analyzer.py` (FFT symmetry/wavelength/stability), `tools/mode_mapper.py` (sweep + webcam -> atlas),
   `tools/physics_tables.py`; `tests/test_tools.py` 8/8 pass.
 - Docs: BUILD_SPECS, SAFETY, PHYSICS_AND_PATTERNS, PHYSICS_TABLES, GEOMETRY_CATALOG, VOYAGES, THEMES, MARKET.
+- 2026-11-25 (later): 30 styles (`tools/styles.py`: gobo + insert + foot + signal + colours; kits in
+  `downloads/CYMATIC_ODYSSEY_30_style_kits.zip`; simulated wall/water previews from `tools/render_wall.py`), 15 ten-minute
+  shows that chain (bridge = next opening, guest from 6 ahead; `docs/SHOWS.md`), console upgraded (style gallery with
+  real gobo textures, shows, Continuous mode, split L/R wiring for automatic mode switching, phone layout), 37-page manual
+  `docs/CYMATIC_ODYSSEY_Manual.pdf` (`docs/manual/build_manual.py`), sourcing guide PDF. Tests 9/9.
 - Next: print platform + one insert + one gobo, measure the real dish ID (regenerate with --dish-id), check exciter ring size
   against the DAEX32EP-4 datasheet, run the console on the real rig and log an atlas; Gordon-Webb-Wolpert isospectral pair
   (needs verified coordinates); music-to-mode quantiser.

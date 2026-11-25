@@ -70,3 +70,28 @@ if __name__ == "__main__":
     for k, f in list(globals().items()):
         if k.startswith("test_"):
             f(); print("ok", k)
+
+
+def test_styles_and_shows():
+    sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "tools"))
+    import json
+    from styles import STYLES
+    sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "tools"))
+    import content
+    names = {e["name"] for e in catalog.entries()}
+    assert len(STYLES) == 30 and len({s["id"] for s in STYLES}) == 30
+    for s in STYLES:
+        assert s["gobo"] in names and s["insert"] in names and (not s["dipper"] or s["dipper"] in names)
+    shows = content.build_shows()
+    assert len(shows) == 15
+    ids = {s["id"] for s in shows}
+    for sh in shows:
+        assert sum(x["t"] for x in sh["steps"]) == 600          # exactly 10 minutes
+        assert sh["next"] in ids and sh["guest_from"] in ids
+        nxt = next(x for x in shows if x["id"] == sh["next"])
+        assert sh["steps"][-1]["style"] == nxt["steps"][0]["style"]   # bridge = next opening
+    # the chain visits every show once before looping
+    seen, cur = [], shows[0]["id"]
+    for _ in range(15):
+        seen.append(cur); cur = next(x for x in shows if x["id"] == cur)["next"]
+    assert len(set(seen)) == 15 and cur == shows[0]["id"]

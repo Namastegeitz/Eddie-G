@@ -148,6 +148,74 @@ THEMES = [
 ]
 
 
+
+# ------------------------------------------------------------------ 15 intertwined 10-minute shows
+# Each show = opening (60 s) + 5 core styles (84 s each) + a guest style borrowed from another show (60 s)
+# + a bridge (60 s) that turns into the NEXT show's opening, so all 15 chain into one 150-minute loop.
+SHOW_PLAN = [
+    ("genesis", "Genesis", "first light, slow awakening", "S01", ["S06", "S28", "S16", "S24", "S05"]),
+    ("solarwinds", "Solar Winds", "warm, energetic", "S30", ["S17", "S20", "S22", "S12", "S15"]),
+    ("saturn", "Saturn Rising", "bold, geometric", "S02", ["S21", "S11", "S12", "S26", "S09"]),
+    ("venusmars", "Venus & Mars", "romantic, orbital", "S07", ["S24", "S28", "S06", "S23", "S17"]),
+    ("quasicrystal", "Quasicrystal Dreams", "mysterious, never repeating", "S03", ["S04", "S27", "S10", "S12", "S29"]),
+    ("sacred", "Sacred Geometry", "centred, devotional", "S05", ["S06", "S25", "S12", "S11", "S21"]),
+    ("fractal", "Fractal Forest", "organic, self-similar", "S16", ["S13", "S15", "S14", "S28", "S24"]),
+    ("hyperbolic", "Hyperbolic Deep", "infinite, trippy", "S08", ["S23", "S26", "S10", "S29", "S14"]),
+    ("ocean", "Ocean of Waves", "pure physics, flowing", "S19", ["S20", "S21", "S18", "S22", "S01"]),
+    ("aurora", "Aurora Borealis", "dreamy, shimmering", "S29", ["S17", "S04", "S08", "S30", "S13"]),
+    ("nightgarden", "Night Garden", "lantern-lit star patterns", "S11", ["S12", "S25", "S05", "S03", "S02"]),
+    ("fourthd", "Fourth Dimension", "hypnotic, higher-dimensional", "S26", ["S10", "S27", "S09", "S08", "S03"]),
+    ("golden", "Golden Ratio", "harmonic, spiralling", "S24", ["S16", "S07", "S04", "S27", "S30"]),
+    ("silence", "Inner Silence", "meditative, breath-paced", "S28", ["S06", "S13", "S19", "S05", "S01"]),
+    ("supernova", "Supernova", "intense build and release", "S09", ["S02", "S12", "S26", "S27", "S10"]),
+]
+
+
+def build_shows():
+    from styles import STYLES
+    st = {x["id"]: x for x in STYLES}
+    n = len(SHOW_PLAN)
+    shows = []
+    for i, (sid, name, mood, opening, core) in enumerate(SHOW_PLAN):
+        nxt = SHOW_PLAN[(i + 1) % n]
+        guest_show = SHOW_PLAN[(i + 6) % n]
+        steps = []
+
+        def step(style_id, t, role, text, fmul=1.0, breathe=None):
+            x = st[style_id]
+            steps.append(dict(t=t, f=round(x["f"] * fmul, 1), ratio=x["ratio"], mix=0.55 if x["ratio"] else 0.0,
+                              pulse=x["pulse"], breathe=x["breathe"] if breathe is None else breathe, mode=x["mode"],
+                              gobo="tex:" + style_id, pal=x["pal"], style=style_id, role=role, text=text))
+        step(opening, 60, "opening", f"{name}: {st[opening]['name']}. {st[opening]['how']}", 0.92, 0.1)
+        for k, c in enumerate(core):
+            step(c, 84, "core", f"{st[c]['name']}. {st[c]['how']}", (1.0, 1.04, 0.97, 1.06, 1.0)[k])
+        gs = next(c for c in [guest_show[3]] + guest_show[4] if c not in [opening] + core + [nxt[3]])
+        step(gs, 60, "guest", f"Guest from {guest_show[1]}: {st[gs]['name']}.")
+        step(nxt[3], 60, "bridge", f"Bridge: the light turns toward {nxt[1]}.", 0.92, 0.1)
+        assert sum(s["t"] for s in steps) == 600
+        shows.append(dict(id=sid, name=name, mood=mood, minutes=10, next=nxt[0], guest_from=guest_show[0],
+                          insert=st[opening]["insert"], steps=steps))
+    return shows
+
+
+def build_assets(STYLES):
+    import base64, io
+    from PIL import Image
+    from odyssey import catalog
+    from render_wall import _gobo_mask
+    ents = {e["name"]: e for e in catalog.entries()}
+    out = {}
+    for x in STYLES:
+        folder = next((ROOT / "styles").glob(x["id"] + "_*"))
+        th = Image.open(folder / "wall_preview.png").convert("RGB").resize((180, 180), Image.LANCZOS)
+        b = io.BytesIO(); th.save(b, "JPEG", quality=78)
+        m = (_gobo_mask(ents[x["gobo"]]["fn"](), 384) * 255).astype("uint8")
+        b2 = io.BytesIO(); Image.fromarray(m).save(b2, "PNG", optimize=True)
+        out[x["id"]] = dict(thumb="data:image/jpeg;base64," + base64.b64encode(b.getvalue()).decode(),
+                            mask="data:image/png;base64," + base64.b64encode(b2.getvalue()).decode())
+    return out
+
+
 def main():
     from odyssey import catalog  # noqa
     names = {e["name"] for e in catalog.entries()}
@@ -155,7 +223,10 @@ def main():
     assert not bad, bad
     vids = {v["id"] for v in VOYAGES}
     assert all(t["voyage"] in vids for t in THEMES)
-    data = dict(voyages=VOYAGES, themes=THEMES)
+    from styles import STYLES
+    SHOWS = build_shows()
+    data = dict(voyages=VOYAGES, themes=THEMES, shows=SHOWS,
+                styles=[{k: v for k, v in x.items()} for x in STYLES])
     (ROOT / "catalog").mkdir(exist_ok=True)
     (ROOT / "catalog/content.json").write_text(json.dumps(data, indent=1))
     # docs
@@ -176,11 +247,29 @@ def main():
         sw = " ".join(f"`{c}`" for c in t["palette"])
         md.append(f"| {t['when']} | **{t['name']}** ({t['mood']}) | {sw} | {vname[t['voyage']]} | {'; '.join(t['gobos'])} | {t['insert']} | {t['venues']} | {t['line']} |")
     (ROOT / "docs/THEMES.md").write_text("\n".join(md) + "\n")
-    # inject into console
+    sn = {x["id"]: x["name"] for x in STYLES}
+    md = ["# 15 light shows (10 minutes each, intertwined)", "",
+          "Every show ends with a 60-second bridge that becomes the next show's opening, and each borrows a guest "
+          "style from the show six places ahead. Play one, or press *Continuous* in the console to run all 15 "
+          "(150 minutes) as one loop. Drive mode switches automatically when the platform is on the left amp "
+          "channel and the dipper speaker on the right (see BUILD_SPECS). Gobo and insert swaps are optional cues.", ""]
+    for sh in SHOWS:
+        md += [f"## {sh['name']}", "", f"*{sh['mood']}* - insert for the whole show: **{sh['insert']}** - next: {next(x['name'] for x in SHOWS if x['id'] == sh['next'])}", "",
+               "| time | role | style | mode | drive Hz | 2nd tone | pulse | breathe |", "|---|---|---|---|---|---|---|---|"]
+        t = 0
+        for x in sh["steps"]:
+            rt = f"{x['ratio'][0]}:{x['ratio'][1]}" if x["ratio"] else "-"
+            md.append(f"| {t // 60}:{t % 60:02d} | {x['role']} | {x['style']} {sn[x['style']]} | {x['mode']} | {x['f']} | {rt} | {x['pulse'] or '-'} | {x['breathe'] or '-'} |")
+            t += x["t"]
+        md.append("")
+    (ROOT / "docs/SHOWS.md").write_text("\n".join(md))
+    # inject into console (data + style thumbnails + gobo masks)
     html = ROOT / "console/index.html"
     if html.exists():
+        assets = build_assets(STYLES)
         s = html.read_text()
-        s = re.sub(r"/\*CONTENT\*/.*?/\*END\*/", "/*CONTENT*/" + json.dumps(data) + "/*END*/", s, flags=re.S)
+        s = re.sub(r"/\*CONTENT\*/.*?/\*END\*/", lambda m: "/*CONTENT*/" + json.dumps(data) + "/*END*/", s, flags=re.S)
+        s = re.sub(r"/\*ASSETS\*/.*?/\*END2\*/", lambda m: "/*ASSETS*/" + json.dumps(assets) + "/*END2*/", s, flags=re.S)
         html.write_text(s)
     print("voyages", len(VOYAGES), "themes", len(THEMES))
 

@@ -1,0 +1,918 @@
+[
+ {
+  "id": "S01",
+  "name": "Orbit Rings",
+  "gobo": "Concentric rings",
+  "insert": "Insert circle (reference)",
+  "dipper": "Dipper point",
+  "mode": "dipper",
+  "f": 24,
+  "ratio": null,
+  "pulse": 1.0,
+  "breathe": 0.0,
+  "pal": [
+   "#2b6cff",
+   "#7fd4ff",
+   "#b48cff"
+  ],
+  "mood": "calm, launch",
+  "how": "A single point taps the water once a second; each ring travels out through printed orbit circles.",
+  "best": "openings, bedrooms",
+  "folder": "styles/S01_orbit_rings",
+  "files": [
+   "gobo_G175_concentric_rings.stl",
+   "gobo_G175_concentric_rings.svg",
+   "insert_B018_insert_circle_reference.stl",
+   "dipper_D001_dipper_point.stl"
+  ],
+  "gobo_id": "G175",
+  "insert_id": "B018",
+  "dipper_id": "D001"
+ },
+ {
+  "id": "S02",
+  "name": "Saturn Storm",
+  "gobo": "Hexagon nest",
+  "insert": "Insert hexagon",
+  "dipper": null,
+  "mode": "faraday",
+  "f": 48,
+  "ratio": [
+   3,
+   2
+  ],
+  "pulse": 0,
+  "breathe": 0.0,
+  "pal": [
+   "#ffd27a",
+   "#ff9f43",
+   "#fff3d6"
+  ],
+  "mood": "bold, geometric",
+  "how": "Two tones at 2:3 make the water choose hexagons; the hexagon wall and gobo lock them in place.",
+  "best": "bars, parties",
+  "folder": "styles/S02_saturn_storm",
+  "files": [
+   "gobo_G004_hexagon_nest.stl",
+   "gobo_G004_hexagon_nest.svg",
+   "insert_B004_insert_hexagon.stl"
+  ],
+  "gobo_id": "G004",
+  "insert_id": "B004",
+  "dipper_id": ""
+ },
+ {
+  "id": "S03",
+  "name": "Quasicrystal Nebula",
+  "gobo": "Dodecagonal quasicrystal",
+  "insert": "Insert circle (reference)",
+  "dipper": null,
+  "mode": "faraday",
+  "f": 40,
+  "ratio": [
+   5,
+   4
+  ],
+  "pulse": 0,
+  "breathe": 0.0,
+  "pal": [
+   "#ff5fa2",
+   "#7a5cff",
+   "#36e2ff"
+  ],
+  "mood": "mysterious",
+  "how": "4:5 forcing grows a 12-fold quasipattern; a 12-fold tiling gobo echoes it.",
+  "best": "lounges, galleries",
+  "folder": "styles/S03_quasicrystal_nebula",
+  "files": [
+   "gobo_G197_dodecagonal_quasicrystal.stl",
+   "gobo_G197_dodecagonal_quasicrystal.svg",
+   "insert_B018_insert_circle_reference.stl"
+  ],
+  "gobo_id": "G197",
+  "insert_id": "B018",
+  "dipper_id": ""
+ },
+ {
+  "id": "S04",
+  "name": "Penrose Gate",
+  "gobo": "Penrose rhombus (P3) quasicrystal",
+  "insert": "Insert pentagon",
+  "dipper": null,
+  "mode": "faraday",
+  "f": 44,
+  "ratio": [
+   5,
+   4
+  ],
+  "pulse": 0,
+  "breathe": 0.05,
+  "pal": [
+   "#36ffb0",
+   "#2bd1ff",
+   "#9b6bff"
+  ],
+  "mood": "ordered chaos",
+  "how": "Penrose rhombi refracted through a five-walled dish: order that never repeats.",
+  "best": "science centres",
+  "folder": "styles/S04_penrose_gate",
+  "files": [
+   "gobo_G193_penrose_rhombus_p3_quasicrystal.stl",
+   "gobo_G193_penrose_rhombus_p3_quasicrystal.svg",
+   "insert_B003_insert_pentagon.stl"
+  ],
+  "gobo_id": "G193",
+  "insert_id": "B003",
+  "dipper_id": ""
+ },
+ {
+  "id": "S05",
+  "name": "Metatron",
+  "gobo": "Metatron's Cube",
+  "insert": "Insert hexagon",
+  "dipper": null,
+  "mode": "faraday",
+  "f": 36,
+  "ratio": [
+   3,
+   2
+  ],
+  "pulse": 0,
+  "breathe": 0.08,
+  "pal": [
+   "#ffd27a",
+   "#ff9f43",
+   "#fff3d6"
+  ],
+  "mood": "sacred, centred",
+  "how": "Metatron's lines bend over a hexagonal standing wave, breathing slowly.",
+  "best": "yoga, meditation",
+  "folder": "styles/S05_metatron",
+  "files": [
+   "gobo_G102_metatron_s_cube.stl",
+   "gobo_G102_metatron_s_cube.svg",
+   "insert_B004_insert_hexagon.stl"
+  ],
+  "gobo_id": "G102",
+  "insert_id": "B004",
+  "dipper_id": ""
+ },
+ {
+  "id": "S06",
+  "name": "Flower of Life Bloom",
+  "gobo": "Flower of Life",
+  "insert": "Insert wavy 6",
+  "dipper": "Dipper point",
+  "mode": "dipper",
+  "f": 20,
+  "ratio": null,
+  "pulse": 0.5,
+  "breathe": 0.1,
+  "pal": [
+   "#ffd27a",
+   "#ff9f43",
+   "#fff3d6"
+  ],
+  "mood": "gentle, blooming",
+  "how": "Rings bloom through 19 interlaced circles at a breathing pace.",
+  "best": "spas, bedrooms",
+  "folder": "styles/S06_flower_of_life_bloom",
+  "files": [
+   "gobo_G100_flower_of_life.stl",
+   "gobo_G100_flower_of_life.svg",
+   "insert_B031_insert_wavy_6.stl",
+   "dipper_D001_dipper_point.stl"
+  ],
+  "gobo_id": "G100",
+  "insert_id": "B031",
+  "dipper_id": "D001"
+ },
+ {
+  "id": "S07",
+  "name": "Venus Rose",
+  "gobo": "Cosmic dance Venus-Earth",
+  "insert": "Insert pentagon",
+  "dipper": "Dipper star 5",
+  "mode": "dipper",
+  "f": 22,
+  "ratio": null,
+  "pulse": 0.6,
+  "breathe": 0.0,
+  "pal": [
+   "#ff7aa8",
+   "#ffd1dc",
+   "#ffb347"
+  ],
+  "mood": "romantic",
+  "how": "The real 8-year Venus-Earth rose, pulsed by a star-shaped foot.",
+  "best": "date nights, weddings",
+  "folder": "styles/S07_venus_rose",
+  "files": [
+   "gobo_G126_cosmic_dance_venus_earth.stl",
+   "gobo_G126_cosmic_dance_venus_earth.svg",
+   "insert_B003_insert_pentagon.stl",
+   "dipper_D009_dipper_star_5.stl"
+  ],
+  "gobo_id": "G126",
+  "insert_id": "B003",
+  "dipper_id": "D009"
+ },
+ {
+  "id": "S08",
+  "name": "Hyperbolic Abyss",
+  "gobo": "Hyperbolic {7,3}",
+  "insert": "Insert heptagon",
+  "dipper": null,
+  "mode": "faraday",
+  "f": 70,
+  "ratio": null,
+  "pulse": 0,
+  "breathe": 0.05,
+  "pal": [
+   "#36ffb0",
+   "#2bd1ff",
+   "#9b6bff"
+  ],
+  "mood": "deep, infinite",
+  "how": "Escher-style heptagons shrinking to the rim over fine square waves.",
+  "best": "lounges, art spaces",
+  "folder": "styles/S08_hyperbolic_abyss",
+  "files": [
+   "gobo_G202_hyperbolic_7_3.stl",
+   "gobo_G202_hyperbolic_7_3.svg",
+   "insert_B005_insert_heptagon.stl"
+  ],
+  "gobo_id": "G202",
+  "insert_id": "B005",
+  "dipper_id": ""
+ },
+ {
+  "id": "S09",
+  "name": "E8 Singularity",
+  "gobo": "E8 root polytope",
+  "insert": "Insert circle (reference)",
+  "dipper": null,
+  "mode": "faraday",
+  "f": 60,
+  "ratio": [
+   5,
+   4
+  ],
+  "pulse": 0,
+  "breathe": 0.0,
+  "pal": [
+   "#ffffff",
+   "#ff5fa2",
+   "#36e2ff"
+  ],
+  "mood": "peak, intense",
+  "how": "E8's 30-fold shadow over a 12-fold quasipattern: the densest look.",
+  "best": "finales",
+  "folder": "styles/S09_e8_singularity",
+  "files": [
+   "gobo_G282_e8_root_polytope.stl",
+   "gobo_G282_e8_root_polytope.svg",
+   "insert_B018_insert_circle_reference.stl"
+  ],
+  "gobo_id": "G282",
+  "insert_id": "B018",
+  "dipper_id": ""
+ },
+ {
+  "id": "S10",
+  "name": "600-Cell Halo",
+  "gobo": "600-cell",
+  "insert": "Insert decagon",
+  "dipper": null,
+  "mode": "faraday",
+  "f": 50,
+  "ratio": [
+   5,
+   4
+  ],
+  "pulse": 0,
+  "breathe": 0.04,
+  "pal": [
+   "#2b6cff",
+   "#7fd4ff",
+   "#b48cff"
+  ],
+  "mood": "cosmic halo",
+  "how": "A 4D polytope's 30-fold halo inside a ten-sided dish.",
+  "best": "planetariums",
+  "folder": "styles/S10_600_cell_halo",
+  "files": [
+   "gobo_G277_600_cell.stl",
+   "gobo_G277_600_cell.svg",
+   "insert_B008_insert_decagon.stl"
+  ],
+  "gobo_id": "G277",
+  "insert_id": "B008",
+  "dipper_id": ""
+ },
+ {
+  "id": "S11",
+  "name": "Girih Lantern",
+  "gobo": "Hankin 4.8.8 at 67.5 deg",
+  "insert": "Insert octagon",
+  "dipper": null,
+  "mode": "faraday",
+  "f": 40,
+  "ratio": [
+   3,
+   2
+  ],
+  "pulse": 0,
+  "breathe": 0.0,
+  "pal": [
+   "#36e2ff",
+   "#ffd27a",
+   "#7a5cff"
+  ],
+  "mood": "night garden",
+  "how": "Eight-point girih stars rippling like lantern light.",
+  "best": "restaurants, Ramadan/Eid",
+  "folder": "styles/S11_girih_lantern",
+  "files": [
+   "gobo_G188_hankin_4_8_8_at_67_5_deg.stl",
+   "gobo_G188_hankin_4_8_8_at_67_5_deg.svg",
+   "insert_B006_insert_octagon.stl"
+  ],
+  "gobo_id": "G188",
+  "insert_id": "B006",
+  "dipper_id": ""
+ },
+ {
+  "id": "S12",
+  "name": "Star of Twelve",
+  "gobo": "Dodecagram {12/5}",
+  "insert": "Insert dodecagon",
+  "dipper": null,
+  "mode": "faraday",
+  "f": 45,
+  "ratio": [
+   5,
+   4
+  ],
+  "pulse": 0,
+  "breathe": 0.0,
+  "pal": [
+   "#ffd27a",
+   "#ff9f43",
+   "#fff3d6"
+  ],
+  "mood": "radiant",
+  "how": "A twelve-point star over twelve-fold water.",
+  "best": "celebrations",
+  "folder": "styles/S12_star_of_twelve",
+  "files": [
+   "gobo_G022_dodecagram_12_5.stl",
+   "gobo_G022_dodecagram_12_5.svg",
+   "insert_B010_insert_dodecagon.stl"
+  ],
+  "gobo_id": "G022",
+  "insert_id": "B010",
+  "dipper_id": ""
+ },
+ {
+  "id": "S13",
+  "name": "Koch Snowfall",
+  "gobo": "Koch snowflake L5",
+  "insert": "Insert Koch snowflake",
+  "dipper": null,
+  "mode": "faraday",
+  "f": 30,
+  "ratio": null,
+  "pulse": 0,
+  "breathe": 0.08,
+  "pal": [
+   "#bfe9ff",
+   "#ffffff",
+   "#8fb8ff"
+  ],
+  "mood": "winter hush",
+  "how": "A fractal snowflake in a snowflake-shaped dish; the jagged wall traps waves in its corners.",
+  "best": "winter, solstice",
+  "folder": "styles/S13_koch_snowfall",
+  "files": [
+   "gobo_G285_koch_snowflake_l5.stl",
+   "gobo_G285_koch_snowflake_l5.svg",
+   "insert_B029_insert_koch_snowflake.stl"
+  ],
+  "gobo_id": "G285",
+  "insert_id": "B029",
+  "dipper_id": ""
+ },
+ {
+  "id": "S14",
+  "name": "Julia Bloom",
+  "gobo": "Julia set - Douady rabbit",
+  "insert": "Insert Bunimovich stadium",
+  "dipper": null,
+  "mode": "faraday",
+  "f": 34,
+  "ratio": null,
+  "pulse": 0,
+  "breathe": 0.0,
+  "pal": [
+   "#ff7a00",
+   "#7a5cff",
+   "#36ff6b"
+  ],
+  "mood": "eerie, chaotic",
+  "how": "Julia lace over a chaotic stadium dish: speckled, restless water.",
+  "best": "Halloween, escape rooms",
+  "folder": "styles/S14_julia_bloom",
+  "files": [
+   "gobo_G301_julia_set_douady_rabbit.stl",
+   "gobo_G301_julia_set_douady_rabbit.svg",
+   "insert_B021_insert_bunimovich_stadium.stl"
+  ],
+  "gobo_id": "G301",
+  "insert_id": "B021",
+  "dipper_id": ""
+ },
+ {
+  "id": "S15",
+  "name": "Dragon Fold",
+  "gobo": "Heighway dragon",
+  "insert": "Insert square",
+  "dipper": null,
+  "mode": "faraday",
+  "f": 28,
+  "ratio": null,
+  "pulse": 0,
+  "breathe": 0.0,
+  "pal": [
+   "#ff6b3d",
+   "#ffb347",
+   "#ffe3a3"
+  ],
+  "mood": "fiery",
+  "how": "The paper-folding dragon over square Faraday waves.",
+  "best": "bars, game rooms",
+  "folder": "styles/S15_dragon_fold",
+  "files": [
+   "gobo_G294_heighway_dragon.stl",
+   "gobo_G294_heighway_dragon.svg",
+   "insert_B002_insert_square.stl"
+  ],
+  "gobo_id": "G294",
+  "insert_id": "B002",
+  "dipper_id": ""
+ },
+ {
+  "id": "S16",
+  "name": "Sunflower Spiral",
+  "gobo": "Sunflower phyllotaxis",
+  "insert": "Insert wavy 8",
+  "dipper": "Dipper point",
+  "mode": "dipper",
+  "f": 21,
+  "ratio": null,
+  "pulse": 0.618,
+  "breathe": 0.0,
+  "pal": [
+   "#9bff6b",
+   "#ffd27a",
+   "#36ffb0"
+  ],
+  "mood": "growth",
+  "how": "Golden-angle seeds pulsed at 0.618 per second.",
+  "best": "spring, garden centres",
+  "folder": "styles/S16_sunflower_spiral",
+  "files": [
+   "gobo_G097_sunflower_phyllotaxis.stl",
+   "gobo_G097_sunflower_phyllotaxis.svg",
+   "insert_B032_insert_wavy_8.stl",
+   "dipper_D001_dipper_point.stl"
+  ],
+  "gobo_id": "G097",
+  "insert_id": "B032",
+  "dipper_id": "D001"
+ },
+ {
+  "id": "S17",
+  "name": "Galaxy Arms",
+  "gobo": "Galaxy arms",
+  "insert": "Insert circle (reference)",
+  "dipper": "Dipper disc 25",
+  "mode": "dipper",
+  "f": 26,
+  "ratio": null,
+  "pulse": 0.4,
+  "breathe": 0.0,
+  "pal": [
+   "#ff5fa2",
+   "#7a5cff",
+   "#36e2ff"
+  ],
+  "mood": "spiral, drifting",
+  "how": "Logarithmic arms with soft rings rolling outward.",
+  "best": "space nights",
+  "folder": "styles/S17_galaxy_arms",
+  "files": [
+   "gobo_G094_galaxy_arms.stl",
+   "gobo_G094_galaxy_arms.svg",
+   "insert_B018_insert_circle_reference.stl",
+   "dipper_D002_dipper_disc_25.stl"
+  ],
+  "gobo_id": "G094",
+  "insert_id": "B018",
+  "dipper_id": "D002"
+ },
+ {
+  "id": "S18",
+  "name": "Chladni Plate",
+  "gobo": "Chladni square (3,5) anti",
+  "insert": "Insert square",
+  "dipper": null,
+  "mode": "faraday",
+  "f": 36,
+  "ratio": null,
+  "pulse": 0,
+  "breathe": 0.0,
+  "pal": [
+   "#ffffff",
+   "#cfe6ff",
+   "#fff1d6"
+  ],
+  "mood": "scientific, crisp",
+  "how": "Chladni's 1787 nodal lines in a square dish of Faraday squares.",
+  "best": "classrooms, museums",
+  "folder": "styles/S18_chladni_plate",
+  "files": [
+   "gobo_G145_chladni_square_3_5_anti.stl",
+   "gobo_G145_chladni_square_3_5_anti.svg",
+   "insert_B002_insert_square.stl"
+  ],
+  "gobo_id": "G145",
+  "insert_id": "B002",
+  "dipper_id": ""
+ },
+ {
+  "id": "S19",
+  "name": "Water Drum",
+  "gobo": "Water mode J4 ring 3",
+  "insert": "Insert circle (reference)",
+  "dipper": null,
+  "mode": "faraday",
+  "f": 32,
+  "ratio": null,
+  "pulse": 0,
+  "breathe": 0.0,
+  "pal": [
+   "#36e2ff",
+   "#ffffff",
+   "#2b6cff"
+  ],
+  "mood": "pure physics",
+  "how": "The dish's own 8-petal Bessel mode drawn on the gobo; tune until water and print agree.",
+  "best": "demos",
+  "folder": "styles/S19_water_drum",
+  "files": [
+   "gobo_G156_water_mode_j4_ring_3.stl",
+   "gobo_G156_water_mode_j4_ring_3.svg",
+   "insert_B018_insert_circle_reference.stl"
+  ],
+  "gobo_id": "G156",
+  "insert_id": "B018",
+  "dipper_id": ""
+ },
+ {
+  "id": "S20",
+  "name": "Twin Source",
+  "gobo": "Two-source interference",
+  "insert": "Insert circle (reference)",
+  "dipper": "Dipper two pins",
+  "mode": "dipper",
+  "f": 30,
+  "ratio": null,
+  "pulse": 0,
+  "breathe": 0.0,
+  "pal": [
+   "#36e2ff",
+   "#7fd4ff",
+   "#ffffff"
+  ],
+  "mood": "clean, scientific",
+  "how": "Young's two-source fringes made by two pins on one foot.",
+  "best": "science centres",
+  "folder": "styles/S20_twin_source",
+  "files": [
+   "gobo_G168_two_source_interference.stl",
+   "gobo_G168_two_source_interference.svg",
+   "insert_B018_insert_circle_reference.stl",
+   "dipper_D010_dipper_two_pins.stl"
+  ],
+  "gobo_id": "G168",
+  "insert_id": "B018",
+  "dipper_id": "D010"
+ },
+ {
+  "id": "S21",
+  "name": "Triple Lattice",
+  "gobo": "Three-source interference",
+  "insert": "Insert hexagon",
+  "dipper": "Dipper three pins",
+  "mode": "dipper",
+  "f": 34,
+  "ratio": null,
+  "pulse": 0,
+  "breathe": 0.0,
+  "pal": [
+   "#36ffb0",
+   "#2bd1ff",
+   "#9b6bff"
+  ],
+  "mood": "lattice",
+  "how": "Three pins at 120 degrees weave a hexagonal interference net.",
+  "best": "lounges",
+  "folder": "styles/S21_triple_lattice",
+  "files": [
+   "gobo_G169_three_source_interference.stl",
+   "gobo_G169_three_source_interference.svg",
+   "insert_B004_insert_hexagon.stl",
+   "dipper_D011_dipper_three_pins.stl"
+  ],
+  "gobo_id": "G169",
+  "insert_id": "B004",
+  "dipper_id": "D011"
+ },
+ {
+  "id": "S22",
+  "name": "Lissajous Weave",
+  "gobo": "Lissajous 3:4",
+  "insert": "Insert circle (reference)",
+  "dipper": null,
+  "mode": "faraday",
+  "f": 40,
+  "ratio": [
+   4,
+   3
+  ],
+  "pulse": 0,
+  "breathe": 0.0,
+  "pal": [
+   "#ffe9b0",
+   "#7fd4ff",
+   "#ff5fa2"
+  ],
+  "mood": "musical",
+  "how": "The 3:4 figure is the picture of the two tones being played.",
+  "best": "music events",
+  "folder": "styles/S22_lissajous_weave",
+  "files": [
+   "gobo_G042_lissajous_3_4.stl",
+   "gobo_G042_lissajous_3_4.svg",
+   "insert_B018_insert_circle_reference.stl"
+  ],
+  "gobo_id": "G042",
+  "insert_id": "B018",
+  "dipper_id": ""
+ },
+ {
+  "id": "S23",
+  "name": "Knotwork",
+  "gobo": "Torus knot (3,7)",
+  "insert": "Insert heptagon",
+  "dipper": null,
+  "mode": "faraday",
+  "f": 42,
+  "ratio": null,
+  "pulse": 0,
+  "breathe": 0.06,
+  "pal": [
+   "#b48cff",
+   "#ffd27a",
+   "#36e2ff"
+  ],
+  "mood": "woven",
+  "how": "A (3,7) torus knot rippling over a seven-walled dish.",
+  "best": "galleries",
+  "folder": "styles/S23_knotwork",
+  "files": [
+   "gobo_G090_torus_knot_3_7.stl",
+   "gobo_G090_torus_knot_3_7.svg",
+   "insert_B005_insert_heptagon.stl"
+  ],
+  "gobo_id": "G090",
+  "insert_id": "B005",
+  "dipper_id": ""
+ },
+ {
+  "id": "S24",
+  "name": "Fibonacci Gold",
+  "gobo": "Golden spiral & Fibonacci squares",
+  "insert": "Insert golden rectangle",
+  "dipper": "Dipper point",
+  "mode": "dipper",
+  "f": 21,
+  "ratio": null,
+  "pulse": 0.618,
+  "breathe": 0.0,
+  "pal": [
+   "#ffd27a",
+   "#ff9f43",
+   "#fff3d6"
+  ],
+  "mood": "harmonic",
+  "how": "The golden spiral in a golden-rectangle dish, pulsed at 1/phi.",
+  "best": "studios, offices",
+  "folder": "styles/S24_fibonacci_gold",
+  "files": [
+   "gobo_G093_golden_spiral_fibonacci_squares.stl",
+   "gobo_G093_golden_spiral_fibonacci_squares.svg",
+   "insert_B036_insert_golden_rectangle.stl",
+   "dipper_D001_dipper_point.stl"
+  ],
+  "gobo_id": "G093",
+  "insert_id": "B036",
+  "dipper_id": "D001"
+ },
+ {
+  "id": "S25",
+  "name": "Sacred Yantra",
+  "gobo": "Nine-triangle yantra (simplified)",
+  "insert": "Insert triangle",
+  "dipper": null,
+  "mode": "faraday",
+  "f": 33,
+  "ratio": [
+   3,
+   2
+  ],
+  "pulse": 0,
+  "breathe": 0.1,
+  "pal": [
+   "#ffd27a",
+   "#ff6b3d",
+   "#ff3dd2"
+  ],
+  "mood": "devotional",
+  "how": "Nine interlocking triangles over hexagon-triangle water, breathing at 6/min.",
+  "best": "Diwali, meditation",
+  "folder": "styles/S25_sacred_yantra",
+  "files": [
+   "gobo_G108_nine_triangle_yantra_simplified.stl",
+   "gobo_G108_nine_triangle_yantra_simplified.svg",
+   "insert_B001_insert_triangle.stl"
+  ],
+  "gobo_id": "G108",
+  "insert_id": "B001",
+  "dipper_id": ""
+ },
+ {
+  "id": "S26",
+  "name": "Hypercube Dream",
+  "gobo": "8-cube (hypercube)",
+  "insert": "Insert octagon",
+  "dipper": null,
+  "mode": "faraday",
+  "f": 64,
+  "ratio": null,
+  "pulse": 0,
+  "breathe": 0.0,
+  "pal": [
+   "#7a5cff",
+   "#36e2ff",
+   "#ffffff"
+  ],
+  "mood": "4D, hypnotic",
+  "how": "256 corners of an 8-dimensional cube in a 16-fold rose.",
+  "best": "lounges, clubs",
+  "folder": "styles/S26_hypercube_dream",
+  "files": [
+   "gobo_G267_8_cube_hypercube.stl",
+   "gobo_G267_8_cube_hypercube.svg",
+   "insert_B006_insert_octagon.stl"
+  ],
+  "gobo_id": "G267",
+  "insert_id": "B006",
+  "dipper_id": ""
+ },
+ {
+  "id": "S27",
+  "name": "Snub Cosmos",
+  "gobo": "Snub dodecahedron",
+  "insert": "Insert pentagon",
+  "dipper": null,
+  "mode": "faraday",
+  "f": 52,
+  "ratio": [
+   5,
+   4
+  ],
+  "pulse": 0,
+  "breathe": 0.0,
+  "pal": [
+   "#ff5fa2",
+   "#7a5cff",
+   "#36e2ff"
+  ],
+  "mood": "crystalline",
+  "how": "The snub dodecahedron's lace over 12-fold water.",
+  "best": "galleries",
+  "folder": "styles/S27_snub_cosmos",
+  "files": [
+   "gobo_G238_snub_dodecahedron.stl",
+   "gobo_G238_snub_dodecahedron.svg",
+   "insert_B003_insert_pentagon.stl"
+  ],
+  "gobo_id": "G238",
+  "insert_id": "B003",
+  "dipper_id": ""
+ },
+ {
+  "id": "S28",
+  "name": "Apollonian Pearls",
+  "gobo": "Apollonian gasket",
+  "insert": "Insert circle (reference)",
+  "dipper": "Dipper ring",
+  "mode": "dipper",
+  "f": 18,
+  "ratio": null,
+  "pulse": 0.3,
+  "breathe": 0.08,
+  "pal": [
+   "#ffffff",
+   "#ffd1dc",
+   "#bfe9ff"
+  ],
+  "mood": "soft, pearly",
+  "how": "Circles within circles; a ring foot sends waves inward to focus at the centre.",
+  "best": "weddings, spas",
+  "folder": "styles/S28_apollonian_pearls",
+  "files": [
+   "gobo_G300_apollonian_gasket.stl",
+   "gobo_G300_apollonian_gasket.svg",
+   "insert_B018_insert_circle_reference.stl",
+   "dipper_D003_dipper_ring.stl"
+  ],
+  "gobo_id": "G300",
+  "insert_id": "B018",
+  "dipper_id": "D003"
+ },
+ {
+  "id": "S29",
+  "name": "Moire Drift",
+  "gobo": "Moire grating 3 deg",
+  "insert": "Insert ellipse 2.0:1",
+  "dipper": null,
+  "mode": "faraday",
+  "f": 38,
+  "ratio": [
+   7,
+   6
+  ],
+  "pulse": 0,
+  "breathe": 0.0,
+  "pal": [
+   "#36ffb0",
+   "#ff5fa2",
+   "#ffffff"
+  ],
+  "mood": "op-art",
+  "how": "Grating lines bent by slowly beating 6:7 water: moire bands crawl across the wall.",
+  "best": "retail windows",
+  "folder": "styles/S29_moire_drift",
+  "files": [
+   "gobo_G173_moire_grating_3_deg.stl",
+   "gobo_G173_moire_grating_3_deg.svg",
+   "insert_B020_insert_ellipse_2_0_1.stl"
+  ],
+  "gobo_id": "G173",
+  "insert_id": "B020",
+  "dipper_id": ""
+ },
+ {
+  "id": "S30",
+  "name": "Fresnel Sun",
+  "gobo": "Fresnel zone plate",
+  "insert": "Insert circle (reference)",
+  "dipper": "Dipper point",
+  "mode": "dipper",
+  "f": 24,
+  "ratio": null,
+  "pulse": 1.2,
+  "breathe": 0.0,
+  "pal": [
+   "#ff6b3d",
+   "#ffb347",
+   "#ffe3a3"
+  ],
+  "mood": "solar",
+  "how": "A zone plate focuses light into bright rings while ripples pulse through them.",
+  "best": "summer, solstice",
+  "folder": "styles/S30_fresnel_sun",
+  "files": [
+   "gobo_G171_fresnel_zone_plate.stl",
+   "gobo_G171_fresnel_zone_plate.svg",
+   "insert_B018_insert_circle_reference.stl",
+   "dipper_D001_dipper_point.stl"
+  ],
+  "gobo_id": "G171",
+  "insert_id": "B018",
+  "dipper_id": "D001"
+ }
+]
