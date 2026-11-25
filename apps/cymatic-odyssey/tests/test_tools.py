@@ -66,11 +66,6 @@ def test_catalog_unique():
     assert len(es) > 300
 
 
-if __name__ == "__main__":
-    for k, f in list(globals().items()):
-        if k.startswith("test_"):
-            f(); print("ok", k)
-
 
 def test_styles_and_shows():
     sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "tools"))
@@ -95,3 +90,9 @@ def test_styles_and_shows():
     for _ in range(15):
         seen.append(cur); cur = next(x for x in shows if x["id"] == cur)["next"]
     assert len(set(seen)) == 15 and cur == shows[0]["id"]
+
+
+if __name__ == "__main__":
+    for k, f in list(globals().items()):
+        if k.startswith("test_"):
+            f(); print("ok", k)
