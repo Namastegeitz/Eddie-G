@@ -1,0 +1,8 @@
+{
+	"about": "Store-approved 'rate this game' prompt (Google Play In-App Review / Apple requestReview) via the Godot In-App Review plugin (MIT). On, but it does nothing until the plugin is in the build (tools/store_addons/install_store_addons.sh, see stores/IN_APP_REVIEW.md), and Google only shows the card in copies installed from Google Play. Asks after a podium finish, never from a button. The stores also limit how often the dialog really shows. Set enabled to false to switch it off.",
+	"enabled": true,
+	"min_races": 5,
+	"min_podiums": 2,
+	"days_between": 30,
+	"max_asks": 3
+}

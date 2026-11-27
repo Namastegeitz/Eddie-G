@@ -137,14 +137,19 @@ func warp_cut() -> void:
 	add_shake(0.3)
 
 
+## Settings > Reduce motion: no boost zoom or camera kicks.
+func _calm() -> bool:
+	return bool(Save.setting("reduce_motion"))
+
+
 func add_shake(amount: float) -> void:
-	if Save.setting("shake"):
+	if Save.setting("shake") and not Save.setting("reduce_motion"):
 		shake = maxf(shake, amount)
 
 
 ## Hard landing: the camera dips and springs back.
 func land(impact: float) -> void:
-	if Save.setting("shake"):
+	if Save.setting("shake") and not Save.setting("reduce_motion"):
 		_dip_v -= clampf(impact * 0.12, 0.0, 2.2)
 
 
@@ -225,8 +230,8 @@ func _process(dt: float) -> void:
 	if boosting and not _was_boost:
 		_kick = 9.0
 	_was_boost = boosting
-	_kick = maxf(0.0, _kick - dt * 18.0)
-	var want_fov := (58.0 if _portrait else 70.0) + ratio * 9.0 + (8.0 if boosting else 0.0)
+	_kick = 0.0 if _calm() else maxf(0.0, _kick - dt * 18.0)
+	var want_fov := (58.0 if _portrait else 70.0) + ratio * 9.0 + (8.0 if boosting and not _calm() else 0.0)
 	fov = lerpf(fov, want_fov, 1.0 - exp(-4.0 * dt)) + _kick * dt * 6.0
 	fov = clampf(fov, 50.0, 100.0)
 	if shake > 0.0:
@@ -271,8 +276,8 @@ func _cockpit_process(dt: float, ratio: float) -> void:
 	if boosting and not _was_boost:
 		_kick = 9.0
 	_was_boost = boosting
-	_kick = maxf(0.0, _kick - dt * 18.0)
-	var want_fov := (62.0 if _portrait else 76.0) + ratio * 12.0 + (8.0 if boosting else 0.0)
+	_kick = 0.0 if _calm() else maxf(0.0, _kick - dt * 18.0)
+	var want_fov := (62.0 if _portrait else 76.0) + ratio * 12.0 + (8.0 if boosting and not _calm() else 0.0)
 	fov = clampf(lerpf(fov, want_fov, 1.0 - exp(-4.0 * dt)) + _kick * dt * 6.0, 50.0, 105.0)
 	if shake > 0.0:
 		shake = maxf(0.0, shake - dt * 1.8)

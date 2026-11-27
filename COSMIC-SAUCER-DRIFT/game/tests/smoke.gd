@@ -28,7 +28,7 @@ func _ready() -> void:
 	var groups := [["data", _data], ["save", _save_tests], ["logic", _game_logic], ["ads", _ads],
 		["achievements", _achievements], ["items", _items_tests], ["skyway", _skyway_tests],
 		["upgrades", _upgrades_tests], ["biome", _biome_tests], ["wonder", _wonder_tests], ["hd", _hd_tests],
-		["gfx", _gfx_tests], ["races", _races], ["menus", _menus]]
+		["gfx", _gfx_tests], ["races", _races], ["menus", _menus], ["upgrade", _upgrade_run_tests]]
 	for g: Array in groups:
 		if only.is_empty() or String(g[0]) in only:
 			await (g[1] as Callable).call()
@@ -1048,7 +1048,7 @@ func _menus() -> void:
 	check("menu loaded", menu != null and menu.has_method("show_screen"))
 	menu.show_screen("settings")
 	check("Settings has a privacy policy button", menu.privacy_btn != null and is_instance_valid(menu.privacy_btn) and UiKit.PRIVACY_URL.begins_with("https://"))
-	for s in ["home", "play", "cups", "quick", "tt", "bosses", "daily", "garage", "pilots", "achievements", "stats", "settings", "howto", "versus", "store", "title"]:
+	for s in ["home", "play", "cups", "quick", "tt", "bosses", "daily", "garage", "pilots", "achievements", "stats", "settings", "howto", "credits", "versus", "store", "title"]:
 		menu.show_screen(s)
 		await get_tree().process_frame
 		check("menu screen " + s, menu._screen == s)
@@ -1956,3 +1956,117 @@ class ContentReportProxy:
 ## Pool size of an effect kind (tests follow Items.POOL_SIZES).
 func _ps(kind: String) -> int:
 	return int(Items.POOL_SIZES[kind])
+
+
+# ---------------------------------------------------------------- upgrade run (2026-11-27)
+## Accessibility settings, frame-cap choices, the review prompt, crash-report
+## consent, the credits screen, and old saves loading without the new keys.
+func _upgrade_run_tests() -> void:
+	# A save from before this upgrade loads with the new settings at their defaults.
+	var old := {"credits": 777, "settings": {"steering": "tilt", "fps_cap": 30.0, "shake": true}, "controls_v3": true}
+	Save.migrate(old)
+	var merged := Save.defaults()
+	Save._merge(merged, old)
+	check("old save keeps its values", int(merged.credits) == 777 and merged.settings.steering == "tilt" and int(merged.settings.fps_cap) == 30)
+	check("old save gets the new settings off", merged.settings.colorblind == "off" and merged.settings.reduce_motion == false \
+		and is_equal_approx(float(merged.settings.ui_scale), 1.0) and merged.settings.crash_reports == "ask")
+	check("old save gets the review record", merged.review is Dictionary and int(merged.review.asked) == 0)
+	Save.data = Save.defaults()
+	# Frame cap choices.
+	for cap in [0, 30, 60, 120]:
+		Save.set_setting("fps_cap", cap)
+		check("frame cap %d" % cap, Engine.max_fps == cap, str(Engine.max_fps))
+	Save.set_setting("fps_cap", 0)
+	# Colour-blind filter: on adds one full-screen layer, off removes it.
+	check("no colour filter by default", Game.colour_filter == null)
+	Save.set_setting("colorblind", "deuteranopia")
+	check("colour filter on", Game.colour_filter != null and is_instance_valid(Game.colour_filter))
+	if Game.colour_filter:
+		var mat := Game.colour_filter.rect.material as ShaderMaterial
+		check("deuteranopia mode", int(mat.get_shader_parameter("mode")) == 2)
+		Save.set_setting("colorblind", "tritanopia")
+		check("tritanopia mode", int(mat.get_shader_parameter("mode")) == 3)
+	await get_tree().process_frame
+	Save.set_setting("colorblind", "off")
+	await get_tree().process_frame
+	check("colour filter off", Game.colour_filter == null)
+	# Interface size scales the 2D layer only.
+	Save.set_setting("ui_scale", 1.3)
+	check("interface 130%", is_equal_approx(get_tree().root.content_scale_factor, 1.3))
+	Save.set_setting("ui_scale", 1.0)
+	check("interface 100%", is_equal_approx(get_tree().root.content_scale_factor, 1.0))
+	# Reduce motion: no camera shake or landing dip.
+	var cam := RaceCamera.new()
+	add_child(cam)
+	Save.set_setting("reduce_motion", true)
+	cam.add_shake(1.0)
+	cam.land(20.0)
+	check("reduce motion: no shake or dip", cam.shake == 0.0 and cam._dip_v == 0.0)
+	Save.set_setting("reduce_motion", false)
+	cam.add_shake(1.0)
+	check("shake still works by default", cam.shake > 0.0)
+	cam.queue_free()
+	# Review prompt: only after enough races and podiums; inert without the plugin.
+	Save.data = Save.defaults()
+	ReviewPrompt._cfg = {}
+	var c := ReviewPrompt.config()
+	check("review config loads", c.has("min_races") and c.has("enabled"))
+	c["enabled"] = true
+	check("no review ask on a first race", not ReviewPrompt.should_ask(1))
+	Save.data.ads.races = int(c.min_races)
+	Save.data.review.podiums = int(c.min_podiums)
+	check("review ask after podiums", ReviewPrompt.should_ask(2))
+	check("no review ask off the podium", not ReviewPrompt.should_ask(4))
+	Save.data.review.last = 1000
+	check("review waits between asks", not ReviewPrompt.should_ask(1, 1000 + 86400))
+	check("review asks again later", ReviewPrompt.should_ask(1, 1000 + int(c.days_between) * 86400))
+	Save.data.review.asked = int(c.max_asks)
+	check("review stops after max asks", not ReviewPrompt.should_ask(1, 10 ** 10))
+	var pods := int(Save.data.review.podiums)
+	check("review needs the plugin", not ReviewPrompt.after_race(1) and int(Save.data.review.podiums) == pods + 1)
+	ReviewPrompt._cfg = {}
+	# Crash reporting: nothing installed here, so nothing to ask and nothing sent.
+	Save.data = Save.defaults()
+	check("crash reports default to ask", Crash.consent() == "ask")
+	check("no crash SDK in this build", not Crash.available() and not Crash.should_ask())
+	Crash.set_consent(true)
+	check("crash consent on is saved", Crash.consent() == "on" and not Crash.sentry_on and not Crash.firebase_on)
+	Crash.breadcrumb("smoke test")
+	Crash.set_consent(false)
+	check("crash consent off is saved", Crash.consent() == "off")
+	Save.data = Save.defaults()
+	# Credits screen shows the engine licence and the third-party list.
+	Save.data.tutorial_done = true
+	Game.go_menu()
+	await get_tree().process_frame
+	await get_tree().process_frame
+	var menu: Control = get_tree().current_scene
+	menu.show_screen("credits")
+	await get_tree().process_frame
+	var texts := PackedStringArray()
+	for l in menu.content.find_children("*", "Label", true, false):
+		texts.append((l as Label).text)
+	var all := "\n".join(texts)
+	check("credits: Godot licence", all.contains("Permission is hereby granted"))
+	check("credits: font licence", all.contains("Bitstream"))
+	check("credits: FreeType listed", all.contains("FreeType"))
+	check("credits: Meshy credit", all.contains("CC BY 4.0"))
+	menu.show_screen("settings")
+	await get_tree().process_frame
+	var btns := PackedStringArray()
+	for b in menu.content.find_children("*", "Button", true, false):
+		btns.append((b as Button).text)
+	var bt := "|".join(btns)
+	check("settings: interface size", bt.contains("100% ▸"), bt)
+	check("settings: colour-blind filter", bt.contains("Off ▸"))
+	check("settings: credits button", bt.contains("Credits & licences"))
+	check("settings: no crash toggle without an SDK", not bt.contains("Send crash"))
+	Save.data.settings.fps_cap = 30.0   # a float from an old save still shows its name
+	menu.show_screen("settings", false)
+	await get_tree().process_frame
+	btns.clear()
+	for b in menu.content.find_children("*", "Button", true, false):
+		btns.append((b as Button).text)
+	check("settings: 30.0 shows as 30 fps", "|".join(btns).contains("30 fps (battery)"))
+	Save.data = Save.defaults()
+	Save.data.tutorial_done = true

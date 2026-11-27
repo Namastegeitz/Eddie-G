@@ -74,12 +74,36 @@ func _ready() -> void:
 	if OS.has_feature("web") or OS.has_feature("mobile"):
 		Engine.max_physics_steps_per_frame = 3
 	apply_frame_cap()
+	apply_accessibility()
 
 
 ## Settings > Frame cap: 0 = uncapped (vsync), 30 = half rate for weak
-## phones and battery (physics stays at 60 Hz, interpolated).
+## phones and battery, 60 steady, 120 for fast screens (physics stays at
+## 60 Hz, interpolated). iPhones may run above 60 Hz since the iOS export
+## asks for ProMotion, so "uncapped" stays at 60 there as before; 120 is a choice.
 func apply_frame_cap() -> void:
-	Engine.max_fps = int(Save.setting("fps_cap"))
+	var cap := int(Save.setting("fps_cap"))
+	if cap == 0 and OS.get_name() == "iOS":
+		cap = 60
+	Engine.max_fps = cap
+
+
+var colour_filter: ColourFilter = null
+
+## Settings > Colour-blind filter and Interface size.
+func apply_accessibility() -> void:
+	var s := float(Save.setting("ui_scale"))
+	get_tree().root.content_scale_factor = clampf(s if s > 0.0 else 1.0, 0.8, 1.5)
+	var mode := String(Save.setting("colorblind"))
+	if mode == "off" or not ColourFilter.MODES.has(mode):
+		if colour_filter:
+			colour_filter.queue_free()
+			colour_filter = null
+	else:
+		if colour_filter == null:
+			colour_filter = ColourFilter.new()
+			add_child(colour_filter)
+		colour_filter.set_mode(mode)
 
 
 # ---------------------------------------------------------------- loading screen
@@ -490,6 +514,8 @@ func on_race_finished(race: Node, results: Array) -> void:
 	last_summary = summary
 	Events.log_event("race_finish", {"mode": req.mode, "track": td.id, "variant": td.variant, "place": place, "time": me.time})
 	race.show_panel(ResultsScreen.make(race, results, summary))
+	Crash.breadcrumb("race finished: %s %s, place %d" % [req.mode, td.id, place])
+	ReviewPrompt.after_race(place)
 
 
 ## Stardust (Super Upgrades currency): every local player's clean drifts,

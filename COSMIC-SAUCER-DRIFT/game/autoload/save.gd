@@ -14,7 +14,11 @@ const DEFAULT_SETTINGS := {
 	"cockpit": false,               # start races in first-person (COCKPIT tab)
 	"quality": "auto",              # auto | low | medium | high | ultra
 	"show_fps": false, "difficulty": 1,
-	"fps_cap": 0,                   # 0 = uncapped, 30 = half rate (weak phones, battery)
+	"fps_cap": 0,                   # 0 = uncapped (iOS: 60), 30 battery, 60 steady, 120 fast screens
+	"colorblind": "off",             # off | deuteranopia | protanopia | tritanopia (full-screen correction)
+	"reduce_motion": false,          # no speed lines, camera shake, landing dip or boost zoom
+	"ui_scale": 1.0,                 # interface size: 1.0, 1.15, 1.3
+	"crash_reports": "ask",          # ask | on | off (nothing is sent until "on"; see Crash)
 	"glide_auto": false,            # wings unfold by themselves when airborne (always on with touch)
 	"mouse_controls": true,          # mouse = flight stick + throttle lever (desktop/web)
 	"key_hints": true,               # on-screen joystick + key chips with a keyboard/mouse
@@ -58,6 +62,7 @@ func defaults() -> Dictionary:
 		"last_race": {"track": "mars", "variant": 0, "class": -1},   # what RACE NOW repeats
 		"wonders": Upgrades.defaults(),   # Super Upgrades: Stardust, Wonder tiers, mods, overclock, perks
 		"tutorial_done": false,
+		"review": {"asked": 0, "last": 0, "podiums": 0},   # store rating prompt (ReviewPrompt)
 		"first_launch": Time.get_datetime_string_from_system(),
 	}
 
@@ -189,6 +194,8 @@ func set_setting(k: String, v: Variant) -> void:
 	mark()
 	if k == "fps_cap":
 		Game.apply_frame_cap()
+	elif k == "colorblind" or k == "ui_scale":
+		Game.apply_accessibility()
 
 
 # ---------------------------------------------------------------- currency

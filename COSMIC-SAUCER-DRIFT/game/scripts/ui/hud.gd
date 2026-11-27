@@ -380,6 +380,8 @@ func _process(dt: float) -> void:
 	if _lines and _lines.get_meta("on", false):
 		var ratio := clampf(racer.fwd_speed / maxf(racer.max_speed, 1.0), 0.0, 1.5)
 		var want := clampf((ratio - 0.82) / 0.35, 0.0, 1.0) * 0.55 + (0.55 if racer.boost_time > 0.0 else 0.0)
+		if Save.setting("reduce_motion"):
+			want = 0.0
 		_lines_amt = move_toward(_lines_amt, want, dt * 3.0)
 		_lines.visible = _lines_amt > 0.01
 		if _lines.visible:
@@ -506,7 +508,7 @@ func _draw_overlay() -> void:
 		_overlay.draw_line(Vector2(tx, my - 3), Vector2(tx, my + 14 * k + 3), Color(1, 1, 1, 0.7), 2.0)
 	if racer.boost_time > 0.0:
 		_overlay.draw_rect(Rect2(x0, my, mw, 14 * k), Color(1, 1, 1, 0.25))
-	if racer.boost_time > 0.0 and not (_lines and _lines.get_meta("on", false)):
+	if racer.boost_time > 0.0 and not (_lines and _lines.get_meta("on", false)) and not Save.setting("reduce_motion"):
 		# Speed streaks at the screen edges (low graphics).
 		var t := Time.get_ticks_msec() * 0.001
 		for i in 14:

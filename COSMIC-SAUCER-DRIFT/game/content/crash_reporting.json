@@ -1,0 +1,13 @@
+{
+	"about": "Crash reporting with Sentry (sentry-godot, MIT) and Firebase Crashlytics (godot-x/firebase, MIT), both on their free plans. Nothing is sent unless the SDK is installed (tools/crash/install_crash_sdks.sh), the keys below are filled in, AND the player agreed (first-run question or Settings > Send crash reports). Sentry DSNs and Firebase config files are not secrets, but they belong to your accounts.",
+	"sentry": {
+		"dsn": "",
+		"environment": "production",
+		"sample_rate": 1.0,
+		"attach_log": false
+	},
+	"firebase": {
+		"enabled": true
+	},
+	"ask_players": true
+}

@@ -238,6 +238,9 @@ func show_screen(sname: String, push := true) -> void:
 		"howto":
 			title = "How to Play"
 			root = _howto()
+		"credits":
+			title = "Credits & Licences"
+			root = _credits()
 		"store":
 			title = "Store"
 			root = _store()
@@ -410,6 +413,19 @@ func _title() -> Control:
 func _home() -> Control:
 	var lp := _left_panel(560)
 	var v: VBoxContainer = lp[1]
+	# Store builds with a crash reporter ask once; nothing is sent until Yes.
+	if Crash.should_ask():
+		var ask := UiKit.vbox(8)
+		ask.name = "CrashAsk"
+		v.add_child(ask)
+		ask.add_child(_wrap("Help us fix crashes? If the game breaks, send an anonymous crash report (what went wrong, device model, game version; no name, email or location). Change it any time in Settings.", 17, Color.WHITE))
+		var yes := UiKit.button("Yes, send reports", func() -> void:
+			Crash.set_consent(true)
+			show_screen("home", false), 18)
+		var no := UiKit.button("No thanks", func() -> void:
+			Crash.set_consent(false)
+			show_screen("home", false), 18)
+		_row(ask, [yes, no])
 	# One tap (or Enter / pad A) to race: repeats your last Quick Race setup.
 	var lr := Game.last_race()
 	var now := UiKit.button("RACE NOW ▶", func() -> void:
@@ -1441,7 +1457,10 @@ func _settings() -> Control:
 		["Mouse controls", "mouse_controls", [true, false], {true: "On: stick + throttle", false: "Off"}],
 		["Key hints (keyboard/mouse)", "key_hints", [true, false], {true: "On", false: "Off"}],
 		["Show FPS", "show_fps", [false, true], {true: "On", false: "Off"}],
-		["Frame cap", "fps_cap", [0, 30], {0: "Off (smoothest)", 30: "30 fps (battery)"}],
+		["Frame cap", "fps_cap", [0, 30, 60, 120], {0: "Off (smoothest)", 30: "30 fps (battery)", 60: "60 fps (steady)", 120: "120 fps (fast screens)"}],
+		["Colour-blind filter", "colorblind", ["off", "deuteranopia", "protanopia", "tritanopia"], {"off": "Off", "deuteranopia": "Deuteranopia (green-weak)", "protanopia": "Protanopia (red-weak)", "tritanopia": "Tritanopia (blue-weak)"}],
+		["Reduce motion", "reduce_motion", [false, true], {false: "Off", true: "On: no shake, zoom or speed lines"}],
+		["Interface size", "ui_scale", [1.0, 1.15, 1.3], {1.0: "100%", 1.15: "115%", 1.3: "130%"}],
 		["Glide deploy", "glide_auto", [false, true], {false: "Hold SHIFT (pad: D-pad up)", true: "Automatic (as on touch)"}],
 		["Volcanic biome", "biome", ["auto", "eerie", "divine", "off"], {"auto": "Auto (volcanic worlds)", "eerie": "Eerie on rocky worlds", "divine": "Divine on rocky worlds", "off": "Off (classic scenery)"}],
 	]
@@ -1455,11 +1474,12 @@ func _settings() -> Control:
 		l.custom_minimum_size = Vector2(320, 0)
 		row.add_child(l)
 		var cur: Variant = Save.setting(key)
-		var shown := str(names.get(cur, str(cur)))
+		var ci := _opt_index(opts, cur)
+		var shown := str(names.get(opts[ci], str(cur))) if ci >= 0 else str(cur)
 		if key == "quality" and cur == "auto":
 			shown = "Auto (%s)" % String(Game.detected_quality).capitalize()
 		var b := UiKit.button(shown + " ▸", func() -> void:
-			var i := opts.find(Save.setting(key))
+			var i := _opt_index(opts, Save.setting(key))
 			Save.set_setting(key, opts[(i + 1) % opts.size()])
 			show_screen("settings", false), 20, 260)
 		row.add_child(b)
@@ -1476,9 +1496,22 @@ func _settings() -> Control:
 	ts.custom_minimum_size = Vector2(320, 40)
 	ts.value_changed.connect(func(x: float) -> void: Save.set_setting("tilt_sensitivity", x))
 	srow.add_child(ts)
-	v.add_child(_wrap("Privacy: Cosmic Saucer Drift collects no personal data. Progress is saved only on this device. No ads in this version.", 16))
+	if Crash.available():
+		var crow := UiKit.hbox(12)
+		v.add_child(crow)
+		var cl := UiKit.label("Send crash reports", 20)
+		cl.custom_minimum_size = Vector2(320, 0)
+		crow.add_child(cl)
+		var on := Crash.consent() == "on"
+		crow.add_child(UiKit.button(("On" if on else "Off") + " ▸", func() -> void:
+			Crash.set_consent(Crash.consent() != "on")
+			show_screen("settings", false), 20, 260))
+		v.add_child(_wrap("Privacy: Cosmic Saucer Drift collects no personal data. Progress is saved only on this device. No ads in this version. Crash reports (what broke, device model, game version; no name, email or location) go to our crash services only while \"Send crash reports\" is On.", 16))
+	else:
+		v.add_child(_wrap("Privacy: Cosmic Saucer Drift collects no personal data. Progress is saved only on this device. No ads in this version.", 16))
 	privacy_btn = UiKit.button("Privacy policy ↗", func() -> void: OS.shell_open(UiKit.PRIVACY_URL), 20)
 	v.add_child(privacy_btn)
+	v.add_child(UiKit.button("Credits & licences", func() -> void: show_screen("credits"), 20))
 	var reset := UiKit.button("Reset all progress…", func() -> void: pass, 20)
 	reset.pressed.connect(func() -> void:
 		if reset.text.begins_with("Tap again"):
@@ -1490,6 +1523,65 @@ func _settings() -> Control:
 			reset.text = "Tap again to erase everything")
 	v.add_child(reset)
 	v.add_child(UiKit.label("Cosmic Saucer Drift v%s · made with Godot" % ProjectSettings.get_setting("application/config/version"), 16, UiKit.DIM))
+	return lp[0]
+
+
+## Index of v in opts, matching numbers by value (a save may hold 30.0 for 30).
+func _opt_index(opts: Array, v: Variant) -> int:
+	for i in opts.size():
+		var o: Variant = opts[i]
+		if typeof(o) == typeof(v) and o == v:
+			return i
+		if (o is int or o is float) and (v is int or v is float) and absf(float(o) - float(v)) < 0.001:
+			return i
+	return -1
+
+
+# ---------------------------------------------------------------- credits
+## Who made what, and the licences the stores and Godot's MIT terms ask
+## every shipped game to show (content/credits.json + the engine's own list).
+func _credits() -> Control:
+	var lp := _left_panel(900)
+	var v: VBoxContainer = lp[1]
+	var c: Dictionary = {}
+	if FileAccess.file_exists("res://content/credits.json"):
+		var d: Variant = JSON.parse_string(FileAccess.get_file_as_string("res://content/credits.json"))
+		if d is Dictionary:
+			c = d
+	v.add_child(UiKit.label("Cosmic Saucer Drift v%s" % ProjectSettings.get_setting("application/config/version"), 24, UiKit.CYAN))
+	v.add_child(_wrap(String(c.get("game", "Made by Aethertek.")), 18, Color.WHITE))
+	for sec in c.get("sections", []):
+		if sec is Dictionary:
+			v.add_child(UiKit.label(String(sec.get("title", "")), 22, UiKit.GOLD))
+			for line in sec.get("lines", []):
+				v.add_child(_wrap(String(line), 16))
+	v.add_child(UiKit.label("Godot Engine", 22, UiKit.GOLD))
+	v.add_child(_wrap("This game uses Godot Engine, available under the following license:", 16, Color.WHITE))
+	v.add_child(_wrap(Engine.get_license_text(), 14))
+	v.add_child(UiKit.label("Third-party parts of the engine", 22, UiKit.GOLD))
+	var parts := PackedStringArray()
+	for comp: Dictionary in Engine.get_copyright_info():
+		var lic := PackedStringArray()
+		for part: Dictionary in comp.get("parts", []):
+			for cr in part.get("copyright", []):
+				lic.append("© " + String(cr))
+			lic.append("License: " + String(part.get("license", "")))
+		parts.append("%s\n   %s" % [comp.get("name", ""), "\n   ".join(lic)])
+	v.add_child(_wrap("\n".join(parts), 14))
+	if c.has("font_name"):
+		v.add_child(UiKit.label("Font: " + String(c.font_name), 22, UiKit.GOLD))
+		v.add_child(_wrap(String(c.get("font_license", "")), 14))
+	# The full licence texts are long: added at the end on request. The button
+	# sits at the top so the screen opens at the start, not scrolled down to it.
+	var more := UiKit.button("Show full licence texts (added at the end) ▾", func() -> void: pass, 18)
+	more.pressed.connect(func() -> void:
+		more.disabled = true
+		var info := Engine.get_license_info()
+		for name: String in info:
+			v.add_child(UiKit.label(name, 18, UiKit.CYAN))
+			v.add_child(_wrap(String(info[name]), 13)))
+	v.add_child(more)
+	v.move_child(more, 2)
 	return lp[0]
 
 

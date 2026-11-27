@@ -26,9 +26,25 @@ func _ready() -> void:
 		Upgrades.fit("dragon", "core", "null_reactor")
 		Upgrades.set_overclock("dragon", 2)
 		Save.data.garage.saucer = "sail"
-	DisplayServer.window_set_size(Vector2i(720, 1280) if portrait else Vector2i(1280, 720))
+	# Extra options: size=WxH (window size), ui=1.3 (Interface size),
+	# cb=deuteranopia (colour-blind filter), tag=x (added to file names).
+	var win := Vector2i(720, 1280) if portrait else Vector2i(1280, 720)
+	var tag := ""
+	for a in args:
+		if a.begins_with("size="):
+			var wh := a.substr(5).split("x")
+			win = Vector2i(int(wh[0]), int(wh[1]))
+		elif a.begins_with("ui="):
+			Save.data.settings.ui_scale = float(a.substr(3))
+		elif a.begins_with("cb="):
+			Save.data.settings.colorblind = a.substr(3)
+		elif a.begins_with("tag="):
+			tag = "_" + a.substr(4)
+	if win != DisplayServer.window_get_size():
+		DisplayServer.window_set_size(win)
 	await get_tree().process_frame
 	Game.fit_orientation()
+	Game.apply_accessibility()
 	var menu: Control = load("res://scenes/main.tscn").instantiate()
 	add_child(menu)
 	for s in screens:
@@ -44,6 +60,6 @@ func _ready() -> void:
 		for i in 20:
 			await get_tree().process_frame
 		await RenderingServer.frame_post_draw
-		get_viewport().get_texture().get_image().save_png("%s/menu_%s%s.png" % [out, s, "_portrait" if portrait else ""])
+		get_viewport().get_texture().get_image().save_png("%s/menu_%s%s%s.png" % [out, s, "_portrait" if portrait else "", tag])
 		print("saved ", s)
 	get_tree().quit()

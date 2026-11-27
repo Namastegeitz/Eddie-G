@@ -26,6 +26,7 @@ Ads="*res://autoload/ads.gd"
 Store="*res://autoload/store.gd"
 Audio="*res://autoload/audio.gd"
 Game="*res://autoload/game.gd"
+Crash="*res://scripts/platform/crash_reporting.gd"
 
 [display]
 
@@ -64,3 +65,8 @@ renderer/rendering_method.mobile="gl_compatibility"
 textures/vram_compression/import_etc2_astc=true
 anti_aliasing/quality/msaa_3d=1
 environment/defaults/default_clear_color=Color(0.02, 0.01, 0.05, 1)
+
+[sentry]
+
+options/auto_init=false
+options/attach_scene_tree=false
