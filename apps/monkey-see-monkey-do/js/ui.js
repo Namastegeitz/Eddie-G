@@ -1358,7 +1358,6 @@ export class UI {
       </ol>
       <p>Each level has ${RULES.startLives} lives and 3 or 4 rounds. Clear a level to open the next one. Clear level 10 to open World 2, level 20 to open World 3, and level 30 to open World 4 on the moon.</p>
       <p><b>Maps:</b> levels 1-3 are in the jungle. After that, every level moves on to the next map (${['jungle', 'beach', 'disco', 'moon'].map((s) => STAGE_NAMES[s]).join(', ')}, then round again), starting from each world's home map, and each showdown (level 10, 20, 30, 40) is on its world's home map. The level card and the table below say which map each level uses. Every map is free to play in levels; a stage you own in the Wardrobe can be picked to always dance on that one instead.</p>
-      <p><b>Take turns</b> (levels ${LEVELS.filter((l) => l.twist === 'trade').map((l) => l.id).join(', ')}): the monkey does a move; copy it, then tap any move to add your own (+${RULES.tradeAddPoints} points; there is no wrong move to add). The monkey copies you and adds another. When the dance reaches the round's length and you copy all of it, the round is cleared. If the add timer runs out, the monkey picks a move for you and you lose no life. A mistake while copying costs a life as usual, and you try the same dance again.</p>
 
       <h3>The moves</h3>
       <p class="note">Left and right are ${n === 'monkey' ? "the monkey's own sides (Settings > Name sides by)" : 'the sides of your screen, like a mirror (change in Settings > Name sides by)'}. Buttons never move during a game. On a wide screen (a computer, or a tablet held sideways) they sit on both sides of the monkey: head moves at the top, arms in the middle, legs at the bottom.</p>
@@ -1371,7 +1370,7 @@ export class UI {
       <div class="table-wrap"><table><thead><tr><th>Combo</th><th>Moves</th><th>First seen</th></tr></thead><tbody>${chordRows}</tbody></table></div>
 
       <h3>Twists</h3>
-      <ul>${Object.values(TWISTS).map((t) => `<li><b>${esc(t.name)}:</b> ${esc(t.text)}</li>`).join('')}</ul>
+      <ul>${Object.entries(TWISTS).filter(([k]) => LEVELS.some((l) => (Array.isArray(l.twist) ? l.twist : [l.twist]).includes(k))).map(([, t]) => `<li><b>${esc(t.name)}:</b> ${esc(t.text)}</li>`).join('')}</ul>
 
       <h3>Timer</h3>
       <p>Time to copy a routine = ${RULES.timerBase} s + ${RULES.timerPerStep} s per move x (100 / tempo in BPM). Faster songs give a little less time. Relaxed timer gives ${RULES.relaxedTimerMult}x; you can also turn it off. A combo you start must be finished inside its window.</p>

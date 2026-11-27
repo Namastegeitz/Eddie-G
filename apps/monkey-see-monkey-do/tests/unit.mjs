@@ -63,36 +63,34 @@ check('World 1 visits all four maps', new Set(LEVELS.slice(0, 10).map((l) => l.s
 check('level 4 is the first new map', LEVELS[3].stage !== 'jungle');
 for (const w of WORLDS) check(`World ${w.id} starts on its home map`, LEVELS[(w.id - 1) * 10 + (w.id === 1 ? 0 : 0)].stage === w.stage);
 
-// ---- take turns (levels 2 and 3, and two on the moon)
-check('levels 2 and 3 take turns', LEVELS[1].twist === 'trade' && LEVELS[2].twist === 'trade');
-for (const l of LEVELS.filter((x) => x.twist === 'trade')) {
-  const start = l.tradeStart || 1;
+// ---- take turns is out of the main game (its code is kept for the coming mini game)
+const tradeIn = (l) => (Array.isArray(l.twist) ? l.twist : [l.twist]).includes('trade');
+check('no level takes turns', LEVELS.every((l) => !tradeIn(l) && !l.tradeStart));
+check('levels 2 and 3 are plain copy levels again', LEVELS[1].twist === null && LEVELS[2].twist === null && JSON.stringify(LEVELS[1].rounds) === '[2,3,3]' && JSON.stringify(LEVELS[2].rounds) === '[3,3,3]');
+check('level 3 brings in Head Bob in round 1', generateRound(LEVELS[2], 0, 4242).steps.some((st) => st.includes('HD')));
+{
+  // the kept take-turns code still works, on a pretend take-turns level
+  const l = { ...LEVELS[36], rounds: [7, 9, 9], twist: 'trade', tradeStart: 5 };
   for (const [r, n] of l.rounds.entries()) {
     const g = generateRound(l, r, 777 + r);
-    check(`L${l.id} r${r + 1}: monkey opens with ${start}`, g.steps.length === start && g.target === n, `${g.steps.length}/${g.target}`);
-    check(`L${l.id} r${r + 1}: target reachable by trading`, (n - start) % 2 === 0 && n > start, `${start}->${n}`);
-    const copies = tradeCopies(start, n);
-    check(`L${l.id} r${r + 1}: you copy ${copies.join(', ')}`, copies[0] === start && copies[copies.length - 1] === n);
+    check(`take-turns code r${r + 1}: monkey opens with 5`, g.steps.length === 5 && g.target === n, `${g.steps.length}/${g.target}`);
+    const copies = tradeCopies(5, n);
+    check(`take-turns code r${r + 1}: you copy ${copies.join(', ')}`, copies[0] === 5 && copies[copies.length - 1] === n);
   }
-}
-check('level 3 opens with the new Head Bob', JSON.stringify(generateRound(LEVELS[2], 0, 4242).steps) === '[["HD"]]');
-{
-  // the monkey's added moves follow the routine rules, even after your moves
-  const l = LEVELS[36];
   const rng = makeRng(99);
   let chain = generateRound(l, 0, 5).steps;
   let bad = 0;
   for (let i = 0; i < 400; i++) {
     chain = [...chain, ['LA'], tradeMove(rng, l, [...chain, ['LA']])];
     const n = chain.length;
-    const s = chain[n - 1];
-    if (n >= 3 && JSON.stringify(s) === JSON.stringify(chain[n - 2]) && JSON.stringify(s) === JSON.stringify(chain[n - 3])) bad++;
-    if (s.length > 1 && !l.chords.some((c) => CHORDS[c].parts.slice().sort().join() === s.slice().sort().join())) bad++;
+    const st = chain[n - 1];
+    if (n >= 3 && JSON.stringify(st) === JSON.stringify(chain[n - 2]) && JSON.stringify(st) === JSON.stringify(chain[n - 3])) bad++;
+    if (st.length > 1 && !l.chords.some((c) => CHORDS[c].parts.slice().sort().join() === st.slice().sort().join())) bad++;
     if (chain.length > 40) chain = chain.slice(-6);
   }
-  check('monkey trade moves: never 3 in a row, only allowed combos', bad === 0, bad);
+  check('take-turns code: monkey moves never 3 in a row, only allowed combos', bad === 0, bad);
 }
-check('Take turns twist explained', !!TWISTS.trade && TWISTS.trade.text.length > 40);
+check('Take turns twist kept and explained (for the mini game)', !!TWISTS.trade && TWISTS.trade.text.length > 40);
 
 // ---- generator rules, over many seeds
 let triples = 0, doubleChords = 0, outside = 0;
@@ -124,7 +122,6 @@ for (const l of LEVELS) {
   let prev = null;
   l.rounds.forEach((n, r) => {
     const g = generateRound(l, r, 1000 + r * 7, prev);
-    if (l.twist === 'trade') { prev = g.steps; return; } // checked above: the dance grows by trading
     check(`L${l.id} r${r + 1} length`, g.steps.length === n, `${g.steps.length} vs ${n}`);
     if (twistFor(l, r) === 'buildup' && prev) check(`L${l.id} r${r + 1} builds on the last round`, JSON.stringify(g.steps.slice(0, prev.length)) === JSON.stringify(prev));
     prev = g.steps;

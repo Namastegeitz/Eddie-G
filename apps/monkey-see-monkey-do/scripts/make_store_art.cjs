@@ -202,7 +202,7 @@ async function main() {
       { id: 'title', go: async (p) => { await look(p, { skin: 'cocoa', hat: 'party', feet: 'sneakers' }); await p.evaluate(() => MSMD.stage.setEnvironment('jungle')); await toTitle(p); } },
       { id: 'watch', go: async (p) => { await look(p, { skin: 'tiger', hat: 'pirate', back: 'cape' }); await level(p, 4, 'watch'); await settle(p, 500); } },
       { id: 'your-turn', go: async (p) => { await look(p, { skin: 'galaxy', hat: 'spacehelmet', aura: 'stars' }); await level(p, 6, 'respond'); await tapRight(p); await settle(p, 160); } },
-      { id: 'take-turns', go: async (p) => { await look(p, { skin: 'cocoa', hat: 'party', hands: 'maracas' }); await level(p, 2, 'respond'); await tapRight(p); await p.waitForFunction(() => MSMD.game.phase === 'add', null, { timeout: 15000 }); await settle(p, 500); } },
+      { id: 'moon', go: async (p) => { await look(p, { skin: 'cocoa', hat: 'spacehelmet', hands: 'maracas' }); await level(p, 31, 'watch'); await settle(p, 600); } },
       { id: 'disco', go: async (p) => { await look(p, { skin: 'gold', eyes: 'shades', neck: 'bowtie', aura: 'sparkle' }); await level(p, 5, 'watch'); await settle(p, 700); } },
       { id: 'wardrobe', go: async (p) => { await p.evaluate(() => { MSMD.game.quit(); MSMD.ui.hideOverlays(); }); await look(p, { skin: 'phoenix', hat: 'crown', back: 'angelwings' }); await p.evaluate(() => MSMD.ui.show('shop')); await settle(p, 1500); } },
     ];

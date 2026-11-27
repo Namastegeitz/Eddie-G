@@ -17,6 +17,7 @@ export const TWISTS = {
   buildup: { name: 'Build-up', short: 'BUILD-UP', text: 'Each round repeats the last routine and adds new moves on the end.' },
   speedup: { name: 'Speed-up', short: 'SPEED-UP', text: 'The monkey gets faster during the routine. Your timer is the same.' },
   reverse: { name: 'Backwards', short: 'BACKWARDS', text: 'Copy the routine in reverse order: last move first.' },
+  // Take turns is kept for the coming take-turns mini game: no level uses it.
   trade: { name: 'Take turns', short: 'TAKE TURNS', text: 'You and the monkey trade moves. The monkey does a move; copy it, then add any move of your own. The monkey copies you and adds another. Keep going until the dance is as long as the round says.' },
 };
 
@@ -33,9 +34,8 @@ function L(id, name, rounds, bpm, moves, chords = [], extra = {}) {
 export const LEVELS = [
   // World 1: 2-3 steps slow (1-3), then 4-6 steps, faster, combos (4-10)
   L(1, 'First Steps', [2, 2, 3], 80, W1, [], { intro: ['LA', 'RA', 'LL', 'RL'], guided: true }),
-  // Levels 2-3: take turns. The dance grows to 3 moves: monkey 1, you copy + add, monkey copies + adds, you copy 3.
-  L(2, 'Copy Cat', [3, 3, 3], 84, W1, [], { twist: 'trade', tradeStart: 1, intro: ['trade'] }),
-  L(3, 'Head Banana', [3, 3, 3], 88, W1H, [], { twist: 'trade', tradeStart: 1, intro: ['HD'] }),
+  L(2, 'Copy Cat', [2, 3, 3], 84, W1),
+  L(3, 'Head Banana', [3, 3, 3], 88, W1H, [], { intro: ['HD'] }),
   L(4, 'Hooray!', [4, 4, 4], 95, W1H, ['BA'], { intro: ['BA'] }),
   L(5, 'Hip Wiggle', [4, 5, 5], 100, ALL6, ['BA'], { intro: ['FL'] }),
   L(6, 'Jump Up', [5, 5, 5], 104, ALL6, ['BA', 'BL'], { intro: ['BL'] }),
@@ -65,14 +65,14 @@ export const LEVELS = [
   L(28, 'Ancient Rhythm', [9, 9, 9], 138, ALL6, ['BA', 'BL', 'XL', 'XR'], { chordChance: 0.3 }),
   L(29, 'Last Rehearsal', [7, 8, 9], 136, ALL6, ['BA', 'BL', 'XL', 'XR'], { twist: [null, 'reverse', 'speedup'] }),
   L(30, 'Temple Showdown', [9, 10, 10, 10], 142, ALL6, ['BA', 'BL', 'XL', 'XR'], { boss: true, twist: [null, 'speedup', 'reverse', null] }),
-  // World 4: the moon. 7-12 steps, the fastest tempos, every twist (take turns comes back, starting longer)
+  // World 4: the moon. 7-12 steps, the fastest tempos, every twist
   L(31, 'Lift Off', [7, 8, 8], 130, ALL6, CH4),
   L(32, 'Low Gravity', [5, 7, 9], 132, ALL6, CH4, { twist: 'buildup' }),
-  L(33, 'Moon Echo', [5, 7, 7], 128, ALL6, CH4, { twist: 'trade', tradeStart: 3 }),
+  L(33, 'Moon Echo', [7, 7, 8], 128, ALL6, CH4),
   L(34, 'Crater Hop', [8, 9, 9], 136, ALL6, CH4, { chordChance: 0.3 }),
   L(35, 'Star Spin', [6, 7, 8], 134, ALL6, CH4, { twist: 'reverse' }),
   L(36, 'Orbit', [8, 9, 10], 138, ALL6, CH4, { twist: 'speedup' }),
-  L(37, 'Space Duet', [7, 9, 9], 132, ALL6, CH4, { twist: 'trade', tradeStart: 5 }),
+  L(37, 'Space Dance', [8, 9, 9], 132, ALL6, CH4),
   L(38, 'Meteor Shower', [9, 10, 10], 142, ALL6, CH4, { chordChance: 0.3 }),
   L(39, 'Countdown', [8, 9, 10], 144, ALL6, CH4, { twist: [null, 'reverse', 'speedup'] }),
   L(40, 'Moon Showdown', [10, 10, 11, 12], 148, ALL6, CH4, { boss: true, twist: [null, 'speedup', 'reverse', 'buildup'] }),

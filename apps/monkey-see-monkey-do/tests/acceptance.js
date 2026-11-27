@@ -206,31 +206,21 @@ let passes = 0;
     expect(await ev(() => MSMD.Save.data.bananas) === b2 - 15, 'spent 15');
   });
 
-  await step('Level 2 takes turns: copy, add your own move, the monkey copies you and adds one', async () => {
-    let added = 0;
-    let copiedYou = 0;
-    for (let k = 0; k < 30; k++) {
-      await page.waitForFunction(() => ['respond', 'add'].includes(MSMD.game.phase) || !!document.querySelector('#ov-result.show'), null, { timeout: 25000 });
+  await step('Level 2 is all about copying the monkey: no "your move", round codes explained', async () => {
+    let sawAdd = false;
+    for (let k = 0; k < 20; k++) {
+      await page.waitForFunction(() => MSMD.game.phase === 'respond' || MSMD.game.phase === 'add' || !!document.querySelector('#ov-result.show'), null, { timeout: 25000 });
       if (await page.isVisible('#ov-result.show')) break;
-      const ph = await ev(() => MSMD.game.phase);
-      if (ph === 'add') {
-        expect((await page.textContent('#phase')).includes('YOUR MOVE'), 'your move label');
-        const before = await ev(() => MSMD.game.run.steps.length);
-        await page.keyboard.press('a'); // add Left Leg
-        added++;
-        await waitPhase('respond', 20000);
-        const chain = await ev(() => ({ steps: MSMD.game.run.steps, owners: MSMD.game.run.trade.owners }));
-        // your move is in the dance, then the monkey's new one on the end
-        if (chain.steps.length === before + 2 && chain.steps[before][0] === 'LL' && chain.owners[before] === 'you' && chain.owners[before + 1] === 'monkey') copiedYou++;
-        if (added === 1) await shot('05b-take-turns');
-      } else {
-        await playRoutine('keys');
-      }
+      if (await ev(() => MSMD.game.phase === 'add')) { sawAdd = true; break; }
+      const label = await page.textContent('#phase');
+      expect(!label.includes('YOUR MOVE'), 'no YOUR MOVE label');
+      await playRoutine('keys');
     }
+    expect(!sawAdd, 'level 2 never asks you to add a move');
     await page.waitForSelector('#ov-result.show', { timeout: 15000 });
     expect((await ev(() => MSMD.Save.levelInfo(2))).clears === 1, 'level 2 cleared');
-    expect(added >= 3 && copiedYou === added, `added ${added}, monkey copied ${copiedYou}`);
-    expect((await page.textContent('#result-card')).includes('take-turns'), 'results explain take-turns codes');
+    const card = await page.textContent('#result-card');
+    expect(card.includes('Routine codes') && !card.includes('take-turns'), 'plain routine codes on the results');
   });
 
   await step('combos: Level 4 needs both arms together', async () => {

@@ -40,7 +40,7 @@ Legend: ✅ done · 🔄 working on it · ⬜ to do · ⏭️ skipped. Owner: **
 
 **Your next steps**
 - ⬜ **Recruit 12 or more testers** (Beta test). Ask 15-16 people: some always drop out, and Google counts only testers who stay opted in for all 14 days.
-- ⬜ **Send testers the beta link** (Beta test). Give them three concrete asks: finish levels 1-5, try a take-turns level (2 or 3), open the Wardrobe.
+- ⬜ **Send testers the beta link** (Beta test). Give them three concrete asks: finish levels 1-5, play with a game controller or keyboard if they have one, open the Wardrobe.
 - ⬜ **Invite testers to the Bug & Feedback page** (Beta test). If a tester has no Claude account, ask them to text you instead and type their report in yourself: it takes 30 seconds.
 - ⬜ **Real-device pass: iPhone, Android, tablet, computer** (Beta test). On older phones, check Settings > Graphics: Auto should drop to Medium or Low by itself within a few seconds.
 
@@ -153,7 +153,7 @@ Real people on real phones find the small bugs before any store reviewer does.
   1. Send https://namastegeitz.github.io/Eddie-G/monkey-see-monkey-do/ (or the QR code in release/01-web-beta/qr.png).
   2. Ask them to play for 15 minutes on two different days.
 
-  **Tip:** Give them three concrete asks: finish levels 1-5, try a take-turns level (2 or 3), open the Wardrobe.
+  **Tip:** Give them three concrete asks: finish levels 1-5, play with a game controller or keyboard if they have one, open the Wardrobe.
 
   **Done when:** Everyone has the link.
   </details>
@@ -280,7 +280,7 @@ Write it once, paste it everywhere: icons, screenshots, text, policies, ratings.
 
   **Why:** Apple needs 6.9-inch iPhone (1320x2868); Google Play needs 2-8 phone shots.
 
-  1. Rendered from the real game into release/00-shared/screenshots (title, watch, your turn, take turns, wardrobe, moon).
+  1. Rendered from the real game into release/00-shared/screenshots (title, watch, your turn, moon, disco, wardrobe).
 
   **Tip:** The first two screenshots sell the game: they show the dancing monkey and the copy buttons.
 
@@ -372,7 +372,7 @@ Write it once, paste it everywhere: icons, screenshots, text, policies, ratings.
 
   **Why:** Steam and GOG pages convert much better with a 30-60 second video.
 
-  1. Record the screen while playing: title, a watch round, a take-turns round, three maps, the wardrobe.
+  1. Record the screen while playing: title, a watch round, a copy round with Perfect sparkles, three maps, the wardrobe.
   2. Claude can script the shots and add captions.
 
   **Tip:** Show gameplay in the first 3 seconds; no logos first.
@@ -867,7 +867,7 @@ A Steam store page collecting wishlists, then release.
   - After: Steamworks partner account
   <details><summary>How to do it</summary>
 
-  **Why:** One fee per game; there is a 30-day wait after paying before you can release.
+  **Why:** One fee per game; there is a 21-day wait after paying before you can release.
 
   1. Steamworks > Pay the fee (Admin users only).
 
@@ -953,7 +953,7 @@ Pitch the PC edition to GOG's curators.
 
   **Why:** GOG curates: a clear pitch matters as much as the game.
 
-  1. Draft in release/07-gog/pitch.md: what it is, who it's for, what's special (take turns, 40 levels, 4 maps, 100 skins, no ads, no tracking), links.
+  1. Draft in release/07-gog/pitch.md: what it is, who it's for, what's special (pure watch-and-copy, 40 levels, 4 maps, 100 skins, no ads, no tracking), links.
 
   **Tip:** GOG favors polished single-player games; mention the family angle and that everything is earnable by playing.
 

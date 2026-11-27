@@ -4,6 +4,13 @@ Written for players. The newest version is at the top.
 
 ## 1.1.0 (build 2) · 27 November 2026
 
+**Changed**
+- Every level is about watching the monkey and copying its dance. The "Your
+  move" rounds (take turns, where you added moves of your own) are gone from
+  levels 2, 3, 33 and 37; they'll come back as a separate mini game. Levels 2
+  and 3 are gentle copy levels again, and the moon's Moon Echo and Space Dance
+  are regular copy levels. Your stars and scores are kept.
+
 **New**
 - Play with a game controller: shoulder buttons for the arms, triggers for the
   legs, Y for Head Bob, A for Flair. The D-pad works too, and in the menus you

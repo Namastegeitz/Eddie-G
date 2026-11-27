@@ -22,8 +22,8 @@ beat, in a family rhythm memory game that's fully DRM-free and offline.
   every move.
 
 **What's distinctive**
-- "Take turns" duets: copy the monkey's move, add one of your own, and the
-  monkey copies you.
+- Pure watch-and-copy: the monkey dances, you copy it on the beat, and every
+  level adds length, speed, combos or a twist.
 - Each level moves to a new map (jungle, beach, temple disco, moon).
 - A "How it works" screen documents every rule and number in the game.
 

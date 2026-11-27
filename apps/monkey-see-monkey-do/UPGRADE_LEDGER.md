@@ -62,3 +62,20 @@ new value. Details and numbers: `UPGRADE_REPORT.md`.
   Direct, Deck compatibility; Microsoft MSIX; itch.io HTML5; Epic requirements;
   three.js r163/r187 releases and migration guide; Capacitor releases; Electron
   timelines and advisories; electron-builder releases; esbuild advisory).
+
+## 2026-11-27 (later the same day) · Eddie's change: watch-and-copy only
+
+- Take turns ("YOUR MOVE!": add a move of your own) removed from every level
+  at Eddie's request. Levels 2 and 3 restored to their original copy levels
+  (Copy Cat 2-3-3 moves, Head Banana 3-3-3); Moon Echo (33) and Space Dance
+  (37, was Space Duet) are regular copy levels. Saves unaffected (stars are by
+  level number).
+- The take-turns code is kept for a separate mini game (TWISTS.trade,
+  generateRound's trade branch, tradeMove, tradeCopies, Game.startAdd /
+  tradeAdd, the "YOUR MOVE!" phase); no level reaches it. Rule checks cover it
+  through a pretend level.
+- Store text, landing page, Apple review notes, GOG pitch, checklist, shot list,
+  tester feedback page, README, CHANGELOG updated; store screenshots
+  re-rendered (the take-turns shot became a moon shot; all shots now show the
+  lush jungle).
+- Next: the take-turns mini game, designed with Eddie.

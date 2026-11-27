@@ -30,7 +30,7 @@ Copy the dance, beat by beat
 
 ### apple-promo (limit 170)
 ```
-New: take turns with the monkey! Copy its move, add one of your own, and watch it copy you. 40 levels on four maps, from the jungle to the moon.
+Watch the monkey, then copy its dance! 40 levels on four maps, from a lush jungle to a party on the moon. Now with game controller support.
 ```
 
 ### apple-keywords (limit 100)
@@ -43,9 +43,6 @@ rhythm,memory,dance,music,kids,family,beat,copycat,brain,party,moves,skins,jungl
 Watch the monkey dance. Copy the moves. Keep the beat.
 
 Monkey See, Monkey Do is a rhythm memory game for the whole family. A cheerful 3D monkey shows you a little dance on the beat. Then it's your turn: tap Left Arm, Right Arm, Head Bob, Left Leg, Right Leg or Flair in the same order before the timer runs out. Get it right and the monkey cheers. Slip up and it stumbles, rubs its head, and lets you try the same dance again.
-
-TAKE TURNS
-In the early levels you dance together: copy the monkey's move, add one of your own, and watch the monkey copy you. There's no wrong move to add.
 
 40 LEVELS, 4 MAPS
 - A friendly start: 2-3 moves at a slow tempo while you learn.
@@ -88,7 +85,7 @@ Watch the monkey dance. Copy the moves. Keep the beat.
 
 Monkey See, Monkey Do is a rhythm memory game for the whole family. A cheerful 3D monkey shows you a little dance on the beat. Then it's your turn: tap Left Arm, Right Arm, Head Bob, Left Leg, Right Leg or Flair in the same order before the timer runs out. Get it right and the monkey cheers. Slip up and it stumbles, rubs its head, and lets you try the same dance again.
 
-★ Take turns: copy the monkey's move, add one of your own, and watch the monkey copy you.
+★ Watch the monkey, then copy its dance in the same order, on the beat.
 ★ 40 levels across four worlds, with a showdown at the end of each.
 ★ A new map every level: jungle clearing, beach at sunset, temple disco, party on the moon.
 ★ Combos, build-up rounds, speed-up rounds and backwards rounds.
@@ -111,17 +108,14 @@ Fair and private
 
 ### steam-short (limit 300)
 ```
-Watch the monkey dance, then copy its moves on the beat. A cheerful rhythm memory game with 40 levels on four maps, take-turns duets, combos and backwards rounds, Endless mode, and 100 skins to earn. No ads, no purchases, no account.
+Watch the monkey dance, then copy its moves on the beat. A cheerful rhythm memory game with 40 levels on four maps, combos and backwards rounds, Endless mode, controller support and 100 skins to earn. No ads, no purchases, no account.
 ```
 
 ### steam-about (limit 4000)
 ```
-Monkey See, Monkey Do is a rhythm memory game for the whole family. A cheerful 3D monkey shows you a little dance on the beat. Then it's your turn: press the moves in the same order before the timer runs out (Q W E / A S D on the keyboard, or click the buttons).
+Monkey See, Monkey Do is a rhythm memory game for the whole family. A cheerful 3D monkey shows you a little dance on the beat. Then it's your turn: press the moves in the same order before the timer runs out (Q W E / A S D on the keyboard or your own keys, a game controller, or click the buttons).
 
 Get it right and the monkey cheers. Slip up and it stumbles, rubs its head, and lets you try the same dance again.
-
-Take turns
-In the early levels you dance together: copy the monkey's move, add one of your own, and watch the monkey copy you.
 
 40 levels, four maps
 Start with two or three slow moves while you learn, then work up to long routines, fast tempos, combos where you press two moves at once, build-up rounds, speed-up rounds and backwards rounds. Every level moves to a new map: a jungle clearing, a beach at sunset, a temple disco and a party on the moon.
@@ -152,7 +146,7 @@ Watch the monkey dance. Copy the moves. Keep the beat.
 
 A cheerful rhythm memory game that plays right here in your browser, on a phone or a computer.
 
-- Take turns with the monkey: copy its move, add your own, and watch it copy you.
+- Copy the monkey's dance in the same order, on the beat.
 - 40 levels on four maps: jungle, beach, temple disco and the moon.
 - Combos, build-up, speed-up and backwards rounds.
 - Endless mode and Free Dance.
@@ -166,12 +160,12 @@ Controls: tap or click the buttons, swipe on the stage, tap the monkey, or use Q
 
 ### ms-short (limit 1000)
 ```
-Watch the monkey dance, then copy its moves on the beat. 40 levels on four maps, take-turns duets, Endless mode and 100 skins to earn. No ads, no account, no tracking.
+Watch the monkey dance, then copy its moves on the beat. 40 levels on four maps, Endless mode, controller support and 100 skins to earn. No ads, no account, no tracking.
 ```
 
-## What's new (version 1.0.0)
+## What's new (version 1.1.0)
 
 ### whats-new (limit 500)
 ```
-First release! 40 levels on four maps, take-turns duets with the monkey, Endless and Free Dance, 100 skins and 88 pieces of gear to earn.
+New: play with a game controller or your own keys, smoother maps, a lush new jungle, and every level is all about copying the monkey. 40 levels on four maps, Endless and Free Dance, 100 skins and 88 pieces of gear to earn.
 ```
