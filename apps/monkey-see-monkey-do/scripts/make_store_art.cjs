@@ -98,6 +98,11 @@ async function main() {
       await page.evaluate(() => document.getElementById('intro-go').click());
       await page.waitForFunction((p) => MSMD.game.phase === p, phase, { timeout: 90000 });
     };
+    // hold the game still while a move is lit in Watch, so the picture shows it
+    const holdWatch = async (page) => {
+      await page.waitForFunction(() => MSMD.game.phase === 'watch' && !!document.querySelector('#pad .pad-btn.lit'), null, { timeout: 90000 });
+      await page.evaluate(() => { if (!MSMD.game.realUpdate) MSMD.game.realUpdate = MSMD.game.update; MSMD.game.update = () => {}; });
+    };
     const tapRight = async (page) => {
       const step = await page.evaluate(() => MSMD.game.run.expected[MSMD.game.run.idx]);
       for (const id of step) await page.keyboard.down(KEYS[id]);
@@ -181,7 +186,10 @@ async function main() {
       let i = 0;
       for (const shot of list) {
         i++;
+        // SHOTS=watch,moon renders only those (numbering stays the same)
+        if (process.env.SHOTS && !process.env.SHOTS.split(',').includes(shot.id)) continue;
         try {
+          await page.evaluate(() => { if (MSMD.game.realUpdate) MSMD.game.update = MSMD.game.realUpdate; });
           await shot.go(page);
           // no pop-up cards over the picture (unlocks, mistakes, toasts)
           await page.evaluate(() => {
@@ -200,10 +208,10 @@ async function main() {
     };
     const PLAY = [
       { id: 'title', go: async (p) => { await look(p, { skin: 'cocoa', hat: 'party', feet: 'sneakers' }); await p.evaluate(() => MSMD.stage.setEnvironment('jungle')); await toTitle(p); } },
-      { id: 'watch', go: async (p) => { await look(p, { skin: 'tiger', hat: 'pirate', back: 'cape' }); await level(p, 4, 'watch'); await settle(p, 500); } },
+      { id: 'watch', go: async (p) => { await look(p, { skin: 'tiger', hat: 'pirate', back: 'cape' }); await level(p, 4, 'watch'); await holdWatch(p); await settle(p, 500); } },
       { id: 'your-turn', go: async (p) => { await look(p, { skin: 'galaxy', hat: 'spacehelmet', aura: 'stars' }); await level(p, 6, 'respond'); await tapRight(p); await settle(p, 160); } },
-      { id: 'moon', go: async (p) => { await look(p, { skin: 'cocoa', hat: 'spacehelmet', hands: 'maracas' }); await level(p, 31, 'watch'); await settle(p, 600); } },
-      { id: 'disco', go: async (p) => { await look(p, { skin: 'gold', eyes: 'shades', neck: 'bowtie', aura: 'sparkle' }); await level(p, 5, 'watch'); await settle(p, 700); } },
+      { id: 'moon', go: async (p) => { await look(p, { skin: 'cocoa', hat: 'spacehelmet', hands: 'maracas' }); await level(p, 31, 'watch'); await holdWatch(p); await settle(p, 600); } },
+      { id: 'disco', go: async (p) => { await look(p, { skin: 'gold', eyes: 'shades', neck: 'bowtie', aura: 'sparkle' }); await level(p, 5, 'watch'); await holdWatch(p); await settle(p, 700); } },
       { id: 'wardrobe', go: async (p) => { await p.evaluate(() => { MSMD.game.quit(); MSMD.ui.hideOverlays(); }); await look(p, { skin: 'phoenix', hat: 'crown', back: 'angelwings' }); await p.evaluate(() => MSMD.ui.show('shop')); await settle(p, 1500); } },
     ];
     if (on('phone')) await screenshotSet('iphone-6.9', { width: 440, height: 956 }, 3, '', PLAY);
