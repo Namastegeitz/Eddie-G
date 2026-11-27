@@ -123,3 +123,53 @@ Deferred (with reason): moving every on-screen string into translation files (la
 | Android in-app updates: `@capawesome/capacitor-app-update` | Capawesome (open source) | Free | Prompts players on an old phone version to update | Optional; on iOS it can only open the App Store page |
 
 Not asked this run, because they don't fit yet: PostHog (analytics, not suited to a kids game without a consent plan), Azure Artifact Signing (~$10/month; only for Windows downloads outside the stores, and Microsoft Store MSIX is signed free), fastlane and Maestro (need a Mac or phone emulators; worth it once phone builds start), GdUnit4/GUT (Godot only), EAS (Expo only), Grafana k6 (no backend).
+
+## Eddie's add-on answers (27 Nov 2026)
+
+| Question | Answer | Done |
+|---|---|---|
+| Electron 36 to 45 and electron-builder 25 to 26 | Yes | Upgraded; desktop audit 18 issues (1 critical, 13 high) down to 6 moderate, all in build-time tooling |
+| Crash reporting | Both Sentry and Firebase Crashlytics, free tiers | Built in and **off until set up** (keys in `release/config.json`, Firebase files on the build machine). The privacy page and Data safety notes match either state |
+| Store rating prompt | Yes | `@capacitor-community/in-app-review` 8.0.0, phones only, after a good level, max 3 a year, switch in Settings |
+| Android in-app updates | Not now | Skipped |
+
+## What was added (all behind settings; defaults keep 1.0 behaviour)
+
+| # | Upgrade | Where |
+|---|---|---|
+| U1 | Maps got ready ahead: build, texture upload, shader compile and a 1-pixel warm-up draw while the results card or level map is up | `js/stage.js` `prepare()` / `warmDraw()`, `js/game.js` `prepareStage()`; Settings > Display > Get maps ready ahead |
+| U2 | Error safety net: every uncaught error logged on the device (last 20); the main loop schedules the next frame first, so an error can't freeze the game; GPU reset (WebGL context loss) pauses with a card and carries on | `js/safety.js`, `js/main.js` |
+| U3 | Report a problem: version, device, recent errors, Copy, links to the bug page and support page | Settings > Help and privacy |
+| U4 | Game controllers (standard mapping; button names on the pad for Xbox, PlayStation and Nintendo; D-pad menus) and custom keyboard keys | `js/gamepad.js`, `js/keys.js`; Settings > Controls |
+| U5 | Graphics: Medium selectable, Sharpness (100/85/70%), Frame rate (Max/60/30), Auto keeps watching during play | `js/stage.js`, `js/main.js`; Settings > Display |
+| U6 | Web: "a new version is ready" bar and an hourly update check | `js/main.js`, `js/ui.js` |
+| U7 | Reduce motion also calms the disco floor's flashing | `js/stage.js` |
+| U8 | Capacitor 8.6.3 (0 vulnerabilities in the phone tooling) | `mobile/package.json` |
+| U9 | Old saves: the first release's save format is loaded by the rule checks | `tests/fixtures/save-first-release.json`, `tests/unit.mjs` |
+| U10 | Release package: version 1.1.0 build 2 everywhere (`scripts/set_version.mjs`), `CHANGELOG.md`, `store-kit/`, CI on every push, smoke test, PC-edition test, benchmark | see Step 10 |
+| A1 | Electron 45.5.0 + electron-builder 26.18.0 | `release/05-desktop/package.json` |
+| A2 | Sentry (vendored `@sentry/browser` 11.19.0, shipped only with a DSN) and Firebase Crashlytics (`@capacitor-firebase/crashlytics` 8.6.0; Android plugin applied only with `google-services.json`, iOS starts Firebase only with its plist) | `js/crash.js`, `scripts/vendor_sentry.mjs`, `mobile/` |
+| A3 | Store rating prompt | `js/main.js` `maybeAskRating()` |
+
+Also fixed while researching: Steam Direct wait is 21 days, not 30 (docs and checklist).
+
+## Before / after (same machine, software renderer, 390x844 phone window)
+
+| Measure | Before (8ea014e) | After (1.1.0) | |
+|---|---|---|---|
+| Scenery draw calls / triangles, all 4 stages x Low/High | 35-65 calls, 17k-85k triangles | identical | no cost added |
+| Monkey triangles | 157,540 | 157,540 | same |
+| Frame draw time, all 8 stage/level pairs | 1,201 ms | 1,144 ms | 4.7% faster |
+| First appearance of a map, Get maps ready ahead on (worst of beach/disco/moon) | 1,051 ms | 517 ms | about half |
+| ... beach / disco / moon | 1,051 / 463 / 597 ms | 504 / 133 / 517 ms | moon gains least: part of its first-draw cost isn't removed by the warm-up yet |
+| First appearance with the setting off | 1,051 / 463 / 597 ms | 997 / 379 / 607 ms | unchanged (noise) |
+| Cold start to playable | 6.4 s | 5.6 s | within noise |
+| Level 1 play after Auto settles (frames a second) | 5.9 | 6.3-6.8 | |
+| Worst frame while playing (benchmark, Low) | 583 ms | 517 ms | |
+| JS memory after start / after a level | 22.4 / 19.6 MB | 23.9 / 20.9 MB | +1.5 MB (new modules) |
+| Web build | app.js 981 KB | app.js 1,000 KB (Sentry adds 94 KB only when set up) | |
+| Crash-free rate | not measurable yet (no crash service set up, no store release) | same | |
+| Vulnerabilities | phone 3 moderate; desktop 1 critical, 13 high, 4 moderate | phone 0; desktop 6 moderate (build-time only) | |
+
+Benchmark files: `tests/benchmark-baseline.json` (before) and the after numbers above.
+Real-device numbers still need a phone: the software renderer is 10-50x slower than a phone GPU.

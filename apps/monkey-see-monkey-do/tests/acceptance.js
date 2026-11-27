@@ -76,6 +76,9 @@ let passes = 0;
   });
 
   await step('first Play shows the 3-card how-to, then Level 1 card', async () => {
+    // Auto graphics settles on the title first (a few seconds on a phone; much
+    // longer in this software renderer), as it does for a real player
+    await page.waitForFunction(() => MSMD.app.gfxProbe && MSMD.app.gfxProbe.done, null, { timeout: 90000 }).catch(() => {});
     await page.click('#btn-play');
     await page.waitForSelector('#ov-howto.show');
     await shot('02-howto');
