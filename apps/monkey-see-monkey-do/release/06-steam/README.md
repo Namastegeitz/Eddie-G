@@ -1,6 +1,6 @@
 # 06 · Steam
 
-Cost: **$100 per game** (Steam Direct), then a **30-day wait** before release.
+Cost: **$100 per game** (Steam Direct), then a **21-day wait** before release (checked 27 Nov 2026: https://partner.steamgames.com/steamdirect).
 In-game purchases on Steam must use Steam's own payment system, so Steam gets
 the **PC edition** (no Shop): sell it at a one-time price instead.
 
@@ -25,7 +25,7 @@ size by `node scripts/make_store_art.cjs steam`.
 ## Steps
 
 1. Join Steamworks (partner.steamgames.com): identity, tax, bank.
-2. Pay the Steam Direct fee (Admin users only). The 30 days start now.
+2. Pay the Steam Direct fee (Admin users only). The 21 days start now.
 3. Store page: paste `steam-short` and `steam-about` from ../00-shared/store-text.md;
    tags Rhythm, Music, Casual, Family Friendly, Memory, Cute, Singleplayer;
    upload art, 5+ screenshots and the trailer; content survey (no mature content).
@@ -35,7 +35,7 @@ size by `node scripts/make_store_art.cjs steam`.
    `tools/ContentBuilder` (steamcmd) or the web uploader for small builds.
    Launch option (Windows): `Monkey See, Monkey Do.exe`.
 6. Test from a beta branch in your own Steam library.
-7. Request build review; once approved and 30 days have passed, Release.
+7. Request build review; once approved and 21 days have passed, Release.
 
 ## Optional later
 

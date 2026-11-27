@@ -359,7 +359,7 @@
           "done_when": "You can sign in to Steamworks.",
           "links": [{ "label": "Steamworks", "url": "https://partner.steamgames.com/" }] },
         { "id": "p7-fee", "title": "Pay the Steam Direct fee ($100)", "owner": "you", "needs": ["p7-partner"],
-          "why": "One fee per game; there is a 30-day wait after paying before you can release.",
+          "why": "One fee per game; there is a 21-day wait after paying before you can release.",
           "how": ["Steamworks > Pay the fee (Admin users only)."],
           "tip": "Pay early: the 30-day wait runs while you build the store page.",
           "done_when": "App ID created." },
