@@ -1,5 +1,28 @@
 # Status
 
+## FLOWSMITH (`apps/flowsmith`)
+- Built 2026-11-27 from `prompts/claude/flowsmith.md` on branch `claude/ai-music-google-flow-app-fup0ia`.
+- Live as a Claude artifact (private to Eddie): https://claude.ai/artifact/EWvVq4N26pJoT8vtwFJC3D
+  Capabilities: sample (asks Claude on your own account), db + user (song folders saved privately to
+  your Claude account, so they follow you to computer / iPhone / Android), dictation (mic), desktop
+  (install as a desktop app from the Claude desktop app).
+- Standalone PWA from the same files (IndexedDB, service worker, manifest, icons); Claude via the
+  official Anthropic SDK (bundled in `vendor/`) with your API key, or copy & paste with the Claude app.
+- Research: Flow Music = Google Labs (ex-ProducerAI/Riffusion), Lyria 3.5 since Jul 29 2026; prompt order,
+  no negative prompts, `Lyrics:` with section tags, timestamps, Compose/Extend/Cover/Replace, stems,
+  plugins. Sources in the app's Learn → Google Flow Music → Sources.
+- Content: 609 sound pads in 18 categories, 30 beat step grids, 46 recipes, 14 tunings, 37 Flow edit
+  moves, 75 lessons + 11-part Flow guide. Schema `data/SCHEMA.md`; `node tests/validate-data.mjs` 0/0.
+- Agents (Agent Kernel): Composer, Tweaker, Critic, Next-step writer, Librarian; spec cards and the
+  steps 1-8 checklist in `apps/flowsmith/CLAUDE.md`. Lessons wait in quarantine until approved; versions
+  are SHA-256 chained; daily cap, loop guard, traces, status light from traces.
+- Tests: `npm test` (validator + 55 engine checks + 20 evals, avg score 95), `npm run smoke` (41 checks,
+  standalone + mocked artifact, 360 px phones, 0 page errors). Not run: `tests/evals/run-claude-evals.mjs`
+  (costs API money; needs your OK and a key).
+- Not done / next: Supabase sync migration written but not applied (`supabase/migrations/`); not tested
+  inside the real Claude app on a phone yet; no MCP server; beat grids don't play sound yet.
+- Next: open the artifact link, allow Claude, write a first song, paste it into flowmusic.app.
+
 ## Off-Grid Survival Kit (`apps/off-grid-survival-kit`)
 - Built from `prompts/claude/off-grid-survival-kit.md`: hub + map + 8 module folders, PWA (manifest,
   service worker precaching 53 files), everything on-device (IndexedDB/localStorage), no CDN.

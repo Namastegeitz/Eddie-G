@@ -8,6 +8,8 @@ snippets; Learn teaches the music theory and Flow Music itself.
 
 Not made by or affiliated with Google.
 
+**Open it:** https://claude.ai/artifact/EWvVq4N26pJoT8vtwFJC3D (Claude artifact, private to you until you share it).
+
 ## Ways to use it
 
 | Where | How Claude is reached | Where songs are saved |
