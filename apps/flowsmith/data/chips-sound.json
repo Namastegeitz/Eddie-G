@@ -1,0 +1,2344 @@
+{
+  "chips": [
+    {
+      "id": "g-boom-bap",
+      "cat": "genre",
+      "group": "Hip-hop",
+      "label": "Boom bap",
+      "prompt": "boom bap hip-hop: dusty sampled drums, a hard cracking snare on 2 and 4, chopped soul loop and warm, round bass",
+      "desc": "East Coast hip-hop of the late 80s and 90s, named for the sound of its kick (boom) and snare (bap). Built from sampled breaks on machines like the SP-1200 and MPC, with swung hats and chopped jazz or soul loops. Usually 85 to 95 BPM.",
+      "bpm": [84, 96],
+      "pairs": ["dr-sp1200", "dr-mpc", "gr-boom-bap-swing", "pr-vinyl-crackle", "kb-rhodes"]
+    },
+    {
+      "id": "g-trap",
+      "cat": "genre",
+      "group": "Hip-hop",
+      "label": "Trap",
+      "prompt": "modern trap: booming 808 bass, rapid triplet hi-hat rolls, sharp claps on a half-time backbeat and dark, minor-key bell melodies",
+      "desc": "Born in Atlanta in the 2000s and now the backbone of mainstream rap and pop. Long 808 sub bass, rattling hi-hat rolls in triplets and 32nds, and a snare on beat 3 that makes 130 to 160 BPM feel half as fast.",
+      "bpm": [130, 160],
+      "pairs": ["dr-tr808", "ba-808-sub", "gr-trap-half-time", "vo-melodic-rap", "mo-menacing"]
+    },
+    {
+      "id": "g-drill-uk",
+      "cat": "genre",
+      "group": "Hip-hop",
+      "label": "UK drill",
+      "prompt": "UK drill: sliding 808 bass glides, skippy triplet hi-hats, syncopated offbeat snares and an ominous minor-key piano and string melody",
+      "desc": "Grew out of Chicago drill and London road rap in Brixton around 2012. Signature 808s that slide between notes, choppy hats with triplet skips and dark, sparse piano or string melodies, sitting around 140 BPM.",
+      "bpm": [138, 146],
+      "pairs": ["ba-808-sub", "gr-drill-slide", "kb-grand-piano", "mo-menacing"]
+    },
+    {
+      "id": "g-drill-ny",
+      "cat": "genre",
+      "group": "Hip-hop",
+      "label": "NY drill",
+      "prompt": "Brooklyn drill: heavy distorted sliding 808s, aggressive bouncing hi-hats, chopped R&B vocal samples and cold, gritty New York street energy",
+      "desc": "Brooklyn's late-2010s spin on UK drill, often built on beats from UK producers. Louder, more distorted 808 slides, flipped R&B vocal samples and a hard, party-ready bounce around 140 to 145 BPM.",
+      "bpm": [138, 148],
+      "pairs": ["ba-808-sub", "gr-drill-slide", "mo-aggressive", "g-drill-uk"]
+    },
+    {
+      "id": "g-phonk",
+      "cat": "genre",
+      "group": "Hip-hop",
+      "label": "Phonk",
+      "prompt": "phonk: chopped Memphis rap vocal samples, a distorted cowbell melody, heavy saturated 808s and a murky lo-fi cassette haze",
+      "desc": "Underground SoundCloud style of the 2010s that recycles 90s Memphis rap tapes: pitched vocal chops, cowbell riffs, TR-808 drums and cassette grit. Dark, hazy and hypnotic, with a half-time feel around 120 to 145 BPM.",
+      "bpm": [120, 145],
+      "pairs": ["dr-tr808", "ba-808-sub", "g-memphis-rap", "pr-tape-saturation", "mo-menacing"]
+    },
+    {
+      "id": "g-lofi-hiphop",
+      "cat": "genre",
+      "group": "Hip-hop",
+      "label": "Lo-fi hip-hop",
+      "prompt": "lo-fi hip-hop: dusty, lazy swung drums, warm jazzy Rhodes chords, soft vinyl crackle and a mellow, rounded bassline",
+      "desc": "Laid-back instrumental hip-hop that exploded through 24/7 YouTube study streams in the late 2010s. Off-grid drums, jazz chords, tape wobble and vinyl noise make it feel warm and handmade. Usually 70 to 90 BPM.",
+      "bpm": [70, 90],
+      "pairs": ["kb-rhodes", "pr-vinyl-crackle", "pr-tape-saturation", "gr-laid-back", "us-study"]
+    },
+    {
+      "id": "g-cloud-rap",
+      "cat": "genre",
+      "group": "Hip-hop",
+      "label": "Cloud rap",
+      "prompt": "cloud rap: hazy reverb-drenched synth pads, ethereal pitched vocal samples, soft spacious trap drums and a floating, dreamlike atmosphere",
+      "desc": "Internet-born rap of the late 2000s and early 2010s. Swaps hard, busy beats for washed-out ambient samples and airy pads so the track seems to drift. Slow and spacious, often 60 to 80 BPM or a half-time trap feel.",
+      "bpm": [60, 80],
+      "pairs": ["sy-juno-pad", "mo-dreamy", "vo-melodic-rap", "g-trap"]
+    },
+    {
+      "id": "g-g-funk",
+      "cat": "genre",
+      "group": "Hip-hop",
+      "label": "G-funk",
+      "prompt": "West Coast G-funk: a whining high portamento synth lead, rubbery Moog bass, laid-back TR-808 drums and smooth talk-box hooks",
+      "desc": "Early-90s Los Angeles hip-hop built on slowed-down 70s funk. Whiny sine-wave leads, deep Minimoog bass, live keys, talk box and a relaxed, rolling bounce around 88 to 100 BPM.",
+      "bpm": [88, 100],
+      "pairs": ["ba-moog", "dr-tr808", "gr-laid-back", "mo-swagger", "er-1990s"]
+    },
+    {
+      "id": "g-memphis-rap",
+      "cat": "genre",
+      "group": "Hip-hop",
+      "label": "Memphis rap",
+      "prompt": "90s Memphis rap: lo-fi cassette-tape TR-808 drums, eerie horror-movie synth melodies, cowbell and rapid chanted triplet-flow vocal hooks",
+      "desc": "Underground Tennessee rap of the early 90s, dubbed onto cheap cassettes. Raw 808s, sinister minor-key synths and horror-film samples. The direct ancestor of phonk and of the triplet flow heard all over trap.",
+      "bpm": [66, 90],
+      "pairs": ["dr-tr808", "g-phonk", "mo-eerie", "pr-tape-saturation"]
+    },
+    {
+      "id": "g-jersey-club",
+      "cat": "genre",
+      "group": "Hip-hop",
+      "label": "Jersey club",
+      "prompt": "Jersey club: bouncing rapid-fire kick rolls, bed-squeak and vocal-chop stutters, chopped R&B sample hooks and a high-energy party swing",
+      "desc": "Newark's party sound of the 2000s, descended from Baltimore club. Built on bursting kick patterns (often five quick kicks), chopped vocal stutters and playful samples like bed squeaks. About 130 to 145 BPM.",
+      "bpm": [130, 145],
+      "pairs": ["g-footwork", "mo-playful", "en-high", "us-tiktok-hook"]
+    },
+    {
+      "id": "g-rage",
+      "cat": "genre",
+      "group": "Hip-hop",
+      "label": "Rage",
+      "prompt": "rage rap: blown-out distorted 808s, buzzing detuned supersaw synth leads, rapid hi-hats and chaotic, mosh-pit energy",
+      "desc": "Early-2020s offshoot of trap built for mosh pits. Clipped, overloaded 808s and video-game-like square and supersaw leads give it a punk energy. Fast, often 150 BPM and up.",
+      "bpm": [140, 170],
+      "pairs": ["sy-supersaw", "ba-808-sub", "mo-aggressive", "mo-chaotic"]
+    },
+    {
+      "id": "g-jazz-rap",
+      "cat": "genre",
+      "group": "Hip-hop",
+      "label": "Jazz rap",
+      "prompt": "jazz rap: swinging sampled drum breaks, walking upright bass, muted trumpet and smoky jazz piano chords over a head-nodding groove",
+      "desc": "Late-80s and 90s hip-hop that sampled jazz records: upright bass lines, horn stabs, vibraphone and piano loops over boom bap drums. Warm, thoughtful and loose, usually 85 to 100 BPM.",
+      "bpm": [85, 100],
+      "pairs": ["ba-upright", "dr-sp1200", "g-bebop", "pr-vinyl-crackle"]
+    },
+    {
+      "id": "g-soul-sample-rap",
+      "cat": "genre",
+      "group": "Hip-hop",
+      "label": "Soul-sample rap",
+      "prompt": "soulful conscious hip-hop: a pitched-up, chopped 70s soul vocal sample, warm punchy drums, deep bass and a reflective, uplifting feel",
+      "desc": "Hip-hop that flips old soul records into the hook: sped-up vocal samples, gospel chords and hard drums. A go-to backdrop for reflective, message-driven rap since the early 2000s. Around 80 to 95 BPM.",
+      "bpm": [80, 96],
+      "pairs": ["dr-mpc", "kb-rhodes", "g-gospel", "mo-hopeful"]
+    },
+    {
+      "id": "g-grime",
+      "cat": "genre",
+      "group": "Hip-hop",
+      "label": "Grime",
+      "prompt": "London grime at 140 BPM: cold square-wave bass stabs, icy bleeping synth riffs, sparse skippy drums and gunshot-style hits",
+      "desc": "East London's early-2000s sound, born on pirate radio from UK garage and jungle. Cold square-wave synths, aggressive skippy drums and rapid MC flows, locked to 140 BPM.",
+      "bpm": [138, 142],
+      "pairs": ["g-uk-garage", "gr-two-step", "mo-aggressive"]
+    },
+    {
+      "id": "g-90s-rnb",
+      "cat": "genre",
+      "group": "R&B & soul",
+      "label": "90s R&B",
+      "prompt": "90s R&B: crisp swung drum-machine beat, lush stacked vocal harmonies, smooth electric piano chords and a deep, warm bassline",
+      "desc": "Mid-90s R&B fused gospel-trained vocals with hip-hop drums: swung MPC-style beats, silky keys and stacked harmonies. Slow jams sit around 65 to 75 BPM; mid-tempo cuts reach 100.",
+      "bpm": [65, 100],
+      "pairs": ["dr-mpc", "sy-dx7-epiano", "vo-female-breathy", "mo-sensual", "er-1990s"]
+    },
+    {
+      "id": "g-neo-soul",
+      "cat": "genre",
+      "group": "R&B & soul",
+      "label": "Neo-soul",
+      "prompt": "neo-soul: loose, behind-the-beat live drums, warm Rhodes chords full of ninths, round fingered bass and an earthy, organic groove",
+      "desc": "Late-90s return to live-band soul, mixed with hip-hop timing and jazz harmony. Extended chords on Rhodes, wandering basslines and drums that drag lazily behind the beat. Usually 70 to 95 BPM.",
+      "bpm": [70, 95],
+      "pairs": ["kb-rhodes", "gr-laid-back", "ke-dorian", "vo-female-breathy"]
+    },
+    {
+      "id": "g-alt-rnb",
+      "cat": "genre",
+      "group": "R&B & soul",
+      "label": "Alt R&B",
+      "prompt": "alternative R&B: moody minimal synth pads, sparse trap-tinged drums, deep sub bass and intimate, reverb-heavy vocals floating in dark space",
+      "desc": "2010s R&B that borrowed from electronic, ambient and indie music. Sparse, moody arrangements, wide reverbs and pitched vocal layers replace the big, polished hooks of mainstream R&B.",
+      "bpm": [60, 95],
+      "pairs": ["sy-juno-pad", "ba-808-sub", "mo-sensual", "vo-female-breathy"]
+    },
+    {
+      "id": "g-contemporary-rnb",
+      "cat": "genre",
+      "group": "R&B & soul",
+      "label": "Contemporary R&B",
+      "prompt": "contemporary R&B: polished trap-influenced drums, silky layered vocal harmonies, lush keys and a smooth, deep 808 low end",
+      "desc": "Today's mainstream R&B: sleek pop-level production, crisp trap hi-hats, warm chords and heavily layered, tuned vocals, built for playlists and radio. Usually 65 to 105 BPM.",
+      "bpm": [65, 105],
+      "pairs": ["ba-808-sub", "kb-rhodes", "mo-romantic", "vo-female-breathy"]
+    },
+    {
+      "id": "g-motown-soul",
+      "cat": "genre",
+      "group": "R&B & soul",
+      "label": "Motown soul",
+      "prompt": "1960s Detroit soul: tambourine and snare on every beat, a busy melodic bassline, bright horns, vibraphone and joyful call-and-response backing vocals",
+      "desc": "The Detroit hit-factory sound of the 60s. A tight house band, an inventive melodic bass, snare and tambourine hitting every beat, strings and horns, all mixed to jump out of car radios. Bright and upbeat, around 100 to 130 BPM.",
+      "bpm": [100, 130],
+      "pairs": ["or-brass-section", "or-strings-lush", "er-1960s", "mo-joyful"]
+    },
+    {
+      "id": "g-funk",
+      "cat": "genre",
+      "group": "R&B & soul",
+      "label": "Funk",
+      "prompt": "tight 70s funk: syncopated sixteenth-note guitar scratches, popping slap bass, punchy horn stabs and a heavy accent on the one",
+      "desc": "Late-60s and 70s groove music that turned the rhythm section into the lead. Everything locks to a heavy downbeat on the one: choppy guitar, slap or fingered bass, horn hits and syncopated drums. Usually 95 to 120 BPM.",
+      "bpm": [95, 120],
+      "pairs": ["ba-slap", "gt-clean-electric", "or-brass-section", "mo-swagger", "er-1970s"]
+    },
+    {
+      "id": "g-disco",
+      "cat": "genre",
+      "group": "R&B & soul",
+      "label": "Disco",
+      "prompt": "classic disco: four-on-the-floor kick, offbeat open hi-hats, octave-jumping bass, sweeping string section and funky rhythm guitar",
+      "desc": "1970s dance-club music from New York and Philadelphia. Steady four-on-the-floor kick, offbeat open hats, octave bass, lush strings and horns. The direct template for house music. Usually 110 to 130 BPM.",
+      "bpm": [110, 130],
+      "pairs": ["gr-four-on-floor", "or-strings-lush", "gt-clean-electric", "er-1970s", "mo-euphoric"]
+    },
+    {
+      "id": "g-nu-disco",
+      "cat": "genre",
+      "group": "R&B & soul",
+      "label": "Nu-disco",
+      "prompt": "nu-disco: filtered disco loops, glossy analog synth bass, four-on-the-floor kick, funky clean guitar licks and a warm, pumping sidechain shimmer",
+      "desc": "2000s and 2010s revival of disco and boogie through modern dance production: filter sweeps, analog synths, sidechain pumping and long, DJ-friendly builds. Around 110 to 125 BPM.",
+      "bpm": [110, 125],
+      "pairs": ["pr-sidechain", "sy-juno-pad", "gt-clean-electric", "g-disco"]
+    },
+    {
+      "id": "g-boogie",
+      "cat": "genre",
+      "group": "R&B & soul",
+      "label": "Boogie",
+      "prompt": "early-80s boogie: fat synth bass, sparkling electric piano, drum-machine claps with live hi-hats and smooth, slinky funk guitar",
+      "desc": "Post-disco dance music of roughly 1979 to 1985. Slower and slinkier than disco, with Minimoog-style synth bass, early drum machines, vocoder touches and jazzy keys. Around 100 to 120 BPM.",
+      "bpm": [100, 120],
+      "pairs": ["ba-moog", "sy-dx7-epiano", "dr-linndrum", "er-1980s"]
+    },
+    {
+      "id": "g-gospel",
+      "cat": "genre",
+      "group": "R&B & soul",
+      "label": "Gospel",
+      "prompt": "gospel: a soaring choir in rich harmony, Hammond organ swells, rolling piano runs, hand claps and a powerful call-and-response lift",
+      "desc": "African American church music rooted in spirituals and blues. Big choirs, Hammond B-3 organ, gospel piano runs and call-and-response singing shaped soul, R&B and pop. Tempos range from slow worship to fast praise breaks.",
+      "bpm": [65, 130],
+      "pairs": ["or-choir", "kb-hammond-b3", "kb-grand-piano", "mo-spiritual"]
+    },
+    {
+      "id": "g-synth-pop",
+      "cat": "genre",
+      "group": "Pop",
+      "label": "Synth-pop",
+      "prompt": "80s synth-pop: bright analog synth hooks, punchy drum-machine beat, pulsing sequenced bass and a big, melodic chorus",
+      "desc": "Pop built around synthesizers and drum machines, born in Britain at the turn of the 80s. Melodic synth riffs, sequenced basslines and gated drums. Usually 110 to 130 BPM.",
+      "bpm": [110, 130],
+      "pairs": ["sy-juno-pad", "sy-arp", "dr-linndrum", "er-1980s"]
+    },
+    {
+      "id": "g-dance-pop",
+      "cat": "genre",
+      "group": "Pop",
+      "label": "Dance-pop",
+      "prompt": "dance-pop: driving four-on-the-floor beat, glossy synth chords, pumping sidechained bass and a big, chant-along chorus",
+      "desc": "Club-ready pop that has ruled radio since the 80s. A steady dance beat, bright synths and a hook designed to be sung back by a crowd. Usually 115 to 130 BPM.",
+      "bpm": [115, 130],
+      "pairs": ["gr-four-on-floor", "pr-sidechain", "sy-supersaw", "en-explosive-chorus"]
+    },
+    {
+      "id": "g-electropop",
+      "cat": "genre",
+      "group": "Pop",
+      "label": "Electropop",
+      "prompt": "electropop: crisp electronic drums, quirky buzzing synth bass, glittering arpeggios and a sleek, modern vocal hook",
+      "desc": "Synth-driven pop with a harder electronic edge than synth-pop: distorted or buzzy synth basses, programmed beats and polished vocals. Peaked in the late-2000s club-pop era. Usually 100 to 128 BPM.",
+      "bpm": [100, 128],
+      "pairs": ["sy-arp", "gr-quantized", "er-2000s", "mo-playful"]
+    },
+    {
+      "id": "g-hyperpop",
+      "cat": "genre",
+      "group": "Pop",
+      "label": "Hyperpop",
+      "prompt": "hyperpop: pitched-up autotuned vocals, distorted bubblegum synths, glitchy blown-out drums and sudden, chaotic genre switches",
+      "desc": "Maximalist internet-born pop of the late 2010s. Exaggerates pop until it breaks: chipmunk vocals, distorted 808s, trance supersaws, glitches and abrupt switches. Fast and hyper-bright, often 130 to 180 BPM.",
+      "bpm": [130, 180],
+      "pairs": ["sy-supersaw", "mo-chaotic", "mo-playful", "er-futuristic"]
+    },
+    {
+      "id": "g-k-pop",
+      "cat": "genre",
+      "group": "Pop",
+      "label": "K-pop",
+      "prompt": "K-pop: hard-hitting dance beat, genre-switching sections, glossy layered synths, sharp rap breaks and a massive, instantly catchy chorus",
+      "desc": "South Korean idol pop. Famous for maximal production that changes style mid-song (EDM drop, trap break, ballad bridge), tight group vocals and dance-ready hooks. Usually 100 to 130 BPM.",
+      "bpm": [100, 130],
+      "pairs": ["sy-supersaw", "en-explosive-chorus", "mo-swagger", "us-tiktok-hook"]
+    },
+    {
+      "id": "g-j-pop",
+      "cat": "genre",
+      "group": "Pop",
+      "label": "J-pop",
+      "prompt": "J-pop: bright, fast-moving chord changes, sparkling synths and guitars, a busy melodic bassline and a soaring, emotional chorus",
+      "desc": "Japanese pop, from idol groups to anime themes. Known for dense, jazzy chord progressions (the IV-V-iii-vi 'royal road' is a favorite), busy basslines, key changes and big melodic choruses.",
+      "bpm": [110, 160],
+      "pairs": ["gt-clean-electric", "ke-key-change", "mo-hopeful", "g-city-pop"]
+    },
+    {
+      "id": "g-city-pop",
+      "cat": "genre",
+      "group": "Pop",
+      "label": "City pop",
+      "prompt": "Japanese city pop: glossy 80s production, jazzy major-seventh chords, slap bass, bright brass hits and a breezy night-drive feel",
+      "desc": "Late-70s and 80s Japanese pop that blended soft rock, funk, jazz fusion and AOR for a booming urban lifestyle. Polished, jazzy and nostalgic; rediscovered online in the 2010s. Around 100 to 120 BPM.",
+      "bpm": [100, 120],
+      "pairs": ["ba-slap", "sy-dx7-epiano", "or-brass-section", "er-1980s", "mo-nostalgic"]
+    },
+    {
+      "id": "g-indie-pop",
+      "cat": "genre",
+      "group": "Pop",
+      "label": "Indie pop",
+      "prompt": "indie pop: jangly clean guitars, bouncy bass, light live drums, warm synths and a sweet, slightly lo-fi melody",
+      "desc": "Pop made outside the major-label machine, with roots in 80s jangle pop. Melodic and handmade-sounding, with clean guitars, light synths and personal lyrics. Usually 100 to 130 BPM.",
+      "bpm": [100, 130],
+      "pairs": ["gt-clean-electric", "sy-juno-pad", "mo-playful", "mo-bittersweet"]
+    },
+    {
+      "id": "g-dream-pop",
+      "cat": "genre",
+      "group": "Pop",
+      "label": "Dream pop",
+      "prompt": "dream pop: shimmering reverb-soaked guitars, soft hazy synth pads, a gentle drum machine and airy, breathy vocals floating in the mix",
+      "desc": "Atmospheric offshoot of 80s alternative rock: deep reverb, chorus effects, washed-out textures and soft, half-buried vocals. A gentler cousin of shoegaze. Usually 70 to 110 BPM.",
+      "bpm": [70, 110],
+      "pairs": ["gt-clean-electric", "sy-juno-pad", "vo-female-breathy", "mo-dreamy"]
+    },
+    {
+      "id": "g-bedroom-pop",
+      "cat": "genre",
+      "group": "Pop",
+      "label": "Bedroom pop",
+      "prompt": "bedroom pop: intimate close-miked vocals, soft clean guitar, simple programmed beats and a warm, homemade lo-fi charm",
+      "desc": "DIY pop recorded at home on laptops and cheap mics, spread through SoundCloud and YouTube in the 2010s. Intimate, a little rough and emotionally direct. Usually 80 to 115 BPM.",
+      "bpm": [80, 115],
+      "pairs": ["gt-clean-electric", "pr-tape-saturation", "mo-cozy", "vo-female-breathy"]
+    },
+    {
+      "id": "g-power-ballad",
+      "cat": "genre",
+      "group": "Pop",
+      "label": "Power ballad",
+      "prompt": "power ballad that grows from tender piano and soft vocals into huge drums, a soaring guitar solo and an anthemic final chorus",
+      "desc": "A slow, emotional song that explodes into a loud full-band climax. A staple of 80s rock and pop: piano or acoustic intro, big drums, guitar solo and often a key change. Usually 60 to 80 BPM.",
+      "bpm": [60, 80],
+      "pairs": ["kb-grand-piano", "gt-distorted", "en-slow-build", "ke-key-change", "mo-yearning"]
+    },
+    {
+      "id": "g-house",
+      "cat": "genre",
+      "group": "Electronic",
+      "label": "House",
+      "prompt": "classic house: four-on-the-floor kick, offbeat open hi-hats, soulful piano chords, a deep groovy bassline and claps on 2 and 4",
+      "desc": "Born in Chicago clubs in the early 80s and named after the Warehouse club. Disco's four-on-the-floor pulse rebuilt with drum machines, soulful chords and vocals. Usually 118 to 128 BPM.",
+      "bpm": [118, 128],
+      "pairs": ["dr-tr909", "gr-four-on-floor", "kb-grand-piano", "pr-sidechain"]
+    },
+    {
+      "id": "g-deep-house",
+      "cat": "genre",
+      "group": "Electronic",
+      "label": "Deep house",
+      "prompt": "deep house: warm rounded kick, jazzy minor-seventh chord stabs, a rolling deep bassline, soft shuffled hats and a late-night glow",
+      "desc": "The mellow, soulful side of house from late-80s Chicago and New York. Jazz-influenced chords, warm basslines and lots of space. Usually 118 to 124 BPM.",
+      "bpm": [118, 124],
+      "pairs": ["sy-juno-pad", "kb-rhodes", "dr-tr909", "mo-sensual"]
+    },
+    {
+      "id": "g-tech-house",
+      "cat": "genre",
+      "group": "Electronic",
+      "label": "Tech house",
+      "prompt": "tech house: punchy rolling kick, groovy percussive bassline, shuffling hats, quirky vocal chops and stripped-back hypnotic loops",
+      "desc": "House grooves meet techno minimalism; a staple of 2010s club and festival sets. Bass and percussion do the work while melodies stay minimal. Usually 124 to 128 BPM.",
+      "bpm": [124, 128],
+      "pairs": ["dr-tr909", "gr-four-on-floor", "en-steady", "us-dj-opener"]
+    },
+    {
+      "id": "g-progressive-house",
+      "cat": "genre",
+      "group": "Electronic",
+      "label": "Progressive house",
+      "prompt": "progressive house: long euphoric builds, layered plucks and evolving pads, a driving four-on-the-floor beat and an emotional melodic breakdown",
+      "desc": "House built on slow evolution: layers enter and leave over long builds, with melodic breakdowns and big lifts. Grew from 90s UK clubs to 2010s festival main stages. Around 124 to 130 BPM.",
+      "bpm": [124, 130],
+      "pairs": ["sy-supersaw", "sy-arp", "en-slow-build", "mo-euphoric"]
+    },
+    {
+      "id": "g-techno",
+      "cat": "genre",
+      "group": "Electronic",
+      "label": "Techno",
+      "prompt": "driving techno: pounding four-on-the-floor kick, hypnotic repeating synth sequences, metallic percussion and dark industrial textures",
+      "desc": "Born in Detroit in the mid-80s and refined in Berlin after 1989. Machine-like, repetitive and hypnotic, focused on rhythm and texture over melody, often on TR-909 drums. Usually 125 to 140 BPM.",
+      "bpm": [125, 140],
+      "pairs": ["dr-tr909", "gr-four-on-floor", "en-peak-time", "mo-brooding"]
+    },
+    {
+      "id": "g-minimal-techno",
+      "cat": "genre",
+      "group": "Electronic",
+      "label": "Minimal techno",
+      "prompt": "minimal techno: tight dry kick, sparse clicking percussion, micro-sampled glitches and a subtle, endlessly evolving groove",
+      "desc": "Stripped-down techno that took shape in 90s Detroit and 2000s Berlin and Cologne. Very few elements, tiny changes over long stretches, precise clicks and lots of space. Around 120 to 130 BPM.",
+      "bpm": [120, 130],
+      "pairs": ["dr-tr909", "gr-quantized", "en-steady", "mo-meditative"]
+    },
+    {
+      "id": "g-acid-house",
+      "cat": "genre",
+      "group": "Electronic",
+      "label": "Acid house",
+      "prompt": "acid house: squelchy, resonant TB-303 bassline sweeps, raw TR-909 drums and a hypnotic, sweaty warehouse-party drive",
+      "desc": "Chicago house of the mid-80s built on the Roland TB-303, whose filter and accent tweaks create the squelching acid line. Exploded in UK raves in 1988. Usually 118 to 128 BPM.",
+      "bpm": [118, 128],
+      "pairs": ["ba-acid-303", "dr-tr909", "dr-tr808", "er-1980s"]
+    },
+    {
+      "id": "g-trance",
+      "cat": "genre",
+      "group": "Electronic",
+      "label": "Trance",
+      "prompt": "uplifting trance: soaring supersaw chords, rolling offbeat bass, gated pads, a long euphoric breakdown and a massive anthem lead",
+      "desc": "Euphoric, melodic dance music of the 90s and 2000s, rooted in Germany, the Netherlands and the UK. Long breakdowns, rising builds, supersaw leads and arpeggios. Usually 128 to 140 BPM.",
+      "bpm": [128, 140],
+      "pairs": ["sy-supersaw", "sy-arp", "en-build-drop", "mo-euphoric"]
+    },
+    {
+      "id": "g-dnb",
+      "cat": "genre",
+      "group": "Electronic",
+      "label": "Drum & bass",
+      "prompt": "drum and bass: fast chopped breakbeats, a heavy rolling sub bassline, crisp snares cracking on 2 and 4 and dark atmospheric pads",
+      "desc": "UK genre that grew out of jungle in the early-to-mid 90s. Fast breakbeats around 170 to 176 BPM over huge basslines that move at half speed. Subgenres range from dark neurofunk to soulful liquid.",
+      "bpm": [170, 176],
+      "pairs": ["ba-reese", "gr-breakbeat", "en-peak-time", "g-jungle"]
+    },
+    {
+      "id": "g-liquid-dnb",
+      "cat": "genre",
+      "group": "Electronic",
+      "label": "Liquid DnB",
+      "prompt": "liquid drum and bass: smooth rolling breaks, warm deep sub bass, lush jazzy chords, airy pads and soulful, uplifting melodies",
+      "desc": "The melodic, soulful side of drum and bass. The same 170 to 176 BPM rush, but with jazz and soul chords, smooth basslines and dreamy atmospheres.",
+      "bpm": [170, 176],
+      "pairs": ["kb-rhodes", "sy-juno-pad", "mo-hopeful", "g-dnb"]
+    },
+    {
+      "id": "g-jungle",
+      "cat": "genre",
+      "group": "Electronic",
+      "label": "Jungle",
+      "prompt": "90s jungle: frantically chopped funk breakbeats, booming reggae sub bass, dub sirens, rave stabs and ragga vocal samples",
+      "desc": "Early-90s UK rave offshoot that fused sped-up hip-hop and funk breakbeats with reggae sound-system bass and dancehall vocals. Breaks are sliced and rearranged at high speed, around 160 to 175 BPM.",
+      "bpm": [160, 175],
+      "pairs": ["gr-amen-breaks", "ba-reese", "g-roots-dub", "er-1990s"]
+    },
+    {
+      "id": "g-dubstep",
+      "cat": "genre",
+      "group": "Electronic",
+      "label": "Dubstep",
+      "prompt": "dubstep at 140 BPM: half-time snare on the three, heavy wobbling LFO bass, deep sub pressure and dark, cavernous reverb",
+      "desc": "Born in South London around 2002 from UK garage and dub. Half-time beats at 140 BPM, deep sub bass and the LFO wobble. American brostep later made the drops louder and more distorted.",
+      "bpm": [138, 142],
+      "pairs": ["gr-half-time", "ba-reese", "mo-menacing", "en-build-drop"]
+    },
+    {
+      "id": "g-future-bass",
+      "cat": "genre",
+      "group": "Electronic",
+      "label": "Future bass",
+      "prompt": "future bass: lush detuned supersaw chords swelling with sidechain, pitched vocal chops, punchy trap drums and a bright, emotional drop",
+      "desc": "Mid-2010s electronic style known for huge, wobbling supersaw chords pumped by sidechain and pitched vocal chops over trap-style half-time drums. Often 130 to 160 BPM.",
+      "bpm": [130, 160],
+      "pairs": ["sy-supersaw", "pr-sidechain", "en-build-drop", "mo-euphoric"]
+    },
+    {
+      "id": "g-uk-garage",
+      "cat": "genre",
+      "group": "Electronic",
+      "label": "UK garage",
+      "prompt": "UK garage: shuffling swung hi-hats, skippy syncopated kicks, warm organ-style bass stabs, chopped R&B vocals and a smooth late-night bounce",
+      "desc": "Late-90s London club sound that sped up New York and New Jersey garage house and added heavy swing. Shuffled hats, chopped and pitched R&B vocals and bouncy bass. Around 130 to 138 BPM.",
+      "bpm": [130, 138],
+      "pairs": ["gr-two-step", "g-2-step", "vo-female-breathy", "er-1990s"]
+    },
+    {
+      "id": "g-2-step",
+      "cat": "genre",
+      "group": "Electronic",
+      "label": "2-step",
+      "prompt": "2-step garage: a skipping broken kick pattern, crisp swung snares, bouncy sub bass and silky time-stretched vocal chops",
+      "desc": "UK garage style that drops the steady four-on-the-floor kick for a syncopated, skipping pattern that leaves out beats 2 and 4. Its swung, shuffling feel later fed grime and dubstep. About 130 to 136 BPM.",
+      "bpm": [130, 136],
+      "pairs": ["gr-two-step", "g-uk-garage", "ba-808-sub", "mo-sensual"]
+    },
+    {
+      "id": "g-breakbeat",
+      "cat": "genre",
+      "group": "Electronic",
+      "label": "Breakbeat",
+      "prompt": "big breakbeat: chunky chopped funk drum breaks, fat acid basslines, rave stabs and a heavy, rolling swagger",
+      "desc": "Dance music built on sampled drum breaks instead of a steady kick, central to 90s UK rave and the big beat era. Funky, chunky and energetic, usually 120 to 140 BPM.",
+      "bpm": [120, 140],
+      "pairs": ["gr-breakbeat", "ba-acid-303", "er-1990s", "mo-swagger"]
+    },
+    {
+      "id": "g-electro",
+      "cat": "genre",
+      "group": "Electronic",
+      "label": "Electro",
+      "prompt": "80s electro: robotic TR-808 drum patterns, vocoder voices, sci-fi synth stabs and a bouncing, syncopated synth bassline",
+      "desc": "Early-80s New York fusion of funk and machine music: TR-808 beats, vocoders and futuristic synths. Soundtrack of early breakdancing and a root of Miami bass and Detroit techno. Around 110 to 130 BPM.",
+      "bpm": [110, 130],
+      "pairs": ["dr-tr808", "sy-arp", "er-1980s", "er-futuristic"]
+    },
+    {
+      "id": "g-synthwave",
+      "cat": "genre",
+      "group": "Electronic",
+      "label": "Synthwave",
+      "prompt": "synthwave: neon analog synth leads, pulsing arpeggiated bass, gated-reverb drums and lush retro 80s pads under a night-drive glow",
+      "desc": "2000s and 2010s revival of 80s film and video game soundtracks. Analog-style synths, gated snares and arpeggios conjure VHS action films, sunsets and night drives. Usually 80 to 118 BPM.",
+      "bpm": [80, 118],
+      "pairs": ["sy-juno-pad", "sy-arp", "dr-linndrum", "er-1980s", "mo-nostalgic"]
+    },
+    {
+      "id": "g-vaporwave",
+      "cat": "genre",
+      "group": "Electronic",
+      "label": "Vaporwave",
+      "prompt": "vaporwave: slowed, pitched-down 80s smooth-jazz and muzak samples, heavy reverb, stuttering loops and a surreal shopping-mall haze",
+      "desc": "Early-2010s internet microgenre that slows down and loops 80s and 90s corporate music, smooth jazz and elevator tunes. Uncanny, nostalgic and slightly ironic.",
+      "bpm": [60, 100],
+      "pairs": ["pr-tape-saturation", "mo-nostalgic", "mo-dreamy", "er-1980s"]
+    },
+    {
+      "id": "g-ambient",
+      "cat": "genre",
+      "group": "Electronic",
+      "label": "Ambient",
+      "prompt": "ambient soundscape: slowly evolving synth pads, soft drones, distant textures and long, gentle reverb tails",
+      "desc": "Music designed to color a space rather than demand attention; the term was coined in the late 70s. Slowly moving drones, pads and textures with little or no beat.",
+      "bpm": [50, 80],
+      "pairs": ["sy-juno-pad", "en-ambient", "mo-peaceful", "us-meditation"]
+    },
+    {
+      "id": "g-idm",
+      "cat": "genre",
+      "group": "Electronic",
+      "label": "IDM",
+      "prompt": "IDM: intricate glitchy programmed drums, complex shifting rhythms, warm detuned analog synths and playful, melancholic melodies",
+      "desc": "Intelligent dance music: 90s UK electronic music built more for headphones than dance floors. Detailed, irregular beat programming, glitches and warm, odd melodies. Tempo varies widely.",
+      "bpm": [90, 160],
+      "pairs": ["sy-arp", "mo-mysterious", "mo-otherworldly", "er-futuristic"]
+    },
+    {
+      "id": "g-downtempo",
+      "cat": "genre",
+      "group": "Electronic",
+      "label": "Downtempo",
+      "prompt": "downtempo: relaxed, laid-back breakbeats, warm deep bass, dubby echoes and lush jazzy samples in a chilled lounge mood",
+      "desc": "Slow, relaxed electronic music from the 90s chill-out rooms, borrowing from hip-hop, dub and jazz. Comfortable grooves and rich textures, usually 70 to 105 BPM.",
+      "bpm": [70, 105],
+      "pairs": ["kb-rhodes", "gr-laid-back", "mo-chill", "us-cafe"]
+    },
+    {
+      "id": "g-chillwave",
+      "cat": "genre",
+      "group": "Electronic",
+      "label": "Chillwave",
+      "prompt": "chillwave: hazy filtered synths, a warm retro drum machine, sun-faded tape warble and soft, washed-out vocals",
+      "desc": "Late-2000s indie electronic style that sounds like a faded summer memory: heavily filtered synths, lo-fi tape wobble and dreamy vocals inspired by 80s pop. Usually 80 to 110 BPM.",
+      "bpm": [80, 110],
+      "pairs": ["sy-juno-pad", "pr-tape-saturation", "mo-nostalgic", "mo-dreamy"]
+    },
+    {
+      "id": "g-trip-hop",
+      "cat": "genre",
+      "group": "Electronic",
+      "label": "Trip-hop",
+      "prompt": "trip-hop: slow, heavy hip-hop breakbeats, dark moody bass, dusty jazz and film samples, vinyl scratches and a smoky cinematic atmosphere",
+      "desc": "Early-90s Bristol sound: slowed hip-hop beats with dub bass, film-noir samples, scratching and moody vocals. Dark, cinematic and sensual, usually 65 to 95 BPM.",
+      "bpm": [65, 95],
+      "pairs": ["pr-vinyl-crackle", "mo-brooding", "mo-mysterious", "vo-female-breathy"]
+    },
+    {
+      "id": "g-footwork",
+      "cat": "genre",
+      "group": "Electronic",
+      "label": "Footwork",
+      "prompt": "Chicago footwork at 160 BPM: stuttering syncopated TR-808 kicks, rapid-fire chopped vocal loops and skittering triplet hi-hats",
+      "desc": "Chicago dance-battle music grown out of juke in the late 2000s. Around 160 BPM, with off-kilter 808 patterns that feel half-time and obsessively chopped vocal samples.",
+      "bpm": [155, 165],
+      "pairs": ["dr-tr808", "ba-808-sub", "g-jersey-club", "mo-chaotic"]
+    },
+    {
+      "id": "g-afro-house",
+      "cat": "genre",
+      "group": "Electronic",
+      "label": "Afro house",
+      "prompt": "afro house: rolling organic hand percussion, deep tribal drums, hypnotic chant-like vocals, warm bass and spiritual, uplifting chords",
+      "desc": "House music rooted in South Africa and spread worldwide. Layered hand percussion, polyrhythms, deep basslines and chant-like vocals over a steady house kick. About 118 to 125 BPM.",
+      "bpm": [118, 125],
+      "pairs": ["gr-afro-poly", "gr-four-on-floor", "wo-kalimba", "mo-spiritual"]
+    },
+    {
+      "id": "g-amapiano",
+      "cat": "genre",
+      "group": "Electronic",
+      "label": "Amapiano",
+      "prompt": "amapiano: deep log-drum basslines, jazzy piano chords, shuffling shakers and hats, airy pads and a smooth, unhurried groove",
+      "desc": "South African house style from the townships of Gauteng that broke out in the late 2010s. Known for the log drum, a pitched percussive bass, plus jazzy piano and a laid-back groove around 108 to 115 BPM.",
+      "bpm": [108, 115],
+      "pairs": ["wo-log-drum", "gr-amapiano", "kb-grand-piano", "g-afro-house"]
+    },
+    {
+      "id": "g-hardstyle",
+      "cat": "genre",
+      "group": "Electronic",
+      "label": "Hardstyle",
+      "prompt": "hardstyle: a distorted, punchy pitched kick with a long tail, a euphoric screeching lead, reverse-bass rhythm and festival anthem energy",
+      "desc": "Dutch hard dance from the early 2000s. Built on a heavily distorted, tuned kick drum, reverse bass and big euphoric or raw melodies. Usually 150 to 160 BPM.",
+      "bpm": [150, 160],
+      "pairs": ["sy-supersaw", "en-peak-time", "mo-euphoric", "us-workout"]
+    },
+    {
+      "id": "g-drift-phonk",
+      "cat": "genre",
+      "group": "Electronic",
+      "label": "Drift phonk",
+      "prompt": "drift phonk: aggressive distorted cowbell melodies, blown-out 808 bass, fast hi-hats and relentless, high-speed street-race energy",
+      "desc": "2020s offshoot of phonk that went viral on car-drifting and gym videos. Louder and harder: distorted cowbell riffs, clipped 808s and a pounding drive, often 120 to 160 BPM.",
+      "bpm": [120, 160],
+      "pairs": ["g-phonk", "ba-808-sub", "mo-aggressive", "us-workout"]
+    },
+    {
+      "id": "g-classic-rock",
+      "cat": "genre",
+      "group": "Rock & metal",
+      "label": "Classic rock",
+      "prompt": "classic rock: crunchy overdriven guitar riffs, driving live drums, solid bass, swirling Hammond organ and a bluesy guitar solo",
+      "desc": "Guitar-driven rock of the late 60s and 70s, rooted in the blues. Tube-amp riffs, live-in-the-room drums, organ and anthemic choruses. Usually 100 to 140 BPM.",
+      "bpm": [100, 140],
+      "pairs": ["gt-distorted", "kb-hammond-b3", "gr-backbeat", "ke-mixolydian", "er-1970s"]
+    },
+    {
+      "id": "g-alt-rock",
+      "cat": "genre",
+      "group": "Rock & metal",
+      "label": "Alt rock",
+      "prompt": "alternative rock: quiet, tense verses that burst into loud choruses, distorted guitars, melodic bass and raw, emotional vocals",
+      "desc": "Rock from the 80s and 90s college-radio underground that went mainstream. Often uses the quiet-verse, loud-chorus dynamic, unusual chords and raw guitar tones. Usually 100 to 140 BPM.",
+      "bpm": [100, 140],
+      "pairs": ["gt-distorted", "en-explosive-chorus", "er-1990s", "mo-defiant"]
+    },
+    {
+      "id": "g-indie-rock",
+      "cat": "genre",
+      "group": "Rock & metal",
+      "label": "Indie rock",
+      "prompt": "indie rock: angular interlocking clean and crunchy guitars, punchy driving drums, melodic bass and a raw, energetic garage feel",
+      "desc": "Guitar rock from independent labels, from 80s college rock to the 2000s garage revival. Angular riffs, energetic drums and a less polished, more personal sound. Usually 110 to 150 BPM.",
+      "bpm": [110, 150],
+      "pairs": ["gt-clean-electric", "gt-distorted", "gr-backbeat", "er-2000s"]
+    },
+    {
+      "id": "g-punk",
+      "cat": "genre",
+      "group": "Rock & metal",
+      "label": "Punk",
+      "prompt": "raw punk rock: fast downstroked power chords, pounding straight drums, buzzing bass and shouted gang vocals",
+      "desc": "Mid-70s rebellion against bloated rock, from New York and London. Short, fast, loud songs built on a few power chords, straight driving beats and a DIY attitude. Often 150 to 200 BPM.",
+      "bpm": [150, 200],
+      "pairs": ["gt-distorted", "mo-defiant", "mo-aggressive", "er-1970s"]
+    },
+    {
+      "id": "g-pop-punk",
+      "cat": "genre",
+      "group": "Rock & metal",
+      "label": "Pop-punk",
+      "prompt": "pop-punk: fast palm-muted power chords, energetic skate-punk drums, bouncy bass and a big, sing-along melodic chorus",
+      "desc": "Punk speed and guitars married to catchy pop hooks, peaking in the 90s and 2000s skate scene. Bright, youthful and usually 150 to 190 BPM.",
+      "bpm": [150, 190],
+      "pairs": ["gt-distorted", "mo-defiant", "mo-playful", "er-2000s"]
+    },
+    {
+      "id": "g-grunge",
+      "cat": "genre",
+      "group": "Rock & metal",
+      "label": "Grunge",
+      "prompt": "grunge: sludgy, heavily distorted detuned guitars, loose heavy drums, a quiet verse and loud chorus and raw, angst-ridden energy",
+      "desc": "Early-90s Seattle rock that fused punk and heavy metal. Murky, distorted guitars (often drop-tuned), loose heavy drumming and loud-quiet dynamics. Usually 90 to 130 BPM.",
+      "bpm": [90, 130],
+      "pairs": ["gt-distorted", "er-1990s", "mo-brooding", "mo-defiant"]
+    },
+    {
+      "id": "g-shoegaze",
+      "cat": "genre",
+      "group": "Rock & metal",
+      "label": "Shoegaze",
+      "prompt": "shoegaze: walls of distorted, reverb-drenched guitars, swirling feedback, buried dreamy vocals and a hazy, overwhelming wash of sound",
+      "desc": "Late-80s and early-90s British rock named for guitarists staring down at their effect pedals. Layered fuzz, reverb and pitch-bent guitars build a dense, blurry wall with vocals blended in like another instrument.",
+      "bpm": [80, 130],
+      "pairs": ["gt-distorted", "pr-wide-stereo", "mo-dreamy", "g-dream-pop"]
+    },
+    {
+      "id": "g-post-rock",
+      "cat": "genre",
+      "group": "Rock & metal",
+      "label": "Post-rock",
+      "prompt": "instrumental post-rock: chiming delayed guitars, slow-building crescendos, rolling tom-heavy drums and a cathartic wall-of-sound climax",
+      "desc": "90s movement that uses rock instruments for texture and long builds instead of verses and choruses. Usually instrumental, with tremolo-picked guitars, swelling dynamics and huge climaxes.",
+      "bpm": [70, 130],
+      "pairs": ["gt-clean-electric", "en-slow-build", "mo-cinematic-awe", "or-strings-lush"]
+    },
+    {
+      "id": "g-heavy-metal",
+      "cat": "genre",
+      "group": "Rock & metal",
+      "label": "Heavy metal",
+      "prompt": "heavy metal: galloping distorted guitar riffs, thundering double-kick drums, thick bass, dramatic wailing vocals and a blazing twin-guitar solo",
+      "desc": "Loud, heavy rock born in late-60s and 70s England. Distorted riffs, power chords, galloping rhythms and virtuosic solos, often in minor keys or the Phrygian mode. Usually 100 to 180 BPM.",
+      "bpm": [100, 180],
+      "pairs": ["gt-distorted", "ke-phrygian", "mo-aggressive", "mo-triumphant"]
+    },
+    {
+      "id": "g-metalcore",
+      "cat": "genre",
+      "group": "Rock & metal",
+      "label": "Metalcore",
+      "prompt": "metalcore: chugging drop-tuned breakdowns, fast double-kick blasts, harmonized melodic guitar leads and screamed verses into a soaring clean chorus",
+      "desc": "Fusion of hardcore punk and extreme metal that boomed in the 2000s. Low-tuned riffs, crushing half-time breakdowns, melodic leads and contrast between screams and clean choruses. Usually 120 to 180 BPM.",
+      "bpm": [120, 180],
+      "pairs": ["gt-distorted", "gr-half-time", "mo-aggressive", "en-explosive-chorus"]
+    },
+    {
+      "id": "g-prog-rock",
+      "cat": "genre",
+      "group": "Rock & metal",
+      "label": "Prog rock",
+      "prompt": "progressive rock: shifting odd time signatures, long multi-part arrangements, Mellotron strings and virtuosic synth and guitar solos",
+      "desc": "Late-60s and 70s rock with classical and jazz ambition: long suites, odd meters like 7/8, complex harmony and virtuoso playing on synths, organ and guitar. Tempos shift within songs.",
+      "bpm": [70, 160],
+      "pairs": ["gr-seven-eight", "kb-hammond-b3", "ba-moog", "er-1970s"]
+    },
+    {
+      "id": "g-surf-rock",
+      "cat": "genre",
+      "group": "Rock & metal",
+      "label": "Surf rock",
+      "prompt": "surf rock: twangy, reverb-drenched electric guitar, fast tremolo-picked melodies, driving drums and a splashy spring-reverb sound",
+      "desc": "Early-60s California instrumental rock. Wet spring-reverb guitar, rapid tremolo picking, twangy single-coil tones and fast beats that evoke waves and beach culture. Often 140 to 180 BPM.",
+      "bpm": [140, 180],
+      "pairs": ["gt-clean-electric", "er-1960s", "mo-carefree", "ke-phrygian-dominant"]
+    },
+    {
+      "id": "g-bebop",
+      "cat": "genre",
+      "group": "Jazz & blues",
+      "label": "Bebop",
+      "prompt": "bebop jazz quintet: blazing fast saxophone and trumpet lines, walking upright bass, comping piano and a crisp swinging ride cymbal",
+      "desc": "1940s jazz revolution: small groups, very fast tempos and complex chord changes, with virtuosic solos built from chromatic lines. Often 200 BPM and beyond.",
+      "bpm": [160, 220],
+      "pairs": ["ba-upright", "gr-swing-ride", "kb-grand-piano", "ke-chromatic"]
+    },
+    {
+      "id": "g-cool-jazz",
+      "cat": "genre",
+      "group": "Jazz & blues",
+      "label": "Cool jazz",
+      "prompt": "cool jazz: soft, airy trumpet and saxophone, brushed drums, gentle walking bass and relaxed, understated piano voicings",
+      "desc": "Late-40s and 50s answer to bebop: calmer tempos, softer tones, arranged textures and lyrical solos. Laid-back and sophisticated, often linked with the US West Coast.",
+      "bpm": [90, 150],
+      "pairs": ["ba-upright", "gr-swing-ride", "mo-chill", "er-1950s"]
+    },
+    {
+      "id": "g-smooth-jazz",
+      "cat": "genre",
+      "group": "Jazz & blues",
+      "label": "Smooth jazz",
+      "prompt": "smooth jazz: silky soprano saxophone melody, warm electric piano chords, gentle funk bass and polished, relaxed drums",
+      "desc": "Polished, radio-friendly blend of jazz, R&B and pop from the 80s and 90s. Mellow sax or guitar melodies over soft grooves, made for late nights and lounges. Usually 80 to 110 BPM.",
+      "bpm": [80, 110],
+      "pairs": ["sy-dx7-epiano", "kb-rhodes", "mo-sensual", "us-cafe"]
+    },
+    {
+      "id": "g-jazz-fusion",
+      "cat": "genre",
+      "group": "Jazz & blues",
+      "label": "Jazz fusion",
+      "prompt": "jazz fusion: virtuosic electric guitar and synth solos, slap bass, complex funk-rock drumming and rich jazz chord changes",
+      "desc": "Late-60s and 70s blend of jazz improvisation with the volume and grooves of rock and funk: electric instruments, synths, odd meters and high-speed solos.",
+      "bpm": [90, 150],
+      "pairs": ["ba-slap", "kb-rhodes", "ba-moog", "er-1970s"]
+    },
+    {
+      "id": "g-bossa-nova",
+      "cat": "genre",
+      "group": "Jazz & blues",
+      "label": "Bossa nova",
+      "prompt": "bossa nova: soft nylon-string guitar chords, a syncopated rim-click rhythm, gentle brushes, upright bass and a breezy, intimate mood",
+      "desc": "Late-50s Brazilian style that blended samba rhythm with cool jazz harmony. Soft nylon guitar, rich seventh and ninth chords, hushed vocals and a gentle, syncopated pulse. Around 120 to 140 BPM.",
+      "bpm": [120, 140],
+      "pairs": ["gt-nylon", "gr-bossa-clave", "ba-upright", "mo-romantic"]
+    },
+    {
+      "id": "g-delta-blues",
+      "cat": "genre",
+      "group": "Jazz & blues",
+      "label": "Delta blues",
+      "prompt": "raw Delta blues: solo acoustic slide guitar, a stomping foot beat, gritty moaning vocals and a lonesome, dusty feel",
+      "desc": "Early country blues of the Mississippi Delta, recorded from the 1920s and 30s. One voice and an acoustic guitar, often played with a bottleneck slide, using blue notes and loose 12-bar forms.",
+      "bpm": [60, 110],
+      "pairs": ["gt-acoustic-fingerpicked", "ke-blues-scale", "gr-shuffle", "mo-lonely"]
+    },
+    {
+      "id": "g-chicago-blues",
+      "cat": "genre",
+      "group": "Jazz & blues",
+      "label": "Chicago blues",
+      "prompt": "Chicago blues band: amplified electric guitar licks, wailing harmonica, shuffling drums, walking bass and a rolling barrelhouse piano",
+      "desc": "Delta blues electrified in post-war Chicago. Amplified guitar, harmonica cupped against a microphone, bass, drums and piano playing 12-bar shuffles. A direct ancestor of rock and roll.",
+      "bpm": [80, 130],
+      "pairs": ["gt-clean-electric", "gr-shuffle", "ke-blues-scale", "er-1950s"]
+    },
+    {
+      "id": "g-reggaeton",
+      "cat": "genre",
+      "group": "Latin & Caribbean",
+      "label": "Reggaeton",
+      "prompt": "reggaeton: the dembow drum rhythm, booming sub bass, crisp syncopated snares and catchy, sensual Latin synth hooks",
+      "desc": "Born in Puerto Rico and Panama in the 90s from Jamaican dancehall and hip-hop. Built on the dembow rhythm: a kick on every beat with snares in a 3-3-2 pattern. Usually 88 to 100 BPM.",
+      "bpm": [88, 100],
+      "pairs": ["gr-dembow", "ba-808-sub", "mo-sensual", "g-latin-trap"]
+    },
+    {
+      "id": "g-dembow",
+      "cat": "genre",
+      "group": "Latin & Caribbean",
+      "label": "Dominican dembow",
+      "prompt": "Dominican dembow: a fast, relentless dembow drum loop, rattling percussion, hard chanted hooks and raw street-party energy",
+      "desc": "The Dominican Republic's high-speed take on the dembow rhythm, booming since the 2000s. Faster and rawer than reggaeton, around 115 to 130 BPM, with bare-bones loops and shouted hooks.",
+      "bpm": [115, 130],
+      "pairs": ["gr-dembow", "g-reggaeton", "en-peak-time", "mo-playful"]
+    },
+    {
+      "id": "g-salsa",
+      "cat": "genre",
+      "group": "Latin & Caribbean",
+      "label": "Salsa",
+      "prompt": "salsa: a clave-locked piano montuno, blazing brass section, congas, timbales, cowbell and a syncopated tumbao bassline",
+      "desc": "1960s and 70s New York style built on Cuban son and mambo by Cuban and Puerto Rican musicians. Everything locks to the clave: piano montunos, tumbao bass, congas, timbales and punchy horns. Fast, often 160 to 220 BPM.",
+      "bpm": [150, 220],
+      "pairs": ["gr-son-clave", "or-brass-section", "kb-grand-piano", "mo-joyful"]
+    },
+    {
+      "id": "g-bachata",
+      "cat": "genre",
+      "group": "Latin & Caribbean",
+      "label": "Bachata",
+      "prompt": "bachata: bright, picked requinto guitar arpeggios, syncopated bongos, scraping metal güira and a romantic, swaying rhythm",
+      "desc": "Romantic guitar music from the Dominican Republic, born in the 1960s countryside. Lead requinto guitar, rhythm guitar, bass, bongos and güira, with dancers tapping on every fourth beat. Usually 120 to 140 BPM.",
+      "bpm": [120, 140],
+      "pairs": ["gt-nylon", "mo-romantic", "mo-heartbroken"]
+    },
+    {
+      "id": "g-cumbia",
+      "cat": "genre",
+      "group": "Latin & Caribbean",
+      "label": "Cumbia",
+      "prompt": "cumbia: a loping two-beat rhythm, scraping güiro, hand drums, accordion melodies and a warm, swaying dance-floor groove",
+      "desc": "Music of Colombia's Caribbean coast that spread across Latin America. Mixes African, Indigenous and Spanish roots: a steady shuffling two-beat, scrapers, drums and accordion or keyboard leads. Around 85 to 110 BPM.",
+      "bpm": [85, 110],
+      "pairs": ["gr-afro-poly", "mo-joyful", "mo-carefree"]
+    },
+    {
+      "id": "g-latin-trap",
+      "cat": "genre",
+      "group": "Latin & Caribbean",
+      "label": "Latin trap",
+      "prompt": "Latin trap: booming 808s, rapid triplet hi-hats, dark reggaeton-flavored melodies and melodic Spanish-language rap flows",
+      "desc": "Mid-2010s fusion of Atlanta trap and Puerto Rican reggaeton. Slow, menacing trap drums and 808s under Latin melodies, sometimes switching into a dembow section. Usually 125 to 150 BPM, felt in half-time.",
+      "bpm": [125, 150],
+      "pairs": ["dr-tr808", "ba-808-sub", "vo-melodic-rap", "g-reggaeton"]
+    },
+    {
+      "id": "g-baile-funk",
+      "cat": "genre",
+      "group": "Latin & Caribbean",
+      "label": "Baile funk",
+      "prompt": "Brazilian baile funk: the tamborzão drum loop, booming Miami-bass 808 kicks, chopped vocal shouts and rowdy party energy",
+      "desc": "Funk carioca from the favelas of Rio de Janeiro, grown from 80s Miami bass. Built on the tamborzão, a percussive, syncopated drum loop, with shouted vocals and heavy bass samples. Usually 125 to 140 BPM.",
+      "bpm": [125, 140],
+      "pairs": ["dr-tr808", "mo-playful", "en-peak-time", "us-tiktok-hook"]
+    },
+    {
+      "id": "g-reggae",
+      "cat": "genre",
+      "group": "Latin & Caribbean",
+      "label": "Reggae",
+      "prompt": "roots reggae: one-drop drum beat, offbeat guitar skank, deep melodic bassline, bubbling organ and a warm, conscious vibe",
+      "desc": "Jamaican music of the late 60s and 70s, grown from ska and rocksteady. Offbeat guitar and keyboard chops, deep melodic bass and the one-drop beat that accents beat 3. Usually 60 to 90 BPM.",
+      "bpm": [60, 90],
+      "pairs": ["gr-one-drop", "gr-skank", "kb-hammond-b3", "er-1970s"]
+    },
+    {
+      "id": "g-roots-dub",
+      "cat": "genre",
+      "group": "Latin & Caribbean",
+      "label": "Roots dub",
+      "prompt": "roots dub: heavy rumbling bass, sparse one-drop drums, spring-reverb splashes, tape-echo delays and instruments dropping in and out",
+      "desc": "Jamaican studio art of the late 60s and 70s. Engineers remixed reggae tracks live on the desk, muting parts, drowning them in echo and pushing the bass forward. The root of remix culture.",
+      "bpm": [60, 90],
+      "pairs": ["gr-one-drop", "pr-tape-saturation", "g-reggae", "mo-psychedelic"]
+    },
+    {
+      "id": "g-dancehall",
+      "cat": "genre",
+      "group": "Latin & Caribbean",
+      "label": "Dancehall",
+      "prompt": "dancehall: a punchy digital riddim, syncopated kick and snare, deep sub bass, bright synth stabs and energetic toasting vocals",
+      "desc": "Jamaican style from the late 70s that went fully digital in the mid-80s. Built on riddims, shared instrumentals voiced by many different singers, with sparse syncopated drums and toasting vocals. Usually 90 to 110 BPM.",
+      "bpm": [90, 110],
+      "pairs": ["gr-dembow", "ba-808-sub", "mo-swagger", "g-reggae"]
+    },
+    {
+      "id": "g-soca",
+      "cat": "genre",
+      "group": "Latin & Caribbean",
+      "label": "Soca",
+      "prompt": "soca: fast driving carnival rhythm, bright brass riffs, steel pan, pulsing synth bass and euphoric jump-and-wave energy",
+      "desc": "Trinidad and Tobago's carnival music, born in the 70s from calypso with Indo-Caribbean rhythms. Groovy soca is smoother and slower; power soca is fast and frantic. Usually 115 to 160 BPM.",
+      "bpm": [115, 160],
+      "pairs": ["wo-steel-pan", "or-brass-section", "mo-euphoric", "en-peak-time"]
+    },
+    {
+      "id": "g-afrobeats",
+      "cat": "genre",
+      "group": "African",
+      "label": "Afrobeats",
+      "prompt": "afrobeats: bouncy syncopated percussion, log drums and shakers, warm melodic bass, bright guitar riffs and a smooth, danceable groove",
+      "desc": "West African pop from Nigeria and Ghana that went global in the 2010s. Mixes highlife, hip-hop, dancehall and R&B over syncopated, percussion-rich grooves. Usually 95 to 115 BPM.",
+      "bpm": [95, 115],
+      "pairs": ["gr-afro-poly", "gt-clean-electric", "vo-melodic-rap", "mo-carefree"]
+    },
+    {
+      "id": "g-afrobeat-70s",
+      "cat": "genre",
+      "group": "African",
+      "label": "Afrobeat (70s)",
+      "prompt": "70s Afrobeat: long hypnotic jams, interlocking funky guitars, tight polyrhythmic drumming, a blaring horn section and call-and-response chants",
+      "desc": "1970s Nigerian style that fused Yoruba rhythms, highlife, jazz and funk into long, political big-band grooves where guitars, percussion and horns interlock. Spelled without the 's'. Usually 100 to 130 BPM.",
+      "bpm": [100, 130],
+      "pairs": ["gr-afro-poly", "or-brass-section", "gt-clean-electric", "er-1970s"]
+    },
+    {
+      "id": "g-highlife",
+      "cat": "genre",
+      "group": "African",
+      "label": "Highlife",
+      "prompt": "highlife: bright, sweet interlocking electric guitar melodies, lilting percussion, warm bass and joyful horn lines",
+      "desc": "Ghanaian music from the early 20th century that blended local rhythms with jazz, brass bands and guitar. Bright melodic guitar lines and a joyful lilt; a key root of afrobeats. Usually 100 to 130 BPM.",
+      "bpm": [100, 130],
+      "pairs": ["gt-clean-electric", "or-brass-section", "mo-joyful", "g-afrobeats"]
+    },
+    {
+      "id": "g-country",
+      "cat": "genre",
+      "group": "Country & folk",
+      "label": "Country",
+      "prompt": "modern country: twangy electric guitar, crying pedal steel, strummed acoustic, a steady train beat and a heartfelt storytelling melody",
+      "desc": "American music born in 1920s Appalachia and the South. Twangy guitars, pedal steel, fiddle and storytelling lyrics; modern country adds pop production and big drums. Usually 80 to 130 BPM.",
+      "bpm": [80, 130],
+      "pairs": ["gt-clean-electric", "gt-acoustic-fingerpicked", "ke-major-penta", "mo-nostalgic"]
+    },
+    {
+      "id": "g-outlaw-country",
+      "cat": "genre",
+      "group": "Country & folk",
+      "label": "Outlaw country",
+      "prompt": "outlaw country: a raw, gritty baritone vocal, dusty twangy guitar, honky-tonk piano and a rough, rebellious roadhouse feel",
+      "desc": "Mid-70s rebellion against the polished Nashville sound. Stripped-down, rock-tinged country with rough edges and songs about hard living. Usually 90 to 130 BPM.",
+      "bpm": [90, 130],
+      "pairs": ["vo-male-baritone", "gt-clean-electric", "mo-defiant", "er-1970s"]
+    },
+    {
+      "id": "g-bluegrass",
+      "cat": "genre",
+      "group": "Country & folk",
+      "label": "Bluegrass",
+      "prompt": "bluegrass: fast-picked banjo rolls, flatpicked acoustic guitar, fiddle runs, mandolin chops and close, high lonesome harmonies",
+      "desc": "Acoustic string-band music from 1940s Kentucky and Appalachia. Banjo, fiddle, mandolin, guitar and upright bass trade fast solos while the mandolin chops the backbeat. Often 110 to 180 BPM.",
+      "bpm": [110, 180],
+      "pairs": ["ba-upright", "gt-acoustic-fingerpicked", "ke-major-penta", "mo-joyful"]
+    },
+    {
+      "id": "g-americana",
+      "cat": "genre",
+      "group": "Country & folk",
+      "label": "Americana",
+      "prompt": "Americana: warm acoustic guitars, rootsy live drums, upright bass, pedal steel and a weathered, heartfelt storytelling feel",
+      "desc": "Umbrella term for American roots music: country, folk, blues, gospel and rock blended with a handmade, live-band feel. Usually 70 to 120 BPM.",
+      "bpm": [70, 120],
+      "pairs": ["gt-acoustic-fingerpicked", "ba-upright", "mo-wistful", "pr-tape-saturation"]
+    },
+    {
+      "id": "g-indie-folk",
+      "cat": "genre",
+      "group": "Country & folk",
+      "label": "Indie folk",
+      "prompt": "indie folk: fingerpicked acoustic guitar, soft layered harmonies, gentle banjo and piano and a warm, intimate cabin-recorded feel",
+      "desc": "2000s folk revival with indie-rock sensibilities. Acoustic instruments, layered harmonies, natural room sound and introspective lyrics, often recorded in homes or cabins. Usually 70 to 120 BPM.",
+      "bpm": [70, 120],
+      "pairs": ["gt-acoustic-fingerpicked", "kb-grand-piano", "mo-wistful", "mo-cozy"]
+    },
+    {
+      "id": "g-film-score",
+      "cat": "genre",
+      "group": "Cinematic & classical",
+      "label": "Film score",
+      "prompt": "cinematic film score: sweeping full orchestra, emotional string melodies, noble French horns, soft piano and dynamics that rise and fall with the story",
+      "desc": "Music written to support picture. Uses the full orchestra, recurring themes (leitmotifs) for characters and places, and dynamic arcs that follow the scene.",
+      "bpm": [60, 120],
+      "pairs": ["or-strings-lush", "or-brass-section", "kb-grand-piano", "mo-cinematic-awe"]
+    },
+    {
+      "id": "g-epic-trailer",
+      "cat": "genre",
+      "group": "Cinematic & classical",
+      "label": "Epic trailer",
+      "prompt": "epic trailer music: thunderous taiko and orchestral percussion, massive brass hits, a rising string ostinato, huge choir and a giant final climax",
+      "desc": "Modern hybrid orchestral style made for movie trailers. Driving string ostinatos, booming braams, taiko percussion, choirs and synth risers arranged in rising acts toward a giant finale.",
+      "bpm": [80, 140],
+      "pairs": ["or-brass-section", "or-choir", "en-slow-build", "us-film-trailer", "mo-triumphant"]
+    },
+    {
+      "id": "g-baroque",
+      "cat": "genre",
+      "group": "Cinematic & classical",
+      "label": "Baroque",
+      "prompt": "Baroque chamber music: harpsichord continuo, interweaving contrapuntal strings, ornamented melodies and a steady, motoric pulse",
+      "desc": "European music from about 1600 to 1750. Harpsichord and continuo bass, counterpoint where independent lines weave together, ornaments and steady driving rhythms.",
+      "bpm": [60, 130],
+      "pairs": ["or-strings-lush", "ke-harmonic-minor", "ke-g-minor"]
+    },
+    {
+      "id": "g-romantic-orchestral",
+      "cat": "genre",
+      "group": "Cinematic & classical",
+      "label": "Romantic orchestral",
+      "prompt": "Romantic-era orchestral piece: lush, expressive strings, rich chromatic harmony, sweeping crescendos and soaring French horn melodies",
+      "desc": "19th-century style that put emotion first: bigger orchestras, rich chromatic harmony, huge dynamic swings and soaring melodies. The foundation of modern film scoring.",
+      "bpm": [50, 120],
+      "pairs": ["or-strings-lush", "or-brass-section", "mo-yearning", "g-film-score"]
+    },
+    {
+      "id": "g-minimalist-classical",
+      "cat": "genre",
+      "group": "Cinematic & classical",
+      "label": "Minimalist classical",
+      "prompt": "minimalist classical: repeating piano and marimba patterns that slowly shift and overlap, pulsing strings and a hypnotic, glowing calm",
+      "desc": "1960s American movement built on repetition: short patterns that change gradually, phase against each other and pulse steadily. Hypnotic and meditative, and a big influence on ambient and film music.",
+      "bpm": [70, 140],
+      "pairs": ["kb-grand-piano", "or-strings-lush", "mo-meditative", "us-study"]
+    },
+    {
+      "id": "g-neoclassical-piano",
+      "cat": "genre",
+      "group": "Cinematic & classical",
+      "label": "Neoclassical piano",
+      "prompt": "neoclassical solo piano: soft felt-muted keys, simple emotional melodies, gentle arpeggios and an intimate, close-miked room sound",
+      "desc": "Modern piano music between classical and ambient. Simple, emotional themes, felt-dampened pianos and close recording. Hugely popular for study, film and relaxation playlists.",
+      "bpm": [55, 90],
+      "pairs": ["kb-grand-piano", "mo-wistful", "us-study", "us-sleep"]
+    },
+    {
+      "id": "g-lullaby",
+      "cat": "genre",
+      "group": "Cinematic & classical",
+      "label": "Lullaby",
+      "prompt": "gentle lullaby: soft music-box melody, a slow rocking 6/8 lilt, warm celesta and harp and a tender, sleepy hush",
+      "desc": "Cradle songs exist in every culture. Slow, rocking rhythms (often 6/8 or 3/4), simple stepwise melodies and soft, high instruments like music box, celesta and harp.",
+      "bpm": [55, 75],
+      "pairs": ["gr-six-eight", "mo-sleepy", "mo-tender", "us-sleep"]
+    },
+    {
+      "id": "g-chiptune",
+      "cat": "genre",
+      "group": "Cinematic & classical",
+      "label": "Chiptune",
+      "prompt": "8-bit video game chiptune: square-wave lead melodies, fast arpeggiated chords, triangle-wave bass and noise-channel drums",
+      "desc": "Music made with, or imitating, the sound chips of 80s consoles and home computers. A few square, triangle and noise channels, rapid arpeggios faking chords and bouncy, catchy melodies.",
+      "bpm": [120, 180],
+      "pairs": ["sy-arp", "er-1980s", "us-game-loop", "mo-playful"]
+    },
+    {
+      "id": "g-lofi-game",
+      "cat": "genre",
+      "group": "Cinematic & classical",
+      "label": "Lo-fi game music",
+      "prompt": "cozy lo-fi game soundtrack: soft synth bells, gentle plucked melodies, warm pads, light chillhop drums and a looping, pastoral calm",
+      "desc": "The relaxed sound of modern indie and cozy games. Soft, warm instruments, simple looping melodies and gentle beats that sit comfortably under hours of play.",
+      "bpm": [70, 100],
+      "pairs": ["wo-kalimba", "mo-cozy", "us-game-loop", "g-lofi-hiphop"]
+    },
+    {
+      "id": "er-1950s",
+      "cat": "era",
+      "group": "Decades",
+      "label": "1950s",
+      "prompt": "1950s recording style: mono room sound, slapback echo, upright bass, brushed drums and a warm tube-microphone glow",
+      "desc": "The era of rock and roll, doo-wop, early R&B and jazz. Recorded in mono, often live to tape around a few microphones, with natural room sound and slapback echo on vocals and guitar.",
+      "pairs": ["ba-upright", "g-chicago-blues", "pr-tape-saturation"]
+    },
+    {
+      "id": "er-1960s",
+      "cat": "era",
+      "group": "Decades",
+      "label": "1960s",
+      "prompt": "1960s sound: warm analog tape, wide hard-panned stereo, jangly guitars, tambourine, organ and lush plate reverb",
+      "desc": "From early-60s pop and soul to late-60s psychedelia. Four- and eight-track tape, early stereo with instruments panned hard left and right, fuzz guitar, organ and plate reverb.",
+      "pairs": ["g-motown-soul", "kb-hammond-b3", "pr-tape-saturation", "mo-psychedelic"]
+    },
+    {
+      "id": "er-1970s",
+      "cat": "era",
+      "group": "Decades",
+      "label": "1970s",
+      "prompt": "1970s analog sound: warm tape-saturated drums with deadened toms, round bass, Rhodes and live string sections in an intimate studio feel",
+      "desc": "The era of 24-track tape, funk, disco, soul and rock. Dry, dampened drums, warm analog consoles, live string and horn sections and early synths like the Minimoog.",
+      "pairs": ["kb-rhodes", "ba-moog", "g-funk", "g-disco"]
+    },
+    {
+      "id": "er-1980s",
+      "cat": "era",
+      "group": "Decades",
+      "label": "1980s",
+      "prompt": "1980s production: gated-reverb snare, glossy digital synths, DX7 electric piano, drum machines and big chorus-drenched guitars",
+      "desc": "Digital synths like the DX7, drum machines like the LinnDrum and TR-808, gated reverb, MIDI and bright, polished mixes. Big, glossy and confident.",
+      "pairs": ["sy-dx7-epiano", "dr-linndrum", "sy-juno-pad", "g-synth-pop"]
+    },
+    {
+      "id": "er-1990s",
+      "cat": "era",
+      "group": "Decades",
+      "label": "1990s",
+      "prompt": "1990s production: sampled breakbeats, punchy compressed drums, chunky bass, crisp digital reverb and a slightly gritty, sample-based warmth",
+      "desc": "Samplers like the MPC and SP-1200, early digital recording, and the golden eras of hip-hop, R&B, grunge and rave. Punchy, slightly gritty and sample-driven.",
+      "pairs": ["dr-mpc", "dr-sp1200", "g-boom-bap", "g-90s-rnb"]
+    },
+    {
+      "id": "er-2000s",
+      "cat": "era",
+      "group": "Decades",
+      "label": "2000s / Y2K",
+      "prompt": "Y2K-era production: shiny futuristic synths, crisp clicky drums, glossy auto-tuned vocals and a bright, loud, polished pop sheen",
+      "desc": "The turn-of-the-millennium sound: computer-based recording, Auto-Tune, glossy R&B, pop-punk, club pop and chrome-plated futuristic synths, all mastered loud and bright.",
+      "pairs": ["g-pop-punk", "g-electropop", "g-dance-pop"]
+    },
+    {
+      "id": "er-2010s",
+      "cat": "era",
+      "group": "Decades",
+      "label": "2010s",
+      "prompt": "2010s production: huge sidechained EDM synths, trap hi-hats, booming 808s, tight vocal chops and loud, wide, streaming-ready mixes",
+      "desc": "The laptop-production decade: EDM drops, trap drums spreading into pop, tropical house, vocal chops and the rise of streaming playlists.",
+      "pairs": ["pr-sidechain", "sy-supersaw", "g-future-bass", "g-trap"]
+    },
+    {
+      "id": "er-modern",
+      "cat": "era",
+      "group": "Decades",
+      "label": "Modern 2020s",
+      "prompt": "modern 2020s production: crisp, hyper-clean mix, deep sub bass, wide stereo, genre-blending textures and a short, hook-first structure",
+      "desc": "Today's streaming and short-video era: genre blending, retro nostalgia, songs that hook in the first seconds, short runtimes and crisp, bass-heavy mixes that translate to earbuds and phones.",
+      "pairs": ["pr-wide-stereo", "us-tiktok-hook", "g-hyperpop", "g-afrobeats"]
+    },
+    {
+      "id": "er-futuristic",
+      "cat": "era",
+      "group": "Beyond",
+      "label": "Futuristic",
+      "prompt": "futuristic sound design: alien granular textures, morphing synthetic voices, glitch-edited rhythms and hyper-detailed, swirling spatial movement",
+      "desc": "Imagined music of the future. Leans on unusual synthesis, granular textures, 3D spatial movement and rhythms that bend genre rules. Good for sci-fi, tech and fashion visuals.",
+      "pairs": ["g-idm", "mo-otherworldly", "pr-wide-stereo"]
+    },
+    {
+      "id": "mo-euphoric",
+      "cat": "mood",
+      "group": "Bright",
+      "label": "Euphoric",
+      "prompt": "euphoric and weightless, hands-in-the-air joy, bright soaring melodies and a rush of uplifting, shimmering energy",
+      "desc": "Peak happiness. Major keys, rising melodies, bright supersaws or strings and big releases after tension. Common in trance, progressive house and anthemic pop.",
+      "pairs": ["g-trance", "sy-supersaw", "en-build-drop"]
+    },
+    {
+      "id": "mo-triumphant",
+      "cat": "mood",
+      "group": "Bright",
+      "label": "Triumphant",
+      "prompt": "triumphant and victorious, bold brass fanfares, pounding drums and a heroic major-key melody that rises to a glorious peak",
+      "desc": "The sound of winning. Brass fanfares, strong perfect-fifth leaps, march-like drums and major keys. Used in sports, film finales and epic trailers.",
+      "pairs": ["or-brass-section", "g-epic-trailer", "us-sports-hype"]
+    },
+    {
+      "id": "mo-playful",
+      "cat": "mood",
+      "group": "Bright",
+      "label": "Playful",
+      "prompt": "playful and cheeky, bouncy staccato rhythms, quirky plucked sounds, whistles and a mischievous, toy-box sense of fun",
+      "desc": "Light-hearted and fun. Short staccato notes, pizzicato strings, bouncy bass, unexpected sounds and major keys. Great for kids' content, comedy and quirky ads.",
+      "pairs": ["wo-kalimba", "mo-whimsical", "us-ad-jingle"]
+    },
+    {
+      "id": "mo-hopeful",
+      "cat": "mood",
+      "group": "Bright",
+      "label": "Hopeful",
+      "prompt": "hopeful and optimistic, warm rising chord progressions, gently building drums and a bright melody reaching toward the light",
+      "desc": "Looking forward. Chord progressions that climb, suspended chords resolving to major, steady builds and warm piano or guitar. Common in inspirational videos and indie anthems.",
+      "pairs": ["kb-grand-piano", "en-slow-build", "ke-lydian"]
+    },
+    {
+      "id": "mo-joyful",
+      "cat": "mood",
+      "group": "Bright",
+      "label": "Joyful",
+      "prompt": "joyful and celebratory, hand claps, bright horns, cheerful major-key melodies and a bouncing, feel-good groove",
+      "desc": "Pure, communal happiness. Hand claps, major keys, bright brass and up-tempo grooves: the language of gospel, Motown, highlife and party music.",
+      "pairs": ["g-motown-soul", "g-highlife", "or-brass-section"]
+    },
+    {
+      "id": "mo-carefree",
+      "cat": "mood",
+      "group": "Bright",
+      "label": "Carefree summer",
+      "prompt": "carefree summer vibe, sun-soaked guitars, breezy tropical percussion, light bouncing bass and a relaxed, feel-good glow",
+      "desc": "Sunny and easy-going. Major keys, bouncy mid-tempo grooves, clean or acoustic guitars, marimba and steel pan colors. Perfect for travel vlogs and beach scenes.",
+      "pairs": ["wo-steel-pan", "gt-clean-electric", "us-travel-vlog"]
+    },
+    {
+      "id": "mo-swagger",
+      "cat": "mood",
+      "group": "Bright",
+      "label": "Swagger",
+      "prompt": "confident swagger, a strutting head-nodding groove, punchy low end and a cool, effortless, larger-than-life attitude",
+      "desc": "Self-assured and cool. Mid-tempo grooves, strong bass, sparse hooks and space in the arrangement let the beat strut. A staple of hip-hop, funk and G-funk.",
+      "pairs": ["g-g-funk", "g-funk", "ba-808-sub"]
+    },
+    {
+      "id": "mo-melancholic",
+      "cat": "mood",
+      "group": "Dark",
+      "label": "Melancholic",
+      "prompt": "melancholic and reflective, slow minor-key piano, soft aching strings and a heavy, rain-on-the-window sadness",
+      "desc": "Thoughtful sadness. Minor keys, slower tempos, falling melodies, sparse piano and soft strings. Lyria responds well to vivid images like rain or empty streets.",
+      "pairs": ["kb-grand-piano", "or-strings-lush", "ke-natural-minor"]
+    },
+    {
+      "id": "mo-brooding",
+      "cat": "mood",
+      "group": "Dark",
+      "label": "Brooding",
+      "prompt": "brooding and dark, low simmering bass, tense sustained synths and a heavy, slow-burning atmosphere of unresolved tension",
+      "desc": "Dark, inward and tense. Low registers, minor keys, slow tempos and chords that refuse to resolve. Common in trip-hop, dark techno and crime-drama scores.",
+      "pairs": ["g-trip-hop", "ke-c-minor", "ba-reese"]
+    },
+    {
+      "id": "mo-menacing",
+      "cat": "mood",
+      "group": "Dark",
+      "label": "Menacing",
+      "prompt": "menacing and sinister, ominous low piano notes, dark distorted bass, tense staccato strings and a threatening, predatory edge",
+      "desc": "Threatening and dangerous. Low, dissonant intervals like the minor second and tritone, distorted bass and sharp staccato hits. The core mood of drill, trap and villain themes.",
+      "pairs": ["g-drill-uk", "ke-phrygian", "ba-808-sub"]
+    },
+    {
+      "id": "mo-haunting",
+      "cat": "mood",
+      "group": "Dark",
+      "label": "Haunting",
+      "prompt": "haunting and ghostly, distant wordless vocals, echoing piano, cold airy pads and a lingering, unforgettable sadness",
+      "desc": "Beautiful but unsettling, the kind of music that stays with you. Lots of reverb, wordless voices, sparse melodies and minor or modal harmony.",
+      "pairs": ["or-choir", "kb-grand-piano", "mo-eerie"]
+    },
+    {
+      "id": "mo-lonely",
+      "cat": "mood",
+      "group": "Dark",
+      "label": "Lonely",
+      "prompt": "lonely and isolated, a single fragile melody, sparse echoing instruments and wide empty space around every note",
+      "desc": "Solitude in sound. One lead instrument, minimal accompaniment, wide reverb and silence between phrases. Works for late-night city scenes and introspective edits.",
+      "pairs": ["kb-grand-piano", "gt-clean-electric", "mo-melancholic"]
+    },
+    {
+      "id": "mo-ominous",
+      "cat": "mood",
+      "group": "Dark",
+      "label": "Ominous",
+      "prompt": "ominous and foreboding, deep rumbling drones, slow heartbeat drums and low brass swells hinting at something approaching",
+      "desc": "The feeling that something bad is coming. Low drones, slow pulses, rising tension and low brass. Used in thrillers, horror trailers and boss-fight intros.",
+      "pairs": ["or-brass-section", "us-boss-battle", "ke-chromatic"]
+    },
+    {
+      "id": "mo-peaceful",
+      "cat": "mood",
+      "group": "Calm",
+      "label": "Peaceful",
+      "prompt": "peaceful and serene, soft sustained pads, gentle acoustic textures, slow flowing melodies and a calm, open sense of space",
+      "desc": "Calm with nothing to resolve. Slow tempos, consonant major or modal harmony, soft attacks and long reverb tails. Ideal for nature, wellness and relaxation content.",
+      "pairs": ["g-ambient", "us-meditation", "ke-major-penta"]
+    },
+    {
+      "id": "mo-meditative",
+      "cat": "mood",
+      "group": "Calm",
+      "label": "Meditative",
+      "prompt": "meditative and hypnotic, slow repeating patterns, long resonant drones, soft bells and a deep, steady, breathing calm",
+      "desc": "Focused stillness. Drones, repetition and slowly evolving textures help the mind settle. Often built on a single key center with little harmonic movement.",
+      "pairs": ["us-meditation", "g-minimalist-classical", "ke-432hz"]
+    },
+    {
+      "id": "mo-cozy",
+      "cat": "mood",
+      "group": "Calm",
+      "label": "Cozy",
+      "prompt": "cozy and warm, soft crackling textures, mellow keys, gentle brushed drums and a snug, fireside comfort",
+      "desc": "Warm, safe and comfortable. Soft attacks, warm low-mids, vinyl or tape texture and mellow Rhodes or acoustic guitar. The mood of lo-fi playlists and cozy games.",
+      "pairs": ["g-lofi-hiphop", "kb-rhodes", "pr-vinyl-crackle"]
+    },
+    {
+      "id": "mo-sleepy",
+      "cat": "mood",
+      "group": "Calm",
+      "label": "Sleepy",
+      "prompt": "sleepy and drowsy, a slow swaying rhythm, hushed soft instruments, a lullaby-like melody and a heavy-eyed, dreamy haze",
+      "desc": "Winding down. Very slow tempos, soft dynamics, repetitive melodies and warm, muffled tones. Pair with sleep or lullaby styles.",
+      "pairs": ["g-lullaby", "us-sleep", "en-ambient"]
+    },
+    {
+      "id": "mo-chill",
+      "cat": "mood",
+      "group": "Calm",
+      "label": "Chill",
+      "prompt": "chill and laid-back, an easy mid-tempo groove, mellow warm chords and a relaxed, unhurried, sunset-on-the-balcony vibe",
+      "desc": "Relaxed but still grooving. Mid-to-slow tempos, jazzy seventh chords, soft drums and warm bass. The default mood for lo-fi, downtempo and cafe playlists.",
+      "pairs": ["g-downtempo", "g-lofi-hiphop", "gr-laid-back"]
+    },
+    {
+      "id": "mo-spiritual",
+      "cat": "mood",
+      "group": "Calm",
+      "label": "Spiritual",
+      "prompt": "spiritual and transcendent, a soaring choir, sustained organ and drones, slow uplifting harmony and a sense of sacred, open space",
+      "desc": "Reaching toward something bigger. Choirs, organs, drones and long reverbs borrowed from churches, temples and gospel, with slow harmonic movement and swelling dynamics.",
+      "pairs": ["or-choir", "kb-hammond-b3", "g-gospel"]
+    },
+    {
+      "id": "mo-aggressive",
+      "cat": "mood",
+      "group": "Intense",
+      "label": "Aggressive",
+      "prompt": "aggressive and hard-hitting, distorted bass, pounding drums, snarling synths and a fierce, in-your-face energy",
+      "desc": "Pure force. Distortion, loud punchy drums, fast or heavy tempos and dissonant riffs. Found in metal, drill, rage, dubstep and workout music.",
+      "pairs": ["gt-distorted", "g-rage", "us-workout"]
+    },
+    {
+      "id": "mo-defiant",
+      "cat": "mood",
+      "group": "Intense",
+      "label": "Defiant",
+      "prompt": "defiant and rebellious, stomping drums, gritty guitars, chanted gang vocals and a fists-up, stand-your-ground attitude",
+      "desc": "Standing your ground. Stomping rhythms, gang vocals, distorted guitars and strong minor-to-major lifts. The heart of punk, protest songs and sports anthems.",
+      "pairs": ["g-punk", "g-pop-punk", "us-sports-hype"]
+    },
+    {
+      "id": "mo-anxious",
+      "cat": "mood",
+      "group": "Intense",
+      "label": "Anxious",
+      "prompt": "anxious and restless, ticking pulses, jittery off-kilter rhythms, tense high strings and a nervous, racing heartbeat",
+      "desc": "Unease and nervous energy. Fast repeated notes, ticking clock sounds, dissonant intervals and irregular rhythms keep the listener on edge. Common in thriller and suspense scenes.",
+      "pairs": ["ke-chromatic", "gr-five-four", "mo-ominous"]
+    },
+    {
+      "id": "mo-chaotic",
+      "cat": "mood",
+      "group": "Intense",
+      "label": "Chaotic",
+      "prompt": "chaotic and frenzied, glitching drums, clashing layers, sudden switches and a wild, overloaded, everything-at-once rush",
+      "desc": "Controlled madness. Glitches, abrupt changes, clashing rhythms and dense layers. Found in hyperpop, breakcore, rage and some jazz fusion.",
+      "pairs": ["g-hyperpop", "g-rage", "g-footwork"]
+    },
+    {
+      "id": "mo-cinematic-awe",
+      "cat": "mood",
+      "group": "Intense",
+      "label": "Cinematic awe",
+      "prompt": "awe-inspiring and vast, a swelling orchestra, towering brass, shimmering high strings and a breathtaking sense of scale",
+      "desc": "The feeling of seeing something enormous. Wide orchestral swells, open fifths, Lydian brightness and slow builds to huge peaks. Used for landscapes, space and big reveals.",
+      "pairs": ["g-film-score", "ke-lydian", "or-strings-lush"]
+    },
+    {
+      "id": "mo-urgent",
+      "cat": "mood",
+      "group": "Intense",
+      "label": "Urgent",
+      "prompt": "urgent and driving, a relentless pulsing ostinato, fast hi-hats, ticking percussion and race-against-time momentum",
+      "desc": "Time is running out. Repeating ostinatos, fast pulses, rising pitch and tight rhythms create momentum. Great for chase scenes, countdowns and action edits.",
+      "pairs": ["gr-double-time", "g-epic-trailer", "en-high"]
+    },
+    {
+      "id": "mo-determined",
+      "cat": "mood",
+      "group": "Intense",
+      "label": "Determined",
+      "prompt": "determined and focused, steady marching drums, resolute low strings and a strong melody that keeps climbing",
+      "desc": "Grit and resolve. A steady march-like pulse, low strings and a melody that climbs step by step. Perfect for training montages and comeback stories.",
+      "pairs": ["us-workout", "en-slow-build", "or-strings-lush"]
+    },
+    {
+      "id": "mo-romantic",
+      "cat": "mood",
+      "group": "Romantic",
+      "label": "Romantic",
+      "prompt": "romantic and warm, a tender melody, lush strings, soft piano and a glowing, candlelit intimacy",
+      "desc": "Love in sound. Warm major-seventh chords, lush strings or soft guitar, slow-to-mid tempos and close, intimate vocals.",
+      "pairs": ["or-strings-lush", "kb-grand-piano", "us-first-dance"]
+    },
+    {
+      "id": "mo-sensual",
+      "cat": "mood",
+      "group": "Romantic",
+      "label": "Sensual",
+      "prompt": "sensual and smooth, a slow sultry groove, deep warm bass, silky keys and a late-night, velvet atmosphere",
+      "desc": "Slow, intimate and seductive. Laid-back grooves, warm bass, Rhodes or synth pads and breathy vocals. The language of slow-jam R&B, neo-soul and reggaeton.",
+      "pairs": ["g-90s-rnb", "kb-rhodes", "vo-female-breathy"]
+    },
+    {
+      "id": "mo-yearning",
+      "cat": "mood",
+      "group": "Romantic",
+      "label": "Yearning",
+      "prompt": "yearning and aching, rising melodies that reach and fall back, swelling strings and a longing, unresolved ache",
+      "desc": "Wanting something out of reach. Melodies that leap upward, suspended chords that delay resolution and swelling dynamics. Central to power ballads and Romantic orchestral music.",
+      "pairs": ["or-strings-lush", "g-power-ballad", "mo-bittersweet"]
+    },
+    {
+      "id": "mo-heartbroken",
+      "cat": "mood",
+      "group": "Romantic",
+      "label": "Heartbroken",
+      "prompt": "heartbroken and raw, a fragile vocal, sparse piano and guitar, slow aching chords and a quiet, tearful vulnerability",
+      "desc": "After the loss. Sparse arrangements, slow tempos, minor keys or major keys with sad borrowed chords, and exposed, emotional vocals. The core of breakup ballads and bachata.",
+      "pairs": ["kb-grand-piano", "g-bachata", "mo-melancholic"]
+    },
+    {
+      "id": "mo-tender",
+      "cat": "mood",
+      "group": "Romantic",
+      "label": "Tender",
+      "prompt": "tender and gentle, soft fingerpicked guitar, delicate piano, hushed close vocals and a warm, caring intimacy",
+      "desc": "Gentle, protective love. Soft dynamics, simple melodies, fingerpicked guitar or felt piano and close-miked voices. Great for weddings, family moments and lullabies.",
+      "pairs": ["gt-acoustic-fingerpicked", "us-first-dance", "g-lullaby"]
+    },
+    {
+      "id": "mo-nostalgic",
+      "cat": "mood",
+      "group": "Nostalgic",
+      "label": "Nostalgic",
+      "prompt": "nostalgic and warm, faded retro tones, gentle tape wobble, familiar old-school chords and a golden-memory glow",
+      "desc": "Looking back fondly. Retro gear sounds, tape wobble, vinyl crackle and chords tied to a past era. Pair with an era chip to point at a specific decade.",
+      "pairs": ["pr-tape-saturation", "pr-vinyl-crackle", "g-city-pop"]
+    },
+    {
+      "id": "mo-wistful",
+      "cat": "mood",
+      "group": "Nostalgic",
+      "label": "Wistful",
+      "prompt": "wistful and reflective, soft fingerpicked guitar, a gentle melancholy melody and a quiet, faraway longing for what has passed",
+      "desc": "Soft, thoughtful longing, lighter than sadness. Gentle tempos, mixed major and minor colors and simple melodies. Perfect for indie folk and reflective montages.",
+      "pairs": ["g-indie-folk", "gt-acoustic-fingerpicked", "mo-bittersweet"]
+    },
+    {
+      "id": "mo-bittersweet",
+      "cat": "mood",
+      "group": "Nostalgic",
+      "label": "Bittersweet",
+      "prompt": "bittersweet, a happy major-key melody shaded with sad borrowed minor chords, warm yet tinged with loss",
+      "desc": "Happy and sad at the same time. Major keys mixed with borrowed minor chords (like the minor iv) and upbeat tempos under reflective melodies. A favorite trick of indie pop and J-pop.",
+      "pairs": ["ke-modal-mix", "g-indie-pop", "g-j-pop"]
+    },
+    {
+      "id": "mo-innocent",
+      "cat": "mood",
+      "group": "Nostalgic",
+      "label": "Innocent",
+      "prompt": "innocent and childlike, a simple music-box melody, glockenspiel, soft ukulele and a pure, wide-eyed wonder",
+      "desc": "Childhood and wonder. Simple melodies, high bright instruments like glockenspiel, music box and celesta, and major or pentatonic scales.",
+      "pairs": ["ke-major-penta", "g-lullaby", "mo-playful"]
+    },
+    {
+      "id": "mo-mysterious",
+      "cat": "mood",
+      "group": "Strange",
+      "label": "Mysterious",
+      "prompt": "mysterious and intriguing, a slinking bass, muted plucks, unusual chords and shadowy, curious tension",
+      "desc": "Something hidden. Chromatic lines, whole-tone or diminished harmony, muted textures and sparse, slinking rhythms. Classic for detective, heist and puzzle scenes.",
+      "pairs": ["ke-whole-tone", "ke-chromatic", "g-trip-hop"]
+    },
+    {
+      "id": "mo-psychedelic",
+      "cat": "mood",
+      "group": "Strange",
+      "label": "Psychedelic",
+      "prompt": "psychedelic and trippy, swirling phased guitars, backwards echoes, droning sitar-like tones and a kaleidoscopic, mind-bending haze",
+      "desc": "Altered-state music of the late 60s and beyond. Phasers, backwards tape, droning modal harmony, Indian instruments and long, wandering jams.",
+      "pairs": ["wo-sitar", "er-1960s", "ke-mixolydian"]
+    },
+    {
+      "id": "mo-eerie",
+      "cat": "mood",
+      "group": "Strange",
+      "label": "Eerie",
+      "prompt": "eerie and unsettling, a detuned music box, distant whispers, scraping strings and a cold, creeping unease",
+      "desc": "Something is wrong. Detuning, dissonant clusters, scraping string techniques and unexplained sounds create unease. The core of horror scores and creepy edits.",
+      "pairs": ["ke-locrian", "ke-chromatic", "mo-haunting"]
+    },
+    {
+      "id": "mo-dreamy",
+      "cat": "mood",
+      "group": "Strange",
+      "label": "Dreamy",
+      "prompt": "dreamy and floating, soft-focus synth pads, shimmering reverb, gentle chorus-warped guitars and a weightless, half-asleep haze",
+      "desc": "Soft and suspended. Lots of reverb and chorus, slow attacks, major-seventh and Lydian colors. Used in dream pop, chillwave, cloud rap and ambient.",
+      "pairs": ["g-dream-pop", "ke-lydian", "sy-juno-pad"]
+    },
+    {
+      "id": "mo-whimsical",
+      "cat": "mood",
+      "group": "Strange",
+      "label": "Whimsical",
+      "prompt": "whimsical and fairy-tale, plucky pizzicato strings, twinkling celesta, bouncy woodwinds and a storybook sense of magic",
+      "desc": "Magic and fantasy. Pizzicato strings, celesta, woodwinds and quirky rhythms in major or whole-tone colors, as in animated films and storybook scenes.",
+      "pairs": ["mo-playful", "ke-whole-tone", "or-strings-lush"]
+    },
+    {
+      "id": "mo-otherworldly",
+      "cat": "mood",
+      "group": "Strange",
+      "label": "Otherworldly",
+      "prompt": "otherworldly and alien, strange evolving textures, unfamiliar timbres, floating microtonal melodies and a vast, cosmic emptiness",
+      "desc": "Not of this planet. Unusual synthesis, granular textures, microtonal bends and huge reverbs. Ideal for sci-fi, space and surreal visuals.",
+      "pairs": ["er-futuristic", "g-ambient", "ke-whole-tone"]
+    },
+    {
+      "id": "en-ambient",
+      "cat": "energy",
+      "group": "Level",
+      "label": "Barely there",
+      "prompt": "barely-there energy: soft, sparse and floating, long gentle swells and only the faintest touches of rhythm",
+      "desc": "The lowest energy setting. Little or no percussion, quiet dynamics and slow changes. Good for backgrounds, sleep and meditation.",
+      "pairs": ["g-ambient", "us-sleep"]
+    },
+    {
+      "id": "en-low",
+      "cat": "energy",
+      "group": "Level",
+      "label": "Low-key",
+      "prompt": "low-key, relaxed energy, soft dynamics, a gentle unhurried groove and plenty of space between the notes",
+      "desc": "Calm but moving. A soft groove at moderate volume with a sparse arrangement. Works for study, podcasts and cafes.",
+      "pairs": ["us-study", "us-podcast-bed", "mo-chill"]
+    },
+    {
+      "id": "en-steady",
+      "cat": "energy",
+      "group": "Level",
+      "label": "Steady groove",
+      "prompt": "a steady, consistent groove that locks in from the first bar and keeps an even, hypnotic energy throughout",
+      "desc": "No big peaks or drops, just a reliable pulse. Ideal for loops, DJ intros and background use where sudden changes would distract.",
+      "pairs": ["us-game-loop", "g-tech-house", "us-podcast-bed"]
+    },
+    {
+      "id": "en-high",
+      "cat": "energy",
+      "group": "Level",
+      "label": "High energy",
+      "prompt": "high energy, punchy driving drums, busy rhythms, a bright full arrangement and constant forward momentum",
+      "desc": "Upbeat and full. Faster tempos, dense arrangements and strong drums keep momentum high. Great for workouts, trailers and hype edits.",
+      "pairs": ["us-workout", "mo-urgent"]
+    },
+    {
+      "id": "en-peak-time",
+      "cat": "energy",
+      "group": "Level",
+      "label": "Peak-time",
+      "prompt": "peak-time energy: relentless full-throttle drums, maximum intensity and every element hitting hard for a packed dance floor",
+      "desc": "Club term for the busiest hours of the night, when DJs play their hardest tracks. Maximum drive, loudness and intensity.",
+      "pairs": ["g-techno", "g-hardstyle", "us-workout"]
+    },
+    {
+      "id": "en-slow-build",
+      "cat": "energy",
+      "group": "Shape",
+      "label": "Slow build",
+      "prompt": "a slow build that starts sparse and quiet, layers in instruments bar by bar and rises to a huge, full climax",
+      "desc": "A long crescendo. Instruments enter one by one and dynamics rise steadily, so the payoff feels earned. Post-rock, film scores and progressive house live on it.",
+      "pairs": ["g-post-rock", "g-epic-trailer", "g-progressive-house"]
+    },
+    {
+      "id": "en-build-drop",
+      "cat": "energy",
+      "group": "Shape",
+      "label": "Build to a drop",
+      "prompt": "a tension-building riser with accelerating snare rolls and a sweeping filter that slams into a big, heavy drop",
+      "desc": "The core EDM move. A riser, snare roll and filter sweep build tension, a brief pause holds it, then the full beat and bass crash back in.",
+      "pairs": ["g-dubstep", "g-future-bass", "g-trance"]
+    },
+    {
+      "id": "en-explosive-chorus",
+      "cat": "energy",
+      "group": "Shape",
+      "label": "Calm verse, big chorus",
+      "prompt": "calm, restrained verses that explode into a loud, full, euphoric chorus with every instrument entering at once",
+      "desc": "Dynamic contrast makes the chorus hit harder. Strip the verse back, then bring in drums, bass and layered vocals all at once. A pop, rock and K-pop staple.",
+      "pairs": ["g-alt-rock", "g-k-pop", "g-dance-pop"]
+    },
+    {
+      "id": "en-fade-out",
+      "cat": "energy",
+      "group": "Shape",
+      "label": "Fade-out ending",
+      "prompt": "a fade-out ending where the final groove keeps repeating as the volume slowly drifts away",
+      "desc": "The classic radio ending: the band keeps playing while the volume falls. Describe it in the prompt so the track winds down naturally; for a hard stop, ask for a clean final hit instead.",
+      "pairs": ["g-motown-soul", "g-disco"]
+    },
+    {
+      "id": "gr-four-on-floor",
+      "cat": "groove",
+      "group": "Straight & swung",
+      "label": "Four-on-the-floor",
+      "prompt": "four-on-the-floor kick on every beat, offbeat open hi-hats and claps on 2 and 4",
+      "desc": "A kick drum on all four beats of the bar. The engine of disco, house, techno and dance-pop, usually 115 to 135 BPM.",
+      "pairs": ["g-house", "g-disco", "dr-tr909"]
+    },
+    {
+      "id": "gr-backbeat",
+      "cat": "groove",
+      "group": "Straight & swung",
+      "label": "Rock backbeat",
+      "prompt": "a straight rock backbeat, kick on 1 and 3, a big snare crack on 2 and 4 and driving eighth-note hi-hats",
+      "desc": "The most common groove in popular music: kick on beats 1 and 3, snare on 2 and 4. Rock, pop, soul and country are all built on it.",
+      "pairs": ["g-classic-rock", "g-indie-rock"]
+    },
+    {
+      "id": "gr-quantized",
+      "cat": "groove",
+      "group": "Straight & swung",
+      "label": "Straight quantized",
+      "prompt": "tightly quantized, machine-precise straight rhythm with every hit locked perfectly to the grid",
+      "desc": "Every note snapped exactly to the beat grid, with no swing. Gives techno, electropop and K-pop a sharp, robotic precision.",
+      "pairs": ["g-techno", "g-electropop"]
+    },
+    {
+      "id": "gr-laid-back",
+      "cat": "groove",
+      "group": "Straight & swung",
+      "label": "Laid-back feel",
+      "prompt": "a laid-back groove played slightly behind the beat, lazy drunken drums and loose, human timing",
+      "desc": "Snares and hats land a hair late against the kick and bass, creating a relaxed, dragging pocket. A hallmark of neo-soul, lo-fi and late-90s hip-hop.",
+      "pairs": ["g-neo-soul", "g-lofi-hiphop", "kb-rhodes"]
+    },
+    {
+      "id": "gr-half-time",
+      "cat": "groove",
+      "group": "Straight & swung",
+      "label": "Half-time",
+      "prompt": "a half-time feel with the snare on beat 3, making the groove feel slow, heavy and spacious",
+      "desc": "The snare moves from beats 2 and 4 to beat 3, so the music feels half as fast as the real tempo. Central to trap, dubstep and metal breakdowns.",
+      "pairs": ["g-dubstep", "g-trap", "g-metalcore"]
+    },
+    {
+      "id": "gr-double-time",
+      "cat": "groove",
+      "group": "Straight & swung",
+      "label": "Double-time",
+      "prompt": "a double-time feel, drums and hi-hats racing at twice the pulse for a rush of urgency",
+      "desc": "The rhythm section plays as if the tempo had doubled while the chords move at the same pace. A classic way to lift a final chorus or a rap verse.",
+      "pairs": ["mo-urgent", "en-high"]
+    },
+    {
+      "id": "gr-boom-bap-swing",
+      "cat": "groove",
+      "group": "Hip-hop & bass",
+      "label": "Boom bap swing",
+      "prompt": "a swung boom bap groove, heavy kick, cracking snare on 2 and 4 and lazy, shuffled sixteenth-note hi-hats",
+      "desc": "Sampler swing (around 55 to 62 percent on an MPC) pushes every second sixteenth late, giving 90s hip-hop its head-nod. Usually 84 to 96 BPM.",
+      "bpm": [84, 96],
+      "pairs": ["g-boom-bap", "dr-mpc", "dr-sp1200"]
+    },
+    {
+      "id": "gr-trap-half-time",
+      "cat": "groove",
+      "group": "Hip-hop & bass",
+      "label": "Trap half-time",
+      "prompt": "a half-time trap groove, snare on beat 3, rolling triplet hi-hats and stuttering, syncopated 808 kick patterns",
+      "desc": "Hats run in fast 16ths, triplets and 32nd-note rolls while the snare lands only on beat 3, so 140 BPM feels like 70. The rhythm of modern trap and pop.",
+      "bpm": [130, 160],
+      "pairs": ["g-trap", "dr-tr808", "ba-808-sub"]
+    },
+    {
+      "id": "gr-drill-slide",
+      "cat": "groove",
+      "group": "Hip-hop & bass",
+      "label": "Drill bounce",
+      "prompt": "a drill bounce, gliding 808 slides, syncopated kick patterns, skippy triplet hi-hats and a late, stuttering second snare",
+      "desc": "UK and NY drill grooves at about 140 BPM. The main snare lands on beat 3 with a shifted, syncopated second hit, hats skip in triplets and the 808 bass slides between notes.",
+      "bpm": [138, 146],
+      "pairs": ["g-drill-uk", "g-drill-ny", "ba-808-sub"]
+    },
+    {
+      "id": "gr-two-step",
+      "cat": "groove",
+      "group": "Hip-hop & bass",
+      "label": "2-step shuffle",
+      "prompt": "a two-step garage shuffle, skipping syncopated kick, crisp snare on 2 and 4 and heavily swung hi-hats",
+      "desc": "UK garage groove that drops the kick from beats 2 and 4 and swings everything hard. Around 130 to 138 BPM, it fed straight into grime and dubstep.",
+      "bpm": [130, 138],
+      "pairs": ["g-2-step", "g-uk-garage"]
+    },
+    {
+      "id": "gr-breakbeat",
+      "cat": "groove",
+      "group": "Breaks",
+      "label": "Breakbeat",
+      "prompt": "a funky breakbeat groove of chopped live drum breaks, ghost-note snares and a loose, syncopated kick",
+      "desc": "Grooves built from sampled drum breaks, the solo drum sections of funk and soul records. The basis of hip-hop, big beat, breaks and drum and bass.",
+      "pairs": ["g-breakbeat", "g-dnb"]
+    },
+    {
+      "id": "gr-amen-breaks",
+      "cat": "groove",
+      "group": "Breaks",
+      "label": "Amen-style breaks",
+      "prompt": "frantic chopped jungle breakbeats, rapid re-sequenced snare edits, ghost notes and rushing ride cymbals at high speed",
+      "desc": "Jungle and drum and bass slice a famous six-second drum solo from a 1969 soul B-side into new patterns at 160 to 175 BPM. Probably the most sampled drum break ever.",
+      "bpm": [160, 175],
+      "pairs": ["g-jungle", "g-dnb"]
+    },
+    {
+      "id": "gr-shuffle",
+      "cat": "groove",
+      "group": "Jazz & blues",
+      "label": "12/8 shuffle",
+      "prompt": "a 12/8 blues shuffle with a lilting triplet swing, heavy backbeat on 2 and 4 and a rolling, walking bass",
+      "desc": "Each beat splits into three with the middle note left out, giving the long-short shuffle feel. The heartbeat of blues, early rock and roll and boogie-woogie.",
+      "pairs": ["g-chicago-blues", "g-delta-blues", "ke-blues-scale"]
+    },
+    {
+      "id": "gr-swing-ride",
+      "cat": "groove",
+      "group": "Jazz & blues",
+      "label": "Jazz swing ride",
+      "prompt": "a swinging jazz ride cymbal pattern, feathered bass drum, walking bass on every beat and hi-hat closing on 2 and 4",
+      "desc": "The 'spang-a-lang' ride pattern with hi-hat on 2 and 4 is the core of swing and bebop. Eighth notes are played long-short rather than evenly.",
+      "pairs": ["g-bebop", "g-cool-jazz", "ba-upright"]
+    },
+    {
+      "id": "gr-waltz",
+      "cat": "groove",
+      "group": "Odd & triple meters",
+      "label": "Waltz 3/4",
+      "prompt": "a waltz in 3/4 time, a strong downbeat followed by two lighter beats, gently swaying oom-pah-pah",
+      "desc": "Three beats per bar with the weight on beat 1. The meter of waltzes, many folk songs, country ballads and lullabies.",
+      "pairs": ["g-lullaby", "g-romantic-orchestral"]
+    },
+    {
+      "id": "gr-six-eight",
+      "cat": "groove",
+      "group": "Odd & triple meters",
+      "label": "6/8 lilt",
+      "prompt": "a lilting 6/8 rhythm, two rocking pulses per bar each split into three, rolling and swaying",
+      "desc": "Six eighth notes grouped 3+3, felt as two big swaying beats. Common in Irish jigs, soul ballads, lullabies and Afro-Cuban music.",
+      "pairs": ["g-lullaby", "mo-tender", "us-first-dance"]
+    },
+    {
+      "id": "gr-five-four",
+      "cat": "groove",
+      "group": "Odd & triple meters",
+      "label": "5/4 time",
+      "prompt": "an unusual 5/4 time signature grouped three plus two, giving a lopsided, restless groove",
+      "desc": "Five beats per bar, usually felt as 3+2 or 2+3. Sounds slightly off-balance in a good way; used in cool jazz, prog and spy film themes.",
+      "pairs": ["g-prog-rock", "g-cool-jazz", "mo-anxious"]
+    },
+    {
+      "id": "gr-seven-eight",
+      "cat": "groove",
+      "group": "Odd & triple meters",
+      "label": "7/8 time",
+      "prompt": "an odd-meter 7/8 groove grouped two-two-three, a limping, propulsive rhythm that keeps tumbling forward",
+      "desc": "Seven eighth notes per bar, often grouped 2+2+3. Native to Balkan folk dances and loved by prog and math rock for its urgent stumble.",
+      "pairs": ["g-prog-rock", "mo-urgent"]
+    },
+    {
+      "id": "gr-dembow",
+      "cat": "groove",
+      "group": "Latin & Caribbean",
+      "label": "Dembow",
+      "prompt": "the dembow rhythm, a kick on every beat with snares on syncopated 3-3-2 offbeats and rattling percussion on top",
+      "desc": "Named after a 1990 Jamaican dancehall riddim. A kick on each beat plus snares that outline a 3-3-2 pattern. The heartbeat of reggaeton and Dominican dembow.",
+      "bpm": [88, 130],
+      "pairs": ["g-reggaeton", "g-dembow"]
+    },
+    {
+      "id": "gr-bossa-clave",
+      "cat": "groove",
+      "group": "Latin & Caribbean",
+      "label": "Bossa nova clave",
+      "prompt": "a bossa nova rhythm, syncopated rim-click clave, soft brushed eighth notes and a gentle two-feel bass",
+      "desc": "A relaxed cousin of the son clave with its last hit shifted later. Played as rim clicks under soft brushes and an alternating root-fifth bass.",
+      "pairs": ["g-bossa-nova", "gt-nylon"]
+    },
+    {
+      "id": "gr-son-clave",
+      "cat": "groove",
+      "group": "Latin & Caribbean",
+      "label": "Son clave",
+      "prompt": "a 3-2 son clave pattern driving the groove, with congas, cowbell and a syncopated tumbao bass locked to it",
+      "desc": "A two-bar Afro-Cuban key pattern: three hits, then two. Every part in salsa and son is arranged around it; playing against it is called crossing the clave.",
+      "pairs": ["g-salsa", "gr-afro-poly"]
+    },
+    {
+      "id": "gr-one-drop",
+      "cat": "groove",
+      "group": "Latin & Caribbean",
+      "label": "Reggae one-drop",
+      "prompt": "a reggae one-drop beat, kick and rimshot together on beat 3, an open, spacious beat 1 and relaxed hi-hats",
+      "desc": "Reggae's signature drum groove: the kick skips beat 1 and lands with the rimshot on beat 3. Laid-back and spacious, usually 60 to 90 BPM.",
+      "bpm": [60, 90],
+      "pairs": ["g-reggae", "g-roots-dub", "gr-skank"]
+    },
+    {
+      "id": "gr-rockers",
+      "cat": "groove",
+      "group": "Latin & Caribbean",
+      "label": "Rockers beat",
+      "prompt": "a rockers reggae beat, steady kick on every beat, crisp rimshots and driving, marching hi-hats",
+      "desc": "Mid-70s Jamaican drum style with the kick on all four beats, more urgent than the one-drop. Later carried into dub, digital reggae and UK sound-system music.",
+      "pairs": ["g-reggae", "g-roots-dub"]
+    },
+    {
+      "id": "gr-skank",
+      "cat": "groove",
+      "group": "Latin & Caribbean",
+      "label": "Offbeat skank",
+      "prompt": "an offbeat skank, choppy guitar and keyboard chords on every 'and', bouncing against the bass",
+      "desc": "Short, muted chords on the offbeats. The signature rhythm of ska, rocksteady and reggae; fast and bouncy in ska, relaxed in reggae.",
+      "pairs": ["g-reggae", "gt-clean-electric"]
+    },
+    {
+      "id": "gr-afro-poly",
+      "cat": "groove",
+      "group": "African",
+      "label": "Afro polyrhythm",
+      "prompt": "a polyrhythmic afro groove, interlocking hand drums, shakers and bells layering three-against-two patterns",
+      "desc": "Several rhythms in different groupings played at once, often 3 against 2 over a repeating bell pattern. Rooted in West and Central African drumming.",
+      "pairs": ["g-afrobeats", "g-afrobeat-70s", "g-afro-house"]
+    },
+    {
+      "id": "gr-amapiano",
+      "cat": "groove",
+      "group": "African",
+      "label": "Log-drum bounce",
+      "prompt": "an amapiano bounce, syncopated log-drum bass hits, shuffling shakers, soft kick and lazy offbeat percussion",
+      "desc": "Amapiano's laid-back groove at about 108 to 115 BPM. The pitched log drum plays syncopated basslines while shakers shuffle on top.",
+      "bpm": [108, 115],
+      "pairs": ["g-amapiano", "wo-log-drum"]
+    },
+    {
+      "id": "ke-c-major",
+      "cat": "key",
+      "group": "Keys",
+      "label": "C major",
+      "prompt": "in C major for a pure, simple and bright sound",
+      "desc": "No sharps or flats: all white keys on the piano. Sounds plain, open and honest. Relative minor: A minor.",
+      "pairs": ["ke-a-minor"]
+    },
+    {
+      "id": "ke-a-minor",
+      "cat": "key",
+      "group": "Keys",
+      "label": "A minor",
+      "prompt": "in A minor for a natural, reflective minor color",
+      "desc": "The relative minor of C major, also with no sharps or flats. A favorite of EDM, pop and piano ballads for its easy, honest sadness.",
+      "pairs": ["ke-c-major"]
+    },
+    {
+      "id": "ke-g-major",
+      "cat": "key",
+      "group": "Keys",
+      "label": "G major",
+      "prompt": "in G major for a warm, open, folky brightness",
+      "desc": "One sharp (F#). Sits naturally under open guitar chords, so it rules folk, country and campfire songs. Relative minor: E minor.",
+      "pairs": ["ke-e-minor", "g-bluegrass"]
+    },
+    {
+      "id": "ke-e-minor",
+      "cat": "key",
+      "group": "Keys",
+      "label": "E minor",
+      "prompt": "in E minor for a dark, guitar-heavy edge",
+      "desc": "One sharp. The lowest open string on a standard-tuned guitar is E, so rock and metal riffs live here. Relative major: G major.",
+      "pairs": ["ke-g-major", "gt-distorted"]
+    },
+    {
+      "id": "ke-d-major",
+      "cat": "key",
+      "group": "Keys",
+      "label": "D major",
+      "prompt": "in D major for a ringing, triumphant brightness",
+      "desc": "Two sharps. Bright and resonant on violin and guitar because their open strings ring along. Relative minor: B minor.",
+      "pairs": ["ke-b-minor", "mo-triumphant"]
+    },
+    {
+      "id": "ke-b-minor",
+      "cat": "key",
+      "group": "Keys",
+      "label": "B minor",
+      "prompt": "in B minor for a moody, introspective darkness",
+      "desc": "Two sharps, relative of D major. Brooding and personal; common in trap, R&B and melancholy pop.",
+      "pairs": ["ke-d-major", "mo-brooding"]
+    },
+    {
+      "id": "ke-f-major",
+      "cat": "key",
+      "group": "Keys",
+      "label": "F major",
+      "prompt": "in F major for a warm, pastoral, gentle feel",
+      "desc": "One flat (Bb). Warm and gentle, comfortable for piano and for many singers. Relative minor: D minor.",
+      "pairs": ["ke-d-minor", "mo-peaceful"]
+    },
+    {
+      "id": "ke-d-minor",
+      "cat": "key",
+      "group": "Keys",
+      "label": "D minor",
+      "prompt": "in D minor for a serious, dramatic melancholy",
+      "desc": "One flat. Serious and dramatic, often joked about as the saddest key. Big in film scores, requiems and EDM. Relative major: F major.",
+      "pairs": ["ke-f-major", "g-film-score"]
+    },
+    {
+      "id": "ke-bb-major",
+      "cat": "key",
+      "group": "Keys",
+      "label": "Bb major",
+      "prompt": "in B-flat major for a warm, brassy, soulful glow",
+      "desc": "Two flats. Trumpets, clarinets and tenor saxes are pitched in Bb, so jazz, brass bands and gospel favor it. Relative minor: G minor.",
+      "pairs": ["ke-g-minor", "or-brass-section"]
+    },
+    {
+      "id": "ke-g-minor",
+      "cat": "key",
+      "group": "Keys",
+      "label": "G minor",
+      "prompt": "in G minor for a dramatic, stormy intensity",
+      "desc": "Two flats, relative of Bb major. Dramatic and passionate; a favorite of Baroque composers and modern film music.",
+      "pairs": ["ke-bb-major", "g-baroque"]
+    },
+    {
+      "id": "ke-eb-major",
+      "cat": "key",
+      "group": "Keys",
+      "label": "Eb major",
+      "prompt": "in E-flat major for a noble, heroic warmth",
+      "desc": "Three flats. Rich and heroic, comfortable for horns and alto sax (an Eb instrument). Common in jazz, soul ballads and grand orchestral themes. Relative minor: C minor.",
+      "pairs": ["ke-c-minor", "mo-triumphant"]
+    },
+    {
+      "id": "ke-c-minor",
+      "cat": "key",
+      "group": "Keys",
+      "label": "C minor",
+      "prompt": "in C minor for a stormy, tragic, heroic darkness",
+      "desc": "Three flats, relative of Eb major. Long tied to struggle and tragedy in classical music, and a trap and drill staple today.",
+      "pairs": ["ke-eb-major", "mo-menacing"]
+    },
+    {
+      "id": "ke-e-major",
+      "cat": "key",
+      "group": "Keys",
+      "label": "E major",
+      "prompt": "in E major for a bright, ringing, guitar-driven energy",
+      "desc": "Four sharps. Guitar-friendly thanks to the open low E, so it is everywhere in blues, rock and country. Relative minor: C# minor.",
+      "pairs": ["ke-cs-minor", "g-classic-rock"]
+    },
+    {
+      "id": "ke-cs-minor",
+      "cat": "key",
+      "group": "Keys",
+      "label": "C# minor",
+      "prompt": "in C-sharp minor for a moody, nocturnal piano color",
+      "desc": "Four sharps, relative of E major. Dark and intimate; famous in moonlit classical piano music and modern pop ballads.",
+      "pairs": ["ke-e-major", "kb-grand-piano"]
+    },
+    {
+      "id": "ke-a-major",
+      "cat": "key",
+      "group": "Keys",
+      "label": "A major",
+      "prompt": "in A major for a sunny, confident brightness",
+      "desc": "Three sharps. Bright and confident, easy on guitar with open A and E strings. Loved in country, rock and pop. Relative minor: F# minor.",
+      "pairs": ["ke-fs-minor", "mo-carefree"]
+    },
+    {
+      "id": "ke-fs-minor",
+      "cat": "key",
+      "group": "Keys",
+      "label": "F# minor",
+      "prompt": "in F-sharp minor for a moody, emotional depth",
+      "desc": "Three sharps, relative of A major. A common home for melancholy house, pop and R&B, with a bittersweet, glowing darkness.",
+      "pairs": ["ke-a-major", "g-deep-house"]
+    },
+    {
+      "id": "ke-major-scale",
+      "cat": "key",
+      "group": "Scales & modes",
+      "label": "Major (Ionian)",
+      "prompt": "built on the major scale for a bright, stable, happy sound",
+      "desc": "Whole and half steps in the pattern W-W-H-W-W-W-H. The reference point for every other mode: bright, settled and familiar.",
+      "pairs": ["mo-joyful"]
+    },
+    {
+      "id": "ke-natural-minor",
+      "cat": "key",
+      "group": "Scales & modes",
+      "label": "Natural minor",
+      "prompt": "built on the natural minor scale for a sad, dark, grounded sound",
+      "desc": "Also called Aeolian: the major scale started from its sixth note. A flat 3rd, 6th and 7th give it the sad, grounded sound used across pop, rock and EDM.",
+      "pairs": ["mo-melancholic"]
+    },
+    {
+      "id": "ke-harmonic-minor",
+      "cat": "key",
+      "group": "Scales & modes",
+      "label": "Harmonic minor",
+      "prompt": "built on the harmonic minor scale, with exotic tension from its raised seventh",
+      "desc": "Natural minor with a raised 7th, creating a strong pull to the root and an exotic gap (augmented 2nd) between the 6th and 7th. Heard in classical, metal, flamenco and drill melodies.",
+      "pairs": ["g-baroque", "g-drill-uk"]
+    },
+    {
+      "id": "ke-melodic-minor",
+      "cat": "key",
+      "group": "Scales & modes",
+      "label": "Melodic minor",
+      "prompt": "built on the melodic minor scale for a smoky, sophisticated jazz color",
+      "desc": "Minor with a raised 6th and 7th. Classical players use it going up and revert coming down; jazz uses it both ways for a smooth, sophisticated minor sound.",
+      "pairs": ["g-cool-jazz", "g-neo-soul"]
+    },
+    {
+      "id": "ke-dorian",
+      "cat": "key",
+      "group": "Scales & modes",
+      "label": "Dorian",
+      "prompt": "in a Dorian minor mode, minor but hopeful and funky thanks to its bright sixth",
+      "desc": "A minor scale with a raised 6th. Less sad than natural minor, with a cool, funky lift; heard in funk, jazz, Celtic folk and neo-soul vamps.",
+      "pairs": ["g-funk", "g-neo-soul"]
+    },
+    {
+      "id": "ke-phrygian",
+      "cat": "key",
+      "group": "Scales & modes",
+      "label": "Phrygian",
+      "prompt": "in the dark Phrygian mode with a menacing flat second",
+      "desc": "A minor scale with a flat 2nd that pulls hard toward the root. Dark and heavy with a Spanish tinge; a metal and drill favorite.",
+      "pairs": ["g-heavy-metal", "mo-menacing"]
+    },
+    {
+      "id": "ke-phrygian-dominant",
+      "cat": "key",
+      "group": "Scales & modes",
+      "label": "Phrygian dominant",
+      "prompt": "built on the Phrygian dominant scale for a Middle-Eastern, flamenco flavor",
+      "desc": "The 5th mode of harmonic minor: a major 3rd with a flat 2nd and flat 6th. The sound of flamenco, Middle Eastern and klezmer music, plus many surf and metal riffs.",
+      "pairs": ["g-surf-rock", "gt-nylon"]
+    },
+    {
+      "id": "ke-lydian",
+      "cat": "key",
+      "group": "Scales & modes",
+      "label": "Lydian",
+      "prompt": "in the Lydian mode, floating and dreamy with a raised fourth",
+      "desc": "A major scale with a sharp 4th. Floating, magical and slightly unreal; film composers use it for wonder, flight and space.",
+      "pairs": ["mo-cinematic-awe", "mo-dreamy"]
+    },
+    {
+      "id": "ke-mixolydian",
+      "cat": "key",
+      "group": "Scales & modes",
+      "label": "Mixolydian",
+      "prompt": "in the Mixolydian mode for a bluesy, swaggering rock brightness",
+      "desc": "A major scale with a flat 7th. Bright but bluesy, the sound of classic rock riffs, jam bands, Celtic tunes and funk vamps.",
+      "pairs": ["g-classic-rock", "g-funk"]
+    },
+    {
+      "id": "ke-locrian",
+      "cat": "key",
+      "group": "Scales & modes",
+      "label": "Locrian",
+      "prompt": "in the unstable Locrian mode with a flattened fifth",
+      "desc": "The darkest mode: a flat 2nd and flat 5th make its root chord diminished, so it never quite feels at rest. Rare outside metal and experimental music.",
+      "pairs": ["mo-eerie", "g-metalcore"]
+    },
+    {
+      "id": "ke-major-penta",
+      "cat": "key",
+      "group": "Scales & modes",
+      "label": "Major pentatonic",
+      "prompt": "built on the major pentatonic scale for a sunny, singable, folk-like melody",
+      "desc": "Five notes with no half steps (1, 2, 3, 5, 6), so nothing clashes. The scale of folk songs, country licks, gospel and East Asian folk melodies.",
+      "pairs": ["g-country", "mo-innocent"]
+    },
+    {
+      "id": "ke-minor-penta",
+      "cat": "key",
+      "group": "Scales & modes",
+      "label": "Minor pentatonic",
+      "prompt": "built on the minor pentatonic scale for gritty, bluesy riffs",
+      "desc": "Five notes (1, b3, 4, 5, b7). The first scale most guitarists learn and the backbone of rock and blues solos, R&B runs and hip-hop hooks.",
+      "pairs": ["g-classic-rock", "gt-distorted"]
+    },
+    {
+      "id": "ke-blues-scale",
+      "cat": "key",
+      "group": "Scales & modes",
+      "label": "Blues scale",
+      "prompt": "built on the blues scale with a bent, gritty blue note",
+      "desc": "Minor pentatonic plus the flat 5th, the blue note. Bent and slid into, it gives blues, rock and jazz their crying, gritty edge.",
+      "pairs": ["g-chicago-blues", "g-delta-blues"]
+    },
+    {
+      "id": "ke-whole-tone",
+      "cat": "key",
+      "group": "Scales & modes",
+      "label": "Whole-tone",
+      "prompt": "built on the whole-tone scale for a dreamlike, weightless ambiguity",
+      "desc": "Six notes, each a whole step apart, with no home note. Sounds suspended and dreamlike: the classic TV dream-sequence or flashback sound.",
+      "pairs": ["mo-dreamy", "mo-mysterious"]
+    },
+    {
+      "id": "ke-chromatic",
+      "cat": "key",
+      "group": "Scales & modes",
+      "label": "Chromatic tension",
+      "prompt": "with chromatic, creeping half-step lines that build unsettling tension",
+      "desc": "Melodies or basslines that move by half steps through the twelve notes. Builds suspense in horror and thriller music and slick passing runs in jazz.",
+      "pairs": ["mo-eerie", "g-bebop"]
+    },
+    {
+      "id": "ke-key-change",
+      "cat": "key",
+      "group": "Harmony moves",
+      "label": "Key change lift",
+      "prompt": "with an uplifting key change up a whole step into the final chorus",
+      "desc": "Shifting the whole song up a half or whole step for the last chorus. Nicknamed the truck driver's gear change; a power-ballad and pop classic.",
+      "pairs": ["g-power-ballad", "en-explosive-chorus"]
+    },
+    {
+      "id": "ke-modal-mix",
+      "cat": "key",
+      "group": "Harmony moves",
+      "label": "Borrowed chords",
+      "prompt": "in a major key with borrowed minor chords for a bittersweet twist",
+      "desc": "Modal interchange: borrowing chords from the parallel minor, like a minor iv or a flat VI in a major key. Adds instant nostalgia and bittersweet color.",
+      "pairs": ["mo-bittersweet", "mo-nostalgic"]
+    },
+    {
+      "id": "ke-432hz",
+      "cat": "key",
+      "group": "Tuning feel",
+      "label": "A=432 Hz",
+      "prompt": "tuned to A=432 Hz for a soft, warm, slightly mellow tone",
+      "desc": "An alternative to standard A=440 Hz tuning, about a third of a semitone lower. Popular in wellness and meditation music for a warmer feel, though claims of special healing powers lack scientific support.",
+      "pairs": ["us-meditation", "mo-meditative"]
+    },
+    {
+      "id": "us-tiktok-hook",
+      "cat": "usecase",
+      "group": "Video & media",
+      "label": "TikTok hook",
+      "prompt": "a short-video hook that grabs attention in the first five seconds, with an instantly catchy repeating motif and a punchy beat drop",
+      "desc": "Short-video clips are often 15 to 30 seconds, so the hook must land immediately. Lead with the catchiest part, keep a loopable motif and put a drop where an edit can cut on it.",
+      "pairs": ["er-modern", "en-build-drop", "g-jersey-club"]
+    },
+    {
+      "id": "us-youtube-intro",
+      "cat": "usecase",
+      "group": "Video & media",
+      "label": "YouTube intro",
+      "prompt": "a short, punchy YouTube intro theme, a bold signature riff, quick build and a clean, branded ending hit",
+      "desc": "A 5 to 10 second sonic logo for a channel. One memorable riff, a fast build and a clear final hit that sits under a title card. Generate a full clip, then trim.",
+      "pairs": ["us-ad-jingle", "en-high"]
+    },
+    {
+      "id": "us-podcast-bed",
+      "cat": "usecase",
+      "group": "Video & media",
+      "label": "Podcast bed",
+      "prompt": "an unobtrusive podcast background bed, soft steady groove, warm mellow chords and a sparse mid-range that leaves room for speech",
+      "desc": "Music that sits under talking. Keep the mid-range, where voices live, sparse, the energy steady and the melody simple so it never competes with speech. Instrumental works best.",
+      "pairs": ["en-low", "en-steady", "g-downtempo"]
+    },
+    {
+      "id": "us-ad-jingle",
+      "cat": "usecase",
+      "group": "Video & media",
+      "label": "Ad jingle",
+      "prompt": "an upbeat advertising jingle, a bright, instantly memorable hook, clean cheerful instrumentation and a crisp, confident ending sting",
+      "desc": "Short, catchy music for commercials. A simple melody that sticks after one listen, a positive major-key mood and a button ending for the logo.",
+      "pairs": ["mo-playful", "mo-joyful", "ke-major-penta"]
+    },
+    {
+      "id": "us-film-trailer",
+      "cat": "usecase",
+      "group": "Video & media",
+      "label": "Film trailer",
+      "prompt": "a film trailer cue in three rising acts: a mysterious opening, building percussion and strings, then a huge brass and choir climax",
+      "desc": "Trailers usually move in three acts, each bigger than the last, separated by silences and braams. Ask for clear hits and pauses so editors can cut picture to them.",
+      "pairs": ["g-epic-trailer", "en-slow-build", "mo-cinematic-awe"]
+    },
+    {
+      "id": "us-travel-vlog",
+      "cat": "usecase",
+      "group": "Video & media",
+      "label": "Travel vlog",
+      "prompt": "upbeat travel vlog montage music, bright guitars and claps, sunny tropical percussion and a carefree, feel-good groove",
+      "desc": "Feel-good background for montage edits. Mid-to-up tempos, clean guitars, claps and light percussion that cut well on the beat.",
+      "bpm": [100, 120],
+      "pairs": ["mo-carefree", "wo-steel-pan", "g-afrobeats"]
+    },
+    {
+      "id": "us-game-loop",
+      "cat": "usecase",
+      "group": "Games",
+      "label": "Game loop",
+      "prompt": "a seamlessly looping video game background track, steady energy, a short memorable melody and an ending that flows back into the start",
+      "desc": "Background music for levels and menus that repeats for minutes. Even energy, a hummable short theme and a matching start and end make the loop seamless.",
+      "pairs": ["g-chiptune", "g-lofi-game", "en-steady"]
+    },
+    {
+      "id": "us-boss-battle",
+      "cat": "usecase",
+      "group": "Games",
+      "label": "Boss battle",
+      "prompt": "an intense boss battle theme, pounding drums, an aggressive driving ostinato, dramatic brass and choir stabs and relentless rising tension",
+      "desc": "Game music for the big fight. Fast tempos, minor keys, driving ostinatos, choir and brass, often with rock or electronic drums layered in.",
+      "bpm": [140, 180],
+      "pairs": ["or-choir", "or-brass-section", "mo-ominous", "g-metalcore"]
+    },
+    {
+      "id": "us-workout",
+      "cat": "usecase",
+      "group": "Focus & wellness",
+      "label": "Workout",
+      "prompt": "a high-energy workout track, a pounding motivating beat, driving bass, punchy drops and relentless forward momentum",
+      "desc": "Music for training. Tempos of about 120 to 150 BPM match running cadence and lifting intensity; strong kicks and drops keep motivation high.",
+      "bpm": [120, 150],
+      "pairs": ["en-high", "mo-determined", "g-drift-phonk", "g-hardstyle"]
+    },
+    {
+      "id": "us-study",
+      "cat": "usecase",
+      "group": "Focus & wellness",
+      "label": "Study & focus",
+      "prompt": "calm study music, a steady gentle beat, soft repetitive chords and an even, unobtrusive mood that stays in the background",
+      "desc": "Background music for concentration. Steady tempo, little dynamic change, repetitive harmony and usually instrumental, so it never pulls attention from the task.",
+      "bpm": [60, 90],
+      "pairs": ["g-lofi-hiphop", "g-neoclassical-piano", "en-low"]
+    },
+    {
+      "id": "us-sleep",
+      "cat": "usecase",
+      "group": "Focus & wellness",
+      "label": "Sleep",
+      "prompt": "soothing sleep music, an ultra-slow tempo, soft warm drones and pads, gentle low piano and a deep, calming stillness",
+      "desc": "Music for falling asleep. Very slow or beatless, soft and low, with no sudden changes. Long tracks with gentle fades work best.",
+      "bpm": [40, 60],
+      "pairs": ["g-ambient", "mo-sleepy", "en-ambient"]
+    },
+    {
+      "id": "us-meditation",
+      "cat": "usecase",
+      "group": "Focus & wellness",
+      "label": "Meditation",
+      "prompt": "meditation music, long sustained drones, resonant singing bowls, soft breathing pads and a slow, spacious, timeless flow",
+      "desc": "Supports breathing and stillness. Drones, singing bowls, soft pads and a slow, steady pace; some practitioners like A=432 Hz tuning.",
+      "pairs": ["mo-meditative", "ke-432hz", "g-ambient"]
+    },
+    {
+      "id": "us-first-dance",
+      "cat": "usecase",
+      "group": "Events & spaces",
+      "label": "Wedding first dance",
+      "prompt": "a romantic wedding first-dance song, slow tender tempo, warm piano and strings, heartfelt melody and a swelling, emotional final chorus",
+      "desc": "A slow, swaying love song for the couple's first dance. Usually 60 to 80 BPM or a 3/4 or 6/8 waltz feel, about three minutes long.",
+      "bpm": [60, 80],
+      "pairs": ["mo-romantic", "mo-tender", "kb-grand-piano", "gr-six-eight"]
+    },
+    {
+      "id": "us-cafe",
+      "cat": "usecase",
+      "group": "Events & spaces",
+      "label": "Cafe background",
+      "prompt": "relaxed cafe background music, light acoustic guitar and jazzy piano, brushed drums and a warm, friendly, easy-listening mood",
+      "desc": "Ambient music for shops and cafes. Mid-to-low tempo, light jazz, bossa or acoustic textures, and an even volume that supports conversation.",
+      "pairs": ["g-bossa-nova", "g-smooth-jazz", "mo-chill"]
+    },
+    {
+      "id": "us-dj-opener",
+      "cat": "usecase",
+      "group": "Events & spaces",
+      "label": "DJ set opener",
+      "prompt": "a DJ set opener with a long mix-friendly intro, a steady kick, slowly unfolding layers and a gradual rise in energy",
+      "desc": "The first track of a DJ set warms the room. Long intros and outros with steady drums make it easy to mix, and the energy rises gradually instead of peaking early.",
+      "bpm": [118, 124],
+      "pairs": ["g-deep-house", "g-tech-house", "en-slow-build"]
+    },
+    {
+      "id": "us-sports-hype",
+      "cat": "usecase",
+      "group": "Events & spaces",
+      "label": "Sports hype",
+      "prompt": "a stadium sports hype track, stomp-stomp-clap drums, big crowd chants, distorted bass and an anthemic, rising build",
+      "desc": "Arena music for entrances and highlight reels. Stomps and claps, crowd chants, big drums and a simple chant-along hook pump up a crowd.",
+      "pairs": ["mo-triumphant", "mo-defiant", "gr-backbeat"]
+    }
+  ]
+}

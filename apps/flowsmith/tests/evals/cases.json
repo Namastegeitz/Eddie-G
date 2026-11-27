@@ -1,0 +1,26 @@
+{
+  "about": "Saved good examples for FLOWSMITH's Composer (offline engine and Claude). Each case is a request plus properties a good Flow Music prompt must have. Rerun before every release; a drop blocks the release.",
+  "minScore": 75,
+  "cases": [
+    { "id": "e01", "query": "dark boom bap 90 bpm in F minor with 808 drums, rainy night", "chips": ["mo-brooding", "kb-rhodes"], "expect": { "includes": ["90 BPM", "F minor", "TR-808", "boom bap"], "vocals": "auto" } },
+    { "id": "e02", "query": "chill lofi with rhodes and vinyl crackle for studying", "chips": ["vo-instrumental"], "expect": { "includes": ["Rhodes", "nstrumental", "vinyl"] } },
+    { "id": "e03", "query": "505 drums and a juno pad, 80s, in A minor, nostalgic summer night drive", "chips": ["g-synthwave"], "expect": { "includes": ["TR-505", "A minor", "1980s"] } },
+    { "id": "e04", "query": "trap 140 bpm with 808s and female vocals about getting money", "chips": [], "expect": { "includes": ["140 BPM", "female"], "vocals": "vocals" } },
+    { "id": "e05", "query": "uk drill 142 bpm, sliding 808s, menacing", "chips": ["g-drill-uk", "mo-menacing"], "expect": { "includes": ["142 BPM"] } },
+    { "id": "e06", "query": "deep house 122 bpm warm and late night", "chips": ["g-deep-house", "dr-tr909", "pr-sidechain"], "expect": { "includes": ["122 BPM", "909"] } },
+    { "id": "e07", "query": "neo soul love song in Eb major", "chips": ["g-neo-soul", "kb-rhodes", "vo-female-breathy", "mo-romantic"], "expect": { "includes": ["Eb major", "Rhodes"], "vocals": "vocals" } },
+    { "id": "e08", "query": "epic trailer music, huge drums and choir, 3 minutes", "chips": ["or-choir", "or-brass-section", "dr-taiko", "vo-instrumental"], "expect": { "includes": ["3 minutes", "nstrumental"] } },
+    { "id": "e09", "query": "amapiano 113 bpm with log drums, summer party", "chips": ["g-amapiano", "wo-log-drum", "mo-euphoric"], "expect": { "includes": ["113 BPM"] } },
+    { "id": "e10", "query": "reggaeton 95 bpm in Spanish, romantic", "chips": ["g-reggaeton", "gr-dembow", "vo-solo-male"], "expect": { "includes": ["95 BPM", "Spanish"], "vocals": "vocals" } },
+    { "id": "e11", "query": "acoustic folk ballad, fingerpicked guitar, 1 minute", "chips": ["gt-acoustic-fingerpicked", "vo-solo-female", "mo-wistful"], "expect": { "includes": ["1 minute"] } },
+    { "id": "e12", "query": "synthwave night drive 100 bpm", "chips": ["g-synthwave", "sy-juno-pad", "dr-linndrum", "pr-gated-reverb", "vo-instrumental"], "expect": { "includes": ["100 BPM", "nstrumental"] } },
+    { "id": "e13", "query": "drum and bass 174 bpm liquid, rolling", "chips": ["g-liquid-dnb", "ba-reese", "vo-instrumental"], "expect": { "includes": ["174 BPM"] } },
+    { "id": "e14", "query": "jazz trio smoky club, 120 bpm swing", "chips": ["g-bebop", "kb-grand-piano", "ba-upright", "vo-instrumental"], "expect": { "includes": ["120 BPM", "upright"] } },
+    { "id": "e15", "query": "punk 180 bpm angry fast", "chips": ["g-punk", "gt-distorted", "mo-aggressive", "vo-gang-vocals"], "expect": { "includes": ["180 BPM"], "vocals": "vocals" } },
+    { "id": "e16", "query": "afrobeats 104 bpm wedding dance", "chips": ["g-afrobeats", "mo-joyful", "vo-solo-male"], "expect": { "includes": ["104 BPM"] } },
+    { "id": "e17", "query": "tiktok hook, catchy, 30 seconds", "chips": ["g-dance-pop", "us-tiktok-hook", "vo-solo-female"], "expect": { "includes": ["30-second"] } },
+    { "id": "e18", "query": "sleep music, slow and peaceful, 60 bpm", "chips": ["g-ambient", "mo-peaceful", "us-sleep", "vo-instrumental"], "expect": { "includes": ["60 BPM", "nstrumental"] } },
+    { "id": "e19", "query": "country heartbreak song, pedal steel", "chips": ["g-country", "gt-pedal-steel", "mo-heartbroken", "vo-male-baritone"], "expect": { "includes": ["pedal steel"], "vocals": "vocals" } },
+    { "id": "e20", "query": "video game boss battle loop, 150 bpm, chiptune", "chips": ["g-chiptune", "mo-urgent", "vo-instrumental"], "expect": { "includes": ["150 BPM", "nstrumental"] } }
+  ]
+}

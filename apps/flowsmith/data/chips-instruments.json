@@ -1,0 +1,2412 @@
+{
+  "chips": [
+    {
+      "id": "dr-tr808",
+      "cat": "drums",
+      "group": "Drum machines",
+      "label": "TR-808",
+      "prompt": "booming Roland TR-808 drum machine: deep tuned kick, snappy snare, crisp closed hats, handclaps and cowbell",
+      "desc": "Roland's 1980 analog drum machine flopped on release, then became the sound of electro, Miami bass, hip-hop and trap. With its decay turned up, the kick doubles as a sub bass.",
+      "bpm": [70, 150],
+      "pairs": ["ba-808-sub", "dr-trap-hat-rolls", "dr-clap-stack", "g-trap", "g-boom-bap"]
+    },
+    {
+      "id": "dr-tr909",
+      "cat": "drums",
+      "group": "Drum machines",
+      "label": "TR-909",
+      "prompt": "punchy Roland TR-909 drum machine: driving four-on-the-floor kick, sizzling offbeat open hats, bright clap and crashing ride",
+      "desc": "Roland's 1983 hybrid machine: analog kick, snare and clap with sampled hats and cymbals. Chicago and Detroit producers made it the backbone of house and techno.",
+      "bpm": [118, 140],
+      "pairs": ["ba-acid-303", "dr-open-hat-offbeat", "pr-sidechain", "g-house", "g-techno"]
+    },
+    {
+      "id": "dr-tr707",
+      "cat": "drums",
+      "group": "Drum machines",
+      "label": "TR-707",
+      "prompt": "crisp Roland TR-707 sampled drums: tight digital kick, clean snappy snare, bright cowbell and tambourine in a mid-80s dance groove",
+      "desc": "Roland's 1985 all-sample drum machine, clean and slightly thin. A staple of freestyle, Italo disco, early Chicago house and 80s synth-pop.",
+      "bpm": [110, 130],
+      "pairs": ["ba-analog-synth", "sy-juno-pad", "g-house", "g-synthwave"]
+    },
+    {
+      "id": "dr-tr606",
+      "cat": "drums",
+      "group": "Drum machines",
+      "label": "TR-606",
+      "prompt": "thin, ticking Roland TR-606 analog drums: clicky kick, papery snare and fizzy hi-hats in busy sixteenth-note patterns",
+      "desc": "Roland's 1981 Drumatix, built as a partner for the TB-303 bass. Its small, clicky analog sounds suit acid, electro, IDM and lo-fi indie.",
+      "bpm": [100, 140],
+      "pairs": ["ba-acid-303", "sy-sh101", "sy-modular-bleeps", "g-techno"]
+    },
+    {
+      "id": "dr-tr505",
+      "cat": "drums",
+      "group": "Drum machines",
+      "label": "TR-505",
+      "prompt": "lo-fi Roland TR-505 drum machine: small, boxy sampled kick and snare, plinky congas, timbales and cowbell in a cheerful mid-80s pattern",
+      "desc": "Roland's 1986 budget PCM drum machine, with tiny lo-fi samples of kick, snare, congas, timbales and cowbells. Cheap and charming, it turns up in early house, bedroom pop and lo-fi electronica.",
+      "bpm": [100, 128],
+      "pairs": ["sy-chiptune", "sy-lofi-keys", "ba-analog-synth", "g-house", "g-lofi-hiphop"]
+    },
+    {
+      "id": "dr-cr78",
+      "cat": "drums",
+      "group": "Drum machines",
+      "label": "CR-78",
+      "prompt": "vintage Roland CR-78 rhythm box: soft thumping kick, ticking metallic hi-hat, tambourine and guiro in a gentle preset groove",
+      "desc": "Roland's 1978 CompuRhythm, among the first drum machines with a microprocessor, so users could store their own patterns. Its soft, ticking, slightly toy-like sound colours late-70s new wave and synth-pop.",
+      "bpm": [90, 130],
+      "pairs": ["sy-string-machine", "sy-prophet-5", "g-synthwave"]
+    },
+    {
+      "id": "dr-rhythm-box",
+      "cat": "drums",
+      "group": "Drum machines",
+      "label": "Vintage rhythm box",
+      "prompt": "early-70s preset rhythm box: thin, ticking organ-top drum patterns looping a hypnotic, mechanical soul pulse",
+      "desc": "Boxes like the Ace Tone Rhythm Ace (1967) and Maestro Rhythm King were built to accompany home organists. Their thin, looping presets gave early-70s soul and later bedroom pop a hypnotic, mechanical pulse.",
+      "bpm": [80, 120],
+      "pairs": ["kb-farfisa", "kb-wurlitzer", "kb-reed-organ", "pr-tape-saturation"]
+    },
+    {
+      "id": "dr-linndrum",
+      "cat": "drums",
+      "group": "Drum machines",
+      "label": "LinnDrum",
+      "prompt": "punchy LinnDrum sampled drums: tight tuned kick, crisp snare with big reverb, claps and cabasa in a polished 80s pop groove",
+      "desc": "The 1980 Linn LM-1 was the first drum machine to play digital samples of real drums; the cheaper LinnDrum followed in 1982. Tunable, crisp and clean, it is all over 80s pop, R&B and rock.",
+      "bpm": [95, 125],
+      "pairs": ["dr-gated-snare", "pr-gated-reverb", "sy-dx7-epiano", "ba-fm", "g-synthwave"]
+    },
+    {
+      "id": "dr-dmx",
+      "cat": "drums",
+      "group": "Drum machines",
+      "label": "Oberheim DMX",
+      "prompt": "hard-hitting Oberheim DMX drums: thick boxy kick, cracking sampled snare and stiff hi-hats in an early-80s electro beat",
+      "desc": "Oberheim's 1981 sampled drum machine hit harder than most rivals. Its blunt kick and loud crack powered early hip-hop, electro and synth-pop.",
+      "bpm": [95, 120],
+      "pairs": ["dr-clap-stack", "sy-orch-hit", "ba-moog", "g-boom-bap"]
+    },
+    {
+      "id": "dr-sp1200",
+      "cat": "drums",
+      "group": "Drum machines",
+      "label": "E-mu SP-1200",
+      "prompt": "gritty E-mu SP-1200 drums: crunchy 12-bit sampled kick and snare, filtered dusty breaks and heavy swing",
+      "desc": "E-mu's 1987 sampling drum machine: 12-bit, 26 kHz and only ten seconds of sample time. That grainy crunch defined late-80s and 90s golden-era hip-hop.",
+      "bpm": [84, 98],
+      "pairs": ["dr-chopped-breaks", "pr-vinyl-crackle", "ba-upright", "g-boom-bap"]
+    },
+    {
+      "id": "dr-mpc",
+      "cat": "drums",
+      "group": "Drum machines",
+      "label": "Akai MPC crunch",
+      "prompt": "punchy Akai MPC drums: crunchy sampled kick and snare finger-drummed on pads with loose, lazy MPC swing",
+      "desc": "Akai's MPC60 (1988) and MPC3000 (1994) put sampling and sequencing behind 16 rubber pads. Their punch and signature swing shaped hip-hop and neo-soul drums that sit just behind the beat.",
+      "bpm": [80, 96],
+      "pairs": ["kb-rhodes", "pr-vinyl-crackle", "g-boom-bap", "g-neo-soul", "g-lofi-hiphop"]
+    },
+    {
+      "id": "dr-drumulator",
+      "cat": "drums",
+      "group": "Drum machines",
+      "label": "E-mu Drumulator",
+      "prompt": "chunky early-80s E-mu Drumulator drums: punchy, slightly dull sampled kick and snare, clicky rimshot and claps in a straight electro-pop beat",
+      "desc": "E-mu's 1983 Drumulator brought sampled drums in under $1,000. Its short, punchy samples were everywhere in mid-80s pop, rock demos and early hip-hop.",
+      "bpm": [100, 125],
+      "pairs": ["dr-dmx", "sy-obxa", "g-synthwave"]
+    },
+    {
+      "id": "dr-simmons",
+      "cat": "drums",
+      "group": "Drum machines",
+      "label": "Simmons SDS-V",
+      "prompt": "zappy Simmons SDS-V electronic drums: pitch-sweeping synth toms and a hard electronic snare in big 80s fills",
+      "desc": "A 1981 British analog electronic kit played on hexagonal pads. Its laser-like descending toms became the signature fill of 80s new wave and pop rock.",
+      "pairs": ["dr-gated-snare", "dr-tom-fills", "pr-gated-reverb", "g-synthwave"]
+    },
+    {
+      "id": "dr-hr16",
+      "cat": "drums",
+      "group": "Drum machines",
+      "label": "Alesis HR-16",
+      "prompt": "late-80s Alesis HR-16 drums: bright, roomy sampled acoustic kit with crisp snare and realistic toms in a stiff, programmed groove",
+      "desc": "Alesis's 1987 budget drum machine, packed with bright 16-bit acoustic-style samples. A staple of late-80s demos, industrial, early techno and bedroom productions.",
+      "bpm": [100, 135],
+      "pairs": ["sy-ms20", "sy-korg-m1", "gt-distorted"]
+    },
+    {
+      "id": "dr-elektron",
+      "cat": "drums",
+      "group": "Drum machines",
+      "label": "Elektron-style machine",
+      "prompt": "modern Elektron-style drum machine: punchy analog kick, crunchy sample hits and parameter-locked hats that change tone every step",
+      "desc": "Swedish maker Elektron's boxes (Machinedrum 2001, Analog Rytm 2014, Digitakt 2017) let every step lock its own pitch, decay or filter. The result is evolving, glitchy, jam-friendly drums loved in techno and experimental electronica.",
+      "bpm": [120, 140],
+      "pairs": ["sy-modular-bleeps", "dr-glitch-foley", "g-techno"]
+    },
+    {
+      "id": "dr-studio-kit",
+      "cat": "drums",
+      "group": "Kits & breaks",
+      "label": "Tight studio kit",
+      "prompt": "tight, dry acoustic studio drum kit: punchy close-miked kick, crisp snare and controlled hi-hats with a steady pocket",
+      "desc": "A well-tuned kit recorded in a dead room with close mics. Clean and punchy, it is the default for pop, singer-songwriter, R&B and polished rock.",
+      "pairs": ["ba-fingerstyle", "gt-clean-electric", "kb-grand-piano"]
+    },
+    {
+      "id": "dr-rock-kit",
+      "cat": "drums",
+      "group": "Kits & breaks",
+      "label": "Big roomy rock kit",
+      "prompt": "big, roomy rock drum kit: booming kick, huge cracking snare and crashing cymbals captured with loud room mics",
+      "desc": "Distant room mics and heavy compression make a kit sound enormous. The thunderous sound of 70s arena rock and stadium anthems, played hard on a heavy backbeat.",
+      "bpm": [90, 140],
+      "pairs": ["gt-distorted", "ba-picked", "dr-crash-swell", "g-classic-rock"]
+    },
+    {
+      "id": "dr-jazz-brushes",
+      "cat": "drums",
+      "group": "Kits & breaks",
+      "label": "Jazz brushes kit",
+      "prompt": "small jazz drum kit played with wire brushes: swishing snare sweeps, feathered kick and a soft ride cymbal pattern",
+      "desc": "Small drums and thin cymbals, with wire brushes stirring circles on the snare head. Intimate and swinging: ballads, piano trios and late-night lounge jazz.",
+      "bpm": [60, 180],
+      "pairs": ["ba-upright", "kb-grand-piano", "or-vibraphone", "dr-ride-ping"]
+    },
+    {
+      "id": "dr-60s-soul-kit",
+      "cat": "drums",
+      "group": "Kits & breaks",
+      "label": "60s soul kit",
+      "prompt": "vintage 1960s soul drum kit: thuddy deadened kick, woody snare doubled by tambourine on the backbeat, warm and slightly distant",
+      "desc": "Deadened heads, few mics and analog tape: the warm, thuddy kit of 60s Detroit and Memphis soul records, often doubled by a tambourine on 2 and 4.",
+      "bpm": [90, 130],
+      "pairs": ["dr-tambourine", "ba-fingerstyle", "kb-hammond-b3", "or-bari-sax", "pr-tape-saturation"]
+    },
+    {
+      "id": "dr-amen-break",
+      "cat": "drums",
+      "group": "Kits & breaks",
+      "label": "Amen break",
+      "prompt": "sped-up, chopped Amen break: rolling, syncopated vintage funk drum break with washy ride and rushing snare edits",
+      "desc": "A four-bar drum solo from a 1969 funk record, perhaps the most sampled break ever. Sped up and re-chopped, it is the backbone of jungle and drum and bass.",
+      "bpm": [160, 178],
+      "pairs": ["ba-reese", "dr-chopped-breaks", "g-dnb"]
+    },
+    {
+      "id": "dr-think-break",
+      "cat": "drums",
+      "group": "Kits & breaks",
+      "label": "Think break",
+      "prompt": "sped-up Think break: driving funk kick and snare with chopped 'woo, yeah' vocal shouts, high-energy rave and hip-house feel",
+      "desc": "A 1972 funk drum break famous for its shouted 'woo! yeah!'. Late-80s hip-hop, hip-house and rave producers looped it endlessly, usually sped up.",
+      "bpm": [110, 135],
+      "pairs": ["dr-clap-stack", "sy-hoover", "g-house"]
+    },
+    {
+      "id": "dr-funk-break",
+      "cat": "drums",
+      "group": "Kits & breaks",
+      "label": "Classic funk break",
+      "prompt": "looped 1970 funk drum break: syncopated kick, ghost-noted snare and busy sixteenth-note hi-hats, sampled and dusty",
+      "desc": "Modeled on a 1970 funk drum break that is one of the most sampled ever: syncopated kick, whispering snare ghost notes and steady 16th hats. Looped, it powered late-80s and 90s hip-hop.",
+      "bpm": [90, 105],
+      "pairs": ["dr-sp1200", "pr-vinyl-crackle", "g-boom-bap"]
+    },
+    {
+      "id": "dr-chopped-breaks",
+      "cat": "drums",
+      "group": "Kits & breaks",
+      "label": "Chopped breakbeats",
+      "prompt": "chopped and rearranged breakbeats: sliced vintage drum hits re-sequenced into stuttering, syncopated rolls and edits",
+      "desc": "Producers slice a sampled drum break into single hits and replay them in a new order. The technique behind jungle, breakbeat, big beat and much boom bap.",
+      "pairs": ["dr-amen-break", "dr-sp1200", "g-dnb", "g-boom-bap"]
+    },
+    {
+      "id": "dr-funk-ghost-kit",
+      "cat": "drums",
+      "group": "Kits & breaks",
+      "label": "Funk ghost-note kit",
+      "prompt": "live funk drum kit: tight kick, crisp backbeat and quiet ghost notes on the snare bubbling between every hit",
+      "desc": "Ghost notes are barely-there snare taps between the main backbeats. They give live funk, neo-soul and fusion drumming its bubbling sixteenth-note pocket.",
+      "bpm": [90, 115],
+      "pairs": ["ba-slap", "gt-funk-scratch", "kb-clavinet", "g-neo-soul", "g-jazz-fusion"]
+    },
+    {
+      "id": "dr-garage-kit",
+      "cat": "drums",
+      "group": "Kits & breaks",
+      "label": "Trashy garage kit",
+      "prompt": "loose, trashy garage-rock drum kit: washy cymbals, flappy snare and pounding floor tom played hard and fast",
+      "desc": "A cheap kit, one or two mics and lots of cymbal wash. Raw and energetic, it is the sound of 60s garage, punk and lo-fi indie rock.",
+      "bpm": [120, 180],
+      "pairs": ["gt-fuzz", "ba-picked", "kb-farfisa"]
+    },
+    {
+      "id": "dr-trap-hat-rolls",
+      "cat": "drums",
+      "group": "Hits & tricks",
+      "label": "Trap hi-hat rolls",
+      "prompt": "rapid trap hi-hat rolls switching between sixteenths, triplets and thirty-second-note stutters with pitched flams",
+      "desc": "Machine-gun hi-hats that jump between note values and bend up and down in pitch. The rhythmic signature of Atlanta trap and its offshoots, drill included.",
+      "bpm": [130, 160],
+      "pairs": ["dr-tr808", "ba-808-sub", "dr-trap-snare", "g-trap", "g-drill-uk"]
+    },
+    {
+      "id": "dr-808-snare-roll",
+      "cat": "drums",
+      "group": "Hits & tricks",
+      "label": "Snare roll build",
+      "prompt": "accelerating 808 snare roll build-up, doubling in speed and rising in pitch into the drop",
+      "desc": "Snare hits doubling from 8ths to 16ths to 32nds, often pitched upward. The classic tension build before an EDM, trap or dance-pop drop.",
+      "pairs": ["sy-noise-riser", "ba-sub-drop", "dr-crash-swell", "g-house"]
+    },
+    {
+      "id": "dr-rimshot",
+      "cat": "drums",
+      "group": "Hits & tricks",
+      "label": "Rimshot",
+      "prompt": "dry, woody cross-stick rimshot clicks marking the backbeat with a soft, intimate feel",
+      "desc": "Hitting rim and head together (rimshot) or laying the stick across the rim (cross-stick) gives a woody click. Used in quiet verses, bossa nova, reggae and ballads; the 808 rim is a dancehall staple.",
+      "pairs": ["gt-nylon", "ba-upright", "dr-shaker"]
+    },
+    {
+      "id": "dr-clap-stack",
+      "cat": "drums",
+      "group": "Hits & tricks",
+      "label": "Handclap stack",
+      "prompt": "layered stack of handclaps on the backbeat, wide and slightly loose like a room full of people clapping",
+      "desc": "Several claps, real or drum-machine, stacked and spread in stereo for a big human snap. A backbone of disco, house, trap and pop choruses.",
+      "pairs": ["dr-tr808", "dr-tr909", "pr-wide-stereo", "g-house"]
+    },
+    {
+      "id": "dr-finger-snaps",
+      "cat": "drums",
+      "group": "Hits & tricks",
+      "label": "Finger snaps",
+      "prompt": "crisp, dry finger snaps on 2 and 4, close and intimate, carrying the backbeat",
+      "desc": "A minimal backbeat that feels cool and personal. Heard in doo-wop, jazz vocals, minimal pop and R&B, where the snap replaces or doubles the snare.",
+      "pairs": ["ba-upright", "kb-rhodes", "g-neo-soul"]
+    },
+    {
+      "id": "dr-gated-snare",
+      "cat": "drums",
+      "group": "Hits & tricks",
+      "label": "Gated 80s snare",
+      "prompt": "huge gated-reverb 80s snare: a cannon-like crack with a burst of room sound that cuts off abruptly",
+      "desc": "Discovered in a London studio around 1979: a noise gate chops off the room reverb on a loud snare. That explosive, clipped crack defined 80s pop and power ballads.",
+      "pairs": ["pr-gated-reverb", "dr-linndrum", "dr-simmons", "g-synthwave"]
+    },
+    {
+      "id": "dr-trap-snare",
+      "cat": "drums",
+      "group": "Hits & tricks",
+      "label": "Layered trap snare",
+      "prompt": "layered trap snare and clap hitting hard on beat three, sharp and bright with a short reverb tail",
+      "desc": "Trap snares are usually a snare and clap stacked, landing on beat 3 because the groove is felt in half-time. Crisp, bright and loud in the mix.",
+      "bpm": [130, 160],
+      "pairs": ["dr-trap-hat-rolls", "ba-808-sub", "g-trap"]
+    },
+    {
+      "id": "dr-open-hat-offbeat",
+      "cat": "drums",
+      "group": "Hits & tricks",
+      "label": "Offbeat open hats",
+      "prompt": "sizzling open hi-hats on every offbeat between four-on-the-floor kicks, driving and bright",
+      "desc": "The open hat on the 'and' of every beat gives disco, house and garage their pumping lift. With a kick on every beat it makes the classic 'boom-tss'.",
+      "bpm": [115, 130],
+      "pairs": ["dr-tr909", "ba-disco-octave", "sy-chord-stabs", "g-house"]
+    },
+    {
+      "id": "dr-ride-ping",
+      "cat": "drums",
+      "group": "Hits & tricks",
+      "label": "Ride cymbal pings",
+      "prompt": "clear, pinging ride cymbal with a bright bell-like stick attack driving a swinging pattern",
+      "desc": "The ride's 'ding, ding-da-ding' carries the swing in jazz and lifts choruses in rock. Hitting the bell gives a brighter, cutting ping.",
+      "pairs": ["dr-jazz-brushes", "ba-upright", "g-jazz-fusion"]
+    },
+    {
+      "id": "dr-crash-swell",
+      "cat": "drums",
+      "group": "Hits & tricks",
+      "label": "Crash swells",
+      "prompt": "rolling mallet cymbal swells rising into big crash hits at every section change",
+      "desc": "A cymbal rolled with soft mallets swells from a whisper to a roar. Film scores, rock intros and EDM transitions use it to announce a new section.",
+      "pairs": ["or-timpani", "dr-808-snare-roll", "g-film-score"]
+    },
+    {
+      "id": "dr-reverse-cymbal",
+      "cat": "drums",
+      "group": "Hits & tricks",
+      "label": "Reversed cymbal",
+      "prompt": "reversed cymbal swooshes sucking upward into the downbeat of each new section",
+      "desc": "A cymbal recording played backwards swells up and stops dead. A transition trick in psychedelic rock since the late 60s and everywhere in pop and EDM today.",
+      "pairs": ["sy-noise-riser", "ba-sub-drop", "g-synthwave"]
+    },
+    {
+      "id": "dr-tom-fills",
+      "cat": "drums",
+      "group": "Hits & tricks",
+      "label": "Big tom fills",
+      "prompt": "rolling tom fills tumbling around the kit into each chorus, big, resonant and powerful",
+      "desc": "Fills around the toms close one phrase and launch the next section. Big, resonant tom runs are a staple of rock, gospel and power ballads.",
+      "pairs": ["dr-rock-kit", "dr-gated-snare", "g-classic-rock"]
+    },
+    {
+      "id": "dr-congas",
+      "cat": "drums",
+      "group": "Percussion",
+      "label": "Congas",
+      "prompt": "warm, open-toned congas played by hand in an interlocking tumbao pattern with crisp slaps",
+      "desc": "Tall Afro-Cuban barrel drums played in pairs or threes. The tumbao rhythm of open tones and slaps drives salsa, Latin jazz, disco and house percussion.",
+      "pairs": ["dr-bongos", "dr-claves", "dr-timbales", "ba-disco-octave", "g-house"]
+    },
+    {
+      "id": "dr-bongos",
+      "cat": "drums",
+      "group": "Percussion",
+      "label": "Bongos",
+      "prompt": "bright, high-pitched bongos in a steady martillo pattern with crisp slaps and quick rolls",
+      "desc": "Two small joined drums held between the knees. The martillo ('hammer') pattern is a fixture of Cuban son, salsa and 70s soul and funk.",
+      "pairs": ["dr-congas", "dr-guiro", "wo-tres"]
+    },
+    {
+      "id": "dr-timbales",
+      "cat": "drums",
+      "group": "Percussion",
+      "label": "Timbales",
+      "prompt": "metallic timbales with sharp rimshots, cascara shell patterns and rolling fills into cowbell hits",
+      "desc": "Shallow metal-shelled drums played with sticks, usually with mounted cowbells. Their cascara shell rhythm and fiery fills lead the band in salsa, mambo and Latin jazz.",
+      "pairs": ["dr-congas", "dr-cowbell", "or-trombone"]
+    },
+    {
+      "id": "dr-shaker",
+      "cat": "drums",
+      "group": "Percussion",
+      "label": "Shaker",
+      "prompt": "steady sixteenth-note shaker, soft and airy, adding gentle forward motion to the groove",
+      "desc": "A seed- or bead-filled shaker played in constant 16ths. The easiest way to add subtle motion to pop, acoustic, house and Afrobeats grooves.",
+      "pairs": ["gt-acoustic-strummed", "dr-congas", "g-afrobeats"]
+    },
+    {
+      "id": "dr-tambourine",
+      "cat": "drums",
+      "group": "Percussion",
+      "label": "Tambourine",
+      "prompt": "jingling tambourine struck on the backbeat and shaken in sixteenths for bright, driving energy",
+      "desc": "A frame with metal jingles, hit on 2 and 4 or shaken in 16ths. The sparkle on top of 60s soul, gospel, folk rock and Britpop.",
+      "pairs": ["dr-60s-soul-kit", "or-gospel-choir", "kb-hammond-b3"]
+    },
+    {
+      "id": "dr-cowbell",
+      "cat": "drums",
+      "group": "Percussion",
+      "label": "Cowbell",
+      "prompt": "dry, clanky cowbell playing a steady, syncopated pattern that cuts through the mix",
+      "desc": "A metal bell struck with a stick. It anchors salsa and Latin grooves, and the 808 cowbell is a hallmark of Miami bass, Memphis rap and phonk.",
+      "pairs": ["dr-tr808", "dr-timbales", "dr-congas"]
+    },
+    {
+      "id": "dr-claves",
+      "cat": "drums",
+      "group": "Percussion",
+      "label": "Claves",
+      "prompt": "two hardwood claves clicking out a crisp, bright son clave rhythm",
+      "desc": "Two hardwood sticks struck together to play clave, the 3-2 or 2-3 rhythmic key that organises Cuban son, salsa and much Latin music.",
+      "pairs": ["dr-congas", "dr-bongos", "wo-tres"]
+    },
+    {
+      "id": "dr-guiro",
+      "cat": "drums",
+      "group": "Percussion",
+      "label": "Guiro",
+      "prompt": "scraped wooden guiro playing a scratchy, rhythmic long-short pattern",
+      "desc": "A notched gourd scraped with a stick. Its raspy long-short strokes add texture to salsa, cumbia, merengue and bossa nova.",
+      "pairs": ["dr-congas", "dr-bongos", "wo-accordion"]
+    },
+    {
+      "id": "dr-cajon",
+      "cat": "drums",
+      "group": "Percussion",
+      "label": "Cajon",
+      "prompt": "deep, slappy cajon played by hand: bass-heavy center thumps and snappy edge slaps",
+      "desc": "A Peruvian wooden box drum the player sits on. The centre gives a kick-like thump and the edge a snare-like crack, ideal for flamenco and unplugged acoustic sets.",
+      "pairs": ["gt-acoustic-strummed", "gt-flamenco", "dr-shaker"]
+    },
+    {
+      "id": "dr-djembe",
+      "cat": "drums",
+      "group": "Percussion",
+      "label": "Djembe",
+      "prompt": "resonant djembe hand drum: deep bass tones, ringing open tones and sharp, cracking slaps",
+      "desc": "A goblet-shaped drum of the Mande peoples of West Africa (Mali, Guinea), played with bare hands. Three core strokes, bass, tone and slap, build its powerful polyrhythms.",
+      "pairs": ["wo-kora", "wo-balafon", "wo-talking-drum", "g-afrobeats"]
+    },
+    {
+      "id": "dr-taiko",
+      "cat": "drums",
+      "group": "Percussion",
+      "label": "Taiko",
+      "prompt": "thunderous Japanese taiko ensemble: massive booming drums struck with thick sticks in powerful unison patterns",
+      "desc": "Japanese barrel drums, the biggest (odaiko) taller than a person. Ensemble taiko took off in the 1950s and now powers epic trailers, film scores and game music.",
+      "pairs": ["or-trailer-braams", "wo-shakuhachi", "or-chant-choir", "g-film-score"]
+    },
+    {
+      "id": "dr-frame-drum",
+      "cat": "drums",
+      "group": "Percussion",
+      "label": "Frame drum",
+      "prompt": "deep frame drum played by hand: soft thumps, buzzing snare strings and a hypnotic rolling pattern",
+      "desc": "Wide, shallow drums like the tar and bendir are among the oldest drums known. Played with the fingers, they give North African, Middle Eastern and meditative music an earthy pulse; the bendir adds a buzzing snare string.",
+      "pairs": ["wo-oud", "wo-ney", "wo-darbuka"]
+    },
+    {
+      "id": "dr-marching-snare",
+      "cat": "drums",
+      "group": "Percussion",
+      "label": "Marching snare",
+      "prompt": "tight, high-tension marching snare drumline with crisp rudiments, rolls and military cadences",
+      "desc": "Marching snares are cranked tight for a cutting crack. Drumline rudiments and cadences drive military music, HBCU marching bands and stadium anthems.",
+      "pairs": ["or-trumpet-fanfare", "or-brass-section", "g-film-score"]
+    },
+    {
+      "id": "dr-glitch-foley",
+      "cat": "drums",
+      "group": "Percussion",
+      "label": "Glitchy foley",
+      "prompt": "glitchy foley percussion: clicks, crunches, taps and found-sound hits chopped into tight micro-rhythms",
+      "desc": "Everyday sounds such as keys, paper, pops and mouth clicks used as drums and cut into tiny stuttering fragments. Heard in glitch, IDM, hyperpop and minimal pop.",
+      "pairs": ["dr-elektron", "sy-granular", "sy-modular-bleeps"]
+    },
+    {
+      "id": "dr-agogo",
+      "cat": "drums",
+      "group": "Percussion",
+      "label": "Agogo bells",
+      "prompt": "bright two-tone agogo bells ringing a high-low syncopated pattern over the groove",
+      "desc": "A double bell with roots in Yoruba tradition, central to Brazilian samba and Afro-Brazilian music. Its high-low clang ties the whole percussion section together.",
+      "pairs": ["dr-batucada", "wo-berimbau", "dr-congas"]
+    },
+    {
+      "id": "dr-batucada",
+      "cat": "drums",
+      "group": "Percussion",
+      "label": "Samba batucada",
+      "prompt": "booming Brazilian samba batucada: deep surdo drums, rattling snares, snapping tamborims and whistles in a carnival groove",
+      "desc": "Batucada is the street-percussion style of Rio's samba schools: surdos pound the bass, caixas and repiques chatter, and tamborims snap. Pure carnival energy.",
+      "bpm": [90, 110],
+      "pairs": ["dr-agogo", "dr-shaker", "or-brass-section"]
+    },
+    {
+      "id": "dr-mark-tree",
+      "cat": "drums",
+      "group": "Percussion",
+      "label": "Wind chimes",
+      "prompt": "shimmering mark tree wind chimes: a glittering cascade of tiny metal bars sweeping up and down",
+      "desc": "A row of hanging metal bars brushed with a finger or stick. That cascading sparkle signals magic, dreams and transitions in pop, R&B and film.",
+      "pairs": ["or-harp", "kb-celesta", "sy-bell-pad"]
+    },
+    {
+      "id": "dr-castanets",
+      "cat": "drums",
+      "group": "Percussion",
+      "label": "Castanets",
+      "prompt": "rapid clicking castanets rattling crisp trills and accents in a fiery Spanish rhythm",
+      "desc": "Pairs of shell-shaped hardwood clappers held in the hands. Their rattling trills are essential to Spanish dance and flamenco-flavoured classical music.",
+      "pairs": ["gt-flamenco", "dr-cajon", "or-trumpet-fanfare"]
+    },
+    {
+      "id": "ba-808-sub",
+      "cat": "bass",
+      "group": "808 & synth bass",
+      "label": "808 sub bass",
+      "prompt": "deep 808 sub bass: long, booming tuned kick-bass notes rumbling beneath the beat",
+      "desc": "The TR-808 kick with its decay turned right up, tuned to the song's key and played as a bassline. Usually a sample played chromatically today; the low end of trap, drill and modern hip-hop.",
+      "bpm": [60, 160],
+      "pairs": ["dr-tr808", "dr-trap-hat-rolls", "ba-808-glide", "g-trap", "g-drill-uk"]
+    },
+    {
+      "id": "ba-808-glide",
+      "cat": "bass",
+      "group": "808 & synth bass",
+      "label": "Sliding 808 glides",
+      "prompt": "sliding 808 bass with portamento glides bending between notes, lightly distorted for growl",
+      "desc": "Glide, or portamento, bends each 808 note into the next. Pitch slides are the defining move of UK drill basslines and a big part of modern trap.",
+      "bpm": [130, 150],
+      "pairs": ["ba-808-sub", "dr-trap-hat-rolls", "g-drill-uk", "g-trap"]
+    },
+    {
+      "id": "ba-reese",
+      "cat": "bass",
+      "group": "808 & synth bass",
+      "label": "Reese bass",
+      "prompt": "dark Reese bass: two detuned sawtooth waves phasing against each other in a growling, swirling low drone",
+      "desc": "Named after the alias on a 1988 Detroit techno record, it is two slightly detuned saws beating against each other. Jungle and drum and bass made its menacing rumble a signature.",
+      "bpm": [160, 178],
+      "pairs": ["dr-amen-break", "ba-neuro", "g-dnb"]
+    },
+    {
+      "id": "ba-acid-303",
+      "cat": "bass",
+      "group": "808 & synth bass",
+      "label": "TB-303 acid",
+      "prompt": "squelchy Roland TB-303 acid bassline: resonant filter sweeps, accents and slides in hypnotic sixteenth-note patterns",
+      "desc": "Roland's 1981 TB-303 Bass Line was sold as a practice partner for guitarists and flopped. Chicago producers cranked its resonance and accent in the mid-80s and acid house was born.",
+      "bpm": [118, 135],
+      "pairs": ["dr-tr909", "dr-tr606", "sy-acid-lead", "g-techno", "g-house"]
+    },
+    {
+      "id": "ba-moog",
+      "cat": "bass",
+      "group": "808 & synth bass",
+      "label": "Minimoog bass",
+      "prompt": "fat Minimoog bass: warm, round analog low end with a punchy filter envelope in a funky, syncopated line",
+      "desc": "Moog's 1970 Minimoog Model D packed three oscillators and the famous ladder filter into a portable keyboard. Its thick bass fuelled 70s funk, disco, fusion and 90s West Coast G-funk.",
+      "bpm": [85, 115],
+      "pairs": ["sy-minimoog-lead", "dr-funk-ghost-kit", "sy-talk-box", "g-jazz-fusion"]
+    },
+    {
+      "id": "ba-analog-synth",
+      "cat": "bass",
+      "group": "808 & synth bass",
+      "label": "Juno synth bass",
+      "prompt": "warm analog synth bass from a Juno-style polysynth: round square-wave notes with a soft filter pluck",
+      "desc": "Roland's Juno-60 and Juno-106 and similar analog synths make smooth, rubbery bass. Common in synth-pop, synthwave, deep house and Japanese city pop.",
+      "bpm": [95, 125],
+      "pairs": ["sy-juno-pad", "dr-linndrum", "g-synthwave", "g-house"]
+    },
+    {
+      "id": "ba-fm",
+      "cat": "bass",
+      "group": "808 & synth bass",
+      "label": "FM / DX bass",
+      "prompt": "punchy Yamaha DX7 FM bass: metallic, percussive slap-like attack with a bright, elastic tone",
+      "desc": "FM synthesis (Yamaha DX7, 1983) gives bass a hard, clanky attack. Its slap-bass presets bounce through mid-80s pop, R&B, new jack swing and city pop.",
+      "bpm": [95, 120],
+      "pairs": ["sy-dx7-epiano", "dr-linndrum", "sy-orch-hit", "g-synthwave"]
+    },
+    {
+      "id": "ba-wobble",
+      "cat": "bass",
+      "group": "808 & synth bass",
+      "label": "Wobble bass",
+      "prompt": "wobble bass: thick, growling synth bass with a filter LFO wobbling in time with the beat",
+      "desc": "An LFO sweeps a low-pass filter so the bass pulses 'wub-wub' in rhythm. Born in mid-2000s UK dubstep and supersized in brostep and riddim.",
+      "bpm": [138, 150],
+      "pairs": ["sy-wavetable-growl", "ba-sub-drop", "sy-noise-riser"]
+    },
+    {
+      "id": "ba-neuro",
+      "cat": "bass",
+      "group": "808 & synth bass",
+      "label": "Neuro bass",
+      "prompt": "aggressive neuro bass: distorted, metallic, constantly morphing mid-range synth bass with sharp rhythmic edits",
+      "desc": "Neurofunk, a late-90s drum and bass offshoot, is built on layered, heavily processed basses that snarl and mutate every bar. Dark, technical and precise.",
+      "bpm": [170, 176],
+      "pairs": ["ba-reese", "sy-wavetable-growl", "g-dnb"]
+    },
+    {
+      "id": "ba-sub-drop",
+      "cat": "bass",
+      "group": "808 & synth bass",
+      "label": "Sub drop",
+      "prompt": "deep sub drop: a falling sine-bass boom plunging in pitch right on the downbeat of the drop",
+      "desc": "A low sine or 808 note that sweeps downward in pitch as an impact at a drop or section change. Felt more than heard in EDM, trap and trailers.",
+      "pairs": ["sy-noise-riser", "dr-808-snare-roll", "dr-reverse-cymbal"]
+    },
+    {
+      "id": "ba-taurus",
+      "cat": "bass",
+      "group": "808 & synth bass",
+      "label": "Taurus bass pedals",
+      "prompt": "huge Moog Taurus pedal bass: deep, sustained analog synth bass notes swelling under the band",
+      "desc": "Moog's 1976 Taurus is a set of foot pedals that plays enormous analog bass. Prog and arena rock bands used it so the bassist's hands were free for guitar or keys.",
+      "pairs": ["sy-minimoog-lead", "kb-mellotron-flutes", "g-classic-rock"]
+    },
+    {
+      "id": "ba-slap",
+      "cat": "bass",
+      "group": "Played bass",
+      "label": "Slap bass",
+      "prompt": "funky slap bass: thumb-slapped low notes and popped high strings in a percussive, syncopated groove",
+      "desc": "Thumping the low strings with the thumb and snapping the high ones with a finger, a technique popularised in late-60s funk. Bright and percussive: the voice of funk, disco and 80s pop.",
+      "bpm": [95, 120],
+      "pairs": ["dr-funk-ghost-kit", "gt-funk-scratch", "kb-clavinet", "g-jazz-fusion"]
+    },
+    {
+      "id": "ba-fingerstyle",
+      "cat": "bass",
+      "group": "Played bass",
+      "label": "Fingerstyle bass",
+      "prompt": "warm fingerstyle electric bass: round, steady notes locking tightly with the kick drum",
+      "desc": "Plucking with two fingers gives a warm, rounded tone. The everyday bass of soul, R&B, pop, reggae and gospel; a Precision Bass with flatwound strings is the vintage soul sound.",
+      "pairs": ["dr-60s-soul-kit", "kb-rhodes", "g-neo-soul"]
+    },
+    {
+      "id": "ba-picked",
+      "cat": "bass",
+      "group": "Played bass",
+      "label": "Picked rock bass",
+      "prompt": "driving pick-played rock bass: bright attack, steady eighth notes and a growly, slightly overdriven tone",
+      "desc": "A pick gives a sharper attack and a metallic clank. The driving eighth-note bass of punk, classic rock, post-punk and indie.",
+      "bpm": [110, 180],
+      "pairs": ["dr-rock-kit", "gt-distorted", "g-classic-rock"]
+    },
+    {
+      "id": "ba-fretless",
+      "cat": "bass",
+      "group": "Played bass",
+      "label": "Fretless bass",
+      "prompt": "singing fretless bass: smooth glides, a vocal 'mwah' tone and melodic slides between notes",
+      "desc": "With a smooth fingerboard, notes slide freely and bloom with a vocal 'mwah'. Fusion, 80s art pop and smooth jazz used it as a lead voice.",
+      "pairs": ["kb-rhodes", "or-alto-sax", "g-jazz-fusion"]
+    },
+    {
+      "id": "ba-upright",
+      "cat": "bass",
+      "group": "Played bass",
+      "label": "Upright bass",
+      "prompt": "warm upright double bass: plucked walking lines with woody thump and natural resonance",
+      "desc": "The acoustic double bass played pizzicato with the fingers. Its walking quarter-note lines are the heartbeat of jazz, and slapped it drives rockabilly and bluegrass.",
+      "pairs": ["dr-jazz-brushes", "kb-grand-piano", "dr-ride-ping", "or-tenor-sax"]
+    },
+    {
+      "id": "ba-keyboard-bass",
+      "cat": "bass",
+      "group": "Played bass",
+      "label": "Keyboard bass",
+      "prompt": "soft Rhodes-style keyboard bass: round, thumpy electric piano bass notes played with the left hand",
+      "desc": "Fender's 1960s Rhodes Piano Bass, a 32-key bass-range electric piano, let keyboardists cover the bass. Its soft, thumpy tone grounds psychedelic rock, soul jazz and lounge combos.",
+      "pairs": ["kb-rhodes", "kb-farfisa", "kb-hammond-b3"]
+    },
+    {
+      "id": "ba-tuba",
+      "cat": "bass",
+      "group": "Played bass",
+      "label": "Tuba bass line",
+      "prompt": "bouncing sousaphone bass line: round, brassy low notes pumping on the downbeats",
+      "desc": "In early jazz and street bands, the tuba or sousaphone played the bass. It still powers New Orleans brass bands, polka, Mexican banda and Balkan brass.",
+      "pairs": ["or-trombone", "or-trumpet-fanfare", "wo-accordion"]
+    },
+    {
+      "id": "ba-disco-octave",
+      "cat": "bass",
+      "group": "Played bass",
+      "label": "Octave disco bass",
+      "prompt": "octave-pumping disco bass: bouncing eighth notes leaping between low and high octaves",
+      "desc": "The bass jumps between a note and its octave on every eighth, locking with a four-on-the-floor kick. The engine of 70s disco, Italo and nu-disco.",
+      "bpm": [110, 128],
+      "pairs": ["dr-open-hat-offbeat", "gt-funk-scratch", "or-strings-lush", "g-house"]
+    },
+    {
+      "id": "ba-dub",
+      "cat": "bass",
+      "group": "Played bass",
+      "label": "Dub bass",
+      "prompt": "deep, heavy dub bass: round, slow, melodic sub-heavy lines with lots of space between notes",
+      "desc": "Reggae and dub push the bass to the front: very low, rounded and melodic, played softly so it is felt in the chest. Jungle, dubstep and UK sound-system music inherited it.",
+      "bpm": [60, 90],
+      "pairs": ["gt-reggae-skank", "kb-melodica", "pr-tape-saturation"]
+    },
+    {
+      "id": "ba-fuzz",
+      "cat": "bass",
+      "group": "Played bass",
+      "label": "Fuzz bass",
+      "prompt": "fuzzy overdriven electric bass: gritty, saturated growl driving a heavy riff",
+      "desc": "Running bass through a fuzz pedal or cranked amp adds a buzzing, gritty top. Used in 60s psych, stoner rock, garage and big modern pop-rock choruses.",
+      "pairs": ["gt-fuzz", "dr-rock-kit", "dr-garage-kit"]
+    },
+    {
+      "id": "sy-minimoog-lead",
+      "cat": "synths",
+      "group": "Classic synths",
+      "label": "Minimoog lead",
+      "prompt": "soaring Minimoog lead: fat, singing monophonic tone with pitch-bend wails and mod-wheel vibrato",
+      "desc": "Played with its pitch and mod wheels, the Minimoog Model D (1970) sounds almost vocal. It defined 70s prog rock, jazz fusion and funk synth solos.",
+      "pairs": ["ba-moog", "kb-hammond-b3", "g-jazz-fusion"]
+    },
+    {
+      "id": "sy-prophet-5",
+      "cat": "synths",
+      "group": "Classic synths",
+      "label": "Prophet-5 chords",
+      "prompt": "warm Sequential Prophet-5 polysynth chords: rich, slightly detuned analog voices with a gentle filter sweep",
+      "desc": "Sequential Circuits' 1978 Prophet-5 was the first fully programmable polyphonic synth that could store its sounds. Its lush, slightly unstable chords fill late-70s and 80s pop and film scores.",
+      "pairs": ["sy-prophet-brass", "dr-linndrum", "g-synthwave", "g-film-score"]
+    },
+    {
+      "id": "sy-prophet-brass",
+      "cat": "synths",
+      "group": "Classic synths",
+      "label": "Prophet synth brass",
+      "prompt": "punchy Prophet-5 synth brass: bright sawtooth chord stabs with a fast, snappy filter swell",
+      "desc": "Analog 'synth brass' uses sawtooth waves and a quick filter envelope to mimic a horn section. The Prophet-5 version is a signature of 80s pop and new wave hooks.",
+      "pairs": ["sy-prophet-5", "dr-linndrum", "g-synthwave"]
+    },
+    {
+      "id": "sy-juno-pad",
+      "cat": "synths",
+      "group": "Classic synths",
+      "label": "Juno pad",
+      "prompt": "lush Juno-106 pad: warm sawtooth chords washed in thick, wobbly stereo chorus",
+      "desc": "Roland's Juno-60 (1982) and Juno-106 (1984) are affordable analog polysynths with one oscillator per voice. The built-in chorus makes them wide and dreamy: house, synthwave, lo-fi and chillwave.",
+      "pairs": ["ba-analog-synth", "pr-wide-stereo", "g-synthwave", "g-house"]
+    },
+    {
+      "id": "sy-jupiter-8",
+      "cat": "synths",
+      "group": "Classic synths",
+      "label": "Jupiter-8",
+      "prompt": "big Roland Jupiter-8 polysynth: wide, glossy analog pads and bright, punchy layered chords",
+      "desc": "Roland's 1981 flagship, eight voices with two oscillators each. Its rich, polished sound is a staple of 80s synth-pop, Italo disco and modern synthwave.",
+      "pairs": ["sy-arp", "dr-linndrum", "g-synthwave"]
+    },
+    {
+      "id": "sy-dx7-epiano",
+      "cat": "synths",
+      "group": "Classic synths",
+      "label": "DX7 e-piano",
+      "prompt": "glassy Yamaha DX7 FM electric piano: bell-like tine attack, chiming and bright, in soft 80s ballad chords",
+      "desc": "The 1983 DX7 was the first hit digital synth and one of the best-selling ever. Its crystalline FM electric piano preset sits on countless 80s ballads and R&B slow jams.",
+      "bpm": [60, 100],
+      "pairs": ["ba-fm", "dr-linndrum", "sy-dx7-bells", "g-synthwave"]
+    },
+    {
+      "id": "sy-dx7-bells",
+      "cat": "synths",
+      "group": "Classic synths",
+      "label": "DX7 FM bells",
+      "prompt": "shimmering Yamaha DX7 FM bells: metallic, glassy tones with a long ringing decay",
+      "desc": "FM is great at bells: modulating one sine wave with another at odd ratios creates clangorous overtones. The DX7's bell and marimba presets sparkle through 80s pop and new age.",
+      "pairs": ["sy-dx7-epiano", "sy-bell-pad", "dr-mark-tree"]
+    },
+    {
+      "id": "sy-cs80",
+      "cat": "synths",
+      "group": "Classic synths",
+      "label": "CS-80 brass",
+      "prompt": "swelling Yamaha CS-80 brass: expressive, bittersweet analog chords with ribbon pitch bends, cinematic and vast",
+      "desc": "Yamaha's famously heavy 1977 CS-80 had a ribbon controller and per-note aftertouch for expressive swells. Its bittersweet brass became the sound of sci-fi film scores.",
+      "bpm": [60, 100],
+      "pairs": ["sy-analog-pad", "or-strings-lush", "g-film-score", "g-synthwave"]
+    },
+    {
+      "id": "sy-obxa",
+      "cat": "synths",
+      "group": "Classic synths",
+      "label": "OB-Xa brass stabs",
+      "prompt": "huge Oberheim OB-Xa brass stabs: fat, detuned analog chords punching out a bold, anthemic riff",
+      "desc": "Oberheim's early-80s OB-Xa was a big, bold polysynth with up to eight voices. Its brassy, stadium-sized stabs drove 80s rock anthems and synth-pop.",
+      "bpm": [110, 135],
+      "pairs": ["dr-gated-snare", "gt-distorted", "g-synthwave", "g-classic-rock"]
+    },
+    {
+      "id": "sy-korg-m1",
+      "cat": "synths",
+      "group": "Classic synths",
+      "label": "Korg M1 house",
+      "prompt": "bright Korg M1 house piano and organ: punchy digital piano chords and deep organ-bass stabs in classic 90s house",
+      "desc": "Korg's 1988 M1 workstation sold around 250,000 units. Its bright house piano and organ presets are the sound of early-90s house, garage and Eurodance.",
+      "bpm": [118, 128],
+      "pairs": ["dr-tr909", "or-gospel-choir", "g-house"]
+    },
+    {
+      "id": "sy-ppg",
+      "cat": "synths",
+      "group": "Classic synths",
+      "label": "PPG Wave",
+      "prompt": "glassy PPG Wave wavetable synth: metallic digital tones sweeping through shimmering harmonic textures",
+      "desc": "Germany's PPG Wave (1981) pioneered wavetable synthesis, stepping through stored waveforms for a crisp, grainy, digital-meets-analog shimmer. A favourite of 80s new wave and synth-pop.",
+      "pairs": ["sy-jupiter-8", "dr-linndrum", "g-synthwave"]
+    },
+    {
+      "id": "sy-arp-odyssey",
+      "cat": "synths",
+      "group": "Classic synths",
+      "label": "ARP Odyssey",
+      "prompt": "biting ARP Odyssey lead: nasal, aggressive analog tone with a screaming filter and squelchy sync",
+      "desc": "ARP's 1972 Odyssey was a compact duophonic rival to the Minimoog with a sharper, more aggressive filter. Funk, fusion and disco players loved its piercing leads.",
+      "pairs": ["ba-slap", "kb-rhodes", "g-jazz-fusion"]
+    },
+    {
+      "id": "sy-mellotron-choir",
+      "cat": "synths",
+      "group": "Classic synths",
+      "label": "Mellotron choir",
+      "prompt": "haunting Mellotron tape choir: wobbly 'aah' vocal chords with tape flutter and a soft attack",
+      "desc": "The 1960s Mellotron plays real tape recordings, one strip per key, each lasting about eight seconds. Its eerie choir and strings define 60s psychedelia and 70s prog.",
+      "pairs": ["kb-mellotron-flutes", "ba-taurus", "pr-tape-saturation"]
+    },
+    {
+      "id": "sy-sh101",
+      "cat": "synths",
+      "group": "Classic synths",
+      "label": "SH-101",
+      "prompt": "bubbly Roland SH-101 mono synth: rubbery, squelchy bass-lead lines and sequenced blips",
+      "desc": "Roland's 1982 SH-101 was a simple, affordable monosynth with a built-in sequencer and arpeggiator. Bargain-priced secondhand by the 90s, it became a rave, acid and electro workhorse.",
+      "bpm": [120, 140],
+      "pairs": ["dr-tr606", "ba-acid-303", "g-techno"]
+    },
+    {
+      "id": "sy-ms20",
+      "cat": "synths",
+      "group": "Classic synths",
+      "label": "Korg MS-20",
+      "prompt": "gritty Korg MS-20: raw, snarling leads and basses through an aggressive, screaming resonant filter",
+      "desc": "Korg's 1978 semi-modular MS-20 has a famously harsh, self-oscillating filter. Industrial, EBM, electroclash and synth-punk love its abrasive scream.",
+      "pairs": ["dr-hr16", "sy-modular-bleeps", "g-techno"]
+    },
+    {
+      "id": "sy-d50",
+      "cat": "synths",
+      "group": "Classic synths",
+      "label": "Roland D-50",
+      "prompt": "breathy Roland D-50 digital pad: airy sampled-attack textures with shimmering chorus and reverb, dreamy and late-80s",
+      "desc": "Roland's 1987 D-50 joined short sampled attacks to synthesized sustains, which it called LA synthesis. Built-in reverb and chorus presets like 'Fantasia' defined late-80s pop and new age pads.",
+      "pairs": ["sy-bell-pad", "sy-dx7-epiano", "g-synthwave"]
+    },
+    {
+      "id": "sy-theremin",
+      "cat": "synths",
+      "group": "Classic synths",
+      "label": "Theremin",
+      "prompt": "eerie theremin: wavering, ghostly sine-like melody gliding between notes with wide, wobbling vibrato",
+      "desc": "Invented in 1920 and played in the air: one hand near an antenna sets pitch, the other sets volume. Its ghostly wail is the classic sound of 50s sci-fi and horror films.",
+      "pairs": ["or-strings-lush", "or-tremolo-strings", "g-film-score"]
+    },
+    {
+      "id": "sy-supersaw",
+      "cat": "synths",
+      "group": "Sound types",
+      "label": "Supersaw",
+      "prompt": "huge supersaw lead: stacked detuned sawtooth waves, bright, wide and euphoric",
+      "desc": "Roland's JP-8000 (1996) introduced the 'super saw', seven detuned saws in one voice. Its massive shimmer became the anthem of trance, EDM festival drops and future bass.",
+      "bpm": [124, 140],
+      "pairs": ["sy-noise-riser", "pr-sidechain", "pr-wide-stereo", "g-house"]
+    },
+    {
+      "id": "sy-pluck",
+      "cat": "synths",
+      "group": "Sound types",
+      "label": "Synth pluck",
+      "prompt": "bright synth pluck: short, snappy notes with a quick filter decay bouncing in a melodic pattern",
+      "desc": "A patch whose filter snaps shut so each note blips like a plucked string. Everywhere in tropical house, progressive house, future bass and pop drops.",
+      "bpm": [100, 128],
+      "pairs": ["sy-supersaw", "pr-sidechain", "g-house"]
+    },
+    {
+      "id": "sy-analog-pad",
+      "cat": "synths",
+      "group": "Sound types",
+      "label": "Warm analog pad",
+      "prompt": "warm analog pad: soft, slow-attack sawtooth chords under a gentle low-pass filter, swelling underneath",
+      "desc": "Slow attack, long release and a mellow filter turn a synth into a cushion of sound. Pads glue chords together in ambient, synthwave, R&B and film music.",
+      "pairs": ["sy-juno-pad", "sy-arp", "g-synthwave"]
+    },
+    {
+      "id": "sy-bell-pad",
+      "cat": "synths",
+      "group": "Sound types",
+      "label": "Glassy bell pad",
+      "prompt": "glassy bell pad: shimmering crystalline attack melting into a soft, airy sustain",
+      "desc": "Layering a bell-like FM or digital attack over a soft pad gives sparkle and warmth at once. A signature of late-80s digital synths, new age, ambient and lo-fi.",
+      "pairs": ["sy-d50", "sy-dx7-bells", "g-lofi-hiphop"]
+    },
+    {
+      "id": "sy-string-machine",
+      "cat": "synths",
+      "group": "Sound types",
+      "label": "String machine",
+      "prompt": "vintage string machine: thin, buzzy ensemble strings swirling in chorus, warm and slightly synthetic",
+      "desc": "Divide-down string ensembles like the 1974 ARP Solina used a chorus-like ensemble circuit to fake a section. Their silky, buzzy wash colours 70s disco, prog and synth-pop.",
+      "pairs": ["dr-cr78", "ba-disco-octave", "sy-analog-pad"]
+    },
+    {
+      "id": "sy-arp",
+      "cat": "synths",
+      "group": "Sound types",
+      "label": "Arpeggiator",
+      "prompt": "bubbling synth arpeggiator: fast sixteenth-note analog arpeggios cycling hypnotically through the chord",
+      "desc": "An arpeggiator plays a held chord one note at a time in a set pattern and rate. It is the sequenced pulse of 70s Berlin-school electronic music, Italo disco and synthwave.",
+      "bpm": [100, 130],
+      "pairs": ["sy-juno-pad", "sy-jupiter-8", "dr-linndrum", "g-synthwave"]
+    },
+    {
+      "id": "sy-acid-lead",
+      "cat": "synths",
+      "group": "Sound types",
+      "label": "Acid lead",
+      "prompt": "screaming acid lead: resonant, squelching 303-style line pushed through distortion, rising in intensity",
+      "desc": "Play the TB-303 an octave up through distortion and it becomes a squealing lead. A peak-time sound in acid techno, acid trance and rave revivals.",
+      "bpm": [125, 145],
+      "pairs": ["ba-acid-303", "dr-tr909", "g-techno"]
+    },
+    {
+      "id": "sy-portamento-lead",
+      "cat": "synths",
+      "group": "Sound types",
+      "label": "Portamento lead",
+      "prompt": "gliding portamento lead: smooth, singing mono synth notes sliding into each other, expressive and vocal",
+      "desc": "Portamento, or glide, makes a mono synth slide between notes like a voice or slide guitar. Classic for prog and fusion solos and modern trap and drill melodies.",
+      "pairs": ["sy-minimoog-lead", "ba-808-glide", "g-trap"]
+    },
+    {
+      "id": "sy-hoover",
+      "cat": "synths",
+      "group": "Sound types",
+      "label": "Hoover",
+      "prompt": "rave hoover synth: menacing, detuned, pitch-diving chords with a vacuum-cleaner whine",
+      "desc": "Born from a Roland Alpha Juno preset around 1990-91, the hoover dives in pitch with a growling, detuned buzz. Iconic in hardcore rave, gabber, jungle and techno.",
+      "bpm": [130, 175],
+      "pairs": ["dr-think-break", "dr-amen-break", "g-techno"]
+    },
+    {
+      "id": "sy-chiptune",
+      "cat": "synths",
+      "group": "Sound types",
+      "label": "Chiptune square wave",
+      "prompt": "bleepy 8-bit chiptune square waves: pulse-wave melodies and fast arpeggios like a retro game console",
+      "desc": "Chiptune uses or imitates the sound chips of 80s consoles and home computers, with only a few pulse, triangle and noise channels. Fast arpeggios fake chords; huge in game music and nostalgic pop.",
+      "pairs": ["dr-tr505", "sy-arp", "sy-pluck"]
+    },
+    {
+      "id": "sy-vocoder",
+      "cat": "synths",
+      "group": "Sound types",
+      "label": "Vocoder chords",
+      "prompt": "robotic vocoder chords: synth pads shaped by a voice into talking, harmonised robot vocals",
+      "desc": "A vocoder imprints the shape of a voice onto a synth carrier so chords seem to speak. Its robotic harmony is a staple of electro, disco, funk and French house.",
+      "pairs": ["sy-chord-stabs", "ba-disco-octave", "g-house"]
+    },
+    {
+      "id": "sy-talk-box",
+      "cat": "synths",
+      "group": "Sound types",
+      "label": "Talk box",
+      "prompt": "funky talk box lead: a synth melody shaped through a mouth tube into smooth, singing, robotic vowels",
+      "desc": "A talk box pipes a synth or guitar into the player's mouth through a tube, so their mouth shapes the sound. The smooth, vowel-shaped lead of 80s funk and West Coast G-funk.",
+      "bpm": [85, 105],
+      "pairs": ["ba-moog", "sy-sine-lead", "dr-tr808"]
+    },
+    {
+      "id": "sy-granular",
+      "cat": "synths",
+      "group": "Sound types",
+      "label": "Granular shimmer",
+      "prompt": "granular shimmer: tiny slices of sound frozen into a glittering, slowly evolving cloud of tones",
+      "desc": "Granular synthesis chops audio into tiny grains and re-scatters them. The result is a hovering, glistening texture used in ambient, film scores and experimental electronica.",
+      "pairs": ["sy-ambient-drone", "gt-ebow", "dr-glitch-foley"]
+    },
+    {
+      "id": "sy-modular-bleeps",
+      "cat": "synths",
+      "group": "Sound types",
+      "label": "Modular bleeps",
+      "prompt": "modular synth bleeps: random sample-and-hold blips and burbling patch-cable tones, playful and alien",
+      "desc": "Modular synths, from 60s Moog systems to today's Eurorack, are wired with patch cables. Random voltages make the burbling, computer-like bleeps of IDM, experimental techno and sci-fi scores.",
+      "pairs": ["dr-elektron", "sy-ms20", "g-techno"]
+    },
+    {
+      "id": "sy-chord-stabs",
+      "cat": "synths",
+      "group": "Sound types",
+      "label": "Sidechained stabs",
+      "prompt": "sidechained synth chord stabs: punchy, short house chords ducking and pumping against the kick",
+      "desc": "Short offbeat chords compressed so they duck every time the kick hits. The pumping feel of French house, deep house and UK garage.",
+      "bpm": [118, 130],
+      "pairs": ["pr-sidechain", "dr-tr909", "dr-open-hat-offbeat", "g-house"]
+    },
+    {
+      "id": "sy-lofi-keys",
+      "cat": "synths",
+      "group": "Sound types",
+      "label": "Detuned lo-fi keys",
+      "prompt": "detuned lo-fi synth keys: warbly chords with wobbling tape-flutter pitch drift and a dusty, muffled tone",
+      "desc": "Slight detune and pitch wobble (wow and flutter) mimic a worn cassette. The hazy, nostalgic keys of lo-fi hip-hop, chillwave and bedroom pop.",
+      "bpm": [70, 90],
+      "pairs": ["dr-mpc", "pr-tape-saturation", "pr-vinyl-crackle", "g-lofi-hiphop"]
+    },
+    {
+      "id": "sy-wavetable-growl",
+      "cat": "synths",
+      "group": "Sound types",
+      "label": "Wavetable growl",
+      "prompt": "aggressive wavetable growl: snarling, vowel-like mid bass morphing through distorted, metallic shapes",
+      "desc": "Modern wavetable synths sweep through waveforms while filters and distortion carve talking 'yoi' and growl sounds. The core of dubstep, riddim and bass music.",
+      "bpm": [140, 150],
+      "pairs": ["ba-wobble", "ba-neuro", "ba-sub-drop"]
+    },
+    {
+      "id": "sy-sine-lead",
+      "cat": "synths",
+      "group": "Sound types",
+      "label": "Sine-wave lead",
+      "prompt": "pure sine-wave lead: soft, whistling, flute-like synth melody gliding high above a deep, round sub",
+      "desc": "A sine wave has no overtones, so it sounds pure and whistly. Used for G-funk whistle melodies, minimal techno blips and gentle lullaby-like leads.",
+      "pairs": ["sy-talk-box", "ba-moog", "ba-808-sub"]
+    },
+    {
+      "id": "sy-noise-riser",
+      "cat": "synths",
+      "group": "Sound types",
+      "label": "Noise riser",
+      "prompt": "white-noise sweep riser: filtered noise swelling up in pitch and volume into a big drop",
+      "desc": "Filtered white noise with a rising cutoff builds tension before a drop or chorus; reversed, it becomes a downlifter. Essential to EDM, trance, trap and trailer music.",
+      "pairs": ["dr-808-snare-roll", "ba-sub-drop", "sy-supersaw", "dr-reverse-cymbal"]
+    },
+    {
+      "id": "sy-orch-hit",
+      "cat": "synths",
+      "group": "Sound types",
+      "label": "Orchestra hit",
+      "prompt": "dramatic orchestra hit stabs: a sampled full-orchestra blast, punchy and retro, slamming the accents",
+      "desc": "Sampled from a classical recording into the Fairlight CMI sampler around 1980, the orchestra hit became a hallmark of 80s electro, freestyle, early hip-hop and new jack swing.",
+      "pairs": ["dr-dmx", "ba-fm", "dr-tr808"]
+    },
+    {
+      "id": "sy-trance-gate",
+      "cat": "synths",
+      "group": "Sound types",
+      "label": "Trance gate",
+      "prompt": "trance-gated pad: sustained synth chords chopped into pulsing, rhythmic sixteenth-note stutters",
+      "desc": "A volume gate chops a held pad into rhythmic 16ths. A staple of 90s and 2000s trance, progressive house and euphoric EDM breakdowns.",
+      "bpm": [128, 140],
+      "pairs": ["sy-supersaw", "sy-noise-riser", "pr-sidechain"]
+    },
+    {
+      "id": "sy-sync-lead",
+      "cat": "synths",
+      "group": "Sound types",
+      "label": "Hard-sync lead",
+      "prompt": "tearing hard-sync synth lead: bright, aggressive tone with a ripping, sweeping harmonic edge",
+      "desc": "Hard sync locks one oscillator to another; sweeping the second one's pitch gives a ripping, vocal sweep. A classic lead in 80s new wave, synth rock and modern electro.",
+      "pairs": ["sy-prophet-5", "sy-obxa", "g-synthwave"]
+    },
+    {
+      "id": "sy-future-bass",
+      "cat": "synths",
+      "group": "Sound types",
+      "label": "Future bass chords",
+      "prompt": "wobbling future bass chords: detuned supersaw stacks with pitch-bent swells, sidechain pumping and chopped vocal blips",
+      "desc": "Mid-2010s future bass took fat supersaw chords and made them wobble, bend and pump hard against a half-time beat. Bright, emotional and festival-ready.",
+      "bpm": [140, 160],
+      "pairs": ["sy-supersaw", "pr-sidechain", "sy-noise-riser"]
+    },
+    {
+      "id": "sy-ambient-drone",
+      "cat": "synths",
+      "group": "Sound types",
+      "label": "Ambient drone",
+      "prompt": "evolving ambient drone: slow, sustained synth tones drifting and shimmering over long stretches of time",
+      "desc": "Long, slowly changing tones with little rhythm. The foundation of ambient, drone, meditation music and tense film underscore.",
+      "pairs": ["sy-granular", "gt-ebow", "wo-didgeridoo"]
+    },
+    {
+      "id": "kb-grand-piano",
+      "cat": "keys",
+      "group": "Acoustic pianos",
+      "label": "Grand piano",
+      "prompt": "bright concert grand piano: full, ringing chords and clear melodic runs with natural hall resonance",
+      "desc": "The modern grand, with 88 keys and a cast-iron frame, has a vast range of dynamics and colour. Bright and full for pop ballads, jazz, classical and film; nine-foot concert grands have the deepest bass.",
+      "pairs": ["or-strings-lush", "ba-upright", "dr-jazz-brushes", "g-film-score"]
+    },
+    {
+      "id": "kb-upright-piano",
+      "cat": "keys",
+      "group": "Acoustic pianos",
+      "label": "Upright piano",
+      "prompt": "warm upright piano: intimate, slightly woody tone, close-miked with soft hammer and pedal noise",
+      "desc": "Vertical strings make uprights compact and a little boxier than grands. Their homely, close sound suits singer-songwriter, indie, lo-fi and parlour songs.",
+      "pairs": ["gt-acoustic-fingerpicked", "or-solo-cello", "pr-vinyl-crackle"]
+    },
+    {
+      "id": "kb-felt-piano",
+      "cat": "keys",
+      "group": "Acoustic pianos",
+      "label": "Felt piano",
+      "prompt": "soft felt piano: muted, hushed notes from felt-dampened hammers with intimate key and pedal noise",
+      "desc": "A strip of felt between hammers and strings, like an upright's practice pedal, makes notes soft, dark and breathy. The signature of modern neo-classical, ambient and sad-piano music.",
+      "bpm": [60, 90],
+      "pairs": ["or-solo-cello", "sy-ambient-drone", "pr-tape-saturation"]
+    },
+    {
+      "id": "kb-honky-tonk",
+      "cat": "keys",
+      "group": "Acoustic pianos",
+      "label": "Honky-tonk piano",
+      "prompt": "jangly honky-tonk piano: bright, slightly detuned saloon upright pounding out ragtime and boogie rhythms",
+      "desc": "A piano whose two or three strings per note drift slightly apart, giving a chorus-like jangle. It evokes saloons, ragtime, boogie-woogie and early rock and roll.",
+      "bpm": [100, 180],
+      "pairs": ["ba-upright", "wo-banjo", "or-clarinet"]
+    },
+    {
+      "id": "kb-rhodes",
+      "cat": "keys",
+      "group": "Electric keys",
+      "label": "Rhodes",
+      "prompt": "warm Fender Rhodes electric piano: bell-like tines, mellow bark when played hard, gentle stereo tremolo",
+      "desc": "Struck metal tines and pickups give the Rhodes its round, bell-like tone that growls when played hard. Since the 60s it has been the sound of jazz fusion, soul, neo-soul and lo-fi hip-hop.",
+      "pairs": ["dr-mpc", "ba-fingerstyle", "g-neo-soul", "g-lofi-hiphop", "g-jazz-fusion"]
+    },
+    {
+      "id": "kb-wurlitzer",
+      "cat": "keys",
+      "group": "Electric keys",
+      "label": "Wurlitzer",
+      "prompt": "reedy Wurlitzer electric piano: warm, slightly gritty tone that barks and breaks up when played hard",
+      "desc": "Wurlitzer electric pianos, made from 1954 (the 1970s 200A is the classic), strike steel reeds for a buzzier, more nasal tone than a Rhodes. Heard in 60s soul, 70s soft rock and indie.",
+      "pairs": ["dr-60s-soul-kit", "ba-fingerstyle", "g-neo-soul"]
+    },
+    {
+      "id": "kb-cp70",
+      "cat": "keys",
+      "group": "Electric keys",
+      "label": "CP-70 electric grand",
+      "prompt": "chiming Yamaha CP-70 electric grand: bright, slightly metallic piano with a punchy pickup tone",
+      "desc": "Yamaha's 1976 CP-70 is a real stringed grand with pickups, built to fold down for touring. Its chiming, jangly tone shines in 80s pop, new wave and synth-pop ballads.",
+      "pairs": ["sy-jupiter-8", "dr-linndrum", "g-synthwave"]
+    },
+    {
+      "id": "kb-clavinet",
+      "cat": "keys",
+      "group": "Electric keys",
+      "label": "Clavinet",
+      "prompt": "funky Hohner Clavinet: percussive, twangy, wah-filtered keyboard riffs in tight sixteenth-note funk patterns",
+      "desc": "Hohner's Clavinet (the D6 arrived in 1971) strikes strings with rubber tips for a biting, guitar-like snap. The funk keyboard of the 70s, often through wah or phaser.",
+      "bpm": [95, 115],
+      "pairs": ["ba-slap", "gt-wah", "dr-funk-ghost-kit"]
+    },
+    {
+      "id": "kb-hammond-b3",
+      "cat": "keys",
+      "group": "Organs",
+      "label": "Hammond B3",
+      "prompt": "whirling Hammond B3 organ through a Leslie rotary speaker: gospel-style swells, drawbar chords and percussive stabs",
+      "desc": "Hammond's B3 (1954-1974) builds its tone from spinning tonewheels and drawbars; through a Leslie rotating speaker it swirls and growls. Central to gospel, soul, blues, jazz organ trios and classic rock.",
+      "pairs": ["or-gospel-choir", "dr-60s-soul-kit", "g-classic-rock", "g-jazz-fusion"]
+    },
+    {
+      "id": "kb-pipe-organ",
+      "cat": "keys",
+      "group": "Organs",
+      "label": "Church pipe organ",
+      "prompt": "majestic church pipe organ: towering full-stop chords, deep pedal bass and vast cathedral reverb",
+      "desc": "Pipe organs blow air through ranks of pipes chosen by stops, some 32 feet long for floor-shaking bass. Sacred and grand in Baroque music, hymns, gothic horror and epic scores.",
+      "pairs": ["or-choir", "or-boys-choir", "g-film-score"]
+    },
+    {
+      "id": "kb-reed-organ",
+      "cat": "keys",
+      "group": "Organs",
+      "label": "Reed organ",
+      "prompt": "wheezy reed organ: breathy pump-organ chords with a soft, accordion-like sustain, homely and rustic",
+      "desc": "Pump organs and harmoniums push air across free metal reeds, like an accordion. Their wheezy warmth suits folk, old hymns and Indian devotional music, where the hand-pumped harmonium backs singers.",
+      "pairs": ["gt-acoustic-fingerpicked", "wo-tabla", "kb-upright-piano"]
+    },
+    {
+      "id": "kb-farfisa",
+      "cat": "keys",
+      "group": "Organs",
+      "label": "60s combo organ",
+      "prompt": "buzzy 60s combo organ: thin, bright, reedy Farfisa-style riffs with fast vibrato",
+      "desc": "Portable transistor organs like the Farfisa and Vox Continental arrived in the early 60s. Their cheesy, cutting buzz is the sound of garage rock, ska and psychedelic pop.",
+      "bpm": [110, 170],
+      "pairs": ["dr-garage-kit", "gt-fuzz", "gt-reggae-skank"]
+    },
+    {
+      "id": "kb-harpsichord",
+      "cat": "keys",
+      "group": "Other keyboards",
+      "label": "Harpsichord",
+      "prompt": "crisp harpsichord: plucked, bright metallic notes in ornate baroque runs and arpeggios",
+      "desc": "Quills pluck the strings instead of hammers striking them, so every note jangles at the same volume. The keyboard of the Baroque era, revived in 60s baroque pop and period scores.",
+      "pairs": ["or-string-quartet", "kb-pipe-organ", "or-oboe"]
+    },
+    {
+      "id": "kb-celesta",
+      "cat": "keys",
+      "group": "Other keyboards",
+      "label": "Celesta",
+      "prompt": "delicate celesta: tinkling, sweet bell-like keyboard notes, magical and twinkling",
+      "desc": "Patented in Paris in 1886, its hammers strike metal bars over wooden resonators. Its fairy-dust sound is the classic marker of magic, winter and childhood in ballet and film.",
+      "pairs": ["or-harp", "or-pizzicato", "g-film-score"]
+    },
+    {
+      "id": "kb-music-box",
+      "cat": "keys",
+      "group": "Other keyboards",
+      "label": "Music box",
+      "prompt": "music box melody: tiny plinking metal-comb notes, fragile and nostalgic, gently slowing down",
+      "desc": "A pinned cylinder plucks the teeth of a tuned steel comb. Its fragile tinkle signals childhood, nostalgia or creepiness in film, lullabies and lo-fi.",
+      "pairs": ["kb-felt-piano", "pr-vinyl-crackle", "sy-ambient-drone"]
+    },
+    {
+      "id": "kb-toy-piano",
+      "cat": "keys",
+      "group": "Other keyboards",
+      "label": "Toy piano",
+      "prompt": "plinky toy piano: small, metallic, slightly out-of-tune notes, playful and quirky",
+      "desc": "Toy pianos strike metal rods instead of strings, so they plink like a glockenspiel. Used for whimsical, quirky or eerie touches in indie pop, film and contemporary classical.",
+      "pairs": ["or-glockenspiel", "or-pizzicato", "wo-ukulele"]
+    },
+    {
+      "id": "kb-mellotron-flutes",
+      "cat": "keys",
+      "group": "Other keyboards",
+      "label": "Mellotron flutes",
+      "prompt": "dreamy Mellotron flutes: wobbly, breathy tape-replay flute chords with a nostalgic, psychedelic haze",
+      "desc": "Each Mellotron key plays an eight-second tape of a real flute, string or choir note. Its warbly flute opened 60s psychedelic and baroque pop records and is beloved by lo-fi producers.",
+      "pairs": ["sy-mellotron-choir", "pr-tape-saturation", "g-lofi-hiphop"]
+    },
+    {
+      "id": "kb-melodica",
+      "cat": "keys",
+      "group": "Other keyboards",
+      "label": "Melodica",
+      "prompt": "breathy melodica: reedy, harmonica-like keyboard melody blown through a mouthpiece, wistful and bright",
+      "desc": "A small keyboard you blow into, with free reeds like a harmonica; Hohner popularised it in the late 1950s. A dub reggae classic, also loved in indie and folk.",
+      "pairs": ["ba-dub", "gt-reggae-skank", "wo-ukulele"]
+    },
+    {
+      "id": "gt-clean-electric",
+      "cat": "guitars",
+      "group": "Electric tones",
+      "label": "Clean electric",
+      "prompt": "clean electric guitar: bright, glassy single-coil tone with light reverb, playing articulate chords and arpeggios",
+      "desc": "A single-coil guitar into a clean amp gives sparkle and definition. The default for pop, R&B, indie and neo-soul rhythm parts.",
+      "pairs": ["ba-fingerstyle", "kb-rhodes", "dr-studio-kit", "g-neo-soul"]
+    },
+    {
+      "id": "gt-12-string",
+      "cat": "guitars",
+      "group": "Electric tones",
+      "label": "Jangly 12-string",
+      "prompt": "jangly electric 12-string guitar: shimmering, chiming chords with doubled octave strings ringing out",
+      "desc": "Paired octave strings make every chord ring and shimmer. The jangle of mid-60s folk rock and 80s college-radio jangle pop.",
+      "pairs": ["dr-tambourine", "gt-acoustic-strummed", "g-classic-rock"]
+    },
+    {
+      "id": "gt-overdrive",
+      "cat": "guitars",
+      "group": "Electric tones",
+      "label": "Crunchy overdrive",
+      "prompt": "crunchy overdriven electric guitar: warm tube-amp breakup on bluesy power chords and riffs",
+      "desc": "A tube amp pushed just past clean breaks up into warm crunch that responds to picking strength. The core of blues rock, classic rock and indie.",
+      "pairs": ["dr-rock-kit", "kb-hammond-b3", "g-classic-rock"]
+    },
+    {
+      "id": "gt-distorted",
+      "cat": "guitars",
+      "group": "Electric tones",
+      "label": "High-gain distortion",
+      "prompt": "high-gain distorted electric guitar: thick, saturated wall of power chords with long, heavy sustain",
+      "desc": "Stacked gain stages compress humbuckers into a dense wall of harmonics. The engine of hard rock, metal and pop punk.",
+      "pairs": ["gt-palm-mute", "dr-rock-kit", "tu-drop-d", "g-classic-rock"]
+    },
+    {
+      "id": "gt-fuzz",
+      "cat": "guitars",
+      "group": "Electric tones",
+      "label": "Fuzz guitar",
+      "prompt": "buzzing fuzz guitar: thick, woolly, square-wave saturation on gritty, raw vintage riffs",
+      "desc": "Fuzz pedals, sold from the early 60s, clip the signal into a near-square wave for a buzzy, woolly, sustaining tone. The sound of 60s garage, psych, stoner rock and doom.",
+      "pairs": ["ba-fuzz", "dr-garage-kit", "tu-d-standard"]
+    },
+    {
+      "id": "gt-jazz-hollowbody",
+      "cat": "guitars",
+      "group": "Electric tones",
+      "label": "Jazz hollow-body",
+      "prompt": "mellow jazz hollow-body guitar: warm, round, dark tone with smooth chord melodies and gentle comping",
+      "desc": "Big archtop hollow-bodies with neck humbuckers and flatwound strings give a warm, woody, rolled-off tone. The classic voice of jazz guitar from swing to bebop and soul jazz.",
+      "pairs": ["ba-upright", "dr-jazz-brushes", "kb-hammond-b3", "g-jazz-fusion"]
+    },
+    {
+      "id": "gt-80s-chorus",
+      "cat": "guitars",
+      "group": "Electric tones",
+      "label": "80s chorus clean",
+      "prompt": "chorus-drenched 80s clean guitar: shimmering, watery arpeggios with lush stereo chorus and echo",
+      "desc": "Boss's CE-1 chorus (1976) and the pedals that followed made clean guitars swirl and widen. The glassy, watery sound of 80s new wave, post-punk and dream pop.",
+      "pairs": ["dr-linndrum", "sy-juno-pad", "pr-wide-stereo", "g-synthwave"]
+    },
+    {
+      "id": "gt-surf",
+      "cat": "guitars",
+      "group": "Electric tones",
+      "label": "Surf twang",
+      "prompt": "surf twang guitar: drippy spring-reverb tone with fast tremolo-picked melodies on the low strings",
+      "desc": "Bright single-coils plus an early-60s spring reverb unit give surf rock its wet twang. Also beloved in spaghetti-western scores and retro garage.",
+      "bpm": [130, 180],
+      "pairs": ["gt-tremolo-picking", "dr-garage-kit", "gt-baritone"]
+    },
+    {
+      "id": "gt-shoegaze",
+      "cat": "guitars",
+      "group": "Electric tones",
+      "label": "Shoegaze wall",
+      "prompt": "shoegaze wall of fuzz: layered, heavily distorted, reverse-reverb guitars with whammy-bar bends, dreamy and immense",
+      "desc": "Stacked fuzz, reverse reverb and constant tremolo-arm bending melt guitars into a roaring haze. Late-80s UK bands invented it, named for staring at their pedals.",
+      "pairs": ["gt-ebow", "pr-wide-stereo", "g-shoegaze"]
+    },
+    {
+      "id": "gt-baritone",
+      "cat": "guitars",
+      "group": "Electric tones",
+      "label": "Baritone guitar",
+      "prompt": "deep baritone guitar: twangy, low-tuned notes between guitar and bass, moody and cinematic",
+      "desc": "A longer-scale guitar tuned a fourth or fifth below standard, often B to B. Its dark twang suits spaghetti-western scores, modern country and heavy riffs.",
+      "pairs": ["tu-baritone-b", "gt-surf", "g-country"]
+    },
+    {
+      "id": "gt-palm-mute",
+      "cat": "guitars",
+      "group": "Playing styles",
+      "label": "Palm-muted chugs",
+      "prompt": "palm-muted chugging guitars: tight, percussive low-string chugs locked to the kick drum",
+      "desc": "Resting the picking hand on the strings by the bridge damps them into a tight 'chug'. The rhythmic backbone of metal, hard rock and pop punk verses.",
+      "pairs": ["gt-distorted", "tu-drop-c", "tu-7-string"]
+    },
+    {
+      "id": "gt-funk-scratch",
+      "cat": "guitars",
+      "group": "Playing styles",
+      "label": "Funk scratch",
+      "prompt": "funky scratch guitar: muted sixteenth-note chicken-scratch strums and tight chord stabs",
+      "desc": "Muting the strings with the fretting hand while strumming fast 16ths gives the percussive 'chicken scratch'. Essential in funk, disco and Afrobeat rhythm sections.",
+      "bpm": [95, 125],
+      "pairs": ["ba-slap", "dr-funk-ghost-kit", "ba-disco-octave"]
+    },
+    {
+      "id": "gt-wah",
+      "cat": "guitars",
+      "group": "Playing styles",
+      "label": "Wah-wah",
+      "prompt": "wah-wah guitar: vocal, sweeping 'wacka-wacka' rhythm and crying lead lines through a foot pedal",
+      "desc": "A foot-controlled filter sweep, introduced in the late 60s, makes the guitar talk. Famous in 70s funk and soul soundtracks and psychedelic rock solos.",
+      "pairs": ["kb-clavinet", "gt-funk-scratch", "ba-slap"]
+    },
+    {
+      "id": "gt-slide",
+      "cat": "guitars",
+      "group": "Playing styles",
+      "label": "Slide guitar",
+      "prompt": "bluesy slide guitar: a glass bottleneck gliding between notes, wailing and vocal, in open tuning",
+      "desc": "A glass or metal tube, originally a bottle neck, slides along the strings for crying glissandi. A Delta blues tradition that runs through Southern rock and Americana.",
+      "pairs": ["tu-open-g", "tu-open-e", "wo-harmonica"]
+    },
+    {
+      "id": "gt-ebow",
+      "cat": "guitars",
+      "group": "Playing styles",
+      "label": "E-bow swells",
+      "prompt": "ambient e-bow guitar swells: endlessly sustained, violin-like notes fading in and out with lush reverb",
+      "desc": "The EBow, a handheld magnetic device from the 1970s, keeps a string vibrating indefinitely so the guitar sustains like a bowed instrument. Used in post-rock, ambient and dream pop.",
+      "pairs": ["sy-ambient-drone", "gt-shoegaze", "sy-granular"]
+    },
+    {
+      "id": "gt-tremolo-picking",
+      "cat": "guitars",
+      "group": "Playing styles",
+      "label": "Tremolo picking",
+      "prompt": "rapid tremolo-picked guitar: fast, continuous single-note picking in a shimmering, intense melodic wash",
+      "desc": "Picking one note as fast as possible makes it hover and shimmer. Core to surf, black metal and post-rock crescendos.",
+      "pairs": ["gt-surf", "gt-distorted", "dr-crash-swell"]
+    },
+    {
+      "id": "gt-highlife",
+      "cat": "guitars",
+      "group": "Playing styles",
+      "label": "Highlife guitar",
+      "prompt": "bright Afrobeat and highlife guitar: clean, interlocking looping single-note patterns and sparkling picked chords",
+      "desc": "Ghanaian highlife and Nigerian Afrobeat use clean, trebly guitars playing short repeating patterns that interlock like percussion. Their sunny, cyclical lines live on in modern Afrobeats and soukous.",
+      "bpm": [100, 120],
+      "pairs": ["dr-congas", "dr-shaker", "or-brass-section", "g-afrobeats"]
+    },
+    {
+      "id": "gt-reggae-skank",
+      "cat": "guitars",
+      "group": "Playing styles",
+      "label": "Reggae skank",
+      "prompt": "reggae skank guitar: short, choppy, trebly chord upstrokes on the offbeat, crisp and bouncing",
+      "desc": "Short chord chops on the offbeats, damped right after each strum, give ska, rocksteady and reggae their bounce. Often doubled by an organ 'bubble'.",
+      "pairs": ["ba-dub", "kb-melodica", "kb-hammond-b3"]
+    },
+    {
+      "id": "gt-rock-solo",
+      "cat": "guitars",
+      "group": "Playing styles",
+      "label": "Rock guitar solo",
+      "prompt": "soaring rock guitar solo: singing sustain, wide string bends, vibrato and fast pentatonic runs",
+      "desc": "A lead guitar pushed into smooth sustain sings like a voice. Bends, vibrato and pentatonic runs are the language of classic rock, hard rock and power ballads.",
+      "pairs": ["gt-overdrive", "dr-rock-kit", "g-classic-rock"]
+    },
+    {
+      "id": "gt-blues-licks",
+      "cat": "guitars",
+      "group": "Playing styles",
+      "label": "Blues licks",
+      "prompt": "stinging electric blues guitar: expressive bent notes and call-and-response licks between the vocal lines",
+      "desc": "Blues players bend notes between the minor and major third and answer the singer phrase by phrase. The root of rock, soul and R&B lead guitar.",
+      "bpm": [60, 120],
+      "pairs": ["wo-harmonica", "kb-hammond-b3", "gt-overdrive"]
+    },
+    {
+      "id": "gt-math-tapping",
+      "cat": "guitars",
+      "group": "Playing styles",
+      "label": "Twinkly tapping",
+      "prompt": "twinkly tapped clean guitar: intricate two-hand tapped arpeggios cascading in odd time signatures",
+      "desc": "Tapping with both hands on the fretboard creates rippling, piano-like arpeggios. The signature of math rock and Midwest emo's 'twinkly' sound.",
+      "pairs": ["gt-clean-electric", "dr-studio-kit", "tu-dadgad"]
+    },
+    {
+      "id": "gt-nylon",
+      "cat": "guitars",
+      "group": "Acoustic & steel",
+      "label": "Nylon classical",
+      "prompt": "warm nylon-string classical guitar: soft, round fingerpicked melodies and gentle arpeggiated chords",
+      "desc": "Nylon strings sound softer and rounder than steel. Played fingerstyle, it is the guitar of classical, bossa nova and Latin ballads, and a lo-fi favourite.",
+      "pairs": ["dr-rimshot", "ba-upright", "or-flute", "g-lofi-hiphop"]
+    },
+    {
+      "id": "gt-acoustic-fingerpicked",
+      "cat": "guitars",
+      "group": "Acoustic & steel",
+      "label": "Fingerpicked acoustic",
+      "prompt": "fingerpicked steel-string acoustic guitar: bright, intimate arpeggios over alternating-thumb bass notes",
+      "desc": "The thumb alternates between bass strings while the fingers pick a melody, a style from early country and blues. The intimate engine of folk, country and singer-songwriter music.",
+      "pairs": ["kb-upright-piano", "or-solo-cello", "tu-dadgad", "g-country"]
+    },
+    {
+      "id": "gt-acoustic-strummed",
+      "cat": "guitars",
+      "group": "Acoustic & steel",
+      "label": "Strummed acoustic",
+      "prompt": "strummed steel-string acoustic guitar: bright, full open chords in a driving campfire rhythm",
+      "desc": "A big-bodied dreadnought acoustic strummed with a pick fills the mid-range with shimmer. The heartbeat of folk, country, pop and acoustic rock.",
+      "pairs": ["dr-shaker", "dr-cajon", "wo-harmonica", "g-country"]
+    },
+    {
+      "id": "gt-flamenco",
+      "cat": "guitars",
+      "group": "Acoustic & steel",
+      "label": "Flamenco guitar",
+      "prompt": "fiery flamenco guitar: rapid rasgueado strums, percussive golpe taps and dramatic Phrygian runs",
+      "desc": "A light, bright nylon-string guitar fitted with a tap plate. Finger-flicked rasgueado strums and Phrygian-mode runs drive Andalusian flamenco and its rumba offshoots.",
+      "pairs": ["dr-cajon", "dr-castanets", "dr-clap-stack"]
+    },
+    {
+      "id": "gt-pedal-steel",
+      "cat": "guitars",
+      "group": "Acoustic & steel",
+      "label": "Pedal steel",
+      "prompt": "weeping pedal steel guitar: smooth swelling bends and sliding chords, tearful and sweet",
+      "desc": "Played flat with a steel bar, plus pedals and knee levers that bend single strings inside a chord. The tearful cry of classic country, honky-tonk and Americana.",
+      "pairs": ["gt-acoustic-strummed", "wo-fiddle", "g-country"]
+    },
+    {
+      "id": "gt-resonator",
+      "cat": "guitars",
+      "group": "Acoustic & steel",
+      "label": "Resonator guitar",
+      "prompt": "metallic resonator guitar: bright, ringing, nasal tone with slide licks for bluegrass and blues",
+      "desc": "Aluminium cones inside the body make it loud and tangy; the Dobro is the best-known brand. Played lap-style in bluegrass or with a bottleneck in Delta blues.",
+      "pairs": ["wo-banjo", "wo-mandolin", "gt-slide"]
+    },
+    {
+      "id": "or-strings-lush",
+      "cat": "orchestral",
+      "group": "Strings",
+      "label": "Lush strings",
+      "prompt": "lush orchestral string section: sweeping legato violins, violas and cellos, warm and cinematic",
+      "desc": "A full section of 30 to 60 players bowing smooth legato lines in harmony. The emotional swell behind film scores, ballads, disco and Bollywood.",
+      "pairs": ["kb-grand-piano", "or-french-horns", "or-harp", "g-film-score"]
+    },
+    {
+      "id": "or-staccato-strings",
+      "cat": "orchestral",
+      "group": "Strings",
+      "label": "Staccato strings",
+      "prompt": "driving staccato strings: short, punchy, rhythmic ostinato bowing pushing the music forward",
+      "desc": "Short, detached bow strokes repeated as a rhythmic ostinato. The pulse of action trailers, epic scores and orchestral pop builds.",
+      "bpm": [120, 160],
+      "pairs": ["or-french-horns", "or-timpani", "dr-taiko", "g-film-score"]
+    },
+    {
+      "id": "or-pizzicato",
+      "cat": "orchestral",
+      "group": "Strings",
+      "label": "Pizzicato",
+      "prompt": "playful pizzicato strings: plucked violins and cellos, light, bouncy and mischievous",
+      "desc": "Strings plucked with the fingers instead of bowed. Bouncy and light: tiptoeing comedy, holiday music and quirky indie pop.",
+      "pairs": ["kb-celesta", "or-bassoon", "or-glockenspiel"]
+    },
+    {
+      "id": "or-tremolo-strings",
+      "cat": "orchestral",
+      "group": "Strings",
+      "label": "Tremolo strings",
+      "prompt": "suspenseful tremolo strings: rapid shivering bow strokes, tense and shimmering",
+      "desc": "Moving the bow back and forth very fast makes notes shiver. Classic for suspense, horror and building tension, or a shimmering bed in ambient scores.",
+      "pairs": ["or-timpani", "sy-theremin", "or-double-bass-section"]
+    },
+    {
+      "id": "or-solo-cello",
+      "cat": "orchestral",
+      "group": "Strings",
+      "label": "Solo cello",
+      "prompt": "expressive solo cello: deep, warm, singing melody with rich vibrato and long bow strokes",
+      "desc": "The cello's range sits closest to the human voice, from deep bass to singing tenor. Mournful and intimate in neo-classical, film and sad piano pieces.",
+      "pairs": ["kb-felt-piano", "or-harp", "or-string-quartet"]
+    },
+    {
+      "id": "or-solo-violin",
+      "cat": "orchestral",
+      "group": "Strings",
+      "label": "Solo violin",
+      "prompt": "soaring solo violin: sweet, expressive melody with vibrato and graceful slides",
+      "desc": "The highest bowed string, agile and singing. Used for virtuosic leads in classical, crossover, film themes and emotional pop bridges.",
+      "pairs": ["kb-grand-piano", "or-strings-lush", "or-harp"]
+    },
+    {
+      "id": "or-solo-viola",
+      "cat": "orchestral",
+      "group": "Strings",
+      "label": "Solo viola",
+      "prompt": "warm solo viola: dark, husky mid-range melody with gentle vibrato",
+      "desc": "Slightly larger than a violin and tuned a fifth lower, the viola has a dark, husky warmth. Moody and introspective, a secret weapon of chamber pop.",
+      "pairs": ["or-solo-cello", "kb-felt-piano", "or-string-quartet"]
+    },
+    {
+      "id": "or-double-bass-section",
+      "cat": "orchestral",
+      "group": "Strings",
+      "label": "Double bass section",
+      "prompt": "deep double bass section: dark bowed low notes and heavy pizzicato under the orchestra",
+      "desc": "The orchestra's lowest strings, usually six to eight players. They give film scores ominous weight with long bowed tones and thumping pizzicato.",
+      "pairs": ["or-tremolo-strings", "or-timpani", "or-tuba"]
+    },
+    {
+      "id": "or-harp",
+      "cat": "orchestral",
+      "group": "Strings",
+      "label": "Harp",
+      "prompt": "concert harp: shimmering glissandos and delicate plucked arpeggios, dreamy and celestial",
+      "desc": "The 47-string pedal harp can sweep a glissando across every string. Its rippling arpeggios signal dreams, flashbacks and magic in film, and warm up ballads and dream pop.",
+      "pairs": ["or-flute", "kb-celesta", "or-strings-lush"]
+    },
+    {
+      "id": "or-full-orchestra",
+      "cat": "orchestral",
+      "group": "Ensembles",
+      "label": "Full orchestra",
+      "prompt": "full symphony orchestra in tutti: strings, brass, woodwinds and timpani swelling together in a grand climax",
+      "desc": "A symphony orchestra of 60 to 100 players, everyone playing at once (tutti). The biggest acoustic sound there is, built for film climaxes, anthems and epic trailers.",
+      "pairs": ["or-choir", "or-timpani", "g-film-score"]
+    },
+    {
+      "id": "or-string-quartet",
+      "cat": "orchestral",
+      "group": "Ensembles",
+      "label": "String quartet",
+      "prompt": "intimate string quartet: two violins, viola and cello weaving close, expressive harmony",
+      "desc": "The chamber format perfected in the late 18th century. Detailed and intimate; great for indie ballads, baroque pop and string covers of pop songs.",
+      "pairs": ["kb-harpsichord", "kb-grand-piano", "or-solo-cello"]
+    },
+    {
+      "id": "or-brass-section",
+      "cat": "orchestral",
+      "group": "Brass",
+      "label": "Brass section",
+      "prompt": "punchy horn section: tight trumpets, trombones and saxophones playing bright unison riffs and stabs",
+      "desc": "A horn section of trumpet, sax and trombone playing tight unison lines and stabs. It drives soul, funk, ska, big-band swing and pop.",
+      "pairs": ["dr-funk-ghost-kit", "or-bari-sax", "gt-funk-scratch", "g-afrobeats"]
+    },
+    {
+      "id": "or-french-horns",
+      "cat": "orchestral",
+      "group": "Brass",
+      "label": "French horns",
+      "prompt": "noble French horns: warm, heroic, round brass melody soaring over the orchestra",
+      "desc": "Played with a hand in the bell, horns have a warm, round, heroic tone; film orchestras often use four to eight. The voice of adventure and nobility in film scores.",
+      "pairs": ["or-strings-lush", "or-timpani", "g-film-score"]
+    },
+    {
+      "id": "or-muted-trumpet",
+      "cat": "orchestral",
+      "group": "Brass",
+      "label": "Muted trumpet",
+      "prompt": "smoky muted trumpet: intimate, breathy, buzzy tone through a Harmon mute, late-night jazz",
+      "desc": "A Harmon mute in the bell gives a buzzy, whispering, intimate sound. Iconic in cool jazz ballads, noir soundtracks and jazzy lo-fi.",
+      "bpm": [60, 120],
+      "pairs": ["dr-jazz-brushes", "ba-upright", "g-lofi-hiphop"]
+    },
+    {
+      "id": "or-trumpet-fanfare",
+      "cat": "orchestral",
+      "group": "Brass",
+      "label": "Trumpet fanfare",
+      "prompt": "bright trumpet fanfare: bold, triumphant brass calls with crisp tonguing and ringing high notes",
+      "desc": "Short heraldic calls built on chord tones, born in ceremony and battle. Used for royal, sporting, victory and epic opening moments.",
+      "pairs": ["or-timpani", "dr-marching-snare", "or-french-horns"]
+    },
+    {
+      "id": "or-trombone",
+      "cat": "orchestral",
+      "group": "Brass",
+      "label": "Trombone",
+      "prompt": "warm trombone: rich, buttery brass lines with smooth slides and punchy accents",
+      "desc": "The slide lets trombones glide between notes. Warm and mellow in ballads, punchy in ska, salsa and big-band shout choruses.",
+      "pairs": ["or-brass-section", "dr-timbales", "ba-tuba"]
+    },
+    {
+      "id": "or-tuba",
+      "cat": "orchestral",
+      "group": "Brass",
+      "label": "Tuba",
+      "prompt": "deep orchestral tuba: weighty, round low brass anchoring dramatic chords",
+      "desc": "The largest, lowest brass instrument. In the orchestra it anchors the brass with dark, massive weight in film and epic scores.",
+      "pairs": ["or-french-horns", "or-trailer-braams", "or-double-bass-section"]
+    },
+    {
+      "id": "or-trailer-braams",
+      "cat": "orchestral",
+      "group": "Brass",
+      "label": "Trailer braams",
+      "prompt": "massive trailer brass braams: huge, distorted low-brass blasts with booming impacts, dark and epic",
+      "desc": "Since around 2010, blockbuster trailers have used enormous low-brass 'braams', often layered with synths and hits. Shorthand for epic, ominous scale.",
+      "pairs": ["dr-taiko", "ba-sub-drop", "or-timpani", "g-film-score"]
+    },
+    {
+      "id": "or-alto-sax",
+      "cat": "orchestral",
+      "group": "Saxophones",
+      "label": "Alto sax",
+      "prompt": "smooth alto saxophone: bright, singing, expressive melody with soulful bends",
+      "desc": "The alto is the agile, bright, singing member of the sax family. Heard in bebop, smooth jazz, R&B and 80s pop solos.",
+      "pairs": ["kb-rhodes", "ba-fretless", "g-jazz-fusion"]
+    },
+    {
+      "id": "or-tenor-sax",
+      "cat": "orchestral",
+      "group": "Saxophones",
+      "label": "Tenor sax",
+      "prompt": "warm, breathy tenor saxophone: husky, soulful lead with growls and smoky vibrato",
+      "desc": "Lower and huskier than the alto, the tenor is the classic sax voice of jazz ballads, honking rock and roll and R&B solos.",
+      "pairs": ["ba-upright", "dr-jazz-brushes", "kb-grand-piano"]
+    },
+    {
+      "id": "or-bari-sax",
+      "cat": "orchestral",
+      "group": "Saxophones",
+      "label": "Baritone sax",
+      "prompt": "growling baritone saxophone: deep, honking low riffs adding punch under the horn section",
+      "desc": "The big low sax grunts bass lines and punchy riffs beneath the horns. Essential in funk, soul, ska and swing.",
+      "pairs": ["or-brass-section", "dr-60s-soul-kit", "ba-slap"]
+    },
+    {
+      "id": "or-clarinet",
+      "cat": "orchestral",
+      "group": "Woodwinds",
+      "label": "Clarinet",
+      "prompt": "woody clarinet: warm, smooth melody moving from dark low notes to bright high runs",
+      "desc": "A single-reed woodwind with a huge range: hollow and dark down low, sweet and bright up high. Key in classical, klezmer, Dixieland and early jazz.",
+      "pairs": ["kb-honky-tonk", "ba-tuba", "wo-accordion"]
+    },
+    {
+      "id": "or-flute",
+      "cat": "orchestral",
+      "group": "Woodwinds",
+      "label": "Flute",
+      "prompt": "airy concert flute: breathy, light, flowing melody floating above the arrangement",
+      "desc": "A transverse flute with a pure, breathy tone. It brings pastoral calm, birdsong and floating melody to classical, film, jazz and psychedelic rock.",
+      "pairs": ["or-harp", "gt-nylon", "or-strings-lush"]
+    },
+    {
+      "id": "or-piccolo",
+      "cat": "orchestral",
+      "group": "Woodwinds",
+      "label": "Piccolo",
+      "prompt": "piercing piccolo: tiny, bright, high-flying runs and trills cutting through the full orchestra",
+      "desc": "Half the size of a flute and an octave higher, it pierces through everything. Used in marches and festive or comic passages.",
+      "pairs": ["dr-marching-snare", "or-glockenspiel", "or-trumpet-fanfare"]
+    },
+    {
+      "id": "or-oboe",
+      "cat": "orchestral",
+      "group": "Woodwinds",
+      "label": "Oboe",
+      "prompt": "plaintive oboe: nasal, reedy, poignant melody, pastoral and lyrical",
+      "desc": "A double-reed woodwind with a penetrating, bittersweet voice. The orchestra tunes to its A, and it carries pastoral, lonely and tender themes.",
+      "pairs": ["or-strings-lush", "kb-harpsichord", "or-bassoon"]
+    },
+    {
+      "id": "or-bassoon",
+      "cat": "orchestral",
+      "group": "Woodwinds",
+      "label": "Bassoon",
+      "prompt": "dry, woody bassoon: reedy low notes bouncing in playful or wistful lines",
+      "desc": "The bass of the double-reed family. Its dry, woody tone can be comic and grumpy or soulful and melancholy.",
+      "pairs": ["or-pizzicato", "or-clarinet", "or-oboe"]
+    },
+    {
+      "id": "or-choir",
+      "cat": "orchestral",
+      "group": "Choir",
+      "label": "SATB choir",
+      "prompt": "full SATB choir: soprano, alto, tenor and bass voices singing wordless 'aah' harmonies, rich and cathedral-like",
+      "desc": "SATB stands for soprano, alto, tenor and bass, the four sections of a standard mixed choir. Wordless choir pads add grandeur to film scores, epic trailers and ballads.",
+      "pairs": ["kb-pipe-organ", "or-strings-lush", "or-full-orchestra", "g-film-score"]
+    },
+    {
+      "id": "or-boys-choir",
+      "cat": "orchestral",
+      "group": "Choir",
+      "label": "Boys' choir",
+      "prompt": "angelic boys' choir: pure, high, bright treble voices echoing through a stone church",
+      "desc": "Unbroken treble voices with a pure, bright, nearly vibrato-free tone. The sound of the English cathedral tradition and ethereal, sacred moments in film.",
+      "pairs": ["kb-pipe-organ", "or-harp", "or-tubular-bells"]
+    },
+    {
+      "id": "or-gospel-choir",
+      "cat": "orchestral",
+      "group": "Choir",
+      "label": "Gospel choir",
+      "prompt": "powerful gospel choir: soulful call-and-response harmonies, handclaps and soaring belted chords",
+      "desc": "Born in African-American churches, gospel choirs sing stacked, bluesy harmonies with call-and-response and huge dynamic builds. They lift soul, R&B, house and pop choruses.",
+      "pairs": ["kb-hammond-b3", "dr-clap-stack", "dr-tambourine", "g-neo-soul"]
+    },
+    {
+      "id": "or-chant-choir",
+      "cat": "orchestral",
+      "group": "Choir",
+      "label": "Chanting choir",
+      "prompt": "chanting choir: deep, unison male voices intoning slow, ancient monastic chant in a vast stone reverb",
+      "desc": "Gregorian and Orthodox chant are unaccompanied vocal lines, often over a held drone. Deep chanting voices add mystery, ritual and epic darkness to scores and games.",
+      "pairs": ["dr-taiko", "kb-pipe-organ", "or-tubular-bells"]
+    },
+    {
+      "id": "or-timpani",
+      "cat": "orchestral",
+      "group": "Orchestral percussion",
+      "label": "Timpani",
+      "prompt": "rolling orchestral timpani: deep, tuned kettle-drum rolls and booming dramatic hits",
+      "desc": "Copper kettle drums tuned to exact notes with foot pedals. Their rolls and thunderous accents add drama to classical climaxes, film scores and trailers.",
+      "pairs": ["or-french-horns", "or-trumpet-fanfare", "dr-crash-swell", "g-film-score"]
+    },
+    {
+      "id": "or-glockenspiel",
+      "cat": "orchestral",
+      "group": "Orchestral percussion",
+      "label": "Glockenspiel",
+      "prompt": "sparkling glockenspiel: bright, ringing metal-bar melody, twinkling and festive",
+      "desc": "Steel bars struck with hard mallets give a bright, ringing chime. It twinkles on top of film scores, Christmas music, 60s pop and indie.",
+      "pairs": ["kb-celesta", "or-pizzicato", "kb-toy-piano"]
+    },
+    {
+      "id": "or-marimba",
+      "cat": "orchestral",
+      "group": "Orchestral percussion",
+      "label": "Marimba",
+      "prompt": "warm wooden marimba: round, mellow mallet tones in rolling, rhythmic patterns",
+      "desc": "Rosewood bars over tuned tube resonators, with roots in African and Central American instruments. Warm and percussive in minimalism, Latin music, tropical house and pop.",
+      "pairs": ["wo-balafon", "dr-shaker", "sy-pluck"]
+    },
+    {
+      "id": "or-vibraphone",
+      "cat": "orchestral",
+      "group": "Orchestral percussion",
+      "label": "Vibraphone",
+      "prompt": "cool vibraphone: shimmering, vibrato-laced metal bars struck with soft mallets, mellow and jazzy",
+      "desc": "Aluminium bars with motor-driven discs spinning in the resonators create a pulsing vibrato. A cool jazz, lounge and lo-fi favourite since the 1930s.",
+      "pairs": ["dr-jazz-brushes", "ba-upright", "kb-rhodes"]
+    },
+    {
+      "id": "or-xylophone",
+      "cat": "orchestral",
+      "group": "Orchestral percussion",
+      "label": "Xylophone",
+      "prompt": "bright, dry xylophone: crisp, woody, staccato mallet notes, playful and bouncy",
+      "desc": "Hard rosewood or synthetic bars give a dry, bright, short tone. Used for skeletal, comic or playful effects in cartoons and orchestral scores.",
+      "pairs": ["or-pizzicato", "or-bassoon", "or-piccolo"]
+    },
+    {
+      "id": "or-tubular-bells",
+      "cat": "orchestral",
+      "group": "Orchestral percussion",
+      "label": "Tubular bells",
+      "prompt": "resonant tubular bells: deep, chiming church-bell tones ringing out in slow, solemn strikes",
+      "desc": "Long brass tubes struck with a mallet stand in for church bells in the orchestra. Ominous, ceremonial or celebratory; a horror and sacred-music staple.",
+      "pairs": ["kb-pipe-organ", "or-chant-choir", "or-boys-choir"]
+    },
+    {
+      "id": "wo-sitar",
+      "cat": "world",
+      "group": "South Asia",
+      "label": "Sitar",
+      "prompt": "shimmering sitar: buzzing, twangy plucked melody with sweeping bends and ringing sympathetic strings over a drone",
+      "desc": "The long-necked lute of Hindustani classical music, with a curved bridge that makes notes buzz and up to 13 sympathetic strings that ring along. It swept into 60s psychedelic rock and pop.",
+      "pairs": ["wo-tabla", "wo-bansuri", "sy-ambient-drone"]
+    },
+    {
+      "id": "wo-tabla",
+      "cat": "world",
+      "group": "South Asia",
+      "label": "Tabla",
+      "prompt": "intricate tabla: crisp, ringing high drum and deep, bending bass drum in fast, rolling rhythmic patterns",
+      "desc": "A pair of hand drums: the small wooden dayan rings at a tuned pitch while the larger metal bayan's bass bends under the palm. The rhythmic heart of Hindustani music and Bollywood.",
+      "pairs": ["wo-sitar", "wo-bansuri", "kb-reed-organ"]
+    },
+    {
+      "id": "wo-bansuri",
+      "cat": "world",
+      "group": "South Asia",
+      "label": "Bansuri",
+      "prompt": "breathy bansuri bamboo flute: soft, airy, ornamented melody gliding between notes, meditative and pastoral",
+      "desc": "A side-blown bamboo flute of North India, long associated with the god Krishna. Its breathy, bending melodies suit Hindustani classical, devotional and film music.",
+      "pairs": ["wo-tabla", "wo-sitar", "wo-santoor"]
+    },
+    {
+      "id": "wo-shehnai",
+      "cat": "world",
+      "group": "South Asia",
+      "label": "Shehnai",
+      "prompt": "festive shehnai: piercing, reedy double-reed melody with fast ornaments, bright and celebratory",
+      "desc": "A North Indian double-reed horn with a nasal, penetrating voice. Traditionally played at weddings, temples and festivals, it signals celebration and auspicious beginnings.",
+      "pairs": ["wo-tabla", "dr-frame-drum", "wo-sitar"]
+    },
+    {
+      "id": "wo-santoor",
+      "cat": "world",
+      "group": "South Asia",
+      "label": "Santoor",
+      "prompt": "sparkling santoor: rippling hammered-dulcimer notes, bright and cascading over a gentle drone",
+      "desc": "A Kashmiri hammered dulcimer with around 100 strings, struck with light curved mallets. Its shimmering cascades suit Hindustani classical, meditation and film music.",
+      "pairs": ["wo-bansuri", "wo-tabla", "sy-ambient-drone"]
+    },
+    {
+      "id": "wo-koto",
+      "cat": "world",
+      "group": "East & Southeast Asia",
+      "label": "Koto",
+      "prompt": "elegant Japanese koto: plucked zither notes with pitch bends and graceful, ringing pentatonic phrases",
+      "desc": "Japan's 13-string zither with movable bridges, plucked with finger picks. Pressing strings behind the bridges bends notes for its poised, elegant sound.",
+      "pairs": ["wo-shakuhachi", "wo-shamisen", "dr-taiko"]
+    },
+    {
+      "id": "wo-shamisen",
+      "cat": "world",
+      "group": "East & Southeast Asia",
+      "label": "Shamisen",
+      "prompt": "twangy shamisen: three-string Japanese lute struck with a big plectrum, percussive, snappy and fast",
+      "desc": "A skin-covered three-string lute struck with a large plectrum, so every note snaps. Its fast, virtuosic Tsugaru style has inspired rock and anime soundtracks.",
+      "pairs": ["wo-koto", "dr-taiko", "wo-shakuhachi"]
+    },
+    {
+      "id": "wo-shakuhachi",
+      "cat": "world",
+      "group": "East & Southeast Asia",
+      "label": "Shakuhachi",
+      "prompt": "breathy shakuhachi bamboo flute: airy, haunting, wavering tones with expressive breath accents",
+      "desc": "An end-blown Japanese bamboo flute once played as meditation by Zen monks. Its breathy, wavering tone evokes stillness, mist and mountains.",
+      "pairs": ["wo-koto", "dr-taiko", "sy-ambient-drone"]
+    },
+    {
+      "id": "wo-erhu",
+      "cat": "world",
+      "group": "East & Southeast Asia",
+      "label": "Erhu",
+      "prompt": "expressive erhu: two-string Chinese fiddle with a soaring, voice-like, slightly nasal bowed melody and slides",
+      "desc": "A Chinese two-string fiddle with the bow hair threaded between the strings and a snakeskin-covered body. Its plaintive, voice-like slides carry Chinese folk, opera and film melodies.",
+      "pairs": ["wo-guzheng", "wo-pipa", "or-strings-lush"]
+    },
+    {
+      "id": "wo-guzheng",
+      "cat": "world",
+      "group": "East & Southeast Asia",
+      "label": "Guzheng",
+      "prompt": "flowing guzheng: rippling plucked zither glissandos and bent pentatonic notes, graceful and shimmering",
+      "desc": "A Chinese zither, usually with 21 strings over movable bridges, tuned to a pentatonic scale. Sweeping glissandos and left-hand bends give it a flowing, water-like sound.",
+      "pairs": ["wo-erhu", "wo-pipa", "or-harp"]
+    },
+    {
+      "id": "wo-pipa",
+      "cat": "world",
+      "group": "East & Southeast Asia",
+      "label": "Pipa",
+      "prompt": "agile pipa: bright, percussive four-string Chinese lute with rapid tremolo and dramatic strums",
+      "desc": "A pear-shaped four-string Chinese lute with over 2,000 years of history. Its rapid five-finger tremolo and martial strums can sound delicate or battle-ready.",
+      "pairs": ["wo-erhu", "wo-guzheng", "dr-taiko"]
+    },
+    {
+      "id": "wo-gamelan",
+      "cat": "world",
+      "group": "East & Southeast Asia",
+      "label": "Gamelan",
+      "prompt": "shimmering Indonesian gamelan: interlocking bronze metallophones, deep gongs and drums in cycling, hypnotic patterns",
+      "desc": "The bronze ensembles of Java and Bali: metallophones, gong chimes, great gongs and kendang drums. Interlocking parts in their own slendro and pelog scales shimmer and cycle around the big gong.",
+      "pairs": ["or-vibraphone", "sy-ambient-drone", "wo-kalimba"]
+    },
+    {
+      "id": "wo-oud",
+      "cat": "world",
+      "group": "Middle East & Mediterranean",
+      "label": "Oud",
+      "prompt": "warm oud: fretless short-neck lute with deep, woody plucked notes, sliding ornaments and maqam melodies",
+      "desc": "The fretless short-necked lute of the Arab world, Turkey and Iran, and ancestor of the European lute. Its smooth fingerboard lets players slide through the microtones of maqam scales.",
+      "pairs": ["wo-qanun", "wo-darbuka", "wo-ney"]
+    },
+    {
+      "id": "wo-qanun",
+      "cat": "world",
+      "group": "Middle East & Mediterranean",
+      "label": "Qanun",
+      "prompt": "glittering qanun: rapid plucked zither runs and shimmering tremolos, ornate and bright",
+      "desc": "A trapezoid zither with about 78 strings in courses of three, plucked with finger picks. Small levers re-tune strings mid-song for microtonal maqam scales.",
+      "pairs": ["wo-oud", "wo-darbuka", "wo-ney"]
+    },
+    {
+      "id": "wo-darbuka",
+      "cat": "world",
+      "group": "Middle East & Mediterranean",
+      "label": "Darbuka",
+      "prompt": "crisp darbuka goblet drum: deep 'doum' bass and sharp 'tek' rim hits in rapid, rolling Middle Eastern rhythms",
+      "desc": "A goblet drum played across North Africa, the Middle East and Turkey. Its deep doum and crisp tek strokes drive belly dance, Arabic pop and Turkish music.",
+      "pairs": ["wo-oud", "wo-qanun", "dr-frame-drum"]
+    },
+    {
+      "id": "wo-bouzouki",
+      "cat": "world",
+      "group": "Middle East & Mediterranean",
+      "label": "Bouzouki",
+      "prompt": "bright Greek bouzouki: metallic, tremolo-picked long-neck lute melodies, lively and dancing",
+      "desc": "A long-necked Greek lute with paired metal strings, the voice of rebetiko and Greek popular music. An adapted version became a staple of Irish folk from the 1960s.",
+      "pairs": ["wo-accordion", "wo-fiddle", "wo-darbuka"]
+    },
+    {
+      "id": "wo-ney",
+      "cat": "world",
+      "group": "Middle East & Mediterranean",
+      "label": "Ney flute",
+      "prompt": "breathy ney flute: haunting, airy end-blown reed flute melody with slow, mystical ornaments",
+      "desc": "An end-blown reed flute of Persian, Arabic and Turkish music, central to Sufi ceremonies. Its breathy, sighing tone sounds spiritual and ancient.",
+      "pairs": ["wo-oud", "dr-frame-drum", "wo-qanun"]
+    },
+    {
+      "id": "wo-duduk",
+      "cat": "world",
+      "group": "Middle East & Mediterranean",
+      "label": "Duduk",
+      "prompt": "mournful duduk: dark, warm, sorrowful double-reed melody over a sustained drone",
+      "desc": "An Armenian double-reed flute carved from apricot wood, usually played over a second duduk holding a drone. Its sorrowful warmth is much loved in film scores.",
+      "pairs": ["or-strings-lush", "dr-frame-drum", "g-film-score"]
+    },
+    {
+      "id": "wo-baglama",
+      "cat": "world",
+      "group": "Middle East & Mediterranean",
+      "label": "Bağlama saz",
+      "prompt": "twangy Turkish bağlama saz: bright, metallic long-neck lute melodies with fast, ringing strummed patterns",
+      "desc": "The long-necked lute at the heart of Turkish, Kurdish and Anatolian folk music. Bright metal strings and microtonal frets give it a ringing, nasal twang.",
+      "pairs": ["wo-darbuka", "wo-ney", "wo-oud"]
+    },
+    {
+      "id": "wo-kalimba",
+      "cat": "world",
+      "group": "Africa",
+      "label": "Kalimba",
+      "prompt": "gentle kalimba thumb piano: soft, plinking metal tines in a sweet, looping melody with a warm, woody body",
+      "desc": "A modern box-bodied thumb piano based on the mbira family of Africa. Its plinky, music-box-like tone is a favourite in lo-fi, Afro-pop and gentle children's music.",
+      "pairs": ["wo-mbira", "dr-shaker", "g-lofi-hiphop"]
+    },
+    {
+      "id": "wo-mbira",
+      "cat": "world",
+      "group": "Africa",
+      "label": "Mbira",
+      "prompt": "buzzing Zimbabwean mbira: interlocking metal-key patterns with a bright rattling buzz inside a resonant gourd",
+      "desc": "The Shona people's mbira has 22 to 28 metal keys and bottle-cap buzzers, often played inside a gourd. Its interlocking cyclical patterns accompany ceremonies that call on ancestors.",
+      "pairs": ["wo-kalimba", "dr-shaker", "wo-kora"]
+    },
+    {
+      "id": "wo-kora",
+      "cat": "world",
+      "group": "Africa",
+      "label": "Kora",
+      "prompt": "flowing kora: rippling 21-string West African harp-lute with cascading, interlocking arpeggios and bright bass runs",
+      "desc": "The 21-string harp-lute of the Mande griots of Mali, Senegal, Gambia and Guinea. Its flowing, harp-like runs carry centuries of praise songs and modern Afro-pop.",
+      "pairs": ["wo-balafon", "dr-djembe", "wo-talking-drum"]
+    },
+    {
+      "id": "wo-balafon",
+      "cat": "world",
+      "group": "Africa",
+      "label": "Balafon",
+      "prompt": "bright balafon: wooden West African xylophone with buzzing gourd resonators in fast, cyclical melodies",
+      "desc": "A wooden xylophone of the Mande world, with gourd resonators fitted with buzzing membranes. Its rattling, woody patterns drive West African griot and dance music.",
+      "pairs": ["wo-kora", "dr-djembe", "or-marimba"]
+    },
+    {
+      "id": "wo-talking-drum",
+      "cat": "world",
+      "group": "Africa",
+      "label": "Talking drum",
+      "prompt": "pitch-bending talking drum: hourglass drum squeezed under the arm, swooping and speaking in rhythmic phrases",
+      "desc": "An hourglass drum (the Yoruba dundun) whose pitch rises when the player squeezes its cords. It mimics the tones of speech and drives juju, fuji and Afrobeats.",
+      "pairs": ["dr-djembe", "gt-highlife", "g-afrobeats"]
+    },
+    {
+      "id": "wo-log-drum",
+      "cat": "world",
+      "group": "Africa",
+      "label": "Amapiano log drum",
+      "prompt": "deep amapiano log drum: woody, pitched, bouncing bass-percussion hits sliding through syncopated patterns",
+      "desc": "Amapiano's signature, born in South Africa's townships in the mid-2010s: a deep, woody synth hit that plays the bassline like a drum. Pairs with shakers and jazzy keys around 112 BPM.",
+      "bpm": [108, 116],
+      "pairs": ["dr-shaker", "kb-rhodes", "g-amapiano"]
+    },
+    {
+      "id": "wo-steel-pan",
+      "cat": "world",
+      "group": "Caribbean & Latin America",
+      "label": "Steel pan",
+      "prompt": "bright Caribbean steel pan: sweet, ringing metallic melody with rolled notes, sunny and tropical",
+      "desc": "Invented in Trinidad and Tobago in the 1930s and 40s from oil drums hammered into tuned note areas. Its sweet, ringing voice is the sound of calypso, soca and carnival.",
+      "pairs": ["dr-congas", "dr-shaker", "ba-dub"]
+    },
+    {
+      "id": "wo-charango",
+      "cat": "world",
+      "group": "Caribbean & Latin America",
+      "label": "Charango",
+      "prompt": "sparkling Andean charango: small ten-string lute strummed in bright, fast, ringing rhythms",
+      "desc": "A small Andean lute with five pairs of strings, traditionally built with an armadillo-shell back. Its bright, jangly strums lead Bolivian and Peruvian folk.",
+      "pairs": ["wo-pan-flute", "dr-frame-drum", "gt-nylon"]
+    },
+    {
+      "id": "wo-pan-flute",
+      "cat": "world",
+      "group": "Caribbean & Latin America",
+      "label": "Pan flute",
+      "prompt": "airy Andean pan flute: breathy, hollow panpipe melody with soft, fluttering accents",
+      "desc": "Rows of bamboo pipes of different lengths, like the Andean siku and zampona, blown across the top. Breathy and evocative of mountains, Andean folk and new age.",
+      "pairs": ["wo-charango", "sy-ambient-drone", "gt-nylon"]
+    },
+    {
+      "id": "wo-cuatro",
+      "cat": "world",
+      "group": "Caribbean & Latin America",
+      "label": "Cuatro",
+      "prompt": "bright cuatro: small Latin American folk guitar strumming crisp, fast, syncopated rhythms",
+      "desc": "Two Latin guitars share the name: Venezuela's four-string cuatro strums the rhythm of joropo, while Puerto Rico's ten-string cuatro sings bright melodies in jibaro music.",
+      "pairs": ["dr-guiro", "wo-tres", "dr-claves"]
+    },
+    {
+      "id": "wo-bandoneon",
+      "cat": "world",
+      "group": "Caribbean & Latin America",
+      "label": "Bandoneon",
+      "prompt": "dramatic bandoneon: breathy, melancholic button-accordion chords and sharp staccato tango phrases",
+      "desc": "A German square concertina that became the soul of Argentine tango in the early 20th century. Its bellows sigh and snap with passion and melancholy.",
+      "bpm": [60, 120],
+      "pairs": ["or-solo-violin", "kb-grand-piano", "ba-upright"]
+    },
+    {
+      "id": "wo-berimbau",
+      "cat": "world",
+      "group": "Caribbean & Latin America",
+      "label": "Berimbau",
+      "prompt": "twangy berimbau: single-string musical bow with a gourd, buzzing and wah-like, tapped in a hypnotic rhythm",
+      "desc": "A Brazilian musical bow: a steel string struck with a stick while a gourd pressed to the belly opens and closes for a 'wah'. It leads the music of capoeira.",
+      "pairs": ["dr-agogo", "dr-shaker", "dr-batucada"]
+    },
+    {
+      "id": "wo-tres",
+      "cat": "world",
+      "group": "Caribbean & Latin America",
+      "label": "Cuban tres",
+      "prompt": "bright Cuban tres: three doubled-string guitar playing crisp, syncopated montuno riffs",
+      "desc": "A Cuban guitar with three pairs of strings, tuned so its sharp, ringing montuno riffs cut through. The lead guitar voice of son cubano and an ancestor of salsa.",
+      "pairs": ["dr-bongos", "dr-claves", "ba-upright"]
+    },
+    {
+      "id": "wo-bagpipes",
+      "cat": "world",
+      "group": "Europe & Celtic",
+      "label": "Bagpipes",
+      "prompt": "stirring Highland bagpipes: loud, droning reedy pipes with a soaring chanter melody and ornamented grace notes",
+      "desc": "The Great Highland bagpipe sounds three drones under a nine-note chanter, fed by a bag of air. Martial, mournful and stirring at Scottish ceremonies.",
+      "pairs": ["dr-marching-snare", "wo-bodhran", "wo-fiddle"]
+    },
+    {
+      "id": "wo-tin-whistle",
+      "cat": "world",
+      "group": "Europe & Celtic",
+      "label": "Tin whistle",
+      "prompt": "lilting tin whistle: bright, breathy six-hole flute playing ornamented Irish jig and reel melodies",
+      "desc": "A cheap six-hole whistle at the centre of Irish traditional music. Cuts and rolls give it a lilting, dancing sparkle.",
+      "pairs": ["wo-bodhran", "wo-fiddle", "wo-uilleann-pipes"]
+    },
+    {
+      "id": "wo-uilleann-pipes",
+      "cat": "world",
+      "group": "Europe & Celtic",
+      "label": "Uilleann pipes",
+      "prompt": "sweet uilleann pipes: soft, plaintive Irish bagpipes with a reedy two-octave melody over warm drones",
+      "desc": "Irish bagpipes filled by an elbow bellows instead of the breath, sweeter and quieter than Highland pipes. Keyed regulators add chords for mournful airs and fast reels alike.",
+      "pairs": ["wo-tin-whistle", "wo-bodhran", "or-strings-lush"]
+    },
+    {
+      "id": "wo-bodhran",
+      "cat": "world",
+      "group": "Europe & Celtic",
+      "label": "Bodhrán",
+      "prompt": "driving bodhrán: Irish frame drum beaten with a double-ended stick, pitch-shaped by the hand inside",
+      "desc": "An Irish frame drum played with a small double-ended stick while the other hand presses the skin from inside to change pitch. The rhythmic pulse of Irish jigs and reels.",
+      "pairs": ["wo-tin-whistle", "wo-fiddle", "wo-bouzouki"]
+    },
+    {
+      "id": "wo-accordion",
+      "cat": "world",
+      "group": "Europe & Celtic",
+      "label": "Accordion",
+      "prompt": "lively accordion: bellows-driven reedy chords and bouncy melody, warm and folky",
+      "desc": "A free-reed instrument driven by bellows, with keys or buttons for melody and chords. Heard in French musette, polka, Irish trad, Cajun, zydeco, Mexican norteno and Colombian vallenato.",
+      "pairs": ["ba-tuba", "wo-fiddle", "or-clarinet"]
+    },
+    {
+      "id": "wo-hurdy-gurdy",
+      "cat": "world",
+      "group": "Europe & Celtic",
+      "label": "Hurdy-gurdy",
+      "prompt": "droning hurdy-gurdy: cranked-wheel strings buzzing over a constant drone with a rasping medieval melody",
+      "desc": "A medieval string instrument: a rosined wheel turned by a crank bows the strings while keys press the melody. Its buzzing drones suit folk, neofolk and folk metal.",
+      "pairs": ["wo-bagpipes", "dr-frame-drum", "wo-fiddle"]
+    },
+    {
+      "id": "wo-balalaika",
+      "cat": "world",
+      "group": "Europe & Celtic",
+      "label": "Balalaika",
+      "prompt": "fast tremolo balalaika: bright, triangular three-string Russian lute strummed in lively folk-dance patterns",
+      "desc": "A Russian lute with a triangular body and three strings. Rapid tremolo strumming gives Russian folk its bright, galloping energy.",
+      "pairs": ["wo-accordion", "or-clarinet", "wo-bouzouki"]
+    },
+    {
+      "id": "wo-hang-drum",
+      "cat": "world",
+      "group": "Europe & Celtic",
+      "label": "Hang drum",
+      "prompt": "meditative hang drum: soft, ringing, steel-pan-like tones tapped by hand, warm and hypnotic",
+      "desc": "The Hang was created in Bern, Switzerland, in 2000; similar instruments are called handpans. Two steel shells tuned to a scale ring with a calm, otherworldly glow.",
+      "bpm": [60, 100],
+      "pairs": ["sy-ambient-drone", "wo-didgeridoo", "dr-frame-drum"]
+    },
+    {
+      "id": "wo-banjo",
+      "cat": "world",
+      "group": "Folk & Americana",
+      "label": "Banjo",
+      "prompt": "bright, rolling five-string banjo: fast three-finger picking patterns, twangy and driving",
+      "desc": "Descended from West African gourd lutes brought to the Americas by enslaved people. Bluegrass three-finger rolls and old-time clawhammer make it the twang of Appalachian music.",
+      "pairs": ["wo-fiddle", "wo-mandolin", "ba-upright", "g-country"]
+    },
+    {
+      "id": "wo-mandolin",
+      "cat": "world",
+      "group": "Folk & Americana",
+      "label": "Mandolin",
+      "prompt": "crisp mandolin: bright paired strings with tremolo melodies and choppy bluegrass backbeat chords",
+      "desc": "An Italian lute with four pairs of strings tuned like a violin. Its sharp 'chop' backbeat and tremolo melodies drive bluegrass, Italian folk and folk rock.",
+      "pairs": ["wo-banjo", "wo-fiddle", "gt-acoustic-strummed"]
+    },
+    {
+      "id": "wo-fiddle",
+      "cat": "world",
+      "group": "Folk & Americana",
+      "label": "Fiddle",
+      "prompt": "lively fiddle: violin played folk-style with driving bow rhythms, slides and double stops",
+      "desc": "The same instrument as the violin, played in dance-music styles. Celtic reels, bluegrass breakdowns, Cajun waltzes and country all live on fiddle.",
+      "pairs": ["wo-banjo", "gt-pedal-steel", "wo-bodhran", "g-country"]
+    },
+    {
+      "id": "wo-harmonica",
+      "cat": "world",
+      "group": "Folk & Americana",
+      "label": "Harmonica",
+      "prompt": "wailing blues harmonica: bent, breathy reedy notes and chugging train rhythms",
+      "desc": "A pocket free-reed instrument. Blues players use 'cross harp' and bend notes with the mouth for its crying wail; also a folk and country staple.",
+      "pairs": ["gt-slide", "gt-acoustic-strummed", "gt-blues-licks"]
+    },
+    {
+      "id": "wo-dulcimer",
+      "cat": "world",
+      "group": "Folk & Americana",
+      "label": "Appalachian dulcimer",
+      "prompt": "sweet Appalachian dulcimer: plucked lap zither melody over ringing drone strings, gentle and old-time",
+      "desc": "A fretted zither laid across the lap, playing melody over drone strings. A folk-revival favourite with roots in Appalachian mountain music.",
+      "pairs": ["wo-banjo", "wo-fiddle", "gt-acoustic-fingerpicked"]
+    },
+    {
+      "id": "wo-ukulele",
+      "cat": "world",
+      "group": "Oceania & Pacific",
+      "label": "Ukulele",
+      "prompt": "cheerful ukulele: bright, plinky nylon-string strums and sweet, sunny chords",
+      "desc": "A four-string Hawaiian guitar developed from Portuguese instruments brought to Hawaii in 1879. Its bright, happy strum suits island music, indie pop and feel-good ads.",
+      "pairs": ["dr-shaker", "kb-toy-piano", "or-glockenspiel"]
+    },
+    {
+      "id": "wo-didgeridoo",
+      "cat": "world",
+      "group": "Oceania & Pacific",
+      "label": "Didgeridoo",
+      "prompt": "deep didgeridoo: earthy, buzzing drone with rhythmic vocal pulses, circular-breathed and hypnotic",
+      "desc": "An Aboriginal Australian wind instrument from northern Australia, made from eucalyptus hollowed by termites. Circular breathing keeps its deep, buzzing drone going.",
+      "pairs": ["dr-frame-drum", "wo-hang-drum", "sy-ambient-drone"]
+    },
+    {
+      "id": "tu-standard-e",
+      "cat": "tuning",
+      "group": "Guitar tunings",
+      "label": "Standard E",
+      "prompt": "guitars in standard E tuning: bright, familiar open-chord voicings and balanced, ringing strings",
+      "desc": "E A D G B E, low to high. The default tuning almost every chord chart assumes; bright and balanced for pop, folk, blues and rock.",
+      "pairs": ["gt-acoustic-strummed", "gt-clean-electric", "tu-a440"]
+    },
+    {
+      "id": "tu-drop-d",
+      "cat": "tuning",
+      "group": "Guitar tunings",
+      "label": "Drop D",
+      "prompt": "guitars in drop D with heavy, resonant low-string riffs and one-finger power chords",
+      "desc": "D A D G B E: only the low E drops a whole step. Easy one-finger power chords and a deeper low end; loved by grunge, alt-rock and metal players and folk fingerpickers.",
+      "pairs": ["gt-distorted", "gt-palm-mute", "gt-acoustic-fingerpicked"]
+    },
+    {
+      "id": "tu-drop-c",
+      "cat": "tuning",
+      "group": "Guitar tunings",
+      "label": "Drop C",
+      "prompt": "guitars in drop C: crushing, down-tuned chugging riffs with a thick, dark low end",
+      "desc": "C G C F A D: everything down a whole step, then the lowest string down another. The heavy, saturated chug of metalcore, nu-metal and post-hardcore.",
+      "pairs": ["gt-palm-mute", "gt-distorted", "dr-rock-kit"]
+    },
+    {
+      "id": "tu-d-standard",
+      "cat": "tuning",
+      "group": "Guitar tunings",
+      "label": "D standard",
+      "prompt": "guitars tuned a whole step down to D standard: darker, looser, heavier chords and easy bends",
+      "desc": "D G C F A D, every string down a whole step. Slacker strings bend easily and sound darker; heard in grunge, doom, stoner rock and heavy blues.",
+      "pairs": ["gt-fuzz", "ba-fuzz", "dr-rock-kit"]
+    },
+    {
+      "id": "tu-eb",
+      "cat": "tuning",
+      "group": "Guitar tunings",
+      "label": "Eb (half-step down)",
+      "prompt": "guitars tuned a half step down to E-flat: warm, slightly darker tone, slinky bends and fat chords",
+      "desc": "Eb Ab Db Gb Bb Eb. A half step down loosens the strings for easier bends and suits lower voices; common in 80s hard rock, blues rock and shred.",
+      "pairs": ["gt-rock-solo", "gt-blues-licks", "g-classic-rock"]
+    },
+    {
+      "id": "tu-dadgad",
+      "cat": "tuning",
+      "group": "Guitar tunings",
+      "label": "DADGAD",
+      "prompt": "guitar in DADGAD tuning: droning, open, modal chords ringing with a Celtic, harp-like shimmer",
+      "desc": "D A D G A D, an open suspended tuning with no third, so chords sound ambiguous and droning. Popularised in 1960s British folk; a Celtic and fingerstyle favourite.",
+      "pairs": ["gt-acoustic-fingerpicked", "wo-bodhran", "wo-tin-whistle"]
+    },
+    {
+      "id": "tu-open-g",
+      "cat": "tuning",
+      "group": "Guitar tunings",
+      "label": "Open G",
+      "prompt": "guitar in open G tuning: ringing, bluesy open chords and slide riffs with a raw, droning edge",
+      "desc": "D G D G B D, so the open strings strum a G chord. Delta slide players and rock rhythm guitarists use it for big droning riffs, sometimes removing the low string.",
+      "pairs": ["gt-slide", "gt-overdrive", "g-classic-rock"]
+    },
+    {
+      "id": "tu-open-d",
+      "cat": "tuning",
+      "group": "Guitar tunings",
+      "label": "Open D",
+      "prompt": "guitar in open D tuning: big, resonant open chords and slide lines over a full, droning low end",
+      "desc": "D A D F# A D, a full D major chord on the open strings. Deep and resonant for slide blues, folk and fingerstyle ballads.",
+      "pairs": ["gt-slide", "gt-acoustic-fingerpicked", "gt-resonator"]
+    },
+    {
+      "id": "tu-open-e",
+      "cat": "tuning",
+      "group": "Guitar tunings",
+      "label": "Open E",
+      "prompt": "guitar in open E tuning: bright, high-tension open chords and wailing electric slide",
+      "desc": "E B E G# B E, an open E major chord at higher string tension than open D. Bright and punchy for electric slide blues and Southern rock.",
+      "pairs": ["gt-slide", "gt-overdrive", "wo-harmonica"]
+    },
+    {
+      "id": "tu-nashville",
+      "cat": "tuning",
+      "group": "Guitar tunings",
+      "label": "Nashville tuning",
+      "prompt": "shimmering Nashville-tuned acoustic guitar: high, chiming chords like a delicate 12-string",
+      "desc": "The four lowest strings are swapped for thin ones tuned an octave higher, borrowed from a 12-string set. Studio players double strummed parts with it for sparkle in country and pop.",
+      "pairs": ["gt-acoustic-strummed", "gt-12-string", "g-country"]
+    },
+    {
+      "id": "tu-baritone-b",
+      "cat": "tuning",
+      "group": "Guitar tunings",
+      "label": "Baritone B",
+      "prompt": "baritone guitar tuned B to B: deep, dark, twangy low riffs and cinematic chords",
+      "desc": "B E A D F# B, a perfect fourth below standard on a longer-scale guitar. Dark and twangy for surf, western scores, modern country and metal.",
+      "pairs": ["gt-baritone", "gt-surf", "gt-palm-mute"]
+    },
+    {
+      "id": "tu-7-string",
+      "cat": "tuning",
+      "group": "Guitar tunings",
+      "label": "7-string low B",
+      "prompt": "seven-string guitars with a low B: extended-range djent-style chugs and deep, wide chords",
+      "desc": "B E A D G B E: standard tuning plus a low B string. Mass-produced from 1990, it drove nu-metal and is now standard in progressive metal and djent.",
+      "pairs": ["gt-palm-mute", "gt-distorted", "tu-drop-c"]
+    },
+    {
+      "id": "tu-a440",
+      "cat": "tuning",
+      "group": "Concert pitch",
+      "label": "A=440 Hz",
+      "prompt": "instruments tuned to standard A=440 Hz concert pitch: bright, precise, modern tuning",
+      "desc": "The international reference since a 1939 conference: the A above middle C vibrates 440 times per second. Modern instruments, synths and recordings use it by default.",
+      "pairs": ["tu-standard-e", "kb-grand-piano", "or-full-orchestra"]
+    },
+    {
+      "id": "tu-a432",
+      "cat": "tuning",
+      "group": "Concert pitch",
+      "label": "A=432 Hz",
+      "prompt": "instruments tuned to A=432 Hz: slightly lower, warm, mellow pitch with a soft, dark resonance",
+      "desc": "About 32 cents (a third of a semitone) below 440. Fans call it warmer and calmer; science has found nothing special about it, but it is popular in meditation and ambient music.",
+      "pairs": ["sy-ambient-drone", "wo-hang-drum", "kb-felt-piano"]
+    },
+    {
+      "id": "tu-a415",
+      "cat": "tuning",
+      "group": "Concert pitch",
+      "label": "A=415 baroque",
+      "prompt": "period instruments at baroque pitch A=415 Hz: dark, gentle, gut-string warmth",
+      "desc": "Historically informed baroque ensembles tune about a semitone below modern pitch, to A=415. Gut strings and lower tension give a darker, gentler tone.",
+      "pairs": ["kb-harpsichord", "or-string-quartet", "or-oboe"]
+    }
+  ]
+}

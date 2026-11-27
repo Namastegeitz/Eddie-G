@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>FLOWSMITH</title>
+<meta name="description" content="Prompt studio for Google Flow Music: type a few words, tap drum machines, synths and moods, and Claude writes the prompt. Every song gets its own folder of versions.">
+<meta name="theme-color" content="#d2382b">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="assets/icons/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/icons/icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="FLOWSMITH">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,600..900&family=Inter:wght@400;600;700&display=swap">
+<link rel="stylesheet" href="assets/css/app.css">
+</head>
+<body>
+<header class="top">
+  <div class="topin">
+    <a class="brand" href="#studio" aria-label="FLOWSMITH home"><span class="logo" aria-hidden="true"><i></i><i></i><i></i><i></i></span><b>FLOWSMITH</b></a>
+    <span class="badge" id="aiBadge" title="How Claude is connected">Starting…</span>
+    <span class="badge" id="storeBadge" title="Where your songs are saved">…</span>
+    <span class="status" id="status"><span class="led" id="led"></span><span class="txt" id="statusTxt">Ready</span></span>
+    <a class="btn sm soft" href="#setup" aria-label="Setup">Setup</a>
+  </div>
+  <nav class="tabs" aria-label="Main">
+    <a href="#studio">Studio</a><a href="#songs">Songs</a><a href="#next">Next</a><a href="#library">Library</a><a href="#learn">Learn</a>
+  </nav>
+</header>
+<main id="view" tabindex="-1"><p class="muted">Loading the studio…</p></main>
+<nav class="botnav" aria-label="Main">
+  <a href="#studio"><i></i>Studio</a><a href="#songs"><i></i>Songs</a><a href="#next"><i></i>Next</a><a href="#library"><i></i>Library</a><a href="#learn"><i></i>Learn</a>
+</nav>
+<noscript><p style="padding:20px">FLOWSMITH needs JavaScript turned on.</p></noscript>
+<script type="module" src="assets/js/app.js"></script>
+</body>
+</html>

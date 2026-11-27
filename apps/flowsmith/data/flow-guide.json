@@ -1,0 +1,215 @@
+{
+  "updated": "2026-11-27",
+  "sections": [
+    {
+      "id": "flow",
+      "title": "Google Flow Music",
+      "articles": [
+        {
+          "id": "fl-what",
+          "title": "What Flow Music is",
+          "summary": "Google Labs' AI music studio: describe a song, get it with vocals, then edit, remix and split it.",
+          "body": [
+            { "type": "p", "text": "Google Flow Music is an AI music studio from Google Labs. You describe a song with text (or give it an image or audio), and it writes and performs it, vocals and lyrics included. You can then edit the lyrics and sound, extend the song, make a cover in another style, replace one section, and split it into stems." },
+            { "type": "h", "text": "Where it came from" },
+            { "type": "list", "items": [
+              "2022: Riffusion, an open-source music model, launches.",
+              "August 2025: Riffusion becomes Producer.ai.",
+              "February 2026: Google announces it is acquiring Producer.ai into Google Labs.",
+              "April 2026: Producer.ai is relaunched as Google Flow Music (sources give April 17 or 18), first on the Lyria 3 Pro model.",
+              "July 29, 2026: Lyria 3.5, Google DeepMind's newest music model, ships in Flow Music first.",
+              "October 2026: Spaces (custom tools you build by describing them) can be exported as VST3/AU plugins for your DAW.",
+              "Google's older MusicFX and MusicFX DJ were folded into Flow Music (one report dates the shutdown July 31, 2026; unconfirmed)."
+            ] },
+            { "type": "h", "text": "What it can take and make" },
+            { "type": "list", "items": [
+              "Inputs: text prompts, images, audio, and your own uploaded beats to remix.",
+              "Outputs: songs up to about 3 minutes with sung vocals and lyrics, or instrumentals; lyric and music-video generation; stems.",
+              "Vocal languages Google lists for Lyria: English, German, Spanish, French, Hindi, Japanese, Korean and Portuguese.",
+              "Every output carries Google's SynthID watermark and C2PA content credentials.",
+              "Apps: web (flowmusic.app) plus iPhone/iPad and Android apps."
+            ] },
+            { "type": "tip", "text": "FLOWSMITH does the thinking before you spend Flow credits: build and refine the prompt here, paste it into a New session in Flow, then come back and log what happened so the next version is better." }
+          ]
+        },
+        {
+          "id": "fl-workflow",
+          "title": "The workflow, start to finish",
+          "summary": "How a song moves between FLOWSMITH and Flow Music.",
+          "body": [
+            { "type": "h", "text": "In FLOWSMITH" },
+            { "type": "list", "items": [
+              "Studio: type a few words, tap buttons (drums, synths, mood, BPM, key), press Write it. Claude writes the Flow prompt and, if you want, lyrics.",
+              "Check the score card. It grades the prompt against Google's guidance and tells you what is missing.",
+              "Save. The prompt gets its own song folder; this is version 1.",
+              "Copy the prompt (and lyrics) and open Flow Music."
+            ] },
+            { "type": "h", "text": "In Flow Music" },
+            { "type": "list", "items": [
+              "Sign in with your Google account and start a New session.",
+              "Paste the prompt into the prompt box and generate. Listen to the takes.",
+              "Use Compose to change lyrics, sound or details, or remix a section with Extend, Cover or Replace (see Editing and remixing).",
+              "Download or share the take you like."
+            ] },
+            { "type": "h", "text": "Back in FLOWSMITH" },
+            { "type": "list", "items": [
+              "Open the song folder and rate the result. Say what worked and what didn't.",
+              "Tweak: type the change ('harder drums, drop the sax, darker chorus') or tap a quick tweak. It saves as version 2 in the same folder, so nothing is lost.",
+              "Open the Next column for follow-ups: Flow edit moves for this song, and the next songs in the series.",
+              "Approve any lesson Claude proposes from your rating. Approved lessons are added to every future prompt."
+            ] },
+            { "type": "tip", "text": "Change one or two things per version. If you change everything at once you can't tell what made the song better." }
+          ]
+        },
+        {
+          "id": "fl-formula",
+          "title": "The prompt formula",
+          "summary": "Google's order: genre and style, mood, instruments, tempo and rhythm, vocals, lyrics.",
+          "body": [
+            { "type": "p", "text": "Google's prompting guide for Lyria 3 and 3 Pro gives one framework: [Genre and style] + [Mood] + [Instrumentation] + [Tempo and rhythm] + [Vocal style and language] + [Lyrics]. The Gemini API guide for Lyria 3.5 adds: be specific, because vague prompts give generic output, and name instruments, BPM, key, mood and structure. FLOWSMITH always builds prompts in this order." },
+            { "type": "table", "head": ["Part", "What to write", "Example"], "rows": [
+              ["Genre and style", "A genre plus an era or scene. Name it, or Lyria picks genre defaults.", "1990s East Coast boom bap hip-hop"],
+              ["Mood", "Two or three vivid adjectives.", "smoky, nostalgic, late-night"],
+              ["Instrumentation", "The key instruments with tone and playing style.", "dusty SP-1200 drums, warm Rhodes chords, upright bass walking low"],
+              ["Tempo and rhythm", "BPM, groove and key.", "88 BPM, lazy swung hi-hats, in F minor"],
+              ["Vocals and language", "Gender, range, timbre, delivery, language. Or 'instrumental'.", "laid-back male baritone rap, conversational flow, in English"],
+              ["Lyrics", "A theme in words, or your exact lyrics under 'Lyrics:' with section tags.", "Lyrics about riding the last train home"]
+            ] },
+            { "type": "prompt", "text": "1990s East Coast boom bap hip-hop with a smoky, nostalgic, late-night mood. Featuring dusty SP-1200 drums, warm Rhodes chords and a walking upright bass. 88 BPM, lazy swung hi-hats, in F minor. Laid-back male baritone rap with a conversational flow, in English, lyrics about riding the last train home. About 2 minutes long." },
+            { "type": "tip", "text": "Google's own examples are short and descriptive, such as a warm, modern lofi hip-hop beat for studying with a muffled drum break and dusty jazz piano samples, instrumental. Detail helps, but 50 to 150 words is usually plenty." }
+          ]
+        },
+        {
+          "id": "fl-lyrics",
+          "title": "Lyrics and vocals",
+          "summary": "How to get the words and the voice you want.",
+          "body": [
+            { "type": "list", "items": [
+              "Want words written for you? Give a theme: 'lyrics about leaving a small town at sunrise'.",
+              "Have your own words? Put them after a line that says 'Lyrics:', and tag each section: [Intro], [Verse 1], [Pre-Chorus], [Chorus], [Bridge], [Outro].",
+              "Keep production notes out of the lyrics block, so the model doesn't sing your instructions.",
+              "Want no vocals? Write 'instrumental' and leave out lyrics.",
+              "Describe the singer: gender, range (bass to soprano), timbre (breathy, gravelly, silky) and delivery (crooning, belting, rapping, whispering). Say where backing vocals come in.",
+              "Write the prompt in the language you want sung, or say 'sung in Spanish'. Supported: English, German, Spanish, French, Hindi, Japanese, Korean, Portuguese."
+            ] },
+            { "type": "prompt", "text": "Warm female alto lead, breathy and close-mic in the verses, opening up to a powerful belt in the chorus, with stacked three-part harmonies on the hook, sung in English." },
+            { "type": "tip", "text": "Short lines with clear stresses are easier for an AI singer to phrase. If a line keeps getting mumbled, cut syllables or swap a word with a simpler vowel." }
+          ]
+        },
+        {
+          "id": "fl-timestamps",
+          "title": "Length and timestamp prompts",
+          "summary": "Script the arrangement second by second.",
+          "body": [
+            { "type": "p", "text": "Songs run up to about 3 minutes. Say the length in the prompt. To control the arrangement, Google's guide describes timestamp prompting: one line per moment, each starting with a time in brackets. FLOWSMITH can write these for you (Timestamps switch in the Studio), working out where each section lands from your BPM." },
+            { "type": "prompt", "text": "[00:00] Sparse intro, felt piano and vinyl crackle\n[00:16] Drums enter, verse groove settles\n[00:48] Chorus, full band and the hook\n[01:20] Bridge, strings take the melody\n[01:52] Outro, elements fall away to a soft final chord" },
+            { "type": "tip", "text": "At 4/4, one bar lasts 240 divided by the BPM, in seconds. At 120 BPM a bar is 2 seconds, so an 8-bar intro is 16 seconds." }
+          ]
+        },
+        {
+          "id": "fl-editing",
+          "title": "Editing and remixing",
+          "summary": "Compose, Extend, Cover and Replace section, and how to word each.",
+          "body": [
+            { "type": "p", "text": "Google's help center lists these ways to change a song after it's made. In Compose you change the song's lyrics, sound or details. The remix modes work on a section: pick it, describe the change, and select Generate." },
+            { "type": "table", "head": ["Move", "What it does", "How to word it"], "rows": [
+              ["Compose", "Change lyrics, sound or details of the whole song.", "Make the drums punchier and add a warm string pad under the chorus."],
+              ["Extend", "Continue the song past its ending.", "Extend with a 16-bar instrumental outro that strips back to piano and fades."],
+              ["Cover", "Restyle the song while keeping the melody.", "Cover as a stripped-back acoustic version: nylon guitar, soft brushes, intimate vocal."],
+              ["Replace section", "Rewrite one selected section.", "Shorten the intro to 4 bars. / Add a bridge before the final chorus."],
+              ["Stems (in Spaces)", "Split a song into drums, bass, vocals and other layers.", "Split into stems so I can remix the drums."]
+            ] },
+            { "type": "tip", "text": "The two examples in the Replace row are Google's own. Edits work best when they name the section, the change and the target sound in one sentence." },
+            { "type": "prompt", "text": "Replace the second chorus with a bigger version: double-time hi-hats, a rising synth arpeggio, and gang vocals on the last line." }
+          ]
+        },
+        {
+          "id": "fl-rules",
+          "title": "Rules that make prompts work",
+          "summary": "What Lyria listens to, and what it ignores.",
+          "body": [
+            { "type": "list", "items": [
+              "Say what you want. Lyria has no negative prompts, so 'no drums' can backfire. Write 'only piano and cello' instead.",
+              "Name instruments. Without them the model uses genre defaults.",
+              "Give BPM and key when you care about them. Feel words (laid-back, driving) help too.",
+              "Describe sounds instead of naming artists. Turn 'like a famous producer' into the era, drum machine, chords and mix you actually like.",
+              "Keep lyrics in their own block with section tags.",
+              "Iterate. Change one or two parts per version, and keep what worked.",
+              "Use short clips to test a palette cheaply, then go full length."
+            ] },
+            { "type": "tip", "text": "The score card in the Studio checks all of these automatically every time a prompt is built or written by Claude." },
+            { "type": "prompt", "text": "Only felt piano and solo cello, intimate and slow, recorded close with soft room ambience." }
+          ]
+        },
+        {
+          "id": "fl-fixes",
+          "title": "Troubleshooting",
+          "summary": "If Flow gives you X, change the prompt like this.",
+          "body": [
+            { "type": "table", "head": ["What happened", "Try this"], "rows": [
+              ["It sounds generic", "Add an era, two named instruments with tone, and a BPM. Swap 'nice' adjectives for vivid ones."],
+              ["Wrong instruments took over", "Name the lead instrument first and give it a role: 'Rhodes carries the chords, synth only as a high counter-melody'."],
+              ["Vocals appeared on an instrumental", "Write 'instrumental' plainly and give the melody to an instrument."],
+              ["Lyrics are mumbled", "Shorten lines, put them under 'Lyrics:' with tags, describe a clear, front-of-mix vocal."],
+              ["Intro takes too long", "Use Replace section on the intro: 'Shorten the intro to 4 bars', or start with a cold open on the hook."],
+              ["Tempo feels off", "State the BPM and the feel: '92 BPM, half-time drums' reads very differently from '92 BPM, four-on-the-floor'."],
+              ["Ending stops abruptly", "Extend with an outro, or ask for 'a clean ending on the tonic chord' in the prompt."],
+              ["Mix is muddy", "Ask for fewer, clearer parts and a production note like 'crisp, modern, spacious mix with tight low end'."]
+            ] },
+            { "type": "tip", "text": "Log the problem when you rate the result. Claude turns repeated problems into lessons that get added to future prompts once you approve them." }
+          ]
+        },
+        {
+          "id": "fl-series",
+          "title": "Prompting the next song (series and albums)",
+          "summary": "Keep a sonic DNA constant, change one or two slots per track.",
+          "body": [
+            { "type": "p", "text": "To make songs that belong together, keep the same palette: era, drum machine, core instruments, mix character and vocal. Then move one or two slots per track: mood, tempo, key or structure. The Next column in FLOWSMITH writes these follow-ups for you and links the new song to the one it came from." },
+            { "type": "list", "items": [
+              "Track 1: the statement. Full palette, mid tempo.",
+              "Track 2: same palette, more energy, plus 8 BPM, hookier chorus.",
+              "Track 3: the slow one. Same palette, sparse, more space.",
+              "Interlude: 30 seconds built from the palette, hinting at the main melody.",
+              "Closer: relative key, the biggest dynamic arc."
+            ] },
+            { "type": "prompt", "text": "Companion track in the same world: same dusty drum machine, warm Rhodes and tape-saturated mix, now at 96 BPM in the relative major, brighter and hopeful, with a singalong chorus." }
+          ]
+        },
+        {
+          "id": "fl-plans",
+          "title": "Plans, credits and rights",
+          "summary": "What's known, and what to check yourself.",
+          "body": [
+            { "type": "list", "items": [
+              "Base use is free with a Google account; paid plans add credits. Exact free allowances and prices differ between sources (figures from $6 to $48 a month are reported), so check flowmusic.app for current numbers.",
+              "Generations cost credits, so testing ideas with short clips before full songs saves credits.",
+              "Reports say Google does not claim ownership of what you make, but commentators note that isn't the same as a commercial licence. Read the current terms before releasing music commercially.",
+              "Every output carries SynthID and C2PA content credentials, which identify it as AI-generated.",
+              "In May 2026 Google partnered with Believe and TuneCore to bring Flow Music to their artists."
+            ] },
+            { "type": "tip", "text": "These details change often. FLOWSMITH's guide was last checked on the date shown at the top of the Learn tab." }
+          ]
+        },
+        {
+          "id": "fl-sources",
+          "title": "Sources",
+          "summary": "Where this guide's facts come from.",
+          "body": [
+            { "type": "list", "items": [
+              "Google Cloud, Ultimate prompting guide for Lyria 3 Pro: https://cloud.google.com/blog/products/ai-machine-learning/ultimate-prompting-guide-for-lyria-3-pro",
+              "Gemini API, Lyria prompt guide: https://ai.google.dev/gemini-api/docs/lyria-prompt-guide",
+              "Gemini API, Generate music with Lyria 3.5: https://ai.google.dev/gemini-api/docs/music-generation",
+              "Google Flow Help, Create and manage songs: https://support.google.com/flow/answer/17084348",
+              "Google, Lyria 3.5 announcement: https://blog.google/innovation-and-ai/models-and-research/google-labs/lyria-3-5/",
+              "Google, Flow Music plugins: https://blog.google/innovation-and-ai/models-and-research/google-labs/create-music-production-plugins-google-flow/",
+              "Google, Believe partnership: https://blog.google/innovation-and-ai/models-and-research/google-labs/believe-flow-music-partnership/",
+              "Music Business Worldwide on Spaces, editing and stems: https://www.musicbusinessworldwide.com/googles-flow-music-adds-song-generation-editing-and-stem-splitting-to-spaces-its-vibe-coding-tool/",
+              "Google Labs: https://labs.google"
+            ] },
+            { "type": "tip", "text": "Third-party blogs disagree on prices and credits; the Google pages above are the ones to trust." }
+          ]
+        }
+      ]
+    }
+  ]
+}

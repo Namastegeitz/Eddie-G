@@ -1,0 +1,936 @@
+{
+  "patterns": [
+    {
+      "id": "bt-boom-bap",
+      "name": "Boom bap",
+      "genre": "Hip-hop",
+      "bpm": [
+        84,
+        96
+      ],
+      "timeSig": "4/4",
+      "steps": 16,
+      "swing": 58,
+      "lanes": [
+        {
+          "inst": "Kick",
+          "hits": "X......x..x....."
+        },
+        {
+          "inst": "Snare",
+          "hits": "....X.......X..o"
+        },
+        {
+          "inst": "Closed hat",
+          "hits": "x.x.x.x.x.x.x.x."
+        }
+      ],
+      "desc": "Kick on 1, the 'a' of 2 and the 'and' of 3; a hard snare cracks on 2 and 4 with a ghost note on the last sixteenth pulling into the next bar. Swung eighth-note hats give the head-nod bounce.",
+      "prompt": "classic 90s boom bap drum groove, dusty punchy kick, cracking snare on 2 and 4, swung eighth-note hi-hats, head-nodding at 90 BPM"
+    },
+    {
+      "id": "bt-lofi-swing",
+      "name": "Lo-fi swing",
+      "genre": "Lo-fi hip-hop",
+      "bpm": [
+        70,
+        88
+      ],
+      "timeSig": "4/4",
+      "steps": 16,
+      "swing": 66,
+      "lanes": [
+        {
+          "inst": "Kick",
+          "hits": "X......x.x......"
+        },
+        {
+          "inst": "Snare",
+          "hits": "....x.......x..."
+        },
+        {
+          "inst": "Closed hat",
+          "hits": "x.xox.x.x.xox.x."
+        },
+        {
+          "inst": "Shaker",
+          "hits": "..o...o...o...o."
+        }
+      ],
+      "desc": "A lazy, behind-the-beat groove: kick on 1, the 'a' of 2 and the 'e' of 3, a soft snare on 2 and 4, eighth hats with ghosted sixteenths. Heavy swing drags every offbeat late, which is the whole charm.",
+      "prompt": "lazy lo-fi hip-hop drums with heavy swing, soft dusty kick, muted snare on 2 and 4, loose ghosted hi-hats and a quiet shaker, relaxed 80 BPM"
+    },
+    {
+      "id": "bt-trap",
+      "name": "Trap (with hat rolls)",
+      "genre": "Trap",
+      "bpm": [
+        130,
+        160
+      ],
+      "timeSig": "4/4",
+      "steps": 32,
+      "swing": 50,
+      "lanes": [
+        {
+          "inst": "Kick",
+          "hits": "x.............x.......x........."
+        },
+        {
+          "inst": "808",
+          "hits": "X.............x.......x.....x..."
+        },
+        {
+          "inst": "Clap",
+          "hits": "................X..............."
+        },
+        {
+          "inst": "Closed hat",
+          "hits": "x...x...x...x.x.x...x...x.x.xxxx"
+        }
+      ],
+      "desc": "One bar in 32nd notes on a 140 BPM grid so the rolls can be written. The clap lands only on beat 3 for the half-time feel; kick and 808 hit 1 and push just before and after the clap; eighth-note hats break into sixteenths and a 32nd-note roll at the end of the bar.",
+      "prompt": "hard trap drums at 140 BPM in half-time, booming TR-808 kick and gliding 808 bass, sharp clap on beat 3, rattling hi-hats with fast 32nd-note rolls"
+    },
+    {
+      "id": "bt-uk-drill",
+      "name": "UK drill",
+      "genre": "Drill",
+      "bpm": [
+        138,
+        146
+      ],
+      "timeSig": "4/4",
+      "steps": 16,
+      "swing": 50,
+      "lanes": [
+        {
+          "inst": "Kick",
+          "hits": "X.........x....."
+        },
+        {
+          "inst": "808",
+          "hits": "X.....x...x..x.."
+        },
+        {
+          "inst": "Snare",
+          "hits": "........X.....x."
+        },
+        {
+          "inst": "Closed hat",
+          "hits": "x..x..x.x..x..x."
+        }
+      ],
+      "desc": "Half-time at 140: the main snare sits on beat 3 and a late second snare on the 'and' of 4 gives drill its off-kilter skip. Hats move in 3-3-2 groupings, and the sparse kick leaves room for 808 notes that slide between pitches.",
+      "prompt": "UK drill drums at 142 BPM, half-time snare on beat 3 with a late skippy second snare, syncopated 3-3-2 hi-hats, dark sliding 808 bass glides"
+    },
+    {
+      "id": "bt-ny-drill",
+      "name": "NY drill",
+      "genre": "Drill",
+      "bpm": [
+        140,
+        150
+      ],
+      "timeSig": "4/4",
+      "steps": 16,
+      "swing": 50,
+      "lanes": [
+        {
+          "inst": "Kick",
+          "hits": "X..x......x....."
+        },
+        {
+          "inst": "808",
+          "hits": "X..x..x...x.x.x."
+        },
+        {
+          "inst": "Snare",
+          "hits": "........X......o"
+        },
+        {
+          "inst": "Closed hat",
+          "hits": "x..x.x..x..x.xxx"
+        }
+      ],
+      "desc": "The New York take on drill: snare on beat 3 with a ghosted pickup on the last sixteenth, a bouncier kick that doubles on the 'a' of 1, and a busy 808 line that slides on almost every hit. Hats skip in syncopated bursts and finish with a fast roll.",
+      "prompt": "New York drill drums at 144 BPM, aggressive half-time snare on beat 3, bouncing kick, heavily distorted sliding 808 glides, skippy hi-hats with triplet rolls"
+    },
+    {
+      "id": "bt-drift-phonk",
+      "name": "Drift phonk cowbell",
+      "genre": "Phonk",
+      "bpm": [
+        125,
+        160
+      ],
+      "timeSig": "4/4",
+      "steps": 16,
+      "swing": 50,
+      "lanes": [
+        {
+          "inst": "Kick",
+          "hits": "X.......X.x....."
+        },
+        {
+          "inst": "Clap",
+          "hits": "....X.......X..."
+        },
+        {
+          "inst": "Closed hat",
+          "hits": "x.x.x.x.x.x.xxxx"
+        },
+        {
+          "inst": "Cowbell",
+          "hits": "X..x..x.X..x..x."
+        }
+      ],
+      "desc": "Kick on 1, 3 and the 'and' of 3, a hard clap on 2 and 4 for drive, and the star of the show: a distorted TR-808 cowbell melody in a syncopated 3-3-2 rhythm, twice per bar. Hats roll into the next bar.",
+      "prompt": "drift phonk drums at 130 BPM, punchy distorted kick, hard clap on 2 and 4, loud overdriven TR-808 cowbell melody in a syncopated 3-3-2 rhythm"
+    },
+    {
+      "id": "bt-g-funk",
+      "name": "G-funk bounce",
+      "genre": "Hip-hop",
+      "bpm": [
+        88,
+        100
+      ],
+      "timeSig": "4/4",
+      "steps": 16,
+      "swing": 60,
+      "lanes": [
+        {
+          "inst": "Kick",
+          "hits": "X......x..x..x.."
+        },
+        {
+          "inst": "Snare",
+          "hits": "....X.......X..."
+        },
+        {
+          "inst": "Clap",
+          "hits": "....X.......X..."
+        },
+        {
+          "inst": "Closed hat",
+          "hits": "xoxoxoxoxoxoxoxo"
+        },
+        {
+          "inst": "Open hat",
+          "hits": "..............x."
+        }
+      ],
+      "desc": "Laid-back West Coast bounce: kick on 1, the 'a' of 2, the 'and' of 3 and the 'e' of 4; snare and clap stacked on 2 and 4; sixteenth hats with soft in-between strokes and an open hat on the 'and' of 4. Light swing keeps it rolling.",
+      "prompt": "laid-back G-funk drums at 94 BPM, rolling TR-808 kick, snare and clap stacked on 2 and 4, swung sixteenth hi-hats, open hat lifting the end of each bar"
+    },
+    {
+      "id": "bt-house",
+      "name": "Four-on-the-floor house",
+      "genre": "House",
+      "bpm": [
+        120,
+        128
+      ],
+      "timeSig": "4/4",
+      "steps": 16,
+      "swing": 52,
+      "lanes": [
+        {
+          "inst": "Kick",
+          "hits": "X...X...X...X..."
+        },
+        {
+          "inst": "Clap",
+          "hits": "....X.......X..."
+        },
+        {
+          "inst": "Open hat",
+          "hits": "..x...x...x...x."
+        },
+        {
+          "inst": "Shaker",
+          "hits": "xoxoxoxoxoxoxoxo"
+        }
+      ],
+      "desc": "The foundation of dance music: kick on every quarter note, clap on 2 and 4, an open hat on every offbeat 'and' for the 'tss' lift, and a sixteenth shaker for motion.",
+      "prompt": "classic four-on-the-floor house groove at 124 BPM, punchy TR-909 kick on every beat, clap on 2 and 4, open hi-hat on the offbeats, shuffling shaker"
+    },
+    {
+      "id": "bt-deep-house",
+      "name": "Deep house",
+      "genre": "House",
+      "bpm": [
+        118,
+        124
+      ],
+      "timeSig": "4/4",
+      "steps": 16,
+      "swing": 56,
+      "lanes": [
+        {
+          "inst": "Kick",
+          "hits": "X...X...X...X..."
+        },
+        {
+          "inst": "Clap",
+          "hits": "....x.......x..."
+        },
+        {
+          "inst": "Closed hat",
+          "hits": "..x...x...x...x."
+        },
+        {
+          "inst": "Shaker",
+          "hits": "oxoxoxoxoxoxoxox"
+        },
+        {
+          "inst": "Rim",
+          "hits": "...x..x......x.."
+        }
+      ],
+      "desc": "A softer, rounder kick on all four beats, a gentle clap on 2 and 4, closed hats on the offbeats, a swung shaker, and rim clicks on the 'a' of 1, the 'and' of 2 and the 'e' of 4 for a warm, rolling feel.",
+      "prompt": "warm deep house groove at 120 BPM, soft round four-on-the-floor kick, gentle clap on 2 and 4, offbeat closed hats, swung shaker and syncopated rimshots"
+    },
+    {
+      "id": "bt-techno",
+      "name": "Techno",
+      "genre": "Techno",
+      "bpm": [
+        125,
+        140
+      ],
+      "timeSig": "4/4",
+      "steps": 16,
+      "swing": 50,
+      "lanes": [
+        {
+          "inst": "Kick",
+          "hits": "X...X...X...X..."
+        },
+        {
+          "inst": "Clap",
+          "hits": "....x.......x..."
+        },
+        {
+          "inst": "Closed hat",
+          "hits": "xx.xxx.xxx.xxx.x"
+        },
+        {
+          "inst": "Open hat",
+          "hits": "..X...X...X...X."
+        },
+        {
+          "inst": "Perc",
+          "hits": "...x..x....x..x."
+        }
+      ],
+      "desc": "A relentless kick on every beat, driving sixteenth closed hats that make way for accented open hats on every offbeat, and a percussion stab on the 'a' of 1 and the 'and' of 2 (repeated in the second half) that keeps the loop hypnotic.",
+      "prompt": "driving warehouse techno groove at 132 BPM, pounding four-on-the-floor kick, relentless sixteenth hi-hats, offbeat open hats, hypnotic syncopated percussion"
+    },
+    {
+      "id": "bt-uk-garage",
+      "name": "UK garage 2-step",
+      "genre": "UK garage",
+      "bpm": [
+        130,
+        138
+      ],
+      "timeSig": "4/4",
+      "steps": 16,
+      "swing": 64,
+      "lanes": [
+        {
+          "inst": "Kick",
+          "hits": "X.........x....."
+        },
+        {
+          "inst": "Snare",
+          "hits": "....X.......X..."
+        },
+        {
+          "inst": "Closed hat",
+          "hits": "x.xox.xox.xox.xo"
+        },
+        {
+          "inst": "Rim",
+          "hits": "...x.....x....x."
+        }
+      ],
+      "desc": "The 2-step skip: kick on 1 and the 'and' of 3, skipping beat 3 itself, snare on 2 and 4, shuffling hats with ghosted sixteenths, and syncopated rimshots. Heavy swing gives garage its rolling, skippy bounce.",
+      "prompt": "UK garage 2-step drums at 134 BPM, skippy kick on 1 and the and of 3, crisp snare on 2 and 4, heavily swung shuffling hi-hats, syncopated rimshots"
+    },
+    {
+      "id": "bt-breakbeat",
+      "name": "Breakbeat",
+      "genre": "Breaks",
+      "bpm": [
+        125,
+        140
+      ],
+      "timeSig": "4/4",
+      "steps": 16,
+      "swing": 54,
+      "lanes": [
+        {
+          "inst": "Kick",
+          "hits": "X..x......x....."
+        },
+        {
+          "inst": "Snare",
+          "hits": "....X....o..X.o."
+        },
+        {
+          "inst": "Closed hat",
+          "hits": "x.x.x.x.x.x.x.xx"
+        }
+      ],
+      "desc": "A syncopated funk break: kick on 1, the 'a' of 1 and the 'and' of 3, hard snare on 2 and 4 with ghost notes on the 'e' of 3 and the 'and' of 4, and eighth-note hats. Pushed to 130 BPM it becomes big beat and breaks.",
+      "prompt": "funky chopped breakbeat drums at 130 BPM, syncopated punchy kick, crisp snare on 2 and 4 with ghost notes, driving eighth-note hats, big-beat energy"
+    },
+    {
+      "id": "bt-jungle",
+      "name": "Jungle (Amen-style)",
+      "genre": "Jungle / drum and bass",
+      "bpm": [
+        160,
+        175
+      ],
+      "timeSig": "4/4",
+      "steps": 16,
+      "swing": 50,
+      "lanes": [
+        {
+          "inst": "Kick",
+          "hits": "X.x.......xx...."
+        },
+        {
+          "inst": "Snare",
+          "hits": "....X..o.o..X..o"
+        },
+        {
+          "inst": "Ride",
+          "hits": "x.x.x.x.x.x.x.x."
+        }
+      ],
+      "desc": "The classic 1960s funk break (Amen-style) sped up: kick on 1 and its 'and', then a double on the 'and' and 'a' of 3; snares on 2 and 4 with ghosts on the 'a' of 2, the 'e' of 3 and the 'a' of 4; ride eighths on top. Jungle chops and rearranges it at 160 plus.",
+      "prompt": "frantic jungle drums at 170 BPM, chopped and rearranged vintage funk breakbeat, rapid ghost-noted snares, ride cymbal eighths, rolling over deep sub bass"
+    },
+    {
+      "id": "bt-dnb-two-step",
+      "name": "Drum and bass two-step",
+      "genre": "Drum and bass",
+      "bpm": [
+        170,
+        176
+      ],
+      "timeSig": "4/4",
+      "steps": 16,
+      "swing": 50,
+      "lanes": [
+        {
+          "inst": "Kick",
+          "hits": "X.........x....."
+        },
+        {
+          "inst": "Snare",
+          "hits": "....X.......X..o"
+        },
+        {
+          "inst": "Closed hat",
+          "hits": "x.xox.x.x.xox.x."
+        }
+      ],
+      "desc": "Drum and bass in its simplest form: kick on 1 and the 'and' of 3, snare on 2 and 4, so the groove feels half-time at 87 while the hats race at 174. The gap after the second kick is where the bassline rolls.",
+      "prompt": "rolling drum and bass two-step at 174 BPM, tight kick on 1 and the and of 3, sharp snare on 2 and 4, fast shuffling hi-hats, deep rolling bass"
+    },
+    {
+      "id": "bt-dubstep",
+      "name": "Dubstep half-time",
+      "genre": "Dubstep",
+      "bpm": [
+        138,
+        142
+      ],
+      "timeSig": "4/4",
+      "steps": 16,
+      "swing": 50,
+      "lanes": [
+        {
+          "inst": "Kick",
+          "hits": "X............x.."
+        },
+        {
+          "inst": "Snare",
+          "hits": "........X......."
+        },
+        {
+          "inst": "Closed hat",
+          "hits": "x.x.x.xxx.x.x.x."
+        }
+      ],
+      "desc": "Half-time at 140: the snare lands only on beat 3, so the groove feels like 70 while the hats move at full speed. The kick on 1 and the 'e' of 4 leaves huge gaps for the wobble bass.",
+      "prompt": "heavy dubstep half-time drums at 140 BPM, booming kick, massive snare on beat 3 with big reverb, crisp hi-hats, wide space for growling wobble bass"
+    },
+    {
+      "id": "bt-dembow",
+      "name": "Reggaeton dembow",
+      "genre": "Reggaeton",
+      "bpm": [
+        88,
+        100
+      ],
+      "timeSig": "4/4",
+      "steps": 16,
+      "swing": 52,
+      "lanes": [
+        {
+          "inst": "Kick",
+          "hits": "X...X...X...X..."
+        },
+        {
+          "inst": "Snare",
+          "hits": "...x..x....x..x."
+        },
+        {
+          "inst": "Closed hat",
+          "hits": "x.x.x.x.x.x.x.x."
+        }
+      ],
+      "desc": "The dembow: kick on every beat, snare on the 'a' of 1, the 'and' of 2, the 'a' of 3 and the 'and' of 4. That 3-3-2 snare against the straight kick is the instantly recognizable reggaeton bounce.",
+      "prompt": "reggaeton dembow groove at 95 BPM, steady kick on every beat, syncopated snare in the classic dembow 3-3-2 pattern, crisp hi-hats, deep 808 bass"
+    },
+    {
+      "id": "bt-afrobeats",
+      "name": "Afrobeats",
+      "genre": "Afrobeats",
+      "bpm": [
+        100,
+        115
+      ],
+      "timeSig": "4/4",
+      "steps": 16,
+      "swing": 56,
+      "lanes": [
+        {
+          "inst": "Kick",
+          "hits": "X.....x.X.....x."
+        },
+        {
+          "inst": "Clap",
+          "hits": "....x.......x..."
+        },
+        {
+          "inst": "Rim",
+          "hits": "x..x..x...x.x..."
+        },
+        {
+          "inst": "Shaker",
+          "hits": "oxoxoxoxoxoxoxox"
+        }
+      ],
+      "desc": "Kick on 1, the 'and' of 2, 3 and the 'and' of 4 for a lilting push; a soft clap on 2 and 4; rimshots tracing a 3-2 clave; and a busy sixteenth shaker. Light swing makes it sway rather than shuffle.",
+      "prompt": "afrobeats groove at 106 BPM, lilting syncopated kick, soft clap on 2 and 4, rimshots on a 3-2 clave, busy shaker, talking drum and conga accents"
+    },
+    {
+      "id": "bt-amapiano",
+      "name": "Amapiano log drum",
+      "genre": "Amapiano",
+      "bpm": [
+        108,
+        115
+      ],
+      "timeSig": "4/4",
+      "steps": 16,
+      "swing": 58,
+      "lanes": [
+        {
+          "inst": "Kick",
+          "hits": "X...X...X...X..."
+        },
+        {
+          "inst": "Clap",
+          "hits": "....x.......x..."
+        },
+        {
+          "inst": "Shaker",
+          "hits": "oxoxoxoxoxoxoxox"
+        },
+        {
+          "inst": "Rim",
+          "hits": "..x.......x..x.."
+        },
+        {
+          "inst": "Log drum",
+          "hits": "...x..x...x.x.x."
+        }
+      ],
+      "desc": "A soft kick on every beat under a swung shaker and gentle claps on 2 and 4, while the log drum, a pitched percussive bass, hits the 'a' of 1, the 'and' of 2, the 'and' of 3, beat 4 and its 'and'.",
+      "prompt": "amapiano groove at 112 BPM, soft four-on-the-floor kick, swung shakers, gentle claps and rimshots, deep syncopated log drum bass hits"
+    },
+    {
+      "id": "bt-jersey-club",
+      "name": "Jersey club",
+      "genre": "Jersey club",
+      "bpm": [
+        135,
+        145
+      ],
+      "timeSig": "4/4",
+      "steps": 16,
+      "swing": 50,
+      "lanes": [
+        {
+          "inst": "Kick",
+          "hits": "X...X...X..x..x."
+        },
+        {
+          "inst": "Clap",
+          "hits": "....X.......X..."
+        },
+        {
+          "inst": "Perc",
+          "hits": "..x...x...x...x."
+        }
+      ],
+      "desc": "The jersey bounce: five kicks per bar on 1, 2, 3, the 'a' of 3 and the 'and' of 4, so the last three tumble into the next bar. Claps on 2 and 4 and offbeat sample stabs (bed squeaks, vocal chops) complete it.",
+      "prompt": "jersey club drums at 140 BPM, bouncing five-kick pattern with tumbling kicks at the end of each bar, sharp claps, offbeat squeaky sample stabs"
+    },
+    {
+      "id": "bt-miami-bass",
+      "name": "Miami bass",
+      "genre": "Miami bass",
+      "bpm": [
+        125,
+        140
+      ],
+      "timeSig": "4/4",
+      "steps": 16,
+      "swing": 52,
+      "lanes": [
+        {
+          "inst": "808",
+          "hits": "X.....x...x....."
+        },
+        {
+          "inst": "Clap",
+          "hits": "....X.......X..."
+        },
+        {
+          "inst": "Closed hat",
+          "hits": "xxxxxxxxxxxxxxxx"
+        },
+        {
+          "inst": "Cowbell",
+          "hits": "..x...x......x.."
+        }
+      ],
+      "desc": "Electro-rooted booty bass: long TR-808 kick booms on 1, the 'and' of 2 and the 'and' of 3, claps on 2 and 4, machine-gun sixteenth hats and a syncopated 808 cowbell. Tuned low and long, the kick doubles as the bassline.",
+      "prompt": "Miami bass drums at 130 BPM, long booming TR-808 kick that doubles as bass, snappy claps on 2 and 4, rapid sixteenth hi-hats, syncopated 808 cowbell"
+    },
+    {
+      "id": "bt-rock-backbeat",
+      "name": "Rock backbeat",
+      "genre": "Rock",
+      "bpm": [
+        100,
+        140
+      ],
+      "timeSig": "4/4",
+      "steps": 16,
+      "swing": 50,
+      "lanes": [
+        {
+          "inst": "Kick",
+          "hits": "X.......X.x....."
+        },
+        {
+          "inst": "Snare",
+          "hits": "....X.......X..."
+        },
+        {
+          "inst": "Closed hat",
+          "hits": "x.x.x.x.x.x.x.x."
+        },
+        {
+          "inst": "Crash",
+          "hits": "X..............."
+        }
+      ],
+      "desc": "Rock's backbone: kick on 1, 3 and the 'and' of 3, snare cracking on 2 and 4, straight eighth-note hats, and a crash on the downbeat to mark each new phrase.",
+      "prompt": "driving rock backbeat at 120 BPM, live acoustic drum kit, solid kick on 1 and 3, cracking snare on 2 and 4, straight eighth-note hi-hats, crash on the downbeat"
+    },
+    {
+      "id": "bt-punk",
+      "name": "Punk skate beat",
+      "genre": "Punk",
+      "bpm": [
+        160,
+        200
+      ],
+      "timeSig": "4/4",
+      "steps": 16,
+      "swing": 50,
+      "lanes": [
+        {
+          "inst": "Kick",
+          "hits": "X...X...X...X..."
+        },
+        {
+          "inst": "Snare",
+          "hits": "..x...x...x...x."
+        },
+        {
+          "inst": "Open hat",
+          "hits": "x.x.x.x.x.x.x.x."
+        },
+        {
+          "inst": "Crash",
+          "hits": "X..............."
+        }
+      ],
+      "desc": "The skate-punk beat: kick on every quarter note and snare on every 'and' in between, an oom-pah alternation that sounds like a sprint at 180 BPM. Washy open hats ride straight eighths on top.",
+      "prompt": "fast punk skate beat at 180 BPM, kick on every beat and snare on every offbeat, bashing open hi-hats and crash cymbals, raw garage energy"
+    },
+    {
+      "id": "bt-funk-ghost",
+      "name": "Funk with ghost notes",
+      "genre": "Funk",
+      "bpm": [
+        95,
+        115
+      ],
+      "timeSig": "4/4",
+      "steps": 16,
+      "swing": 54,
+      "lanes": [
+        {
+          "inst": "Kick",
+          "hits": "X.x.......x..x.."
+        },
+        {
+          "inst": "Snare",
+          "hits": "....X..o.o.oX..o"
+        },
+        {
+          "inst": "Closed hat",
+          "hits": "xoxoxoxoxoxoxo.o"
+        },
+        {
+          "inst": "Open hat",
+          "hits": "..............x."
+        }
+      ],
+      "desc": "Syncopated kick on 1, the 'and' of 1, the 'and' of 3 and the 'e' of 4; a strong backbeat on 2 and 4 surrounded by soft ghost-note snares that fill the sixteenth grid; sixteenth hats that open on the 'and' of 4.",
+      "prompt": "tight 70s funk drums at 104 BPM, syncopated kick, fat snare backbeat on 2 and 4 surrounded by quiet ghost notes, crisp sixteenth hi-hats with an open-hat lift"
+    },
+    {
+      "id": "bt-disco",
+      "name": "Disco",
+      "genre": "Disco",
+      "bpm": [
+        110,
+        125
+      ],
+      "timeSig": "4/4",
+      "steps": 16,
+      "swing": 50,
+      "lanes": [
+        {
+          "inst": "Kick",
+          "hits": "X...X...X...X..."
+        },
+        {
+          "inst": "Snare",
+          "hits": "....X.......X..."
+        },
+        {
+          "inst": "Open hat",
+          "hits": "..x...x...x...x."
+        },
+        {
+          "inst": "Closed hat",
+          "hits": "xx.xxx.xxx.xxx.x"
+        }
+      ],
+      "desc": "Four-on-the-floor kick, snare on 2 and 4, and the defining open hi-hat on every offbeat 'and', with closed sixteenths filling the gaps around it. That offbeat 'tss' is what gets people dancing.",
+      "prompt": "classic disco drums at 120 BPM, four-on-the-floor kick, snare on 2 and 4, sizzling open hi-hat on every offbeat, busy sixteenth closed hats, live and groovy"
+    },
+    {
+      "id": "bt-motown",
+      "name": "Motown stomp",
+      "genre": "Soul",
+      "bpm": [
+        115,
+        135
+      ],
+      "timeSig": "4/4",
+      "steps": 16,
+      "swing": 50,
+      "lanes": [
+        {
+          "inst": "Kick",
+          "hits": "X.....x.X......."
+        },
+        {
+          "inst": "Snare",
+          "hits": "x...X...x...X..."
+        },
+        {
+          "inst": "Tambourine",
+          "hits": "x.x.X.x.x.x.X.x."
+        }
+      ],
+      "desc": "The 1960s soul stomp: snare on all four beats with the backbeat accented, tambourine shaking eighths and slapping 2 and 4, and a simple kick on 1, the 'and' of 2 and 3. Everything leans forward for dancing.",
+      "prompt": "1960s soul drums at 124 BPM, snare hitting all four beats, bright tambourine slapping the backbeat, simple driving kick, warm live room, joyful forward stomp"
+    },
+    {
+      "id": "bt-bossa-nova",
+      "name": "Bossa nova",
+      "genre": "Bossa nova",
+      "bpm": [
+        110,
+        140
+      ],
+      "timeSig": "4/4",
+      "steps": 16,
+      "swing": 50,
+      "lanes": [
+        {
+          "inst": "Kick",
+          "hits": "X..xX..xX..xX..x"
+        },
+        {
+          "inst": "Rim",
+          "hits": "x..x..x...x..x.."
+        },
+        {
+          "inst": "Closed hat",
+          "hits": "..x...x...x...x."
+        },
+        {
+          "inst": "Ride",
+          "hits": "xxxxxxxxxxxxxxxx"
+        }
+      ],
+      "desc": "Two bars written in eighth notes: the soft kick plays a dotted-quarter-plus-eighth heartbeat (1, the 'and' of 2, 3, the 'and' of 4), the cross-stick traces the bossa clave, the foot hat ticks 2 and 4, and brushes or ride play straight eighths.",
+      "prompt": "gentle bossa nova groove at 130 BPM, soft brushed drums, cross-stick rim clicks tracing the bossa clave, quiet heartbeat kick, straight eighth-note ride"
+    },
+    {
+      "id": "bt-reggae-one-drop",
+      "name": "Reggae one drop",
+      "genre": "Reggae",
+      "bpm": [
+        64,
+        80
+      ],
+      "timeSig": "4/4",
+      "steps": 16,
+      "swing": 64,
+      "lanes": [
+        {
+          "inst": "Kick",
+          "hits": "........X......."
+        },
+        {
+          "inst": "Rim",
+          "hits": "........X......."
+        },
+        {
+          "inst": "Closed hat",
+          "hits": "x.x.x.x.x.x.x.x."
+        }
+      ],
+      "desc": "The one drop: beat 1 is left empty and the kick and cross-stick land together on beat 3, while swung hats keep time. The missing downbeat gives roots reggae its floating, laid-back pull.",
+      "prompt": "roots reggae one-drop drums at 74 BPM, kick and cross-stick rimshot together on beat 3, an open, empty downbeat, swung hi-hats, deep dub bass"
+    },
+    {
+      "id": "bt-blues-shuffle",
+      "name": "12/8 blues shuffle",
+      "genre": "Blues",
+      "bpm": [
+        60,
+        100
+      ],
+      "timeSig": "12/8",
+      "steps": 12,
+      "swing": 50,
+      "lanes": [
+        {
+          "inst": "Kick",
+          "hits": "X.....X....."
+        },
+        {
+          "inst": "Snare",
+          "hits": "...X.....X.."
+        },
+        {
+          "inst": "Ride",
+          "hits": "x.xx.xx.xx.x"
+        }
+      ],
+      "desc": "Each beat is split into three triplet eighths. The ride plays the first and third of every triplet, the long-short shuffle, with kick on 1 and 3 and a snare backbeat on 2 and 4. Count it in dotted quarters, roughly 70 to 90 BPM.",
+      "prompt": "slow 12/8 blues shuffle at 80 BPM, lazy triplet-feel ride cymbal, kick on 1 and 3, fat snare backbeat on 2 and 4, smoky live club drums"
+    },
+    {
+      "id": "bt-68-ballad",
+      "name": "6/8 ballad",
+      "genre": "Ballad",
+      "bpm": [
+        48,
+        66
+      ],
+      "timeSig": "6/8",
+      "steps": 12,
+      "swing": 50,
+      "lanes": [
+        {
+          "inst": "Kick",
+          "hits": "X.........x."
+        },
+        {
+          "inst": "Rim",
+          "hits": "......X....."
+        },
+        {
+          "inst": "Closed hat",
+          "hits": "x.x.x.x.x.x."
+        }
+      ],
+      "desc": "One bar of 6/8 in sixteenths: six eighth-note hats, kick on 1 with a pickup on the sixth eighth, and a rim or soft snare on 4, the second big beat. Felt as two slow sways per bar, about 55 to 65 dotted-quarter BPM.",
+      "prompt": "slow 6/8 ballad groove, two gentle sways per bar at about 60 BPM, soft kick on 1, rimshot on 4, flowing eighth-note hi-hats, brushed and tender"
+    },
+    {
+      "id": "bt-trap-soul",
+      "name": "Half-time trap-soul",
+      "genre": "R&B / hip-hop",
+      "bpm": [
+        120,
+        140
+      ],
+      "timeSig": "4/4",
+      "steps": 16,
+      "swing": 50,
+      "lanes": [
+        {
+          "inst": "Kick",
+          "hits": "X..........x...."
+        },
+        {
+          "inst": "808",
+          "hits": "X..........x..x."
+        },
+        {
+          "inst": "Clap",
+          "hits": "........X......."
+        },
+        {
+          "inst": "Closed hat",
+          "hits": "x.x.x.x.x.x.x.xx"
+        }
+      ],
+      "desc": "Moody R&B in half-time: on a 130 grid the snap-clap lands only on beat 3, so it feels like a slow 65. Kick and long 808 notes hit 1 and the 'a' of 3, and lazy eighth hats end with a small roll into the next bar.",
+      "prompt": "moody trap-soul drums in half-time at 130 BPM, finger snaps and soft clap on beat 3, deep long 808 notes, lazy hi-hats with small rolls, late-night R&B"
+    }
+  ]
+}

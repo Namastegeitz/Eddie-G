@@ -1,0 +1,16 @@
+{
+  "name": "flowsmith",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Prompt studio for Google Flow Music, powered by Claude",
+  "type": "module",
+  "scripts": {
+    "vendor": "esbuild scripts/sdk-entry.mjs --bundle --format=esm --platform=browser --minify --outfile=vendor/anthropic-sdk.mjs",
+    "test": "node tests/validate-data.mjs && node tests/engine.test.mjs && node tests/evals/run-engine-evals.mjs",
+    "smoke": "node tests/smoke.mjs"
+  },
+  "devDependencies": {
+    "@anthropic-ai/sdk": "^1.14.0",
+    "esbuild": "^0.28.2"
+  }
+}
