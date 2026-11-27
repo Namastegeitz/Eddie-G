@@ -9,7 +9,15 @@ const DIR := "res://scripts/abilities/%s.gd"
 
 var id := ""
 var p: Dictionary = {}
-var run = null              # RunSim
+## The run this ability belongs to (a RunSim). Held weakly: the run owns
+## its abilities, so a strong reference back would be a cycle and every
+## finished run (and every copy the bot plans with) would never be freed.
+var run = null:
+	get:
+		return _run_ref.get_ref() if _run_ref != null else null
+	set(value):
+		_run_ref = weakref(value) if value != null else null
+var _run_ref: WeakRef = null
 var cooldown := 0.0
 var cd_left := 0.0
 var active_left := 0.0

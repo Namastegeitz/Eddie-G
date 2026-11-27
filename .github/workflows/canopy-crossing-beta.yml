@@ -45,15 +45,15 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-java@v4
+      - uses: actions/setup-java@v6
         with:
           distribution: temurin
           java-version: 17
 
       - name: Cache Godot and export templates
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: ${{ env.GODOT_DIR }}
           key: godot-${{ env.GODOT_VERSION }}-web-android-v1
@@ -95,7 +95,7 @@ jobs:
 
       - name: Android signing key (cached debug key, or your secret)
         id: key
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: ${{ runner.temp }}/../canopy-keystore
           key: canopy-android-debug-keystore-v1
@@ -154,23 +154,24 @@ jobs:
           mkdir -p build/web_smoke
           node tools/web_artifact/smoke.js build/site/canopy-crossing play.html build/web_smoke
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: canopy-crossing-android-apk
           path: apps/CANOPY-CROSSING/build/android/canopycrossing.apk
           if-no-files-found: ignore
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: canopy-crossing-phone-test-screens
           path: apps/CANOPY-CROSSING/build/web_smoke
           if-no-files-found: ignore
 
-      - uses: actions/upload-pages-artifact@v3
+      - uses: actions/upload-pages-artifact@v5
         with:
           path: apps/CANOPY-CROSSING/build/site
+          include-hidden-files: true
 
   deploy:
     needs: build
@@ -181,4 +182,4 @@ jobs:
     steps:
       - name: Publish to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5

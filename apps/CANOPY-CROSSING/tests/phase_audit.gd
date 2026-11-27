@@ -63,6 +63,8 @@ func _ready() -> void:
 				await _silly_faces()
 			"terrain":
 				await _hd_terrain()
+			"stability":
+				await _stability()
 		print("phase audit (%s): %d passed, %d failed" % [only, passed, failed])
 		Save.wipe()
 		Save.path = real_save
@@ -83,6 +85,7 @@ func _ready() -> void:
 	await _trade_roads()
 	await _silly_faces()
 	await _hd_terrain()
+	await _stability()
 	_phase8()
 	Save.wipe()
 	Save.path = real_save
@@ -1963,6 +1966,82 @@ func _silly_faces() -> void:
 ## starts and ends harder than the one before; the first five jungles bring
 ## their hazards in level by level; and generated levels really are gentler
 ## early on (slower movers, fewer kinds of hazard).
+## Upgrade run 2026-11-27: memory, crash reporting.
+func _stability() -> void:
+	begin("Stability: memory and crash reporting")
+	# a finished run (and every copy the bot plans with) is freed
+	await get_tree().process_frame
+	var before := Performance.get_monitor(Performance.OBJECT_COUNT)
+	for i in 4:
+		var w := World.new()
+		w.setup(Content.map("amazon"), "journey", 4, 300 + i)
+		w.ensure(40)
+		var s := RunSim.new()
+		s.setup(w, Content.animal("poison_dart_frog"), {"mode": "journey"})
+		var bot := PathBot.new()
+		for k in 90:
+			s.step(1.0 / 60.0)
+			if k % 30 == 0:
+				bot.plan(s, s.row + 6)
+	await get_tree().process_frame
+	var left := int(Performance.get_monitor(Performance.OBJECT_COUNT) - before)
+	check("finished runs and the bot's planning copies are freed (no memory growing run after run)", left <= 2, "%d objects left after 4 runs" % left)
+	# crash reporting: off without the SDKs, and every path works with them
+	check("crash reports are on by default in Settings, and the services stay off until their keys are built in", bool(Save.setting("crash_reports", false)) and not CrashReport.active() and CrashReport.sentry == null)
+	var fake := FakeCrashlytics.new()
+	var keep_c = CrashReport.crashlytics
+	CrashReport.crashlytics = fake
+	CrashReport.apply_consent()
+	Analytics.event("run_start", {"mode": "journey", "map": "borneo", "stage": 2, "animal": "orangutan"})
+	Analytics.event("view", {"view": "fpv", "map": "borneo", "row": 4})
+	check("each run start, view switch and purchase leaves a breadcrumb; the jungle and level go on every report",
+		fake.logs.any(func(l): return l.begins_with("run_start:") and "map=borneo" in l) and fake.logs.any(func(l): return l.begins_with("view:")) and fake.keys.get("map", "") == "borneo" and fake.keys.get("level", "") == "3", str(fake.logs.slice(-2)))
+	CrashReport.report("map pack download failed", "borneo: timeout")
+	check("handled problems are reported with recent steps attached", fake.errors.size() == 1 and "run_start" in String(fake.errors[0][1]))
+	var sent0 := fake.errors.size()
+	for i in 3:
+		CrashReport._queue_error("Invalid access to property 'x'", "res://a.gd:10 in f", "")
+	CrashReport._queue_error("Another error", "res://b.gd:5 in g", "")
+	CrashReport._process(0.0)
+	check("script errors reach Crashlytics once each (repeats are only counted)", fake.errors.size() == sent0 + 2, str(fake.errors.size() - sent0))
+	Save.set_setting("crash_reports", false)
+	check("turning reports off in Settings reaches Crashlytics at once", fake.enabled == false and not CrashReport.active())
+	CrashReport._queue_error("A third error", "res://c.gd:1 in h", "")
+	CrashReport._process(0.0)
+	CrashReport.report("ignored", "")
+	check("with reports off nothing is sent", fake.errors.size() == sent0 + 2)
+	Save.set_setting("crash_reports", true)
+	check("turning them back on reaches Crashlytics too", fake.enabled == true)
+	CrashReport.crashlytics = keep_c
+	var st: Control = load("res://scripts/ui/settings_screen.gd").new()
+	add_child(st)
+	await get_tree().process_frame
+	var labels: Array = st.find_children("*", "CheckButton", true, false).map(func(c): return String(c.text))
+	check("Settings has the Send crash reports switch", labels.any(func(t): return "crash reports" in t.to_lower()), str(labels.size()))
+	st.queue_free()
+	await get_tree().process_frame
+
+
+## Stands in for the CanopyCrashlytics Android plugin in tests.
+class FakeCrashlytics extends RefCounted:
+	var logs: Array[String] = []
+	var keys := {}
+	var errors: Array = []
+	var enabled := true
+
+	func log(m: String) -> void:
+		logs.append(m)
+
+	func setKey(k: String, v: String) -> void:
+		keys[k] = v
+
+	func recordError(m: String, d: String) -> void:
+		errors.append([m, d])
+
+	func setCollectionEnabled(on: bool) -> void:
+		enabled = on
+
+
 ## High-definition terrain on every map, in both views.
 func _hd_terrain() -> void:
 	begin("High-definition maps: ground, water, plants, canopy")

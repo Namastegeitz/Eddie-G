@@ -199,6 +199,23 @@ Researched requirements, with sources: [requirements.md](requirements.md)
 
   **Official pages:** [Submit your game](https://www.gog.com/indie)
 
+- [ ] **Create a free Sentry project for crash reports**  
+  _You · free (Developer plan)_
+
+  **Why:** The game is ready to send crash and error reports from the Android .aab, iPhone, Windows, Mac and Linux builds; it needs your project's DSN to know where.
+
+  **How:**
+  1. Sign up at sentry.io (free Developer plan), create a project with platform Godot Engine.
+  2. Copy the DSN (Settings > Projects > Client Keys).
+  3. Settings > Security & Privacy: turn on Prevent Storing of IP Addresses.
+  4. GitHub > Settings > Secrets and variables > Actions: new secret SENTRY_DSN.
+
+  **Done when:** The release builds' log says SENTRY OK.
+
+  **Watch out:** Keep the free plan's 5,000 errors a month in mind: one bad bug can use them up; Sentry stops accepting new ones until next month.
+
+  **Official pages:** [Setup steps](https://sentry.io/signup/)
+
 ## Phase 3: Legal and privacy
 
 - [ ] **Finish the privacy policy and put it on your website**  

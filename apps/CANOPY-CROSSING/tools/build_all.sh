@@ -116,7 +116,20 @@ for p in $WANT; do
       elif grep -q "Android SDK" "$LOG/android.log"; then
         info android needs-sdk "This machine has no Android SDK (its network can't reach Google's download server). GitHub Actions builds the APK and the Play Store .aab: run 'Canopy Crossing release builds'."
       else info android failed "export failed: see build/build_all/android.log"; status=1; fi ;;
-    *) echo "unknown platform $p (one of: $ALL)"; status=1 ;;
+    aab)
+      # just the Google Play bundle (Gradle build), next to the APK already in
+      # BUILDS/android; the release workflow builds it after installing the
+      # crash-reporting SDKs, which need Gradle
+      mkdir -p BUILDS/android
+      rm -f BUILDS/android/CanopyCrossing.aab
+      ok=1
+      export_preset "Android AAB" BUILDS/android/CanopyCrossing.aab "$LOG/android_aab.log" --install-android-build-template || ok=0
+      if [ $ok -eq 1 ]; then
+        files=(BUILDS/android/CanopyCrossing.aab)
+        [ -f BUILDS/android/CanopyCrossing.apk ] && files=(BUILDS/android/CanopyCrossing.apk BUILDS/android/CanopyCrossing.aab)
+        info android built "APK installs directly on phones; the .aab is the Google Play upload." "${files[@]}"
+      else info android failed "AAB export failed: see build/build_all/android_aab.log"; status=1; fi ;;
+    *) echo "unknown platform $p (one of: $ALL aab)"; status=1 ;;
   esac
 done
 exit $status

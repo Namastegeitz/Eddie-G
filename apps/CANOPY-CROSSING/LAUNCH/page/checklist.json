@@ -742,6 +742,57 @@
      "done_when": "Accounts open, or you've decided to skip them.",
      "pitfall": "Both need a custom payment plugin; leave them until Google and Apple are live.",
      "next": "Lowest priority."
+    },
+    {
+     "id": "cr-sentry",
+     "title": "Create a free Sentry project for crash reports",
+     "owner": "you",
+     "stores": [
+      "all"
+     ],
+     "cost": "free (Developer plan)",
+     "why": "The game is ready to send crash and error reports from the Android .aab, iPhone, Windows, Mac and Linux builds; it needs your project's DSN to know where.",
+     "how": [
+      "Sign up at sentry.io (free Developer plan), create a project with platform Godot Engine.",
+      "Copy the DSN (Settings > Projects > Client Keys).",
+      "Settings > Security & Privacy: turn on Prevent Storing of IP Addresses.",
+      "GitHub > Settings > Secrets and variables > Actions: new secret SENTRY_DSN."
+     ],
+     "done_when": "The release builds' log says SENTRY OK.",
+     "pitfall": "Keep the free plan's 5,000 errors a month in mind: one bad bug can use them up; Sentry stops accepting new ones until next month.",
+     "next": "Firebase Crashlytics next.",
+     "links": [
+      {
+       "label": "Setup steps",
+       "url": "https://sentry.io/signup/"
+      }
+     ]
+    },
+    {
+     "id": "cr-firebase",
+     "title": "Create a free Firebase project for Crashlytics (Android)",
+     "owner": "you",
+     "stores": [
+      "google",
+      "amazon"
+     ],
+     "cost": "free (Spark plan)",
+     "why": "Crashlytics is Google's crash reporter: it catches Android crashes, including the engine's own, and shows them next to Play's vitals.",
+     "how": [
+      "console.firebase.google.com > Add project (Google Analytics off).",
+      "Add an Android app with package com.aethertek.canopycrossing; download google-services.json.",
+      "Crashlytics > Enable.",
+      "GitHub secret FIREBASE_ANDROID_CONFIG = the whole contents of google-services.json."
+     ],
+     "done_when": "The release builds' log says CRASHLYTICS LIBRARY OK (with Firebase config).",
+     "pitfall": "Don't commit google-services.json; it's git-ignored on purpose.",
+     "next": "Both are set: update Data safety and App Privacy (Phase 3) to list crash logs and diagnostics.",
+     "links": [
+      {
+       "label": "Firebase console",
+       "url": "https://console.firebase.google.com/"
+      }
+     ]
     }
    ]
   },
@@ -821,7 +872,8 @@
      "why": "Required for every submission; shown as the privacy label on the store page.",
      "how": [
       "Without ads: Data Not Collected (everything stays on the device).",
-      "With AdMob: Device ID, Advertising Data, Product Interaction, Coarse Location, Diagnostics."
+      "With AdMob: Device ID, Advertising Data, Product Interaction, Coarse Location, Diagnostics.",
+      "With crash reporting on: Diagnostics > Crash Data and Other Diagnostic Data; not linked to the user, not tracking, App Functionality."
      ],
      "done_when": "App Privacy shows Published.",
      "pitfall": "Saying you track without ever showing Apple's tracking prompt is a common rejection.",
@@ -842,7 +894,8 @@
      ],
      "why": "Mandatory even if nothing is collected; it must match the privacy policy and every SDK.",
      "how": [
-      "Use the table in LAUNCH/google-play/requirements.md, section 2.2."
+      "Use the table in LAUNCH/google-play/requirements.md, section 2.2.",
+      "With crash reporting on: App info and performance > Crash logs and Diagnostics; collected, not shared, optional (Settings switch), for App functionality (docs/CRASH_REPORTING.md)."
      ],
      "done_when": "Data safety shows Completed.",
      "pitfall": "A mismatch with AdMob's real data collection is a classic rejection.",

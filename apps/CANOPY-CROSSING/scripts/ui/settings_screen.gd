@@ -28,6 +28,7 @@ func _ready() -> void:
 	box.add_child(_toggle("Reduce motion", "reduce_motion", "No screen shake."))
 	box.add_child(_toggle("Per-move timer on harder maps", "move_timer", "Some regions (like Bwindi) time each forward move."))
 	box.add_child(_toggle("Personalised ads", "ads_personalised", "Off by default. Only affects optional ads."))
+	box.add_child(_toggle("Send crash reports", "crash_reports", "Helps us fix crashes and bugs. Reports say what went wrong and on which device, never who you are."))
 	box.add_child(_silly_faces())
 	box.add_child(_toggle("Mini-map", "mini_map", "A live map of the rows around you, and where you are in the level. Tap it to resize."))
 	box.add_child(_toggle("Show FPS counter", "show_fps", "For checking smoothness on your device."))

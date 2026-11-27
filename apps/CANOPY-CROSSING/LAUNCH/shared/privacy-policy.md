@@ -15,6 +15,8 @@
 Canopy Crossing is a single-player game. You don't need an account, and the
 game works offline. Your progress is saved on your own device. We don't
 collect your name, email, contacts, location, photos or microphone.
+If the game crashes, it can send an anonymous crash report so we can fix it
+(you can turn this off in Settings).
 
 ## What is stored on your device
 
@@ -52,6 +54,27 @@ Some jungles can be downloaded as extra content packs. The game then
 connects to [FILL IN: the server that hosts them] to download them; that
 server sees your IP address as part of the download.
 
+## Crash reports
+
+When the game crashes or hits an error, it can send a crash report so we can
+fix it. We use two services for this: **Sentry** (by Functional Software,
+Inc.) on every platform, and **Firebase Crashlytics** (by Google) on Android.
+A report contains what went wrong (the error and where in the game's code),
+the game's version, the platform and device model, the operating system
+version, the graphics setting, and what you were doing just before (for
+example: which jungle and level, which view, which screen). It does **not**
+contain your name, email, contacts, location, advertising ID or any account,
+because the game has none. The services receive your IP address when the
+report is sent, as any internet connection does; we have asked them not to
+store it [FILL IN: once set up, turn on "Prevent storing of IP addresses" in
+Sentry; Crashlytics doesn't keep IP addresses in reports]. Reports are kept
+for [FILL IN: 90 days, Sentry's default; Crashlytics keeps them for 90 days]
+and used only to find and fix problems.
+
+You can turn crash reports off at any time in *Settings > Send crash
+reports*. Sentry's privacy policy: https://sentry.io/privacy/ . Google's:
+https://policies.google.com/privacy and https://firebase.google.com/support/privacy .
+
 ## Children
 
 Canopy Crossing is a family-friendly game but is not directed at children
@@ -63,9 +86,10 @@ children.
 ## Your choices and rights
 
 You can delete everything the game stored by deleting the game, or with
-*Settings > Reset all progress*. Because we don't hold any personal data on
-our side, there is nothing for us to export or delete; if that changes we'll
-say so here. Questions: [FILL IN: email].
+*Settings > Reset all progress*, and stop crash reports with *Settings > Send
+crash reports*. Because we don't hold any personal data on our side (crash
+reports aren't linked to you), there is nothing for us to export or delete;
+if that changes we'll say so here. Questions: [FILL IN: email].
 
 ## Changes
 

@@ -20,6 +20,7 @@ config/icon="res://assets/icons/icon.png"
 Content="*res://autoload/content.gd"
 Save="*res://autoload/save.gd"
 Analytics="*res://autoload/analytics.gd"
+CrashReport="*res://autoload/crash_report.gd"
 Economy="*res://autoload/economy.gd"
 Progress="*res://autoload/progress.gd"
 Store="*res://autoload/store.gd"
@@ -28,6 +29,8 @@ Sfx="*res://autoload/sfx.gd"
 Game="*res://autoload/game.gd"
 
 [canopy]
+
+build_number="1"
 
 billing/backend="mock"
 ads/backend="mock"
@@ -69,3 +72,7 @@ renderer/rendering_method.mobile="gl_compatibility"
 textures/vram_compression/import_etc2_astc=true
 environment/defaults/default_clear_color=Color(0.055, 0.165, 0.11, 1)
 anti_aliasing/quality/msaa_2d=0
+
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/canopy_crashlytics/plugin.cfg")
