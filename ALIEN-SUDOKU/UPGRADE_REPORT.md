@@ -170,3 +170,6 @@ Old build vs new build, alternating runs on the same machine (pooled frames, 4 r
 | Map fps | 59.9 / 59.8 | 59.7 / 60.0 |
 
 Cold start and memory: unchanged within noise (1.1-1.4 s phone, 0.7-0.8 s desktop; 3.1-3.7 MB heap).
+
+### Step 4: dependencies (U4)
+Capacitor 8.6.0 → 8.6.3, Vite 8.3.5 → 8.4.0, Vitest 5.1.0 → 5.1.2, Electron 45.2.1 → **45.5.0**, `npm audit fix` (no breaking changes). Game advisories 8 → 4; the 4 left are in `vite-plugin-pwa`'s build-time file matching and only clear by downgrading it to 1.1.0. Desktop: 6 left, all in `electron-builder` (packaging only) and only clear by downgrading it to 24.x. Both stay on their current versions; nothing that ships to players is affected. Kept on purpose: AdMob plugin 8.3.0, Playwright 1.64.1 (see Research b). Unit 123/123, browser 44/44 (+2 skipped) after the update.
