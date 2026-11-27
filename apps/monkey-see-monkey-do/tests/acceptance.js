@@ -270,11 +270,18 @@ let passes = 0;
     await page.waitForSelector('#hud.show');
     await page.click('#pad [data-move="FL"]');
     await page.keyboard.press('w');
-    // swipe up-left on the stage = Left Arm
-    await page.mouse.move(200, 400);
-    await page.mouse.down();
-    await page.mouse.move(150, 340, { steps: 4 });
-    await page.mouse.up();
+    // swipe up-left on the stage = Left Arm. A swipe must finish within 0.7 s;
+    // the software renderer can be slower than that, so swipe in one quick
+    // move and try once more if it was too slow to count
+    const swipe = async () => {
+      await page.mouse.move(200, 400);
+      await page.mouse.down();
+      await page.mouse.move(150, 340, { steps: 1 });
+      await page.mouse.up();
+      await page.waitForTimeout(100);
+    };
+    await swipe();
+    if ((await ev(() => MSMD.game.run.moves)) < 3) await swipe();
     // tap the monkey's right foot
     const foot = await ev(() => {
       const { monkey, stage, app } = MSMD;
