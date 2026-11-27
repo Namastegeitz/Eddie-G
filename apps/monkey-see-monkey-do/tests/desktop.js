@@ -66,11 +66,16 @@ const expect = (c, m) => { if (!c) throw new Error(m); };
   });
 
   await run('F11 toggles full screen', async () => {
-    await win.keyboard.press('F11');
+    // send F11 through the browser's own input path, like a real keyboard
+    // (Playwright's key presses skip the main process's before-input-event)
+    const f11 = () => app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows()[0].webContents.sendInputEvent({ type: 'keyDown', keyCode: 'F11' }));
+    await f11();
     await win.waitForTimeout(1500);
     const full = await app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows()[0].isFullScreen());
-    await win.keyboard.press('F11');
-    expect(full === true, 'full screen after F11');
+    await f11();
+    await win.waitForTimeout(1500);
+    const back = await app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows()[0].isFullScreen());
+    expect(full === true && back === false, `full screen after F11: ${full}, back after a second F11: ${!back}`);
   });
 
   await run('no errors', async () => {

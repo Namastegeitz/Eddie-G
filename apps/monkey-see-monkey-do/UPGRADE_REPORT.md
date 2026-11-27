@@ -173,3 +173,78 @@ Also fixed while researching: Steam Direct wait is 21 days, not 30 (docs and che
 
 Benchmark files: `tests/benchmark-baseline.json` (before) and the after numbers above.
 Real-device numbers still need a phone: the software renderer is 10-50x slower than a phone GPU.
+
+## Tests (Step 9)
+
+| Suite | Before | After | Notes |
+|---|---|---|---|
+| Rule checks (`tests/unit.mjs`) | 767/767 | **790/790** | +23: first-release save round trip, keyboard keys, controller mapping and menu navigation |
+| Play-through (`tests/acceptance.js`, source) | 35/35 | **42/42** | +7: new settings, Sharpness, Report a problem, custom keys, controller (moves, button names, Start/D-pad/A), GPU reset, maps ready ahead. The play-through now waits for Auto graphics to settle on the title before level 1 (the first rerun failed because Auto was still trying High at 2 fps in the software renderer during level 1; steady play is faster than before) |
+| Devices (`tests/devices.js`, build) | 15/15 | **15/15** | 320 px phone to wide laptop, iPad sideways, simulated iOS/Android shells, WebGL 1 |
+| PC edition (`tests/desktop.js`, real Electron 45.5.0 under a virtual display) | none | **5/5** | WebGL 2, no Shop, keyboard and controller, F11 full screen, no errors |
+| Smoke (`tests/smoke.js`, what CI runs) | none | **pass** | |
+| Benchmark (`tests/benchmark.js`) | baseline | **at or better on every check** | see Before / after |
+| Live beta site (`tests/beta_site.js`) | 13/13 | not rerun | 1.1.0 isn't published yet (needs Eddie's go) |
+| Visual check | | done | `upgrade-shots/`: Settings Display and Controls, controller button names. It caught a layout bug (5-option rows squeezed their description into a one-word column); fixed by stacking long option rows |
+| Store pre-checks (Play pre-launch report, App Store Connect validation, Windows App Cert Kit) | | **not run** | need the store accounts and native builds |
+| CI on GitHub | | **runs, but stops in 3 s** | all 3 runs failed before any step started, matching the earlier account-level Actions refusal: check GitHub > Settings > Billing and plans (Actions) |
+
+## Critic rubric (pass/fail per change)
+
+| Check | Result |
+|---|---|
+| Nothing removed or changed without a setting | **Pass**: every new behaviour has a setting whose default keeps 1.0 behaviour (maps ahead and controller are on by default because they only add) |
+| Old saves and data load | **Pass**: first-release save fixture loads with every field; new settings arrive at defaults |
+| All tests pass | **Pass** (local suites); CI can't start on the account |
+| Performance at or above baseline | **Pass**: same draw calls and triangles, 4.7% faster frames, first map appearance halved |
+| Low graphics look at least as good | **Pass**: Low unchanged |
+| No new warnings | **Pass**: build clean, no console errors in any suite |
+| Every store rule from research met | **Partly**: see the store-readiness checklist |
+| Accessibility not reduced | **Pass**: added controller, custom keys, calmer flashing; nothing removed |
+| Rights cleared | **Pass**: `store-kit/credits.md` |
+
+## Store-readiness checklist
+
+| Item | Status |
+|---|---|
+| Web beta: built, tested on phone/tablet/desktop sizes | **Pass** (publishing 1.1.0 waits for Eddie) |
+| itch.io HTML5 zip (15 files, 0.45 MB) | **Pass** |
+| Store text within limits, age-rating answers, accessibility-label answers, credits | **Pass** |
+| Privacy policy matches the build (crash reports off/on) | **Pass** in the build; the **live page must be republished** before any 1.1.0 phone release (it still says the Android app has no internet access) |
+| Google Play: target API 36, Billing Library 9.0.0, Data safety answers | **Pass** |
+| Google Play: 16 KB pages | **Likely pass** (no native libraries in our packages); confirm on the release bundle |
+| Google Play: signed release bundle (.aab) | **Fail here**: needs the Android SDK (phone build workflow or a local build) and Eddie's upload key |
+| Google Play: closed test, 12 testers for 14 days | **Not started** (Eddie) |
+| Apple: Xcode 26 build, TestFlight | **Fail here**: needs a Mac or a cloud Mac |
+| Apple: privacy manifest | **Pass** (none needed in our code; confirm with Xcode's privacy report) |
+| Apple: screenshots | **Pass** for 6.9" and iPad 13"; 6.3" (1206x2622) set still to make |
+| Apple/Google: kids purchases (parental gate, restore, monthly limit) | **Pass** |
+| US state age-assurance laws (Texas, Utah, Louisiana) | **Open**: legal advice needed |
+| PC edition on Electron 45 | **Pass** (tested) |
+| PC installers (Windows/macOS/Linux), Microsoft Store MSIX | **Not built**: electron-builder 26 is ready; MSIX needs Partner Center identity values |
+| Steam: capsule art, controller support | **Pass**; a Steam Input default config and a native Linux build for Steam Deck are next |
+| Crash reports | **Ready, off**: needs Sentry DSN and/or Firebase files |
+| Signing keys and certificates | **Eddie**: Android upload key, Apple certificates, (optional) Windows signing; never in the repository |
+
+## Deferred, and why
+
+- Translation-ready string files: large change; no translation planned yet.
+- 1206x2622 iPhone screenshots: 1320x2868 is still accepted.
+- three.js upgrade: pinned (WebGL 1 phones).
+- cordova-plugin-purchase 13.20.0: changes when purchase errors count as temporary; needs a real-store test.
+- The moon's first appearance improves least (597 to 517 ms here); finding what the warm-up misses is a next step.
+- Native phone builds weren't compiled here (no Android SDK or Mac); the native config changes are guarded so a build without Firebase files behaves as before.
+
+## Open questions for Eddie
+
+1. Publish 1.1.0 to the beta link and the claude.ai game page? (Not done: publishing needs your go.)
+2. Merge `upgrade/2026-11-27-monkey-see-monkey-do` into the main working branch?
+3. Crash reports: create the free Sentry project and/or Firebase project when you're ready (steps in `mobile/README.md`), and decide on the kids-audience review first.
+4. Age-assurance laws: get advice on whether the US state rules apply.
+5. GitHub Actions: check why runs can't start (Settings > Billing and plans).
+
+## Next 3 upgrades worth doing
+
+1. **Phone builds end to end:** fix the Actions start problem, then build the signed Android bundle and an iOS TestFlight build in CI, and run the stores' own pre-checks.
+2. **Steam-ready PC edition:** a default Steam Input controller config, a native Linux build for Steam Deck, Windows/macOS installers, Microsoft Store MSIX.
+3. **Find the rest of the moon's first-draw cost** and make the 6.3" iPhone screenshot set.

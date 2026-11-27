@@ -513,3 +513,5 @@ pre.report-view { max-height: 34vh; overflow: auto; margin: 8px 0; padding: 10px
 .update-bar { position: absolute; left: 50%; bottom: calc(var(--safe-b) + 14px); transform: translateX(-50%); z-index: 60; display: flex; gap: 8px; align-items: center; padding: 8px 10px 8px 16px; border-radius: 16px; background: var(--panel); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45), inset 0 0 0 2px var(--banana); font-weight: 800; white-space: nowrap; }
 .update-bar[hidden] { display: none; }
 .seg { flex-wrap: wrap; }
+.row.stack { flex-direction: column; align-items: stretch; gap: 8px; }
+.row.stack .seg { align-self: flex-start; max-width: 100%; }

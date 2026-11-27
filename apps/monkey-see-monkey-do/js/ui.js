@@ -1168,7 +1168,7 @@ export class UI {
       const label = `<div class="label"><b id="lbl-${it.key || it.action}">${esc(it.label)}</b>${help ? `<small>${esc(help)}</small>` : ''}</div>`;
       if (it.type === 'toggle') return `<div class="row">${label}<button class="toggle" role="switch" id="set-${it.key}" data-key="${it.key}" aria-checked="${!!s[it.key]}" aria-labelledby="lbl-${it.key}"></button></div>`;
       if (it.type === 'range') return `<div class="row">${label}<input type="range" id="set-${it.key}" data-key="${it.key}" min="0" max="1" step="0.05" value="${s[it.key]}" aria-labelledby="lbl-${it.key}"></div>`;
-      if (it.type === 'seg') return `<div class="row">${label}<div class="seg" role="group" aria-labelledby="lbl-${it.key}">${it.options.map(([v, t]) => `<button data-key="${it.key}" data-val="${v}" aria-pressed="${String(s[it.key]) === String(v)}">${esc(t)}</button>`).join('')}</div></div>`;
+      if (it.type === 'seg') return `<div class="row${it.options.length > 3 ? ' stack' : ''}">${label}<div class="seg" role="group" aria-labelledby="lbl-${it.key}">${it.options.map(([v, t]) => `<button data-key="${it.key}" data-val="${v}" aria-pressed="${String(s[it.key]) === String(v)}">${esc(t)}</button>`).join('')}</div></div>`;
       if (it.type === 'action') return `<div class="row">${label}<button class="btn small" id="act-${it.action}">${esc(it.button)}</button></div>`;
       return '';
     };

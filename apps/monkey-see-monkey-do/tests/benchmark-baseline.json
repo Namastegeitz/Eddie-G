@@ -1,75 +1,83 @@
 {
-  "when": "2026-11-27T16:45:07.280Z",
-  "base": "http://127.0.0.1:8767/",
+  "when": "2026-11-27T16:47:37.091Z",
+  "base": "http://127.0.0.1:8766/",
   "viewport": "390x844@1x",
   "renderer": "SwiftShader (software)",
-  "coldStartMs": 6450,
-  "heapAfterStartMB": 22.4,
+  "coldStartMs": 5562,
+  "heapAfterStartMB": 23.9,
   "firstUseMs": {
-    "beach": 1051,
-    "disco": 463,
-    "moon": 597
+    "beach": 997,
+    "disco": 379,
+    "moon": 607
   },
-  "firstUseWorstMs": 1051,
+  "firstUseWorstMs": 997,
+  "firstUsePreparedMs": {
+    "beach": 504,
+    "disco": 133,
+    "moon": 517
+  },
+  "firstUsePreparedWorstMs": 517,
   "stages": {
     "jungle/low": {
       "drawCalls": 35,
       "triangles": 31696,
       "programs": 44,
-      "drawMs": 125
+      "drawMs": 120
     },
     "beach/low": {
       "drawCalls": 44,
       "triangles": 22496,
       "programs": 44,
-      "drawMs": 90
+      "drawMs": 77
     },
     "disco/low": {
       "drawCalls": 60,
       "triangles": 17466,
       "programs": 44,
-      "drawMs": 101
+      "drawMs": 98
     },
     "moon/low": {
       "drawCalls": 38,
       "triangles": 24566,
       "programs": 44,
-      "drawMs": 92
+      "drawMs": 74
     },
     "jungle/high": {
       "drawCalls": 60,
       "triangles": 84646,
       "programs": 44,
-      "drawMs": 335
+      "drawMs": 326
     },
     "beach/high": {
       "drawCalls": 52,
       "triangles": 35062,
       "programs": 48,
-      "drawMs": 150
+      "drawMs": 148
     },
     "disco/high": {
       "drawCalls": 65,
       "triangles": 17660,
       "programs": 49,
-      "drawMs": 162
+      "drawMs": 161
     },
     "moon/high": {
       "drawCalls": 45,
       "triangles": 25694,
       "programs": 51,
-      "drawMs": 146
+      "drawMs": 140
     }
   },
   "monkeyTriangles": 157540,
   "play": {
     "frames": 40,
-    "avgMs": 198.7,
-    "avgFps": 5,
-    "low1pctFps": 1.7,
-    "worstMs": 583,
+    "avgMs": 196.7,
+    "avgFps": 5.1,
+    "low1pctFps": 1.9,
+    "worstMs": 517,
     "spikesOver2x": 2
   },
-  "heapAfterPlayMB": 19.6,
-  "pageErrors": []
+  "heapAfterPlayMB": 20.9,
+  "pageErrors": [],
+  "totalDrawMs": 1144,
+  "note": "Baseline for the next upgrade run: version 1.1.0 (27 Nov 2026), same machine and method as benchmark-baseline-1.0.0.json (the pre-upgrade numbers)."
 }

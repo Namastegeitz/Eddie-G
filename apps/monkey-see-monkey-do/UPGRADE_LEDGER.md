@@ -33,6 +33,15 @@ new value. Details and numbers: `UPGRADE_REPORT.md`.
     smoke test, desktop (Electron) test, old-save fixture, 23 new rule checks.
   - Store docs corrected: Steam wait 21 days; privacy page and Data safety
     generated/annotated for crash reports.
+  - Settings rows with more than 3 options stack under their description
+    (found by the before/after screenshots).
+- **Tests at the end of the run:** rules 790/790, play-through 42/42, devices
+  15/15, PC edition (real Electron 45) 5/5, smoke pass, benchmark at or better
+  than baseline. New baseline: `tests/benchmark-baseline.json` (1.1.0); the
+  pre-upgrade numbers are in `tests/benchmark-baseline-1.0.0.json`.
+- **Not done:** publishing 1.1.0 (waits for Eddie), merging the branch, store
+  pre-checks, native phone builds; GitHub Actions runs stop before starting
+  (account setting).
 - **Add-ons (Eddie's answers)**
   - Electron 45 + electron-builder 26: **yes**, done.
   - Crash reports: **Sentry and Firebase Crashlytics**, both free tiers.
