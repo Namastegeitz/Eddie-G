@@ -28,6 +28,14 @@ export const DEFAULT_SETTINGS = {
   latencyMs: 0, // rhythm calibration
   parentGate: true, // ask a grown-up question before any real-money purchase
   spendLimit: 0, // monthly real-money limit in the store's currency (0 = no limit)
+  // added 27 Nov 2026 (v1.1.0); every default keeps the earlier behaviour
+  prepareMaps: true, // build the next map ahead, so it opens without a pause
+  fpsCap: 0, // 0 = as fast as the screen; 60 or 30 save battery
+  renderScale: 1, // 1 | 0.85 | 0.7 of the graphics level's resolution
+  keys: null, // custom keyboard keys per move, e.g. { LA: 'j' } (null = Q W E / A S D)
+  gamepad: true, // a game controller can play and move around the menus
+  crashReports: true, // only used in builds where a crash service is set up
+  askRating: true, // phone apps: may show the store's rating box after a cleared level
 };
 
 function defaults() {

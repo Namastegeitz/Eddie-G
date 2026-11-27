@@ -257,22 +257,102 @@ export class Stage {
 
   // ------------------------------------------------------------ environments
 
-  setEnvironment(id) {
-    if (!ENVS[id]) id = 'jungle';
-    if (this.envId === id) return;
-    for (const [k, g] of Object.entries(this.envs)) g.visible = k === id;
+  /** Build a stage's scenery (once) and paint its sky; hidden until shown. */
+  ensureEnv(id) {
     if (!this.envs[id]) {
       const g = this['build_' + id]();
       const parts = [];
       g.traverse((o) => { if (o !== g && o.userData.detailLevel && !o.isMesh && !o.isPoints && !o.userData.dynamic) parts.push(o); });
       for (const o of parts) bakeStatic(o);
       bakeStatic(g);
+      g.visible = false;
       this.envs[id] = g;
       this.scene.add(g);
+      this.applyDetail();
     }
     const e = ENVS[id];
     this.skies = this.skies || {};
     if (!this.skies[id]) this.skies[id] = skyTexture(e.sky, e.skyExtra); // painted once per stage
+    return this.envs[id];
+  }
+
+  /**
+   * Get a stage ready ahead of time: build it, upload its textures and compile
+   * its shaders while nothing else is happening, so its first appearance
+   * doesn't freeze the game. Resolves true when ready.
+   */
+  prepare(id) {
+    if (!ENVS[id]) return Promise.resolve(false);
+    this.prepared = this.prepared || {};
+    if (this.prepared[id]) return this.prepared[id];
+    const g = this.ensureEnv(id);
+    // compile exactly what will be drawn: only this stage visible, its fog, at
+    // the current graphics level (all inside this call, so nothing flickers)
+    const vis = {};
+    for (const [k, e] of Object.entries(this.envs)) { vis[k] = e.visible; e.visible = k === id; }
+    const fog = this.scene.fog;
+    const e = ENVS[id];
+    this.scene.fog = new THREE.Fog(e.fog, e.fogNear, e.fogFar);
+    g.traverse((o) => {
+      if (!o.material) return;
+      for (const m of Array.isArray(o.material) ? o.material : [o.material]) {
+        for (const k of ['map', 'bumpMap', 'alphaMap', 'emissiveMap', 'gradientMap']) if (m[k] && m[k].isTexture) this.renderer.initTexture(m[k]);
+      }
+    });
+    if (this.skies[id]) this.renderer.initTexture(this.skies[id]);
+    let done;
+    try {
+      done = this.renderer.compileAsync(this.scene, this.camera);
+    } catch (err) {
+      done = Promise.resolve();
+    }
+    for (const [k, en] of Object.entries(this.envs)) en.visible = vis[k];
+    this.scene.fog = fog;
+    // Many graphics drivers only finish a shader the first time it draws, so
+    // after compiling, draw the stage once into a single pixel at the start of
+    // the next frame (the full frame then covers it): see warmDraw().
+    this.prepared[id] = Promise.resolve(done).then(() => new Promise((resolve) => {
+      (this.warmQueue = this.warmQueue || []).push({ id, resolve });
+    }), () => true);
+    return this.prepared[id];
+  }
+
+  /** Draw one queued stage into a 1x1 pixel (called inside the frame, before the real draw). */
+  warmDraw() {
+    const job = this.warmQueue && this.warmQueue.shift();
+    if (!job) return;
+    const g = this.envs[job.id];
+    if (!g || this.envId === job.id) { job.resolve(true); return; }
+    const R = this.renderer;
+    const vis = {};
+    for (const [k, e] of Object.entries(this.envs)) { vis[k] = e.visible; e.visible = k === job.id; }
+    const fog = this.scene.fog;
+    const bg = this.scene.background;
+    const e = ENVS[job.id];
+    this.scene.fog = new THREE.Fog(e.fog, e.fogNear, e.fogFar);
+    this.scene.background = this.skies[job.id] || bg;
+    try {
+      R.setScissorTest(true);
+      R.setScissor(0, 0, 1, 1);
+      R.render(this.scene, this.camera);
+    } catch (err) {
+      /* a failed warm-up only means the stage compiles on first use, as before */
+    } finally {
+      R.setScissorTest(false);
+      R.setScissor(0, 0, this.width, this.height);
+      for (const [k, en] of Object.entries(this.envs)) en.visible = vis[k];
+      this.scene.fog = fog;
+      this.scene.background = bg;
+    }
+    job.resolve(true);
+  }
+
+  setEnvironment(id) {
+    if (!ENVS[id]) id = 'jungle';
+    if (this.envId === id) return;
+    this.ensureEnv(id);
+    for (const [k, g] of Object.entries(this.envs)) g.visible = k === id;
+    const e = ENVS[id];
     this.skyTex = this.skies[id];
     this.scene.background = this.skyTex;
     this.scene.fog = new THREE.Fog(e.fog, e.fogNear, e.fogFar);
@@ -1435,7 +1515,7 @@ export class Stage {
     this.level = level;
     const Q = QUALITY[level];
     this.maxDpr = Q.dpr;
-    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, Q.dpr));
+    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, Q.dpr) * (this.renderScale || 1));
     const wantShadows = Q.shadow > 0;
     if (this.renderer.shadowMap.enabled !== wantShadows) {
       this.renderer.shadowMap.enabled = wantShadows;
@@ -1457,6 +1537,16 @@ export class Stage {
       if (t.anisotropy !== a) { t.anisotropy = a; t.needsUpdate = true; }
     }
     this.applyDetail();
+    this.resize();
+  }
+
+  /** Sharpness setting: 1, 0.85 or 0.7 of the graphics level's resolution. */
+  setRenderScale(scale) {
+    const sc = [1, 0.85, 0.7].includes(Number(scale)) ? Number(scale) : 1;
+    if (sc === (this.renderScale || 1)) return;
+    this.renderScale = sc;
+    const Q = QUALITY[this.level] || QUALITY.high;
+    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, Q.dpr) * sc);
     this.resize();
   }
 
@@ -1605,6 +1695,7 @@ export class Stage {
       });
     }
 
+    if (this.warmQueue && this.warmQueue.length) this.warmDraw();
     this.renderer.render(this.scene, this.camera);
   }
 
@@ -1650,10 +1741,13 @@ export class Stage {
     if (id === 'disco' && this.tiles) {
       const bi = Math.floor(beat);
       const c = new THREE.Color();
+      // Reduce motion also calms the flashing floor (photosensitivity): softer
+      // pulses and a dimmer sweep
+      const calm = this.reduceMotion ? 0.3 : 1;
       this.tileData.forEach((t, n) => {
         const lit = (bi + t.phase) % 3 === 0;
         const wave = Math.max(0, 1 - Math.abs(((beat * 2.5) % 14) - t.ring) * 0.6);
-        c.copy(t.col).multiplyScalar(lit ? 0.35 + pulse * 0.65 : 0.1 + wave * 0.45);
+        c.copy(t.col).multiplyScalar(lit ? 0.35 + pulse * 0.65 * calm : 0.1 + wave * 0.45 * calm);
         this.tiles.setColorAt(n, c);
       });
       this.tiles.instanceColor.needsUpdate = true;

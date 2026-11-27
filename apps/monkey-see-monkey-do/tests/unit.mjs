@@ -283,5 +283,50 @@ check('monthly limit blocks going over', Save.overLimit({ micros: 9990000, curre
 Save.data.purchases = [];
 check('monthly limit allows within it', Save.overLimit({ micros: 4990000, currency: 'USD' }) === false);
 
+// ---- 1.1.0: old saves still load, with the new settings at their defaults
+{
+  const fs = await import('node:fs');
+  const old = JSON.parse(fs.readFileSync(new URL('./fixtures/save-first-release.json', import.meta.url), 'utf8'));
+  const code = Buffer.from(JSON.stringify(old), 'utf8').toString('base64');
+  Save.importCode(code);
+  const d = Save.data;
+  check('old save: bananas kept', d.bananas === 1234 && d.earned === 1500 && d.spent === 266);
+  check('old save: stars and best scores kept', d.levels[1].stars === 3 && d.levels[2].best === 3900 && d.levels[3].clears === 1);
+  check('old save: Endless record kept', d.endless.bestRounds === 7 && d.endless.bestScore === 9100);
+  check('old save: fur colours become skins', d.owned.skin.includes('rainbow') && d.equipped.skin === 'rainbow' && !('fur' in d.owned));
+  check('old save: gear kept', d.owned.hat.includes('party') && d.equipped.hat === 'party');
+  check('old save: settings kept', d.settings.music === 0.4 && d.settings.naming === 'monkey' && d.settings.timer === 'relaxed' && d.settings.quality === 'low' && d.settings.latencyMs === 40 && d.settings.reduceMotion === true);
+  check('old save: new settings start at their no-change defaults', d.settings.prepareMaps === true && d.settings.fpsCap === 0 && d.settings.renderScale === 1 && d.settings.keys === null && d.settings.gamepad === true && d.settings.crashReports === true && d.settings.askRating === true);
+  check('old save: stats kept', d.stats.mixups['LA>RA'] === 2 && d.tutorialDone === true);
+  check('old save: level unlocks follow the stars', Save.unlockedLevel() === 4);
+  const again = JSON.parse(Buffer.from(Save.exportCode(), 'base64').toString('utf8'));
+  check('old save: survives a save-code round trip', again.bananas === 1234 && again.levels[1].stars === 3 && again.settings.fpsCap === 0);
+}
+
+// ---- 1.1.0: keyboard keys
+{
+  const { keyFor, keyMap, checkKey, keySummary } = await import('../js/keys.js');
+  check('default keys Q W E / A S D', keySummary({}) === 'Q W E / A S D' && keyFor('LA', {}) === 'q');
+  check('custom key wins', keyFor('LA', { keys: { LA: 'j' } }) === 'j' && keyMap({ keys: { LA: 'j' } }).j === 'LA');
+  check('old key freed when changed', keyMap({ keys: { LA: 'j' } }).q === undefined);
+  check('number row still works', keyMap({ keys: { LA: 'j' } })['7'] === 'LA');
+  check('duplicate key refused', checkKey('w', 'LA', {}) !== '' && checkKey('w', 'HD', {}) === '');
+  check('pause and browser keys refused', checkKey('p', 'LA', {}) !== '' && checkKey('escape', 'LA', {}) !== '' && checkKey('tab', 'LA', {}) !== '');
+  check('a free letter is fine', checkKey('j', 'LA', {}) === '');
+}
+
+// ---- 1.1.0: game controllers
+{
+  const { PLAY_BUTTONS, padFamily, glyphFor, nearestInDirection } = await import('../js/gamepad.js');
+  check('shoulders are arms, triggers legs', PLAY_BUTTONS[4] === 'LA' && PLAY_BUTTONS[5] === 'RA' && PLAY_BUTTONS[6] === 'LL' && PLAY_BUTTONS[7] === 'RL');
+  check('Y is Head Bob, A is Flair, D-pad plays', PLAY_BUTTONS[3] === 'HD' && PLAY_BUTTONS[0] === 'FL' && PLAY_BUTTONS[12] === 'HD' && PLAY_BUTTONS[14] === 'LA');
+  check('every move has a controller button', ['LA', 'HD', 'RA', 'LL', 'FL', 'RL'].every((m) => Object.values(PLAY_BUTTONS).includes(m)));
+  check('controller families', padFamily('DualSense Wireless Controller (STANDARD GAMEPAD Vendor: 054c)') === 'playstation' && padFamily('Pro Controller (Vendor: 057e)') === 'nintendo' && padFamily('Xbox 360 Controller') === 'xbox' && padFamily('') === 'xbox');
+  check('button names per family', glyphFor('LA', 'xbox') === 'LB' && glyphFor('FL', 'playstation') === '✕' && glyphFor('RL', 'nintendo') === 'ZR');
+  const box = (x, y) => ({ rect: { left: x, top: y, width: 10, height: 10 } });
+  const a = box(0, 0), right = box(100, 0), below = box(0, 100), diag = box(100, 100);
+  check('menu navigation goes the right way', nearestInDirection(a.rect, [right, below, diag], 'right') === right && nearestInDirection(a.rect, [right, below, diag], 'down') === below && nearestInDirection(a.rect, [right, below], 'up') === null);
+}
+
 console.log(`${pass} passed, ${fail} failed`);
 process.exit(fail ? 1 : 0);

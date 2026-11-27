@@ -1,12 +1,8 @@
 // Every way to make a move: the on-screen pad, the keyboard (Q W E / A S D or
-// 7 8 9 / 4 5 6), swiping on the stage, and tapping the monkey's body.
-import { MOVES, PAD_ORDER } from './moves.js';
+// 7 8 9 / 4 5 6, or the player's own keys), swiping on the stage, and tapping
+// the monkey's body. Game controllers are in gamepad.js.
+import { keyMap } from './keys.js';
 
-const KEYMAP = {};
-for (const id of PAD_ORDER) {
-  KEYMAP[MOVES[id].key] = id;
-  KEYMAP[MOVES[id].alt] = id;
-}
 const NUMPAD = { Numpad7: 'LA', Numpad8: 'HD', Numpad9: 'RA', Numpad4: 'LL', Numpad5: 'FL', Numpad6: 'RL' };
 
 export function swipeToMove(dx, dy) {
@@ -55,7 +51,7 @@ export class Input {
         onPause && onPause();
         return;
       }
-      const id = NUMPAD[e.code] || KEYMAP[e.key.toLowerCase()];
+      const id = NUMPAD[e.code] || keyMap(this.settings())[e.key.toLowerCase()];
       if (id) {
         e.preventDefault();
         this.fire(id, e.timeStamp, 'key');

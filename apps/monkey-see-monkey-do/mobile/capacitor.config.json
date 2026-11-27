@@ -36,5 +36,16 @@
       "style": "DARK",
       "initialViewportFitValueHint": "cover"
     }
+  },
+  "experimental": {
+    "ios": {
+      "spm": {
+        "packageOptions": {
+          "@capacitor-firebase/crashlytics": {
+            "symlink": true
+          }
+        }
+      }
+    }
   }
 }

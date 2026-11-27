@@ -1,0 +1,17 @@
+{
+  "_about": "A save in the first release's format (Nov 2026, before skins, golden bananas, purchases or any 1.1.0 setting). The rule checks load it to prove old saves still work.",
+  "v": 1,
+  "created": 1762400000000,
+  "bananas": 1234,
+  "earned": 1500,
+  "spent": 266,
+  "levels": { "1": { "stars": 3, "best": 4200, "clears": 2 }, "2": { "stars": 2, "best": 3900, "clears": 1 }, "3": { "stars": 1, "best": 2100, "clears": 1 } },
+  "endless": { "bestRounds": 7, "bestScore": 9100, "plays": 3 },
+  "owned": { "fur": ["cocoa", "rainbow"], "hat": ["none", "party"], "eyes": ["none"], "neck": ["none"], "flair": ["wiggle"], "stage": ["jungle"] },
+  "equipped": { "fur": "rainbow", "hat": "party", "eyes": "none", "neck": "none", "flair": "wiggle", "stage": "auto" },
+  "settings": { "music": 0.4, "sfx": 0.8, "voice": true, "haptics": false, "naming": "monkey", "timer": "relaxed", "speed": 0.85, "assist": true, "swipe": true, "tapMonkey": true, "keyHints": false, "captions": true, "reduceMotion": true, "quality": "low", "latencyMs": 40 },
+  "stats": { "sessions": 5, "levelsPlayed": 6, "roundsCleared": 14, "stepsCorrect": 80, "mistakes": 3, "timeouts": 1, "perfects": 30, "greats": 25, "bestStreak": 12, "playSeconds": 900, "perMove": {}, "mixups": { "LA>RA": 2 } },
+  "tutorialDone": true,
+  "seenIntro": { "LA": true },
+  "ledger": [{ "t": 1762400100000, "amount": 50, "reason": "Level 1" }]
+}

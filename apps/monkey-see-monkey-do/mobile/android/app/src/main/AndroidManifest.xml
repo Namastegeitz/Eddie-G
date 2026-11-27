@@ -36,7 +36,10 @@
         </provider>
     </application>
 
-    <!-- Permissions: none for the network. The game runs entirely on the phone.
-         (The Haptics plugin adds VIBRATE for the buzz on taps, and
-         cordova-plugin-purchase adds com.android.vending.BILLING for the Shop.) -->
+    <!-- Permissions: none of our own. The game runs entirely on the phone.
+         (The Haptics plugin adds VIBRATE for the buzz on taps,
+         cordova-plugin-purchase adds com.android.vending.BILLING for the Shop,
+         and the Firebase Crashlytics library adds INTERNET and
+         ACCESS_NETWORK_STATE, used only for crash reports once they are set up:
+         see mobile/README.md.) -->
 </manifest>

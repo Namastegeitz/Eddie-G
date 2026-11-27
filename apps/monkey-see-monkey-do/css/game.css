@@ -497,3 +497,19 @@ body.reduce-motion *, body.reduce-motion *::before, body.reduce-motion *::after 
 .btn-row.three { grid-template-columns: repeat(3, 1fr); }
 .warn { color: #ffb3b8; font-weight: 700; }
 @media (max-width: 360px) { .mini { font-size: 11px; } .mini svg { width: 22px; height: 22px; } }
+
+/* ---------------------------------------------------------------- 27 Nov 2026 additions */
+/* game controller: a clear focus ring while moving around with the D-pad */
+.gp-nav :focus { outline: 3px solid var(--banana); outline-offset: 3px; }
+.gp-nav .pad-btn:focus { outline-offset: 5px; }
+/* controller button names on the pad replace the keyboard letters */
+.pad-btn kbd.glyph { min-width: 24px; font-weight: 900; }
+/* Report a problem / Keyboard keys */
+pre.report-view { max-height: 34vh; overflow: auto; margin: 8px 0; padding: 10px; border-radius: 12px; background: rgba(0, 0, 0, 0.3); font: 11px/1.4 ui-monospace, Menlo, Consolas, monospace; white-space: pre-wrap; word-break: break-word; }
+.key-rows { display: grid; grid-template-columns: 1fr auto; gap: 8px 12px; align-items: center; margin: 10px 0; }
+.key-rows kbd { display: inline-block; min-width: 38px; padding: 6px 10px; border-radius: 10px; background: var(--panel-2); box-shadow: inset 0 0 0 2px var(--line); text-align: center; font-weight: 900; }
+.key-rows .listening kbd { box-shadow: inset 0 0 0 3px var(--banana); animation: hintRing 0.9s ease-in-out infinite; }
+/* the "new version ready" bar */
+.update-bar { position: absolute; left: 50%; bottom: calc(var(--safe-b) + 14px); transform: translateX(-50%); z-index: 60; display: flex; gap: 8px; align-items: center; padding: 8px 10px 8px 16px; border-radius: 16px; background: var(--panel); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45), inset 0 0 0 2px var(--banana); font-weight: 800; white-space: nowrap; }
+.update-bar[hidden] { display: none; }
+.seg { flex-wrap: wrap; }

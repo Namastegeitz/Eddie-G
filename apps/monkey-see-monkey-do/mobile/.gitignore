@@ -1,1 +1,5 @@
 node_modules/
+
+# Firebase config (project keys; keep out of git, add on the build machine or from CI secrets)
+android/app/google-services.json
+ios/App/App/GoogleService-Info.plist

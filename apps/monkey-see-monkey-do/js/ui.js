@@ -11,6 +11,14 @@ import { QUALITY } from './stage.js';
 import { renderStore, storeHelp } from './storeui.js';
 import { spentThisMonth, SPEND_LIMITS } from './store.js';
 import { SKINS } from './skins.js';
+import { keyFor, checkKey, keySummary } from './keys.js';
+import { errorLog, clearErrors, deviceDetails } from './safety.js';
+import { Crash } from './crash.js';
+import { glyphFor } from './gamepad.js';
+
+// Bug reports go here (testers invited to the page) or to the public support page.
+const BUG_PAGE = 'https://claude.ai/artifact/NiybkudZiDL75qvRyHvHuC';
+const SUPPORT_PAGE = 'https://namastegeitz.github.io/Eddie-G/monkey-see-monkey-do/support.html';
 
 export const ICON = {
   banana: '<svg viewBox="0 0 32 32" aria-hidden="true"><path d="M6 9c1 9 7 16 18 15 2 0 3-1 3-2-9 0-14-6-16-14-.4-2-5.4-1-5 1z" fill="#ffd23f" stroke="#23160c" stroke-width="2" stroke-linejoin="round"/><path d="M8.5 11c2 6 6 10 13 11" fill="none" stroke="#d29a00" stroke-width="1.6" stroke-linecap="round"/><path d="M5 9l1-3 3 1" fill="#6b4423" stroke="#23160c" stroke-width="1.6" stroke-linejoin="round"/></svg>',
@@ -108,6 +116,8 @@ const SETTINGS = [
     { key: 'keyHints', type: 'toggle', label: 'Show keyboard letters', help: 'Q W E on the top row, A S D on the bottom row (or 7 8 9 / 4 5 6).' },
     { key: 'haptics', type: 'toggle', label: 'Vibration', help: 'A short buzz on taps and mistakes, on phones that support it.' },
     { type: 'action', label: 'Rhythm calibration', action: 'calibrate', button: 'Calibrate', help: () => `Adjusts timing for your device's sound delay (useful with Bluetooth headphones). Current: ${Save.settings.latencyMs} ms.` },
+    { type: 'action', label: 'Keyboard keys', action: 'keys', button: 'Change', help: () => `Pick your own key for each move. Now: ${keySummary(Save.settings)}.` },
+    { key: 'gamepad', type: 'toggle', label: 'Game controller', help: 'Shoulder buttons are the arms, triggers the legs, Y (top) Head Bob, A (bottom) Flair; the D-pad plays too. In menus: D-pad to move, A to choose, B to go back, Start to pause.' },
   ] },
   { group: 'Purchases', items: [
     { key: 'parentGate', type: 'toggle', label: 'Ask a grown-up before buying', help: 'A times-table question comes before every real-money purchase. Turning this off also needs the answer.' },
@@ -117,9 +127,18 @@ const SETTINGS = [
   { group: 'Display', items: [
     { key: 'captions', type: 'toggle', label: 'Move names during Watch', help: 'Shows the name of each move as the monkey does it.' },
     { key: 'reduceMotion', type: 'toggle', label: 'Reduce motion', help: 'No camera shake, less confetti, calmer menus.' },
-    { key: 'quality', type: 'seg', label: 'Graphics', options: [['auto', 'Auto'], ['low', 'Low'], ['high', 'High'], ['ultra', 'Ultra']], help: 'Auto starts at High and steps down (Medium, then Low) if your device struggles. Low: no outlines or shadows, plain scenery. High: sharp, soft shadows, full scenery. Ultra: full phone resolution and finer shadows (uses the most battery).' },
+    { key: 'quality', type: 'seg', label: 'Graphics', options: [['auto', 'Auto'], ['low', 'Low'], ['medium', 'Medium'], ['high', 'High'], ['ultra', 'Ultra']], help: 'Auto starts at High and steps down (Medium, then Low) if your device struggles, and keeps watching while you play. Low: no outlines or shadows, plain scenery. Medium: outlines, grass and flowers, no shadows. High: sharp, soft shadows, full scenery. Ultra: full phone resolution and finer shadows (uses the most battery).' },
+    { key: 'renderScale', type: 'seg', label: 'Sharpness', options: [[1, '100%'], [0.85, '85%'], [0.7, '70%']], help: 'Lower draws fewer pixels: smoother and cooler on older phones, a slightly softer picture.' },
+    { key: 'fpsCap', type: 'seg', label: 'Frame rate', options: [[0, 'Max'], [60, '60'], [30, '30']], help: 'Max follows your screen (up to 120 on fast screens). 30 saves the most battery. Timing and scoring are the same at any frame rate.' },
+    { key: 'prepareMaps', type: 'toggle', label: 'Get maps ready ahead', help: 'Builds the next map while you read the results, so it opens without a pause. Turn off to save memory on very old phones.' },
   ] },
 ];
+
+SETTINGS.push({ group: 'Help and privacy', items: [
+  { key: 'crashReports', type: 'toggle', label: 'Send crash reports', when: () => Crash.configured(), help: 'When something breaks, sends the error and your device type so it can be fixed. Never your name, an account, your location or anything you typed.' },
+  { key: 'askRating', type: 'toggle', label: 'Ask for a rating', when: (ui) => !!ui.app.native, help: 'After a good level the app may show the store\'s rating box (never on the first day, at most 3 times a year).' },
+  { type: 'action', label: 'Report a problem', action: 'report', button: 'Open', help: 'Shows this version, your device and any recent errors, ready to copy into a bug report.' },
+] });
 
 function purchasesHtml(d) {
   if (!d.purchases.length) return '<p class="note" style="color:var(--cream-dim)">No purchases. Everything in the game can be earned by playing.</p>';
@@ -212,6 +231,9 @@ export class UI {
   handleBack() {
     const open = (id) => document.getElementById(id).classList.contains('show');
     if (open('ov-confirm')) { this.closeConfirm(false); return true; }
+    if (open('ov-gpu')) return true;
+    if (open('ov-report')) { this.closeOverlay('ov-report'); return true; }
+    if (open('ov-keys')) { window.removeEventListener('keydown', this.keyGrab, true); this.closeOverlay('ov-keys'); this.relabelPad(); return true; }
     if (open('ov-calibrate')) { this.calRunning = false; this.closeOverlay('ov-calibrate'); return true; }
     if (open('ov-howto')) { this.closeOverlay('ov-howto'); return true; }
     if (open('ov-exchange')) { this.closeOverlay('ov-exchange'); return true; }
@@ -236,7 +258,7 @@ export class UI {
     pad.innerHTML = PAD_ORDER.map((id) => {
       const m = MOVES[id];
       const ink = inkMove(id);
-      return `<button class="pad-btn${ink ? ' ink' : ''}" data-move="${id}" style="--c:${m.color};--c2:${shade(m.color, 0.55)};--fg:${ink ? '#23160c' : '#fff'}" aria-label="${esc(moveName(id, this.s.naming))} (${m.key.toUpperCase()})">${moveIcon(id, { dim: 0.42 })}<span class="pad-label">${esc(moveName(id, this.s.naming))}</span><kbd>${m.key.toUpperCase()}</kbd></button>`;
+      return `<button class="pad-btn${ink ? ' ink' : ''}" data-move="${id}" style="--c:${m.color};--c2:${shade(m.color, 0.55)};--fg:${ink ? '#23160c' : '#fff'}" aria-label="${esc(moveName(id, this.s.naming))} (${m.key.toUpperCase()})">${moveIcon(id, { dim: 0.42 })}<span class="pad-label">${esc(moveName(id, this.s.naming))}</span><kbd>${keyFor(id, this.s).toUpperCase()}</kbd></button>`;
     }).join('');
     this.applyPadPrefs();
   }
@@ -246,13 +268,115 @@ export class UI {
     for (const btn of $$('#pad [data-move]')) {
       const id = btn.dataset.move;
       btn.querySelector('.pad-label').textContent = moveName(id, this.s.naming);
-      btn.setAttribute('aria-label', `${moveName(id, this.s.naming)} (${MOVES[id].key.toUpperCase()})`);
+      btn.setAttribute('aria-label', `${moveName(id, this.s.naming)} (${keyFor(id, this.s).toUpperCase()})`);
+      const kbd = btn.querySelector('kbd');
+      if (kbd) {
+        kbd.textContent = this.padFamily ? glyphFor(id, this.padFamily) : keyFor(id, this.s).toUpperCase();
+        kbd.classList.toggle('glyph', !!this.padFamily);
+      }
     }
     this.applyPadPrefs();
   }
 
   applyPadPrefs() {
-    $('#pad').classList.toggle('nokeys', !this.s.keyHints);
+    // controller button names always show while a controller is in use
+    $('#pad').classList.toggle('nokeys', !this.s.keyHints && !this.padFamily);
+  }
+
+  /** A controller was used (family: xbox | playstation | nintendo) or put down (null). */
+  setPadGlyphs(family) {
+    this.padFamily = family;
+    this.relabelPad();
+  }
+
+  /** Light a pad button briefly (moves played from a controller). */
+  flashPad(id) {
+    const btn = document.querySelector(`#pad [data-move="${id}"]`);
+    if (!btn) return;
+    btn.classList.add('down');
+    setTimeout(() => btn.classList.remove('down'), 120);
+  }
+
+  /** The GPU reset: pause with a calm message; offer a reload if it doesn't come back. */
+  gpuLost(lost) {
+    clearTimeout(this.gpuT);
+    if (lost) {
+      $('#gpu-reload').hidden = true;
+      $('#gpu-wait').textContent = 'Waking them back up...';
+      this.openOverlay('ov-gpu');
+      this.gpuT = setTimeout(() => {
+        $('#gpu-wait').textContent = 'They are taking a while. Reloading the game keeps your progress.';
+        $('#gpu-reload').hidden = false;
+        $('#gpu-reload').onclick = () => { Save.persist(); location.reload(); };
+      }, 5000);
+    } else {
+      this.closeOverlay('ov-gpu');
+      this.toast('Graphics are back. Tap Resume when you are ready.');
+    }
+  }
+
+  /** The web version updated in the background: offer a reload (on menus only). */
+  updateReady() {
+    const bar = $('#update-bar');
+    if (!bar || !bar.hidden) return;
+    bar.hidden = false;
+    $('#update-reload').onclick = () => { Save.persist(); location.reload(); };
+    $('#update-later').onclick = () => { bar.hidden = true; };
+  }
+
+  /** Settings > Report a problem: what a bug report needs, ready to copy. */
+  showReport() {
+    const errs = errorLog();
+    const text = [
+      deviceDetails(this.app),
+      `Recent errors: ${errs.length ? '' : 'none'}`,
+      ...errs.slice(-10).map((e) => `- ${e.at} [${e.where}] ${e.msg}${e.n ? ` (x${e.n})` : ''}${e.stack ? '\n' + e.stack.split('\n').slice(0, 3).join('\n') : ''}`),
+    ].join('\n');
+    $('#report-card').innerHTML = `<h2 id="report-title">Report a problem</h2>
+      <p class="note">Tell us what happened and what you were doing, and paste these details with it. They include no names and nothing you typed.</p>
+      <pre class="report-view" id="report-text">${esc(text)}</pre>
+      <div class="btn-line"><button class="btn small primary" id="report-copy">Copy details</button><a class="btn small" id="report-bug" href="${BUG_PAGE}" target="_blank" rel="noopener">Tester bug page</a><a class="btn small" href="${SUPPORT_PAGE}" target="_blank" rel="noopener">Support page</a></div>
+      <div class="actions"><button class="btn small ghost" id="report-clear"${errs.length ? '' : ' hidden'}>Clear the error list</button><button class="btn" id="report-close">Close</button></div>`;
+    this.openOverlay('ov-report');
+    $('#report-copy').addEventListener('click', async () => {
+      try { await navigator.clipboard.writeText(text); this.toast('Details copied.'); } catch { const r = document.createRange(); r.selectNodeContents($('#report-text')); getSelection().removeAllRanges(); getSelection().addRange(r); this.toast('Select the text and copy it.'); }
+    });
+    $('#report-clear').addEventListener('click', () => { clearErrors(); this.showReport(); });
+    $('#report-close').addEventListener('click', () => { this.click(); this.closeOverlay('ov-report'); });
+    $('#report-copy').focus({ preventScroll: true });
+  }
+
+  /** Settings > Controls > Keyboard keys: pick a key per move. */
+  showKeys(listening = null, msg = '') {
+    const rows = PAD_ORDER.map((id) => `<span>${esc(moveName(id, this.s.naming))}</span><button class="btn small${listening === id ? ' listening' : ''}" data-keyfor="${id}" aria-label="Change the key for ${esc(moveName(id, this.s.naming))}"><kbd>${listening === id ? '...' : esc(keyFor(id, this.s).toUpperCase())}</kbd></button>`).join('');
+    $('#keys-card').innerHTML = `<h2 id="keys-title">Keyboard keys</h2>
+      <p class="note">${listening ? `Press the new key for ${esc(moveName(listening, this.s.naming))} (Esc to cancel).` : 'Choose a move, then press the key you want for it. The number keys 7 8 9 / 4 5 6 and the numpad always work too.'}</p>
+      ${msg ? `<p class="note" role="alert" style="color:#ffb3b3">${esc(msg)}</p>` : ''}
+      <div class="key-rows">${rows}</div>
+      <div class="actions"><button class="btn small ghost" id="keys-reset">Back to Q W E / A S D</button><button class="btn primary" id="keys-done">Done</button></div>`;
+    this.openOverlay('ov-keys');
+    $$('[data-keyfor]', $('#keys-card')).forEach((b) => b.addEventListener('click', () => { this.click(); this.showKeys(b.dataset.keyfor); }));
+    $('#keys-reset').addEventListener('click', () => { Save.setSetting('keys', null); this.relabelPad(); this.showKeys(); });
+    $('#keys-done').addEventListener('click', () => { this.closeOverlay('ov-keys'); this.relabelPad(); if (this.current === 'settings') this.renderSettings(); });
+    window.removeEventListener('keydown', this.keyGrab, true);
+    if (!listening) return;
+    this.keyGrab = (e) => {
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      window.removeEventListener('keydown', this.keyGrab, true);
+      if (e.key === 'Escape') { this.showKeys(); return; }
+      const k = e.key.toLowerCase();
+      const err = checkKey(k, listening, this.s);
+      if (err) { this.showKeys(listening, err); return; }
+      const keys = { ...(this.s.keys || {}) };
+      keys[listening] = k;
+      Save.setSetting('keys', keys);
+      this.relabelPad();
+      this.showKeys(null, '');
+      this.toast(`${moveName(listening, this.s.naming)}: ${k.toUpperCase()}`);
+    };
+    window.addEventListener('keydown', this.keyGrab, true);
+    $(`[data-keyfor="${listening}"]`).focus({ preventScroll: true });
   }
 
   // ------------------------------------------------------------ screens
@@ -266,7 +390,7 @@ export class UI {
     this.current = name;
     if (name !== 'hud') this.hideOverlays(['ov-pause']);
     if (name === 'hud' && this.game.paused) $('#ov-pause').classList.add('show');
-    if (name === 'map') this.renderMap();
+    if (name === 'map') { this.renderMap(); this.game.prepareStage(getLevel(Save.unlockedLevel())); }
     if (name === 'shop') this.renderShop();
     if (name === 'settings') this.renderSettings();
     if (name === 'help') this.renderHelp();
@@ -1038,6 +1162,7 @@ export class UI {
   renderSettings() {
     const s = this.s;
     const rowHtml = (it) => {
+      if (it.when && !it.when(this)) return '';
       let help = typeof it.help === 'function' ? it.help() : it.help;
       if (it.key === 'voice' && !('speechSynthesis' in window)) help += ' Not available on this device.';
       const label = `<div class="label"><b id="lbl-${it.key || it.action}">${esc(it.label)}</b>${help ? `<small>${esc(help)}</small>` : ''}</div>`;
@@ -1083,6 +1208,8 @@ export class UI {
       this.click();
     }));
     $('#act-calibrate').addEventListener('click', () => { this.audio.unlock(); this.showCalibrate(); });
+    $('#act-keys').addEventListener('click', () => { this.click(); this.showKeys(); });
+    $('#act-report').addEventListener('click', () => { this.click(); this.showReport(); });
     // (the PC edition has no Purchases group, so no Restore button)
     if ($('#act-restore')) $('#act-restore').addEventListener('click', async () => {
       this.click();
@@ -1235,6 +1362,7 @@ export class UI {
 
       <h3>The moves</h3>
       <p class="note">Left and right are ${n === 'monkey' ? "the monkey's own sides (Settings > Name sides by)" : 'the sides of your screen, like a mirror (change in Settings > Name sides by)'}. Buttons never move during a game. On a wide screen (a computer, or a tablet held sideways) they sit on both sides of the monkey: head moves at the top, arms in the middle, legs at the bottom.</p>
+      <p class="note">Game controllers: LB / RB play the arms, LT / RT the legs, Y Head Bob and A Flair (the D-pad works too: up Head Bob, down Flair, left and right the arms). In menus the D-pad moves, A chooses, B goes back and Start pauses. The buttons on screen show your controller's button names while you use it. Keyboard keys can be changed in Settings > Controls.</p>
       <div class="table-wrap"><table><thead><tr><th>Move</th><th>What it does</th><th>Keys</th><th>Swipe</th><th>Note</th></tr></thead><tbody>${moveRows}</tbody></table></div>
       <p class="note">You can also tap the monkey itself: a hand for an arm, a foot for a leg, the head, or the belly for Flair.</p>
 
@@ -1302,9 +1430,12 @@ export class UI {
       <ul>
         <li>Auto starts at High and watches your frame rate for a few seconds. If it averages under 38 frames a second it steps down to Medium, then Low, and tells you when it switches to Low. If a lower level doesn't speed things up (a browser in battery-saver mode can cap the frame rate), it goes back up and stays there.</li>
         <li>Low: no outlines, shadows, grass or move trails, and fewer leaves and flat bark on the trees; normal resolution. Easiest on older phones and batteries.</li>
-        <li>Medium (Auto only): outlines, grass, flowers and move trails; no shadows; up to ${QUALITY.medium.dpr}x resolution.</li>
+        <li>Medium: outlines, grass, flowers and move trails; no shadows; up to ${QUALITY.medium.dpr}x resolution.</li>
         <li>High: adds soft shadows, light rays and butterflies; up to ${QUALITY.high.dpr}x resolution.</li>
         <li>Ultra: up to ${QUALITY.ultra.dpr}x (a phone's full sharpness) and finer shadows. Uses the most battery.</li>
+        <li>While you play, Auto keeps watching: if frames stay slow for about 10 seconds (a phone getting warm), it lowers the graphics one more step and tells you.</li>
+        <li>Sharpness (100%, 85%, 70%) draws fewer pixels for a smoother, cooler game on older devices. Frame rate (Max, 60, 30) caps how often the picture is drawn to save battery.</li>
+        <li>Get maps ready ahead builds the next map while you read your results, so new maps open without a pause.</li>
         <li>Graphics never change timing, scoring or difficulty.</li>
       </ul>
 

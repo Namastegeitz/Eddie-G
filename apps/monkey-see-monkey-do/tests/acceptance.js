@@ -20,6 +20,11 @@ let passes = 0;
 (async () => {
   const browser = await chromium.launch({ args: ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader'] });
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 1, serviceWorkers: 'allow' });
+  // a pretend game controller the 1.1.0 steps can press (idle until then)
+  await ctx.addInitScript(() => {
+    window.__pad = { id: 'Xbox Wireless Controller (STANDARD GAMEPAD)', index: 0, connected: true, mapping: 'standard', axes: [0, 0, 0, 0], buttons: Array.from({ length: 17 }, () => ({ pressed: false, value: 0 })) };
+    navigator.getGamepads = () => [window.__pad];
+  });
   const page = await ctx.newPage();
   const errors = [];
   page.on('console', (m) => { if (m.type() === 'error') errors.push(m.text()); });
@@ -556,8 +561,120 @@ let passes = 0;
     expect(r.edition === 'pc' && r.shop === 'none' && !r.purchases && r.help && r.billing === 'none', JSON.stringify(r));
   });
 
+  // ---------------------------------------------------------------- 1.1.0 upgrade
+  const toTitle = () => ev(() => { document.querySelectorAll('.overlay.show').forEach((o) => o.classList.remove('show')); if (MSMD.game.mode !== 'menu') MSMD.game.quit(); MSMD.game.paused = false; MSMD.ui.show('title'); });
+  // hold a controller button long enough for the slow test renderer to see it
+  const padPress = async (i, check) => {
+    await ev((i) => { window.__pad.buttons[i] = { pressed: true, value: 1 }; }, i);
+    if (check) await page.waitForFunction(check, null, { timeout: 20000 });
+    else await page.waitForTimeout(1200);
+    await ev((i) => { window.__pad.buttons[i] = { pressed: false, value: 0 }; }, i);
+    await page.waitForTimeout(900);
+  };
+
+  await step('1.1.0 Settings: Medium, sharpness, frame rate, maps ahead, controller, keys, report', async () => {
+    await toTitle();
+    await ev(() => MSMD.ui.show('settings'));
+    const r = await ev(() => ({
+      quality: [...document.querySelectorAll('.seg button[data-key="quality"]')].map((b) => b.dataset.val).join(','),
+      scale: document.querySelectorAll('.seg button[data-key="renderScale"]').length,
+      fps: document.querySelectorAll('.seg button[data-key="fpsCap"]').length,
+      rows: ['#set-prepareMaps', '#set-gamepad', '#act-keys', '#act-report'].every((q) => document.querySelector(q)),
+      crash: !!document.querySelector('#set-crashReports'),
+    }));
+    expect(r.quality === 'auto,low,medium,high,ultra' && r.scale === 3 && r.fps === 3 && r.rows, JSON.stringify(r));
+    expect(!r.crash, 'crash-report switch hidden while no crash service is set up');
+  });
+
+  await step('1.1.0 Sharpness changes the drawing resolution', async () => {
+    const before = await ev(() => MSMD.stage.renderer.getPixelRatio());
+    await page.click('.seg button[data-key="renderScale"][data-val="0.7"]');
+    const after = await ev(() => MSMD.stage.renderer.getPixelRatio());
+    await page.click('.seg button[data-key="renderScale"][data-val="1"]');
+    const back = await ev(() => MSMD.stage.renderer.getPixelRatio());
+    expect(Math.abs(after - before * 0.7) < 0.01 && back === before, `${before} -> ${after} -> ${back}`);
+  });
+
+  await step('1.1.0 Report a problem lists recent errors', async () => {
+    await ev(() => setTimeout(() => { throw new Error('acceptance test error'); }, 0));
+    await page.waitForTimeout(300);
+    await page.click('#act-report');
+    await page.waitForSelector('#ov-report.show');
+    const text = await page.textContent('#report-text');
+    expect(text.includes('acceptance test error') && text.includes('Monkey See, Monkey Do 1.1'), text.slice(0, 200));
+    await shot('31-report-a-problem');
+    await page.click('#report-clear');
+    expect((await page.textContent('#report-text')).includes('Recent errors: none'), 'cleared');
+    await page.click('#report-close');
+  });
+
+  await step('1.1.0 Keyboard keys: pick your own, it plays, reset brings Q W E back', async () => {
+    await page.click('#act-keys');
+    await page.click('[data-keyfor="LA"]');
+    await page.keyboard.press('j');
+    expect(await ev(() => MSMD.Save.settings.keys && MSMD.Save.settings.keys.LA === 'j'), 'LA = J saved');
+    await page.click('[data-keyfor="RA"]');
+    await page.keyboard.press('j');
+    expect((await page.textContent('#keys-card')).includes('already plays'), 'duplicate refused');
+    await page.keyboard.press('Escape');
+    await page.click('#keys-done');
+    await toTitle();
+    await page.click('#btn-free');
+    await page.waitForFunction(() => MSMD.game.mode === 'free', null, { timeout: 30000 });
+    const kbd = await page.textContent('#pad [data-move="LA"] kbd');
+    const m0 = await ev(() => MSMD.game.run.moves);
+    await page.keyboard.press('j');
+    await page.waitForFunction((m0) => MSMD.game.run.moves > m0, m0, { timeout: 10000 });
+    expect(kbd === 'J', 'pad shows J: ' + kbd);
+    await ev(() => { MSMD.Save.setSetting('keys', null); MSMD.ui.relabelPad(); });
+    expect((await page.textContent('#pad [data-move="LA"] kbd')) === 'Q', 'reset to Q');
+  });
+
+  await step('1.1.0 Game controller plays moves, shows its buttons, Start pauses, A resumes', async () => {
+    const m0 = await ev(() => MSMD.game.run.moves);
+    await padPress(4, `MSMD.game.run.moves > ${m0}`); // LB = Left Arm
+    await padPress(7, `MSMD.game.run.moves > ${m0 + 1}`); // RT = Right Leg
+    const glyphs = await ev(() => [...document.querySelectorAll('#pad kbd')].map((k) => k.textContent).join(' '));
+    expect(glyphs === 'LB Y RB LT A RT', 'pad shows controller buttons: ' + glyphs);
+    await shot('32-controller-glyphs');
+    await padPress(9, 'MSMD.game.paused === true'); // Start
+    await padPress(13, 'document.activeElement && document.activeElement.closest(".overlay.show")'); // D-pad focuses the pause card
+    await padPress(0, 'MSMD.game.paused === false'); // A presses the focused button (Resume)
+    await page.mouse.click(5, 5); // touch again: letters come back
+    await page.waitForTimeout(300);
+    expect((await page.textContent('#pad [data-move="LA"] kbd')) === 'Q', 'letters back after a tap');
+    await toTitle();
+  });
+
+  await step('1.1.0 GPU reset: pauses with a calm card, then carries on', async () => {
+    await page.click('#btn-free');
+    await page.waitForFunction(() => MSMD.game.mode === 'free', null, { timeout: 30000 });
+    await ev(() => { window.__lc = MSMD.stage.renderer.getContext().getExtension('WEBGL_lose_context'); window.__lc.loseContext(); });
+    await page.waitForSelector('#ov-gpu.show', { timeout: 10000 });
+    expect(await ev(() => MSMD.game.paused), 'paused');
+    await shot('33-gpu-reset');
+    await ev(() => window.__lc.restoreContext());
+    await page.waitForSelector('#ov-gpu.show', { state: 'detached', timeout: 15000 }).catch(() => {});
+    await page.waitForFunction(() => !document.getElementById('ov-gpu').classList.contains('show'), null, { timeout: 15000 });
+    await page.waitForTimeout(1500);
+    const calls = await ev(() => MSMD.stage.renderer.info.render.calls);
+    expect(calls > 20, 'drawing again: ' + calls);
+    await toTitle();
+  });
+
+  await step('1.1.0 The next map gets ready ahead (built and warmed before it is shown)', async () => {
+    const r = await ev(async () => {
+      const st = MSMD.stage;
+      const target = ['beach', 'disco', 'moon'].find((id) => !st.prepared || !st.prepared[id]) || 'moon';
+      const t0 = performance.now();
+      await st.prepare(target);
+      return { target, built: !!st.envs[target], hidden: st.envs[target].visible === false || st.envId === target, ms: Math.round(performance.now() - t0) };
+    });
+    expect(r.built && r.hidden, JSON.stringify(r));
+  });
+
   await step('no errors in the console', async () => {
-    const real = errors.filter((e) => !/favicon|net::ERR_INTERNET_DISCONNECTED/.test(e));
+    const real = errors.filter((e) => !/favicon|net::ERR_INTERNET_DISCONNECTED|acceptance test error|WebGL context lost/.test(e));
     expect(real.length === 0, real.join(' | '));
   });
 

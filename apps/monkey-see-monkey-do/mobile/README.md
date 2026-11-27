@@ -233,3 +233,45 @@ and an app category (Games > Music, or Puzzle).
 
 App Store: App Privacy "Data Not Collected", category Games (Music/Puzzle),
 and export compliance "No" (already set in Info.plist).
+
+## Crash reports and the rating prompt (added 27 Nov 2026)
+
+Both are built in and **off until you set them up**; until then the game
+sends nothing (the privacy page says so automatically).
+
+**Sentry** (web, phone apps and the PC edition; free developer tier):
+1. Create a project at sentry.io (platform: Browser JavaScript). In its
+   settings turn on *Prevent storing of IP addresses* and *Data scrubber*.
+2. Copy the project's DSN into `release/config.json` > `sentryDsn`.
+3. Rebuild (`node scripts/build_web.mjs`). The build adds
+   `vendor/sentry.min.js` (made by `scripts/vendor_sentry.mjs` from the
+   official @sentry/browser package) and the privacy page lists Sentry.
+4. Readable stack traces: build with source maps and upload them with
+   `sentry-cli sourcemaps upload` using an auth token kept in your password
+   manager or CI secrets (never in the repository).
+
+**Firebase Crashlytics** (phone apps; free; also catches native crashes):
+1. In the Firebase console create a project and add the Android app
+   (`com.namastegeitz.monkeydo`) and the iOS app (same bundle ID).
+2. Put `google-services.json` in `mobile/android/app/` and
+   `GoogleService-Info.plist` in `mobile/ios/App/App/` (add it to the App
+   target in Xcode). Both are git-ignored: keep them on the build machine or
+   add them from CI secrets.
+3. Set `release/config.json` > `firebaseCrashlytics` to `true`, rebuild, then
+   `npx cap sync`.
+4. Android applies the Crashlytics Gradle plugin only when
+   `google-services.json` exists; iOS starts Firebase only when the plist is
+   in the app. iOS dSYM upload: add the Crashlytics run script build phase
+   (see `node_modules/@capacitor-firebase/crashlytics/README.md`).
+
+Before switching either on for a children's audience, check Google's Families
+policy and COPPA guidance (see `release/03-google-play/data-safety.md`).
+
+**Rating prompt** (`@capacitor-community/in-app-review`, free): after a level
+from 4 onwards cleared with 2+ stars, never on the first day, at most 3 times a
+year and 60+ days apart, the app asks Apple's or Google's own rating box
+(which may choose not to show). Players can switch it off in Settings > Help
+and privacy > Ask for a rating.
+
+Not verified in this environment: the Android and iOS builds themselves (no
+Android SDK or Mac here). Run the phone build workflow or build locally once.

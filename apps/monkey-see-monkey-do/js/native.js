@@ -99,3 +99,15 @@ export function setupPlatform(app) {
     });
   }
 }
+
+/** Call a native plugin method if this app has it; resolves null otherwise (or on failure). */
+export function nativeCall(plugin, method, options = {}) {
+  const C = bridge();
+  return C ? call(C, plugin, method, options) : Promise.resolve(null);
+}
+
+/** Does this app (not the browser) have the native plugin? */
+export function nativeHas(plugin) {
+  const C = bridge();
+  return !!(C && has(C, plugin));
+}

@@ -11,8 +11,12 @@ import { Input } from './input.js';
 import { setupPlatform } from './native.js';
 import { Billing } from './billing.js';
 import { purchaseDone } from './storeui.js';
+import { installSafetyNet, recordError } from './safety.js';
+import { setupCrashReports, Crash } from './crash.js';
+import { Gamepads } from './gamepad.js';
+import { nativeCall, nativeHas } from './native.js';
 
-const VERSION = '1.0.0';
+const VERSION = '1.1.0';
 // PC edition (desktop stores): no real-money Shop; everything is earned by playing.
 const EDITION = (typeof window !== 'undefined' && (window.MSMD_EDITION === 'pc' || /[?&]edition=pc\b/.test(location.search))) ? 'pc' : 'standard';
 if (EDITION === 'pc') document.documentElement.classList.add('edition-pc');
@@ -33,6 +37,7 @@ function fail(msg) {
 }
 
 async function boot() {
+  installSafetyNet(VERSION);
   setLoading(20, 'Loading your save...');
   Save.load();
   const s = Save.settings;
@@ -45,6 +50,17 @@ async function boot() {
     fail("This browser can't show 3D graphics (WebGL is off or not supported). Try Chrome, Safari or Firefox, or turn on hardware acceleration.");
     return;
   }
+  // The GPU can reset (a phone waking up, a driver update): pause, say so, and
+  // carry on when it comes back instead of showing a frozen picture.
+  canvas.addEventListener('webglcontextlost', (e) => {
+    e.preventDefault();
+    if (app.game) app.game.pause();
+    if (app.ui) app.ui.gpuLost(true);
+    recordError(new Error('WebGL context lost'), 'gpu');
+  });
+  canvas.addEventListener('webglcontextrestored', () => {
+    if (app.ui) app.ui.gpuLost(false);
+  });
   setLoading(45, 'Building the monkey...');
   const monkey = new Monkey({ outlines: true });
   stage.scene.add(monkey.root);
@@ -73,6 +89,8 @@ async function boot() {
       lastQuality = st.quality;
       app.setLevel(st.quality === 'auto' ? app.autoLevel : st.quality);
     }
+    stage.setRenderScale(st.renderScale || 1);
+    Crash.apply();
     ui.relabelPad();
   };
 
@@ -99,7 +117,7 @@ async function boot() {
   };
   window.addEventListener('resize', onResize);
   window.addEventListener('orientationchange', () => setTimeout(onResize, 250));
-  new Input({
+  const input = new Input({
     pad: document.getElementById('pad'),
     surface: canvas,
     settings: () => Save.settings,
@@ -113,6 +131,32 @@ async function boot() {
       monkey.setLook((x - hx) / (stage.width * 0.4), -(y - hy) / (stage.height * 0.4));
     },
   });
+  app.input = input;
+  // Game controllers: moves while playing, D-pad / A / B in the menus
+  app.gamepads = new Gamepads({
+    enabled: () => Save.settings.gamepad !== false,
+    fire: (id, ms) => { input.fire(id, ms, 'gamepad'); ui.flashPad(id); },
+    isPlaying: () => ui.current === 'hud' && !document.querySelector('.overlay.show') && document.getElementById('mistake').hidden && !game.paused,
+    onPause: () => { if (ui.current === 'hud') { if (game.paused) game.resume(); else game.pause(); } },
+    onBack: () => ui.handleBack(),
+    onActive: (family) => ui.setPadGlyphs(family),
+  });
+  // Phone apps: maybe show the store's own rating box after a good level
+  // (never on the first day, at most 3 times a year, 60+ days apart)
+  app.maybeAskRating = (level, stars) => {
+    if (!app.native || Save.settings.askRating === false || !nativeHas('InAppReview')) return false;
+    const d = Save.data;
+    const now = Date.now();
+    const day = 864e5;
+    const asks = (d.ratingAsks || []).filter((t) => now - t < 365 * day);
+    if (!level || level.id < 4 || stars < 2 || asks.length >= 3) return false;
+    if (asks.length && now - asks[asks.length - 1] < 60 * day) return false;
+    if (now - (d.created || now) < day) return false;
+    d.ratingAsks = [...asks, now];
+    Save.persist();
+    setTimeout(() => nativeCall('InAppReview', 'requestReview'), 1800);
+    return true;
+  };
   // First tap anywhere unlocks sound (browsers need a gesture). Kept on for
   // later taps too: iPhones pause audio after calls and Siri ("interrupted").
   let unlocked = false;
@@ -162,10 +206,14 @@ async function boot() {
   // Auto graphics probe: 3-second windows of real frame times
   const probe = { t: 0, n: 0, slow: 0, wall: performance.now(), done: false, skip: 1 };
   app.gfxProbe = probe; // visible in the console for checking
-  const loop = () => {
+  // Auto keeps watching while you play: if frames stay slow for 10 seconds
+  // (a phone heating up), step down one more level, at most every 30 seconds.
+  const watch = { t: 0, n: 0, slowWindows: 0, cooldown: 0 };
+  app.gfxWatch = watch;
+  let lastDraw = 0;
+  const frame = () => {
     const now = audio.now();
-    const dt = Math.min(0.05, Math.max(0, now - last));
-    last = now;
+    const wall = performance.now();
     const beat = audio.beatAt(now);
     const bi = Math.floor(beat);
     if (bi !== lastBeat) {
@@ -177,12 +225,20 @@ async function boot() {
       game.update(now);
     } catch (e) {
       console.error(e);
+      recordError(e, 'game');
     }
+    app.gamepads.poll(wall);
+    // Frame-rate cap (Settings > Display): game timing runs every frame; only drawing is skipped
+    const cap = Save.settings.fpsCap || 0;
+    if (cap && wall - lastDraw < 1000 / cap - 2) return;
+    lastDraw = wall;
+    const dt = Math.min(0.05, Math.max(0, now - last));
+    last = now;
     monkey.update(now, dt, beat);
     stage.update(now, dt, beat, monkey);
-    // Auto graphics: if a 3-second window averages under 38 frames a second, step down High -> Medium -> Low,
-    // but only while stepping down actually speeds things up
-    const wall = performance.now();
+    // Auto graphics: if a 3-second window averages under 38 frames a second (or well under
+    // the frame-rate cap), step down High -> Medium -> Low, but only while stepping down helps
+    const target = cap ? Math.min(38, cap * 0.8) : 38;
     const raw = (wall - probe.wall) / 1000;
     probe.wall = wall;
     if (Save.settings.quality === 'auto' && !probe.done && !document.hidden && raw < 1) {
@@ -201,7 +257,7 @@ async function boot() {
             app.setLevel(app.autoLevel);
             probe.capped = true;
             probe.done = true;
-          } else if (probe.fps < 38 && app.autoLevel !== 'low') {
+          } else if (probe.fps < target && app.autoLevel !== 'low') {
             probe.prev = { level: app.autoLevel, fps: probe.fps };
             app.autoLevel = app.autoLevel === 'high' ? 'medium' : 'low';
             app.setLevel(app.autoLevel);
@@ -213,8 +269,36 @@ async function boot() {
           probe.t = 0; probe.n = 0; probe.slow = 0;
         }
       }
+    } else if (Save.settings.quality === 'auto' && probe.done && !probe.capped && !document.hidden && raw < 1
+      && game.mode !== 'menu' && !game.paused && app.autoLevel !== 'low') {
+      if (watch.cooldown > 0) watch.cooldown -= raw;
+      else {
+        watch.t += raw;
+        watch.n++;
+        if (watch.t >= 5) {
+          watch.fps = watch.n / watch.t;
+          watch.slowWindows = watch.fps < (cap ? cap * 0.75 : 24) ? watch.slowWindows + 1 : 0;
+          if (watch.slowWindows >= 2) {
+            app.autoLevel = app.autoLevel === 'high' || app.autoLevel === 'ultra' ? 'medium' : 'low';
+            app.setLevel(app.autoLevel);
+            ui.toast(`Graphics lowered to ${app.autoLevel === 'medium' ? 'Medium' : 'Low'} to keep play smooth.`);
+            watch.slowWindows = 0;
+            watch.cooldown = 30;
+          }
+          watch.t = 0; watch.n = 0;
+        }
+      }
     }
+  };
+  // Schedule the next frame first, so an error in one frame can never stop the game
+  const loop = () => {
     requestAnimationFrame(loop);
+    try {
+      frame();
+    } catch (e) {
+      console.error(e);
+      recordError(e, 'loop');
+    }
   };
   requestAnimationFrame(loop);
 
@@ -230,8 +314,22 @@ async function boot() {
 
   // Offline support when served from a web host (not inside a sandboxed preview).
   if (!window.MSMD_NO_SW && !app.native && 'serviceWorker' in navigator && /^https?:$/.test(location.protocol)) {
-    navigator.serviceWorker.register('sw.js').catch(() => { /* offline install not available here */ });
+    const hadController = !!navigator.serviceWorker.controller;
+    navigator.serviceWorker.register('sw.js').then((reg) => {
+      // a new version finished installing while the game is open: offer a reload
+      reg.addEventListener('updatefound', () => {
+        const w = reg.installing;
+        if (!w) return;
+        w.addEventListener('statechange', () => {
+          if (w.state === 'activated' && hadController) ui.updateReady();
+        });
+      });
+      // look for a new version every hour while the game stays open
+      setInterval(() => { if (navigator.onLine !== false) reg.update().catch(() => {}); }, 60 * 60 * 1000);
+    }).catch(() => { /* offline install not available here */ });
   }
+  // Crash reports: only in builds with a crash service set up (see crash.js)
+  setupCrashReports(app).catch((e) => recordError(e, 'crash-setup'));
 
   // Handy for tests and for curious players poking around in the console.
   window.MSMD = { version: VERSION, app, game, Save, audio, monkey, stage, ui, webgl: stage.webgl, platform: app.platform };

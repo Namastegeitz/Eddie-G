@@ -1,13 +1,23 @@
 # Privacy policy: Monkey See, Monkey Do
 
-Last updated: 17 November 2026
+Last updated: 27 November 2026
 
 Monkey See, Monkey Do is a game that runs entirely on your device.
 
-- **We collect nothing.** The game has no accounts, no ads, no analytics and no
-  tracking. It doesn't send any data anywhere. The Android app doesn't even
-  ask for internet access (its only store permission is Google Play Billing,
-  for the Shop).
+- **We collect nothing about you.** The game has no accounts, no ads, no
+  analytics and no tracking.
+- **Crash reports (only in versions where they are switched on).** If the
+  game crashes or hits an error, it can send a crash report to Sentry
+  (sentry.io) and, in the phone apps, Google Firebase Crashlytics: the error
+  message and where in the code it happened, the game version, and the device
+  model, system and browser version. Crashlytics also uses a random
+  installation ID (it identifies the app install, not you). Crash reports
+  never include your name, an account, your location, an advertising ID, your
+  save or anything you type, and aren't used for ads or tracking. Settings >
+  Help and privacy > Send crash reports switches them off; versions without
+  that switch send nothing. The phone apps have the crash tool built in, so
+  the Android app lists internet access, used only for these reports. The
+  online copy of this policy always describes the current build.
 - **What stays on your device:** your progress (levels, stars, bananas,
   wardrobe), your settings, play statistics, a list of bananas earned and
   spent, and a list of Shop purchases (product, price, date). It's stored in the app's or browser's local storage on your device.

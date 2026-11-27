@@ -1,76 +1,75 @@
 {
-  "when": "2026-11-27T15:50:46.724Z",
-  "base": "http://127.0.0.1:8766/",
+  "when": "2026-11-27T16:45:07.280Z",
+  "base": "http://127.0.0.1:8767/",
   "viewport": "390x844@1x",
   "renderer": "SwiftShader (software)",
-  "coldStartMs": 5602,
-  "heapAfterStartMB": 21.7,
+  "coldStartMs": 6450,
+  "heapAfterStartMB": 22.4,
   "firstUseMs": {
-    "beach": 3486,
-    "disco": 383,
-    "moon": 589
+    "beach": 1051,
+    "disco": 463,
+    "moon": 597
   },
-  "firstUseWorstMs": 3486,
+  "firstUseWorstMs": 1051,
   "stages": {
     "jungle/low": {
-      "drawCalls": 94,
-      "triangles": 101788,
+      "drawCalls": 35,
+      "triangles": 31696,
       "programs": 44,
-      "drawMs": 130
+      "drawMs": 125
     },
     "beach/low": {
-      "drawCalls": 103,
-      "triangles": 92588,
+      "drawCalls": 44,
+      "triangles": 22496,
       "programs": 44,
-      "drawMs": 82
+      "drawMs": 90
     },
     "disco/low": {
-      "drawCalls": 119,
-      "triangles": 87558,
+      "drawCalls": 60,
+      "triangles": 17466,
       "programs": 44,
-      "drawMs": 97
+      "drawMs": 101
     },
     "moon/low": {
-      "drawCalls": 97,
-      "triangles": 94658,
+      "drawCalls": 38,
+      "triangles": 24566,
       "programs": 44,
-      "drawMs": 79
+      "drawMs": 92
     },
     "jungle/high": {
-      "drawCalls": 138,
-      "triangles": 199178,
+      "drawCalls": 60,
+      "triangles": 84646,
       "programs": 44,
-      "drawMs": 332
+      "drawMs": 335
     },
     "beach/high": {
-      "drawCalls": 130,
-      "triangles": 149594,
+      "drawCalls": 52,
+      "triangles": 35062,
       "programs": 48,
-      "drawMs": 147
+      "drawMs": 150
     },
     "disco/high": {
-      "drawCalls": 143,
-      "triangles": 132192,
+      "drawCalls": 65,
+      "triangles": 17660,
       "programs": 49,
-      "drawMs": 160
+      "drawMs": 162
     },
     "moon/high": {
-      "drawCalls": 123,
-      "triangles": 140226,
+      "drawCalls": 45,
+      "triangles": 25694,
       "programs": 51,
-      "drawMs": 147
+      "drawMs": 146
     }
   },
+  "monkeyTriangles": 157540,
   "play": {
-    "frames": 43,
-    "avgMs": 179.5,
-    "avgFps": 5.6,
-    "low1pctFps": 1.9,
-    "worstMs": 533,
-    "spikesOver2x": 5
+    "frames": 40,
+    "avgMs": 198.7,
+    "avgFps": 5,
+    "low1pctFps": 1.7,
+    "worstMs": 583,
+    "spikesOver2x": 2
   },
-  "heapAfterPlayMB": 20.4,
-  "pageErrors": [],
-  "totalDrawMs": 1174,
-  "note": "Baseline before the 2026-11-27 upgrade run (commit 8ea014e). Software renderer: compare only with runs on the same machine."
+  "heapAfterPlayMB": 19.6,
+  "pageErrors": []
 }

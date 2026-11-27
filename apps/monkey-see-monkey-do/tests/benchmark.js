@@ -1,8 +1,9 @@
 // Performance benchmark (Step 9 of the upgrade prompt). Records, on the built game:
 //   - cold start: page open to playable (html[data-ready])
 //   - JS memory after start and after a level
-//   - per stage (jungle, beach, disco, moon) x graphics (low, high): draw calls,
-//     triangles, shader programs, and the time to draw one frame (fastest of 11)
+//   - per stage (jungle, beach, disco, moon) x graphics (low, high): the scenery's
+//     draw calls and triangles (monkey hidden), shader programs, and the time to
+//     draw one whole frame (fastest of 11); plus the monkey's own triangle count
 //   - first-use stutter: building + compiling a stage the first time it's shown
 //   - frame times while playing level 1 (average, 1% low, worst spike)
 // Results: tests/output/benchmark.json. With tests/benchmark-baseline.json present
@@ -52,7 +53,10 @@ async function openPage(browser) {
   res.heapAfterStartMB = await page.evaluate(() => +(performance.memory.usedJSHeapSize / 1048576).toFixed(1));
   await page.evaluate(() => { MSMD.Save.settings.quality = 'low'; MSMD.app.setLevel('low'); });
   res.firstUseMs = await page.evaluate(() => {
+    if (MSMD.Save.settings) MSMD.Save.settings.prepareMaps = false; // measure the plain first use
     const st = MSMD.stage, R = st.renderer, gl = R.getContext(), px = new Uint8Array(4);
+    // finish frames still queued from the game loop, so they aren't counted
+    gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, px);
     const out = {};
     for (const id of ['beach', 'disco', 'moon']) {
       const t = performance.now();
@@ -65,6 +69,31 @@ async function openPage(browser) {
     return out;
   });
   res.firstUseWorstMs = Math.max(...Object.values(res.firstUseMs));
+
+  // ---- the same, with the map got ready ahead (builds that have stage.prepare)
+  if (await page.evaluate(() => typeof MSMD.stage.prepare === 'function')) {
+    const p2 = await openPage(browser);
+    await p2.goto(BASE);
+    await p2.waitForSelector('html[data-ready="1"]', { timeout: 120000 });
+    await p2.evaluate(() => { MSMD.Save.settings.quality = 'low'; MSMD.app.setLevel('low'); });
+    res.firstUsePreparedMs = {};
+    for (const id of ['beach', 'disco', 'moon']) {
+      await p2.evaluate((id) => MSMD.stage.prepare(id), id); // resolves after its warm-up draw
+      res.firstUsePreparedMs[id] = await p2.evaluate((id) => {
+        const st = MSMD.stage, R = st.renderer, gl = R.getContext(), px = new Uint8Array(4);
+        gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, px);
+        const t = performance.now();
+        st.setEnvironment(id);
+        R.render(st.scene, st.camera);
+        gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, px);
+        const ms = Math.round(performance.now() - t);
+        st.setEnvironment('jungle');
+        return ms;
+      }, id);
+    }
+    res.firstUsePreparedWorstMs = Math.max(...Object.values(res.firstUsePreparedMs));
+    await p2.context().close();
+  }
 
   // ---- per stage x graphics level: draw calls, triangles, frame draw time
   res.stages = await page.evaluate(({ STAGES, LEVELS }) => {
@@ -83,9 +112,14 @@ async function openPage(browser) {
         st.setEnvironment(id);
         settle();
         R.render(st.scene, st.camera); sync(); // compile
+        // count the scenery with the monkey hidden: its face swaps small meshes
+        // (blinks, mouth shapes) at random, which would make the count wobble
+        MSMD.monkey.root.visible = false;
         R.render(st.scene, st.camera); sync();
         const info = R.info;
         const calls = info.render.calls, tris = info.render.triangles;
+        MSMD.monkey.root.visible = true;
+        R.render(st.scene, st.camera); sync();
         let best = Infinity;
         for (let i = 0; i < 11; i++) {
           const t = performance.now();
@@ -99,6 +133,12 @@ async function openPage(browser) {
     st.setEnvironment('jungle');
     return out;
   }, { STAGES, LEVELS });
+  // the monkey's own detail: every triangle it owns, shown or not
+  res.monkeyTriangles = await page.evaluate(() => {
+    let n = 0;
+    MSMD.monkey.root.traverse((o) => { if (o.isMesh && o.geometry) n += (o.geometry.index ? o.geometry.index.count : o.geometry.attributes.position.count) / 3; });
+    return Math.round(n);
+  });
 
   // ---- playing level 1: frame times for 8 seconds (graphics Low)
   await page.click('#btn-play');
@@ -152,6 +192,7 @@ async function openPage(browser) {
   res.totalDrawMs = total(res.stages);
   worse('total frame draw ms (all stages)', res.totalDrawMs, total(base.stages), TOL);
   worse('first-use worst ms', res.firstUseWorstMs, base.firstUseWorstMs, TIME_TOL);
+  if (base.monkeyTriangles) worse('monkey triangles', res.monkeyTriangles, base.monkeyTriangles, TOL);
   if (res.pageErrors.length) fails.push('page errors: ' + res.pageErrors.join(' | '));
   if (fails.length) { console.log('\nWORSE THAN BASELINE:\n- ' + fails.join('\n- ')); process.exit(1); }
   console.log('\nAt or better than the baseline on every check.');

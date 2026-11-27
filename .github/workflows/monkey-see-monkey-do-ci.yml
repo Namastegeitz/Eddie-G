@@ -1,0 +1,42 @@
+# Monkey See, Monkey Do: checks on every push and pull request that touch the
+# game. Rule checks, the web build, and a quick smoke test in a real browser.
+# (Phone builds: monkey-see-monkey-do-mobile.yml, by hand or on monkey-v* tags.)
+name: Monkey See Monkey Do (checks)
+
+on:
+  push:
+    paths: ['apps/monkey-see-monkey-do/**', '.github/workflows/monkey-see-monkey-do-ci.yml']
+  pull_request:
+    paths: ['apps/monkey-see-monkey-do/**']
+
+defaults:
+  run:
+    working-directory: apps/monkey-see-monkey-do
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Rule checks
+        run: node tests/unit.mjs
+      - name: Store text lengths
+        run: node scripts/check_store_text.mjs
+      - name: Build dist/www
+        run: node scripts/build_web.mjs
+      - name: Browser for the smoke test
+        run: npm install --no-save playwright@1.65.1 && npx playwright install --with-deps chromium
+      - name: Smoke test
+        run: |
+          (cd dist/www && python3 -m http.server 8766 --bind 127.0.0.1 &)
+          sleep 2
+          node tests/smoke.js
+      - uses: actions/upload-artifact@v4
+        with:
+          name: monkey-web-${{ github.sha }}
+          path: apps/monkey-see-monkey-do/dist/www
+          retention-days: 14

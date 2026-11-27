@@ -1,7 +1,7 @@
 {
   "name": "monkey-see-monkey-do",
   "productName": "Monkey See, Monkey Do",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Watch the monkey dance, then copy the moves on the beat. PC edition: no purchases, plays offline.",
   "main": "main.js",
   "private": true,
@@ -14,8 +14,8 @@
     "build:steam": "npm run prepare-app && electron-builder --dir"
   },
   "devDependencies": {
-    "electron": "36.9.5",
-    "electron-builder": "25.1.8"
+    "electron": "45.5.0",
+    "electron-builder": "26.18.0"
   },
   "build": {
     "appId": "com.namastegeitz.monkeydo",

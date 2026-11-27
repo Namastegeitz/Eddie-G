@@ -1,6 +1,9 @@
 import UIKit
 import AVFoundation
 import Capacitor
+#if canImport(FirebaseCore)
+import FirebaseCore
+#endif
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -12,6 +15,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // ring/silent switch on. mixWithOthers leaves your own music playing.
         try? AVAudioSession.sharedInstance().setCategory(.playback, mode: .default, options: [.mixWithOthers])
         try? AVAudioSession.sharedInstance().setActive(true)
+        #if canImport(FirebaseCore)
+        // Crash reports (Firebase Crashlytics) start only when the Firebase
+        // config file is in the app (see mobile/README.md). Without it, nothing runs.
+        if Bundle.main.path(forResource: "GoogleService-Info", ofType: "plist") != nil {
+            FirebaseApp.configure()
+        }
+        #endif
         return true
     }
 

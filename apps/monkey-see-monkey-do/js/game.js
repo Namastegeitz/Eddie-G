@@ -57,6 +57,17 @@ export class Game {
     return 'jungle';
   }
 
+  /**
+   * Get a level's map ready ahead (Settings > Display > Get maps ready ahead),
+   * a moment after the screen settles, so it opens without a pause later.
+   */
+  prepareStage(level) {
+    if (!level || Save.settings.prepareMaps === false || !this.stage.prepare) return;
+    const id = this.stageFor(level);
+    clearTimeout(this.prepT);
+    this.prepT = setTimeout(() => { this.stage.prepare(id); }, 900);
+  }
+
   setScene(level, bpm, menu = false) {
     const env = this.stageFor(level);
     this.stage.setEnvironment(env);
@@ -585,6 +596,9 @@ export class Game {
       onBeat: r.onBeat, steps: r.stepsDone, livesLost: r.livesLost, bestStreak: r.bestStreak,
       seeds: r.seeds, traded, next, newWorld, golden, unlocks: unlocked.skins,
     });
+    this.prepareStage(next);
+    const app = this.ui && this.ui.app;
+    if (app && app.maybeAskRating) app.maybeAskRating(level, stars);
   }
 
   victoryDance() {

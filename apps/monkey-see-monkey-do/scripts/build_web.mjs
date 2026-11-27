@@ -28,6 +28,15 @@ cpSync(join(root, 'mobile', 'update-webview.html'), join(out, 'update-webview.ht
 
 let html = readFileSync(join(root, 'index.html'), 'utf8');
 html = html.replace('<script type="module" src="js/main.js"></script>', '<script src="app.js" defer></script>');
+// Crash reports (js/crash.js): off unless release/config.json sets them up
+const cfg = JSON.parse(readFileSync(join(root, 'release/config.json'), 'utf8'));
+const sentryDsn = /^https:\/\/[^@\s]+@[^/\s]+\/\d+$/.test((cfg.sentryDsn || '').trim()) ? cfg.sentryDsn.trim() : '';
+const runtime = { sentryDsn, firebaseCrashlytics: !!cfg.firebaseCrashlytics };
+html = html.replace('<script src="app.js" defer></script>', `<script>window.MSMD_CONFIG=${JSON.stringify(runtime)};</script>\n<script src="app.js" defer></script>`);
+if (sentryDsn) {
+  mkdirSync(join(out, 'vendor'), { recursive: true });
+  cpSync(join(root, 'js/vendor/sentry.min.js'), join(out, 'vendor/sentry.min.js'));
+}
 if (!html.includes('src="app.js"')) throw new Error('index.html: could not swap in app.js');
 writeFileSync(join(out, 'index.html'), html);
 
