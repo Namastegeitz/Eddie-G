@@ -35,6 +35,11 @@
   Zen and Alien Duel keep the original lineup. New visitor tone "cadet", new song "Cadet Mixtape".
   Android versionCode 2, iOS build 2.
   Shareable web link (1.1.0): https://rawcdn.githack.com/Namastegeitz/Eddie-G/cff49a00f7e25606123decf9bb2d81e2a99e7a61/ALIEN-SUDOKU/builds/web/AlienSudoku.html
+- Nov 20-27: **store prep**. Android release builds work in the session (eddie-g cloud environment):
+  signed 1.2.0 AAB + APK, R8 shrinking, upload key held by the owner. iOS builds on a Codemagic cloud
+  Mac (codemagic.yaml). Step-by-step guide: ALIEN-SUDOKU/store-launch/STEP-BY-STEP.md. Owner chose
+  personal/individual accounts. Website live: https://namastegeitz.github.io/Eddie-G/alien-sudoku/
+  (privacy, support, play/).
 - Version 1.2.0 (Nov 18): **maps and levels in high definition**. The six space backdrops are
   remade at 4x detail (Real-ESRGAN upscale, 2816x1536) with tall cuts for upright phones and strip
   cuts for the sector cards. The campaign list is a star chart (sector art, nine progress marks per

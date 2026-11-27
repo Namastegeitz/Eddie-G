@@ -87,7 +87,7 @@
   "owner": "you",
   "status": "todo",
   "title": "Fill in support email, support URL, privacy URL",
-  "statusNote": "Support and privacy URLs are set (namastegeitz.github.io/Eddie-G/alien-sudoku/). Still needed: the new support Gmail (step 1 in store-launch/STEP-BY-STEP.md).",
+  "statusNote": "Support and privacy URLs are live (namastegeitz.github.io/Eddie-G/alien-sudoku/). Still needed: the new support Gmail (step 1 in store-launch/STEP-BY-STEP.md).",
   "cost": null,
   "time": "15 min",
   "steps": [
@@ -445,8 +445,8 @@
   "store": "all",
   "title": "Publish a site: privacy, support, press and play",
   "owner": "both",
-  "status": "todo",
-  "statusNote": "game/tools/build-site.mjs builds the home, privacy and support pages plus the installable web game. Publishing to the gh-pages branch at /alien-sudoku/ waits for the owner's OK and the support email.",
+  "status": "done",
+  "statusNote": "Live at https://namastegeitz.github.io/Eddie-G/alien-sudoku/ (home, privacy policy, support, and the installable game at play/), published to the gh-pages branch on Nov 27. Rebuild with game/tools/build-site.mjs. Not included yet: a press kit page and app-ads.txt (needs the AdMob publisher id and a namastegeitz.github.io repository).",
   "cost": "$0 hosting; ~$10-20/year for an optional domain",
   "time": "2-3 hours",
   "steps": [

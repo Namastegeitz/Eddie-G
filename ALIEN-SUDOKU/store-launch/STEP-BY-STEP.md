@@ -13,7 +13,7 @@ Claude has already prepared:
 - the signed Android upload file (`.aab`) and an installable `.apk` at version 1.2.0;
 - the Android upload key (sent to you; keep it safe, see G3);
 - the cloud iOS build (`codemagic.yaml` in the repository) that signs and uploads to TestFlight;
-- the website pages: home, privacy policy and support;
+- the website, **live** at https://namastegeitz.github.io/Eddie-G/alien-sudoku/ (home, privacy policy, support, and the game playable in a browser);
 - store text, screenshots for every size, and all graphics (`store-launch/listing`, `store-launch/assets`).
 
 | | Google Play | App Store |
@@ -32,7 +32,7 @@ Claude has already prepared:
 3. This address is shown publicly on both stores and in the privacy policy.
 
 **Send Claude:** the new email address. Claude puts it in the game, the privacy
-policy, the support page and the store text, then publishes the website.
+policy, the support page and the store text, and updates the website.
 
 > Use your **main** Google account (not the new Gmail) to sign up for Play Console
 > and AdMob. That account owns the money and the apps; the new Gmail is only for players.

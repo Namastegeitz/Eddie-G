@@ -6,6 +6,8 @@
 
 Shareable link for version 1.2.0 (pinned to its commit): https://rawcdn.githack.com/Namastegeitz/Eddie-G/4910aa93116cd52e073d410774a4138e64e6011d/ALIEN-SUDOKU/builds/web/AlienSudoku.html
 
+Public website (always the latest release): https://namastegeitz.github.io/Eddie-G/alien-sudoku/ and the installable game at https://namastegeitz.github.io/Eddie-G/alien-sudoku/play/. To update it: `npm run build && node tools/build-site.mjs`, then copy `builds/site/` to the `alien-sudoku/` folder of the `gh-pages` branch (other folders there belong to other projects).
+
 ## How to build it
 ```bash
 cd ALIEN-SUDOKU/game
