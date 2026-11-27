@@ -312,7 +312,19 @@ def place(obj, x=0, y=0, z=0, rx=0, ry=0, rz=0, center_xy=True):
 
 # ------------------------------------------------------------------ chamber assembly
 
-def build_chamber(root, style_id="S05", exploded=False, render=None, blend=None, samples=48, res=(1280, 960)):
+# which assembly step adds each part (object base name -> step)
+STAGES = {
+    "LED cradle": 1, "heatsink": 1, "LED": 1, "amplifier": 1, "base": 1,
+    "gobo carrier": 2, "gobo": 2, "light beam": 2,
+    "exciter": 3, "foot cup": 3, "platform": 3, "support post": 3,
+    "glass dish": 4, "insert": 4, "water": 4,
+    "dipper speaker": 5, "dipper arm": 5, "dipper foot": 5,
+    "M5 rod": 6, "lens ring": 6, "lens": 6, "mirror holder": 6, "mirror": 6, "wall picture": 6, "projected beam": 6,
+    "acrylic": 7,
+}
+
+
+def build_chamber(root, style_id="S05", exploded=False, render=None, blend=None, samples=48, res=(1280, 960), stage=0):
     root = Path(root)
     clear_scene()
     sc = bpy.context.scene
@@ -353,6 +365,7 @@ def build_chamber(root, style_id="S05", exploded=False, render=None, blend=None,
         for sy in (1, -1):
             ex = cylinder("exciter", 22, 18, 196 - e * 0.25, 48, x=70 * sx, y=70 * sy); assign(ex, dark)
             cup = place(stl(hw / "platform_foot_cup.stl", "foot cup", petg_orange), x=92 * sx, y=92 * sy, z=206 - e * 0.25)
+            post = cylinder("support post", 7, 206, -e * 0.25, 32, x=92 * sx, y=92 * sy); assign(post, steel)
     # dish, insert, water
     dish = cylinder("glass dish", 75, 25, 218.2 + e * 0.5, 128); assign(dish, glass)
     ins = place(stl(next(kit.glob("insert_*.stl")), "insert", petg_blue), z=221.2 + e * 1.0)
@@ -385,6 +398,17 @@ def build_chamber(root, style_id="S05", exploded=False, render=None, blend=None,
     # light cone (visual)
     bpy.ops.mesh.primitive_cone_add(vertices=64, radius1=6, radius2=60, depth=190, location=(0, 0, 30 + 95 - e * 0.5))
     cone = bpy.context.active_object; cone.name = "light beam"; assign(cone, beam)
+    # assembly steps: keep parts up to `stage`, highlight the parts added in that step
+    if stage:
+        hi = mat("new in this step", (1.0, 0.72, 0.18), 0.35, emission=(1.0, 0.6, 0.1), strength=0.6)
+        for o in list(bpy.data.objects):
+            if o.type != "MESH":
+                continue
+            st = next((n for pre, n in STAGES.items() if o.name.split(".")[0] == pre), 0)
+            if st > stage:
+                bpy.data.objects.remove(o)
+            elif st == stage and o.name.split(".")[0] not in ("light beam", "projected beam", "wall picture", "water", "glass dish", "lens", "acrylic"):
+                assign(o, hi)
     # lights + camera + world
     bpy.ops.object.light_add(type="SPOT", location=(0, 0, 30))
     sp = bpy.context.active_object; sp.data.energy = 2.5e6; sp.data.spot_size = math.radians(40); sp.rotation_euler = (0, 0, 0)
@@ -394,11 +418,16 @@ def build_chamber(root, style_id="S05", exploded=False, render=None, blend=None,
     bpy.ops.object.light_add(type="AREA", location=(-600, 300, 300))
     a2 = bpy.context.active_object; a2.data.energy = 1.2e7; a2.data.size = 500; a2.rotation_euler = (math.radians(70), 0, math.radians(-120))
     cam_d = 1500 if not exploded else 1750
+    if stage and stage < 6:
+        cam_d = 950
     bpy.ops.object.camera_add(location=(cam_d * 0.80, -cam_d * 0.60, 520 + (150 if exploded else 0)))
     cam = bpy.context.active_object
     tgt = bpy.data.objects.new("target", None); sc.collection.objects.link(tgt); tgt.location = (0, 300, 330 if not exploded else 340)
+    if stage and stage < 6:
+        tgt.location = (0, 0, 200)
     c = cam.constraints.new("TRACK_TO"); c.target = tgt; c.track_axis = "TRACK_NEGATIVE_Z"; c.up_axis = "UP_Y"
-    cam.data.lens = 35; cam.data.clip_end = 10000
+    cam.data.lens = 35 if not (stage and stage < 6) else 52
+    cam.data.clip_end = 10000
     sc.camera = cam
     world = bpy.data.worlds.new("world"); sc.world = world; world.use_nodes = True
     world.node_tree.nodes["Background"].inputs[0].default_value = (0.012, 0.014, 0.03, 1)
@@ -523,6 +552,7 @@ def cli(argv):
     b.add_argument("--root", required=True); b.add_argument("--style", default="S05"); b.add_argument("--exploded", action="store_true")
     b.add_argument("--render"); b.add_argument("--blend"); b.add_argument("--samples", type=int, default=48)
     b.add_argument("--res", default="1280x960")
+    b.add_argument("--stage", type=int, default=0, help="1-7: render one assembly step, new parts highlighted")
     a = ap.parse_args(argv)
     if a.cmd == "enhance":
         print(json.dumps(enhance_file(a.src, a.out, a.bevel, a.label, (a.label_x, a.label_y), a.label_size, a.remesh, a.decimate, a.scale_xy), indent=1))
@@ -530,7 +560,7 @@ def cli(argv):
         enhance_kits(a.root)
     else:
         w, h = (int(v) for v in a.res.split("x"))
-        build_chamber(a.root, a.style, a.exploded, a.render, a.blend, a.samples, (w, h))
+        build_chamber(a.root, a.style, a.exploded, a.render, a.blend, a.samples, (w, h), a.stage)
 
 
 if __name__ == "__main__":

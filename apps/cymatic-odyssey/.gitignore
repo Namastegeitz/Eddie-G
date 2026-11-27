@@ -16,3 +16,4 @@ node_modules/
 apps/web/dist/
 .vite/
 coverage/
+docs/manual/hires/

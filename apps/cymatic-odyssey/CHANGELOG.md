@@ -15,6 +15,10 @@ Every phase appends: what was built, what is stubbed, what is untested, and what
 - CI: `.github/workflows/cymatic-light-chamber-ci.yml` runs the Python tests, a generator smoke test, type-check, Vitest, the claims linter and the web build.
 - `tools/generate.py --no-package` so smoke runs can't overwrite the committed zips.
 
+- **Manual v2** (`docs/CYMATIC_ODYSSEY_Manual.pdf`, 77 pages, about 18.6 MB, was 37 pages). Eddie asked for a more detailed, high-resolution manual. Adds a "how to read this manual" page, a contents page, a quick start, a wavelength chart, 7 assembly-step pages rendered in Blender from the real STLs (the parts added in each step are highlighted), Bambu Lab printing, an annotated console guide, one full page per style and per show (with the flicker-guard status of every style and show step), troubleshooting, a glossary and a file index. Every picture carries a burned-in mark: **SIMULATION**, **3D RENDER** or **REAL FOOTAGE** (frames from Eddie's own jar test). Numbers are tagged ESTIMATED. Builders: `docs/manual/build_assets.py` (pictures into the gitignored `docs/manual/hires/`), `docs/manual/diagrams.py` and `docs/manual/build_manual.py`. The v1 picture folder `docs/manual/img/` is removed because nothing uses it now.
+- Every page was checked by machine for content running into the footer (none does), and all 77 pages were checked by eye on contact sheets.
+- `tools/blender/cymatic_blender.py --stage 1-7`: builds the chamber up to one assembly step and highlights that step's new parts; adds the four support posts to the model.
+
 **Stubbed**
 - `packages/core-audio`, `core-physics`, `core-light`, `core-session`, `core-cv`, `ui-kit` (status exports only).
 - `apps/desktop`, `apps/mobile`, `firmware/chamber-esp32`, `supabase` (READMEs describing their phase).
@@ -25,6 +29,7 @@ Every phase appends: what was built, what is stubbed, what is untested, and what
 - The red-flash rule is a design choice (1 transition per second, 5 % threshold); it isn't calibrated against a published red-flash standard yet.
 
 **Couldn't verify**
+- **CI on GitHub.** Both jobs of the new workflow fail in about 3 seconds without ever getting a runner (no logs exist). The same happens to every workflow run in this repo since Nov 17 (Alien Sudoku too), while GitHub Pages deploys still succeed. That points to the account's Actions settings or billing (minutes or spending limit), not to the code. Every CI step passes when run locally.
 - Whether the inherent f/2 oscillation of a single-tone Faraday pattern counts as hazardous flicker (needs a photodiode measurement in P5).
 - The §17 source links were copied from the spec, not re-opened.
 - The installed plugin: Eddie approved `frontend-design`; enabling it happens on his side (install card shown). `Security Guidance` was deferred to P7/P9 at his choice.
