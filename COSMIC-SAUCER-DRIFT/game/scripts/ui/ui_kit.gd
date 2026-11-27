@@ -15,6 +15,8 @@ static var _theme: Theme = null
 ## Pretend screen insets for tests and screenshots (window pixels:
 ## x = left, y = top, z = right, w = bottom). Zero means "ask the device".
 static var debug_insets := Vector4.ZERO
+## Tests only: a pretend window size in pixels (headless runs report 0x0).
+static var debug_window := Vector2.ZERO
 ## Link to the public privacy policy (Settings > Privacy policy).
 const PRIVACY_URL := "https://claude.ai/artifact/12KFSui6FLptDfppK9aVCp"
 static var _bold: FontVariation = null
@@ -98,6 +100,8 @@ static func safe_insets(vp: Viewport) -> Dictionary:
 	if vp == null:
 		return out
 	var win := Vector2(DisplayServer.window_get_size())
+	if debug_window != Vector2.ZERO:
+		win = debug_window   # tests: headless runs have no window
 	if win.x < 1.0 or win.y < 1.0:
 		return out
 	var px := debug_insets

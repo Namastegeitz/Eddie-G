@@ -996,8 +996,15 @@ func _items_tests() -> void:
 		# Notches and rounded corners: a pretend safe area moves the HUD and the
 		# touch buttons in from the edges, while speed lines still fill the screen.
 		UiKit.debug_insets = Vector4(90, 30, 60, 20)
+		# Headless runs have no window (0x0): pretend a phone-sized one,
+		# half the viewport's size, so the pixel insets double in viewport units.
+		if DisplayServer.window_get_size().x < 1:
+			UiKit.debug_window = hud.get_viewport().get_visible_rect().size * 0.5
 		var ins := UiKit.safe_insets(hud.get_viewport())
-		check("safe area read in viewport units", ins.left > 0.0 and ins.top > 0.0 and ins.right > 0.0 and ins.bottom > 0.0)
+		check("safe area read in viewport units", ins.left > 0.0 and ins.top > 0.0 and ins.right > 0.0 and ins.bottom > 0.0,
+			"%s win=%s vp=%s" % [ins, DisplayServer.window_get_size(), hud.get_viewport().get_visible_rect().size])
+		if UiKit.debug_window != Vector2.ZERO:
+			check("safe area scales pixels to viewport units", is_equal_approx(ins.left, 180.0) and is_equal_approx(ins.bottom, 40.0), str(ins))
 		hud._apply_safe()
 		check("HUD sits inside the safe area", is_equal_approx(hud.offset_left, ins.left) and is_equal_approx(hud.offset_right, -ins.right))
 		check("speed lines still reach the screen edges", is_equal_approx(hud._lines.offset_left, -ins.left))
@@ -1016,6 +1023,7 @@ func _items_tests() -> void:
 		check("resting stick clears the notch", tc.stick_home().x - tc.stick_radius() >= ins.left - 0.5)
 		tc.queue_free()
 		UiKit.debug_insets = Vector4.ZERO
+		UiKit.debug_window = Vector2.ZERO
 		hud._apply_safe()
 		check("no safe area on desktop", is_zero_approx(hud.offset_left) and is_zero_approx(hud.offset_top))
 		InputRouter.touch_seen = false
@@ -1812,6 +1820,12 @@ func _wonder_tests() -> void:
 		var peak_mult := 1.0
 		var phased_on := false
 		var phased_off := false
+		# Headless runs: the music clock follows the wall clock while these
+		# physics frames run faster than real time, so the beat could land
+		# anywhere. With the music stopped the Wonder keeps the beat on its own
+		# game clock, which is what this check is about.
+		var music_was: bool = Audio._music.playing
+		Audio._music.stop()
 		for f in 90:
 			await get_tree().physics_frame
 			top = maxf(top, me.fwd_speed)
@@ -1821,6 +1835,8 @@ func _wonder_tests() -> void:
 					phased_on = true
 				else:
 					phased_off = true
+		if music_was:
+			Audio._music.play()
 		match craft:
 			"phantom":
 				check("lighthouse: phases on the beat, not all the time", phased_on and phased_off)
