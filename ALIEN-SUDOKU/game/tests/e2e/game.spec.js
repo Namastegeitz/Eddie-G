@@ -535,3 +535,43 @@ test('HD maps: the star chart, the route map and the backdrop cut for the screen
   expect(missing).toEqual([]);
   expect(errors).toEqual([]);
 });
+
+test('graphics: Settings quality changes what is drawn, and Auto names its level', async ({ page }, testInfo) => {
+  const errors = errorsOf(page);
+  await openMenu(page);
+  const root = page.locator('html');
+  await expect(root).toHaveAttribute('data-gfx', /^(low|medium|high|ultra)$/);
+  await page.locator('.menu-settings, .icon-tile:has-text("Settings")').first().click();
+  const quality = page.locator('select[data-setting="graphics"]');
+  await expect(quality).toHaveValue('auto');
+  await expect(page.locator('.gfx-auto-note')).toContainText(/now (Low|Medium|High|Ultra)/);
+
+  const canvasScale = () => page.evaluate(() => {
+    const c = document.querySelector('.starfield-canvas');
+    return c.width / window.innerWidth;
+  });
+  await quality.selectOption('low');
+  await expect(root).toHaveAttribute('data-gfx', 'low');
+  await expect(root).toHaveAttribute('data-gfx-motion', 'off');
+  await expect(root).toHaveAttribute('data-gfx-blur', 'off');
+  expect(await canvasScale()).toBeLessThanOrEqual(1.01);
+  await expect(page.locator('.cosmic-bg.loaded')).toHaveCount(1);
+  await expect.poll(() => page.locator('.cosmic-bg.loaded').evaluate((e) => e.style.backgroundImage)).toMatch(/\.(tall-sd|sd)\.webp/);
+
+  await quality.selectOption('ultra');
+  await expect(root).toHaveAttribute('data-gfx', 'ultra');
+  await expect(root).toHaveAttribute('data-gfx-glow', 'on');
+  const dpr = await page.evaluate(() => window.devicePixelRatio);
+  expect(await canvasScale()).toBeCloseTo(Math.min(dpr, 3), 1);
+  await expect.poll(() => page.locator('.cosmic-bg.loaded').evaluate((e) => e.style.backgroundImage)).not.toMatch(/sd\.webp/);
+
+  await page.locator('select[data-setting="renderScale"]').selectOption('0.5');
+  expect(await canvasScale()).toBeCloseTo(Math.max(0.5, Math.min(dpr, 3) * 0.5), 1);
+  await page.locator('label:has-text("Glow and blur effects") input').uncheck();
+  await expect(root).toHaveAttribute('data-gfx-glow', 'off');
+  // The choice is saved and survives a reload.
+  await page.reload();
+  await expect(root).toHaveAttribute('data-gfx', 'ultra');
+  await expect(root).toHaveAttribute('data-gfx-glow', 'off');
+  expect(errors).toEqual([]);
+});

@@ -23,6 +23,7 @@ import './styles/screens.css';
 import './styles/themes.css';
 import './styles/encounter.css';
 import './styles/duel.css';
+import './styles/graphics.css';
 
 import { initStorage } from './core/storage.js';
 import { initProfile, settings } from './core/profile.js';
@@ -36,6 +37,7 @@ import { initRouter, registerScreen, reset, handleBack, refreshTheme } from './u
 import { installGlyphSprite } from './data/symbols.js';
 import { applyTheme, setEasyPalette } from './ui/theme.js';
 import { initStarfield, setReducedMotion } from './ui/starfield.js';
+import { applyGraphics } from './ui/graphics.js';
 import { menuScreen } from './ui/screens/menu.js';
 import { playScreen } from './ui/screens/play.js';
 import { campaignScreen, sectorScreen } from './ui/screens/campaign.js';
@@ -44,6 +46,8 @@ import { statsScreen, achievementsScreen, howtoScreen } from './ui/screens/info.
 import { settingsScreen } from './ui/screens/settings.js';
 import { duelScreen } from './ui/screens/duel.js';
 import { SYMBOL_SETS } from './data/symbols.js';
+
+const GFX_KEYS = ['graphics', 'renderScale', 'frameCap', 'bgMotion', 'glowEffects'];
 
 function applySettings() {
   const s = settings();
@@ -60,7 +64,10 @@ async function boot() {
   installGlyphSprite();
   setEasyPalette(settings().easyPalette);
   applyTheme(settings().symbolSet);
+  applyGraphics();
   initStarfield(document.querySelector('.starfield'));
+  on('settings', ({ key }) => { if (GFX_KEYS.includes(key)) applyGraphics(); });
+  on('profile-reset', () => applyGraphics());
   on('settings', applySettings);
   on('settings', ({ key }) => { if (key === 'symbolSet' || key === 'sectorSymbols') refreshTheme(); });
   on('settings', ({ key }) => { if (key === 'easyPalette') { setEasyPalette(settings().easyPalette); refreshTheme(); } });

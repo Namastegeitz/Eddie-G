@@ -199,14 +199,27 @@ body, .board, .cell, .glyph-btn, .menu-btn, .tool-btn { transition-property: bac
 /* ---------- Gnarly Horde (Alien): heartbeat, veins, glitches ---------- */
 [data-theme='gnarly'] .board {
   border: 3px solid rgb(var(--c1-rgb));
+  box-shadow: 0 0 18px rgba(232, 22, 52, 0.45), inset 0 0 22px rgba(232, 22, 52, 0.15);
+}
+/* The heartbeat: a strong glow layer behind the board beats in and out
+   (opacity only, so the board itself is never repainted). */
+[data-theme='gnarly'] .board-wrap::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: var(--r-board);
+  box-shadow: 0 0 36px rgba(232, 22, 52, 0.9), 0 0 14px rgba(232, 22, 52, 0.6);
+  opacity: 0;
+  pointer-events: none;
   animation: heartbeat 1.5s ease-in-out infinite;
 }
 @keyframes heartbeat {
-  0%, 100% { box-shadow: 0 0 18px rgba(232, 22, 52, 0.45), inset 0 0 22px rgba(232, 22, 52, 0.15); }
-  12% { box-shadow: 0 0 36px rgba(232, 22, 52, 0.9), inset 0 0 32px rgba(232, 22, 52, 0.32); }
-  24% { box-shadow: 0 0 20px rgba(232, 22, 52, 0.5), inset 0 0 22px rgba(232, 22, 52, 0.18); }
-  36% { box-shadow: 0 0 30px rgba(232, 22, 52, 0.75), inset 0 0 28px rgba(232, 22, 52, 0.26); }
+  0%, 100% { opacity: 0; }
+  12% { opacity: 1; }
+  24% { opacity: 0.1; }
+  36% { opacity: 0.65; }
 }
+[data-gfx-glow='off'][data-theme='gnarly'] .board-wrap::before { animation: none; opacity: 0.25; }
 [data-theme='gnarly'] .cell { background-image: radial-gradient(circle at 50% 55%, rgba(140, 255, 40, 0.06), transparent 65%); }
 [data-theme='gnarly'] .cell.pop .cell-glyph { animation: chomp 0.42s cubic-bezier(0.3, 0, 0.2, 1); }
 @keyframes chomp {
@@ -237,7 +250,7 @@ body, .board, .cell, .glyph-btn, .menu-btn, .tool-btn { transition-property: bac
 @keyframes vignettePulse { 50% { opacity: 0.6; } }
 
 @media (prefers-reduced-motion: reduce) {
-  [data-theme='gnarly'] .board, [data-theme='gnarly'] .game-title { animation: none; }
+  [data-theme='gnarly'] .board-wrap::before, [data-theme='gnarly'] .game-title { animation: none; }
 }
 
 /* Gnarly: the drippy horror face is for big titles only; small text stays readable. */

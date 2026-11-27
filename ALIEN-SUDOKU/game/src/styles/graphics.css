@@ -1,0 +1,28 @@
+/* ============================================================
+   Graphics levels (ui/graphics.js sets these on <html>):
+     data-gfx         low | medium | high | ultra
+     data-gfx-motion  on | off   background drift
+     data-gfx-glow    on | off   glow pulses
+     data-gfx-blur    on | off   frosted-glass blur
+   High and Ultra look exactly as before; these rules only take
+   costly effects away, and Low still looks clean.
+   ============================================================ */
+
+/* Background motion off: the space backdrop and nebula hold still. */
+[data-gfx-motion='off'] .cosmic-bg,
+[data-gfx-motion='off'] .nebula { animation: none; }
+[data-gfx-motion='off'] .cosmic-bg { transform: scale(1.04); }
+
+/* Low: the nebula haze without its big 40px blur (its gradients are already soft). */
+[data-gfx='low'] .nebula { filter: none; opacity: 0.8; }
+
+/* Blur off: frosted glass becomes a slightly more solid panel. */
+[data-gfx-blur='off'] .modal-overlay { backdrop-filter: none; -webkit-backdrop-filter: none; background: rgba(var(--deep-rgb), 0.82); }
+[data-gfx-blur='off'] .menu-btn { backdrop-filter: none; -webkit-backdrop-filter: none; background: linear-gradient(rgba(var(--deep-rgb), 0.35), rgba(var(--deep-rgb), 0.35)), var(--panel); }
+
+/* Glow off: pulses hold their resting glow. */
+[data-gfx-glow='off'] .level-node.next .level-disc::after,
+[data-gfx-glow='off'] .pip.open,
+[data-gfx-glow='off'] .song-row.on .song-eq i,
+[data-gfx-glow='off'][data-theme='gnarly'] .starfield::after { animation: none; }
+[data-gfx-glow='off'] .level-node.next .level-disc::after { opacity: 0.6; }

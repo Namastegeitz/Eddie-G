@@ -83,7 +83,7 @@ describe('HD backdrops', async () => {
     expect(variantPath('icons/icon-192.png', 'tall')).toBe('icons/icon-192.png');
   });
 
-  it('every scene ships in all three cuts', () => {
-    for (const path of BACKGROUNDS) for (const v of [null, 'tall', 'card']) expect(existsSync(pub(variantPath(path, v))), variantPath(path, v)).toBe(true);
+  it('every scene ships in all five cuts', () => {
+    for (const path of BACKGROUNDS) for (const v of [null, 'tall', 'card', 'sd', 'tall-sd']) expect(existsSync(pub(variantPath(path, v))), variantPath(path, v)).toBe(true);
   });
 });

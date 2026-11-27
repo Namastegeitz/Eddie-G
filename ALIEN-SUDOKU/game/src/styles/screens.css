@@ -344,11 +344,21 @@
   pointer-events: none;
 }
 .level-node.done .level-disc { border-color: var(--accent); }
-.level-node.next .level-disc { border-color: var(--accent); animation: nodePulse 2s ease-in-out infinite; }
+.level-node.next .level-disc { border-color: var(--accent); }
 .level-node.next .level-disc::before { border-color: var(--accent); animation: orbitSpin 14s linear infinite; }
-@keyframes nodePulse {
-  50% { box-shadow: 0 0 0 4px rgba(var(--deep-rgb), 0.6), 0 0 0 5px var(--accent), 0 0 26px var(--accent), inset 0 0 16px color-mix(in srgb, var(--accent) 55%, transparent); }
+/* The pulse: a glow layer that fades in and out (opacity runs on the compositor,
+   so nothing is repainted each frame). */
+.level-node.next .level-disc::after {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: 50%;
+  box-shadow: 0 0 0 3px var(--accent), 0 0 26px var(--accent);
+  opacity: 0;
+  pointer-events: none;
+  animation: nodePulse 2s ease-in-out infinite;
 }
+@keyframes nodePulse { 50% { opacity: 1; } }
 .level-node.locked .level-disc { border-color: rgba(255, 255, 255, 0.22); background: rgba(var(--deep-rgb), 0.82); box-shadow: 0 0 0 4px rgba(var(--deep-rgb), 0.5), 0 4px 12px rgba(0, 0, 0, 0.6); }
 .level-node.locked .level-disc::before { border-color: rgba(255, 255, 255, 0.14); }
 .level-glyph { display: flex; width: 64%; aspect-ratio: 1; color: var(--accent); filter: drop-shadow(0 0 5px color-mix(in srgb, var(--accent) 65%, transparent)); }
@@ -397,7 +407,7 @@
   .level-diff { font-size: 0.58rem; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .pip.open, .level-node.next .level-disc, .level-node.next .level-disc::before { animation: none; }
+  .pip.open, .level-node.next .level-disc::after, .level-node.next .level-disc::before { animation: none; }
 }
 
 /* ---------- Daily ---------- */

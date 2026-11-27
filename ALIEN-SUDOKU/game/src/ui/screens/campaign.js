@@ -13,6 +13,7 @@ import { sfx } from '../../audio/audio.js';
 import { toast } from '../modal.js';
 import { confirmAbandon } from './menu.js';
 import { assetUrl, backdropVariant } from '../background.js';
+import { gfx } from '../graphics.js';
 import { lineupForLevel, sectorLineup } from '../glyphs.js';
 import { THEMES } from '../../data/themes.js';
 
@@ -175,7 +176,7 @@ export const sectorScreen = {
             h('i', { style: { width: `${(done / LEVELS_PER_SECTOR) * 100}%` } })),
           h('span', { class: 'sector-count' }, `${done} / ${LEVELS_PER_SECTOR} decoded`)),
         h('div', { class: 'level-map' },
-          h('span', { class: 'level-map-art', 'aria-hidden': 'true', style: { backgroundImage: `url("${assetUrl(s.bg, backdropVariant(window.innerWidth, window.innerHeight))}")` } }),
+          h('span', { class: 'level-map-art', 'aria-hidden': 'true', style: { backgroundImage: `url("${assetUrl(s.bg, backdropVariant(window.innerWidth, window.innerHeight, gfx().backdrop))}")` } }),
           h('span', { class: 'level-map-chart', 'aria-hidden': 'true' }),
           h('span', { class: 'level-map-label', 'aria-hidden': 'true' }, `Sector ${String(s.id + 1).padStart(2, '0')} chart`),
           h('div', { class: 'level-grid' }, route, nodes)),

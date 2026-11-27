@@ -14,6 +14,8 @@
      domNodes       DOM size on the play screen
      frames         per scene (menu, play, map): average frame time, fps,
                     1% low fps and the worst single frame, over 5 seconds
+   --dist=<dir> benchmarks another build (default dist/); --profiles=phone,desktop picks profiles. Frame statistics pool every
+   run's frames (8 s per scene per run), so the 1% low is not one unlucky frame.
    With --compare it exits 1 if any headline number is more than 5% worse.
    Headless Chromium draws on the CPU, so absolute numbers are pessimistic;
    compare runs on the same machine.
@@ -29,7 +31,7 @@ const arg = (k, d) => (process.argv.find((a) => a.startsWith(`--${k}=`)) || '').
 const outFile = resolve(root, arg('out', 'perf/latest.json'));
 const compareFile = arg('compare', '') && resolve(root, arg('compare', ''));
 const RUNS = Number(arg('runs', '3'));
-const dist = join(root, 'dist');
+const dist = resolve(root, arg('dist', 'dist'));
 if (!existsSync(join(dist, 'index.html'))) { console.error('Run `npm run build` first.'); process.exit(2); }
 
 const MIME = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.webp': 'image/webp', '.png': 'image/png', '.svg': 'image/svg+xml', '.woff2': 'font/woff2', '.json': 'application/json', '.webmanifest': 'application/manifest+json', '.jpg': 'image/jpeg' };
@@ -51,16 +53,21 @@ const median = (xs) => { const s = [...xs].sort((a, b) => a - b); return s[Math.
 const round = (x, d = 1) => Math.round(x * 10 ** d) / 10 ** d;
 
 /** Frame times for `ms` milliseconds of whatever the page is doing. */
-async function frames(page, ms = 5000) {
+async function frames(page, ms = 8000) {
   const deltas = await page.evaluate((ms) => new Promise((done) => {
     const out = []; let last = performance.now(); const end = last + ms;
     const tick = (t) => { out.push(t - last); last = t; if (t < end) requestAnimationFrame(tick); else done(out.slice(2)); };
     requestAnimationFrame(tick);
   }), ms);
+  return deltas;
+}
+/** Statistics over pooled frame times. */
+function frameStats(deltas) {
   const avg = deltas.reduce((a, b) => a + b, 0) / deltas.length;
   const sorted = [...deltas].sort((a, b) => a - b);
   const p99 = sorted[Math.min(sorted.length - 1, Math.floor(sorted.length * 0.99))];
-  return { avgMs: round(avg, 2), fps: round(1000 / avg), low1Fps: round(1000 / p99), worstMs: round(sorted[sorted.length - 1]), samples: deltas.length };
+  const over2x = deltas.filter((d) => d > 33.4).length;
+  return { avgMs: round(avg, 2), fps: round(1000 / avg), low1Fps: round(1000 / p99), worstMs: round(sorted[sorted.length - 1]), spikesOver2x: round((over2x / deltas.length) * 100, 2), samples: deltas.length };
 }
 async function heapMB(cdp) {
   await cdp.send('HeapProfiler.collectGarbage').catch(() => {});
@@ -110,14 +117,12 @@ async function runOnce(name, prof) {
 }
 
 const result = { date: new Date().toISOString(), version: JSON.parse(readFileSync(join(root, 'package.json'), 'utf8')).version, runs: RUNS, profiles: {} };
-for (const [name, prof] of Object.entries(PROFILES)) {
+const only = arg('profiles', '') ? arg('profiles', '').split(',') : null;
+for (const [name, prof] of Object.entries(PROFILES).filter(([n]) => !only || only.includes(n))) {
   const runs = [];
   for (let i = 0; i < RUNS; i++) runs.push(await runOnce(name, prof));
   const pick = (f) => median(runs.map(f));
-  const scene = (s) => ({
-    avgMs: pick((r) => r.frames[s].avgMs), fps: pick((r) => r.frames[s].fps),
-    low1Fps: pick((r) => r.frames[s].low1Fps), worstMs: pick((r) => r.frames[s].worstMs),
-  });
+  const scene = (s) => frameStats(runs.flatMap((r) => r.frames[s]));
   result.profiles[name] = {
     coldStartMs: pick((r) => r.coldStartMs),
     heapMB: { menu: pick((r) => r.heap.menu), play: pick((r) => r.heap.play), map: pick((r) => r.heap.map) },
@@ -147,6 +152,7 @@ if (compareFile) {
     for (const s of ['menu', 'play', 'map']) {
       check(`${p} ${s} avg frame ms`, n.frames[s].avgMs, o.frames[s].avgMs, false);
       check(`${p} ${s} 1% low fps`, n.frames[s].low1Fps, o.frames[s].low1Fps, true);
+      if (n.frames[s].spikesOver2x > (o.frames[s].spikesOver2x ?? 0) + 0.5) worse.push(`${p} ${s} frames over 2x budget: ${o.frames[s].spikesOver2x}% -> ${n.frames[s].spikesOver2x}%`);
     }
   }
   if (worse.length) { console.error('Worse than baseline by more than 5%:\n  ' + worse.join('\n  ')); process.exit(1); }

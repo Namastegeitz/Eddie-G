@@ -32,6 +32,11 @@ export const DEFAULT_SETTINGS = {
   autoRemoveNotes: true,
   inputMode: 'cell',       // 'cell' = tap cell then glyph; 'glyph' = arm a glyph then tap cells
   reduceMotion: false,
+  graphics: 'auto',        // 'auto' | 'low' | 'medium' | 'high' | 'ultra' (ui/graphics.js)
+  renderScale: 'auto',     // 'auto' | 1 | 0.75 | 0.5: resolution of the animated star field and sparks
+  frameCap: 'auto',        // 'auto' | 30 | 60 | 120: frame rate of those animations
+  bgMotion: true,          // slow drift of the space backdrop
+  glowEffects: true,       // glow pulses and frosted-glass blur
   quickDifficulty: 'medium',
   tries: 25,               // mistakes allowed per puzzle: 3, 5, 10 or 25
   seenTutorial: false,

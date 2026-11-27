@@ -4,7 +4,12 @@
      space/<name>.webp        wide, 2816x1536: desktops, tablets and phones held sideways
      space/<name>.tall.webp   tall, 1728x2304: phones and tablets held upright
      space/<name>.card.webp   1500x500 strip: campaign sector cards and the sector header
+   plus half-size cuts for the Low graphics level (less memory on small phones):
+     space/<name>.sd.webp      1408x768
+     space/<name>.tall-sd.webp 864x1152
    The page asks for a scene by its plain name; the cut is picked here. */
+import { on } from '../core/events.js';
+import { gfx } from './graphics.js';
 
 export const BACKGROUNDS = [
   'space/nebula-pink.webp',
@@ -22,8 +27,13 @@ export function variantPath(path, variant) {
   return variant && /^space\/[\w-]+\.webp$/.test(path) ? path.replace(/\.webp$/, `.${variant}.webp`) : path;
 }
 
-/** The backdrop cut for a viewport: tall when it is higher than it is wide. */
-export const backdropVariant = (width, height) => (height > width ? 'tall' : null);
+/** The backdrop cut for a viewport: tall when it is higher than it is wide;
+    the half-size versions when the graphics level asks for them (quality 'sd'). */
+export const backdropVariant = (width, height, quality = 'hd') => {
+  const tall = height > width;
+  if (quality === 'sd') return tall ? 'tall-sd' : 'sd';
+  return tall ? 'tall' : null;
+};
 
 /** URL for a bundled image. Single-file builds embed images in window.__ALIEN_ASSETS__.
     variant: 'tall' | 'card' | null (see the top of this file). */
@@ -39,7 +49,7 @@ let currentUrl = null;
 let currentVariant = null;
 let lastRandom = -1;
 
-const viewportVariant = () => backdropVariant(window.innerWidth, window.innerHeight);
+const viewportVariant = () => backdropVariant(window.innerWidth, window.innerHeight, gfx().backdrop);
 
 export function initBackground() {
   layers = [...document.querySelectorAll('.cosmic-bg')];
@@ -49,6 +59,7 @@ export function initBackground() {
     clearTimeout(timer);
     timer = setTimeout(() => { if (currentUrl && viewportVariant() !== currentVariant) paint(currentUrl); }, 250);
   });
+  on('graphics', () => { if (currentUrl && viewportVariant() !== currentVariant) paint(currentUrl); });
 }
 
 export function randomBackground() {

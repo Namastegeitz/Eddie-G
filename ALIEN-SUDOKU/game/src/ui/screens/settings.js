@@ -20,6 +20,8 @@ import { appVersion, isNative, isElectron } from '../../platform/native.js';
 import { privacyOptionsAvailable, showPrivacyOptions, adsSupported } from '../../platform/ads.js';
 import { openPrivacyPolicy } from '../privacy.js';
 import { openReportAd } from '../report-ad.js';
+import { on } from '../../core/events.js';
+import { autoLevel } from '../graphics.js';
 
 function unlockHint(key) {
   const reach = SECTORS.find((s) => s.unlocksSet === key);
@@ -146,6 +148,30 @@ export const settingsScreen = {
       h('option', { value: 'cell', selected: s.inputMode === 'cell' }, 'Cell first (tap cell, then glyph)'),
       h('option', { value: 'glyph', selected: s.inputMode === 'glyph' }, 'Glyph first (pick glyph, then tap cells)'));
 
+    // ---- Graphics ----
+    const GFX_LABEL = { low: 'Low', medium: 'Medium', high: 'High', ultra: 'Ultra' };
+    const parseOpt = (v) => (v === 'auto' || Number.isNaN(Number(v)) ? v : Number(v));
+    const select = (key, label, sub, options) => h('label', { class: 'set-row' },
+      h('span', { class: 'set-text' }, h('span', {}, label), sub),
+      h('select', { class: 'select', 'aria-label': label, dataset: { setting: key }, onchange: (e) => { setSetting(key, parseOpt(e.target.value)); sfx.tap(); } },
+        options.map(([v, text]) => h('option', { value: String(v), selected: String(s[key] ?? 'auto') === String(v) }, text))));
+    const autoNote = h('small', { class: 'gfx-auto-note' });
+    const renderAutoNote = () => {
+      const lvl = autoLevel();
+      autoNote.textContent = settings().graphics === 'auto' || !settings().graphics
+        ? `Auto picks the level for this device${lvl ? `: now ${GFX_LABEL[lvl]}` : ''}, and steps down if the game starts to stutter.`
+        : 'Lower levels draw fewer effects and save battery.';
+    };
+    renderAutoNote();
+    const offGfx = on('graphics', renderAutoNote);
+    const graphicsGroup = group('Graphics', [
+      select('graphics', 'Quality', autoNote, [['auto', 'Auto'], ['low', 'Low'], ['medium', 'Medium'], ['high', 'High'], ['ultra', 'Ultra']]),
+      select('renderScale', 'Resolution', h('small', {}, 'Sharpness of the animated stars and sparks'), [['auto', 'Auto'], [1, '100%'], [0.75, '75%'], [0.5, '50%']]),
+      select('frameCap', 'Frame rate', h('small', {}, 'For the animated background. Higher is smoother, lower saves battery'), [['auto', 'Auto'], [30, '30 fps'], [60, '60 fps'], [120, '120 fps']]),
+      toggle('bgMotion', 'Background motion', 'The space backdrop drifts slowly'),
+      toggle('glowEffects', 'Glow and blur effects', 'Pulsing glows and frosted-glass panels'),
+    ]);
+
     const el = h('div', { class: 'page' },
       topbar('Settings', null, nav),
       h('div', { class: 'page-body settings' },
@@ -178,6 +204,7 @@ export const settingsScreen = {
           toggle('showTimer', 'Show timer'),
           toggle('reduceMotion', 'Reduce motion', 'Calmer animations and background'),
         ]),
+        graphicsGroup,
         group('Privacy & data', [
           adsSupported ? h('p', { class: 'set-note' }, 'Alien Sudoku is free and shows ads from Google AdMob. Rewarded videos are always optional.') : null,
           h('button', { class: 'btn btn-ghost btn-wide', type: 'button', onclick: () => openPrivacyPolicy() }, 'Privacy policy'),
@@ -198,7 +225,7 @@ export const settingsScreen = {
           h('b', {}, 'Alien Sudoku'),
           h('small', {}, `Version ${appVersion()}${isElectron ? ' · desktop' : isNative ? '' : ' · web'}`),
           h('small', {}, 'Space photography, glyph art and synthesized music from the original Alien Glyph Sudoku. Fonts: Orbitron and Space Grotesk (SIL Open Font License).'))));
-    return { el, destroy: offMusic };
+    return { el, destroy: () => { offMusic(); offGfx(); } };
   },
 };
 

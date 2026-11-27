@@ -1,64 +1,76 @@
 {
-  "date": "2026-11-27T15:44:19.738Z",
+  "date": "2026-11-27T16:05:18.820Z",
   "version": "1.2.0",
-  "runs": 3,
+  "runs": 4,
   "profiles": {
     "phone": {
-      "coldStartMs": 1170,
+      "coldStartMs": 1092,
       "heapMB": {
         "menu": 3.1,
         "play": 3.6,
         "map": 3.4
       },
-      "domNodes": 3326,
+      "domNodes": 3329,
       "frames": {
         "menu": {
-          "avgMs": 16.72,
+          "avgMs": 16.73,
           "fps": 59.8,
           "low1Fps": 59.5,
-          "worstMs": 33.4
+          "worstMs": 116.7,
+          "spikesOver2x": 0.1,
+          "samples": 1913
         },
         "play": {
-          "avgMs": 17.42,
-          "fps": 57.4,
+          "avgMs": 17.16,
+          "fps": 58.3,
           "low1Fps": 29.9,
-          "worstMs": 49.9
+          "worstMs": 50,
+          "spikesOver2x": 0.48,
+          "samples": 1861
         },
         "map": {
-          "avgMs": 18.25,
-          "fps": 54.8,
+          "avgMs": 17.4,
+          "fps": 57.5,
           "low1Fps": 29.9,
-          "worstMs": 33.4
+          "worstMs": 66.8,
+          "spikesOver2x": 0.82,
+          "samples": 1837
         }
       },
       "errors": []
     },
     "desktop": {
-      "coldStartMs": 734,
+      "coldStartMs": 748,
       "heapMB": {
         "menu": 3.1,
-        "play": 3.6,
-        "map": 3.4
+        "play": 3.7,
+        "map": 3.5
       },
-      "domNodes": 3326,
+      "domNodes": 3320,
       "frames": {
         "menu": {
-          "avgMs": 16.67,
-          "fps": 60,
+          "avgMs": 16.75,
+          "fps": 59.7,
           "low1Fps": 59.5,
-          "worstMs": 16.8
+          "worstMs": 66.7,
+          "spikesOver2x": 0.16,
+          "samples": 1907
         },
         "play": {
-          "avgMs": 16.89,
-          "fps": 59.2,
+          "avgMs": 17,
+          "fps": 58.8,
           "low1Fps": 30,
-          "worstMs": 33.4
+          "worstMs": 66.7,
+          "spikesOver2x": 0.37,
+          "samples": 1878
         },
         "map": {
-          "avgMs": 16.72,
-          "fps": 59.8,
+          "avgMs": 16.78,
+          "fps": 59.6,
           "low1Fps": 59.5,
-          "worstMs": 33.3
+          "worstMs": 50.1,
+          "spikesOver2x": 0.21,
+          "samples": 1904
         }
       },
       "errors": []

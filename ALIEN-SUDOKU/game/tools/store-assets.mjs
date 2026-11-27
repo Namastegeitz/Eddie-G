@@ -53,7 +53,8 @@ const save = (file) => { written.push(file); return file; };
 
 // ---------- screenshots ----------
 const STAGED_PROFILE = {
-  settings: { seenTutorial: true },
+  // Store shots show the full-detail look, whatever Auto would pick on this machine.
+  settings: { seenTutorial: true, graphics: 'ultra' },
   campaign: { levels: Object.fromEntries([3, 3, 2, 3, 3, 2].map((stars, l) => [`0-${l}`, { stars, bestMs: 180_000 + l * 41_000 }])) },
 };
 /** A believable clock for a puzzle in progress. */

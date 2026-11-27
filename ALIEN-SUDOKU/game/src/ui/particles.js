@@ -1,6 +1,8 @@
 /* Particle bursts over the board: sparks in a glyph's color when it is
    placed, a bigger shower when a row/column/box completes, fireworks on a
-   win. The canvas only animates while particles are alive. */
+   win. The canvas only animates while particles are alive. The graphics level
+   (ui/graphics.js) sets its resolution and how many sparks each burst has. */
+import { gfx } from './graphics.js';
 
 export function createParticles(host) {
   const canvas = document.createElement('canvas');
@@ -17,12 +19,14 @@ export function createParticles(host) {
 
   function size() {
     const r = host.getBoundingClientRect();
-    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const g = gfx();
+    dpr = Math.max(0.5, Math.min(window.devicePixelRatio || 1, 2, g.dprCap) * g.scale);
     canvas.width = Math.round((r.width + PAD * 2) * dpr);
     canvas.height = Math.round((r.height + PAD * 2) * dpr);
   }
 
   function spawn(x, y, color, n, power, kind = 'spark') {
+    n = Math.max(1, Math.round(n * gfx().sparks));
     for (let i = 0; i < n; i++) {
       const a = Math.random() * Math.PI * 2;
       const v = power * (0.35 + Math.random() * 0.65);

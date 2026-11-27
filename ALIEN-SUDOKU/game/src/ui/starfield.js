@@ -1,10 +1,14 @@
 /* Animated starfield on a canvas: twinkling stars in the theme's colors,
    slow parallax drift, occasional shooting stars and a rare UFO flyby.
-   Runs at ~30 fps, pauses when the page is hidden, and draws one still
-   frame when reduced motion is on. */
+   Runs at the graphics level's frame rate (30 fps unless Ultra or a frame-rate
+   setting says otherwise), pauses when the page is hidden, and draws one still
+   frame when reduced motion is on. Resolution, star count and drift follow the
+   graphics level (ui/graphics.js), and each frame's duration is reported to it so
+   Auto can step down on a struggling device. */
 
 import { on } from '../core/events.js';
 import { themeFor, currentTheme } from './theme.js';
+import { gfx, reportFrame } from './graphics.js';
 
 let canvas, ctx, w = 0, h = 0, dpr = 1;
 let stars = [];
@@ -16,6 +20,8 @@ let last = 0;
 let nextShooter = 0;
 let nextUfo = 0;
 let reduced = false;
+let lastRaf = 0;
+let g = null;
 
 const rand = (a, b) => a + Math.random() * (b - a);
 
@@ -31,6 +37,7 @@ export function initStarfield(host) {
   window.addEventListener('resize', resize);
   document.addEventListener('visibilitychange', () => (document.hidden ? stop() : start()));
   on('theme', () => { recolor(); if (!running) drawFrame(0); });
+  on('graphics', () => { const before = g && `${g.dprCap}/${g.scale}/${g.density}/${g.dust}`; g = gfx(); if (before !== `${g.dprCap}/${g.scale}/${g.density}/${g.dust}`) resize(); });
   const mq = window.matchMedia?.('(prefers-reduced-motion: reduce)');
   setReducedMotion(!!mq?.matches);
   start();
@@ -48,9 +55,11 @@ function resize() {
   if (!canvas) return;
   w = window.innerWidth;
   h = window.innerHeight;
-  // Full device resolution (up to 3x on phones) so stars are pin-sharp,
-  // capped at about 8.5 megapixels to keep big 4K screens smooth.
-  dpr = Math.max(1, Math.min(window.devicePixelRatio || 1, 3, Math.sqrt(8_500_000 / Math.max(1, w * h))));
+  g = gfx();
+  // Up to the graphics level's pixel ratio (3x on Ultra, so stars are pin-sharp),
+  // capped at about 8.5 megapixels for big 4K screens, then the resolution setting.
+  const full = Math.max(1, Math.min(window.devicePixelRatio || 1, g.dprCap, Math.sqrt(8_500_000 / Math.max(1, w * h))));
+  dpr = Math.max(0.5, full * g.scale);
   canvas.width = Math.round(w * dpr);
   canvas.height = Math.round(h * dpr);
   canvas.style.width = `${w}px`;
@@ -58,8 +67,8 @@ function resize() {
   const colors = palette();
   const pick = () => colors[Math.floor(Math.random() * colors.length)];
   // Three sizes: fine dust (most of them), ordinary stars, and a few bright ones with flares.
-  const count = Math.min(240, Math.round((w * h) / 7000));
-  const dust = Math.min(320, Math.round((w * h) / 4200));
+  const count = Math.round(Math.min(240, (w * h) / 7000) * g.density);
+  const dust = Math.round(Math.min(320, (w * h) / 4200) * g.dust);
   stars = [
     ...Array.from({ length: dust }, () => ({
       x: Math.random() * w, y: Math.random() * h, r: rand(0.22, 0.5), a: rand(0.25, 0.7),
@@ -88,6 +97,7 @@ function start() {
   if (running || reduced || !ctx || document.hidden) return;
   running = true;
   last = performance.now();
+  lastRaf = 0;
   nextShooter = last + rand(3000, 8000);
   nextUfo = last + rand(25000, 50000);
   rafId = requestAnimationFrame(loop);
@@ -101,8 +111,10 @@ function stop() {
 function loop(now) {
   if (!running) return;
   rafId = requestAnimationFrame(loop);
+  if (lastRaf) reportFrame(now - lastRaf);
+  lastRaf = now;
   const dt = now - last;
-  if (dt < 33) return; // ~30 fps is plenty for ambience
+  if (dt < 1000 / (g?.fps || 30) - 2) return; // 30 fps is plenty for ambience; Ultra draws at 60
   last = now;
   if (now > nextShooter) {
     spawnShooter();
@@ -137,7 +149,7 @@ function spawnUfo() {
 
 function update(dt) {
   for (const s of stars) {
-    s.x += s.depth * 2.2 * dt; // gentle drift to the right
+    if (g?.drift !== false) s.x += s.depth * 2.2 * dt; // gentle drift to the right
     if (s.x > w + 2) s.x -= w + 4;
   }
   for (const s of shooters) {

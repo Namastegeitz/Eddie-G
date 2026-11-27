@@ -6,6 +6,8 @@ usage: python3 tools/hd/cut.py <dir with <name>-4x.png masters> <out dir = publi
   <name>.webp       wide  2816x1536  desktops, tablets, phones held sideways
   <name>.tall.webp  tall  1728x2304  phones and tablets held upright (3:4, framed on the subject)
   <name>.card.webp  card  1500x500   campaign sector cards (subject placed right of center)
+  <name>.sd.webp       1408x768   Low graphics level, wide
+  <name>.tall-sd.webp  864x1152   Low graphics level, tall
 
 FOCUS is where each scene's subject sits in the frame (0..1 from the left / top),
 so the tall and card cuts keep the planet, galaxy or pillars in view."""
@@ -57,3 +59,5 @@ for name, (fx, fy) in FOCUS.items():
     save(finish(tall, (1728, 2304)), os.path.join(out, f'{name}.tall.webp'))
     cw = round(W * 0.78); card = crop_around(m, cw, round(cw / 3), fx, fy, at=(0.66, 0.5))
     save(finish(card, (1500, 500)), os.path.join(out, f'{name}.card.webp'))
+    save(finish(m, (1408, 768)), os.path.join(out, f'{name}.sd.webp'))
+    save(finish(tall, (864, 1152)), os.path.join(out, f'{name}.tall-sd.webp'))
