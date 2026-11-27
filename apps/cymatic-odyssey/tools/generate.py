@@ -191,6 +191,7 @@ def main():
     ap.add_argument("--jobs", type=int, default=4)
     ap.add_argument("--dish-id", type=float, default=145.0)
     ap.add_argument("--no-hardware", action="store_true")
+    ap.add_argument("--no-package", action="store_true", help="don't rebuild downloads/*.zip (CI smoke runs)")
     a = ap.parse_args()
     entries = catalog.entries()
     todo = [e for e in entries if (not a.family or e["family"] == a.family) and (not a.ids or e["id"] in a.ids.split(","))]
@@ -214,7 +215,7 @@ def main():
             print("ok  hardware", k, n)
     contact_sheets(results, entries)
     write_catalog(entries, results)
-    if not a.preview_only:
+    if not a.preview_only and not a.no_package:
         package()
     bad = [r for r in results.values() if not r.get("ok")]
     print(f"done: {len(results) - len(bad)} ok, {len(bad)} failed, {time.time() - t0:.0f}s")

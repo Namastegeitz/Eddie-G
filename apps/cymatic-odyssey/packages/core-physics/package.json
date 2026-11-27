@@ -1,0 +1,8 @@
+{
+  "name": "@clc/core-physics",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Dispersion solver, bowl modes, Chladni, N-wave superposition, simulator shaders (spec 5). Built in P2.",
+  "exports": { ".": "./src/index.ts" }
+}

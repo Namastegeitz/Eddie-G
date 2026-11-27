@@ -1,0 +1,62 @@
+{
+  "note": "Files scanned by the claims linter (spec 9.6): UI strings, session templates/show copy, exported captions, store/marketing drafts and customer-facing docs. 'allow' entries are critical discussions of a claim (e.g. 'we never claim it treats...'); each needs a reason.",
+  "include": [
+    "apps/web/src",
+    "apps/web/index.html",
+    "packages/content/src/phrase-bank.json",
+    "console/index.html",
+    "catalog/content.json",
+    "catalog/styles.json",
+    "marketing/VIDEOS.md",
+    "docs"
+  ],
+  "exclude": [
+    "docs/manual/manual.html",
+    "docs/sourcing/sourcing_guide.html",
+    "docs/CYMATIC_ODYSSEY_Manual.pdf",
+    "docs/CYMATIC_ODYSSEY_Sourcing_Guide.pdf",
+    "docs/manual/img"
+  ],
+  "allow": [
+    {
+      "path": "docs/SAFETY.md",
+      "contains": "FDA/CDRH variance",
+      "reason": "regulatory fact about laser shows, not a product claim"
+    },
+    {
+      "path": "docs/SAFETY.md",
+      "contains": "not treatment",
+      "reason": "says the product is NOT treatment"
+    },
+    {
+      "path": "docs/MARKET.md",
+      "contains": "Claiming to treat, cure",
+      "reason": "explains why we never make health claims"
+    },
+    {
+      "path": "docs/MARKET.md",
+      "contains": "\"Healing frequencies\"",
+      "reason": "tells sellers NOT to claim healing frequencies"
+    },
+    {
+      "path": "docs/manual/build_manual.py",
+      "contains": "never as treatment",
+      "reason": "says the product is never sold as treatment"
+    },
+    {
+      "path": "docs/manual/build_manual.py",
+      "contains": "A note on the pictures",
+      "reason": "contains 'treat every frequency as a starting point' (verb 'treat', not a health claim)"
+    },
+    {
+      "path": "docs/TRANSPARENCY.md",
+      "contains": "",
+      "reason": "transparency doc lists the never-say terms and trademarks on purpose"
+    },
+    {
+      "path": "docs/ARCHITECTURE_NOW.md",
+      "contains": "",
+      "reason": "audit lists the never-say terms and trademarks it searched for"
+    }
+  ]
+}

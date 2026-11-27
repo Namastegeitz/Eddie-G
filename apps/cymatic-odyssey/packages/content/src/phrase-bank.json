@@ -1,0 +1,53 @@
+{
+ "version": 1,
+ "phrases": [
+  {
+   "text": "See your sound.",
+   "claims": [
+    "C-CYM-01"
+   ]
+  },
+  {
+   "text": "Physics you can watch.",
+   "claims": [
+    "C-CYM-01"
+   ]
+  },
+  {
+   "text": "A calm, beautiful focal point for meditation.",
+   "claims": [
+    "C-EXP-01"
+   ]
+  },
+  {
+   "text": "Explore frequencies in real water.",
+   "claims": [
+    "C-CYM-01"
+   ]
+  },
+  {
+   "text": "An immersive group sound experience.",
+   "claims": [
+    "C-EXP-01"
+   ]
+  },
+  {
+   "text": "An immersive headphone audio experience some people find relaxing.",
+   "claims": [
+    "C-BIN-01"
+   ]
+  },
+  {
+   "text": "Art and relaxation experience. Not a medical device.",
+   "claims": [
+    "C-EXP-01"
+   ]
+  },
+  {
+   "text": "Popular tradition frequencies.",
+   "claims": [
+    "C-SOL-01"
+   ]
+  }
+ ]
+}

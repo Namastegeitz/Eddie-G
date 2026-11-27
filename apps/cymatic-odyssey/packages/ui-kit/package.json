@@ -1,0 +1,8 @@
+{
+  "name": "@clc/ui-kit",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Responsive components shared by every mode. Grows from P1.",
+  "exports": { ".": "./src/index.ts" }
+}

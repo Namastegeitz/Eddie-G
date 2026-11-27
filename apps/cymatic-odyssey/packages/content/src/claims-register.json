@@ -1,0 +1,325 @@
+{
+ "version": 1,
+ "updated": "2026-11-27",
+ "grades": {
+  "A": "physics, or consistent RCT / meta-analysis support",
+  "B": "some RCTs, promising",
+  "C": "mixed, small, uncontrolled or observational",
+  "D": "no good evidence, or implausible",
+  "T": "cultural tradition, not a scientific claim"
+ },
+ "claims": [
+  {
+   "id": "C-CYM-01",
+   "kind": "physics",
+   "statement": "Sound vibration makes visible standing-wave patterns on a water surface (Faraday waves, bowl modes, Chladni figures).",
+   "grade": "A",
+   "plainSummary": "Textbook physics since Faraday (1831) and Chladni (1787). Which exact pattern appears depends on the bowl, depth, temperature and drive level.",
+   "whatWeSay": "See your sound. Physics you can watch. Explore frequencies in real water.",
+   "whatWeNeverSay": [
+    "cymatics heals",
+    "structures your water"
+   ],
+   "sources": [
+    "https://www-users.cse.umn.edu/~vinals/research/fwaves/index.html",
+    "https://en.wikipedia.org/wiki/Chladni%27s_law",
+    "https://www.cambridge.org/core/journals/journal-of-fluid-mechanics/article/patterns-and-quasipatterns-in-the-faraday-experiment/8FF2B22DE046BC52D144128237B9C194"
+   ]
+  },
+  {
+   "id": "C-CYM-02",
+   "kind": "physics",
+   "statement": "Driving the water with two frequencies at certain ratios can produce 8-, 10- and 12-fold quasipatterns.",
+   "grade": "A",
+   "plainSummary": "Shown in controlled lab experiments, usually with viscous, shallow layers. Plain water in a bowl may not show them.",
+   "whatWeSay": "Experimental two-frequency mode: ordered patterns that never repeat, when conditions allow.",
+   "whatWeNeverSay": [
+    "guaranteed sacred patterns"
+   ],
+   "sources": [
+    "https://www.cambridge.org/core/journals/journal-of-fluid-mechanics/article/patterns-and-quasipatterns-in-the-faraday-experiment/8FF2B22DE046BC52D144128237B9C194",
+    "https://arxiv.org/pdf/nlin/0610063",
+    "https://arxiv.org/pdf/nlin/0209034"
+   ]
+  },
+  {
+   "id": "C-CYM-03",
+   "kind": "wellness",
+   "statement": "Cymatic patterns or sound-shaped water heal the body or 'structure' water.",
+   "grade": "D",
+   "plainSummary": "No good evidence. The patterns are a physical response of the surface; nothing persists in the water after the sound stops.",
+   "whatWeSay": "A beautiful physical effect of sound on water.",
+   "whatWeNeverSay": [
+    "heals",
+    "healing water",
+    "structured water",
+    "raises your vibration"
+   ],
+   "sources": [
+    "https://www-users.cse.umn.edu/~vinals/research/fwaves/index.html"
+   ]
+  },
+  {
+   "id": "C-BIN-01",
+   "kind": "wellness",
+   "statement": "Binaural beats entrain brainwaves.",
+   "grade": "C",
+   "plainSummary": "Research is mixed; a 2023 systematic review of 14 EEG studies found results inconsistent.",
+   "whatWeSay": "An immersive headphone audio experience some people find relaxing.",
+   "whatWeNeverSay": [
+    "syncs your brain",
+    "rewires your brain",
+    "proven to reduce anxiety"
+   ],
+   "sources": [
+    "https://pubmed.ncbi.nlm.nih.gov/37205669/",
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC10198548"
+   ]
+  },
+  {
+   "id": "C-BIN-02",
+   "kind": "wellness",
+   "statement": "Binaural beats reduce stress or pain.",
+   "grade": "C",
+   "plainSummary": "2024 systematic reviews report mixed, low-certainty findings from small trials.",
+   "whatWeSay": "Some listeners describe the experience as calming.",
+   "whatWeNeverSay": [
+    "reduces stress",
+    "reduces pain",
+    "pain relief"
+   ],
+   "sources": [
+    "https://informahealthcare.com/doi/full/10.1080/18387357.2024.2374759",
+    "https://doaj.org/article/dfa26072808643c6a6fca754b7c09caa"
+   ]
+  },
+  {
+   "id": "C-MON-01",
+   "kind": "physics",
+   "statement": "Monaural and isochronic beats are audible on ordinary speakers; binaural beats need headphones.",
+   "grade": "A",
+   "plainSummary": "Binaural beats are created inside the listener from two different ear signals; monaural beats are a physical beat in the air.",
+   "whatWeSay": "Room-speaker beats work for groups; binaural layers need headphones.",
+   "whatWeNeverSay": [],
+   "sources": [
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC7082494"
+   ]
+  },
+  {
+   "id": "C-HEMI-01",
+   "kind": "wellness",
+   "statement": "Bilateral or hemispheric audio synchronises the two brain hemispheres.",
+   "grade": "D",
+   "plainSummary": "No good evidence for 'hemisphere synchronisation'. We offer these as experiential audio modes only.",
+   "whatWeSay": "Experiential audio modes: sound that moves between your ears.",
+   "whatWeNeverSay": [
+    "hemisphere sync",
+    "balances your brain",
+    "Hemi-Sync"
+   ],
+   "sources": [
+    "https://en.wikipedia.org/wiki/Hemi-Sync"
+   ]
+  },
+  {
+   "id": "C-SOL-01",
+   "kind": "tradition",
+   "statement": "These nine tones (174-963 Hz) are popular 'solfeggio' tradition frequencies.",
+   "grade": "T",
+   "plainSummary": "A modern invention (1970s, Joseph Puleo, later popularised). Offered as a cultural/musical choice.",
+   "whatWeSay": "Popular tradition frequencies.",
+   "whatWeNeverSay": [],
+   "sources": [
+    "https://science.feedback.org/review/no-evidence-support-claim-solfeggio-frequencies-remove-toxins-from-body/"
+   ]
+  },
+  {
+   "id": "C-SOL-02",
+   "kind": "wellness",
+   "statement": "Solfeggio frequencies repair DNA, remove toxins or have other specific effects.",
+   "grade": "D",
+   "plainSummary": "No scientific evidence for specific effects.",
+   "whatWeSay": "(nothing - we attach no benefits to these tones)",
+   "whatWeNeverSay": [
+    "repairs DNA",
+    "removes toxins",
+    "miracle tone",
+    "528 Hz heals"
+   ],
+   "sources": [
+    "https://science.feedback.org/review/no-evidence-support-claim-solfeggio-frequencies-remove-toxins-from-body/"
+   ]
+  },
+  {
+   "id": "C-432-01",
+   "kind": "wellness",
+   "statement": "Tuning to A4 = 432 Hz has special or natural effects.",
+   "grade": "D",
+   "plainSummary": "No established evidence that 432 Hz tuning has special effects.",
+   "whatWeSay": "Selectable reference pitch (440 Hz default, 432 Hz available).",
+   "whatWeNeverSay": [
+    "natural frequency of the universe",
+    "432 heals"
+   ],
+   "sources": [],
+   "notes": "Spec 17 lists no source on 432 Hz; add one before using this in a Learn card."
+  },
+  {
+   "id": "C-SCH-01",
+   "kind": "physics",
+   "statement": "The Schumann resonance (~7.83 Hz) is a natural electromagnetic resonance of the Earth-ionosphere cavity.",
+   "grade": "A",
+   "plainSummary": "Real atmospheric physics, measured since the 1960s.",
+   "whatWeSay": "A natural electromagnetic resonance of the Earth; no established health link.",
+   "whatWeNeverSay": [],
+   "sources": [],
+   "notes": "Spec 17 lists no source for this entry; add one (e.g. a geophysics review) before using it in Learn."
+  },
+  {
+   "id": "C-SCH-02",
+   "kind": "wellness",
+   "statement": "Listening to or being exposed to 7.83 Hz improves health.",
+   "grade": "D",
+   "plainSummary": "No established health link.",
+   "whatWeSay": "(nothing)",
+   "whatWeNeverSay": [
+    "grounds your body",
+    "earth's heartbeat heals"
+   ],
+   "sources": []
+  },
+  {
+   "id": "C-HRV-01",
+   "kind": "wellness",
+   "statement": "Resonance breathing near 0.1 Hz (about 4.5-6.5 breaths/min) increases heart-rate variability, and HRV biofeedback can help some people relax.",
+   "grade": "B",
+   "plainSummary": "Supported by multiple trials and reviews of HRV biofeedback (Lehrer & Gevirtz).",
+   "whatWeSay": "A breathing pacer at about six breaths a minute.",
+   "whatWeNeverSay": [
+    "fixes your nervous system",
+    "clinically proven"
+   ],
+   "sources": [
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC4104929",
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC7578229",
+    "https://link.springer.com/article/10.1007/s10484-023-09582-6"
+   ]
+  },
+  {
+   "id": "C-HRV-02",
+   "kind": "wellness",
+   "statement": "Heart-rhythm coherence improves emotions, intuition or performance broadly.",
+   "grade": "C",
+   "plainSummary": "Mostly observational or industry-linked studies; broader claims go beyond the evidence.",
+   "whatWeSay": "A heart-rhythm coherence readout (not a medical measurement).",
+   "whatWeNeverSay": [
+    "HeartMath",
+    "heart intelligence heals"
+   ],
+   "sources": [
+    "https://www.heartmath.org/?p=34692",
+    "https://uhra.herts.ac.uk/id/eprint/15348/1/ARRC_2021_Beyond_HRV_web_material.pdf"
+   ],
+   "notes": "'HeartMath-style method' wording is allowed in Learn cards and docs only, never in marketing."
+  },
+  {
+   "id": "C-SIGH-01",
+   "kind": "wellness",
+   "statement": "Five minutes a day of cyclic sighing for a month improved mood and lowered breathing rate more than mindfulness meditation in one randomized trial.",
+   "grade": "B",
+   "plainSummary": "A single RCT (Balban et al., Cell Reports Medicine 2023). Promising, not settled.",
+   "whatWeSay": "A guided cyclic-sigh breathing exercise.",
+   "whatWeNeverSay": [
+    "proven to cure stress"
+   ],
+   "sources": [
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC9873947"
+   ]
+  },
+  {
+   "id": "C-MED-01",
+   "kind": "wellness",
+   "statement": "A 7-day meditation retreat produced measurable brain and blood changes.",
+   "grade": "C",
+   "plainSummary": "One observational study of 20 healthy adults with no control group; the program's founder was a co-author employed by the retreat company; critics point to confounds.",
+   "whatWeSay": "Guided phases inspired by meditation practice, described generically.",
+   "whatWeNeverSay": [
+    "Dispenza",
+    "Dr Joe",
+    "reprograms your body"
+   ],
+   "sources": [
+    "https://today.ucsd.edu/story/meditation-retreat-rapidly-reprograms-body-and-mind",
+    "https://www.eurekalert.org/news-releases/1104876",
+    "https://edzardernst.com/2025/11/joe-dispenza-and-his-landmark-study-of-dr-joes-week-long-retreat/"
+   ]
+  },
+  {
+   "id": "C-MIND-01",
+   "kind": "wellness",
+   "statement": "Mindfulness, the relaxation response and yoga nidra reduce stress.",
+   "grade": "",
+   "plainSummary": "NOT YET GRADED. The spec requires looking up a current meta-analysis before assigning a grade.",
+   "whatWeSay": "(not used until graded)",
+   "whatWeNeverSay": [],
+   "sources": [],
+   "needsReview": true
+  },
+  {
+   "id": "C-FLK-01",
+   "kind": "safety",
+   "statement": "Flashing or flickering light at about 3-30 Hz (up to 60 Hz for some people) can trigger seizures in people with photosensitive epilepsy.",
+   "grade": "A",
+   "plainSummary": "Well-established; the reason the Safety Guardian blocks 3-60 Hz flicker and there is no strobe mode.",
+   "whatWeSay": "This experience uses light. If you have epilepsy or light sensitivity, check with your clinician first.",
+   "whatWeNeverSay": [],
+   "sources": [
+    "https://epilepsysociety.org.uk/sites/default/files/2025-04/PhotosensitiveepilepsyApril2025.pdf",
+    "https://developer.mozilla.org/en-US/docs/Web/Accessibility/Guides/Seizure_disorders",
+    "https://repository.essex.ac.uk/34275/1/Epilepsia%20-%202022%20-%20Fisher%20-%20Visually%20sensitive%20seizures%20An%20updated%20review%20by%20the%20Epilepsy%20Foundation.pdf"
+   ]
+  },
+  {
+   "id": "C-EXP-01",
+   "kind": "experience",
+   "statement": "Watching moving water and light is a calm, pleasant focal point for many people.",
+   "grade": "C",
+   "plainSummary": "Describes the experience, not a health effect. Testimonials must stay about the experience ('beautiful', 'the room went quiet'), never health outcomes.",
+   "whatWeSay": "A calm, beautiful focal point for meditation. An immersive group sound experience.",
+   "whatWeNeverSay": [
+    "reduces anxiety",
+    "therapeutic"
+   ],
+   "sources": [
+    "https://www.ftc.gov/system/files/ftc_gov/pdf/Health-Products-Compliance-Guidance.pdf"
+   ]
+  },
+  {
+   "id": "C-OCT-01",
+   "kind": "physics",
+   "statement": "Transposing a tone up by octaves into light frequencies gives its 'colour'.",
+   "grade": "D",
+   "plainSummary": "Sound and light are different physical waves; the octave-colour map is an artistic metaphor, not a physical equivalence.",
+   "whatWeSay": "Octave colour: an artistic metaphor, not a physical equivalence.",
+   "whatWeNeverSay": [
+    "the true colour of 528 Hz"
+   ],
+   "sources": []
+  },
+  {
+   "id": "C-SIM-01",
+   "kind": "physics",
+   "statement": "Simulated patterns and predicted wavelengths come from linear wave models (dispersion relation, bowl modes, N-wave sums).",
+   "grade": "A",
+   "plainSummary": "The models are standard physics, but real bowls differ; simulations are labelled SIMULATION and predictions as Simulated or Estimated.",
+   "whatWeSay": "Predicted from physics; your bowl's calibration shows the real thing.",
+   "whatWeNeverSay": [
+    "real footage (for simulations)"
+   ],
+   "sources": [
+    "https://www-users.cse.umn.edu/~vinals/research/fwaves/index.html",
+    "https://en.wikipedia.org/wiki/Chladni%27s_law"
+   ]
+  }
+ ]
+}

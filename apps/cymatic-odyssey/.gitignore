@@ -12,3 +12,7 @@ __pycache__/
 blender_enhanced/**/*.stl
 bambu/styles/
 bambu/hardware/
+node_modules/
+apps/web/dist/
+.vite/
+coverage/

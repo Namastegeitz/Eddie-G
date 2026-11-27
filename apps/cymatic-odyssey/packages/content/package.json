@@ -1,0 +1,8 @@
+{
+  "name": "@clc/content",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Claims register, phrase bank, never-say list and claims linter (spec 9.5, 9.6, 16).",
+  "exports": { ".": "./src/index.ts", "./claims-register.json": "./src/claims-register.json" }
+}

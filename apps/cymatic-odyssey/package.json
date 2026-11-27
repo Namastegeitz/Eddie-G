@@ -1,0 +1,25 @@
+{
+  "name": "cymatic-light-chamber",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Cymatic Light Chamber (working name; currently branded CYMATIC ODYSSEY) - monorepo root",
+  "type": "module",
+  "packageManager": "pnpm@10.28.0",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "typecheck": "tsc -p tsconfig.json --noEmit && tsc -p apps/web/tsconfig.json --noEmit",
+    "claims:lint": "node packages/content/scripts/claims-lint.mjs",
+    "build": "pnpm --filter @clc/web build",
+    "dev": "pnpm --filter @clc/web dev",
+    "legacy:test": "python3 tests/test_tools.py",
+    "ci": "pnpm typecheck && pnpm test && pnpm claims:lint && pnpm build"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.11",
+    "typescript": "^7.0.2",
+    "vitest": "^5.1.2"
+  }
+}

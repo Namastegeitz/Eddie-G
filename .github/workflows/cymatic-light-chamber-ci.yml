@@ -1,0 +1,48 @@
+name: cymatic-light-chamber CI
+
+on:
+  push:
+    paths:
+      - "apps/cymatic-odyssey/**"
+      - ".github/workflows/cymatic-light-chamber-ci.yml"
+  pull_request:
+    paths:
+      - "apps/cymatic-odyssey/**"
+
+defaults:
+  run:
+    working-directory: apps/cymatic-odyssey
+
+jobs:
+  legacy-generator:
+    name: Legacy STL generator still works (Python)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - run: pip install -r requirements.txt
+      - name: Python tests
+        run: python tests/test_tools.py
+      - name: Generator smoke test (one family, no zip rebuild)
+        run: python tools/generate.py --family polygons --jobs 2 --no-package --no-hardware
+
+  app:
+    name: Monorepo (typecheck, tests, claims linter, build)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.28.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: apps/cymatic-odyssey/pnpm-lock.yaml
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm typecheck
+      - run: pnpm test
+      - run: pnpm claims:lint
+      - run: pnpm build
