@@ -1,0 +1,212 @@
+# Cosmic Saucer Drift: tests and builds on GitHub's machines.
+#
+# Every push that changes COSMIC-SAUCER-DRIFT/game runs the tests (compile
+# check, 1,200 smoke checks, the AI race on every track) and, if they pass,
+# makes the web, Windows, Linux and debug Android builds. They're kept as
+# downloads on the run's page (Actions tab > the run > Artifacts).
+#
+# "Run workflow" by hand (Actions tab > this workflow > Run workflow) also
+# makes the STORE builds with crash reporting and the rating prompt
+# (builds/store_build.sh): an Android App Bundle signed with a throwaway debug
+# key, to prove the gradle build works. Upload builds are made on your own PC
+# with your upload key; this never uploads to any store.
+#
+# Optional repository secrets (Settings > Secrets and variables > Actions):
+#   CSD_SENTRY_DSN                     Sentry project DSN
+#   CSD_FIREBASE_ANDROID_CONFIG_BASE64 base64 of google-services.json
+#   CSD_FIREBASE_IOS_CONFIG_BASE64     base64 of GoogleService-Info.plist
+# Without them the store build still works; that service just stays off.
+name: Cosmic Saucer Drift (tests + builds)
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'COSMIC-SAUCER-DRIFT/game/**'
+      - 'COSMIC-SAUCER-DRIFT/builds/store_build.sh'
+      - '.github/workflows/cosmic-saucer-drift.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cosmic-saucer-drift-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  GODOT_VERSION: 4.7.2
+  GODOT_DIR: ${{ github.workspace }}/../godot
+
+defaults:
+  run:
+    working-directory: COSMIC-SAUCER-DRIFT/game
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Cache Godot and export templates
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.GODOT_DIR }}
+          key: godot-${{ env.GODOT_VERSION }}-csd-v1
+
+      - name: Install Godot ${{ env.GODOT_VERSION }}
+        run: |
+          set -e
+          mkdir -p "$GODOT_DIR"
+          if [ ! -x "$GODOT_DIR/godot" ]; then
+            base="https://github.com/godotengine/godot-builds/releases/download/${GODOT_VERSION}-stable"
+            curl -sSLo "$RUNNER_TEMP/godot.zip" "$base/Godot_v${GODOT_VERSION}-stable_linux.x86_64.zip"
+            unzip -q -o "$RUNNER_TEMP/godot.zip" -d "$RUNNER_TEMP/godot"
+            mv "$RUNNER_TEMP"/godot/Godot_v*_linux.x86_64 "$GODOT_DIR/godot"
+            curl -sSLo "$RUNNER_TEMP/templates.tpz" "$base/Godot_v${GODOT_VERSION}-stable_export_templates.tpz"
+            mkdir -p "$GODOT_DIR/templates"
+            # only what this game exports here
+            unzip -q -j -o "$RUNNER_TEMP/templates.tpz" templates/version.txt \
+              templates/web_nothreads_release.zip templates/web_nothreads_debug.zip \
+              templates/windows_release_x86_64.exe templates/windows_debug_x86_64.exe \
+              templates/linux_release.x86_64 templates/linux_debug.x86_64 \
+              templates/android_debug.apk templates/android_release.apk templates/android_source.zip \
+              -d "$GODOT_DIR/templates"
+            rm -f "$RUNNER_TEMP/templates.tpz"
+          fi
+          dest="$HOME/.local/share/godot/export_templates/$(cat "$GODOT_DIR/templates/version.txt")"
+          mkdir -p "$dest" && cp "$GODOT_DIR"/templates/* "$dest/"
+          sudo ln -sf "$GODOT_DIR/godot" /usr/local/bin/godot
+          godot --version
+
+      - name: Import the project
+        run: |
+          timeout 900 godot --headless --path . --import > "$RUNNER_TEMP/import.log" 2>&1 || true
+          if grep -E "SCRIPT ERROR|Parse Error" "$RUNNER_TEMP/import.log"; then exit 1; fi
+
+      - name: Tests (compile check, smoke checks, AI race on every track)
+        run: |
+          LAPS=1 tools/run_tests.sh 2>&1 | tee "$RUNNER_TEMP/tests.log"
+          cp /tmp/csd_smoke.log /tmp/csd_sim.log "$RUNNER_TEMP/" 2>/dev/null || true
+          grep -q "ALL CHECKS PASSED" "$RUNNER_TEMP/tests.log"
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: csd-test-logs
+          path: |
+            ${{ runner.temp }}/tests.log
+            ${{ runner.temp }}/csd_smoke.log
+            ${{ runner.temp }}/csd_sim.log
+          if-no-files-found: ignore
+
+  build:
+    needs: test
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Restore Godot
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.GODOT_DIR }}
+          key: godot-${{ env.GODOT_VERSION }}-csd-v1
+
+      - name: Set up Godot
+        run: |
+          set -e
+          dest="$HOME/.local/share/godot/export_templates/$(cat "$GODOT_DIR/templates/version.txt")"
+          mkdir -p "$dest" && cp "$GODOT_DIR"/templates/* "$dest/"
+          sudo ln -sf "$GODOT_DIR/godot" /usr/local/bin/godot
+          timeout 900 godot --headless --path . --import > /dev/null 2>&1 || true
+
+      - name: Android debug key and SDK path
+        run: |
+          set -e
+          ks="$RUNNER_TEMP/debug.keystore"
+          keytool -genkeypair -keystore "$ks" -storepass android -keypass android -alias androiddebugkey \
+            -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Android Debug, O=Android, C=US"
+          mkdir -p "$HOME/.config/godot"
+          printf '[gd_resource type="EditorSettings" format=3]\n\n[resource]\nexport/android/android_sdk_path = "%s"\nexport/android/java_sdk_path = "%s"\nexport/android/debug_keystore = "%s"\nexport/android/debug_keystore_user = "androiddebugkey"\nexport/android/debug_keystore_pass = "android"\n' \
+            "$ANDROID_HOME" "$JAVA_HOME" "$ks" > "$HOME/.config/godot/editor_settings-4.7.tres"
+
+      - name: Builds (web, Windows, Linux, debug APK)
+        run: |
+          set -e
+          mkdir -p build/web build/out
+          godot --headless --path . --export-release "Web" build/web/index.html
+          test -s build/web/index.wasm && test -s build/web/index.pck
+          (cd build/web && zip -q -r ../out/CosmicSaucerDrift-web.zip .)
+          godot --headless --path . --export-release "Windows Desktop" build/out/CosmicSaucerDrift.exe
+          godot --headless --path . --export-release "Linux" build/out/CosmicSaucerDrift.x86_64
+          godot --headless --path . --export-debug "Android" build/out/cosmicsaucerdrift-debug.apk
+          ls -la build/out
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cosmic-saucer-drift-builds
+          path: COSMIC-SAUCER-DRIFT/game/build/out
+
+  store-build:
+    if: github.event_name == 'workflow_dispatch'
+    needs: test
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Restore Godot
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.GODOT_DIR }}
+          key: godot-${{ env.GODOT_VERSION }}-csd-v1
+
+      - name: Set up Godot and the Android SDK path
+        run: |
+          set -e
+          dest="$HOME/.local/share/godot/export_templates/$(cat "$GODOT_DIR/templates/version.txt")"
+          mkdir -p "$dest" && cp "$GODOT_DIR"/templates/* "$dest/"
+          sudo ln -sf "$GODOT_DIR/godot" /usr/local/bin/godot
+          ks="$RUNNER_TEMP/debug.keystore"
+          keytool -genkeypair -keystore "$ks" -storepass android -keypass android -alias androiddebugkey \
+            -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Android Debug, O=Android, C=US"
+          mkdir -p "$HOME/.config/godot"
+          printf '[gd_resource type="EditorSettings" format=3]\n\n[resource]\nexport/android/android_sdk_path = "%s"\nexport/android/java_sdk_path = "%s"\nexport/android/debug_keystore = "%s"\nexport/android/debug_keystore_user = "androiddebugkey"\nexport/android/debug_keystore_pass = "android"\n' \
+            "$ANDROID_HOME" "$JAVA_HOME" "$ks" > "$HOME/.config/godot/editor_settings-4.7.tres"
+
+      - name: Store build (Android App Bundle + Linux, with crash reporting)
+        working-directory: COSMIC-SAUCER-DRIFT
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SENTRY_DSN: ${{ secrets.CSD_SENTRY_DSN }}
+          FB_ANDROID_B64: ${{ secrets.CSD_FIREBASE_ANDROID_CONFIG_BASE64 }}
+          FB_IOS_B64: ${{ secrets.CSD_FIREBASE_IOS_CONFIG_BASE64 }}
+          STORE_DEBUG: '1'
+        run: |
+          set -e
+          if [ -n "$FB_ANDROID_B64" ] && [ -n "$FB_IOS_B64" ]; then
+            mkdir -p "$RUNNER_TEMP/fb"
+            echo "$FB_ANDROID_B64" | base64 -d > "$RUNNER_TEMP/fb/google-services.json"
+            echo "$FB_IOS_B64" | base64 -d > "$RUNNER_TEMP/fb/GoogleService-Info.plist"
+            export FIREBASE_ANDROID_CONFIG="$RUNNER_TEMP/fb/google-services.json"
+            export FIREBASE_IOS_CONFIG="$RUNNER_TEMP/fb/GoogleService-Info.plist"
+          fi
+          bash builds/store_build.sh aab linux
+          test -s builds/store/cosmicsaucerdrift-store.aab
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cosmic-saucer-drift-store-builds-debug-signed
+          path: COSMIC-SAUCER-DRIFT/builds/store
+          retention-days: 7

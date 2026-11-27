@@ -66,6 +66,9 @@ Contact: your name, phone and email (only Apple sees them). No demo account need
 ## App Privacy
 - "Do you or your third-party partners collect data from this app?" → **No** → shows **Data Not Collected**.
 - No tracking. No third-party SDKs.
+- **Store builds with crash reporting** (`builds/store_build.sh`, added 27 Nov 2026) include the
+  Sentry and Firebase Crashlytics SDKs (opt-in). Answer as in `stores/CRASH_REPORTING.md` for those:
+  Diagnostics > Crash Data, Identifiers > Device ID; not linked; no tracking.
 
 ## EU Digital Services Act
 Choose **trader** or **non-trader** yourself (checklist step "EU trader status"). A free game

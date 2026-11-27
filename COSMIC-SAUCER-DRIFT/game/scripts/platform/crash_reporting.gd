@@ -89,6 +89,8 @@ func _configure_sentry(o: Object) -> void:
 	o.set("sample_rate", float(sc.get("sample_rate", 1.0)))
 	o.set("attach_log", bool(sc.get("attach_log", false)))
 	o.set("send_default_pii", false)
+	o.set("attach_screenshot", false)   # no pictures of the player's screen
+	o.set("attach_scene_tree", false)
 	o.set("debug", false)
 
 

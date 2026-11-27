@@ -1,0 +1,7 @@
+# Store builds (builds/store_build.sh): a copy of the game with the store
+# add-ons, your Sentry DSN and Firebase files baked in. Never commit these.
+store-build/
+builds/store/
+private/
+google-services.json
+GoogleService-Info.plist

@@ -103,3 +103,6 @@ Galactic Cups screen, the Hangar with a premium craft, Mars.
     Not applicable; progress lives only on the device (Settings > Reset all
     progress, or uninstalling, removes it).
 - **Permissions:** VIBRATE only (for haptics).
+- **Store builds with crash reporting** (`builds/store_build.sh`, added 27 Nov 2026): change the
+  Data safety answers and permissions as listed in `stores/CRASH_REPORTING.md` before uploading
+  one of those (crash logs, diagnostics, installation IDs; optional; not shared; INTERNET added).

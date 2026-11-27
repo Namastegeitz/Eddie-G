@@ -8,3 +8,9 @@ __pycache__/
 # Re-download with: python3 tools/meshy/generate.py --source craft --refetch
 assets/craft/*/*.glb
 assets/craft/*/*.glb.import
+# Store add-ons are installed only into the store-build copy (never here).
+addons/sentry/
+addons/godotx_firebase/
+addons/InappReview*/
+android/
+ios/
