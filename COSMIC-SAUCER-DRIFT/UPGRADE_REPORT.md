@@ -185,3 +185,17 @@ Not live yet, so there are no reviews.
 | In-app review plugin (godot-inapp-review v5.3) | Cengiz (cengiz-pz), MIT | Free | Store-approved "Rate this game" prompt after a good race | No prompt; players rate from the store page |
 | Azure Artifact Signing | Microsoft | $9.99/month (individuals: US/Canada) | Signed Windows downloads (fewer SmartScreen warnings) | Ship Windows through Steam/MS Store, which don't need it |
 | Not recommended now | — | — | GdUnit4/GUT (harness already covers it), fastlane (after store accounts exist), Firebase/PostHog (would end "no data collected") | — |
+
+### Eddie's answers (27 Nov 2026)
+- **Sentry crash reporting: No.**
+  - The game keeps "no data collected".
+  - Phone crash reports come from the Google Play Console (Android vitals) and App Store Connect.
+- **GitHub Actions CI: Yes.**
+- **In-app review prompt: Yes, add it now.**
+  - Cloud-session limit: GitHub's download pages are blocked here and the native libraries need
+    the Android SDK and Xcode, so the plugin's *binaries* can't be fetched or built on this machine.
+  - The game side is added: a review prompt at a happy moment. It's off until switched on and does
+    nothing without the plugin.
+  - Also added: a pinned fetch script for the release zip (`InappReviewPlugin-Multi-v5.3.zip`,
+    MIT, by Cengiz / Godot Mobile Plugins) that runs on Eddie's PC or in CI.
+- **Azure Artifact Signing: No.**
