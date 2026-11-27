@@ -79,3 +79,16 @@ new value. Details and numbers: `UPGRADE_REPORT.md`.
   re-rendered (the take-turns shot became a moon shot; all shots now show the
   lush jungle).
 - Next: the take-turns mini game, designed with Eddie.
+
+## 2026-11-27 (evening) · Your Move! mini game
+
+- Eddie's answers: Copycat Chain, title-screen button, bananas + best score,
+  name "Your Move!".
+- `Game.startYourMove()` / `yourMoveOver()` (js/game.js) reuse the take-turns
+  engine: the monkey opens with one move, you copy and add, it copies and
+  adds; one slip ends it. All six moves, no combos. Tempo 90 BPM rising 1.5
+  per move to 126 (`yourMoveBpm`). Bananas: 1 per move of the longest dance
+  copied, +5 every 5 moves, +10 for a new best (`yourMoveBananas`).
+- Save record `yourMove: { best, bestScore, plays }` (old saves get it empty);
+  Stats tile; Help section; pause menu restart; results card.
+- Stats now count 40 levels / 120 stars (it still said 30 / 90).

@@ -554,6 +554,40 @@ let passes = 0;
     expect(r.edition === 'pc' && r.shop === 'none' && !r.purchases && r.help && r.billing === 'none', JSON.stringify(r));
   });
 
+  // ---------------------------------------------------------------- Your Move! mini game
+  await step('Your Move! mini game: copy, add your own move, the monkey copies you; one slip ends it', async () => {
+    await ev(() => { document.querySelectorAll('.overlay.show').forEach((o) => o.classList.remove('show')); if (MSMD.game.mode !== 'menu') MSMD.game.quit(); MSMD.ui.show('title'); });
+    await ev(() => { MSMD.Save.data.yourMove = { best: 0, bestScore: 0, plays: 0 }; });
+    const bananas0 = await ev(() => MSMD.Save.data.bananas);
+    await page.click('#btn-yourmove');
+    let copied = 0;
+    for (let turn = 0; turn < 2; turn++) {
+      await waitPhase('respond', 40000);
+      const exp = await ev(() => MSMD.game.run.expected.length);
+      expect(exp === 1 + turn * 2, `dance grows by two each turn: ${exp}`);
+      await playRoutine('keys');
+      await waitPhase('add', 20000);
+      expect((await page.textContent('#phase')).includes('YOUR MOVE'), 'YOUR MOVE! label in the mini game');
+      copied = exp;
+      await page.keyboard.press('a'); // add Left Leg
+    }
+    await waitPhase('respond', 40000);
+    const chain = await ev(() => ({ steps: MSMD.game.run.steps.map((s) => s[0]), owners: MSMD.game.run.trade.owners }));
+    expect(chain.steps.length === 5 && chain.owners.join() === 'monkey,you,monkey,you,monkey' && chain.steps[1] === 'LL' && chain.steps[3] === 'LL', JSON.stringify(chain));
+    await shot('09-your-move');
+    const right = await ev(() => MSMD.game.run.expected[0][0]);
+    await page.keyboard.press(keyFor[['LA', 'RA', 'LL', 'RL'].find((m) => m !== right)]);
+    await page.waitForSelector('#mistake:not([hidden])', { timeout: 15000 });
+    await page.click('#mistake-go');
+    await page.waitForSelector('#ov-result.show', { timeout: 15000 });
+    const card = await page.textContent('#result-card');
+    const y = await ev(() => MSMD.Save.data.yourMove);
+    const got = (await ev(() => MSMD.Save.data.bananas)) - bananas0;
+    expect(card.includes('Your Move!') && card.includes('Longest dance copied') && y.best === copied && y.plays === 1, `card/best: ${y.best} vs ${copied}`);
+    expect(got === copied + (copied >= 5 ? 5 : 0) + 10, `bananas ${got} for ${copied} moves + new best`);
+    await page.click('#ym-menu');
+  });
+
   // ---------------------------------------------------------------- 1.1.0 upgrade
   const toTitle = () => ev(() => { document.querySelectorAll('.overlay.show').forEach((o) => o.classList.remove('show')); if (MSMD.game.mode !== 'menu') MSMD.game.quit(); MSMD.game.paused = false; MSMD.ui.show('title'); });
   // hold a controller button long enough for the slow test renderer to see it

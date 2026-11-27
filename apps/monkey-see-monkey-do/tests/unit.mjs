@@ -325,5 +325,17 @@ check('monthly limit allows within it', Save.overLimit({ micros: 4990000, curren
   check('menu navigation goes the right way', nearestInDirection(a.rect, [right, below, diag], 'right') === right && nearestInDirection(a.rect, [right, below, diag], 'down') === below && nearestInDirection(a.rect, [right, below], 'up') === null);
 }
 
+// ---- Your Move! mini game (rules)
+{
+  const { yourMoveBananas, yourMoveBpm, RULES: R } = await import('../js/rules.js');
+  check('Your Move!: nothing for no copied dance', yourMoveBananas({ moves: 0, newBest: true }).total === 0);
+  check('Your Move!: 1 banana a move', yourMoveBananas({ moves: 3, newBest: false }).total === 3);
+  check('Your Move!: milestone every 5 moves and a best bonus', yourMoveBananas({ moves: 11, newBest: true }).total === 11 + 2 * R.yourMoveMilestoneBananas + R.yourMoveBestBonus);
+  check('Your Move!: itemised total adds up', (() => { const b = yourMoveBananas({ moves: 17, newBest: true }); return b.items.reduce((t, i) => t + i.amount, 0) === b.total; })());
+  check('Your Move!: tempo starts gentle and rises', yourMoveBpm(1) === R.yourMoveStartBpm && yourMoveBpm(9) > yourMoveBpm(3));
+  check('Your Move!: tempo has a ceiling', yourMoveBpm(500) === R.yourMoveMaxBpm);
+  check('Your Move!: old saves get an empty record', Save.data.yourMove && Save.data.yourMove.best === 0 && Save.data.yourMove.plays === 0);
+}
+
 console.log(`${pass} passed, ${fail} failed`);
 process.exit(fail ? 1 : 0);

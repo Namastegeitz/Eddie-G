@@ -51,8 +51,8 @@ Monkey See, Monkey Do is a rhythm memory game for the whole family. A cheerful 3
 - Every level moves to a new map: jungle clearing, beach at sunset, temple disco and a party on the moon.
 - Four worlds with a showdown at the end of each.
 
-ENDLESS AND FREE DANCE
-Endless keeps adding one move per round until you miss. Free Dance has no timer and no score: just make the monkey dance.
+ENDLESS, YOUR MOVE! AND FREE DANCE
+Endless keeps adding one move per round until you miss. Your Move! is a mini game where you take turns: copy the monkey's dance, add a move of your own, and watch it copy you. Free Dance has no timer and no score: just make the monkey dance.
 
 DRESS UP
 100 skins, from cocoa fur to galaxy, lava and solid gold, plus 88 pieces of gear: hats, glasses, capes, wings, jetpacks, microphones, rocket boots and sparkly auras. Save up to six outfits. Every skin and item can be earned by playing.
@@ -89,7 +89,7 @@ Monkey See, Monkey Do is a rhythm memory game for the whole family. A cheerful 3
 ★ 40 levels across four worlds, with a showdown at the end of each.
 ★ A new map every level: jungle clearing, beach at sunset, temple disco, party on the moon.
 ★ Combos, build-up rounds, speed-up rounds and backwards rounds.
-★ Endless mode and Free Dance.
+★ Endless mode, the Your Move! mini game (take turns with the monkey) and Free Dance.
 ★ 100 skins and 88 pieces of gear: hats, capes, wings, jetpacks, rocket boots, sparkly auras. Save six outfits.
 
 Made for everyone
@@ -120,8 +120,8 @@ Get it right and the monkey cheers. Slip up and it stumbles, rubs its head, and 
 40 levels, four maps
 Start with two or three slow moves while you learn, then work up to long routines, fast tempos, combos where you press two moves at once, build-up rounds, speed-up rounds and backwards rounds. Every level moves to a new map: a jungle clearing, a beach at sunset, a temple disco and a party on the moon.
 
-Endless and Free Dance
-Endless adds one move per round until you miss. Free Dance has no timer and no score.
+Endless, Your Move! and Free Dance
+Endless adds one move per round until you miss. Your Move! is a mini game: take turns with the monkey, each adding a move to the dance. Free Dance has no timer and no score.
 
 Dress up
 100 skins and 88 pieces of gear, from party hats and jetpacks to angel wings and rocket boots, all earned by playing. Save up to six outfits.
@@ -149,7 +149,7 @@ A cheerful rhythm memory game that plays right here in your browser, on a phone 
 - Copy the monkey's dance in the same order, on the beat.
 - 40 levels on four maps: jungle, beach, temple disco and the moon.
 - Combos, build-up, speed-up and backwards rounds.
-- Endless mode and Free Dance.
+- Endless mode, the Your Move! mini game and Free Dance.
 - 100 skins and 88 pieces of gear, all earned by playing.
 - No ads, no account, no tracking. Works offline once loaded.
 
@@ -167,5 +167,5 @@ Watch the monkey dance, then copy its moves on the beat. 40 levels on four maps,
 
 ### whats-new (limit 500)
 ```
-New: play with a game controller or your own keys, smoother maps, a lush new jungle, and every level is all about copying the monkey. 40 levels on four maps, Endless and Free Dance, 100 skins and 88 pieces of gear to earn.
+New: the Your Move! mini game (take turns with the monkey), game controller support, custom keys, smoother maps and a lush new jungle. 40 levels on four maps, Endless and Free Dance, 100 skins and 88 pieces of gear to earn.
 ```

@@ -32,6 +32,15 @@ export const RULES = {
   endlessBestBonus: 10,
   // Take turns: points for each move you add (any move counts; there is no wrong one)
   tradeAddPoints: 50,
+  // Your Move! mini game: bananas for the longest dance you copied all the way
+  yourMovePerMove: 1,
+  yourMoveMilestoneEvery: 5,
+  yourMoveMilestoneBananas: 5,
+  yourMoveBestBonus: 10,
+  // ...and its tempo, which rises as the dance grows
+  yourMoveStartBpm: 90,
+  yourMoveBpmPerMove: 1.5,
+  yourMoveMaxBpm: 126,
   // Spending inside a level
   replayCost: 5,
   continueCost: 15,
@@ -106,6 +115,21 @@ export function endlessBananas({ rounds, newBest }) {
   if (milestones > 0) items.push({ label: `Every ${RULES.endlessMilestoneEvery} rounds (${milestones} x ${RULES.endlessMilestoneBananas})`, amount: milestones * RULES.endlessMilestoneBananas });
   if (newBest && rounds > 0) items.push({ label: 'New best', amount: RULES.endlessBestBonus });
   return { items, total: items.reduce((s, i) => s + i.amount, 0) };
+}
+
+/** Bananas for a Your Move! game whose longest fully copied dance had `moves` moves. */
+export function yourMoveBananas({ moves, newBest }) {
+  const items = [];
+  if (moves > 0) items.push({ label: `Longest dance copied (${moves} x ${RULES.yourMovePerMove})`, amount: moves * RULES.yourMovePerMove });
+  const milestones = Math.floor(moves / RULES.yourMoveMilestoneEvery);
+  if (milestones > 0) items.push({ label: `Every ${RULES.yourMoveMilestoneEvery} moves (${milestones} x ${RULES.yourMoveMilestoneBananas})`, amount: milestones * RULES.yourMoveMilestoneBananas });
+  if (newBest && moves > 0) items.push({ label: 'New best', amount: RULES.yourMoveBestBonus });
+  return { items, total: items.reduce((s, i) => s + i.amount, 0) };
+}
+
+/** Your Move! tempo for a dance of `len` moves. */
+export function yourMoveBpm(len) {
+  return Math.min(RULES.yourMoveMaxBpm, Math.round(RULES.yourMoveStartBpm + Math.max(0, len - 1) * RULES.yourMoveBpmPerMove));
 }
 
 /** Golden bananas for an Endless run of `rounds` cleared rounds. */

@@ -57,6 +57,7 @@ function defaults() {
     processedTx: [], // store transaction ids already delivered (never grant twice)
     levels: {}, // id -> { stars, best, clears }
     endless: { bestRounds: 0, bestScore: 0, plays: 0 },
+    yourMove: { best: 0, bestScore: 0, plays: 0 }, // Your Move! mini game (added in 1.1.0)
     owned: JSON.parse(JSON.stringify(DEFAULT_OWNED)),
     equipped: JSON.parse(JSON.stringify(DEFAULT_EQUIPPED)),
     settings: { ...DEFAULT_SETTINGS },

@@ -2,9 +2,14 @@
 // -> cheer or oops. Runs Adventure levels, Endless and Free Dance.
 // Timing runs on the beat clock in audio.js so moves land on the music.
 import { MOVES, chordFor, stepName, moveName } from './moves.js';
-import { RULES, gradeTiming, stepPoints, streakMult, starsFor, levelBananas, endlessBananas, endlessGolden, timeLimit } from './rules.js';
+import { RULES, gradeTiming, stepPoints, streakMult, starsFor, levelBananas, endlessBananas, endlessGolden, timeLimit, yourMoveBananas, yourMoveBpm } from './rules.js';
 import { LEVELS, WORLDS, getLevel, generateRound, extendEndless, expectedSteps, watchSchedule, makeRng, newSeed, endlessBpm, levelNews, tradeMove } from './levels.js';
 import { Save } from './save.js';
+
+// Your Move! mini game: the monkey opens with one move; you copy the whole
+// dance and add any move of your own; the monkey copies you and adds one; the
+// dance keeps growing until one slip. All six moves, no combos.
+const YOUR_MOVE = { id: 0, name: 'Your Move!', moves: ['LA', 'HD', 'RA', 'LL', 'FL', 'RL'], chords: [], tradeStart: 1, rounds: [], bpm: RULES.yourMoveStartBpm };
 
 const FIDGETS = ['WAVE', 'SCRATCH', 'YAWN'];
 
@@ -170,6 +175,24 @@ export class Game {
     this.beginRound(false);
   }
 
+  /** Your Move! mini game (title screen). One slip ends it, like Endless. */
+  startYourMove() {
+    this.clearEvents();
+    this.mode = 'yourmove';
+    this.paused = false;
+    this.monkey.anims = [];
+    this.run = this.newRun(YOUR_MOVE);
+    this.run.lives = 1;
+    this.run.copied = 0; // longest dance copied all the way
+    if (!Save.data.yourMove) Save.data.yourMove = { best: 0, bestScore: 0, plays: 0 };
+    Save.data.yourMove.plays++;
+    Save.stat('yourMovePlays');
+    Save.persist();
+    this.setScene(null, this.effBpm(yourMoveBpm(1)));
+    this.ui.showHud('yourmove', this.run);
+    this.beginRound(false);
+  }
+
   startFree() {
     this.clearEvents();
     this.mode = 'free';
@@ -187,6 +210,7 @@ export class Game {
 
   roundBpm() {
     const r = this.run;
+    if (this.mode === 'yourmove') return this.effBpm(yourMoveBpm(r.steps ? r.steps.length : 1));
     return this.mode === 'endless' ? this.effBpm(endlessBpm(r.round)) : this.effBpm(r.level.bpm);
   }
 
@@ -203,6 +227,13 @@ export class Game {
         r.seeds[r.round] = seed;
         // take turns: the dance grows as you and the monkey trade moves
         r.trade = gen.twist === 'trade' ? { target: gen.target, owners: gen.steps.map(() => 'monkey'), rng: makeRng((seed ^ 0x5bd1e995) >>> 0), added: 0 } : null;
+      } else if (this.mode === 'yourmove') {
+        // the monkey opens with one move; after that the dance only grows by taking turns
+        if (!r.steps) {
+          r.trade = { target: Infinity, owners: ['monkey'], rng: makeRng((r.seed ^ 0x5bd1e995) >>> 0), added: 0 };
+          r.steps = [tradeMove(r.trade.rng, r.level, [])];
+        }
+        r.twist = null;
       } else {
         r.steps = extendEndless(r.rng, r.steps || [], r.round);
         r.twist = null;
@@ -340,6 +371,8 @@ export class Game {
       r.partial = null;
       r.hintIndex = -1;
       r.replayUsed = false;
+      const bpm = this.roundBpm();
+      if (Math.abs(this.audio.bpm - bpm) > 0.5) this.audio.setTempo(bpm);
       this.ui.hudRound(this.mode, r);
       this.startWatch();
     });
@@ -475,6 +508,7 @@ export class Game {
     this.ui.score(r.score, r.streak);
     r.idx++;
     if (r.idx >= r.expected.length) {
+      if (this.mode === 'yourmove') r.copied = Math.max(r.copied || 0, r.expected.length);
       if (r.trade && r.steps.length < r.trade.target) this.startAdd();
       else this.roundCleared();
     } else this.updateHint();
@@ -504,11 +538,12 @@ export class Game {
     this.ui.replayButton(false);
     this.ui.hintPad(null);
     this.ui.padMode('off', this.allowedMoves());
-    this.ui.lives(r.lives, this.mode === 'endless' ? 1 : RULES.startLives);
+    this.ui.lives(r.lives, this.mode === 'endless' || this.mode === 'yourmove' ? 1 : RULES.startLives);
     this.ui.score(r.score, 0);
     const info = { kind, expected, tapped, index: r.idx, total: r.expected.length, twist: r.twist, lives: r.lives, mode: this.mode, naming: this.s.naming };
     let next;
     if (this.mode === 'endless') next = () => this.endlessOver();
+    else if (this.mode === 'yourmove') next = () => this.yourMoveOver();
     else if (r.lives > 0) next = () => this.beginRound(true);
     else next = () => this.levelFailed();
     const go = () => {
@@ -516,8 +551,9 @@ export class Game {
       this.ui.hideMistake();
       next();
     };
-    this.ui.mistake(info, go, r.lives > 0 && this.mode !== 'endless' ? 3.2 : 2.2);
-    this.at(this.now() + (r.lives > 0 && this.mode !== 'endless' ? 3.2 : 2.2), go);
+    const wait = r.lives > 0 && this.mode !== 'endless' && this.mode !== 'yourmove' ? 3.2 : 2.2;
+    this.ui.mistake(info, go, wait);
+    this.at(this.now() + wait, go);
   }
 
   roundCleared() {
@@ -674,6 +710,27 @@ export class Game {
     this.ui.showEndless({ rounds, score: r.score, bestRounds: e.bestRounds, bestScore: e.bestScore, newBest, items: bn.items, total: bn.total, longest: r.steps.length, bestStreak: r.bestStreak, seed: r.seed, golden, unlocks: unlocked.skins });
   }
 
+  /** Your Move! is over: bananas for the longest dance copied, and a best to beat. */
+  yourMoveOver() {
+    const r = this.run;
+    this.phase = 'result';
+    this.clearEvents();
+    const moves = r.copied || 0;
+    const y = Save.data.yourMove;
+    const newBest = moves > y.best;
+    y.best = Math.max(y.best, moves);
+    y.bestScore = Math.max(y.bestScore || 0, r.score);
+    const bn = yourMoveBananas({ moves, newBest });
+    Save.addBananas(bn.total, `Your Move!: ${moves} move${moves === 1 ? '' : 's'}`);
+    const unlocked = Save.checkSkinGoals();
+    Save.persist();
+    if (newBest && moves > 0) {
+      this.stage.confetti(0.8);
+      this.audio.sfx('level');
+    }
+    this.ui.showYourMove({ moves, score: r.score, best: y.best, newBest, items: bn.items, total: bn.total, added: r.trade ? r.trade.added : 0, length: r.steps.length, unlocks: unlocked.skins });
+  }
+
   replay() {
     const r = this.run;
     if (!r || this.phase !== 'respond' || r.replayUsed || this.paused) return;
@@ -690,7 +747,7 @@ export class Game {
   // ------------------------------------------------------------ pause
 
   canPause() {
-    return (this.mode === 'adventure' || this.mode === 'endless' || this.mode === 'free') && ['countin', 'watch', 'respond', 'add', 'between', 'cheer', 'oops', 'free', 'starting'].includes(this.phase);
+    return (this.mode === 'adventure' || this.mode === 'endless' || this.mode === 'free' || this.mode === 'yourmove') && ['countin', 'watch', 'respond', 'add', 'between', 'cheer', 'oops', 'free', 'starting'].includes(this.phase);
   }
 
   pause() {

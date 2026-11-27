@@ -35,10 +35,13 @@ names to the monkey's own sides; the buttons never move.
 - **Adventure:** 40 levels in 4 worlds (Jungle Clearing, Beach Bash, Temple
   Disco, Moon Base), 3 lives a level, 3 stars a level, showdowns at levels 10/20/30/40.
   - Levels 1-3: 2-3 moves, 80-88 BPM. Levels 4-10: 4-6 moves, 95-120 BPM, combos.
-  - **Every level is watch and copy:** the monkey dances, you copy it. (Take
-    turns, where you add moves of your own, was taken out of the levels on
-    27 Nov 2026 and will come back as its own mini game; its code is kept in
-    `js/levels.js` and `js/game.js`, and no level uses it.)
+  - **Every level is watch and copy:** the monkey dances, you copy it.
+  - **Your Move!** (mini game, title screen): take turns with the monkey. It
+    does a move; you copy the whole dance and add any move of your own; it
+    copies you and adds another. The dance grows two moves a turn and the
+    tempo rises until one slip. Bananas for the longest dance copied, and a
+    best to beat (Stats). Built on the take-turns code in `js/levels.js` and
+    `js/game.js` (`startYourMove`).
   - World 2 adds build-up rounds (each round repeats the last and adds moves),
     cross combos, and speed-up rounds. World 3 adds backwards rounds, up to 10
     moves at 142 BPM. World 4 (Moon Base, levels 31-40) mixes every twist, up to

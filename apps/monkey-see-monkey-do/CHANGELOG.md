@@ -7,11 +7,15 @@ Written for players. The newest version is at the top.
 **Changed**
 - Every level is about watching the monkey and copying its dance. The "Your
   move" rounds (take turns, where you added moves of your own) are gone from
-  levels 2, 3, 33 and 37; they'll come back as a separate mini game. Levels 2
-  and 3 are gentle copy levels again, and the moon's Moon Echo and Space Dance
-  are regular copy levels. Your stars and scores are kept.
+  levels 2, 3, 33 and 37. Levels 2 and 3 are gentle copy levels again, and the
+  moon's Moon Echo and Space Dance are regular copy levels. Your stars and
+  scores are kept.
 
 **New**
+- **Your Move!** mini game (button on the title screen): take turns with the
+  monkey. Copy its dance, add any move of your own, and watch it copy you and
+  add another. The dance grows two moves a turn and speeds up until one slip.
+  Bananas for the longest dance you copied, and a best to beat.
 - Play with a game controller: shoulder buttons for the arms, triggers for the
   legs, Y for Head Bob, A for Flair. The D-pad works too, and in the menus you
   can move around with the D-pad, choose with A and go back with B. The buttons

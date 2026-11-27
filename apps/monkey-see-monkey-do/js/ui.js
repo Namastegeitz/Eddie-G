@@ -205,6 +205,7 @@ export class UI {
     });
     $('#btn-endless').addEventListener('click', () => { this.audio.unlock(); this.click(); this.game.startEndless(); });
     $('#btn-free').addEventListener('click', () => { this.audio.unlock(); this.click(); this.game.startFree(); });
+    $('#btn-yourmove').addEventListener('click', () => { this.audio.unlock(); this.click(); this.game.startYourMove(); });
     $('#btn-pause').addEventListener('click', () => {
       this.click();
       if (this.game.mode === 'free') this.game.pause();
@@ -622,6 +623,10 @@ export class UI {
       lvl.textContent = 'Endless';
       rnd.textContent = `Best: ${Save.data.endless.bestRounds} rounds`;
       this.lives(run.lives, 1);
+    } else if (mode === 'yourmove') {
+      lvl.textContent = 'Your Move!';
+      rnd.textContent = `Best: ${(Save.data.yourMove || { best: 0 }).best} moves`;
+      this.lives(run.lives, 1);
     } else {
       lvl.textContent = 'Free Dance';
       rnd.textContent = 'Tap anything. No score, no timer.';
@@ -642,6 +647,7 @@ export class UI {
   hudRound(mode, run) {
     if (mode === 'adventure') $('#hud-round').textContent = `Round ${run.round + 1} of ${run.level.rounds.length}`;
     else if (mode === 'endless') $('#hud-round').textContent = `Round ${run.round + 1} · ${run.steps.length} moves · best ${Save.data.endless.bestRounds}`;
+    else if (mode === 'yourmove') $('#hud-round').textContent = `Dance: ${run.steps.length} move${run.steps.length === 1 ? '' : 's'} · best ${(Save.data.yourMove || { best: 0 }).best}`;
   }
 
   lives(n, max) {
@@ -847,7 +853,7 @@ export class UI {
       body = `<p>Move ${info.index + 1} of ${info.total}${info.twist === 'reverse' ? ' (backwards)' : ''}:</p><div class="compare"><div>${swatch(exp)}It was ${esc(stepName(exp, naming))}</div><span class="x">vs</span><div>${swatch(info.tapped)}You tapped ${esc(moveName(info.tapped, naming))}</div></div>`;
     }
     let btn;
-    if (info.mode === 'endless') btn = 'See results';
+    if (info.mode === 'endless' || info.mode === 'yourmove') btn = 'See results';
     else if (info.lives > 0) btn = `Watch again (${info.lives} ${info.lives === 1 ? 'life' : 'lives'} left)`;
     else btn = 'Out of lives';
     el.innerHTML = `<h3>${title}</h3>${body}<button class="btn primary" id="mistake-go">${btn}<span class="fill" style="animation-duration:${seconds}s"></span></button>`;
@@ -943,6 +949,30 @@ export class UI {
     this.updateBananas(true);
   }
 
+  /** Results of a Your Move! game. */
+  showYourMove(e) {
+    const rows = e.items.map((it) => `<tr><td>${esc(it.label)}</td><td>+${it.amount}</td></tr>`).join('');
+    $('#result-card').innerHTML = `
+      <div class="eyebrow">Your Move!</div>
+      <h2>${e.newBest ? 'New best!' : e.moves ? 'Nice dancing!' : 'Good try!'}</h2>
+      <div class="result-stats">
+        <div><b>${e.moves}</b><span>Longest dance copied</span></div>
+        <div><b>${e.added}</b><span>Moves you added</span></div>
+        <div><b>${e.best}</b><span>Best</span></div>
+      </div>
+      <p class="note">You and the monkey built a dance of ${e.length} moves. ${e.score.toLocaleString()} points.</p>
+      <table class="breakdown"><tbody>${rows || '<tr><td>Copy the first move to start earning</td><td>+0</td></tr>'}<tr class="total"><td>Bananas earned</td><td>+${e.total}</td></tr></tbody></table>
+      ${unlockBox(e.unlocks)}
+      <div class="actions">
+        <button class="btn primary big" id="ym-again">Play again</button>
+        <button class="btn" id="ym-menu">Menu</button>
+      </div>`;
+    this.openOverlay('ov-result');
+    $('#ym-again').addEventListener('click', () => { this.click(); this.closeOverlay('ov-result'); this.game.startYourMove(); });
+    $('#ym-menu').addEventListener('click', () => { this.click(); this.closeOverlay('ov-result'); this.show('title'); });
+    this.updateBananas(true);
+  }
+
   // ------------------------------------------------------------ pause
 
   showPause(mode) {
@@ -953,7 +983,7 @@ export class UI {
       <div class="row" style="border:0"><div class="label"><b>Moves and effects</b></div><input type="range" id="p-sfx" min="0" max="1" step="0.05" value="${this.s.sfx}" aria-label="Effects volume"></div>
       <div class="actions">
         <button class="btn primary big" id="p-resume">Resume</button>
-        <div class="btn-row">${mode === 'adventure' ? '<button class="btn" id="p-restart">Restart level</button>' : mode === 'endless' ? '<button class="btn" id="p-restart">Restart run</button>' : '<span></span>'}<button class="btn" id="p-settings">Settings</button></div>
+        <div class="btn-row">${mode === 'adventure' ? '<button class="btn" id="p-restart">Restart level</button>' : mode === 'endless' || mode === 'yourmove' ? '<button class="btn" id="p-restart">Restart run</button>' : '<span></span>'}<button class="btn" id="p-settings">Settings</button></div>
         <button class="btn ghost" id="p-quit">Quit to menu</button>
       </div>`;
     this.openOverlay('ov-pause');
@@ -966,6 +996,7 @@ export class UI {
       this.game.paused = false;
       this.closeOverlay('ov-pause');
       if (mode === 'adventure') this.game.openLevel(this.game.run.level.id);
+      else if (mode === 'yourmove') this.game.startYourMove();
       else this.game.startEndless();
     });
     $('#p-settings').addEventListener('click', () => { this.click(); this.closeOverlay('ov-pause'); this.show('settings'); this.prev = 'hud'; });
@@ -1403,6 +1434,10 @@ export class UI {
       <h3>Endless</h3>
       <p>The classic memory loop: the routine starts at ${ENDLESS.startLength} moves and gains ${ENDLESS.addPerRound} each round. Tempo starts at ${ENDLESS.startBpm} BPM and rises ${ENDLESS.bpmPerRound} BPM a round, up to ${ENDLESS.maxBpm}. Combos join from round ${ENDLESS.chordsFromRound + 1}. One mistake ends the run.</p>
 
+      <h3>Your Move! (mini game)</h3>
+      <p>Take turns with the monkey. It does one move; you copy it, then tap any move to add your own (+${RULES.tradeAddPoints} points; there is no wrong move to add). The monkey dances the whole thing back and adds another move; you copy all of it and add one more, and so on. The dance grows by two moves each turn and the tempo rises from ${RULES.yourMoveStartBpm} BPM (up to ${RULES.yourMoveMaxBpm}). If the add timer runs out, the monkey picks a move for you. One slip while copying ends the game.</p>
+      <p>Bananas: ${RULES.yourMovePerMove} for each move of the longest dance you copied all the way, ${RULES.yourMoveMilestoneBananas} extra for every ${RULES.yourMoveMilestoneEvery} moves, and ${RULES.yourMoveBestBonus} for a new best.</p>
+
       <h3>How routines are made</h3>
       <ul>
         <li>Routines are random, drawn from the moves the level allows.</li>
@@ -1457,9 +1492,10 @@ export class UI {
       [d.earned, 'Bananas earned'],
       [`${d.owned.skin.length}/${SKINS.length}`, 'Skins collected'],
       [d.goldenEarned, 'Golden bananas earned'],
-      [`${totalStars}/90`, 'Stars'],
-      [Object.values(d.levels).filter((l) => l.clears).length + '/30', 'Levels cleared'],
+      [`${totalStars}/${LEVELS.length * 3}`, 'Stars'],
+      [Object.values(d.levels).filter((l) => l.clears).length + '/' + LEVELS.length, 'Levels cleared'],
       [d.endless.bestRounds, 'Endless best (rounds)'],
+      [(d.yourMove || { best: 0 }).best, 'Your Move! best (moves)'],
       [st.roundsCleared, 'Rounds cleared'],
       [`${acc}%`, 'Moves right'],
       [`${onBeat}%`, 'On the beat'],
