@@ -17,7 +17,7 @@ Plain answers to: what this does, what it doesn't, what's real vs simulated, wha
 | **Estimated** | a calculation with stated assumptions | predicted wavelength for 5 mm of 20 °C water |
 | **Tradition (not science)** | a cultural practice or belief, offered as such | the solfeggio preset bank |
 
-Simulations are never presented as real footage. The existing v1 assets (console, style previews, videos, manual) were labelled "simulated" in text; the manual rebuild (Nov 2026) adds a SIMULATION watermark on every simulated image.
+Simulations are never presented as real footage. The existing v1 assets (console, style previews, videos, manual) were labelled "simulated" in text; the manual rebuild (Nov 2026) adds a SIMULATION watermark on every simulated image, and so do the app's pictures (burned into each file), the console's live preview and its style thumbnails. The marketing videos still carry only their small "Simulated preview" footer; their posters in the app are marked.
 
 ## 3. Evidence grades (the claims register)
 
@@ -48,14 +48,14 @@ Claims not yet graded (e.g. `C-MIND-01`, mindfulness/relaxation, awaiting a curr
 
 **Known open question (not yet verified):** even a single tone makes a Faraday pattern that oscillates at half the drive frequency (5-100 Hz). The total light stays about constant (caustics move light around rather than switching it on and off), but local contrast oscillates in the 3-60 Hz band. We'll measure this with a photodiode/camera in P5 and apply the projection contrast and area caps from spec §9.1.
 
-**Existing content that breaks the water-beat rule:** 12 of the 30 v1 styles, 52 show steps and 16 voyage steps use two-tone beats of 6-24 Hz. Until they are re-tuned, the new app will play them only through the guard (second tone limited) or in Lab mode with a warning.
+**Existing content that breaks the water-beat rule:** 12 of the 30 v1 styles, 52 show steps and 16 voyage steps use two-tone beats of 6-24 Hz. Until they are re-tuned, they play only through the guard (second tone limited to 10 %) or in Lab mode with a warning. Since Nov 2026 the Voyage console itself runs every tone through the Safety Guardian (the same `packages/core-safety` code, bundled into the page), and each style and show page in the app says whether it is guarded.
 
 ## 5. Data: what's collected and where it lives
 
 - **Local-first.** Everything works offline with no account. Settings, atlases and journals live on your device (IndexedDB) when those features arrive.
 - **Heart-rate / HRV data stays on the device** unless you explicitly opt in. In the EU this is health data (GDPR special category): explicit consent, minimisation, one-tap export and delete.
 - **Studios** see anonymous aggregate counts only, with participant opt-in.
-- **Today (P0):** the web app stores one thing: that you accepted the safety notice (`localStorage`). Nothing is sent anywhere.
+- **Today:** the app stores two things on the device: that you accepted the safety notice, and the console's pattern atlas if you log patterns (`localStorage`). Nothing is sent anywhere; there are no accounts, ads or analytics. The public privacy policy is at `/privacy/` on the app's site (source `apps/web/public/privacy/index.html`); have it reviewed before store submission. Big files (manual, zips, videos, APK) are served by GitHub Pages, which may log IP addresses under GitHub's own privacy statement.
 
 ## 6. Where AI is used
 

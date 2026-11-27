@@ -24,6 +24,10 @@ What each platform can and can't do. The app doesn't rely on this table: `apps/w
 
 Web Audio, AudioWorklet, `setSinkId`, Web Serial, Web Bluetooth, LAN access (https vs native shell), camera, vibration, Wake Lock, WebGL2, WebGPU, OffscreenCanvas, installed-PWA. Unit tests cover an iOS-like, a Chrome-desktop-like and a native-shell environment, and confirm that the user-agent string is never read.
 
+## Native apps (built Nov 2026, ahead of P8)
+
+`apps/mobile` wraps the same web build with Capacitor 8 for Android and iOS. Today they add no native features beyond the web app (no BLE, haptics, keep-awake or background audio yet), so the table's Capacitor column describes what P8 will add, not what ships now. The Android app was built and signature-checked here but not run on a device; the iOS app is built on a cloud Mac (Codemagic).
+
 ## Not verified yet
 
 Nothing in this table has been checked on physical devices in P0. Real-device runs come with Playwright (P8, plugin question at that checkpoint) and with Eddie's own phone/tablet testing.

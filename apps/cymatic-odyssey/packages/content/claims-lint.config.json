@@ -8,7 +8,10 @@
     "catalog/content.json",
     "catalog/styles.json",
     "marketing/VIDEOS.md",
-    "docs"
+    "docs",
+    "apps/web/public/privacy",
+    "apps/web/public/support",
+    "store-launch"
   ],
   "exclude": [
     "docs/manual/manual.html",

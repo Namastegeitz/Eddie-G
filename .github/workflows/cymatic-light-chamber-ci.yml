@@ -45,4 +45,5 @@ jobs:
       - run: pnpm typecheck
       - run: pnpm test
       - run: pnpm claims:lint
+      - run: pnpm console:safety --check
       - run: pnpm build

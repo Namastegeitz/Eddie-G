@@ -18,12 +18,15 @@ REASONS = {
     "manifold3d": "guaranteed-manifold booleans and extrusion for every STL", "mapbox_earcut": "polygon triangulation used by trimesh",
     "matplotlib": "previews and contours", "contourpy": "contour extraction (nodal lines, raster gobos)",
     "pillow": "images, contact sheets, video frames", "lib3mf": "write + strictly re-read 3MF files for Bambu Studio",
+    "@capacitor/core": "native bridge for the Android/iOS apps (spec 2.1, apps/mobile)",
+    "@capacitor/android": "Android app shell around the web build", "@capacitor/ios": "iOS app shell around the web build",
+    "@capacitor/cli": "copies the web build into the native projects (cap sync)",
 }
 
 
 def js_rows():
     rows = []
-    for pj in [ROOT / "package.json", ROOT / "apps/web/package.json"]:
+    for pj in [ROOT / "package.json", ROOT / "apps/web/package.json", ROOT / "apps/mobile/package.json"]:
         d = json.loads(pj.read_text())
         for sect in ("dependencies", "devDependencies"):
             for name in d.get(sect, {}):

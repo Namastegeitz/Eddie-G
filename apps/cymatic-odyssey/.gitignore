@@ -17,3 +17,4 @@ apps/web/dist/
 .vite/
 coverage/
 docs/manual/hires/
+site-out/

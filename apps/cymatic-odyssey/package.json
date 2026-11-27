@@ -15,7 +15,9 @@
     "build": "pnpm --filter @clc/web build",
     "dev": "pnpm --filter @clc/web dev",
     "legacy:test": "python3 tests/test_tools.py",
-    "ci": "pnpm typecheck && pnpm test && pnpm claims:lint && pnpm build"
+    "ci": "pnpm typecheck && pnpm test && pnpm claims:lint && pnpm console:safety --check && pnpm build",
+    "console:safety": "node apps/web/scripts/inject-safety.mjs",
+    "console:check": "node tests/console_guard.cjs"
   },
   "devDependencies": {
     "@types/node": "^26.6.11",

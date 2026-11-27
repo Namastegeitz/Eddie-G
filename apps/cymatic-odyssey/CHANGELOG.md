@@ -2,6 +2,34 @@
 
 Every phase appends: what was built, what is stubbed, what is untested, and what couldn't be verified.
 
+## Phone app, store builds and public link (2026-11-27, ahead of P8 at Eddie's request)
+
+Eddie asked to have the project on his phone, built for the iOS and Android app stores, with a public link that works on other phones and tablets, and a folder on his desktop. Audiorective (P1 add-on checkpoint): skipped, revisit only if needed later.
+
+**Built**
+- **The Voyage console now runs through the Safety Guardian.** `packages/core-safety` is bundled for the browser (`pnpm console:safety`, checked in CI with `--check`) and injected into `console/index.html`. Volume starts at −18 dBFS (slider max −6 dBFS), fades in over 2 s and out over 3 s (Stop) or 2 s (FADE ALL), a hard ceiling at −1 dBFS follows the limiter, two tones that beat at 3-60 Hz (drive or water beat) get the second tone at 10 % unless Lab mode is switched on behind a warning, pulses are capped at 3 per second, drive tones stay in 5-200 Hz, and the preview and style thumbnails carry a SIMULATION mark. A guard note under the controls says what the guard is doing. This resolves the console conflicts in ARCHITECTURE_NOW §6 (fade 0.4 s, limiter −6 dB, pulse 4/s, missing watermark); the water-beat styles still need re-tuning (P1/P2).
+- Deep links into the console (`#style=S05`, `#show=genesis`): the style or show is set up, and audio still starts only when you press Start.
+- **App hub** (`apps/web`): Home, Play (the console in a same-origin frame that keeps playing while you browse; FADE ALL reaches it), 30 styles with filters and a page each (wall, water and 3D-render pictures, signal with Setting/Estimated labels, parts, guard status), 15 shows with a page each (video preview, timeline with guarded steps), Build (manual, five models, all downloads, desktop-folder commands), Safety and science, Install and share (home-screen steps, share link, capability table). Hash routes, relative paths, offline service worker that never intercepts downloads, skipped inside the native apps.
+- Media for phones (`apps/web/scripts/build_media.py`, 5.3 MB): every simulated picture has a burned-in SIMULATION badge, renders say 3D RENDER. New app icon (a drawn standing-wave lattice, not a picture of water), maskable icon, social preview card.
+- Privacy policy and support pages (`/privacy/`, `/support/`), both scanned by the claims linter. The privacy policy says the app collects nothing; it should get a quick review before store submission.
+- **Android and iOS apps** (`apps/mobile`, Capacitor 8.6.3, MIT): `com.eddieg.cymaticlightchamber` 1.0.0, Android target SDK 36, release signing from a git-ignored `keystore.properties`. Built here: a signed APK and Play bundle (AAB), signature verified with apksigner. New upload key generated and delivered to Eddie, never committed. iOS: Swift Package Manager project plus `codemagic.yaml` (repository root) that builds and uploads to TestFlight on a cloud Mac.
+- Store kit (`store-launch/`): `STEP-BY-STEP.md` (phones today, Google Play G1-G7, App Store A1-A8), `LISTING.md` (names, descriptions, keywords, categories, privacy/data-safety and content-rating answers, review notes), screenshots from the real app at 1290 × 2796, 2064 × 2752 and 1080 × 1920, Play feature graphic and icons, all claims-linted.
+- **Public link** on GitHub Pages (`gh-pages` branch, new `cymatic-light-chamber/` folder only, assembled by `store-launch/publish_site.py`): the app plus `files/` (manual, sourcing guide, all zips, 15 videos, the APK).
+- **Desktop folder**: one command (Mac `get-desktop-folder.sh`, Windows `get-desktop-folder.ps1`) builds "Cymatic Light Chamber" on the Desktop with 51 files in six numbered folders; re-running fetches only what's missing. The Mac/Linux script was tested end to end against a local copy of the site.
+- Tests: 47 Vitest tests (adds console wiring, app data and router tests: 12 guarded styles and 52 guarded show steps, every picture present), `tests/console_guard.cjs` (18 browser checks of the console's fades, beat guard, Lab mode, ceiling and FADE ALL; `pnpm console:check`), app screenshots at 390 × 844, 820 × 1180 and 1440 × 900 with no horizontal scrolling and no console errors.
+
+**Stubbed**
+- Native features (BLE, haptics, keep-awake, background audio, camera) are not in the apps yet (P8). The screen can sleep during a long show.
+
+**Untested**
+- The Android app on a real phone or emulator (built and signature-checked only). The iOS app has not been built (needs Codemagic's Mac and Eddie's Apple account).
+- The Windows desktop-folder script (no PowerShell here). Real iPhone Safari and Android Chrome installs of the PWA.
+- External links inside the native apps should open the system browser (Capacitor's default); not checked on devices.
+
+**Couldn't verify**
+- Store acceptance: nothing has been submitted (needs Eddie's accounts and his go-ahead).
+- Maven Central rate-limits this container (HTTP 429); Android builds here use Google's Maven Central mirror through a machine-local Gradle init script, which is not part of the project.
+
 ## P0 - Audit & scaffold (2026-11-27)
 
 **Built**

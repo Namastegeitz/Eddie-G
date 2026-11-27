@@ -1,19 +1,21 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { getClaim } from "@clc/content";
-import { legacySummary, legacyStyles } from "@clc/core-geometry";
-import { detectCapabilities, deviceRole, type ProbeEnv } from "./capabilities";
 import { guardian } from "./safety";
-
-const MODES = [
-  { id: "personal", name: "Personal Show", who: "You at home", what: "Show playlists, your own music through the water, sunset schedule, clips.", phase: "P1-P6" },
-  { id: "studio", name: "Studio Session", who: "Yoga studios, sound-bath facilitators", what: "Tablet conductor, session arcs, live bowl follow.", phase: "P6-P7" },
-  { id: "silent", name: "Silent Sound Bath", who: "Studio groups", what: "Each guest joins by QR code; personal headphone layers in sync with the room.", phase: "P7" },
-  { id: "retail", name: "Retail Display", who: "Holistic and metaphysical stores", what: "Attract loop of real patterns, QR to shop, kiosk lock.", phase: "P7" },
-  { id: "learn", name: "Learn / Lab", who: "Everyone, classrooms", what: "Dispersion, bowl modes, Chladni's law, the Symmetry Map, what the science says.", phase: "P2" },
-  { id: "forge", name: "STL Forge", who: "Makers", what: "Geometry families to printable plates, lanterns and gobos with a light-throw preview.", phase: "P4" },
-] as const;
+import { href, useRoute } from "./router";
+import { Icon } from "./ui";
+import { Home } from "./pages/Home";
+import { ShowDetail, ShowsPage, StyleDetail, StylesPage } from "./pages/Library";
+import { ConsoleFrame } from "./pages/Play";
+import { BuildPage, DevicePage, SafetyPage } from "./pages/Info";
 
 const NOTICE_KEY = "clc-safety-notice-v1";
+const TABS = [
+  { id: "", label: "Home", icon: "home" },
+  { id: "play", label: "Play", icon: "play" },
+  { id: "styles", label: "Styles", icon: "styles" },
+  { id: "shows", label: "Shows", icon: "shows" },
+  { id: "build", label: "Build", icon: "build" },
+] as const;
 
 function SafetyNotice({ onAccept }: { onAccept: () => void }) {
   const flk = getClaim("C-FLK-01");
@@ -26,18 +28,19 @@ function SafetyNotice({ onAccept }: { onAccept: () => void }) {
           <span className="claim">({flk?.id}, grade {flk?.grade})</span>
         </p>
         <p>
-          <strong>Sound:</strong> start quietly. Headphone modes are not for use while driving or operating machinery.
+          <strong>Sound:</strong> start quietly. The console drives an amplifier and exciters; never connect it to a Tesla coil.
         </p>
         <p>
-          If you have epilepsy or light sensitivity, tinnitus or sound sensitivity, or you are under medical or mental-health care, check with your clinician first. These sessions are relaxation and art experiences, <strong>not therapy</strong>.
+          If you have epilepsy or light sensitivity, tinnitus or sound sensitivity, or you are under medical or mental-health care, check with your clinician first. This is an art and relaxation experience, <strong>not therapy</strong> and not a medical device.
         </p>
-        <button className="primary" onClick={onAccept}>I understand</button>
+        <button className="btn primary" onClick={onAccept}>I understand</button>
       </div>
     </div>
   );
 }
 
 export function App() {
+  const route = useRoute();
   const [accepted, setAccepted] = useState<boolean>(() => {
     try {
       return localStorage.getItem(NOTICE_KEY) === "yes";
@@ -45,13 +48,19 @@ export function App() {
       return false;
     }
   });
-  const [faded, setFaded] = useState<string | null>(null);
-  const caps = useMemo(() => detectCapabilities(globalThis as unknown as ProbeEnv), []);
-  const role = deviceRole(caps);
-  const lib = legacySummary();
+  const [toast, setToast] = useState<string | null>(null);
+  const top = route.path[0] ?? "";
+  const onPlay = top === "play";
+  const [consoleOpened, setConsoleOpened] = useState(onPlay);
+  useEffect(() => {
+    if (onPlay) setConsoleOpened(true);
+  }, [onPlay]);
 
   useEffect(() => {
-    guardian.onFadeAll((ms) => setFaded(`FADE ALL sent: every output fades to safe idle over ${ms / 1000} s.`));
+    guardian.onFadeAll((ms) => {
+      setToast(`FADE ALL: sound fades to silence over ${ms / 1000} s.`);
+      window.setTimeout(() => setToast(null), 5000);
+    });
   }, []);
 
   const accept = () => {
@@ -63,77 +72,58 @@ export function App() {
     setAccepted(true);
   };
 
+  let page: ReactNode = null;
+  if (top === "" || top === "home") page = <Home />;
+  else if (top === "styles") page = route.path[1] ? <StyleDetail id={route.path[1]} /> : <StylesPage />;
+  else if (top === "shows") page = route.path[1] ? <ShowDetail id={route.path[1]} /> : <ShowsPage />;
+  else if (top === "build") page = <BuildPage />;
+  else if (top === "safety") page = <SafetyPage />;
+  else if (top === "device") page = <DevicePage />;
+  else if (!onPlay) page = <Home />;
+
   return (
-    <div className="app">
-      <header className="top">
-        <div>
-          <p className="kicker">Working name</p>
-          <h1>Cymatic Light Chamber</h1>
-          <p className="sub">See your sound. Art and relaxation experience, not a medical device.</p>
-        </div>
+    <div className={`app ${onPlay ? "on-play" : ""}`}>
+      <header className="bar">
+        <a className="brand" href={href("")} aria-label="Cymatic Light Chamber, home">
+          <img src="./icon-192.png" alt="" width={30} height={30} />
+          <span>Light Chamber</span>
+        </a>
+        <nav className="topnav" aria-label="Main">
+          {TABS.map((t) => (
+            <a key={t.id} href={href(t.id)} aria-current={top === t.id || (t.id === "" && top === "home") ? "page" : undefined}>
+              {t.label}
+            </a>
+          ))}
+          <a href={href("safety")} aria-current={top === "safety" ? "page" : undefined}>Safety</a>
+          <a href={href("device")} aria-current={top === "device" ? "page" : undefined}>Share</a>
+        </nav>
+        <button className="fade-all" onClick={() => guardian.fadeAll()} aria-label="FADE ALL: fade every sound and light to silence and dark">
+          FADE ALL
+        </button>
       </header>
 
-      <button className="fade-all" onClick={() => guardian.fadeAll()} aria-label="Fade all outputs to safe idle">
-        FADE ALL
-      </button>
-      {faded && <p className="toast" role="status">{faded}</p>}
+      <main id="main">{page}</main>
+      {consoleOpened && <ConsoleFrame visible={onPlay} query={route.query} />}
 
-      <main>
-        <section aria-labelledby="modes-h">
-          <h2 id="modes-h">Modes</h2>
-          <p className="muted">P0 scaffold: the modes below are planned, not built yet. Each card says which phase delivers it.</p>
-          <div className="modes">
-            {MODES.map((m) => (
-              <article key={m.id} className="mode">
-                <h3>{m.name}</h3>
-                <p className="who">{m.who}</p>
-                <p>{m.what}</p>
-                <p className="phase">Arrives in {m.phase}</p>
-              </article>
-            ))}
-          </div>
-        </section>
-
-        <section aria-labelledby="dev-h">
-          <h2 id="dev-h">This device</h2>
-          <p className={role.controller ? "ok" : "warn"}>{role.summary}</p>
-          <table className="caps">
-            <thead>
-              <tr><th>Capability</th><th>Here</th><th>Note</th></tr>
-            </thead>
-            <tbody>
-              {caps.map((c) => (
-                <tr key={c.id}>
-                  <td>{c.label}</td>
-                  <td><span className={`pill ${c.status}`}>{c.status}</span></td>
-                  <td>{c.note}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          <p className="muted">Detected at runtime by feature checks; never guessed from the browser name.</p>
-        </section>
-
-        <section aria-labelledby="lib-h">
-          <h2 id="lib-h">Your existing library</h2>
+      {!onPlay && (
+        <footer className="foot">
           <p>
-            The current generator (tools/, Python) keeps working: <strong>{lib.total}</strong> printable looks in {lib.families} families ({lib.gobo} gobos, {lib.insert} inserts, {lib.dipper} wave feet) and <strong>{lib.styles}</strong> styles. They move into the STL Forge in P4.
+            Every pattern picture is a SIMULATION until a real chamber is filmed. An art and relaxation experience, not a medical device.{" "}
+            <a href={href("safety")}>Safety</a> · <a href="./privacy/">Privacy</a> · <a href="./support/">Support</a>
           </p>
-          <ul className="styles">
-            {legacyStyles.map((s) => (
-              <li key={s.id}>
-                <span className="sw" style={{ background: `linear-gradient(90deg, ${s.pal.join(",")})` }} aria-hidden="true" />
-                <b>{s.id}</b> {s.name} <span className="muted">· {s.mode === "faraday" ? "whole-dish drive" : "dipper"} {s.f} Hz</span>
-              </li>
-            ))}
-          </ul>
-        </section>
-      </main>
+        </footer>
+      )}
 
-      <footer className="foot">
-        <p>Every simulated image is marked SIMULATION. Every number is labelled Measured, Simulated, Estimated or Tradition (not science). See TRANSPARENCY.md.</p>
-      </footer>
+      <nav className="tabs" aria-label="Main">
+        {TABS.map((t) => (
+          <a key={t.id} href={href(t.id)} aria-current={top === t.id || (t.id === "" && top === "home") ? "page" : undefined}>
+            <Icon name={t.icon} />
+            <span>{t.label}</span>
+          </a>
+        ))}
+      </nav>
 
+      {toast && <p className="toast" role="status">{toast}</p>}
       {!accepted && <SafetyNotice onAccept={accept} />}
     </div>
   );

@@ -1,0 +1,14 @@
+{
+  "appId": "com.eddieg.cymaticlightchamber",
+  "appName": "Light Chamber",
+  "webDir": "../web/dist",
+  "backgroundColor": "#06071a",
+  "android": {
+    "backgroundColor": "#06071a"
+  },
+  "ios": {
+    "backgroundColor": "#06071a",
+    "contentInset": "never",
+    "scheme": "Light Chamber"
+  }
+}
