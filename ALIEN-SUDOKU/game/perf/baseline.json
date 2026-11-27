@@ -1,0 +1,67 @@
+{
+  "date": "2026-11-27T15:44:19.738Z",
+  "version": "1.2.0",
+  "runs": 3,
+  "profiles": {
+    "phone": {
+      "coldStartMs": 1170,
+      "heapMB": {
+        "menu": 3.1,
+        "play": 3.6,
+        "map": 3.4
+      },
+      "domNodes": 3326,
+      "frames": {
+        "menu": {
+          "avgMs": 16.72,
+          "fps": 59.8,
+          "low1Fps": 59.5,
+          "worstMs": 33.4
+        },
+        "play": {
+          "avgMs": 17.42,
+          "fps": 57.4,
+          "low1Fps": 29.9,
+          "worstMs": 49.9
+        },
+        "map": {
+          "avgMs": 18.25,
+          "fps": 54.8,
+          "low1Fps": 29.9,
+          "worstMs": 33.4
+        }
+      },
+      "errors": []
+    },
+    "desktop": {
+      "coldStartMs": 734,
+      "heapMB": {
+        "menu": 3.1,
+        "play": 3.6,
+        "map": 3.4
+      },
+      "domNodes": 3326,
+      "frames": {
+        "menu": {
+          "avgMs": 16.67,
+          "fps": 60,
+          "low1Fps": 59.5,
+          "worstMs": 16.8
+        },
+        "play": {
+          "avgMs": 16.89,
+          "fps": 59.2,
+          "low1Fps": 30,
+          "worstMs": 33.4
+        },
+        "map": {
+          "avgMs": 16.72,
+          "fps": 59.8,
+          "low1Fps": 59.5,
+          "worstMs": 33.3
+        }
+      },
+      "errors": []
+    }
+  }
+}
