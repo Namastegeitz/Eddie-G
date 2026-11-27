@@ -70,3 +70,118 @@ llvmpipe), so frame rates are only comparable between runs here, not with phones
     in tests.
 
 Also open: 9 of the 10 HD Meshy craft are still waiting for credits. That's content, not quality.
+
+## Research (Step 2, all checked 27 Nov 2026)
+
+**[S]** marks findings read from a search snippet of the official page because the page itself
+was blocked in this cloud session. Unconfirmed items are marked *unverified*.
+
+### a. Store rules today (new since the 17 Nov kits in bold)
+| Area | Requirement | When | Source |
+|---|---|---|---|
+| Apple SDK | Xcode 26 + iOS 26 SDK; minimum target iOS 13. **Next: iOS 27 SDK (Xcode 27) and minimum iOS 15** | Since 28 Apr 2026; **Apr 2027** | https://developer.apple.com/news/upcoming-requirements/ |
+| Apple age rating | Updated questionnaire. **Two new questions ("Shared Location", "Dating and Relationships"); both "No" here** | Since 31 Jan 2026; **answer by 12 Jan 2027** | https://developer.apple.com/news/?id=yxkh08us |
+| Apple privacy manifest | Required-reason APIs declared; Godot generates the manifest | Since May 2024 | https://developer.apple.com/support/third-party-SDK-requirements/ |
+| Apple accessibility labels | Optional; "required over time", no date | — | https://developer.apple.com/help/app-store-connect/manage-app-accessibility/overview-of-accessibility-nutrition-labels |
+| **Apple iPhone Duo screenshots** | Every submission needs them | **Apr 2027** | https://developer.apple.com/news/?id=kkphp5qo |
+| **Apple Developer ID CA** | Original sub-CA expires; re-sign .pkg files (notarized + timestamped apps keep working) | **1 Feb 2027** | https://developer.apple.com/news/ |
+| Play target API | API 36 for new apps/updates. **API 37 required Aug 2027** | Since 31 Aug 2026 | https://developer.android.com/google/play/requirements/target-sdk |
+| Play 16 KB pages | Updates without 16 KB support blocked | 1 Feb 2027 | https://developer.android.com/guide/practices/page-sizes |
+| Android developer verification | 4 countries since 30 Sep 2026. **Global rollout starts Jan 2027** (Play, Galaxy Store and 5 more stores first) | Jan 2027 | https://developer.android.com/blog/posts/android-developer-verification-2027 |
+| Android vitals | Crash < 1.09%, ANR < 0.47% (8% per model). **Memory vitals added (games: e.g. 2.25 GB foreground on 4 GB phones); from Feb 2027 they can cut visibility** | Ongoing; Feb 2027 | https://developer.android.com/topic/performance/vitals |
+| **Play games on foldables** | ≥3 foldable screenshots + 1 phone screenshot (Apr 2027); "Tier 3 Ready" large-screen quality (Aug 2027) | **Apr / Aug 2027** | https://developer.android.com/blog/posts/elevating-game-quality-foldables-large-screens-google-play |
+| Windows signing | Artifact Signing $9.99/month; individuals only in the US or Canada; MSIX in the Microsoft Store signed free | Ongoing | https://azure.microsoft.com/en-us/pricing/details/artifact-signing/ [S] |
+| Account deletion | Only for apps with accounts: doesn't apply | — | https://developer.apple.com/support/offering-account-deletion-in-your-app/ |
+
+### b. Engine
+- Godot **4.7.2** (18 Aug 2026) is the newest stable release. There is no official 4.7.3.
+- 4.8 is in **beta 5** (24 Nov 2026), with breaking changes in GDScript and input.
+- 16 KB page support has been built in since 4.5.
+- **Decision: stay on 4.7.2.** Try 4.8 on a branch once it's stable, using the 1,141-check
+  harness and the benchmark.
+- Sources: https://godotengine.org/article/maintenance-release-godot-4-7-2/ [S],
+  https://github.com/godotengine/godot-builds/releases/tag/4.8-beta5 [S]
+
+### c. Dependencies
+None ship with the game: no third-party code. The build tools use Python 3 + Pillow.
+Nothing to update or patch.
+
+### d. Techniques for this stack and genre
+- **4.7's HDR output, AreaLight3D, FSR 1/2 upscaling and TAA all need the Forward+ or Mobile
+  renderer.** This game uses Compatibility everywhere, which is what lets it run on the web and
+  on older phones.
+  - Switching renderer is a major change, so it's gated: deferred.
+  - Sources: https://docs.godotengine.org/en/4.7/tutorials/rendering/hdr_output.html [S],
+    https://docs.godotengine.org/en/4.6/tutorials/3d/resolution_scaling.html [S]
+- **120 Hz:**
+  - Android 15+ runs games at 60 Hz unless they ask for more.
+  - iPhones need the Info.plist key `CADisableMinimumFrameDurationOnPhone` for ProMotion.
+  - Sources: https://developer.android.com/games/optimize/display-refresh-rate-change [S],
+    https://developer.apple.com/forums/thread/690806 [S]
+- **Accessibility common in racers:**
+  - steering assist and auto-accelerate (the game has both)
+  - difficulty (has)
+  - vibration off (has)
+  - camera-shake off (has)
+  - colour-blind modes and motion-blur/effects toggles (EA's Need for Speed Unbound)
+  - remapping and text size
+  - Source: https://www.ea.com/en-ca/able/resources/need-for-speed-unbound [S]
+- **Test frameworks:**
+  - GdUnit4 v6.2.3 and GUT 9.7.1 are both MIT and both support 4.7.
+  - They add unit tests and JUnit reports, which is only modest value next to the existing
+    harness.
+  - Sources: https://github.com/godot-gdunit-labs/gdUnit4, https://github.com/bitwes/Gut
+- **CI:** chickensoft-games/setup-godot@v2 and firebelley/godot-export v8 (both MIT) run headless
+  Godot on GitHub's Linux runners. iOS needs a macOS runner.
+  - Sources: https://github.com/chickensoft-games/setup-godot, https://github.com/firebelley/godot-export
+
+### e. Live reviews
+Not live yet, so there are no reviews.
+
+### Rights (assets)
+- **Godot (MIT) plus its bundled FreeType, ENet and mbed TLS:** the licence text must be visible
+  to players (a credits screen or a file). **Missing today.**
+  - Source: https://docs.godotengine.org/en/stable/about/complying_with_licenses.html [S]
+- **DejaVu font:** free to embed, but its licence must ship with it. **The project's copy is
+  Debian's packaging file, not the upstream licence:** to fix.
+- **Meshy models** (HD Aurora, cockpit, volcanic rocks):
+  - Paid-plan outputs are yours, with commercial use allowed.
+  - Free-plan outputs are **CC BY 4.0 and need the credit line "Model created with Meshy – CC BY
+    4.0 License"**.
+  - Rights follow the plan you were on when the model was made.
+  - Never post the game's models to the Meshy Community: that makes them CC0.
+  - Sources: https://help.meshy.ai/en/articles/10137554-what-is-the-ownership-of-the-generated-models [S],
+    https://docs.meshy.ai/en/webapp/pricing [S]
+- **Music and sounds:** generated by the game's own tools, so they're the developer's own work.
+
+## Plan
+
+### UPGRADES (changes to the code and build; no add-on needed)
+| # | What | Why (evidence) | Effort | Risk | How it's tested |
+|---|---|---|---|---|---|
+| U1 | **Credits & licences** screen in Settings + `store-kit/credits.md`; ship the correct DejaVu licence; credit Meshy | Rights research above: Godot's MIT/FreeType notices are legally required and missing | S | Low | Smoke check: screen opens and shows Godot's licence text |
+| U2 | **Colour-blind filter** setting: Off / Deuteranopia / Protanopia / Tritanopia (default Off) | Weakness #3; standard in racers | M | Low (post-process, off by default) | Smoke: filter on/off; screenshots |
+| U3 | **Reduce motion** setting: no speed lines, flashes or boost FOV kick (default Off) | Weakness #3 | S | Low | Smoke: effects suppressed when on |
+| U4 | **Interface size** setting: 100 / 115 / 130 % (default 100) | Weakness #3 | S–M | Medium (layouts at 130%) | Menu screenshots at 3 screen sizes |
+| U5 | **Frame-rate option** gains 60 and 120 (default unchanged); iOS ProMotion plist key | Step 5 target; research above | S | Low (default unchanged) | Smoke: Engine.max_fps follows the setting |
+| U6 | **Clean exit:** free what's still alive at quit | Weakness #10 | S | Low | Exit leak count goes to 0 |
+| U7 | **Performance regression check** (`tools/perf_check.py`): benchmark vs the saved baseline, fail if over 5% worse | Step 9 | S | None | Runs against the baseline |
+| U8 | **Visual regression check** of key screens at 3 screen sizes | Step 9 | M | None | Its own baseline images |
+| U9 | **Store kits updated** with the new 2027 rules (Apple age questions, iOS 15, iPhone Duo, foldable screenshots, verification, Developer ID CA) | Research a | S | None | Review |
+| U10 | **Release package:** `store-kit/` (shot list, accessibility answers, What's New, credits), `CHANGELOG.md`, version-bump script, release and rollback plan, signing notes | Step 10 | M | None | Review; scripts dry-run |
+
+**Deferred (with reasons):**
+- **Forward+/Mobile renderer** for HDR, AreaLight3D and upscaling: a major change, and
+  approval-gated.
+- **Godot 4.8:** still in beta.
+- **Translation-ready strings:** large (hundreds of strings). Next run.
+- **Key remapping:** medium; next run.
+
+### ADD-ONS (asked before anything is installed)
+| Add-on | Maker | Cost today | What it adds here | If no |
+|---|---|---|---|---|
+| Sentry Godot SDK 2.5.1 | Sentry (MIT SDK) | Free Developer plan, 5k errors/month (third-party figure) | Crash reports from every platform | Use the stores' free built-in crash reports (Play vitals, App Store Connect) and keep "no data collected" |
+| GitHub Actions CI (setup-godot + godot-export) | GitHub / open source (MIT) | Free minutes (private repos get a monthly free allowance) | Every push: tests + web/Windows/Linux/Android builds kept as downloads | Tests and builds stay manual |
+| In-app review plugin (godot-inapp-review v5.3) | Cengiz (cengiz-pz), MIT | Free | Store-approved "Rate this game" prompt after a good race | No prompt; players rate from the store page |
+| Azure Artifact Signing | Microsoft | $9.99/month (individuals: US/Canada) | Signed Windows downloads (fewer SmartScreen warnings) | Ship Windows through Steam/MS Store, which don't need it |
+| Not recommended now | — | — | GdUnit4/GUT (harness already covers it), fastlane (after store accounts exist), Firebase/PostHog (would end "no data collected") | — |
