@@ -22,6 +22,16 @@ A cloud Mac also works for that step.
 - **Privacy policy button inside the game** (Settings), for guideline 5.1.1(i)
 - HUD and touch controls keep clear of the notch / Dynamic Island (safe area)
 
+## Coming in 2027 (added 27 Nov 2026, upgrade run)
+| When | Change | What to do for this game |
+|---|---|---|
+| **by 12 Jan 2027** | Age rating questionnaire: two new questions (Shared Location; Dating and Relationships) | Answer **No** to both in App Store Connect (see `LISTING.md`) |
+| **1 Feb 2027** | Developer ID sub-CA expires: re-sign any **.pkg** installers (notarized, timestamped apps keep working) | Only matters for a signed Mac download outside the App Store |
+| **Apr 2027** | Builds must use the **iOS 27 SDK** (Xcode 27); minimum iOS 15 | Already minimum iOS 15; archive with Xcode 27 once it's out |
+| **Apr 2027** | **iPhone Duo screenshots** required with every submission | Shoot them when the size is published: `tests/menu_shots.tscn` and `tests/shots.tscn` take any size with `--resolution` |
+| Now (optional) | ProMotion: the iOS export now allows 120 Hz (`CADisableMinimumFrameDurationOnPhone`) | "Frame cap" stays 60 on iPhone unless the player picks 120 |
+| With crash reporting | Store builds from `builds/store_build.sh` include Sentry + Firebase Crashlytics (opt-in) | Change App Privacy as in [`../CRASH_REPORTING.md`](../CRASH_REPORTING.md) |
+
 ## Missing
 - [ ] Apple Developer Program membership, then your **Team ID** in the Godot iOS preset (placeholder `ABCDE12345`)
 - [ ] A Mac or cloud Mac to archive and upload (Xcode 26 or later)

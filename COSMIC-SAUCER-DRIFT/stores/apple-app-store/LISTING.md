@@ -62,6 +62,8 @@ Contact: your name, phone and email (only Apple sees them). No demo account need
 - Cartoon or fantasy violence: **Infrequent/Mild** (saucers spin out when hit by rockets and lasers; no one is hurt, no blood) → **9+**.
   If you answer "None" the rating is 4+, but a reviewer may correct it, so 9+ is the safer answer.
 - Everything else (realistic violence, sexual content, profanity, horror, drugs, gambling, contests, medical, unrestricted web, user-generated content, messaging, social media): **None / No**.
+- New questions (answer by 12 Jan 2027): **Shared Location → No** (the game never reads location);
+  **Dating and Relationships → No**.
 
 ## App Privacy
 - "Do you or your third-party partners collect data from this app?" → **No** → shows **Data Not Collected**.

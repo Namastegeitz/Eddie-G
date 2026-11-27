@@ -565,6 +565,58 @@
    "evidence": ""
   },
   {
+   "id": "acc-sentry",
+   "phase": "accounts",
+   "title": "Free Sentry account for crash reports",
+   "who": "you",
+   "stores": [
+    "play",
+    "apple",
+    "steam",
+    "itch",
+    "gog",
+    "ms"
+   ],
+   "how": [
+    "sentry.io: sign up on the free Developer plan, create a project (platform Godot).",
+    "Turn on Settings > Security & Privacy > Prevent Storing of IP Addresses.",
+    "Copy the DSN into a GitHub secret CSD_SENTRY_DSN (never into chat or code)."
+   ],
+   "why": "Crash reports from every store build, so bugs get fixed before reviews mention them.",
+   "tip": "",
+   "done": "",
+   "needs": [],
+   "cost": "Free",
+   "time": "10 min",
+   "link": "https://github.com/namastegeitz/eddie-g/blob/claude/nifty-lamport-bfm2ub/COSMIC-SAUCER-DRIFT/stores/CRASH_REPORTING.md",
+   "initial": "todo",
+   "evidence": ""
+  },
+  {
+   "id": "acc-firebase",
+   "phase": "accounts",
+   "title": "Free Firebase project for Crashlytics",
+   "who": "you",
+   "stores": [
+    "play",
+    "apple"
+   ],
+   "how": [
+    "console.firebase.google.com: new project, Google Analytics OFF.",
+    "Add the Android app and the Apple app (com.aethertek.cosmicsaucerdrift); download both config files.",
+    "Enable Crashlytics; keep the files in COSMIC-SAUCER-DRIFT/private/ (git-ignored)."
+   ],
+   "why": "Google's crash reports for Android and iPhone, free.",
+   "tip": "",
+   "done": "",
+   "needs": [],
+   "cost": "Free",
+   "time": "10 min",
+   "link": "https://github.com/namastegeitz/eddie-g/blob/claude/nifty-lamport-bfm2ub/COSMIC-SAUCER-DRIFT/stores/CRASH_REPORTING.md",
+   "initial": "todo",
+   "evidence": ""
+  },
+  {
    "id": "gr-target36",
    "phase": "ready",
    "title": "Play bundle targets Android 16 (API 36)",
@@ -946,6 +998,202 @@
    "evidence": ""
   },
   {
+   "id": "gr-upgrade-a11y",
+   "phase": "ready",
+   "title": "Accessibility settings: colour-blind filter, reduce motion, interface size",
+   "who": "claude",
+   "stores": [
+    "play",
+    "apple",
+    "steam",
+    "itch",
+    "gog",
+    "epic",
+    "ms",
+    "android",
+    "web"
+   ],
+   "how": [
+    "Settings: colour-blind filter (3 types), reduce motion, interface size 100/115/130 %, frame cap up to 120 fps.",
+    "All off by default; old saves load unchanged."
+   ],
+   "why": "",
+   "tip": "",
+   "done": "Players who need them can turn them on; answers for Apple's accessibility labels are in store-kit/accessibility.md.",
+   "needs": [],
+   "cost": "",
+   "time": "",
+   "link": "https://github.com/namastegeitz/eddie-g/blob/claude/nifty-lamport-bfm2ub/COSMIC-SAUCER-DRIFT/store-kit/accessibility.md",
+   "initial": "done",
+   "evidence": "Upgrade run 27 Nov: smoke checks for every setting; screenshots at 3 screen sizes in upgrade-shots/after."
+  },
+  {
+   "id": "gr-credits",
+   "phase": "ready",
+   "title": "Credits & licences screen (Godot MIT, fonts, Meshy)",
+   "who": "claude",
+   "stores": [
+    "play",
+    "apple",
+    "steam",
+    "itch",
+    "gog",
+    "epic",
+    "ms",
+    "android",
+    "web"
+   ],
+   "how": [
+    "Settings > Credits & licences shows the game credits, Meshy credit, the font licence and every engine notice."
+   ],
+   "why": "Godot's MIT licence and its third-party notices must be shown in a shipped game.",
+   "tip": "",
+   "done": "Licences covered; full list in store-kit/credits.md.",
+   "needs": [],
+   "cost": "",
+   "time": "",
+   "link": "https://github.com/namastegeitz/eddie-g/blob/claude/nifty-lamport-bfm2ub/COSMIC-SAUCER-DRIFT/store-kit/credits.md",
+   "initial": "done",
+   "evidence": "Smoke checks find the Godot licence, FreeType, Bitstream and the CC BY credit on the screen."
+  },
+  {
+   "id": "gr-crash",
+   "phase": "ready",
+   "title": "Crash reporting (Sentry + Firebase Crashlytics), opt-in, in store builds",
+   "who": "claude",
+   "stores": [
+    "play",
+    "apple",
+    "steam",
+    "itch",
+    "gog",
+    "ms"
+   ],
+   "how": [
+    "builds/store_build.sh installs the pinned add-ons into a copy of the game and exports from it.",
+    "Players are asked once; nothing is sent without a yes. Normal builds stay without it."
+   ],
+   "why": "",
+   "tip": "",
+   "done": "Ready. It turns on when the Sentry DSN and Firebase files exist (the two account steps).",
+   "needs": [
+    "acc-sentry",
+    "acc-firebase"
+   ],
+   "cost": "",
+   "time": "",
+   "link": "https://github.com/namastegeitz/eddie-g/blob/claude/nifty-lamport-bfm2ub/COSMIC-SAUCER-DRIFT/stores/CRASH_REPORTING.md",
+   "initial": "done",
+   "evidence": "Installer tested offline (stand-in downloads), idempotent, refuses to touch game/; consent smoke-tested."
+  },
+  {
+   "id": "gr-review-prompt",
+   "phase": "ready",
+   "title": "Store rating prompt after podium finishes",
+   "who": "claude",
+   "stores": [
+    "play",
+    "apple"
+   ],
+   "how": [
+    "In-App Review plugin v5.3 in store builds; at most 3 asks, 30 days apart, never from a button."
+   ],
+   "why": "",
+   "tip": "",
+   "done": "",
+   "needs": [],
+   "cost": "",
+   "time": "",
+   "link": "https://github.com/namastegeitz/eddie-g/blob/claude/nifty-lamport-bfm2ub/COSMIC-SAUCER-DRIFT/stores/IN_APP_REVIEW.md",
+   "initial": "done",
+   "evidence": "Rules smoke-tested; inert without the plugin."
+  },
+  {
+   "id": "gr-ci",
+   "phase": "ready",
+   "title": "GitHub Actions: tests and builds on every change",
+   "who": "both",
+   "stores": [
+    "play",
+    "apple",
+    "steam",
+    "itch",
+    "gog",
+    "epic",
+    "ms",
+    "android",
+    "web"
+   ],
+   "how": [
+    "Workflow .github/workflows/cosmic-saucer-drift.yml is in place.",
+    "GitHub didn't start it (every workflow in the repo stops in 2-3 s with no runner): check",
+    "github.com > Settings > Billing and plans (Actions minutes or spending limit), then re-run it."
+   ],
+   "why": "Every change gets tested and built automatically.",
+   "tip": "",
+   "done": "",
+   "needs": [],
+   "cost": "Free minutes",
+   "time": "",
+   "link": "",
+   "initial": "todo",
+   "evidence": ""
+  },
+  {
+   "id": "gr-meshy-plan",
+   "phase": "ready",
+   "title": "Confirm which Meshy plan made the HD craft and rocks",
+   "who": "you",
+   "stores": [
+    "play",
+    "apple",
+    "steam",
+    "itch",
+    "gog",
+    "epic",
+    "ms",
+    "android",
+    "web"
+   ],
+   "how": [
+    "meshy.ai > Account > Billing: free plan means CC BY 4.0 (credit already shown in-game); paid means you own them."
+   ],
+   "why": "Store rule: every asset needs a licence that allows selling.",
+   "tip": "",
+   "done": "",
+   "needs": [],
+   "cost": "",
+   "time": "2 min",
+   "link": "https://github.com/namastegeitz/eddie-g/blob/claude/nifty-lamport-bfm2ub/COSMIC-SAUCER-DRIFT/store-kit/credits.md",
+   "initial": "todo",
+   "evidence": ""
+  },
+  {
+   "id": "gr-policy-crash",
+   "phase": "ready",
+   "title": "Say go to republish the privacy policy with the crash-report section",
+   "who": "you",
+   "stores": [
+    "play",
+    "apple"
+   ],
+   "how": [
+    "The new text is in game/docs/privacy-policy.html. The live page stays as it is until you say go.",
+    "Needed before the first store build with crash reporting ships."
+   ],
+   "why": "",
+   "tip": "",
+   "done": "",
+   "needs": [
+    "gr-crash"
+   ],
+   "cost": "",
+   "time": "",
+   "link": "https://github.com/namastegeitz/eddie-g/blob/claude/nifty-lamport-bfm2ub/COSMIC-SAUCER-DRIFT/game/docs/privacy-policy.html",
+   "initial": "todo",
+   "evidence": ""
+  },
+  {
    "id": "as-play-text",
    "phase": "assets",
    "title": "Google Play text, tags and content answers",
@@ -1201,6 +1449,51 @@
    "link": "",
    "initial": "done",
    "evidence": "Play answers in STORE_LISTING.md; Apple answers in stores/apple-app-store."
+  },
+  {
+   "id": "as-privacy-crash",
+   "phase": "assets",
+   "title": "Privacy answers for store builds with crash reporting",
+   "who": "claude",
+   "stores": [
+    "play",
+    "apple"
+   ],
+   "how": [
+    "Play Data safety: crash logs, diagnostics, installation IDs; optional; not shared.",
+    "Apple App Privacy: Crash Data, Device ID; not linked; no tracking."
+   ],
+   "why": "",
+   "tip": "",
+   "done": "Use these instead of 'Data not collected' when the build includes crash reporting.",
+   "needs": [],
+   "cost": "",
+   "time": "",
+   "link": "https://github.com/namastegeitz/eddie-g/blob/claude/nifty-lamport-bfm2ub/COSMIC-SAUCER-DRIFT/stores/CRASH_REPORTING.md",
+   "initial": "done",
+   "evidence": "From Firebase's and Sentry's disclosure docs (27 Nov 2026)."
+  },
+  {
+   "id": "as-2027-shots",
+   "phase": "assets",
+   "title": "2027 screenshots: iPhone Duo (Apple) and foldables (Play)",
+   "who": "claude",
+   "stores": [
+    "apple",
+    "play"
+   ],
+   "how": [
+    "Apple wants iPhone Duo shots from Apr 2027; Play wants 3 foldable + 1 phone shot for games from Apr 2027."
+   ],
+   "why": "",
+   "tip": "The shot tools take any size; Claude makes them once the sizes are published.",
+   "done": "",
+   "needs": [],
+   "cost": "",
+   "time": "",
+   "link": "https://github.com/namastegeitz/eddie-g/blob/claude/nifty-lamport-bfm2ub/COSMIC-SAUCER-DRIFT/store-kit/shot-list.md",
+   "initial": "todo",
+   "evidence": ""
   },
   {
    "id": "t-phone",
@@ -1612,7 +1905,7 @@
     "steam"
    ],
    "how": [
-    "Play Console Android vitals, App Store Connect crashes, Steam reviews.",
+    "Sentry and Firebase Crashlytics dashboards (store builds), Play Console Android vitals, App Store Connect crashes, Steam reviews.",
     "Paste anything odd into the bug form."
    ],
    "why": "",

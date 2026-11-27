@@ -250,5 +250,40 @@
     "at": 1794924795393
    }
   ]
+ },
+ "gr-upgrade-a11y": {
+  "status": "done",
+  "by": "claude",
+  "note": "Upgrade run 27 Nov: smoke checks for every setting; screenshots at 3 screen sizes in upgrade-shots/after.",
+  "at": 0,
+  "history": []
+ },
+ "gr-credits": {
+  "status": "done",
+  "by": "claude",
+  "note": "Smoke checks find the Godot licence, FreeType, Bitstream and the CC BY credit on the screen.",
+  "at": 0,
+  "history": []
+ },
+ "gr-crash": {
+  "status": "done",
+  "by": "claude",
+  "note": "Installer tested offline (stand-in downloads), idempotent, refuses to touch game/; consent smoke-tested.",
+  "at": 0,
+  "history": []
+ },
+ "gr-review-prompt": {
+  "status": "done",
+  "by": "claude",
+  "note": "Rules smoke-tested; inert without the plugin.",
+  "at": 0,
+  "history": []
+ },
+ "as-privacy-crash": {
+  "status": "done",
+  "by": "claude",
+  "note": "From Firebase's and Sentry's disclosure docs (27 Nov 2026).",
+  "at": 0,
+  "history": []
  }
 }

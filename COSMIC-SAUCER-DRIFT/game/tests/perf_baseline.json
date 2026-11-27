@@ -1,0 +1,6 @@
+{
+	"about": "Performance budget (tools/perf_check.py). Baseline measured 27 Nov 2026 before the upgrade run, on the cloud build computer (software GPU, so frame times only compare between runs on the same computer). Rule: nothing may get more than 5% worse.",
+	"budget_pct": 5.0,
+	"medium": {"avg_ms": 70.53, "low1_fps": 10.6, "draw_calls": 151, "nodes": 1071, "mem_static_mb": 103.2, "video_mem_mb": 57.4},
+	"high": {"avg_ms": 261.28, "low1_fps": 3.0, "draw_calls": 349, "nodes": 1074, "mem_static_mb": 103.6, "video_mem_mb": 74.3}
+}

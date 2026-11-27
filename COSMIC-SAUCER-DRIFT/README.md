@@ -13,12 +13,12 @@ and the launch checklist. Store rules researched **2026-11-17**.
 | ✅ [`checklist/`](checklist/) | The checklist data and the page it builds |
 | 📝 [`prompts/`](prompts/) | The original game brief and the next-feature prompts |
 
-## Progress: 21 of 65 steps done
+## Progress: 26 of 76 steps done
 
-`██████░░░░░░░░░░░░░░` 32%
+`███████░░░░░░░░░░░░░` 34%
 
 ✅ done · 🔄 doing · ⛔ blocked · ⬜ to do. Ticks you make on the live page are copied here when Claude syncs.
-Snapshot: 2026-11-17.
+Snapshot: 2026-11-27.
 
 ### Phase 1 · Workspace and builds (5/5)
 
@@ -42,7 +42,7 @@ _The few choices only you can make. They shape every store form._
 - ⬜ **You**: EU trader status for the App Store · App Store · 5 min
 - ⬜ **Together**: Support page (Apple requires a support URL) · App Store, Steam, GOG · 15 min
 
-### Phase 3 · Store accounts (0/7)
+### Phase 3 · Store accounts (0/9)
 
 _Open the accounts early: identity checks and Steam's 30-day clock take the longest._
 
@@ -53,8 +53,10 @@ _Open the accounts early: identity checks and Steam's 30-day clock take the long
 - ⬜ **You**: [Microsoft Store developer account (optional)](stores/microsoft-store/README.md) · Microsoft Store · Free · 20 min
 - ⬜ **You**: [Epic Games Store developer account (optional)](stores/epic-games-store/README.md) · Epic · $100 per game · up to 2+ weeks
 - ⬜ **You**: [Samsung Galaxy Store seller account (optional)](stores/other-android-stores/README.md) · Galaxy / Amazon · Free · 1 h + review
+- ⬜ **You**: [Free Sentry account for crash reports](stores/CRASH_REPORTING.md) · Google Play, App Store, Steam, itch.io, GOG, Microsoft Store · Free · 10 min
+- ⬜ **You**: [Free Firebase project for Crashlytics](stores/CRASH_REPORTING.md) · Google Play, App Store · Free · 10 min
 
-### Phase 4 · Release-ready game (7/15)
+### Phase 4 · Release-ready game (11/22)
 
 _The fixes and signed builds each store checks for._
 
@@ -73,8 +75,15 @@ _The fixes and signed builds each store checks for._
 - ✅ **Claude**: Privacy policy button inside the game · App Store, Google Play · 20 min
 - ✅ **Claude**: Write the AI-content disclosure · Steam, itch.io · 15 min
 - ⬜ **Together**: Finish the other 9 HD craft (optional before launch) · all stores · ~540 Meshy credits
+- ✅ **Claude**: [Accessibility settings: colour-blind filter, reduce motion, interface size](store-kit/accessibility.md) · all stores
+- ✅ **Claude**: [Credits & licences screen (Godot MIT, fonts, Meshy)](store-kit/credits.md) · all stores
+- ✅ **Claude**: [Crash reporting (Sentry + Firebase Crashlytics), opt-in, in store builds](stores/CRASH_REPORTING.md) · Google Play, App Store, Steam, itch.io, GOG, Microsoft Store
+- ✅ **Claude**: [Store rating prompt after podium finishes](stores/IN_APP_REVIEW.md) · Google Play, App Store
+- ⬜ **Together**: GitHub Actions: tests and builds on every change · all stores · Free minutes
+- ⬜ **You**: [Confirm which Meshy plan made the HD craft and rocks](store-kit/credits.md) · all stores · 2 min
+- ⬜ **You**: [Say go to republish the privacy policy with the crash-report section](game/docs/privacy-policy.html) · Google Play, App Store
 
-### Phase 5 · Store pages and art (9/11)
+### Phase 5 · Store pages and art (10/13)
 
 _Text, screenshots, art and rating answers at each store's exact sizes._
 
@@ -89,6 +98,8 @@ _Text, screenshots, art and rating answers at each store's exact sizes._
 - ⬜ **Claude**: itch.io cover (630×500) and page text · itch.io · 20 min
 - ✅ **Claude**: Age-rating answers for every store · Google Play, App Store, Steam, Epic, Microsoft Store · 20 min
 - ✅ **Claude**: "Data not collected" answers for Play and Apple · Google Play, App Store
+- ✅ **Claude**: [Privacy answers for store builds with crash reporting](stores/CRASH_REPORTING.md) · Google Play, App Store
+- ⬜ **Claude**: [2027 screenshots: iPhone Duo (Apple) and foldables (Play)](store-kit/shot-list.md) · App Store, Google Play
 
 ### Phase 6 · Testing (0/6)
 

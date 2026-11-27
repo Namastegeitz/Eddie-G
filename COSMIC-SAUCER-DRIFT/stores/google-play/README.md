@@ -40,6 +40,16 @@ new personal accounts must run a 14-day closed test first.
 | Promotion | ≥3 landscape 16:9 screenshots at ≥1920×1080 | Optional; render at 1080p |
 | Android 16 | Edge-to-edge can't be turned off; predictive back | Keep HUD in the safe area; test Back on an Android 16 phone |
 
+## Coming in 2027 (added 27 Nov 2026, upgrade run)
+| When | Change | What to do for this game |
+|---|---|---|
+| **Jan 2027** | Android developer verification rolls out worldwide (Play and other stores first) | Your Play Console identity check covers Play; register the package + signing key for side-loaded APKs (see `../other-android-stores/README.md`) |
+| **1 Feb 2027** | Updates without **16 KB page** support blocked | Check "16 KB" in Play's App bundle explorer after the first upload |
+| **Feb 2027** | **Memory vitals** can lower visibility (games: e.g. 2.25 GB in the foreground on 4 GB phones) | The game uses about 105 MB of static memory and 57–74 MB of video memory (see `UPGRADE_REPORT.md`). Watch Android vitals after launch |
+| **Apr 2027** | Games: **≥3 foldable screenshots + 1 phone screenshot** | Shoot at a foldable's inner-screen size (e.g. `--resolution 2208x1768`) with `tests/shots.tscn` |
+| **Aug 2027** | **Target API 37**; "Tier 3 Ready" large-screen quality for games | Raise `gradle_build/target_sdk` to 37 in the "Android AAB" preset when Godot's templates support it; menus already fit tablet sizes (`tools/visual_check.sh` checks 2048×1536) |
+| With crash reporting | Store AAB from `builds/store_build.sh` adds Sentry + Firebase Crashlytics (opt-in) and INTERNET | Change Data safety as in [`../CRASH_REPORTING.md`](../CRASH_REPORTING.md) |
+
 ## Steps
 1. Open a personal Play Console account ($25), verify ID, email, phone and device.
 2. Create the upload key on your PC; export the signed AAB (or allow `dl.google.com` here and give Claude the key).
