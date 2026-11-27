@@ -19,6 +19,7 @@ import { formatTime, prettyDate } from '../../core/time.js';
 import { sfx, songFor } from '../../audio/audio.js';
 import { haptic } from '../../platform/native.js';
 import { adsSupported, showRewarded, noteGameFinished, maybeShowInterstitial } from '../../platform/ads.js';
+import { maybeAskForReview } from '../../platform/review.js';
 import { openModal, confirmModal, toast } from '../modal.js';
 import { randomBackground } from '../background.js';
 import { setKeyFor, glyphSvg, glyphName, glyphColor } from '../glyphs.js';
@@ -967,8 +968,10 @@ export const playScreen = {
     }
 
     async function afterResult(navigate) {
-      await maybeShowInterstitial();
+      const adShown = await maybeShowInterstitial();
       navigate();
+      // The store's rating card, only after a win and never right after an ad (platform/review.js).
+      if (!adShown && session.status === 'won') setTimeout(() => maybeAskForReview(), 900);
     }
 
     function leave() {

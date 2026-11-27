@@ -57,6 +57,8 @@
 
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
+/* Text size (Settings → Board → Text size, platform/textsize.js): rem-based text scales with it. */
+html { font-size: calc(100% * var(--text-scale, 1)); }
 html, body {
   margin: 0;
   padding: 0;

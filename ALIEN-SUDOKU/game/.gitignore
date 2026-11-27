@@ -12,3 +12,7 @@ desktop/node_modules/
 desktop/app/
 desktop/out/
 perf/latest.json
+
+# Firebase config files (Crashlytics, Remote Config): supplied at build time, kept out of the public repo.
+android/app/google-services.json
+ios/App/App/GoogleService-Info.plist

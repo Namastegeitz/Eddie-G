@@ -23,6 +23,8 @@
 
         <!-- AdMob application ID (strings.xml admob_app_id). Set the real one with tools/set-admob-ids.mjs -->
         <meta-data android:name="com.google.android.gms.ads.APPLICATION_ID" android:value="@string/admob_app_id" />
+        <!-- Crashlytics starts off; the game turns it on from Settings > Send crash reports (platform/crash.js). -->
+        <meta-data android:name="firebase_crashlytics_collection_enabled" android:value="false" />
 
         <provider
             android:name="androidx.core.content.FileProvider"

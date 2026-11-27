@@ -14,6 +14,7 @@
    from build-time env vars (see .env.example and docs/ADS.md).
    ============================================================ */
 
+import { remote } from './remote.js';
 import { isNative, platform } from './native.js';
 import { emit } from '../core/events.js';
 
@@ -159,6 +160,7 @@ export function noteGameFinished() { state.gamesSinceInterstitial++; }
 /** Show an interstitial if the caps allow. Resolves when it's closed (or skipped). */
 export async function maybeShowInterstitial() {
   if (!state.ready || !state.interstitialLoaded) return false;
+  if (remote('disable_interstitials')) return false;
   if (state.gamesSinceInterstitial < INTERSTITIAL_EVERY_N_GAMES) return false;
   if (Date.now() - state.lastInterstitialAt < INTERSTITIAL_MIN_GAP_MS) return false;
   try {
@@ -178,6 +180,7 @@ export async function maybeShowInterstitial() {
  */
 export async function showRewarded() {
   if (!adsSupported) return 'granted';
+  if (remote('disable_rewarded')) return 'granted'; // switched off remotely: give the reward without an ad
   if (!state.ready) return 'unavailable';
   if (!state.rewardedLoaded) {
     await preloadRewarded();

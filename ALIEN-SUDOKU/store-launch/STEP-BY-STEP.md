@@ -39,6 +39,40 @@ policy, the support page and the store text, and updates the website.
 
 ---
 
+# Crash reports (both stores): Sentry and Firebase
+
+The game already has both built in, switched off until these accounts exist. Both are free.
+Do these any time; Claude turns them on in the next build.
+
+### C1. Sentry (crash reports from every version: phone, web and desktop)
+
+1. Go to **sentry.io → Sign up** (use your main Google account or the support Gmail).
+   Plan: **Developer (free)**.
+2. **Create project** → platform **Capacitor** (or **Browser JavaScript**) → name `alien-sudoku`.
+3. Copy the **DSN** it shows (`https://…@o….ingest.sentry.io/…`). It isn't a secret, so you can paste it to Claude.
+4. Project **Settings → Security & Privacy**: turn on **Prevent Storing of IP Addresses**
+   (the privacy policy promises this).
+
+**Send Claude:** the DSN.
+
+### C2. Firebase (Crashlytics crash reports and Remote Config switches, phones only)
+
+1. Go to **console.firebase.google.com → Create a project** → name `Alien Sudoku` →
+   Google Analytics: **off** (not needed) → **Create**. The free Spark plan is enough.
+2. **Add app → Android**: package name `com.eddieg.aliensudoku` → **Register** →
+   **Download google-services.json** → skip the rest.
+3. **Add app → iOS**: bundle ID `com.eddieg.aliensudoku` → **Register** →
+   **Download GoogleService-Info.plist** → skip the rest.
+4. Left menu **Crashlytics** → **Enable Crashlytics**.
+5. (Later) **Remote Config** → **Create configuration**: add the switches only when you
+   need one (`disable_ads`, `disable_interstitials`, `disable_rewarded`, `min_version`,
+   `force_below_version`, `update_message`). Until then the game uses safe defaults.
+
+**Send Claude:** both downloaded files (attach them in the chat). They hold app identifiers,
+not passwords, but Claude keeps them out of the public repository anyway.
+
+---
+
 # Google Play
 
 ### G1. Create your Play Console developer account
@@ -93,7 +127,7 @@ Fill in each card with these answers:
 | **Ads** | Yes, my app contains ads |
 | **Content rating** | Email: the support Gmail · Category: **Game**. Violence: No. Scary content: **Yes, mild/cartoon (non-realistic monsters)**. Sexual content, language, drugs, crude humor, hate: No. Gambling or simulated gambling: No. Users interact or share content: No. Shares location: No. Digital purchases: No. Unrestricted web: No. |
 | **Target audience** | Tick **13-15, 16-17 and 18+** only (no under-13 group). "Could the listing unintentionally appeal to children?" → **Yes** (cute cartoon art); accept the "Not designed for children" label if offered |
-| **Data safety** | Collects or shares data: **Yes**. Encrypted in transit: **Yes**. Account creation: **My app does not allow users to create an account**. Deletion request: **No**. Data types, all **collected and shared**, **required**, purposes **Advertising or marketing, Analytics, Fraud prevention/security**: Approximate location · App interactions · Diagnostics (+ Crash logs) · Device or other IDs. Nothing else. |
+| **Data safety** | Collects or shares data: **Yes**. Encrypted in transit: **Yes**. Account creation: **My app does not allow users to create an account**. Deletion request: **No**. Data types, all **collected and shared**, **required**, purposes **Advertising or marketing, Analytics, Fraud prevention/security**: Approximate location · App interactions · Device or other IDs. **Crash logs** and **Diagnostics**: collected and shared, required, purposes **App functionality, Analytics, Fraud prevention/security** (crash reports from Sentry and Crashlytics, plus the ads SDK). Nothing else. |
 | **Advertising ID** | Yes. Purposes: Advertising or marketing, Analytics, Fraud prevention/security |
 | **Government / financial / health / news apps** | No / No financial features / No health features / No |
 
@@ -126,7 +160,8 @@ You need: your main Google account, payment details (for verification).
 3. Create three ad units in that app: **Banner**, **Interstitial**, **Rewarded**
    (names: `Alien Sudoku banner`, `... interstitial`, `... rewarded`). Defaults are fine.
 4. **Privacy & messaging → GDPR → Create message** (pick the app, default options, publish);
-   then **US states regulations message** the same way.
+   then **US states regulations message** the same way, with **All current and future
+   supported US states** selected (more states join in 2027 and 2028).
 5. **Blocking controls → Content → Maximum ad content rating: PG** (or G).
 
 **Send Claude:** the Android **App ID** (`ca-app-pub-…~…`) and the three **ad unit IDs**
@@ -154,10 +189,10 @@ You need: **12 or more testers** with Android phones who stay opted in for **14 
    them from your test notes). Review usually takes 7 days or less.
 2. When approved: **Production → Create new release** with the latest `.aab` →
    countries → **Send for review**.
-3. **EU trader status** (Play Console asks, due 1 Feb 2027): an ad-supported app counts
-   as trading. Declaring **trader** shows a contact address and phone to EU/UK users, so
-   use a PO box or a separate number if you want privacy. The other option is to leave
-   EU/UK countries out.
+3. **Trader status** (Play Console asks, due 1 Feb 2027): an ad-supported app counts
+   as trading. Declaring **trader** shows a contact address and phone on the listing; news
+   reports say worldwide from 1 Mar 2027, not only to EU/UK users. Use a PO box or a
+   separate phone number if you want privacy.
 
 ### G9. After it's live
 
@@ -242,8 +277,8 @@ the cloud build, and you start one more Codemagic build.
 | Where | What |
 |---|---|
 | **App Information** | Subtitle, category **Games → Puzzle** (secondary **Board**), from listing.md. Content Rights: **contains third-party content: Yes**, you have the rights |
-| **Age Rating** | Advertising **Yes** · Horror/Fear Themes **Infrequent/Mild** · everything else **No/None** · **don't** choose Made for Kids → result **9+** |
-| **App Privacy** | Data collected: **Yes**. Coarse Location, Device ID, Product Interaction, Advertising Data → purposes **Third-Party Advertising, Analytics** → linked: **Yes** → used for tracking: **Yes**. Crash Data, Performance Data, Other Diagnostic Data → **Analytics**, not linked, not tracking. Privacy Policy URL: `https://namastegeitz.github.io/Eddie-G/alien-sudoku/privacy.html` |
+| **Age Rating** | Advertising **Yes** · Horror/Fear Themes **Infrequent/Mild** · everything else **No/None**, including the newer questions (Social Media, Shared Location, Dating and Relationships) · **don't** choose Made for Kids → result **9+** |
+| **App Privacy** | Data collected: **Yes**. Coarse Location, Product Interaction, Advertising Data → purposes **Third-Party Advertising, Analytics** → linked: **Yes** → used for tracking: **Yes**. Device ID → **Third-Party Advertising, Analytics, App Functionality** → linked **Yes** → tracking **Yes**. Crash Data, Performance Data, Other Diagnostic Data → **Analytics, App Functionality**, not linked, not tracking (crash reports). Privacy Policy URL: `https://namastegeitz.github.io/Eddie-G/alien-sudoku/privacy.html` |
 | **Pricing and Availability** | Free · all countries **except China mainland and Vietnam** · turn **off** "available on Apple Silicon Mac" |
 | **Version 1.2 page** | Promotional text, description, keywords (listing.md) · Support URL `https://namastegeitz.github.io/Eddie-G/alien-sudoku/support.html` · Marketing URL: leave empty · Screenshots: `assets/screenshots/apple-iphone-6.9in/` (7) and `assets/screenshots/apple-ipad-13in/` (7) · Copyright `© 2026 Eddie G` · pick the TestFlight build |
 | **App Review Information** | Sign-in required: **No**. Notes: the text below |

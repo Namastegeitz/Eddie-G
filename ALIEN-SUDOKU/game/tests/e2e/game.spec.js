@@ -575,3 +575,37 @@ test('graphics: Settings quality changes what is drawn, and Auto names its level
   await expect(root).toHaveAttribute('data-gfx-glow', 'off');
   expect(errors).toEqual([]);
 });
+
+test('text size: 150% scales the text, everything still fits, and the choice is saved', async ({ page }) => {
+  const errors = errorsOf(page);
+  await openMenu(page);
+  const rootPx = () => page.evaluate(() => parseFloat(getComputedStyle(document.documentElement).fontSize));
+  const base = await rootPx();
+  await page.locator('.icon-tile:has-text("Settings")').first().click();
+  await page.locator('select[data-setting="textSize"]').selectOption('1.5');
+  expect(await rootPx()).toBeCloseTo(base * 1.5, 0);
+  const overflow = () => page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
+  expect(await overflow()).toBeLessThanOrEqual(1);
+  await page.reload();
+  await expect(page.locator('.screen-menu')).toBeVisible();
+  expect(await rootPx()).toBeCloseTo(base * 1.5, 0);
+  expect(await overflow()).toBeLessThanOrEqual(1);
+  // The puzzle screen still fits with large text.
+  await startQuick(page, 'easy');
+  expect(await overflow()).toBeLessThanOrEqual(1);
+  const board = await page.locator('.board').boundingBox();
+  expect(board.width).toBeGreaterThan(200);
+  expect(errors).toEqual([]);
+});
+
+test('feedback: Settings opens the support page (no email set yet), crash switch hidden until set up', async ({ page }) => {
+  const errors = errorsOf(page);
+  await openMenu(page);
+  await page.evaluate(() => { window.__opened = []; window.open = (url) => { window.__opened.push(url); return null; }; });
+  await page.locator('.icon-tile:has-text("Settings")').first().click();
+  await page.locator('.settings-feedback').click();
+  expect(await page.evaluate(() => window.__opened)).toEqual(['https://namastegeitz.github.io/Eddie-G/alien-sudoku/support.html']);
+  // No Sentry DSN or Firebase files in this build, so there is nothing to switch.
+  await expect(page.locator('label:has-text("Send crash reports")')).toHaveCount(0);
+  expect(errors).toEqual([]);
+});

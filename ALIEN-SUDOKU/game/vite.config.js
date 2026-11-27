@@ -1,8 +1,16 @@
 import { defineConfig } from 'vite';
 import { VitePWA } from 'vite-plugin-pwa';
-import { readFileSync } from 'node:fs';
+import { readFileSync, existsSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
 
 const pkg = JSON.parse(readFileSync(new URL('./package.json', import.meta.url), 'utf8'));
+// Firebase (Crashlytics, Remote Config) runs only when its config files are in the native
+// projects. Add both together: android/app/google-services.json and ios/App/App/GoogleService-Info.plist.
+const here = (p) => fileURLToPath(new URL(p, import.meta.url));
+const HAS_FIREBASE = process.env.VITE_FIREBASE === '1'
+  || existsSync(here('./android/app/google-services.json'))
+  || existsSync(here('./ios/App/App/GoogleService-Info.plist'));
+const firebaseWebStub = here('./src/platform/firebase-web-stub.js');
 
 export default defineConfig({
   // Relative base so the same build runs from a web host, a sub-folder,
@@ -10,6 +18,11 @@ export default defineConfig({
   base: './',
   define: {
     __APP_VERSION__: JSON.stringify(pkg.version),
+    __FIREBASE__: JSON.stringify(HAS_FIREBASE),
+  },
+  resolve: {
+    // The Firebase plugins' web versions are never used (Firebase runs on iOS/Android only).
+    alias: [{ find: /^firebase\/.*$/, replacement: firebaseWebStub }],
   },
   build: {
     target: ['es2020', 'safari15', 'chrome90'],

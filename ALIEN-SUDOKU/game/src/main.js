@@ -38,6 +38,10 @@ import { installGlyphSprite } from './data/symbols.js';
 import { applyTheme, setEasyPalette } from './ui/theme.js';
 import { initStarfield, setReducedMotion } from './ui/starfield.js';
 import { applyGraphics } from './ui/graphics.js';
+import { initCrashReporting, setCrashContext } from './platform/crash.js';
+import { initRemote, updateNotice, remote } from './platform/remote.js';
+import { initTextSize, applyTextSize } from './platform/textsize.js';
+import { showUpdateNotice } from './ui/update-notice.js';
 import { menuScreen } from './ui/screens/menu.js';
 import { playScreen } from './ui/screens/play.js';
 import { campaignScreen, sectorScreen } from './ui/screens/campaign.js';
@@ -60,6 +64,10 @@ function applySettings() {
 async function boot() {
   await initStorage({ native: isNative });
   initProfile();
+  initCrashReporting();
+  initTextSize();
+  on('settings', ({ key }) => { if (key === 'textSize') applyTextSize(); });
+  on('graphics', (g) => setCrashContext('graphics', g.tier));
   applySettings();
   installGlyphSprite();
   setEasyPalette(settings().easyPalette);
@@ -109,8 +117,16 @@ async function boot() {
   setTimeout(() => document.getElementById('boot-splash')?.remove(), 600);
   hideSplash();
 
-  // Ads (native only): consent first, after the menu is on screen.
-  if (isNative) setTimeout(() => initAds(), 800);
+  // Native only, after the menu is on screen: remote switches (Firebase Remote Config,
+  // shipped defaults when it isn't set up), any update notice, then ads (consent first).
+  if (isNative) {
+    setTimeout(async () => {
+      await initRemote();
+      const notice = updateNotice();
+      if (notice) showUpdateNotice(notice);
+      if (!remote('disable_ads')) initAds();
+    }, 800);
+  }
 
   registerServiceWorker();
 }

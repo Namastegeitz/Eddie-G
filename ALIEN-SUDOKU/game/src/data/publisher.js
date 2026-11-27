@@ -5,4 +5,5 @@ export const PUBLISHER = {
   supportEmail: '',        // e.g. aliensudoku.support@gmail.com
   website: 'https://namastegeitz.github.io/Eddie-G/alien-sudoku/',
   privacyPolicyUrl: 'https://namastegeitz.github.io/Eddie-G/alien-sudoku/privacy.html',
+  appStoreId: '',          // the numeric Apple ID from App Store Connect (App Information), for "Rate" links on iPhone
 };

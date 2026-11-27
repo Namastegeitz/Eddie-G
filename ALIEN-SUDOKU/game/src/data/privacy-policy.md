@@ -1,6 +1,6 @@
 # Alien Sudoku: Privacy Policy
 
-*Last updated: November 17, 2026*
+*Last updated: November 27, 2026*
 
 Alien Sudoku ("the game") is made by {{DEVELOPER}}. This policy explains what information the game handles.
 
@@ -28,7 +28,26 @@ Depending on where you live, the app asks for your consent before personalized a
 How Google uses this data: https://policies.google.com/technologies/partner-sites
 Google's privacy policy: https://policies.google.com/privacy
 
-The web and desktop versions of the game show no ads and send no data.
+The web and desktop versions of the game show no ads. The only data they can send are crash reports (below).
+
+## Crash reports
+
+If the game crashes or runs into an error, it can send a crash report so we can find and fix the problem. Reports go to **Sentry** (Functional Software, Inc.) from every version of the game and, in the iOS and Android apps, to **Google Firebase Crashlytics**.
+
+A report contains the error and where in the game's code it happened, the app version, the platform, the device model and operating system version, the graphics setting, and (Crashlytics) a random installation ID. It contains no name, no email address and no game progress, and we don't store IP addresses with it. Reports are kept for up to 90 days and are used only to fix the game.
+
+You can turn crash reports off at any time: **Settings → Privacy & data → Send crash reports**.
+
+How Sentry handles data: https://sentry.io/privacy/
+How Google handles Crashlytics data: https://firebase.google.com/support/privacy
+
+## Remote settings (iOS and Android apps)
+
+The phone apps check **Google Firebase Remote Config** for a few switches we can change without an app update, for example to turn off an ad type or to tell you a new version is available. The check uses a random installation ID and no personal information.
+
+## Feedback
+
+"Send feedback" in Settings opens your own email app with a message you can read and edit before sending. It includes the app version, your device type and any recent error messages. Nothing is sent unless you send that email.
 
 ## Children
 

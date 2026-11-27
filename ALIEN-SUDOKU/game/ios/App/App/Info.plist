@@ -70,6 +70,9 @@
 	<string>UIStatusBarStyleLightContent</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
+	<!-- Crashlytics starts off; the game turns it on from Settings > Send crash reports (platform/crash.js). -->
+	<key>FirebaseCrashlyticsCollectionEnabled</key>
+	<false/>
 	<!-- AdMob. Google's public TEST app id; set the real one with tools/set-admob-ids.mjs -->
 	<key>GADApplicationIdentifier</key>
 	<string>ca-app-pub-3940256099942544~1458002511</string>

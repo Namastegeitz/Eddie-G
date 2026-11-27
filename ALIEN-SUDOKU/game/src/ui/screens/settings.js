@@ -21,7 +21,11 @@ import { privacyOptionsAvailable, showPrivacyOptions, adsSupported } from '../..
 import { openPrivacyPolicy } from '../privacy.js';
 import { openReportAd } from '../report-ad.js';
 import { on } from '../../core/events.js';
-import { autoLevel } from '../graphics.js';
+import { autoLevel, gfx } from '../graphics.js';
+import { crashReportingAvailable, recentErrors } from '../../platform/crash.js';
+import { canOpenStorePage, openStorePage } from '../../platform/review.js';
+import { PUBLISHER } from '../../data/publisher.js';
+import { platform } from '../../platform/native.js';
 
 function unlockHint(key) {
   const reach = SECTORS.find((s) => s.unlocksSet === key);
@@ -172,6 +176,24 @@ export const settingsScreen = {
       toggle('glowEffects', 'Glow and blur effects', 'Pulsing glows and frosted-glass panels'),
     ]);
 
+    // ---- Feedback ----
+    const sendFeedback = () => {
+      const where = isElectron ? 'desktop' : isNative ? platform : 'web';
+      const errors = recentErrors();
+      const body = [
+        'What happened, or what would you like to see?', '', '', '',
+        '---',
+        `Alien Sudoku ${appVersion()} · ${where} · graphics ${gfx().tier}`,
+        `Screen ${window.innerWidth}x${window.innerHeight} @${window.devicePixelRatio || 1}x · ${navigator.userAgent}`,
+        ...(errors.length ? ['Recent errors:', ...errors] : []),
+      ].join('\n');
+      if (PUBLISHER.supportEmail) {
+        window.location.href = `mailto:${PUBLISHER.supportEmail}?subject=${encodeURIComponent('Alien Sudoku feedback')}&body=${encodeURIComponent(body)}`;
+      } else if (PUBLISHER.website) {
+        window.open(`${PUBLISHER.website}support.html`, '_blank', 'noopener');
+      }
+    };
+
     const el = h('div', { class: 'page' },
       topbar('Settings', null, nav),
       h('div', { class: 'page-body settings' },
@@ -203,6 +225,8 @@ export const settingsScreen = {
           toggle('autoRemoveNotes', 'Auto-clear notes', 'Placing a glyph removes it from nearby notes'),
           toggle('showTimer', 'Show timer'),
           toggle('reduceMotion', 'Reduce motion', 'Calmer animations and background'),
+          select('textSize', 'Text size', h('small', {}, isNative ? 'Auto follows your phone\'s text size' : 'Menus and labels; the board scales with the screen'),
+            [['auto', 'Auto'], [1, '100%'], [1.15, '115%'], [1.3, '130%'], [1.5, '150%']]),
         ]),
         graphicsGroup,
         group('Privacy & data', [
@@ -210,6 +234,9 @@ export const settingsScreen = {
           h('button', { class: 'btn btn-ghost btn-wide', type: 'button', onclick: () => openPrivacyPolicy() }, 'Privacy policy'),
           privacyOptionsAvailable() ? h('button', { class: 'btn btn-ghost btn-wide', type: 'button', onclick: () => showPrivacyOptions() }, 'Ad privacy choices') : null,
           adsSupported ? h('button', { class: 'btn btn-ghost btn-wide', type: 'button', onclick: () => openReportAd() }, 'Report an ad') : null,
+          crashReportingAvailable() ? toggle('crashReports', 'Send crash reports', 'If the game crashes, a report with no personal data helps us fix it') : null,
+          (PUBLISHER.supportEmail || PUBLISHER.website) ? h('button', { class: 'btn btn-ghost btn-wide settings-feedback', type: 'button', onclick: () => sendFeedback() }, 'Send feedback or report a bug') : null,
+          isNative && canOpenStorePage() ? h('button', { class: 'btn btn-ghost btn-wide', type: 'button', onclick: () => openStorePage() }, 'Rate Alien Sudoku') : null,
           h('button', {
             class: 'btn btn-danger btn-wide', type: 'button',
             onclick: async () => {

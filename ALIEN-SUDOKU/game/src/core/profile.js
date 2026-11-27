@@ -37,6 +37,8 @@ export const DEFAULT_SETTINGS = {
   frameCap: 'auto',        // 'auto' | 30 | 60 | 120: frame rate of those animations
   bgMotion: true,          // slow drift of the space backdrop
   glowEffects: true,       // glow pulses and frosted-glass blur
+  textSize: 'auto',        // 'auto' (follow the phone) | 1 | 1.15 | 1.3 | 1.5 (platform/textsize.js)
+  crashReports: true,      // send crash reports when Sentry / Crashlytics are set up (platform/crash.js)
   quickDifficulty: 'medium',
   tries: 25,               // mistakes allowed per puzzle: 3, 5, 10 or 25
   seenTutorial: false,
