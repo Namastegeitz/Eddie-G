@@ -3,14 +3,14 @@
   "status": "built",
   "version": "0.9.0",
   "build": 1,
-  "commit": "8ea014e",
-  "built_at": "2026-11-27T16:09:52Z",
+  "commit": "30e2033",
+  "built_at": "2026-11-28T02:04:03Z",
   "godot": "4.7.2",
   "files": [
     {
       "file": "CanopyCrossing.apk",
-      "bytes": 90767565,
-      "sha256": "3656ef99533f9137eb59845cda9a85b3024cb47f6fc2efac77bcf55d85a58cb8"
+      "bytes": 90788466,
+      "sha256": "ce8f8a8b2cef764bb376950560b90763562e75dd5d7c2f7052f44313fc74311d"
     }
   ],
   "notes": "APK installs directly on phones. Google Play needs the .aab (set ANDROID_AAB=1; GitHub Actions does)."

@@ -7,7 +7,7 @@ count, set by the release workflow).
 ## Unreleased: the 2026-11-27 upgrade
 
 - **Graphics options:** a new **Ultra** setting for strong computers (soft contact shadows, softer sun shadows, sharper 3D), a **Frame rate** choice (Max, 60, or 30 to save battery) and **First-person resolution** (Auto, 100%, 75%, 50%).
-- **Smoother from above:** each animal, hazard and pickup is drawn in one go, so the busiest screens ask the graphics chip for about 85% less work.
+- **Smoother from above:** each animal, hazard and pickup is drawn in one go, so the busiest screens send the graphics chip over 80% fewer drawing calls (about 10% faster frames in our tests).
 - **Pause when you switch away:** a call, a notification or another app opens the pause menu, so you never come back mid-hop (Settings switch, on).
 - **Rating card:** after you clear a level, now and then, the store's own "rate this game" card (at most every four months).
 - **Update reminders:** the home screen says when a newer version is out.

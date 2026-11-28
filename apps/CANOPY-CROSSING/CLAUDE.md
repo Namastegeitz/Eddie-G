@@ -56,7 +56,11 @@ view, where, steps, status) and `activity/*`.
   primitives must stay within 5% of `tests/perf_baseline.json`; re-record with
   `--record` only for a deliberate change, and say why in the commit) and a
   secret scan. `VISUAL=1` adds `tools/visual_check.py` (key screens at phone,
-  tall-phone and tablet sizes vs `tests/visual/`). Plus the level sweep.
+  tall-phone and tablet sizes vs `tests/visual/`, captured at Medium via the
+  one-launch `--graphics=` switch). Plus the level sweep.
+- **Size budget**: `tools/build_web.sh` fails if the game data grows over 5%
+  past `tests/size_budget.json`. Folders of pictures that aren't game content
+  (`upgrade-shots/`, `tests/visual/`) carry a `.gdignore`, or Godot packs them.
 - **Android locally**: the SDK may be installed at `/root/android-sdk` (Google's
   hosts are reachable now). `tools/build_all.sh android` (needs a keystore: the
   `GODOT_ANDROID_KEYSTORE_RELEASE_*` variables; use a throwaway key outside the

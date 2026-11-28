@@ -1,0 +1,5 @@
+{
+  "web_pck_mb": 39.2,
+  "tolerance": 0.05,
+  "note": "Web game data (build/web/index.pck). Checked by tools/build_web.sh. Raise it only for content the game really needs, and say why in the commit."
+}

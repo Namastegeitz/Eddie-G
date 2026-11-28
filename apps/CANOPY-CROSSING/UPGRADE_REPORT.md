@@ -201,7 +201,47 @@ The game is in a private beta (web link). The launch page's bug log has no repor
 
 ## Before / after
 
-AFTER_TABLE
+Measured back to back on 2026-11-28: the pre-upgrade copy (8ea014e) and
+this branch, the same benchmark run twice each (240 frames, Amazon level 5,
+seed 777, 720x1280, software OpenGL). Where the two runs differ, both are
+shown. Frame times on this machine only compare with each other; draw calls,
+objects and primitives are the same on any machine.
+
+| Measure | Before | After | Change |
+|---|---|---|---|
+| Bird's-eye draw calls a frame, Medium (average / worst) | 2,131 / 2,710 | 347 / 383 | **-84%** |
+| Bird's-eye objects drawn a frame, Medium | 8,074 | 2,727 | -66% |
+| Bird's-eye primitives a frame, Medium | 69,722 | 55,600 | -20% (anti-aliased edges are now part of each figure's batch) |
+| Bird's-eye frame time here, Medium (two runs) | 108.5 / 111.2 ms | 98.1 / 100.9 ms | **-9%** |
+| Bird's-eye CPU time a frame here, Medium | 119.9 / 125.8 ms | 107.5 / 112.8 ms | -10% |
+| Bird's-eye 1% low here, Medium | 6.6 / 6.7 fps | 7.7 / 6.9 fps | better or equal |
+| Bird's-eye draw calls, High (computers) | 2,222 | 355 | -84% |
+| Bird's-eye frame time here, High | 115.9 ms | 108.7 ms | -6% |
+| First person, Medium: draw calls / objects / primitives | 332 / 680 / 612k | 332 / 680 / 610k | same (identical when started from the same spot) |
+| First-person frame time here, Medium (two runs) | 359.7 / 359.8 ms | 380.5 / 356.9 ms | same within this machine's noise |
+| Start-up to home screen here (two runs) | 1.93 / 1.86 s | 1.80 / 1.98 s | same |
+| Memory, CPU side (static) | 106.8 MB | 108.3 MB | +1.5 MB (crash reporting, remote switches, batch buffers) |
+| Video memory, Medium / High | 66.7 / 98.1 MB | 67.9 / 99.4 MB | +1.2 / +1.3 MB |
+| Objects left behind by each finished run | 146 (the whole level) | 0 | **leak fixed** |
+| Level sweep: objects leaked at exit | 790,090 | none reported | **fixed** |
+| Level sweep: bot moves on all 220 levels | (reference) | identical, 220/220 beaten | gameplay unchanged |
+| Phase audit checks | 423 (exported pack 422) | 451 (exported pack 450) | +28 (stability, crash reports, remote switches, review timing, graphics, credits) |
+| Other test gates | first-person render, songs, level sweep | + performance gate (5%), secret scan, visual check at 3 sizes | +3 gates |
+| Settings page width on a 720 px phone | wider than the screen (rows cut off) | fits at phone, tall-phone and tablet sizes | fixed (`upgrade-shots/settings_*.jpg`) |
+| Crash reports | none | Sentry (all store builds) + Crashlytics (Android), switched on by 2 GitHub secrets | new |
+| CI | Node 20 actions (removed by GitHub 2026-09-23), build numbers by hand | Node 24 actions, build number = commit count, Play pre-checks | fixed |
+| Web download: game data + engine | 39.2 + 39.5 MB | 39.2 + 39.5 MB | same (+26 KB of code); now gated by `tests/size_budget.json` |
+| Desktop zips: Windows / Linux / macOS (universal) | 74 / 70 / 158 MB (Nov 17 builds) | 75.6 / 66.0 / 97.3 MB | same engine and the same 39.2 MB game data inside |
+| Android APK (arm64 + armv7) | could not be built here (no Android SDK) | 90.8 MB; passes the 16 KB page, target API 36, package and permission checks | new |
+
+Caught during this run: the first web build after adding `upgrade-shots/`
+packed those 12 pictures into the game (+8.6 MB on the web and in the APK).
+Both picture folders now carry a `.gdignore`, and `tools/build_web.sh` fails
+if the game data grows more than 5% over `tests/size_budget.json`.
+
+Before/after pictures of 4 screens at 3 screen sizes: `upgrade-shots/`. They
+match except Settings (new rows, and it now fits the screen); an ant pulling
+a face in one first-person picture is the game's random silly-faces feature.
 
 ## Store readiness (2026-11-28)
 

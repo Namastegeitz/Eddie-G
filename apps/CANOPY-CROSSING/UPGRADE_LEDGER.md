@@ -23,6 +23,9 @@ Done:
 - Settings > Credits and licences (Godot's MIT licence and its third-party notices, font, map data, models).
 - Before/after screenshots in `upgrade-shots/` (4 screens x 3 screen sizes).
 - Android APK builds locally (SDK at /root/android-sdk) and passes the 16 KB / API 36 checks.
+- Web game-data size budget (`tests/size_budget.json`, checked by `tools/build_web.sh`).
+
+Results: bird's-eye draw calls -84%, frame time -9% (software GL); first person, start-up and download size unchanged; memory +1.5 MB; leak fixed (146 objects a run -> 0); phase audit 423 -> 451 checks; gameplay identical (same bot moves on all 220 levels).
 
 Add-ons: Sentry (yes), Firebase Crashlytics (yes), In-app Review (yes), remote switches as a GitHub Pages file (yes), Play Games Services / Game Center (yes, after store accounts exist).
 

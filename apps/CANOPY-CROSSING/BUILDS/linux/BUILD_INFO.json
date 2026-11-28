@@ -3,14 +3,14 @@
   "status": "built",
   "version": "0.9.0",
   "build": 1,
-  "commit": "4412280",
-  "built_at": "2026-11-17T01:19:55Z",
+  "commit": "30e2033",
+  "built_at": "2026-11-28T02:04:43Z",
   "godot": "4.7.2",
   "files": [
     {
       "file": "CanopyCrossing-Linux-x86_64.zip",
-      "bytes": 65913715,
-      "sha256": "568dd08516ae18aced138744cddd89ec544dc19a962a9e96ea5233162115038f"
+      "bytes": 65977639,
+      "sha256": "3b917186e65846c5e68a18f74886f3798cae067a7de9e0b734e64bfc532155a9"
     }
   ],
   "notes": "One file, the game data is inside. Runs on 64-bit Linux with OpenGL 3.3 (and Steam Deck)."

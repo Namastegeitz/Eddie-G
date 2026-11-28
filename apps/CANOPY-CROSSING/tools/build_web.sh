@@ -15,6 +15,17 @@ echo "== export"
 if ! timeout 900 "$GODOT" --headless --path . --export-release "Web" build/web/index.html > /tmp/cc_web_export.log 2>&1; then
   tail -20 /tmp/cc_web_export.log; echo "web export failed"; exit 1
 fi
+echo "== size budget (game data vs tests/size_budget.json; fails if >5% bigger)"
+python3 - <<'PY'
+import json, os, sys
+b = json.load(open("tests/size_budget.json"))
+mb = os.path.getsize("build/web/index.pck") / 1e6
+limit = b["web_pck_mb"] * (1 + b["tolerance"])
+print(f"  game data {mb:.1f} MB (budget {b['web_pck_mb']} MB + {b['tolerance']:.0%})")
+if mb > limit:
+    print("  too big: did a folder of pictures or docs get packed? (.gdignore it or add it to exclude_filter)")
+    sys.exit(1)
+PY
 echo "== package"
 python3 tools/web_artifact/package.py build/web build/web_artifact
 echo "== smoke test (phone browser, touch)"
