@@ -1,0 +1,1 @@
+import{i as e,n as t,r as n}from"./index-CriuY7HZ.js";var r=class extends e{async openAppStore(){throw this.createUnimplementedException()}async requestReview(){throw this.createUnimplementedException()}createUnimplementedException(){return new t(`This plugin method is not implemented on this platform.`,n.Unimplemented)}};export{r as AppReviewWeb};
