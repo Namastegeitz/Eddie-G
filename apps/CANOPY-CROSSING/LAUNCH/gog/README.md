@@ -232,7 +232,7 @@ Researched requirements, with sources: [requirements.md](requirements.md)
 
   **Watch out:** Update it before the game ever sends data anywhere (ads, analytics, crash reports).
 
-- [ ] **Add a credits and licences screen**  
+- [x] ✅ **Add a credits and licences screen**  
   _Claude_
 
   **Why:** Godot's MIT licence and the fonts' licences require a notice; free-plan Meshy models need credit.
@@ -241,6 +241,8 @@ Researched requirements, with sources: [requirements.md](requirements.md)
   1. Settings > Credits: Godot notice, font licences, music credit, Meshy credit if the models were free-plan.
 
   **Done when:** Credits open from Settings.
+
+  **Done ✅** Then the privacy questionnaires.
 
 - [ ] **Answer the age-rating questionnaires (Apple and IARC)**  
   _You_

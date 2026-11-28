@@ -375,7 +375,7 @@ Researched requirements, with sources: [requirements.md](requirements.md)
 
   **Done when:** Terms are live on your site.
 
-- [ ] **Add a credits and licences screen**  
+- [x] ✅ **Add a credits and licences screen**  
   _Claude_
 
   **Why:** Godot's MIT licence and the fonts' licences require a notice; free-plan Meshy models need credit.
@@ -384,6 +384,8 @@ Researched requirements, with sources: [requirements.md](requirements.md)
   1. Settings > Credits: Godot notice, font licences, music credit, Meshy credit if the models were free-plan.
 
   **Done when:** Credits open from Settings.
+
+  **Done ✅** Then the privacy questionnaires.
 
 - [ ] **Answer Apple's App Privacy questions**  
   _You · Apple App Store_

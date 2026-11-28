@@ -1,6 +1,6 @@
 # **CANOPY CROSSING: STORE LAUNCH CHECKLIST**
 
-**13 of 92 steps done (14%)** · snapshot 2026-11-27
+**14 of 92 steps done (15%)** · snapshot 2026-11-28
 
 **Live checklist (tick steps, log bugs, see builds):** https://claude.ai/artifact/W8GbYN7jifz6X6fRE4QSNR
 
@@ -36,7 +36,7 @@ the official page to re-check on the day you do it.
 - [Phase 0: Set up the project for launch](#phase-0-set-up-the-project-for-launch): 13/13
 - [Phase 1: Decide](#phase-1-decide): 0/8
 - [Phase 2: Accounts, contracts and money](#phase-2-accounts-contracts-and-money): 0/18
-- [Phase 3: Legal and privacy](#phase-3-legal-and-privacy): 0/10
+- [Phase 3: Legal and privacy](#phase-3-legal-and-privacy): 1/10
 - [Phase 4: Game changes the stores require](#phase-4-game-changes-the-stores-require): 0/11
 - [Phase 5: Signing and store builds](#phase-5-signing-and-store-builds): 0/8
 - [Phase 6: Store pictures and video](#phase-6-store-pictures-and-video): 0/6
@@ -573,7 +573,7 @@ _0 of 18 done._ Open each store account, sign the paid agreements, and add tax a
 
 ## Phase 3: Legal and privacy
 
-_0 of 10 done._ The pages, answers and in-game links every store checks before approving.
+_1 of 10 done._ The pages, answers and in-game links every store checks before approving.
 
 - [ ] **Finish the privacy policy and put it on your website**  
   _You + Claude_
@@ -609,7 +609,7 @@ _0 of 10 done._ The pages, answers and in-game links every store checks before a
 
   **Done when:** Terms are live on your site.
 
-- [ ] **Add a credits and licences screen**  
+- [x] ✅ **Add a credits and licences screen**  
   _Claude_
 
   **Why:** Godot's MIT licence and the fonts' licences require a notice; free-plan Meshy models need credit.
@@ -618,6 +618,8 @@ _0 of 10 done._ The pages, answers and in-game links every store checks before a
   1. Settings > Credits: Godot notice, font licences, music credit, Meshy credit if the models were free-plan.
 
   **Done when:** Credits open from Settings.
+
+  **Done ✅** Then the privacy questionnaires.
 
 - [ ] **Answer Apple's App Privacy questions**  
   _You · Apple App Store_
