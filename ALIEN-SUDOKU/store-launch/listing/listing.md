@@ -88,9 +88,9 @@ _Add to the end of the description on Steam, GOG, itch.io, Epic and Microsoft St
 
 ## What's new
 
-> Version 1.2: space in high definition. Every backdrop is redrawn at four times the detail, with framings made for phones held upright. The campaign is now a star chart, and each sector has its own route map. Boards gain finer detail. Also new: the Star Cadets, polite recruits raised on Earth's '80s and '90s broadcasts, bring Medium puzzles with their own song, Cadet Mixtape.
+> Version 1.3: smoother on every phone. A new Graphics setting (Auto, Low to Ultra) keeps the game fluid, and Auto adjusts itself on older phones. Text size now follows your phone, or pick up to 150%. Send feedback right from Settings, and optional crash reports help us fix problems fast. Also: space in high definition, a star-chart campaign map, and the Star Cadets.
 
-✅ apple 377/4000 · ✅ google 377/500
+✅ apple 367/4000 · ✅ google 367/500
 
 ## Categories
 

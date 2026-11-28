@@ -1,11 +1,12 @@
-# Android (Google Play): ✅ Built (version 1.2.0, versionCode 3)
+# Android (Google Play): ✅ Built (version 1.3.0, versionCode 4)
 
 ## What's here
-- `files/AlienSudoku-1.2.0-play.aab`: the upload for Google Play (signed with the upload key; Google re-signs it with Play App Signing). Upload it in step G3 of `store-launch/STEP-BY-STEP.md`.
-- `files/AlienSudoku-1.2.0.apk`: installs directly on an Android phone for a quick try (same build). Uninstall it before installing from Google Play, because Play's copy is signed with Google's key.
-- `files/AlienSudoku-1.2.0-mapping.txt`: R8 map for readable crash reports (also inside the AAB, so Play gets it automatically).
+- `files/AlienSudoku-1.3.0-play.aab`: the upload for Google Play (signed with the upload key; Google re-signs it with Play App Signing). Upload it in step G3 of `store-launch/STEP-BY-STEP.md`.
+- `files/AlienSudoku-1.3.0.apk`: installs directly on an Android phone for a quick try (same build). Uninstall it before installing from Google Play, because Play's copy is signed with Google's key.
+- `files/AlienSudoku-1.3.0-mapping.txt`: R8 map for readable crash reports (also inside the AAB, so Play gets it automatically).
 - `files/` is not in git. It exists on the machine that built it; ask Claude to send the files.
-- Ads: Google's **test** ads until the real AdMob ids are set (step G6).
+- Ads: Google's **test** ads until the real AdMob ids are set (step G6). Crash reports and Remote Config switch on when the Firebase file and Sentry DSN are added (guide C1, C2).
+- Size: APK 15.4 MB, AAB 16.9 MB (Sentry and Firebase native SDKs; all native libraries are 16 KB-aligned).
 
 ## The upload key
 - `alien-sudoku-upload.jks` (alias `upload`), certificate `CN=Alien Sudoku, O=Eddie G`,

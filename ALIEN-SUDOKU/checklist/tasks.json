@@ -211,6 +211,27 @@
   "depends": []
  },
  {
+  "id": "ready-v130",
+  "phase": "ready",
+  "store": "all",
+  "owner": "claude",
+  "status": "done",
+  "title": "Release version 1.3.0: upgrade run 1 (smoother, crash reports, text size)",
+  "statusNote": "Graphics setting with Auto, crash reporting (Sentry + Firebase Crashlytics, off until set up), Remote Config switches, the store rating card, text size, Send feedback; patch updates; 130 unit + 48 browser + 3 screenshot tests. Version 1.3.0 (Android versionCode 4, iOS build 4). Details: UPGRADE_REPORT.md. Windows 1.3.0 not built (Wine broken in the cloud machine).",
+  "cost": null,
+  "time": "done",
+  "steps": [
+   "Open Settings > Graphics and Settings > Text size",
+   "Set up Sentry and Firebase (guide C1, C2) to turn crash reports on"
+  ],
+  "feedback": [
+   "Android versionCode and iOS build number are both 4 now."
+  ],
+  "doneMessage": "Version 1.3.0 is built.",
+  "links": [],
+  "depends": []
+ },
+ {
   "id": "apple-ios-baseline",
   "phase": "ready",
   "store": "apple",
@@ -3477,7 +3498,7 @@
   "title": "Plan the 2027 ads SDK and target API upgrade",
   "owner": "claude",
   "status": "todo",
-  "statusNote": "@capacitor-community/admob 8.3 uses legacy ads SDK 25.4.x, deprecated 30 Jun 2027.",
+  "statusNote": "Legacy Google Mobile Ads Android SDK v25 is deprecated Jun 30, 2027 (iOS v12 Q1 2027). Move to the Next-Gen SDK when the Capacitor AdMob plugin supports it. Researched Nov 27, 2026 (UPGRADE_REPORT.md).",
   "cost": null,
   "time": "Half a day in spring 2027",
   "steps": [

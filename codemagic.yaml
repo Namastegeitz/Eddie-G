@@ -40,6 +40,8 @@ workflows:
     scripts:
       - name: Install packages
         script: cd "$APP_DIR" && npm ci
+      - name: Unit tests (the build stops if any fail)
+        script: cd "$APP_DIR" && npx vitest run
       - name: AdMob app id (test ads until it is set)
         script: |
           cd "$APP_DIR"
@@ -74,3 +76,49 @@ workflows:
       app_store_connect:
         auth: integration
         submit_to_testflight: true
+
+  # ---------------------------------------------------------------------------------------
+  # Android: tests, then a signed upload file (.aab) for Google Play. It only builds; upload
+  # the .aab yourself in Play Console (Codemagic can publish too, but only with your go).
+  # One-time setup: Team settings > Code signing identities > Android keystores > upload
+  # alien-sudoku-upload.jks with reference name "alien-sudoku-upload" (password from the .txt).
+  # Optional variables (group "alien-sudoku"): FIREBASE_ANDROID_JSON_BASE64 (google-services.json
+  # as base64), VITE_SENTRY_DSN, ADMOB_ANDROID_APP_ID, VITE_ADMOB_ANDROID_BANNER/_INTERSTITIAL/_REWARDED.
+  alien-sudoku-android:
+    name: Alien Sudoku Android (Play upload file)
+    instance_type: mac_mini_m2
+    max_build_duration: 45
+    environment:
+      android_signing:
+        - alien-sudoku-upload
+      # groups:
+      #   - alien-sudoku
+      node: 22
+      java: 21
+      vars:
+        APP_DIR: ALIEN-SUDOKU/game
+        BUILD_OFFSET: 100
+    triggering:
+      events: []
+    scripts:
+      - name: Install packages
+        script: cd "$APP_DIR" && npm ci
+      - name: Unit tests (the build stops if any fail)
+        script: cd "$APP_DIR" && npx vitest run
+      - name: Firebase and AdMob config (each only when set)
+        script: |
+          cd "$APP_DIR"
+          if [ -n "$FIREBASE_ANDROID_JSON_BASE64" ]; then echo "$FIREBASE_ANDROID_JSON_BASE64" | base64 --decode > android/app/google-services.json; fi
+          if [ -n "$ADMOB_ANDROID_APP_ID" ]; then node tools/set-admob-ids.mjs; fi
+      - name: Build the game and copy it into the Android app
+        script: cd "$APP_DIR" && npm run build && npx cap sync android
+      - name: Build the signed .aab
+        script: |
+          cd "$APP_DIR/android"
+          export ANDROID_KEYSTORE_PATH="$CM_KEYSTORE_PATH" ANDROID_KEYSTORE_PASSWORD="$CM_KEYSTORE_PASSWORD"
+          export ANDROID_KEY_ALIAS="$CM_KEY_ALIAS" ANDROID_KEY_PASSWORD="$CM_KEY_PASSWORD"
+          VERSION=$(node -p "require('../package.json').version")
+          ./gradlew bundleRelease -PversionCode=$((BUILD_NUMBER + BUILD_OFFSET)) -PversionName=$VERSION
+    artifacts:
+      - ALIEN-SUDOKU/game/android/app/build/outputs/bundle/release/*.aab
+      - ALIEN-SUDOKU/game/android/app/build/outputs/mapping/release/mapping.txt

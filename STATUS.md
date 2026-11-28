@@ -35,6 +35,12 @@
   Zen and Alien Duel keep the original lineup. New visitor tone "cadet", new song "Cadet Mixtape".
   Android versionCode 2, iOS build 2.
   Shareable web link (1.1.0): https://rawcdn.githack.com/Namastegeitz/Eddie-G/cff49a00f7e25606123decf9bb2d81e2a99e7a61/ALIEN-SUDOKU/builds/web/AlienSudoku.html
+- Version 1.3.0 (Nov 28): **Universal Upgrade run 1**. Graphics setting (Auto/Low-Ultra; phone-profile
+  stutter on the puzzle and map screens cut to near zero), crash reporting with Sentry + Firebase
+  Crashlytics (off until the owner sets up the free accounts), Firebase Remote Config switches, the
+  store rating card, text size, Send feedback, patch updates (Electron 45.5.0), visual regression and
+  benchmark gates, Codemagic iOS + Android workflows, store-kit/. Report: ALIEN-SUDOKU/UPGRADE_REPORT.md;
+  ledger: ALIEN-SUDOKU/UPGRADE_LEDGER.md. Android versionCode 4, iOS build 4.
 - Nov 20-27: **store prep**. Android release builds work in the session (eddie-g cloud environment):
   signed 1.2.0 AAB + APK, R8 shrinking, upload key held by the owner. iOS builds on a Codemagic cloud
   Mac (codemagic.yaml). Step-by-step guide: ALIEN-SUDOKU/store-launch/STEP-BY-STEP.md. Owner chose

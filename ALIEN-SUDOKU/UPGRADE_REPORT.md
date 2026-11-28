@@ -184,3 +184,79 @@ Capacitor 8.6.0 → 8.6.3, Vite 8.3.5 → 8.4.0, Vitest 5.1.0 → 5.1.2, Electro
 - Android: APK 10.1 → 15.4 MB, AAB 12.7 → 16.9 MB (Sentry and Firebase native SDKs). New native libraries (Sentry, AndroidX DataStore) are **16 KB-aligned** on all four ABIs (ELF LOAD alignment 0x4000; `zipalign -P 16` OK). All 10 plugins survive R8.
 - Privacy policy (in the game and `store-launch/privacy-policy.md`), store-form answers and set-up steps C1-C2 updated in `store-launch/STEP-BY-STEP.md`.
 - Tests: unit 130/130 (remote switches, rating rules, text size, crash switch); browser 48/48 (+2 skipped), including text size at 150% and Send feedback.
+
+### Step 9: testing
+- **Flaky Alien Duel test fixed** (U10): it compared the rival's progress read *before* the game saved, while the rival kept playing in real time. It now compares against the saved rival clock, and gets the same 180 s limit as the other full-solve test. 10/10 passes.
+- **Visual regression** (U9): `tests/e2e/visual.spec.js`: menu, settings, campaign map and a puzzle at 360×640, Pixel 7 and 1280×800, compared with saved pictures (`visual.spec.js-snapshots/`, 12 files). The random space background is hidden. Repeat runs match.
+- **Benchmark gate**: `npm run bench` fails if any headline number is >5% worse than `perf/baseline.json`. Final run: everything passed except desktop cold start (748 → 821 ms), and a 12-run alternating re-test of both builds put that at **714 vs 737 ms median (+3%)**, inside the 5% limit and the old build's own spread (655–810 ms).
+- **Security**: no secrets or key files tracked in git (scan for API keys, private keys, tokens, keystores, .p8/.p12, Firebase files, .env). The Android app asks for exactly the same permissions as 1.2.0 (the new add-ons added none); `FOREGROUND_SERVICE`/`WAKE_LOCK` come from AdMob's WorkManager, with no typed foreground-service permission, so Play needs no foreground-service declaration (re-check in Play Console). `npm audit`: 4 + 6 moderate, build tools only (see Step 4).
+- **Store pre-checks** (Play pre-launch report, TestFlight validation): need the store accounts; they run automatically on the first upload (guide G3, A5).
+
+### Step 10: build and release package
+- Version **1.3.0** (Android versionCode 4, iOS build 4). `CHANGELOG.md` for players; store "What's new" updated (367/500).
+- CI: GitHub Actions still doesn't start jobs on this account. `codemagic.yaml` now has an **iOS** workflow (tests, build, sign, TestFlight) and an **Android** workflow (tests, signed .aab), both started by hand; a release rebuilds from its tag by choosing the tag in Codemagic.
+- Signing: Android upload key with the owner (password manager), never in git; Play App Signing holds the app key. iOS: Apple cloud-managed certificate through the App Store Connect API key in Codemagic. Desktop: unsigned for now (owner's choice).
+- `store-kit/`: index of every listing item, screenshot and video shot list, Accessibility Nutrition Label answers, credits (⚠️ the space backdrops), release plan with staged rollout and rollback.
+- Builds at 1.3.0: web, one-file game, itch.io zip, website, store screenshots, Android (`.aab` + `.apk`, versionCode 4, signed, 16 KB OK), Linux (AppImage, deb; smoke test passes), macOS (Intel, Apple Silicon). **Windows could not be built**: the installer step runs Wine, and Wine now crashes on this cloud machine even during set-up (three failures, so stopped as the prompt requires). The Windows files stay at 1.2.0 until a build on a Windows PC or a working Wine.
+- Published (both approved earlier): the website (privacy policy now covers crash reports, remote settings and feedback) and the game page in Claude.
+- Nothing uploaded or submitted to any store.
+
+## Before / after (run 1)
+
+Same machine, same method (pooled frames, 4 runs × 8 s per scene). Before = the untouched build (commit 826fc25), re-measured; after = 1.3.0 at default settings (graphics Auto).
+
+| | Phone before | Phone after | Desktop before | Desktop after |
+|---|---|---|---|---|
+| Cold start to menu | 1,092 ms | **938 ms** | 748 ms | 821 ms (12-run re-test: 714 → 737 ms, +3%, within noise) |
+| JS memory, puzzle | 3.6 MB | 3.7 MB | 3.7 MB | 3.7 MB |
+| Menu fps · frames over 2x budget | 59.8 · 0.10% | 60.0 · **0%** | 59.7 · 0.16% | 59.9 · **0%** |
+| **Puzzle fps · 1% low · over 2x** | 58.3 · 29.9 · 0.48% | **59.7 · 59.5 · 0.05%** | 58.8 · 30 · 0.37% | 59.1 · 30 · **0.21%** |
+| **Map fps · 1% low · over 2x** | 57.5 · 29.9 · 0.82% | **59.9 · 59.5 · 0%** | 59.6 · 59.5 · 0.21% | 59.7 · 59.5 · **0.05%** |
+| Worst frame (puzzle / map) | 50 / 67 ms | **33 / 33 ms** | 67 / 50 ms | 50 / 50 ms |
+| Android APK / AAB | 10.1 / 12.7 MB | 15.4 / 16.9 MB (Sentry + Firebase native SDKs) | | |
+| Web bundle (JS) | 504 KB | 516 KB (+11 KB; Sentry/Firebase code is dropped until set up) | | |
+| Crash-free rate | not measurable (no crash reporting) | measurable once Sentry/Crashlytics are set up | | |
+| Tests | 116 unit + 42 browser | **130 unit + 48 browser + 3 screenshot tests (12 pictures)** | | |
+
+Before/after screenshots of the same scenes (Pixel 7): `ALIEN-SUDOKU/upgrade-shots/` (`before-*` vs `after-*`, plus `after-low-quality-*` and `after-text-150-*`).
+
+## What was deferred, and why
+- **Translations** (all text is in the code): large job (L); worth it once the game is live and we know which countries play.
+- **Auto-fill notes, a mistake-check toggle, hints that explain the technique, left-handed layout** (what top Sudoku apps have): gameplay additions, not upgrades; next run.
+- **Gamepad support** (Steam Deck): needed before the Steam release.
+- **Google's third-party SKAdNetwork IDs**: Google's list page is blocked from this workspace; paste the list or open the network for developers.google.com.
+- **Next-Gen Google Mobile Ads SDK** (legacy v25 deprecated Jun 30, 2027): wait until the Capacitor AdMob plugin supports it.
+- **Desktop code signing / notarization**: owner chose "not now".
+- **Space backdrop rights**: needs the owner (see `store-kit/credits.md`).
+
+## Open questions for Eddie
+1. Where did the six space pictures come from? (keep them, or should Claude replace them with free-to-use images?)
+2. The Sentry DSN and the two Firebase files, when you've made the accounts (guide C1, C2).
+3. The support Gmail (guide step 1), still pending.
+
+## Store-readiness checklist (pass / fail)
+
+| Item | Google Play | App Store |
+|---|---|---|
+| Builds with the required SDK (API 36 / Xcode 26) | ✅ | ✅ (Codemagic, latest Xcode) |
+| 16 KB memory pages (Feb 2027) | ✅ all native libraries aligned | n/a |
+| Signed upload file | ✅ `.aab` 1.3.0 | ⏳ first Codemagic build needs the Apple account (A1–A5) |
+| Privacy manifest / Data safety answers | ✅ answers ready (G4) | ✅ PrivacyInfo.xcprivacy + answers (A8) |
+| Privacy policy URL, in-app link | ✅ live, updated for crash reports | ✅ |
+| Support URL | ✅ live | ✅ live |
+| Support email | ❌ waiting for the support Gmail | ❌ same |
+| Age rating answers | ✅ (G4) | ✅ incl. the Nov 2026 questions (A8) |
+| Ads: test IDs → real IDs | ❌ waiting for AdMob (G6) | ❌ waiting for AdMob (A7) |
+| Consent (UMP), ATT prompt, Report an ad | ✅ | ✅ |
+| Review prompt within store rules | ✅ | ✅ |
+| Crash reporting | ⏳ built in, waiting for Sentry/Firebase accounts | ⏳ same |
+| Screenshots and graphics, every size | ✅ | ✅ |
+| Accessibility labels | n/a | ✅ answers ready (claim only after a TestFlight check) |
+| Content rights | ⚠️ space backdrops unconfirmed | ⚠️ same |
+| Developer account | ❌ G1 | ⏳ A1 in progress |
+| Closed test (12 testers, 14 days) | ❌ after G1–G3 | n/a |
+
+## The next 3 upgrades worth doing
+1. **Gameplay parity with the top Sudoku apps**: auto-fill notes, a mistake-check toggle and hints that explain the technique (what players of Sudoku.com, Good Sudoku and Brainium expect).
+2. **Translations**: move the text into string files and add Spanish, Portuguese, German, French and Japanese, the big Sudoku markets.
+3. **Gamepad and Steam Deck support** plus the Next-Gen Google ads SDK before its June 2027 deadline.

@@ -1,0 +1,79 @@
+{
+  "date": "2026-11-28T00:08:55.167Z",
+  "version": "1.2.0",
+  "runs": 4,
+  "profiles": {
+    "phone": {
+      "coldStartMs": 938,
+      "heapMB": {
+        "menu": 3.1,
+        "play": 3.7,
+        "map": 3.4
+      },
+      "domNodes": 3326,
+      "frames": {
+        "menu": {
+          "avgMs": 16.67,
+          "fps": 60,
+          "low1Fps": 59.5,
+          "worstMs": 33.4,
+          "spikesOver2x": 0,
+          "samples": 1918
+        },
+        "play": {
+          "avgMs": 16.75,
+          "fps": 59.7,
+          "low1Fps": 59.5,
+          "worstMs": 33.4,
+          "spikesOver2x": 0.05,
+          "samples": 1908
+        },
+        "map": {
+          "avgMs": 16.68,
+          "fps": 59.9,
+          "low1Fps": 59.5,
+          "worstMs": 33.3,
+          "spikesOver2x": 0,
+          "samples": 1914
+        }
+      },
+      "errors": []
+    },
+    "desktop": {
+      "coldStartMs": 821,
+      "heapMB": {
+        "menu": 3.2,
+        "play": 3.7,
+        "map": 3.5
+      },
+      "domNodes": 3320,
+      "frames": {
+        "menu": {
+          "avgMs": 16.68,
+          "fps": 59.9,
+          "low1Fps": 59.5,
+          "worstMs": 33.4,
+          "spikesOver2x": 0,
+          "samples": 1915
+        },
+        "play": {
+          "avgMs": 16.92,
+          "fps": 59.1,
+          "low1Fps": 30,
+          "worstMs": 50,
+          "spikesOver2x": 0.21,
+          "samples": 1888
+        },
+        "map": {
+          "avgMs": 16.76,
+          "fps": 59.7,
+          "low1Fps": 59.5,
+          "worstMs": 49.9,
+          "spikesOver2x": 0.05,
+          "samples": 1907
+        }
+      },
+      "errors": []
+    }
+  }
+}

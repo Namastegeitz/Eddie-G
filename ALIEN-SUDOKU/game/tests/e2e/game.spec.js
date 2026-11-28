@@ -198,20 +198,25 @@ test('alien duel: customize a rival, beat it, and see it in stats', async ({ pag
 });
 
 test('alien duel: the rival finishes first, you can keep solving, and a duel resumes', async ({ page }) => {
+  test.setTimeout(180_000); // solves a whole puzzle through the UI; slow on a busy machine
   const errors = errorsOf(page);
   await openMenu(page);
   await page.locator('.menu-duel').click();
   await page.locator('.rival-card', { hasText: 'Cadet Xel' }).click();
   await page.locator('.duel-start').click();
   await expect(page.locator('.screen-play .rival')).toBeVisible();
-  // Some rival progress survives a reload.
+  // Some rival progress survives a reload. The rival keeps playing in real time until the
+  // game is saved on "Back", so compare against the saved rival clock, not an earlier read.
   await page.evaluate(() => window.__alienDuelAdvance(120_000));
-  const before = await page.evaluate(() => window.__alienRival.filled);
   await page.locator('.topbar .icon-btn[aria-label="Back to menu"]').click();
+  const savedClock = await page.evaluate(() => JSON.parse(localStorage.getItem('alien-sudoku:saved-game')).duel.clock);
+  expect(savedClock).toBeGreaterThanOrEqual(120_000);
   await page.reload();
   await page.locator('.menu-continue').click();
   await expect(page.locator('.screen-play .rival')).toBeVisible();
-  expect(await page.evaluate(() => window.__alienRival.filled)).toBe(before);
+  const resumed = await page.evaluate(() => ({ filled: window.__alienRival.filled, clock: window.__alienSession.duel.clock }));
+  expect(resumed.clock).toBeGreaterThanOrEqual(savedClock);
+  expect(resumed.filled).toBeGreaterThan(0);
   // Fast-forward to the end of the rival's game.
   await page.evaluate(() => window.__alienDuelAdvance(60 * 60_000));
   await expect(page.locator('.duel-modal .modal-title')).toHaveText('Cadet Xel finished first');
