@@ -2,8 +2,9 @@
 
 Run of Eddie's *Universal Upgrade + Release Build Prompt (Apps + Games)*.
 - **Branch:** `upgrade/2026-11-27`
-- **Start commit tag:** `pre-upgrade-2026-11-27` (roll everything back with
-  `git checkout pre-upgrade-2026-11-27`)
+- **Start point:** commit `8ea014e`, kept as the branch `rollback/pre-upgrade-2026-11-27` on
+  GitHub (the cloud session can't push tags; the tag `pre-upgrade-2026-11-27` exists locally).
+  Roll everything back with `git checkout rollback/pre-upgrade-2026-11-27`.
 - **Rules:** every change is additive, behind a setting where it changes behaviour,
   tested, and committed per step.
 
@@ -184,18 +185,89 @@ Not live yet, so there are no reviews.
 | GitHub Actions CI (setup-godot + godot-export) | GitHub / open source (MIT) | Free minutes (private repos get a monthly free allowance) | Every push: tests + web/Windows/Linux/Android builds kept as downloads | Tests and builds stay manual |
 | In-app review plugin (godot-inapp-review v5.3) | Cengiz (cengiz-pz), MIT | Free | Store-approved "Rate this game" prompt after a good race | No prompt; players rate from the store page |
 | Azure Artifact Signing | Microsoft | $9.99/month (individuals: US/Canada) | Signed Windows downloads (fewer SmartScreen warnings) | Ship Windows through Steam/MS Store, which don't need it |
-| Not recommended now | — | — | GdUnit4/GUT (harness already covers it), fastlane (after store accounts exist), Firebase/PostHog (would end "no data collected") | — |
+| Not recommended now | — | — | GdUnit4/GUT (harness already covers it), fastlane (after store accounts exist), Firebase/PostHog (would end "no data collected"; Eddie later chose Firebase Crashlytics, opt-in, store builds only) | — |
 
 ### Eddie's answers (27 Nov 2026)
-- **Sentry crash reporting: No.**
-  - The game keeps "no data collected".
-  - Phone crash reports come from the Google Play Console (Android vitals) and App Store Connect.
+- **Crash reporting: Yes, Sentry AND Firebase Crashlytics, free.** The first answer was "No, use
+  store reports"; Eddie then wrote "add both sentry and firebase crashlytics. free of course."
+  - Both are opt-in for players and live only in store builds (see Results below).
+  - Store privacy answers change from "no data collected" for those builds
+    (`stores/CRASH_REPORTING.md`).
 - **GitHub Actions CI: Yes.**
 - **In-app review prompt: Yes, add it now.**
   - Cloud-session limit: GitHub's download pages are blocked here and the native libraries need
     the Android SDK and Xcode, so the plugin's *binaries* can't be fetched or built on this machine.
-  - The game side is added: a review prompt at a happy moment. It's off until switched on and does
-    nothing without the plugin.
-  - Also added: a pinned fetch script for the release zip (`InappReviewPlugin-Multi-v5.3.zip`,
-    MIT, by Cengiz / Godot Mobile Plugins) that runs on Eddie's PC or in CI.
+  - The game side is added: a review prompt at a happy moment. It's on in its settings file but
+    does nothing until the plugin is in the build (store builds only).
+  - Also added: a pinned installer for the release zip (`InappReviewPlugin-Multi-v5.3.zip`,
+    MIT, Godot Mobile Plugins) that runs on Eddie's PC or in CI (`builds/store_build.sh`).
 - **Azure Artifact Signing: No.**
+
+## Results (Steps 4–11, finished 28 Nov 2026)
+
+### What was done
+| # | Upgrade | Status | Evidence |
+|---|---|---|---|
+| U1 | Credits & licences screen, upstream DejaVu licence, Meshy credit, `store-kit/credits.md` | ✅ | smoke: Godot licence, FreeType, Bitstream, CC BY found on screen; `upgrade-shots/after/menu_credits*.png` |
+| U2 | Colour-blind filter (3 types), default Off | ✅ | smoke: on / mode / off; `menu_home_deutan.png` |
+| U3 | Reduce motion, default Off | ✅ | smoke: no shake or landing dip when on; shake still works when off |
+| U4 | Interface size 100/115/130 %, default 100 % | ✅ | smoke; `menu_settings_ui130.png`; layouts checked at 720×1280, 1280×720, 2048×1536 |
+| U5 | Frame cap adds 60 and 120; iOS ProMotion key; "Off" stays 60 on iPhone | ✅ | smoke: `Engine.max_fps` follows each choice |
+| U6 | Clean exit | ❌ not done | The one object left at exit is the menu music playback inside Godot's dummy audio driver (test machines only). Two fixes didn't change it, so it's left as a known test-only artefact |
+| U7 | `tools/perf_check.py` + `tests/perf_baseline.json` | ✅ | passes on the after runs (below) |
+| U8 | `tools/visual_check.sh`: 5 screens × 3 sizes | ✅ | VISUAL OK; a wrong screen scores 34 % and fails |
+| U9 | 2027 store rules in the Apple and Play kits | ✅ | `stores/apple-app-store/README.md`, `stores/google-play/README.md` |
+| U10 | `store-kit/`, `CHANGELOG.md`, `tools/bump_version.py`, release/rollback/signing plan | ✅ | bump script dry-run |
+| Add-on | Sentry + Firebase Crashlytics, opt-in, store builds only (`builds/store_build.sh`) | ✅ code / ⏳ accounts | consent smoke tests; installer tested offline with a stand-in `gh` and fake release zips; idempotent; refuses to touch `game/` |
+| Add-on | In-App Review prompt, store builds only | ✅ code / ⏳ plugin | rule smoke tests (races, podiums, spacing, max asks) |
+| Add-on | GitHub Actions workflow | ✅ written / ❌ not running | GitHub started no runner for **any** workflow in the repo (all stop in 2–3 s): account billing or minutes |
+
+**Also fixed:** two tests that passed or failed by machine speed. Both failed the same way on the
+pre-upgrade code:
+- the Lighthouse Wonder beat check (the music clock follows the wall clock);
+- the safe-area check (headless runs have a 0×0 window).
+
+### Before → after
+| Measure | Before (27 Nov) | After (28 Nov) | |
+|---|---|---|---|
+| Medium: avg frame / 1 % low / worst | 70.5 ms / 10.6 fps / 186 ms | 67.7 ms / 10.1 fps / 135 ms | within 5 % ✅ |
+| High: avg frame / 1 % low / worst | 261.3 ms / 3.0 fps / 360 ms | 242.9 ms / 3.2 fps / 356 ms | within 5 % ✅ |
+| Memory, Medium (static / video) | 103.2 / 57.4 MB | 103.4 / 57.5 MB | ✅ |
+| Nodes in a race | 1,071 | 1,075 | ✅ |
+| Smoke checks | 1,141 pass | **1,180 pass, 0 fail** | ✅ |
+| AI race on every track and layout | pass | pass (one rare flaky "stuck racer" seen once, passed on re-run) | ✅ |
+| Build sizes | APK 61.6 · Win 42.3 · Linux 33.1 · macOS 64.6 · iOS 100.1 MB | same | ✅ |
+| Linux build launch | starts and quits cleanly | same (300 frames, no errors) | ✅ |
+| Crash reporting | none | Sentry + Crashlytics ready (opt-in), needs Eddie's free accounts | ⏳ |
+
+Frame times are from the cloud computer's software GPU, measured alone. Single runs of the same
+code differ by up to about 8 %. Draw calls aren't compared: the bench samples wherever the AI
+race happens to be, and the pre-upgrade code alone gave 151, 257 and 272 in three runs.
+
+### Store-readiness checklist
+| Item | Pass/Fail |
+|---|---|
+| Builds: web, Windows, Linux, macOS (unsigned), iOS Xcode project, debug APK | ✅ |
+| Google Play AAB (needs upload key + Android SDK 36) | ❌ Eddie |
+| Target API 36, 64-bit, edge-to-edge safe area | ✅ |
+| 16 KB pages (Godot 4.5+ templates; check in Play's bundle explorer) | ⚠️ unverified |
+| Privacy policy public URL | ❌ Eddie (page is private) |
+| Privacy policy covers crash reports | ✅ local text / ❌ live page waits for Eddie's go |
+| Data safety / App Privacy answers (both variants) | ✅ |
+| Age-rating answers incl. Apple's 2 new questions | ✅ |
+| Screenshots and previews for today's rules | ✅ |
+| 2027 screenshots (iPhone Duo, foldables) | ⏳ Apr 2027 |
+| Credits and licences in-game | ✅ |
+| Every asset licensed for commercial use | ⚠️ Meshy plan to confirm |
+| Accessibility features + Apple label answers | ✅ |
+| Crash reporting live | ❌ Eddie: free Sentry + Firebase accounts |
+| Automatic tests/builds (CI) | ❌ GitHub isn't starting runners |
+| Store accounts, Apple Team ID, signing keys | ❌ Eddie |
+| All tests pass | ✅ |
+
+### Next 3 upgrades
+1. **Translation-ready strings**, then the first languages (Spanish, Portuguese, German): the
+   biggest reach gain.
+2. **Control remapping** for keyboard and gamepad: the last big accessibility gap.
+3. **Real-phone performance pass:** Play's pre-launch report or a device farm on a low, mid and high
+   phone; then decide on the Mobile renderer for High/Ultra (approval-gated).

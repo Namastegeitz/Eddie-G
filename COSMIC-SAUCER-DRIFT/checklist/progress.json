@@ -170,14 +170,15 @@
  "gr-tests": {
   "status": "done",
   "by": "claude",
-  "at": 1795001000000,
+  "at": 1795830000000,
   "history": [
    {
     "status": "done",
     "by": "claude",
     "at": 1795001000000
    }
-  ]
+  ],
+  "note": "Claude: Upgrade run (28 Nov): 1,180 smoke checks passed, 0 failed (was 1,141), and the AI race finished on every track and layout. Also new: a 5% performance budget check (passes: Medium 67.7 vs 70.5 ms per frame) and a visual check of 5 menus at phone, laptop and tablet sizes (passes)."
  },
  "gr-version": {
   "status": "done",
@@ -194,14 +195,15 @@
  "ws-builds": {
   "status": "done",
   "by": "claude",
-  "at": 1795001000000,
+  "at": 1795830000000,
   "history": [
    {
     "status": "done",
     "by": "claude",
     "at": 1795001000000
    }
-  ]
+  ],
+  "note": "Claude: Rebuilt 28 Nov with the upgrade-run changes: web, Windows, Linux (launch-tested, 300 frames, no errors), macOS, iOS Xcode project and the test APK. Sizes unchanged. Store builds with crash reporting come from builds/store_build.sh on your PC once the Sentry/Firebase accounts exist. The Play bundle still waits for your upload key."
  },
  "ws-folder": {
   "status": "done",

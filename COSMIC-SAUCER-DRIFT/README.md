@@ -18,7 +18,7 @@ and the launch checklist. Store rules researched **2026-11-17**.
 `███████░░░░░░░░░░░░░` 34%
 
 ✅ done · 🔄 doing · ⛔ blocked · ⬜ to do. Ticks you make on the live page are copied here when Claude syncs.
-Snapshot: 2026-11-27.
+Snapshot: 2026-11-28.
 
 ### Phase 1 · Workspace and builds (5/5)
 
