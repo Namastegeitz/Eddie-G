@@ -92,3 +92,8 @@ new value. Details and numbers: `UPGRADE_REPORT.md`.
 - Save record `yourMove: { best, bestScore, plays }` (old saves get it empty);
   Stats tile; Help section; pause menu restart; results card.
 - Stats now count 40 levels / 120 stars (it still said 30 / 90).
+- Title screen: Endless, Your Move! and Free Dance share one row by the length
+  of their names; the text shrinks a little on 320 px phones so nothing runs
+  off the side (found by the device-size checks).
+- `tests/devices.js` closes each size's page even when a check fails (a page
+  left running slowed every later size into a timeout).

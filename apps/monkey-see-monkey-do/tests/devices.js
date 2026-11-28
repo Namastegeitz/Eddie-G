@@ -162,16 +162,21 @@ const FAKE_BRIDGE = (platform) => `
         expect(!r.scroll, `${where}: page scrolls sideways`);
         expect(r.off.length === 0, `${where}: off screen: ${r.off.join(', ')}`);
       };
-      await check('title');
-      await p.screenshot({ path: path.join(OUT, `${name.replace(/\W+/g, '_')}-title.png`) });
-      await p.evaluate(() => { MSMD.Save.data.tutorialDone = true; MSMD.game.openLevel(5); });
-      await p.evaluate(() => { MSMD.Save.data.levels[4] = { stars: 1, best: 1, clears: 1 }; });
-      await p.tap('#intro-go');
-      await p.waitForFunction(() => MSMD.game.phase === 'respond', null, { timeout: 25000 });
-      await check('game');
-      await p.screenshot({ path: path.join(OUT, `${name.replace(/\W+/g, '_')}-game.png`) });
-      expect(p.errors.length === 0, p.errors.join(' | '));
-      await p.context().close();
+      // close the page even when a check fails: a page left running keeps
+      // rendering and slows every later check into a timeout
+      try {
+        await p.screenshot({ path: path.join(OUT, `${name.replace(/\W+/g, '_')}-title.png`) });
+        await check('title');
+        await p.evaluate(() => { MSMD.Save.data.tutorialDone = true; MSMD.game.openLevel(5); });
+        await p.evaluate(() => { MSMD.Save.data.levels[4] = { stars: 1, best: 1, clears: 1 }; });
+        await p.tap('#intro-go');
+        await p.waitForFunction(() => MSMD.game.phase === 'respond', null, { timeout: 25000 });
+        await p.screenshot({ path: path.join(OUT, `${name.replace(/\W+/g, '_')}-game.png`) });
+        await check('game');
+        expect(p.errors.length === 0, p.errors.join(' | '));
+      } finally {
+        await p.context().close().catch(() => {});
+      }
     });
   }
 
