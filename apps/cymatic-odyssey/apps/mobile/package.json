@@ -1,0 +1,20 @@
+{
+  "name": "cymatic-light-chamber-mobile",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Android and iOS apps (Capacitor) wrapping the same web build as the PWA (apps/web).",
+  "scripts": {
+    "web": "cd ../.. && pnpm install --frozen-lockfile && pnpm build",
+    "sync": "cap sync",
+    "android:apk": "cd android && ./gradlew assembleRelease",
+    "android:aab": "cd android && ./gradlew bundleRelease"
+  },
+  "dependencies": {
+    "@capacitor/android": "8.6.3",
+    "@capacitor/core": "8.6.3",
+    "@capacitor/ios": "8.6.3"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "8.6.3"
+  }
+}

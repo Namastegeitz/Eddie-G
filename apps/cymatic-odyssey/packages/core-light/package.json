@@ -1,0 +1,8 @@
+{
+  "name": "@clc/core-light",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Fixture abstraction and mapping modes (spec 7). Built in P3.",
+  "exports": { ".": "./src/index.ts" }
+}

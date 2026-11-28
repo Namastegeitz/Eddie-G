@@ -1,0 +1,8 @@
+{
+  "name": "@clc/core-audio",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "AudioWorklet oscillator bank, buses, binaural/monaural/isochronic, hemispheric suite (spec 4). Built in P1.",
+  "exports": { ".": "./src/index.ts" }
+}

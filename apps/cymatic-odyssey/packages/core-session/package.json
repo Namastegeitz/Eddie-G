@@ -1,0 +1,8 @@
+{
+  "name": "@clc/core-session",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Session arcs, breath pacer, HRV, journal, group sync (spec 8). Built in P6/P7.",
+  "exports": { ".": "./src/index.ts" }
+}

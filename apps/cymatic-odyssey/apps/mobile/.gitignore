@@ -1,0 +1,6 @@
+node_modules/
+# signed builds and keys are delivered separately, never committed
+release/
+*.jks
+*.keystore
+keystore.properties

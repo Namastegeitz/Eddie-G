@@ -1,0 +1,78 @@
+{
+ "version": 1,
+ "note": "Spec 9.6 never-say terms and section 10 trademarks. Matching is case-insensitive on word boundaries.",
+ "terms": [
+  {
+   "pattern": "\\bheal(s|ed|ing|er|ers)?\\b",
+   "why": "health claim"
+  },
+  {
+   "pattern": "\\bcur(e|es|ed|ing)\\b",
+   "why": "health claim"
+  },
+  {
+   "pattern": "\\btreat(s|ed|ing|ment|ments)?\\b",
+   "why": "health claim"
+  },
+  {
+   "pattern": "\\bdetox\\w*",
+   "why": "health claim"
+  },
+  {
+   "pattern": "\\bclinically proven\\b",
+   "why": "unsupported evidence claim"
+  },
+  {
+   "pattern": "\\bFDA\\b",
+   "why": "implies regulatory status"
+  },
+  {
+   "pattern": "\\brewires?\\s+(your\\s+)?(dna|brain)\\b",
+   "why": "implausible claim"
+  },
+  {
+   "pattern": "\\braises?\\s+(your\\s+)?vibration",
+   "why": "implausible claim"
+  },
+  {
+   "pattern": "\\bremoves?\\s+toxins\\b",
+   "why": "health claim"
+  },
+  {
+   "pattern": "\\breduc(e|es|ed|ing)\\s+(your\\s+)?(anxiety|pain|depression)\\b",
+   "why": "health claim"
+  },
+  {
+   "pattern": "\\bsyncs?\\s+your\\s+brain\\b",
+   "why": "implausible claim"
+  },
+  {
+   "pattern": "\\bhemi-?sync\\b",
+   "why": "trademark (Monroe Products)"
+  },
+  {
+   "pattern": "\\bcymascope\\b",
+   "why": "trademark"
+  },
+  {
+   "pattern": "\\bheartmath\\b",
+   "why": "trademark (allowed as 'HeartMath-style method' in Learn/docs only)"
+  },
+  {
+   "pattern": "\\bdispenza\\b",
+   "why": "personal name / brand"
+  },
+  {
+   "pattern": "\\bdr\\.?\\s+joe\\b",
+   "why": "personal name / brand"
+  },
+  {
+   "pattern": "\\bfocus\\s+(10|12|15|21)\\b",
+   "why": "Monroe program term"
+  },
+  {
+   "pattern": "\\bgateway experience\\b",
+   "why": "Monroe program term"
+  }
+ ]
+}

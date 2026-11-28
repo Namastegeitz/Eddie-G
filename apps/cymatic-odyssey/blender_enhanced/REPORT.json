@@ -1,0 +1,2178 @@
+[
+ {
+  "in": "styles/S01_orbit_rings/dipper_D001_dipper_point.stl",
+  "out": "blender_enhanced/S01_orbit_rings/dipper_D001_dipper_point_plus.stl",
+  "before": {
+   "triangles": 1064,
+   "non_manifold_edges": 0,
+   "volume_cm3": 1.33,
+   "size_mm": [
+    6.0,
+    6.0,
+    47.0
+   ]
+  },
+  "after": {
+   "triangles": 1776,
+   "non_manifold_edges": 0,
+   "volume_cm3": 1.33,
+   "size_mm": [
+    6.0,
+    6.0,
+    47.0
+   ]
+  },
+  "label_skipped": false,
+  "style": "S01",
+  "role": "dipper"
+ },
+ {
+  "in": "styles/S01_orbit_rings/gobo_G175_concentric_rings.stl",
+  "out": "blender_enhanced/S01_orbit_rings/gobo_G175_concentric_rings_plus.stl",
+  "before": {
+   "triangles": 9948,
+   "non_manifold_edges": 0,
+   "volume_cm3": 11.51,
+   "size_mm": [
+    110.0,
+    110.0,
+    2.4
+   ]
+  },
+  "after": {
+   "triangles": 10860,
+   "non_manifold_edges": 0,
+   "volume_cm3": 11.51,
+   "size_mm": [
+    110.0,
+    110.0,
+    2.4
+   ]
+  },
+  "label_skipped": false,
+  "style": "S01",
+  "role": "gobo"
+ },
+ {
+  "in": "styles/S01_orbit_rings/insert_B018_insert_circle_reference.stl",
+  "out": "blender_enhanced/S01_orbit_rings/insert_B018_insert_circle_reference_plus.stl",
+  "before": {
+   "triangles": 2600,
+   "non_manifold_edges": 0,
+   "volume_cm3": 74.27,
+   "size_mm": [
+    143.0,
+    143.0,
+    12.0
+   ]
+  },
+  "after": {
+   "triangles": 8960,
+   "non_manifold_edges": 0,
+   "volume_cm3": 74.25,
+   "size_mm": [
+    143.0,
+    143.0,
+    12.0
+   ]
+  },
+  "label_skipped": false,
+  "style": "S01",
+  "role": "insert"
+ },
+ {
+  "in": "styles/S02_saturn_storm/gobo_G004_hexagon_nest.stl",
+  "out": "blender_enhanced/S02_saturn_storm/gobo_G004_hexagon_nest_plus.stl",
+  "before": {
+   "triangles": 2194,
+   "non_manifold_edges": 0,
+   "volume_cm3": 9.79,
+   "size_mm": [
+    110.0,
+    110.0,
+    2.4
+   ]
+  },
+  "after": {
+   "triangles": 3454,
+   "non_manifold_edges": 0,
+   "volume_cm3": 9.79,
+   "size_mm": [
+    110.0,
+    110.0,
+    2.4
+   ]
+  },
+  "label_skipped": false,
+  "style": "S02",
+  "role": "gobo"
+ },
+ {
+  "in": "styles/S02_saturn_storm/insert_B004_insert_hexagon.stl",
+  "out": "blender_enhanced/S02_saturn_storm/insert_B004_insert_hexagon_plus.stl",
+  "before": {
+   "triangles": 2112,
+   "non_manifold_edges": 0,
+   "volume_cm3": 94.66,
+   "size_mm": [
+    143.0,
+    143.0,
+    12.0
+   ]
+  },
+  "after": {
+   "triangles": 7992,
+   "non_manifold_edges": 0,
+   "volume_cm3": 94.66,
+   "size_mm": [
+    143.0,
+    143.0,
+    12.0
+   ]
+  },
+  "label_skipped": false,
+  "style": "S02",
+  "role": "insert"
+ },
+ {
+  "in": "styles/S03_quasicrystal_nebula/gobo_G197_dodecagonal_quasicrystal.stl",
+  "out": "blender_enhanced/S03_quasicrystal_nebula/gobo_G197_dodecagonal_quasicrystal_plus.stl",
+  "before": {
+   "triangles": 4696,
+   "non_manifold_edges": 0,
+   "volume_cm3": 10.64,
+   "size_mm": [
+    110.0,
+    110.0,
+    2.4
+   ]
+  },
+  "after": {
+   "triangles": 6188,
+   "non_manifold_edges": 0,
+   "volume_cm3": 10.64,
+   "size_mm": [
+    110.0,
+    110.0,
+    2.4
+   ]
+  },
+  "label_skipped": false,
+  "style": "S03",
+  "role": "gobo"
+ },
+ {
+  "in": "styles/S03_quasicrystal_nebula/insert_B018_insert_circle_reference.stl",
+  "out": "blender_enhanced/S03_quasicrystal_nebula/insert_B018_insert_circle_reference_plus.stl",
+  "before": {
+   "triangles": 2600,
+   "non_manifold_edges": 0,
+   "volume_cm3": 74.27,
+   "size_mm": [
+    143.0,
+    143.0,
+    12.0
+   ]
+  },
+  "after": {
+   "triangles": 9560,
+   "non_manifold_edges": 0,
+   "volume_cm3": 74.25,
+   "size_mm": [
+    143.0,
+    143.0,
+    12.0
+   ]
+  },
+  "label_skipped": false,
+  "style": "S03",
+  "role": "insert"
+ },
+ {
+  "in": "styles/S04_penrose_gate/gobo_G193_penrose_rhombus_p3_quasicrystal.stl",
+  "out": "blender_enhanced/S04_penrose_gate/gobo_G193_penrose_rhombus_p3_quasicrystal_plus.stl",
+  "before": {
+   "triangles": 4732,
+   "non_manifold_edges": 0,
+   "volume_cm3": 10.63,
+   "size_mm": [
+    110.0,
+    110.0,
+    2.4
+   ]
+  },
+  "after": {
+   "triangles": 5692,
+   "non_manifold_edges": 0,
+   "volume_cm3": 10.63,
+   "size_mm": [
+    110.0,
+    110.0,
+    2.4
+   ]
+  },
+  "label_skipped": false,
+  "style": "S04",
+  "role": "gobo"
+ },
+ {
+  "in": "styles/S04_penrose_gate/insert_B003_insert_pentagon.stl",
+  "out": "blender_enhanced/S04_penrose_gate/insert_B003_insert_pentagon_plus.stl",
+  "before": {
+   "triangles": 2108,
+   "non_manifold_edges": 0,
+   "volume_cm3": 102.85,
+   "size_mm": [
+    143.0,
+    143.0,
+    12.0
+   ]
+  },
+  "after": {
+   "triangles": 7664,
+   "non_manifold_edges": 0,
+   "volume_cm3": 102.84,
+   "size_mm": [
+    143.0,
+    143.0,
+    12.0
+   ]
+  },
+  "label_skipped": false,
+  "style": "S04",
+  "role": "insert"
+ },
+ {
+  "in": "styles/S05_metatron/gobo_G102_metatron_s_cube.stl",
+  "out": "blender_enhanced/S05_metatron/gobo_G102_metatron_s_cube_plus.stl",
+  "before": {
+   "triangles": 7472,
+   "non_manifold_edges": 0,
+   "volume_cm3": 10.76,
+   "size_mm": [
+    110.0,
+    110.0,
+    2.4
+   ]
+  },
+  "after": {
+   "triangles": 8688,
+   "non_manifold_edges": 0,
+   "volume_cm3": 10.75,
+   "size_mm": [
+    110.0,
+    110.0,
+    2.4
+   ]
+  },
+  "label_skipped": false,
+  "style": "S05",
+  "role": "gobo"
+ },
+ {
+  "in": "styles/S05_metatron/insert_B004_insert_hexagon.stl",
+  "out": "blender_enhanced/S05_metatron/insert_B004_insert_hexagon_plus.stl",
+  "before": {
+   "triangles": 2112,
+   "non_manifold_edges": 0,
+   "volume_cm3": 94.66,
+   "size_mm": [
+    143.0,
+    143.0,
+    12.0
+   ]
+  },
+  "after": {
+   "triangles": 7956,
+   "non_manifold_edges": 0,
+   "volume_cm3": 94.66,
+   "size_mm": [
+    143.0,
+    143.0,
+    12.0
+   ]
+  },
+  "label_skipped": false,
+  "style": "S05",
+  "role": "insert"
+ },
+ {
+  "in": "styles/S06_flower_of_life_bloom/dipper_D001_dipper_point.stl",
+  "out": "blender_enhanced/S06_flower_of_life_bloom/dipper_D001_dipper_point_plus.stl",
+  "before": {
+   "triangles": 1064,
+   "non_manifold_edges": 0,
+   "volume_cm3": 1.33,
+   "size_mm": [
+    6.0,
+    6.0,
+    47.0
+   ]
+  },
+  "after": {
+   "triangles": 1776,
+   "non_manifold_edges": 0,
+   "volume_cm3": 1.33,
+   "size_mm": [
+    6.0,
+    6.0,
+    47.0
+   ]
+  },
+  "label_skipped": false,
+  "style": "S06",
+  "role": "dipper"
+ },
+ {
+  "in": "styles/S06_flower_of_life_bloom/gobo_G100_flower_of_life.stl",
+  "out": "blender_enhanced/S06_flower_of_life_bloom/gobo_G100_flower_of_life_plus.stl",
+  "before": {
+   "triangles": 11960,
+   "non_manifold_edges": 0,
+   "volume_cm3": 11.48,
+   "size_mm": [
+    110.0,
+    110.0,
+    2.4
+   ]
+  },
+  "after": {
+   "triangles": 13348,
+   "non_manifold_edges": 0,
+   "volume_cm3": 11.48,
+   "size_mm": [
+    110.0,
+    110.0,
+    2.4
+   ]
+  },
+  "label_skipped": false,
+  "style": "S06",
+  "role": "gobo"
+ },
+ {
+  "in": "styles/S06_flower_of_life_bloom/insert_B031_insert_wavy_6.stl",
+  "out": "blender_enhanced/S06_flower_of_life_bloom/insert_B031_insert_wavy_6_plus.stl",
+  "before": {
+   "triangles": 2732,
+   "non_manifold_edges": 0,
+   "volume_cm3": 97.33,
+   "size_mm": [
+    143.0,
+    143.0,
+    12.0
+   ]
+  },
+  "after": {
+   "triangles": 9840,
+   "non_manifold_edges": 0,
+   "volume_cm3": 97.32,
+   "size_mm": [
+    143.0,
+    143.0,
+    12.0
+   ]
+  },
+  "label_skipped": false,
+  "style": "S06",
+  "role": "insert"
+ },
+ {
+  "in": "styles/S07_venus_rose/dipper_D009_dipper_star_5.stl",
+  "out": "blender_enhanced/S07_venus_rose/dipper_D009_dipper_star_5_plus.stl",
+  "before": {
+   "triangles": 420,
+   "non_manifold_edges": 0,
+   "volume_cm3": 1.71,
+   "size_mm": [
+    26.6,
+    25.3,
+    47.0
+   ]
+  },
+  "after": {
+   "triangles": 1428,
+   "non_manifold_edges": 0,
+   "volume_cm3": 1.71,
+   "size_mm": [
+    26.6,
+    25.3,
+    47.0
+   ]
+  },
+  "label_skipped": false,
+  "style": "S07",
+  "role": "dipper"
+ },
+ {
+  "in": "styles/S07_venus_rose/gobo_G126_cosmic_dance_venus_earth.stl",
+  "out": "blender_enhanced/S07_venus_rose/gobo_G126_cosmic_dance_venus_earth_plus.stl",
+  "before": {
+   "triangles": 83756,
+   "non_manifold_edges": 0,
+   "volume_cm3": 18.13,
+   "size_mm": [
+    110.0,
+    110.0,
+    2.4
+   ]
+  },
+  "after": {
+   "triangles": 84680,
+   "non_manifold_edges": 0,
+   "volume_cm3": 18.13,
+   "size_mm": [
+    110.0,
+    110.0,
+    2.4
+   ]
+  },
+  "label_skipped": false,
+  "style": "S07",
+  "role": "gobo"
+ },
+ {
+  "in": "styles/S07_venus_rose/insert_B003_insert_pentagon.stl",
+  "out": "blender_enhanced/S07_venus_rose/insert_B003_insert_pentagon_plus.stl",
+  "before": {
+   "triangles": 2108,
+   "non_manifold_edges": 0,
+   "volume_cm3": 102.85,
+   "size_mm": [
+    143.0,
+    143.0,
+    12.0
+   ]
+  },
+  "after": {
+   "triangles": 7604,
+   "non_manifold_edges": 0,
+   "volume_cm3": 102.84,
+   "size_mm": [
+    143.0,
+    143.0,
+    12.0
+   ]
+  },
+  "label_skipped": false,
+  "style": "S07",
+  "role": "insert"
+ },
+ {
+  "in": "styles/S08_hyperbolic_abyss/gobo_G202_hyperbolic_7_3.stl",
+  "out": "blender_enhanced/S08_hyperbolic_abyss/gobo_G202_hyperbolic_7_3_plus.stl",
+  "before": {
+   "triangles": 67726,
+   "non_manifold_edges": 0,
+   "volume_cm3": 10.25,
+   "size_mm": [
+    110.1,
+    110.0,
+    2.4
+   ]
+  },
+  "after": {
+   "triangles": 69400,
+   "non_manifold_edges": 0,
+   "volume_cm3": 10.25,
+   "size_mm": [
+    110.1,
+    110.0,
+    2.4
+   ]
+  },
+  "label_skipped": false,
+  "style": "S08",
+  "role": "gobo"
+ },
+ {
+  "in": "styles/S08_hyperbolic_abyss/insert_B005_insert_heptagon.stl",
+  "out": "blender_enhanced/S08_hyperbolic_abyss/insert_B005_insert_heptagon_plus.stl",
+  "before": {
+   "triangles": 2116,
+   "non_manifold_edges": 0,
+   "volume_cm3": 89.41,
+   "size_mm": [
+    143.0,
+    143.0,
+    12.0
+   ]
+  },
+  "after": {
+   "triangles": 8444,
+   "non_manifold_edges": 0,
+   "volume_cm3": 89.4,
+   "size_mm": [
+    143.0,
+    143.0,
+    12.0
+   ]
+  },
+  "label_skipped": false,
+  "style": "S08",
+  "role": "insert"
+ },
+ {
+  "in": "styles/S09_e8_singularity/gobo_G282_e8_root_polytope.stl",
+  "out": "blender_enhanced/S09_e8_singularity/gobo_G282_e8_root_polytope_plus.stl",
+  "before": {
+   "triangles": 66628,
+   "non_manifold_edges": 0,
+   "volume_cm3": 22.13,
+   "size_mm": [
+    110.1,
+    110.0,
+    2.4
+   ]
+  },
+  "after": {
+   "triangles": 68056,
+   "non_manifold_edges": 0,
+   "volume_cm3": 22.13,
+   "size_mm": [
+    110.1,
+    110.0,
+    2.4
+   ]
+  },
+  "label_skipped": false,
+  "style": "S09",
+  "role": "gobo"
+ },
+ {
+  "in": "styles/S09_e8_singularity/insert_B018_insert_circle_reference.stl",
+  "out": "blender_enhanced/S09_e8_singularity/insert_B018_insert_circle_reference_plus.stl",
+  "before": {
+   "triangles": 2600,
+   "non_manifold_edges": 0,
+   "volume_cm3": 74.27,
+   "size_mm": [
+    143.0,
+    143.0,
+    12.0
+   ]
+  },
+  "after": {
+   "triangles": 9500,
+   "non_manifold_edges": 0,
+   "volume_cm3": 74.25,
+   "size_mm": [
+    143.0,
+    143.0,
+    12.0
+   ]
+  },
+  "label_skipped": false,
+  "style": "S09",
+  "role": "insert"
+ },
+ {
+  "in": "styles/S10_600_cell_halo/gobo_G277_600_cell.stl",
+  "out": "blender_enhanced/S10_600_cell_halo/gobo_G277_600_cell_plus.stl",
+  "before": {
+   "triangles": 57764,
+   "non_manifold_edges": 0,
+   "volume_cm3": 16.78,
+   "size_mm": [
+    110.0,
+    110.0,
+    2.4
+   ]
+  },
+  "after": {
+   "triangles": 58676,
+   "non_manifold_edges": 0,
+   "volume_cm3": 16.78,
+   "size_mm": [
+    110.0,
+    110.0,
+    2.4
+   ]
+  },
+  "label_skipped": false,
+  "style": "S10",
+  "role": "gobo"
+ },
+ {
+  "in": "styles/S10_600_cell_halo/insert_B008_insert_decagon.stl",
+  "out": "blender_enhanced/S10_600_cell_halo/insert_B008_insert_decagon_plus.stl",
+  "before": {
+   "triangles": 2128,
+   "non_manifold_edges": 0,
+   "volume_cm3": 81.82,
+   "size_mm": [
+    143.0,
+    143.0,
+    12.0
+   ]
+  },
+  "after": {
+   "triangles": 7568,
+   "non_manifold_edges": 0,
+   "volume_cm3": 81.81,
+   "size_mm": [
+    143.0,
+    143.0,
+    12.0
+   ]
+  },
+  "label_skipped": false,
+  "style": "S10",
+  "role": "insert"
+ },
+ {
+  "in": "styles/S11_girih_lantern/gobo_G188_hankin_4_8_8_at_67_5_deg.stl",
+  "out": "blender_enhanced/S11_girih_lantern/gobo_G188_hankin_4_8_8_at_67_5_deg_plus.stl",
+  "before": {
+   "triangles": 9664,
+   "non_manifold_edges": 0,
+   "volume_cm3": 11.12,
+   "size_mm": [
+    110.0,
+    110.0,
+    2.4
+   ]
+  },
+  "after": {
+   "triangles": 10204,
+   "non_manifold_edges": 0,
+   "volume_cm3": 11.12,
+   "size_mm": [
+    110.0,
+    110.0,
+    2.4
+   ]
+  },
+  "label_skipped": false,
+  "style": "S11",
+  "role": "gobo"
+ },
+ {
+  "in": "styles/S11_girih_lantern/insert_B006_insert_octagon.stl",
+  "out": "blender_enhanced/S11_girih_lantern/insert_B006_insert_octagon_plus.stl",
+  "before": {
+   "triangles": 2120,
+   "non_manifold_edges": 0,
+   "volume_cm3": 85.96,
+   "size_mm": [
+    143.0,
+    143.0,
+    12.0
+   ]
+  },
+  "after": {
+   "triangles": 7280,
+   "non_manifold_edges": 0,
+   "volume_cm3": 85.95,
+   "size_mm": [
+    143.0,
+    143.0,
+    12.0
+   ]
+  },
+  "label_skipped": false,
+  "style": "S11",
+  "role": "insert"
+ },
+ {
+  "in": "styles/S12_star_of_twelve/gobo_G022_dodecagram_12_5.stl",
+  "out": "blender_enhanced/S12_star_of_twelve/gobo_G022_dodecagram_12_5_plus.stl",
+  "before": {
+   "triangles": 3600,
+   "non_manifold_edges": 0,
+   "volume_cm3": 10.14,
+   "size_mm": [
+    110.0,
+    110.0,
+    2.4
+   ]
+  },
+  "after": {
+   "triangles": 4488,
+   "non_manifold_edges": 0,
+   "volume_cm3": 10.14,
+   "size_mm": [
+    110.0,
+    110.0,
+    2.4
+   ]
+  },
+  "label_skipped": false,
+  "style": "S12",
+  "role": "gobo"
+ },
+ {
+  "in": "styles/S12_star_of_twelve/insert_B010_insert_dodecagon.stl",
+  "out": "blender_enhanced/S12_star_of_twelve/insert_B010_insert_dodecagon_plus.stl",
+  "before": {
+   "triangles": 2136,
+   "non_manifold_edges": 0,
+   "volume_cm3": 79.54,
+   "size_mm": [
+    143.0,
+    143.0,
+    12.0
+   ]
+  },
+  "after": {
+   "triangles": 7568,
+   "non_manifold_edges": 0,
+   "volume_cm3": 79.54,
+   "size_mm": [
+    143.0,
+    143.0,
+    12.0
+   ]
+  },
+  "label_skipped": false,
+  "style": "S12",
+  "role": "insert"
+ },
+ {
+  "in": "styles/S13_koch_snowfall/gobo_G285_koch_snowflake_l5.stl",
+  "out": "blender_enhanced/S13_koch_snowfall/gobo_G285_koch_snowflake_l5_plus.stl",
+  "before": {
+   "triangles": 20180,
+   "non_manifold_edges": 0,
+   "volume_cm3": 9.39,
+   "size_mm": [
+    110.0,
+    110.0,
+    2.4
+   ]
+  },
+  "after": {
+   "triangles": 21300,
+   "non_manifold_edges": 0,
+   "volume_cm3": 9.38,
+   "size_mm": [
+    110.0,
+    110.0,
+    2.4
+   ]
+  },
+  "label_skipped": false,
+  "style": "S13",
+  "role": "gobo"
+ },
+ {
+  "in": "styles/S13_koch_snowfall/insert_B029_insert_koch_snowflake.stl",
+  "out": "blender_enhanced/S13_koch_snowfall/insert_B029_insert_koch_snowflake_plus.stl",
+  "before": {
+   "triangles": 2856,
+   "non_manifold_edges": 0,
+   "volume_cm3": 116.77,
+   "size_mm": [
+    143.0,
+    143.0,
+    12.0
+   ]
+  },
+  "after": {
+   "triangles": 12996,
+   "non_manifold_edges": 0,
+   "volume_cm3": 116.77,
+   "size_mm": [
+    143.0,
+    143.0,
+    12.0
+   ]
+  },
+  "label_skipped": false,
+  "style": "S13",
+  "role": "insert"
+ },
+ {
+  "in": "styles/S14_julia_bloom/gobo_G301_julia_set_douady_rabbit.stl",
+  "out": "blender_enhanced/S14_julia_bloom/gobo_G301_julia_set_douady_rabbit_plus.stl",
+  "before": {
+   "triangles": 23188,
+   "non_manifold_edges": 0,
+   "volume_cm3": 9.87,
+   "size_mm": [
+    110.0,
+    110.0,
+    2.4
+   ]
+  },
+  "after": {
+   "triangles": 23776,
+   "non_manifold_edges": 0,
+   "volume_cm3": 9.87,
+   "size_mm": [
+    110.0,
+    110.0,
+    2.4
+   ]
+  },
+  "label_skipped": false,
+  "style": "S14",
+  "role": "gobo"
+ },
+ {
+  "in": "styles/S14_julia_bloom/insert_B021_insert_bunimovich_stadium.stl",
+  "out": "blender_enhanced/S14_julia_bloom/insert_B021_insert_bunimovich_stadium_plus.stl",
+  "before": {
+   "triangles": 2388,
+   "non_manifold_edges": 0,
+   "volume_cm3": 125.06,
+   "size_mm": [
+    143.0,
+    143.0,
+    12.0
+   ]
+  },
+  "after": {
+   "triangles": 8008,
+   "non_manifold_edges": 0,
+   "volume_cm3": 125.05,
+   "size_mm": [
+    143.0,
+    143.0,
+    12.0
+   ]
+  },
+  "label_skipped": false,
+  "style": "S14",
+  "role": "insert"
+ },
+ {
+  "in": "styles/S15_dragon_fold/gobo_G294_heighway_dragon.stl",
+  "out": "blender_enhanced/S15_dragon_fold/gobo_G294_heighway_dragon_plus.stl",
+  "before": {
+   "triangles": 42786,
+   "non_manifold_edges": 0,
+   "volume_cm3": 11.18,
+   "size_mm": [
+    110.0,
+    110.0,
+    2.4
+   ]
+  },
+  "after": {
+   "triangles": 43630,
+   "non_manifold_edges": 0,
+   "volume_cm3": 11.18,
+   "size_mm": [
+    110.0,
+    110.0,
+    2.4
+   ]
+  },
+  "label_skipped": false,
+  "style": "S15",
+  "role": "gobo"
+ },
+ {
+  "in": "styles/S15_dragon_fold/insert_B002_insert_square.stl",
+  "out": "blender_enhanced/S15_dragon_fold/insert_B002_insert_square_plus.stl",
+  "before": {
+   "triangles": 2104,
+   "non_manifold_edges": 0,
+   "volume_cm3": 117.0,
+   "size_mm": [
+    143.0,
+    143.0,
+    12.0
+   ]
+  },
+  "after": {
+   "triangles": 7500,
+   "non_manifold_edges": 0,
+   "volume_cm3": 116.99,
+   "size_mm": [
+    143.0,
+    143.0,
+    12.0
+   ]
+  },
+  "label_skipped": false,
+  "style": "S15",
+  "role": "insert"
+ },
+ {
+  "in": "styles/S16_sunflower_spiral/dipper_D001_dipper_point.stl",
+  "out": "blender_enhanced/S16_sunflower_spiral/dipper_D001_dipper_point_plus.stl",
+  "before": {
+   "triangles": 1064,
+   "non_manifold_edges": 0,
+   "volume_cm3": 1.33,
+   "size_mm": [
+    6.0,
+    6.0,
+    47.0
+   ]
+  },
+  "after": {
+   "triangles": 1776,
+   "non_manifold_edges": 0,
+   "volume_cm3": 1.33,
+   "size_mm": [
+    6.0,
+    6.0,
+    47.0
+   ]
+  },
+  "label_skipped": false,
+  "style": "S16",
+  "role": "dipper"
+ },
+ {
+  "in": "styles/S16_sunflower_spiral/gobo_G097_sunflower_phyllotaxis.stl",
+  "out": "blender_enhanced/S16_sunflower_spiral/gobo_G097_sunflower_phyllotaxis_plus.stl",
+  "before": {
+   "triangles": 71630,
+   "non_manifold_edges": 0,
+   "volume_cm3": 11.55,
+   "size_mm": [
+    110.0,
+    110.0,
+    2.4
+   ]
+  },
+  "after": {
+   "triangles": 72646,
+   "non_manifold_edges": 0,
+   "volume_cm3": 11.54,
+   "size_mm": [
+    110.0,
+    110.0,
+    2.4
+   ]
+  },
+  "label_skipped": false,
+  "style": "S16",
+  "role": "gobo"
+ },
+ {
+  "in": "styles/S16_sunflower_spiral/insert_B032_insert_wavy_8.stl",
+  "out": "blender_enhanced/S16_sunflower_spiral/insert_B032_insert_wavy_8_plus.stl",
+  "before": {
+   "triangles": 2832,
+   "non_manifold_edges": 0,
+   "volume_cm3": 97.46,
+   "size_mm": [
+    143.0,
+    143.0,
+    12.0
+   ]
+  },
+  "after": {
+   "triangles": 9752,
+   "non_manifold_edges": 0,
+   "volume_cm3": 97.46,
+   "size_mm": [
+    143.0,
+    143.0,
+    12.0
+   ]
+  },
+  "label_skipped": false,
+  "style": "S16",
+  "role": "insert"
+ },
+ {
+  "in": "styles/S17_galaxy_arms/dipper_D002_dipper_disc_25.stl",
+  "out": "blender_enhanced/S17_galaxy_arms/dipper_D002_dipper_disc_25_plus.stl",
+  "before": {
+   "triangles": 940,
+   "non_manifold_edges": 0,
+   "volume_cm3": 2.25,
+   "size_mm": [
+    25.0,
+    25.0,
+    47.0
+   ]
+  },
+  "after": {
+   "triangles": 2828,
+   "non_manifold_edges": 0,
+   "volume_cm3": 2.25,
+   "size_mm": [
+    25.0,
+    25.0,
+    47.0
+   ]
+  },
+  "label_skipped": false,
+  "style": "S17",
+  "role": "dipper"
+ },
+ {
+  "in": "styles/S17_galaxy_arms/gobo_G094_galaxy_arms.stl",
+  "out": "blender_enhanced/S17_galaxy_arms/gobo_G094_galaxy_arms_plus.stl",
+  "before": {
+   "triangles": 12880,
+   "non_manifold_edges": 0,
+   "volume_cm3": 13.25,
+   "size_mm": [
+    110.0,
+    110.0,
+    2.4
+   ]
+  },
+  "after": {
+   "triangles": 13432,
+   "non_manifold_edges": 0,
+   "volume_cm3": 13.25,
+   "size_mm": [
+    110.0,
+    110.0,
+    2.4
+   ]
+  },
+  "label_skipped": false,
+  "style": "S17",
+  "role": "gobo"
+ },
+ {
+  "in": "styles/S17_galaxy_arms/insert_B018_insert_circle_reference.stl",
+  "out": "blender_enhanced/S17_galaxy_arms/insert_B018_insert_circle_reference_plus.stl",
+  "before": {
+   "triangles": 2600,
+   "non_manifold_edges": 0,
+   "volume_cm3": 74.27,
+   "size_mm": [
+    143.0,
+    143.0,
+    12.0
+   ]
+  },
+  "after": {
+   "triangles": 8596,
+   "non_manifold_edges": 0,
+   "volume_cm3": 74.25,
+   "size_mm": [
+    143.0,
+    143.0,
+    12.0
+   ]
+  },
+  "label_skipped": false,
+  "style": "S17",
+  "role": "insert"
+ },
+ {
+  "in": "styles/S18_chladni_plate/gobo_G145_chladni_square_3_5_anti.stl",
+  "out": "blender_enhanced/S18_chladni_plate/gobo_G145_chladni_square_3_5_anti_plus.stl",
+  "before": {
+   "triangles": 2858,
+   "non_manifold_edges": 0,
+   "volume_cm3": 9.13,
+   "size_mm": [
+    110.0,
+    110.0,
+    2.4
+   ]
+  },
+  "after": {
+   "triangles": 4158,
+   "non_manifold_edges": 0,
+   "volume_cm3": 9.13,
+   "size_mm": [
+    110.0,
+    110.0,
+    2.4
+   ]
+  },
+  "label_skipped": false,
+  "style": "S18",
+  "role": "gobo"
+ },
+ {
+  "in": "styles/S18_chladni_plate/insert_B002_insert_square.stl",
+  "out": "blender_enhanced/S18_chladni_plate/insert_B002_insert_square_plus.stl",
+  "before": {
+   "triangles": 2104,
+   "non_manifold_edges": 0,
+   "volume_cm3": 117.0,
+   "size_mm": [
+    143.0,
+    143.0,
+    12.0
+   ]
+  },
+  "after": {
+   "triangles": 7960,
+   "non_manifold_edges": 0,
+   "volume_cm3": 116.99,
+   "size_mm": [
+    143.0,
+    143.0,
+    12.0
+   ]
+  },
+  "label_skipped": false,
+  "style": "S18",
+  "role": "insert"
+ },
+ {
+  "in": "styles/S19_water_drum/gobo_G156_water_mode_j4_ring_3.stl",
+  "out": "blender_enhanced/S19_water_drum/gobo_G156_water_mode_j4_ring_3_plus.stl",
+  "before": {
+   "triangles": 4344,
+   "non_manifold_edges": 0,
+   "volume_cm3": 9.61,
+   "size_mm": [
+    110.0,
+    110.0,
+    2.4
+   ]
+  },
+  "after": {
+   "triangles": 5408,
+   "non_manifold_edges": 0,
+   "volume_cm3": 9.61,
+   "size_mm": [
+    110.0,
+    110.0,
+    2.4
+   ]
+  },
+  "label_skipped": false,
+  "style": "S19",
+  "role": "gobo"
+ },
+ {
+  "in": "styles/S19_water_drum/insert_B018_insert_circle_reference.stl",
+  "out": "blender_enhanced/S19_water_drum/insert_B018_insert_circle_reference_plus.stl",
+  "before": {
+   "triangles": 2600,
+   "non_manifold_edges": 0,
+   "volume_cm3": 74.27,
+   "size_mm": [
+    143.0,
+    143.0,
+    12.0
+   ]
+  },
+  "after": {
+   "triangles": 9112,
+   "non_manifold_edges": 0,
+   "volume_cm3": 74.25,
+   "size_mm": [
+    143.0,
+    143.0,
+    12.0
+   ]
+  },
+  "label_skipped": false,
+  "style": "S19",
+  "role": "insert"
+ },
+ {
+  "in": "styles/S20_twin_source/dipper_D010_dipper_two_pins.stl",
+  "out": "blender_enhanced/S20_twin_source/dipper_D010_dipper_two_pins_plus.stl",
+  "before": {
+   "triangles": 2006,
+   "non_manifold_edges": 0,
+   "volume_cm3": 1.58,
+   "size_mm": [
+    22.0,
+    12.0,
+    47.0
+   ]
+  },
+  "after": {
+   "triangles": 6090,
+   "non_manifold_edges": 0,
+   "volume_cm3": 1.58,
+   "size_mm": [
+    22.0,
+    12.0,
+    47.0
+   ]
+  },
+  "label_skipped": false,
+  "style": "S20",
+  "role": "dipper"
+ },
+ {
+  "in": "styles/S20_twin_source/gobo_G168_two_source_interference.stl",
+  "out": "blender_enhanced/S20_twin_source/gobo_G168_two_source_interference_plus.stl",
+  "before": {
+   "triangles": 20428,
+   "non_manifold_edges": 0,
+   "volume_cm3": 11.1,
+   "size_mm": [
+    110.0,
+    110.0,
+    2.4
+   ]
+  },
+  "after": {
+   "triangles": 21688,
+   "non_manifold_edges": 0,
+   "volume_cm3": 11.1,
+   "size_mm": [
+    110.0,
+    110.0,
+    2.4
+   ]
+  },
+  "label_skipped": false,
+  "style": "S20",
+  "role": "gobo"
+ },
+ {
+  "in": "styles/S20_twin_source/insert_B018_insert_circle_reference.stl",
+  "out": "blender_enhanced/S20_twin_source/insert_B018_insert_circle_reference_plus.stl",
+  "before": {
+   "triangles": 2600,
+   "non_manifold_edges": 0,
+   "volume_cm3": 74.27,
+   "size_mm": [
+    143.0,
+    143.0,
+    12.0
+   ]
+  },
+  "after": {
+   "triangles": 9332,
+   "non_manifold_edges": 0,
+   "volume_cm3": 74.25,
+   "size_mm": [
+    143.0,
+    143.0,
+    12.0
+   ]
+  },
+  "label_skipped": false,
+  "style": "S20",
+  "role": "insert"
+ },
+ {
+  "in": "styles/S21_triple_lattice/dipper_D011_dipper_three_pins.stl",
+  "out": "blender_enhanced/S21_triple_lattice/dipper_D011_dipper_three_pins_plus.stl",
+  "before": {
+   "triangles": 2498,
+   "non_manifold_edges": 0,
+   "volume_cm3": 1.67,
+   "size_mm": [
+    21.3,
+    19.0,
+    47.0
+   ]
+  },
+  "after": {
+   "triangles": 7598,
+   "non_manifold_edges": 0,
+   "volume_cm3": 1.67,
+   "size_mm": [
+    21.3,
+    19.0,
+    47.0
+   ]
+  },
+  "label_skipped": false,
+  "style": "S21",
+  "role": "dipper"
+ },
+ {
+  "in": "styles/S21_triple_lattice/gobo_G169_three_source_interference.stl",
+  "out": "blender_enhanced/S21_triple_lattice/gobo_G169_three_source_interference_plus.stl",
+  "before": {
+   "triangles": 149684,
+   "non_manifold_edges": 0,
+   "volume_cm3": 11.36,
+   "size_mm": [
+    110.1,
+    110.0,
+    2.4
+   ]
+  },
+  "after": {
+   "triangles": 150568,
+   "non_manifold_edges": 0,
+   "volume_cm3": 11.36,
+   "size_mm": [
+    110.1,
+    110.0,
+    2.4
+   ]
+  },
+  "label_skipped": false,
+  "style": "S21",
+  "role": "gobo"
+ },
+ {
+  "in": "styles/S21_triple_lattice/insert_B004_insert_hexagon.stl",
+  "out": "blender_enhanced/S21_triple_lattice/insert_B004_insert_hexagon_plus.stl",
+  "before": {
+   "triangles": 2112,
+   "non_manifold_edges": 0,
+   "volume_cm3": 94.66,
+   "size_mm": [
+    143.0,
+    143.0,
+    12.0
+   ]
+  },
+  "after": {
+   "triangles": 7612,
+   "non_manifold_edges": 0,
+   "volume_cm3": 94.66,
+   "size_mm": [
+    143.0,
+    143.0,
+    12.0
+   ]
+  },
+  "label_skipped": false,
+  "style": "S21",
+  "role": "insert"
+ },
+ {
+  "in": "styles/S22_lissajous_weave/gobo_G042_lissajous_3_4.stl",
+  "out": "blender_enhanced/S22_lissajous_weave/gobo_G042_lissajous_3_4_plus.stl",
+  "before": {
+   "triangles": 3796,
+   "non_manifold_edges": 0,
+   "volume_cm3": 9.19,
+   "size_mm": [
+    110.0,
+    110.0,
+    2.4
+   ]
+  },
+  "after": {
+   "triangles": 5032,
+   "non_manifold_edges": 0,
+   "volume_cm3": 9.19,
+   "size_mm": [
+    110.0,
+    110.0,
+    2.4
+   ]
+  },
+  "label_skipped": false,
+  "style": "S22",
+  "role": "gobo"
+ },
+ {
+  "in": "styles/S22_lissajous_weave/insert_B018_insert_circle_reference.stl",
+  "out": "blender_enhanced/S22_lissajous_weave/insert_B018_insert_circle_reference_plus.stl",
+  "before": {
+   "triangles": 2600,
+   "non_manifold_edges": 0,
+   "volume_cm3": 74.27,
+   "size_mm": [
+    143.0,
+    143.0,
+    12.0
+   ]
+  },
+  "after": {
+   "triangles": 9316,
+   "non_manifold_edges": 0,
+   "volume_cm3": 74.25,
+   "size_mm": [
+    143.0,
+    143.0,
+    12.0
+   ]
+  },
+  "label_skipped": false,
+  "style": "S22",
+  "role": "insert"
+ },
+ {
+  "in": "styles/S23_knotwork/gobo_G090_torus_knot_3_7.stl",
+  "out": "blender_enhanced/S23_knotwork/gobo_G090_torus_knot_3_7_plus.stl",
+  "before": {
+   "triangles": 4756,
+   "non_manifold_edges": 0,
+   "volume_cm3": 9.26,
+   "size_mm": [
+    110.0,
+    110.0,
+    2.4
+   ]
+  },
+  "after": {
+   "triangles": 6224,
+   "non_manifold_edges": 0,
+   "volume_cm3": 9.26,
+   "size_mm": [
+    110.0,
+    110.0,
+    2.4
+   ]
+  },
+  "label_skipped": false,
+  "style": "S23",
+  "role": "gobo"
+ },
+ {
+  "in": "styles/S23_knotwork/insert_B005_insert_heptagon.stl",
+  "out": "blender_enhanced/S23_knotwork/insert_B005_insert_heptagon_plus.stl",
+  "before": {
+   "triangles": 2116,
+   "non_manifold_edges": 0,
+   "volume_cm3": 89.41,
+   "size_mm": [
+    143.0,
+    143.0,
+    12.0
+   ]
+  },
+  "after": {
+   "triangles": 8240,
+   "non_manifold_edges": 0,
+   "volume_cm3": 89.4,
+   "size_mm": [
+    143.0,
+    143.0,
+    12.0
+   ]
+  },
+  "label_skipped": false,
+  "style": "S23",
+  "role": "insert"
+ },
+ {
+  "in": "styles/S24_fibonacci_gold/dipper_D001_dipper_point.stl",
+  "out": "blender_enhanced/S24_fibonacci_gold/dipper_D001_dipper_point_plus.stl",
+  "before": {
+   "triangles": 1064,
+   "non_manifold_edges": 0,
+   "volume_cm3": 1.33,
+   "size_mm": [
+    6.0,
+    6.0,
+    47.0
+   ]
+  },
+  "after": {
+   "triangles": 1776,
+   "non_manifold_edges": 0,
+   "volume_cm3": 1.33,
+   "size_mm": [
+    6.0,
+    6.0,
+    47.0
+   ]
+  },
+  "label_skipped": false,
+  "style": "S24",
+  "role": "dipper"
+ },
+ {
+  "in": "styles/S24_fibonacci_gold/gobo_G093_golden_spiral_fibonacci_squares.stl",
+  "out": "blender_enhanced/S24_fibonacci_gold/gobo_G093_golden_spiral_fibonacci_squares_plus.stl",
+  "before": {
+   "triangles": 2540,
+   "non_manifold_edges": 0,
+   "volume_cm3": 8.92,
+   "size_mm": [
+    110.0,
+    110.0,
+    2.4
+   ]
+  },
+  "after": {
+   "triangles": 3476,
+   "non_manifold_edges": 0,
+   "volume_cm3": 8.92,
+   "size_mm": [
+    110.0,
+    110.0,
+    2.4
+   ]
+  },
+  "label_skipped": false,
+  "style": "S24",
+  "role": "gobo"
+ },
+ {
+  "in": "styles/S24_fibonacci_gold/insert_B036_insert_golden_rectangle.stl",
+  "out": "blender_enhanced/S24_fibonacci_gold/insert_B036_insert_golden_rectangle_plus.stl",
+  "before": {
+   "triangles": 2104,
+   "non_manifold_edges": 0,
+   "volume_cm3": 124.96,
+   "size_mm": [
+    143.0,
+    143.0,
+    12.0
+   ]
+  },
+  "after": {
+   "triangles": 7576,
+   "non_manifold_edges": 0,
+   "volume_cm3": 124.95,
+   "size_mm": [
+    143.0,
+    143.0,
+    12.0
+   ]
+  },
+  "label_skipped": false,
+  "style": "S24",
+  "role": "insert"
+ },
+ {
+  "in": "styles/S25_sacred_yantra/gobo_G108_nine_triangle_yantra_simplified.stl",
+  "out": "blender_enhanced/S25_sacred_yantra/gobo_G108_nine_triangle_yantra_simplified_plus.stl",
+  "before": {
+   "triangles": 9152,
+   "non_manifold_edges": 0,
+   "volume_cm3": 11.65,
+   "size_mm": [
+    110.0,
+    110.0,
+    2.4
+   ]
+  },
+  "after": {
+   "triangles": 10344,
+   "non_manifold_edges": 0,
+   "volume_cm3": 11.65,
+   "size_mm": [
+    110.0,
+    110.0,
+    2.4
+   ]
+  },
+  "label_skipped": false,
+  "style": "S25",
+  "role": "gobo"
+ },
+ {
+  "in": "styles/S25_sacred_yantra/insert_B001_insert_triangle.stl",
+  "out": "blender_enhanced/S25_sacred_yantra/insert_B001_insert_triangle_plus.stl",
+  "before": {
+   "triangles": 2100,
+   "non_manifold_edges": 0,
+   "volume_cm3": 143.53,
+   "size_mm": [
+    143.0,
+    143.0,
+    12.0
+   ]
+  },
+  "after": {
+   "triangles": 7764,
+   "non_manifold_edges": 0,
+   "volume_cm3": 143.52,
+   "size_mm": [
+    143.0,
+    143.0,
+    12.0
+   ]
+  },
+  "label_skipped": false,
+  "style": "S25",
+  "role": "insert"
+ },
+ {
+  "in": "styles/S26_hypercube_dream/gobo_G267_8_cube_hypercube.stl",
+  "out": "blender_enhanced/S26_hypercube_dream/gobo_G267_8_cube_hypercube_plus.stl",
+  "before": {
+   "triangles": 54092,
+   "non_manifold_edges": 0,
+   "volume_cm3": 16.52,
+   "size_mm": [
+    110.0,
+    110.0,
+    2.4
+   ]
+  },
+  "after": {
+   "triangles": 55456,
+   "non_manifold_edges": 0,
+   "volume_cm3": 16.52,
+   "size_mm": [
+    110.0,
+    110.0,
+    2.4
+   ]
+  },
+  "label_skipped": false,
+  "style": "S26",
+  "role": "gobo"
+ },
+ {
+  "in": "styles/S26_hypercube_dream/insert_B006_insert_octagon.stl",
+  "out": "blender_enhanced/S26_hypercube_dream/insert_B006_insert_octagon_plus.stl",
+  "before": {
+   "triangles": 2120,
+   "non_manifold_edges": 0,
+   "volume_cm3": 85.96,
+   "size_mm": [
+    143.0,
+    143.0,
+    12.0
+   ]
+  },
+  "after": {
+   "triangles": 8164,
+   "non_manifold_edges": 0,
+   "volume_cm3": 85.95,
+   "size_mm": [
+    143.0,
+    143.0,
+    12.0
+   ]
+  },
+  "label_skipped": false,
+  "style": "S26",
+  "role": "insert"
+ },
+ {
+  "in": "styles/S27_snub_cosmos/gobo_G238_snub_dodecahedron.stl",
+  "out": "blender_enhanced/S27_snub_cosmos/gobo_G238_snub_dodecahedron_plus.stl",
+  "before": {
+   "triangles": 3964,
+   "non_manifold_edges": 0,
+   "volume_cm3": 11.12,
+   "size_mm": [
+    110.0,
+    110.0,
+    2.4
+   ]
+  },
+  "after": {
+   "triangles": 4864,
+   "non_manifold_edges": 0,
+   "volume_cm3": 11.12,
+   "size_mm": [
+    110.0,
+    110.0,
+    2.4
+   ]
+  },
+  "label_skipped": false,
+  "style": "S27",
+  "role": "gobo"
+ },
+ {
+  "in": "styles/S27_snub_cosmos/insert_B003_insert_pentagon.stl",
+  "out": "blender_enhanced/S27_snub_cosmos/insert_B003_insert_pentagon_plus.stl",
+  "before": {
+   "triangles": 2108,
+   "non_manifold_edges": 0,
+   "volume_cm3": 102.85,
+   "size_mm": [
+    143.0,
+    143.0,
+    12.0
+   ]
+  },
+  "after": {
+   "triangles": 7592,
+   "non_manifold_edges": 0,
+   "volume_cm3": 102.84,
+   "size_mm": [
+    143.0,
+    143.0,
+    12.0
+   ]
+  },
+  "label_skipped": false,
+  "style": "S27",
+  "role": "insert"
+ },
+ {
+  "in": "styles/S28_apollonian_pearls/dipper_D003_dipper_ring.stl",
+  "out": "blender_enhanced/S28_apollonian_pearls/dipper_D003_dipper_ring_plus.stl",
+  "before": {
+   "triangles": 1516,
+   "non_manifold_edges": 0,
+   "volume_cm3": 1.89,
+   "size_mm": [
+    30.0,
+    30.0,
+    47.0
+   ]
+  },
+  "after": {
+   "triangles": 4556,
+   "non_manifold_edges": 0,
+   "volume_cm3": 1.89,
+   "size_mm": [
+    30.0,
+    30.0,
+    47.0
+   ]
+  },
+  "label_skipped": false,
+  "style": "S28",
+  "role": "dipper"
+ },
+ {
+  "in": "styles/S28_apollonian_pearls/gobo_G300_apollonian_gasket.stl",
+  "out": "blender_enhanced/S28_apollonian_pearls/gobo_G300_apollonian_gasket_plus.stl",
+  "before": {
+   "triangles": 17880,
+   "non_manifold_edges": 0,
+   "volume_cm3": 9.48,
+   "size_mm": [
+    110.0,
+    110.0,
+    2.4
+   ]
+  },
+  "after": {
+   "triangles": 19528,
+   "non_manifold_edges": 0,
+   "volume_cm3": 9.48,
+   "size_mm": [
+    110.0,
+    110.0,
+    2.4
+   ]
+  },
+  "label_skipped": false,
+  "style": "S28",
+  "role": "gobo"
+ },
+ {
+  "in": "styles/S28_apollonian_pearls/insert_B018_insert_circle_reference.stl",
+  "out": "blender_enhanced/S28_apollonian_pearls/insert_B018_insert_circle_reference_plus.stl",
+  "before": {
+   "triangles": 2600,
+   "non_manifold_edges": 0,
+   "volume_cm3": 74.27,
+   "size_mm": [
+    143.0,
+    143.0,
+    12.0
+   ]
+  },
+  "after": {
+   "triangles": 9724,
+   "non_manifold_edges": 0,
+   "volume_cm3": 74.25,
+   "size_mm": [
+    143.0,
+    143.0,
+    12.0
+   ]
+  },
+  "label_skipped": false,
+  "style": "S28",
+  "role": "insert"
+ },
+ {
+  "in": "styles/S29_moire_drift/gobo_G173_moire_grating_3_deg.stl",
+  "out": "blender_enhanced/S29_moire_drift/gobo_G173_moire_grating_3_deg_plus.stl",
+  "before": {
+   "triangles": 2876,
+   "non_manifold_edges": 0,
+   "volume_cm3": 12.29,
+   "size_mm": [
+    110.0,
+    110.0,
+    2.4
+   ]
+  },
+  "after": {
+   "triangles": 4288,
+   "non_manifold_edges": 0,
+   "volume_cm3": 12.29,
+   "size_mm": [
+    110.0,
+    110.0,
+    2.4
+   ]
+  },
+  "label_skipped": false,
+  "style": "S29",
+  "role": "gobo"
+ },
+ {
+  "in": "styles/S29_moire_drift/insert_B020_insert_ellipse_2_0_1.stl",
+  "out": "blender_enhanced/S29_moire_drift/insert_B020_insert_ellipse_2_0_1_plus.stl",
+  "before": {
+   "triangles": 2440,
+   "non_manifold_edges": 0,
+   "volume_cm3": 133.07,
+   "size_mm": [
+    143.0,
+    143.0,
+    12.0
+   ]
+  },
+  "after": {
+   "triangles": 8980,
+   "non_manifold_edges": 0,
+   "volume_cm3": 133.06,
+   "size_mm": [
+    143.0,
+    143.0,
+    12.0
+   ]
+  },
+  "label_skipped": false,
+  "style": "S29",
+  "role": "insert"
+ },
+ {
+  "in": "styles/S30_fresnel_sun/dipper_D001_dipper_point.stl",
+  "out": "blender_enhanced/S30_fresnel_sun/dipper_D001_dipper_point_plus.stl",
+  "before": {
+   "triangles": 1064,
+   "non_manifold_edges": 0,
+   "volume_cm3": 1.33,
+   "size_mm": [
+    6.0,
+    6.0,
+    47.0
+   ]
+  },
+  "after": {
+   "triangles": 1776,
+   "non_manifold_edges": 0,
+   "volume_cm3": 1.33,
+   "size_mm": [
+    6.0,
+    6.0,
+    47.0
+   ]
+  },
+  "label_skipped": false,
+  "style": "S30",
+  "role": "dipper"
+ },
+ {
+  "in": "styles/S30_fresnel_sun/gobo_G171_fresnel_zone_plate.stl",
+  "out": "blender_enhanced/S30_fresnel_sun/gobo_G171_fresnel_zone_plate_plus.stl",
+  "before": {
+   "triangles": 9692,
+   "non_manifold_edges": 0,
+   "volume_cm3": 15.73,
+   "size_mm": [
+    110.0,
+    110.0,
+    2.4
+   ]
+  },
+  "after": {
+   "triangles": 11180,
+   "non_manifold_edges": 0,
+   "volume_cm3": 15.73,
+   "size_mm": [
+    110.0,
+    110.0,
+    2.4
+   ]
+  },
+  "label_skipped": false,
+  "style": "S30",
+  "role": "gobo"
+ },
+ {
+  "in": "styles/S30_fresnel_sun/insert_B018_insert_circle_reference.stl",
+  "out": "blender_enhanced/S30_fresnel_sun/insert_B018_insert_circle_reference_plus.stl",
+  "before": {
+   "triangles": 2600,
+   "non_manifold_edges": 0,
+   "volume_cm3": 74.27,
+   "size_mm": [
+    143.0,
+    143.0,
+    12.0
+   ]
+  },
+  "after": {
+   "triangles": 9560,
+   "non_manifold_edges": 0,
+   "volume_cm3": 74.25,
+   "size_mm": [
+    143.0,
+    143.0,
+    12.0
+   ]
+  },
+  "label_skipped": false,
+  "style": "S30",
+  "role": "insert"
+ },
+ {
+  "in": "stl/hardware/coil_bay_base.stl",
+  "out": "blender_enhanced/hardware/coil_bay_base_plus.stl",
+  "before": {
+   "triangles": 3324,
+   "non_manifold_edges": 0,
+   "volume_cm3": 93.54,
+   "size_mm": [
+    159.2,
+    159.2,
+    12.0
+   ]
+  },
+  "after": {
+   "triangles": 10620,
+   "non_manifold_edges": 0,
+   "volume_cm3": 93.54,
+   "size_mm": [
+    159.2,
+    159.2,
+    12.0
+   ]
+  },
+  "label_skipped": false,
+  "role": "hardware"
+ },
+ {
+  "in": "stl/hardware/dipper_arm.stl",
+  "out": "blender_enhanced/hardware/dipper_arm_plus.stl",
+  "before": {
+   "triangles": 3572,
+   "non_manifold_edges": 0,
+   "volume_cm3": 11.62,
+   "size_mm": [
+    132.1,
+    30.0,
+    20.0
+   ]
+  },
+  "after": {
+   "triangles": 9584,
+   "non_manifold_edges": 0,
+   "volume_cm3": 11.62,
+   "size_mm": [
+    132.1,
+    30.0,
+    20.0
+   ]
+  },
+  "label_skipped": false,
+  "role": "hardware"
+ },
+ {
+  "in": "stl/hardware/gobo_carrier.stl",
+  "out": "blender_enhanced/hardware/gobo_carrier_plus.stl",
+  "before": {
+   "triangles": 4316,
+   "non_manifold_edges": 0,
+   "volume_cm3": 29.38,
+   "size_mm": [
+    134.0,
+    134.0,
+    6.0
+   ]
+  },
+  "after": {
+   "triangles": 12032,
+   "non_manifold_edges": 0,
+   "volume_cm3": 29.38,
+   "size_mm": [
+    134.0,
+    134.0,
+    6.0
+   ]
+  },
+  "label_skipped": false,
+  "role": "hardware"
+ },
+ {
+  "in": "stl/hardware/led_cradle.stl",
+  "out": "blender_enhanced/hardware/led_cradle_plus.stl",
+  "before": {
+   "triangles": 1564,
+   "non_manifold_edges": 0,
+   "volume_cm3": 15.38,
+   "size_mm": [
+    56.0,
+    56.0,
+    8.0
+   ]
+  },
+  "after": {
+   "triangles": 4884,
+   "non_manifold_edges": 0,
+   "volume_cm3": 15.37,
+   "size_mm": [
+    56.0,
+    56.0,
+    8.0
+   ]
+  },
+  "label_skipped": false,
+  "role": "hardware"
+ },
+ {
+  "in": "stl/hardware/lens_ring_80mm.stl",
+  "out": "blender_enhanced/hardware/lens_ring_80mm_plus.stl",
+  "before": {
+   "triangles": 2972,
+   "non_manifold_edges": 0,
+   "volume_cm3": 18.12,
+   "size_mm": [
+    114.4,
+    106.0,
+    10.0
+   ]
+  },
+  "after": {
+   "triangles": 9084,
+   "non_manifold_edges": 0,
+   "volume_cm3": 18.12,
+   "size_mm": [
+    114.4,
+    106.0,
+    10.0
+   ]
+  },
+  "label_skipped": false,
+  "role": "hardware"
+ },
+ {
+  "in": "stl/hardware/mirror_holder_45.stl",
+  "out": "blender_enhanced/hardware/mirror_holder_45_plus.stl",
+  "before": {
+   "triangles": 52,
+   "non_manifold_edges": 0,
+   "volume_cm3": 85.7,
+   "size_mm": [
+    112.0,
+    86.0,
+    80.0
+   ]
+  },
+  "after": {
+   "triangles": 372,
+   "non_manifold_edges": 0,
+   "volume_cm3": 85.5,
+   "size_mm": [
+    112.0,
+    86.0,
+    79.6
+   ]
+  },
+  "label_skipped": false,
+  "role": "hardware"
+ },
+ {
+  "in": "stl/hardware/panel_corner.stl",
+  "out": "blender_enhanced/hardware/panel_corner_plus.stl",
+  "before": {
+   "triangles": 678,
+   "non_manifold_edges": 0,
+   "volume_cm3": 8.74,
+   "size_mm": [
+    30.0,
+    30.0,
+    30.0
+   ]
+  },
+  "after": {
+   "triangles": 2110,
+   "non_manifold_edges": 0,
+   "volume_cm3": 8.73,
+   "size_mm": [
+    30.0,
+    30.0,
+    30.0
+   ]
+  },
+  "label_skipped": false,
+  "role": "hardware"
+ },
+ {
+  "in": "stl/hardware/platform_4x_exciter.stl",
+  "out": "blender_enhanced/hardware/platform_4x_exciter_plus.stl",
+  "before": {
+   "triangles": 9258,
+   "non_manifold_edges": 0,
+   "volume_cm3": 126.19,
+   "size_mm": [
+    200.0,
+    200.0,
+    6.2
+   ]
+  },
+  "after": {
+   "triangles": 28062,
+   "non_manifold_edges": 0,
+   "volume_cm3": 126.19,
+   "size_mm": [
+    200.0,
+    200.0,
+    6.2
+   ]
+  },
+  "label_skipped": false,
+  "role": "hardware"
+ },
+ {
+  "in": "stl/hardware/platform_foot_cup.stl",
+  "out": "blender_enhanced/hardware/platform_foot_cup_plus.stl",
+  "before": {
+   "triangles": 2136,
+   "non_manifold_edges": 0,
+   "volume_cm3": 3.27,
+   "size_mm": [
+    38.0,
+    38.0,
+    8.0
+   ]
+  },
+  "after": {
+   "triangles": 5540,
+   "non_manifold_edges": 0,
+   "volume_cm3": 3.27,
+   "size_mm": [
+    38.0,
+    38.0,
+    8.0
+   ]
+  },
+  "label_skipped": false,
+  "role": "hardware"
+ },
+ {
+  "in": "stl/hardware/platform_quarter_a1mini.stl",
+  "out": "blender_enhanced/hardware/platform_quarter_a1mini_plus.stl",
+  "before": {
+   "triangles": 3000,
+   "non_manifold_edges": 0,
+   "volume_cm3": 31.4,
+   "size_mm": [
+    100.0,
+    100.0,
+    6.2
+   ]
+  },
+  "after": {
+   "triangles": 9216,
+   "non_manifold_edges": 0,
+   "volume_cm3": 31.4,
+   "size_mm": [
+    100.0,
+    100.0,
+    6.2
+   ]
+  },
+  "label_skipped": false,
+  "role": "hardware"
+ },
+ {
+  "in": "stl/hardware/platform_splice_plate.stl",
+  "out": "blender_enhanced/hardware/platform_splice_plate_plus.stl",
+  "before": {
+   "triangles": 668,
+   "non_manifold_edges": 0,
+   "volume_cm3": 3.46,
+   "size_mm": [
+    30.0,
+    30.0,
+    4.0
+   ]
+  },
+  "after": {
+   "triangles": 2044,
+   "non_manifold_edges": 0,
+   "volume_cm3": 3.43,
+   "size_mm": [
+    30.0,
+    30.0,
+    4.0
+   ]
+  },
+  "label_skipped": false,
+  "role": "hardware"
+ }
+]

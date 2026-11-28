@@ -1,0 +1,60 @@
+# Codemagic: builds the Cymatic Light Chamber iOS app on a cloud Mac and uploads it to TestFlight,
+# so no Mac or Xcode is needed. Codemagic's free plan includes 500 macOS minutes a month; one build
+# takes about 10-15 minutes.
+#
+# One-time setup (apps/cymatic-odyssey/store-launch/STEP-BY-STEP.md, Apple steps A1-A5):
+#   1. Sign in at codemagic.io with GitHub and add the Eddie-G repository (once for all your apps).
+#   2. Team settings > Integrations > Developer Portal: an App Store Connect API key (Admin role).
+#      If you already added one for Alien Sudoku, it works for every app on your Apple account;
+#      the name below must match its name in Codemagic.
+#   3. Start the "Cymatic Light Chamber iOS (TestFlight)" workflow on branch claude/peaceful-babbage-k8oen2.
+# Codemagic creates the signing certificate and App Store profile itself through the API key.
+#
+# Note: Codemagic reads this file from the branch it builds. The Alien Sudoku branch has its own
+# codemagic.yaml; if the two branches are ever merged, keep both entries under "workflows:".
+
+workflows:
+  cymatic-light-chamber-ios:
+    name: Cymatic Light Chamber iOS (TestFlight)
+    instance_type: mac_mini_m2
+    max_build_duration: 60
+    integrations:
+      app_store_connect: Alien Sudoku ASC key
+    environment:
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: com.eddieg.cymaticlightchamber
+      node: 22
+      xcode: latest
+      vars:
+        APP_ROOT: apps/cymatic-odyssey
+        MARKETING_VERSION: 1.0.0
+    triggering:
+      events: []   # start builds by hand from the Codemagic dashboard
+    scripts:
+      - name: Build the web app (pnpm workspace)
+        script: |
+          cd "$APP_ROOT"
+          corepack enable
+          pnpm install --frozen-lockfile
+          pnpm test
+          pnpm claims:lint
+          pnpm build
+      - name: Copy it into the iOS project
+        script: cd "$APP_ROOT/apps/mobile" && npm ci && npx cap sync ios
+      - name: Apply signing files
+        script: xcode-project use-profiles
+      - name: Build the .ipa
+        script: |
+          cd "$APP_ROOT/apps/mobile/ios/App"
+          xcode-project build-ipa \
+            --project App.xcodeproj \
+            --scheme App \
+            --archive-xcargs "CURRENT_PROJECT_VERSION=$BUILD_NUMBER MARKETING_VERSION=$MARKETING_VERSION"
+    artifacts:
+      - apps/cymatic-odyssey/apps/mobile/ios/App/build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+    publishing:
+      app_store_connect:
+        auth: integration
+        submit_to_testflight: true

@@ -1,0 +1,8 @@
+{
+  "name": "@clc/core-geometry",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Shape families, STL/3MF export, light-throw preview (spec 6). P0: legacy adapter over the Python generator's catalog.",
+  "exports": { ".": "./src/index.ts" }
+}

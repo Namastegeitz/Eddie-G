@@ -1,0 +1,8 @@
+{
+  "name": "@clc/core-cv",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Camera pipeline, Symmetry Score, calibration sweep, Pattern Lock (spec 5.7-5.9). Built in P5.",
+  "exports": { ".": "./src/index.ts" }
+}

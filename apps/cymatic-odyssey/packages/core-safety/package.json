@@ -1,0 +1,8 @@
+{
+  "name": "@clc/core-safety",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Safety Guardian: every light, audio and hardware output passes through here (spec section 9).",
+  "exports": { ".": "./src/index.ts" }
+}

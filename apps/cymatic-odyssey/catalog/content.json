@@ -1,0 +1,4790 @@
+{
+ "voyages": [
+  {
+   "id": "departure",
+   "name": "Departure: Earth Orbit",
+   "mood": "calm opening, 6 min",
+   "steps": [
+    {
+     "t": 60,
+     "f": 18,
+     "ratio": null,
+     "mix": 0.0,
+     "pulse": 0.5,
+     "breathe": 0.1,
+     "mode": "dipper",
+     "gobo": "none",
+     "pal": [
+      "#2b6cff",
+      "#7fd4ff",
+      "#b48cff"
+     ],
+     "text": "Single drops of sound. Rings leave the centre like a launch countdown."
+    },
+    {
+     "t": 60,
+     "f": 24,
+     "ratio": null,
+     "mix": 0.0,
+     "pulse": 1.0,
+     "breathe": 0.0,
+     "mode": "dipper",
+     "gobo": "rings",
+     "pal": [
+      "#2b6cff",
+      "#7fd4ff",
+      "#b48cff"
+     ],
+     "text": "Pulse quickens; concentric rings stack into an orbit map."
+    },
+    {
+     "t": 90,
+     "f": 36,
+     "ratio": null,
+     "mix": 0.0,
+     "pulse": 0.0,
+     "breathe": 0.0,
+     "mode": "faraday",
+     "gobo": "none",
+     "pal": [
+      "#2b6cff",
+      "#7fd4ff",
+      "#b48cff"
+     ],
+     "text": "Whole-dish drive: the first standing squares lock in."
+    },
+    {
+     "t": 90,
+     "f": 30,
+     "ratio": null,
+     "mix": 0.0,
+     "pulse": 0.0,
+     "breathe": 0.1,
+     "mode": "faraday",
+     "gobo": "none",
+     "pal": [
+      "#36ffb0",
+      "#2bd1ff",
+      "#9b6bff"
+     ],
+     "text": "Breathe with the swell - 6 breaths a minute."
+    },
+    {
+     "t": 60,
+     "f": 20,
+     "ratio": null,
+     "mix": 0.0,
+     "pulse": 0.25,
+     "breathe": 0.0,
+     "mode": "dipper",
+     "gobo": "none",
+     "pal": [
+      "#2b6cff",
+      "#7fd4ff",
+      "#b48cff"
+     ],
+     "text": "Leaving orbit."
+    }
+   ]
+  },
+  {
+   "id": "saturn",
+   "name": "Saturn's Hexagon",
+   "mood": "bold, geometric, 5 min",
+   "steps": [
+    {
+     "t": 60,
+     "f": 40,
+     "ratio": [
+      3,
+      2
+     ],
+     "mix": 0.5,
+     "pulse": 0.0,
+     "breathe": 0.0,
+     "mode": "faraday",
+     "gobo": "ngon:6",
+     "pal": [
+      "#ffd27a",
+      "#ff9f43",
+      "#fff3d6"
+     ],
+     "text": "Two tones in 2:3 - the water prefers hexagons."
+    },
+    {
+     "t": 90,
+     "f": 48,
+     "ratio": [
+      3,
+      2
+     ],
+     "mix": 0.6,
+     "pulse": 0.0,
+     "breathe": 0.0,
+     "mode": "faraday",
+     "gobo": "hex",
+     "pal": [
+      "#ffd27a",
+      "#ff9f43",
+      "#fff3d6"
+     ],
+     "text": "A hexagonal jet stream, like the one Cassini filmed at Saturn's pole."
+    },
+    {
+     "t": 60,
+     "f": 56,
+     "ratio": [
+      3,
+      2
+     ],
+     "mix": 0.4,
+     "pulse": 0.0,
+     "breathe": 0.05,
+     "mode": "faraday",
+     "gobo": "none",
+     "pal": [
+      "#ff6b3d",
+      "#ffb347",
+      "#ffe3a3"
+     ],
+     "text": "Storm bands tighten."
+    },
+    {
+     "t": 90,
+     "f": 44,
+     "ratio": [
+      2,
+      1
+     ],
+     "mix": 0.5,
+     "pulse": 0.0,
+     "breathe": 0.0,
+     "mode": "faraday",
+     "gobo": "star:6",
+     "pal": [
+      "#ffd27a",
+      "#ff9f43",
+      "#fff3d6"
+     ],
+     "text": "Octave pair: triangles appear inside the hexagons."
+    }
+   ]
+  },
+  {
+   "id": "quasicrystal",
+   "name": "Quasicrystal Nebula",
+   "mood": "mysterious, 7 min",
+   "steps": [
+    {
+     "t": 90,
+     "f": 40,
+     "ratio": [
+      5,
+      4
+     ],
+     "mix": 0.6,
+     "pulse": 0.0,
+     "breathe": 0.0,
+     "mode": "faraday",
+     "gobo": "none",
+     "pal": [
+      "#ff5fa2",
+      "#7a5cff",
+      "#36e2ff"
+     ],
+     "text": "4:5 forcing - the 12-fold quasipattern Edwards & Fauve found in 1993. Order without repetition."
+    },
+    {
+     "t": 90,
+     "f": 42,
+     "ratio": [
+      7,
+      6
+     ],
+     "mix": 0.55,
+     "pulse": 0.0,
+     "breathe": 0.0,
+     "mode": "faraday",
+     "gobo": "flower",
+     "pal": [
+      "#ff5fa2",
+      "#7a5cff",
+      "#36e2ff"
+     ],
+     "text": "6:7 - superlattices: hexagons nested in hexagons."
+    },
+    {
+     "t": 90,
+     "f": 52,
+     "ratio": [
+      5,
+      4
+     ],
+     "mix": 0.7,
+     "pulse": 0.0,
+     "breathe": 0.07,
+     "mode": "faraday",
+     "gobo": "none",
+     "pal": [
+      "#36ffb0",
+      "#2bd1ff",
+      "#9b6bff"
+     ],
+     "text": "The nebula drifts; phase slips make the pattern rotate."
+    },
+    {
+     "t": 60,
+     "f": 60,
+     "ratio": null,
+     "mix": 0.0,
+     "pulse": 0.0,
+     "breathe": 0.0,
+     "mode": "faraday",
+     "gobo": "none",
+     "pal": [
+      "#ff5fa2",
+      "#7a5cff",
+      "#36e2ff"
+     ],
+     "text": "Single tone again: back to squares, the ground state of water."
+    },
+    {
+     "t": 90,
+     "f": 45,
+     "ratio": [
+      5,
+      4
+     ],
+     "mix": 0.6,
+     "pulse": 0.0,
+     "breathe": 0.0,
+     "mode": "faraday",
+     "gobo": "star:12",
+     "pal": [
+      "#ff5fa2",
+      "#7a5cff",
+      "#36e2ff"
+     ],
+     "text": "Return to twelve-fold."
+    }
+   ]
+  },
+  {
+   "id": "pulsar",
+   "name": "Pulsar",
+   "mood": "energetic, 4 min",
+   "steps": [
+    {
+     "t": 40,
+     "f": 30,
+     "ratio": null,
+     "mix": 0.0,
+     "pulse": 1.4,
+     "breathe": 0.0,
+     "mode": "dipper",
+     "gobo": "none",
+     "pal": [
+      "#ffffff",
+      "#7fd4ff",
+      "#ff5fa2"
+     ],
+     "text": "A spinning neutron star: one ring per beat."
+    },
+    {
+     "t": 60,
+     "f": 40,
+     "ratio": null,
+     "mix": 0.0,
+     "pulse": 2.0,
+     "breathe": 0.0,
+     "mode": "dipper",
+     "gobo": "radial",
+     "pal": [
+      "#ffffff",
+      "#36e2ff",
+      "#7a5cff"
+     ],
+     "text": "Two beats a second - rings collide with their echoes off the wall."
+    },
+    {
+     "t": 60,
+     "f": 50,
+     "ratio": null,
+     "mix": 0.0,
+     "pulse": 2.5,
+     "breathe": 0.0,
+     "mode": "dipper",
+     "gobo": "none",
+     "pal": [
+      "#ff5fa2",
+      "#7a5cff",
+      "#36e2ff"
+     ],
+     "text": "Faster - interference lace."
+    },
+    {
+     "t": 80,
+     "f": 34,
+     "ratio": null,
+     "mix": 0.0,
+     "pulse": 0.8,
+     "breathe": 0.1,
+     "mode": "dipper",
+     "gobo": "none",
+     "pal": [
+      "#2b6cff",
+      "#7fd4ff",
+      "#b48cff"
+     ],
+     "text": "Spin down."
+    }
+   ]
+  },
+  {
+   "id": "venus",
+   "name": "Venus Pentagram",
+   "mood": "romantic, 5 min",
+   "steps": [
+    {
+     "t": 90,
+     "f": 22,
+     "ratio": null,
+     "mix": 0.0,
+     "pulse": 0.6,
+     "breathe": 0.0,
+     "mode": "dipper",
+     "gobo": "star:5",
+     "pal": [
+      "#ff7aa8",
+      "#ffd1dc",
+      "#ffb347"
+     ],
+     "text": "Earth and Venus line up five times in eight years, tracing a five-petalled rose. Use the pentagon insert."
+    },
+    {
+     "t": 90,
+     "f": 32,
+     "ratio": null,
+     "mix": 0.0,
+     "pulse": 0.0,
+     "breathe": 0.0,
+     "mode": "faraday",
+     "gobo": "ngon:5",
+     "pal": [
+      "#ff7aa8",
+      "#ffd1dc",
+      "#b48cff"
+     ],
+     "text": "Faraday drive inside a pentagon: the wall shape bends the squares into five-fold arcs."
+    },
+    {
+     "t": 90,
+     "f": 26,
+     "ratio": null,
+     "mix": 0.0,
+     "pulse": 0.0,
+     "breathe": 0.08,
+     "mode": "faraday",
+     "gobo": "none",
+     "pal": [
+      "#ff7aa8",
+      "#ffe9b0",
+      "#ff9f43"
+     ],
+     "text": "Slow swell."
+    }
+   ]
+  },
+  {
+   "id": "hyperbolic",
+   "name": "Hyperbolic Drift",
+   "mood": "trippy, 6 min",
+   "steps": [
+    {
+     "t": 60,
+     "f": 70,
+     "ratio": null,
+     "mix": 0.0,
+     "pulse": 0.0,
+     "breathe": 0.0,
+     "mode": "faraday",
+     "gobo": "hex",
+     "pal": [
+      "#36ffb0",
+      "#2bd1ff",
+      "#9b6bff"
+     ],
+     "text": "High drive: fine squares, tiles shrinking to the edge like an Escher circle."
+    },
+    {
+     "t": 120,
+     "f": 70,
+     "ratio": [
+      7,
+      6
+     ],
+     "mix": 0.3,
+     "pulse": 0.0,
+     "breathe": 0.05,
+     "mode": "faraday",
+     "gobo": "none",
+     "pal": [
+      "#36ffb0",
+      "#2bd1ff",
+      "#9b6bff"
+     ],
+     "text": "Slow beating between tones makes the lattice breathe in and out."
+    },
+    {
+     "t": 90,
+     "f": 90,
+     "ratio": null,
+     "mix": 0.0,
+     "pulse": 0.0,
+     "breathe": 0.0,
+     "mode": "faraday",
+     "gobo": "none",
+     "pal": [
+      "#ff5fa2",
+      "#7a5cff",
+      "#36e2ff"
+     ],
+     "text": "Finer still."
+    },
+    {
+     "t": 90,
+     "f": 55,
+     "ratio": [
+      5,
+      4
+     ],
+     "mix": 0.5,
+     "pulse": 0.0,
+     "breathe": 0.0,
+     "mode": "faraday",
+     "gobo": "none",
+     "pal": [
+      "#36ffb0",
+      "#2bd1ff",
+      "#9b6bff"
+     ],
+     "text": "Fold into twelve."
+    }
+   ]
+  },
+  {
+   "id": "mandala",
+   "name": "Inner Mandala",
+   "mood": "introspective, 10 min",
+   "steps": [
+    {
+     "t": 120,
+     "f": 20,
+     "ratio": null,
+     "mix": 0.0,
+     "pulse": 0.1,
+     "breathe": 0.1,
+     "mode": "dipper",
+     "gobo": "flower",
+     "pal": [
+      "#ffd27a",
+      "#ff9f43",
+      "#fff3d6"
+     ],
+     "text": "Breathe in as the swell rises, out as it falls (6 per minute)."
+    },
+    {
+     "t": 120,
+     "f": 26,
+     "ratio": null,
+     "mix": 0.0,
+     "pulse": 0.0,
+     "breathe": 0.1,
+     "mode": "faraday",
+     "gobo": "flower",
+     "pal": [
+      "#ffd27a",
+      "#ff9f43",
+      "#fff3d6"
+     ],
+     "text": "Squares under the Flower of Life."
+    },
+    {
+     "t": 120,
+     "f": 33,
+     "ratio": [
+      3,
+      2
+     ],
+     "mix": 0.35,
+     "pulse": 0.0,
+     "breathe": 0.1,
+     "mode": "faraday",
+     "gobo": "star:8",
+     "pal": [
+      "#ff6b3d",
+      "#ffb347",
+      "#ffe3a3"
+     ],
+     "text": "Hexagons under an eight-point star."
+    },
+    {
+     "t": 120,
+     "f": 24,
+     "ratio": null,
+     "mix": 0.0,
+     "pulse": 0.1,
+     "breathe": 0.083,
+     "mode": "dipper",
+     "gobo": "rings",
+     "pal": [
+      "#ffd27a",
+      "#ff9f43",
+      "#fff3d6"
+     ],
+     "text": "Slower: 5 breaths a minute."
+    },
+    {
+     "t": 120,
+     "f": 18,
+     "ratio": null,
+     "mix": 0.0,
+     "pulse": 0.05,
+     "breathe": 0.083,
+     "mode": "dipper",
+     "gobo": "none",
+     "pal": [
+      "#ffe9b0",
+      "#ffd27a",
+      "#ffffff"
+     ],
+     "text": "Stillness. Let the last ring reach the wall."
+    }
+   ]
+  },
+  {
+   "id": "golden",
+   "name": "Golden Spiral Descent",
+   "mood": "flowing, 5 min",
+   "steps": [
+    {
+     "t": 45,
+     "f": 89,
+     "ratio": null,
+     "mix": 0.0,
+     "pulse": 0.0,
+     "breathe": 0.0,
+     "mode": "faraday",
+     "gobo": "none",
+     "pal": [
+      "#ffd27a",
+      "#ff9f43",
+      "#fff3d6"
+     ],
+     "text": "Frequencies fall by the golden ratio: 89..."
+    },
+    {
+     "t": 45,
+     "f": 55,
+     "ratio": null,
+     "mix": 0.0,
+     "pulse": 0.0,
+     "breathe": 0.0,
+     "mode": "faraday",
+     "gobo": "none",
+     "pal": [
+      "#ffd27a",
+      "#ff9f43",
+      "#fff3d6"
+     ],
+     "text": "55..."
+    },
+    {
+     "t": 45,
+     "f": 34,
+     "ratio": null,
+     "mix": 0.0,
+     "pulse": 0.0,
+     "breathe": 0.0,
+     "mode": "faraday",
+     "gobo": "none",
+     "pal": [
+      "#ff6b3d",
+      "#ffb347",
+      "#ffe3a3"
+     ],
+     "text": "34..."
+    },
+    {
+     "t": 45,
+     "f": 21,
+     "ratio": null,
+     "mix": 0.0,
+     "pulse": 0.618,
+     "breathe": 0.0,
+     "mode": "dipper",
+     "gobo": "none",
+     "pal": [
+      "#ff6b3d",
+      "#ffb347",
+      "#ffe3a3"
+     ],
+     "text": "21, pulsing at 0.618 Hz..."
+    },
+    {
+     "t": 60,
+     "f": 13,
+     "ratio": null,
+     "mix": 0.0,
+     "pulse": 0.382,
+     "breathe": 0.1,
+     "mode": "dipper",
+     "gobo": "star:5",
+     "pal": [
+      "#ffd27a",
+      "#ff9f43",
+      "#fff3d6"
+     ],
+     "text": "13. Fibonacci all the way down."
+    }
+   ]
+  },
+  {
+   "id": "e8",
+   "name": "E8 Singularity",
+   "mood": "intense build, 5 min",
+   "steps": [
+    {
+     "t": 40,
+     "f": 30,
+     "ratio": null,
+     "mix": 0.0,
+     "pulse": 0.0,
+     "breathe": 0.0,
+     "mode": "faraday",
+     "gobo": "none",
+     "pal": [
+      "#2b6cff",
+      "#7fd4ff",
+      "#b48cff"
+     ],
+     "text": "Low and wide."
+    },
+    {
+     "t": 40,
+     "f": 45,
+     "ratio": [
+      5,
+      4
+     ],
+     "mix": 0.4,
+     "pulse": 0.0,
+     "breathe": 0.0,
+     "mode": "faraday",
+     "gobo": "none",
+     "pal": [
+      "#2b6cff",
+      "#7fd4ff",
+      "#b48cff"
+     ],
+     "text": "Second tone enters."
+    },
+    {
+     "t": 40,
+     "f": 60,
+     "ratio": [
+      5,
+      4
+     ],
+     "mix": 0.6,
+     "pulse": 0.0,
+     "breathe": 0.0,
+     "mode": "faraday",
+     "gobo": "star:12",
+     "pal": [
+      "#ff5fa2",
+      "#7a5cff",
+      "#36e2ff"
+     ],
+     "text": "Density rises."
+    },
+    {
+     "t": 40,
+     "f": 80,
+     "ratio": [
+      7,
+      6
+     ],
+     "mix": 0.6,
+     "pulse": 0.0,
+     "breathe": 0.0,
+     "mode": "faraday",
+     "gobo": "radial",
+     "pal": [
+      "#ff5fa2",
+      "#7a5cff",
+      "#36e2ff"
+     ],
+     "text": "Thirty-fold E8 shadow on the gobo."
+    },
+    {
+     "t": 60,
+     "f": 100,
+     "ratio": [
+      5,
+      4
+     ],
+     "mix": 0.7,
+     "pulse": 0.0,
+     "breathe": 0.0,
+     "mode": "faraday",
+     "gobo": "none",
+     "pal": [
+      "#ffffff",
+      "#ff5fa2",
+      "#36e2ff"
+     ],
+     "text": "Peak: finest lattice the water can hold."
+    },
+    {
+     "t": 60,
+     "f": 24,
+     "ratio": null,
+     "mix": 0.0,
+     "pulse": 0.3,
+     "breathe": 0.1,
+     "mode": "dipper",
+     "gobo": "none",
+     "pal": [
+      "#2b6cff",
+      "#7fd4ff",
+      "#b48cff"
+     ],
+     "text": "Release."
+    }
+   ]
+  },
+  {
+   "id": "aurora",
+   "name": "Aurora Ribbons",
+   "mood": "dreamy, 6 min",
+   "steps": [
+    {
+     "t": 90,
+     "f": 16,
+     "ratio": null,
+     "mix": 0.0,
+     "pulse": 0.0,
+     "breathe": 0.06,
+     "mode": "faraday",
+     "gobo": "none",
+     "pal": [
+      "#36ffb0",
+      "#2bd1ff",
+      "#9b6bff"
+     ],
+     "text": "Long slow waves - ribbons of green light."
+    },
+    {
+     "t": 90,
+     "f": 19,
+     "ratio": [
+      2,
+      1
+     ],
+     "mix": 0.3,
+     "pulse": 0.0,
+     "breathe": 0.06,
+     "mode": "faraday",
+     "gobo": "none",
+     "pal": [
+      "#36ffb0",
+      "#2bd1ff",
+      "#9b6bff"
+     ],
+     "text": "Ribbons fold."
+    },
+    {
+     "t": 90,
+     "f": 24,
+     "ratio": null,
+     "mix": 0.0,
+     "pulse": 0.0,
+     "breathe": 0.0,
+     "mode": "faraday",
+     "gobo": "none",
+     "pal": [
+      "#36ffb0",
+      "#ff5fa2",
+      "#2bd1ff"
+     ],
+     "text": "A pink curtain appears."
+    },
+    {
+     "t": 90,
+     "f": 14,
+     "ratio": null,
+     "mix": 0.0,
+     "pulse": 0.2,
+     "breathe": 0.0,
+     "mode": "dipper",
+     "gobo": "none",
+     "pal": [
+      "#36ffb0",
+      "#2bd1ff",
+      "#9b6bff"
+     ],
+     "text": "Fade to night."
+    }
+   ]
+  },
+  {
+   "id": "home",
+   "name": "Return Home",
+   "mood": "closing, 3 min",
+   "steps": [
+    {
+     "t": 60,
+     "f": 28,
+     "ratio": null,
+     "mix": 0.0,
+     "pulse": 0.0,
+     "breathe": 0.0,
+     "mode": "faraday",
+     "gobo": "none",
+     "pal": [
+      "#2b6cff",
+      "#7fd4ff",
+      "#b48cff"
+     ],
+     "text": "Squares - the simplest standing wave."
+    },
+    {
+     "t": 60,
+     "f": 20,
+     "ratio": null,
+     "mix": 0.0,
+     "pulse": 0.5,
+     "breathe": 0.0,
+     "mode": "dipper",
+     "gobo": "rings",
+     "pal": [
+      "#ffd27a",
+      "#ff9f43",
+      "#fff3d6"
+     ],
+     "text": "Rings."
+    },
+    {
+     "t": 60,
+     "f": 12,
+     "ratio": null,
+     "mix": 0.0,
+     "pulse": 0.2,
+     "breathe": 0.1,
+     "mode": "dipper",
+     "gobo": "none",
+     "pal": [
+      "#fff3d6",
+      "#ffd27a",
+      "#ffffff"
+     ],
+     "text": "Splashdown."
+    }
+   ]
+  }
+ ],
+ "themes": [
+  {
+   "id": "newyear",
+   "name": "New Year's Day",
+   "when": "Jan 1",
+   "palette": [
+    "#ffd27a",
+    "#ffffff",
+    "#b48cff"
+   ],
+   "voyage": "departure",
+   "gobos": [
+    "Sunburst 36",
+    "Golden spiral & Fibonacci squares"
+   ],
+   "insert": "Insert circle (reference)",
+   "mood": "fresh start, countdown rings",
+   "venues": "bars, hotels, homes",
+   "line": "Ring in the year with light that ripples from the centre."
+  },
+  {
+   "id": "mlk",
+   "name": "Martin Luther King Jr. Day",
+   "when": "3rd Mon Jan",
+   "palette": [
+    "#ffffff",
+    "#ffd27a",
+    "#7fd4ff"
+   ],
+   "voyage": "mandala",
+   "gobos": [
+    "Borromean rings",
+    "Seed of Life"
+   ],
+   "insert": "Insert circle (reference)",
+   "mood": "reflection, unity",
+   "venues": "schools, libraries, lobbies",
+   "line": "Unity made visible: three rings that only hold together as one."
+  },
+  {
+   "id": "lunar",
+   "name": "Lunar New Year",
+   "when": "late Jan-Feb (lunar)",
+   "palette": [
+    "#ff3d3d",
+    "#ffd27a",
+    "#ff9f43"
+   ],
+   "voyage": "saturn",
+   "gobos": [
+    "Hankin 4.8.8 at 67.5 deg",
+    "Petal mandala 12"
+   ],
+   "insert": "Insert octagon",
+   "mood": "prosperity, lanterns",
+   "venues": "restaurants, retail windows",
+   "line": "Red and gold lattices that bloom like lanterns."
+  },
+  {
+   "id": "blackhistory",
+   "name": "Black History Month (US)",
+   "when": "February",
+   "palette": [
+    "#ffd27a",
+    "#36ffb0",
+    "#ff3d3d"
+   ],
+   "voyage": "mandala",
+   "gobos": [
+    "Hankin 3.6.3.6 at 60 deg",
+    "Sierpinski triangle"
+   ],
+   "insert": "Insert hexagon",
+   "mood": "heritage, pattern traditions",
+   "venues": "museums, schools, offices",
+   "line": "Celebrates mathematical pattern traditions such as fractal design in African architecture (Eglash, 'African Fractals', 1999)."
+  },
+  {
+   "id": "valentine",
+   "name": "Valentine's Day",
+   "when": "Feb 14",
+   "palette": [
+    "#ff7aa8",
+    "#ffd1dc",
+    "#ff3d6b"
+   ],
+   "voyage": "venus",
+   "gobos": [
+    "Cardioid",
+    "Cardioid from circles",
+    "Times table x2"
+   ],
+   "insert": "Insert heart",
+   "mood": "romance",
+   "venues": "restaurants, date nights, spas",
+   "line": "Light-drawn hearts: the cardioid appears out of pure arithmetic."
+  },
+  {
+   "id": "pi",
+   "name": "Pi Day",
+   "when": "Mar 14",
+   "palette": [
+    "#7fd4ff",
+    "#ffe9b0",
+    "#ffffff"
+   ],
+   "voyage": "golden",
+   "gobos": [
+    "Mystic rose K24",
+    "Ford circles",
+    "Apollonian gasket"
+   ],
+   "insert": "Insert circle (reference)",
+   "mood": "math joy",
+   "venues": "schools, science centres, cafes",
+   "line": "3.14 reasons to love circles."
+  },
+  {
+   "id": "stpatrick",
+   "name": "St. Patrick's Day",
+   "when": "Mar 17",
+   "palette": [
+    "#36ff6b",
+    "#ffd27a",
+    "#ffffff"
+   ],
+   "voyage": "aurora",
+   "gobos": [
+    "Superformula Clover 3",
+    "Borromean rings"
+   ],
+   "insert": "Insert superformula starfish",
+   "mood": "festive green",
+   "venues": "pubs, bars",
+   "line": "Shamrock-green ripples on every wall."
+  },
+  {
+   "id": "equinox_spring",
+   "name": "Spring Equinox / Nowruz",
+   "when": "~Mar 20",
+   "palette": [
+    "#36ffb0",
+    "#ffd1dc",
+    "#ffe9b0"
+   ],
+   "voyage": "golden",
+   "gobos": [
+    "Sunflower phyllotaxis",
+    "Petal mandala 16",
+    "Fractal plant (L-system)"
+   ],
+   "insert": "Insert wavy 8",
+   "mood": "renewal, growth",
+   "venues": "spas, garden centres, homes",
+   "line": "Day and night in balance; growth spirals in light."
+  },
+  {
+   "id": "holi",
+   "name": "Holi",
+   "when": "Phalguna full moon (Mar)",
+   "palette": [
+    "#ff3dd2",
+    "#36e2ff",
+    "#ffd23d"
+   ],
+   "voyage": "pulsar",
+   "gobos": [
+    "Petal mandala 12",
+    "Rose 7/1"
+   ],
+   "insert": "Insert circle (reference)",
+   "mood": "colour play",
+   "venues": "community halls, events",
+   "line": "Three coloured lights, overlapping into every colour at once."
+  },
+  {
+   "id": "yuri",
+   "name": "Yuri's Night / Int'l Day of Human Space Flight",
+   "when": "Apr 12",
+   "palette": [
+    "#2b6cff",
+    "#ffffff",
+    "#ff5fa2"
+   ],
+   "voyage": "departure",
+   "gobos": [
+    "Geocentric Mars",
+    "Cosmic dance Earth-Mars"
+   ],
+   "insert": "Insert circle (reference)",
+   "mood": "space party",
+   "venues": "planetariums, bars, schools",
+   "line": "Celebrate the first human in space with real orbital art."
+  },
+  {
+   "id": "earth",
+   "name": "Earth Day",
+   "when": "Apr 22",
+   "palette": [
+    "#36ffb0",
+    "#2b6cff",
+    "#ffe9b0"
+   ],
+   "voyage": "aurora",
+   "gobos": [
+    "Sunflower phyllotaxis",
+    "Water mode J6 ring 3"
+   ],
+   "insert": "Insert circle (reference)",
+   "mood": "nature, water",
+   "venues": "offices, schools, retail",
+   "line": "Water and light only - a show with nothing to throw away."
+  },
+  {
+   "id": "easter",
+   "name": "Easter",
+   "when": "spring (varies)",
+   "palette": [
+    "#ffd1dc",
+    "#c8f7c5",
+    "#fff3b0"
+   ],
+   "voyage": "mandala",
+   "gobos": [
+    "Vesica Piscis",
+    "Flower of Life"
+   ],
+   "insert": "Insert ellipse 1.5:1",
+   "mood": "renewal, pastel",
+   "venues": "churches, homes, brunch venues",
+   "line": "Soft pastel light, egg-shaped ripples."
+  },
+  {
+   "id": "passover",
+   "name": "Passover",
+   "when": "Nisan 15 (Mar-Apr)",
+   "palette": [
+    "#7fd4ff",
+    "#ffffff",
+    "#ffd27a"
+   ],
+   "voyage": "mandala",
+   "gobos": [
+    "Hexagram (Star of David)",
+    "Hankin 6.6.6 at 60 deg"
+   ],
+   "insert": "Insert hexagon",
+   "mood": "reflection, freedom",
+   "venues": "homes, community centres",
+   "line": "Six-pointed geometry in calm blue and gold."
+  },
+  {
+   "id": "ramadan",
+   "name": "Ramadan / Eid al-Fitr",
+   "when": "lunar (varies)",
+   "palette": [
+    "#36e2ff",
+    "#ffd27a",
+    "#7a5cff"
+   ],
+   "voyage": "mandala",
+   "gobos": [
+    "Hankin 4.6.12 at 60 deg",
+    "Quasicrystal girih 5-fold at 72 deg",
+    "Octagram {8/3}"
+   ],
+   "insert": "Insert octagon",
+   "mood": "night, lanterns, star patterns",
+   "venues": "mosques' community halls, restaurants, homes",
+   "line": "Girih star patterns, the art tradition that anticipated quasicrystals by 500 years (Lu & Steinhardt, Science 2007)."
+  },
+  {
+   "id": "mayday",
+   "name": "Cinco de Mayo",
+   "when": "May 5",
+   "palette": [
+    "#36ff6b",
+    "#ffffff",
+    "#ff3d3d"
+   ],
+   "voyage": "pulsar",
+   "gobos": [
+    "Petal mandala 16",
+    "Sunburst 36"
+   ],
+   "insert": "Insert wavy 12",
+   "mood": "fiesta",
+   "venues": "restaurants, bars",
+   "line": "Papel-picado colours, pulsing to the music."
+  },
+  {
+   "id": "mentalhealth",
+   "name": "Mental Health Awareness Month (US)",
+   "when": "May",
+   "palette": [
+    "#36ffb0",
+    "#7fd4ff",
+    "#ffffff"
+   ],
+   "voyage": "mandala",
+   "gobos": [
+    "Seed of Life",
+    "Pulse rings (J0)"
+   ],
+   "insert": "Insert circle (reference)",
+   "mood": "calm, breathing",
+   "venues": "clinics' waiting rooms, offices, schools",
+   "line": "A breathing guide on the wall: swell in, swell out, 6 breaths a minute."
+  },
+  {
+   "id": "mothers",
+   "name": "Mother's Day (US)",
+   "when": "2nd Sun May",
+   "palette": [
+    "#ff7aa8",
+    "#ffe9b0",
+    "#b48cff"
+   ],
+   "voyage": "venus",
+   "gobos": [
+    "Rose 5/1",
+    "Petal mandala 8"
+   ],
+   "insert": "Insert wavy 5",
+   "mood": "gentle, floral",
+   "venues": "restaurants, spas, homes",
+   "line": "Flowers drawn in light that never wilt."
+  },
+  {
+   "id": "memorial",
+   "name": "Memorial Day (US)",
+   "when": "last Mon May",
+   "palette": [
+    "#ffffff",
+    "#2b6cff",
+    "#ff3d3d"
+   ],
+   "voyage": "home",
+   "gobos": [
+    "Pentagram",
+    "Concentric rings"
+   ],
+   "insert": "Insert pentagon",
+   "mood": "remembrance, quiet",
+   "venues": "civic spaces",
+   "line": "Quiet rings of remembrance."
+  },
+  {
+   "id": "pride",
+   "name": "Pride Month",
+   "when": "June",
+   "palette": [
+    "#ff3d3d",
+    "#ffd23d",
+    "#2b6cff"
+   ],
+   "voyage": "pulsar",
+   "gobos": [
+    "Rose 7/1",
+    "Petal mandala 12",
+    "Times table x21"
+   ],
+   "insert": "Insert circle (reference)",
+   "mood": "joy, spectrum",
+   "venues": "bars, retail, offices",
+   "line": "The whole spectrum, split by water and a diffraction film."
+  },
+  {
+   "id": "juneteenth",
+   "name": "Juneteenth",
+   "when": "Jun 19",
+   "palette": [
+    "#ff3d3d",
+    "#36ff6b",
+    "#ffd27a"
+   ],
+   "voyage": "departure",
+   "gobos": [
+    "Sunburst 36",
+    "Pentagram"
+   ],
+   "insert": "Insert star {5/2}",
+   "mood": "freedom, celebration",
+   "venues": "community centres, museums",
+   "line": "A star of freedom rising out of rippling light."
+  },
+  {
+   "id": "fathers",
+   "name": "Father's Day (US)",
+   "when": "3rd Sun Jun",
+   "palette": [
+    "#2b6cff",
+    "#ffe9b0",
+    "#36e2ff"
+   ],
+   "voyage": "saturn",
+   "gobos": [
+    "Truncated icosahedron",
+    "Tiling 4.8.8"
+   ],
+   "insert": "Insert square",
+   "mood": "bold, playful",
+   "venues": "bars, homes",
+   "line": "Geometry for the dad who has everything (except a hexagon storm)."
+  },
+  {
+   "id": "solstice_summer",
+   "name": "Summer Solstice / Int'l Day of Yoga",
+   "when": "~Jun 21",
+   "palette": [
+    "#ffd27a",
+    "#ff9f43",
+    "#fff3d6"
+   ],
+   "voyage": "golden",
+   "gobos": [
+    "Sunburst 36",
+    "Golden spiral & Fibonacci squares"
+   ],
+   "insert": "Insert wavy 12",
+   "mood": "sun, energy",
+   "venues": "yoga studios, spas, rooftops",
+   "line": "Longest day: a sun of light on the studio wall."
+  },
+  {
+   "id": "july4",
+   "name": "Independence Day (US)",
+   "when": "Jul 4",
+   "palette": [
+    "#ff3d3d",
+    "#ffffff",
+    "#2b6cff"
+   ],
+   "voyage": "pulsar",
+   "gobos": [
+    "Pentagram",
+    "Sunburst 36",
+    "Two-source interference"
+   ],
+   "insert": "Insert star {5/2}",
+   "mood": "fireworks",
+   "venues": "bars, backyards, events",
+   "line": "Indoor fireworks: rings bursting in red, white and blue."
+  },
+  {
+   "id": "moon",
+   "name": "Moon Landing Day",
+   "when": "Jul 20",
+   "palette": [
+    "#ffffff",
+    "#7fd4ff",
+    "#b0b0c0"
+   ],
+   "voyage": "departure",
+   "gobos": [
+    "Geocentric Venus",
+    "Concentric rings"
+   ],
+   "insert": "Insert circle (reference)",
+   "mood": "space history",
+   "venues": "planetariums, schools",
+   "line": "One small step, one ring at a time."
+  },
+  {
+   "id": "perseids",
+   "name": "Perseid Meteor Shower",
+   "when": "~Aug 12",
+   "palette": [
+    "#7a5cff",
+    "#36e2ff",
+    "#ffffff"
+   ],
+   "voyage": "aurora",
+   "gobos": [
+    "Galaxy arms",
+    "Archimedean spiral x3"
+   ],
+   "insert": "Insert circle (reference)",
+   "mood": "night sky",
+   "venues": "rooftops, camps, bars",
+   "line": "Streaks of light across a midnight-blue wall."
+  },
+  {
+   "id": "labor",
+   "name": "Labor Day (US)",
+   "when": "1st Mon Sep",
+   "palette": [
+    "#2b6cff",
+    "#ffd27a",
+    "#ffffff"
+   ],
+   "voyage": "home",
+   "gobos": [
+    "Tiling 6.6.6",
+    "Hankin 6.6.6 at 60 deg"
+   ],
+   "insert": "Insert hexagon",
+   "mood": "honeycomb, teamwork",
+   "venues": "offices, union halls",
+   "line": "The honeycomb: the strongest shape is built by many."
+  },
+  {
+   "id": "midautumn",
+   "name": "Mid-Autumn Festival",
+   "when": "Aug 15 lunar (Sep-Oct)",
+   "palette": [
+    "#ffd27a",
+    "#ff9f43",
+    "#ffffff"
+   ],
+   "voyage": "venus",
+   "gobos": [
+    "Concentric rings",
+    "Water mode J0 ring 4"
+   ],
+   "insert": "Insert circle (reference)",
+   "mood": "full moon, family",
+   "venues": "restaurants, homes",
+   "line": "A full moon on the water, rippling."
+  },
+  {
+   "id": "diwali",
+   "name": "Diwali",
+   "when": "Kartika new moon (Oct-Nov)",
+   "palette": [
+    "#ffd27a",
+    "#ff6b3d",
+    "#ff3dd2"
+   ],
+   "voyage": "mandala",
+   "gobos": [
+    "Nine-triangle yantra (simplified)",
+    "Petal mandala 16",
+    "Rose 8/1"
+   ],
+   "insert": "Insert wavy 8",
+   "mood": "festival of lights",
+   "venues": "homes, restaurants, temples' halls",
+   "line": "Rangoli-inspired light mandalas."
+  },
+  {
+   "id": "spaceweek",
+   "name": "World Space Week",
+   "when": "Oct 4-10",
+   "palette": [
+    "#2b6cff",
+    "#ff5fa2",
+    "#36e2ff"
+   ],
+   "voyage": "quasicrystal",
+   "gobos": [
+    "Cosmic dance Venus-Earth",
+    "600-cell",
+    "E8 root polytope"
+   ],
+   "insert": "Insert circle (reference)",
+   "mood": "science",
+   "venues": "schools, museums, planetariums",
+   "line": "A week-long voyage through real orbits and higher dimensions."
+  },
+  {
+   "id": "halloween",
+   "name": "Halloween",
+   "when": "Oct 31",
+   "palette": [
+    "#ff7a00",
+    "#7a5cff",
+    "#36ff6b"
+   ],
+   "voyage": "hyperbolic",
+   "gobos": [
+    "Hyperbolic {7,3}",
+    "Julia set - Douady rabbit",
+    "Heighway dragon"
+   ],
+   "insert": "Insert Bunimovich stadium",
+   "mood": "spooky, chaotic",
+   "venues": "bars, haunted houses, homes",
+   "line": "Chaotic billiards and Julia sets: geometry that refuses to sit still."
+  },
+  {
+   "id": "diadelosmuertos",
+   "name": "Dia de los Muertos",
+   "when": "Nov 1-2",
+   "palette": [
+    "#ff7a00",
+    "#ff3dd2",
+    "#ffd23d"
+   ],
+   "voyage": "venus",
+   "gobos": [
+    "Petal mandala 12",
+    "Rose 5/2"
+   ],
+   "insert": "Insert wavy 6",
+   "mood": "marigolds, memory",
+   "venues": "restaurants, community centres",
+   "line": "Marigold rosettes in light."
+  },
+  {
+   "id": "veterans",
+   "name": "Veterans Day / Remembrance Day",
+   "when": "Nov 11",
+   "palette": [
+    "#ff3d3d",
+    "#ffffff",
+    "#2b6cff"
+   ],
+   "voyage": "home",
+   "gobos": [
+    "Pentagram",
+    "Concentric rings"
+   ],
+   "insert": "Insert pentagon",
+   "mood": "honour, quiet",
+   "venues": "civic spaces, offices",
+   "line": "Steady light, slow rings, a minute of stillness."
+  },
+  {
+   "id": "thanksgiving",
+   "name": "Thanksgiving (US)",
+   "when": "4th Thu Nov",
+   "palette": [
+    "#ff9f43",
+    "#ffd27a",
+    "#b5651d"
+   ],
+   "voyage": "golden",
+   "gobos": [
+    "Sunflower phyllotaxis",
+    "Golden spiral & Fibonacci squares"
+   ],
+   "insert": "Insert wavy 8",
+   "mood": "harvest, gratitude",
+   "venues": "restaurants, homes",
+   "line": "Harvest spirals - the sunflower's golden angle."
+  },
+  {
+   "id": "hanukkah",
+   "name": "Hanukkah",
+   "when": "Kislev 25 (Nov-Dec)",
+   "palette": [
+    "#2b6cff",
+    "#ffffff",
+    "#7fd4ff"
+   ],
+   "voyage": "mandala",
+   "gobos": [
+    "Hexagram (Star of David)",
+    "Hankin 3.12.12 at 60 deg"
+   ],
+   "insert": "Insert hexagon",
+   "mood": "light, eight nights",
+   "venues": "homes, community centres",
+   "line": "Eight nights, eight voyages, blue and white light."
+  },
+  {
+   "id": "solstice_winter",
+   "name": "Winter Solstice / World Meditation Day",
+   "when": "~Dec 21",
+   "palette": [
+    "#7fd4ff",
+    "#ffffff",
+    "#b48cff"
+   ],
+   "voyage": "mandala",
+   "gobos": [
+    "Koch snowflake L5",
+    "Water mode J6 ring 3"
+   ],
+   "insert": "Insert Koch snowflake",
+   "mood": "stillness, snow",
+   "venues": "spas, yoga studios, homes",
+   "line": "Longest night: a slow snowflake meditation."
+  },
+  {
+   "id": "christmas",
+   "name": "Christmas",
+   "when": "Dec 25",
+   "palette": [
+    "#ff3d3d",
+    "#36ff6b",
+    "#ffd27a"
+   ],
+   "voyage": "aurora",
+   "gobos": [
+    "Koch snowflake L3",
+    "Octagram {8/3}",
+    "Fractal plant (L-system)"
+   ],
+   "insert": "Insert Koch snowflake",
+   "mood": "festive, warm",
+   "venues": "retail windows, restaurants, homes",
+   "line": "Snowflakes and stars that dance to carols."
+  },
+  {
+   "id": "kwanzaa",
+   "name": "Kwanzaa",
+   "when": "Dec 26-Jan 1",
+   "palette": [
+    "#ff3d3d",
+    "#36ff6b",
+    "#ffd27a"
+   ],
+   "voyage": "mandala",
+   "gobos": [
+    "Heptagram {7/2}",
+    "Heptagon nest"
+   ],
+   "insert": "Insert heptagon",
+   "mood": "seven principles",
+   "venues": "community centres, homes",
+   "line": "Seven-fold geometry for seven principles."
+  },
+  {
+   "id": "nye",
+   "name": "New Year's Eve",
+   "when": "Dec 31",
+   "palette": [
+    "#ffd27a",
+    "#ffffff",
+    "#ff5fa2"
+   ],
+   "voyage": "e8",
+   "gobos": [
+    "E8 root polytope",
+    "Sunburst 36"
+   ],
+   "insert": "Insert circle (reference)",
+   "mood": "countdown, peak",
+   "venues": "bars, clubs, events",
+   "line": "Count down with E8: 240 points of light at midnight."
+  },
+  {
+   "id": "birthday",
+   "name": "Birthdays (any day)",
+   "when": "any",
+   "palette": [
+    "#ff5fa2",
+    "#ffd27a",
+    "#36e2ff"
+   ],
+   "voyage": "pulsar",
+   "gobos": [
+    "Rose 6/1",
+    "Spirograph R7 r3 d2"
+   ],
+   "insert": "Insert circle (reference)",
+   "mood": "party",
+   "venues": "homes, party venues",
+   "line": "A light show named after the guest of honour."
+  },
+  {
+   "id": "wedding",
+   "name": "Weddings & anniversaries",
+   "when": "any",
+   "palette": [
+    "#ffffff",
+    "#ffd27a",
+    "#ffd1dc"
+   ],
+   "voyage": "venus",
+   "gobos": [
+    "Vesica Piscis",
+    "Torus knot (2,3)"
+   ],
+   "insert": "Insert ellipse 1.5:1",
+   "mood": "union",
+   "venues": "venues, hotels",
+   "line": "Two circles becoming one: the vesica piscis."
+  }
+ ],
+ "shows": [
+  {
+   "id": "genesis",
+   "name": "Genesis",
+   "mood": "first light, slow awakening",
+   "minutes": 10,
+   "next": "solarwinds",
+   "guest_from": "fractal",
+   "insert": "Insert circle (reference)",
+   "steps": [
+    {
+     "t": 60,
+     "f": 22.1,
+     "ratio": null,
+     "mix": 0.0,
+     "pulse": 1.0,
+     "breathe": 0.1,
+     "mode": "dipper",
+     "gobo": "tex:S01",
+     "pal": [
+      "#2b6cff",
+      "#7fd4ff",
+      "#b48cff"
+     ],
+     "style": "S01",
+     "role": "opening",
+     "text": "Genesis: Orbit Rings. A single point taps the water once a second; each ring travels out through printed orbit circles."
+    },
+    {
+     "t": 84,
+     "f": 20.0,
+     "ratio": null,
+     "mix": 0.0,
+     "pulse": 0.5,
+     "breathe": 0.1,
+     "mode": "dipper",
+     "gobo": "tex:S06",
+     "pal": [
+      "#ffd27a",
+      "#ff9f43",
+      "#fff3d6"
+     ],
+     "style": "S06",
+     "role": "core",
+     "text": "Flower of Life Bloom. Rings bloom through 19 interlaced circles at a breathing pace."
+    },
+    {
+     "t": 84,
+     "f": 18.7,
+     "ratio": null,
+     "mix": 0.0,
+     "pulse": 0.3,
+     "breathe": 0.08,
+     "mode": "dipper",
+     "gobo": "tex:S28",
+     "pal": [
+      "#ffffff",
+      "#ffd1dc",
+      "#bfe9ff"
+     ],
+     "style": "S28",
+     "role": "core",
+     "text": "Apollonian Pearls. Circles within circles; a ring foot sends waves inward to focus at the centre."
+    },
+    {
+     "t": 84,
+     "f": 20.4,
+     "ratio": null,
+     "mix": 0.0,
+     "pulse": 0.618,
+     "breathe": 0.0,
+     "mode": "dipper",
+     "gobo": "tex:S16",
+     "pal": [
+      "#9bff6b",
+      "#ffd27a",
+      "#36ffb0"
+     ],
+     "style": "S16",
+     "role": "core",
+     "text": "Sunflower Spiral. Golden-angle seeds pulsed at 0.618 per second."
+    },
+    {
+     "t": 84,
+     "f": 22.3,
+     "ratio": null,
+     "mix": 0.0,
+     "pulse": 0.618,
+     "breathe": 0.0,
+     "mode": "dipper",
+     "gobo": "tex:S24",
+     "pal": [
+      "#ffd27a",
+      "#ff9f43",
+      "#fff3d6"
+     ],
+     "style": "S24",
+     "role": "core",
+     "text": "Fibonacci Gold. The golden spiral in a golden-rectangle dish, pulsed at 1/phi."
+    },
+    {
+     "t": 84,
+     "f": 36.0,
+     "ratio": [
+      3,
+      2
+     ],
+     "mix": 0.55,
+     "pulse": 0,
+     "breathe": 0.08,
+     "mode": "faraday",
+     "gobo": "tex:S05",
+     "pal": [
+      "#ffd27a",
+      "#ff9f43",
+      "#fff3d6"
+     ],
+     "style": "S05",
+     "role": "core",
+     "text": "Metatron. Metatron's lines bend over a hexagonal standing wave, breathing slowly."
+    },
+    {
+     "t": 60,
+     "f": 30.0,
+     "ratio": null,
+     "mix": 0.0,
+     "pulse": 0,
+     "breathe": 0.08,
+     "mode": "faraday",
+     "gobo": "tex:S13",
+     "pal": [
+      "#bfe9ff",
+      "#ffffff",
+      "#8fb8ff"
+     ],
+     "style": "S13",
+     "role": "guest",
+     "text": "Guest from Fractal Forest: Koch Snowfall."
+    },
+    {
+     "t": 60,
+     "f": 22.1,
+     "ratio": null,
+     "mix": 0.0,
+     "pulse": 1.2,
+     "breathe": 0.1,
+     "mode": "dipper",
+     "gobo": "tex:S30",
+     "pal": [
+      "#ff6b3d",
+      "#ffb347",
+      "#ffe3a3"
+     ],
+     "style": "S30",
+     "role": "bridge",
+     "text": "Bridge: the light turns toward Solar Winds."
+    }
+   ]
+  },
+  {
+   "id": "solarwinds",
+   "name": "Solar Winds",
+   "mood": "warm, energetic",
+   "minutes": 10,
+   "next": "saturn",
+   "guest_from": "hyperbolic",
+   "insert": "Insert circle (reference)",
+   "steps": [
+    {
+     "t": 60,
+     "f": 22.1,
+     "ratio": null,
+     "mix": 0.0,
+     "pulse": 1.2,
+     "breathe": 0.1,
+     "mode": "dipper",
+     "gobo": "tex:S30",
+     "pal": [
+      "#ff6b3d",
+      "#ffb347",
+      "#ffe3a3"
+     ],
+     "style": "S30",
+     "role": "opening",
+     "text": "Solar Winds: Fresnel Sun. A zone plate focuses light into bright rings while ripples pulse through them."
+    },
+    {
+     "t": 84,
+     "f": 26.0,
+     "ratio": null,
+     "mix": 0.0,
+     "pulse": 0.4,
+     "breathe": 0.0,
+     "mode": "dipper",
+     "gobo": "tex:S17",
+     "pal": [
+      "#ff5fa2",
+      "#7a5cff",
+      "#36e2ff"
+     ],
+     "style": "S17",
+     "role": "core",
+     "text": "Galaxy Arms. Logarithmic arms with soft rings rolling outward."
+    },
+    {
+     "t": 84,
+     "f": 31.2,
+     "ratio": null,
+     "mix": 0.0,
+     "pulse": 0,
+     "breathe": 0.0,
+     "mode": "dipper",
+     "gobo": "tex:S20",
+     "pal": [
+      "#36e2ff",
+      "#7fd4ff",
+      "#ffffff"
+     ],
+     "style": "S20",
+     "role": "core",
+     "text": "Twin Source. Young's two-source fringes made by two pins on one foot."
+    },
+    {
+     "t": 84,
+     "f": 38.8,
+     "ratio": [
+      4,
+      3
+     ],
+     "mix": 0.55,
+     "pulse": 0,
+     "breathe": 0.0,
+     "mode": "faraday",
+     "gobo": "tex:S22",
+     "pal": [
+      "#ffe9b0",
+      "#7fd4ff",
+      "#ff5fa2"
+     ],
+     "style": "S22",
+     "role": "core",
+     "text": "Lissajous Weave. The 3:4 figure is the picture of the two tones being played."
+    },
+    {
+     "t": 84,
+     "f": 47.7,
+     "ratio": [
+      5,
+      4
+     ],
+     "mix": 0.55,
+     "pulse": 0,
+     "breathe": 0.0,
+     "mode": "faraday",
+     "gobo": "tex:S12",
+     "pal": [
+      "#ffd27a",
+      "#ff9f43",
+      "#fff3d6"
+     ],
+     "style": "S12",
+     "role": "core",
+     "text": "Star of Twelve. A twelve-point star over twelve-fold water."
+    },
+    {
+     "t": 84,
+     "f": 28.0,
+     "ratio": null,
+     "mix": 0.0,
+     "pulse": 0,
+     "breathe": 0.0,
+     "mode": "faraday",
+     "gobo": "tex:S15",
+     "pal": [
+      "#ff6b3d",
+      "#ffb347",
+      "#ffe3a3"
+     ],
+     "style": "S15",
+     "role": "core",
+     "text": "Dragon Fold. The paper-folding dragon over square Faraday waves."
+    },
+    {
+     "t": 60,
+     "f": 70.0,
+     "ratio": null,
+     "mix": 0.0,
+     "pulse": 0,
+     "breathe": 0.05,
+     "mode": "faraday",
+     "gobo": "tex:S08",
+     "pal": [
+      "#36ffb0",
+      "#2bd1ff",
+      "#9b6bff"
+     ],
+     "style": "S08",
+     "role": "guest",
+     "text": "Guest from Hyperbolic Deep: Hyperbolic Abyss."
+    },
+    {
+     "t": 60,
+     "f": 44.2,
+     "ratio": [
+      3,
+      2
+     ],
+     "mix": 0.55,
+     "pulse": 0,
+     "breathe": 0.1,
+     "mode": "faraday",
+     "gobo": "tex:S02",
+     "pal": [
+      "#ffd27a",
+      "#ff9f43",
+      "#fff3d6"
+     ],
+     "style": "S02",
+     "role": "bridge",
+     "text": "Bridge: the light turns toward Saturn Rising."
+    }
+   ]
+  },
+  {
+   "id": "saturn",
+   "name": "Saturn Rising",
+   "mood": "bold, geometric",
+   "minutes": 10,
+   "next": "venusmars",
+   "guest_from": "ocean",
+   "insert": "Insert hexagon",
+   "steps": [
+    {
+     "t": 60,
+     "f": 44.2,
+     "ratio": [
+      3,
+      2
+     ],
+     "mix": 0.55,
+     "pulse": 0,
+     "breathe": 0.1,
+     "mode": "faraday",
+     "gobo": "tex:S02",
+     "pal": [
+      "#ffd27a",
+      "#ff9f43",
+      "#fff3d6"
+     ],
+     "style": "S02",
+     "role": "opening",
+     "text": "Saturn Rising: Saturn Storm. Two tones at 2:3 make the water choose hexagons; the hexagon wall and gobo lock them in place."
+    },
+    {
+     "t": 84,
+     "f": 34.0,
+     "ratio": null,
+     "mix": 0.0,
+     "pulse": 0,
+     "breathe": 0.0,
+     "mode": "dipper",
+     "gobo": "tex:S21",
+     "pal": [
+      "#36ffb0",
+      "#2bd1ff",
+      "#9b6bff"
+     ],
+     "style": "S21",
+     "role": "core",
+     "text": "Triple Lattice. Three pins at 120 degrees weave a hexagonal interference net."
+    },
+    {
+     "t": 84,
+     "f": 41.6,
+     "ratio": [
+      3,
+      2
+     ],
+     "mix": 0.55,
+     "pulse": 0,
+     "breathe": 0.0,
+     "mode": "faraday",
+     "gobo": "tex:S11",
+     "pal": [
+      "#36e2ff",
+      "#ffd27a",
+      "#7a5cff"
+     ],
+     "style": "S11",
+     "role": "core",
+     "text": "Girih Lantern. Eight-point girih stars rippling like lantern light."
+    },
+    {
+     "t": 84,
+     "f": 43.6,
+     "ratio": [
+      5,
+      4
+     ],
+     "mix": 0.55,
+     "pulse": 0,
+     "breathe": 0.0,
+     "mode": "faraday",
+     "gobo": "tex:S12",
+     "pal": [
+      "#ffd27a",
+      "#ff9f43",
+      "#fff3d6"
+     ],
+     "style": "S12",
+     "role": "core",
+     "text": "Star of Twelve. A twelve-point star over twelve-fold water."
+    },
+    {
+     "t": 84,
+     "f": 67.8,
+     "ratio": null,
+     "mix": 0.0,
+     "pulse": 0,
+     "breathe": 0.0,
+     "mode": "faraday",
+     "gobo": "tex:S26",
+     "pal": [
+      "#7a5cff",
+      "#36e2ff",
+      "#ffffff"
+     ],
+     "style": "S26",
+     "role": "core",
+     "text": "Hypercube Dream. 256 corners of an 8-dimensional cube in a 16-fold rose."
+    },
+    {
+     "t": 84,
+     "f": 60.0,
+     "ratio": [
+      5,
+      4
+     ],
+     "mix": 0.55,
+     "pulse": 0,
+     "breathe": 0.0,
+     "mode": "faraday",
+     "gobo": "tex:S09",
+     "pal": [
+      "#ffffff",
+      "#ff5fa2",
+      "#36e2ff"
+     ],
+     "style": "S09",
+     "role": "core",
+     "text": "E8 Singularity. E8's 30-fold shadow over a 12-fold quasipattern: the densest look."
+    },
+    {
+     "t": 60,
+     "f": 32.0,
+     "ratio": null,
+     "mix": 0.0,
+     "pulse": 0,
+     "breathe": 0.0,
+     "mode": "faraday",
+     "gobo": "tex:S19",
+     "pal": [
+      "#36e2ff",
+      "#ffffff",
+      "#2b6cff"
+     ],
+     "style": "S19",
+     "role": "guest",
+     "text": "Guest from Ocean of Waves: Water Drum."
+    },
+    {
+     "t": 60,
+     "f": 20.2,
+     "ratio": null,
+     "mix": 0.0,
+     "pulse": 0.6,
+     "breathe": 0.1,
+     "mode": "dipper",
+     "gobo": "tex:S07",
+     "pal": [
+      "#ff7aa8",
+      "#ffd1dc",
+      "#ffb347"
+     ],
+     "style": "S07",
+     "role": "bridge",
+     "text": "Bridge: the light turns toward Venus & Mars."
+    }
+   ]
+  },
+  {
+   "id": "venusmars",
+   "name": "Venus & Mars",
+   "mood": "romantic, orbital",
+   "minutes": 10,
+   "next": "quasicrystal",
+   "guest_from": "aurora",
+   "insert": "Insert pentagon",
+   "steps": [
+    {
+     "t": 60,
+     "f": 20.2,
+     "ratio": null,
+     "mix": 0.0,
+     "pulse": 0.6,
+     "breathe": 0.1,
+     "mode": "dipper",
+     "gobo": "tex:S07",
+     "pal": [
+      "#ff7aa8",
+      "#ffd1dc",
+      "#ffb347"
+     ],
+     "style": "S07",
+     "role": "opening",
+     "text": "Venus & Mars: Venus Rose. The real 8-year Venus-Earth rose, pulsed by a star-shaped foot."
+    },
+    {
+     "t": 84,
+     "f": 21.0,
+     "ratio": null,
+     "mix": 0.0,
+     "pulse": 0.618,
+     "breathe": 0.0,
+     "mode": "dipper",
+     "gobo": "tex:S24",
+     "pal": [
+      "#ffd27a",
+      "#ff9f43",
+      "#fff3d6"
+     ],
+     "style": "S24",
+     "role": "core",
+     "text": "Fibonacci Gold. The golden spiral in a golden-rectangle dish, pulsed at 1/phi."
+    },
+    {
+     "t": 84,
+     "f": 18.7,
+     "ratio": null,
+     "mix": 0.0,
+     "pulse": 0.3,
+     "breathe": 0.08,
+     "mode": "dipper",
+     "gobo": "tex:S28",
+     "pal": [
+      "#ffffff",
+      "#ffd1dc",
+      "#bfe9ff"
+     ],
+     "style": "S28",
+     "role": "core",
+     "text": "Apollonian Pearls. Circles within circles; a ring foot sends waves inward to focus at the centre."
+    },
+    {
+     "t": 84,
+     "f": 19.4,
+     "ratio": null,
+     "mix": 0.0,
+     "pulse": 0.5,
+     "breathe": 0.1,
+     "mode": "dipper",
+     "gobo": "tex:S06",
+     "pal": [
+      "#ffd27a",
+      "#ff9f43",
+      "#fff3d6"
+     ],
+     "style": "S06",
+     "role": "core",
+     "text": "Flower of Life Bloom. Rings bloom through 19 interlaced circles at a breathing pace."
+    },
+    {
+     "t": 84,
+     "f": 44.5,
+     "ratio": null,
+     "mix": 0.0,
+     "pulse": 0,
+     "breathe": 0.06,
+     "mode": "faraday",
+     "gobo": "tex:S23",
+     "pal": [
+      "#b48cff",
+      "#ffd27a",
+      "#36e2ff"
+     ],
+     "style": "S23",
+     "role": "core",
+     "text": "Knotwork. A (3,7) torus knot rippling over a seven-walled dish."
+    },
+    {
+     "t": 84,
+     "f": 26.0,
+     "ratio": null,
+     "mix": 0.0,
+     "pulse": 0.4,
+     "breathe": 0.0,
+     "mode": "dipper",
+     "gobo": "tex:S17",
+     "pal": [
+      "#ff5fa2",
+      "#7a5cff",
+      "#36e2ff"
+     ],
+     "style": "S17",
+     "role": "core",
+     "text": "Galaxy Arms. Logarithmic arms with soft rings rolling outward."
+    },
+    {
+     "t": 60,
+     "f": 38.0,
+     "ratio": [
+      7,
+      6
+     ],
+     "mix": 0.55,
+     "pulse": 0,
+     "breathe": 0.0,
+     "mode": "faraday",
+     "gobo": "tex:S29",
+     "pal": [
+      "#36ffb0",
+      "#ff5fa2",
+      "#ffffff"
+     ],
+     "style": "S29",
+     "role": "guest",
+     "text": "Guest from Aurora Borealis: Moire Drift."
+    },
+    {
+     "t": 60,
+     "f": 36.8,
+     "ratio": [
+      5,
+      4
+     ],
+     "mix": 0.55,
+     "pulse": 0,
+     "breathe": 0.1,
+     "mode": "faraday",
+     "gobo": "tex:S03",
+     "pal": [
+      "#ff5fa2",
+      "#7a5cff",
+      "#36e2ff"
+     ],
+     "style": "S03",
+     "role": "bridge",
+     "text": "Bridge: the light turns toward Quasicrystal Dreams."
+    }
+   ]
+  },
+  {
+   "id": "quasicrystal",
+   "name": "Quasicrystal Dreams",
+   "mood": "mysterious, never repeating",
+   "minutes": 10,
+   "next": "sacred",
+   "guest_from": "nightgarden",
+   "insert": "Insert circle (reference)",
+   "steps": [
+    {
+     "t": 60,
+     "f": 36.8,
+     "ratio": [
+      5,
+      4
+     ],
+     "mix": 0.55,
+     "pulse": 0,
+     "breathe": 0.1,
+     "mode": "faraday",
+     "gobo": "tex:S03",
+     "pal": [
+      "#ff5fa2",
+      "#7a5cff",
+      "#36e2ff"
+     ],
+     "style": "S03",
+     "role": "opening",
+     "text": "Quasicrystal Dreams: Quasicrystal Nebula. 4:5 forcing grows a 12-fold quasipattern; a 12-fold tiling gobo echoes it."
+    },
+    {
+     "t": 84,
+     "f": 44.0,
+     "ratio": [
+      5,
+      4
+     ],
+     "mix": 0.55,
+     "pulse": 0,
+     "breathe": 0.05,
+     "mode": "faraday",
+     "gobo": "tex:S04",
+     "pal": [
+      "#36ffb0",
+      "#2bd1ff",
+      "#9b6bff"
+     ],
+     "style": "S04",
+     "role": "core",
+     "text": "Penrose Gate. Penrose rhombi refracted through a five-walled dish: order that never repeats."
+    },
+    {
+     "t": 84,
+     "f": 54.1,
+     "ratio": [
+      5,
+      4
+     ],
+     "mix": 0.55,
+     "pulse": 0,
+     "breathe": 0.0,
+     "mode": "faraday",
+     "gobo": "tex:S27",
+     "pal": [
+      "#ff5fa2",
+      "#7a5cff",
+      "#36e2ff"
+     ],
+     "style": "S27",
+     "role": "core",
+     "text": "Snub Cosmos. The snub dodecahedron's lace over 12-fold water."
+    },
+    {
+     "t": 84,
+     "f": 48.5,
+     "ratio": [
+      5,
+      4
+     ],
+     "mix": 0.55,
+     "pulse": 0,
+     "breathe": 0.04,
+     "mode": "faraday",
+     "gobo": "tex:S10",
+     "pal": [
+      "#2b6cff",
+      "#7fd4ff",
+      "#b48cff"
+     ],
+     "style": "S10",
+     "role": "core",
+     "text": "600-Cell Halo. A 4D polytope's 30-fold halo inside a ten-sided dish."
+    },
+    {
+     "t": 84,
+     "f": 47.7,
+     "ratio": [
+      5,
+      4
+     ],
+     "mix": 0.55,
+     "pulse": 0,
+     "breathe": 0.0,
+     "mode": "faraday",
+     "gobo": "tex:S12",
+     "pal": [
+      "#ffd27a",
+      "#ff9f43",
+      "#fff3d6"
+     ],
+     "style": "S12",
+     "role": "core",
+     "text": "Star of Twelve. A twelve-point star over twelve-fold water."
+    },
+    {
+     "t": 84,
+     "f": 38.0,
+     "ratio": [
+      7,
+      6
+     ],
+     "mix": 0.55,
+     "pulse": 0,
+     "breathe": 0.0,
+     "mode": "faraday",
+     "gobo": "tex:S29",
+     "pal": [
+      "#36ffb0",
+      "#ff5fa2",
+      "#ffffff"
+     ],
+     "style": "S29",
+     "role": "core",
+     "text": "Moire Drift. Grating lines bent by slowly beating 6:7 water: moire bands crawl across the wall."
+    },
+    {
+     "t": 60,
+     "f": 40.0,
+     "ratio": [
+      3,
+      2
+     ],
+     "mix": 0.55,
+     "pulse": 0,
+     "breathe": 0.0,
+     "mode": "faraday",
+     "gobo": "tex:S11",
+     "pal": [
+      "#36e2ff",
+      "#ffd27a",
+      "#7a5cff"
+     ],
+     "style": "S11",
+     "role": "guest",
+     "text": "Guest from Night Garden: Girih Lantern."
+    },
+    {
+     "t": 60,
+     "f": 33.1,
+     "ratio": [
+      3,
+      2
+     ],
+     "mix": 0.55,
+     "pulse": 0,
+     "breathe": 0.1,
+     "mode": "faraday",
+     "gobo": "tex:S05",
+     "pal": [
+      "#ffd27a",
+      "#ff9f43",
+      "#fff3d6"
+     ],
+     "style": "S05",
+     "role": "bridge",
+     "text": "Bridge: the light turns toward Sacred Geometry."
+    }
+   ]
+  },
+  {
+   "id": "sacred",
+   "name": "Sacred Geometry",
+   "mood": "centred, devotional",
+   "minutes": 10,
+   "next": "fractal",
+   "guest_from": "fourthd",
+   "insert": "Insert hexagon",
+   "steps": [
+    {
+     "t": 60,
+     "f": 33.1,
+     "ratio": [
+      3,
+      2
+     ],
+     "mix": 0.55,
+     "pulse": 0,
+     "breathe": 0.1,
+     "mode": "faraday",
+     "gobo": "tex:S05",
+     "pal": [
+      "#ffd27a",
+      "#ff9f43",
+      "#fff3d6"
+     ],
+     "style": "S05",
+     "role": "opening",
+     "text": "Sacred Geometry: Metatron. Metatron's lines bend over a hexagonal standing wave, breathing slowly."
+    },
+    {
+     "t": 84,
+     "f": 20.0,
+     "ratio": null,
+     "mix": 0.0,
+     "pulse": 0.5,
+     "breathe": 0.1,
+     "mode": "dipper",
+     "gobo": "tex:S06",
+     "pal": [
+      "#ffd27a",
+      "#ff9f43",
+      "#fff3d6"
+     ],
+     "style": "S06",
+     "role": "core",
+     "text": "Flower of Life Bloom. Rings bloom through 19 interlaced circles at a breathing pace."
+    },
+    {
+     "t": 84,
+     "f": 34.3,
+     "ratio": [
+      3,
+      2
+     ],
+     "mix": 0.55,
+     "pulse": 0,
+     "breathe": 0.1,
+     "mode": "faraday",
+     "gobo": "tex:S25",
+     "pal": [
+      "#ffd27a",
+      "#ff6b3d",
+      "#ff3dd2"
+     ],
+     "style": "S25",
+     "role": "core",
+     "text": "Sacred Yantra. Nine interlocking triangles over hexagon-triangle water, breathing at 6/min."
+    },
+    {
+     "t": 84,
+     "f": 43.6,
+     "ratio": [
+      5,
+      4
+     ],
+     "mix": 0.55,
+     "pulse": 0,
+     "breathe": 0.0,
+     "mode": "faraday",
+     "gobo": "tex:S12",
+     "pal": [
+      "#ffd27a",
+      "#ff9f43",
+      "#fff3d6"
+     ],
+     "style": "S12",
+     "role": "core",
+     "text": "Star of Twelve. A twelve-point star over twelve-fold water."
+    },
+    {
+     "t": 84,
+     "f": 42.4,
+     "ratio": [
+      3,
+      2
+     ],
+     "mix": 0.55,
+     "pulse": 0,
+     "breathe": 0.0,
+     "mode": "faraday",
+     "gobo": "tex:S11",
+     "pal": [
+      "#36e2ff",
+      "#ffd27a",
+      "#7a5cff"
+     ],
+     "style": "S11",
+     "role": "core",
+     "text": "Girih Lantern. Eight-point girih stars rippling like lantern light."
+    },
+    {
+     "t": 84,
+     "f": 34.0,
+     "ratio": null,
+     "mix": 0.0,
+     "pulse": 0,
+     "breathe": 0.0,
+     "mode": "dipper",
+     "gobo": "tex:S21",
+     "pal": [
+      "#36ffb0",
+      "#2bd1ff",
+      "#9b6bff"
+     ],
+     "style": "S21",
+     "role": "core",
+     "text": "Triple Lattice. Three pins at 120 degrees weave a hexagonal interference net."
+    },
+    {
+     "t": 60,
+     "f": 64.0,
+     "ratio": null,
+     "mix": 0.0,
+     "pulse": 0,
+     "breathe": 0.0,
+     "mode": "faraday",
+     "gobo": "tex:S26",
+     "pal": [
+      "#7a5cff",
+      "#36e2ff",
+      "#ffffff"
+     ],
+     "style": "S26",
+     "role": "guest",
+     "text": "Guest from Fourth Dimension: Hypercube Dream."
+    },
+    {
+     "t": 60,
+     "f": 19.3,
+     "ratio": null,
+     "mix": 0.0,
+     "pulse": 0.618,
+     "breathe": 0.1,
+     "mode": "dipper",
+     "gobo": "tex:S16",
+     "pal": [
+      "#9bff6b",
+      "#ffd27a",
+      "#36ffb0"
+     ],
+     "style": "S16",
+     "role": "bridge",
+     "text": "Bridge: the light turns toward Fractal Forest."
+    }
+   ]
+  },
+  {
+   "id": "fractal",
+   "name": "Fractal Forest",
+   "mood": "organic, self-similar",
+   "minutes": 10,
+   "next": "hyperbolic",
+   "guest_from": "golden",
+   "insert": "Insert wavy 8",
+   "steps": [
+    {
+     "t": 60,
+     "f": 19.3,
+     "ratio": null,
+     "mix": 0.0,
+     "pulse": 0.618,
+     "breathe": 0.1,
+     "mode": "dipper",
+     "gobo": "tex:S16",
+     "pal": [
+      "#9bff6b",
+      "#ffd27a",
+      "#36ffb0"
+     ],
+     "style": "S16",
+     "role": "opening",
+     "text": "Fractal Forest: Sunflower Spiral. Golden-angle seeds pulsed at 0.618 per second."
+    },
+    {
+     "t": 84,
+     "f": 30.0,
+     "ratio": null,
+     "mix": 0.0,
+     "pulse": 0,
+     "breathe": 0.08,
+     "mode": "faraday",
+     "gobo": "tex:S13",
+     "pal": [
+      "#bfe9ff",
+      "#ffffff",
+      "#8fb8ff"
+     ],
+     "style": "S13",
+     "role": "core",
+     "text": "Koch Snowfall. A fractal snowflake in a snowflake-shaped dish; the jagged wall traps waves in its corners."
+    },
+    {
+     "t": 84,
+     "f": 29.1,
+     "ratio": null,
+     "mix": 0.0,
+     "pulse": 0,
+     "breathe": 0.0,
+     "mode": "faraday",
+     "gobo": "tex:S15",
+     "pal": [
+      "#ff6b3d",
+      "#ffb347",
+      "#ffe3a3"
+     ],
+     "style": "S15",
+     "role": "core",
+     "text": "Dragon Fold. The paper-folding dragon over square Faraday waves."
+    },
+    {
+     "t": 84,
+     "f": 33.0,
+     "ratio": null,
+     "mix": 0.0,
+     "pulse": 0,
+     "breathe": 0.0,
+     "mode": "faraday",
+     "gobo": "tex:S14",
+     "pal": [
+      "#ff7a00",
+      "#7a5cff",
+      "#36ff6b"
+     ],
+     "style": "S14",
+     "role": "core",
+     "text": "Julia Bloom. Julia lace over a chaotic stadium dish: speckled, restless water."
+    },
+    {
+     "t": 84,
+     "f": 19.1,
+     "ratio": null,
+     "mix": 0.0,
+     "pulse": 0.3,
+     "breathe": 0.08,
+     "mode": "dipper",
+     "gobo": "tex:S28",
+     "pal": [
+      "#ffffff",
+      "#ffd1dc",
+      "#bfe9ff"
+     ],
+     "style": "S28",
+     "role": "core",
+     "text": "Apollonian Pearls. Circles within circles; a ring foot sends waves inward to focus at the centre."
+    },
+    {
+     "t": 84,
+     "f": 21.0,
+     "ratio": null,
+     "mix": 0.0,
+     "pulse": 0.618,
+     "breathe": 0.0,
+     "mode": "dipper",
+     "gobo": "tex:S24",
+     "pal": [
+      "#ffd27a",
+      "#ff9f43",
+      "#fff3d6"
+     ],
+     "style": "S24",
+     "role": "core",
+     "text": "Fibonacci Gold. The golden spiral in a golden-rectangle dish, pulsed at 1/phi."
+    },
+    {
+     "t": 60,
+     "f": 22.0,
+     "ratio": null,
+     "mix": 0.0,
+     "pulse": 0.6,
+     "breathe": 0.0,
+     "mode": "dipper",
+     "gobo": "tex:S07",
+     "pal": [
+      "#ff7aa8",
+      "#ffd1dc",
+      "#ffb347"
+     ],
+     "style": "S07",
+     "role": "guest",
+     "text": "Guest from Golden Ratio: Venus Rose."
+    },
+    {
+     "t": 60,
+     "f": 64.4,
+     "ratio": null,
+     "mix": 0.0,
+     "pulse": 0,
+     "breathe": 0.1,
+     "mode": "faraday",
+     "gobo": "tex:S08",
+     "pal": [
+      "#36ffb0",
+      "#2bd1ff",
+      "#9b6bff"
+     ],
+     "style": "S08",
+     "role": "bridge",
+     "text": "Bridge: the light turns toward Hyperbolic Deep."
+    }
+   ]
+  },
+  {
+   "id": "hyperbolic",
+   "name": "Hyperbolic Deep",
+   "mood": "infinite, trippy",
+   "minutes": 10,
+   "next": "ocean",
+   "guest_from": "silence",
+   "insert": "Insert heptagon",
+   "steps": [
+    {
+     "t": 60,
+     "f": 64.4,
+     "ratio": null,
+     "mix": 0.0,
+     "pulse": 0,
+     "breathe": 0.1,
+     "mode": "faraday",
+     "gobo": "tex:S08",
+     "pal": [
+      "#36ffb0",
+      "#2bd1ff",
+      "#9b6bff"
+     ],
+     "style": "S08",
+     "role": "opening",
+     "text": "Hyperbolic Deep: Hyperbolic Abyss. Escher-style heptagons shrinking to the rim over fine square waves."
+    },
+    {
+     "t": 84,
+     "f": 42.0,
+     "ratio": null,
+     "mix": 0.0,
+     "pulse": 0,
+     "breathe": 0.06,
+     "mode": "faraday",
+     "gobo": "tex:S23",
+     "pal": [
+      "#b48cff",
+      "#ffd27a",
+      "#36e2ff"
+     ],
+     "style": "S23",
+     "role": "core",
+     "text": "Knotwork. A (3,7) torus knot rippling over a seven-walled dish."
+    },
+    {
+     "t": 84,
+     "f": 66.6,
+     "ratio": null,
+     "mix": 0.0,
+     "pulse": 0,
+     "breathe": 0.0,
+     "mode": "faraday",
+     "gobo": "tex:S26",
+     "pal": [
+      "#7a5cff",
+      "#36e2ff",
+      "#ffffff"
+     ],
+     "style": "S26",
+     "role": "core",
+     "text": "Hypercube Dream. 256 corners of an 8-dimensional cube in a 16-fold rose."
+    },
+    {
+     "t": 84,
+     "f": 48.5,
+     "ratio": [
+      5,
+      4
+     ],
+     "mix": 0.55,
+     "pulse": 0,
+     "breathe": 0.04,
+     "mode": "faraday",
+     "gobo": "tex:S10",
+     "pal": [
+      "#2b6cff",
+      "#7fd4ff",
+      "#b48cff"
+     ],
+     "style": "S10",
+     "role": "core",
+     "text": "600-Cell Halo. A 4D polytope's 30-fold halo inside a ten-sided dish."
+    },
+    {
+     "t": 84,
+     "f": 40.3,
+     "ratio": [
+      7,
+      6
+     ],
+     "mix": 0.55,
+     "pulse": 0,
+     "breathe": 0.0,
+     "mode": "faraday",
+     "gobo": "tex:S29",
+     "pal": [
+      "#36ffb0",
+      "#ff5fa2",
+      "#ffffff"
+     ],
+     "style": "S29",
+     "role": "core",
+     "text": "Moire Drift. Grating lines bent by slowly beating 6:7 water: moire bands crawl across the wall."
+    },
+    {
+     "t": 84,
+     "f": 34.0,
+     "ratio": null,
+     "mix": 0.0,
+     "pulse": 0,
+     "breathe": 0.0,
+     "mode": "faraday",
+     "gobo": "tex:S14",
+     "pal": [
+      "#ff7a00",
+      "#7a5cff",
+      "#36ff6b"
+     ],
+     "style": "S14",
+     "role": "core",
+     "text": "Julia Bloom. Julia lace over a chaotic stadium dish: speckled, restless water."
+    },
+    {
+     "t": 60,
+     "f": 18.0,
+     "ratio": null,
+     "mix": 0.0,
+     "pulse": 0.3,
+     "breathe": 0.08,
+     "mode": "dipper",
+     "gobo": "tex:S28",
+     "pal": [
+      "#ffffff",
+      "#ffd1dc",
+      "#bfe9ff"
+     ],
+     "style": "S28",
+     "role": "guest",
+     "text": "Guest from Inner Silence: Apollonian Pearls."
+    },
+    {
+     "t": 60,
+     "f": 29.4,
+     "ratio": null,
+     "mix": 0.0,
+     "pulse": 0,
+     "breathe": 0.1,
+     "mode": "faraday",
+     "gobo": "tex:S19",
+     "pal": [
+      "#36e2ff",
+      "#ffffff",
+      "#2b6cff"
+     ],
+     "style": "S19",
+     "role": "bridge",
+     "text": "Bridge: the light turns toward Ocean of Waves."
+    }
+   ]
+  },
+  {
+   "id": "ocean",
+   "name": "Ocean of Waves",
+   "mood": "pure physics, flowing",
+   "minutes": 10,
+   "next": "aurora",
+   "guest_from": "supernova",
+   "insert": "Insert circle (reference)",
+   "steps": [
+    {
+     "t": 60,
+     "f": 29.4,
+     "ratio": null,
+     "mix": 0.0,
+     "pulse": 0,
+     "breathe": 0.1,
+     "mode": "faraday",
+     "gobo": "tex:S19",
+     "pal": [
+      "#36e2ff",
+      "#ffffff",
+      "#2b6cff"
+     ],
+     "style": "S19",
+     "role": "opening",
+     "text": "Ocean of Waves: Water Drum. The dish's own 8-petal Bessel mode drawn on the gobo; tune until water and print agree."
+    },
+    {
+     "t": 84,
+     "f": 30.0,
+     "ratio": null,
+     "mix": 0.0,
+     "pulse": 0,
+     "breathe": 0.0,
+     "mode": "dipper",
+     "gobo": "tex:S20",
+     "pal": [
+      "#36e2ff",
+      "#7fd4ff",
+      "#ffffff"
+     ],
+     "style": "S20",
+     "role": "core",
+     "text": "Twin Source. Young's two-source fringes made by two pins on one foot."
+    },
+    {
+     "t": 84,
+     "f": 35.4,
+     "ratio": null,
+     "mix": 0.0,
+     "pulse": 0,
+     "breathe": 0.0,
+     "mode": "dipper",
+     "gobo": "tex:S21",
+     "pal": [
+      "#36ffb0",
+      "#2bd1ff",
+      "#9b6bff"
+     ],
+     "style": "S21",
+     "role": "core",
+     "text": "Triple Lattice. Three pins at 120 degrees weave a hexagonal interference net."
+    },
+    {
+     "t": 84,
+     "f": 34.9,
+     "ratio": null,
+     "mix": 0.0,
+     "pulse": 0,
+     "breathe": 0.0,
+     "mode": "faraday",
+     "gobo": "tex:S18",
+     "pal": [
+      "#ffffff",
+      "#cfe6ff",
+      "#fff1d6"
+     ],
+     "style": "S18",
+     "role": "core",
+     "text": "Chladni Plate. Chladni's 1787 nodal lines in a square dish of Faraday squares."
+    },
+    {
+     "t": 84,
+     "f": 42.4,
+     "ratio": [
+      4,
+      3
+     ],
+     "mix": 0.55,
+     "pulse": 0,
+     "breathe": 0.0,
+     "mode": "faraday",
+     "gobo": "tex:S22",
+     "pal": [
+      "#ffe9b0",
+      "#7fd4ff",
+      "#ff5fa2"
+     ],
+     "style": "S22",
+     "role": "core",
+     "text": "Lissajous Weave. The 3:4 figure is the picture of the two tones being played."
+    },
+    {
+     "t": 84,
+     "f": 24.0,
+     "ratio": null,
+     "mix": 0.0,
+     "pulse": 1.0,
+     "breathe": 0.0,
+     "mode": "dipper",
+     "gobo": "tex:S01",
+     "pal": [
+      "#2b6cff",
+      "#7fd4ff",
+      "#b48cff"
+     ],
+     "style": "S01",
+     "role": "core",
+     "text": "Orbit Rings. A single point taps the water once a second; each ring travels out through printed orbit circles."
+    },
+    {
+     "t": 60,
+     "f": 60.0,
+     "ratio": [
+      5,
+      4
+     ],
+     "mix": 0.55,
+     "pulse": 0,
+     "breathe": 0.0,
+     "mode": "faraday",
+     "gobo": "tex:S09",
+     "pal": [
+      "#ffffff",
+      "#ff5fa2",
+      "#36e2ff"
+     ],
+     "style": "S09",
+     "role": "guest",
+     "text": "Guest from Supernova: E8 Singularity."
+    },
+    {
+     "t": 60,
+     "f": 35.0,
+     "ratio": [
+      7,
+      6
+     ],
+     "mix": 0.55,
+     "pulse": 0,
+     "breathe": 0.1,
+     "mode": "faraday",
+     "gobo": "tex:S29",
+     "pal": [
+      "#36ffb0",
+      "#ff5fa2",
+      "#ffffff"
+     ],
+     "style": "S29",
+     "role": "bridge",
+     "text": "Bridge: the light turns toward Aurora Borealis."
+    }
+   ]
+  },
+  {
+   "id": "aurora",
+   "name": "Aurora Borealis",
+   "mood": "dreamy, shimmering",
+   "minutes": 10,
+   "next": "nightgarden",
+   "guest_from": "genesis",
+   "insert": "Insert ellipse 2.0:1",
+   "steps": [
+    {
+     "t": 60,
+     "f": 35.0,
+     "ratio": [
+      7,
+      6
+     ],
+     "mix": 0.55,
+     "pulse": 0,
+     "breathe": 0.1,
+     "mode": "faraday",
+     "gobo": "tex:S29",
+     "pal": [
+      "#36ffb0",
+      "#ff5fa2",
+      "#ffffff"
+     ],
+     "style": "S29",
+     "role": "opening",
+     "text": "Aurora Borealis: Moire Drift. Grating lines bent by slowly beating 6:7 water: moire bands crawl across the wall."
+    },
+    {
+     "t": 84,
+     "f": 26.0,
+     "ratio": null,
+     "mix": 0.0,
+     "pulse": 0.4,
+     "breathe": 0.0,
+     "mode": "dipper",
+     "gobo": "tex:S17",
+     "pal": [
+      "#ff5fa2",
+      "#7a5cff",
+      "#36e2ff"
+     ],
+     "style": "S17",
+     "role": "core",
+     "text": "Galaxy Arms. Logarithmic arms with soft rings rolling outward."
+    },
+    {
+     "t": 84,
+     "f": 45.8,
+     "ratio": [
+      5,
+      4
+     ],
+     "mix": 0.55,
+     "pulse": 0,
+     "breathe": 0.05,
+     "mode": "faraday",
+     "gobo": "tex:S04",
+     "pal": [
+      "#36ffb0",
+      "#2bd1ff",
+      "#9b6bff"
+     ],
+     "style": "S04",
+     "role": "core",
+     "text": "Penrose Gate. Penrose rhombi refracted through a five-walled dish: order that never repeats."
+    },
+    {
+     "t": 84,
+     "f": 67.9,
+     "ratio": null,
+     "mix": 0.0,
+     "pulse": 0,
+     "breathe": 0.05,
+     "mode": "faraday",
+     "gobo": "tex:S08",
+     "pal": [
+      "#36ffb0",
+      "#2bd1ff",
+      "#9b6bff"
+     ],
+     "style": "S08",
+     "role": "core",
+     "text": "Hyperbolic Abyss. Escher-style heptagons shrinking to the rim over fine square waves."
+    },
+    {
+     "t": 84,
+     "f": 25.4,
+     "ratio": null,
+     "mix": 0.0,
+     "pulse": 1.2,
+     "breathe": 0.0,
+     "mode": "dipper",
+     "gobo": "tex:S30",
+     "pal": [
+      "#ff6b3d",
+      "#ffb347",
+      "#ffe3a3"
+     ],
+     "style": "S30",
+     "role": "core",
+     "text": "Fresnel Sun. A zone plate focuses light into bright rings while ripples pulse through them."
+    },
+    {
+     "t": 84,
+     "f": 30.0,
+     "ratio": null,
+     "mix": 0.0,
+     "pulse": 0,
+     "breathe": 0.08,
+     "mode": "faraday",
+     "gobo": "tex:S13",
+     "pal": [
+      "#bfe9ff",
+      "#ffffff",
+      "#8fb8ff"
+     ],
+     "style": "S13",
+     "role": "core",
+     "text": "Koch Snowfall. A fractal snowflake in a snowflake-shaped dish; the jagged wall traps waves in its corners."
+    },
+    {
+     "t": 60,
+     "f": 24.0,
+     "ratio": null,
+     "mix": 0.0,
+     "pulse": 1.0,
+     "breathe": 0.0,
+     "mode": "dipper",
+     "gobo": "tex:S01",
+     "pal": [
+      "#2b6cff",
+      "#7fd4ff",
+      "#b48cff"
+     ],
+     "style": "S01",
+     "role": "guest",
+     "text": "Guest from Genesis: Orbit Rings."
+    },
+    {
+     "t": 60,
+     "f": 36.8,
+     "ratio": [
+      3,
+      2
+     ],
+     "mix": 0.55,
+     "pulse": 0,
+     "breathe": 0.1,
+     "mode": "faraday",
+     "gobo": "tex:S11",
+     "pal": [
+      "#36e2ff",
+      "#ffd27a",
+      "#7a5cff"
+     ],
+     "style": "S11",
+     "role": "bridge",
+     "text": "Bridge: the light turns toward Night Garden."
+    }
+   ]
+  },
+  {
+   "id": "nightgarden",
+   "name": "Night Garden",
+   "mood": "lantern-lit star patterns",
+   "minutes": 10,
+   "next": "fourthd",
+   "guest_from": "solarwinds",
+   "insert": "Insert octagon",
+   "steps": [
+    {
+     "t": 60,
+     "f": 36.8,
+     "ratio": [
+      3,
+      2
+     ],
+     "mix": 0.55,
+     "pulse": 0,
+     "breathe": 0.1,
+     "mode": "faraday",
+     "gobo": "tex:S11",
+     "pal": [
+      "#36e2ff",
+      "#ffd27a",
+      "#7a5cff"
+     ],
+     "style": "S11",
+     "role": "opening",
+     "text": "Night Garden: Girih Lantern. Eight-point girih stars rippling like lantern light."
+    },
+    {
+     "t": 84,
+     "f": 45.0,
+     "ratio": [
+      5,
+      4
+     ],
+     "mix": 0.55,
+     "pulse": 0,
+     "breathe": 0.0,
+     "mode": "faraday",
+     "gobo": "tex:S12",
+     "pal": [
+      "#ffd27a",
+      "#ff9f43",
+      "#fff3d6"
+     ],
+     "style": "S12",
+     "role": "core",
+     "text": "Star of Twelve. A twelve-point star over twelve-fold water."
+    },
+    {
+     "t": 84,
+     "f": 34.3,
+     "ratio": [
+      3,
+      2
+     ],
+     "mix": 0.55,
+     "pulse": 0,
+     "breathe": 0.1,
+     "mode": "faraday",
+     "gobo": "tex:S25",
+     "pal": [
+      "#ffd27a",
+      "#ff6b3d",
+      "#ff3dd2"
+     ],
+     "style": "S25",
+     "role": "core",
+     "text": "Sacred Yantra. Nine interlocking triangles over hexagon-triangle water, breathing at 6/min."
+    },
+    {
+     "t": 84,
+     "f": 34.9,
+     "ratio": [
+      3,
+      2
+     ],
+     "mix": 0.55,
+     "pulse": 0,
+     "breathe": 0.08,
+     "mode": "faraday",
+     "gobo": "tex:S05",
+     "pal": [
+      "#ffd27a",
+      "#ff9f43",
+      "#fff3d6"
+     ],
+     "style": "S05",
+     "role": "core",
+     "text": "Metatron. Metatron's lines bend over a hexagonal standing wave, breathing slowly."
+    },
+    {
+     "t": 84,
+     "f": 42.4,
+     "ratio": [
+      5,
+      4
+     ],
+     "mix": 0.55,
+     "pulse": 0,
+     "breathe": 0.0,
+     "mode": "faraday",
+     "gobo": "tex:S03",
+     "pal": [
+      "#ff5fa2",
+      "#7a5cff",
+      "#36e2ff"
+     ],
+     "style": "S03",
+     "role": "core",
+     "text": "Quasicrystal Nebula. 4:5 forcing grows a 12-fold quasipattern; a 12-fold tiling gobo echoes it."
+    },
+    {
+     "t": 84,
+     "f": 48.0,
+     "ratio": [
+      3,
+      2
+     ],
+     "mix": 0.55,
+     "pulse": 0,
+     "breathe": 0.0,
+     "mode": "faraday",
+     "gobo": "tex:S02",
+     "pal": [
+      "#ffd27a",
+      "#ff9f43",
+      "#fff3d6"
+     ],
+     "style": "S02",
+     "role": "core",
+     "text": "Saturn Storm. Two tones at 2:3 make the water choose hexagons; the hexagon wall and gobo lock them in place."
+    },
+    {
+     "t": 60,
+     "f": 24.0,
+     "ratio": null,
+     "mix": 0.0,
+     "pulse": 1.2,
+     "breathe": 0.0,
+     "mode": "dipper",
+     "gobo": "tex:S30",
+     "pal": [
+      "#ff6b3d",
+      "#ffb347",
+      "#ffe3a3"
+     ],
+     "style": "S30",
+     "role": "guest",
+     "text": "Guest from Solar Winds: Fresnel Sun."
+    },
+    {
+     "t": 60,
+     "f": 58.9,
+     "ratio": null,
+     "mix": 0.0,
+     "pulse": 0,
+     "breathe": 0.1,
+     "mode": "faraday",
+     "gobo": "tex:S26",
+     "pal": [
+      "#7a5cff",
+      "#36e2ff",
+      "#ffffff"
+     ],
+     "style": "S26",
+     "role": "bridge",
+     "text": "Bridge: the light turns toward Fourth Dimension."
+    }
+   ]
+  },
+  {
+   "id": "fourthd",
+   "name": "Fourth Dimension",
+   "mood": "hypnotic, higher-dimensional",
+   "minutes": 10,
+   "next": "golden",
+   "guest_from": "saturn",
+   "insert": "Insert octagon",
+   "steps": [
+    {
+     "t": 60,
+     "f": 58.9,
+     "ratio": null,
+     "mix": 0.0,
+     "pulse": 0,
+     "breathe": 0.1,
+     "mode": "faraday",
+     "gobo": "tex:S26",
+     "pal": [
+      "#7a5cff",
+      "#36e2ff",
+      "#ffffff"
+     ],
+     "style": "S26",
+     "role": "opening",
+     "text": "Fourth Dimension: Hypercube Dream. 256 corners of an 8-dimensional cube in a 16-fold rose."
+    },
+    {
+     "t": 84,
+     "f": 50.0,
+     "ratio": [
+      5,
+      4
+     ],
+     "mix": 0.55,
+     "pulse": 0,
+     "breathe": 0.04,
+     "mode": "faraday",
+     "gobo": "tex:S10",
+     "pal": [
+      "#2b6cff",
+      "#7fd4ff",
+      "#b48cff"
+     ],
+     "style": "S10",
+     "role": "core",
+     "text": "600-Cell Halo. A 4D polytope's 30-fold halo inside a ten-sided dish."
+    },
+    {
+     "t": 84,
+     "f": 54.1,
+     "ratio": [
+      5,
+      4
+     ],
+     "mix": 0.55,
+     "pulse": 0,
+     "breathe": 0.0,
+     "mode": "faraday",
+     "gobo": "tex:S27",
+     "pal": [
+      "#ff5fa2",
+      "#7a5cff",
+      "#36e2ff"
+     ],
+     "style": "S27",
+     "role": "core",
+     "text": "Snub Cosmos. The snub dodecahedron's lace over 12-fold water."
+    },
+    {
+     "t": 84,
+     "f": 58.2,
+     "ratio": [
+      5,
+      4
+     ],
+     "mix": 0.55,
+     "pulse": 0,
+     "breathe": 0.0,
+     "mode": "faraday",
+     "gobo": "tex:S09",
+     "pal": [
+      "#ffffff",
+      "#ff5fa2",
+      "#36e2ff"
+     ],
+     "style": "S09",
+     "role": "core",
+     "text": "E8 Singularity. E8's 30-fold shadow over a 12-fold quasipattern: the densest look."
+    },
+    {
+     "t": 84,
+     "f": 74.2,
+     "ratio": null,
+     "mix": 0.0,
+     "pulse": 0,
+     "breathe": 0.05,
+     "mode": "faraday",
+     "gobo": "tex:S08",
+     "pal": [
+      "#36ffb0",
+      "#2bd1ff",
+      "#9b6bff"
+     ],
+     "style": "S08",
+     "role": "core",
+     "text": "Hyperbolic Abyss. Escher-style heptagons shrinking to the rim over fine square waves."
+    },
+    {
+     "t": 84,
+     "f": 40.0,
+     "ratio": [
+      5,
+      4
+     ],
+     "mix": 0.55,
+     "pulse": 0,
+     "breathe": 0.0,
+     "mode": "faraday",
+     "gobo": "tex:S03",
+     "pal": [
+      "#ff5fa2",
+      "#7a5cff",
+      "#36e2ff"
+     ],
+     "style": "S03",
+     "role": "core",
+     "text": "Quasicrystal Nebula. 4:5 forcing grows a 12-fold quasipattern; a 12-fold tiling gobo echoes it."
+    },
+    {
+     "t": 60,
+     "f": 48.0,
+     "ratio": [
+      3,
+      2
+     ],
+     "mix": 0.55,
+     "pulse": 0,
+     "breathe": 0.0,
+     "mode": "faraday",
+     "gobo": "tex:S02",
+     "pal": [
+      "#ffd27a",
+      "#ff9f43",
+      "#fff3d6"
+     ],
+     "style": "S02",
+     "role": "guest",
+     "text": "Guest from Saturn Rising: Saturn Storm."
+    },
+    {
+     "t": 60,
+     "f": 19.3,
+     "ratio": null,
+     "mix": 0.0,
+     "pulse": 0.618,
+     "breathe": 0.1,
+     "mode": "dipper",
+     "gobo": "tex:S24",
+     "pal": [
+      "#ffd27a",
+      "#ff9f43",
+      "#fff3d6"
+     ],
+     "style": "S24",
+     "role": "bridge",
+     "text": "Bridge: the light turns toward Golden Ratio."
+    }
+   ]
+  },
+  {
+   "id": "golden",
+   "name": "Golden Ratio",
+   "mood": "harmonic, spiralling",
+   "minutes": 10,
+   "next": "silence",
+   "guest_from": "venusmars",
+   "insert": "Insert golden rectangle",
+   "steps": [
+    {
+     "t": 60,
+     "f": 19.3,
+     "ratio": null,
+     "mix": 0.0,
+     "pulse": 0.618,
+     "breathe": 0.1,
+     "mode": "dipper",
+     "gobo": "tex:S24",
+     "pal": [
+      "#ffd27a",
+      "#ff9f43",
+      "#fff3d6"
+     ],
+     "style": "S24",
+     "role": "opening",
+     "text": "Golden Ratio: Fibonacci Gold. The golden spiral in a golden-rectangle dish, pulsed at 1/phi."
+    },
+    {
+     "t": 84,
+     "f": 21.0,
+     "ratio": null,
+     "mix": 0.0,
+     "pulse": 0.618,
+     "breathe": 0.0,
+     "mode": "dipper",
+     "gobo": "tex:S16",
+     "pal": [
+      "#9bff6b",
+      "#ffd27a",
+      "#36ffb0"
+     ],
+     "style": "S16",
+     "role": "core",
+     "text": "Sunflower Spiral. Golden-angle seeds pulsed at 0.618 per second."
+    },
+    {
+     "t": 84,
+     "f": 22.9,
+     "ratio": null,
+     "mix": 0.0,
+     "pulse": 0.6,
+     "breathe": 0.0,
+     "mode": "dipper",
+     "gobo": "tex:S07",
+     "pal": [
+      "#ff7aa8",
+      "#ffd1dc",
+      "#ffb347"
+     ],
+     "style": "S07",
+     "role": "core",
+     "text": "Venus Rose. The real 8-year Venus-Earth rose, pulsed by a star-shaped foot."
+    },
+    {
+     "t": 84,
+     "f": 42.7,
+     "ratio": [
+      5,
+      4
+     ],
+     "mix": 0.55,
+     "pulse": 0,
+     "breathe": 0.05,
+     "mode": "faraday",
+     "gobo": "tex:S04",
+     "pal": [
+      "#36ffb0",
+      "#2bd1ff",
+      "#9b6bff"
+     ],
+     "style": "S04",
+     "role": "core",
+     "text": "Penrose Gate. Penrose rhombi refracted through a five-walled dish: order that never repeats."
+    },
+    {
+     "t": 84,
+     "f": 55.1,
+     "ratio": [
+      5,
+      4
+     ],
+     "mix": 0.55,
+     "pulse": 0,
+     "breathe": 0.0,
+     "mode": "faraday",
+     "gobo": "tex:S27",
+     "pal": [
+      "#ff5fa2",
+      "#7a5cff",
+      "#36e2ff"
+     ],
+     "style": "S27",
+     "role": "core",
+     "text": "Snub Cosmos. The snub dodecahedron's lace over 12-fold water."
+    },
+    {
+     "t": 84,
+     "f": 24.0,
+     "ratio": null,
+     "mix": 0.0,
+     "pulse": 1.2,
+     "breathe": 0.0,
+     "mode": "dipper",
+     "gobo": "tex:S30",
+     "pal": [
+      "#ff6b3d",
+      "#ffb347",
+      "#ffe3a3"
+     ],
+     "style": "S30",
+     "role": "core",
+     "text": "Fresnel Sun. A zone plate focuses light into bright rings while ripples pulse through them."
+    },
+    {
+     "t": 60,
+     "f": 20.0,
+     "ratio": null,
+     "mix": 0.0,
+     "pulse": 0.5,
+     "breathe": 0.1,
+     "mode": "dipper",
+     "gobo": "tex:S06",
+     "pal": [
+      "#ffd27a",
+      "#ff9f43",
+      "#fff3d6"
+     ],
+     "style": "S06",
+     "role": "guest",
+     "text": "Guest from Venus & Mars: Flower of Life Bloom."
+    },
+    {
+     "t": 60,
+     "f": 16.6,
+     "ratio": null,
+     "mix": 0.0,
+     "pulse": 0.3,
+     "breathe": 0.1,
+     "mode": "dipper",
+     "gobo": "tex:S28",
+     "pal": [
+      "#ffffff",
+      "#ffd1dc",
+      "#bfe9ff"
+     ],
+     "style": "S28",
+     "role": "bridge",
+     "text": "Bridge: the light turns toward Inner Silence."
+    }
+   ]
+  },
+  {
+   "id": "silence",
+   "name": "Inner Silence",
+   "mood": "meditative, breath-paced",
+   "minutes": 10,
+   "next": "supernova",
+   "guest_from": "quasicrystal",
+   "insert": "Insert circle (reference)",
+   "steps": [
+    {
+     "t": 60,
+     "f": 16.6,
+     "ratio": null,
+     "mix": 0.0,
+     "pulse": 0.3,
+     "breathe": 0.1,
+     "mode": "dipper",
+     "gobo": "tex:S28",
+     "pal": [
+      "#ffffff",
+      "#ffd1dc",
+      "#bfe9ff"
+     ],
+     "style": "S28",
+     "role": "opening",
+     "text": "Inner Silence: Apollonian Pearls. Circles within circles; a ring foot sends waves inward to focus at the centre."
+    },
+    {
+     "t": 84,
+     "f": 20.0,
+     "ratio": null,
+     "mix": 0.0,
+     "pulse": 0.5,
+     "breathe": 0.1,
+     "mode": "dipper",
+     "gobo": "tex:S06",
+     "pal": [
+      "#ffd27a",
+      "#ff9f43",
+      "#fff3d6"
+     ],
+     "style": "S06",
+     "role": "core",
+     "text": "Flower of Life Bloom. Rings bloom through 19 interlaced circles at a breathing pace."
+    },
+    {
+     "t": 84,
+     "f": 31.2,
+     "ratio": null,
+     "mix": 0.0,
+     "pulse": 0,
+     "breathe": 0.08,
+     "mode": "faraday",
+     "gobo": "tex:S13",
+     "pal": [
+      "#bfe9ff",
+      "#ffffff",
+      "#8fb8ff"
+     ],
+     "style": "S13",
+     "role": "core",
+     "text": "Koch Snowfall. A fractal snowflake in a snowflake-shaped dish; the jagged wall traps waves in its corners."
+    },
+    {
+     "t": 84,
+     "f": 31.0,
+     "ratio": null,
+     "mix": 0.0,
+     "pulse": 0,
+     "breathe": 0.0,
+     "mode": "faraday",
+     "gobo": "tex:S19",
+     "pal": [
+      "#36e2ff",
+      "#ffffff",
+      "#2b6cff"
+     ],
+     "style": "S19",
+     "role": "core",
+     "text": "Water Drum. The dish's own 8-petal Bessel mode drawn on the gobo; tune until water and print agree."
+    },
+    {
+     "t": 84,
+     "f": 38.2,
+     "ratio": [
+      3,
+      2
+     ],
+     "mix": 0.55,
+     "pulse": 0,
+     "breathe": 0.08,
+     "mode": "faraday",
+     "gobo": "tex:S05",
+     "pal": [
+      "#ffd27a",
+      "#ff9f43",
+      "#fff3d6"
+     ],
+     "style": "S05",
+     "role": "core",
+     "text": "Metatron. Metatron's lines bend over a hexagonal standing wave, breathing slowly."
+    },
+    {
+     "t": 84,
+     "f": 24.0,
+     "ratio": null,
+     "mix": 0.0,
+     "pulse": 1.0,
+     "breathe": 0.0,
+     "mode": "dipper",
+     "gobo": "tex:S01",
+     "pal": [
+      "#2b6cff",
+      "#7fd4ff",
+      "#b48cff"
+     ],
+     "style": "S01",
+     "role": "core",
+     "text": "Orbit Rings. A single point taps the water once a second; each ring travels out through printed orbit circles."
+    },
+    {
+     "t": 60,
+     "f": 40.0,
+     "ratio": [
+      5,
+      4
+     ],
+     "mix": 0.55,
+     "pulse": 0,
+     "breathe": 0.0,
+     "mode": "faraday",
+     "gobo": "tex:S03",
+     "pal": [
+      "#ff5fa2",
+      "#7a5cff",
+      "#36e2ff"
+     ],
+     "style": "S03",
+     "role": "guest",
+     "text": "Guest from Quasicrystal Dreams: Quasicrystal Nebula."
+    },
+    {
+     "t": 60,
+     "f": 55.2,
+     "ratio": [
+      5,
+      4
+     ],
+     "mix": 0.55,
+     "pulse": 0,
+     "breathe": 0.1,
+     "mode": "faraday",
+     "gobo": "tex:S09",
+     "pal": [
+      "#ffffff",
+      "#ff5fa2",
+      "#36e2ff"
+     ],
+     "style": "S09",
+     "role": "bridge",
+     "text": "Bridge: the light turns toward Supernova."
+    }
+   ]
+  },
+  {
+   "id": "supernova",
+   "name": "Supernova",
+   "mood": "intense build and release",
+   "minutes": 10,
+   "next": "genesis",
+   "guest_from": "sacred",
+   "insert": "Insert circle (reference)",
+   "steps": [
+    {
+     "t": 60,
+     "f": 55.2,
+     "ratio": [
+      5,
+      4
+     ],
+     "mix": 0.55,
+     "pulse": 0,
+     "breathe": 0.1,
+     "mode": "faraday",
+     "gobo": "tex:S09",
+     "pal": [
+      "#ffffff",
+      "#ff5fa2",
+      "#36e2ff"
+     ],
+     "style": "S09",
+     "role": "opening",
+     "text": "Supernova: E8 Singularity. E8's 30-fold shadow over a 12-fold quasipattern: the densest look."
+    },
+    {
+     "t": 84,
+     "f": 48.0,
+     "ratio": [
+      3,
+      2
+     ],
+     "mix": 0.55,
+     "pulse": 0,
+     "breathe": 0.0,
+     "mode": "faraday",
+     "gobo": "tex:S02",
+     "pal": [
+      "#ffd27a",
+      "#ff9f43",
+      "#fff3d6"
+     ],
+     "style": "S02",
+     "role": "core",
+     "text": "Saturn Storm. Two tones at 2:3 make the water choose hexagons; the hexagon wall and gobo lock them in place."
+    },
+    {
+     "t": 84,
+     "f": 46.8,
+     "ratio": [
+      5,
+      4
+     ],
+     "mix": 0.55,
+     "pulse": 0,
+     "breathe": 0.0,
+     "mode": "faraday",
+     "gobo": "tex:S12",
+     "pal": [
+      "#ffd27a",
+      "#ff9f43",
+      "#fff3d6"
+     ],
+     "style": "S12",
+     "role": "core",
+     "text": "Star of Twelve. A twelve-point star over twelve-fold water."
+    },
+    {
+     "t": 84,
+     "f": 62.1,
+     "ratio": null,
+     "mix": 0.0,
+     "pulse": 0,
+     "breathe": 0.0,
+     "mode": "faraday",
+     "gobo": "tex:S26",
+     "pal": [
+      "#7a5cff",
+      "#36e2ff",
+      "#ffffff"
+     ],
+     "style": "S26",
+     "role": "core",
+     "text": "Hypercube Dream. 256 corners of an 8-dimensional cube in a 16-fold rose."
+    },
+    {
+     "t": 84,
+     "f": 55.1,
+     "ratio": [
+      5,
+      4
+     ],
+     "mix": 0.55,
+     "pulse": 0,
+     "breathe": 0.0,
+     "mode": "faraday",
+     "gobo": "tex:S27",
+     "pal": [
+      "#ff5fa2",
+      "#7a5cff",
+      "#36e2ff"
+     ],
+     "style": "S27",
+     "role": "core",
+     "text": "Snub Cosmos. The snub dodecahedron's lace over 12-fold water."
+    },
+    {
+     "t": 84,
+     "f": 50.0,
+     "ratio": [
+      5,
+      4
+     ],
+     "mix": 0.55,
+     "pulse": 0,
+     "breathe": 0.04,
+     "mode": "faraday",
+     "gobo": "tex:S10",
+     "pal": [
+      "#2b6cff",
+      "#7fd4ff",
+      "#b48cff"
+     ],
+     "style": "S10",
+     "role": "core",
+     "text": "600-Cell Halo. A 4D polytope's 30-fold halo inside a ten-sided dish."
+    },
+    {
+     "t": 60,
+     "f": 36.0,
+     "ratio": [
+      3,
+      2
+     ],
+     "mix": 0.55,
+     "pulse": 0,
+     "breathe": 0.08,
+     "mode": "faraday",
+     "gobo": "tex:S05",
+     "pal": [
+      "#ffd27a",
+      "#ff9f43",
+      "#fff3d6"
+     ],
+     "style": "S05",
+     "role": "guest",
+     "text": "Guest from Sacred Geometry: Metatron."
+    },
+    {
+     "t": 60,
+     "f": 22.1,
+     "ratio": null,
+     "mix": 0.0,
+     "pulse": 1.0,
+     "breathe": 0.1,
+     "mode": "dipper",
+     "gobo": "tex:S01",
+     "pal": [
+      "#2b6cff",
+      "#7fd4ff",
+      "#b48cff"
+     ],
+     "style": "S01",
+     "role": "bridge",
+     "text": "Bridge: the light turns toward Genesis."
+    }
+   ]
+  }
+ ],
+ "styles": [
+  {
+   "id": "S01",
+   "name": "Orbit Rings",
+   "gobo": "Concentric rings",
+   "insert": "Insert circle (reference)",
+   "dipper": "Dipper point",
+   "mode": "dipper",
+   "f": 24,
+   "ratio": null,
+   "pulse": 1.0,
+   "breathe": 0.0,
+   "pal": [
+    "#2b6cff",
+    "#7fd4ff",
+    "#b48cff"
+   ],
+   "mood": "calm, launch",
+   "how": "A single point taps the water once a second; each ring travels out through printed orbit circles.",
+   "best": "openings, bedrooms"
+  },
+  {
+   "id": "S02",
+   "name": "Saturn Storm",
+   "gobo": "Hexagon nest",
+   "insert": "Insert hexagon",
+   "dipper": null,
+   "mode": "faraday",
+   "f": 48,
+   "ratio": [
+    3,
+    2
+   ],
+   "pulse": 0,
+   "breathe": 0.0,
+   "pal": [
+    "#ffd27a",
+    "#ff9f43",
+    "#fff3d6"
+   ],
+   "mood": "bold, geometric",
+   "how": "Two tones at 2:3 make the water choose hexagons; the hexagon wall and gobo lock them in place.",
+   "best": "bars, parties"
+  },
+  {
+   "id": "S03",
+   "name": "Quasicrystal Nebula",
+   "gobo": "Dodecagonal quasicrystal",
+   "insert": "Insert circle (reference)",
+   "dipper": null,
+   "mode": "faraday",
+   "f": 40,
+   "ratio": [
+    5,
+    4
+   ],
+   "pulse": 0,
+   "breathe": 0.0,
+   "pal": [
+    "#ff5fa2",
+    "#7a5cff",
+    "#36e2ff"
+   ],
+   "mood": "mysterious",
+   "how": "4:5 forcing grows a 12-fold quasipattern; a 12-fold tiling gobo echoes it.",
+   "best": "lounges, galleries"
+  },
+  {
+   "id": "S04",
+   "name": "Penrose Gate",
+   "gobo": "Penrose rhombus (P3) quasicrystal",
+   "insert": "Insert pentagon",
+   "dipper": null,
+   "mode": "faraday",
+   "f": 44,
+   "ratio": [
+    5,
+    4
+   ],
+   "pulse": 0,
+   "breathe": 0.05,
+   "pal": [
+    "#36ffb0",
+    "#2bd1ff",
+    "#9b6bff"
+   ],
+   "mood": "ordered chaos",
+   "how": "Penrose rhombi refracted through a five-walled dish: order that never repeats.",
+   "best": "science centres"
+  },
+  {
+   "id": "S05",
+   "name": "Metatron",
+   "gobo": "Metatron's Cube",
+   "insert": "Insert hexagon",
+   "dipper": null,
+   "mode": "faraday",
+   "f": 36,
+   "ratio": [
+    3,
+    2
+   ],
+   "pulse": 0,
+   "breathe": 0.08,
+   "pal": [
+    "#ffd27a",
+    "#ff9f43",
+    "#fff3d6"
+   ],
+   "mood": "sacred, centred",
+   "how": "Metatron's lines bend over a hexagonal standing wave, breathing slowly.",
+   "best": "yoga, meditation"
+  },
+  {
+   "id": "S06",
+   "name": "Flower of Life Bloom",
+   "gobo": "Flower of Life",
+   "insert": "Insert wavy 6",
+   "dipper": "Dipper point",
+   "mode": "dipper",
+   "f": 20,
+   "ratio": null,
+   "pulse": 0.5,
+   "breathe": 0.1,
+   "pal": [
+    "#ffd27a",
+    "#ff9f43",
+    "#fff3d6"
+   ],
+   "mood": "gentle, blooming",
+   "how": "Rings bloom through 19 interlaced circles at a breathing pace.",
+   "best": "spas, bedrooms"
+  },
+  {
+   "id": "S07",
+   "name": "Venus Rose",
+   "gobo": "Cosmic dance Venus-Earth",
+   "insert": "Insert pentagon",
+   "dipper": "Dipper star 5",
+   "mode": "dipper",
+   "f": 22,
+   "ratio": null,
+   "pulse": 0.6,
+   "breathe": 0.0,
+   "pal": [
+    "#ff7aa8",
+    "#ffd1dc",
+    "#ffb347"
+   ],
+   "mood": "romantic",
+   "how": "The real 8-year Venus-Earth rose, pulsed by a star-shaped foot.",
+   "best": "date nights, weddings"
+  },
+  {
+   "id": "S08",
+   "name": "Hyperbolic Abyss",
+   "gobo": "Hyperbolic {7,3}",
+   "insert": "Insert heptagon",
+   "dipper": null,
+   "mode": "faraday",
+   "f": 70,
+   "ratio": null,
+   "pulse": 0,
+   "breathe": 0.05,
+   "pal": [
+    "#36ffb0",
+    "#2bd1ff",
+    "#9b6bff"
+   ],
+   "mood": "deep, infinite",
+   "how": "Escher-style heptagons shrinking to the rim over fine square waves.",
+   "best": "lounges, art spaces"
+  },
+  {
+   "id": "S09",
+   "name": "E8 Singularity",
+   "gobo": "E8 root polytope",
+   "insert": "Insert circle (reference)",
+   "dipper": null,
+   "mode": "faraday",
+   "f": 60,
+   "ratio": [
+    5,
+    4
+   ],
+   "pulse": 0,
+   "breathe": 0.0,
+   "pal": [
+    "#ffffff",
+    "#ff5fa2",
+    "#36e2ff"
+   ],
+   "mood": "peak, intense",
+   "how": "E8's 30-fold shadow over a 12-fold quasipattern: the densest look.",
+   "best": "finales"
+  },
+  {
+   "id": "S10",
+   "name": "600-Cell Halo",
+   "gobo": "600-cell",
+   "insert": "Insert decagon",
+   "dipper": null,
+   "mode": "faraday",
+   "f": 50,
+   "ratio": [
+    5,
+    4
+   ],
+   "pulse": 0,
+   "breathe": 0.04,
+   "pal": [
+    "#2b6cff",
+    "#7fd4ff",
+    "#b48cff"
+   ],
+   "mood": "cosmic halo",
+   "how": "A 4D polytope's 30-fold halo inside a ten-sided dish.",
+   "best": "planetariums"
+  },
+  {
+   "id": "S11",
+   "name": "Girih Lantern",
+   "gobo": "Hankin 4.8.8 at 67.5 deg",
+   "insert": "Insert octagon",
+   "dipper": null,
+   "mode": "faraday",
+   "f": 40,
+   "ratio": [
+    3,
+    2
+   ],
+   "pulse": 0,
+   "breathe": 0.0,
+   "pal": [
+    "#36e2ff",
+    "#ffd27a",
+    "#7a5cff"
+   ],
+   "mood": "night garden",
+   "how": "Eight-point girih stars rippling like lantern light.",
+   "best": "restaurants, Ramadan/Eid"
+  },
+  {
+   "id": "S12",
+   "name": "Star of Twelve",
+   "gobo": "Dodecagram {12/5}",
+   "insert": "Insert dodecagon",
+   "dipper": null,
+   "mode": "faraday",
+   "f": 45,
+   "ratio": [
+    5,
+    4
+   ],
+   "pulse": 0,
+   "breathe": 0.0,
+   "pal": [
+    "#ffd27a",
+    "#ff9f43",
+    "#fff3d6"
+   ],
+   "mood": "radiant",
+   "how": "A twelve-point star over twelve-fold water.",
+   "best": "celebrations"
+  },
+  {
+   "id": "S13",
+   "name": "Koch Snowfall",
+   "gobo": "Koch snowflake L5",
+   "insert": "Insert Koch snowflake",
+   "dipper": null,
+   "mode": "faraday",
+   "f": 30,
+   "ratio": null,
+   "pulse": 0,
+   "breathe": 0.08,
+   "pal": [
+    "#bfe9ff",
+    "#ffffff",
+    "#8fb8ff"
+   ],
+   "mood": "winter hush",
+   "how": "A fractal snowflake in a snowflake-shaped dish; the jagged wall traps waves in its corners.",
+   "best": "winter, solstice"
+  },
+  {
+   "id": "S14",
+   "name": "Julia Bloom",
+   "gobo": "Julia set - Douady rabbit",
+   "insert": "Insert Bunimovich stadium",
+   "dipper": null,
+   "mode": "faraday",
+   "f": 34,
+   "ratio": null,
+   "pulse": 0,
+   "breathe": 0.0,
+   "pal": [
+    "#ff7a00",
+    "#7a5cff",
+    "#36ff6b"
+   ],
+   "mood": "eerie, chaotic",
+   "how": "Julia lace over a chaotic stadium dish: speckled, restless water.",
+   "best": "Halloween, escape rooms"
+  },
+  {
+   "id": "S15",
+   "name": "Dragon Fold",
+   "gobo": "Heighway dragon",
+   "insert": "Insert square",
+   "dipper": null,
+   "mode": "faraday",
+   "f": 28,
+   "ratio": null,
+   "pulse": 0,
+   "breathe": 0.0,
+   "pal": [
+    "#ff6b3d",
+    "#ffb347",
+    "#ffe3a3"
+   ],
+   "mood": "fiery",
+   "how": "The paper-folding dragon over square Faraday waves.",
+   "best": "bars, game rooms"
+  },
+  {
+   "id": "S16",
+   "name": "Sunflower Spiral",
+   "gobo": "Sunflower phyllotaxis",
+   "insert": "Insert wavy 8",
+   "dipper": "Dipper point",
+   "mode": "dipper",
+   "f": 21,
+   "ratio": null,
+   "pulse": 0.618,
+   "breathe": 0.0,
+   "pal": [
+    "#9bff6b",
+    "#ffd27a",
+    "#36ffb0"
+   ],
+   "mood": "growth",
+   "how": "Golden-angle seeds pulsed at 0.618 per second.",
+   "best": "spring, garden centres"
+  },
+  {
+   "id": "S17",
+   "name": "Galaxy Arms",
+   "gobo": "Galaxy arms",
+   "insert": "Insert circle (reference)",
+   "dipper": "Dipper disc 25",
+   "mode": "dipper",
+   "f": 26,
+   "ratio": null,
+   "pulse": 0.4,
+   "breathe": 0.0,
+   "pal": [
+    "#ff5fa2",
+    "#7a5cff",
+    "#36e2ff"
+   ],
+   "mood": "spiral, drifting",
+   "how": "Logarithmic arms with soft rings rolling outward.",
+   "best": "space nights"
+  },
+  {
+   "id": "S18",
+   "name": "Chladni Plate",
+   "gobo": "Chladni square (3,5) anti",
+   "insert": "Insert square",
+   "dipper": null,
+   "mode": "faraday",
+   "f": 36,
+   "ratio": null,
+   "pulse": 0,
+   "breathe": 0.0,
+   "pal": [
+    "#ffffff",
+    "#cfe6ff",
+    "#fff1d6"
+   ],
+   "mood": "scientific, crisp",
+   "how": "Chladni's 1787 nodal lines in a square dish of Faraday squares.",
+   "best": "classrooms, museums"
+  },
+  {
+   "id": "S19",
+   "name": "Water Drum",
+   "gobo": "Water mode J4 ring 3",
+   "insert": "Insert circle (reference)",
+   "dipper": null,
+   "mode": "faraday",
+   "f": 32,
+   "ratio": null,
+   "pulse": 0,
+   "breathe": 0.0,
+   "pal": [
+    "#36e2ff",
+    "#ffffff",
+    "#2b6cff"
+   ],
+   "mood": "pure physics",
+   "how": "The dish's own 8-petal Bessel mode drawn on the gobo; tune until water and print agree.",
+   "best": "demos"
+  },
+  {
+   "id": "S20",
+   "name": "Twin Source",
+   "gobo": "Two-source interference",
+   "insert": "Insert circle (reference)",
+   "dipper": "Dipper two pins",
+   "mode": "dipper",
+   "f": 30,
+   "ratio": null,
+   "pulse": 0,
+   "breathe": 0.0,
+   "pal": [
+    "#36e2ff",
+    "#7fd4ff",
+    "#ffffff"
+   ],
+   "mood": "clean, scientific",
+   "how": "Young's two-source fringes made by two pins on one foot.",
+   "best": "science centres"
+  },
+  {
+   "id": "S21",
+   "name": "Triple Lattice",
+   "gobo": "Three-source interference",
+   "insert": "Insert hexagon",
+   "dipper": "Dipper three pins",
+   "mode": "dipper",
+   "f": 34,
+   "ratio": null,
+   "pulse": 0,
+   "breathe": 0.0,
+   "pal": [
+    "#36ffb0",
+    "#2bd1ff",
+    "#9b6bff"
+   ],
+   "mood": "lattice",
+   "how": "Three pins at 120 degrees weave a hexagonal interference net.",
+   "best": "lounges"
+  },
+  {
+   "id": "S22",
+   "name": "Lissajous Weave",
+   "gobo": "Lissajous 3:4",
+   "insert": "Insert circle (reference)",
+   "dipper": null,
+   "mode": "faraday",
+   "f": 40,
+   "ratio": [
+    4,
+    3
+   ],
+   "pulse": 0,
+   "breathe": 0.0,
+   "pal": [
+    "#ffe9b0",
+    "#7fd4ff",
+    "#ff5fa2"
+   ],
+   "mood": "musical",
+   "how": "The 3:4 figure is the picture of the two tones being played.",
+   "best": "music events"
+  },
+  {
+   "id": "S23",
+   "name": "Knotwork",
+   "gobo": "Torus knot (3,7)",
+   "insert": "Insert heptagon",
+   "dipper": null,
+   "mode": "faraday",
+   "f": 42,
+   "ratio": null,
+   "pulse": 0,
+   "breathe": 0.06,
+   "pal": [
+    "#b48cff",
+    "#ffd27a",
+    "#36e2ff"
+   ],
+   "mood": "woven",
+   "how": "A (3,7) torus knot rippling over a seven-walled dish.",
+   "best": "galleries"
+  },
+  {
+   "id": "S24",
+   "name": "Fibonacci Gold",
+   "gobo": "Golden spiral & Fibonacci squares",
+   "insert": "Insert golden rectangle",
+   "dipper": "Dipper point",
+   "mode": "dipper",
+   "f": 21,
+   "ratio": null,
+   "pulse": 0.618,
+   "breathe": 0.0,
+   "pal": [
+    "#ffd27a",
+    "#ff9f43",
+    "#fff3d6"
+   ],
+   "mood": "harmonic",
+   "how": "The golden spiral in a golden-rectangle dish, pulsed at 1/phi.",
+   "best": "studios, offices"
+  },
+  {
+   "id": "S25",
+   "name": "Sacred Yantra",
+   "gobo": "Nine-triangle yantra (simplified)",
+   "insert": "Insert triangle",
+   "dipper": null,
+   "mode": "faraday",
+   "f": 33,
+   "ratio": [
+    3,
+    2
+   ],
+   "pulse": 0,
+   "breathe": 0.1,
+   "pal": [
+    "#ffd27a",
+    "#ff6b3d",
+    "#ff3dd2"
+   ],
+   "mood": "devotional",
+   "how": "Nine interlocking triangles over hexagon-triangle water, breathing at 6/min.",
+   "best": "Diwali, meditation"
+  },
+  {
+   "id": "S26",
+   "name": "Hypercube Dream",
+   "gobo": "8-cube (hypercube)",
+   "insert": "Insert octagon",
+   "dipper": null,
+   "mode": "faraday",
+   "f": 64,
+   "ratio": null,
+   "pulse": 0,
+   "breathe": 0.0,
+   "pal": [
+    "#7a5cff",
+    "#36e2ff",
+    "#ffffff"
+   ],
+   "mood": "4D, hypnotic",
+   "how": "256 corners of an 8-dimensional cube in a 16-fold rose.",
+   "best": "lounges, clubs"
+  },
+  {
+   "id": "S27",
+   "name": "Snub Cosmos",
+   "gobo": "Snub dodecahedron",
+   "insert": "Insert pentagon",
+   "dipper": null,
+   "mode": "faraday",
+   "f": 52,
+   "ratio": [
+    5,
+    4
+   ],
+   "pulse": 0,
+   "breathe": 0.0,
+   "pal": [
+    "#ff5fa2",
+    "#7a5cff",
+    "#36e2ff"
+   ],
+   "mood": "crystalline",
+   "how": "The snub dodecahedron's lace over 12-fold water.",
+   "best": "galleries"
+  },
+  {
+   "id": "S28",
+   "name": "Apollonian Pearls",
+   "gobo": "Apollonian gasket",
+   "insert": "Insert circle (reference)",
+   "dipper": "Dipper ring",
+   "mode": "dipper",
+   "f": 18,
+   "ratio": null,
+   "pulse": 0.3,
+   "breathe": 0.08,
+   "pal": [
+    "#ffffff",
+    "#ffd1dc",
+    "#bfe9ff"
+   ],
+   "mood": "soft, pearly",
+   "how": "Circles within circles; a ring foot sends waves inward to focus at the centre.",
+   "best": "weddings, spas"
+  },
+  {
+   "id": "S29",
+   "name": "Moire Drift",
+   "gobo": "Moire grating 3 deg",
+   "insert": "Insert ellipse 2.0:1",
+   "dipper": null,
+   "mode": "faraday",
+   "f": 38,
+   "ratio": [
+    7,
+    6
+   ],
+   "pulse": 0,
+   "breathe": 0.0,
+   "pal": [
+    "#36ffb0",
+    "#ff5fa2",
+    "#ffffff"
+   ],
+   "mood": "op-art",
+   "how": "Grating lines bent by slowly beating 6:7 water: moire bands crawl across the wall.",
+   "best": "retail windows"
+  },
+  {
+   "id": "S30",
+   "name": "Fresnel Sun",
+   "gobo": "Fresnel zone plate",
+   "insert": "Insert circle (reference)",
+   "dipper": "Dipper point",
+   "mode": "dipper",
+   "f": 24,
+   "ratio": null,
+   "pulse": 1.2,
+   "breathe": 0.0,
+   "pal": [
+    "#ff6b3d",
+    "#ffb347",
+    "#ffe3a3"
+   ],
+   "mood": "solar",
+   "how": "A zone plate focuses light into bright rings while ripples pulse through them.",
+   "best": "summer, solstice"
+  }
+ ]
+}
