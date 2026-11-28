@@ -3,14 +3,14 @@
   "status": "built",
   "version": "0.9.0",
   "build": 1,
-  "commit": "4412280",
-  "built_at": "2026-11-17T01:19:32Z",
+  "commit": "30e2033",
+  "built_at": "2026-11-28T02:04:32Z",
   "godot": "4.7.2",
   "files": [
     {
       "file": "CanopyCrossing-Windows-x86_64.zip",
-      "bytes": 75562084,
-      "sha256": "491832148c57bbbac3bef61eefed5cb4588f5d830ae0efbf5fc77a7bf3707035"
+      "bytes": 75626436,
+      "sha256": "df4b864407a1e070d49de4388ecb9dcbaf90c7e738dfd69ac489e08668509e6f"
     }
   ],
   "notes": "One file, the game data is inside the .exe. Not code-signed yet (Windows SmartScreen will warn until it is)."

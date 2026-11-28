@@ -61,6 +61,13 @@ func play_emote(kind: String) -> void:
 
 
 func _draw() -> void:
+	# one draw call for the whole figure (Draw.begin_batch)
+	Draw.begin_batch(self)
+	_paint()
+	Draw.end_batch(self)
+
+
+func _paint() -> void:
 	var s := wv.sim
 	var anim := {"t": t, "blink": blink_left > 0.0, "flip": s.face.x < 0}
 	var lift := s.hop_height()
@@ -102,7 +109,7 @@ func _draw() -> void:
 	AnimalPainter.draw(self, wv.animal, SIZE, anim, wv.look_override)
 	if s.swimming:
 		var wc := wv.color("water")
-		draw_rect(Rect2(-SIZE * 0.5, -SIZE * 0.18, SIZE, SIZE * 0.22), Color(wc, 0.85))
+		Draw._rect_raw(self, Rect2(-SIZE * 0.5, -SIZE * 0.18, SIZE, SIZE * 0.22), Color(wc, 0.85))
 		Draw.ellipse_line(self, Vector2(0, -SIZE * 0.1), SIZE * 0.42, SIZE * 0.1, Color(1, 1, 1, 0.5), 2)
 	var shield_up := s.shields > 0
 	for a in s.abilities:

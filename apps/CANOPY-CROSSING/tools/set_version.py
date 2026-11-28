@@ -19,6 +19,8 @@ def show() -> None:
     proj = (ROOT / "project.godot").read_text()
     pre = (ROOT / "export_presets.cfg").read_text()
     print("project:", re.search(r'config/version="([^"]*)"', proj).group(1))
+    m = re.search(r'^build_number="([^"]*)"', proj, re.M)
+    print("build number (crash reports):", m.group(1) if m else "(not set)")
     for key in ["version/name", "version/code", "application/short_version", "application/version",
                 "application/file_version", "application/product_version"]:
         vals = sorted(set(re.findall(r'^' + re.escape(key) + r'="?([^"\n]*)"?$', pre, re.M)))
@@ -34,7 +36,13 @@ def main() -> None:
         sys.exit("version must look like 1.2.3")
     win = name + ".0"
     p = ROOT / "project.godot"
-    p.write_text(re.sub(r'config/version="[^"]*"', f'config/version="{name}"', p.read_text()))
+    proj = re.sub(r'config/version="[^"]*"', f'config/version="{name}"', p.read_text())
+    # the build number too, so crash reports name the exact build
+    if re.search(r'^build_number=', proj, re.M):
+        proj = re.sub(r'^build_number="[^"]*"', f'build_number="{build}"', proj, flags=re.M)
+    else:
+        proj = proj.replace("[canopy]\n", f'[canopy]\n\nbuild_number="{build}"\n', 1)
+    p.write_text(proj)
     p = ROOT / "export_presets.cfg"
     s = p.read_text()
     s = re.sub(r'^version/name="[^"]*"', f'version/name="{name}"', s, flags=re.M)

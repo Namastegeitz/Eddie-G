@@ -1,11 +1,17 @@
 {
   "platform": "android",
-  "status": "needs-sdk",
+  "status": "built",
   "version": "0.9.0",
   "build": 1,
-  "commit": "4412280",
-  "built_at": "2026-11-17T01:20:22Z",
+  "commit": "30e2033",
+  "built_at": "2026-11-28T02:04:03Z",
   "godot": "4.7.2",
-  "files": [],
-  "notes": "This machine has no Android SDK (its network can't reach Google's download server). GitHub Actions builds the APK and the Play Store .aab: run 'Canopy Crossing release builds'."
+  "files": [
+    {
+      "file": "CanopyCrossing.apk",
+      "bytes": 90788466,
+      "sha256": "ce8f8a8b2cef764bb376950560b90763562e75dd5d7c2f7052f44313fc74311d"
+    }
+  ],
+  "notes": "APK installs directly on phones. Google Play needs the .aab (set ANDROID_AAB=1; GitHub Actions does)."
 }

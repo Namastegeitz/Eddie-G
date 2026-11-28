@@ -82,7 +82,8 @@ func _draw() -> void:
 	if fpv:
 		return
 	# canopy frame: solid foliage beyond the play field, leaves reaching in
-	if Draw.detail > 0:
+	var hd := Draw.detail > 0 and RemoteConfig.enabled("hd_terrain")
+	if hd:
 		var key := Vector3(vp.x, vp.y, fx)
 		if key != _frame_key:
 			_frame_key = key
@@ -93,7 +94,7 @@ func _draw() -> void:
 			draw_set_transform(Vector2(sin(t * 1.1 + sd2) * 2.0, off))
 			draw_mesh(_frame[sd2], null)
 		draw_set_transform(Vector2.ZERO)
-	for side: int in ([] if Draw.detail > 0 else [-1, 1]):
+	for side: int in ([] if hd else [-1, 1]):
 		var edge := fx if side < 0 else fx + fw
 		var inward := -float(side)
 		var solid_from := 0.0 if side < 0 else edge + 30.0

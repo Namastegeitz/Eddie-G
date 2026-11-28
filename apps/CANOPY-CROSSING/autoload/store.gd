@@ -325,6 +325,7 @@ func needs_download(map_id: String) -> bool:
 func download_pack(map_id: String, done: Callable) -> void:
 	var dlc: Dictionary = Content.map(map_id).get("dlc", {})
 	var http := HTTPRequest.new()
+	http.timeout = 180.0          # a whole map pack; a stalled connection gives up instead of hanging
 	add_child(http)
 	DirAccess.make_dir_recursive_absolute("user://dlc")
 	http.download_file = "user://dlc/%s.zip" % map_id
@@ -333,7 +334,9 @@ func download_pack(map_id: String, done: Callable) -> void:
 		var ok: bool = result == HTTPRequest.RESULT_SUCCESS and code == 200 and install_zip("user://dlc/%s.zip" % map_id)
 		if ok:
 			FileAccess.open("user://dlc/%s.done" % map_id, FileAccess.WRITE).store_string("ok")
-		Analytics.event("dlc_download", {"map": map_id, "ok": ok})
+		Analytics.event("dlc_download", {"map": map_id, "ok": ok, "result": result, "code": code})
+		if not ok:
+			CrashReport.report("map pack download failed", "%s: result %d, HTTP %d" % [map_id, result, code])
 		done.call(ok))
 	if http.request(String(dlc.get("url", ""))) != OK:
 		http.queue_free()

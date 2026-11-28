@@ -63,6 +63,8 @@ func _ready() -> void:
 				await _silly_faces()
 			"terrain":
 				await _hd_terrain()
+			"stability":
+				await _stability()
 		print("phase audit (%s): %d passed, %d failed" % [only, passed, failed])
 		Save.wipe()
 		Save.path = real_save
@@ -83,6 +85,7 @@ func _ready() -> void:
 	await _trade_roads()
 	await _silly_faces()
 	await _hd_terrain()
+	await _stability()
 	_phase8()
 	Save.wipe()
 	Save.path = real_save
@@ -1200,9 +1203,27 @@ func _phase7() -> void:
 		Save.set_setting("graphics", q[0])
 		Gfx.apply(get_tree())
 		levels_ok = levels_ok and Draw.detail == int(q[1])
+	Save.set_setting("graphics", "ultra")
+	Gfx.apply(get_tree())
+	var ultra_ok := Gfx.ultra() and Gfx.level() == "high" and Draw.detail == 2 and Gfx.scale_3d(1.0) >= 1.5
+	Save.set_setting("res_3d", "50")
+	ultra_ok = ultra_ok and is_equal_approx(Gfx.scale_3d(1.0), 0.75)
+	Save.set_setting("res_3d", "auto")
+	Save.set_setting("fps_cap", "30")
+	Gfx.apply(get_tree())
+	var fps_ok := Engine.max_fps == 30
+	Save.set_setting("fps_cap", "max")
 	Save.set_setting("graphics", "auto")
 	Gfx.apply(get_tree())
+	fps_ok = fps_ok and Engine.max_fps == 0
+	Gfx.forced = "low"
+	var forced_ok := Gfx.level() == "low" and String(Save.setting("graphics", "auto")) == "auto"
+	Gfx.forced = ""
+	check("--graphics=<level> (screenshots) sets this launch only, never the saved choice", forced_ok and Gfx.choice() == "auto")
 	check("Graphics setting: High/Medium/Low set detail, Auto resolves", levels_ok and Gfx.level() in ["high", "medium"] and Draw.detail >= 1, Gfx.level())
+	check("Ultra is High plus extras (computers); first-person resolution scales the 3D view", ultra_ok)
+	check("Frame rate: 30 caps the game for battery, Max follows the screen (as before)", fps_ok)
+	check("figures are drawn in one batch each (a few hundred draw calls a screen instead of over 2,000)", Draw.batching and ProjectSettings.get_setting("canopy/render/batch_2d", true))
 	check("water shader and lane grain texture load", WorldView.water_shader() != null and Draw.grain().get_width() == 128)
 	# a run with the view
 	var gs: Control = load("res://scripts/ui/game_screen.gd").new()
@@ -1963,6 +1984,151 @@ func _silly_faces() -> void:
 ## starts and ends harder than the one before; the first five jungles bring
 ## their hazards in level by level; and generated levels really are gentler
 ## early on (slower movers, fewer kinds of hazard).
+## Upgrade run 2026-11-27: memory, crash reporting.
+func _stability() -> void:
+	begin("Stability: memory and crash reporting")
+	# a finished run (and every copy the bot plans with) is freed
+	await get_tree().process_frame
+	var before := Performance.get_monitor(Performance.OBJECT_COUNT)
+	for i in 4:
+		var w := World.new()
+		w.setup(Content.map("amazon"), "journey", 4, 300 + i)
+		w.ensure(40)
+		var s := RunSim.new()
+		s.setup(w, Content.animal("poison_dart_frog"), {"mode": "journey"})
+		var bot := PathBot.new()
+		for k in 90:
+			s.step(1.0 / 60.0)
+			if k % 30 == 0:
+				bot.plan(s, s.row + 6)
+	await get_tree().process_frame
+	var left := int(Performance.get_monitor(Performance.OBJECT_COUNT) - before)
+	check("finished runs and the bot's planning copies are freed (no memory growing run after run)", left <= 2, "%d objects left after 4 runs" % left)
+	# crash reporting: off without the SDKs, and every path works with them
+	check("crash reports are on by default in Settings, and the services stay off until their keys are built in", bool(Save.setting("crash_reports", false)) and not CrashReport.active() and CrashReport.sentry == null)
+	var fake := FakeCrashlytics.new()
+	var keep_c = CrashReport.crashlytics
+	CrashReport.crashlytics = fake
+	CrashReport.apply_consent()
+	Analytics.event("run_start", {"mode": "journey", "map": "borneo", "stage": 2, "animal": "orangutan"})
+	Analytics.event("view", {"view": "fpv", "map": "borneo", "row": 4})
+	check("each run start, view switch and purchase leaves a breadcrumb; the jungle and level go on every report",
+		fake.logs.any(func(l): return l.begins_with("run_start:") and "map=borneo" in l) and fake.logs.any(func(l): return l.begins_with("view:")) and fake.keys.get("map", "") == "borneo" and fake.keys.get("level", "") == "3", str(fake.logs.slice(-2)))
+	CrashReport.report("map pack download failed", "borneo: timeout")
+	check("handled problems are reported with recent steps attached", fake.errors.size() == 1 and "run_start" in String(fake.errors[0][1]))
+	var sent0 := fake.errors.size()
+	for i in 3:
+		CrashReport._queue_error("Invalid access to property 'x'", "res://a.gd:10 in f", "")
+	CrashReport._queue_error("Another error", "res://b.gd:5 in g", "")
+	CrashReport._process(0.0)
+	check("script errors reach Crashlytics once each (repeats are only counted)", fake.errors.size() == sent0 + 2, str(fake.errors.size() - sent0))
+	Save.set_setting("crash_reports", false)
+	check("turning reports off in Settings reaches Crashlytics at once", fake.enabled == false and not CrashReport.active())
+	CrashReport._queue_error("A third error", "res://c.gd:1 in h", "")
+	CrashReport._process(0.0)
+	CrashReport.report("ignored", "")
+	check("with reports off nothing is sent", fake.errors.size() == sent0 + 2)
+	Save.set_setting("crash_reports", true)
+	check("turning them back on reaches Crashlytics too", fake.enabled == true)
+	CrashReport.crashlytics = keep_c
+	var st: Control = load("res://scripts/ui/settings_screen.gd").new()
+	add_child(st)
+	await get_tree().process_frame
+	var labels: Array = st.find_children("*", "CheckButton", true, false).map(func(c): return String(c.text))
+	check("Settings has the Send crash reports switch", labels.any(func(t): return "crash reports" in t.to_lower()), str(labels.size()))
+	check("Settings has the Pause when you switch away switch (on by default)", labels.any(func(t): return "switch away" in t.to_lower()) and bool(Save.setting("auto_pause", false)))
+	var credits: Control = st._credits_card()
+	var ctext := " ".join(credits.find_children("*", "Label", true, false).map(func(l): return String(l.text)))
+	check("Settings > Credits and licences carries Godot's MIT licence, the font licence and Natural Earth", "Permission is hereby granted" in ctext and "Fredoka" in ctext and "Natural Earth" in ctext)
+	credits.free()
+	st.queue_free()
+	await get_tree().process_frame
+	# remote switches: shipped values, a published copy, bad copies ignored
+	var rc_keep := RemoteConfig.config.duplicate(true)
+	check("remote switches ship all on, with the Google Play link", RemoteConfig.enabled("first_person") and RemoteConfig.enabled("hd_terrain") and RemoteConfig.enabled("crash_reports") and "com.aethertek.canopycrossing" in String(RemoteConfig.config.store_urls.android))
+	check("a broken or wrong-shaped config file is ignored", not RemoteConfig._valid({"flags": []}) and not RemoteConfig._valid("x") and not RemoteConfig._valid({"version": 1, "min_build": "9"}) and RemoteConfig._valid({"version": 2, "flags": {"first_person": false}}))
+	RemoteConfig.config = RemoteConfig._merged(RemoteConfig._shipped(), {"version": 2, "flags": {"first_person": false, "crash_reports": false}})
+	check("a published copy can turn a feature off and leaves the rest as shipped", not RemoteConfig.enabled("first_person") and not RemoteConfig.enabled("crash_reports") and RemoteConfig.enabled("silly_faces"))
+	CrashReport.crashlytics = fake
+	check("the remote crash-report switch overrides the player's setting", not CrashReport.allowed())
+	CrashReport.crashlytics = keep_c
+	var main: Control = load("res://scenes/main.tscn").instantiate()
+	add_child(main)
+	await get_tree().process_frame
+	Save.data.seen_intro = Content.playable_maps()
+	Game.start_run({"mode": "journey", "map": "amazon", "stage": 4, "seed": 11, "animal": "poison_dart_frog"})
+	await get_tree().process_frame
+	var gs = Game.current
+	gs.started = true
+	gs.blocking = false
+	gs._update_views(1.0 / 60.0)
+	check("with first person switched off remotely: no eye button, the canopy rows show from above, the view can't switch", not gs.eye_btn.visible and (gs.wv.roof == null or not await _roof_visible(gs)))
+	gs.set_view("fpv")
+	check("...and asking for first person keeps the bird's-eye view", gs.view == "bird")
+	RemoteConfig.config = rc_keep
+	gs.set_view("fpv")
+	check("with the switch back on, first person works again", gs.view == "fpv" and gs.eye_btn != null)
+	gs.set_view("bird")
+	# leaving the app opens the pause menu
+	gs.paused = false
+	gs._notification(Node.NOTIFICATION_APPLICATION_FOCUS_OUT)
+	check("leaving the app mid-run opens the pause menu", gs.paused)
+	main.queue_free()
+	await get_tree().process_frame
+	# update prompts from the build number
+	var b_keep: Variant = ProjectSettings.get_setting("canopy/build_number", "1")
+	ProjectSettings.set_setting("canopy/build_number", "40")
+	RemoteConfig.config = RemoteConfig._merged(RemoteConfig._shipped(), {"version": 2, "latest_build": 45})
+	var soft := RemoteConfig.update_state()
+	RemoteConfig.config = RemoteConfig._merged(RemoteConfig._shipped(), {"version": 2, "latest_build": 45, "min_build": 41})
+	var forced := RemoteConfig.update_state()
+	RemoteConfig.config = RemoteConfig._merged(RemoteConfig._shipped(), {"version": 2, "latest_build": 40, "min_build": 12})
+	var none := RemoteConfig.update_state()
+	check("update prompts: newer build = gentle reminder, too old = update needed, current = nothing", soft == "soft" and forced == "forced" and none == "", "%s/%s/%s" % [soft, forced, none])
+	ProjectSettings.set_setting("canopy/build_number", b_keep)
+	RemoteConfig.config = rc_keep
+	# the store rating card: only at a happy moment, rarely
+	Save.wipe()
+	Save.load_game()
+	Save.data.created = int(Time.get_unix_time_from_system()) - 5 * 86400
+	check("no rating card before 5 cleared levels", not ReviewPrompt.due(true, "journey"))
+	Save.map_progress("amazon").cleared = 6
+	check("a rating card after a cleared level, once 5 are cleared and the game is 2+ days old", ReviewPrompt.due(true, "journey"))
+	check("never after a failed run, in endless mode, or in the first 2 days",
+		not ReviewPrompt.due(false, "journey") and not ReviewPrompt.due(true, "endless") and (func():
+			Save.data.created = int(Time.get_unix_time_from_system()); var r := not ReviewPrompt.due(true, "journey"); Save.data.created = int(Time.get_unix_time_from_system()) - 5 * 86400; return r).call())
+	ReviewPrompt.ask()
+	check("after asking, not again for 120 days; at most 3 times ever", not ReviewPrompt.due(true, "journey") and ReviewPrompt.due(true, "journey", Progress.today() + 121) and (func():
+		Save.data.prompts.review_asks = 3; return not ReviewPrompt.due(true, "journey", Progress.today() + 400)).call())
+	Save.wipe()
+	Save.load_game()
+
+
+func _roof_visible(gs) -> bool:
+	gs.wv.roof._process(0.016)
+	return gs.wv.roof.visible
+
+
+## Stands in for the CanopyCrashlytics Android plugin in tests.
+class FakeCrashlytics extends RefCounted:
+	var logs: Array[String] = []
+	var keys := {}
+	var errors: Array = []
+	var enabled := true
+
+	func log(m: String) -> void:
+		logs.append(m)
+
+	func setKey(k: String, v: String) -> void:
+		keys[k] = v
+
+	func recordError(m: String, d: String) -> void:
+		errors.append([m, d])
+
+	func setCollectionEnabled(on: bool) -> void:
+		enabled = on
+
+
 ## High-definition terrain on every map, in both views.
 func _hd_terrain() -> void:
 	begin("High-definition maps: ground, water, plants, canopy")

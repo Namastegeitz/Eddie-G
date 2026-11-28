@@ -3,15 +3,19 @@
 # frame (or all frames with KEEP_ALL=1).
 #   tools/capture.sh out.png <frames> [WxH] -- <game user args...>
 # e.g. tools/capture.sh /tmp/home.png 40 720x1280 -- --skip-tutorial --screen=home
+# CAPTURE_TIMEOUT (seconds, default 300) limits the run; if it runs out before
+# the last frame, the script says SHORT on stderr (the picture is an earlier frame).
 set -e
 cd "$(dirname "$0")/.."
 OUT="$1"; FRAMES="$2"; RES="${3:-720x1280}"
 shift 3; [ "$1" = "--" ] && shift
 TMP="$(mktemp -d)"
 W="${RES%x*}"; H="${RES#*x}"
-timeout 300 xvfb-run -a -s "-screen 0 $((W+64))x$((H+64))x24" "${GODOT:-godot}" --path . --rendering-driver opengl3 \
+timeout "${CAPTURE_TIMEOUT:-300}" xvfb-run -a -s "-screen 0 $((W+64))x$((H+64))x24" "${GODOT:-godot}" --path . --rendering-driver opengl3 \
   --resolution "$RES" --write-movie "$TMP/f.png" --fixed-fps 30 --quit-after "$FRAMES" -- "$@" > "$TMP/log.txt" 2>&1 || true
 grep -E "SCRIPT ERROR|^ERROR" "$TMP/log.txt" | grep -v "resources still in use" | head -20 || true
+N="$(ls "$TMP"/f*.png 2>/dev/null | wc -l)"
+[ "$N" -lt "$FRAMES" ] && echo "SHORT: $N of $FRAMES frames (timed out)" >&2
 if [ "${KEEP_ALL:-0}" = "1" ]; then
   mkdir -p "$OUT"; cp "$TMP"/f*.png "$OUT"/
 else

@@ -1,54 +1,44 @@
 {
- "c-folder": {
-  "done": true,
-  "by": "claude"
- },
- "c-builds": {
-  "done": true,
-  "by": "claude"
- },
- "c-ios-project": {
-  "done": true,
-  "by": "claude"
- },
- "c-release-workflow": {
-  "done": true,
-  "by": "claude"
- },
- "c-version": {
-  "done": true,
-  "by": "claude"
- },
- "c-research": {
-  "done": true,
-  "by": "claude"
- },
- "c-listing": {
-  "done": true,
-  "by": "claude"
- },
- "c-iap-list": {
-  "done": true,
-  "by": "claude"
- },
- "c-privacy-draft": {
-  "done": true,
-  "by": "claude"
- },
- "c-rating-draft": {
-  "done": true,
-  "by": "claude"
- },
- "c-target-api": {
-  "done": true,
-  "by": "claude"
- },
- "c-ios-icon": {
-  "done": true,
-  "by": "claude"
- },
- "c-live-page": {
-  "done": true,
-  "by": "claude"
- }
+  "c-builds": {
+    "done": true
+  },
+  "c-folder": {
+    "done": true
+  },
+  "c-iap-list": {
+    "done": true
+  },
+  "c-ios-icon": {
+    "done": true
+  },
+  "c-ios-project": {
+    "done": true
+  },
+  "c-listing": {
+    "done": true
+  },
+  "c-live-page": {
+    "done": true
+  },
+  "c-privacy-draft": {
+    "done": true
+  },
+  "c-rating-draft": {
+    "done": true
+  },
+  "c-release-workflow": {
+    "done": true
+  },
+  "c-research": {
+    "done": true
+  },
+  "c-target-api": {
+    "done": true
+  },
+  "c-version": {
+    "done": true
+  },
+  "l-credits": {
+    "done": true
+  }
 }

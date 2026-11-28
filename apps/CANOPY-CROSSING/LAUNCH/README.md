@@ -1,6 +1,6 @@
 # **CANOPY CROSSING: STORE LAUNCH CHECKLIST**
 
-**13 of 90 steps done (14%)** · snapshot 2026-11-17
+**14 of 92 steps done (15%)** · snapshot 2026-11-28
 
 **Live checklist (tick steps, log bugs, see builds):** https://claude.ai/artifact/W8GbYN7jifz6X6fRE4QSNR
 
@@ -35,8 +35,8 @@ the official page to re-check on the day you do it.
 
 - [Phase 0: Set up the project for launch](#phase-0-set-up-the-project-for-launch): 13/13
 - [Phase 1: Decide](#phase-1-decide): 0/8
-- [Phase 2: Accounts, contracts and money](#phase-2-accounts-contracts-and-money): 0/16
-- [Phase 3: Legal and privacy](#phase-3-legal-and-privacy): 0/10
+- [Phase 2: Accounts, contracts and money](#phase-2-accounts-contracts-and-money): 0/18
+- [Phase 3: Legal and privacy](#phase-3-legal-and-privacy): 1/10
 - [Phase 4: Game changes the stores require](#phase-4-game-changes-the-stores-require): 0/11
 - [Phase 5: Signing and store builds](#phase-5-signing-and-store-builds): 0/8
 - [Phase 6: Store pictures and video](#phase-6-store-pictures-and-video): 0/6
@@ -318,7 +318,7 @@ _0 of 8 done._ A few choices that change everything after them. Decide these fir
 
 ## Phase 2: Accounts, contracts and money
 
-_0 of 16 done._ Open each store account, sign the paid agreements, and add tax and bank details. Only you can do these.
+_0 of 18 done._ Open each store account, sign the paid agreements, and add tax and bank details. Only you can do these.
 
 - [ ] **Join the Apple Developer Program**  
   _You · Apple App Store · Mac distribution · US$99/year_
@@ -537,9 +537,43 @@ _0 of 16 done._ Open each store account, sign the paid agreements, and add tax a
 
   **Watch out:** Both need a custom payment plugin; leave them until Google and Apple are live.
 
+- [ ] **Create a free Sentry project for crash reports**  
+  _You · free (Developer plan)_
+
+  **Why:** The game is ready to send crash and error reports from the Android .aab, iPhone, Windows, Mac and Linux builds; it needs your project's DSN to know where.
+
+  **How:**
+  1. Sign up at sentry.io (free Developer plan), create a project with platform Godot Engine.
+  2. Copy the DSN (Settings > Projects > Client Keys).
+  3. Settings > Security & Privacy: turn on Prevent Storing of IP Addresses.
+  4. GitHub > Settings > Secrets and variables > Actions: new secret SENTRY_DSN.
+
+  **Done when:** The release builds' log says SENTRY OK.
+
+  **Watch out:** Keep the free plan's 5,000 errors a month in mind: one bad bug can use them up; Sentry stops accepting new ones until next month.
+
+  **Official pages:** [Setup steps](https://sentry.io/signup/)
+
+- [ ] **Create a free Firebase project for Crashlytics (Android)**  
+  _You · Google Play · Amazon Appstore · free (Spark plan)_
+
+  **Why:** Crashlytics is Google's crash reporter: it catches Android crashes, including the engine's own, and shows them next to Play's vitals.
+
+  **How:**
+  1. console.firebase.google.com > Add project (Google Analytics off).
+  2. Add an Android app with package com.aethertek.canopycrossing; download google-services.json.
+  3. Crashlytics > Enable.
+  4. GitHub secret FIREBASE_ANDROID_CONFIG = the whole contents of google-services.json.
+
+  **Done when:** The release builds' log says CRASHLYTICS LIBRARY OK (with Firebase config).
+
+  **Watch out:** Don't commit google-services.json; it's git-ignored on purpose.
+
+  **Official pages:** [Firebase console](https://console.firebase.google.com/)
+
 ## Phase 3: Legal and privacy
 
-_0 of 10 done._ The pages, answers and in-game links every store checks before approving.
+_1 of 10 done._ The pages, answers and in-game links every store checks before approving.
 
 - [ ] **Finish the privacy policy and put it on your website**  
   _You + Claude_
@@ -575,7 +609,7 @@ _0 of 10 done._ The pages, answers and in-game links every store checks before a
 
   **Done when:** Terms are live on your site.
 
-- [ ] **Add a credits and licences screen**  
+- [x] ✅ **Add a credits and licences screen**  
   _Claude_
 
   **Why:** Godot's MIT licence and the fonts' licences require a notice; free-plan Meshy models need credit.
@@ -585,6 +619,8 @@ _0 of 10 done._ The pages, answers and in-game links every store checks before a
 
   **Done when:** Credits open from Settings.
 
+  **Done ✅** Then the privacy questionnaires.
+
 - [ ] **Answer Apple's App Privacy questions**  
   _You · Apple App Store_
 
@@ -593,6 +629,7 @@ _0 of 10 done._ The pages, answers and in-game links every store checks before a
   **How:**
   1. Without ads: Data Not Collected (everything stays on the device).
   2. With AdMob: Device ID, Advertising Data, Product Interaction, Coarse Location, Diagnostics.
+  3. With crash reporting on: Diagnostics > Crash Data and Other Diagnostic Data; not linked to the user, not tracking, App Functionality.
 
   **Done when:** App Privacy shows Published.
 
@@ -607,6 +644,7 @@ _0 of 10 done._ The pages, answers and in-game links every store checks before a
 
   **How:**
   1. Use the table in LAUNCH/google-play/requirements.md, section 2.2.
+  2. With crash reporting on: App info and performance > Crash logs and Diagnostics; collected, not shared, optional (Settings switch), for App functionality (docs/CRASH_REPORTING.md).
 
   **Done when:** Data safety shows Completed.
 

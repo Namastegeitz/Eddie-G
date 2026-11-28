@@ -31,26 +31,26 @@ static func draw(ci: CanvasItem, animal: Dictionary, s: float, anim: Dictionary 
 	var shadow_a := float(anim.get("shadow", 0.28))
 	var lift := float(anim.get("lift", 0.0))
 	s *= 0.72 + 0.32 * float(look.get("size", 0.75))
-	ci.draw_set_transform_matrix(pre)
+	Draw.set_transform_matrix(ci, pre)
 	Draw.shadow(ci, Vector2(0, 0), s * 0.34 * (1.0 - lift * 0.4), s * 0.1 * (1.0 - lift * 0.4), shadow_a * (1.0 - lift * 0.5))
 	var xf := Transform2D()
 	xf = xf.scaled(Vector2((-1.0 if anim.get("flip", false) else 1.0) * (1.0 + squash * 0.18), 1.0 - squash * 0.2))
 	xf.origin = Vector2(0, -lift * s * 0.9)
-	ci.draw_set_transform_matrix(pre * xf)
+	Draw.set_transform_matrix(ci, pre * xf)
 	if sprite != "" and ResourceLoader.exists(sprite):
 		if not _sprites.has(sprite):
 			_sprites[sprite] = load(sprite)
 		var tex: Texture2D = _sprites[sprite]
 		var h := s * 1.05
 		var w := h * tex.get_width() / maxf(1.0, tex.get_height())
-		ci.draw_texture_rect(tex, Rect2(-w * 0.5, -h, w, h), false)
+		Draw.texture_rect(ci, tex, Rect2(-w * 0.5, -h, w, h), false)
 	else:
 		if Draw.detail > 0 and not anim.get("no_outline", false):
 			Draw.begin_outline(maxf(1.3, s * 0.022))
 			_plan(ci, look, s, anim)
 			Draw.end_outline()
 		_plan(ci, look, s, anim)
-	ci.draw_set_transform_matrix(pre)
+	Draw.set_transform_matrix(ci, pre)
 
 
 static func _plan(ci: CanvasItem, look: Dictionary, s: float, anim: Dictionary) -> void:

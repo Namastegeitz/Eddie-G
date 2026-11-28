@@ -3,14 +3,14 @@
   "status": "built",
   "version": "0.9.0",
   "build": 1,
-  "commit": "4412280",
-  "built_at": "2026-11-17T01:19:46Z",
+  "commit": "30e2033",
+  "built_at": "2026-11-28T02:04:59Z",
   "godot": "4.7.2",
   "files": [
     {
       "file": "CanopyCrossing-macOS.zip",
-      "bytes": 97254192,
-      "sha256": "1eba60e6c3b197bead32aa338c92aca022b501a00f87d601063b58ba960cf3e4"
+      "bytes": 97319914,
+      "sha256": "bffa4cf30dfcc83bd4e61c2f37ad026353bba87059efee7a41d3671e13057fbf"
     }
   ],
   "notes": "Universal (Apple silicon + Intel) .app in a zip. Not signed or notarized: macOS will refuse to open it normally until it is (needs an Apple Developer account)."

@@ -12,3 +12,19 @@ BUILDS/*/*
 
 # Godot installs its Android Gradle build template here when building the Play Store .aab
 /android/
+# Crashlytics library: built by tools/build_crashlytics.sh (CI), never committed
+addons/canopy_crashlytics/bin/
+android_plugins/**/build/
+android_plugins/**/.gradle/
+android_plugins/**/local.properties
+android_plugins/crashlytics/plugin/src/main/res/
+# Firebase / Sentry config files stay out of git (GitHub secrets)
+google-services.json
+GoogleService-Info.plist
+# Sentry SDK: installed by tools/install_sentry.sh on the build machine, never committed
+addons/sentry/
+# In-app Review plugin: installed by tools/install_review.sh on the build machine
+addons/InappReview*/
+ios/plugins/
+# local window-size overrides used by capture tools
+/override.cfg

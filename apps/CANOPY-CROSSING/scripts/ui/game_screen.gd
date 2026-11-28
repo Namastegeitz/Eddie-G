@@ -25,6 +25,7 @@ var paused := false
 var blocking := false
 var started := false
 var finished := false
+var review_ok := false              # this run cleared a level: a happy moment to ask for a rating
 var acc := 0.0
 var revive_ad_used := false
 var low_life_prompted := false
@@ -285,6 +286,8 @@ func _build_hud() -> void:
 	eye_btn.size_flags_horizontal = Control.SIZE_SHRINK_END if left_handed else Control.SIZE_SHRINK_BEGIN
 	eyebox.add_child(eye_btn)
 	hud_buttons.append(eye_btn)
+	if not RemoteConfig.enabled("first_person"):
+		eye_btn.visible = false
 	var col := UI.vbox(14)
 	col.set_anchors_preset(Control.PRESET_BOTTOM_LEFT if left_handed else Control.PRESET_BOTTOM_RIGHT)
 	col.grow_horizontal = Control.GROW_DIRECTION_END if left_handed else Control.GROW_DIRECTION_BEGIN
@@ -463,7 +466,7 @@ func _update_views(dt: float) -> void:
 			canopy_tip.text = String(tips.scene_text).replace("{scene}", String(sc.get("name", "")))
 		if eye_btn.key_hint and not canopy_tip.text.ends_with("(or press X)"):
 			canopy_tip.text += " (or press X)"
-		canopy_tip.visible = ahead and view == "bird" and not finished and not tut_bubble.visible
+		canopy_tip.visible = ahead and view == "bird" and not finished and not tut_bubble.visible and RemoteConfig.enabled("first_person")
 		eye_btn.pulse = ahead and view == "bird" and not finished
 
 
@@ -546,6 +549,8 @@ func _prewarm_fpv() -> void:
 ## Bird's-eye (2D, top-down) or first person (3D, through the animal's eyes).
 func set_view(v: String, remember := true) -> void:
 	if v == view:
+		return
+	if v == "fpv" and not RemoteConfig.enabled("first_person"):
 		return
 	view = v
 	if v == "fpv":
@@ -793,6 +798,14 @@ func _unhandled_input(event: InputEvent) -> void:
 
 # ------------------------------------------------------------------ overlays
 
+## Leaving the app mid-run (a call, a notification, another tab or window)
+## opens the pause menu, so coming back never drops you straight into play.
+func _notification(what: int) -> void:
+	if what in [NOTIFICATION_APPLICATION_FOCUS_OUT, NOTIFICATION_APPLICATION_PAUSED]:
+		if started and not autoplay and bool(Save.setting("auto_pause", true)):
+			_pause()
+
+
 func _pause() -> void:
 	if finished or blocking or paused:
 		return
@@ -1004,6 +1017,7 @@ func _settle(won: bool) -> Dictionary:
 	if not autoplay:
 		rec = Progress.record_run({"map": map.id, "mode": cfg.mode, "stage": int(cfg.get("stage", 0)), "rows": rows, "score": sim.score,
 			"won": won, "cause": sim.cause if not won else "", "collected": collected, "best_combo": sim.combo})
+		review_ok = won and bool(rec.get("stage_cleared", false))
 		Analytics.event("run_end", {"mode": cfg.mode, "map": map.id, "stage": cfg.get("stage", 0), "animal": animal.id, "rows": rows,
 			"score": sim.score, "won": won, "berries": earned, "deaths": sim.deaths, "revives": sim.revives, "near_misses": sim.near_misses, "time": snappedf(sim.t, 0.1)})
 		if sim.cause != "" and not won:
@@ -1036,6 +1050,12 @@ func leave(target: String) -> void:
 			_:
 				Game.goto("home")
 	if cfg.mode == "tutorial" or autoplay:
+		go.call()
+		return
+	# a store rating card after a cleared level (instead of an ad, never with one)
+	if review_ok and target != "retry" and ReviewPrompt.due(true, String(cfg.mode)):
+		review_ok = false
+		ReviewPrompt.ask()
 		go.call()
 		return
 	if _milestone_due():

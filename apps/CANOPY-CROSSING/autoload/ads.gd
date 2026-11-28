@@ -45,7 +45,7 @@ func _allowed() -> bool:
 
 
 func interstitial_due() -> bool:
-	if ads_removed() or not _allowed():
+	if ads_removed() or not _allowed() or not RemoteConfig.enabled("between_run_ads"):
 		return false
 	if int(Save.data.stats.get("runs", 0)) < MIN_RUNS_BEFORE_ADS:
 		return false

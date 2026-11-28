@@ -2,14 +2,20 @@
  "platforms": [
   {
    "platform": "android",
-   "status": "needs-sdk",
+   "status": "built",
    "version": "0.9.0",
    "build": 1,
-   "commit": "4412280",
-   "built_at": "2026-11-17T01:20:22Z",
+   "commit": "30e2033",
+   "built_at": "2026-11-28T02:04:03Z",
    "godot": "4.7.2",
-   "files": [],
-   "notes": "This machine has no Android SDK (its network can't reach Google's download server). GitHub Actions builds the APK and the Play Store .aab: run 'Canopy Crossing release builds'.",
+   "files": [
+    {
+     "file": "CanopyCrossing.apk",
+     "bytes": 90788466,
+     "sha256": "ce8f8a8b2cef764bb376950560b90763562e75dd5d7c2f7052f44313fc74311d"
+    }
+   ],
+   "notes": "APK installs directly on phones. Google Play needs the .aab (set ANDROID_AAB=1; GitHub Actions does).",
    "id": "android",
    "stores": "Google Play (.aab), Amazon Appstore, Samsung Galaxy Store (.apk)"
   },
@@ -18,14 +24,14 @@
    "status": "project",
    "version": "0.9.0",
    "build": 1,
-   "commit": "4412280",
-   "built_at": "2026-11-17T01:20:18Z",
+   "commit": "30e2033",
+   "built_at": "2026-11-28T02:05:25Z",
    "godot": "4.7.2",
    "files": [
     {
      "file": "CanopyCrossing-iOS-XcodeProject.zip",
-     "bytes": 135147425,
-     "sha256": "936e736cb4dc92efa7ac2f9f05b6abf4b11f855bdb79a082f301e31b3ba18425"
+     "bytes": 135180468,
+     "sha256": "bbd78d84ae2fc47c30a718ab01be1560853709b493b6cda42112c2bc01574a21"
     }
    ],
    "notes": "Xcode project (built on Linux). Finish on a Mac or a cloud Mac: open CanopyCrossing.xcodeproj, set your Team, Product > Archive, upload to App Store Connect.",
@@ -37,14 +43,14 @@
    "status": "built",
    "version": "0.9.0",
    "build": 1,
-   "commit": "4412280",
-   "built_at": "2026-11-17T01:19:32Z",
+   "commit": "30e2033",
+   "built_at": "2026-11-28T02:04:32Z",
    "godot": "4.7.2",
    "files": [
     {
      "file": "CanopyCrossing-Windows-x86_64.zip",
-     "bytes": 75562084,
-     "sha256": "491832148c57bbbac3bef61eefed5cb4588f5d830ae0efbf5fc77a7bf3707035"
+     "bytes": 75626436,
+     "sha256": "df4b864407a1e070d49de4388ecb9dcbaf90c7e738dfd69ac489e08668509e6f"
     }
    ],
    "notes": "One file, the game data is inside the .exe. Not code-signed yet (Windows SmartScreen will warn until it is).",
@@ -56,14 +62,14 @@
    "status": "built",
    "version": "0.9.0",
    "build": 1,
-   "commit": "4412280",
-   "built_at": "2026-11-17T01:19:46Z",
+   "commit": "30e2033",
+   "built_at": "2026-11-28T02:04:59Z",
    "godot": "4.7.2",
    "files": [
     {
      "file": "CanopyCrossing-macOS.zip",
-     "bytes": 97254192,
-     "sha256": "1eba60e6c3b197bead32aa338c92aca022b501a00f87d601063b58ba960cf3e4"
+     "bytes": 97319914,
+     "sha256": "bffa4cf30dfcc83bd4e61c2f37ad026353bba87059efee7a41d3671e13057fbf"
     }
    ],
    "notes": "Universal (Apple silicon + Intel) .app in a zip. Not signed or notarized: macOS will refuse to open it normally until it is (needs an Apple Developer account).",
@@ -75,14 +81,14 @@
    "status": "built",
    "version": "0.9.0",
    "build": 1,
-   "commit": "4412280",
-   "built_at": "2026-11-17T01:19:55Z",
+   "commit": "30e2033",
+   "built_at": "2026-11-28T02:04:43Z",
    "godot": "4.7.2",
    "files": [
     {
      "file": "CanopyCrossing-Linux-x86_64.zip",
-     "bytes": 65913715,
-     "sha256": "568dd08516ae18aced138744cddd89ec544dc19a962a9e96ea5233162115038f"
+     "bytes": 65977639,
+     "sha256": "3b917186e65846c5e68a18f74886f3798cae067a7de9e0b734e64bfc532155a9"
     }
    ],
    "notes": "One file, the game data is inside. Runs on 64-bit Linux with OpenGL 3.3 (and Steam Deck).",

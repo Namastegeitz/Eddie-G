@@ -3,14 +3,14 @@
   "status": "project",
   "version": "0.9.0",
   "build": 1,
-  "commit": "4412280",
-  "built_at": "2026-11-17T01:20:18Z",
+  "commit": "30e2033",
+  "built_at": "2026-11-28T02:05:25Z",
   "godot": "4.7.2",
   "files": [
     {
       "file": "CanopyCrossing-iOS-XcodeProject.zip",
-      "bytes": 135147425,
-      "sha256": "936e736cb4dc92efa7ac2f9f05b6abf4b11f855bdb79a082f301e31b3ba18425"
+      "bytes": 135180468,
+      "sha256": "bbd78d84ae2fc47c30a718ab01be1560853709b493b6cda42112c2bc01574a21"
     }
   ],
   "notes": "Xcode project (built on Linux). Finish on a Mac or a cloud Mac: open CanopyCrossing.xcodeproj, set your Team, Product > Archive, upload to App Store Connect."

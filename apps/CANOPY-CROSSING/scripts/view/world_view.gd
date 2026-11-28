@@ -234,7 +234,7 @@ class LaneView extends Node2D:
 
 	func _ready() -> void:
 		var T := WorldView.T
-		if Draw.detail > 0 and not lane.covered:
+		if Draw.detail > 0 and not lane.covered and RemoteConfig.enabled("hd_terrain"):
 			var up := wv.sim.world.lane(row + 1)
 			var down := wv.sim.world.lane(row - 1)
 			var st := Terrain.style(wv.map)
@@ -495,6 +495,12 @@ class EntView extends Node2D:
 			queue_redraw()
 
 	func _draw() -> void:
+		# one draw call for the whole figure (Draw.begin_batch)
+		Draw.begin_batch(self)
+		_paint()
+		Draw.end_batch(self)
+
+	func _paint() -> void:
 		var dir := 1 if lane.speed >= 0.0 else -1
 		if e.motion == "pendulum":
 			dir = 1 if e.velocity(0.0, wv.sim.vt) >= 0.0 else -1
@@ -526,6 +532,12 @@ class PredView extends Node2D:
 			position = Vector2(int(p.col) * T, -lane.row * T + 1)
 
 	func _draw() -> void:
+		# one draw call for the whole figure (Draw.begin_batch)
+		Draw.begin_batch(self)
+		_paint()
+		Draw.end_batch(self)
+
+	func _paint() -> void:
 		var st := lane.pred_state(p, wv.sim.vt)
 		var reveal := wv.reveal if bool(p.get("hidden", false)) else 0.0
 		HazardPainter.draw_pred(self, hz, p, WorldView.T, String(st[0]), float(st[1]), wv.sim.vt, reveal)
@@ -558,6 +570,12 @@ class ItemView extends Node2D:
 		queue_redraw()
 
 	func _draw() -> void:
+		# one draw call for the whole figure (Draw.begin_batch)
+		Draw.begin_batch(self)
+		_paint()
+		Draw.end_batch(self)
+
+	func _paint() -> void:
 		HazardPainter.draw_item(self, def, WorldView.T, wv.sim.t + float(it.col) * 0.7, bool(it.bonus))
 
 
@@ -565,6 +583,12 @@ class SwoopView extends Node2D:
 	var wv: WorldView
 
 	func _draw() -> void:
+		# one draw call for the whole figure (Draw.begin_batch)
+		Draw.begin_batch(self)
+		_paint()
+		Draw.end_batch(self)
+
+	func _paint() -> void:
 		var T := WorldView.T
 		var w := wv.sim.world
 		var vis := wv.visible_rows()
@@ -581,7 +605,7 @@ class SwoopView extends Node2D:
 			match String(st[0]):
 				"warn":
 					var k := float(st[1])
-					draw_rect(Rect2(x - T * 0.5, top, T, bottom - top), Color(0, 0, 0, 0.06 + 0.12 * k))
+					Draw._rect_raw(self, Rect2(x - T * 0.5, top, T, bottom - top), Color(0, 0, 0, 0.06 + 0.12 * k))
 					var sy := lerpf(top - T, bottom - T * 0.5, k * 0.3)
 					_bird_shadow(Vector2(x, sy), T * (0.5 + 0.3 * k), Color(0, 0, 0, 0.25 + 0.25 * k))
 					if wv.colorblind:
@@ -589,18 +613,18 @@ class SwoopView extends Node2D:
 				"active":
 					var k2 := float(st[1])
 					var by := lerpf(top, bottom, k2)
-					draw_rect(Rect2(x - T * 0.5, top, T, bottom - top), Color(0, 0, 0, 0.12))
+					Draw._rect_raw(self, Rect2(x - T * 0.5, top, T, bottom - top), Color(0, 0, 0, 0.12))
 					_bird(Vector2(x, by), T * 0.9, cl)
 
 	func _bird_shadow(p: Vector2, r: float, c: Color) -> void:
 		Draw.ellipse(self, p, r * 0.25, r * 0.4, c)
-		draw_colored_polygon(PackedVector2Array([p + Vector2(-r, -r * 0.1), p + Vector2(0, -r * 0.25), p + Vector2(r, -r * 0.1), p + Vector2(0, r * 0.15)]), c)
+		Draw._fill(self, PackedVector2Array([p + Vector2(-r, -r * 0.1), p + Vector2(0, -r * 0.25), p + Vector2(r, -r * 0.1), p + Vector2(0, r * 0.15)]), c)
 
 	func _bird(p: Vector2, r: float, cl: Dictionary) -> void:
 		var wing := Color(String(cl.get("wing", "#2a2a30")))
 		var body := Color(String(cl.get("body", "#55565e")))
 		Draw.shadow(self, p + Vector2(10, 20), r * 0.6, r * 0.2, 0.3)
-		draw_colored_polygon(PackedVector2Array([p + Vector2(-r, -r * 0.05), p + Vector2(-r * 0.2, -r * 0.3), p + Vector2(0, -r * 0.1), p + Vector2(r * 0.2, -r * 0.3), p + Vector2(r, -r * 0.05), p + Vector2(0, r * 0.15)]), wing)
+		Draw._fill(self, PackedVector2Array([p + Vector2(-r, -r * 0.05), p + Vector2(-r * 0.2, -r * 0.3), p + Vector2(0, -r * 0.1), p + Vector2(r * 0.2, -r * 0.3), p + Vector2(r, -r * 0.05), p + Vector2(0, r * 0.15)]), wing)
 		Draw.ellipse(self, p, r * 0.18, r * 0.35, body)
 		Draw.ellipse(self, p + Vector2(0, r * 0.28), r * 0.12, r * 0.12, Color(String(cl.get("belly", "#f4f4f2"))))
-		draw_colored_polygon(PackedVector2Array([p + Vector2(-r * 0.05, r * 0.38), p + Vector2(r * 0.05, r * 0.38), p + Vector2(0, r * 0.5)]), Color("f2c02a"))
+		Draw._fill(self, PackedVector2Array([p + Vector2(-r * 0.05, r * 0.38), p + Vector2(r * 0.05, r * 0.38), p + Vector2(0, r * 0.5)]), Color("f2c02a"))

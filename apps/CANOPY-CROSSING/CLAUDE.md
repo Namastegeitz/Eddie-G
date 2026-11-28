@@ -45,3 +45,45 @@ view, where, steps, status) and `activity/*`.
   (and `builds.json` after new builds) to that artifact. To refresh the
   README snapshot's green checks, export `progress` to
   `LAUNCH/progress.json` ({id: {done}}) first.
+
+## Build, test, release, roll back (since the 2026-11-27 upgrade)
+
+- **Upgrade runs** follow Eddie's *Universal Upgrade + Release Build* prompt:
+  read `UPGRADE_LEDGER.md` first (skip what's done), write findings and the
+  before/after table to `UPGRADE_REPORT.md`, append the run to the ledger.
+- **Tests**: `FAST=1 tools/run_tests.sh` now also runs the performance gate
+  (`tools/benchmark.tscn` + `tools/bench_check.py`: draw calls, objects and
+  primitives must stay within 5% of `tests/perf_baseline.json`; re-record with
+  `--record` only for a deliberate change, and say why in the commit) and a
+  secret scan. `VISUAL=1` adds `tools/visual_check.py` (key screens at phone,
+  tall-phone and tablet sizes vs `tests/visual/`, captured at Medium via the
+  one-launch `--graphics=` switch). Plus the level sweep.
+- **Size budget**: `tools/build_web.sh` fails if the game data grows over 5%
+  past `tests/size_budget.json`. Folders of pictures that aren't game content
+  (`upgrade-shots/`, `tests/visual/`) carry a `.gdignore`, or Godot packs them.
+- **Android locally**: the SDK may be installed at `/root/android-sdk` (Google's
+  hosts are reachable now). `tools/build_all.sh android` (needs a keystore: the
+  `GODOT_ANDROID_KEYSTORE_RELEASE_*` variables; use a throwaway key outside the
+  repo) and `tools/check_android.sh BUILDS/android/CanopyCrossing.apk`
+  (16 KB pages, target API 36, permissions).
+- **Release builds**: GitHub *Actions > Canopy Crossing release builds*. Order:
+  web + APK, then the SDKs (`tools/install_sentry.sh` if `SENTRY_DSN`,
+  `tools/install_review.sh`, `tools/build_crashlytics.sh` if
+  `FIREBASE_ANDROID_CONFIG`), then `.aab`, iOS, desktop, then the Play checks.
+  Build number = commit count. Never upload to a store without Eddie's go.
+- **Crash reporting**: `autoload/crash_report.gd`; setup in
+  `docs/CRASH_REPORTING.md`. Off without the keys (local builds, tests, beta link).
+- **Remote switches**: `content/remote_config.json` (published by the beta
+  workflow to GitHub Pages); `docs/REMOTE_CONFIG.md`. Switches may only turn
+  shipped features off (App Review 2.5.19).
+- **2D drawing**: painters draw through `Draw.*` helpers; entity views wrap
+  their drawing in `Draw.begin_batch`/`end_batch` (one draw call per figure).
+  New painter code must use `Draw.*` (and `Draw.set_transform`,
+  `Draw.texture_rect`) rather than `ci.draw_*`, or its shapes land under the batch.
+- **Store kit**: `store-kit/` (credits, privacy answers, screenshots list,
+  accessibility labels, review notes, release plan, where keys live).
+- **Roll back**: each upgrade step is its own commit; the 2026-11-27 run
+  started from commit 8ea014e (local tag `pre-upgrade-2026-11-27-canopy-crossing`;
+  the proxy refused to push tags). Store side: halt the staged rollout, flip a
+  remote switch, or ship the previous tag with a higher build number
+  (`store-kit/release-plan.md`).

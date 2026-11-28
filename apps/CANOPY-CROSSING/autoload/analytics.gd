@@ -16,6 +16,8 @@ var _pending: Array[Dictionary] = []
 var _http: HTTPRequest
 var _endpoint := ""
 var _flush_timer := 0.0
+var _in_flight: Array[Dictionary] = []
+var _backoff := 20.0               # seconds between uploads; doubles after a failure, up to 10 minutes
 
 
 func _ready() -> void:
@@ -23,6 +25,8 @@ func _ready() -> void:
 	_endpoint = String(ProjectSettings.get_setting("canopy/analytics/endpoint", ""))
 	if _endpoint != "":
 		_http = HTTPRequest.new()
+		_http.timeout = 15.0          # never hold a batch open on a bad connection (it's retried later)
+		_http.request_completed.connect(_on_sent)
 		add_child(_http)
 	if Save.data.get("stats", {}).get("runs", 0) == 0 and not Save.flag("funnel_first_launch"):
 		funnel("first_launch")
@@ -34,7 +38,7 @@ func _process(delta: float) -> void:
 		return
 	_flush_timer -= delta
 	if _flush_timer <= 0.0:
-		_flush_timer = 20.0
+		_flush_timer = _backoff
 		_send_batch()
 
 
@@ -80,8 +84,27 @@ func count(name: String) -> int:
 func _send_batch() -> void:
 	if _http == null or _http.get_http_client_status() != HTTPClient.STATUS_DISCONNECTED:
 		return
-	var batch := _pending.duplicate()
-	_pending.clear()
+	var batch := _pending.slice(0, 200)
+	_pending = _pending.slice(200)
+	_in_flight = batch
 	var err := _http.request(_endpoint, ["Content-Type: application/json"], HTTPClient.METHOD_POST, JSON.stringify({"events": batch}))
 	if err != OK:
-		_pending = batch + _pending
+		_requeue()
+
+
+## A batch that didn't arrive goes back in the queue, and uploads slow down
+## (20 s, 40 s, ... up to 10 minutes) until one gets through.
+func _on_sent(result: int, code: int, _h: PackedStringArray, _b: PackedByteArray) -> void:
+	if result == HTTPRequest.RESULT_SUCCESS and code >= 200 and code < 300:
+		_in_flight.clear()
+		_backoff = 20.0
+	else:
+		_requeue()
+
+
+func _requeue() -> void:
+	_pending = _in_flight + _pending
+	_in_flight.clear()
+	if _pending.size() > 1000:
+		_pending = _pending.slice(_pending.size() - 1000)
+	_backoff = minf(_backoff * 2.0, 600.0)

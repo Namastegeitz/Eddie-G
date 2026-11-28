@@ -29,7 +29,7 @@ static func draw_entity(ci: CanvasItem, hz: Dictionary, len_px: float, T: float,
 		if not _sprites.has(sprite):
 			_sprites[sprite] = load(sprite)
 		var tex: Texture2D = _sprites[sprite]
-		ci.draw_texture_rect(tex, Rect2(0, -T * 0.45, len_px, T * 0.9), false)
+		Draw.texture_rect(ci, tex, Rect2(0, -T * 0.45, len_px, T * 0.9), false)
 		return
 	if Draw.detail > 0 and Draw.outline == 0.0:
 		Draw.begin_outline(maxf(1.2, T * 0.028))
@@ -1048,9 +1048,9 @@ static func draw_item(ci: CanvasItem, def: Dictionary, T: float, t: float, ghost
 	var a := 0.55 if ghost else 1.0
 	match String(def.get("art", {}).get("painter", "")):
 		"berry":
-			ci.draw_set_transform(p, 0, Vector2.ONE * 0.9)
+			Draw.set_transform(ci, p, 0, Vector2.ONE * 0.9)
 			Draw.berry_icon(ci, Vector2.ZERO, T * 0.2)
-			ci.draw_set_transform(Vector2.ZERO)
+			Draw.set_transform(ci, Vector2.ZERO)
 		"beetle":
 			Draw.ellipse(ci, p, T * 0.16, T * 0.2, Color(c(cl, "body"), a))
 			Draw.line(ci, p + Vector2(0, -T * 0.18), p + Vector2(0, T * 0.18), Color(0, 0, 0, 0.4 * a), 2)

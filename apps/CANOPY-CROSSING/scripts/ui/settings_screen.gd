@@ -26,8 +26,10 @@ func _ready() -> void:
 	box.add_child(_toggle("Left-handed controls", "left_handed", "Ability button on the left."))
 	box.add_child(_toggle("Colour-blind hazard markers", "colorblind", "Warning triangles on deadly things, outlines on safe rides."))
 	box.add_child(_toggle("Reduce motion", "reduce_motion", "No screen shake."))
+	box.add_child(_toggle("Pause when you switch away", "auto_pause", "A call, a notification or another app pauses the run."))
 	box.add_child(_toggle("Per-move timer on harder maps", "move_timer", "Some regions (like Bwindi) time each forward move."))
 	box.add_child(_toggle("Personalised ads", "ads_personalised", "Off by default. Only affects optional ads."))
+	box.add_child(_toggle("Send crash reports", "crash_reports", "Helps us fix crashes and bugs. Reports say what went wrong and on which device, never who you are."))
 	box.add_child(_silly_faces())
 	box.add_child(_toggle("Mini-map", "mini_map", "A live map of the rows around you, and where you are in the level. Tap it to resize."))
 	box.add_child(_toggle("Show FPS counter", "show_fps", "For checking smoothness on your device."))
@@ -45,9 +47,12 @@ func _ready() -> void:
 				Save.wipe()
 				Game.boot())
 		Game.modal(card), Color("5a2a22"), 26, 80))
+	box.add_child(UI.button("Credits and licences", func(): Game.modal(_credits_card()), UI.PANEL_3, 26, 80))
 	box.add_child(UI.label("About", 30, UI.ACCENT, true))
 	box.add_child(UI.wrap_label("Canopy Crossing %s. Animals and places are real; facts are simplified for play. Conservation statuses follow the IUCN Red List where available.\nFont: Fredoka (SIL Open Font License). Globe outline: Natural Earth (public domain)." % String(ProjectSettings.get_setting("application/config/version")), 22, UI.MUTED))
-	box.add_child(UI.label("Analytics events this session: %d · billing: %s · ads: %s" % [Analytics.buffer.size(), Store.backend.name_label, Ads.backend], 20, UI.MUTED))
+	var dbg := UI.label("Analytics events this session: %d · billing: %s · ads: %s" % [Analytics.buffer.size(), Store.backend.name_label, Ads.backend], 20, UI.MUTED)
+	dbg.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	box.add_child(dbg)
 
 
 func _slider(label: String, key: String) -> Control:
@@ -145,8 +150,9 @@ func _quality() -> Control:
 	var row := UI.hbox(8)
 	var group := ButtonGroup.new()
 	var hint := UI.label("", 20, UI.MUTED)
-	var names := {"auto": "Auto", "high": "High", "medium": "Medium", "low": "Low"}
-	var hints := {"auto": "Picks for your device (now: %s).", "high": "Sharpest: fur and feather detail, full-resolution anti-aliased 3D with shadows.",
+	var names := {"auto": "Auto", "ultra": "Ultra", "high": "High", "medium": "Medium", "low": "Low"}
+	var hints := {"auto": "Picks for your device (now: %s).", "ultra": "For strong computers: High plus soft contact shadows, softer sun shadows and extra-sharp 3D.",
+		"high": "Sharpest: fur and feather detail, full-resolution anti-aliased 3D with shadows.",
 		"medium": "Outlines and shading, lighter 3D. Best for most phones.", "low": "Flat shapes for older phones and the longest battery life."}
 	var show := func(q: String):
 		hint.text = String(hints[q]) % Gfx.level().capitalize() if q == "auto" else String(hints[q])
@@ -158,7 +164,8 @@ func _quality() -> Control:
 		b.button_pressed = Gfx.choice() == q
 		b.custom_minimum_size = Vector2(0, 64)
 		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		b.add_theme_font_size_override("font_size", 24)
+		b.clip_text = true          # five choices share a phone-width row
+		b.add_theme_font_size_override("font_size", 22)
 		b.toggled.connect(func(on):
 			if on:
 				Save.set_setting("graphics", q)
@@ -169,6 +176,40 @@ func _quality() -> Control:
 	v.add_child(row)
 	v.add_child(hint)
 	show.call(Gfx.choice())
+	v.add_child(_choice_row("Frame rate", "fps_cap", [["max", "Max"], ["60", "60"], ["30", "30 (battery)"]],
+		"Max follows your screen (up to 120 on some phones). 30 saves battery."))
+	v.add_child(_choice_row("First-person resolution", "res_3d", [["auto", "Auto"], ["100", "100%"], ["75", "75%"], ["50", "50%"]],
+		"Lower is smoother and cooler on older phones."))
+	return v
+
+
+## A row of buttons for one setting (frame rate, 3D resolution).
+func _choice_row(title: String, key: String, options: Array, hint_text: String) -> Control:
+	var v := UI.vbox(4)
+	v.add_child(UI.label(title, 24))
+	var row := UI.hbox(8)
+	var group := ButtonGroup.new()
+	for o in options:
+		var b := Button.new()
+		b.text = String(o[1])
+		b.toggle_mode = true
+		b.button_group = group
+		b.button_pressed = String(Save.setting(key, options[0][0])) == String(o[0])
+		b.custom_minimum_size = Vector2(0, 56)
+		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		b.clip_text = true
+		b.add_theme_font_size_override("font_size", 22)
+		b.accessibility_name = "%s: %s" % [title, String(o[1])]
+		b.toggled.connect(func(on):
+			if on:
+				Save.set_setting(key, String(o[0]))
+				Gfx.apply(get_tree())
+				Analytics.event("settings_" + key, {"value": String(o[0])}))
+		row.add_child(b)
+	v.add_child(row)
+	var h := UI.label(hint_text, 20, UI.MUTED)
+	h.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	v.add_child(h)
 	return v
 
 
@@ -213,5 +254,42 @@ func _toggle(label: String, key: String, hint: String) -> Control:
 	c.custom_minimum_size.y = 64
 	c.toggled.connect(func(on): Save.set_setting(key, on))
 	v.add_child(c)
-	v.add_child(UI.label(hint, 20, UI.MUTED))
+	# hints wrap, so a long one can't make the page wider than the screen
+	var h := UI.label(hint, 20, UI.MUTED)
+	h.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	v.add_child(h)
 	return v
+
+
+## Credits and licences: who made what, and the licence texts the game must
+## carry (Godot's MIT licence and its third-party notices come from the engine).
+func _credits_card() -> Control:
+	var lines: Array[String] = [
+		"Canopy Crossing %s" % String(ProjectSettings.get_setting("application/config/version")),
+		"Game, code, music and sound: Canopy Crossing (Aethertek).",
+		"Made with Godot Engine (godotengine.org), MIT licence.",
+		"Font: Fredoka, SIL Open Font License 1.1.",
+		"Globe outline: Natural Earth (public domain).",
+		"3D models: made with Meshy (meshy.ai).",
+		"Conservation statuses: IUCN Red List.",
+	]
+	if Engine.has_singleton("SentrySDK"):
+		lines.append("Crash reports: Sentry SDK for Godot, MIT licence.")
+	if Engine.has_singleton("CanopyCrashlytics"):
+		lines.append("Crash reports: Firebase Crashlytics (Google).")
+	if Engine.has_singleton("InappReviewPlugin"):
+		lines.append("Rating card: Godot In-app Review plugin, MIT licence.")
+	var text := "\n".join(lines) + "\n\n--- Godot Engine licence ---\n" + Engine.get_license_text()
+	text += "\n--- Third-party licences in Godot ---\n"
+	for part in Engine.get_copyright_info():
+		text += "\n" + String(part.get("name", ""))
+	var scroll := ScrollContainer.new()
+	scroll.custom_minimum_size = Vector2(540, 620)
+	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	var lab := UI.label(text, 18, UI.TEXT)
+	lab.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	lab.custom_minimum_size.x = 520
+	lab.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	scroll.add_child(lab)
+	return PromptCard.make("Credits and licences", "", [{"id": "ok", "text": "Close", "color": UI.ACCENT}], scroll)
+
