@@ -4465,3 +4465,105 @@ func _phase22() -> void:
 		DirAccess.remove_absolute(dir.path_join(g))
 	SaveSystem.save_path = keep_path
 	SaveSystem.data = keep_data
+	await _phase22_settings()
+	await _phase22_crash_reports()
+
+
+func _phase22_settings() -> void:
+	# New settings default to "as before": medium still means 60 fps, full scale.
+	SaveSystem.data = SaveSystem.default_data()
+	SaveSystem.set_setting("quality", "medium")
+	check(Engine.max_fps == 60 and is_equal_approx(get_viewport().scaling_3d_scale, 1.0)
+		and is_equal_approx(get_tree().root.content_scale_factor, 1.0), "new settings change nothing until used")
+	SaveSystem.set_setting("quality", "ultra")
+	check(get_viewport().msaa_3d == Viewport.MSAA_8X and get_viewport().anisotropic_filtering_level == Viewport.ANISOTROPY_16X
+		and GameManager.shadows_enabled() and GameManager.quality_at_least("high"), "Ultra: 8x antialiasing, 16x filtering, shadows")
+	var lv := await load_level(&"kitchen", &"cockroach")
+	var env := (lv.find_children("*", "WorldEnvironment", true, false)[0] as WorldEnvironment).environment
+	check(env.ssao_enabled and env.glow_enabled, "Ultra adds ambient occlusion on top of High's glow")
+	SaveSystem.set_setting("quality", "high")
+	check(not env.ssao_enabled and env.glow_enabled, "High keeps glow without ambient occlusion")
+	GameManager.auto_quality_enabled = true
+	SaveSystem.set_setting("auto_quality", true)
+	SaveSystem.set_setting("quality", "ultra")
+	GameManager._quality_cd = 0.0
+	GameManager.check_frame_rate(10.0)
+	check(GameManager.quality() == "high", "auto quality steps Ultra down to High when slow")
+	GameManager.auto_quality_enabled = false
+	SaveSystem.set_setting("quality", "medium")
+	SaveSystem.set_setting("frame_cap", "120")
+	SaveSystem.set_setting("render_scale", "0.5")
+	check(Engine.max_fps == 120 and is_equal_approx(get_viewport().scaling_3d_scale, 0.5), "frame cap and render scale override the preset")
+	SaveSystem.set_setting("frame_cap", "unlimited")
+	check(Engine.max_fps == 0, "no frame cap")
+	SaveSystem.set_setting("frame_cap", "preset")
+	SaveSystem.set_setting("render_scale", "preset")
+	check(Engine.max_fps == 60 and is_equal_approx(get_viewport().scaling_3d_scale, 1.0), "back to the preset")
+
+	# Reduced motion: no screen shake when it's off.
+	var cam := lv.camera
+	SaveSystem.set_setting("screen_shake", false)
+	Feedback.shake_requested.emit(1.0, 0.5)
+	check(cam._shake_time <= 0.0, "screen shake off ignores shakes")
+	SaveSystem.set_setting("screen_shake", true)
+	Feedback.shake_requested.emit(1.0, 0.5)
+	check(cam._shake_time > 0.0, "screen shake on still shakes")
+
+	# Losing focus pauses a run (unless turned off).
+	GameManager.set_state(GameManager.State.PLAYING)
+	GameManager._notification(NOTIFICATION_APPLICATION_FOCUS_OUT)
+	check(GameManager.state == GameManager.State.PAUSED, "losing window focus pauses the game")
+	GameManager.set_state(GameManager.State.PLAYING)
+	SaveSystem.set_setting("pause_on_focus_loss", false)
+	GameManager._notification(NOTIFICATION_APPLICATION_FOCUS_OUT)
+	check(GameManager.state == GameManager.State.PLAYING, "...unless that setting is off")
+	SaveSystem.set_setting("pause_on_focus_loss", true)
+	await unload(lv)
+
+	# Text size scales the whole interface.
+	SaveSystem.set_setting("text_size", "1.5")
+	check(is_equal_approx(get_tree().root.content_scale_factor, 1.5), "text size 150% scales the interface")
+	SaveSystem.set_setting("text_size", "1.0")
+	check(is_equal_approx(get_tree().root.content_scale_factor, 1.0), "and back to 100%")
+
+
+func _phase22_crash_reports() -> void:
+	# This build has no crash-reporting keys: nothing is offered or sent.
+	SaveSystem.data = SaveSystem.default_data()
+	check(CrashReporter.consent() == "ask" and not CrashReporter.started, "crash reports start undecided and off")
+	check(not CrashReporter.should_ask() or CrashReporter.available(), "the question is only asked when a build can report")
+	var menu := (load("res://scenes/ui/main_menu.tscn") as PackedScene).instantiate()
+	get_tree().root.add_child(menu)
+	await frames(2)
+	check((menu.find_child("CrashReportCard", true, false) != null) == CrashReporter.should_ask(), "the menu asks only when there is something to ask")
+	menu.queue_free()
+	await frames(2)
+	# Config is read from the (git-ignored) file; consent turns it on and off.
+	var cfg_path := "user://crash_test.cfg"
+	var cfg := ConfigFile.new()
+	cfg.set_value("sentry", "dsn", "https://public@o0.ingest.example/1")
+	cfg.save(cfg_path)
+	var keep_dsn := CrashReporter.sentry_dsn
+	CrashReporter.load_config(cfg_path)
+	check(CrashReporter.sentry_dsn == "https://public@o0.ingest.example/1", "the Sentry DSN comes from the config file")
+	CrashReporter.sentry_dsn = keep_dsn
+	DirAccess.remove_absolute(cfg_path)
+	CrashReporter.dry_run = true
+	CrashReporter.set_consent(true)
+	check(CrashReporter.started and CrashReporter.consent() == "on", "saying yes starts crash reporting")
+	CrashReporter.set_consent(false)
+	check(not CrashReporter.started and CrashReporter.consent() == "off", "saying no (or switching it off) stops it")
+	CrashReporter.dry_run = false
+	check(CrashReporter.release_name().begins_with("bugs-eye-view@1."), "reports are tagged with the game version")
+	# google-services.json -> the Android resources Firebase reads.
+	var helper_path := "res://addons/bugs_crashlytics/firebase_values.gd"
+	if ResourceLoader.exists(helper_path):
+		var helper: GDScript = load(helper_path)
+		var json := JSON.stringify({"project_info": {"project_number": "42", "project_id": "p"},
+			"client": [{"client_info": {"mobilesdk_app_id": "1:42:android:ab", "android_client_info": {"package_name": "com.aethertek.bugseyeview"}},
+				"api_key": [{"current_key": "KEY<&"}]}]})
+		var xml: String = helper.call("values_xml", json, "com.aethertek.bugseyeview")
+		check(xml.contains('name="google_app_id" translatable="false">1:42:android:ab<') and xml.contains("KEY&lt;&amp;"),
+			"Firebase values are written as escaped Android resources")
+		check(helper.call("values_xml", json, "com.other.app") == "", "a config for another app is refused")
+	SaveSystem.data = SaveSystem.default_data()

@@ -201,7 +201,7 @@ func check_frame_rate(avg_fps: float) -> bool:
 		return false
 	if _quality_cd > 0.0 or avg_fps >= FPS_FLOOR:
 		return false
-	var next: String = {"high": "medium", "medium": "low"}.get(String(SaveSystem.get_setting("quality", "medium")), "")
+	var next: String = {"ultra": "high", "high": "medium", "medium": "low"}.get(String(SaveSystem.get_setting("quality", "medium")), "")
 	if next == "":
 		return false
 	SaveSystem.set_setting("quality", next)
@@ -387,18 +387,57 @@ func apply_quality() -> void:
 			vp.msaa_3d = Viewport.MSAA_4X
 			vp.anisotropic_filtering_level = Viewport.ANISOTROPY_8X
 			Engine.max_fps = 0
+		"ultra":
+			# For strong PCs: the most antialiasing and texture filtering the
+			# Compatibility renderer has, plus ambient occlusion (Level).
+			vp.scaling_3d_scale = 1.0
+			vp.msaa_3d = Viewport.MSAA_8X
+			vp.anisotropic_filtering_level = Viewport.ANISOTROPY_16X
+			Engine.max_fps = 0
 		_:
 			vp.scaling_3d_scale = 1.0
 			# (Screen-space AA isn't available in the Compatibility renderer.)
 			vp.msaa_3d = Viewport.MSAA_2X
 			vp.anisotropic_filtering_level = Viewport.ANISOTROPY_4X
 			Engine.max_fps = 60
-	RenderingServer.directional_shadow_atlas_set_size(4096 if q == "high" else 2048, true)
+	# Optional overrides (Settings); "preset" keeps what the quality level sets.
+	var cap := String(SaveSystem.get_setting("frame_cap", "preset"))
+	if cap != "preset":
+		Engine.max_fps = 0 if cap == "unlimited" else int(cap)
+	var scale := String(SaveSystem.get_setting("render_scale", "preset"))
+	if scale != "preset":
+		vp.scaling_3d_scale = clampf(float(scale), 0.5, 1.5)
+	apply_text_size()
+	RenderingServer.directional_shadow_atlas_set_size(4096 if quality_at_least("high") else 2048, true)
 	# Bump detail on every textured surface; off on low for speed.
 	for m in _textured_materials():
 		m.normal_enabled = q != "low"
 	if Level.current and is_instance_valid(Level.current):
 		Level.current.refresh_quality()
+
+
+const QUALITY_ORDER := ["low", "medium", "high", "ultra"]
+
+
+## True when the current quality is at least `level` (Ultra counts as High).
+func quality_at_least(level: String) -> bool:
+	return QUALITY_ORDER.find(quality()) >= QUALITY_ORDER.find(level)
+
+
+## Text size (Settings): scales every menu and the HUD, 100-200%.
+func apply_text_size() -> void:
+	var f := clampf(float(SaveSystem.get_setting("text_size", "1.0")), 1.0, 2.0)
+	var root := get_tree().root
+	if not is_equal_approx(root.content_scale_factor, f):
+		root.content_scale_factor = f
+
+
+## Pause when the window or browser tab loses focus (Settings, on by default),
+## so the bug isn't caught while you're away.
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_APPLICATION_FOCUS_OUT or what == NOTIFICATION_APPLICATION_PAUSED:
+		if state == State.PLAYING and bool(SaveSystem.get_setting("pause_on_focus_loss", true)):
+			toggle_pause()
 
 
 ## Behind the bug <-> through its eyes (V, the EYES button, Settings).

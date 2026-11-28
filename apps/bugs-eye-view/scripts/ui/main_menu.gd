@@ -41,6 +41,32 @@ func _ready() -> void:
 	col.add_child(UIKit.label(Collection.summary(), 18, ItemDef.RARITY_COLORS[3] if Collection.by_rarity()[3][0] > 0 else UIKit.DIM))
 	play.grab_focus.call_deferred()
 	AudioManager.play_music(&"music_ambient")
+	if CrashReporter.should_ask():
+		_ask_crash_reports()
+
+
+## Asked once, only in builds that can send crash reports. Nothing is sent
+## before "Yes"; Settings > Privacy & about changes it any time.
+func _ask_crash_reports() -> void:
+	var dim := ColorRect.new()
+	dim.name = "CrashReportCard"
+	dim.color = Color(0, 0, 0, 0.6)
+	dim.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	_ui.add_child(dim)
+	var col := UIKit.column(dim, 520.0, 14)
+	col.add_child(UIKit.title("HELP FIX BUGS?", 40))
+	col.add_child(UIKit.label(CRASH_REPORT_TEXT, 20, UIKit.TEXT, HORIZONTAL_ALIGNMENT_LEFT))
+	var yes := UIKit.button("Yes, send crash reports", func() -> void:
+		CrashReporter.set_consent(true)
+		dim.queue_free())
+	col.add_child(yes)
+	col.add_child(UIKit.button("No thanks", func() -> void:
+		CrashReporter.set_consent(false)
+		dim.queue_free()))
+	yes.grab_focus.call_deferred()
+
+
+const CRASH_REPORT_TEXT := "If the game crashes, it can send an anonymous crash report so the bug gets fixed: the device model, system version, game version and what went wrong. No name, account, location or personal data. You can change this any time in Settings > Privacy & about."
 
 
 func _build_backdrop() -> void:

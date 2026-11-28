@@ -62,6 +62,14 @@ func default_data() -> Dictionary:
 			"fly_follow_look": true,
 			"auto_quality": true,
 			"first_person": false,
+			## Crash reports: "ask" (the menu asks once), "on" or "off".
+			"crash_reports": "ask",
+			## Added 27 Nov 2026; the defaults keep the game as it was.
+			"frame_cap": "preset",
+			"render_scale": "preset",
+			"screen_shake": true,
+			"pause_on_focus_loss": true,
+			"text_size": "1.0",
 		},
 		"bindings": {},
 	}

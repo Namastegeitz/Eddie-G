@@ -13,3 +13,9 @@ android/
 
 # Raw store-art renders (tools/release/make_store_assets.sh remakes them)
 BUG'S-EYE VIEW/Store Assets/_renders/
+
+# Crash-reporting keys (see config/README.md)
+config/crash_reporting.cfg
+config/google-services.json
+# Sentry SDK (downloaded by the release workflow)
+addons/sentry/

@@ -7,7 +7,8 @@ var overlay := false
 var _waiting_action := ""
 var _bind_buttons: Dictionary = {}
 const PRIVACY_URL := "https://claude.ai/artifact/FTpfni4mRM5NiUvRAvZyoT"
-const PRIVACY_SUMMARY := "Bug's-Eye View collects no personal data: no accounts, ads, analytics or tracking, and it doesn't go online while you play. Your progress and settings are saved only on this device, and Reset all progress erases them."
+const PRIVACY_SUMMARY := "Bug's-Eye View collects no personal data: no accounts, ads, analytics or tracking. Your progress and settings are saved only on this device, and Reset all progress erases them."
+const CRASH_SUMMARY := "Crash reports (only if you allow them): when the game crashes it sends the device model, system version, game version and what went wrong - nothing personal."
 
 var _confirm_reset := false
 var _reset_button: Button
@@ -25,14 +26,22 @@ func _ready() -> void:
 	col.add_child(_slider("Effects", "sfx_volume"))
 	col.add_child(_section("Feel"))
 	col.add_child(_toggle("Vibration / rumble", "haptics"))
+	col.add_child(_toggle("Screen shake (off = reduced motion)", "screen_shake"))
+	col.add_child(_toggle("Pause when the window or app loses focus", "pause_on_focus_loss"))
 	col.add_child(_toggle("Invert look Y", "invert_y"))
 	col.add_child(_toggle("Fly where you look", "fly_follow_look"))
 	col.add_child(_toggle("Bug's-eye view (see through the bug's eyes)", "first_person"))
 	col.add_child(_slider("Look sensitivity", "look_sensitivity", 0.3, 2.5))
 	col.add_child(_slider("Touch look speed", "touch_look_sensitivity", 0.2, 2.0))
 	col.add_child(_section("Display"))
-	col.add_child(_options("Quality", "quality", ["low", "medium", "high"]))
+	col.add_child(_options("Quality", "quality", ["low", "medium", "high", "ultra"]))
 	col.add_child(_toggle("Auto quality (drops it if the game runs slowly)", "auto_quality"))
+	col.add_child(_choice("Frame rate cap", "frame_cap", ["preset", "30", "60", "120", "unlimited"],
+		["Same as quality", "30 fps", "60 fps", "120 fps", "No cap"]))
+	col.add_child(_choice("Render scale", "render_scale", ["preset", "0.5", "0.67", "0.75", "0.85", "1.0", "1.25"],
+		["Same as quality", "50%", "67%", "75%", "85%", "100%", "125% (sharper)"]))
+	col.add_child(_choice("Text size", "text_size", ["1.0", "1.25", "1.5", "1.75", "2.0"],
+		["100%", "125%", "150%", "175%", "200%"]))
 	col.add_child(_options("Touch controls", "touch_controls", ["auto", "on", "off"]))
 	col.add_child(_section("Keyboard & mouse"))
 	for a in InputRouter.REBINDABLE:
@@ -52,6 +61,23 @@ func _ready() -> void:
 func _add_privacy(col: VBoxContainer) -> void:
 	col.add_child(_section("Privacy & about"))
 	col.add_child(UIKit.label(PRIVACY_SUMMARY, 18, UIKit.TEXT, HORIZONTAL_ALIGNMENT_LEFT))
+	if CrashReporter.available():
+		col.add_child(UIKit.label(CRASH_SUMMARY, 18, UIKit.TEXT, HORIZONTAL_ALIGNMENT_LEFT))
+		var c := CheckButton.new()
+		c.text = "Send anonymous crash reports"
+		c.button_pressed = CrashReporter.consent() == "on"
+		c.custom_minimum_size.y = 52
+		col.add_child(c)
+		var note := UIKit.label("", 16, UIKit.TEXT.darkened(0.25))
+		var test := UIKit.button("Send a test report", func() -> void:
+			note.text = CrashReporter.send_test_report(), 52.0)
+		test.visible = c.button_pressed
+		c.toggled.connect(func(on: bool) -> void:
+			CrashReporter.set_consent(on)
+			test.visible = on
+			note.text = "")
+		col.add_child(test)
+		col.add_child(note)
 	col.add_child(UIKit.button("Read the privacy policy", func() -> void:
 		OS.shell_open(PRIVACY_URL), 52.0))
 	var version := str(ProjectSettings.get_setting("application/config/version", "1.0.0"))
@@ -108,6 +134,27 @@ func _options(text: String, key: String, values: Array) -> Control:
 	for i in values.size():
 		o.add_item(String(values[i]).capitalize(), i)
 		if values[i] == cur:
+			o.select(i)
+	o.item_selected.connect(func(i: int) -> void:
+		SaveSystem.set_setting(key, values[i])
+		SaveSystem.save_game())
+	row.add_child(o)
+	return row
+
+
+## Like _options, with readable labels for each stored value.
+func _choice(text: String, key: String, values: Array, labels: Array) -> Control:
+	var row := UIKit.hbox(12)
+	var l := UIKit.label(text, 20, UIKit.TEXT, HORIZONTAL_ALIGNMENT_LEFT)
+	l.custom_minimum_size.x = 200
+	row.add_child(l)
+	var o := OptionButton.new()
+	o.custom_minimum_size = Vector2(200, 52)
+	o.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	var cur := String(SaveSystem.get_setting(key, values[0]))
+	for i in values.size():
+		o.add_item(String(labels[i]), i)
+		if String(values[i]) == cur:
 			o.select(i)
 	o.item_selected.connect(func(i: int) -> void:
 		SaveSystem.set_setting(key, values[i])

@@ -244,6 +244,8 @@ func screen_center() -> Vector2:
 
 
 func _on_shake(strength: float, duration: float) -> void:
+	if not bool(SaveSystem.get_setting("screen_shake", true)):
+		return  # reduced motion (Settings)
 	_shake = maxf(_shake if _shake_time > 0.0 else 0.0, strength)
 	_shake_time = maxf(_shake_time, duration)
 

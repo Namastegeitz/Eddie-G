@@ -193,12 +193,17 @@ func refresh_quality() -> void:
 	if _sun:
 		_sun.shadow_enabled = GameManager.shadows_enabled()
 		# High: two shadow cascades (crisp up close) and softer edges.
-		_sun.directional_shadow_mode = DirectionalLight3D.SHADOW_PARALLEL_2_SPLITS if q == "high" else DirectionalLight3D.SHADOW_ORTHOGONAL
-		_sun.shadow_blur = 1.5 if q == "high" else 1.0
+		var hi := GameManager.quality_at_least("high")
+		_sun.directional_shadow_mode = DirectionalLight3D.SHADOW_PARALLEL_2_SPLITS if hi else DirectionalLight3D.SHADOW_ORTHOGONAL
+		_sun.shadow_blur = 1.5 if hi else 1.0
 	if _env and _env.environment:
 		var e := _env.environment
 		# A soft glow around bright things (gems, lamps, the firefly) on high.
-		e.glow_enabled = q == "high"
+		e.glow_enabled = GameManager.quality_at_least("high")
+		# Ultra: soft contact shadows where things meet (ambient occlusion).
+		e.ssao_enabled = q == "ultra"
+		e.ssao_radius = 1.2
+		e.ssao_intensity = 1.6
 		e.glow_intensity = 0.55
 		e.glow_strength = 0.9
 		e.glow_bloom = 0.04

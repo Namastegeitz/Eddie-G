@@ -26,7 +26,7 @@ grep -E "FAIL|passed" /tmp/bev_audit.log
 if bad_lines /tmp/bev_audit.log; then fail=1; fi
 echo "== smoke test (exported pack)"
 cp export_presets.cfg /tmp/bev_presets.cfg
-sed -i 's|exclude_filter="tools/\*, tests/\*, docs/\*, override.cfg"|exclude_filter="tools/*, docs/*, override.cfg"|' export_presets.cfg
+sed -i 's|exclude_filter="tools/\*, tests/\*, docs/\*, override.cfg|exclude_filter="tools/*, docs/*, override.cfg|' export_presets.cfg
 "$GODOT" --headless --path . --export-pack "Linux" /tmp/bev_test.pck > /tmp/bev_pack.log 2>&1
 cp /tmp/bev_presets.cfg export_presets.cfg
 (cd /tmp && "$GODOT" --headless --main-pack /tmp/bev_test.pck res://tests/smoke_test.tscn --fixed-fps 60 > /tmp/bev_smoke_pck.log 2>&1) || fail=1
