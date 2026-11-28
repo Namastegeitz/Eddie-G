@@ -66,7 +66,7 @@ func active() -> bool:
 
 
 func allowed() -> bool:
-	return bool(Save.setting("crash_reports", true))
+	return bool(Save.setting("crash_reports", true)) and RemoteConfig.enabled("crash_reports")
 
 
 ## Pass the player's Settings choice to both services. Crashlytics stores it;

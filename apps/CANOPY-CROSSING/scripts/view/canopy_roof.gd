@@ -15,6 +15,10 @@ var _rows := {}                 # row -> RoofRow (drawn once, then just swayed)
 ## used to redraw every leaf of every covered row each frame.)
 func _process(dt: float) -> void:
 	t += dt
+	# first person switched off remotely: the canopy rows show from above
+	visible = RemoteConfig.enabled("first_person")
+	if not visible:
+		return
 	var vis := wv.visible_rows()
 	for r in _rows.keys():
 		if r < vis.x - 1 or r > vis.y + 1:
@@ -57,7 +61,7 @@ class RoofRow extends Node2D:
 		var rng := RandomNumberGenerator.new()
 		rng.seed = r * 7919 + 3
 		var n := int(w / 46.0) + 2
-		if Draw.detail > 0:
+		if Draw.detail > 0 and RemoteConfig.enabled("hd_terrain"):
 			# layered, shaded crowns of leaves (one mesh, built once per row)
 			draw_set_transform(Vector2(0, y))
 			if leaves == null:

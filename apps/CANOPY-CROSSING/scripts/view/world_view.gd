@@ -234,7 +234,7 @@ class LaneView extends Node2D:
 
 	func _ready() -> void:
 		var T := WorldView.T
-		if Draw.detail > 0 and not lane.covered:
+		if Draw.detail > 0 and not lane.covered and RemoteConfig.enabled("hd_terrain"):
 			var up := wv.sim.world.lane(row + 1)
 			var down := wv.sim.world.lane(row - 1)
 			var st := Terrain.style(wv.map)

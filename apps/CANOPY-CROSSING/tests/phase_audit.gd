@@ -2018,8 +2018,73 @@ func _stability() -> void:
 	await get_tree().process_frame
 	var labels: Array = st.find_children("*", "CheckButton", true, false).map(func(c): return String(c.text))
 	check("Settings has the Send crash reports switch", labels.any(func(t): return "crash reports" in t.to_lower()), str(labels.size()))
+	check("Settings has the Pause when you switch away switch (on by default)", labels.any(func(t): return "switch away" in t.to_lower()) and bool(Save.setting("auto_pause", false)))
 	st.queue_free()
 	await get_tree().process_frame
+	# remote switches: shipped values, a published copy, bad copies ignored
+	var rc_keep := RemoteConfig.config.duplicate(true)
+	check("remote switches ship all on, with the Google Play link", RemoteConfig.enabled("first_person") and RemoteConfig.enabled("hd_terrain") and RemoteConfig.enabled("crash_reports") and "com.aethertek.canopycrossing" in String(RemoteConfig.config.store_urls.android))
+	check("a broken or wrong-shaped config file is ignored", not RemoteConfig._valid({"flags": []}) and not RemoteConfig._valid("x") and not RemoteConfig._valid({"version": 1, "min_build": "9"}) and RemoteConfig._valid({"version": 2, "flags": {"first_person": false}}))
+	RemoteConfig.config = RemoteConfig._merged(RemoteConfig._shipped(), {"version": 2, "flags": {"first_person": false, "crash_reports": false}})
+	check("a published copy can turn a feature off and leaves the rest as shipped", not RemoteConfig.enabled("first_person") and not RemoteConfig.enabled("crash_reports") and RemoteConfig.enabled("silly_faces"))
+	CrashReport.crashlytics = fake
+	check("the remote crash-report switch overrides the player's setting", not CrashReport.allowed())
+	CrashReport.crashlytics = keep_c
+	var main: Control = load("res://scenes/main.tscn").instantiate()
+	add_child(main)
+	await get_tree().process_frame
+	Save.data.seen_intro = Content.playable_maps()
+	Game.start_run({"mode": "journey", "map": "amazon", "stage": 4, "seed": 11, "animal": "poison_dart_frog"})
+	await get_tree().process_frame
+	var gs = Game.current
+	gs.started = true
+	gs.blocking = false
+	gs._update_views(1.0 / 60.0)
+	check("with first person switched off remotely: no eye button, the canopy rows show from above, the view can't switch", not gs.eye_btn.visible and (gs.wv.roof == null or not await _roof_visible(gs)))
+	gs.set_view("fpv")
+	check("...and asking for first person keeps the bird's-eye view", gs.view == "bird")
+	RemoteConfig.config = rc_keep
+	gs.set_view("fpv")
+	check("with the switch back on, first person works again", gs.view == "fpv" and gs.eye_btn != null)
+	gs.set_view("bird")
+	# leaving the app opens the pause menu
+	gs.paused = false
+	gs._notification(Node.NOTIFICATION_APPLICATION_FOCUS_OUT)
+	check("leaving the app mid-run opens the pause menu", gs.paused)
+	main.queue_free()
+	await get_tree().process_frame
+	# update prompts from the build number
+	var b_keep: Variant = ProjectSettings.get_setting("canopy/build_number", "1")
+	ProjectSettings.set_setting("canopy/build_number", "40")
+	RemoteConfig.config = RemoteConfig._merged(RemoteConfig._shipped(), {"version": 2, "latest_build": 45})
+	var soft := RemoteConfig.update_state()
+	RemoteConfig.config = RemoteConfig._merged(RemoteConfig._shipped(), {"version": 2, "latest_build": 45, "min_build": 41})
+	var forced := RemoteConfig.update_state()
+	RemoteConfig.config = RemoteConfig._merged(RemoteConfig._shipped(), {"version": 2, "latest_build": 40, "min_build": 12})
+	var none := RemoteConfig.update_state()
+	check("update prompts: newer build = gentle reminder, too old = update needed, current = nothing", soft == "soft" and forced == "forced" and none == "", "%s/%s/%s" % [soft, forced, none])
+	ProjectSettings.set_setting("canopy/build_number", b_keep)
+	RemoteConfig.config = rc_keep
+	# the store rating card: only at a happy moment, rarely
+	Save.wipe()
+	Save.load_game()
+	Save.data.created = int(Time.get_unix_time_from_system()) - 5 * 86400
+	check("no rating card before 5 cleared levels", not ReviewPrompt.due(true, "journey"))
+	Save.map_progress("amazon").cleared = 6
+	check("a rating card after a cleared level, once 5 are cleared and the game is 2+ days old", ReviewPrompt.due(true, "journey"))
+	check("never after a failed run, in endless mode, or in the first 2 days",
+		not ReviewPrompt.due(false, "journey") and not ReviewPrompt.due(true, "endless") and (func():
+			Save.data.created = int(Time.get_unix_time_from_system()); var r := not ReviewPrompt.due(true, "journey"); Save.data.created = int(Time.get_unix_time_from_system()) - 5 * 86400; return r).call())
+	ReviewPrompt.ask()
+	check("after asking, not again for 120 days; at most 3 times ever", not ReviewPrompt.due(true, "journey") and ReviewPrompt.due(true, "journey", Progress.today() + 121) and (func():
+		Save.data.prompts.review_asks = 3; return not ReviewPrompt.due(true, "journey", Progress.today() + 400)).call())
+	Save.wipe()
+	Save.load_game()
+
+
+func _roof_visible(gs) -> bool:
+	gs.wv.roof._process(0.016)
+	return gs.wv.roof.visible
 
 
 ## Stands in for the CanopyCrashlytics Android plugin in tests.

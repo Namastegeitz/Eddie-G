@@ -18,6 +18,7 @@ With --site it also builds a public beta site for phone testers (GitHub Pages):
     build/site/index.html                      -> sends visitors to canopy-crossing/
     build/site/canopy-crossing/index.html      tester page: play, add to home screen, Android APK
     build/site/canopy-crossing/play.html       the game, installable (manifest, icons, iPhone tags)
+    build/site/canopy-crossing/config.json     the game's remote switches (content/remote_config.json)
 """
 import json, os, re, shutil, subprocess, sys, time
 
@@ -107,5 +108,8 @@ if site:
         '<title>Canopy Crossing beta</title><meta http-equiv="refresh" content="0; url=canopy-crossing/">'
         '<a href="canopy-crossing/">Canopy Crossing beta</a>\n')
     open(os.path.join(root, ".nojekyll"), "w").write("")
+    # the game's remote switches (autoload/remote_config.gd reads this file)
+    rc = os.path.join(here, "..", "..", "content", "remote_config.json")
+    shutil.copyfile(rc, os.path.join(dst, "config.json"))
     print("beta site in", root, "(apk: %s)" % ("yes" if apk else "no"))
 print("packaged into", dst)

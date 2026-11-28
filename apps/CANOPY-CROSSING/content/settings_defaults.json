@@ -14,5 +14,6 @@
   "first_person": false,
   "fpv_view": "wide",
   "graphics": "auto",
-  "crash_reports": true
+  "crash_reports": true,
+  "auto_pause": true
 }

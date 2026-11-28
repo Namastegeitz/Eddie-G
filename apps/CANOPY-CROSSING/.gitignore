@@ -23,3 +23,6 @@ google-services.json
 GoogleService-Info.plist
 # Sentry SDK: installed by tools/install_sentry.sh on the build machine, never committed
 addons/sentry/
+# In-app Review plugin: installed by tools/install_review.sh on the build machine
+addons/InappReview*/
+ios/plugins/

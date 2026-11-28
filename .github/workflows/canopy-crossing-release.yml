@@ -148,6 +148,11 @@ jobs:
           if [ -n "$SENTRY_DSN" ]; then tools/install_sentry.sh
           else echo "::notice::No SENTRY_DSN secret: store builds have no Sentry crash reports."; fi
 
+      - name: Store rating card (In-app Review plugin, Android .aab + iOS)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: tools/install_review.sh
+
       - name: Crash reporting - Firebase Crashlytics for Android (when FIREBASE_ANDROID_CONFIG is set)
         env:
           FIREBASE_ANDROID_CONFIG: ${{ secrets.FIREBASE_ANDROID_CONFIG }}

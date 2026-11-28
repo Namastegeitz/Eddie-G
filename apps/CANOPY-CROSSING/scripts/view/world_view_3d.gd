@@ -652,7 +652,7 @@ func mat(c: Color, emissive := false) -> StandardMaterial3D:
 ## forest floor or wet rock, shaded per pixel (assets/shaders/ground3d).
 ## kind: 0 grass, 1 dirt, 2 forest floor, 3 rock.
 func ground_mat(kind: int, a: Color, b: Color) -> Material:
-	if _grain == null:
+	if _grain == null or not RemoteConfig.enabled("hd_terrain"):
 		return surface(a, [0.5, 0.35, 0.8, 0.6][kind])
 	var key := "g3d%d%s%s" % [kind, a.to_html(), b.to_html()]
 	if _mats.has(key):
@@ -681,7 +681,7 @@ func ground_mat(kind: int, a: Color, b: Color) -> Material:
 ## with this row's current, the sky mirrored at low angles, the bed through
 ## the shallows and foam at the banks (assets/shaders/water3d).
 func water_mat(l: Lane) -> Material:
-	if _grain == null:
+	if _grain == null or not RemoteConfig.enabled("hd_terrain"):
 		return surface(color("water"), 0.22, true)
 	var up := 1 if sim.world.lane(l.row + 1).type == "water" else 0
 	var down := 1 if l.row > 0 and sim.world.lane(l.row - 1).type == "water" else 0

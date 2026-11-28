@@ -86,6 +86,8 @@ func _nudges() -> void:
 	if Game.has_modal() or _nudge_shown:
 		return
 	_nudge_shown = true
+	if _update_prompt():
+		return
 	if Progress.daily_reward_ready() and bool(Save.data.get("tutorial_done", false)):
 		var entry := Progress.daily_reward()
 		var nd: Dictionary = Content.onboarding.get("nudges", {}).get("daily_reward", {})
@@ -109,6 +111,42 @@ func _nudges() -> void:
 			if c == "go":
 				Game.goto("animals", {"filter_affordable": true}))
 		Game.modal(card2)
+
+
+## Remote config says this build is too old ("forced": play waits for the
+## update) or a newer one is out ("soft": once per new build). True if shown.
+func _update_prompt() -> bool:
+	var state := RemoteConfig.update_state()
+	if state == "":
+		return false
+	var latest := int(RemoteConfig.config.get("latest_build", 0))
+	if state == "soft" and int(Save.data.prompts.get("update_seen", 0)) >= latest:
+		return false
+	var url := RemoteConfig.store_url()
+	if state == "forced" and url == "":
+		state = "soft"      # no store link to send them to: never lock the game
+	var msg := String(RemoteConfig.config.get("update_message", ""))
+	if msg == "":
+		msg = "This version needs an update to keep playing." if state == "forced" else "A new version of Canopy Crossing is ready, with fixes and improvements."
+	var buttons: Array = []
+	if url != "":
+		buttons.append({"id": "update", "text": "Update", "color": UI.ACCENT})
+	if state == "soft":
+		buttons.append({"id": "later", "text": "Later"})
+	var card := PromptCard.make("Update available" if state == "soft" else "Update needed", msg, buttons)
+	card.closed.connect(func(c):
+		if c == "update" and url != "":
+			OS.shell_open(url)
+		if state == "forced":
+			# keep asking: play waits for the update
+			_nudge_shown = false
+			call_deferred("_nudges"))
+	if state == "soft":
+		Save.data.prompts["update_seen"] = latest
+		Save.mark()
+	Analytics.event("update_prompt", {"state": state, "build": RemoteConfig.build_number(), "latest": latest})
+	Game.modal(card)
+	return true
 
 
 static func _reward_text(r: Dictionary) -> String:

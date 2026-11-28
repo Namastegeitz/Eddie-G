@@ -1,0 +1,20 @@
+{
+  "_about": "Remote switches for Canopy Crossing. The game ships with these values; the beta workflow publishes this file to GitHub Pages as canopy-crossing/config.json, and the game checks it at start-up (never blocking play). Change a value here, run 'Canopy Crossing beta (web + Android)', and every copy picks it up on its next launch. See docs/REMOTE_CONFIG.md.",
+  "version": 1,
+  "flags": {
+    "first_person": true,
+    "silly_faces": true,
+    "hd_terrain": true,
+    "review_prompt": true,
+    "crash_reports": true,
+    "between_run_ads": true
+  },
+  "min_build": 0,
+  "latest_build": 0,
+  "update_message": "",
+  "store_urls": {
+    "android": "https://play.google.com/store/apps/details?id=com.aethertek.canopycrossing",
+    "ios": "",
+    "default": ""
+  }
+}

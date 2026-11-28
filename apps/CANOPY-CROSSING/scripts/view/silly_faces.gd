@@ -48,7 +48,7 @@ static func enabled(map: Dictionary, mode: String, view := "fpv") -> bool:
 	var c := choice()
 	if c == "off" or (view == "bird" and c != "both"):
 		return false
-	return bool(map.get("silly_faces", true)) and mode != "tutorial"
+	return bool(map.get("silly_faces", true)) and mode != "tutorial" and RemoteConfig.enabled("silly_faces")
 
 
 static func is_animal(painter: String) -> bool:

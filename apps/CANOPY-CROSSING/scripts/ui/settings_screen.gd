@@ -26,6 +26,7 @@ func _ready() -> void:
 	box.add_child(_toggle("Left-handed controls", "left_handed", "Ability button on the left."))
 	box.add_child(_toggle("Colour-blind hazard markers", "colorblind", "Warning triangles on deadly things, outlines on safe rides."))
 	box.add_child(_toggle("Reduce motion", "reduce_motion", "No screen shake."))
+	box.add_child(_toggle("Pause when you switch away", "auto_pause", "A call, a notification or another app pauses the run."))
 	box.add_child(_toggle("Per-move timer on harder maps", "move_timer", "Some regions (like Bwindi) time each forward move."))
 	box.add_child(_toggle("Personalised ads", "ads_personalised", "Off by default. Only affects optional ads."))
 	box.add_child(_toggle("Send crash reports", "crash_reports", "Helps us fix crashes and bugs. Reports say what went wrong and on which device, never who you are."))
