@@ -45,6 +45,9 @@ var guides_enabled := true
 ## Step quality down when the frame rate stays low (the "Auto quality" setting;
 ## tests turn it off).
 var auto_quality_enabled := true
+## Feature flag: draw the whole room once under the loading fade (see
+## Level.warm_up_shaders). Switch off here if it ever causes trouble.
+var shader_warmup_enabled := true
 const FPS_FLOOR := 24.0
 const FPS_WINDOW := 6
 var _fps_samples: Array[float] = []
@@ -241,6 +244,8 @@ func goto(key_or_path: String) -> void:
 		InputRouter.set_enabled(false)
 	get_tree().change_scene_to_file(path)
 	await get_tree().process_frame
+	if shader_warmup_enabled and Level.current and is_instance_valid(Level.current):
+		await Level.current.warm_up_shaders()
 	var tw2 := create_tween()
 	tw2.tween_property(_fade, "color:a", 0.0, 0.25)
 	_changing = false

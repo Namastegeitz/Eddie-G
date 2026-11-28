@@ -183,6 +183,8 @@ func _mat(c: Color) -> StandardMaterial3D:
 
 
 func _process(delta: float) -> void:
+	if not bool(SaveSystem.get_setting("screen_shake", true)):
+		return  # reduced motion: the diorama and shelf hold still
 	if _pivot:
 		_pivot.rotate_y(delta * 0.12)
 	for it in shelf_items:

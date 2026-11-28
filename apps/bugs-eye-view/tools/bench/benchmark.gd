@@ -13,6 +13,7 @@ var out := ""
 var n_frames := 600
 var rooms: PackedStringArray = ["kitchen", "living_room", "backyard"]
 var quality := "medium"
+var warmup := true
 var _times: PackedFloat64Array = []
 
 
@@ -28,6 +29,8 @@ func _ready() -> void:
 			rooms = a.substr(8).split(",")
 		elif a.begins_with("--quality="):
 			quality = a.substr(10)
+		elif a == "--no-warmup":
+			warmup = false
 	GameManager.auto_quality_enabled = false
 	GameManager.guides_enabled = false  # the how-to card pauses the game
 	SaveSystem.save_path = "user://bench_save.json"
@@ -35,7 +38,7 @@ func _ready() -> void:
 	SaveSystem.set_setting("quality", quality)
 	GameManager.apply_quality()
 	var result := {"godot": Engine.get_version_info().string, "headless": DisplayServer.get_name() == "headless",
-		"quality": quality, "frames": n_frames, "rooms": {}}
+		"quality": quality, "frames": n_frames, "warmup": warmup, "rooms": {}}
 	for room in rooms:
 		result["rooms"][room] = await _bench_room(StringName(room))
 	var line := JSON.stringify(result)
@@ -49,8 +52,13 @@ func _ready() -> void:
 func _bench_room(room: StringName) -> Dictionary:
 	var t0 := Time.get_ticks_usec()
 	var lvl := await load_level(room, &"cockroach")
+	var t1 := Time.get_ticks_usec()
+	var warm_frames := 0
+	if warmup:
+		warm_frames = await lvl.warm_up_shaders()
+	var warm_ms := (Time.get_ticks_usec() - t1) / 1000.0
 	var load_ms := (Time.get_ticks_usec() - t0) / 1000.0
-	await frames(30)  # settle: first-time shader and physics setup
+	await frames(30)  # settle: physics setup
 	assert(not get_tree().paused)
 	_times.clear()
 	key(KEY_W, true)
@@ -79,7 +87,7 @@ func _bench_room(room: StringName) -> Dictionary:
 	var p99: float = sorted[int(sorted.size() * 0.99)] if sorted.size() > 0 else 0.0
 	var p50: float = sorted[int(sorted.size() * 0.5)] if sorted.size() > 0 else 0.0
 	return {
-		"load_ms": snappedf(load_ms, 0.1),
+		"load_ms": snappedf(load_ms, 0.1), "warmup_frames": warm_frames, "warmup_ms": snappedf(warm_ms, 0.1),
 		"frame_ms_avg": snappedf(avg, 0.001), "frame_ms_median": snappedf(p50, 0.001),
 		"frame_ms_p99": snappedf(p99, 0.001), "frame_ms_worst": snappedf(sorted[-1] if sorted.size() > 0 else 0.0, 0.001),
 		"fps_avg": snappedf(1000.0 / maxf(avg, 0.001), 0.1), "fps_1pct_low": snappedf(1000.0 / maxf(p99, 0.001), 0.1),

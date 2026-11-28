@@ -1,0 +1,154 @@
+# BUG'S-EYE VIEW: release builds for every store, each platform as its own
+# download on the run page (Actions tab > "Bug's-Eye View release builds" >
+# Run workflow), or on a tag like bugs-eye-view-v1.0.1 (also drafts a GitHub
+# Release with the files). Nothing is uploaded to any store.
+#
+# Optional repository secrets (Settings > Secrets and variables > Actions):
+#   SENTRY_DSN                    Sentry crash reports (all but the web build)
+#   FIREBASE_ANDROID_CONFIG       the google-services.json text: Crashlytics on Android
+#   BUGS_ANDROID_KEYSTORE_BASE64  base64 of YOUR upload .keystore (Google Play)
+#   BUGS_ANDROID_KEY_ALIAS / BUGS_ANDROID_KEY_PASSWORD
+# Without them the builds still work: no crash reports, and the Android files
+# use a throwaway test key (fine for phones, NOT uploadable to Google Play).
+# Crash reports are only ever sent after the player says yes in the game.
+name: Bug's-Eye View release builds
+
+on:
+  workflow_dispatch:
+  push:
+    tags: ['bugs-eye-view-v*']
+
+permissions:
+  contents: write
+
+env:
+  GODOT_VERSION: 4.7.2
+  GODOT_DIR: ${{ github.workspace }}/../godot
+
+defaults:
+  run:
+    working-directory: apps/bugs-eye-view
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+
+      - uses: actions/setup-java@v4
+        with: { distribution: temurin, java-version: 17 }
+
+      - name: Android SDK platform 36 and build-tools 36.1.0
+        run: |
+          yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses > /dev/null || true
+          "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "platforms;android-36" "build-tools;36.1.0" > /dev/null
+
+      - name: Cache Godot and export templates
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.GODOT_DIR }}
+          key: godot-${{ env.GODOT_VERSION }}-all-platforms-v1
+
+      - name: Install Godot ${{ env.GODOT_VERSION }} and the templates for every platform
+        run: |
+          set -e
+          mkdir -p "$GODOT_DIR"
+          if [ ! -x "$GODOT_DIR/godot" ]; then
+            base="https://github.com/godotengine/godot-builds/releases/download/${GODOT_VERSION}-stable"
+            curl -sSLo "$RUNNER_TEMP/godot.zip" "$base/Godot_v${GODOT_VERSION}-stable_linux.x86_64.zip"
+            unzip -q -o "$RUNNER_TEMP/godot.zip" -d "$RUNNER_TEMP/godot"
+            mv "$RUNNER_TEMP"/godot/Godot_v*_linux.x86_64 "$GODOT_DIR/godot"
+            curl -sSLo "$RUNNER_TEMP/templates.tpz" "$base/Godot_v${GODOT_VERSION}-stable_export_templates.tpz"
+            mkdir -p "$GODOT_DIR/templates"
+            unzip -q -j -o "$RUNNER_TEMP/templates.tpz" -d "$GODOT_DIR/templates"
+            rm -f "$RUNNER_TEMP/templates.tpz"
+          fi
+          dest="$HOME/.local/share/godot/export_templates/$(cat "$GODOT_DIR/templates/version.txt")"
+          mkdir -p "$dest" && cp "$GODOT_DIR"/templates/* "$dest/"
+          sudo ln -sf "$GODOT_DIR/godot" /usr/local/bin/godot
+          godot --version
+
+      - name: Version and build number (build = commit count)
+        id: v
+        run: |
+          build=$(git rev-list --count HEAD)
+          version=$(sed -n 's/^config\/version="\(.*\)"/\1/p' project.godot)
+          python3 tools/release/bump_version.py "$version" "$build"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "build=$build" >> "$GITHUB_OUTPUT"
+
+      - name: Android signing (your upload key, or a throwaway test key)
+        env:
+          KEYSTORE_B64: ${{ secrets.BUGS_ANDROID_KEYSTORE_BASE64 }}
+          KEY_ALIAS: ${{ secrets.BUGS_ANDROID_KEY_ALIAS }}
+          KEY_PASS: ${{ secrets.BUGS_ANDROID_KEY_PASSWORD }}
+        run: |
+          set -e
+          ks="$RUNNER_TEMP/upload.keystore"
+          if [ -n "$KEYSTORE_B64" ]; then
+            echo "$KEYSTORE_B64" | base64 -d > "$ks"; alias="$KEY_ALIAS"; pass="$KEY_PASS"
+          else
+            keytool -genkeypair -keystore "$ks" -storepass android -keypass android -alias test \
+              -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Bugs-Eye View test, C=US"
+            alias=test; pass=android
+            echo "::warning::No upload key secrets: Android files use a throwaway test key (not for Google Play)."
+          fi
+          mkdir -p "$HOME/.config/godot"
+          printf '[gd_resource type="EditorSettings" format=3]\n\n[resource]\nexport/android/android_sdk_path = "%s"\nexport/android/java_sdk_path = "%s"\n' "$ANDROID_HOME" "$JAVA_HOME" > "$HOME/.config/godot/editor_settings-4.7.tres"
+          {
+            echo "GODOT_ANDROID_KEYSTORE_DEBUG_PATH=$ks"; echo "GODOT_ANDROID_KEYSTORE_DEBUG_USER=$alias"; echo "GODOT_ANDROID_KEYSTORE_DEBUG_PASSWORD=$pass"
+            echo "GODOT_ANDROID_KEYSTORE_RELEASE_PATH=$ks"; echo "GODOT_ANDROID_KEYSTORE_RELEASE_USER=$alias"; echo "GODOT_ANDROID_KEYSTORE_RELEASE_PASSWORD=$pass"
+          } >> "$GITHUB_ENV"
+
+      - name: Crash reporting - Sentry (when SENTRY_DSN is set)
+        env:
+          SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [ -n "$SENTRY_DSN" ]; then tools/release/install_sentry.sh
+          else echo "::notice::No SENTRY_DSN secret: builds have no Sentry crash reports."; fi
+
+      - name: Crash reporting - Firebase Crashlytics for Android (when FIREBASE_ANDROID_CONFIG is set)
+        env:
+          FIREBASE_ANDROID_CONFIG: ${{ secrets.FIREBASE_ANDROID_CONFIG }}
+        run: |
+          if [ -n "$FIREBASE_ANDROID_CONFIG" ]; then printf '%s' "$FIREBASE_ANDROID_CONFIG" > config/google-services.json
+          else echo "::notice::No FIREBASE_ANDROID_CONFIG secret: Android builds have no Crashlytics."; fi
+
+      - name: Import
+        run: timeout 900 godot --headless --path . --import > "$RUNNER_TEMP/import.log" 2>&1 || true
+
+      - name: Build every platform into BUG'S-EYE VIEW/Builds
+        run: |
+          godot --headless --path . --install-android-build-template --export-release "Android AAB" "build/android/BugsEyeView.aab"
+          tools/release/export_builds.sh
+          godot --headless --path . --export-release "iOS" build/ios/BugsEyeView.ipa
+          (cd build/ios && zip -q -r -y "$GITHUB_WORKSPACE/apps/bugs-eye-view/BUG'S-EYE VIEW/Builds/iOS/BugsEyeView-xcode-project.zip" .)
+          cp build/android/BugsEyeView.aab "BUG'S-EYE VIEW/Builds/Android/BugsEyeView.aab"
+          rm -f config/google-services.json config/crash_reporting.cfg
+
+      - uses: actions/upload-artifact@v4
+        with: { name: 'bugs-eye-view-android-${{ steps.v.outputs.version }}-${{ steps.v.outputs.build }}', path: "apps/bugs-eye-view/BUG'S-EYE VIEW/Builds/Android", if-no-files-found: error }
+      - uses: actions/upload-artifact@v4
+        with: { name: 'bugs-eye-view-windows-${{ steps.v.outputs.version }}-${{ steps.v.outputs.build }}', path: "apps/bugs-eye-view/BUG'S-EYE VIEW/Builds/Windows", if-no-files-found: error }
+      - uses: actions/upload-artifact@v4
+        with: { name: 'bugs-eye-view-macos-${{ steps.v.outputs.version }}-${{ steps.v.outputs.build }}', path: "apps/bugs-eye-view/BUG'S-EYE VIEW/Builds/macOS", if-no-files-found: error }
+      - uses: actions/upload-artifact@v4
+        with: { name: 'bugs-eye-view-linux-${{ steps.v.outputs.version }}-${{ steps.v.outputs.build }}', path: "apps/bugs-eye-view/BUG'S-EYE VIEW/Builds/Linux", if-no-files-found: error }
+      - uses: actions/upload-artifact@v4
+        with: { name: 'bugs-eye-view-web-${{ steps.v.outputs.version }}-${{ steps.v.outputs.build }}', path: "apps/bugs-eye-view/BUG'S-EYE VIEW/Builds/Web", if-no-files-found: error }
+      - uses: actions/upload-artifact@v4
+        with: { name: 'bugs-eye-view-ios-${{ steps.v.outputs.version }}-${{ steps.v.outputs.build }}', path: "apps/bugs-eye-view/BUG'S-EYE VIEW/Builds/iOS", if-no-files-found: error }
+
+      - name: Draft GitHub Release (tags only)
+        if: startsWith(github.ref, 'refs/tags/bugs-eye-view-v')
+        uses: softprops/action-gh-release@v2
+        with:
+          draft: true
+          name: Bug's-Eye View ${{ steps.v.outputs.version }} (build ${{ steps.v.outputs.build }})
+          files: |
+            apps/bugs-eye-view/BUG'S-EYE VIEW/Builds/*/*.zip
+            apps/bugs-eye-view/BUG'S-EYE VIEW/Builds/Android/*.apk
+            apps/bugs-eye-view/BUG'S-EYE VIEW/Builds/Android/*.aab

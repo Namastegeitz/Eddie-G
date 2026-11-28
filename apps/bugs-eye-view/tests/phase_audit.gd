@@ -4508,6 +4508,16 @@ func _phase22_settings() -> void:
 	SaveSystem.set_setting("screen_shake", true)
 	Feedback.shake_requested.emit(1.0, 0.5)
 	check(cam._shake_time > 0.0, "screen shake on still shakes")
+	var menu := (load("res://scenes/ui/main_menu.tscn") as PackedScene).instantiate()
+	get_tree().root.add_child(menu)
+	await frames(2)
+	SaveSystem.set_setting("screen_shake", false)
+	var r0: Vector3 = menu._pivot.rotation
+	await frames(10)
+	check(menu._pivot.rotation.is_equal_approx(r0), "reduced motion also stops the spinning menu diorama")
+	SaveSystem.set_setting("screen_shake", true)
+	menu.queue_free()
+	await frames(2)
 
 	# Losing focus pauses a run (unless turned off).
 	GameManager.set_state(GameManager.State.PLAYING)

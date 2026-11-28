@@ -187,6 +187,48 @@ func _spawn_camera() -> void:
 	camera.set_target(player)
 
 
+## First-time stutter fix (upgrade of 27 Nov 2026). The Compatibility
+## renderer compiles each shader the first time it's drawn, so a new object
+## or light coming into view used to hitch. While the screen is still black
+## after loading, a wide temporary camera looks around the room six ways so
+## every mesh, light and shadow combination is compiled before play starts.
+## Returns the frames it took (0 when skipped: headless, or no camera).
+func warm_up_shaders() -> int:
+	if DisplayServer.get_name() == "headless" or camera == null:
+		return 0
+	var bounds := AABB()
+	var first := true
+	for n in find_children("*", "VisualInstance3D", true, false):
+		var vi := n as VisualInstance3D
+		if not vi.is_visible_in_tree():
+			continue
+		var b := vi.global_transform * vi.get_aabb()
+		if b.size.length() > 500.0:
+			continue
+		bounds = b if first else bounds.merge(b)
+		first = false
+	if first:
+		return 0
+	var previous := get_viewport().get_camera_3d()
+	var cam := Camera3D.new()
+	cam.fov = 120.0
+	cam.near = 0.05
+	cam.far = maxf(bounds.size.length() * 1.5, 50.0)
+	add_child(cam)
+	cam.global_position = bounds.get_center()
+	cam.make_current()
+	var looks := [Vector3.FORWARD, Vector3.BACK, Vector3.LEFT, Vector3.RIGHT, Vector3.DOWN, Vector3.UP]
+	for d: Vector3 in looks:
+		var up := Vector3.FORWARD if absf(d.y) > 0.9 else Vector3.UP
+		cam.look_at(cam.global_position + d, up)
+		cam.reset_physics_interpolation()
+		await RenderingServer.frame_post_draw
+	if previous and is_instance_valid(previous):
+		previous.make_current()
+	cam.queue_free()
+	return looks.size()
+
+
 ## After a quality change (Settings or auto quality).
 func refresh_quality() -> void:
 	var q := GameManager.quality()

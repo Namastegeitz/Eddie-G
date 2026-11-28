@@ -1,0 +1,74 @@
+# BUG'S-EYE VIEW: tests on every push or pull request that changes the game.
+# Runs the full headless suite (import, boot, warnings-as-errors, smoke test,
+# phase audit - in the project and in an exported pack), the benchmark and
+# the screenshot check. About 15 minutes; only runs when apps/bugs-eye-view
+# changes. Benchmark numbers and screenshots are kept as run artifacts.
+name: Bug's-Eye View tests
+
+on:
+  push:
+    paths: ['apps/bugs-eye-view/**', '.github/workflows/bugs-eye-view-tests.yml']
+  pull_request:
+    paths: ['apps/bugs-eye-view/**']
+  workflow_dispatch:
+
+env:
+  GODOT_VERSION: 4.7.2
+  GODOT_DIR: ${{ github.workspace }}/../godot
+
+defaults:
+  run:
+    working-directory: apps/bugs-eye-view
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Cache Godot
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.GODOT_DIR }}
+          key: godot-${{ env.GODOT_VERSION }}-linux-v1
+
+      - name: Install Godot ${{ env.GODOT_VERSION }}, xvfb and Mesa
+        run: |
+          set -e
+          mkdir -p "$GODOT_DIR"
+          if [ ! -x "$GODOT_DIR/godot" ]; then
+            base="https://github.com/godotengine/godot-builds/releases/download/${GODOT_VERSION}-stable"
+            curl -sSLo "$RUNNER_TEMP/godot.zip" "$base/Godot_v${GODOT_VERSION}-stable_linux.x86_64.zip"
+            unzip -q -o "$RUNNER_TEMP/godot.zip" -d "$RUNNER_TEMP/godot"
+            mv "$RUNNER_TEMP"/godot/Godot_v*_linux.x86_64 "$GODOT_DIR/godot"
+            curl -sSLo "$RUNNER_TEMP/templates.tpz" "$base/Godot_v${GODOT_VERSION}-stable_export_templates.tpz"
+            mkdir -p "$GODOT_DIR/templates"
+            unzip -q -j -o "$RUNNER_TEMP/templates.tpz" templates/version.txt templates/linux_release.x86_64 templates/linux_debug.x86_64 -d "$GODOT_DIR/templates"
+          fi
+          dest="$HOME/.local/share/godot/export_templates/$(cat "$GODOT_DIR/templates/version.txt")"
+          mkdir -p "$dest" && cp "$GODOT_DIR"/templates/* "$dest/"
+          sudo ln -sf "$GODOT_DIR/godot" /usr/local/bin/godot
+          sudo apt-get install -y -qq xvfb libgl1-mesa-dri > /dev/null
+          pip install -q pillow
+          godot --version
+
+      - name: Full test suite
+        run: tools/run_tests.sh
+
+      - name: Benchmark (numbers kept; the 5% gate runs on the baseline machine)
+        run: |
+          godot --headless --path . res://tools/bench/benchmark.tscn --fixed-fps 60 -- --out="$RUNNER_TEMP/bench.json" > /dev/null 2>&1
+          python3 -c "import json;d=json.load(open('$RUNNER_TEMP/bench.json'));[print(r, v['frame_ms_avg'], 'ms avg,', v['frame_ms_p99'], 'ms p99') for r,v in d['rooms'].items()]"
+
+      - name: Screenshot check (3 screen sizes + 200% text)
+        run: tools/visual/check_visual.sh "$RUNNER_TEMP/visual"
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: bugs-eye-view-test-output
+          path: |
+            ${{ runner.temp }}/bench.json
+            ${{ runner.temp }}/visual
+          if-no-files-found: ignore

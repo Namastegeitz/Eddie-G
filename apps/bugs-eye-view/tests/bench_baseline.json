@@ -1,0 +1,7 @@
+{
+  "measured": "2026-11-27, before the upgrade (commit 8ea014e), headless, medium quality, 600 frames per room, median of 3 runs",
+  "machine_note": "4-core cloud container. Re-baseline on a new machine with: python3 tools/bench/check_perf.py --rebaseline",
+  "frame_ms_avg": {"kitchen": 1.065, "living_room": 1.173, "backyard": 1.057},
+  "frame_ms_p99": {"kitchen": 1.677, "living_room": 1.962, "backyard": 2.108},
+  "memory_static_mb": {"kitchen": 97.4, "living_room": 97.6, "backyard": 101.0}
+}

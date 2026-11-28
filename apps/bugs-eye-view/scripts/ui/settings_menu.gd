@@ -26,7 +26,7 @@ func _ready() -> void:
 	col.add_child(_slider("Effects", "sfx_volume"))
 	col.add_child(_section("Feel"))
 	col.add_child(_toggle("Vibration / rumble", "haptics"))
-	col.add_child(_toggle("Screen shake (off = reduced motion)", "screen_shake"))
+	col.add_child(_toggle("Motion: screen shake, spinning menus (off = reduced motion)", "screen_shake"))
 	col.add_child(_toggle("Pause when the window or app loses focus", "pause_on_focus_loss"))
 	col.add_child(_toggle("Invert look Y", "invert_y"))
 	col.add_child(_toggle("Fly where you look", "fly_follow_look"))
@@ -82,6 +82,7 @@ func _add_privacy(col: VBoxContainer) -> void:
 		OS.shell_open(PRIVACY_URL), 52.0))
 	var version := str(ProjectSettings.get_setting("application/config/version", "1.0.0"))
 	col.add_child(UIKit.label("Bug's-Eye View %s  ·  © 2026 Aethertek" % version, 16, UIKit.TEXT.darkened(0.25)))
+	col.add_child(UIKit.label("Made with the Godot Engine (MIT licence, godotengine.org/license)", 14, UIKit.TEXT.darkened(0.3)))
 
 
 func _section(text: String) -> Label:
