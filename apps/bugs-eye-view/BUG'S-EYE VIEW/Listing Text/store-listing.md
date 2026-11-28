@@ -67,7 +67,7 @@ FEATURES
 - Touch, keyboard and mouse, and controller support
 - Eight bugs, three rooms, thirty mini maps, a secret crawl space
 - Twenty-four treasures to collect
-- No ads, no in-app purchases, no accounts, no data collected
+- No ads, no in-app purchases, no accounts; anonymous crash reports only if you allow them
 - Plays offline
 
 ## Apple keywords (<= 100 bytes, comma-separated, no spaces needed)

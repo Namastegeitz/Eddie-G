@@ -3,7 +3,7 @@
 | | |
 |---|---|
 | File | `BugsEyeView-macos.zip` (69 MB) - one Universal app (Apple silicon + Intel) |
-| Version | 1.0.0 (build 1), exported 17 Nov 2026 |
+| Version | 1.0.0 (build 1), exported 28 Nov 2026 |
 | Runs on | macOS 11 Big Sur or newer |
 | Stores | itch.io, GOG now; Steam and Epic once notarized |
 

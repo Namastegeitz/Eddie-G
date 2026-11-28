@@ -3,7 +3,7 @@
 | | |
 |---|---|
 | File | `BugsEyeView-web.zip` (21 MB) - `index.html` plus the engine and game data |
-| Version | 1.0.0 (build 1), exported 17 Nov 2026 |
+| Version | 1.0.0 (build 1), exported 28 Nov 2026 |
 | Runs on | Chrome, Edge, Firefox, Safari (WebGL 2), phones and tablets with touch controls |
 | Stores | itch.io (played in the browser) |
 

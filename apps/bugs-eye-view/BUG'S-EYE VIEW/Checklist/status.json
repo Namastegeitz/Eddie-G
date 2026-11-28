@@ -1,5 +1,5 @@
 {
- "synced": "17 Nov 2026",
+ "synced": "28 Nov 2026",
  "tracker_url": "https://claude.ai/artifact/MKiRiENoEXksyyoVYmNkxw",
  "steps": {
   "p0-plants": {
@@ -69,6 +69,21 @@
   "p1-desktop": {
    "done": false,
    "coach": "The folder is on GitHub on branch claude/nifty-lamport-bfm2ub. On GitHub switch to that branch, choose Code > Download ZIP, unzip it, then run 'Make Desktop Folder.bat' inside apps/bugs-eye-view/BUG'S-EYE VIEW."
+  },
+  "p0-upgrade": {
+   "done": true,
+   "doneAt": "2026-11-28",
+   "by": "claude"
+  },
+  "p0-crash": {
+   "done": true,
+   "doneAt": "2026-11-28",
+   "by": "claude"
+  },
+  "p0-ci": {
+   "done": true,
+   "doneAt": "2026-11-28",
+   "by": "claude"
   }
  }
 }

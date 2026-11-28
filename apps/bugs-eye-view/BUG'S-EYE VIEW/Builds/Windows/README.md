@@ -3,7 +3,7 @@
 | | |
 |---|---|
 | File | `BugsEyeView-windows.zip` (47 MB) |
-| Version | 1.0.0 (build 1), exported 17 Nov 2026 |
+| Version | 1.0.0 (build 1), exported 28 Nov 2026 |
 | Runs on | Windows 10/11, 64-bit, OpenGL 3.3 graphics |
 | Stores | Steam, GOG, Epic, Microsoft Store (as MSIX), itch.io |
 

@@ -1,6 +1,6 @@
 {
   "title": "Bug's-Eye View - release checklist",
-  "updated": "2026-11-17",
+  "updated": "2026-11-28",
   "phases": [
     {
       "id": "p0",
@@ -8,39 +8,197 @@
       "goal": "Everything that could be done in the cloud before you touch a store account.",
       "who": "Claude",
       "steps": [
-        {"id": "p0-plants", "t": "Lighter bugs can push the potted plants", "who": "Claude", "cost": "", "time": "",
-         "how": ["Plants, glasses and teacups slide on a low-friction material; the plant weighs 0.6.", "An automated test pushes a plant off the bench with the ant, the weakest pusher."],
-         "tip": "Try it in the backyard with the ant: walk into the plant on the bench edge."},
-        {"id": "p0-folder", "t": "Release folder BUG'S-EYE VIEW made", "who": "Claude", "cost": "", "time": "",
-         "how": ["One folder holds everything for the release: Builds, Store Assets, Store pages, Listing Text, Legal, Research and this Checklist.", "Godot ignores it (.gdignore), so it never ends up inside the game."],
-         "files": ["BUG'S-EYE VIEW/"]},
-        {"id": "p0-research", "t": "Store requirements researched (Apple, Google Play, Steam, GOG, itch.io, Epic, Microsoft)", "who": "Claude", "cost": "", "time": "",
-         "how": ["Fees, account checks, review times, image sizes, forms and technical rules, checked against each store's own pages on 17 Nov 2026."],
-         "files": ["BUG'S-EYE VIEW/Research/"]},
-        {"id": "p0-audit", "t": "Machine audit: what the build computer has and lacks", "who": "Claude", "cost": "", "time": "",
-         "how": ["Has: Godot 4.7.2 with export templates, Android SDK (platform 36, build-tools 36.1.0), Java 21, Python with Pillow, a virtual display for rendering.", "Lacks: a Mac and Xcode (needed to sign iPhone builds), your signing keys (on purpose: they stay with you)."],
-         "tip": "The iPhone build is the only one that needs extra hardware or a cloud Mac - see phase 4."},
-        {"id": "p0-api36", "t": "Android build targets API 36 (Google Play's rule since 31 Aug 2026)", "who": "Claude", "cost": "", "time": "",
-         "how": ["The Android App Bundle preset now targets SDK 36; a debug bundle was built to prove it."]},
-        {"id": "p0-listing", "t": "Store listing text written, checked against every length limit", "who": "Claude", "cost": "", "time": "",
-         "how": ["Name, subtitle, short descriptions, the 2,251-character full description, keywords, tags and system requirements."],
-         "files": ["BUG'S-EYE VIEW/Listing Text/store-listing.md"]},
-        {"id": "p0-privacy", "t": "Privacy policy drafted (the game collects no data)", "who": "Claude", "cost": "", "time": "",
-         "how": ["Every store needs one, even for a game that collects nothing. The draft says exactly that: saves stay on the device; no ads, analytics or accounts."],
-         "files": ["BUG'S-EYE VIEW/Legal/privacy-policy.md"]},
-        {"id": "p0-forms", "t": "Answers for the stores' privacy, data and age-rating forms", "who": "Claude", "cost": "", "time": "",
-         "how": ["Google Play data safety and content rating, Apple privacy labels, age rating and encryption, Steam's content survey, EU trader status."],
-         "files": ["BUG'S-EYE VIEW/Legal/store-questionnaire-answers.md"]},
-        {"id": "p0-art", "t": "Store art rendered from the real game", "who": "Claude", "cost": "", "time": "",
-         "how": ["App icons, key art, logo, 1920x1080 screenshots, iPhone 6.9\" and 6.3\" and iPad 13\" screenshots, Steam capsules, Google Play feature graphic, Epic, Microsoft, itch.io and GOG images.", "Re-make them any time with tools/release/make_store_assets.sh."],
-         "files": ["BUG'S-EYE VIEW/Store Assets/"]},
-        {"id": "p0-ingame-privacy", "t": "Privacy & about section inside the game", "who": "Claude", "cost": "", "time": "",
-         "how": ["Google Play wants the policy reachable inside the app too. Settings now shows what the game keeps, the policy link, the version and the developer."]},
-        {"id": "p0-builds", "t": "Every build in its own folder", "who": "Claude", "cost": "", "time": "",
-         "how": ["Builds/Windows, macOS, Linux, Web and Android each hold a fresh build and a README; Builds/iOS holds the plan for the iPhone build."],
-         "files": ["BUG'S-EYE VIEW/Builds/"]},
-        {"id": "p0-tracker", "t": "This live checklist and the feedback collector", "who": "Claude", "cost": "", "time": "",
-         "how": ["Tick steps here; the green checks are saved and show on every device. Report bugs in the Feedback tab - Claude reads them and replies."]}
+        {
+          "id": "p0-plants",
+          "t": "Lighter bugs can push the potted plants",
+          "who": "Claude",
+          "cost": "",
+          "time": "",
+          "how": [
+            "Plants, glasses and teacups slide on a low-friction material; the plant weighs 0.6.",
+            "An automated test pushes a plant off the bench with the ant, the weakest pusher."
+          ],
+          "tip": "Try it in the backyard with the ant: walk into the plant on the bench edge."
+        },
+        {
+          "id": "p0-folder",
+          "t": "Release folder BUG'S-EYE VIEW made",
+          "who": "Claude",
+          "cost": "",
+          "time": "",
+          "how": [
+            "One folder holds everything for the release: Builds, Store Assets, Store pages, Listing Text, Legal, Research and this Checklist.",
+            "Godot ignores it (.gdignore), so it never ends up inside the game."
+          ],
+          "files": [
+            "BUG'S-EYE VIEW/"
+          ]
+        },
+        {
+          "id": "p0-research",
+          "t": "Store requirements researched (Apple, Google Play, Steam, GOG, itch.io, Epic, Microsoft)",
+          "who": "Claude",
+          "cost": "",
+          "time": "",
+          "how": [
+            "Fees, account checks, review times, image sizes, forms and technical rules, checked against each store's own pages on 17 Nov 2026."
+          ],
+          "files": [
+            "BUG'S-EYE VIEW/Research/"
+          ]
+        },
+        {
+          "id": "p0-audit",
+          "t": "Machine audit: what the build computer has and lacks",
+          "who": "Claude",
+          "cost": "",
+          "time": "",
+          "how": [
+            "Has: Godot 4.7.2 with export templates, Android SDK (platform 36, build-tools 36.1.0), Java 21, Python with Pillow, a virtual display for rendering.",
+            "Lacks: a Mac and Xcode (needed to sign iPhone builds), your signing keys (on purpose: they stay with you)."
+          ],
+          "tip": "The iPhone build is the only one that needs extra hardware or a cloud Mac - see phase 4."
+        },
+        {
+          "id": "p0-api36",
+          "t": "Android build targets API 36 (Google Play's rule since 31 Aug 2026)",
+          "who": "Claude",
+          "cost": "",
+          "time": "",
+          "how": [
+            "The Android App Bundle preset now targets SDK 36; a debug bundle was built to prove it."
+          ]
+        },
+        {
+          "id": "p0-listing",
+          "t": "Store listing text written, checked against every length limit",
+          "who": "Claude",
+          "cost": "",
+          "time": "",
+          "how": [
+            "Name, subtitle, short descriptions, the 2,251-character full description, keywords, tags and system requirements."
+          ],
+          "files": [
+            "BUG'S-EYE VIEW/Listing Text/store-listing.md"
+          ]
+        },
+        {
+          "id": "p0-privacy",
+          "t": "Privacy policy drafted (the game collects no data)",
+          "who": "Claude",
+          "cost": "",
+          "time": "",
+          "how": [
+            "Every store needs one, even for a game that collects nothing. The draft says exactly that: saves stay on the device; no ads, analytics or accounts."
+          ],
+          "files": [
+            "BUG'S-EYE VIEW/Legal/privacy-policy.md"
+          ]
+        },
+        {
+          "id": "p0-forms",
+          "t": "Answers for the stores' privacy, data and age-rating forms",
+          "who": "Claude",
+          "cost": "",
+          "time": "",
+          "how": [
+            "Google Play data safety and content rating, Apple privacy labels, age rating and encryption, Steam's content survey, EU trader status."
+          ],
+          "files": [
+            "BUG'S-EYE VIEW/Legal/store-questionnaire-answers.md"
+          ]
+        },
+        {
+          "id": "p0-art",
+          "t": "Store art rendered from the real game",
+          "who": "Claude",
+          "cost": "",
+          "time": "",
+          "how": [
+            "App icons, key art, logo, 1920x1080 screenshots, iPhone 6.9\" and 6.3\" and iPad 13\" screenshots, Steam capsules, Google Play feature graphic, Epic, Microsoft, itch.io and GOG images.",
+            "Re-make them any time with tools/release/make_store_assets.sh."
+          ],
+          "files": [
+            "BUG'S-EYE VIEW/Store Assets/"
+          ]
+        },
+        {
+          "id": "p0-ingame-privacy",
+          "t": "Privacy & about section inside the game",
+          "who": "Claude",
+          "cost": "",
+          "time": "",
+          "how": [
+            "Google Play wants the policy reachable inside the app too. Settings now shows what the game keeps, the policy link, the version and the developer."
+          ]
+        },
+        {
+          "id": "p0-builds",
+          "t": "Every build in its own folder",
+          "who": "Claude",
+          "cost": "",
+          "time": "",
+          "how": [
+            "Builds/Windows, macOS, Linux, Web and Android each hold a fresh build and a README; Builds/iOS holds the plan for the iPhone build."
+          ],
+          "files": [
+            "BUG'S-EYE VIEW/Builds/"
+          ]
+        },
+        {
+          "id": "p0-tracker",
+          "t": "This live checklist and the feedback collector",
+          "who": "Claude",
+          "cost": "",
+          "time": "",
+          "how": [
+            "Tick steps here; the green checks are saved and show on every device. Report bugs in the Feedback tab - Claude reads them and replies."
+          ]
+        },
+        {
+          "id": "p0-upgrade",
+          "t": "Upgrade run (27-28 Nov): safer saves, smoother loading, more graphics and accessibility options",
+          "who": "Claude",
+          "cost": "",
+          "time": "",
+          "how": [
+            "Saves keep a backup and can't be wiped by a crash; old desktop saves move over automatically.",
+            "Rooms pre-draw everything while loading: the worst first-time hitches are 40-74% shorter.",
+            "Settings: Ultra quality, 120 fps cap, render scale, text size up to 200%, reduced motion, pause when you switch away.",
+            "Every change is measured against a baseline and covered by tests. The full report is in UPGRADE_REPORT.md."
+          ],
+          "files": [
+            "UPGRADE_REPORT.md",
+            "upgrade-shots/"
+          ]
+        },
+        {
+          "id": "p0-crash",
+          "t": "Crash reporting built in: Sentry + Firebase Crashlytics (free), off until the player says yes",
+          "who": "Claude",
+          "cost": "Free",
+          "time": "",
+          "how": [
+            "The game asks once; nothing is sent before Yes. Settings has the switch and a 'Send a test report' button.",
+            "Android builds get Crashlytics when your Firebase file is present; every build except the web gets Sentry when your DSN is set.",
+            "The privacy policy, store forms and listing text now describe the optional crash reports."
+          ]
+        },
+        {
+          "id": "p0-ci",
+          "t": "Automatic tests and one-click release builds on GitHub, plus the store kit",
+          "who": "Claude",
+          "cost": "Free (GitHub Actions minutes)",
+          "time": "",
+          "how": [
+            "Every change to the game runs the full test suite, a benchmark and screenshot checks on GitHub.",
+            "Actions > Bug's-Eye View release builds > Run workflow builds every platform, with crash reporting when your keys are set.",
+            "store-kit/ holds credits and rights, What's New, the trailer shot list, Apple accessibility answers, signing notes and the rollback plan."
+          ],
+          "files": [
+            "BUG'S-EYE VIEW/store-kit/"
+          ]
+        }
       ]
     },
     {
@@ -49,28 +207,153 @@
       "goal": "A few choices only you can make. Each one unblocks several stores.",
       "who": "You",
       "steps": [
-        {"id": "p1-desktop", "t": "Put the BUG'S-EYE VIEW folder on your Desktop", "who": "You", "cost": "Free", "time": "5 min",
-         "how": ["Pull the latest code from GitHub (or download the repo as a zip).", "Open apps/bugs-eye-view/BUG'S-EYE VIEW and double-click \"Make Desktop Folder.bat\".", "A BUG'S-EYE VIEW folder appears on your Desktop with everything in it. Run it again after each update."],
-         "tip": "Windows may ask before running a .bat from the internet: choose More info > Run anyway, or right-click the file > Properties > Unblock.",
-         "files": ["BUG'S-EYE VIEW/Make Desktop Folder.bat"]},
-        {"id": "p1-seller", "t": "Decide who sells the game: you personally, or a company", "who": "You", "cost": "Free (a company costs money to set up)", "time": "15 min to decide",
-         "how": ["As an individual, Apple shows your legal name as the seller and Google shows your developer name. That's normal for solo developers.", "A company (an LLC, for example) lets stores show \"Aethertek\", but Apple then needs a D-U-N-S number and Microsoft needs a Company account.", "Microsoft's Individual account is meant for non-commercial apps: if you plan to sell there, choose Company."],
-         "tip": "If you're unsure, start as an individual on itch.io and Google Play; you can form a company before the paid stores."},
-        {"id": "p1-price", "t": "Decide the price: free or paid", "who": "You", "cost": "Free", "time": "10 min",
-         "how": ["Free: no tax or bank forms on most stores, and you're usually a non-trader in the EU.", "Paid: you'll fill in tax forms (W-9 in the US, W-8BEN elsewhere), add a bank account, and in the EU your address and phone are shown as a trader.", "A common route: free web demo on itch.io, paid full game on Steam."],
-         "tip": "Tell Claude the price and Claude updates the listing text and forms to match."},
-        {"id": "p1-email", "t": "Create a support email address for players and stores", "who": "You", "cost": "Free", "time": "10 min",
-         "how": ["Make a separate address for the game (for example a new Gmail or Outlook address). Every store shows it publicly.", "Tell Claude the address; Claude puts it in the privacy policy and listing and republishes them."],
-         "tip": "Don't use your personal inbox: store pages are public and get spam."},
-        {"id": "p1-privacy-url", "t": "Make the privacy policy page public and save its link", "who": "You", "cost": "Free", "time": "5 min",
-         "how": ["Open the privacy policy page Claude published, choose Share, and turn on the public link.", "Paste the link into the step's notes here. Every store asks for it.", "Any public web page works too (GitHub Pages, your own site): tell Claude the link and it updates the game and listings."],
-         "tip": "Do this after the support email step, so the public page shows the real address."},
-        {"id": "p1-keystore", "t": "Make your Android upload key (on your own computer)", "who": "You", "cost": "Free", "time": "15 min",
-         "how": ["Install Java (Temurin 17 or newer) or use the one that comes with Android Studio.", "In a terminal run: keytool -genkeypair -v -keystore bugseyeview-upload.keystore -alias upload -keyalg RSA -keysize 2048 -validity 10000", "Use the same password for the store and the key (letters and numbers only - Godot needs that).", "Back the file and password up somewhere safe and offline. Never commit it to GitHub."],
-         "tip": "Lose it and Google can reset it, but that takes days. Two backups (a USB stick and a password manager) are enough."},
-        {"id": "p1-playtest", "t": "Play the current builds and report anything odd", "who": "You", "cost": "Free", "time": "30 min",
-         "how": ["Play the web build and the Windows build from Builds/.", "Use the Feedback tab for every bug, however small: where you were, what happened, what you expected."],
-         "tip": "Five minutes per bug and room is plenty. Small things count: a clipping chair, a confusing hint, a menu that's hard to tap."}
+        {
+          "id": "p1-desktop",
+          "t": "Put the BUG'S-EYE VIEW folder on your Desktop",
+          "who": "You",
+          "cost": "Free",
+          "time": "5 min",
+          "how": [
+            "Pull the latest code from GitHub (or download the repo as a zip).",
+            "Open apps/bugs-eye-view/BUG'S-EYE VIEW and double-click \"Make Desktop Folder.bat\".",
+            "A BUG'S-EYE VIEW folder appears on your Desktop with everything in it. Run it again after each update."
+          ],
+          "tip": "Windows may ask before running a .bat from the internet: choose More info > Run anyway, or right-click the file > Properties > Unblock.",
+          "files": [
+            "BUG'S-EYE VIEW/Make Desktop Folder.bat"
+          ]
+        },
+        {
+          "id": "p1-seller",
+          "t": "Decide who sells the game: you personally, or a company",
+          "who": "You",
+          "cost": "Free (a company costs money to set up)",
+          "time": "15 min to decide",
+          "how": [
+            "As an individual, Apple shows your legal name as the seller and Google shows your developer name. That's normal for solo developers.",
+            "A company (an LLC, for example) lets stores show \"Aethertek\", but Apple then needs a D-U-N-S number and Microsoft needs a Company account.",
+            "Microsoft's Individual account is meant for non-commercial apps: if you plan to sell there, choose Company."
+          ],
+          "tip": "If you're unsure, start as an individual on itch.io and Google Play; you can form a company before the paid stores."
+        },
+        {
+          "id": "p1-price",
+          "t": "Decide the price: free or paid",
+          "who": "You",
+          "cost": "Free",
+          "time": "10 min",
+          "how": [
+            "Free: no tax or bank forms on most stores, and you're usually a non-trader in the EU.",
+            "Paid: you'll fill in tax forms (W-9 in the US, W-8BEN elsewhere), add a bank account, and in the EU your address and phone are shown as a trader.",
+            "A common route: free web demo on itch.io, paid full game on Steam."
+          ],
+          "tip": "Tell Claude the price and Claude updates the listing text and forms to match."
+        },
+        {
+          "id": "p1-email",
+          "t": "Create a support email address for players and stores",
+          "who": "You",
+          "cost": "Free",
+          "time": "10 min",
+          "how": [
+            "Make a separate address for the game (for example a new Gmail or Outlook address). Every store shows it publicly.",
+            "Tell Claude the address; Claude puts it in the privacy policy and listing and republishes them."
+          ],
+          "tip": "Don't use your personal inbox: store pages are public and get spam."
+        },
+        {
+          "id": "p1-privacy-url",
+          "t": "Make the privacy policy page public and save its link",
+          "who": "You",
+          "cost": "Free",
+          "time": "5 min",
+          "how": [
+            "Open the privacy policy page Claude published, choose Share, and turn on the public link.",
+            "Paste the link into the step's notes here. Every store asks for it.",
+            "Any public web page works too (GitHub Pages, your own site): tell Claude the link and it updates the game and listings."
+          ],
+          "tip": "Do this after the support email step, so the public page shows the real address."
+        },
+        {
+          "id": "p1-keystore",
+          "t": "Make your Android upload key (on your own computer)",
+          "who": "You",
+          "cost": "Free",
+          "time": "15 min",
+          "how": [
+            "Install Java (Temurin 17 or newer) or use the one that comes with Android Studio.",
+            "In a terminal run: keytool -genkeypair -v -keystore bugseyeview-upload.keystore -alias upload -keyalg RSA -keysize 2048 -validity 10000",
+            "Use the same password for the store and the key (letters and numbers only - Godot needs that).",
+            "Back the file and password up somewhere safe and offline. Never commit it to GitHub."
+          ],
+          "tip": "Lose it and Google can reset it, but that takes days. Two backups (a USB stick and a password manager) are enough."
+        },
+        {
+          "id": "p1-sentry",
+          "t": "Create a free Sentry account for crash reports",
+          "who": "You",
+          "cost": "Free (Developer plan, 5,000 errors a month)",
+          "time": "15 min",
+          "how": [
+            "Sign up at sentry.io and pick the free Developer plan.",
+            "Create a project: platform Godot, name bugs-eye-view.",
+            "Copy the DSN (Settings > Projects > bugs-eye-view > Client Keys).",
+            "In the project's Security & Privacy settings turn on 'Prevent Storing of IP Addresses' and the Data Scrubber.",
+            "On GitHub: repository Settings > Secrets and variables > Actions > New secret, name SENTRY_DSN, paste the DSN."
+          ],
+          "tip": "The same SENTRY_DSN secret name is used by your other games' workflows; give each game its own Sentry project and DSN if you want their reports separate.",
+          "links": [
+            [
+              "Sentry sign-up",
+              "https://sentry.io/signup/"
+            ]
+          ]
+        },
+        {
+          "id": "p1-firebase",
+          "t": "Create a free Firebase project for Android crash reports (Crashlytics)",
+          "who": "You",
+          "cost": "Free (Spark plan)",
+          "time": "15 min",
+          "how": [
+            "console.firebase.google.com > Add project (Google Analytics can stay off).",
+            "Add an Android app with package name com.aethertek.bugseyeview and download google-services.json.",
+            "Open Crashlytics in the Firebase menu and click Enable.",
+            "On GitHub: add a secret named FIREBASE_ANDROID_CONFIG and paste the whole text of google-services.json."
+          ],
+          "tip": "Crashlytics shows 'waiting for first crash' until a build with your file is run and the player says yes; use Settings > Send a test report.",
+          "links": [
+            [
+              "Firebase console",
+              "https://console.firebase.google.com/"
+            ]
+          ]
+        },
+        {
+          "id": "p1-release-run",
+          "t": "Run the release workflow and check a test report arrives",
+          "who": "You + Claude",
+          "cost": "Free",
+          "time": "30 min",
+          "how": [
+            "GitHub > Actions > 'Bug's-Eye View release builds' > Run workflow.",
+            "Download a build from the run page (Windows or Android), open it and answer Yes to crash reports.",
+            "Settings > Privacy & about > Send a test report. It should appear in Sentry (and Crashlytics on Android) within minutes.",
+            "Tell Claude what you see; Claude fixes anything that doesn't arrive."
+          ]
+        },
+        {
+          "id": "p1-playtest",
+          "t": "Play the current builds and report anything odd",
+          "who": "You",
+          "cost": "Free",
+          "time": "30 min",
+          "how": [
+            "Play the web build and the Windows build from Builds/.",
+            "Use the Feedback tab for every bug, however small: where you were, what happened, what you expected."
+          ],
+          "tip": "Five minutes per bug and room is plenty. Small things count: a clipping chair, a confusing hint, a menu that's hard to tap."
+        }
       ]
     },
     {
@@ -79,14 +362,57 @@
       "goal": "Free and live the same day. Real players, real feedback, a link to share.",
       "who": "You + Claude",
       "steps": [
-        {"id": "p2-account", "t": "Create an itch.io account", "who": "You", "cost": "Free", "time": "5 min",
-         "how": ["Sign up at itch.io and verify your email."], "links": [["itch.io", "https://itch.io/register"]]},
-        {"id": "p2-project", "t": "Create the project and upload the builds", "who": "You", "cost": "Free", "time": "30 min",
-         "how": ["Dashboard > Create new project. Kind: HTML. Title: Bug's-Eye View.", "Upload Builds/Web/BugsEyeView-web.zip and tick \"This file will be played in the browser\". Viewport 1280 x 720, tick fullscreen button and mobile friendly.", "Also upload the Windows, macOS and Linux zips as downloads.", "Cover image: Store Assets/itch.io/cover_630x500.jpg. Screenshots: Store Assets/Screenshots/1920x1080 folder.", "Paste the short and full descriptions from Listing Text. Genre Action, tags from the listing file."],
-         "tip": "Set it to Restricted first and play it from the itch page yourself before going Public.",
-         "files": ["BUG'S-EYE VIEW/Store pages/itch.io/README.md"], "links": [["itch.io creator docs", "https://itch.io/docs/creators/html5"]]},
-        {"id": "p2-public", "t": "Make it public and share the link", "who": "You", "cost": "Free", "time": "5 min",
-         "how": ["Visibility: Public. Pricing: free or \"No payments\" for now.", "Paste the itch.io link into this step's notes and share it with friends for feedback."]}
+        {
+          "id": "p2-account",
+          "t": "Create an itch.io account",
+          "who": "You",
+          "cost": "Free",
+          "time": "5 min",
+          "how": [
+            "Sign up at itch.io and verify your email."
+          ],
+          "links": [
+            [
+              "itch.io",
+              "https://itch.io/register"
+            ]
+          ]
+        },
+        {
+          "id": "p2-project",
+          "t": "Create the project and upload the builds",
+          "who": "You",
+          "cost": "Free",
+          "time": "30 min",
+          "how": [
+            "Dashboard > Create new project. Kind: HTML. Title: Bug's-Eye View.",
+            "Upload Builds/Web/BugsEyeView-web.zip and tick \"This file will be played in the browser\". Viewport 1280 x 720, tick fullscreen button and mobile friendly.",
+            "Also upload the Windows, macOS and Linux zips as downloads.",
+            "Cover image: Store Assets/itch.io/cover_630x500.jpg. Screenshots: Store Assets/Screenshots/1920x1080 folder.",
+            "Paste the short and full descriptions from Listing Text. Genre Action, tags from the listing file."
+          ],
+          "tip": "Set it to Restricted first and play it from the itch page yourself before going Public.",
+          "files": [
+            "BUG'S-EYE VIEW/Store pages/itch.io/README.md"
+          ],
+          "links": [
+            [
+              "itch.io creator docs",
+              "https://itch.io/docs/creators/html5"
+            ]
+          ]
+        },
+        {
+          "id": "p2-public",
+          "t": "Make it public and share the link",
+          "who": "You",
+          "cost": "Free",
+          "time": "5 min",
+          "how": [
+            "Visibility: Public. Pricing: free or \"No payments\" for now.",
+            "Paste the itch.io link into this step's notes and share it with friends for feedback."
+          ]
+        }
       ]
     },
     {
@@ -95,32 +421,136 @@
       "goal": "About 3-5 weeks, mostly waiting: identity checks, a required 14-day closed test, then review.",
       "who": "You + Claude",
       "steps": [
-        {"id": "p3-account", "t": "Create a Google Play developer account (Personal)", "who": "You", "cost": "US$25 once", "time": "20 min, then 1-3 days for checks",
-         "how": ["Go to play.google.com/console/signup with the Google account you'll keep for the game.", "Choose Personal (unless you made a company in phase 1), pay the $25, upload a government ID.", "Your legal name, country and the developer email are shown on the store."],
-         "tip": "Use the exact name on your ID - a mismatch is the most common reason for a failed check, and the fee isn't refunded.",
-         "links": [["Play Console sign-up", "https://play.google.com/console/signup"], ["What's required", "https://support.google.com/googleplay/android-developer/answer/13628312"]]},
-        {"id": "p3-verify", "t": "Verify your phone and email, and an Android device", "who": "You", "cost": "Free", "time": "15 min",
-         "how": ["Enter the codes Google sends.", "Install the Play Console app on an Android 10+ phone and sign in - that finishes the device check."]},
-        {"id": "p3-app", "t": "Create the app in Play Console", "who": "You", "cost": "Free", "time": "10 min",
-         "how": ["Create app: name Bug's-Eye View, language English, Game, Free (or Paid).", "The package name com.aethertek.bugseyeview is fixed forever once the first bundle is uploaded.", "Accept Play App Signing (Google keeps the app signing key; you keep the upload key)."]},
-        {"id": "p3-listing", "t": "Fill in the store listing", "who": "You", "cost": "Free", "time": "30 min",
-         "how": ["Short and full description: Listing Text/store-listing.md.", "Icon: Store Assets/Google Play/icon_512.png. Feature graphic: Store Assets/Google Play/feature_graphic_1024x500.jpg.", "Phone screenshots: 4-8 from the Store Assets/Screenshots/1920x1080 folder (landscape 16:9 makes the game eligible for recommendations).", "Category Action, contact email (phase 1), privacy policy link (phase 1)."],
-         "files": ["BUG'S-EYE VIEW/Store pages/Google Play/README.md"]},
-        {"id": "p3-content", "t": "Complete the App content forms", "who": "You", "cost": "Free", "time": "30 min",
-         "how": ["Use Legal/store-questionnaire-answers.md for every form: privacy policy, ads (No), app access, content rating (cartoon violence), target audience 13+, data safety (no data collected)."],
-         "tip": "Choose 13+ for target audience. Picking under-13 brings in the Families policy and slower reviews."},
-        {"id": "p3-release-build", "t": "Build the signed release bundle (.aab)", "who": "You + Claude", "cost": "Free", "time": "15 min",
-         "how": ["Option A (your PC): install Godot 4.7.2 + export templates + Android SDK, open the project, Project > Export > Android AAB, set the release keystore, Export Project.", "Option B (cloud): add the keystore as a GitHub Actions secret and Claude sets up a workflow that builds the signed bundle.", "Every new upload needs a higher version code - Claude bumps it for each release."],
-         "tip": "Option B means you never need Android tools on your PC.", "files": ["BUG'S-EYE VIEW/Builds/Android/README.md"]},
-        {"id": "p3-closed-test", "t": "Run the closed test: 12 testers for 14 days in a row", "who": "You", "cost": "Free", "time": "14+ days",
-         "how": ["Testing > Closed testing > create a track, upload the .aab, add testers by email list or Google Group.", "At least 12 testers must opt in and stay opted in for 14 days in a row.", "Collect what they say - the production application asks what you learned and what you changed. Log it in the Feedback tab here."],
-         "tip": "Ask 15-20 people so a few dropping out doesn't reset the clock. Friends, family, a Discord or Reddit playtest thread all work.",
-         "links": [["Testing requirements", "https://support.google.com/googleplay/android-developer/answer/14151465"]]},
-        {"id": "p3-apply", "t": "Apply for production access", "who": "You", "cost": "Free", "time": "Up to 7 days",
-         "how": ["Dashboard > Apply for production. Answer the questions about your test (Claude can draft answers from the Feedback tab)."]},
-        {"id": "p3-launch", "t": "Release to production", "who": "You", "cost": "Free", "time": "1-7 days review",
-         "how": ["Production > Create release, upload the .aab, release notes, choose countries, send for review."],
-         "tip": "A staged rollout (20% first) lets you catch a crash before everyone gets it."}
+        {
+          "id": "p3-account",
+          "t": "Create a Google Play developer account (Personal)",
+          "who": "You",
+          "cost": "US$25 once",
+          "time": "20 min, then 1-3 days for checks",
+          "how": [
+            "Go to play.google.com/console/signup with the Google account you'll keep for the game.",
+            "Choose Personal (unless you made a company in phase 1), pay the $25, upload a government ID.",
+            "Your legal name, country and the developer email are shown on the store."
+          ],
+          "tip": "Use the exact name on your ID - a mismatch is the most common reason for a failed check, and the fee isn't refunded.",
+          "links": [
+            [
+              "Play Console sign-up",
+              "https://play.google.com/console/signup"
+            ],
+            [
+              "What's required",
+              "https://support.google.com/googleplay/android-developer/answer/13628312"
+            ]
+          ]
+        },
+        {
+          "id": "p3-verify",
+          "t": "Verify your phone and email, and an Android device",
+          "who": "You",
+          "cost": "Free",
+          "time": "15 min",
+          "how": [
+            "Enter the codes Google sends.",
+            "Install the Play Console app on an Android 10+ phone and sign in - that finishes the device check."
+          ]
+        },
+        {
+          "id": "p3-app",
+          "t": "Create the app in Play Console",
+          "who": "You",
+          "cost": "Free",
+          "time": "10 min",
+          "how": [
+            "Create app: name Bug's-Eye View, language English, Game, Free (or Paid).",
+            "The package name com.aethertek.bugseyeview is fixed forever once the first bundle is uploaded.",
+            "Accept Play App Signing (Google keeps the app signing key; you keep the upload key)."
+          ]
+        },
+        {
+          "id": "p3-listing",
+          "t": "Fill in the store listing",
+          "who": "You",
+          "cost": "Free",
+          "time": "30 min",
+          "how": [
+            "Short and full description: Listing Text/store-listing.md.",
+            "Icon: Store Assets/Google Play/icon_512.png. Feature graphic: Store Assets/Google Play/feature_graphic_1024x500.jpg.",
+            "Phone screenshots: 4-8 from the Store Assets/Screenshots/1920x1080 folder (landscape 16:9 makes the game eligible for recommendations).",
+            "Category Action, contact email (phase 1), privacy policy link (phase 1)."
+          ],
+          "files": [
+            "BUG'S-EYE VIEW/Store pages/Google Play/README.md"
+          ]
+        },
+        {
+          "id": "p3-content",
+          "t": "Complete the App content forms",
+          "who": "You",
+          "cost": "Free",
+          "time": "30 min",
+          "how": [
+            "Use Legal/store-questionnaire-answers.md for every form: privacy policy, ads (No), app access, content rating (cartoon violence), target audience 13+.",
+            "Data safety: crash logs, diagnostics and a device ID are collected only if the player allows crash reports - optional, not shared, encrypted in transit (exact answers in the file)."
+          ],
+          "tip": "Choose 13+ for target audience. Picking under-13 brings in the Families policy and slower reviews."
+        },
+        {
+          "id": "p3-release-build",
+          "t": "Build the signed release bundle (.aab)",
+          "who": "You + Claude",
+          "cost": "Free",
+          "time": "15 min",
+          "how": [
+            "Option A (your PC): install Godot 4.7.2 + export templates + Android SDK, open the project, Project > Export > Android AAB, set the release keystore, Export Project.",
+            "Option B (cloud): add the keystore as a GitHub Actions secret and Claude sets up a workflow that builds the signed bundle.",
+            "Every new upload needs a higher version code - Claude bumps it for each release."
+          ],
+          "tip": "Option B means you never need Android tools on your PC.",
+          "files": [
+            "BUG'S-EYE VIEW/Builds/Android/README.md"
+          ]
+        },
+        {
+          "id": "p3-closed-test",
+          "t": "Run the closed test: 12 testers for 14 days in a row",
+          "who": "You",
+          "cost": "Free",
+          "time": "14+ days",
+          "how": [
+            "Testing > Closed testing > create a track, upload the .aab, add testers by email list or Google Group.",
+            "At least 12 testers must opt in and stay opted in for 14 days in a row.",
+            "Collect what they say - the production application asks what you learned and what you changed. Log it in the Feedback tab here."
+          ],
+          "tip": "Ask 15-20 people so a few dropping out doesn't reset the clock. Friends, family, a Discord or Reddit playtest thread all work.",
+          "links": [
+            [
+              "Testing requirements",
+              "https://support.google.com/googleplay/android-developer/answer/14151465"
+            ]
+          ]
+        },
+        {
+          "id": "p3-apply",
+          "t": "Apply for production access",
+          "who": "You",
+          "cost": "Free",
+          "time": "Up to 7 days",
+          "how": [
+            "Dashboard > Apply for production. Answer the questions about your test (Claude can draft answers from the Feedback tab)."
+          ]
+        },
+        {
+          "id": "p3-launch",
+          "t": "Release to production",
+          "who": "You",
+          "cost": "Free",
+          "time": "1-7 days review",
+          "how": [
+            "Production > Create release, upload the .aab, release notes, choose countries, send for review."
+          ],
+          "tip": "A staged rollout (20% first) lets you catch a crash before everyone gets it."
+        }
       ]
     },
     {
@@ -129,26 +559,125 @@
       "goal": "Needs a paid Apple account and a Mac to sign the build - a cloud Mac works.",
       "who": "You + Claude",
       "steps": [
-        {"id": "p4-account", "t": "Join the Apple Developer Program", "who": "You", "cost": "US$99 a year", "time": "30 min, then 1-2 days",
-         "how": ["Use an Apple Account with two-factor authentication, in your legal name.", "Enroll as an Individual (or as an Organization with a D-U-N-S number if you made a company).", "When it's approved, find your Team ID under Membership details and paste it in this step's notes."],
-         "links": [["Enroll", "https://developer.apple.com/programs/enroll/"]]},
-        {"id": "p4-mac", "t": "Choose how to build for iPhone: Mac, cloud Mac or GitHub Actions", "who": "You + Claude", "cost": "Free to ~US$50/month", "time": "1 hour",
-         "how": ["Apple only accepts iPhone builds made with Xcode 26 or newer on macOS. The Xcode project itself is ready: Claude exported it here and it passes Apple's current rules.", "Codemagic (free tier with macOS minutes) or GitHub Actions macOS runners can build it from this repo - Claude writes the workflow.", "Or borrow or rent a Mac (MacinCloud) for the day of the build."],
-         "tip": "GitHub Actions is the cheapest if the repo stays private and builds are rare."},
-        {"id": "p4-ids", "t": "Register the bundle ID and certificates", "who": "You + Claude", "cost": "Free", "time": "20 min",
-         "how": ["Certificates, Identifiers & Profiles: register the App ID com.aethertek.bugseyeview.", "Create an App Store Connect API key (for automated signing and uploads) and store it as a CI secret."]},
-        {"id": "p4-record", "t": "Create the app in App Store Connect", "who": "You", "cost": "Free", "time": "20 min",
-         "how": ["My Apps > + > New App: iOS, name Bug's-Eye View, bundle ID, SKU bugseyeview.", "Subtitle, keywords, promotional text and description: Listing Text.", "App Privacy: Data Not Collected. Age rating: Cartoon violence Frequent (13+). Export compliance: no non-exempt encryption."],
-         "files": ["BUG'S-EYE VIEW/Store pages/Apple App Store/README.md"]},
-        {"id": "p4-media", "t": "Upload the icon and screenshots", "who": "You", "cost": "Free", "time": "20 min",
-         "how": ["iPhone: Store Assets/Screenshots/iPhone 6.9 inch and iPhone 6.3 inch folders. iPad: the iPad 13 inch folder.", "The app icon comes from the build itself (1024 x 1024, no transparency)."]},
-        {"id": "p4-build", "t": "Build, sign and upload the iPhone build", "who": "You + Claude", "cost": "Free", "time": "1-2 hours the first time",
-         "how": ["Godot exports an Xcode project; Xcode (local or cloud) archives, signs and uploads it to App Store Connect.", "Claude fills in the Team ID and checks the export preset first."],
-         "files": ["BUG'S-EYE VIEW/Builds/iOS/README.md"]},
-        {"id": "p4-testflight", "t": "Test on your own iPhone with TestFlight", "who": "You", "cost": "Free", "time": "1-3 days",
-         "how": ["Install TestFlight, add yourself as an internal tester, play the build.", "Check touch controls, the notch area, and that the game resumes after a phone call."]},
-        {"id": "p4-submit", "t": "Submit for review and release", "who": "You", "cost": "Free", "time": "1-3 days review",
-         "how": ["Choose the build, add review notes (\"No login needed; tutorial on first launch\"), submit.", "If it's rejected, paste Apple's message in this step's notes - Claude fixes what's needed."]}
+        {
+          "id": "p4-account",
+          "t": "Join the Apple Developer Program",
+          "who": "You",
+          "cost": "US$99 a year",
+          "time": "30 min, then 1-2 days",
+          "how": [
+            "Use an Apple Account with two-factor authentication, in your legal name.",
+            "Enroll as an Individual (or as an Organization with a D-U-N-S number if you made a company).",
+            "When it's approved, find your Team ID under Membership details and paste it in this step's notes."
+          ],
+          "links": [
+            [
+              "Enroll",
+              "https://developer.apple.com/programs/enroll/"
+            ]
+          ]
+        },
+        {
+          "id": "p4-mac",
+          "t": "Choose how to build for iPhone: Mac, cloud Mac or GitHub Actions",
+          "who": "You + Claude",
+          "cost": "Free to ~US$50/month",
+          "time": "1 hour",
+          "how": [
+            "Apple only accepts iPhone builds made with Xcode 26 or newer on macOS. The Xcode project itself is ready: Claude exported it here and it passes Apple's current rules.",
+            "Codemagic (free tier with macOS minutes) or GitHub Actions macOS runners can build it from this repo - Claude writes the workflow.",
+            "Or borrow or rent a Mac (MacinCloud) for the day of the build."
+          ],
+          "tip": "GitHub Actions is the cheapest if the repo stays private and builds are rare."
+        },
+        {
+          "id": "p4-ids",
+          "t": "Register the bundle ID and certificates",
+          "who": "You + Claude",
+          "cost": "Free",
+          "time": "20 min",
+          "how": [
+            "Certificates, Identifiers & Profiles: register the App ID com.aethertek.bugseyeview.",
+            "Create an App Store Connect API key (for automated signing and uploads) and store it as a CI secret."
+          ]
+        },
+        {
+          "id": "p4-record",
+          "t": "Create the app in App Store Connect",
+          "who": "You",
+          "cost": "Free",
+          "time": "20 min",
+          "how": [
+            "My Apps > + > New App: iOS, name Bug's-Eye View, bundle ID, SKU bugseyeview.",
+            "Subtitle, keywords, promotional text and description: Listing Text.",
+            "App Privacy: Data Not Collected. Age rating: Cartoon violence Frequent (13+). Export compliance: no non-exempt encryption."
+          ],
+          "files": [
+            "BUG'S-EYE VIEW/Store pages/Apple App Store/README.md"
+          ]
+        },
+        {
+          "id": "p4-age-2027",
+          "t": "Answer Apple's two new age-rating questions (by 12 Jan 2027)",
+          "who": "You",
+          "cost": "Free",
+          "time": "5 min",
+          "how": [
+            "App Store Connect > your app > App Information > Age Rating > Edit.",
+            "Shared Location: No. Dating and Relationships: No. Everything else as in Legal/store-questionnaire-answers.md (13+ for frequent cartoon violence).",
+            "Since 16 Nov 2026 every app must answer these or its updates are blocked."
+          ],
+          "files": [
+            "BUG'S-EYE VIEW/Legal/store-questionnaire-answers.md"
+          ]
+        },
+        {
+          "id": "p4-media",
+          "t": "Upload the icon and screenshots",
+          "who": "You",
+          "cost": "Free",
+          "time": "20 min",
+          "how": [
+            "iPhone: Store Assets/Screenshots/iPhone 6.9 inch and iPhone 6.3 inch folders. iPad: the iPad 13 inch folder.",
+            "The app icon comes from the build itself (1024 x 1024, no transparency)."
+          ]
+        },
+        {
+          "id": "p4-build",
+          "t": "Build, sign and upload the iPhone build",
+          "who": "You + Claude",
+          "cost": "Free",
+          "time": "1-2 hours the first time",
+          "how": [
+            "Godot exports an Xcode project; Xcode (local or cloud) archives, signs and uploads it to App Store Connect.",
+            "Claude fills in the Team ID and checks the export preset first."
+          ],
+          "files": [
+            "BUG'S-EYE VIEW/Builds/iOS/README.md"
+          ]
+        },
+        {
+          "id": "p4-testflight",
+          "t": "Test on your own iPhone with TestFlight",
+          "who": "You",
+          "cost": "Free",
+          "time": "1-3 days",
+          "how": [
+            "Install TestFlight, add yourself as an internal tester, play the build.",
+            "Check touch controls, the notch area, and that the game resumes after a phone call."
+          ]
+        },
+        {
+          "id": "p4-submit",
+          "t": "Submit for review and release",
+          "who": "You",
+          "cost": "Free",
+          "time": "1-3 days review",
+          "how": [
+            "Choose the build, add review notes (\"No login needed; tutorial on first launch\"), submit.",
+            "If it's rejected, paste Apple's message in this step's notes - Claude fixes what's needed."
+          ]
+        }
       ]
     },
     {
@@ -157,22 +686,84 @@
       "goal": "The biggest PC store. Start early: a page must be up 2 weeks before launch, and 21 days must pass after paying.",
       "who": "You + Claude",
       "steps": [
-        {"id": "p5-account", "t": "Join Steamworks (Steam Direct)", "who": "You", "cost": "US$100 per game (refunded after $1,000 in sales)", "time": "1 hour, then up to 30 days of checks",
-         "how": ["partner.steamgames.com: sign the agreements, pay the fee, enter bank details and the tax interview, and verify your identity.", "As an individual, the company name is your legal name with \"Sole Proprietorship\"."],
-         "tip": "Do this first of all the PC stores: the tax check can take up to 30 days.", "links": [["Onboarding", "https://partner.steamgames.com/doc/gettingstarted/onboarding"]]},
-        {"id": "p5-page", "t": "Build the store page", "who": "You", "cost": "Free", "time": "1-2 hours",
-         "how": ["Capsules and library images: Store Assets/Steam (every size is ready).", "5+ screenshots from Store Assets/Screenshots/1920x1080. Descriptions and system requirements from Listing Text.", "Content survey: cartoon violence only."],
-         "files": ["BUG'S-EYE VIEW/Store pages/Steam/README.md"]},
-        {"id": "p5-trailer", "t": "Make a short trailer (30-60 seconds)", "who": "You + Claude", "cost": "Free", "time": "2-4 hours",
-         "how": ["Record gameplay (Windows: Win+Alt+R or OBS). Show the bug's-eye view, a crash distraction, a slap and an escape in the first 5 seconds.", "Claude can plan the shot list."],
-         "tip": "Steam trailers autoplay muted: put the action first, text big and short."},
-        {"id": "p5-coming-soon", "t": "Submit the page and go \"Coming Soon\"", "who": "You", "cost": "Free", "time": "3-5 business days review",
-         "how": ["Submit for review at least 7 business days before you want it live.", "Once approved, press Publish as Coming Soon. Wishlists start counting."],
-         "tip": "The longer the page is up before launch, the more wishlists - a month or more helps."},
-        {"id": "p5-build", "t": "Upload the builds with SteamPipe and pass the build review", "who": "You + Claude", "cost": "Free", "time": "3-5 business days review",
-         "how": ["Upload Builds/Windows and Builds/Linux as depots (steamcmd or SteamPipe GUI).", "Only list macOS once the Mac build is notarized by Apple (needs the Apple account from phase 4)."]},
-        {"id": "p5-launch", "t": "Press Release", "who": "You", "cost": "Free", "time": "Launch day",
-         "how": ["After 2 weeks of Coming Soon and 21 days since paying, the Release button unlocks."]}
+        {
+          "id": "p5-account",
+          "t": "Join Steamworks (Steam Direct)",
+          "who": "You",
+          "cost": "US$100 per game (refunded after $1,000 in sales)",
+          "time": "1 hour, then up to 30 days of checks",
+          "how": [
+            "partner.steamgames.com: sign the agreements, pay the fee, enter bank details and the tax interview, and verify your identity.",
+            "As an individual, the company name is your legal name with \"Sole Proprietorship\"."
+          ],
+          "tip": "Do this first of all the PC stores: the tax check can take up to 30 days.",
+          "links": [
+            [
+              "Onboarding",
+              "https://partner.steamgames.com/doc/gettingstarted/onboarding"
+            ]
+          ]
+        },
+        {
+          "id": "p5-page",
+          "t": "Build the store page",
+          "who": "You",
+          "cost": "Free",
+          "time": "1-2 hours",
+          "how": [
+            "Capsules and library images: Store Assets/Steam (every size is ready).",
+            "5+ screenshots from Store Assets/Screenshots/1920x1080. Descriptions and system requirements from Listing Text.",
+            "Content survey: cartoon violence only."
+          ],
+          "files": [
+            "BUG'S-EYE VIEW/Store pages/Steam/README.md"
+          ]
+        },
+        {
+          "id": "p5-trailer",
+          "t": "Make a short trailer (30-60 seconds)",
+          "who": "You + Claude",
+          "cost": "Free",
+          "time": "2-4 hours",
+          "how": [
+            "Record gameplay (Windows: Win+Alt+R or OBS). Show the bug's-eye view, a crash distraction, a slap and an escape in the first 5 seconds.",
+            "Claude can plan the shot list."
+          ],
+          "tip": "Steam trailers autoplay muted: put the action first, text big and short."
+        },
+        {
+          "id": "p5-coming-soon",
+          "t": "Submit the page and go \"Coming Soon\"",
+          "who": "You",
+          "cost": "Free",
+          "time": "3-5 business days review",
+          "how": [
+            "Submit for review at least 7 business days before you want it live.",
+            "Once approved, press Publish as Coming Soon. Wishlists start counting."
+          ],
+          "tip": "The longer the page is up before launch, the more wishlists - a month or more helps."
+        },
+        {
+          "id": "p5-build",
+          "t": "Upload the builds with SteamPipe and pass the build review",
+          "who": "You + Claude",
+          "cost": "Free",
+          "time": "3-5 business days review",
+          "how": [
+            "Upload Builds/Windows and Builds/Linux as depots (steamcmd or SteamPipe GUI).",
+            "Only list macOS once the Mac build is notarized by Apple (needs the Apple account from phase 4)."
+          ]
+        },
+        {
+          "id": "p5-launch",
+          "t": "Press Release",
+          "who": "You",
+          "cost": "Free",
+          "time": "Launch day",
+          "how": [
+            "After 2 weeks of Coming Soon and 21 days since paying, the Release button unlocks."
+          ]
+        }
       ]
     },
     {
@@ -181,11 +772,37 @@
       "goal": "GOG picks the games it sells. Pitch once the Steam page and a trailer are up.",
       "who": "You",
       "steps": [
-        {"id": "p6-pitch", "t": "Send the pitch form", "who": "You", "cost": "Free", "time": "30 min, reply in days or weeks",
-         "how": ["gog.com/submit-your-game: developer, title, description, platforms, status, price, links to the Steam page and trailer.", "Claude can draft the answers."],
-         "links": [["Submit your game", "https://www.gog.com/submit-your-game"]], "files": ["BUG'S-EYE VIEW/Store pages/GOG/README.md"]},
-        {"id": "p6-onboard", "t": "If accepted: contract, Developer Portal and builds", "who": "You + Claude", "cost": "Free", "time": "1-3 weeks",
-         "how": ["Fill GOG's Essentials Checklist (key art and logo from Store Assets/GOG, description, screenshots, trailer).", "Upload builds with GOG's Build Creator; they must run offline and contain no links to other stores."]}
+        {
+          "id": "p6-pitch",
+          "t": "Send the pitch form",
+          "who": "You",
+          "cost": "Free",
+          "time": "30 min, reply in days or weeks",
+          "how": [
+            "gog.com/submit-your-game: developer, title, description, platforms, status, price, links to the Steam page and trailer.",
+            "Claude can draft the answers."
+          ],
+          "links": [
+            [
+              "Submit your game",
+              "https://www.gog.com/submit-your-game"
+            ]
+          ],
+          "files": [
+            "BUG'S-EYE VIEW/Store pages/GOG/README.md"
+          ]
+        },
+        {
+          "id": "p6-onboard",
+          "t": "If accepted: contract, Developer Portal and builds",
+          "who": "You + Claude",
+          "cost": "Free",
+          "time": "1-3 weeks",
+          "how": [
+            "Fill GOG's Essentials Checklist (key art and logo from Store Assets/GOG, description, screenshots, trailer).",
+            "Upload builds with GOG's Build Creator; they must run offline and contain no links to other stores."
+          ]
+        }
       ]
     },
     {
@@ -194,11 +811,30 @@
       "goal": "Windows and Mac only. You keep 100% of the first $1M each year.",
       "who": "You",
       "steps": [
-        {"id": "p7-account", "t": "Join the Epic Developer Portal and pay the submission fee", "who": "You", "cost": "US$100 per game", "time": "1 hour, then up to 2 weeks",
-         "how": ["dev.epicgames.com/portal: sign the Distribution Agreement, pay the fee, complete trader, tax and payout details."]},
-        {"id": "p7-page", "t": "Store page, rating and build", "who": "You", "cost": "Free", "time": "2-3 hours, 3-5 days review",
-         "how": ["Images in Store Assets/Epic Games Store. IARC rating inside the portal (same answers as Google Play).", "Upload the Windows build with the BuildPatch Tool, then submit for review."],
-         "files": ["BUG'S-EYE VIEW/Store pages/Epic Games Store/README.md"]}
+        {
+          "id": "p7-account",
+          "t": "Join the Epic Developer Portal and pay the submission fee",
+          "who": "You",
+          "cost": "US$100 per game",
+          "time": "1 hour, then up to 2 weeks",
+          "how": [
+            "dev.epicgames.com/portal: sign the Distribution Agreement, pay the fee, complete trader, tax and payout details."
+          ]
+        },
+        {
+          "id": "p7-page",
+          "t": "Store page, rating and build",
+          "who": "You",
+          "cost": "Free",
+          "time": "2-3 hours, 3-5 days review",
+          "how": [
+            "Images in Store Assets/Epic Games Store. IARC rating inside the portal (same answers as Google Play).",
+            "Upload the Windows build with the BuildPatch Tool, then submit for review."
+          ],
+          "files": [
+            "BUG'S-EYE VIEW/Store pages/Epic Games Store/README.md"
+          ]
+        }
       ]
     },
     {
@@ -207,13 +843,41 @@
       "goal": "No fee. Decide Individual or Company first: it can't be changed later.",
       "who": "You + Claude",
       "steps": [
-        {"id": "p8-account", "t": "Create the Microsoft Store developer account", "who": "You", "cost": "Free", "time": "30 min, then a few days",
-         "how": ["storedeveloper.microsoft.com. Individual: government ID and a selfie. Company: business documents or a D-U-N-S number.", "Selling as a business needs a Company account."]},
-        {"id": "p8-reserve", "t": "Reserve the name and fill the submission", "who": "You", "cost": "Free", "time": "1 hour",
-         "how": ["Reserve \"Bug's-Eye View\". Pricing, Games category, IARC questionnaire, listing text and images from Store Assets/Microsoft Store."],
-         "files": ["BUG'S-EYE VIEW/Store pages/Microsoft Store/README.md"]},
-        {"id": "p8-msix", "t": "Package the Windows build as MSIX and submit", "who": "You + Claude", "cost": "Free", "time": "1-2 hours, 3 days certification",
-         "how": ["The Partner Center gives you the identity values; Claude puts them in the package manifest.", "Wrap the Windows build with the MSIX Packaging Tool (on Windows) and upload. Microsoft signs it."]}
+        {
+          "id": "p8-account",
+          "t": "Create the Microsoft Store developer account",
+          "who": "You",
+          "cost": "Free",
+          "time": "30 min, then a few days",
+          "how": [
+            "storedeveloper.microsoft.com. Individual: government ID and a selfie. Company: business documents or a D-U-N-S number.",
+            "Selling as a business needs a Company account."
+          ]
+        },
+        {
+          "id": "p8-reserve",
+          "t": "Reserve the name and fill the submission",
+          "who": "You",
+          "cost": "Free",
+          "time": "1 hour",
+          "how": [
+            "Reserve \"Bug's-Eye View\". Pricing, Games category, IARC questionnaire, listing text and images from Store Assets/Microsoft Store."
+          ],
+          "files": [
+            "BUG'S-EYE VIEW/Store pages/Microsoft Store/README.md"
+          ]
+        },
+        {
+          "id": "p8-msix",
+          "t": "Package the Windows build as MSIX and submit",
+          "who": "You + Claude",
+          "cost": "Free",
+          "time": "1-2 hours, 3 days certification",
+          "how": [
+            "The Partner Center gives you the identity values; Claude puts them in the package manifest.",
+            "Wrap the Windows build with the MSIX Packaging Tool (on Windows) and upload. Microsoft signs it."
+          ]
+        }
       ]
     },
     {
@@ -222,13 +886,40 @@
       "goal": "Keep players happy: fix what they report, ship small updates.",
       "who": "You + Claude",
       "steps": [
-        {"id": "p9-igdb", "t": "Add the game to IGDB and press kit pages", "who": "You", "cost": "Free", "time": "30 min",
-         "how": ["IGDB (used by GOG and many sites): add the game with the key art and description.", "Optional: a one-page press kit with the key art, logo, screenshots and trailer."]},
-        {"id": "p9-launch-day", "t": "Launch day", "who": "You", "cost": "Free", "time": "1 day",
-         "how": ["Release on the stores that are ready; post the links where your players are (Reddit, Discord, TikTok, friends).", "Watch the Feedback tab and the store reviews."]},
-        {"id": "p9-patch", "t": "First update from player feedback", "who": "You + Claude", "cost": "Free", "time": "Ongoing",
-         "how": ["Claude fixes reported bugs, bumps the version numbers and rebuilds every platform into Builds/.", "Upload the new builds to each store."],
-         "tip": "Small, frequent updates with clear notes (\"Fixed: chair legs blocked the camera\") earn better reviews than one big one."}
+        {
+          "id": "p9-igdb",
+          "t": "Add the game to IGDB and press kit pages",
+          "who": "You",
+          "cost": "Free",
+          "time": "30 min",
+          "how": [
+            "IGDB (used by GOG and many sites): add the game with the key art and description.",
+            "Optional: a one-page press kit with the key art, logo, screenshots and trailer."
+          ]
+        },
+        {
+          "id": "p9-launch-day",
+          "t": "Launch day",
+          "who": "You",
+          "cost": "Free",
+          "time": "1 day",
+          "how": [
+            "Release on the stores that are ready; post the links where your players are (Reddit, Discord, TikTok, friends).",
+            "Watch the Feedback tab and the store reviews."
+          ]
+        },
+        {
+          "id": "p9-patch",
+          "t": "First update from player feedback",
+          "who": "You + Claude",
+          "cost": "Free",
+          "time": "Ongoing",
+          "how": [
+            "Claude fixes reported bugs, bumps the version numbers and rebuilds every platform into Builds/.",
+            "Upload the new builds to each store."
+          ],
+          "tip": "Small, frequent updates with clear notes (\"Fixed: chair legs blocked the camera\") earn better reviews than one big one."
+        }
       ]
     }
   ]

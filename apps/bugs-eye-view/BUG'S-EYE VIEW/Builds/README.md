@@ -1,6 +1,6 @@
 # **BUILDS**
 
-Every platform's build in its own folder. Version 1.0.0 (build 1), exported 17 Nov 2026 from the same code.
+Every platform's build in its own folder. Version 1.0.0 (build 1), exported 28 Nov 2026 from the same code.
 
 | Platform | File | Size | For |
 |---|---|---|---|

@@ -2,13 +2,13 @@
 
 Everything needed to take Bug's-Eye View from a finished game to live store pages - builds, store images, listing text, legal pages, research and a step-by-step checklist.
 
-**Progress: 12 of 55 steps done (22%)**  
+**Progress: 15 of 62 steps done (24%)**  
 
 `███████░░░░░░░░░░░░░░░░░░░░░░░`
 
 - **Live checklist (tick steps, leave notes, report bugs):** https://claude.ai/artifact/MKiRiENoEXksyyoVYmNkxw
 - **Play the web build:** https://claude.ai/artifact/Gmpx6M1Qb9WmCn1BY1Qbh4
-- Last synced from the live checklist: 17 Nov 2026
+- Last synced from the live checklist: 28 Nov 2026
 
 > The live checklist is the real-time version: tick a step there and it turns green on every device. This README is a snapshot Claude refreshes from it with each update (✅ done, ⬜ to do).
 
@@ -34,7 +34,7 @@ Everything needed to take Bug's-Eye View from a finished game to live store page
 
 ## The checklist
 
-### ✅ Phase 0 - Groundwork  (12/12)
+### ✅ Phase 0 - Groundwork  (15/15)
 
 _Everything that could be done in the cloud before you touch a store account._
 
@@ -69,8 +69,17 @@ _Everything that could be done in the cloud before you touch a store account._
   - 📁 [Builds/](Builds/)
 - ✅ **This live checklist and the feedback collector**  
   <sub>Claude - done 2026-11-17</sub>
+- ✅ **Upgrade run (27-28 Nov): safer saves, smoother loading, more graphics and accessibility options**  
+  <sub>Claude - done 2026-11-28</sub>
+  - 📁 [UPGRADE_REPORT.md](UPGRADE_REPORT.md)
+  - 📁 [upgrade-shots/](upgrade-shots/)
+- ✅ **Crash reporting built in: Sentry + Firebase Crashlytics (free), off until the player says yes**  
+  <sub>Claude · Free - done 2026-11-28</sub>
+- ✅ **Automatic tests and one-click release builds on GitHub, plus the store kit**  
+  <sub>Claude · Free (GitHub Actions minutes) - done 2026-11-28</sub>
+  - 📁 [store-kit/](store-kit/)
 
-### ⬜ Phase 1 - Your decisions and setup  (0/7)
+### ⬜ Phase 1 - Your decisions and setup  (0/10)
 
 _A few choices only you can make. Each one unblocks several stores._
 
@@ -113,6 +122,29 @@ _A few choices only you can make. Each one unblocks several stores._
   3. Use the same password for the store and the key (letters and numbers only - Godot needs that).
   4. Back the file and password up somewhere safe and offline. Never commit it to GitHub.
   > **Tip:** Lose it and Google can reset it, but that takes days. Two backups (a USB stick and a password manager) are enough.
+- ⬜ **Create a free Sentry account for crash reports**  
+  <sub>You · 15 min · Free (Developer plan, 5,000 errors a month)</sub>
+  1. Sign up at sentry.io and pick the free Developer plan.
+  2. Create a project: platform Godot, name bugs-eye-view.
+  3. Copy the DSN (Settings > Projects > bugs-eye-view > Client Keys).
+  4. In the project's Security & Privacy settings turn on 'Prevent Storing of IP Addresses' and the Data Scrubber.
+  5. On GitHub: repository Settings > Secrets and variables > Actions > New secret, name SENTRY_DSN, paste the DSN.
+  > **Tip:** The same SENTRY_DSN secret name is used by your other games' workflows; give each game its own Sentry project and DSN if you want their reports separate.
+  - 🔗 [Sentry sign-up](https://sentry.io/signup/)
+- ⬜ **Create a free Firebase project for Android crash reports (Crashlytics)**  
+  <sub>You · 15 min · Free (Spark plan)</sub>
+  1. console.firebase.google.com > Add project (Google Analytics can stay off).
+  2. Add an Android app with package name com.aethertek.bugseyeview and download google-services.json.
+  3. Open Crashlytics in the Firebase menu and click Enable.
+  4. On GitHub: add a secret named FIREBASE_ANDROID_CONFIG and paste the whole text of google-services.json.
+  > **Tip:** Crashlytics shows 'waiting for first crash' until a build with your file is run and the player says yes; use Settings > Send a test report.
+  - 🔗 [Firebase console](https://console.firebase.google.com/)
+- ⬜ **Run the release workflow and check a test report arrives**  
+  <sub>You + Claude · 30 min · Free</sub>
+  1. GitHub > Actions > 'Bug's-Eye View release builds' > Run workflow.
+  2. Download a build from the run page (Windows or Android), open it and answer Yes to crash reports.
+  3. Settings > Privacy & about > Send a test report. It should appear in Sentry (and Crashlytics on Android) within minutes.
+  4. Tell Claude what you see; Claude fixes anything that doesn't arrive.
 - ⬜ **Play the current builds and report anything odd**  
   <sub>You · 30 min · Free</sub>
   1. Play the web build and the Windows build from Builds/.
@@ -172,7 +204,8 @@ _About 3-5 weeks, mostly waiting: identity checks, a required 14-day closed test
   - 📁 [Store pages/Google Play/README.md](Store%20pages/Google%20Play/README.md)
 - ⬜ **Complete the App content forms**  
   <sub>You · 30 min · Free</sub>
-  1. Use Legal/store-questionnaire-answers.md for every form: privacy policy, ads (No), app access, content rating (cartoon violence), target audience 13+, data safety (no data collected).
+  1. Use Legal/store-questionnaire-answers.md for every form: privacy policy, ads (No), app access, content rating (cartoon violence), target audience 13+.
+  2. Data safety: crash logs, diagnostics and a device ID are collected only if the player allows crash reports - optional, not shared, encrypted in transit (exact answers in the file).
   > **Tip:** Choose 13+ for target audience. Picking under-13 brings in the Families policy and slower reviews.
 - ⬜ **Build the signed release bundle (.aab)**  
   <sub>You + Claude · 15 min · Free</sub>
@@ -196,7 +229,7 @@ _About 3-5 weeks, mostly waiting: identity checks, a required 14-day closed test
   1. Production > Create release, upload the .aab, release notes, choose countries, send for review.
   > **Tip:** A staged rollout (20% first) lets you catch a crash before everyone gets it.
 
-### ⬜ Phase 4 - Apple App Store (iPhone and iPad)  (0/8)
+### ⬜ Phase 4 - Apple App Store (iPhone and iPad)  (0/9)
 
 _Needs a paid Apple account and a Mac to sign the build - a cloud Mac works._
 
@@ -222,6 +255,12 @@ _Needs a paid Apple account and a Mac to sign the build - a cloud Mac works._
   2. Subtitle, keywords, promotional text and description: Listing Text.
   3. App Privacy: Data Not Collected. Age rating: Cartoon violence Frequent (13+). Export compliance: no non-exempt encryption.
   - 📁 [Store pages/Apple App Store/README.md](Store%20pages/Apple%20App%20Store/README.md)
+- ⬜ **Answer Apple's two new age-rating questions (by 12 Jan 2027)**  
+  <sub>You · 5 min · Free</sub>
+  1. App Store Connect > your app > App Information > Age Rating > Edit.
+  2. Shared Location: No. Dating and Relationships: No. Everything else as in Legal/store-questionnaire-answers.md (13+ for frequent cartoon violence).
+  3. Since 16 Nov 2026 every app must answer these or its updates are blocked.
+  - 📁 [Legal/store-questionnaire-answers.md](Legal/store-questionnaire-answers.md)
 - ⬜ **Upload the icon and screenshots**  
   <sub>You · 20 min · Free</sub>
   1. iPhone: Store Assets/Screenshots/iPhone 6.9 inch and iPhone 6.3 inch folders. iPad: the iPad 13 inch folder.

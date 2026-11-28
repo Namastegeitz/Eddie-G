@@ -130,3 +130,72 @@ Crash reporting changes what the game collects, so it ships with:
 - a Settings switch;
 - no personal data (`send_default_pii` off);
 - an updated privacy policy and Data safety / App Privacy answers.
+
+## Results (after the upgrade, 28 Nov 2026)
+### Before / after
+| Measure | Before | After | Change |
+|---|---|---|---|
+| Game-logic frame time, all three rooms (median of 3, headless) | 3.295 ms | 3.091 ms | **6.2% faster** (gate: 5% slower fails) |
+| 1% worst logic frame (p99) - kitchen / living room / backyard | 1.68 / 1.96 / 2.11 ms | 2.07 / 1.70 / 1.54 ms | Within run-to-run noise |
+| Worst rendered frame, software GPU - backyard | 685 ms | 376 ms | **45% shorter** (shader warm-up) |
+| Worst rendered frame, software GPU - kitchen | 1,014 ms | 610 ms | **40% shorter** |
+| Worst rendered frame, software GPU - living room | 980 ms | 256 ms | **74% shorter** |
+| Average rendered frame, software GPU | 299 / 339 / 211 ms | 289 / 332 / 199 ms | 2-6% faster |
+| Room load time, software GPU | 5.1-7.6 s | 7.4-10.1 s | +2.4-3.3 s, all under the black loading fade (the shader compiling moved out of play) |
+| Memory (static peak) | 97.4-101.0 MB | 97.7-101.1 MB | Same |
+| Cold start to main menu (headless) | 0.83-0.95 s | 0.73-0.74 s | Same or better |
+| Crash-free rate | Unknown (no reporting) | Measured once players opt in | New |
+| Lost-progress risk on a crash mid-save | Whole save | None (backup + temp-file swap) | Fixed |
+| Tests | 1,242 checks (165 + 464 project, 165 + 437 pack, 11 Meshy) | 1,312 checks (165 + 500, 165 + 471, 11) + benchmark gate + 14 screenshot comparisons | +70 checks, all passing |
+| Build warnings | 0 | 0 | |
+| Install sizes | Win 47.0 / Mac 68.7 / Linux 37.4 / Web 21.1 / APK 67.7 MB | Win 46.9 / Mac 68.7 / Linux 37.4 / Web 21.1 / APK 67.7 MB | Same (crash-report SDKs are only added to store builds by the release workflow) |
+
+Rendered numbers come from a software GPU (no graphics card in the cloud
+machine), so only the direction and size of a change carry over to real
+devices, not the absolute fps.
+
+### What was added
+See the plan table above (U1-U13, A1-A2). Every change sits behind a
+setting or flag whose default keeps the game as it was, except two:
+- the shader warm-up, which is invisible and has a code flag;
+- the safe-save swap, which is invisible and loads old saves unchanged (tested).
+
+### Deferred, and why
+- **Translation tables:** a large refactor with no translation planned yet.
+- **Screen-reader names:** desktop only in Godot 4.7; do it with 4.8.
+- **Assist mode:** needs your call on difficulty.
+- **Crashlytics on iOS:** needs the Firebase iOS SDK in a Mac build; Sentry covers iOS in the meantime.
+- **Readable native stack traces:** need Godot export templates built with debug symbols. GDScript errors already arrive with script stack traces.
+- **Auto text size for phones.**
+
+### Open questions for Eddie
+- Was the Meshy plan paid when the fridge models were made (17 Nov)? If it was free, the models need a CC BY credit (`store-kit/credits.md`).
+- The test workflow runs on every push that changes the game, about 15 minutes each. That's fine on a public repo; on a private repo it uses Actions minutes (2,000 a month free). Say if you'd rather it run only on demand.
+
+## Store readiness (28 Nov 2026)
+| Item | Status |
+|---|---|
+| Google Play target API 36 | PASS (AAB preset) |
+| 16 KB page alignment (Godot + Crashlytics libraries) | PASS (checked with readelf) |
+| Google Play signed release bundle | WAITING ON YOU (upload key) |
+| Google Play Data safety / content rating answers | PASS (updated for optional crash reports) |
+| Privacy policy reachable on the web and in the game | PARTLY: written and linked in game; WAITING ON YOU to make the page public |
+| Support email in policy and listings | FAIL - not created yet (checklist phase 1) |
+| Apple: Xcode 26 / iOS 26 SDK build | WAITING (needs a Mac or Mac CI runner) |
+| Apple: UIScene manifest, privacy manifest, encryption flag | PASS |
+| Apple: new age-rating questions (due 12 Jan 2027) | PASS (answers written; enter them in App Store Connect) |
+| Apple: Team ID in the iOS preset | FAIL - placeholder ABCDE12345 |
+| Apple accessibility labels | Answers ready; claim Reduced Motion / Larger Text after an iPhone check |
+| Screenshots for every store size | PASS |
+| Steam: Windows + Linux builds, capsules, Deck text size (9 px+ at 1280x800) | PASS |
+| macOS notarization (Steam/Epic Mac) | WAITING (Apple account; Developer ID G2 certificate) |
+| Microsoft Store MSIX | WAITING (Partner Center identity) |
+| itch.io web zip | PASS |
+| Crash reporting live | WAITING ON YOU (free Sentry + Firebase accounts, two GitHub secrets) |
+| Asset rights | PASS except the Meshy models (check your plan) |
+| All tests, perf gate, screenshot check | PASS |
+
+## Next 3 upgrades worth doing
+1. **Phone-first readability:** default text size by screen size (HUD text is about 7 px on a phone at 100%), then claim Apple's *Larger Text* label after a device check.
+2. **Readable native crash traces and iOS Crashlytics:** Godot export templates with debug symbols uploaded to Sentry, and Firebase in the iOS build on a Mac runner.
+3. **Godot 4.8 when stable:** Compatibility-renderer decals for richer rooms, screen readers on mobile, then translation-ready text.
