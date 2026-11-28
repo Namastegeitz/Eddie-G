@@ -26,3 +26,5 @@ addons/sentry/
 # In-app Review plugin: installed by tools/install_review.sh on the build machine
 addons/InappReview*/
 ios/plugins/
+# local window-size overrides used by capture tools
+/override.cfg

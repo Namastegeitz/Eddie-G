@@ -20,8 +20,12 @@ const FPS_CAPS := {"max": 0, "60": 60, "30": 30}
 const RES_3D := {"auto": 1.0, "100": 1.0, "75": 0.75, "50": 0.5}
 
 
+## Set by the --graphics=<level> capture hook (scripts/main.gd); not saved.
+static var forced := ""
+
+
 static func choice() -> String:
-	var q := String(Save.setting("graphics", "auto"))
+	var q := forced if forced != "" else String(Save.setting("graphics", "auto"))
 	return q if q in LEVELS else "auto"
 
 

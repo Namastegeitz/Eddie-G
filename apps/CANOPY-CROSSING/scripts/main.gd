@@ -29,13 +29,17 @@ func _ready() -> void:
 	modals.theme = UI.theme()
 	layer.add_child(modals)
 	Game.register_host(screens, modals)
+	for a in OS.get_cmdline_user_args():
+		if a.begins_with("--graphics="):
+			Gfx.forced = a.substr(11)
 	Gfx.apply(get_tree())
 	Store.confirm_requested.connect(func(p): Game.modal(SandboxSheet.make(p)))
 	var args := OS.get_cmdline_user_args()
 	if args.has("--no-boot"):
 		return
 	# Developer / capture hooks: --fresh, --skip-tutorial, --screen=<name>,
-	# --play=<mode>,<map>,<stage>,<animal>, --autoplay, --give=<berries>
+	# --play=<mode>,<map>,<stage>,<animal>, --autoplay, --give=<berries>,
+	# --graphics=<auto|ultra|high|medium|low> (this launch only, above)
 	if args.has("--fresh"):
 		Save.wipe()
 	if args.has("--skip-tutorial"):

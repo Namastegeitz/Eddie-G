@@ -47,6 +47,7 @@ func _ready() -> void:
 				Save.wipe()
 				Game.boot())
 		Game.modal(card), Color("5a2a22"), 26, 80))
+	box.add_child(UI.button("Credits and licences", func(): Game.modal(_credits_card()), UI.PANEL_3, 26, 80))
 	box.add_child(UI.label("About", 30, UI.ACCENT, true))
 	box.add_child(UI.wrap_label("Canopy Crossing %s. Animals and places are real; facts are simplified for play. Conservation statuses follow the IUCN Red List where available.\nFont: Fredoka (SIL Open Font License). Globe outline: Natural Earth (public domain)." % String(ProjectSettings.get_setting("application/config/version")), 22, UI.MUTED))
 	var dbg := UI.label("Analytics events this session: %d · billing: %s · ads: %s" % [Analytics.buffer.size(), Store.backend.name_label, Ads.backend], 20, UI.MUTED)
@@ -258,3 +259,37 @@ func _toggle(label: String, key: String, hint: String) -> Control:
 	h.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	v.add_child(h)
 	return v
+
+
+## Credits and licences: who made what, and the licence texts the game must
+## carry (Godot's MIT licence and its third-party notices come from the engine).
+func _credits_card() -> Control:
+	var lines: Array[String] = [
+		"Canopy Crossing %s" % String(ProjectSettings.get_setting("application/config/version")),
+		"Game, code, music and sound: Canopy Crossing (Aethertek).",
+		"Made with Godot Engine (godotengine.org), MIT licence.",
+		"Font: Fredoka, SIL Open Font License 1.1.",
+		"Globe outline: Natural Earth (public domain).",
+		"3D models: made with Meshy (meshy.ai).",
+		"Conservation statuses: IUCN Red List.",
+	]
+	if Engine.has_singleton("SentrySDK"):
+		lines.append("Crash reports: Sentry SDK for Godot, MIT licence.")
+	if Engine.has_singleton("CanopyCrashlytics"):
+		lines.append("Crash reports: Firebase Crashlytics (Google).")
+	if Engine.has_singleton("InappReviewPlugin"):
+		lines.append("Rating card: Godot In-app Review plugin, MIT licence.")
+	var text := "\n".join(lines) + "\n\n--- Godot Engine licence ---\n" + Engine.get_license_text()
+	text += "\n--- Third-party licences in Godot ---\n"
+	for part in Engine.get_copyright_info():
+		text += "\n" + String(part.get("name", ""))
+	var scroll := ScrollContainer.new()
+	scroll.custom_minimum_size = Vector2(540, 620)
+	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	var lab := UI.label(text, 18, UI.TEXT)
+	lab.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	lab.custom_minimum_size.x = 520
+	lab.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	scroll.add_child(lab)
+	return PromptCard.make("Credits and licences", "", [{"id": "ok", "text": "Close", "color": UI.ACCENT}], scroll)
+

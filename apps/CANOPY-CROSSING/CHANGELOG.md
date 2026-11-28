@@ -12,6 +12,7 @@ count, set by the release workflow).
 - **Rating card:** after you clear a level, now and then, the store's own "rate this game" card (at most every four months).
 - **Update reminders:** the home screen says when a newer version is out.
 - **Optional crash reports** help fix problems (Settings > Send crash reports; no personal data).
+- **Credits and licences** in Settings: who made what, and the open-source licences the game uses.
 - **Fixed:** memory slowly filling up during long play sessions.
 - **Fixed:** the Settings page was a little wider than some phone screens.
 - More reliable map-pack downloads on weak connections.

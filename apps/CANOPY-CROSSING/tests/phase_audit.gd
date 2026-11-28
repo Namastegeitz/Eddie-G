@@ -1216,6 +1216,10 @@ func _phase7() -> void:
 	Save.set_setting("graphics", "auto")
 	Gfx.apply(get_tree())
 	fps_ok = fps_ok and Engine.max_fps == 0
+	Gfx.forced = "low"
+	var forced_ok := Gfx.level() == "low" and String(Save.setting("graphics", "auto")) == "auto"
+	Gfx.forced = ""
+	check("--graphics=<level> (screenshots) sets this launch only, never the saved choice", forced_ok and Gfx.choice() == "auto")
 	check("Graphics setting: High/Medium/Low set detail, Auto resolves", levels_ok and Gfx.level() in ["high", "medium"] and Draw.detail >= 1, Gfx.level())
 	check("Ultra is High plus extras (computers); first-person resolution scales the 3D view", ultra_ok)
 	check("Frame rate: 30 caps the game for battery, Max follows the screen (as before)", fps_ok)
@@ -2033,6 +2037,10 @@ func _stability() -> void:
 	var labels: Array = st.find_children("*", "CheckButton", true, false).map(func(c): return String(c.text))
 	check("Settings has the Send crash reports switch", labels.any(func(t): return "crash reports" in t.to_lower()), str(labels.size()))
 	check("Settings has the Pause when you switch away switch (on by default)", labels.any(func(t): return "switch away" in t.to_lower()) and bool(Save.setting("auto_pause", false)))
+	var credits: Control = st._credits_card()
+	var ctext := " ".join(credits.find_children("*", "Label", true, false).map(func(l): return String(l.text)))
+	check("Settings > Credits and licences carries Godot's MIT licence, the font licence and Natural Earth", "Permission is hereby granted" in ctext and "Fredoka" in ctext and "Natural Earth" in ctext)
+	credits.free()
 	st.queue_free()
 	await get_tree().process_frame
 	# remote switches: shipped values, a published copy, bad copies ignored

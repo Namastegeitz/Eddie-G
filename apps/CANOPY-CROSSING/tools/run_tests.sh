@@ -5,7 +5,7 @@
 #   tools/run_tests.sh          # everything (all 30 stages solved by the bot)
 #   FAST=1 tools/run_tests.sh   # one stage per region
 #   WEB=1 tools/run_tests.sh    # also build the web version and tap-test it in a phone browser
-#   VISUAL=1 tools/run_tests.sh # also compare key screens at 3 screen sizes (tools/visual_check.py, ~10 min)
+#   VISUAL=1 tools/run_tests.sh # also compare key screens at 3 screen sizes (tools/visual_check.py, ~20 min on software GL)
 set -u
 cd "$(dirname "$0")/.."
 GODOT="${GODOT:-godot}"

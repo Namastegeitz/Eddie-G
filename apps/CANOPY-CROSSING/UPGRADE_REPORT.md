@@ -27,7 +27,20 @@ machine. Draw calls, objects and primitives don't depend on the machine.
 Benchmark: `tools/benchmark.tscn` (added in this run, also run on the
 pre-upgrade copy): Amazon level 5, seed 777, the bot playing, 720x1280.
 
-BASELINE_TABLE
+| Measure (720x1280, Medium = phones, Amazon level 5) | Bird's-eye | First person |
+|---|---|---|
+| Draw calls a frame (average / worst) | **2,131 / 2,709** | 333 / 359 |
+| Objects drawn a frame | 8,074 | 681 |
+| Primitives (triangles) a frame | 69,713 | 613,605 |
+| Frame time here (average, software GL) | 119 ms (same-session re-run; 88 ms in the first run, when the machine was idler) | 301 ms |
+| 1% low / worst frame here | 6.6 fps / 156 ms | 2.7 fps / 378 ms |
+
+| High (computers) | Bird's-eye | First person |
+|---|---|---|
+| Draw calls / objects / primitives | 2,222 / 8,236 / 81,215 | 544 / 892 / 1,377,702 |
+
+Start-up (engine start to home screen drawn twice): 1.6-2.6 s here (varies with load).
+Memory: 107 MB static (CPU side), 67 MB video (Medium), 100 MB (High).
 
 | Other baseline facts | |
 |---|---|
@@ -69,7 +82,42 @@ marked [UNVERIFIED] were seen only through search results.
 
 ### b. Engine
 
-ENGINE_RESEARCH
+Sources: the godotengine/godot and godot-docs repositories (4.7 branch and
+tags), godot-builds release files; checked 2026-11-27.
+
+- **Version**: 4.7.2 (2026-08-18) is the latest stable. 4.7.3 is in RC in the
+  4.7 branch (a FreeType security fix, CVE-2026-95512, plus Compatibility
+  fixes for AreaLight3D and particles): **take 4.7.3 when it ships** (drop-in
+  patch). **4.8** is at beta 5 (2026-11-24): adds Compatibility decals and
+  the Android screen reader, but rejects scripts that inherit their own inner
+  classes and warns on class-level string comments. **Decision: pin 4.7.2**,
+  test 4.8 in a branch at RC. https://github.com/godotengine/godot/compare/4.7.2-stable...4.7
+- **Compatibility renderer (ours, on every platform)**: MSAA 3D yes; FXAA,
+  SMAA, TAA, FSR no (bilinear scaling only); **SSAO yes since 4.6** (now used
+  by Ultra); glow yes; soft-shadow filter quality respected (5/13-tap PCF);
+  HDR output **no** (Mobile/Forward+ only); AreaLight3D yes but without
+  shadows; no shader precompilation (ubershaders are Forward+/Mobile only):
+  the game already warms first person up at level start, and the GLES3 shader
+  cache helps from the second launch. https://docs.godotengine.org/en/stable/tutorials/rendering/renderers.html
+- **Frame rate**: `Engine.max_fps` everywhere; iOS 120 Hz already on
+  (`allow_high_refresh_rate`). Android 15+ holds games at 60 Hz unless the app
+  calls `Surface.setFrameRate()`, which Godot 4.7/4.8 doesn't: deferred (needs
+  a small Android plugin). No thermal API in Godot.
+- **Accessibility**: AccessKit screen reader since 4.5, desktop only in 4.7
+  (Android in 4.8). `accessibility_name` is set on the new Settings buttons
+  and the eye button.
+- **Tests**: GdUnit4 6.2.3 / GUT 9.7.1 support 4.7. Not added: the project's
+  own phase audit (451 checks), level sweep, render checks and benchmark
+  already cover what they would (see Add-ons).
+- **Crash reporting**: Sentry SDK for Godot 2.5.1 (MIT, Godot 4.5+, all six
+  platforms; Android needs Gradle builds, Web needs GDExtension support).
+  Firebase Crashlytics has no official Godot plugin (godot-x/firebase 3.1.0 is
+  a third-party option); we built a small Android plugin of our own.
+- **Store compliance**: Godot 4.7.2's Android build uses NDK 29 (16 KB pages
+  by default) and targets API 36: **verified on our APK** (64-bit libraries
+  aligned 0x4000, zip aligned, target 36, only the VIBRATE permission). The iOS
+  export writes a privacy manifest with required reasons (file timestamp,
+  boot time, disk space); crash data is added when Sentry is built in.
 
 ### c. Dependencies
 
@@ -115,12 +163,90 @@ The game is in a private beta (web link). The launch page's bug log has no repor
 
 ### UPGRADES (code and build)
 
-PLAN_UPGRADES
+| # | Upgrade | Why (evidence) | Effort | Risk | Tested by | Status |
+|---|---|---|---|---|---|---|
+| 1 | Fix the run/ability reference cycle | 146 objects leaked per run; 790k at the end of a level sweep | S | Low | audit: 4 runs + bot plans leave <= 2 objects | **Done** |
+| 2 | Crash reporting (Sentry + Crashlytics) | No visibility of crashes on devices | M | Low (off without keys) | 9 audit checks with a stand-in plugin; plugin builds; install scripts dry-run | **Done** |
+| 3 | CI on Node 24 actions; build number = commit count; SDK installs; Play pre-checks | Node 20 removed 2026-09-23; build numbers by hand | M | Medium (needs a run on GitHub) | YAML lint; scripts dry-run locally | **Done** (first GitHub run pending) |
+| 4 | Remote switches + update prompts | No way to switch a broken feature off without a release | M | Low | 6 audit checks | **Done** |
+| 5 | Store rating card | Genre leaders ask at happy moments | S | Low | 4 audit checks on timing | **Done** (plugin installed by CI) |
+| 6 | Pause when the app loses focus | Players dropped back into play after a call | S | Low | audit check | **Done** |
+| 7 | Network time-outs, analytics retry with backoff | Downloads could hang forever; failed batches were lost | S | Low | parse + run | **Done** |
+| 8 | One draw call per figure (2D batching) | Profile: 2,131 draw calls a frame from the moving figures | M | Medium (drawing core) | pixel diff on/off (0.2%), perf gate, frame-cost check | **Done** |
+| 9 | Graphics: Ultra, frame-rate cap, 3D resolution | Prompt step 6; SSAO available in Compatibility since 4.6 | S | Low | 3 audit checks | **Done** |
+| 10 | Settings page fits the screen | It was a little wider than phones (and more so with new rows) | S | Low | screenshot | **Done** |
+| 11 | Perf gate, secret scan, visual regression | Prompt step 9 | M | Low | repeat runs within 0.3% | **Done** |
+| 12 | Store kit, CHANGELOG, release plan, signing notes | Prompt step 10 | M | None | review | **Done** |
+| 13 | Android 120 Hz (`Surface.setFrameRate`) | Android 15+ holds games at 60 Hz | M | Medium | needs a phone | Deferred |
+| 14 | Thermal quality step-down | Prompt step 5 | M | Medium | needs a phone | Deferred |
+| 15 | Translations (strings to files) | English only | L | Medium | - | Deferred |
+| 16 | Screen-reader names on every control, text-size option, gamepad menus | Accessibility | M | Low | - | Deferred (partly: new Settings rows are named) |
+| 17 | Achievements + cloud saves | Play Games Level Up expects them | L | Medium | - | **Eddie: yes, after store accounts exist** |
+| 18 | Godot 4.7.3 | Security fix in FreeType | S | Low | full tests | When released |
 
 ### ADD-ONS (installed or connected)
 
-PLAN_ADDONS
+| Add-on | Maker | Cost (checked 2026-11-27) | What it adds | Eddie | Status |
+|---|---|---|---|---|---|
+| Sentry SDK for Godot 2.5.1 | Sentry (Functional Software) | Free Developer plan (about 5k errors/month) | Crash and error reports on every store build | **Yes** | Wired in; needs the free account + `SENTRY_DSN` |
+| Firebase Crashlytics 21.1.0 | Google | Free (Spark) | Android crash reports incl. native crashes | **Yes** | Own plugin built; needs the Firebase project + `FIREBASE_ANDROID_CONFIG` |
+| In-app Review plugin 5.3 | Godot Mobile Plugins (MIT) | Free | Store rating card | **Yes** | Installed by the release workflow |
+| Remote switches | (none: a file on GitHub Pages) | Free | Kill switches, update prompts | **Yes (Pages file)** | Done; Pages must be switched on once |
+| Play Games Services / Game Center | Google / Apple | Free | Achievements, cloud saves | **Yes, later** | Plan only |
+| GdUnit4 / GUT | open source (MIT) | Free | Unit-test framework | not asked | Not needed: the phase audit covers it |
+| Firebase Remote Config / PostHog | Google / PostHog | Free tiers | Remote config, analytics funnels | not needed | GitHub Pages file chosen instead |
+| Azure Artifact Signing | Microsoft | ~$10/month | Signed Windows downloads | not asked | Not needed: Steam/GOG/Epic/MSIX don't require it |
+| fastlane | open source | Free | Automated screenshots and uploads | not asked | Later, with the Mac build job |
+| Maestro | mobile.dev | Free CLI | Tap-through tests on a phone | not asked | Later (needs devices or emulators) |
 
 ## Before / after
 
 AFTER_TABLE
+
+## Store readiness (2026-11-28)
+
+PASS = done and checked in this run. FAIL = not ready yet, with who fixes it.
+Nothing was uploaded to any store.
+
+| # | Item | Result | Evidence / who fixes it |
+|---|---|---|---|
+| 1 | Google Play: target API 36 | PASS | `tools/check_android.sh` on the local APK (aapt2) |
+| 2 | Google Play: 16 KB memory pages | PASS | zipalign `-P 16`; arm64 libraries aligned 0x4000 |
+| 3 | Google Play: smallest permissions | PASS | Only VIBRATE |
+| 4 | Google Play: release `.aab` | FAIL | Built by the release workflow, which has not run on GitHub yet (Eddie starts it; needs item 5) |
+| 5 | Android upload key | FAIL | Eddie creates it and adds the 3 GitHub secrets (`LAUNCH`, step b-upload-key) |
+| 6 | Version name and build number set automatically | PASS | Build number = commit count (`tools/set_version.py`, release workflow) |
+| 7 | Version 1.0.0 for the first upload | FAIL | Still 0.9.0 (beta); set when Eddie says go |
+| 8 | Data safety (Play) and App Privacy (Apple) answers | PASS | Drafted in `store-kit/data-safety.md`, crash reports included; Eddie types them in |
+| 9 | Privacy policy at a public web address, linked in the game | FAIL | Draft ready (`LAUNCH/shared/privacy-policy.md`); needs Eddie's website, then a Settings link |
+| 10 | Age-rating answers (IARC, Apple) | PASS | `LAUNCH/shared/content-rating-answers.md` |
+| 11 | Store texts and What's New | PASS | `LAUNCH/shared/store-listing.md`, `store-kit/whats-new.md` |
+| 12 | Credits and licences | PASS | `store-kit/credits.md` and the new Settings > Credits and licences screen (audit check) |
+| 13 | Accessibility answers (Apple) | PASS | `store-kit/accessibility-labels.md` (honest: VoiceOver not yet supported in game) |
+| 14 | Notes for App Review | PASS | `store-kit/review-notes.md` |
+| 15 | Screenshots, feature graphic, preview video | FAIL | Shot list and sizes ready (`store-kit/screenshots.md`); pictures made after the store builds |
+| 16 | Real purchases (Play Billing, StoreKit 2) | FAIL | Still the sandbox; waits on Eddie's Phase 1 money decision |
+| 17 | Ads with consent screens, or ads off | FAIL | Same decision (between-run ads can be switched off remotely already) |
+| 18 | Crash reporting | PASS (code) | Sentry + Crashlytics wired, 23 stability checks; reports start once Eddie adds `SENTRY_DSN` and `FIREBASE_ANDROID_CONFIG` |
+| 19 | iOS Xcode project | PASS | Exported by `tools/build_all.sh ios` (signing and upload need Apple's account) |
+| 20 | iOS privacy manifest | PASS | Written by Godot; `tools/install_sentry.sh` adds the crash-data entries |
+| 21 | Apple export compliance | FAIL | Answer is "standard encryption only (HTTPS)": Eddie answers it at the first upload |
+| 22 | Developer accounts (Apple, Google) | FAIL | Eddie (Phase 2 of the launch checklist) |
+| 23 | Tests | PASS | Phase audit, exported pack, first person, performance gate, secret scan, level sweep, visual check |
+| 24 | Roll-back plan | PASS | `store-kit/release-plan.md`, step commits, remote switches |
+
+## Next 3 upgrades worth doing
+
+1. **Smooth on every phone**: a small Android plugin that asks for 90/120 Hz
+   (`Surface.setFrameRate`; Android 15+ holds games at 60 Hz otherwise), and a
+   frame-time watchdog that drops one quality step when a phone runs hot or
+   slow, then steps back up. Measure on 2-3 real phones first (Play Console's
+   pre-launch report gives free ones).
+2. **Achievements and cloud saves** (Eddie: yes, once the store accounts
+   exist): Play Games Services v2 and Game Center, saves behind the existing
+   `Save` format with a version field so nothing old breaks.
+3. **Reach more players**: every string into translation files (Spanish and
+   Portuguese first: the Amazon countries), screen-reader names on every
+   control (Android screen reader arrives with Godot 4.8), a text-size
+   setting, and following the phone's own Reduce Motion setting. That turns
+   three Apple accessibility labels from No to Yes.
