@@ -58,7 +58,9 @@ let passes = 0;
         await page.keyboard.up(keyFor[st[0]]);
         await page.keyboard.up(keyFor[st[1]]);
       } else if (via === 'pad') {
-        await page.click(`#pad [data-move="${st[0]}"]`);
+        // a real click, without waiting for the button to sit still for two
+        // frames: on the slow software renderer that wait alone can use up the timer
+        await page.click(`#pad [data-move="${st[0]}"]`, { force: true });
       } else {
         await page.keyboard.press(keyFor[st[0]]);
       }
