@@ -6,14 +6,21 @@ signal settings_changed
 signal progress_changed
 
 ## Tests point this at a scratch file so they never touch a real save.
-var save_path := "user://save.json"
+const DEFAULT_PATH := "user://save.json"
+var save_path := DEFAULT_PATH
 const SAVE_VERSION := 1
 
 var data: Dictionary = {}
 
 
+## True when the last load had to fall back to the backup copy.
+var restored_from_backup := false
+
+
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
+	if save_path == DEFAULT_PATH and OS.has_feature("pc") and not OS.has_feature("editor"):
+		migrate_from(old_desktop_save_paths())
 	load_game()
 
 
@@ -62,13 +69,33 @@ func default_data() -> Dictionary:
 
 func load_game() -> void:
 	data = default_data()
-	if FileAccess.file_exists(save_path):
-		var f := FileAccess.open(save_path, FileAccess.READ)
-		if f:
-			var parsed: Variant = JSON.parse_string(f.get_as_text())
-			if parsed is Dictionary:
-				_merge(data, parsed as Dictionary)
+	restored_from_backup = false
+	# The main file, then a save that was half-way through being replaced,
+	# then the last good copy: a broken file never wipes progress.
+	for path in [save_path, save_path + ".tmp", save_path + ".bak"]:
+		var parsed := _read_json(path)
+		if not parsed.is_empty():
+			_merge(data, parsed)
+			if path != save_path:
+				restored_from_backup = true
+				push_warning("SaveSystem: %s was missing or broken; loaded %s" % [save_path, path])
+			break
 	_tune_for_phone_browser()
+
+
+func _read_json(path: String) -> Dictionary:
+	if not FileAccess.file_exists(path):
+		return {}
+	var f := FileAccess.open(path, FileAccess.READ)
+	if f == null:
+		return {}
+	var json := JSON.new()  # (parse_string would log an engine error for a broken file)
+	if json.parse(f.get_as_text()) != OK:
+		return {}
+	var parsed: Variant = json.data
+	if parsed is Dictionary and (parsed as Dictionary).has("unlocked_bugs"):
+		return parsed
+	return {}
 
 
 func is_phone_browser() -> bool:
@@ -85,12 +112,59 @@ func _tune_for_phone_browser() -> void:
 		settings["web_phone_tuned"] = true
 
 
-func save_game() -> void:
-	var f := FileAccess.open(save_path, FileAccess.WRITE)
+## Writes the new save next to the old one first, then swaps them, keeping
+## the previous save as a backup. A crash, power cut or full disk mid-write
+## leaves the last good save intact. Returns false if nothing could be written.
+func save_game() -> bool:
+	var text := JSON.stringify(data, "  ")
+	var tmp := save_path + ".tmp"
+	var f := FileAccess.open(tmp, FileAccess.WRITE)
 	if f == null:
-		push_warning("SaveSystem: cannot write %s" % save_path)
-		return
-	f.store_string(JSON.stringify(data, "  "))
+		push_warning("SaveSystem: cannot write %s" % tmp)
+		return false
+	f.store_string(text)
+	var ok := f.get_error() == OK
+	f.close()
+	if not ok or _read_json(tmp).is_empty():
+		push_warning("SaveSystem: writing %s failed (disk full?); kept the previous save" % tmp)
+		DirAccess.remove_absolute(tmp)
+		return false
+	var bak := save_path + ".bak"
+	if FileAccess.file_exists(save_path) and not _read_json(save_path).is_empty():
+		if FileAccess.file_exists(bak):
+			DirAccess.remove_absolute(bak)
+		DirAccess.rename_absolute(save_path, bak)
+	elif FileAccess.file_exists(save_path):
+		DirAccess.remove_absolute(save_path)
+	if DirAccess.rename_absolute(tmp, save_path) != OK:
+		# Some file systems can't rename over: copy instead.
+		DirAccess.copy_absolute(tmp, save_path)
+		DirAccess.remove_absolute(tmp)
+	return true
+
+
+## Desktop builds before 1.0.0 (17 Nov 2026) kept saves in Godot's shared
+## app_userdata folder; builds since keep them in their own folder.
+func old_desktop_save_paths() -> PackedStringArray:
+	var base := OS.get_data_dir()
+	var out: PackedStringArray = []
+	for engine_dir in ["Godot", "godot"]:
+		out.append(base.path_join(engine_dir).path_join("app_userdata").path_join("Bug's-Eye View").path_join("save.json"))
+	return out
+
+
+## Copies the first old save found to the current save path, if there is no
+## save there yet. Never deletes the old file. Returns true if one was copied.
+func migrate_from(old_paths: PackedStringArray) -> bool:
+	if FileAccess.file_exists(save_path):
+		return false
+	for old in old_paths:
+		if not _read_json(old).is_empty():
+			DirAccess.make_dir_recursive_absolute(save_path.get_base_dir())
+			if DirAccess.copy_absolute(old, save_path) == OK:
+				print("SaveSystem: moved your save from ", old)
+				return true
+	return false
 
 
 func reset_progress() -> void:

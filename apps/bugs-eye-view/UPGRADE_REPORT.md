@@ -119,10 +119,10 @@ Deferred, with the reason:
 |---|---|---|---|---|---|
 | A1 | Sentry Godot SDK 2.5.1 + Sentry.io | Sentry (SDK MIT) | Free Developer plan (5k errors/mo) | Crash and error reports on every platform | **Yes** (Eddie, 27 Nov) |
 | A2 | Firebase Crashlytics | Google | Free (Spark plan) | Android crash reports in the Firebase console | **Yes** (Eddie, 27 Nov) |
-| A3 | GdUnit4 or GUT | Open source (MIT) | Free | Unit-test framework inside Godot | Asked |
-| A4 | In-app review prompt plugin | Community, MIT | Free | Play/App Store rating card at a happy moment | Asked |
-| A5 | fastlane | Open source | Free | Scripted store uploads and screenshot frames | Asked |
-| A6 | Azure Artifact Signing | Microsoft | About $10/mo (US/Canada individuals) | Signed Windows downloads for itch.io | Asked |
+| A3 | GdUnit4 or GUT | Open source (MIT) | Free | Unit-test framework inside Godot | **Not now** (Eddie, 28 Nov): existing suites cover it |
+| A4 | In-app review prompt plugin | Community, MIT | Free | Play/App Store rating card at a happy moment | **Later, after launch** (Eddie, 28 Nov) |
+| A5 | fastlane | Open source | Free | Scripted store uploads and screenshot frames | **Later, once accounts exist** (Eddie, 28 Nov) |
+| A6 | Azure Artifact Signing | Microsoft | About $10/mo (US/Canada individuals) | Signed Windows downloads for itch.io | **No, stay free** (Eddie, 28 Nov) |
 | - | PostHog / Firebase Analytics / Remote Config | - | Free tiers | Analytics and remote switches | Not proposed: the game is offline and collects no usage data |
 
 Crash reporting changes what the game collects, so it ships with:

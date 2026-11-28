@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "unlocked_bugs": ["cockroach", "fly"],
+  "levels": {
+    "kitchen": {"completed": true, "best_score": 1840, "best_time": 212.5, "badges": {"ghost": true}}
+  },
+  "colony": {"banked": 37, "lifetime": 120, "upgrades": ["thicker_shell"]},
+  "settings": {
+    "master_volume": 0.5,
+    "music_volume": 0.2,
+    "sfx_volume": 0.8,
+    "haptics": false,
+    "quality": "high",
+    "touch_controls": "off",
+    "look_sensitivity": 1.4,
+    "invert_y": true
+  },
+  "bindings": {"jump": [32]}
+}

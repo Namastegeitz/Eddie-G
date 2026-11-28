@@ -57,6 +57,8 @@ func _ready() -> void:
 		await _phase20()
 	if only in [0, 21]:
 		await _phase21()
+	if only in [0, 22]:
+		await _phase22()
 	finish("phase audit")
 
 
@@ -4397,3 +4399,69 @@ func _phase21() -> void:
 			break
 	check(ant_broke, "even the ant (push %.1f) can push a potted plant off the bench" % ant.stats.push_force)
 	await unload(lv)
+
+
+# --- Phase 22: upgrade run of 27 Nov 2026 (saves, settings, crash reports) -----
+
+func _phase22() -> void:
+	print("-- Phase 22: upgrade 2026-11-27")
+	var keep_path := SaveSystem.save_path
+	var keep_data := SaveSystem.data
+	var dir := "user://upgrade_test"
+	DirAccess.make_dir_recursive_absolute(dir)
+	for f in DirAccess.get_files_at(dir):
+		DirAccess.remove_absolute(dir.path_join(f))
+	SaveSystem.save_path = dir.path_join("save.json")
+
+	# A save from the first public build (1 Nov 2026) still loads: progress and
+	# settings come through, and every newer key gets its default.
+	DirAccess.copy_absolute("res://tests/fixtures/save_v1_2026-11-01.json", SaveSystem.save_path)
+	SaveSystem.load_game()
+	var rec := SaveSystem.get_level_record(&"kitchen")
+	check(SaveSystem.is_bug_unlocked(&"fly") and bool(rec.get("completed", false)) and int(rec.get("best_score", 0)) == 1840,
+		"a save from the first build keeps its bugs and level records")
+	check(String(SaveSystem.get_setting("quality", "")) == "high" and bool(SaveSystem.get_setting("invert_y", false))
+		and is_equal_approx(float(SaveSystem.get_setting("look_sensitivity", 0.0)), 1.4),
+		"its settings come through")
+	check(SaveSystem.data.has("treasures") and SaveSystem.data.has("revolver") and SaveSystem.get_setting("first_person", null) == false,
+		"keys added since then get their defaults")
+	check(int(SaveSystem.data["colony"]["banked"]) == 37, "colony crumbs survive")
+
+	# Saving keeps the previous file as a backup; a broken main file falls back.
+	SaveSystem.data["credits"] = 11
+	check(SaveSystem.save_game(), "save succeeds")
+	SaveSystem.data["credits"] = 22
+	SaveSystem.save_game()
+	check(FileAccess.file_exists(SaveSystem.save_path + ".bak") and not FileAccess.file_exists(SaveSystem.save_path + ".tmp"),
+		"saving leaves the last good save as a backup and no temp file")
+	var f := FileAccess.open(SaveSystem.save_path, FileAccess.WRITE)
+	f.store_string("{\"unlocked_bugs\": [\"cockr")  # cut off mid-write
+	f.close()
+	SaveSystem.load_game()
+	check(SaveSystem.restored_from_backup and int(SaveSystem.data["credits"]) == 11 and SaveSystem.is_bug_unlocked(&"fly"),
+		"a broken save falls back to the backup instead of wiping progress")
+	SaveSystem.save_game()
+	SaveSystem.load_game()
+	check(not SaveSystem.restored_from_backup and int(SaveSystem.data["credits"]) == 11, "the next save repairs the main file")
+
+	# A save half-way through being replaced (main missing, temp complete).
+	DirAccess.rename_absolute(SaveSystem.save_path, SaveSystem.save_path + ".tmp")
+	SaveSystem.load_game()
+	check(int(SaveSystem.data["credits"]) == 11, "a save caught mid-swap still loads")
+
+	# Desktop saves from builds before 17 Nov move to the new folder, once,
+	# without touching the old file; an existing new save is never replaced.
+	for g in DirAccess.get_files_at(dir):
+		DirAccess.remove_absolute(dir.path_join(g))
+	var old := dir.path_join("old_app_userdata_save.json")
+	DirAccess.copy_absolute("res://tests/fixtures/save_v1_2026-11-01.json", old)
+	var moved := SaveSystem.migrate_from(PackedStringArray([dir.path_join("missing.json"), old]))
+	SaveSystem.load_game()
+	check(moved and FileAccess.file_exists(old) and SaveSystem.is_bug_unlocked(&"fly"), "an old desktop save is copied to the new save folder")
+	check(not SaveSystem.migrate_from(PackedStringArray([old])), "an existing save is never overwritten by the old one")
+	check(SaveSystem.old_desktop_save_paths()[0].ends_with("app_userdata/Bug's-Eye View/save.json"), "it looks in Godot's old app_userdata folder")
+
+	for g in DirAccess.get_files_at(dir):
+		DirAccess.remove_absolute(dir.path_join(g))
+	SaveSystem.save_path = keep_path
+	SaveSystem.data = keep_data
