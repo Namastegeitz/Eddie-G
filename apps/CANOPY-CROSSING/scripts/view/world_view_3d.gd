@@ -148,6 +148,11 @@ func setup(run: RunSim, animal_def: Dictionary) -> void:
 		env.adjustment_contrast = 1.14
 		env.adjustment_saturation = 1.12
 		env.fog_sun_scatter = 0.18
+		if Gfx.ultra():
+			# ambient occlusion: soft contact shadows under roots, stones and animals
+			env.ssao_enabled = true
+			env.ssao_radius = 0.6
+			env.ssao_intensity = 1.6
 		if Gfx.level() == "high":
 			env.glow_enabled = true
 			env.glow_intensity = 0.35

@@ -15,5 +15,7 @@
   "fpv_view": "wide",
   "graphics": "auto",
   "crash_reports": true,
-  "auto_pause": true
+  "auto_pause": true,
+  "fps_cap": "max",
+  "res_3d": "auto"
 }

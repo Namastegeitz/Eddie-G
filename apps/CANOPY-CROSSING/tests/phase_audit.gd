@@ -1203,9 +1203,23 @@ func _phase7() -> void:
 		Save.set_setting("graphics", q[0])
 		Gfx.apply(get_tree())
 		levels_ok = levels_ok and Draw.detail == int(q[1])
+	Save.set_setting("graphics", "ultra")
+	Gfx.apply(get_tree())
+	var ultra_ok := Gfx.ultra() and Gfx.level() == "high" and Draw.detail == 2 and Gfx.scale_3d(1.0) >= 1.5
+	Save.set_setting("res_3d", "50")
+	ultra_ok = ultra_ok and is_equal_approx(Gfx.scale_3d(1.0), 0.75)
+	Save.set_setting("res_3d", "auto")
+	Save.set_setting("fps_cap", "30")
+	Gfx.apply(get_tree())
+	var fps_ok := Engine.max_fps == 30
+	Save.set_setting("fps_cap", "max")
 	Save.set_setting("graphics", "auto")
 	Gfx.apply(get_tree())
+	fps_ok = fps_ok and Engine.max_fps == 0
 	check("Graphics setting: High/Medium/Low set detail, Auto resolves", levels_ok and Gfx.level() in ["high", "medium"] and Draw.detail >= 1, Gfx.level())
+	check("Ultra is High plus extras (computers); first-person resolution scales the 3D view", ultra_ok)
+	check("Frame rate: 30 caps the game for battery, Max follows the screen (as before)", fps_ok)
+	check("figures are drawn in one batch each (a few hundred draw calls a screen instead of over 2,000)", Draw.batching and ProjectSettings.get_setting("canopy/render/batch_2d", true))
 	check("water shader and lane grain texture load", WorldView.water_shader() != null and Draw.grain().get_width() == 128)
 	# a run with the view
 	var gs: Control = load("res://scripts/ui/game_screen.gd").new()

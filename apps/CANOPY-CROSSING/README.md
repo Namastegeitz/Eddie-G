@@ -67,6 +67,20 @@ time, in ten real rainforests. Built from
   with headlights, eyes and wood grain, and an anti-aliased 3D first-person
   view with shadows. Settings > Graphics: Auto / High / Medium / Low (Auto:
   High on desktop, Medium on phones and the web player).
+- **Graphics options:** Auto / Ultra / High / Medium / Low, a frame-rate
+  choice (Max, 60, 30 for battery) and first-person resolution (Auto, 100%,
+  75%, 50%). Ultra (computers) adds ambient occlusion and softer, larger
+  shadows. Each animal, hazard and pickup is drawn in one batch (one draw call
+  per figure), so a busy bird's-eye screen asks the GPU for a few hundred draw
+  calls instead of over 2,000.
+- **Crash reporting (optional):** Sentry on every store build and Firebase
+  Crashlytics on Android, both free tiers, off until their keys are set,
+  no personal data, Settings > Send crash reports. See `docs/CRASH_REPORTING.md`.
+- **Remote switches and update reminders:** a settings file on GitHub Pages
+  can turn a shipped feature off or remind players to update, without a
+  store release. See `docs/REMOTE_CONFIG.md`.
+- **Store rating card** after a cleared level (rarely; In-app Review plugin),
+  and the run **pauses when you switch away**.
 - **High-definition maps (all 22 jungles, every level):** the ground and
   water are shaded per pixel, so they stay sharp at any screen size
   (`assets/shaders/ground.gdshader`, `water.gdshader`, `ground3d.gdshader`,

@@ -3,7 +3,7 @@ extends Control
 ##
 ##   xvfb-run -a -s "-screen 0 800x1400x24" godot --path . --rendering-driver opengl3 \
 ##     --resolution 720x1280 --fixed-fps 60 res://tools/benchmark.tscn -- --no-boot \
-##     [--out=build/bench.json] [--graphics=high] [--frames=480] [--map=amazon] [--stage=4]
+##     [--out=build/bench.json] [--graphics=high] [--frames=480] [--map=amazon] [--stage=4] [--views=bird,fpv]
 ##
 ## It starts the game (home screen), then plays a fixed Journey level with the
 ## bot in the bird's-eye view, then the same in first person, and records:
@@ -24,6 +24,7 @@ var frames := 480
 var map_id := "amazon"
 var stage := 4
 var graphics := ""
+var views := ["bird", "fpv"]
 var res := {}
 
 
@@ -40,6 +41,8 @@ func _ready() -> void:
 			stage = int(a.substr(8))
 		elif a.begins_with("--graphics="):
 			graphics = a.substr(11)
+		elif a.begins_with("--views="):
+			views = Array(a.substr(8).split(","))
 	Save.path = "user://bench_save.json"
 	Save.wipe()
 	Save.load_game()
@@ -64,9 +67,11 @@ func _ready() -> void:
 	var gs = Game.current
 	gs.started = true
 	gs.blocking = false
-	res.bird = await _measure()
-	gs.set_view("fpv", false)
-	res.fpv = await _measure()
+	if "bird" in views:
+		res.bird = await _measure()
+	if "fpv" in views:
+		gs.set_view("fpv", false)
+		res.fpv = await _measure()
 	res.mem_static_mb = snappedf(Performance.get_monitor(Performance.MEMORY_STATIC_MAX) / 1048576.0, 0.1)
 	res.vmem_mb = snappedf(Performance.get_monitor(Performance.RENDER_VIDEO_MEM_USED) / 1048576.0, 0.1)
 	res.rows_reached = gs.sim.max_row

@@ -1,0 +1,21 @@
+{
+  "bird": {
+    "draw_calls": 308.7,
+    "draw_calls_max": 349.0,
+    "objects": 2601.7,
+    "primitives": 47379
+  },
+  "fpv": {
+    "draw_calls": 343.4,
+    "draw_calls_max": 359.0,
+    "objects": 777.5,
+    "primitives": 658432
+  },
+  "setup": {
+    "graphics": "medium",
+    "window": "720x1280",
+    "map": "amazon",
+    "stage": 5,
+    "engine": "4.7.2-stable (official)"
+  }
+}
