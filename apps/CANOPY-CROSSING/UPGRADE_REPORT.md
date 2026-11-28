@@ -7,6 +7,19 @@ additive: new behaviour sits behind a setting or a build-time key, and the
 tag rolls it all back. Findings that come from the web are information, with
 the source and the date checked.
 
+## Summary (10 lines)
+
+1. **Memory leak fixed**: each finished run left its whole level in memory (146 objects); now 0, and the level sweep's 790,090 leaked objects are gone.
+2. **Crash reporting**: Sentry (every store build) and Firebase Crashlytics (Android), free tiers, off until two GitHub secrets are added; Settings switch; privacy texts updated.
+3. **Smoother from above**: each figure is drawn in one go: 2,131 -> 347 draw calls a frame (-84%), frames ~9% faster here, identical pictures.
+4. **Settings**: Ultra graphics, frame-rate cap, first-person resolution, pause when you switch away, send crash reports, credits and licences; the page now fits phone screens.
+5. **Live control**: remote switches (a GitHub Pages file) can turn features off and show update prompts; the store's rating card appears after a cleared level, at most every 4 months.
+6. **Network**: downloads time out instead of hanging; analytics retries with backoff.
+7. **Builds**: CI moved to Node 24 actions, build number = commit count, Google Play pre-checks; the APK builds and passes the 16 KB / API 36 checks.
+8. **Tests**: phase audit 423 -> 451 checks, plus performance, secret, visual (3 screen sizes) and download-size gates; all pass; gameplay identical on all 220 levels.
+9. **Store kit**: credits, privacy and accessibility answers, screenshot list, What's New, review notes, release and roll-back plan, CHANGELOG.
+10. **Unchanged**: first-person speed, start-up time and download size; memory +1.5 MB. Nothing was uploaded to any store and no keys are in the repository.
+
 ## Project at a glance
 
 | | |
@@ -253,7 +266,7 @@ Nothing was uploaded to any store.
 | 1 | Google Play: target API 36 | PASS | `tools/check_android.sh` on the local APK (aapt2) |
 | 2 | Google Play: 16 KB memory pages | PASS | zipalign `-P 16`; arm64 libraries aligned 0x4000 |
 | 3 | Google Play: smallest permissions | PASS | Only VIBRATE |
-| 4 | Google Play: release `.aab` | FAIL | Built by the release workflow, which has not run on GitHub yet (Eddie starts it; needs item 5) |
+| 4 | Google Play: release `.aab` | FAIL | Built by the release workflow (it unpacks Godot's Android Gradle source); not built yet: this machine's templates lack that source, and the workflow hasn't run on GitHub (Eddie starts it; needs item 5) |
 | 5 | Android upload key | FAIL | Eddie creates it and adds the 3 GitHub secrets (`LAUNCH`, step b-upload-key) |
 | 6 | Version name and build number set automatically | PASS | Build number = commit count (`tools/set_version.py`, release workflow) |
 | 7 | Version 1.0.0 for the first upload | FAIL | Still 0.9.0 (beta); set when Eddie says go |
